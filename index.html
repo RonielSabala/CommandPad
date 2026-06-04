@@ -365,7 +365,8 @@
             grid-area: 1 / 1 / 2 / 2;
             font-family: var(--font-sans);
             font-size: 15px;
-            color: var(--color-text-secondary);
+            color: transparent;
+            caret-color: var(--color-text-secondary);
             background: transparent;
             border: none;
             outline: none;
@@ -379,12 +380,20 @@
             width: auto;
         }
 
+        .note-textarea::selection {
+            color: transparent;
+            background: var(--color-accent-dim);
+        }
+
         .note-textarea:focus {
             border-bottom-color: var(--color-border);
+            caret-color: var(--color-text-primary);
+            color: transparent;
+            background: transparent;
         }
 
         .note-textarea::placeholder {
-            color: var(--color-text-muted);
+            color: transparent;
         }
 
         .note-auto-width.style-heading,
@@ -393,8 +402,12 @@
             font-family: var(--font-mono);
             font-size: 20px;
             font-weight: 600;
-            color: var(--color-text-primary);
+            color: transparent;
             letter-spacing: -0.3px;
+        }
+
+        .note-textarea.style-heading:focus {
+            caret-color: var(--color-text-primary);
         }
 
         .note-auto-width.style-subheading,
@@ -403,8 +416,53 @@
             font-family: var(--font-mono);
             font-size: 14px;
             font-weight: 500;
+            color: transparent;
+            letter-spacing: 0.5px;
+        }
+
+        .note-textarea.style-subheading:focus {
+            caret-color: var(--color-accent-text);
+        }
+
+        .note-preview {
+            font-family: var(--font-sans);
+            font-size: 15px;
+            color: var(--color-text-secondary);
+            line-height: 1.65;
+            padding: 4px 0;
+            grid-area: 1 / 1 / 2 / 2;
+            word-break: break-word;
+            white-space: pre-wrap;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .note-preview.style-heading {
+            font-family: var(--font-mono);
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .note-preview.style-subheading {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 500;
             color: var(--color-accent-text);
             letter-spacing: 0.5px;
+        }
+
+        .note-link {
+            color: var(--color-accent);
+            text-decoration: none;
+            border-bottom: 1px solid var(--color-accent-dim);
+            transition: color 0.15s, border-color 0.15s;
+        }
+
+        .note-link:hover {
+            color: var(--color-accent-text);
+            border-bottom-color: var(--color-accent);
         }
 
         /* Section divider block */
@@ -798,6 +856,10 @@
             MOVE: 'move',
         });
 
+        const LinkifyConfig = Object.freeze({
+            URL_REGEX: /(https?:\/\/[^\s<>"{}|\\^`\[\]]*[^\s<>"{}|\\^`\[\].,;:!?()\-])/g,
+        });
+
         // State
 
         let state = {
@@ -902,6 +964,12 @@
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;');
+        }
+
+        function linkifyText(text) {
+            return escapeHtml(text).replace(LinkifyConfig.URL_REGEX, (url) => {
+                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="note-link">${url}</a>`;
+            });
         }
 
         //  Variables
@@ -1051,6 +1119,7 @@
             block.text = text;
             saveState();
             if (block.type === BlockType.COMMAND) refreshBlockPreview(blockId);
+            if (block.type === BlockType.NOTE) refreshNotePreview(blockId);
         }
 
         function updateBlockStyle(blockId, style) {
@@ -1064,6 +1133,7 @@
 
             const textarea = blockElement.querySelector('.note-textarea');
             const label = blockElement.querySelector('.note-auto-width');
+            const preview = blockElement.querySelector('.note-preview');
 
             if (textarea) {
                 textarea.className = `note-textarea style-${style}`;
@@ -1071,9 +1141,13 @@
             if (label) {
                 label.className = `note-auto-width style-${style}`;
             }
+            if (preview) {
+                preview.className = `note-preview style-${style}`;
+            }
             blockElement.querySelectorAll('.note-style-btn').forEach(button => {
                 button.classList.toggle(CssClass.ACTIVE, button.dataset.style === style);
             });
+            refreshNotePreview(blockId);
         }
 
         function moveBlock(blockId, direction) {
@@ -1103,6 +1177,22 @@
             // Auto-resize textarea
             const textarea = blockElement.querySelector('.command-textarea');
             if (textarea) autoResizeTextarea(textarea);
+        }
+
+        function refreshNotePreview(blockId) {
+            const block = state.blocks.find(block => block.id === blockId);
+            if (!block || block.type !== BlockType.NOTE) return;
+
+            const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
+            if (!blockElement) return;
+
+            const previewEl = blockElement.querySelector('.note-preview');
+            if (!previewEl) return;
+
+            const noteStyle = block.style || NoteStyle.BODY;
+            previewEl.innerHTML = block.text ?
+                linkifyText(block.text) :
+                `<span style="color:var(--color-text-muted)">${notePlaceholder(noteStyle)}</span>`;
         }
 
         function refreshAllPreviews() {
@@ -1221,6 +1311,7 @@
         function buildNoteBlockHTML(block) {
             const noteStyle = block.style || NoteStyle.BODY;
             const escapedText = escapeHtml(block.text);
+            const previewHTML = linkifyText(block.text);
             return `
       <div class="note-block">
         <div class="note-style-row">
@@ -1242,6 +1333,7 @@
             onfocus="this.closest('.note-block').classList.add('${CssClass.IS_FOCUSED}')"
             onblur="this.closest('.note-block').classList.remove('${CssClass.IS_FOCUSED}')"
           >${escapedText}</textarea>
+          <div class="note-preview style-${noteStyle}">${previewHTML || `<span style="color:var(--color-text-muted)">${notePlaceholder(noteStyle)}</span>`}</div>
         </label>
       </div>
     `;
@@ -1257,8 +1349,8 @@
 
         function notePlaceholder(style) {
             if (style === NoteStyle.HEADING) return 'Section heading...';
-            if (style === NoteStyle.SUBHEADING) return 'STEP 1. SETUP';
-            return 'Add a note or description...';
+            if (style === NoteStyle.SUBHEADING) return 'Section subheading...';
+            return 'Section body...';
         }
 
         function updateEmptyState() {
