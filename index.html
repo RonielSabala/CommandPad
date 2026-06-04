@@ -60,7 +60,7 @@
             min-height: 100vh;
         }
 
-        /* ─── Scrollbar ──────────────────────────────────────────── */
+        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -75,7 +75,7 @@
             border-radius: 3px;
         }
 
-        /* ─── Layout ─────────────────────────────────────────────── */
+        /* Layout */
         .app-shell {
             display: grid;
             grid-template-columns: 300px 1fr;
@@ -87,7 +87,7 @@
             overflow: hidden;
         }
 
-        /* ─── Header ─────────────────────────────────────────────── */
+        /* Header */
         .app-header {
             grid-area: header;
             display: flex;
@@ -143,7 +143,7 @@
             gap: 8px;
         }
 
-        /* ─── Sidebar ─────────────────────────────────────────────── */
+        /* Sidebar */
         .app-sidebar {
             grid-area: sidebar;
             background: var(--color-surface);
@@ -210,7 +210,7 @@
             border-top: 1px solid var(--color-border);
         }
 
-        /* ─── Main panel ──────────────────────────────────────────── */
+        /* Main panel */
         .app-main {
             grid-area: main;
             overflow-y: auto;
@@ -237,7 +237,7 @@
             margin-bottom: 12px;
         }
 
-        /* ─── Block items ─────────────────────────────────────────── */
+        /* Block items */
         .block-item {
             position: relative;
         }
@@ -258,7 +258,7 @@
             transition: opacity 0.15s;
         }
 
-        /* ─── Command block ───────────────────────────────────────── */
+        /* Command block */
         .command-block {
             background: var(--color-surface);
             border: 1px solid var(--color-border);
@@ -336,7 +336,7 @@
             font-weight: 600;
         }
 
-        /* ─── Note block ──────────────────────────────────────────── */
+        /* Note block */
         .note-block {
             padding: 2px 0;
         }
@@ -382,7 +382,7 @@
             text-transform: uppercase;
         }
 
-        /* ─── Section divider block ───────────────────────────────── */
+        /* Section divider block */
         .divider-block {
             display: flex;
             align-items: center;
@@ -396,7 +396,7 @@
             background: var(--color-border);
         }
 
-        /* ─── Buttons ─────────────────────────────────────────────── */
+        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -487,7 +487,7 @@
             white-space: nowrap;
         }
 
-        /* ─── Copy feedback ───────────────────────────────────────── */
+        /* Copy feedback */
         .copy-feedback {
             color: var(--color-success);
             font-family: var(--font-mono);
@@ -501,7 +501,7 @@
             opacity: 1;
         }
 
-        /* ─── Token tag ───────────────────────────────────────────── */
+        /* Token tag */
         .tag-pill {
             display: inline-block;
             font-family: var(--font-mono);
@@ -512,7 +512,7 @@
             padding: 1px 5px;
         }
 
-        /* ─── Badge ───────────────────────────────────────────────── */
+        /* Badge */
         .badge {
             display: inline-block;
             font-family: var(--font-mono);
@@ -523,13 +523,13 @@
             color: var(--color-text-muted);
         }
 
-        /* ─── Separator ───────────────────────────────────────────── */
+        /* Separator */
         hr.subtle {
             border: none;
             border-top: 1px solid var(--color-border);
         }
 
-        /* ─── Note style picker ───────────────────────────────────── */
+        /* Note style picker */
         .note-style-row {
             display: flex;
             gap: 4px;
@@ -559,7 +559,7 @@
             color: var(--color-accent-text);
         }
 
-        /* ─── Help tooltip ────────────────────────────────────────── */
+        /* Help tooltip */
         .syntax-hint {
             font-size: 11px;
             font-family: var(--font-mono);
@@ -567,7 +567,7 @@
             padding: 8px 16px 10px;
         }
 
-        /* ─── Drag handle ─────────────────────────────────────────── */
+        /* Drag handle */
         .drag-handle {
             cursor: grab;
             color: var(--color-text-muted);
@@ -596,7 +596,7 @@
             border-radius: var(--radius-md);
         }
 
-        /* ─── Top bar of a block ──────────────────────────────────── */
+        /* Top bar of a block */
         .block-top-bar {
             display: flex;
             align-items: center;
@@ -617,10 +617,8 @@
 </head>
 
 <body>
-
     <div class="app-shell">
-
-        <!-- ─── Header ────────────────────────────────────────────── -->
+        <!-- Header -->
         <header class="app-header">
             <div class="app-header-logo">
                 <div class="logo-mark">
@@ -650,7 +648,7 @@
             </div>
         </header>
 
-        <!-- ─── Sidebar ───────────────────────────────────────────── -->
+        <!-- Sidebar -->
         <aside class="app-sidebar">
             <div class="sidebar-section-header">Variables</div>
             <div class="syntax-hint">Use <span class="tag-pill">&#x7B;VAR_NAME&#x7D;</span> in commands</div>
@@ -667,7 +665,7 @@
             </div>
         </aside>
 
-        <!-- ─── Main panel ─────────────────────────────────────────── -->
+        <!-- Main panel -->
         <main class="app-main" id="main-panel">
             <div class="main-empty-state" id="empty-state">
                 <svg viewBox="0 0 40 40">
@@ -712,24 +710,19 @@
     <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="handleImport(event)" />
 
     <script>
-        // ─────────────────────────────────────────────────────────────────
         //  State
-        // ─────────────────────────────────────────────────────────────────
 
         const STORAGE_KEY = 'commandpad_v1';
-
         let state = {
-            variables: [], // [{ id, key, value }]
-            blocks: [], // [{ id, type, ... }]
+            variables: [],
+            blocks: [],
         };
 
         function generateId() {
             return Math.random().toString(36).slice(2, 9);
         }
 
-        // ─────────────────────────────────────────────────────────────────
         //  Persistence
-        // ─────────────────────────────────────────────────────────────────
 
         function saveState() {
             try {
@@ -746,9 +739,7 @@
             if (!state.blocks) state.blocks = [];
         }
 
-        // ─────────────────────────────────────────────────────────────────
         //  Variable resolution
-        // ─────────────────────────────────────────────────────────────────
 
         function getVariableMap() {
             const map = {};
@@ -825,9 +816,7 @@
                 .replace(/"/g, '&quot;');
         }
 
-        // ─────────────────────────────────────────────────────────────────
         //  Variables
-        // ─────────────────────────────────────────────────────────────────
 
         function addVariable() {
             const newVariable = {
@@ -908,9 +897,7 @@
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────
         //  Blocks
-        // ─────────────────────────────────────────────────────────────────
 
         function addBlock(blockType) {
             let newBlock;
@@ -1021,9 +1008,7 @@
             textarea.style.height = textarea.scrollHeight + 'px';
         }
 
-        // ─────────────────────────────────────────────────────────────────
         //  Render: blocks
-        // ─────────────────────────────────────────────────────────────────
 
         function renderBlocksList() {
             const container = document.getElementById('blocks-list');
@@ -1147,9 +1132,7 @@
             emptyState.style.display = state.blocks.length === 0 ? 'block' : 'none';
         }
 
-        // ─────────────────────────────────────────────────────────────────
         //  Copy to clipboard
-        // ─────────────────────────────────────────────────────────────────
 
         function copyCommand(blockId) {
             const block = state.blocks.find(block => block.id === blockId);
@@ -1174,9 +1157,7 @@
             });
         }
 
-        // ─────────────────────────────────────────────────────────────────
         //  Drag and drop reordering
-        // ─────────────────────────────────────────────────────────────────
 
         let dragSourceId = null;
 
@@ -1226,9 +1207,7 @@
             });
         }
 
-        // ─────────────────────────────────────────────────────────────────
         //  Export / Import
-        // ─────────────────────────────────────────────────────────────────
 
         function exportToFile() {
             const exportData = JSON.stringify(state, null, 2);
@@ -1263,16 +1242,14 @@
                     updateEmptyState();
                     setTimeout(refreshAllPreviews, 0);
                 } catch {
-                    alert('Could not import: invalid CommandPad file.');
+                    alert('Could not import: invalid file.');
                 }
             };
             reader.readAsText(file);
             event.target.value = '';
         }
 
-        // ─────────────────────────────────────────────────────────────────
         //  Bootstrap
-        // ─────────────────────────────────────────────────────────────────
 
         function seedDefaultState() {
             state.variables = [{
@@ -1380,7 +1357,6 @@
 
         init();
     </script>
-
 </body>
 
 </html>
