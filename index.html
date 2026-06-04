@@ -55,15 +55,15 @@
             background-color: var(--color-bg);
             color: var(--color-text-primary);
             font-family: var(--font-sans);
-            font-size: 14px;
+            font-size: 16px;
             line-height: 1.6;
             min-height: 100vh;
         }
 
         /* Scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 10px;
+            height: 10px;
         }
 
         ::-webkit-scrollbar-track {
@@ -72,7 +72,7 @@
 
         ::-webkit-scrollbar-thumb {
             background: var(--color-border);
-            border-radius: 3px;
+            border-radius: 5px;
         }
 
         /* Layout */
@@ -125,7 +125,7 @@
 
         .logo-name {
             font-family: var(--font-mono);
-            font-size: 15px;
+            font-size: 25px;
             font-weight: 600;
             letter-spacing: -0.3px;
             color: var(--color-text-primary);
@@ -148,7 +148,7 @@
 
         .sidebar-section-header {
             padding: 16px 16px 8px;
-            font-size: 10px;
+            font-size: 11px;
             font-family: var(--font-mono);
             letter-spacing: 1.2px;
             text-transform: uppercase;
@@ -158,7 +158,7 @@
         .variables-list {
             flex: 1;
             overflow-y: auto;
-            padding: 0 12px 8px;
+            padding: 0 12px 12px;
         }
 
         .variable-row {
@@ -169,10 +169,14 @@
             margin-bottom: 6px;
         }
 
+        .variable-add-row {
+            padding: 4px 0 2px;
+        }
+
         .variable-key-input,
         .variable-value-input {
             font-family: var(--font-mono);
-            font-size: 12px;
+            font-size: 14px;
             background: var(--color-surface-alt);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-sm);
@@ -198,11 +202,6 @@
             color: var(--color-text-muted);
         }
 
-        .sidebar-footer {
-            padding: 10px 12px 14px;
-            border-top: 1px solid var(--color-border);
-        }
-
         /* Main panel */
         .app-main {
             grid-area: main;
@@ -213,12 +212,19 @@
             gap: 6px;
         }
 
+        #blocks-list {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
         .main-empty-state {
             margin: auto;
             text-align: center;
             color: var(--color-text-muted);
             font-family: var(--font-mono);
-            font-size: 13px;
+            font-size: 15px;
         }
 
         .main-empty-state svg {
@@ -269,7 +275,7 @@
             padding: 10px 10px 10px 12px;
             color: var(--color-text-muted);
             font-family: var(--font-mono);
-            font-size: 11px;
+            font-size: 14px;
             line-height: 1.6;
             user-select: none;
             flex-shrink: 0;
@@ -284,13 +290,14 @@
         .command-textarea {
             flex: 1;
             font-family: var(--font-mono);
-            font-size: 13px;
+            font-size: 15px;
             background: transparent;
             border: none;
             color: var(--color-text-primary);
             padding: 10px 12px;
             resize: none;
             outline: none;
+            overflow: hidden;
             line-height: 1.6;
             min-height: 40px;
             width: 100%;
@@ -306,9 +313,13 @@
             background: var(--color-bg);
         }
 
+        .command-preview.collapsed {
+            display: none;
+        }
+
         .command-preview-text {
             font-family: var(--font-mono);
-            font-size: 13px;
+            font-size: 14px;
             color: var(--color-success);
             flex: 1;
             overflow: hidden;
@@ -335,18 +346,22 @@
         }
 
         .note-textarea {
-            width: 100%;
+            display: block;
             font-family: var(--font-sans);
-            font-size: 14px;
+            font-size: 15px;
             color: var(--color-text-secondary);
             background: transparent;
             border: none;
             outline: none;
             resize: none;
+            overflow: hidden;
             line-height: 1.65;
             padding: 4px 0;
             border-bottom: 1px dashed transparent;
             transition: border-color 0.15s;
+            min-width: 200px;
+            width: 100%;
+            max-width: 100%;
         }
 
         .note-textarea:focus {
@@ -360,7 +375,7 @@
         /* heading style notes */
         .note-textarea.style-heading {
             font-family: var(--font-mono);
-            font-size: 17px;
+            font-size: 20px;
             font-weight: 600;
             color: var(--color-text-primary);
             letter-spacing: -0.3px;
@@ -368,7 +383,7 @@
 
         .note-textarea.style-subheading {
             font-family: var(--font-mono);
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 500;
             color: var(--color-accent-text);
             letter-spacing: 0.5px;
@@ -394,10 +409,10 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 5px 12px;
+            padding: 6px 13px;
             border-radius: var(--radius-md);
             font-family: var(--font-mono);
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             border: 1px solid var(--color-border);
@@ -484,7 +499,7 @@
         .copy-feedback {
             color: var(--color-success);
             font-family: var(--font-mono);
-            font-size: 11px;
+            font-size: 13px;
             opacity: 0;
             transition: opacity 0.2s;
             pointer-events: none;
@@ -498,7 +513,7 @@
         .tag-pill {
             display: inline-block;
             font-family: var(--font-mono);
-            font-size: 11px;
+            font-size: 13px;
             background: var(--color-tag-bg);
             color: var(--color-tag-text);
             border-radius: var(--radius-sm);
@@ -509,7 +524,7 @@
         .badge {
             display: inline-block;
             font-family: var(--font-mono);
-            font-size: 10px;
+            font-size: 12px;
             border-radius: 3px;
             padding: 1px 5px;
             background: var(--color-surface-alt);
@@ -530,11 +545,11 @@
         }
 
         .note-style-btn {
-            padding: 2px 7px;
+            padding: 2px 8px;
             border-radius: 3px;
             border: 1px solid transparent;
             background: transparent;
-            font-size: 11px;
+            font-size: 12px;
             font-family: var(--font-mono);
             color: var(--color-text-muted);
             cursor: pointer;
@@ -554,7 +569,7 @@
 
         /* Help tooltip */
         .syntax-hint {
-            font-size: 11px;
+            font-size: 13px;
             font-family: var(--font-mono);
             color: var(--color-text-muted);
             padding: 8px 16px 10px;
@@ -594,17 +609,50 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 4px 8px 4px 4px;
+            padding: 3px 8px 3px 8px;
             border-bottom: 1px solid var(--color-border);
             background: var(--color-surface-alt);
         }
 
         .block-type-badge {
             font-family: var(--font-mono);
-            font-size: 10px;
+            font-size: 11px;
             color: var(--color-text-muted);
-            margin-left: auto;
             letter-spacing: 0.5px;
+        }
+
+        .toggle-preview-btn {
+            margin-left: auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--color-text-muted);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            padding: 2px 4px;
+            border-radius: var(--radius-sm);
+            transition: color 0.1s;
+        }
+
+        .toggle-preview-btn:hover {
+            color: var(--color-text-secondary);
+        }
+
+        .toggle-preview-btn svg {
+            width: 12px;
+            height: 12px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            transition: transform 0.2s;
+        }
+
+        .toggle-preview-btn.collapsed svg {
+            transform: rotate(-90deg);
         }
     </style>
 </head>
@@ -643,18 +691,9 @@
         <!-- Sidebar -->
         <aside class="app-sidebar">
             <div class="sidebar-section-header">Variables</div>
-            <div class="syntax-hint">Use <span class="tag-pill">&#x7B;VAR_NAME&#x7D;</span> in commands</div>
+            <div class="syntax-hint">Use <span class="tag-pill">&#x7B;VAR_NAME&#x7D;</span> in commands.</div>
 
             <div class="variables-list" id="variables-list"></div>
-
-            <div class="sidebar-footer">
-                <button class="btn btn-full" onclick="addVariable()">
-                    <svg viewBox="0 0 16 16">
-                        <path d="M8 3v10M3 8h10" />
-                    </svg>
-                    Add variable
-                </button>
-            </div>
         </aside>
 
         <!-- Main panel -->
@@ -672,7 +711,7 @@
 
             <div class="add-block-row" id="add-block-row">
                 <span class="add-block-label"
-                    style="font-size:11px; font-family:var(--font-mono); color:var(--color-text-muted);">+ add</span>
+                    style="font-size:13px; font-family:var(--font-mono); color:var(--color-text-muted);">+ add</span>
                 <button class="btn" onclick="addBlock('command')">
                     <svg viewBox="0 0 16 16" width="13" height="13">
                         <polyline points="2,4 5,4" />
@@ -845,48 +884,62 @@
             container.innerHTML = '';
 
             if (state.variables.length === 0) {
-                container.innerHTML =
-                    `<p style="font-size:11px; font-family:var(--font-mono); color:var(--color-text-muted); padding: 6px 4px;">No variables defined.</p>`;
-                return;
+                const emptyMsg = document.createElement('p');
+                emptyMsg.style.cssText =
+                    'font-size:13px; font-family:var(--font-mono); color:var(--color-text-muted); padding: 6px 4px;';
+                emptyMsg.textContent = 'No variables defined.';
+                container.appendChild(emptyMsg);
+            } else {
+                for (const variable of state.variables) {
+                    const row = document.createElement('div');
+                    row.className = 'variable-row';
+                    row.dataset.variableId = variable.id;
+
+                    row.innerHTML = `
+            <input
+              class="variable-key-input"
+              type="text"
+              placeholder="VAR_NAME"
+              value="${escapeHtml(variable.key)}"
+              spellcheck="false"
+              autocomplete="off"
+              oninput="updateVariable('${variable.id}', 'key', this.value)"
+            />
+            <input
+              class="variable-value-input"
+              type="text"
+              placeholder="value"
+              value="${escapeHtml(variable.value)}"
+              spellcheck="false"
+              autocomplete="off"
+              oninput="updateVariable('${variable.id}', 'value', this.value)"
+            />
+            <button
+              class="btn btn-icon btn-danger-ghost"
+              onclick="removeVariable('${variable.id}')"
+              title="Remove variable"
+            >
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M3 3l10 10M13 3L3 13"/>
+              </svg>
+            </button>
+          `;
+                    container.appendChild(row);
+                }
             }
 
-            for (const variable of state.variables) {
-                const row = document.createElement('div');
-                row.className = 'variable-row';
-                row.dataset.variableId = variable.id;
-
-                row.innerHTML = `
-        <input
-          class="variable-key-input"
-          type="text"
-          placeholder="VAR_NAME"
-          value="${escapeHtml(variable.key)}"
-          spellcheck="false"
-          autocomplete="off"
-          oninput="updateVariable('${variable.id}', 'key', this.value)"
-        />
-        <input
-          class="variable-value-input"
-          type="text"
-          placeholder="value"
-          value="${escapeHtml(variable.value)}"
-          spellcheck="false"
-          autocomplete="off"
-          oninput="updateVariable('${variable.id}', 'value', this.value)"
-        />
-        <button
-          class="btn btn-icon btn-danger-ghost"
-          onclick="removeVariable('${variable.id}')"
-          title="Remove variable"
-        >
+            // Inline add button at the bottom
+            const addRow = document.createElement('div');
+            addRow.className = 'variable-add-row';
+            addRow.innerHTML = `
+        <button class="btn" onclick="addVariable()">
           <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M3 3l10 10M13 3L3 13"/>
+            <path d="M8 3v10M3 8h10"/>
           </svg>
+          Add variable
         </button>
       `;
-
-                container.appendChild(row);
-            }
+            container.appendChild(addRow);
         }
 
         //  Blocks
@@ -1018,7 +1071,7 @@
             const wrapper = document.createElement('div');
             wrapper.className = 'block-item';
             wrapper.dataset.blockId = block.id;
-            wrapper.draggable = true;
+            // draggable is NOT set on the wrapper; only enabled when the drag handle is held
 
             if (block.type === 'command') {
                 wrapper.innerHTML = buildCommandBlockHTML(block);
@@ -1041,6 +1094,22 @@
     `;
             wrapper.appendChild(sideControls);
 
+            // Enable dragging ONLY when mousedown fires on the drag handle
+            const dragHandle = sideControls.querySelector('.drag-handle');
+            dragHandle.addEventListener('mousedown', () => {
+                wrapper.draggable = true;
+            });
+            wrapper.addEventListener('dragend', () => {
+                wrapper.draggable = false;
+            });
+            // Also reset if mouse is released off the element
+            dragHandle.addEventListener('mouseup', () => {
+                // Will be reset by dragend; this is a safety net for non-drag clicks
+                setTimeout(() => {
+                    wrapper.draggable = false;
+                }, 50);
+            });
+
             return wrapper;
         }
 
@@ -1048,11 +1117,20 @@
             const previewHTML = buildPreviewHTML(block.text);
             const isUnresolved = hasUnresolvedTokens(block.text);
             const escapedText = escapeHtml(block.text);
+            const isCollapsed = block.collapsed === true;
 
             return `
       <div class="command-block">
         <div class="block-top-bar">
           <span class="block-type-badge">CMD</span>
+          <button
+            class="toggle-preview-btn ${isCollapsed ? 'collapsed' : ''}"
+            onclick="toggleCommandPreview('${block.id}')"
+            title="${isCollapsed ? 'Show preview' : 'Hide preview'}"
+          >
+            <svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg>
+            preview
+          </button>
         </div>
         <div class="command-block-editor">
           <div class="command-gutter">
@@ -1067,7 +1145,7 @@
             oninput="updateBlockText('${block.id}', this.value); autoResizeTextarea(this)"
           >${escapedText}</textarea>
         </div>
-        <div class="command-preview">
+        <div class="command-preview${isCollapsed ? ' collapsed' : ''}">
           <span class="command-preview-text ${isUnresolved ? 'has-unresolved' : ''}">${previewHTML || '<span style="color:var(--color-text-muted)">preview will appear here</span>'}</span>
           <span class="copy-feedback" id="copy-feedback-${block.id}">✓ copied</span>
           <button class="btn" onclick="copyCommand('${block.id}')" title="Copy resolved command">
@@ -1114,7 +1192,7 @@
 
         function notePlaceholder(style) {
             if (style === 'heading') return 'Section heading...';
-            if (style === 'subheading') return 'STEP 1 — SETUP';
+            if (style === 'subheading') return 'STEP 1. SETUP';
             return 'Add a note or description...';
         }
 
@@ -1147,6 +1225,27 @@
                 document.execCommand('copy');
                 document.body.removeChild(tempTextArea);
             });
+        }
+
+        //  Toggle command preview
+
+        function toggleCommandPreview(blockId) {
+            const block = state.blocks.find(block => block.id === blockId);
+            if (!block || block.type !== 'command') return;
+            block.collapsed = !block.collapsed;
+            saveState();
+
+            const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
+            if (!blockElement) return;
+
+            const previewEl = blockElement.querySelector('.command-preview');
+            const toggleBtn = blockElement.querySelector('.toggle-preview-btn');
+
+            if (previewEl) previewEl.classList.toggle('collapsed', block.collapsed);
+            if (toggleBtn) {
+                toggleBtn.classList.toggle('collapsed', block.collapsed);
+                toggleBtn.title = block.collapsed ? 'Show preview' : 'Hide preview';
+            }
         }
 
         //  Drag and drop reordering
@@ -1269,7 +1368,7 @@
                 {
                     id: generateId(),
                     type: 'note',
-                    text: 'STEP 1 — LOGIN',
+                    text: 'STEP 1. LOGIN',
                     style: 'subheading'
                 },
                 {
@@ -1289,7 +1388,7 @@
                 {
                     id: generateId(),
                     type: 'note',
-                    text: 'STEP 2 — INSPECT',
+                    text: 'STEP 2. INSPECT',
                     style: 'subheading'
                 },
                 {
@@ -1309,7 +1408,7 @@
                 {
                     id: generateId(),
                     type: 'note',
-                    text: 'STEP 3 — INSIDE POD',
+                    text: 'STEP 3. INSIDE POD',
                     style: 'subheading'
                 },
                 {
