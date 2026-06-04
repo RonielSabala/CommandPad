@@ -768,6 +768,76 @@
             border-radius: var(--radius-sm);
             padding: var(--space-1) var(--space-2);
         }
+
+        /* --- MODE TOGGLE BUTTON --- */
+
+        .btn-mode-toggle {
+            background: transparent;
+            border-color: transparent;
+            color: var(--color-text-muted);
+            padding: var(--space-2);
+        }
+
+        .btn-mode-toggle:hover {
+            background: transparent;
+            border-color: transparent;
+            color: var(--color-text-primary);
+        }
+
+        /* --- READ MODE SUPPRESSIONS --- */
+
+        /* Hide block and variable add/delete */
+        body.read-mode .add-block-row,
+        body.read-mode .variable-add-row,
+        body.read-mode .variable-row .btn-danger-ghost {
+            display: none;
+        }
+
+        /* Hide drag and delete button on blocks */
+        body.read-mode .block-drag-handle,
+        body.read-mode .block-controls {
+            display: none !important;
+        }
+
+        /* Hide note style picker */
+        body.read-mode .note-style-row {
+            visibility: hidden;
+        }
+
+        /* Force all command editors collapsed and hide the toggle */
+        body.read-mode .command-block-editor {
+            display: none !important;
+        }
+
+        body.read-mode .toggle-editor-btn {
+            display: none;
+        }
+
+        /* Make all textareas and inputs non-interactive */
+        body.read-mode .note-textarea,
+        body.read-mode .command-textarea {
+            pointer-events: none;
+            user-select: none;
+            cursor: default;
+        }
+
+        body.read-mode .note-textarea:focus {
+            border-bottom-color: transparent;
+            caret-color: transparent;
+            outline: none;
+        }
+
+        body.read-mode .variable-key-input,
+        body.read-mode .variable-value-input {
+            pointer-events: none;
+            opacity: 0.55;
+        }
+
+        /* Read mode: note links become always clickable */
+        body.read-mode .note-preview a.note-link {
+            pointer-events: auto;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -777,6 +847,12 @@
         <header class="app-header">
             <span class="logo-name">CommandPad</span>
             <div class="header-actions">
+                <button class="btn btn-lg btn-mode-toggle" id="mode-toggle-btn" onclick="toggleAppMode()"
+                    title="Switch to Read mode">
+                    <svg id="mode-icon" viewBox="0 0 16 16">
+                        <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
+                    </svg>
+                </button>
                 <button class="btn btn-lg" onclick="exportToFile()">
                     <svg viewBox="0 0 16 16">
                         <path d="M8 2v8M5 7l3 3 3-3M3 11v2h10v-2" />
@@ -845,10 +921,15 @@
 
     <script>
         //  State
-
         const STORAGE_KEY = 'commandpad_v1';
+        const MODE_STORAGE_KEY = 'commandpad_mode_v1';
 
         // Enums
+
+        const AppMode = Object.freeze({
+            EDIT: 'edit',
+            READ: 'read',
+        });
 
         const BlockType = Object.freeze({
             COMMAND: 'command',
@@ -887,6 +968,7 @@
             IS_FOCUSED: 'is-focused',
             HAS_UNRESOLVED: 'has-unresolved',
             CTRL_HELD: 'ctrl-held',
+            READ_MODE: 'read-mode',
         });
 
         const EventType = Object.freeze({
@@ -950,6 +1032,47 @@
 
         function generateId() {
             return Math.random().toString(36).slice(2, 9);
+        }
+
+        // App mode
+
+        let currentMode = AppMode.EDIT;
+
+        function isReadMode() {
+            return currentMode === AppMode.READ;
+        }
+
+        function setAppMode(mode) {
+            currentMode = mode;
+            try {
+                localStorage.setItem(MODE_STORAGE_KEY, mode);
+            } catch {}
+
+            const isRead = mode === AppMode.READ;
+            document.body.classList.toggle(CssClass.READ_MODE, isRead);
+
+            // Update toggle button
+            const btn = document.getElementById('mode-toggle-btn');
+            if (btn) {
+                const icon = btn.querySelector('svg');
+                if (icon) icon.innerHTML = isRead ?
+                    '<path d="M13 1l2 2L5 13l-3 1 1-3L13 1z"/>' :
+                    '<path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>';
+                btn.title = isRead ? 'Switch to Edit mode' : 'Switch to Read mode';
+            }
+        }
+
+        function toggleAppMode() {
+            setAppMode(isReadMode() ? AppMode.EDIT : AppMode.READ);
+        }
+
+        function loadMode() {
+            try {
+                const saved = localStorage.getItem(MODE_STORAGE_KEY);
+                if (saved === AppMode.READ || saved === AppMode.EDIT) {
+                    setAppMode(saved);
+                }
+            } catch {}
         }
 
         //  Persistence
@@ -1049,13 +1172,17 @@
 
         function linkifyText(text) {
             return escapeHtml(text).replace(LinkifyConfig.URL_REGEX, (url) => {
-                return `<a href="${url}" class="note-link">${url}</a>`;
+                return `<a href="${url}" class="note-link" target="${Anchor.TARGET_BLANK}" rel="${Anchor.REL}">${url}</a>`;
             });
         }
 
         //  Variables
 
         function addVariable() {
+            if (isReadMode()) {
+                return;
+            }
+
             const newVariable = {
                 id: generateId(),
                 key: '',
@@ -1071,6 +1198,10 @@
         }
 
         function removeVariable(variableId) {
+            if (isReadMode()) {
+                return;
+            }
+
             state.variables = state.variables.filter(variable => variable.id !== variableId);
             saveState();
             renderVariablesList();
@@ -1078,6 +1209,10 @@
         }
 
         function updateVariable(variableId, field, value) {
+            if (isReadMode()) {
+                return;
+            }
+
             const variable = state.variables.find(variable => variable.id === variableId);
             if (!variable) return;
             variable[field] = value;
@@ -1151,6 +1286,10 @@
         //  Blocks
 
         function addBlock(blockType) {
+            if (isReadMode()) {
+                return;
+            }
+
             let newBlock;
 
             if (blockType === BlockType.COMMAND) {
@@ -1188,6 +1327,10 @@
         }
 
         function removeBlock(blockId) {
+            if (isReadMode()) {
+                return;
+            }
+
             state.blocks = state.blocks.filter(block => block.id !== blockId);
             saveState();
             renderBlocksList();
@@ -1195,6 +1338,10 @@
         }
 
         function updateBlockText(blockId, text) {
+            if (isReadMode()) {
+                return;
+            }
+
             const block = state.blocks.find(block => block.id === blockId);
             if (!block) return;
             block.text = text;
@@ -1204,6 +1351,10 @@
         }
 
         function updateBlockStyle(blockId, style) {
+            if (isReadMode()) {
+                return;
+            }
+
             const block = state.blocks.find(block => block.id === blockId);
             if (!block || block.type !== BlockType.NOTE) return;
             block.style = style;
@@ -1481,6 +1632,10 @@
         //  Toggle command editor
 
         function toggleCommandEditor(blockId) {
+            if (isReadMode()) {
+                return;
+            }
+
             const block = state.blocks.find(block => block.id === blockId);
             if (!block || block.type !== BlockType.COMMAND) return;
             block.editorCollapsed = !block.editorCollapsed;
@@ -1531,6 +1686,10 @@
 
                 blockElement.addEventListener(EventType.DROP, event => {
                     event.preventDefault();
+                    if (isReadMode()) {
+                        return;
+                    }
+
                     const targetId = blockElement.dataset.blockId;
                     if (!dragSourceId || dragSourceId === targetId) return;
 
@@ -1595,6 +1754,7 @@
 
         function init() {
             loadState();
+            loadMode();
             renderVariablesList();
             renderBlocksList();
             updateEmptyState();
