@@ -882,8 +882,10 @@
             DROP: 'drop',
             KEY_UP: 'keyup',
             KEY_DOWN: 'keydown',
+            CLICK: 'click',
             MOUSE_UP: 'mouseup',
             MOUSE_DOWN: 'mousedown',
+            MOUSE_MOVE: 'mousemove',
             DRAG_END: 'dragend',
             DRAG_OVER: 'dragover',
             DRAG_START: 'dragstart',
@@ -897,6 +899,15 @@
         const Cursor = Object.freeze({
             POINTER: 'pointer',
             DEFAULT: '',
+        });
+
+        const Selector = Object.freeze({
+            NOTE_LINK: 'a.note-link',
+        });
+
+        const Anchor = Object.freeze({
+            TARGET_BLANK: '_blank',
+            REL: 'noopener,noreferrer',
         });
 
         const ElementId = Object.freeze({
@@ -1027,7 +1038,7 @@
 
         function linkifyText(text) {
             return escapeHtml(text).replace(LinkifyConfig.URL_REGEX, (url) => {
-                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="note-link">${url}</a>`;
+                return `<a href="${url}" class="note-link">${url}</a>`;
             });
         }
 
@@ -1585,18 +1596,56 @@
             }, 0);
         }
 
+        // Ctrl+click to open note links
+
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener(EventType.MOUSE_MOVE, e => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            updateCtrlCursor();
+        });
+
         document.addEventListener(EventType.KEY_DOWN, e => {
             if (e.key === Key.CONTROL || e.key === Key.META) {
                 document.body.classList.add(CssClass.CTRL_HELD);
-                document.body.style.cursor = Cursor.POINTER;
+                updateCtrlCursor();
             }
         });
+
         document.addEventListener(EventType.KEY_UP, e => {
             if (e.key === Key.CONTROL || e.key === Key.META) {
                 document.body.classList.remove(CssClass.CTRL_HELD);
                 document.body.style.cursor = Cursor.DEFAULT;
             }
         });
+
+        document.addEventListener(EventType.CLICK, e => {
+            if (!e.ctrlKey && !e.metaKey) {
+                return;
+            }
+
+            const link = document.elementsFromPoint(e.clientX, e.clientY)
+                .find(el => el.matches(Selector.NOTE_LINK));
+
+            if (link) {
+                e.preventDefault();
+                window.open(link.href, Anchor.TARGET_BLANK, Anchor.REL);
+            }
+        });
+
+        function updateCtrlCursor() {
+            if (!document.body.classList.contains(CssClass.CTRL_HELD)) {
+                document.body.style.cursor = Cursor.DEFAULT;
+                return;
+            }
+
+            const overLink = document.elementsFromPoint(mouseX, mouseY)
+                .some(el => el.matches(Selector.NOTE_LINK));
+
+            document.body.style.cursor = overLink ? Cursor.POINTER : Cursor.DEFAULT;
+        }
 
         init();
     </script>
