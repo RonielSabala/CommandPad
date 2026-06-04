@@ -243,11 +243,27 @@
             opacity: 1;
         }
 
+        .block-item:hover .block-drag-handle {
+            opacity: 1;
+        }
+
         .block-controls {
             position: absolute;
             right: -8px;
             top: 50%;
             transform: translateX(100%) translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .block-drag-handle {
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateX(-100%) translateY(-50%);
             display: flex;
             flex-direction: column;
             gap: 4px;
@@ -434,7 +450,13 @@
             word-break: break-word;
             white-space: pre-wrap;
             pointer-events: none;
+            position: relative;
+            z-index: 1;
             user-select: none;
+        }
+
+        body.ctrl-held .note-preview a.note-link {
+            pointer-events: auto;
         }
 
         .note-preview.style-heading {
@@ -553,15 +575,40 @@
         .add-block-row {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 12px 0 0;
+            gap: 0;
+            padding: 16px 0 0;
+            border-top: 1px solid var(--color-border);
+            margin-top: 8px;
         }
 
         .add-block-row-label {
             font-size: 11px;
             font-family: var(--font-mono);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
             color: var(--color-text-muted);
             white-space: nowrap;
+            margin-right: 12px;
+        }
+
+        .add-block-row .btn {
+            border-radius: 0;
+            border-right-width: 0;
+        }
+
+        .add-block-row .btn:first-of-type {
+            border-radius: var(--radius-md) 0 0 var(--radius-md);
+        }
+
+        .add-block-row .btn:last-of-type {
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            border-right-width: 1px;
+        }
+
+        .add-block-row .btn:hover {
+            z-index: 1;
+            position: relative;
+            border-color: var(--color-border-focus);
         }
 
         /* Token tag */
@@ -756,8 +803,7 @@
             <div id="blocks-list"></div>
 
             <div class="add-block-row" id="add-block-row">
-                <span class="add-block-label"
-                    style="font-size:13px; font-family:var(--font-mono); color:var(--color-text-muted);">+ add</span>
+                <span class="add-block-row-label">New block</span>
                 <button class="btn" onclick="addBlock('command')">
                     <svg viewBox="0 0 16 16" width="13" height="13">
                         <polyline points="2,4 5,4" />
@@ -829,15 +875,28 @@
             ACTIVE: 'active',
             IS_FOCUSED: 'is-focused',
             HAS_UNRESOLVED: 'has-unresolved',
+            CTRL_HELD: 'ctrl-held',
         });
 
         const EventType = Object.freeze({
             DROP: 'drop',
+            KEY_UP: 'keyup',
+            KEY_DOWN: 'keydown',
             MOUSE_UP: 'mouseup',
             MOUSE_DOWN: 'mousedown',
             DRAG_END: 'dragend',
             DRAG_OVER: 'dragover',
             DRAG_START: 'dragstart',
+        });
+
+        const Key = Object.freeze({
+            CONTROL: 'Control',
+            META: 'Meta',
+        });
+
+        const Cursor = Object.freeze({
+            POINTER: 'pointer',
+            DEFAULT: '',
         });
 
         const ElementId = Object.freeze({
@@ -1239,13 +1298,20 @@
                 wrapper.innerHTML = buildDividerBlockHTML(block);
             }
 
-            // Side controls
-            const sideControls = document.createElement('div');
-            sideControls.className = 'block-controls';
-            sideControls.innerHTML = `
+            // Left side: drag handle only
+            const dragHandleEl = document.createElement('div');
+            dragHandleEl.className = 'block-drag-handle';
+            dragHandleEl.innerHTML = `
       <button class="btn btn-icon drag-handle" title="Drag to reorder">
         <svg viewBox="0 0 16 16" width="14" height="14"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
       </button>
+    `;
+            wrapper.appendChild(dragHandleEl);
+
+            // Right side: delete only
+            const sideControls = document.createElement('div');
+            sideControls.className = 'block-controls';
+            sideControls.innerHTML = `
       <button class="btn btn-icon btn-danger-ghost" onclick="removeBlock('${block.id}')" title="Delete block">
         <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9"/></svg>
       </button>
@@ -1253,7 +1319,7 @@
             wrapper.appendChild(sideControls);
 
             // Enable dragging ONLY when mousedown fires on the drag handle
-            const dragHandle = sideControls.querySelector('.drag-handle');
+            const dragHandle = dragHandleEl.querySelector('.drag-handle');
             dragHandle.addEventListener(EventType.MOUSE_DOWN, () => {
                 wrapper.draggable = true;
             });
@@ -1518,6 +1584,19 @@
                 refreshAllPreviews();
             }, 0);
         }
+
+        document.addEventListener(EventType.KEY_DOWN, e => {
+            if (e.key === Key.CONTROL || e.key === Key.META) {
+                document.body.classList.add(CssClass.CTRL_HELD);
+                document.body.style.cursor = Cursor.POINTER;
+            }
+        });
+        document.addEventListener(EventType.KEY_UP, e => {
+            if (e.key === Key.CONTROL || e.key === Key.META) {
+                document.body.classList.remove(CssClass.CTRL_HELD);
+                document.body.style.cursor = Cursor.DEFAULT;
+            }
+        });
 
         init();
     </script>
