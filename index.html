@@ -206,6 +206,7 @@
         .app-main {
             grid-area: main;
             overflow-y: auto;
+            overflow-x: auto;
             padding: 24px 32px 48px;
             display: flex;
             flex-direction: column;
@@ -271,6 +272,10 @@
             gap: 0;
         }
 
+        .command-block-editor.hidden {
+            display: none;
+        }
+
         .command-gutter {
             padding: 10px 10px 10px 12px;
             color: var(--color-text-muted);
@@ -311,10 +316,6 @@
             justify-content: space-between;
             gap: 12px;
             background: var(--color-bg);
-        }
-
-        .command-preview.collapsed {
-            display: none;
         }
 
         .command-preview-text {
@@ -360,8 +361,8 @@
             border-bottom: 1px dashed transparent;
             transition: border-color 0.15s;
             min-width: 200px;
-            width: 100%;
-            max-width: 100%;
+            width: auto;
+            white-space: nowrap;
         }
 
         .note-textarea:focus {
@@ -387,7 +388,6 @@
             font-weight: 500;
             color: var(--color-accent-text);
             letter-spacing: 0.5px;
-            text-transform: uppercase;
         }
 
         /* Section divider block */
@@ -396,12 +396,15 @@
             align-items: center;
             gap: 12px;
             padding: 8px 0;
+            width: calc(100vw - 300px - 64px);
+            align-self: stretch;
         }
 
         .divider-line {
             flex: 1;
             height: 1px;
-            background: var(--color-border);
+            background: var(--color-border-focus);
+            opacity: 0.6;
         }
 
         /* Buttons */
@@ -542,6 +545,12 @@
             display: flex;
             gap: 4px;
             margin-bottom: 4px;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .note-block:hover .note-style-row {
+            opacity: 1;
         }
 
         .note-style-btn {
@@ -651,7 +660,7 @@
             transition: transform 0.2s;
         }
 
-        .toggle-preview-btn.collapsed svg {
+        .toggle-preview-btn.editor-hidden svg {
             transform: rotate(-90deg);
         }
     </style>
@@ -1051,6 +1060,13 @@
         function autoResizeTextarea(textarea) {
             textarea.style.height = 'auto';
             textarea.style.height = textarea.scrollHeight + 'px';
+            // Expand width for note textareas
+            if (textarea.classList.contains('note-textarea')) {
+                textarea.style.width = 'auto';
+                // Allow expansion without hard limit, use a reasonable max to prevent extreme widths
+                const maxWidth = Math.max(300, window.innerWidth - 200);
+                textarea.style.width = Math.min(textarea.scrollWidth + 2, maxWidth) + 'px';
+            }
         }
 
         //  Render: blocks
@@ -1117,22 +1133,30 @@
             const previewHTML = buildPreviewHTML(block.text);
             const isUnresolved = hasUnresolvedTokens(block.text);
             const escapedText = escapeHtml(block.text);
-            const isCollapsed = block.collapsed === true;
+            const isEditorHidden = block.editorHidden === true;
 
             return `
       <div class="command-block">
         <div class="block-top-bar">
           <span class="block-type-badge">CMD</span>
           <button
-            class="toggle-preview-btn ${isCollapsed ? 'collapsed' : ''}"
-            onclick="toggleCommandPreview('${block.id}')"
-            title="${isCollapsed ? 'Show preview' : 'Hide preview'}"
+            class="toggle-preview-btn ${isEditorHidden ? 'editor-hidden' : ''}"
+            onclick="toggleCommandEditor('${block.id}')"
+            title="${isEditorHidden ? 'Show editor' : 'Hide editor'}"
           >
             <svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg>
-            preview
+            edit
           </button>
         </div>
-        <div class="command-block-editor">
+        <div class="command-preview">
+          <span class="command-preview-text ${isUnresolved ? 'has-unresolved' : ''}">${previewHTML || '<span style="color:var(--color-text-muted)">preview will appear here</span>'}</span>
+          <span class="copy-feedback" id="copy-feedback-${block.id}">✓ copied</span>
+          <button class="btn" onclick="copyCommand('${block.id}')" title="Copy resolved command">
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M3 11V2h9"/></svg>
+            Copy
+          </button>
+        </div>
+        <div class="command-block-editor ${isEditorHidden ? 'hidden' : ''}">
           <div class="command-gutter">
             <span class="command-gutter-prefix">$</span>
           </div>
@@ -1144,14 +1168,6 @@
             rows="1"
             oninput="updateBlockText('${block.id}', this.value); autoResizeTextarea(this)"
           >${escapedText}</textarea>
-        </div>
-        <div class="command-preview${isCollapsed ? ' collapsed' : ''}">
-          <span class="command-preview-text ${isUnresolved ? 'has-unresolved' : ''}">${previewHTML || '<span style="color:var(--color-text-muted)">preview will appear here</span>'}</span>
-          <span class="copy-feedback" id="copy-feedback-${block.id}">✓ copied</span>
-          <button class="btn" onclick="copyCommand('${block.id}')" title="Copy resolved command">
-            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M3 11V2h9"/></svg>
-            Copy
-          </button>
         </div>
       </div>
     `;
@@ -1227,24 +1243,24 @@
             });
         }
 
-        //  Toggle command preview
+        //  Toggle command editor
 
-        function toggleCommandPreview(blockId) {
+        function toggleCommandEditor(blockId) {
             const block = state.blocks.find(block => block.id === blockId);
             if (!block || block.type !== 'command') return;
-            block.collapsed = !block.collapsed;
+            block.editorHidden = !block.editorHidden;
             saveState();
 
             const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
             if (!blockElement) return;
 
-            const previewEl = blockElement.querySelector('.command-preview');
+            const editorEl = blockElement.querySelector('.command-block-editor');
             const toggleBtn = blockElement.querySelector('.toggle-preview-btn');
 
-            if (previewEl) previewEl.classList.toggle('collapsed', block.collapsed);
+            if (editorEl) editorEl.classList.toggle('hidden', block.editorHidden);
             if (toggleBtn) {
-                toggleBtn.classList.toggle('collapsed', block.collapsed);
-                toggleBtn.title = block.collapsed ? 'Show preview' : 'Hide preview';
+                toggleBtn.classList.toggle('editor-hidden', block.editorHidden);
+                toggleBtn.title = block.editorHidden ? 'Show editor' : 'Hide editor';
             }
         }
 
@@ -1331,7 +1347,10 @@
                     renderVariablesList();
                     renderBlocksList();
                     updateEmptyState();
-                    setTimeout(refreshAllPreviews, 0);
+                    setTimeout(() => {
+                        document.querySelectorAll('textarea').forEach(autoResizeTextarea);
+                        refreshAllPreviews();
+                    }, 0);
                 } catch {
                     alert('Could not import: invalid file.');
                 }
@@ -1374,12 +1393,14 @@
                 {
                     id: generateId(),
                     type: 'command',
-                    text: 'oc login --token={LOGIN_TOKEN} --server={SERVER_URL}'
+                    text: 'oc login --token={LOGIN_TOKEN} --server={SERVER_URL}',
+                    editorHidden: true
                 },
                 {
                     id: generateId(),
                     type: 'command',
-                    text: 'oc project my-project'
+                    text: 'oc project my-project',
+                    editorHidden: true
                 },
                 {
                     id: generateId(),
@@ -1394,12 +1415,14 @@
                 {
                     id: generateId(),
                     type: 'command',
-                    text: 'oc get pods'
+                    text: 'oc get pods',
+                    editorHidden: true
                 },
                 {
                     id: generateId(),
                     type: 'command',
-                    text: 'oc rsh {POD_NAME}'
+                    text: 'oc rsh {POD_NAME}',
+                    editorHidden: true
                 },
                 {
                     id: generateId(),
@@ -1420,12 +1443,14 @@
                 {
                     id: generateId(),
                     type: 'command',
-                    text: 'cd /opt/myapp'
+                    text: 'cd /opt/myapp',
+                    editorHidden: true
                 },
                 {
                     id: generateId(),
                     type: 'command',
-                    text: './start-service.sh'
+                    text: './start-service.sh',
+                    editorHidden: true
                 },
             ];
         }
