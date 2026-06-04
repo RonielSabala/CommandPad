@@ -35,7 +35,6 @@
             --color-accent-text: #a8c8ff;
 
             --color-success: #3ecf7e;
-            --color-success-dim: #1a3d2e;
 
             --color-danger: #e05252;
             --color-danger-dim: #3d1a1a;
@@ -473,12 +472,6 @@
         .btn-primary:hover {
             background: var(--color-accent);
             color: #fff;
-        }
-
-        .btn-success {
-            background: var(--color-success-dim);
-            border-color: var(--color-success);
-            color: var(--color-success);
         }
 
         .btn-danger-ghost {
@@ -1287,10 +1280,8 @@
                 if (button) {
                     const svg = button.querySelector('svg');
                     const originalSvg = svg.cloneNode(true);
-                    const newSvgContainer = document.createElement('div');
-                    newSvgContainer.innerHTML =
-                        '<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 6 9 3 6"/></svg>';
-                    svg.replaceWith(newSvgContainer.firstChild);
+                    svg.innerHTML =
+                        '<polyline points="2,8 6,12 14,4" stroke="var(--color-success)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
                     setTimeout(() => {
                         const currentSvg = button.querySelector('svg');
                         if (currentSvg) currentSvg.replaceWith(originalSvg);
