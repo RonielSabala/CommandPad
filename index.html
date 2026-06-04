@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CommandPad</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --color-bg: #0d0f12;
+            --color-surface: #141720;
+            --color-surface-alt: #1a1e2a;
+            --color-border: #252a38;
+            --color-border-focus: #3d4560;
+
+            --color-text-primary: #e8eaf0;
+            --color-text-secondary: #7a7f96;
+            --color-text-muted: #444a60;
+
+            --color-accent: #4f8eff;
+            --color-accent-dim: #1e3360;
+            --color-accent-text: #a8c8ff;
+
+            --color-success: #3ecf7e;
+            --color-success-dim: #1a3d2e;
+
+            --color-danger: #e05252;
+            --color-danger-dim: #3d1a1a;
+
+            --color-tag-bg: #1e2435;
+            --color-tag-text: #6e8fff;
+
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'IBM Plex Sans', sans-serif;
+
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 10px;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ─── Scrollbar ──────────────────────────────────────────── */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: 3px;
+        }
+
+        /* ─── Layout ─────────────────────────────────────────────── */
+        .app-shell {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            grid-template-rows: 56px 1fr;
+            grid-template-areas:
+                "header header"
+                "sidebar main";
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ─── Header ─────────────────────────────────────────────── */
+        .app-header {
+            grid-area: header;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--color-border);
+            background: var(--color-surface);
+        }
+
+        .app-header-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-mark {
+            width: 28px;
+            height: 28px;
+            background: var(--color-accent);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-mark svg {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+
+        .logo-name {
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: var(--color-text-primary);
+        }
+
+        .logo-version {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--color-text-muted);
+            margin-left: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ─── Sidebar ─────────────────────────────────────────────── */
+        .app-sidebar {
+            grid-area: sidebar;
+            background: var(--color-surface);
+            border-right: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-section-header {
+            padding: 16px 16px 8px;
+            font-size: 10px;
+            font-family: var(--font-mono);
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+        }
+
+        .variables-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 12px 8px;
+        }
+
+        .variable-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .variable-key-input,
+        .variable-value-input {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            background: var(--color-surface-alt);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-primary);
+            padding: 5px 8px;
+            width: 100%;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .variable-key-input:focus,
+        .variable-value-input:focus {
+            border-color: var(--color-border-focus);
+        }
+
+        .variable-key-input {
+            color: var(--color-accent-text);
+            font-weight: 500;
+        }
+
+        .variable-key-input::placeholder,
+        .variable-value-input::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .sidebar-footer {
+            padding: 10px 12px 14px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        /* ─── Main panel ──────────────────────────────────────────── */
+        .app-main {
+            grid-area: main;
+            overflow-y: auto;
+            padding: 24px 32px 48px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .main-empty-state {
+            margin: auto;
+            text-align: center;
+            color: var(--color-text-muted);
+            font-family: var(--font-mono);
+            font-size: 13px;
+        }
+
+        .main-empty-state svg {
+            width: 40px;
+            height: 40px;
+            stroke: var(--color-text-muted);
+            fill: none;
+            stroke-width: 1.5;
+            margin-bottom: 12px;
+        }
+
+        /* ─── Block items ─────────────────────────────────────────── */
+        .block-item {
+            position: relative;
+        }
+
+        .block-item:hover .block-controls {
+            opacity: 1;
+        }
+
+        .block-controls {
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateX(100%) translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        /* ─── Command block ───────────────────────────────────────── */
+        .command-block {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .command-block-editor {
+            display: flex;
+            align-items: flex-start;
+            gap: 0;
+        }
+
+        .command-gutter {
+            padding: 10px 10px 10px 12px;
+            color: var(--color-text-muted);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            line-height: 1.6;
+            user-select: none;
+            flex-shrink: 0;
+            border-right: 1px solid var(--color-border);
+        }
+
+        .command-gutter-prefix {
+            color: var(--color-success);
+            font-weight: 600;
+        }
+
+        .command-textarea {
+            flex: 1;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            background: transparent;
+            border: none;
+            color: var(--color-text-primary);
+            padding: 10px 12px;
+            resize: none;
+            outline: none;
+            line-height: 1.6;
+            min-height: 40px;
+            width: 100%;
+        }
+
+        .command-preview {
+            border-top: 1px solid var(--color-border);
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: var(--color-bg);
+        }
+
+        .command-preview-text {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--color-success);
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .command-preview-text.has-unresolved {
+            color: var(--color-text-secondary);
+        }
+
+        .token-resolved {
+            color: var(--color-success);
+        }
+
+        .token-unresolved {
+            color: var(--color-danger);
+            font-weight: 600;
+        }
+
+        /* ─── Note block ──────────────────────────────────────────── */
+        .note-block {
+            padding: 2px 0;
+        }
+
+        .note-textarea {
+            width: 100%;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            background: transparent;
+            border: none;
+            outline: none;
+            resize: none;
+            line-height: 1.65;
+            padding: 4px 0;
+            border-bottom: 1px dashed transparent;
+            transition: border-color 0.15s;
+        }
+
+        .note-textarea:focus {
+            border-bottom-color: var(--color-border);
+        }
+
+        .note-textarea::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        /* heading style notes */
+        .note-textarea.style-heading {
+            font-family: var(--font-mono);
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .note-textarea.style-subheading {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-accent-text);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* ─── Section divider block ───────────────────────────────── */
+        .divider-block {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--color-border);
+        }
+
+        /* ─── Buttons ─────────────────────────────────────────────── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: var(--radius-md);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--color-border);
+            background: var(--color-surface-alt);
+            color: var(--color-text-secondary);
+            transition: background 0.12s, color 0.12s, border-color 0.12s;
+            outline: none;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: var(--color-surface);
+            border-color: var(--color-border-focus);
+            color: var(--color-text-primary);
+        }
+
+        .btn svg {
+            width: 14px;
+            height: 14px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        .btn-icon {
+            padding: 5px;
+            border-radius: var(--radius-sm);
+        }
+
+        .btn-primary {
+            background: var(--color-accent-dim);
+            border-color: var(--color-accent);
+            color: var(--color-accent-text);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-accent);
+            color: #fff;
+        }
+
+        .btn-success {
+            background: var(--color-success-dim);
+            border-color: var(--color-success);
+            color: var(--color-success);
+        }
+
+        .btn-danger-ghost {
+            background: transparent;
+            border-color: transparent;
+            color: var(--color-text-muted);
+        }
+
+        .btn-danger-ghost:hover {
+            background: var(--color-danger-dim);
+            border-color: var(--color-danger);
+            color: var(--color-danger);
+        }
+
+        .btn-full {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* add block row */
+        .add-block-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 0 0;
+        }
+
+        .add-block-row-label {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: var(--color-text-muted);
+            white-space: nowrap;
+        }
+
+        /* ─── Copy feedback ───────────────────────────────────────── */
+        .copy-feedback {
+            color: var(--color-success);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        .copy-feedback.visible {
+            opacity: 1;
+        }
+
+        /* ─── Token tag ───────────────────────────────────────────── */
+        .tag-pill {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            background: var(--color-tag-bg);
+            color: var(--color-tag-text);
+            border-radius: var(--radius-sm);
+            padding: 1px 5px;
+        }
+
+        /* ─── Badge ───────────────────────────────────────────────── */
+        .badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            border-radius: 3px;
+            padding: 1px 5px;
+            background: var(--color-surface-alt);
+            color: var(--color-text-muted);
+        }
+
+        /* ─── Separator ───────────────────────────────────────────── */
+        hr.subtle {
+            border: none;
+            border-top: 1px solid var(--color-border);
+        }
+
+        /* ─── Note style picker ───────────────────────────────────── */
+        .note-style-row {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .note-style-btn {
+            padding: 2px 7px;
+            border-radius: 3px;
+            border: 1px solid transparent;
+            background: transparent;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .note-style-btn:hover {
+            background: var(--color-surface-alt);
+            color: var(--color-text-secondary);
+        }
+
+        .note-style-btn.active {
+            background: var(--color-tag-bg);
+            border-color: var(--color-border-focus);
+            color: var(--color-accent-text);
+        }
+
+        /* ─── Help tooltip ────────────────────────────────────────── */
+        .syntax-hint {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: var(--color-text-muted);
+            padding: 8px 16px 10px;
+        }
+
+        /* ─── Drag handle ─────────────────────────────────────────── */
+        .drag-handle {
+            cursor: grab;
+            color: var(--color-text-muted);
+            padding: 4px;
+            border-radius: var(--radius-sm);
+            transition: color 0.1s;
+        }
+
+        .drag-handle:hover {
+            color: var(--color-text-secondary);
+        }
+
+        .drag-handle svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+            display: block;
+        }
+
+        .block-item.dragging {
+            opacity: 0.4;
+        }
+
+        .block-item.drag-over {
+            outline: 1px dashed var(--color-accent);
+            border-radius: var(--radius-md);
+        }
+
+        /* ─── Top bar of a block ──────────────────────────────────── */
+        .block-top-bar {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px 4px 4px;
+            border-bottom: 1px solid var(--color-border);
+            background: var(--color-surface-alt);
+        }
+
+        .block-type-badge {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--color-text-muted);
+            margin-left: auto;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-shell">
+
+        <!-- ─── Header ────────────────────────────────────────────── -->
+        <header class="app-header">
+            <div class="app-header-logo">
+                <div class="logo-mark">
+                    <svg viewBox="0 0 16 16">
+                        <polyline points="2,4 5,4" />
+                        <polyline points="2,8 8,8" />
+                        <polyline points="2,12 5,12" />
+                        <polyline points="8,4 14,8 8,12" />
+                    </svg>
+                </div>
+                <span class="logo-name">CommandPad</span>
+                <span class="logo-version">v1.0</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn" onclick="exportToFile()">
+                    <svg viewBox="0 0 16 16">
+                        <path d="M8 2v8M5 7l3 3 3-3M3 11v2h10v-2" />
+                    </svg>
+                    Export
+                </button>
+                <button class="btn btn-primary" onclick="openImportDialog()">
+                    <svg viewBox="0 0 16 16">
+                        <path d="M8 11V3M5 6l3-3 3 3M3 11v2h10v-2" />
+                    </svg>
+                    Import
+                </button>
+            </div>
+        </header>
+
+        <!-- ─── Sidebar ───────────────────────────────────────────── -->
+        <aside class="app-sidebar">
+            <div class="sidebar-section-header">Variables</div>
+            <div class="syntax-hint">Use <span class="tag-pill">&#x7B;VAR_NAME&#x7D;</span> in commands</div>
+
+            <div class="variables-list" id="variables-list"></div>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-full" onclick="addVariable()">
+                    <svg viewBox="0 0 16 16">
+                        <path d="M8 3v10M3 8h10" />
+                    </svg>
+                    Add variable
+                </button>
+            </div>
+        </aside>
+
+        <!-- ─── Main panel ─────────────────────────────────────────── -->
+        <main class="app-main" id="main-panel">
+            <div class="main-empty-state" id="empty-state">
+                <svg viewBox="0 0 40 40">
+                    <rect x="4" y="6" width="32" height="28" rx="3" />
+                    <path d="M10 14l6 6-6 6M18 26h12" />
+                </svg>
+                <p>No blocks yet.</p>
+                <p style="margin-top:6px; font-size:11px;">Add a command or note below.</p>
+            </div>
+
+            <div id="blocks-list"></div>
+
+            <div class="add-block-row" id="add-block-row">
+                <span class="add-block-label"
+                    style="font-size:11px; font-family:var(--font-mono); color:var(--color-text-muted);">+ add</span>
+                <button class="btn" onclick="addBlock('command')">
+                    <svg viewBox="0 0 16 16" width="13" height="13">
+                        <polyline points="2,4 5,4" />
+                        <polyline points="2,8 8,8" />
+                        <polyline points="8,4 14,8 8,12" />
+                    </svg>
+                    Command
+                </button>
+                <button class="btn" onclick="addBlock('note')">
+                    <svg viewBox="0 0 16 16" width="13" height="13">
+                        <path d="M3 3h10v8l-3 3H3z" />
+                        <path d="M10 11v3" />
+                    </svg>
+                    Note
+                </button>
+                <button class="btn" onclick="addBlock('divider')">
+                    <svg viewBox="0 0 16 16" width="13" height="13">
+                        <line x1="2" y1="8" x2="14" y2="8" />
+                    </svg>
+                    Divider
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Hidden import input -->
+    <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="handleImport(event)" />
+
+    <script>
+        // ─────────────────────────────────────────────────────────────────
+        //  State
+        // ─────────────────────────────────────────────────────────────────
+
+        const STORAGE_KEY = 'commandpad_v1';
+
+        let state = {
+            variables: [], // [{ id, key, value }]
+            blocks: [], // [{ id, type, ... }]
+        };
+
+        function generateId() {
+            return Math.random().toString(36).slice(2, 9);
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  Persistence
+        // ─────────────────────────────────────────────────────────────────
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } catch {}
+        }
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) state = JSON.parse(saved);
+            } catch {}
+            if (!state.variables) state.variables = [];
+            if (!state.blocks) state.blocks = [];
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  Variable resolution
+        // ─────────────────────────────────────────────────────────────────
+
+        function getVariableMap() {
+            const map = {};
+            for (const variable of state.variables) {
+                if (variable.key.trim()) map[variable.key.trim()] = variable.value;
+            }
+            return map;
+        }
+
+        function resolveCommandText(rawText) {
+            const variableMap = getVariableMap();
+            // Returns an array of segments: { text, type: 'literal' | 'resolved' | 'unresolved' }
+            const segments = [];
+            const tokenRegex = /\{([^}]+)\}/g;
+            let lastIndex = 0;
+            let match;
+
+            while ((match = tokenRegex.exec(rawText)) !== null) {
+                if (match.index > lastIndex) {
+                    segments.push({
+                        text: rawText.slice(lastIndex, match.index),
+                        type: 'literal'
+                    });
+                }
+                const key = match[1];
+                if (Object.prototype.hasOwnProperty.call(variableMap, key)) {
+                    const value = variableMap[key];
+                    segments.push({
+                        text: value || `{${key}}`,
+                        type: value ? 'resolved' : 'unresolved'
+                    });
+                } else {
+                    segments.push({
+                        text: match[0],
+                        type: 'unresolved'
+                    });
+                }
+                lastIndex = match.index + match[0].length;
+            }
+
+            if (lastIndex < rawText.length) {
+                segments.push({
+                    text: rawText.slice(lastIndex),
+                    type: 'literal'
+                });
+            }
+
+            return segments;
+        }
+
+        function resolveCommandToString(rawText) {
+            return resolveCommandText(rawText).map(segment => segment.text).join('');
+        }
+
+        function buildPreviewHTML(rawText) {
+            const segments = resolveCommandText(rawText);
+            return segments.map(segment => {
+                const escaped = escapeHtml(segment.text);
+                if (segment.type === 'resolved') return `<span class="token-resolved">${escaped}</span>`;
+                if (segment.type === 'unresolved') return `<span class="token-unresolved">${escaped}</span>`;
+                return escaped;
+            }).join('');
+        }
+
+        function hasUnresolvedTokens(rawText) {
+            return resolveCommandText(rawText).some(segment => segment.type === 'unresolved');
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  Variables
+        // ─────────────────────────────────────────────────────────────────
+
+        function addVariable() {
+            const newVariable = {
+                id: generateId(),
+                key: '',
+                value: ''
+            };
+            state.variables.push(newVariable);
+            saveState();
+            renderVariablesList();
+            // Focus the new key input
+            const rows = document.querySelectorAll('.variable-row');
+            const lastRow = rows[rows.length - 1];
+            if (lastRow) lastRow.querySelector('.variable-key-input')?.focus();
+        }
+
+        function removeVariable(variableId) {
+            state.variables = state.variables.filter(variable => variable.id !== variableId);
+            saveState();
+            renderVariablesList();
+            refreshAllPreviews();
+        }
+
+        function updateVariable(variableId, field, value) {
+            const variable = state.variables.find(variable => variable.id === variableId);
+            if (!variable) return;
+            variable[field] = value;
+            saveState();
+            refreshAllPreviews();
+        }
+
+        function renderVariablesList() {
+            const container = document.getElementById('variables-list');
+            container.innerHTML = '';
+
+            if (state.variables.length === 0) {
+                container.innerHTML =
+                    `<p style="font-size:11px; font-family:var(--font-mono); color:var(--color-text-muted); padding: 6px 4px;">No variables defined.</p>`;
+                return;
+            }
+
+            for (const variable of state.variables) {
+                const row = document.createElement('div');
+                row.className = 'variable-row';
+                row.dataset.variableId = variable.id;
+
+                row.innerHTML = `
+        <input
+          class="variable-key-input"
+          type="text"
+          placeholder="VAR_NAME"
+          value="${escapeHtml(variable.key)}"
+          spellcheck="false"
+          autocomplete="off"
+          oninput="updateVariable('${variable.id}', 'key', this.value)"
+        />
+        <input
+          class="variable-value-input"
+          type="text"
+          placeholder="value"
+          value="${escapeHtml(variable.value)}"
+          spellcheck="false"
+          autocomplete="off"
+          oninput="updateVariable('${variable.id}', 'value', this.value)"
+        />
+        <button
+          class="btn btn-icon btn-danger-ghost"
+          onclick="removeVariable('${variable.id}')"
+          title="Remove variable"
+        >
+          <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M3 3l10 10M13 3L3 13"/>
+          </svg>
+        </button>
+      `;
+
+                container.appendChild(row);
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  Blocks
+        // ─────────────────────────────────────────────────────────────────
+
+        function addBlock(blockType) {
+            let newBlock;
+
+            if (blockType === 'command') {
+                newBlock = {
+                    id: generateId(),
+                    type: 'command',
+                    text: ''
+                };
+            } else if (blockType === 'note') {
+                newBlock = {
+                    id: generateId(),
+                    type: 'note',
+                    text: '',
+                    style: 'body'
+                };
+            } else if (blockType === 'divider') {
+                newBlock = {
+                    id: generateId(),
+                    type: 'divider'
+                };
+            }
+
+            state.blocks.push(newBlock);
+            saveState();
+            renderBlocksList();
+            updateEmptyState();
+
+            // Focus the text area of the new block
+            const allBlockElements = document.querySelectorAll('.block-item');
+            const lastBlockElement = allBlockElements[allBlockElements.length - 1];
+            if (lastBlockElement) {
+                const textarea = lastBlockElement.querySelector('textarea');
+                if (textarea) textarea.focus();
+            }
+        }
+
+        function removeBlock(blockId) {
+            state.blocks = state.blocks.filter(block => block.id !== blockId);
+            saveState();
+            renderBlocksList();
+            updateEmptyState();
+        }
+
+        function updateBlockText(blockId, text) {
+            const block = state.blocks.find(block => block.id === blockId);
+            if (!block) return;
+            block.text = text;
+            saveState();
+            refreshBlockPreview(blockId);
+        }
+
+        function updateBlockStyle(blockId, style) {
+            const block = state.blocks.find(block => block.id === blockId);
+            if (!block || block.type !== 'note') return;
+            block.style = style;
+            saveState();
+            // Update textarea class and style buttons
+            const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
+            if (!blockElement) return;
+            const textarea = blockElement.querySelector('.note-textarea');
+            if (textarea) {
+                textarea.className = `note-textarea style-${style}`;
+            }
+            blockElement.querySelectorAll('.note-style-btn').forEach(button => {
+                button.classList.toggle('active', button.dataset.style === style);
+            });
+        }
+
+        function moveBlock(blockId, direction) {
+            const index = state.blocks.findIndex(block => block.id === blockId);
+            if (index < 0) return;
+            const targetIndex = direction === 'up' ? index - 1 : index + 1;
+            if (targetIndex < 0 || targetIndex >= state.blocks.length) return;
+            [state.blocks[index], state.blocks[targetIndex]] = [state.blocks[targetIndex], state.blocks[index]];
+            saveState();
+            renderBlocksList();
+        }
+
+        function refreshBlockPreview(blockId) {
+            const block = state.blocks.find(block => block.id === blockId);
+            if (!block || block.type !== 'command') return;
+
+            const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
+            if (!blockElement) return;
+
+            const previewEl = blockElement.querySelector('.command-preview-text');
+            if (!previewEl) return;
+
+            previewEl.innerHTML = buildPreviewHTML(block.text);
+            const isUnresolved = hasUnresolvedTokens(block.text);
+            previewEl.classList.toggle('has-unresolved', isUnresolved);
+
+            // Auto-resize textarea
+            const textarea = blockElement.querySelector('.command-textarea');
+            if (textarea) autoResizeTextarea(textarea);
+        }
+
+        function refreshAllPreviews() {
+            for (const block of state.blocks) {
+                if (block.type === 'command') refreshBlockPreview(block.id);
+            }
+        }
+
+        function autoResizeTextarea(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  Render: blocks
+        // ─────────────────────────────────────────────────────────────────
+
+        function renderBlocksList() {
+            const container = document.getElementById('blocks-list');
+            container.innerHTML = '';
+
+            for (const block of state.blocks) {
+                const blockElement = buildBlockElement(block);
+                container.appendChild(blockElement);
+            }
+
+            setupDragAndDrop();
+        }
+
+        function buildBlockElement(block) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'block-item';
+            wrapper.dataset.blockId = block.id;
+            wrapper.draggable = true;
+
+            if (block.type === 'command') {
+                wrapper.innerHTML = buildCommandBlockHTML(block);
+            } else if (block.type === 'note') {
+                wrapper.innerHTML = buildNoteBlockHTML(block);
+            } else if (block.type === 'divider') {
+                wrapper.innerHTML = buildDividerBlockHTML(block);
+            }
+
+            // Side controls
+            const sideControls = document.createElement('div');
+            sideControls.className = 'block-controls';
+            sideControls.innerHTML = `
+      <button class="btn btn-icon drag-handle" title="Drag to reorder">
+        <svg viewBox="0 0 16 16" width="14" height="14"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
+      </button>
+      <button class="btn btn-icon btn-danger-ghost" onclick="removeBlock('${block.id}')" title="Delete block">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9"/></svg>
+      </button>
+    `;
+            wrapper.appendChild(sideControls);
+
+            return wrapper;
+        }
+
+        function buildCommandBlockHTML(block) {
+            const previewHTML = buildPreviewHTML(block.text);
+            const isUnresolved = hasUnresolvedTokens(block.text);
+            const escapedText = escapeHtml(block.text);
+
+            return `
+      <div class="command-block">
+        <div class="block-top-bar">
+          <span class="block-type-badge">CMD</span>
+        </div>
+        <div class="command-block-editor">
+          <div class="command-gutter">
+            <span class="command-gutter-prefix">$</span>
+          </div>
+          <textarea
+            class="command-textarea"
+            placeholder="oc rsh {POD_NAME}"
+            spellcheck="false"
+            autocomplete="off"
+            rows="1"
+            oninput="updateBlockText('${block.id}', this.value); autoResizeTextarea(this)"
+          >${escapedText}</textarea>
+        </div>
+        <div class="command-preview">
+          <span class="command-preview-text ${isUnresolved ? 'has-unresolved' : ''}">${previewHTML || '<span style="color:var(--color-text-muted)">preview will appear here</span>'}</span>
+          <span class="copy-feedback" id="copy-feedback-${block.id}">✓ copied</span>
+          <button class="btn" onclick="copyCommand('${block.id}')" title="Copy resolved command">
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M3 11V2h9"/></svg>
+            Copy
+          </button>
+        </div>
+      </div>
+    `;
+        }
+
+        function buildNoteBlockHTML(block) {
+            const noteStyle = block.style || 'body';
+            const escapedText = escapeHtml(block.text);
+            return `
+      <div class="note-block">
+        <div class="note-style-row">
+          ${['heading', 'subheading', 'body'].map(style => `
+            <button
+              class="note-style-btn ${noteStyle === style ? 'active' : ''}"
+              data-style="${style}"
+              onclick="updateBlockStyle('${block.id}', '${style}')"
+            >${style}</button>
+          `).join('')}
+        </div>
+        <textarea
+          class="note-textarea style-${noteStyle}"
+          placeholder="${notePlaceholder(noteStyle)}"
+          spellcheck="true"
+          rows="1"
+          oninput="updateBlockText('${block.id}', this.value); autoResizeTextarea(this)"
+        >${escapedText}</textarea>
+      </div>
+    `;
+        }
+
+        function buildDividerBlockHTML(block) {
+            return `
+      <div class="divider-block">
+        <div class="divider-line"></div>
+      </div>
+    `;
+        }
+
+        function notePlaceholder(style) {
+            if (style === 'heading') return 'Section heading...';
+            if (style === 'subheading') return 'STEP 1 — SETUP';
+            return 'Add a note or description...';
+        }
+
+        function updateEmptyState() {
+            const emptyState = document.getElementById('empty-state');
+            if (!emptyState) return;
+            emptyState.style.display = state.blocks.length === 0 ? 'block' : 'none';
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  Copy to clipboard
+        // ─────────────────────────────────────────────────────────────────
+
+        function copyCommand(blockId) {
+            const block = state.blocks.find(block => block.id === blockId);
+            if (!block || block.type !== 'command') return;
+
+            const resolvedText = resolveCommandToString(block.text);
+
+            navigator.clipboard.writeText(resolvedText).then(() => {
+                const feedbackEl = document.getElementById(`copy-feedback-${blockId}`);
+                if (feedbackEl) {
+                    feedbackEl.classList.add('visible');
+                    setTimeout(() => feedbackEl.classList.remove('visible'), 1800);
+                }
+            }).catch(() => {
+                // Fallback for older browsers
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = resolvedText;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+            });
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  Drag and drop reordering
+        // ─────────────────────────────────────────────────────────────────
+
+        let dragSourceId = null;
+
+        function setupDragAndDrop() {
+            const container = document.getElementById('blocks-list');
+
+            container.querySelectorAll('.block-item').forEach(blockElement => {
+                blockElement.addEventListener('dragstart', event => {
+                    dragSourceId = blockElement.dataset.blockId;
+                    blockElement.classList.add('dragging');
+                    event.dataTransfer.effectAllowed = 'move';
+                });
+
+                blockElement.addEventListener('dragend', () => {
+                    blockElement.classList.remove('dragging');
+                    container.querySelectorAll('.block-item').forEach(el => el.classList.remove(
+                        'drag-over'));
+                    dragSourceId = null;
+                });
+
+                blockElement.addEventListener('dragover', event => {
+                    event.preventDefault();
+                    if (blockElement.dataset.blockId !== dragSourceId) {
+                        container.querySelectorAll('.block-item').forEach(el => el.classList.remove(
+                            'drag-over'));
+                        blockElement.classList.add('drag-over');
+                    }
+                });
+
+                blockElement.addEventListener('drop', event => {
+                    event.preventDefault();
+                    const targetId = blockElement.dataset.blockId;
+                    if (!dragSourceId || dragSourceId === targetId) return;
+
+                    const sourceIndex = state.blocks.findIndex(block => block.id === dragSourceId);
+                    const targetIndex = state.blocks.findIndex(block => block.id === targetId);
+
+                    if (sourceIndex < 0 || targetIndex < 0) return;
+
+                    const [removed] = state.blocks.splice(sourceIndex, 1);
+                    state.blocks.splice(targetIndex, 0, removed);
+
+                    saveState();
+                    renderBlocksList();
+                    updateEmptyState();
+                });
+            });
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  Export / Import
+        // ─────────────────────────────────────────────────────────────────
+
+        function exportToFile() {
+            const exportData = JSON.stringify(state, null, 2);
+            const blob = new Blob([exportData], {
+                type: 'application/json'
+            });
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = 'commandpad-export.json';
+            anchor.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function openImportDialog() {
+            document.getElementById('import-file-input').click();
+        }
+
+        function handleImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (loadEvent) {
+                try {
+                    const importedState = JSON.parse(loadEvent.target.result);
+                    if (!importedState.variables || !importedState.blocks) throw new Error('Invalid format');
+                    state = importedState;
+                    saveState();
+                    renderVariablesList();
+                    renderBlocksList();
+                    updateEmptyState();
+                    setTimeout(refreshAllPreviews, 0);
+                } catch {
+                    alert('Could not import: invalid CommandPad file.');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  Bootstrap
+        // ─────────────────────────────────────────────────────────────────
+
+        function seedDefaultState() {
+            state.variables = [{
+                    id: generateId(),
+                    key: 'LOGIN_TOKEN',
+                    value: ''
+                },
+                {
+                    id: generateId(),
+                    key: 'SERVER_URL',
+                    value: ''
+                },
+                {
+                    id: generateId(),
+                    key: 'POD_NAME',
+                    value: ''
+                },
+            ];
+            state.blocks = [{
+                    id: generateId(),
+                    type: 'note',
+                    text: 'OpenShift Runbook',
+                    style: 'heading'
+                },
+                {
+                    id: generateId(),
+                    type: 'note',
+                    text: 'STEP 1 — LOGIN',
+                    style: 'subheading'
+                },
+                {
+                    id: generateId(),
+                    type: 'command',
+                    text: 'oc login --token={LOGIN_TOKEN} --server={SERVER_URL}'
+                },
+                {
+                    id: generateId(),
+                    type: 'command',
+                    text: 'oc project my-project'
+                },
+                {
+                    id: generateId(),
+                    type: 'divider'
+                },
+                {
+                    id: generateId(),
+                    type: 'note',
+                    text: 'STEP 2 — INSPECT',
+                    style: 'subheading'
+                },
+                {
+                    id: generateId(),
+                    type: 'command',
+                    text: 'oc get pods'
+                },
+                {
+                    id: generateId(),
+                    type: 'command',
+                    text: 'oc rsh {POD_NAME}'
+                },
+                {
+                    id: generateId(),
+                    type: 'divider'
+                },
+                {
+                    id: generateId(),
+                    type: 'note',
+                    text: 'STEP 3 — INSIDE POD',
+                    style: 'subheading'
+                },
+                {
+                    id: generateId(),
+                    type: 'note',
+                    text: 'Run these from inside the pod shell.',
+                    style: 'body'
+                },
+                {
+                    id: generateId(),
+                    type: 'command',
+                    text: 'cd /opt/myapp'
+                },
+                {
+                    id: generateId(),
+                    type: 'command',
+                    text: './start-service.sh'
+                },
+            ];
+        }
+
+        function init() {
+            loadState();
+            const isFirstRun = state.blocks.length === 0 && state.variables.length === 0;
+            if (isFirstRun) seedDefaultState();
+
+            renderVariablesList();
+            renderBlocksList();
+            updateEmptyState();
+
+            // Auto-resize all textareas after render
+            setTimeout(() => {
+                document.querySelectorAll('textarea').forEach(autoResizeTextarea);
+                refreshAllPreviews();
+            }, 0);
+        }
+
+        init();
+    </script>
+
+</body>
+
+</html>
