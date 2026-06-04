@@ -206,7 +206,6 @@
         .app-main {
             grid-area: main;
             overflow-y: auto;
-            overflow-x: auto;
             padding: 24px 32px 48px;
             display: flex;
             flex-direction: column;
@@ -214,9 +213,8 @@
         }
 
         #blocks-list {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            display: grid;
+            grid-template-columns: max-content;
             gap: 6px;
         }
 
@@ -272,7 +270,7 @@
             gap: 0;
         }
 
-        .command-block-editor.hidden {
+        .command-block-editor.collapsed {
             display: none;
         }
 
@@ -309,13 +307,16 @@
         }
 
         .command-preview {
-            border-top: 1px solid var(--color-border);
             padding: 8px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
             background: var(--color-bg);
+        }
+
+        .command-block-editor {
+            border-top: 1px solid var(--color-border);
         }
 
         .command-preview-text {
@@ -343,11 +344,26 @@
 
         /* Note block */
         .note-block {
-            padding: 2px 0;
+            display: inline-grid;
+            min-width: 120px;
+        }
+
+        .note-auto-width {
+            display: inline-grid;
+            width: 100%;
+        }
+
+        .note-auto-width::after {
+            content: attr(data-value) ' ';
+            white-space: pre-wrap;
+            word-break: break-word;
+            visibility: hidden;
+            padding: 4px 0;
+            grid-area: 1 / 1 / 2 / 2;
         }
 
         .note-textarea {
-            display: block;
+            grid-area: 1 / 1 / 2 / 2;
             font-family: var(--font-sans);
             font-size: 15px;
             color: var(--color-text-secondary);
@@ -360,9 +376,8 @@
             padding: 4px 0;
             border-bottom: 1px dashed transparent;
             transition: border-color 0.15s;
-            min-width: 200px;
+            min-width: 120px;
             width: auto;
-            white-space: nowrap;
         }
 
         .note-textarea:focus {
@@ -373,7 +388,8 @@
             color: var(--color-text-muted);
         }
 
-        /* heading style notes */
+        .note-auto-width.style-heading,
+        .note-auto-width.style-heading::after,
         .note-textarea.style-heading {
             font-family: var(--font-mono);
             font-size: 20px;
@@ -382,6 +398,8 @@
             letter-spacing: -0.3px;
         }
 
+        .note-auto-width.style-subheading,
+        .note-auto-width.style-subheading::after,
         .note-textarea.style-subheading {
             font-family: var(--font-mono);
             font-size: 14px;
@@ -396,15 +414,12 @@
             align-items: center;
             gap: 12px;
             padding: 8px 0;
-            width: calc(100vw - 300px - 64px);
-            align-self: stretch;
         }
 
         .divider-line {
             flex: 1;
             height: 1px;
-            background: var(--color-border-focus);
-            opacity: 0.6;
+            background: var(--color-border);
         }
 
         /* Buttons */
@@ -533,9 +548,11 @@
             margin-bottom: 4px;
             opacity: 0;
             transition: opacity 0.15s;
+            height: 22px;
         }
 
-        .note-block:hover .note-style-row {
+        .note-block:hover .note-style-row,
+        .note-block.is-focused .note-style-row {
             opacity: 1;
         }
 
@@ -599,24 +616,7 @@
             border-radius: var(--radius-md);
         }
 
-        /* Top bar of a block */
-        .block-top-bar {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 8px 3px 8px;
-            border-bottom: 1px solid var(--color-border);
-            background: var(--color-surface-alt);
-        }
-
-        .block-type-badge {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--color-text-muted);
-            letter-spacing: 0.5px;
-        }
-
-        .toggle-preview-btn {
+        .toggle-editor-btn {
             margin-left: auto;
             display: inline-flex;
             align-items: center;
@@ -632,11 +632,11 @@
             transition: color 0.1s;
         }
 
-        .toggle-preview-btn:hover {
+        .toggle-editor-btn:hover {
             color: var(--color-text-secondary);
         }
 
-        .toggle-preview-btn svg {
+        .toggle-editor-btn svg {
             width: 12px;
             height: 12px;
             fill: none;
@@ -646,7 +646,7 @@
             transition: transform 0.2s;
         }
 
-        .toggle-preview-btn.editor-hidden svg {
+        .toggle-editor-btn.editor-collapsed svg {
             transform: rotate(-90deg);
         }
     </style>
@@ -686,7 +686,7 @@
         <!-- Sidebar -->
         <aside class="app-sidebar">
             <div class="sidebar-section-header">Variables</div>
-            <div class="syntax-hint">Use <span class="tag-pill">&#x7B;VAR_NAME&#x7D;</span> in commands.</div>
+            <div class="syntax-hint">Use <span class="tag-pill">{VAR_NAME}</span> in commands.</div>
 
             <div class="variables-list" id="variables-list"></div>
         </aside>
@@ -988,7 +988,7 @@
             if (!block) return;
             block.text = text;
             saveState();
-            refreshBlockPreview(blockId);
+            if (block.type === 'command') refreshBlockPreview(blockId);
         }
 
         function updateBlockStyle(blockId, style) {
@@ -996,12 +996,18 @@
             if (!block || block.type !== 'note') return;
             block.style = style;
             saveState();
-            // Update textarea class and style buttons
+
             const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
             if (!blockElement) return;
+
             const textarea = blockElement.querySelector('.note-textarea');
+            const label = blockElement.querySelector('.note-auto-width');
+
             if (textarea) {
                 textarea.className = `note-textarea style-${style}`;
+            }
+            if (label) {
+                label.className = `note-auto-width style-${style}`;
             }
             blockElement.querySelectorAll('.note-style-btn').forEach(button => {
                 button.classList.toggle('active', button.dataset.style === style);
@@ -1046,13 +1052,11 @@
         function autoResizeTextarea(textarea) {
             textarea.style.height = 'auto';
             textarea.style.height = textarea.scrollHeight + 'px';
-            // Expand width for note textareas
-            if (textarea.classList.contains('note-textarea')) {
-                textarea.style.width = 'auto';
-                // Allow expansion without hard limit, use a reasonable max to prevent extreme widths
-                const maxWidth = Math.max(300, window.innerWidth - 200);
-                textarea.style.width = Math.min(textarea.scrollWidth + 2, maxWidth) + 'px';
-            }
+        }
+
+        function syncNoteWidth(textarea) {
+            const label = textarea.closest('.note-auto-width');
+            if (label) label.dataset.value = textarea.value || textarea.placeholder;
         }
 
         //  Render: blocks
@@ -1119,28 +1123,23 @@
             const previewHTML = buildPreviewHTML(block.text);
             const isUnresolved = hasUnresolvedTokens(block.text);
             const escapedText = escapeHtml(block.text);
-            const isEditorHidden = block.editorHidden === true;
+            const isEditorCollapsed = block.editorCollapsed === true;
 
             return `
       <div class="command-block">
-        <div class="block-top-bar">
-          <span class="block-type-badge">CMD</span>
-          <button
-            class="toggle-preview-btn ${isEditorHidden ? 'editor-hidden' : ''}"
+        <div class="command-preview">
+          <span class="command-preview-text ${isUnresolved ? 'has-unresolved' : ''}">${previewHTML || '<span style="color:var(--color-text-muted)">empty command</span>'}</span>
+          <button class="btn btn-icon toggle-editor-btn ${isEditorCollapsed ? 'editor-collapsed' : ''}"
             onclick="toggleCommandEditor('${block.id}')"
-            title="${isEditorHidden ? 'Show editor' : 'Hide editor'}"
+            title="${isEditorCollapsed ? 'Show editor' : 'Hide editor'}"
           >
             <svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg>
-            edit
           </button>
-        </div>
-        <div class="command-preview">
-          <span class="command-preview-text ${isUnresolved ? 'has-unresolved' : ''}">${previewHTML || '<span style="color:var(--color-text-muted)">preview will appear here</span>'}</span>
           <button class="btn" id="copy-btn-${block.id}" onclick="copyCommand('${block.id}')" title="Copy resolved command">
             <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M3 11V2h9"/></svg>
           </button>
         </div>
-        <div class="command-block-editor ${isEditorHidden ? 'hidden' : ''}">
+        <div class="command-block-editor${isEditorCollapsed ? ' collapsed' : ''}">
           <div class="command-gutter">
             <span class="command-gutter-prefix">$</span>
           </div>
@@ -1171,13 +1170,17 @@
             >${style}</button>
           `).join('')}
         </div>
-        <textarea
-          class="note-textarea style-${noteStyle}"
-          placeholder="${notePlaceholder(noteStyle)}"
-          spellcheck="true"
-          rows="1"
-          oninput="updateBlockText('${block.id}', this.value); autoResizeTextarea(this)"
-        >${escapedText}</textarea>
+        <label class="note-auto-width style-${noteStyle}" data-value="${block.text || notePlaceholder(noteStyle)}">
+          <textarea
+            class="note-textarea style-${noteStyle}"
+            placeholder="${notePlaceholder(noteStyle)}"
+            spellcheck="true"
+            rows="1"
+            oninput="updateBlockText('${block.id}', this.value); syncNoteWidth(this)"
+            onfocus="this.closest('.note-block').classList.add('is-focused')"
+            onblur="this.closest('.note-block').classList.remove('is-focused')"
+          >${escapedText}</textarea>
+        </label>
       </div>
     `;
         }
@@ -1214,12 +1217,14 @@
                 const button = document.getElementById(`copy-btn-${blockId}`);
                 if (button) {
                     const svg = button.querySelector('svg');
-                    const originalSvg = svg.outerHTML;
-                    svg.outerHTML =
+                    const originalSvg = svg.cloneNode(true);
+                    const newSvgContainer = document.createElement('div');
+                    newSvgContainer.innerHTML =
                         '<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 6 9 3 6"/></svg>';
+                    svg.replaceWith(newSvgContainer.firstChild);
                     setTimeout(() => {
                         const currentSvg = button.querySelector('svg');
-                        if (currentSvg) currentSvg.outerHTML = originalSvg;
+                        if (currentSvg) currentSvg.replaceWith(originalSvg);
                     }, 1800);
                 }
             }).catch(() => {
@@ -1238,19 +1243,19 @@
         function toggleCommandEditor(blockId) {
             const block = state.blocks.find(block => block.id === blockId);
             if (!block || block.type !== 'command') return;
-            block.editorHidden = !block.editorHidden;
+            block.editorCollapsed = !block.editorCollapsed;
             saveState();
 
             const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
             if (!blockElement) return;
 
             const editorEl = blockElement.querySelector('.command-block-editor');
-            const toggleBtn = blockElement.querySelector('.toggle-preview-btn');
+            const toggleBtn = blockElement.querySelector('.toggle-editor-btn');
 
-            if (editorEl) editorEl.classList.toggle('hidden', block.editorHidden);
+            if (editorEl) editorEl.classList.toggle('collapsed', block.editorCollapsed);
             if (toggleBtn) {
-                toggleBtn.classList.toggle('editor-hidden', block.editorHidden);
-                toggleBtn.title = block.editorHidden ? 'Show editor' : 'Hide editor';
+                toggleBtn.classList.toggle('editor-collapsed', block.editorCollapsed);
+                toggleBtn.title = block.editorCollapsed ? 'Show editor' : 'Hide editor';
             }
         }
 
@@ -1337,10 +1342,7 @@
                     renderVariablesList();
                     renderBlocksList();
                     updateEmptyState();
-                    setTimeout(() => {
-                        document.querySelectorAll('textarea').forEach(autoResizeTextarea);
-                        refreshAllPreviews();
-                    }, 0);
+                    setTimeout(refreshAllPreviews, 0);
                 } catch {
                     alert('Could not import: invalid file.');
                 }
@@ -1360,6 +1362,7 @@
             // Auto-resize all textareas after render
             setTimeout(() => {
                 document.querySelectorAll('textarea').forEach(autoResizeTextarea);
+                document.querySelectorAll('.note-textarea').forEach(textarea => syncNoteWidth(textarea));
                 refreshAllPreviews();
             }, 0);
         }
