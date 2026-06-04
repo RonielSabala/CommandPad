@@ -739,6 +739,74 @@
         //  State
 
         const STORAGE_KEY = 'commandpad_v1';
+
+        // Enums
+
+        const BlockType = Object.freeze({
+            COMMAND: 'command',
+            NOTE: 'note',
+            DIVIDER: 'divider',
+        });
+
+        const NoteStyle = Object.freeze({
+            HEADING: 'heading',
+            SUBHEADING: 'subheading',
+            BODY: 'body',
+        });
+
+        const SegmentType = Object.freeze({
+            LITERAL: 'literal',
+            RESOLVED: 'resolved',
+            UNRESOLVED: 'unresolved',
+        });
+
+        const MoveDirection = Object.freeze({
+            UP: 'up',
+            DOWN: 'down',
+        });
+
+        const VariableField = Object.freeze({
+            KEY: 'key',
+            VALUE: 'value',
+        });
+
+        const CssClass = Object.freeze({
+            DRAGGING: 'dragging',
+            DRAG_OVER: 'drag-over',
+            COLLAPSED: 'collapsed',
+            EDITOR_COLLAPSED: 'editor-collapsed',
+            ACTIVE: 'active',
+            IS_FOCUSED: 'is-focused',
+            HAS_UNRESOLVED: 'has-unresolved',
+        });
+
+        const EventType = Object.freeze({
+            DROP: 'drop',
+            MOUSE_UP: 'mouseup',
+            MOUSE_DOWN: 'mousedown',
+            DRAG_END: 'dragend',
+            DRAG_OVER: 'dragover',
+            DRAG_START: 'dragstart',
+        });
+
+        const ElementId = Object.freeze({
+            VARIABLES_LIST: 'variables-list',
+            BLOCKS_LIST: 'blocks-list',
+            EMPTY_STATE: 'empty-state',
+            IMPORT_FILE_INPUT: 'import-file-input',
+        });
+
+        const ExportConfig = Object.freeze({
+            FILENAME: 'commandpad-export.json',
+            MIME_TYPE: 'application/json',
+        });
+
+        const DragEffect = Object.freeze({
+            MOVE: 'move',
+        });
+
+        // State
+
         let state = {
             variables: [],
             blocks: [],
@@ -777,7 +845,6 @@
 
         function resolveCommandText(rawText) {
             const variableMap = getVariableMap();
-            // Returns an array of segments: { text, type: 'literal' | 'resolved' | 'unresolved' }
             const segments = [];
             const tokenRegex = /\{([^}]+)\}/g;
             let lastIndex = 0;
@@ -787,7 +854,7 @@
                 if (match.index > lastIndex) {
                     segments.push({
                         text: rawText.slice(lastIndex, match.index),
-                        type: 'literal'
+                        type: SegmentType.LITERAL
                     });
                 }
                 const key = match[1];
@@ -795,12 +862,12 @@
                     const value = variableMap[key];
                     segments.push({
                         text: value || `{${key}}`,
-                        type: value ? 'resolved' : 'unresolved'
+                        type: value ? SegmentType.RESOLVED : SegmentType.UNRESOLVED
                     });
                 } else {
                     segments.push({
                         text: match[0],
-                        type: 'unresolved'
+                        type: SegmentType.UNRESOLVED
                     });
                 }
                 lastIndex = match.index + match[0].length;
@@ -809,7 +876,7 @@
             if (lastIndex < rawText.length) {
                 segments.push({
                     text: rawText.slice(lastIndex),
-                    type: 'literal'
+                    type: SegmentType.LITERAL
                 });
             }
 
@@ -824,14 +891,16 @@
             const segments = resolveCommandText(rawText);
             return segments.map(segment => {
                 const escaped = escapeHtml(segment.text);
-                if (segment.type === 'resolved') return `<span class="token-resolved">${escaped}</span>`;
-                if (segment.type === 'unresolved') return `<span class="token-unresolved">${escaped}</span>`;
+                if (segment.type === SegmentType.RESOLVED)
+                    return `<span class="token-resolved">${escaped}</span>`;
+                if (segment.type === SegmentType.UNRESOLVED)
+                    return `<span class="token-unresolved">${escaped}</span>`;
                 return escaped;
             }).join('');
         }
 
         function hasUnresolvedTokens(rawText) {
-            return resolveCommandText(rawText).some(segment => segment.type === 'unresolved');
+            return resolveCommandText(rawText).some(segment => segment.type === SegmentType.UNRESOLVED);
         }
 
         function escapeHtml(text) {
@@ -875,7 +944,7 @@
         }
 
         function renderVariablesList() {
-            const container = document.getElementById('variables-list');
+            const container = document.getElementById(ElementId.VARIABLES_LIST);
             container.innerHTML = '';
 
             if (state.variables.length === 0) {
@@ -898,7 +967,7 @@
               value="${escapeHtml(variable.key)}"
               spellcheck="false"
               autocomplete="off"
-              oninput="updateVariable('${variable.id}', 'key', this.value)"
+              oninput="updateVariable('${variable.id}', '${VariableField.KEY}', this.value)"
             />
             <input
               class="variable-value-input"
@@ -907,7 +976,7 @@
               value="${escapeHtml(variable.value)}"
               spellcheck="false"
               autocomplete="off"
-              oninput="updateVariable('${variable.id}', 'value', this.value)"
+              oninput="updateVariable('${variable.id}', '${VariableField.VALUE}', this.value)"
             />
             <button
               class="btn btn-icon btn-danger-ghost"
@@ -942,23 +1011,23 @@
         function addBlock(blockType) {
             let newBlock;
 
-            if (blockType === 'command') {
+            if (blockType === BlockType.COMMAND) {
                 newBlock = {
                     id: generateId(),
-                    type: 'command',
+                    type: BlockType.COMMAND,
                     text: ''
                 };
-            } else if (blockType === 'note') {
+            } else if (blockType === BlockType.NOTE) {
                 newBlock = {
                     id: generateId(),
-                    type: 'note',
+                    type: BlockType.NOTE,
                     text: '',
-                    style: 'body'
+                    style: NoteStyle.BODY
                 };
-            } else if (blockType === 'divider') {
+            } else if (blockType === BlockType.DIVIDER) {
                 newBlock = {
                     id: generateId(),
-                    type: 'divider'
+                    type: BlockType.DIVIDER
                 };
             }
 
@@ -988,12 +1057,12 @@
             if (!block) return;
             block.text = text;
             saveState();
-            if (block.type === 'command') refreshBlockPreview(blockId);
+            if (block.type === BlockType.COMMAND) refreshBlockPreview(blockId);
         }
 
         function updateBlockStyle(blockId, style) {
             const block = state.blocks.find(block => block.id === blockId);
-            if (!block || block.type !== 'note') return;
+            if (!block || block.type !== BlockType.NOTE) return;
             block.style = style;
             saveState();
 
@@ -1010,14 +1079,14 @@
                 label.className = `note-auto-width style-${style}`;
             }
             blockElement.querySelectorAll('.note-style-btn').forEach(button => {
-                button.classList.toggle('active', button.dataset.style === style);
+                button.classList.toggle(CssClass.ACTIVE, button.dataset.style === style);
             });
         }
 
         function moveBlock(blockId, direction) {
             const index = state.blocks.findIndex(block => block.id === blockId);
             if (index < 0) return;
-            const targetIndex = direction === 'up' ? index - 1 : index + 1;
+            const targetIndex = direction === MoveDirection.UP ? index - 1 : index + 1;
             if (targetIndex < 0 || targetIndex >= state.blocks.length) return;
             [state.blocks[index], state.blocks[targetIndex]] = [state.blocks[targetIndex], state.blocks[index]];
             saveState();
@@ -1026,7 +1095,7 @@
 
         function refreshBlockPreview(blockId) {
             const block = state.blocks.find(block => block.id === blockId);
-            if (!block || block.type !== 'command') return;
+            if (!block || block.type !== BlockType.COMMAND) return;
 
             const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
             if (!blockElement) return;
@@ -1036,7 +1105,7 @@
 
             previewEl.innerHTML = buildPreviewHTML(block.text);
             const isUnresolved = hasUnresolvedTokens(block.text);
-            previewEl.classList.toggle('has-unresolved', isUnresolved);
+            previewEl.classList.toggle(CssClass.HAS_UNRESOLVED, isUnresolved);
 
             // Auto-resize textarea
             const textarea = blockElement.querySelector('.command-textarea');
@@ -1045,7 +1114,7 @@
 
         function refreshAllPreviews() {
             for (const block of state.blocks) {
-                if (block.type === 'command') refreshBlockPreview(block.id);
+                if (block.type === BlockType.COMMAND) refreshBlockPreview(block.id);
             }
         }
 
@@ -1062,7 +1131,7 @@
         //  Render: blocks
 
         function renderBlocksList() {
-            const container = document.getElementById('blocks-list');
+            const container = document.getElementById(ElementId.BLOCKS_LIST);
             container.innerHTML = '';
 
             for (const block of state.blocks) {
@@ -1079,11 +1148,11 @@
             wrapper.dataset.blockId = block.id;
             // draggable is NOT set on the wrapper; only enabled when the drag handle is held
 
-            if (block.type === 'command') {
+            if (block.type === BlockType.COMMAND) {
                 wrapper.innerHTML = buildCommandBlockHTML(block);
-            } else if (block.type === 'note') {
+            } else if (block.type === BlockType.NOTE) {
                 wrapper.innerHTML = buildNoteBlockHTML(block);
-            } else if (block.type === 'divider') {
+            } else if (block.type === BlockType.DIVIDER) {
                 wrapper.innerHTML = buildDividerBlockHTML(block);
             }
 
@@ -1102,14 +1171,14 @@
 
             // Enable dragging ONLY when mousedown fires on the drag handle
             const dragHandle = sideControls.querySelector('.drag-handle');
-            dragHandle.addEventListener('mousedown', () => {
+            dragHandle.addEventListener(EventType.MOUSE_DOWN, () => {
                 wrapper.draggable = true;
             });
-            wrapper.addEventListener('dragend', () => {
+            wrapper.addEventListener(EventType.DRAG_END, () => {
                 wrapper.draggable = false;
             });
             // Also reset if mouse is released off the element
-            dragHandle.addEventListener('mouseup', () => {
+            dragHandle.addEventListener(EventType.MOUSE_UP, () => {
                 // Will be reset by dragend; this is a safety net for non-drag clicks
                 setTimeout(() => {
                     wrapper.draggable = false;
@@ -1128,18 +1197,18 @@
             return `
       <div class="command-block">
         <div class="command-preview">
-          <span class="command-preview-text ${isUnresolved ? 'has-unresolved' : ''}">${previewHTML || '<span style="color:var(--color-text-muted)">empty command</span>'}</span>
-          <button class="btn btn-icon toggle-editor-btn ${isEditorCollapsed ? 'editor-collapsed' : ''}"
+          <span class="command-preview-text ${isUnresolved ? CssClass.HAS_UNRESOLVED : ''}">${previewHTML || '<span style="color:var(--color-text-muted)">empty command</span>'}</span>
+          <button class="btn btn-icon toggle-editor-btn ${isEditorCollapsed ? CssClass.EDITOR_COLLAPSED : ''}"
             onclick="toggleCommandEditor('${block.id}')"
             title="${isEditorCollapsed ? 'Show editor' : 'Hide editor'}"
           >
             <svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg>
           </button>
-          <button class="btn" id="copy-btn-${block.id}" onclick="copyCommand('${block.id}')" title="Copy resolved command">
+          <button class="btn" id="copy-btn-${block.id}" onclick="copyCommand('${block.id}')" title="Copy command">
             <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M3 11V2h9"/></svg>
           </button>
         </div>
-        <div class="command-block-editor${isEditorCollapsed ? ' collapsed' : ''}">
+        <div class="command-block-editor${isEditorCollapsed ? ` ${CssClass.COLLAPSED}` : ''}">
           <div class="command-gutter">
             <span class="command-gutter-prefix">$</span>
           </div>
@@ -1157,14 +1226,14 @@
         }
 
         function buildNoteBlockHTML(block) {
-            const noteStyle = block.style || 'body';
+            const noteStyle = block.style || NoteStyle.BODY;
             const escapedText = escapeHtml(block.text);
             return `
       <div class="note-block">
         <div class="note-style-row">
-          ${['heading', 'subheading', 'body'].map(style => `
+          ${[NoteStyle.HEADING, NoteStyle.SUBHEADING, NoteStyle.BODY].map(style => `
             <button
-              class="note-style-btn ${noteStyle === style ? 'active' : ''}"
+              class="note-style-btn ${noteStyle === style ? CssClass.ACTIVE : ''}"
               data-style="${style}"
               onclick="updateBlockStyle('${block.id}', '${style}')"
             >${style}</button>
@@ -1177,8 +1246,8 @@
             spellcheck="true"
             rows="1"
             oninput="updateBlockText('${block.id}', this.value); syncNoteWidth(this)"
-            onfocus="this.closest('.note-block').classList.add('is-focused')"
-            onblur="this.closest('.note-block').classList.remove('is-focused')"
+            onfocus="this.closest('.note-block').classList.add('${CssClass.IS_FOCUSED}')"
+            onblur="this.closest('.note-block').classList.remove('${CssClass.IS_FOCUSED}')"
           >${escapedText}</textarea>
         </label>
       </div>
@@ -1194,13 +1263,13 @@
         }
 
         function notePlaceholder(style) {
-            if (style === 'heading') return 'Section heading...';
-            if (style === 'subheading') return 'STEP 1. SETUP';
+            if (style === NoteStyle.HEADING) return 'Section heading...';
+            if (style === NoteStyle.SUBHEADING) return 'STEP 1. SETUP';
             return 'Add a note or description...';
         }
 
         function updateEmptyState() {
-            const emptyState = document.getElementById('empty-state');
+            const emptyState = document.getElementById(ElementId.EMPTY_STATE);
             if (!emptyState) return;
             emptyState.style.display = state.blocks.length === 0 ? 'block' : 'none';
         }
@@ -1209,7 +1278,7 @@
 
         function copyCommand(blockId) {
             const block = state.blocks.find(block => block.id === blockId);
-            if (!block || block.type !== 'command') return;
+            if (!block || block.type !== BlockType.COMMAND) return;
 
             const resolvedText = resolveCommandToString(block.text);
 
@@ -1242,7 +1311,7 @@
 
         function toggleCommandEditor(blockId) {
             const block = state.blocks.find(block => block.id === blockId);
-            if (!block || block.type !== 'command') return;
+            if (!block || block.type !== BlockType.COMMAND) return;
             block.editorCollapsed = !block.editorCollapsed;
             saveState();
 
@@ -1252,9 +1321,9 @@
             const editorEl = blockElement.querySelector('.command-block-editor');
             const toggleBtn = blockElement.querySelector('.toggle-editor-btn');
 
-            if (editorEl) editorEl.classList.toggle('collapsed', block.editorCollapsed);
+            if (editorEl) editorEl.classList.toggle(CssClass.COLLAPSED, block.editorCollapsed);
             if (toggleBtn) {
-                toggleBtn.classList.toggle('editor-collapsed', block.editorCollapsed);
+                toggleBtn.classList.toggle(CssClass.EDITOR_COLLAPSED, block.editorCollapsed);
                 toggleBtn.title = block.editorCollapsed ? 'Show editor' : 'Hide editor';
             }
         }
@@ -1264,32 +1333,32 @@
         let dragSourceId = null;
 
         function setupDragAndDrop() {
-            const container = document.getElementById('blocks-list');
+            const container = document.getElementById(ElementId.BLOCKS_LIST);
 
             container.querySelectorAll('.block-item').forEach(blockElement => {
-                blockElement.addEventListener('dragstart', event => {
+                blockElement.addEventListener(EventType.DRAG_START, event => {
                     dragSourceId = blockElement.dataset.blockId;
-                    blockElement.classList.add('dragging');
-                    event.dataTransfer.effectAllowed = 'move';
+                    blockElement.classList.add(CssClass.DRAGGING);
+                    event.dataTransfer.effectAllowed = DragEffect.MOVE;
                 });
 
-                blockElement.addEventListener('dragend', () => {
-                    blockElement.classList.remove('dragging');
+                blockElement.addEventListener(EventType.DRAG_END, () => {
+                    blockElement.classList.remove(CssClass.DRAGGING);
                     container.querySelectorAll('.block-item').forEach(el => el.classList.remove(
-                        'drag-over'));
+                        CssClass.DRAG_OVER));
                     dragSourceId = null;
                 });
 
-                blockElement.addEventListener('dragover', event => {
+                blockElement.addEventListener(EventType.DRAG_OVER, event => {
                     event.preventDefault();
                     if (blockElement.dataset.blockId !== dragSourceId) {
                         container.querySelectorAll('.block-item').forEach(el => el.classList.remove(
-                            'drag-over'));
-                        blockElement.classList.add('drag-over');
+                            CssClass.DRAG_OVER));
+                        blockElement.classList.add(CssClass.DRAG_OVER);
                     }
                 });
 
-                blockElement.addEventListener('drop', event => {
+                blockElement.addEventListener(EventType.DROP, event => {
                     event.preventDefault();
                     const targetId = blockElement.dataset.blockId;
                     if (!dragSourceId || dragSourceId === targetId) return;
@@ -1314,18 +1383,18 @@
         function exportToFile() {
             const exportData = JSON.stringify(state, null, 2);
             const blob = new Blob([exportData], {
-                type: 'application/json'
+                type: ExportConfig.MIME_TYPE
             });
             const url = URL.createObjectURL(blob);
             const anchor = document.createElement('a');
             anchor.href = url;
-            anchor.download = 'commandpad-export.json';
+            anchor.download = ExportConfig.FILENAME;
             anchor.click();
             URL.revokeObjectURL(url);
         }
 
         function openImportDialog() {
-            document.getElementById('import-file-input').click();
+            document.getElementById(ElementId.IMPORT_FILE_INPUT).click();
         }
 
         function handleImport(event) {
