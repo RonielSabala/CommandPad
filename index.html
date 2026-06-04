@@ -412,7 +412,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 13px;
+            padding: 6px 6px;
             border-radius: var(--radius-md);
             font-family: var(--font-mono);
             font-size: 13px;
@@ -496,20 +496,6 @@
             font-family: var(--font-mono);
             color: var(--color-text-muted);
             white-space: nowrap;
-        }
-
-        /* Copy feedback */
-        .copy-feedback {
-            color: var(--color-success);
-            font-family: var(--font-mono);
-            font-size: 13px;
-            opacity: 0;
-            transition: opacity 0.2s;
-            pointer-events: none;
-        }
-
-        .copy-feedback.visible {
-            opacity: 1;
         }
 
         /* Token tag */
@@ -1150,10 +1136,8 @@
         </div>
         <div class="command-preview">
           <span class="command-preview-text ${isUnresolved ? 'has-unresolved' : ''}">${previewHTML || '<span style="color:var(--color-text-muted)">preview will appear here</span>'}</span>
-          <span class="copy-feedback" id="copy-feedback-${block.id}">✓ copied</span>
-          <button class="btn" onclick="copyCommand('${block.id}')" title="Copy resolved command">
+          <button class="btn" id="copy-btn-${block.id}" onclick="copyCommand('${block.id}')" title="Copy resolved command">
             <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M3 11V2h9"/></svg>
-            Copy
           </button>
         </div>
         <div class="command-block-editor ${isEditorHidden ? 'hidden' : ''}">
@@ -1227,10 +1211,16 @@
             const resolvedText = resolveCommandToString(block.text);
 
             navigator.clipboard.writeText(resolvedText).then(() => {
-                const feedbackEl = document.getElementById(`copy-feedback-${blockId}`);
-                if (feedbackEl) {
-                    feedbackEl.classList.add('visible');
-                    setTimeout(() => feedbackEl.classList.remove('visible'), 1800);
+                const button = document.getElementById(`copy-btn-${blockId}`);
+                if (button) {
+                    const svg = button.querySelector('svg');
+                    const originalSvg = svg.outerHTML;
+                    svg.outerHTML =
+                        '<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 6 9 3 6"/></svg>';
+                    setTimeout(() => {
+                        const currentSvg = button.querySelector('svg');
+                        if (currentSvg) currentSvg.outerHTML = originalSvg;
+                    }, 1800);
                 }
             }).catch(() => {
                 // Fallback for older browsers
