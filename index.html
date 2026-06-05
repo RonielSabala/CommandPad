@@ -849,6 +849,21 @@
                         <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
                     </svg>
                 </button>
+                <button class="btn btn-lg" onclick="toggleAllCommandEditors()"
+                    title="Expand/collapse all command editors">
+                    <svg viewBox="0 0 16 16">
+                        <path d="M2 4l6 4-6 4M8 4l6 4-6 4" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Toggle All
+                </button>
+                <button class="btn btn-lg btn-danger-ghost" onclick="clearAllData()"
+                    title="Clear all variables and blocks">
+                    <svg viewBox="0 0 16 16">
+                        <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
                 <button class="btn btn-lg" onclick="exportToFile()">
                     <svg viewBox="0 0 16 16">
                         <path d="M8 2v8M5 7l3 3 3-3M3 11v2h10v-2" />
@@ -1744,6 +1759,41 @@
             };
             reader.readAsText(file);
             event.target.value = '';
+        }
+
+        //  Clear & Toggle
+
+        function clearAllData() {
+            if (!confirm('Are you sure you want to delete all variables and blocks? This action cannot be undone.')) {
+                return;
+            }
+
+            state.variables = [];
+            state.blocks = [];
+            saveState();
+            renderVariablesList();
+            renderBlocksList();
+            updateEmptyState();
+        }
+
+        function toggleAllCommandEditors() {
+            if (isReadMode()) {
+                return;
+            }
+
+            const allCollapsed = state.blocks
+                .filter(block => block.type === BlockType.COMMAND)
+                .every(block => block.editorCollapsed === true);
+
+            const newState = !allCollapsed;
+
+            for (const block of state.blocks) {
+                if (block.type === BlockType.COMMAND) {
+                    block.editorCollapsed = newState;
+                }
+            }
+            saveState();
+            renderBlocksList();
         }
 
         //  Bootstrap
