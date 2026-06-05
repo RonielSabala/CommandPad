@@ -1,0 +1,85 @@
+{
+  "variables": [
+    {
+      "id": "var_1",
+      "key": "API_HOST",
+      "value": "api.example.com"
+    },
+    {
+      "id": "var_2",
+      "key": "PORT",
+      "value": "8080"
+    },
+    {
+      "id": "var_3",
+      "key": "API_KEY",
+      "value": "sk-abc123xyz"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "block_1",
+      "type": "note",
+      "text": "API Testing Commands",
+      "style": "heading"
+    },
+    {
+      "id": "block_2",
+      "type": "note",
+      "text": "Change the variables on the left and watch all commands update instantly.",
+      "style": "body"
+    },
+    {
+      "id": "block_3",
+      "type": "divider"
+    },
+    {
+      "id": "block_4",
+      "type": "command",
+      "text": "curl http://{API_HOST}:{PORT}/status",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_5",
+      "type": "note",
+      "text": "Fetch users with authentication. See https://curl.se for more curl options.",
+      "style": "body"
+    },
+    {
+      "id": "block_6",
+      "type": "command",
+      "text": "curl -X POST http://{API_HOST}:{PORT}/auth -d \"key={API_KEY}\"",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_7",
+      "type": "note",
+      "text": "Authenticate with API key.",
+      "style": "body"
+    },
+    {
+      "id": "block_8",
+      "type": "command",
+      "text": "ssh deploy@{API_HOST} -p {PORT} 'systemctl status api'",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_9",
+      "type": "note",
+      "text": "Check service status on production server.",
+      "style": "body"
+    },
+    {
+      "id": "block_10",
+      "type": "command",
+      "text": "docker logs server | grep {API_KEY}",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_11",
+      "type": "note",
+      "text": "Learn more at https://docs.docker.com/engine/reference/commandline/logs/.",
+      "style": "body"
+    }
+  ]
+}

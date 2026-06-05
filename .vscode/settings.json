@@ -1,0 +1,13 @@
+{
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "editor.formatOnSave": true,
+  "editor.unicodeHighlight.includeStrings": false,
+  "prettier.endOfLine": "lf",
+  "cSpell.language": "en",
+  "cSpell.caseSensitive": true,
+  "markdown.extension.toc.levels": "2..3",
+  "markdown.extension.toc.omittedFromToc": {
+    "README.md": ["## Table of Contents"]
+  }
+}

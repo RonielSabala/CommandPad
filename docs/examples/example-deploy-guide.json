@@ -1,0 +1,200 @@
+{
+  "variables": [
+    {
+      "id": "var_1",
+      "key": "NAMESPACE",
+      "value": "production"
+    },
+    {
+      "id": "var_2",
+      "key": "POD_NAME",
+      "value": "my-app-deployment-5d4f8c6b7-x9k2m"
+    },
+    {
+      "id": "var_3",
+      "key": "CONTAINER_NAME",
+      "value": "api-server"
+    },
+    {
+      "id": "var_4",
+      "key": "IMAGE_TAG",
+      "value": "v2.1.0-prod"
+    },
+    {
+      "id": "var_5",
+      "key": "DOCKER_REGISTRY",
+      "value": "gcr.io/my-project"
+    },
+    {
+      "id": "var_6",
+      "key": "CLUSTER_NAME",
+      "value": "prod-us-central1"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "block_1",
+      "type": "note",
+      "text": "Kubernetes Deployment & Debugging Guide",
+      "style": "heading"
+    },
+    {
+      "id": "block_2",
+      "type": "note",
+      "text": "A complete workflow for deploying and debugging your application in Kubernetes. Contains common kubectl commands and debugging procedures.",
+      "style": "body"
+    },
+    {
+      "id": "block_3",
+      "type": "divider"
+    },
+    {
+      "id": "block_4",
+      "type": "note",
+      "text": "Prerequisites & Setup",
+      "style": "subheading"
+    },
+    {
+      "id": "block_5",
+      "type": "note",
+      "text": "Make sure you have kubectl installed and configured. Visit https://kubernetes.io/docs/tasks/tools/ for installation instructions.",
+      "style": "body"
+    },
+    {
+      "id": "block_6",
+      "type": "command",
+      "text": "kubectl config current-context",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_7",
+      "type": "command",
+      "text": "kubectl get namespaces | grep {NAMESPACE}",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_8",
+      "type": "divider"
+    },
+    {
+      "id": "block_9",
+      "type": "note",
+      "text": "Deployment & Image Management",
+      "style": "subheading"
+    },
+    {
+      "id": "block_10",
+      "type": "command",
+      "text": "docker build -t {DOCKER_REGISTRY}/my-app:{IMAGE_TAG} .",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_11",
+      "type": "command",
+      "text": "docker push {DOCKER_REGISTRY}/my-app:{IMAGE_TAG}",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_12",
+      "type": "command",
+      "text": "kubectl set image deployment/my-app-deployment my-app={DOCKER_REGISTRY}/my-app:{IMAGE_TAG} -n {NAMESPACE}",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_13",
+      "type": "command",
+      "text": "kubectl rollout status deployment/my-app-deployment -n {NAMESPACE}",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_14",
+      "type": "divider"
+    },
+    {
+      "id": "block_15",
+      "type": "note",
+      "text": "Pod Inspection & Logs",
+      "style": "subheading"
+    },
+    {
+      "id": "block_16",
+      "type": "command",
+      "text": "kubectl get pods -n {NAMESPACE} -o wide",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_17",
+      "type": "command",
+      "text": "kubectl describe pod {POD_NAME} -n {NAMESPACE}",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_18",
+      "type": "command",
+      "text": "kubectl logs {POD_NAME} -n {NAMESPACE} -c {CONTAINER_NAME} --tail=100",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_19",
+      "type": "command",
+      "text": "kubectl logs {POD_NAME} -n {NAMESPACE} -c {CONTAINER_NAME} --previous",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_20",
+      "type": "note",
+      "text": "Useful for viewing logs from a crashed container that has been restarted.",
+      "style": "body"
+    },
+    {
+      "id": "block_21",
+      "type": "divider"
+    },
+    {
+      "id": "block_22",
+      "type": "note",
+      "text": "Interactive Debugging",
+      "style": "subheading"
+    },
+    {
+      "id": "block_23",
+      "type": "command",
+      "text": "kubectl exec -it {POD_NAME} -n {NAMESPACE} -c {CONTAINER_NAME} -- /bin/bash",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_24",
+      "type": "note",
+      "text": "Enter interactive shell in the pod. Check environment variables, logs, and running processes.",
+      "style": "body"
+    },
+    {
+      "id": "block_25",
+      "type": "command",
+      "text": "kubectl port-forward {POD_NAME} 8080:8080 -n {NAMESPACE}",
+      "editorCollapsed": true
+    },
+    {
+      "id": "block_26",
+      "type": "note",
+      "text": "Forward local port 8080 to the pod's port 8080. Now access the service at http://localhost:8080",
+      "style": "body"
+    },
+    {
+      "id": "block_27",
+      "type": "divider"
+    },
+    {
+      "id": "block_28",
+      "type": "note",
+      "text": "Useful Resources",
+      "style": "subheading"
+    },
+    {
+      "id": "block_29",
+      "type": "note",
+      "text": "Check the official kubectl documentation at https://kubernetes.io/docs/reference/kubectl/ for more commands.\n\nLearn more about debugging Kubernetes applications: https://kubernetes.io/docs/tasks/debug-application-cluster/",
+      "style": "body"
+    }
+  ]
+}
