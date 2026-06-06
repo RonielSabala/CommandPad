@@ -99,6 +99,18 @@
             line-height: 1.5;
         }
 
+        /* --- DISABLE USER SELECT --- */
+
+        .btn,
+        .no-user-select {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
         /* --- SCROLLBAR --- */
 
         ::-webkit-scrollbar {
@@ -862,13 +874,13 @@
 
         <!-- Sidebar -->
         <aside class="app-sidebar">
-            <p class="section-title sidebar-title">VARIABLES</p>
+            <p class="section-title sidebar-title no-user-select">VARIABLES</p>
             <div class="variables-list" id="variables-list"></div>
         </aside>
 
         <!-- Main panel -->
         <main class="app-main" id="main-panel">
-            <div id="empty-state">
+            <div id="empty-state" class="no-user-select">
                 <svg viewBox="0 0 40 40">
                     <rect x="4" y="6" width="32" height="28" rx="3" />
                     <path d="M10 14l6 6-6 6M18 26h12" />
@@ -880,7 +892,7 @@
             <div id="blocks-list"></div>
 
             <div id="add-block-row">
-                <p class="section-title new-block-row-label">NEW BLOCK</p>
+                <p class="section-title new-block-row-label no-user-select">NEW BLOCK</p>
                 <button class="btn" onclick="addBlock('command')">
                     <svg viewBox="0 0 16 16" width="13" height="13">
                         <polyline points="2,4 5,4" />
@@ -1215,6 +1227,7 @@
 
             if (state.variables.length === 0) {
                 const emptyMsg = document.createElement('p');
+                emptyMsg.className = 'no-user-select'
                 emptyMsg.style.cssText =
                     'font-size:var(--text-md); font-family:var(--font-mono); color:var(--color-text-muted); padding: var(--space-2) 0;';
                 emptyMsg.textContent = 'No variables defined.';
@@ -1229,7 +1242,7 @@
             <input
               class="variable-key-input"
               type="text"
-              placeholder="VAR_NAME"
+              placeholder="key"
               value="${escapeHtml(variable.key)}"
               spellcheck="false"
               autocomplete="off"
