@@ -241,20 +241,28 @@
             gap: var(--space-3);
         }
 
-        .main-empty-state {
+        #empty-state {
             margin: auto;
             text-align: center;
             color: var(--color-text-muted);
             font-family: var(--font-mono);
-            font-size: var(--text-lg);
         }
 
-        .main-empty-state svg {
+        #empty-state svg {
             width: var(--icon-lg);
             height: var(--icon-lg);
             stroke: var(--color-text-muted);
             fill: none;
             stroke-width: 1.75;
+        }
+
+        #empty-state-title {
+            font-size: var(--text-lg);
+        }
+
+        #empty-state-hint {
+            font-size: var(--text-base);
+            margin-top: var(--space-3)
         }
 
         /* --- BLOCK ITEMS --- */
@@ -675,6 +683,10 @@
             height: var(--icon-base);
         }
 
+        #import-file-input {
+            display: none;
+        }
+
         /* Drag handle button */
 
         .drag-handle {
@@ -851,13 +863,13 @@
 
         <!-- Main panel -->
         <main class="app-main" id="main-panel">
-            <div class="main-empty-state" id="empty-state">
+            <div id="empty-state">
                 <svg viewBox="0 0 40 40">
                     <rect x="4" y="6" width="32" height="28" rx="3" />
                     <path d="M10 14l6 6-6 6M18 26h12" />
                 </svg>
-                <p>No blocks yet.</p>
-                <p style="margin-top:var(--space-3); font-size:var(--text-md);">Add a command or note below.</p>
+                <p id="empty-state-title">No blocks yet.</p>
+                <p id="empty-state-hint">Add a command or note below.</p>
             </div>
 
             <div id="blocks-list"></div>
@@ -890,7 +902,7 @@
     </div>
 
     <!-- Hidden import input -->
-    <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="handleImport(event)" />
+    <input type="file" id="import-file-input" accept=".json" onchange="handleImport(event)" />
 
     <script>
         //  State
