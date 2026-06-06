@@ -170,7 +170,7 @@
         }
 
         .sidebar-title {
-            padding: var(--space-7) var(--space-7) var(--space-4);
+            padding: var(--space-6);
         }
 
         .variables-list {
@@ -860,7 +860,7 @@
 
         <!-- Sidebar -->
         <aside class="app-sidebar">
-            <div class="section-title sidebar-title">VARIABLES</div>
+            <p class="section-title sidebar-title">VARIABLES</p>
             <div class="variables-list" id="variables-list"></div>
         </aside>
 
@@ -878,7 +878,7 @@
             <div id="blocks-list"></div>
 
             <div class="add-block-row" id="add-block-row">
-                <span class="section-title new-block-row-label">NEW BLOCK</span>
+                <p class="section-title new-block-row-label">NEW BLOCK</p>
                 <button class="btn" onclick="addBlock('command')">
                     <svg viewBox="0 0 16 16" width="13" height="13">
                         <polyline points="2,4 5,4" />
@@ -1214,7 +1214,7 @@
             if (state.variables.length === 0) {
                 const emptyMsg = document.createElement('p');
                 emptyMsg.style.cssText =
-                    'font-size:var(--text-md); font-family:var(--font-mono); color:var(--color-text-muted); padding: var(--space-3) var(--space-2);';
+                    'font-size:var(--text-md); font-family:var(--font-mono); color:var(--color-text-muted); padding: var(--space-2) 0;';
                 emptyMsg.textContent = 'No variables defined.';
                 container.appendChild(emptyMsg);
             } else {
