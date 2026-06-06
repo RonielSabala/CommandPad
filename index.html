@@ -748,23 +748,6 @@
             border-color: var(--color-border-focus);
         }
 
-        /* Syntax hint */
-
-        .syntax-hint {
-            font-size: var(--text-md);
-            font-family: var(--font-mono);
-            color: var(--color-text-muted);
-            padding: var(--space-4) var(--space-7) var(--space-5);
-        }
-
-        .tag-pill {
-            display: inline-block;
-            background: var(--tag-bg);
-            color: var(--tag-text);
-            border-radius: var(--radius-sm);
-            padding: var(--space-1) var(--space-2);
-        }
-
         /* --- MODE TOGGLE BUTTON --- */
 
         .btn-mode-toggle {
@@ -881,9 +864,7 @@
 
         <!-- Sidebar -->
         <aside class="app-sidebar">
-            <div class="sidebar-section-header">Variables</div>
-            <div class="syntax-hint">Use <span class="tag-pill">{VAR_NAME}</span> in commands.</div>
-
+            <div class="section-title sidebar-title">Variables</div>
             <div class="variables-list" id="variables-list"></div>
         </aside>
 
