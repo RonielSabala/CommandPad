@@ -45,13 +45,13 @@
             --space-9: calc(var(--base-unit) * 2);
             --space-10: calc(var(--base-unit) * 3);
 
-            /* Type scale */
+            /* Text scale */
             --text-xs: calc(var(--base-unit) * 0.6875);
             --text-sm: calc(var(--base-unit) * 0.8125);
             --text-md: calc(var(--base-unit) * 0.875);
-            --text-base: calc(var(--base-unit) * 0.9375);
-            --text-lg: calc(var(--base-unit) * 1.25);
-            --text-logo: calc(var(--base-unit) * 1.5);
+            --text-base: var(--base-unit);
+            --text-xl: calc(var(--base-unit) * 1.125);
+            --text-lg: calc(var(--base-unit) * 1.5);
 
             /* Radius scale */
             --radius-sm: calc(var(--base-unit) * 0.25);
@@ -143,7 +143,7 @@
 
         .app-name {
             font-family: var(--font-mono);
-            font-size: var(--text-logo);
+            font-size: var(--text-lg);
             font-weight: 600;
             letter-spacing: -0.02em;
             color: var(--color-text-primary);
@@ -324,7 +324,7 @@
             padding: var(--space-5) var(--space-5) var(--space-5) var(--space-6);
             color: var(--color-text-muted);
             font-family: var(--font-mono);
-            font-size: var(--text-md);
+            font-size: var(--text-base);
             line-height: 1.6;
             user-select: none;
             flex-shrink: 0;
@@ -483,7 +483,7 @@
         .note-auto-width.style-subheading::after,
         .note-textarea.style-subheading {
             font-family: var(--font-sans);
-            font-size: var(--text-md);
+            font-size: var(--text-xl);
             font-weight: 500;
             color: transparent;
             letter-spacing: 0.03em;
@@ -516,7 +516,7 @@
 
         .note-preview.style-subheading {
             font-family: var(--font-sans);
-            font-size: var(--text-md);
+            font-size: var(--text-xl);
             font-weight: 500;
             color: var(--accent-text);
             letter-spacing: 0.03em;
