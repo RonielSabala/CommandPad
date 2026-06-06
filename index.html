@@ -68,7 +68,7 @@
             --sidebar-width: 18.75rem;
             --header-height: 3.5rem;
             --scrollbar-size: 0.625rem;
-            --note-min-width: 7.5rem;
+            --block-min-width: 7.5rem;
 
             /* Compound tokens */
             --border-standard: 1px solid var(--color-border);
@@ -446,7 +446,7 @@
 
         .note-block {
             display: inline-grid;
-            min-width: var(--note-min-width);
+            min-width: var(--block-min-width);
         }
 
         .note-auto-width {
@@ -476,7 +476,7 @@
             overflow: hidden;
             line-height: 1.65;
             padding: var(--space-2) 0;
-            min-width: var(--note-min-width);
+            min-width: var(--block-min-width);
             width: auto;
         }
 
@@ -546,7 +546,7 @@
             letter-spacing: 0.03em;
         }
 
-        /* Ctrl+click link activation */
+        /* Link activation */
 
         body.ctrl-held .note-preview a.note-link {
             pointer-events: auto;
@@ -611,6 +611,7 @@
             align-items: center;
             gap: var(--space-6);
             padding: var(--space-4) 0;
+            min-width: var(--block-min-width);
         }
 
         .divider-line {
@@ -1568,7 +1569,7 @@
           <textarea
             class="note-textarea style-${noteStyle}"
             placeholder="${notePlaceholder(noteStyle)}"
-            spellcheck="true"
+            spellcheck="false"
             rows="1"
             oninput="updateBlockText('${block.id}', this.value); syncNoteWidth(this)"
             onfocus="this.closest('.note-block').classList.add('${CssClass.IS_FOCUSED}')"
