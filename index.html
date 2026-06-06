@@ -452,8 +452,6 @@
             overflow: hidden;
             line-height: 1.65;
             padding: var(--space-2) 0;
-            border-bottom: 1px dashed transparent;
-            transition: border-color var(--transition-base);
             min-width: var(--note-min-width);
             width: auto;
         }
@@ -461,10 +459,6 @@
         .note-textarea::selection {
             color: transparent;
             background-color: rgb(3, 56, 162);
-        }
-
-        .note-textarea:focus {
-            border-bottom-color: var(--color-border);
         }
 
         .note-textarea::placeholder {
@@ -792,7 +786,6 @@
         }
 
         body.read-mode .note-textarea:focus {
-            border-bottom-color: transparent;
             caret-color: transparent;
             outline: none;
         }
