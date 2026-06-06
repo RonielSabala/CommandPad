@@ -78,21 +78,25 @@
 
         /* --- BASE --- */
 
+        html {
+            font-size: var(--base-unit);
+            box-sizing: border-box;
+        }
+
         *,
         *::before,
         *::after {
-            box-sizing: border-box;
+            box-sizing: inherit;
             margin: 0;
             padding: 0;
         }
 
         body {
+            min-height: 100vh;
             background-color: var(--color-bg);
             color: var(--color-text-primary);
             font-family: var(--font-sans);
-            font-size: var(--base-unit);
-            line-height: 1.6;
-            min-height: 100vh;
+            line-height: 1.5;
         }
 
         /* --- SCROLLBAR --- */
