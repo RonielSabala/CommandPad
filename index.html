@@ -439,7 +439,7 @@
             font-family: var(--font-sans);
             font-size: var(--text-base);
             color: transparent;
-            caret-color: var(--color-text-secondary);
+            caret-color: var(--color-text-primary);
             background: transparent;
             border: none;
             outline: none;
@@ -460,7 +460,6 @@
 
         .note-textarea:focus {
             border-bottom-color: var(--color-border);
-            caret-color: var(--color-text-primary);
         }
 
         .note-textarea::placeholder {
@@ -479,10 +478,6 @@
             letter-spacing: -0.02em;
         }
 
-        .note-textarea.style-heading:focus {
-            caret-color: var(--color-text-primary);
-        }
-
         /* Note styles: subheading */
 
         .note-auto-width.style-subheading,
@@ -493,10 +488,6 @@
             font-weight: 500;
             color: transparent;
             letter-spacing: 0.03em;
-        }
-
-        .note-textarea.style-subheading:focus {
-            caret-color: var(--accent-text);
         }
 
         /* Note preview */
