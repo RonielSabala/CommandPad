@@ -161,13 +161,16 @@
             overflow: hidden;
         }
 
-        .sidebar-section-header {
-            padding: var(--space-7) var(--space-7) var(--space-4);
-            font-size: var(--text-xs);
-            font-family: var(--font-mono);
-            letter-spacing: 0.075em;
-            text-transform: uppercase;
+        .section-title {
+            font-size: var(--text-sm);
+            font-family: var(--font-sans);
+            letter-spacing: 0.05em;
             color: var(--color-text-muted);
+            white-space: nowrap;
+        }
+
+        .sidebar-title {
+            padding: var(--space-7) var(--space-7) var(--space-4);
         }
 
         .variables-list {
@@ -718,13 +721,7 @@
             margin-top: var(--space-4);
         }
 
-        .add-block-row-label {
-            font-size: var(--text-xs);
-            font-family: var(--font-sans);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: var(--color-text-muted);
-            white-space: nowrap;
+        .new-block-row-label {
             margin-right: var(--space-6);
         }
 
@@ -864,7 +861,7 @@
 
         <!-- Sidebar -->
         <aside class="app-sidebar">
-            <div class="section-title sidebar-title">Variables</div>
+            <div class="section-title sidebar-title">VARIABLES</div>
             <div class="variables-list" id="variables-list"></div>
         </aside>
 
@@ -882,7 +879,7 @@
             <div id="blocks-list"></div>
 
             <div class="add-block-row" id="add-block-row">
-                <span class="add-block-row-label">New block</span>
+                <span class="section-title new-block-row-label">NEW BLOCK</span>
                 <button class="btn" onclick="addBlock('command')">
                     <svg viewBox="0 0 16 16" width="13" height="13">
                         <polyline points="2,4 5,4" />
