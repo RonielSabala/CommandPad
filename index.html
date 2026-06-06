@@ -290,7 +290,7 @@
         }
 
         .block-item.dragging {
-            opacity: 0.4;
+            opacity: 0.5;
         }
 
         .block-item.drag-over {
@@ -803,10 +803,9 @@
             outline: none;
         }
 
-        body.read-mode .variable-key-input,
-        body.read-mode .variable-value-input {
+        body.read-mode .variable-key-input {
             pointer-events: none;
-            opacity: 0.55;
+            opacity: 0.5;
         }
 
         /* Read mode: note links become always clickable */
@@ -1198,12 +1197,11 @@
         }
 
         function updateVariable(variableId, field, value) {
-            if (isReadMode()) {
+            const variable = state.variables.find(variable => variable.id === variableId);
+            if (!variable) {
                 return;
             }
 
-            const variable = state.variables.find(variable => variable.id === variableId);
-            if (!variable) return;
             variable[field] = value;
             saveState();
             refreshAllPreviews();
