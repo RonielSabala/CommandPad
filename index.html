@@ -151,8 +151,8 @@
             grid-area: header;
             display: flex;
             align-items: center;
-            justify-content: space-between;
             padding: 0 var(--space-8);
+            gap: var(--space-7);
             border-bottom: var(--border-standard);
             background: var(--color-surface);
         }
@@ -163,11 +163,24 @@
             font-weight: 600;
             letter-spacing: -0.02em;
             color: var(--color-text-primary);
+            flex-shrink: 0;
+        }
+
+        .header-spacer {
+            flex: 1;
+        }
+
+        .header-separator {
+            width: 1px;
+            height: 1.25rem;
+            background: var(--color-border);
+            flex-shrink: 0;
         }
 
         .header-actions {
             display: flex;
-            gap: var(--space-4);
+            align-items: center;
+            gap: var(--space-3);
         }
 
         /* --- SIDEBAR --- */
@@ -836,28 +849,30 @@
         <!-- Header -->
         <header class="app-header">
             <span class="app-name">CommandPad</span>
+
+            <div class="header-spacer"></div>
+
             <div class="header-actions">
                 <button class="btn btn-lg btn-mode-toggle" id="mode-toggle-btn" onclick="toggleAppMode()"
                     title="Switch to Read mode">
                     <svg id="mode-icon" viewBox="0 0 16 16">
-                        <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
+                        <path d="M5 7V5a3 3 0 0 1 6 0v2M3 7h10v7H3zM8 11v-1" />
                     </svg>
                 </button>
+                <div class="header-separator"></div>
                 <button class="btn btn-lg" onclick="toggleAllCommandEditors()"
                     title="Expand/collapse all command editors">
                     <svg viewBox="0 0 16 16">
                         <path d="M2 4l6 4-6 4M8 4l6 4-6 4" fill="none" stroke="currentColor" stroke-width="1.5"
                             stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-                    Toggle All
+                    Collapse All
                 </button>
-                <button class="btn btn-lg btn-danger-ghost" onclick="clearAllData()"
-                    title="Clear all variables and blocks">
-                    <svg viewBox="0 0 16 16">
-                        <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" fill="none" stroke="currentColor" stroke-width="1.5"
-                            stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </button>
+            </div>
+
+            <div class="header-spacer"></div>
+
+            <div class="header-actions">
                 <button class="btn btn-lg" onclick="exportToFile()">
                     <svg viewBox="0 0 16 16">
                         <path d="M8 2v8M5 7l3 3 3-3M3 11v2h10v-2" />
@@ -869,6 +884,14 @@
                         <path d="M8 11V3M5 6l3-3 3 3M3 11v2h10v-2" />
                     </svg>
                     Import
+                </button>
+                <div class="header-separator"></div>
+                <button class="btn btn-lg btn-danger-ghost" onclick="clearAllData()"
+                    title="Clear all variables and blocks">
+                    <svg viewBox="0 0 16 16">
+                        <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
                 </button>
             </div>
         </header>
