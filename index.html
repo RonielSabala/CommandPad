@@ -34,41 +34,41 @@
             --color-text-muted: #3f4150;
 
             /* Space scale */
-            --space-1: calc(var(--base-unit) * 0.125);
-            --space-2: calc(var(--base-unit) * 0.25);
-            --space-3: calc(var(--base-unit) * 0.375);
-            --space-4: calc(var(--base-unit) * 0.5);
-            --space-5: calc(var(--base-unit) * 0.625);
-            --space-6: calc(var(--base-unit) * 0.75);
-            --space-7: calc(var(--base-unit) * 1);
-            --space-8: calc(var(--base-unit) * 1.5);
-            --space-9: calc(var(--base-unit) * 2);
-            --space-10: calc(var(--base-unit) * 3);
+            --space-1: 0.125rem;
+            --space-2: 0.25rem;
+            --space-3: 0.375rem;
+            --space-4: 0.5rem;
+            --space-5: 0.625rem;
+            --space-6: 0.75rem;
+            --space-7: 1rem;
+            --space-8: 1.5rem;
+            --space-9: 2rem;
+            --space-10: 3rem;
 
             /* Text scale */
-            --text-xs: calc(var(--base-unit) * 0.6875);
-            --text-sm: calc(var(--base-unit) * 0.8125);
-            --text-md: calc(var(--base-unit) * 0.875);
-            --text-base: var(--base-unit);
-            --text-xl: calc(var(--base-unit) * 1.125);
-            --text-lg: calc(var(--base-unit) * 1.5);
+            --text-xs: 0.6875rem;
+            --text-sm: 0.8125rem;
+            --text-md: 0.875rem;
+            --text-base: 1rem;
+            --text-xl: 1.125rem;
+            --text-lg: 1.5rem;
 
             /* Radius scale */
-            --radius-sm: calc(var(--base-unit) * 0.25);
-            --radius-md: calc(var(--base-unit) * 0.375);
-            --radius-lg: calc(var(--base-unit) * 0.625);
+            --radius-sm: 0.25rem;
+            --radius-md: 0.375rem;
+            --radius-lg: 0.625rem;
 
             /* Icon scale */
-            --icon-sm: calc(var(--base-unit) * 0.75);
-            --icon-md: calc(var(--base-unit) * 0.875);
-            --icon-base: calc(var(--base-unit) * 1);
-            --icon-lg: calc(var(--base-unit) * 2.875);
+            --icon-sm: 0.75rem;
+            --icon-md: 0.875rem;
+            --icon-base: 1rem;
+            --icon-lg: 2.875rem;
 
             /* Layout dimensions */
-            --sidebar-width: calc(var(--base-unit) * 18.75);
-            --header-height: calc(var(--base-unit) * 3.5);
-            --scrollbar-size: calc(var(--base-unit) * 0.625);
-            --note-min-width: calc(var(--base-unit) * 7.5);
+            --sidebar-width: 18.75rem;
+            --header-height: 3.5rem;
+            --scrollbar-size: 0.625rem;
+            --note-min-width: 7.5rem;
 
             /* Compound tokens */
             --border-standard: 1px solid var(--color-border);
@@ -90,7 +90,7 @@
             background-color: var(--color-bg);
             color: var(--color-text-primary);
             font-family: var(--font-sans);
-            font-size: var(--text-base);
+            font-size: var(--base-unit);
             line-height: 1.6;
             min-height: 100vh;
         }
@@ -324,7 +324,7 @@
             padding: var(--space-5) var(--space-5) var(--space-5) var(--space-6);
             color: var(--color-text-muted);
             font-family: var(--font-mono);
-            font-size: var(--text-base);
+            font-size: var(--text-md);
             line-height: 1.6;
             user-select: none;
             flex-shrink: 0;
@@ -348,7 +348,6 @@
             outline: none;
             overflow: hidden;
             line-height: 1.6;
-            min-height: calc(var(--base-unit) * 2.5);
             width: 100%;
         }
 
@@ -363,7 +362,7 @@
 
         .command-preview-text {
             font-family: var(--font-mono);
-            font-size: var(--text-md);
+            font-size: var(--text-base);
             color: var(--success);
             flex: 1;
             overflow: hidden;
@@ -550,7 +549,6 @@
             margin-bottom: var(--space-2);
             opacity: 0;
             transition: opacity var(--transition-base);
-            height: calc(var(--base-unit) * 1.375);
         }
 
         .note-block:hover .note-style-row,
