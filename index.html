@@ -107,8 +107,13 @@
         }
 
         ::-webkit-scrollbar-thumb {
+            cursor: grab;
             background: var(--color-border);
             border-radius: var(--radius-md);
+        }
+
+        ::-webkit-scrollbar-thumb:active {
+            cursor: grabbing;
         }
 
         /* --- LAYOUT --- */
