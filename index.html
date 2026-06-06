@@ -603,7 +603,7 @@
 
         .divider-line {
             flex: 1;
-            height: 1px;
+            height: var(--space-2);
             background: var(--color-border);
         }
 
@@ -711,12 +711,12 @@
 
         /* --- ADD BLOCK ROW --- */
 
-        .add-block-row {
+        #add-block-row {
             display: flex;
             align-items: center;
             gap: 0;
             padding: var(--space-7) 0 0;
-            border-top: var(--border-standard);
+            border-top: var(--space-1) dashed var(--color-border);
             margin-top: var(--space-4);
         }
 
@@ -724,21 +724,21 @@
             margin-right: var(--space-6);
         }
 
-        .add-block-row .btn {
+        #add-block-row .btn {
             border-radius: 0;
             border-right-width: 0;
         }
 
-        .add-block-row .btn:first-of-type {
+        #add-block-row .btn:first-of-type {
             border-radius: var(--radius-md) 0 0 var(--radius-md);
         }
 
-        .add-block-row .btn:last-of-type {
+        #add-block-row .btn:last-of-type {
             border-radius: 0 var(--radius-md) var(--radius-md) 0;
             border-right-width: 1px;
         }
 
-        .add-block-row .btn:hover {
+        #add-block-row .btn:hover {
             z-index: 1;
             position: relative;
             border-color: var(--color-border-focus);
@@ -762,7 +762,7 @@
         /* --- READ MODE SUPPRESSIONS --- */
 
         /* Hide block and variable add/delete */
-        body.read-mode .add-block-row,
+        body.read-mode #add-block-row,
         body.read-mode .variable-add-row,
         body.read-mode .variable-row .btn-danger-ghost {
             display: none;
@@ -876,7 +876,7 @@
 
             <div id="blocks-list"></div>
 
-            <div class="add-block-row" id="add-block-row">
+            <div id="add-block-row">
                 <p class="section-title new-block-row-label">NEW BLOCK</p>
                 <button class="btn" onclick="addBlock('command')">
                     <svg viewBox="0 0 16 16" width="13" height="13">
