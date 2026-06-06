@@ -52,7 +52,7 @@
             --text-md: calc(var(--base-unit) * 0.875);
             --text-base: calc(var(--base-unit) * 0.9375);
             --text-lg: calc(var(--base-unit) * 1.25);
-            --text-logo: calc(var(--base-unit) * 1.5625);
+            --text-logo: calc(var(--base-unit) * 1.5);
 
             /* Radius scale */
             --radius-sm: calc(var(--base-unit) * 0.25);
@@ -137,7 +137,7 @@
             background: var(--color-surface);
         }
 
-        .logo-name {
+        .app-name {
             font-family: var(--font-mono);
             font-size: var(--text-logo);
             font-weight: 600;
@@ -820,7 +820,7 @@
     <div class="app-shell">
         <!-- Header -->
         <header class="app-header">
-            <span class="logo-name">CommandPad</span>
+            <span class="app-name">CommandPad</span>
             <div class="header-actions">
                 <button class="btn btn-lg btn-mode-toggle" id="mode-toggle-btn" onclick="toggleAppMode()"
                     title="Switch to Read mode">
