@@ -1163,7 +1163,6 @@
                 const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
                 if (!saved) {
                     return;
-
                 }
 
                 savedScrollTop = saved.scrollTop ?? 0;
@@ -1276,8 +1275,10 @@
                 value: ''
             };
             state.variables.push(newVariable);
+
             saveState();
             renderVariablesList();
+
             // Focus the new key input
             const rows = document.querySelectorAll('.variable-row');
             const lastRow = rows[rows.length - 1];
@@ -1430,9 +1431,13 @@
             }
 
             const block = state.blocks.find(block => block.id === blockId);
-            if (!block) return;
+            if (!block) {
+                return;
+            }
+
             block.text = text;
             saveState();
+
             if (block.type === BlockType.COMMAND) refreshBlockPreview(blockId);
             if (block.type === BlockType.NOTE) refreshNotePreview(blockId);
         }
@@ -1447,12 +1452,17 @@
             }
 
             const block = state.blocks.find(block => block.id === blockId);
-            if (!block || block.type !== BlockType.NOTE) return;
+            if (!block || block.type !== BlockType.NOTE) {
+                return;
+            }
+
             block.style = style;
             saveState();
 
             const blockElement = getBlockFromId(blockId);
-            if (!blockElement) return;
+            if (!blockElement) {
+                return;
+            }
 
             const textarea = blockElement.querySelector(Selector.NOTE_TEXTAREA);
             const label = blockElement.querySelector(Selector.NOTE_AUTO_WIDTH);
@@ -1475,23 +1485,36 @@
 
         function moveBlock(blockId, direction) {
             const index = state.blocks.findIndex(block => block.id === blockId);
-            if (index < 0) return;
+            if (index < 0) {
+                return;
+            }
+
             const targetIndex = direction === MoveDirection.UP ? index - 1 : index + 1;
-            if (targetIndex < 0 || targetIndex >= state.blocks.length) return;
+            if (targetIndex < 0 || targetIndex >= state.blocks.length) {
+                return;
+            }
+
             [state.blocks[index], state.blocks[targetIndex]] = [state.blocks[targetIndex], state.blocks[index]];
+
             saveState();
             renderBlocksList();
         }
 
         function refreshBlockPreview(blockId) {
             const block = state.blocks.find(block => block.id === blockId);
-            if (!block || block.type !== BlockType.COMMAND) return;
+            if (!block || block.type !== BlockType.COMMAND) {
+                return;
+            }
 
             const blockElement = getBlockFromId(blockId);
-            if (!blockElement) return;
+            if (!blockElement) {
+                return;
+            }
 
             const previewEl = blockElement.querySelector('.command-preview-text');
-            if (!previewEl) return;
+            if (!previewEl) {
+                return;
+            }
 
             previewEl.innerHTML = buildPreviewHTML(block.text);
             const isUnresolved = hasUnresolvedTokens(block.text);
@@ -1504,13 +1527,19 @@
 
         function refreshNotePreview(blockId) {
             const block = state.blocks.find(block => block.id === blockId);
-            if (!block || block.type !== BlockType.NOTE) return;
+            if (!block || block.type !== BlockType.NOTE) {
+                return;
+            }
 
             const blockElement = getBlockFromId(blockId);
-            if (!blockElement) return;
+            if (!blockElement) {
+                return;
+            }
 
             const previewEl = blockElement.querySelector(Selector.NOTE_PREVIEW);
-            if (!previewEl) return;
+            if (!previewEl) {
+                return;
+            }
 
             const noteStyle = block.style || NoteStyle.BODY;
             previewEl.innerHTML = block.text ?
@@ -1685,7 +1714,10 @@
 
         function updateEmptyState() {
             const emptyState = document.getElementById(ElementId.EMPTY_STATE);
-            if (!emptyState) return;
+            if (!emptyState) {
+                return;
+            }
+
             emptyState.style.display = state.blocks.length === 0 ? 'block' : 'none';
         }
 
@@ -1693,7 +1725,9 @@
 
         function copyCommand(blockId) {
             const block = state.blocks.find(block => block.id === blockId);
-            if (!block || block.type !== BlockType.COMMAND) return;
+            if (!block || block.type !== BlockType.COMMAND) {
+                return;
+            }
 
             const resolvedText = resolveCommandToString(block.text);
 
@@ -1741,12 +1775,17 @@
             }
 
             const block = state.blocks.find(block => block.id === blockId);
-            if (!block || block.type !== BlockType.COMMAND) return;
+            if (!block || block.type !== BlockType.COMMAND) {
+                return;
+            }
+
             block.editorCollapsed = !block.editorCollapsed;
             saveState();
 
             const blockElement = getBlockFromId(blockId);
-            if (!blockElement) return;
+            if (!blockElement) {
+                return;
+            }
 
             const editorEl = blockElement.querySelector('.command-block-editor');
             const toggleBtn = blockElement.querySelector('.toggle-editor-btn');
@@ -1796,12 +1835,16 @@
                     }
 
                     const targetId = blockElement.dataset.blockId;
-                    if (!dragSourceId || dragSourceId === targetId) return;
+                    if (!dragSourceId || dragSourceId === targetId) {
+                        return;
+                    }
 
                     const sourceIndex = state.blocks.findIndex(block => block.id === dragSourceId);
                     const targetIndex = state.blocks.findIndex(block => block.id === targetId);
 
-                    if (sourceIndex < 0 || targetIndex < 0) return;
+                    if (sourceIndex < 0 || targetIndex < 0) {
+                        return;
+                    }
 
                     const [removed] = state.blocks.splice(sourceIndex, 1);
                     state.blocks.splice(targetIndex, 0, removed);
@@ -1834,7 +1877,9 @@
 
         function handleImport(event) {
             const file = event.target.files[0];
-            if (!file) return;
+            if (!file) {
+                return;
+            }
 
             const reader = new FileReader();
             reader.onload = function (loadEvent) {
@@ -1864,6 +1909,7 @@
 
             state.variables = [];
             state.blocks = [];
+
             saveState();
             renderVariablesList();
             renderBlocksList();
@@ -1886,6 +1932,7 @@
                     block.editorCollapsed = newState;
                 }
             }
+
             saveState();
             renderBlocksList();
         }
