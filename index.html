@@ -983,8 +983,6 @@
     <script>
         //  State
         const STORAGE_KEY = 'commandpad_v1';
-        const MODE_STORAGE_KEY = 'commandpad_mode_v1';
-        const SIDEBAR_STORAGE_KEY = 'commandpad_sidebar';
 
         // Enums
 
@@ -1117,9 +1115,7 @@
 
         function setAppMode(mode) {
             currentMode = mode;
-            try {
-                localStorage.setItem(MODE_STORAGE_KEY, mode);
-            } catch {}
+            saveState();
 
             const isRead = mode === AppMode.READ;
             document.body.classList.toggle(CssClass.READ_MODE, isRead);
@@ -1139,30 +1135,35 @@
             setAppMode(isReadMode() ? AppMode.EDIT : AppMode.READ);
         }
 
-        function loadMode() {
-            try {
-                const saved = localStorage.getItem(MODE_STORAGE_KEY);
-                if (saved === AppMode.READ || saved === AppMode.EDIT) {
-                    setAppMode(saved);
-                }
-            } catch {}
-        }
-
         //  Persistence
 
         function saveState() {
             try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    ...state,
+                    mode: currentMode,
+                    sidebar: document.querySelector(Selector.APP_SHELL).classList.contains(CssClass
+                            .SIDEBAR_COLLAPSED) ?
+                        SidebarState.COLLAPSED : SidebarState.EXPANDED,
+                }));
             } catch {}
         }
 
         function loadState() {
             try {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (saved) state = JSON.parse(saved);
+                const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                if (!saved) {
+                    return;
+
+                }
+
+                state.variables = saved.variables ?? [];
+                state.blocks = saved.blocks ?? [];
+                if (saved.sidebar === SidebarState.COLLAPSED) {
+                    document.querySelector(Selector.APP_SHELL).classList.add(CssClass.SIDEBAR_COLLAPSED);
+                }
+                if (saved.mode === AppMode.READ || saved.mode === AppMode.EDIT) setAppMode(saved.mode);
             } catch {}
-            if (!state.variables) state.variables = [];
-            if (!state.blocks) state.blocks = [];
         }
 
         //  Variable resolution
@@ -1711,17 +1712,8 @@
             const btn = document.getElementById(ElementId.SIDEBAR_TOGGLE_BTN);
             btn.title = isCollapsed ? 'Expand sidebar' :
                 'Collapse sidebar';
-            try {
-                localStorage.setItem(SIDEBAR_STORAGE_KEY, isCollapsed ? SidebarState.COLLAPSED : SidebarState.EXPANDED);
-            } catch {}
-        }
 
-        function loadSidebarState() {
-            try {
-                if (localStorage.getItem(SIDEBAR_STORAGE_KEY) === SidebarState.COLLAPSED) {
-                    document.querySelector(Selector.APP_SHELL).classList.add(CssClass.SIDEBAR_COLLAPSED);
-                }
-            } catch {}
+            saveState();
         }
 
         //  Toggle command editor
@@ -1884,12 +1876,8 @@
 
         function init() {
             loadState();
-            loadMode();
-            loadSidebarState();
-
             renderVariablesList();
             renderBlocksList();
-
             updateEmptyState();
 
             // Auto-resize all textareas after render
