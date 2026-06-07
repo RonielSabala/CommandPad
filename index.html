@@ -258,7 +258,11 @@
         /* --- SIDEBAR COLLAPSE --- */
 
         .sidebar-collapse-btn {
+            position: sticky;
+            top: var(--space-1);
             align-self: flex-start;
+            flex-shrink: 0;
+            z-index: 10;
         }
 
         .app-shell.sidebar-collapsed {
