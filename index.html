@@ -982,6 +982,7 @@
 
     <script>
         //  State
+        const SAVE_TIMEOUT_MS = 200;
         const STORAGE_KEY = 'commandpad_v1';
 
         // Enums
@@ -1048,6 +1049,7 @@
             DRAG_END: 'dragend',
             DRAG_OVER: 'dragover',
             DRAG_START: 'dragstart',
+            SCROLL: 'scroll',
         });
 
         const Key = Object.freeze({
@@ -1075,6 +1077,7 @@
         });
 
         const ElementId = Object.freeze({
+            MAIN_PANEL: 'main-panel',
             SIDEBAR_TOGGLE_BTN: 'sidebar-toggle-btn',
             VARIABLES_LIST: 'variables-list',
             BLOCKS_LIST: 'blocks-list',
@@ -1140,15 +1143,20 @@
 
         function saveState() {
             try {
+                const mainPanel = document.getElementById(ElementId.MAIN_PANEL);
+
                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
                     ...state,
                     mode: currentMode,
                     sidebar: document.querySelector(Selector.APP_SHELL).classList.contains(CssClass
                             .SIDEBAR_COLLAPSED) ?
                         SidebarState.COLLAPSED : SidebarState.EXPANDED,
+                    scrollTop: mainPanel ? mainPanel.scrollTop : 0,
                 }));
             } catch {}
         }
+
+        let savedScrollTop = 0;
 
         function loadState() {
             try {
@@ -1158,12 +1166,16 @@
 
                 }
 
+                savedScrollTop = saved.scrollTop ?? 0;
                 state.variables = saved.variables ?? [];
                 state.blocks = saved.blocks ?? [];
+
                 if (saved.sidebar === SidebarState.COLLAPSED) {
                     document.querySelector(Selector.APP_SHELL).classList.add(CssClass.SIDEBAR_COLLAPSED);
                 }
-                if (saved.mode === AppMode.READ || saved.mode === AppMode.EDIT) setAppMode(saved.mode);
+                if (saved.mode === AppMode.READ || saved.mode === AppMode.EDIT) {
+                    setAppMode(saved.mode);
+                }
             } catch {}
         }
 
@@ -1886,13 +1898,30 @@
             renderBlocksList();
             updateEmptyState();
 
-            // Auto-resize all textareas after render
             setTimeout(() => {
+                // Auto-resize all textareas
                 document.querySelectorAll('textarea').forEach(autoResizeTextarea);
                 document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(textarea => syncNoteWidth(textarea));
                 refreshAllPreviews();
+
+                // Restore scroll
+                setTimeout(() => {
+                    const mainPanel = document.getElementById(ElementId.MAIN_PANEL);
+                    if (mainPanel) {
+                        mainPanel.scrollTop = savedScrollTop;
+                    }
+                }, 0);
             }, 0);
         }
+
+        // Persist scrollbar position
+
+        let scrollSaveTimer = null;
+
+        document.getElementById(ElementId.MAIN_PANEL).addEventListener(EventType.SCROLL, () => {
+            clearTimeout(scrollSaveTimer);
+            scrollSaveTimer = setTimeout(saveState, SAVE_TIMEOUT_MS);
+        });
 
         // Ctrl+click to open note links
 
