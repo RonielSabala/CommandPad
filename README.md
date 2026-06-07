@@ -1,6 +1,6 @@
 # CommandPad
 
-A lightweight, variable-aware command management interface. Organize commands and scripts with dynamic variable substitution, making it easy to manage API endpoints, credentials, and other configuration parameters across multiple command blocks.
+A lightweight, variable-aware command runbook tool. Define variables once, reference them across any number of command blocks, and copy resolved commands instantly.
 
 ![Hero](docs/screenshots/hero.jpg)
 
@@ -13,6 +13,10 @@ A lightweight, variable-aware command management interface. Organize commands an
   - [Requirements](#requirements)
   - [Run Locally](#run-locally)
 - [Usage](#usage)
+  - [Variables](#variables)
+  - [Block Types](#block-types)
+  - [Read Mode](#read-mode)
+  - [Export and Import](#export-and-import)
 - [Examples](#examples)
 - [Contributing](#contributing)
 - [License](#license)
@@ -21,10 +25,13 @@ A lightweight, variable-aware command management interface. Organize commands an
 
 ## Features
 
-- **Instant Preview**: See variable substitutions applied immediately across all commands.
-- **Collapsible Editor**: Expand or collapse command editors to keep your workspace clean.
-- **JSON-based Format**: Store configurations in simple, portable JSON files.
-- **Flexible Command Blocks**: Organize commands with notes and dividers.
+- **Variable substitution**: Define named variables and reference them in any command block using `{VARIABLE_NAME}` syntax.
+- **Live preview**: Every command block shows the fully resolved command on top of the template.
+- **Three block types**: Commands, notes, and dividers can be mixed freely to build structured, readable runbooks.
+- **Drag-and-drop reordering**: Blocks can be reordered by holding the drag handle that appears on hover.
+- **Read mode**: A toggle locks the entire interface. Useful for running through a checklist without accidental changes.
+- **Persistent state**: The full workspace is saved to `localStorage` automatically and restored on reload.
+- **Export / Import**: Save the current workspace to a `.json` file and reload it at any time.
 
 ---
 
@@ -32,15 +39,16 @@ A lightweight, variable-aware command management interface. Organize commands an
 
 ### Requirements
 
-- [Visual Studio Code](https://code.visualstudio.com/) (Recommended)
+- Any modern browser (Chrome, Firefox, Edge, Safari).
+- No server required.
 
 ---
 
 ### Run Locally
 
-**Option A. Open `index.html` manually:**
+**Option A. Open directly:**
 
-Open the file directly in your browser by double-clicking it.
+Double-click `index.html` to open it in your default browser.
 
 ---
 
@@ -55,23 +63,92 @@ Use **Live Server: Stop Live Server** to stop.
 
 ## Usage
 
-Variables are defined in the left sidebar and can be referenced in any command block using curly brace syntax: `{VARIABLE_NAME}`.
+### Variables
 
-Example:
+Variables are defined in the left sidebar. Each variable has a **name** and a **value**.
+
+- Click **Add variable** to create a new one.
+- Names are case-sensitive.
+- Delete a variable with the `x` button on its row.
+- Variables with empty names are ignored.
+
+Reference a variable in any command block using curly brace syntax:
 
 ```plain
-curl http://{API_HOST}:{PORT}/users
+{VARIABLE_NAME}
 ```
 
-When you update a variable value, all commands using that variable are instantly updated.
+---
+
+### Block Types
+
+Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel.
+
+---
+
+#### Command Block
+
+It has two parts:
+
+- **Template**: the raw command with `{VARIABLE}` tokens.
+- **Preview**: the resolved command with variables substituted in.
+
+The editor row can be collapsed with the chevron button in the preview row, or globally using **Toggle editors** in the header.
+
+Unresolved tokens are highlighted in red in the preview.
+
+---
+
+#### Note Block
+
+A free-form text. It supports three styles selectable on hover:
+
+| Style        | Appearance                 |
+| ------------ | -------------------------- |
+| `heading`    | Large, bold, primary color |
+| `subheading` | Medium, accented color     |
+| `body`       | Default, secondary color   |
+
+URLs are automatically detected and rendered as links. Hold `Ctrl` and click a link to open it.
+
+Note blocks auto-expand horizontally and vertically as you type.
+
+---
+
+#### Divider Block
+
+A visual separator line. Useful for grouping steps or sections. Stretches to match the width of the widest block in the list.
+
+---
+
+### Read Mode
+
+Click the **padlock icon** in the header to toggle read mode.
+
+In read mode:
+
+- All command editors are collapsed and cannot be expanded.
+- Note blocks and command templates cannot be edited.
+- Variables cannot be added or deleted.
+- Blocks cannot be added, reordered, or deleted.
+- Note style pickers are hidden.
+- Links in note blocks are directly clickable.
+
+The mode is saved across page reloads. Click the **pencil icon** to return to edit mode.
+
+---
+
+### Export and Import
+
+Click the **Export** button in the header to download the current workspace as `commandpad-export.json`.
+
+Click the **Import** button to load a `.json` file. This replaces the current workspace entirely.
 
 ---
 
 ## Examples
 
-Browse the [docs/examples/](/docs/examples/) folder for sample configurations.
-
-To load an example click the **Import** button and select a JSON file.
+Browse the [docs/examples/](/docs/examples/) folder for sample runbooks covering common workflows.
 
 ---
 
