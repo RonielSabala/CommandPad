@@ -1065,6 +1065,9 @@
         const Selector = Object.freeze({
             APP_SHELL: '.app-shell',
             NOTE_LINK: 'a.note-link',
+            NOTE_TEXTAREA: '.note-textarea',
+            NOTE_AUTO_WIDTH: '.note-auto-width',
+            NOTE_PREVIEW: '.note-preview',
         });
 
         const Anchor = Object.freeze({
@@ -1433,9 +1436,9 @@
             const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
             if (!blockElement) return;
 
-            const textarea = blockElement.querySelector('.note-textarea');
-            const label = blockElement.querySelector('.note-auto-width');
-            const preview = blockElement.querySelector('.note-preview');
+            const textarea = blockElement.querySelector(Selector.NOTE_TEXTAREA);
+            const label = blockElement.querySelector(Selector.NOTE_AUTO_WIDTH);
+            const preview = blockElement.querySelector(Selector.NOTE_PREVIEW);
 
             if (textarea) {
                 textarea.className = `note-textarea style-${style}`;
@@ -1488,7 +1491,7 @@
             const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
             if (!blockElement) return;
 
-            const previewEl = blockElement.querySelector('.note-preview');
+            const previewEl = blockElement.querySelector(Selector.NOTE_PREVIEW);
             if (!previewEl) return;
 
             const noteStyle = block.style || NoteStyle.BODY;
@@ -1509,7 +1512,7 @@
         }
 
         function syncNoteWidth(textarea) {
-            const label = textarea.closest('.note-auto-width');
+            const label = textarea.closest(Selector.NOTE_AUTO_WIDTH);
             if (label) label.dataset.value = textarea.value || textarea.placeholder;
         }
 
@@ -1892,7 +1895,7 @@
             // Auto-resize all textareas after render
             setTimeout(() => {
                 document.querySelectorAll('textarea').forEach(autoResizeTextarea);
-                document.querySelectorAll('.note-textarea').forEach(textarea => syncNoteWidth(textarea));
+                document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(textarea => syncNoteWidth(textarea));
                 refreshAllPreviews();
             }, 0);
         }
