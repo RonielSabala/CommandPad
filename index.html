@@ -44,8 +44,7 @@
             --space-6: 0.75rem;
             --space-7: 1rem;
             --space-8: 1.5rem;
-            --space-9: 2rem;
-            --space-10: 3rem;
+            --space-9: 2.375rem;
 
             /* Text scale */
             --text-xs: 0.6875rem;
@@ -256,12 +255,35 @@
             color: var(--color-text-muted);
         }
 
-        /* --- MAIN PANELS --- */
+        /* --- SIDEBAR COLLAPSE --- */
+
+        .sidebar-collapse-btn {
+            align-self: flex-start;
+        }
+
+        .app-shell.sidebar-collapsed {
+            grid-template-columns: 0 1fr;
+        }
+
+        .app-shell.sidebar-collapsed #sidebar-chevron {
+            transform: rotate(180deg);
+        }
+
+        .app-shell.sidebar-collapsed .app-sidebar {
+            width: 0;
+            overflow: hidden;
+            border-right: none;
+        }
+
+        /* --- MAIN PANEL --- */
 
         .app-main {
             grid-area: main;
             overflow-y: auto;
-            padding: var(--space-4) var(--space-9) var(--space-10);
+            padding-top: var(--space-4);
+            padding-right: var(--space-9);
+            padding-bottom: var(--space-9);
+            padding-left: var(--space-9);
             display: flex;
             flex-direction: column;
             gap: var(--space-3);
@@ -906,6 +928,12 @@
 
         <!-- Main panel -->
         <main class="app-main" id="main-panel">
+            <button class="btn btn-icon sidebar-collapse-btn" id="sidebar-toggle-btn" onclick="toggleSidebar()"
+                title="Collapse sidebar">
+                <svg id="sidebar-chevron" viewBox="0 0 16 16">
+                    <polyline points="10,4 4,8 10,12" />
+                </svg>
+            </button>
             <div id="empty-state" class="no-user-select">
                 <svg viewBox="0 0 40 40">
                     <rect x="4" y="6" width="32" height="28" rx="3" />
@@ -951,12 +979,18 @@
         //  State
         const STORAGE_KEY = 'commandpad_v1';
         const MODE_STORAGE_KEY = 'commandpad_mode_v1';
+        const SIDEBAR_STORAGE_KEY = 'commandpad_sidebar';
 
         // Enums
 
         const AppMode = Object.freeze({
             EDIT: 'edit',
             READ: 'read',
+        });
+
+        const SidebarState = Object.freeze({
+            COLLAPSED: 'collapsed',
+            EXPANDED: 'expanded',
         });
 
         const BlockType = Object.freeze({
@@ -991,6 +1025,7 @@
             DRAGGING: 'dragging',
             DRAG_OVER: 'drag-over',
             COLLAPSED: 'collapsed',
+            SIDEBAR_COLLAPSED: 'sidebar-collapsed',
             EDITOR_COLLAPSED: 'editor-collapsed',
             ACTIVE: 'active',
             IS_FOCUSED: 'is-focused',
@@ -1023,6 +1058,7 @@
         });
 
         const Selector = Object.freeze({
+            APP_SHELL: '.app-shell',
             NOTE_LINK: 'a.note-link',
         });
 
@@ -1032,6 +1068,7 @@
         });
 
         const ElementId = Object.freeze({
+            SIDEBAR_TOGGLE_BTN: 'sidebar-toggle-btn',
             VARIABLES_LIST: 'variables-list',
             BLOCKS_LIST: 'blocks-list',
             EMPTY_STATE: 'empty-state',
@@ -1471,7 +1508,7 @@
             if (label) label.dataset.value = textarea.value || textarea.placeholder;
         }
 
-        //  Render: blocks
+        //  Block rendering
 
         function renderBlocksList() {
             const container = document.getElementById(ElementId.BLOCKS_LIST);
@@ -1657,6 +1694,28 @@
             });
         }
 
+        //  Toggle sidebar
+
+        function toggleSidebar() {
+            const shell = document.querySelector(Selector.APP_SHELL);
+            const isCollapsed = shell.classList.toggle(CssClass.SIDEBAR_COLLAPSED);
+
+            const btn = document.getElementById(ElementId.SIDEBAR_TOGGLE_BTN);
+            btn.title = isCollapsed ? 'Expand sidebar' :
+                'Collapse sidebar';
+            try {
+                localStorage.setItem(SIDEBAR_STORAGE_KEY, isCollapsed ? SidebarState.COLLAPSED : SidebarState.EXPANDED);
+            } catch {}
+        }
+
+        function loadSidebarState() {
+            try {
+                if (localStorage.getItem(SIDEBAR_STORAGE_KEY) === SidebarState.COLLAPSED) {
+                    document.querySelector(Selector.APP_SHELL).classList.add(CssClass.SIDEBAR_COLLAPSED);
+                }
+            } catch {}
+        }
+
         //  Toggle command editor
 
         function toggleCommandEditor(blockId) {
@@ -1818,8 +1877,11 @@
         function init() {
             loadState();
             loadMode();
+            loadSidebarState();
+
             renderVariablesList();
             renderBlocksList();
+
             updateEmptyState();
 
             // Auto-resize all textareas after render
