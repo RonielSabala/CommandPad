@@ -78,7 +78,7 @@
     {
       "id": "block_11",
       "type": "note",
-      "text": "Learn more at https://docs.docker.com/engine/reference/commandline/logs/.",
+      "text": "Learn more at https://docs.docker.com/engine/reference/commandline/logs/",
       "style": "body"
     }
   ]
