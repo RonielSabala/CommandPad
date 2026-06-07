@@ -1425,6 +1425,10 @@
             if (block.type === BlockType.NOTE) refreshNotePreview(blockId);
         }
 
+        function getBlockFromId(blockId) {
+            return document.querySelector(`[data-block-id="${blockId}"]`);;
+        }
+
         function updateBlockStyle(blockId, style) {
             if (isReadMode()) {
                 return;
@@ -1435,7 +1439,7 @@
             block.style = style;
             saveState();
 
-            const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
+            const blockElement = getBlockFromId(blockId);
             if (!blockElement) return;
 
             const textarea = blockElement.querySelector(Selector.NOTE_TEXTAREA);
@@ -1471,7 +1475,7 @@
             const block = state.blocks.find(block => block.id === blockId);
             if (!block || block.type !== BlockType.COMMAND) return;
 
-            const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
+            const blockElement = getBlockFromId(blockId);
             if (!blockElement) return;
 
             const previewEl = blockElement.querySelector('.command-preview-text');
@@ -1490,7 +1494,7 @@
             const block = state.blocks.find(block => block.id === blockId);
             if (!block || block.type !== BlockType.NOTE) return;
 
-            const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
+            const blockElement = getBlockFromId(blockId);
             if (!blockElement) return;
 
             const previewEl = blockElement.querySelector(Selector.NOTE_PREVIEW);
@@ -1729,7 +1733,7 @@
             block.editorCollapsed = !block.editorCollapsed;
             saveState();
 
-            const blockElement = document.querySelector(`[data-block-id="${blockId}"]`);
+            const blockElement = getBlockFromId(blockId);
             if (!blockElement) return;
 
             const editorEl = blockElement.querySelector('.command-block-editor');
