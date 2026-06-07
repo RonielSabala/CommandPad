@@ -26,14 +26,12 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 ## Features
 
 - **Variable substitution**: Define named variables and reference them in any command block using `{VARIABLE_NAME}` syntax.
-- **Live resolved preview**: Every command block shows the fully resolved command on top of the template.
-- **Collapsible editors**: The command template row can be collapsed per-block, or toggled globally via the header button.
+- **Live preview**: Every command block shows the fully resolved command on top of the template.
 - **Three block types**: Commands, notes, and dividers can be mixed freely to build structured, readable runbooks.
-- **Rich note blocks**: Notes support three styles (heading, subheading, body), auto-detect URLs and render them as clickable links.
 - **Drag-and-drop reordering**: Blocks can be reordered by holding the drag handle that appears on hover.
 - **Read mode**: A toggle locks the entire interface. Useful for running through a checklist without accidental changes.
 - **Persistent state**: The full workspace is saved to `localStorage` automatically and restored on reload.
-- **Export / Import**: Save the current workspace to a `.json` file and reload it at any time, or share it with teammates.
+- **Export / Import**: Save the current workspace to a `.json` file and reload it at any time.
 
 ---
 
@@ -67,10 +65,10 @@ Use **Live Server: Stop Live Server** to stop.
 
 ### Variables
 
-Variables are defined in the left sidebar. Each variable has a **name** (the key) and a **value**.
+Variables are defined in the left sidebar. Each variable has a **name** and a **value**.
 
 - Click **Add variable** to create a new one.
-- Names are case-sensitive. Use `UPPER_SNAKE_CASE` by convention.
+- Names are case-sensitive.
 - Delete a variable with the `x` button on its row.
 - Variables with empty names are ignored.
 
@@ -80,8 +78,6 @@ Reference a variable in any command block using curly brace syntax:
 {VARIABLE_NAME}
 ```
 
-All command previews update immediately whenever a variable name or value changes.
-
 ---
 
 ### Block Types
@@ -90,22 +86,22 @@ Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row a
 
 ---
 
-#### Command
+#### Command Block
 
-A command block has two parts:
+It has two parts:
 
-- **Template** (the editor row, prefixed with `$`): the raw command with `{VARIABLE}` tokens.
-- **Preview** (always visible): the resolved command with variables substituted in. Click **Copy** to copy the resolved text to the clipboard.
+- **Template**: the raw command with `{VARIABLE}` tokens.
+- **Preview**: the resolved command with variables substituted in.
 
-The editor row can be collapsed with the chevron button in the preview row, or globally using **Toggle editors** in the header. In read mode, all editors are forced collapsed and cannot be reopened.
+The editor row can be collapsed with the chevron button in the preview row, or globally using **Toggle editors** in the header.
 
-Unresolved tokens (variables that have no matching value) are highlighted in red in the preview.
+Unresolved tokens are highlighted in red in the preview.
 
 ---
 
-#### Note
+#### Note Block
 
-A note block is free-form text. It supports three styles selectable on hover:
+A free-form text. It supports three styles selectable on hover:
 
 | Style        | Appearance                 |
 | ------------ | -------------------------- |
@@ -113,16 +109,13 @@ A note block is free-form text. It supports three styles selectable on hover:
 | `subheading` | Medium, accented color     |
 | `body`       | Default, secondary color   |
 
-URLs in note text are automatically detected and rendered as links:
-
-- In **edit mode**: hold `Ctrl` (or `Cmd` on macOS) and click a link to open it.
-- In **read mode**: links are directly clickable without any modifier key.
+URLs are automatically detected and rendered as links. Hold `Ctrl` and click a link to open it.
 
 Note blocks auto-expand horizontally and vertically as you type.
 
 ---
 
-#### Divider
+#### Divider Block
 
 A visual separator line. Useful for grouping steps or sections. Stretches to match the width of the widest block in the list.
 
