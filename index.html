@@ -1062,6 +1062,7 @@
 
         const Selector = Object.freeze({
             APP_SHELL: '.app-shell',
+            BLOCK_ITEM: '.block-item',
             NOTE_LINK: 'a.note-link',
             NOTE_TEXTAREA: '.note-textarea',
             NOTE_AUTO_WIDTH: '.note-auto-width',
@@ -1392,7 +1393,7 @@
             updateEmptyState();
 
             // Focus the text area of the new block
-            const allBlockElements = document.querySelectorAll('.block-item');
+            const allBlockElements = document.querySelectorAll(Selector.BLOCK_ITEM);
             const lastBlockElement = allBlockElements[allBlockElements.length - 1];
             if (lastBlockElement) {
                 const textarea = lastBlockElement.querySelector('textarea');
@@ -1748,7 +1749,7 @@
         function setupDragAndDrop() {
             const container = document.getElementById(ElementId.BLOCKS_LIST);
 
-            container.querySelectorAll('.block-item').forEach(blockElement => {
+            container.querySelectorAll(Selector.BLOCK_ITEM).forEach(blockElement => {
                 blockElement.addEventListener(EventType.DRAG_START, event => {
                     dragSourceId = blockElement.dataset.blockId;
                     blockElement.classList.add(CssClass.DRAGGING);
@@ -1757,7 +1758,7 @@
 
                 blockElement.addEventListener(EventType.DRAG_END, () => {
                     blockElement.classList.remove(CssClass.DRAGGING);
-                    container.querySelectorAll('.block-item').forEach(el => el.classList.remove(
+                    container.querySelectorAll(Selector.BLOCK_ITEM).forEach(el => el.classList.remove(
                         CssClass.DRAG_OVER));
                     dragSourceId = null;
                 });
@@ -1765,8 +1766,9 @@
                 blockElement.addEventListener(EventType.DRAG_OVER, event => {
                     event.preventDefault();
                     if (blockElement.dataset.blockId !== dragSourceId) {
-                        container.querySelectorAll('.block-item').forEach(el => el.classList.remove(
-                            CssClass.DRAG_OVER));
+                        container.querySelectorAll(Selector.BLOCK_ITEM).forEach(el => el.classList
+                            .remove(
+                                CssClass.DRAG_OVER));
                         blockElement.classList.add(CssClass.DRAG_OVER);
                     }
                 });
