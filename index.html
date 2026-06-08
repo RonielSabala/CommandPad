@@ -860,7 +860,8 @@
             outline: none;
         }
 
-        body.read-mode .variable-key-input {
+        body.read-mode .variable-key-input,
+        body.read-mode #collapse-all-btn {
             pointer-events: none;
             opacity: 0.5;
         }
@@ -889,7 +890,7 @@
                     </svg>
                 </button>
                 <div class="header-separator"></div>
-                <button class="btn btn-lg" onclick="toggleAllCommandEditors()"
+                <button id="collapse-all-btn" class="btn btn-lg" onclick="toggleAllCommandEditors()"
                     title="Expand/collapse all command editors">
                     <svg viewBox="0 0 16 16">
                         <path d="M2 4l6 4-6 4M8 4l6 4-6 4" fill="none" stroke="currentColor" stroke-width="1.5"
