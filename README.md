@@ -25,7 +25,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 
 ## Features
 
-- **Variable substitution**: Define named variables and reference them in any command block using `{VARIABLE_NAME}` syntax.
+- **Variable substitution**: Define named variables and reference them in any command block.
 - **Live preview**: Every command block shows the fully resolved command on top of the template.
 - **Three block types**: Commands, notes, and dividers can be mixed freely to build structured, readable runbooks.
 - **Drag-and-drop reordering**: Blocks can be reordered by holding the drag handle that appears on hover.
@@ -117,7 +117,9 @@ Note blocks auto-expand horizontally and vertically as you type.
 
 #### Divider Block
 
-A visual separator line. Useful for grouping steps or sections. Stretches to match the width of the widest block in the list.
+A visual separator line. Stretches to match the width of the widest block in the list.
+
+Useful for grouping steps or sections.
 
 ---
 
@@ -140,7 +142,7 @@ The mode is saved across page reloads. Click the **pencil icon** to return to ed
 
 ### Export and Import
 
-Click the **Export** button in the header to download the current workspace as `commandpad-export.json`.
+Click the **Export** button in the header to download the current workspace as a `.json` file.
 
 Click the **Import** button to load a `.json` file. This replaces the current workspace entirely.
 
