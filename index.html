@@ -215,6 +215,7 @@
             gap: var(--space-3);
             align-items: center;
             margin-bottom: var(--space-3);
+            position: relative;
         }
 
         .variable-add-row {
@@ -233,6 +234,7 @@
             width: 100%;
             outline: none;
             transition: border-color var(--transition-base);
+            position: relative;
         }
 
         .variable-key-input {
@@ -249,6 +251,25 @@
         .variable-key-input::placeholder,
         .variable-value-input::placeholder {
             color: var(--color-text-muted);
+        }
+
+        /* Floating tooltip */
+        .variable-key-input[title]:hover::after,
+        .variable-value-input[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            left: 0;
+            top: calc(100% + var(--space-2));
+            background: var(--color-surface-alt);
+            border: var(--border-standard);
+            border-radius: var(--radius-md);
+            color: var(--color-text-primary);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            padding: var(--space-2) var(--space-4);
+            white-space: pre;
+            z-index: 100;
+            pointer-events: none;
         }
 
         /* --- SIDEBAR COLLAPSE --- */
@@ -1336,6 +1357,7 @@
               spellcheck="false"
               autocomplete="off"
               oninput="updateVariable('${variable.id}', '${VariableField.KEY}', this.value)"
+              title="${escapeHtml(variable.key)}"
             />
             <input
               class="variable-value-input"
@@ -1345,6 +1367,7 @@
               spellcheck="false"
               autocomplete="off"
               oninput="updateVariable('${variable.id}', '${VariableField.VALUE}', this.value)"
+              title="${escapeHtml(variable.value)}"
             />
             <button
               class="btn btn-icon btn-danger-ghost"
