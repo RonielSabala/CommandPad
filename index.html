@@ -1071,6 +1071,7 @@
             NOTE_TEXTAREA: '.note-textarea',
             NOTE_AUTO_WIDTH: '.note-auto-width',
             NOTE_PREVIEW: '.note-preview',
+            COMMAND_TEXTAREA: '.command-textarea',
         });
 
         const Anchor = Object.freeze({
@@ -1523,7 +1524,7 @@
             previewEl.classList.toggle(CssClass.HAS_UNRESOLVED, isUnresolved);
 
             // Auto-resize textarea
-            const textarea = blockElement.querySelector('.command-textarea');
+            const textarea = blockElement.querySelector(Selector.COMMAND_TEXTAREA);
             if (textarea) autoResizeTextarea(textarea);
         }
 
@@ -1797,6 +1798,14 @@
                 toggleBtn.classList.toggle(CssClass.EDITOR_COLLAPSED, block.editorCollapsed);
                 toggleBtn.title = block.editorCollapsed ? 'Show editor' : 'Hide editor';
             }
+
+            if (block.editorCollapsed) {
+                return
+            }
+
+            // Auto-resize textarea
+            const textarea = editorEl.querySelector(Selector.COMMAND_TEXTAREA);
+            if (textarea) autoResizeTextarea(textarea);
         }
 
         //  Drag and drop reordering
