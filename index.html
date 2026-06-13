@@ -406,7 +406,7 @@
 
         .command-block-editor {
             display: flex;
-            align-items: flex-start;
+            align-items: stretch;
             border-top: var(--border-standard);
             width: 100%;
             min-width: 0;
@@ -425,6 +425,8 @@
             user-select: none;
             flex-shrink: 0;
             border-right: var(--border-standard);
+            display: flex;
+            align-items: flex-start;
         }
 
         .command-gutter-prefix {
@@ -452,7 +454,6 @@
             padding: var(--space-4) var(--space-6);
             display: flex;
             align-items: center;
-            justify-content: space-between;
             gap: var(--space-6);
             background: var(--color-bg);
         }
@@ -462,9 +463,11 @@
             font-size: var(--text-base);
             color: var(--success);
             flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: pre;
+            min-width: 0;
+            padding-bottom: var(--space-2);
         }
 
         .command-preview-text.has-unresolved {
