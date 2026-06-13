@@ -412,7 +412,7 @@
             top: 50%;
             transform: translateX(100%) translateY(-50%);
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: var(--space-2);
             opacity: 0;
             transition: opacity var(--transition-base);
@@ -437,6 +437,24 @@
         .block-item.drag-over {
             outline: 1px dashed var(--accent);
             border-radius: var(--radius-md);
+        }
+
+        /* Duplicate flash */
+
+        @keyframes duplicate-flash {
+            0% {
+                outline: var(--space-1) solid var(--accent);
+                outline-offset: var(--space-2);
+            }
+
+            100% {
+                outline: var(--space-3) solid transparent;
+                outline-offset: var(--space-2);
+            }
+        }
+
+        .block-item.duplicate-flash {
+            animation: duplicate-flash 0.5s ease-out forwards;
         }
 
         /* --- COMMAND BLOCK --- */
@@ -1168,9 +1186,11 @@
             READ_MODE: 'read-mode',
             VARIABLE_DRAGGING: 'variable-dragging',
             VARIABLE_DRAG_OVER: 'variable-drag-over',
+            DUPLICATE_FLASH: 'duplicate-flash',
         });
 
         const EventType = Object.freeze({
+            ANIMATION_END: 'animationend',
             DROP: 'drop',
             KEY_UP: 'keyup',
             KEY_DOWN: 'keydown',
@@ -1222,6 +1242,7 @@
             BLOCKS_LIST: 'blocks-list',
             EMPTY_STATE: 'empty-state',
             IMPORT_FILE_INPUT: 'import-file-input',
+            DUPLICATE_BTN: 'duplicate-btn',
         });
 
         const FilePickerConfig = Object.freeze({
@@ -1718,6 +1739,43 @@
             updateEmptyState();
         }
 
+        function duplicateBlock(blockId) {
+            if (isReadMode()) {
+                return;
+            }
+
+            const sourceIndex = state.blocks.findIndex(block => block.id === blockId);
+            if (sourceIndex < 0) {
+                return;
+            }
+
+            const sourceBlock = state.blocks[sourceIndex];
+            const duplicatedBlock = {
+                ...sourceBlock,
+                id: generateId()
+            };
+
+            state.blocks.splice(sourceIndex + 1, 0, duplicatedBlock);
+            saveState();
+            renderBlocksList();
+            updateEmptyState();
+
+            // Flash the duplicated block
+            requestAnimationFrame(() => {
+                const newBlockElement = getBlockFromId(duplicatedBlock.id);
+                if (!newBlockElement) {
+                    return;
+                }
+
+                newBlockElement.classList.add(CssClass.DUPLICATE_FLASH);
+                newBlockElement.addEventListener(EventType.ANIMATION_END, () => {
+                    newBlockElement.classList.remove(CssClass.DUPLICATE_FLASH);
+                }, {
+                    once: true
+                });
+            });
+        }
+
         function updateBlockText(blockId, text) {
             if (isReadMode()) {
                 return;
@@ -1888,7 +1946,7 @@
                 wrapper.innerHTML = buildDividerBlockHTML(block);
             }
 
-            // Left side: drag handle only
+            // Left side: drag handle
             const dragHandleEl = document.createElement('div');
             dragHandleEl.className = 'block-drag-handle';
             dragHandleEl.innerHTML = `
@@ -1898,10 +1956,16 @@
     `;
             wrapper.appendChild(dragHandleEl);
 
-            // Right side: delete only
+            // Right side: delete and duplicate
             const sideControls = document.createElement('div');
             sideControls.className = 'block-controls';
             sideControls.innerHTML = `
+      <button class="btn btn-icon" onclick="duplicateBlock('${block.id}')" title="Duplicate block">
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="9" height="9" rx="1" />
+        <path d="M12 10v4M10 12h4" />
+        </svg>
+      </button>
       <button class="btn btn-icon btn-danger-ghost" onclick="removeBlock('${block.id}')" title="Delete block">
         <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9"/></svg>
       </button>
