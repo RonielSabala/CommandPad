@@ -483,6 +483,10 @@
             font-weight: 600;
         }
 
+        .token-literal {
+            color: var(--color-text-secondary);
+        }
+
         .toggle-editor-btn {
             margin-left: auto;
             display: inline-flex;
@@ -1310,7 +1314,7 @@
                     return `<span class="token-resolved">${escaped}</span>`;
                 if (segment.type === SegmentType.UNRESOLVED)
                     return `<span class="token-unresolved">${escaped}</span>`;
-                return escaped;
+                return `<span class="token-literal">${escaped}</span>`;
             }).join('');
         }
 
