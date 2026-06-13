@@ -244,26 +244,6 @@
             opacity: 1;
         }
 
-        .variable-drag-handle {
-            cursor: grab;
-            color: var(--color-text-muted);
-            display: flex;
-            align-items: center;
-            padding: var(--space-1);
-            border-radius: var(--radius-sm);
-            flex-shrink: 0;
-        }
-
-        .variable-drag-handle:hover {
-            color: var(--color-text-secondary);
-        }
-
-        .variable-drag-handle svg {
-            width: var(--icon-md);
-            height: var(--icon-md);
-            fill: currentColor;
-        }
-
         .variable-row.variable-dragging {
             opacity: 0.5;
         }
@@ -878,19 +858,22 @@
 
         /* Drag handle button */
 
-        .drag-handle {
+        .drag-handle,
+        .variable-drag-handle {
             cursor: grab;
-            color: var(--color-text-muted);
+            color: var(--color-text-secondary);
             padding: var(--space-2);
             border-radius: var(--radius-sm);
             transition: color var(--transition-fast);
         }
 
-        .drag-handle:hover {
-            color: var(--color-text-secondary);
+        .drag-handle:hover,
+        .variable-drag-handle:hover {
+            color: var(--color-text-primary);
         }
 
-        .drag-handle svg {
+        .drag-handle svg,
+        .variable-drag-handle svg {
             width: var(--icon-md);
             height: var(--icon-md);
             fill: currentColor;
@@ -1950,9 +1933,9 @@
             const dragHandleEl = document.createElement('div');
             dragHandleEl.className = 'block-drag-handle';
             dragHandleEl.innerHTML = `
-      <button class="btn btn-icon drag-handle" title="Drag to reorder">
+      <div class="drag-handle" title="Drag to reorder">
         <svg viewBox="0 0 16 16" width="14" height="14"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
-      </button>
+      </div>
     `;
             wrapper.appendChild(dragHandleEl);
 
