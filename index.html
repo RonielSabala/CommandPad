@@ -209,26 +209,72 @@
         }
 
         .sidebar-title {
-            padding: var(--space-6);
+            padding: var(--space-6) var(--space-6) 0 var(--space-6);
         }
 
-        .variables-list {
+        #variables-list {
             flex: 1;
             overflow-y: auto;
-            padding: 0 var(--space-6) var(--space-6);
+            padding: var(--space-6) var(--space-4);
+        }
+
+        .variable-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-3);
         }
 
         .variable-row {
             display: grid;
-            grid-template-columns: 1fr 1fr auto;
+            grid-template-columns: auto 1fr auto;
             gap: var(--space-3);
             align-items: center;
             margin-bottom: var(--space-3);
             position: relative;
         }
 
-        .variable-add-row {
-            padding: var(--space-2) 0 var(--space-1);
+        .variable-drag-handle,
+        .variable-row .btn-danger-ghost {
+            opacity: 0;
+            transition: opacity var(--transition-fast), color var(--transition-fast);
+        }
+
+        .variable-row:hover .variable-drag-handle,
+        .variable-row:hover .btn-danger-ghost {
+            opacity: 1;
+        }
+
+        .variable-drag-handle {
+            cursor: grab;
+            color: var(--color-text-muted);
+            display: flex;
+            align-items: center;
+            padding: var(--space-1);
+            border-radius: var(--radius-sm);
+            flex-shrink: 0;
+        }
+
+        .variable-drag-handle:hover {
+            color: var(--color-text-secondary);
+        }
+
+        .variable-drag-handle svg {
+            width: var(--icon-md);
+            height: var(--icon-md);
+            fill: currentColor;
+        }
+
+        .variable-row.variable-dragging {
+            opacity: 0.5;
+        }
+
+        .variable-row.variable-drag-over .variable-inputs {
+            outline: 1px dashed var(--accent);
+            border-radius: var(--radius-sm);
+        }
+
+        #variable-add-row {
+            padding: var(--space-3) var(--space-12);
         }
 
         .variable-key-input,
@@ -885,11 +931,14 @@
 
         /* --- READ MODE SUPPRESSIONS --- */
 
-        /* Hide block and variable add/delete */
         body.read-mode #add-block-row,
-        body.read-mode .variable-add-row,
-        body.read-mode .variable-row .btn-danger-ghost {
+        body.read-mode #variable-add-row {
             display: none;
+        }
+
+        body.read-mode .variable-drag-handle,
+        body.read-mode .variable-row .btn-danger-ghost {
+            display: none !important;
         }
 
         /* Hide drag and delete button on blocks */
@@ -926,10 +975,18 @@
             outline: none;
         }
 
-        body.read-mode .variable-key-input,
+        body.read-mode .variable-key-input {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
         body.read-mode #collapse-all-btn {
             pointer-events: none;
             opacity: 0.5;
+        }
+
+        body.read-mode .variable-row {
+            grid-template-columns: 1fr;
         }
 
         /* Note links become always clickable */
@@ -995,7 +1052,7 @@
         <!-- Sidebar -->
         <aside class="app-sidebar">
             <p class="section-title sidebar-title no-user-select">VARIABLES</p>
-            <div class="variables-list" id="variables-list"></div>
+            <div id="variables-list"></div>
         </aside>
 
         <!-- Main panel -->
@@ -1109,6 +1166,8 @@
             HAS_UNRESOLVED: 'has-unresolved',
             CTRL_HELD: 'ctrl-held',
             READ_MODE: 'read-mode',
+            VARIABLE_DRAGGING: 'variable-dragging',
+            VARIABLE_DRAG_OVER: 'variable-drag-over',
         });
 
         const EventType = Object.freeze({
@@ -1135,6 +1194,10 @@
             DEFAULT: '',
         });
 
+        const DataAttr = Object.freeze({
+            VARIABLE_ID: 'variableId',
+        });
+
         const Selector = Object.freeze({
             APP_SHELL: '.app-shell',
             BLOCK_ITEM: '.block-item',
@@ -1143,6 +1206,8 @@
             NOTE_AUTO_WIDTH: '.note-auto-width',
             NOTE_PREVIEW: '.note-preview',
             COMMAND_TEXTAREA: '.command-textarea',
+            VARIABLE_ROW: '.variable-row',
+            VARIABLE_DRAG_HANDLE: '.variable-drag-handle',
         });
 
         const Anchor = Object.freeze({
@@ -1255,11 +1320,40 @@
         //  Variable resolution
 
         function getVariableMap() {
-            const map = {};
+            const rawMap = {};
             for (const variable of state.variables) {
-                if (variable.key.trim()) map[variable.key.trim()] = variable.value;
+                if (!variable.key.trim()) {
+                    continue;
+                }
+
+                rawMap[variable.key.trim()] = variable.value;
             }
-            return map;
+
+            const resolvedMap = {};
+
+            function resolveValue(key, visitedKeys = new Set()) {
+                if (key in resolvedMap) {
+                    return resolvedMap[key];
+                }
+                if (visitedKeys.has(key)) {
+                    return `{${key}}`;
+                }
+
+                visitedKeys.add(key);
+                const raw = rawMap[key] ?? '';
+                const resolved = raw.replace(/\{([^}]+)\}/g, (match, refKey) => {
+                    return refKey in rawMap ? resolveValue(refKey, new Set(visitedKeys)) : match;
+                });
+
+                resolvedMap[key] = resolved;
+                return resolved;
+            }
+
+            for (const key of Object.keys(rawMap)) {
+                resolveValue(key);
+            }
+
+            return resolvedMap;
         }
 
         function resolveCommandText(rawText) {
@@ -1401,6 +1495,42 @@
                 return;
             }
 
+            if (field === VariableField.KEY) {
+                const oldKey = variable.key.trim();
+                const newKey = value.trim();
+
+                if (oldKey && newKey && oldKey !== newKey) {
+                    const oldToken = `{${oldKey}}`;
+                    const newToken = `{${newKey}}`;
+
+                    // Rename references inside blocks
+                    for (const block of state.blocks) {
+                        if (block.type === BlockType.COMMAND && block.text.includes(oldToken)) {
+                            block.text = block.text.split(oldToken).join(newToken);
+                        }
+                    }
+
+                    // Rename references inside variables
+                    for (const otherVariable of state.variables) {
+                        if (otherVariable.id !== variableId && otherVariable.value.includes(oldToken)) {
+                            otherVariable.value = otherVariable.value.split(oldToken).join(newToken);
+
+                            // Keep that variable's value input in sync
+                            const otherRow = document.querySelector(
+                                `${Selector.VARIABLE_ROW}[data-variable-id="${otherVariable.id}"]`);
+
+                            const otherValueInput = otherRow?.querySelector('.variable-value-input');
+                            if (otherValueInput) {
+                                otherValueInput.value = otherVariable.value;
+                                otherValueInput.title = otherVariable.value;
+                            }
+                        }
+                    }
+
+                    renderBlocksList();
+                }
+            }
+
             variable[field] = value;
             saveState();
             refreshAllPreviews();
@@ -1412,7 +1542,7 @@
 
             if (state.variables.length === 0) {
                 const emptyMsg = document.createElement('p');
-                emptyMsg.className = 'no-user-select'
+                emptyMsg.className = 'no-user-select';
                 emptyMsg.style.cssText =
                     'font-size:var(--text-md); font-family:var(--font-mono); color:var(--color-text-muted); padding: var(--space-2) 0;';
                 emptyMsg.textContent = 'No variables defined.';
@@ -1424,26 +1554,31 @@
                     row.dataset.variableId = variable.id;
 
                     row.innerHTML = `
-            <input
-              class="variable-key-input"
-              type="text"
-              placeholder="key"
-              value="${escapeHtml(variable.key)}"
-              spellcheck="false"
-              autocomplete="off"
-              oninput="updateVariable('${variable.id}', '${VariableField.KEY}', this.value)"
-              title="${escapeHtml(variable.key)}"
-            />
-            <input
-              class="variable-value-input"
-              type="text"
-              placeholder="value"
-              value="${escapeHtml(variable.value)}"
-              spellcheck="false"
-              autocomplete="off"
-              oninput="updateVariable('${variable.id}', '${VariableField.VALUE}', this.value)"
-              title="${escapeHtml(variable.value)}"
-            />
+            <div class="variable-drag-handle" title="Drag to reorder">
+              <svg viewBox="0 0 16 16"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
+            </div>
+            <div class="variable-inputs">
+              <input
+                class="variable-key-input"
+                type="text"
+                placeholder="key"
+                value="${escapeHtml(variable.key)}"
+                spellcheck="false"
+                autocomplete="off"
+                oninput="updateVariable('${variable.id}', '${VariableField.KEY}', this.value)"
+                title="${escapeHtml(variable.key)}"
+              />
+              <input
+                class="variable-value-input"
+                type="text"
+                placeholder="value"
+                value="${escapeHtml(variable.value)}"
+                spellcheck="false"
+                autocomplete="off"
+                oninput="updateVariable('${variable.id}', '${VariableField.VALUE}', this.value)"
+                title="${escapeHtml(variable.value)}"
+              />
+            </div>
             <button
               class="btn btn-icon btn-danger-ghost"
               onclick="removeVariable('${variable.id}')"
@@ -1454,19 +1589,74 @@
               </svg>
             </button>
           `;
+                    // Drag-and-drop
+                    const handle = row.querySelector(Selector.VARIABLE_DRAG_HANDLE);
+
+                    handle.addEventListener(EventType.MOUSE_DOWN, () => {
+                        row.draggable = true;
+                    });
+
+                    handle.addEventListener(EventType.MOUSE_UP, () => {
+                        setTimeout(() => {
+                            row.draggable = false;
+                        }, 50);
+                    });
+
+                    row.addEventListener(EventType.DRAG_START, event => {
+                        dragSourceVariableId = row.dataset.variableId;
+                        event.dataTransfer.effectAllowed = DragEffect.MOVE;
+                        row.classList.add(CssClass.VARIABLE_DRAGGING);
+                    });
+
+                    row.addEventListener(EventType.DRAG_OVER, event => {
+                        event.preventDefault();
+                        if (row.dataset.variableId === dragSourceVariableId) {
+                            return;
+                        }
+
+                        container.querySelectorAll(Selector.VARIABLE_ROW)
+                            .forEach(el => el.classList.remove(CssClass.VARIABLE_DRAG_OVER));
+
+                        row.classList.add(CssClass.VARIABLE_DRAG_OVER);
+                    });
+
+                    row.addEventListener(EventType.DROP, event => {
+                        event.preventDefault();
+                        if (isReadMode()) {
+                            return;
+                        }
+
+                        const targetId = row.dataset.variableId;
+                        if (!dragSourceVariableId || dragSourceVariableId === targetId) {
+                            return;
+                        }
+
+                        const sourceIndex = state.variables.findIndex(v => v.id === dragSourceVariableId);
+                        const targetIndex = state.variables.findIndex(v => v.id === targetId);
+                        if (sourceIndex < 0 || targetIndex < 0) {
+                            return;
+                        }
+
+                        const [removed] = state.variables.splice(sourceIndex, 1);
+                        state.variables.splice(targetIndex, 0, removed);
+
+                        saveState();
+                        renderVariablesList();
+                    });
+
                     container.appendChild(row);
                 }
             }
 
             // Inline add button at the bottom
             const addRow = document.createElement('div');
-            addRow.className = 'variable-add-row';
+            addRow.id = 'variable-add-row';
             addRow.innerHTML = `
         <button class="btn" onclick="addVariable()">
           <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M8 3v10M3 8h10"/>
           </svg>
-          Add variable
+          New
         </button>
       `;
             container.appendChild(addRow);
@@ -1657,6 +1847,10 @@
         function autoResizeTextarea(textarea) {
             textarea.style.height = 'auto';
             textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        function autoResizeAllTextarea() {
+            document.querySelectorAll('textarea').forEach(autoResizeTextarea);
         }
 
         function syncNoteWidth(textarea) {
@@ -1910,6 +2104,7 @@
         //  Drag and drop reordering
 
         let dragSourceId = null;
+        let dragSourceVariableId = null;
 
         function setupDragAndDrop() {
             const container = document.getElementById(ElementId.BLOCKS_LIST);
@@ -1919,13 +2114,6 @@
                     dragSourceId = blockElement.dataset.blockId;
                     blockElement.classList.add(CssClass.DRAGGING);
                     event.dataTransfer.effectAllowed = DragEffect.MOVE;
-                });
-
-                blockElement.addEventListener(EventType.DRAG_END, () => {
-                    blockElement.classList.remove(CssClass.DRAGGING);
-                    container.querySelectorAll(Selector.BLOCK_ITEM).forEach(el => el.classList.remove(
-                        CssClass.DRAG_OVER));
-                    dragSourceId = null;
                 });
 
                 blockElement.addEventListener(EventType.DRAG_OVER, event => {
@@ -2045,19 +2233,31 @@
 
             saveState();
             renderBlocksList();
+            autoResizeAllTextarea();
         }
 
         //  Bootstrap
+
+        function setupGlobalDragCleanup() {
+            document.addEventListener(EventType.DRAG_END, () => {
+                document.querySelectorAll(Selector.BLOCK_ITEM)
+                    .forEach(el => el.classList.remove(CssClass.DRAG_OVER, CssClass.DRAGGING));
+
+                document.querySelectorAll(Selector.VARIABLE_ROW)
+                    .forEach(el => el.classList.remove(CssClass.VARIABLE_DRAG_OVER, CssClass
+                        .VARIABLE_DRAGGING));
+            });
+        }
 
         function init() {
             loadState();
             renderVariablesList();
             renderBlocksList();
             updateEmptyState();
+            setupGlobalDragCleanup();
 
             setTimeout(() => {
-                // Auto-resize all textareas
-                document.querySelectorAll('textarea').forEach(autoResizeTextarea);
+                autoResizeAllTextarea();
                 document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(textarea => syncNoteWidth(textarea));
                 refreshAllPreviews();
 

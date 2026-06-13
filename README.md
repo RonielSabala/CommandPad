@@ -67,7 +67,7 @@ Use **Live Server: Stop Live Server** to stop.
 
 Variables are defined in the left sidebar. Each variable has a **name** and a **value**.
 
-- Click **Add variable** to create a new one.
+- Click **New** to create a new one.
 - Names are case-sensitive.
 - Delete a variable with the `x` button on its row.
 - Variables with empty names are ignored.
