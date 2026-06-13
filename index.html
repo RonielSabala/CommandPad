@@ -1224,8 +1224,10 @@
             IMPORT_FILE_INPUT: 'import-file-input',
         });
 
-        const ExportConfig = Object.freeze({
-            FILENAME: 'commandpad-export.json',
+        const FilePickerConfig = Object.freeze({
+            SUGGESTED_NAME: 'commandpad-export.json',
+            DESCRIPTION: 'CommandPad JSON',
+            EXTENSION: '.json',
             MIME_TYPE: 'application/json',
         });
 
@@ -2156,15 +2158,41 @@
 
         //  Export / Import
 
-        function exportToFile() {
+        async function exportToFile() {
             const exportData = JSON.stringify(state, null, 2);
+
+            if (window.showSaveFilePicker) {
+                try {
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName: FilePickerConfig.SUGGESTED_NAME,
+                        types: [{
+                            description: FilePickerConfig.DESCRIPTION,
+                            accept: {
+                                [FilePickerConfig.MIME_TYPE]: [FilePickerConfig.EXTENSION]
+                            },
+                        }],
+                    });
+
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(exportData);
+                    await writable.close();
+                    return;
+                } catch (error) {
+                    // User cancelled or browser rejected
+                    if (error.name === 'AbortError') {
+                        return;
+                    }
+                }
+            }
+
+            // Legacy fallback
             const blob = new Blob([exportData], {
-                type: ExportConfig.MIME_TYPE
+                type: FilePickerConfig.MIME_TYPE
             });
             const url = URL.createObjectURL(blob);
             const anchor = document.createElement('a');
             anchor.href = url;
-            anchor.download = ExportConfig.FILENAME;
+            anchor.download = FilePickerConfig.SUGGESTED_NAME;
             anchor.click();
             URL.revokeObjectURL(url);
         }
