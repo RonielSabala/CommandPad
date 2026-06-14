@@ -445,15 +445,18 @@
         body.ctrl-held:not(.read-mode) .block-drag-handle,
         body.ctrl-held:not(.read-mode) .note-style-row,
         body.ctrl-held:not(.read-mode) .command-preview .btn {
-            opacity: 0 !important;
-            pointer-events: none !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        body.ctrl-held:not(.read-mode) * {
+            user-select: none !important;
         }
 
         body.ctrl-held:not(.read-mode) .note-textarea,
         body.ctrl-held:not(.read-mode) .command-textarea,
         body.ctrl-held:not(.read-mode) .command-preview-text {
             pointer-events: none;
-            user-select: none;
             cursor: default;
         }
 
