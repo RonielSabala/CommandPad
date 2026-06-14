@@ -39,6 +39,7 @@
             --code-color: #ff9800;
             --code-bg: rgba(255, 152, 0, 0.08);
             --code-border: rgba(255, 152, 0, 0.2);
+            --selection-color: #0338a2;
 
             /* Space scale */
             --space-1: 0.125rem;
@@ -78,6 +79,7 @@
 
             /* Compound tokens */
             --border-standard: 1px solid var(--color-border);
+            --border-dashed: var(--space-1) dashed var(--accent);
             --transition-fast: 0.15s;
             --transition-base: 0.2s;
         }
@@ -249,7 +251,7 @@
         }
 
         .variable-row.variable-drag-over .variable-inputs {
-            outline: 1px dashed var(--accent);
+            outline: var(--border-dashed);
             border-radius: var(--radius-sm);
         }
 
@@ -415,7 +417,7 @@
         }
 
         .block-item.drag-over {
-            outline: 1px dashed var(--accent);
+            outline: var(--border-dashed);
             border-radius: var(--radius-md);
         }
 
@@ -435,6 +437,36 @@
 
         .block-item.duplicate-flash {
             animation: duplicate-flash 0.5s ease-out forwards;
+        }
+
+        /* --- CTRL-HELD SUPPRESSIONS --- */
+
+        body.ctrl-held:not(.read-mode) .block-controls,
+        body.ctrl-held:not(.read-mode) .block-drag-handle,
+        body.ctrl-held:not(.read-mode) .note-style-row,
+        body.ctrl-held:not(.read-mode) .command-preview .btn {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        body.ctrl-held:not(.read-mode) .note-textarea,
+        body.ctrl-held:not(.read-mode) .command-textarea,
+        body.ctrl-held:not(.read-mode) .command-preview-text {
+            pointer-events: none;
+            user-select: none;
+            cursor: default;
+        }
+
+        body.ctrl-held:not(.read-mode) .block-item:hover:not(.block-selected) {
+            outline: var(--border-dashed);
+            border-radius: var(--radius-lg);
+        }
+
+        .block-selected .command-block,
+        .block-selected .note-block,
+        .block-selected .divider-block {
+            user-select: none;
+            outline: var(--space-1) solid var(--accent);
         }
 
         /* --- COMMAND BLOCK --- */
@@ -538,7 +570,6 @@
             gap: var(--space-2);
             background: transparent;
             border: none;
-            cursor: pointer;
             color: var(--color-text-muted);
             font-family: var(--font-mono);
             font-size: var(--text-xs);
@@ -570,6 +601,7 @@
         .note-block {
             display: inline-grid;
             min-width: var(--block-min-width);
+            border-radius: var(--radius-lg);
         }
 
         .note-auto-width {
@@ -603,8 +635,13 @@
             width: auto;
         }
 
-        .note-textarea::selection {
-            background-color: rgb(3, 56, 162);
+        .note-textarea::selection,
+        .block-item.block-selected .note-textarea::selection {
+            background: transparent;
+        }
+
+        body:not(.ctrl-held) .note-textarea::selection {
+            background-color: var(--selection-color);
         }
 
         .note-textarea::placeholder {
@@ -691,7 +728,7 @@
 
         /* Link activation */
 
-        body.ctrl-held .note-preview a.note-link {
+        body.alt-held a.note-link {
             pointer-events: auto;
         }
 
@@ -740,7 +777,6 @@
             font-size: var(--text-sm);
             font-family: var(--font-mono);
             color: var(--color-text-muted);
-            cursor: pointer;
             transition: all var(--transition-fast);
         }
 
@@ -763,6 +799,7 @@
             gap: var(--space-6);
             padding: var(--space-4) 0;
             min-width: var(--block-min-width);
+            border-radius: var(--radius-md);
         }
 
         .divider-line {
@@ -850,6 +887,12 @@
         .btn-lg svg {
             width: var(--icon-base);
             height: var(--icon-base);
+        }
+
+        .btn-disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            cursor: default;
         }
 
         #import-file-input {
@@ -976,21 +1019,17 @@
             outline: none;
         }
 
-        body.read-mode .variable-key-input {
-            pointer-events: none;
-            opacity: 0.6;
-        }
-
+        body.read-mode .variable-key-input,
         body.read-mode #collapse-all-btn {
-            pointer-events: none;
             opacity: 0.5;
+            pointer-events: none;
         }
 
         body.read-mode .variable-row {
             grid-template-columns: 1fr;
         }
 
-        /* Note links become always clickable */
+        /* Note links become clickable */
         body.read-mode .note-preview a.note-link {
             pointer-events: auto;
             cursor: pointer;
@@ -1027,20 +1066,20 @@
             <div class="header-spacer"></div>
 
             <div class="header-actions">
-                <button class="btn btn-lg" onclick="exportToFile()">
+                <button id="export-btn" class="btn btn-lg" onclick="exportToFile()" title="Export content">
                     <svg viewBox="0 0 16 16">
                         <path d="M8 2v8M5 7l3 3 3-3M3 11v2h10v-2" />
                     </svg>
                     Export
                 </button>
-                <button class="btn btn-lg btn-primary" onclick="openImportDialog()">
+                <button class="btn btn-lg btn-primary" onclick="openImportDialog()" title="Import content">
                     <svg viewBox="0 0 16 16">
                         <path d="M8 11V3M5 6l3-3 3 3M3 11v2h10v-2" />
                     </svg>
                     Import
                 </button>
                 <div class="header-separator"></div>
-                <button class="btn btn-lg btn-danger-ghost" onclick="clearAllData()"
+                <button id="clear-btn" class="btn btn-lg btn-danger-ghost" onclick="clearAllData()"
                     title="Clear all variables and blocks">
                     <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"
                         stroke-linecap="round" stroke-linejoin="round" style="display:block">
@@ -1117,27 +1156,33 @@
             READ: 'read',
         });
 
+        const LassoMode = Object.freeze({
+            SELECT: 'select',
+            DESELECT: 'deselect',
+        });
+
         const SidebarState = Object.freeze({
-            COLLAPSED: 'collapsed',
             EXPANDED: 'expanded',
+            COLLAPSED: 'collapsed',
         });
 
         const BlockType = Object.freeze({
-            COMMAND: 'command',
             NOTE: 'note',
+            COMMAND: 'command',
             DIVIDER: 'divider',
         });
 
         const NoteStyle = Object.freeze({
-            HEADING: 'heading',
-            SUBHEADING: 'subheading',
             BODY: 'body',
+            SUBHEADING: 'subheading',
+            HEADING: 'heading',
         });
 
         const MarkdownToken = Object.freeze({
+            CODE_REGEX: /[`´](.+?)[`´]/g,
             BOLD_REGEX: /\*\*(.+?)\*\*/g,
             ITALIC_REGEX: /(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)|_(.+?)_/g,
-            CODE_REGEX: /[`´](.+?)[`´]/g,
+            URL_REGEX: /(https?:\/\/[^\s<>"{}|\\^`\[\]]*[^\s<>"{}|\\^`\[\].,;:!?()\-])/g,
         });
 
         const SegmentType = Object.freeze({
@@ -1166,35 +1211,44 @@
             IS_FOCUSED: 'is-focused',
             HAS_UNRESOLVED: 'has-unresolved',
             CTRL_HELD: 'ctrl-held',
+            ALT_HELD: 'alt-held',
             READ_MODE: 'read-mode',
             VARIABLE_DRAGGING: 'variable-dragging',
             VARIABLE_DRAG_OVER: 'variable-drag-over',
             DUPLICATE_FLASH: 'duplicate-flash',
+            BLOCK_SELECTED: 'block-selected',
+            SELECTING: 'selecting',
+            BTN_DISABLED: 'btn-disabled',
+            BLOCK_CONTROLS: 'block-controls',
+            BLOCK_DRAG_HANDLE: 'block-drag-handle',
         });
 
         const EventType = Object.freeze({
             ANIMATION_END: 'animationend',
-            DROP: 'drop',
-            KEY_UP: 'keyup',
-            KEY_DOWN: 'keydown',
             CLICK: 'click',
-            MOUSE_UP: 'mouseup',
-            MOUSE_DOWN: 'mousedown',
-            MOUSE_MOVE: 'mousemove',
+            DROP: 'drop',
             DRAG_END: 'dragend',
             DRAG_OVER: 'dragover',
             DRAG_START: 'dragstart',
+            KEY_UP: 'keyup',
+            KEY_DOWN: 'keydown',
+            MOUSE_UP: 'mouseup',
+            MOUSE_DOWN: 'mousedown',
+            MOUSE_ENTER: 'mouseenter',
+            MOUSE_MOVE: 'mousemove',
             SCROLL: 'scroll',
         });
 
         const Key = Object.freeze({
-            CONTROL: 'Control',
-            META: 'Meta',
+            ALT: 'Alt',
+            CTRL: 'Control',
+            ESCAPE: 'Escape',
+            E: 'e',
         });
 
         const Cursor = Object.freeze({
-            POINTER: 'pointer',
             DEFAULT: '',
+            POINTER: 'pointer',
         });
 
         const DataAttr = Object.freeze({
@@ -1211,6 +1265,9 @@
             COMMAND_TEXTAREA: '.command-textarea',
             VARIABLE_ROW: '.variable-row',
             VARIABLE_DRAG_HANDLE: '.variable-drag-handle',
+            BLOCK_SELECTED: '.block-item.block-selected',
+            COMMAND_BLOCK_EDITOR: '.command-block-editor',
+            TOGGLE_EDITOR_BTN: '.toggle-editor-btn',
         });
 
         const Anchor = Object.freeze({
@@ -1220,6 +1277,9 @@
 
         const ElementId = Object.freeze({
             MAIN_PANEL: 'main-panel',
+            COLLAPSE_ALL_BTN: 'collapse-all-btn',
+            EXPORT_BTN: 'export-btn',
+            CLEAR_BTN: 'clear-btn',
             SIDEBAR_TOGGLE_BTN: 'sidebar-toggle-btn',
             VARIABLES_LIST: 'variables-list',
             BLOCKS_LIST: 'blocks-list',
@@ -1237,10 +1297,6 @@
 
         const DragEffect = Object.freeze({
             MOVE: 'move',
-        });
-
-        const LinkifyConfig = Object.freeze({
-            URL_REGEX: /(https?:\/\/[^\s<>"{}|\\^`\[\]]*[^\s<>"{}|\\^`\[\].,;:!?()\-])/g,
         });
 
         // State
@@ -1281,7 +1337,12 @@
         }
 
         function toggleAppMode() {
-            setAppMode(isReadMode() ? AppMode.EDIT : AppMode.READ);
+            const readMode = isReadMode();
+            if (!readMode) {
+                clearBlockSelection();
+            }
+
+            setAppMode(readMode ? AppMode.EDIT : AppMode.READ);
         }
 
         //  Persistence
@@ -1451,7 +1512,7 @@
             );
 
             // Links
-            escaped = escaped.replace(LinkifyConfig.URL_REGEX, (url) =>
+            escaped = escaped.replace(MarkdownToken.URL_REGEX, (url) =>
                 `<a href="${url}" class="note-link" target="${Anchor.TARGET_BLANK}" rel="${Anchor.REL}">${url}</a>`
             );
 
@@ -1716,7 +1777,12 @@
                 return;
             }
 
-            state.blocks = state.blocks.filter(block => block.id !== blockId);
+            const idsToRemove = selectedBlockIds.size > 0 && selectedBlockIds.has(blockId) ?
+                new Set(selectedBlockIds) :
+                new Set([blockId]);
+
+            state.blocks = state.blocks.filter(block => !idsToRemove.has(block.id));
+            clearBlockSelection();
             saveState();
             renderBlocksList();
             updateEmptyState();
@@ -1727,34 +1793,43 @@
                 return;
             }
 
-            const sourceIndex = state.blocks.findIndex(block => block.id === blockId);
-            if (sourceIndex < 0) {
-                return;
-            }
+            const idsToDuplicate = selectedBlockIds.size > 0 && selectedBlockIds.has(blockId) ? [...selectedBlockIds]
+                .sort((a, b) =>
+                    state.blocks.findIndex(bl => bl.id === a) - state.blocks.findIndex(bl => bl.id === b)
+                ) : [blockId];
 
-            const sourceBlock = state.blocks[sourceIndex];
-            const duplicatedBlock = {
-                ...sourceBlock,
-                id: generateId()
-            };
+            // Find the insertion point
+            const lastId = idsToDuplicate[idsToDuplicate.length - 1];
+            const lastIndex = state.blocks.findIndex(block => block.id === lastId);
 
-            state.blocks.splice(sourceIndex + 1, 0, duplicatedBlock);
+            const duplicatedBlocks = idsToDuplicate.map(id => {
+                const source = state.blocks.find(block => block.id === id);
+                return source ? {
+                    ...source,
+                    id: generateId()
+                } : null;
+            }).filter(Boolean);
+
+            state.blocks.splice(lastIndex + 1, 0, ...duplicatedBlocks);
+
             saveState();
             renderBlocksList();
             updateEmptyState();
 
-            // Flash the duplicated block
+            // Flash all duplicated blocks
             requestAnimationFrame(() => {
-                const newBlockElement = getBlockFromId(duplicatedBlock.id);
-                if (!newBlockElement) {
-                    return;
-                }
+                duplicatedBlocks.forEach(block => {
+                    const element = getBlockFromId(block.id);
+                    if (!element) {
+                        return;
+                    }
 
-                newBlockElement.classList.add(CssClass.DUPLICATE_FLASH);
-                newBlockElement.addEventListener(EventType.ANIMATION_END, () => {
-                    newBlockElement.classList.remove(CssClass.DUPLICATE_FLASH);
-                }, {
-                    once: true
+                    element.classList.add(CssClass.DUPLICATE_FLASH);
+                    element.addEventListener(EventType.ANIMATION_END, () => {
+                        element.classList.remove(CssClass.DUPLICATE_FLASH);
+                    }, {
+                        once: true
+                    });
                 });
             });
         }
@@ -1912,6 +1987,7 @@
                 container.appendChild(blockElement);
             }
 
+            updateBlockSelectionVisuals();
             setupDragAndDrop();
         }
 
@@ -1931,7 +2007,7 @@
 
             // Left side: drag handle
             const dragHandleEl = document.createElement('div');
-            dragHandleEl.className = 'block-drag-handle';
+            dragHandleEl.className = CssClass.BLOCK_DRAG_HANDLE;
             dragHandleEl.innerHTML = `
       <div class="drag-handle" title="Drag to reorder">
         <svg viewBox="0 0 16 16" width="14" height="14"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
@@ -1941,7 +2017,7 @@
 
             // Right side: delete and duplicate
             const sideControls = document.createElement('div');
-            sideControls.className = 'block-controls';
+            sideControls.className = CssClass.BLOCK_CONTROLS;
             sideControls.innerHTML = `
       <button class="btn btn-icon" onclick="duplicateBlock('${block.id}')" title="Duplicate block">
         <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1960,15 +2036,41 @@
             dragHandle.addEventListener(EventType.MOUSE_DOWN, () => {
                 wrapper.draggable = true;
             });
+
             wrapper.addEventListener(EventType.DRAG_END, () => {
                 wrapper.draggable = false;
             });
+
             // Also reset if mouse is released off the element
             dragHandle.addEventListener(EventType.MOUSE_UP, () => {
-                // Will be reset by dragend; this is a safety net for non-drag clicks
                 setTimeout(() => {
                     wrapper.draggable = false;
                 }, 50);
+            });
+
+            wrapper.addEventListener(EventType.MOUSE_ENTER, event => {
+                if (!isLassoActive || isReadMode()) {
+                    return;
+                }
+
+                if (lassoMode === LassoMode.DESELECT) {
+                    selectedBlockIds.delete(block.id);
+                } else {
+                    selectedBlockIds.add(block.id);
+                }
+
+                updateBlockSelectionVisuals();
+                updateSelectingBodyClass();
+            });
+
+            wrapper.addEventListener(EventType.CLICK, event => {
+                if ((!event.ctrlKey && !event.metaKey) || isReadMode()) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+                toggleBlockSelection(block.id);
             });
 
             return wrapper;
@@ -2059,11 +2161,23 @@
 
         function updateEmptyState() {
             const emptyState = document.getElementById(ElementId.EMPTY_STATE);
-            if (!emptyState) {
-                return;
+            if (emptyState) {
+                emptyState.style.display = state.blocks.length === 0 ? 'block' : 'none';
             }
 
-            emptyState.style.display = state.blocks.length === 0 ? 'block' : 'none';
+            const isEmpty = state.blocks.length === 0;
+            if (isEmpty) {
+                clearBlockSelection();
+            }
+
+            // Disable header buttons
+            [ElementId.COLLAPSE_ALL_BTN, ElementId.EXPORT_BTN, ElementId.CLEAR_BTN].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.classList.toggle(CssClass.BTN_DISABLED, isEmpty);
+                }
+            });
+
         }
 
         //  Copy to clipboard
@@ -2150,6 +2264,74 @@
             if (textarea) autoResizeTextarea(textarea);
         }
 
+        // Multi select
+
+        let lassoMode = LassoMode.SELECT;
+        let isLassoActive = false;
+        let selectedBlockIds = new Set();
+
+        function isBlockSelected(blockId) {
+            return selectedBlockIds.has(blockId);
+        }
+
+        function toggleBlockSelection(blockId) {
+            if (selectedBlockIds.has(blockId)) {
+                selectedBlockIds.delete(blockId);
+            } else {
+                selectedBlockIds.add(blockId);
+            }
+
+            updateBlockSelectionVisuals();
+            updateSelectingBodyClass();
+        }
+
+        function clearBlockSelection() {
+            selectedBlockIds.clear();
+            updateBlockSelectionVisuals();
+            updateSelectingBodyClass();
+        }
+
+        function updateBlockSelectionVisuals() {
+            document.querySelectorAll(Selector.BLOCK_ITEM).forEach(el => {
+                el.classList.toggle(CssClass.BLOCK_SELECTED, selectedBlockIds.has(el.dataset.blockId));
+            });
+        }
+
+        function updateSelectingBodyClass() {
+            document.body.classList.toggle(CssClass.SELECTING, selectedBlockIds.size > 0);
+        }
+
+        function setupLassoSelection() {
+            document.addEventListener(EventType.MOUSE_DOWN, e => {
+                if (!(e.ctrlKey || e.metaKey) || e.button !== 0 || isReadMode()) {
+                    return;
+                }
+
+                const blockEl = e.target.closest(Selector.BLOCK_ITEM);
+                if (blockEl) {
+                    const blockId = blockEl.dataset.blockId;
+                    lassoMode = selectedBlockIds.has(blockId) ? LassoMode.DESELECT : LassoMode.SELECT;
+
+                    if (lassoMode === LassoMode.DESELECT) {
+                        selectedBlockIds.delete(blockId);
+                    } else {
+                        selectedBlockIds.add(blockId);
+                    }
+
+                    updateBlockSelectionVisuals();
+                    updateSelectingBodyClass();
+                } else {
+                    lassoMode = LassoMode.SELECT;
+                }
+
+                isLassoActive = true;
+            });
+
+            document.addEventListener(EventType.MOUSE_UP, () => {
+                isLassoActive = false;
+            });
+        }
+
         //  Drag and drop reordering
 
         let dragSourceId = null;
@@ -2186,19 +2368,36 @@
                         return;
                     }
 
-                    const sourceIndex = state.blocks.findIndex(block => block.id === dragSourceId);
-                    const targetIndex = state.blocks.findIndex(block => block.id === targetId);
+                    // Move all selected blocks
+                    const movingIds = selectedBlockIds.size > 0 && selectedBlockIds.has(dragSourceId) ?
+                        [...selectedBlockIds] : [dragSourceId];
 
+                    // Capture source and target indices BEFORE any mutation
+                    const targetIndex = state.blocks.findIndex(block => block.id === targetId);
+                    const sourceIndex = state.blocks.findIndex(block => block.id === dragSourceId);
                     if (sourceIndex < 0 || targetIndex < 0) {
                         return;
                     }
 
-                    const [removed] = state.blocks.splice(sourceIndex, 1);
-                    state.blocks.splice(targetIndex, 0, removed);
+                    const movingBlocks = movingIds
+                        .map(id => state.blocks.find(block => block.id === id))
+                        .filter(Boolean)
+                        .sort((a, b) => state.blocks.indexOf(a) - state.blocks.indexOf(b));
+
+                    // Remove moving blocks
+                    state.blocks = state.blocks.filter(block => !movingIds.includes(block.id));
+
+                    // Recalculate target index after removal
+                    const newTargetIndex = state.blocks.findIndex(block => block.id === targetId);
+                    const insertIndex = sourceIndex < targetIndex ? newTargetIndex + 1 : newTargetIndex;
+
+                    // Insert all at the new position
+                    state.blocks.splice(insertIndex, 0, ...movingBlocks);
 
                     saveState();
                     renderBlocksList();
                     updateEmptyState();
+                    updateBlockSelectionVisuals();
                 });
             });
         }
@@ -2329,6 +2528,7 @@
             renderVariablesList();
             renderBlocksList();
             updateEmptyState();
+            setupLassoSelection();
             setupGlobalDragCleanup();
 
             setTimeout(() => {
@@ -2355,56 +2555,98 @@
             scrollSaveTimer = setTimeout(saveState, SAVE_TIMEOUT_MS);
         });
 
-        // Ctrl+click to open note links
+        // Click handlers
 
         let mouseX = 0;
         let mouseY = 0;
 
+        function updateCursorOnLink() {
+            const isCursorOverLink = document.elementsFromPoint(mouseX, mouseY)
+                .some(el => el.matches(Selector.NOTE_LINK));
+
+            document.body.style.cursor = isCursorOverLink ? Cursor.POINTER : Cursor.DEFAULT;
+        }
+
+        function removeAltHeldClass() {
+            document.body.classList.remove(CssClass.ALT_HELD);
+            document.body.style.cursor = Cursor.DEFAULT;
+        }
+
         document.addEventListener(EventType.MOUSE_MOVE, e => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            updateCtrlCursor();
+
+            if (e.altKey) {
+                updateCursorOnLink();
+            }
         });
 
         document.addEventListener(EventType.KEY_DOWN, e => {
-            if (e.key === Key.CONTROL || e.key === Key.META) {
+            if (e.ctrlKey) {
+                // Toggle edit/read mode
+                if (e.key === Key.E) {
+                    e.preventDefault();
+                    toggleAppMode();
+                    return;
+                }
+
                 document.body.classList.add(CssClass.CTRL_HELD);
-                updateCtrlCursor();
+                return;
+            }
+
+            if (e.altKey) {
+                e.preventDefault();
+                document.body.classList.add(CssClass.ALT_HELD);
+                updateCursorOnLink();
             }
         });
 
         document.addEventListener(EventType.KEY_UP, e => {
-            if (e.key === Key.CONTROL || e.key === Key.META) {
+            if (e.key === Key.CTRL) {
                 document.body.classList.remove(CssClass.CTRL_HELD);
-                document.body.style.cursor = Cursor.DEFAULT;
+                return;
+            }
+
+            if (e.key === Key.ALT) {
+                removeAltHeldClass();
+                return;
+            }
+
+            if (e.key === Key.ESCAPE) {
+                document.activeElement?.blur();
+                clearBlockSelection();
             }
         });
 
         document.addEventListener(EventType.CLICK, e => {
-            if (!e.ctrlKey && !e.metaKey) {
+            // Open note links
+            if (e.altKey) {
+                const noteLink = document.elementsFromPoint(e.clientX, e.clientY)
+                    .find(el => el.matches(Selector.NOTE_LINK));
+
+                if (!noteLink) {
+                    return;
+                }
+
+                e.preventDefault();
+                removeAltHeldClass();
+                window.open(noteLink.href, Anchor.TARGET_BLANK, Anchor.REL);
                 return;
             }
 
-            const link = document.elementsFromPoint(e.clientX, e.clientY)
-                .find(el => el.matches(Selector.NOTE_LINK));
+            if (e.ctrlKey || e.metaKey) {
+                return;
+            }
 
-            if (link) {
-                e.preventDefault();
-                window.open(link.href, Anchor.TARGET_BLANK, Anchor.REL);
+            // Clear selection unless on block controls
+
+            const isBlockControl = e.target.closest(
+                `.${CssClass.BLOCK_CONTROLS}, .${CssClass.BLOCK_DRAG_HANDLE}`);
+
+            if (!isBlockControl && selectedBlockIds.size > 0) {
+                clearBlockSelection();
             }
         });
-
-        function updateCtrlCursor() {
-            if (!document.body.classList.contains(CssClass.CTRL_HELD)) {
-                document.body.style.cursor = Cursor.DEFAULT;
-                return;
-            }
-
-            const overLink = document.elementsFromPoint(mouseX, mouseY)
-                .some(el => el.matches(Selector.NOTE_LINK));
-
-            document.body.style.cursor = overLink ? Cursor.POINTER : Cursor.DEFAULT;
-        }
 
         init();
     </script>

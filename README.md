@@ -109,7 +109,7 @@ A free-form text. It supports three styles selectable on hover:
 | `subheading` | Medium, accented color     |
 | `body`       | Default, secondary color   |
 
-URLs are automatically detected and rendered as links. Hold `Ctrl` and click a link to open it.
+URLs are automatically detected and rendered as links. Hold `Alt` and click a link to open it.
 
 Note blocks auto-expand horizontally and vertically as you type.
 
