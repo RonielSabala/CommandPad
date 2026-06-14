@@ -2032,19 +2032,35 @@
             wrapper.appendChild(sideControls);
 
             // Enable dragging ONLY when mousedown fires on the drag handle
+            let dragInitiatedFromHandle = false;
+
             const dragHandle = dragHandleEl.querySelector('.drag-handle');
+
             dragHandle.addEventListener(EventType.MOUSE_DOWN, () => {
+                dragInitiatedFromHandle = true;
                 wrapper.draggable = true;
+            });
+
+            wrapper.addEventListener(EventType.DRAG_START, event => {
+                if (dragInitiatedFromHandle) {
+                    dragInitiatedFromHandle = false;
+                    return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+                wrapper.draggable = false;
             });
 
             wrapper.addEventListener(EventType.DRAG_END, () => {
                 wrapper.draggable = false;
+                dragInitiatedFromHandle = false;
             });
 
-            // Also reset if mouse is released off the element
             dragHandle.addEventListener(EventType.MOUSE_UP, () => {
                 setTimeout(() => {
                     wrapper.draggable = false;
+                    dragInitiatedFromHandle = false;
                 }, 50);
             });
 
@@ -2061,16 +2077,6 @@
 
                 updateBlockSelectionVisuals();
                 updateSelectingBodyClass();
-            });
-
-            wrapper.addEventListener(EventType.CLICK, event => {
-                if ((!event.ctrlKey && !event.metaKey) || isReadMode()) {
-                    return;
-                }
-
-                event.preventDefault();
-                event.stopPropagation();
-                toggleBlockSelection(block.id);
             });
 
             return wrapper;
