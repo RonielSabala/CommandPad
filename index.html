@@ -1760,6 +1760,7 @@
             saveState();
             renderBlocksList();
             updateEmptyState();
+            autoResizeAllTextarea();
 
             // Focus the text area of the new block
             const allBlockElements = document.querySelectorAll(Selector.BLOCK_ITEM);
@@ -1780,10 +1781,12 @@
                 new Set([blockId]);
 
             state.blocks = state.blocks.filter(block => !idsToRemove.has(block.id));
+
             clearBlockSelection();
             saveState();
             renderBlocksList();
             updateEmptyState();
+            autoResizeAllTextarea();
         }
 
         function duplicateBlock(blockId) {
@@ -1813,6 +1816,7 @@
             saveState();
             renderBlocksList();
             updateEmptyState();
+            autoResizeAllTextarea();
 
             // Flash all duplicated blocks
             requestAnimationFrame(() => {
@@ -2403,6 +2407,7 @@
                     saveState();
                     renderBlocksList();
                     updateEmptyState();
+                    autoResizeAllTextarea();
                     updateBlockSelectionVisuals();
                 });
             });
