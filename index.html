@@ -35,6 +35,12 @@
             --color-text-secondary: #8b8d98;
             --color-text-muted: #3f4150;
 
+            /* Note text styles */
+            --code-color: #ff9800;
+            --code-bg: rgba(255, 152, 0, 0.08);
+            --code-border: rgba(255, 152, 0, 0.2);
+            --selection-color: #0338a2;
+
             /* Space scale */
             --space-1: 0.125rem;
             --space-2: 0.25rem;
@@ -73,6 +79,7 @@
 
             /* Compound tokens */
             --border-standard: 1px solid var(--color-border);
+            --border-dashed: var(--space-1) dashed var(--accent);
             --transition-fast: 0.15s;
             --transition-base: 0.2s;
         }
@@ -204,26 +211,47 @@
         }
 
         .sidebar-title {
-            padding: var(--space-6);
+            padding: var(--space-6) var(--space-6) 0 var(--space-6);
         }
 
-        .variables-list {
+        #variables-list {
             flex: 1;
             overflow-y: auto;
-            padding: 0 var(--space-6) var(--space-6);
+            padding: var(--space-6) var(--space-4);
+        }
+
+        .variable-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-3);
+        }
+
+        .variable-inputs.drag-over {
+            border-radius: var(--radius-sm);
         }
 
         .variable-row {
             display: grid;
-            grid-template-columns: 1fr 1fr auto;
+            grid-template-columns: auto 1fr auto;
             gap: var(--space-3);
             align-items: center;
             margin-bottom: var(--space-3);
             position: relative;
         }
 
-        .variable-add-row {
-            padding: var(--space-2) 0 var(--space-1);
+        .variable-drag-handle,
+        .variable-row .btn-danger-ghost {
+            opacity: 0;
+            transition: opacity var(--transition-fast), color var(--transition-fast);
+        }
+
+        .variable-row:hover .variable-drag-handle,
+        .variable-row:hover .btn-danger-ghost {
+            opacity: 1;
+        }
+
+        #variable-add-row {
+            padding: var(--space-3) var(--space-12);
         }
 
         .variable-key-input,
@@ -361,7 +389,7 @@
             top: 50%;
             transform: translateX(100%) translateY(-50%);
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: var(--space-2);
             opacity: 0;
             transition: opacity var(--transition-base);
@@ -379,13 +407,64 @@
             transition: opacity var(--transition-base);
         }
 
-        .block-item.dragging {
+        .dragging {
             opacity: 0.5;
         }
 
-        .block-item.drag-over {
-            outline: 1px dashed var(--accent);
+        .drag-over {
+            outline: var(--border-dashed);
             border-radius: var(--radius-md);
+        }
+
+        /* Duplicate flash */
+
+        @keyframes duplicate-flash {
+            0% {
+                outline: var(--space-1) solid var(--accent);
+                outline-offset: var(--space-2);
+            }
+
+            100% {
+                outline: var(--space-3) solid transparent;
+                outline-offset: var(--space-2);
+            }
+        }
+
+        .block-item.duplicate-flash {
+            animation: duplicate-flash 0.5s ease-out forwards;
+        }
+
+        /* --- CTRL-HELD SUPPRESSIONS --- */
+
+        body.ctrl-held:not(.read-mode) .block-controls,
+        body.ctrl-held:not(.read-mode) .block-drag-handle,
+        body.ctrl-held:not(.read-mode) .note-style-row,
+        body.ctrl-held:not(.read-mode) .command-preview .btn {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        body.ctrl-held:not(.read-mode) * {
+            user-select: none !important;
+        }
+
+        body.ctrl-held:not(.read-mode) .note-textarea,
+        body.ctrl-held:not(.read-mode) .command-textarea,
+        body.ctrl-held:not(.read-mode) .command-preview-text {
+            pointer-events: none;
+            cursor: default;
+        }
+
+        body.ctrl-held:not(.read-mode) .block-item:hover:not(.block-selected) {
+            outline: var(--border-dashed);
+            border-radius: var(--radius-lg);
+        }
+
+        .block-selected .command-block,
+        .block-selected .note-block,
+        .block-selected .divider-block {
+            user-select: none;
+            outline: var(--space-1) solid var(--accent);
         }
 
         /* --- COMMAND BLOCK --- */
@@ -401,7 +480,7 @@
 
         .command-block-editor {
             display: flex;
-            align-items: flex-start;
+            align-items: stretch;
             border-top: var(--border-standard);
             width: 100%;
             min-width: 0;
@@ -420,6 +499,8 @@
             user-select: none;
             flex-shrink: 0;
             border-right: var(--border-standard);
+            display: flex;
+            align-items: flex-start;
         }
 
         .command-gutter-prefix {
@@ -447,7 +528,6 @@
             padding: var(--space-4) var(--space-6);
             display: flex;
             align-items: center;
-            justify-content: space-between;
             gap: var(--space-6);
             background: var(--color-bg);
         }
@@ -457,9 +537,11 @@
             font-size: var(--text-base);
             color: var(--success);
             flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: pre;
+            min-width: 0;
+            padding-bottom: var(--space-2);
         }
 
         .command-preview-text.has-unresolved {
@@ -475,6 +557,10 @@
             font-weight: 600;
         }
 
+        .token-literal {
+            color: var(--color-text-secondary);
+        }
+
         .toggle-editor-btn {
             margin-left: auto;
             display: inline-flex;
@@ -482,7 +568,6 @@
             gap: var(--space-2);
             background: transparent;
             border: none;
-            cursor: pointer;
             color: var(--color-text-muted);
             font-family: var(--font-mono);
             font-size: var(--text-xs);
@@ -514,6 +599,7 @@
         .note-block {
             display: inline-grid;
             min-width: var(--block-min-width);
+            border-radius: var(--radius-lg);
         }
 
         .note-auto-width {
@@ -547,8 +633,13 @@
             width: auto;
         }
 
-        .note-textarea::selection {
-            background-color: rgb(3, 56, 162);
+        .note-textarea::selection,
+        .block-item.block-selected .note-textarea::selection {
+            background: transparent;
+        }
+
+        body:not(.ctrl-held) .note-textarea::selection {
+            background-color: var(--selection-color);
         }
 
         .note-textarea::placeholder {
@@ -592,9 +683,9 @@
         .note-code {
             font-family: var(--font-mono);
             font-size: 0.9em;
-            background: rgba(255, 152, 0, 0.08);
-            color: #ff9800;
-            border: 1px solid rgba(255, 152, 0, 0.2);
+            background: var(--code-bg);
+            color: var(--code-color);
+            border: 1px solid var(--code-border);
             border-radius: var(--radius-sm);
             padding: 0.05em var(--space-3);
             white-space: nowrap;
@@ -635,7 +726,7 @@
 
         /* Link activation */
 
-        body.ctrl-held .note-preview a.note-link {
+        body.alt-held a.note-link {
             pointer-events: auto;
         }
 
@@ -684,7 +775,6 @@
             font-size: var(--text-sm);
             font-family: var(--font-mono);
             color: var(--color-text-muted);
-            cursor: pointer;
             transition: all var(--transition-fast);
         }
 
@@ -707,6 +797,7 @@
             gap: var(--space-6);
             padding: var(--space-4) 0;
             min-width: var(--block-min-width);
+            border-radius: var(--radius-md);
         }
 
         .divider-line {
@@ -796,13 +887,20 @@
             height: var(--icon-base);
         }
 
+        .btn-disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            cursor: default;
+        }
+
         #import-file-input {
             display: none;
         }
 
         /* Drag handle button */
 
-        .drag-handle {
+        .drag-handle,
+        .variable-drag-handle {
             cursor: grab;
             color: var(--color-text-muted);
             padding: var(--space-2);
@@ -810,11 +908,13 @@
             transition: color var(--transition-fast);
         }
 
-        .drag-handle:hover {
-            color: var(--color-text-secondary);
+        .drag-handle:hover,
+        .variable-drag-handle:hover {
+            color: var(--color-text-primary);
         }
 
-        .drag-handle svg {
+        .drag-handle svg,
+        .variable-drag-handle svg {
             width: var(--icon-md);
             height: var(--icon-md);
             fill: currentColor;
@@ -873,11 +973,14 @@
 
         /* --- READ MODE SUPPRESSIONS --- */
 
-        /* Hide block and variable add/delete */
         body.read-mode #add-block-row,
-        body.read-mode .variable-add-row,
-        body.read-mode .variable-row .btn-danger-ghost {
+        body.read-mode #variable-add-row {
             display: none;
+        }
+
+        body.read-mode .variable-drag-handle,
+        body.read-mode .variable-row .btn-danger-ghost {
+            display: none !important;
         }
 
         /* Hide drag and delete button on blocks */
@@ -916,11 +1019,15 @@
 
         body.read-mode .variable-key-input,
         body.read-mode #collapse-all-btn {
-            pointer-events: none;
             opacity: 0.5;
+            pointer-events: none;
         }
 
-        /* Note links become always clickable */
+        body.read-mode .variable-row {
+            grid-template-columns: 1fr;
+        }
+
+        /* Note links become clickable */
         body.read-mode .note-preview a.note-link {
             pointer-events: auto;
             cursor: pointer;
@@ -957,20 +1064,20 @@
             <div class="header-spacer"></div>
 
             <div class="header-actions">
-                <button class="btn btn-lg" onclick="exportToFile()">
+                <button id="export-btn" class="btn btn-lg" onclick="exportToFile()" title="Export content">
                     <svg viewBox="0 0 16 16">
                         <path d="M8 2v8M5 7l3 3 3-3M3 11v2h10v-2" />
                     </svg>
                     Export
                 </button>
-                <button class="btn btn-lg btn-primary" onclick="openImportDialog()">
+                <button class="btn btn-lg btn-primary" onclick="openImportDialog()" title="Import content">
                     <svg viewBox="0 0 16 16">
                         <path d="M8 11V3M5 6l3-3 3 3M3 11v2h10v-2" />
                     </svg>
                     Import
                 </button>
                 <div class="header-separator"></div>
-                <button class="btn btn-lg btn-danger-ghost" onclick="clearAllData()"
+                <button id="clear-btn" class="btn btn-lg btn-danger-ghost" onclick="clearAllData()"
                     title="Clear all variables and blocks">
                     <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"
                         stroke-linecap="round" stroke-linejoin="round" style="display:block">
@@ -983,7 +1090,7 @@
         <!-- Sidebar -->
         <aside class="app-sidebar">
             <p class="section-title sidebar-title no-user-select">VARIABLES</p>
-            <div class="variables-list" id="variables-list"></div>
+            <div id="variables-list"></div>
         </aside>
 
         <!-- Main panel -->
@@ -1047,27 +1154,33 @@
             READ: 'read',
         });
 
+        const LassoMode = Object.freeze({
+            SELECT: 'select',
+            DESELECT: 'deselect',
+        });
+
         const SidebarState = Object.freeze({
-            COLLAPSED: 'collapsed',
             EXPANDED: 'expanded',
+            COLLAPSED: 'collapsed',
         });
 
         const BlockType = Object.freeze({
-            COMMAND: 'command',
             NOTE: 'note',
+            COMMAND: 'command',
             DIVIDER: 'divider',
         });
 
         const NoteStyle = Object.freeze({
-            HEADING: 'heading',
-            SUBHEADING: 'subheading',
             BODY: 'body',
+            SUBHEADING: 'subheading',
+            HEADING: 'heading',
         });
 
         const MarkdownToken = Object.freeze({
+            CODE_REGEX: /[`´](.+?)[`´]/g,
             BOLD_REGEX: /\*\*(.+?)\*\*/g,
             ITALIC_REGEX: /(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)|_(.+?)_/g,
-            CODE_REGEX: /[`´](.+?)[`´]/g,
+            URL_REGEX: /(https?:\/\/[^\s<>"{}|\\^`\[\]]*[^\s<>"{}|\\^`\[\].,;:!?()\-])/g,
         });
 
         const SegmentType = Object.freeze({
@@ -1096,31 +1209,46 @@
             IS_FOCUSED: 'is-focused',
             HAS_UNRESOLVED: 'has-unresolved',
             CTRL_HELD: 'ctrl-held',
+            ALT_HELD: 'alt-held',
             READ_MODE: 'read-mode',
+            DUPLICATE_FLASH: 'duplicate-flash',
+            BLOCK_SELECTED: 'block-selected',
+            SELECTING: 'selecting',
+            BTN_DISABLED: 'btn-disabled',
+            BLOCK_CONTROLS: 'block-controls',
+            BLOCK_DRAG_HANDLE: 'block-drag-handle',
         });
 
         const EventType = Object.freeze({
-            DROP: 'drop',
-            KEY_UP: 'keyup',
-            KEY_DOWN: 'keydown',
+            ANIMATION_END: 'animationend',
             CLICK: 'click',
-            MOUSE_UP: 'mouseup',
-            MOUSE_DOWN: 'mousedown',
-            MOUSE_MOVE: 'mousemove',
+            DROP: 'drop',
             DRAG_END: 'dragend',
             DRAG_OVER: 'dragover',
             DRAG_START: 'dragstart',
+            KEY_UP: 'keyup',
+            KEY_DOWN: 'keydown',
+            MOUSE_UP: 'mouseup',
+            MOUSE_DOWN: 'mousedown',
+            MOUSE_ENTER: 'mouseenter',
+            MOUSE_MOVE: 'mousemove',
             SCROLL: 'scroll',
         });
 
         const Key = Object.freeze({
-            CONTROL: 'Control',
-            META: 'Meta',
+            ALT: 'Alt',
+            CTRL: 'Control',
+            ESCAPE: 'Escape',
+            E: 'e',
         });
 
         const Cursor = Object.freeze({
-            POINTER: 'pointer',
             DEFAULT: '',
+            POINTER: 'pointer',
+        });
+
+        const DataAttr = Object.freeze({
+            VARIABLE_ID: 'variableId',
         });
 
         const Selector = Object.freeze({
@@ -1131,6 +1259,12 @@
             NOTE_AUTO_WIDTH: '.note-auto-width',
             NOTE_PREVIEW: '.note-preview',
             COMMAND_TEXTAREA: '.command-textarea',
+            VARIABLE_ROW: '.variable-row',
+            VARIABLE_INPUTS: '.variable-inputs',
+            VARIABLE_DRAG_HANDLE: '.variable-drag-handle',
+            BLOCK_SELECTED: '.block-item.block-selected',
+            COMMAND_BLOCK_EDITOR: '.command-block-editor',
+            TOGGLE_EDITOR_BTN: '.toggle-editor-btn',
         });
 
         const Anchor = Object.freeze({
@@ -1140,24 +1274,26 @@
 
         const ElementId = Object.freeze({
             MAIN_PANEL: 'main-panel',
+            COLLAPSE_ALL_BTN: 'collapse-all-btn',
+            EXPORT_BTN: 'export-btn',
+            CLEAR_BTN: 'clear-btn',
             SIDEBAR_TOGGLE_BTN: 'sidebar-toggle-btn',
             VARIABLES_LIST: 'variables-list',
             BLOCKS_LIST: 'blocks-list',
             EMPTY_STATE: 'empty-state',
             IMPORT_FILE_INPUT: 'import-file-input',
+            DUPLICATE_BTN: 'duplicate-btn',
         });
 
-        const ExportConfig = Object.freeze({
-            FILENAME: 'commandpad-export.json',
+        const FilePickerConfig = Object.freeze({
+            SUGGESTED_NAME: 'commandpad-export.json',
+            DESCRIPTION: 'CommandPad JSON',
+            EXTENSION: '.json',
             MIME_TYPE: 'application/json',
         });
 
         const DragEffect = Object.freeze({
             MOVE: 'move',
-        });
-
-        const LinkifyConfig = Object.freeze({
-            URL_REGEX: /(https?:\/\/[^\s<>"{}|\\^`\[\]]*[^\s<>"{}|\\^`\[\].,;:!?()\-])/g,
         });
 
         // State
@@ -1198,7 +1334,12 @@
         }
 
         function toggleAppMode() {
-            setAppMode(isReadMode() ? AppMode.EDIT : AppMode.READ);
+            const readMode = isReadMode();
+            if (!readMode) {
+                clearBlockSelection();
+            }
+
+            setAppMode(readMode ? AppMode.EDIT : AppMode.READ);
         }
 
         //  Persistence
@@ -1243,11 +1384,40 @@
         //  Variable resolution
 
         function getVariableMap() {
-            const map = {};
+            const rawMap = {};
             for (const variable of state.variables) {
-                if (variable.key.trim()) map[variable.key.trim()] = variable.value;
+                if (!variable.key.trim()) {
+                    continue;
+                }
+
+                rawMap[variable.key.trim()] = variable.value;
             }
-            return map;
+
+            const resolvedMap = {};
+
+            function resolveValue(key, visitedKeys = new Set()) {
+                if (key in resolvedMap) {
+                    return resolvedMap[key];
+                }
+                if (visitedKeys.has(key)) {
+                    return `{${key}}`;
+                }
+
+                visitedKeys.add(key);
+                const raw = rawMap[key] ?? '';
+                const resolved = raw.replace(/\{([^}]+)\}/g, (match, refKey) => {
+                    return refKey in rawMap ? resolveValue(refKey, new Set(visitedKeys)) : match;
+                });
+
+                resolvedMap[key] = resolved;
+                return resolved;
+            }
+
+            for (const key of Object.keys(rawMap)) {
+                resolveValue(key);
+            }
+
+            return resolvedMap;
         }
 
         function resolveCommandText(rawText) {
@@ -1302,7 +1472,7 @@
                     return `<span class="token-resolved">${escaped}</span>`;
                 if (segment.type === SegmentType.UNRESOLVED)
                     return `<span class="token-unresolved">${escaped}</span>`;
-                return escaped;
+                return `<span class="token-literal">${escaped}</span>`;
             }).join('');
         }
 
@@ -1339,7 +1509,7 @@
             );
 
             // Links
-            escaped = escaped.replace(LinkifyConfig.URL_REGEX, (url) =>
+            escaped = escaped.replace(MarkdownToken.URL_REGEX, (url) =>
                 `<a href="${url}" class="note-link" target="${Anchor.TARGET_BLANK}" rel="${Anchor.REL}">${url}</a>`
             );
 
@@ -1389,6 +1559,42 @@
                 return;
             }
 
+            if (field === VariableField.KEY) {
+                const oldKey = variable.key.trim();
+                const newKey = value.trim();
+
+                if (oldKey && newKey && oldKey !== newKey) {
+                    const oldToken = `{${oldKey}}`;
+                    const newToken = `{${newKey}}`;
+
+                    // Rename references inside blocks
+                    for (const block of state.blocks) {
+                        if (block.type === BlockType.COMMAND && block.text.includes(oldToken)) {
+                            block.text = block.text.split(oldToken).join(newToken);
+                        }
+                    }
+
+                    // Rename references inside variables
+                    for (const otherVariable of state.variables) {
+                        if (otherVariable.id !== variableId && otherVariable.value.includes(oldToken)) {
+                            otherVariable.value = otherVariable.value.split(oldToken).join(newToken);
+
+                            // Keep that variable's value input in sync
+                            const otherRow = document.querySelector(
+                                `${Selector.VARIABLE_ROW}[data-variable-id="${otherVariable.id}"]`);
+
+                            const otherValueInput = otherRow?.querySelector('.variable-value-input');
+                            if (otherValueInput) {
+                                otherValueInput.value = otherVariable.value;
+                                otherValueInput.title = otherVariable.value;
+                            }
+                        }
+                    }
+
+                    renderBlocksList();
+                }
+            }
+
             variable[field] = value;
             saveState();
             refreshAllPreviews();
@@ -1400,9 +1606,9 @@
 
             if (state.variables.length === 0) {
                 const emptyMsg = document.createElement('p');
-                emptyMsg.className = 'no-user-select'
+                emptyMsg.className = 'no-user-select';
                 emptyMsg.style.cssText =
-                    'font-size:var(--text-md); font-family:var(--font-mono); color:var(--color-text-muted); padding: var(--space-2) 0;';
+                    'font-size:var(--text-md); font-family:var(--font-mono); color:var(--color-text-muted); padding: var(--space-2) var(--space-12);';
                 emptyMsg.textContent = 'No variables defined.';
                 container.appendChild(emptyMsg);
             } else {
@@ -1412,26 +1618,31 @@
                     row.dataset.variableId = variable.id;
 
                     row.innerHTML = `
-            <input
-              class="variable-key-input"
-              type="text"
-              placeholder="key"
-              value="${escapeHtml(variable.key)}"
-              spellcheck="false"
-              autocomplete="off"
-              oninput="updateVariable('${variable.id}', '${VariableField.KEY}', this.value)"
-              title="${escapeHtml(variable.key)}"
-            />
-            <input
-              class="variable-value-input"
-              type="text"
-              placeholder="value"
-              value="${escapeHtml(variable.value)}"
-              spellcheck="false"
-              autocomplete="off"
-              oninput="updateVariable('${variable.id}', '${VariableField.VALUE}', this.value)"
-              title="${escapeHtml(variable.value)}"
-            />
+            <div class="variable-drag-handle" title="Drag to reorder">
+              <svg viewBox="0 0 16 16"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
+            </div>
+            <div class="variable-inputs">
+              <input
+                class="variable-key-input"
+                type="text"
+                placeholder="key"
+                value="${escapeHtml(variable.key)}"
+                spellcheck="false"
+                autocomplete="off"
+                oninput="updateVariable('${variable.id}', '${VariableField.KEY}', this.value)"
+                title="${escapeHtml(variable.key)}"
+              />
+              <input
+                class="variable-value-input"
+                type="text"
+                placeholder="value"
+                value="${escapeHtml(variable.value)}"
+                spellcheck="false"
+                autocomplete="off"
+                oninput="updateVariable('${variable.id}', '${VariableField.VALUE}', this.value)"
+                title="${escapeHtml(variable.value)}"
+              />
+            </div>
             <button
               class="btn btn-icon btn-danger-ghost"
               onclick="removeVariable('${variable.id}')"
@@ -1442,19 +1653,75 @@
               </svg>
             </button>
           `;
+                    // Drag-and-drop
+                    const handle = row.querySelector(Selector.VARIABLE_DRAG_HANDLE);
+
+                    handle.addEventListener(EventType.MOUSE_DOWN, () => {
+                        row.draggable = true;
+                    });
+
+                    handle.addEventListener(EventType.MOUSE_UP, () => {
+                        setTimeout(() => {
+                            row.draggable = false;
+                        }, 50);
+                    });
+
+                    row.addEventListener(EventType.DRAG_START, event => {
+                        dragSourceVariableId = row.dataset.variableId;
+                        event.dataTransfer.effectAllowed = DragEffect.MOVE;
+                        row.classList.add(CssClass.DRAGGING);
+                    });
+
+                    row.addEventListener(EventType.DRAG_OVER, event => {
+                        event.preventDefault();
+                        if (row.dataset.variableId === dragSourceVariableId) {
+                            return;
+                        }
+
+                        container.querySelectorAll(Selector.VARIABLE_ROW)
+                            .forEach(el => el.querySelector(Selector.VARIABLE_INPUTS)?.classList.remove(CssClass
+                                .DRAG_OVER));
+
+                        row.querySelector(Selector.VARIABLE_INPUTS)?.classList.add(CssClass.DRAG_OVER);
+                    });
+
+                    row.addEventListener(EventType.DROP, event => {
+                        event.preventDefault();
+                        if (isReadMode()) {
+                            return;
+                        }
+
+                        const targetId = row.dataset.variableId;
+                        if (!dragSourceVariableId || dragSourceVariableId === targetId) {
+                            return;
+                        }
+
+                        const sourceIndex = state.variables.findIndex(v => v.id === dragSourceVariableId);
+                        const targetIndex = state.variables.findIndex(v => v.id === targetId);
+                        if (sourceIndex < 0 || targetIndex < 0) {
+                            return;
+                        }
+
+                        const [removed] = state.variables.splice(sourceIndex, 1);
+                        state.variables.splice(targetIndex, 0, removed);
+
+                        saveState();
+                        renderVariablesList();
+                    });
+
                     container.appendChild(row);
                 }
             }
 
             // Inline add button at the bottom
             const addRow = document.createElement('div');
-            addRow.className = 'variable-add-row';
+            addRow.id = 'variable-add-row';
             addRow.innerHTML = `
         <button class="btn" onclick="addVariable()">
           <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M8 3v10M3 8h10"/>
           </svg>
-          Add variable
+          New
         </button>
       `;
             container.appendChild(addRow);
@@ -1508,10 +1775,61 @@
                 return;
             }
 
-            state.blocks = state.blocks.filter(block => block.id !== blockId);
+            const idsToRemove = selectedBlockIds.size > 0 && selectedBlockIds.has(blockId) ?
+                new Set(selectedBlockIds) :
+                new Set([blockId]);
+
+            state.blocks = state.blocks.filter(block => !idsToRemove.has(block.id));
+            clearBlockSelection();
             saveState();
             renderBlocksList();
             updateEmptyState();
+        }
+
+        function duplicateBlock(blockId) {
+            if (isReadMode()) {
+                return;
+            }
+
+            const idsToDuplicate = selectedBlockIds.size > 0 && selectedBlockIds.has(blockId) ? [...selectedBlockIds]
+                .sort((a, b) =>
+                    state.blocks.findIndex(bl => bl.id === a) - state.blocks.findIndex(bl => bl.id === b)
+                ) : [blockId];
+
+            // Find the insertion point
+            const lastId = idsToDuplicate[idsToDuplicate.length - 1];
+            const lastIndex = state.blocks.findIndex(block => block.id === lastId);
+
+            const duplicatedBlocks = idsToDuplicate.map(id => {
+                const source = state.blocks.find(block => block.id === id);
+                return source ? {
+                    ...source,
+                    id: generateId()
+                } : null;
+            }).filter(Boolean);
+
+            state.blocks.splice(lastIndex + 1, 0, ...duplicatedBlocks);
+
+            saveState();
+            renderBlocksList();
+            updateEmptyState();
+
+            // Flash all duplicated blocks
+            requestAnimationFrame(() => {
+                duplicatedBlocks.forEach(block => {
+                    const element = getBlockFromId(block.id);
+                    if (!element) {
+                        return;
+                    }
+
+                    element.classList.add(CssClass.DUPLICATE_FLASH);
+                    element.addEventListener(EventType.ANIMATION_END, () => {
+                        element.classList.remove(CssClass.DUPLICATE_FLASH);
+                    }, {
+                        once: true
+                    });
+                });
+            });
         }
 
         function updateBlockText(blockId, text) {
@@ -1647,6 +1965,10 @@
             textarea.style.height = textarea.scrollHeight + 'px';
         }
 
+        function autoResizeAllTextarea() {
+            document.querySelectorAll('textarea').forEach(autoResizeTextarea);
+        }
+
         function syncNoteWidth(textarea) {
             const label = textarea.closest(Selector.NOTE_AUTO_WIDTH);
             if (label) label.dataset.value = textarea.value || textarea.placeholder;
@@ -1663,6 +1985,7 @@
                 container.appendChild(blockElement);
             }
 
+            updateBlockSelectionVisuals();
             setupDragAndDrop();
         }
 
@@ -1670,7 +1993,6 @@
             const wrapper = document.createElement('div');
             wrapper.className = 'block-item';
             wrapper.dataset.blockId = block.id;
-            // draggable is NOT set on the wrapper; only enabled when the drag handle is held
 
             if (block.type === BlockType.COMMAND) {
                 wrapper.innerHTML = buildCommandBlockHTML(block);
@@ -1680,40 +2002,76 @@
                 wrapper.innerHTML = buildDividerBlockHTML(block);
             }
 
-            // Left side: drag handle only
+            // Left side: drag handle
             const dragHandleEl = document.createElement('div');
-            dragHandleEl.className = 'block-drag-handle';
+            dragHandleEl.className = CssClass.BLOCK_DRAG_HANDLE;
             dragHandleEl.innerHTML = `
-      <button class="btn btn-icon drag-handle" title="Drag to reorder">
+      <div class="drag-handle" title="Drag to reorder">
         <svg viewBox="0 0 16 16" width="14" height="14"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
-      </button>
+      </div>
     `;
             wrapper.appendChild(dragHandleEl);
 
-            // Right side: delete only
+            // Right side: delete and duplicate
             const sideControls = document.createElement('div');
-            sideControls.className = 'block-controls';
+            sideControls.className = CssClass.BLOCK_CONTROLS;
             sideControls.innerHTML = `
+      <button class="btn btn-icon" onclick="duplicateBlock('${block.id}')" title="Duplicate block">
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="9" height="9" rx="1" />
+        <path d="M12 10v4M10 12h4" />
+        </svg>
+      </button>
       <button class="btn btn-icon btn-danger-ghost" onclick="removeBlock('${block.id}')" title="Delete block">
         <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9"/></svg>
       </button>
     `;
             wrapper.appendChild(sideControls);
 
-            // Enable dragging ONLY when mousedown fires on the drag handle
+            let dragInitiatedFromHandle = false;
             const dragHandle = dragHandleEl.querySelector('.drag-handle');
+
             dragHandle.addEventListener(EventType.MOUSE_DOWN, () => {
                 wrapper.draggable = true;
+                dragInitiatedFromHandle = true;
             });
-            wrapper.addEventListener(EventType.DRAG_END, () => {
+
+            wrapper.addEventListener(EventType.DRAG_START, event => {
+                if (dragInitiatedFromHandle) {
+                    dragInitiatedFromHandle = false;
+                    return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
                 wrapper.draggable = false;
             });
-            // Also reset if mouse is released off the element
+
+            wrapper.addEventListener(EventType.DRAG_END, () => {
+                wrapper.draggable = false;
+                dragInitiatedFromHandle = false;
+            });
+
             dragHandle.addEventListener(EventType.MOUSE_UP, () => {
-                // Will be reset by dragend; this is a safety net for non-drag clicks
                 setTimeout(() => {
                     wrapper.draggable = false;
+                    dragInitiatedFromHandle = false;
                 }, 50);
+            });
+
+            wrapper.addEventListener(EventType.MOUSE_ENTER, event => {
+                if (!isLassoActive || isReadMode()) {
+                    return;
+                }
+
+                if (lassoMode === LassoMode.DESELECT) {
+                    selectedBlockIds.delete(block.id);
+                } else {
+                    selectedBlockIds.add(block.id);
+                }
+
+                updateBlockSelectionVisuals();
+                updateSelectingBodyClass();
             });
 
             return wrapper;
@@ -1804,11 +2162,23 @@
 
         function updateEmptyState() {
             const emptyState = document.getElementById(ElementId.EMPTY_STATE);
-            if (!emptyState) {
-                return;
+            if (emptyState) {
+                emptyState.style.display = state.blocks.length === 0 ? 'block' : 'none';
             }
 
-            emptyState.style.display = state.blocks.length === 0 ? 'block' : 'none';
+            const isEmpty = state.blocks.length === 0;
+            if (isEmpty) {
+                clearBlockSelection();
+            }
+
+            // Disable header buttons
+            [ElementId.COLLAPSE_ALL_BTN, ElementId.EXPORT_BTN, ElementId.CLEAR_BTN].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.classList.toggle(CssClass.BTN_DISABLED, isEmpty);
+                }
+            });
+
         }
 
         //  Copy to clipboard
@@ -1895,25 +2265,92 @@
             if (textarea) autoResizeTextarea(textarea);
         }
 
+        // Multi select
+
+        let lassoMode = LassoMode.SELECT;
+        let isLassoActive = false;
+        let selectedBlockIds = new Set();
+
+        function isBlockSelected(blockId) {
+            return selectedBlockIds.has(blockId);
+        }
+
+        function toggleBlockSelection(blockId) {
+            if (selectedBlockIds.has(blockId)) {
+                selectedBlockIds.delete(blockId);
+            } else {
+                selectedBlockIds.add(blockId);
+            }
+
+            updateBlockSelectionVisuals();
+            updateSelectingBodyClass();
+        }
+
+        function clearBlockSelection() {
+            selectedBlockIds.clear();
+            updateBlockSelectionVisuals();
+            updateSelectingBodyClass();
+        }
+
+        function updateBlockSelectionVisuals() {
+            document.querySelectorAll(Selector.BLOCK_ITEM).forEach(el => {
+                el.classList.toggle(CssClass.BLOCK_SELECTED, selectedBlockIds.has(el.dataset.blockId));
+            });
+        }
+
+        function updateSelectingBodyClass() {
+            document.body.classList.toggle(CssClass.SELECTING, selectedBlockIds.size > 0);
+        }
+
+        function setupLassoSelection() {
+            document.addEventListener(EventType.MOUSE_DOWN, e => {
+                if (!(e.ctrlKey || e.metaKey) || e.button !== 0 || isReadMode()) {
+                    return;
+                }
+
+                const blockEl = e.target.closest(Selector.BLOCK_ITEM);
+                if (blockEl) {
+                    const blockId = blockEl.dataset.blockId;
+                    lassoMode = selectedBlockIds.has(blockId) ? LassoMode.DESELECT : LassoMode.SELECT;
+
+                    if (lassoMode === LassoMode.DESELECT) {
+                        selectedBlockIds.delete(blockId);
+                    } else {
+                        selectedBlockIds.add(blockId);
+                    }
+
+                    updateBlockSelectionVisuals();
+                    updateSelectingBodyClass();
+                } else {
+                    lassoMode = LassoMode.SELECT;
+                }
+
+                isLassoActive = true;
+            });
+
+            document.addEventListener(EventType.MOUSE_UP, () => {
+                isLassoActive = false;
+            });
+        }
+
         //  Drag and drop reordering
 
         let dragSourceId = null;
+        let dragSourceVariableId = null;
 
         function setupDragAndDrop() {
             const container = document.getElementById(ElementId.BLOCKS_LIST);
 
             container.querySelectorAll(Selector.BLOCK_ITEM).forEach(blockElement => {
                 blockElement.addEventListener(EventType.DRAG_START, event => {
+                    if (!blockElement.draggable) {
+                        event.preventDefault();
+                        return;
+                    }
+
                     dragSourceId = blockElement.dataset.blockId;
                     blockElement.classList.add(CssClass.DRAGGING);
                     event.dataTransfer.effectAllowed = DragEffect.MOVE;
-                });
-
-                blockElement.addEventListener(EventType.DRAG_END, () => {
-                    blockElement.classList.remove(CssClass.DRAGGING);
-                    container.querySelectorAll(Selector.BLOCK_ITEM).forEach(el => el.classList.remove(
-                        CssClass.DRAG_OVER));
-                    dragSourceId = null;
                 });
 
                 blockElement.addEventListener(EventType.DRAG_OVER, event => {
@@ -1937,34 +2374,77 @@
                         return;
                     }
 
-                    const sourceIndex = state.blocks.findIndex(block => block.id === dragSourceId);
-                    const targetIndex = state.blocks.findIndex(block => block.id === targetId);
+                    // Move all selected blocks
+                    const movingIds = selectedBlockIds.size > 0 && selectedBlockIds.has(dragSourceId) ?
+                        [...selectedBlockIds] : [dragSourceId];
 
+                    // Capture source and target indices BEFORE any mutation
+                    const targetIndex = state.blocks.findIndex(block => block.id === targetId);
+                    const sourceIndex = state.blocks.findIndex(block => block.id === dragSourceId);
                     if (sourceIndex < 0 || targetIndex < 0) {
                         return;
                     }
 
-                    const [removed] = state.blocks.splice(sourceIndex, 1);
-                    state.blocks.splice(targetIndex, 0, removed);
+                    const movingBlocks = movingIds
+                        .map(id => state.blocks.find(block => block.id === id))
+                        .filter(Boolean)
+                        .sort((a, b) => state.blocks.indexOf(a) - state.blocks.indexOf(b));
+
+                    // Remove moving blocks
+                    state.blocks = state.blocks.filter(block => !movingIds.includes(block.id));
+
+                    // Recalculate target index after removal
+                    const newTargetIndex = state.blocks.findIndex(block => block.id === targetId);
+                    const insertIndex = sourceIndex < targetIndex ? newTargetIndex + 1 : newTargetIndex;
+
+                    // Insert all at the new position
+                    state.blocks.splice(insertIndex, 0, ...movingBlocks);
 
                     saveState();
                     renderBlocksList();
                     updateEmptyState();
+                    updateBlockSelectionVisuals();
                 });
             });
         }
 
         //  Export / Import
 
-        function exportToFile() {
+        async function exportToFile() {
             const exportData = JSON.stringify(state, null, 2);
+
+            if (window.showSaveFilePicker) {
+                try {
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName: FilePickerConfig.SUGGESTED_NAME,
+                        types: [{
+                            description: FilePickerConfig.DESCRIPTION,
+                            accept: {
+                                [FilePickerConfig.MIME_TYPE]: [FilePickerConfig.EXTENSION]
+                            },
+                        }],
+                    });
+
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(exportData);
+                    await writable.close();
+                    return;
+                } catch (error) {
+                    // User cancelled or browser rejected
+                    if (error.name === 'AbortError') {
+                        return;
+                    }
+                }
+            }
+
+            // Legacy fallback
             const blob = new Blob([exportData], {
-                type: ExportConfig.MIME_TYPE
+                type: FilePickerConfig.MIME_TYPE
             });
             const url = URL.createObjectURL(blob);
             const anchor = document.createElement('a');
             anchor.href = url;
-            anchor.download = ExportConfig.FILENAME;
+            anchor.download = FilePickerConfig.SUGGESTED_NAME;
             anchor.click();
             URL.revokeObjectURL(url);
         }
@@ -2033,19 +2513,34 @@
 
             saveState();
             renderBlocksList();
+            autoResizeAllTextarea();
         }
 
         //  Bootstrap
+
+        function setupGlobalDragCleanup() {
+            document.addEventListener(EventType.DRAG_END, () => {
+                document.querySelectorAll(Selector.BLOCK_ITEM)
+                    .forEach(el => el.classList.remove(CssClass.DRAG_OVER, CssClass.DRAGGING));
+
+                document.querySelectorAll(Selector.VARIABLE_ROW)
+                    .forEach(el => {
+                        el.classList.remove(CssClass.DRAGGING);
+                        el.querySelector(Selector.VARIABLE_INPUTS)?.classList.remove(CssClass.DRAG_OVER);
+                    });
+            });
+        }
 
         function init() {
             loadState();
             renderVariablesList();
             renderBlocksList();
             updateEmptyState();
+            setupLassoSelection();
+            setupGlobalDragCleanup();
 
             setTimeout(() => {
-                // Auto-resize all textareas
-                document.querySelectorAll('textarea').forEach(autoResizeTextarea);
+                autoResizeAllTextarea();
                 document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(textarea => syncNoteWidth(textarea));
                 refreshAllPreviews();
 
@@ -2068,56 +2563,102 @@
             scrollSaveTimer = setTimeout(saveState, SAVE_TIMEOUT_MS);
         });
 
-        // Ctrl+click to open note links
+        // Click handlers
 
         let mouseX = 0;
         let mouseY = 0;
 
+        function updateCursorOnLink() {
+            const isCursorOverLink = document.elementsFromPoint(mouseX, mouseY)
+                .some(el => el.matches(Selector.NOTE_LINK));
+
+            document.body.style.cursor = isCursorOverLink ? Cursor.POINTER : Cursor.DEFAULT;
+        }
+
+        function removeAltHeldClass() {
+            document.body.classList.remove(CssClass.ALT_HELD);
+            document.body.style.cursor = Cursor.DEFAULT;
+        }
+
         document.addEventListener(EventType.MOUSE_MOVE, e => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            updateCtrlCursor();
+
+            if (e.altKey) {
+                updateCursorOnLink();
+            }
         });
 
         document.addEventListener(EventType.KEY_DOWN, e => {
-            if (e.key === Key.CONTROL || e.key === Key.META) {
-                document.body.classList.add(CssClass.CTRL_HELD);
-                updateCtrlCursor();
+            if (e.ctrlKey) {
+                // Toggle edit/read mode
+                if (e.key === Key.E) {
+                    e.preventDefault();
+                    toggleAppMode();
+                    return;
+                }
+
+                // Enter ctrl-held mode if the user is not typing
+                if (!document.activeElement?.matches('textarea, input')) {
+                    document.body.classList.add(CssClass.CTRL_HELD);
+                }
+
+                return;
+            }
+
+            if (e.altKey) {
+                e.preventDefault();
+                document.body.classList.add(CssClass.ALT_HELD);
+                updateCursorOnLink();
             }
         });
 
         document.addEventListener(EventType.KEY_UP, e => {
-            if (e.key === Key.CONTROL || e.key === Key.META) {
+            if (e.key === Key.CTRL) {
                 document.body.classList.remove(CssClass.CTRL_HELD);
-                document.body.style.cursor = Cursor.DEFAULT;
+                return;
+            }
+
+            if (e.key === Key.ALT) {
+                removeAltHeldClass();
+                return;
+            }
+
+            if (e.key === Key.ESCAPE) {
+                document.activeElement?.blur();
+                clearBlockSelection();
             }
         });
 
         document.addEventListener(EventType.CLICK, e => {
-            if (!e.ctrlKey && !e.metaKey) {
+            // Open note links
+            if (e.altKey) {
+                const noteLink = document.elementsFromPoint(e.clientX, e.clientY)
+                    .find(el => el.matches(Selector.NOTE_LINK));
+
+                if (!noteLink) {
+                    return;
+                }
+
+                e.preventDefault();
+                removeAltHeldClass();
+                window.open(noteLink.href, Anchor.TARGET_BLANK, Anchor.REL);
                 return;
             }
 
-            const link = document.elementsFromPoint(e.clientX, e.clientY)
-                .find(el => el.matches(Selector.NOTE_LINK));
+            if (e.ctrlKey || e.metaKey) {
+                return;
+            }
 
-            if (link) {
-                e.preventDefault();
-                window.open(link.href, Anchor.TARGET_BLANK, Anchor.REL);
+            // Clear selection unless on block controls
+
+            const isBlockControl = e.target.closest(
+                `.${CssClass.BLOCK_CONTROLS}, .${CssClass.BLOCK_DRAG_HANDLE}`);
+
+            if (!isBlockControl && selectedBlockIds.size > 0) {
+                clearBlockSelection();
             }
         });
-
-        function updateCtrlCursor() {
-            if (!document.body.classList.contains(CssClass.CTRL_HELD)) {
-                document.body.style.cursor = Cursor.DEFAULT;
-                return;
-            }
-
-            const overLink = document.elementsFromPoint(mouseX, mouseY)
-                .some(el => el.matches(Selector.NOTE_LINK));
-
-            document.body.style.cursor = overLink ? Cursor.POINTER : Cursor.DEFAULT;
-        }
 
         init();
     </script>
