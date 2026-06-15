@@ -2598,7 +2598,11 @@
                     return;
                 }
 
-                document.body.classList.add(CssClass.CTRL_HELD);
+                // Enter ctrl-held mode if the user is not typing
+                if (!document.activeElement?.matches('textarea, input')) {
+                    document.body.classList.add(CssClass.CTRL_HELD);
+                }
+
                 return;
             }
 
