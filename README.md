@@ -77,6 +77,7 @@ Variables are defined in the left sidebar. Each variable has a **key** and a **v
 - Drag the handle on the left to reorder variables.
 - Variables can reference other variables: `URL=https://{HOST}/api`.
 - Renaming a key propagates the change to all command blocks and other variable values automatically.
+- Hovering over a key or value input shows the full content in a tooltip.
 
 Reference a variable in any command block:
 
@@ -97,7 +98,7 @@ Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row a
 A command block has two parts:
 
 - **Preview** (always visible): the resolved command. Click **Copy** to copy the resolved text to the clipboard.
-- **Editor** (collapsible): the raw template prefixed with `$`. Collapse it with the chevron button in the preview row, or toggle all editors globally from the header.
+- **Editor** (collapsible): the raw template prefixed with `$`. Collapse it with the chevron button in the preview row, or toggle all editors globally from the header. Commands can span multiple lines. If a line exceeds the panel width, the editor scrolls horizontally.
 
 ---
 
