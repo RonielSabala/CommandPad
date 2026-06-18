@@ -13,11 +13,13 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
   - [Requirements](#requirements)
   - [Run Locally](#run-locally)
 - [Usage](#usage)
+  - [Runbook Library](#runbook-library)
   - [Variables](#variables)
   - [Block Types](#block-types)
   - [Multi-select](#multi-select)
   - [Read Mode](#read-mode)
-  - [Export and Import](#export-and-import)
+  - [Export](#export)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Examples](#examples)
 - [Contributing](#contributing)
 - [License](#license)
@@ -26,15 +28,16 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 
 ## Features
 
+- **Runbook library**: import one or many `.json` runbooks into a persistent sidebar list. Click any entry to switch the active workspace instantly — no re-importing.
 - **Variables**: define named variables and reference them in any other variable or command block.
 - **Live resolved preview**: every command block shows the fully resolved command.
 - **Three block types**: commands, notes, and dividers can be mixed freely to build structured, annotated runbooks.
 - **Rich note blocks**: notes support three text styles (heading, subheading, body), auto-detect URLs, and support inline markdown: `**bold**`, `_italic_`, `` `code` ``.
-- **Drag-and-drop reordering**: blocks and variables can each be reordered independently via their drag handles.
+- **Drag-and-drop reordering**: blocks, variables, and runbook library entries can each be reordered independently via their drag handles.
 - **Multi-block selection**: hold `Ctrl` and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the whole group at once.
-- **Read mode**: locks the entire interface.
-- **Persistent state**: workspace, sidebar state, and app mode are all saved to `localStorage` and restored on reload.
-- **Export / Import**: save the workspace to a `.json` file and load it back at any time.
+- **Read mode**: locks the entire interface against structural edits, while still allowing variable values to change and runbooks to be switched.
+- **Persistent state**: workspace, sidebar state, app mode, and the runbook library are all saved locally and restored on reload.
+- **Export**: save the active workspace to a `.json` file, with a native OS save dialog on supported browsers.
 
 ---
 
@@ -66,9 +69,22 @@ Use **Live Server: Stop Live Server** to stop.
 
 ## Usage
 
+### Runbook Library
+
+The sidebar's top section holds your imported runbooks.
+
+- Click **Import** under the Runbooks section to import one or more `.json` files at once.
+- Click any runbook entry to make it the active workspace. The current variables and blocks are replaced with that runbook's content.
+- Delete a runbook from the library with the button that appears on row hover.
+- Drag the handle on the left of an entry to reorder the library list.
+
+If a runbook's first block is a note, its text is used as the library label, so you can tell runbooks apart at a glance. Otherwise it falls back to the imported filename.
+
+---
+
 ### Variables
 
-Variables are defined in the left sidebar. Each variable has a **key** and a **value**.
+Variables are defined in the Variables section of the sidebar. Each variable has a **key** and a **value**.
 
 - Click **New** to create a new one.
 - Keys are case-sensitive.
@@ -150,27 +166,35 @@ While `Ctrl` is held, the interface is in selection-only mode.
 
 ### Read Mode
 
-Click the **padlock icon** in the header (or press `Ctrl+E`) to enter read mode.
+Read mode locks editing, not navigation.
 
-In read mode:
+Click the **padlock icon** in the header to enter read mode:
 
 - All command editors are collapsed and cannot be expanded.
 - Note and command block text cannot be edited.
-- Block structure cannot be changed (no adding, deleting, or reordering).
-- Variable keys cannot be changed and new variables cannot be added or deleted.
-- Variable **values** remain editable.
+- Block structure, variables and runbooks cannot be changed (no adding, deleting, or reordering).
 - Note style pickers are hidden.
 - Links in notes are directly clickable.
 
-Click the **pencil icon** (or press `Ctrl+E`) to return to edit mode. The mode is saved across page reloads.
+Click the **pencil icon** to return to edit mode. The mode is saved across page reloads.
 
 ---
 
-### Export and Import
+### Export
 
-Click the **Export** button in the header to save the workspace. A native OS save dialog opens so you can choose the filename and folder.
+Click the **Export** button in the header to save the active workspace. A native OS save dialog opens on supported browsers so you can choose the filename and folder; otherwise the file downloads directly.
 
-Click **Import** to load a `.json` file. This replaces the current workspace entirely.
+---
+
+## Keyboard Shortcuts
+
+| Shortcut                          | Action                        |
+| --------------------------------- | ----------------------------- |
+| `Ctrl+E`                          | Toggle Read mode / Edit mode  |
+| `Ctrl+S`                          | Collapse / expand the sidebar |
+| `Alt` + **click** on a note link  | Open the link                 |
+| `Ctrl` + **click/drag** on blocks | Multi-select blocks           |
+| `Escape`                          | Clear block selection         |
 
 ---
 
