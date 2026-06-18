@@ -210,8 +210,126 @@
             white-space: nowrap;
         }
 
-        .sidebar-title {
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .sidebar-section-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
             padding: var(--space-6) var(--space-6) 0 var(--space-6);
+            cursor: pointer;
+        }
+
+        .sidebar-section-empty-msg {
+            font-size: var(--text-md);
+            font-family: var(--font-mono);
+            color: var(--color-text-muted);
+            padding: var(--space-2) var(--space-12);
+        }
+
+        .sidebar-section-chevron {
+            width: var(--icon-sm);
+            height: var(--icon-sm);
+            fill: none;
+            stroke: var(--color-text-muted);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: transform var(--transition-base);
+            flex-shrink: 0;
+        }
+
+        .sidebar-section.collapsed .sidebar-section-chevron {
+            transform: rotate(-90deg);
+        }
+
+        .sidebar-section.collapsed .sidebar-section-body {
+            display: none;
+        }
+
+        .sidebar-section-body {
+            overflow-y: auto;
+            padding: var(--space-6) var(--space-4);
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: var(--color-border);
+            margin: var(--space-4) var(--space-6);
+            flex-shrink: 0;
+        }
+
+        /* --- RUNBOOK LIBRARY SECTION --- */
+
+        #runbook-list {
+            flex: 0 1 auto;
+        }
+
+        .runbook-row {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: var(--space-3);
+            align-items: center;
+            margin-bottom: var(--space-3);
+            position: relative;
+        }
+
+        .runbook-item-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: var(--color-surface-alt);
+            border: var(--border-standard);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-secondary);
+            font-family: var(--font-mono);
+            font-size: var(--text-md);
+            padding: var(--space-3) var(--space-4);
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            transition: border-color var(--transition-base), color var(--transition-base);
+        }
+
+        .runbook-item-btn:hover {
+            border-color: var(--color-border-focus);
+            color: var(--color-text-primary);
+        }
+
+        .runbook-item-btn.active {
+            background: var(--tag-bg);
+            border-color: var(--accent);
+            color: var(--accent-text);
+        }
+
+        .runbook-drag-handle,
+        .runbook-row .btn-danger-ghost {
+            opacity: 0;
+            transition: opacity var(--transition-fast), color var(--transition-fast);
+        }
+
+        .runbook-row:hover .runbook-drag-handle,
+        .runbook-row:hover .btn-danger-ghost {
+            opacity: 1;
+        }
+
+        #runbook-add-row {
+            padding: var(--space-3) var(--space-12);
+        }
+
+        #runbook-import-input {
+            display: none;
+        }
+
+        /* --- VARIABLES SECTION --- */
+
+        #variables-section {
+            flex: 1 1 auto;
         }
 
         #variables-list {
@@ -224,10 +342,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: var(--space-3);
-        }
-
-        .variable-inputs.drag-over {
-            border-radius: var(--radius-sm);
         }
 
         .variable-row {
@@ -413,6 +527,10 @@
 
         .drag-over {
             outline: var(--border-dashed);
+            border-radius: var(--radius-sm);
+        }
+
+        .block-item.drag-over {
             border-radius: var(--radius-md);
         }
 
@@ -893,10 +1011,6 @@
             cursor: default;
         }
 
-        #import-file-input {
-            display: none;
-        }
-
         /* Drag handle button */
 
         .drag-handle,
@@ -972,6 +1086,12 @@
         }
 
         /* --- READ MODE SUPPRESSIONS --- */
+
+        body.read-mode #runbook-add-row,
+        body.read-mode .runbook-drag-handle,
+        body.read-mode .runbook-row .btn-danger-ghost {
+            display: none !important;
+        }
 
         body.read-mode #add-block-row,
         body.read-mode #variable-add-row {
@@ -1064,17 +1184,11 @@
             <div class="header-spacer"></div>
 
             <div class="header-actions">
-                <button id="export-btn" class="btn btn-lg" onclick="exportToFile()" title="Export content">
+                <button id="export-btn" class="btn btn-lg btn-primary" onclick="exportToFile()" title="Export content">
                     <svg viewBox="0 0 16 16">
                         <path d="M8 2v8M5 7l3 3 3-3M3 11v2h10v-2" />
                     </svg>
                     Export
-                </button>
-                <button class="btn btn-lg btn-primary" onclick="openImportDialog()" title="Import content">
-                    <svg viewBox="0 0 16 16">
-                        <path d="M8 11V3M5 6l3-3 3 3M3 11v2h10v-2" />
-                    </svg>
-                    Import
                 </button>
                 <div class="header-separator"></div>
                 <button id="clear-btn" class="btn btn-lg btn-danger-ghost" onclick="clearAllData()"
@@ -1089,9 +1203,31 @@
 
         <!-- Sidebar -->
         <aside class="app-sidebar">
-            <p class="section-title sidebar-title no-user-select">VARIABLES</p>
-            <div id="variables-list"></div>
+            <div class="sidebar-section" id="runbook-section">
+                <div class="sidebar-section-header no-user-select" onclick="toggleRunbookSection()">
+                    <svg class="sidebar-section-chevron" viewBox="0 0 16 16">
+                        <polyline points="4,6 8,10 12,6" />
+                    </svg>
+                    <p class="section-title">RUNBOOKS</p>
+                </div>
+                <div class="sidebar-section-body" id="runbook-list"></div>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-section" id="variables-section">
+                <div class="sidebar-section-header no-user-select" onclick="toggleVariablesSection()">
+                    <svg class="sidebar-section-chevron" viewBox="0 0 16 16">
+                        <polyline points="4,6 8,10 12,6" />
+                    </svg>
+                    <p class="section-title">VARIABLES</p>
+                </div>
+                <div class="sidebar-section-body" id="variables-list"></div>
+            </div>
         </aside>
+
+        <!-- Hidden import input for adding a runbook to the library -->
+        <input type="file" id="runbook-import-input" accept=".json" multiple onchange="handleRunbookImport(event)" />
 
         <!-- Main panel -->
         <main class="app-main" id="main-panel">
@@ -1139,9 +1275,6 @@
         </main>
     </div>
 
-    <!-- Hidden import input -->
-    <input type="file" id="import-file-input" accept=".json" onchange="handleImport(event)" />
-
     <script>
         //  State
         const SAVE_TIMEOUT_MS = 200;
@@ -1162,6 +1295,25 @@
         const SidebarState = Object.freeze({
             EXPANDED: 'expanded',
             COLLAPSED: 'collapsed',
+        });
+
+        const SectionState = Object.freeze({
+            EXPANDED: 'expanded',
+            COLLAPSED: 'collapsed',
+        });
+
+        const RunbookConfig = Object.freeze({
+            DB_NAME: 'commandpad_runbooks_db',
+            DB_VERSION: 1,
+            STORE_NAME: 'runbooks',
+            LIBRARY_STORAGE_KEY: 'commandpad_runbook_library',
+            SECTIONS_STORAGE_KEY: 'commandpad_sidebar_sections',
+            DEFAULT_LABEL: 'Untitled runbook',
+        });
+
+        const IndexedDbTransactionMode = Object.freeze({
+            READ_WRITE: 'readwrite',
+            READ_ONLY: 'readonly',
         });
 
         const BlockType = Object.freeze({
@@ -1217,6 +1369,9 @@
             BTN_DISABLED: 'btn-disabled',
             BLOCK_CONTROLS: 'block-controls',
             BLOCK_DRAG_HANDLE: 'block-drag-handle',
+            SECTION_COLLAPSED: 'collapsed',
+            RUNBOOK_ACTIVE: 'active',
+            SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
         });
 
         const EventType = Object.freeze({
@@ -1226,6 +1381,7 @@
             DRAG_END: 'dragend',
             DRAG_OVER: 'dragover',
             DRAG_START: 'dragstart',
+            DRAG_LEAVE: 'dragleave',
             KEY_UP: 'keyup',
             KEY_DOWN: 'keydown',
             MOUSE_UP: 'mouseup',
@@ -1240,6 +1396,7 @@
             CTRL: 'Control',
             ESCAPE: 'Escape',
             E: 'e',
+            S: 's',
         });
 
         const Cursor = Object.freeze({
@@ -1265,6 +1422,9 @@
             BLOCK_SELECTED: '.block-item.block-selected',
             COMMAND_BLOCK_EDITOR: '.command-block-editor',
             TOGGLE_EDITOR_BTN: '.toggle-editor-btn',
+            RUNBOOK_ROW: '.runbook-row',
+            RUNBOOK_ITEM_BTN: '.runbook-item-btn',
+            RUNBOOK_DRAG_HANDLE: '.runbook-drag-handle',
         });
 
         const Anchor = Object.freeze({
@@ -1281,8 +1441,11 @@
             VARIABLES_LIST: 'variables-list',
             BLOCKS_LIST: 'blocks-list',
             EMPTY_STATE: 'empty-state',
-            IMPORT_FILE_INPUT: 'import-file-input',
             DUPLICATE_BTN: 'duplicate-btn',
+            RUNBOOK_LIST: 'runbook-list',
+            RUNBOOK_SECTION: 'runbook-section',
+            VARIABLES_SECTION: 'variables-section',
+            RUNBOOK_IMPORT_INPUT: 'runbook-import-input',
         });
 
         const FilePickerConfig = Object.freeze({
@@ -1305,6 +1468,380 @@
 
         function generateId() {
             return Math.random().toString(36).slice(2, 9);
+        }
+
+        //  Runbook Library
+
+        let runbookDbInstance = null;
+
+        function openRunbookDb() {
+            return new Promise((resolve, reject) => {
+                if (runbookDbInstance) {
+                    resolve(runbookDbInstance);
+                    return;
+                }
+
+                const request = indexedDB.open(RunbookConfig.DB_NAME, RunbookConfig.DB_VERSION);
+
+                request.onupgradeneeded = () => {
+                    const db = request.result;
+                    if (!db.objectStoreNames.contains(RunbookConfig.STORE_NAME)) {
+                        db.createObjectStore(RunbookConfig.STORE_NAME, {
+                            keyPath: 'id'
+                        });
+                    }
+                };
+
+                request.onsuccess = () => {
+                    runbookDbInstance = request.result;
+                    resolve(runbookDbInstance);
+                };
+
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function putRunbookContent(id, content) {
+            const db = await openRunbookDb();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(RunbookConfig.STORE_NAME, IndexedDbTransactionMode.READ_WRITE);
+                tx.objectStore(RunbookConfig.STORE_NAME).put({
+                    id,
+                    content
+                });
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
+        }
+
+        async function getRunbookContent(id) {
+            const db = await openRunbookDb();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(RunbookConfig.STORE_NAME, IndexedDbTransactionMode.READ_ONLY);
+                const request = tx.objectStore(RunbookConfig.STORE_NAME).get(id);
+                request.onsuccess = () => resolve(request.result ? request.result.content : null);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function deleteRunbookContent(id) {
+            const db = await openRunbookDb();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(RunbookConfig.STORE_NAME, IndexedDbTransactionMode.READ_WRITE);
+                tx.objectStore(RunbookConfig.STORE_NAME).delete(id);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
+        }
+
+        //  Runbook library metadata
+
+        let runbookLibrary = [];
+        let activeRunbookId = null;
+
+        function deriveRunbookLabel(runbookContent, fallback) {
+            const firstBlock = runbookContent.blocks?.[0];
+            if (firstBlock && firstBlock.type === BlockType.NOTE && firstBlock.text?.trim()) {
+                return firstBlock.text.trim().slice(0, 60);
+            }
+
+            return fallback;
+        }
+
+        function saveRunbookLibrary() {
+            try {
+                localStorage.setItem(RunbookConfig.LIBRARY_STORAGE_KEY, JSON.stringify({
+                    items: runbookLibrary,
+                    activeId: activeRunbookId,
+                }));
+            } catch {}
+        }
+
+        function loadRunbookLibrary() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(RunbookConfig.LIBRARY_STORAGE_KEY));
+                if (!saved) {
+                    return;
+                }
+
+                runbookLibrary = saved.items ?? [];
+                activeRunbookId = saved.activeId ?? null;
+            } catch {}
+        }
+
+        async function addRunbookToLibrary(content, fallbackLabel) {
+            const id = generateId();
+            const label = deriveRunbookLabel(content, fallbackLabel || RunbookConfig.DEFAULT_LABEL);
+
+            await putRunbookContent(id, content);
+            runbookLibrary.push({
+                id,
+                label
+            });
+
+            saveRunbookLibrary();
+            renderRunbookList();
+        }
+
+        async function loadRunbookFromLibrary(id) {
+            const content = await getRunbookContent(id);
+            if (!content) {
+                return;
+            }
+
+            state.variables = content.variables ?? [];
+            state.blocks = content.blocks ?? [];
+            activeRunbookId = id;
+
+            saveState();
+            saveRunbookLibrary();
+            renderVariablesList();
+            renderBlocksList();
+            updateEmptyState();
+            renderRunbookList();
+            setTimeout(refreshAllPreviews, 0);
+        }
+
+        async function overwriteActiveRunbookInLibrary() {
+            if (!activeRunbookId) {
+                return;
+            }
+
+            const entry = runbookLibrary.find(item => item.id === activeRunbookId);
+            if (!entry) {
+                return;
+            }
+
+            const content = {
+                variables: state.variables,
+                blocks: state.blocks
+            };
+            entry.label = deriveRunbookLabel(content, entry.label);
+
+            await putRunbookContent(activeRunbookId, content);
+            saveRunbookLibrary();
+            renderRunbookList();
+        }
+
+        async function removeRunbookFromLibrary(id) {
+            if (isReadMode()) {
+                return;
+            }
+
+            runbookLibrary = runbookLibrary.filter(item => item.id !== id);
+            if (activeRunbookId === id) {
+                activeRunbookId = null;
+            }
+
+            await deleteRunbookContent(id);
+            saveRunbookLibrary();
+            renderRunbookList();
+        }
+
+        function openRunbookImportDialog() {
+            document.getElementById(ElementId.RUNBOOK_IMPORT_INPUT).click();
+        }
+
+        function handleRunbookImport(event) {
+            const files = Array.from(event.target.files || []);
+            if (files.length === 0) {
+                return;
+            }
+
+            let failedCount = 0;
+
+            const readFile = file => new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = async loadEvent => {
+                    try {
+                        const importedContent = JSON.parse(loadEvent.target.result);
+                        if (!importedContent.variables || !importedContent.blocks) {
+                            throw new Error('Invalid format');
+                        }
+                        await addRunbookToLibrary(importedContent, file.name.replace(/\.json$/i, ''));
+                    } catch {
+                        failedCount += 1;
+                    }
+                    resolve();
+                };
+                reader.onerror = () => {
+                    failedCount += 1;
+                    resolve();
+                };
+                reader.readAsText(file);
+            });
+
+            Promise.all(files.map(readFile)).then(() => {
+                if (failedCount > 0) {
+                    alert(`${failedCount} file(s) could not be imported (invalid format).`);
+                }
+            });
+
+            event.target.value = '';
+        }
+
+        //  Runbook library; render
+
+        function renderRunbookList() {
+            const container = document.getElementById(ElementId.RUNBOOK_LIST);
+            container.innerHTML = '';
+
+            if (runbookLibrary.length === 0) {
+                const emptyMsg = document.createElement('p');
+                emptyMsg.className = CssClass.SIDEBAR_SECTION_EMPTY_MSG;
+                emptyMsg.textContent = 'No runbooks imported.';
+                container.appendChild(emptyMsg);
+            } else {
+                for (const runbook of runbookLibrary) {
+                    const row = document.createElement('div');
+                    row.className = 'runbook-row';
+                    row.dataset.runbookId = runbook.id;
+
+                    const isActive = runbook.id === activeRunbookId;
+
+                    row.innerHTML = `
+                <div class="runbook-drag-handle drag-handle" title="Drag to reorder">
+                    <svg viewBox="0 0 16 16"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
+                </div>
+                <button class="runbook-item-btn ${isActive ? CssClass.RUNBOOK_ACTIVE : ''}"
+                    onclick="loadRunbookFromLibrary('${runbook.id}')"
+                    title="${escapeHtml(runbook.label)}"
+                >${escapeHtml(runbook.label)}</button>
+                <button class="btn btn-icon btn-danger-ghost" onclick="removeRunbookFromLibrary('${runbook.id}')" title="Remove from library">
+                    <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M3 3l10 10M13 3L3 13"/>
+                    </svg>
+                </button>
+            `;
+
+                    const handle = row.querySelector(Selector.RUNBOOK_DRAG_HANDLE);
+                    const itemButton = row.querySelector(Selector.RUNBOOK_ITEM_BTN);
+
+                    handle.addEventListener(EventType.MOUSE_DOWN, () => {
+                        row.draggable = true;
+                    });
+
+                    handle.addEventListener(EventType.MOUSE_UP, () => {
+                        setTimeout(() => {
+                            row.draggable = false;
+                        }, 50);
+                    });
+
+                    row.addEventListener(EventType.DRAG_START, event => {
+                        dragSourceRunbookId = runbook.id;
+                        event.dataTransfer.effectAllowed = DragEffect.MOVE;
+                        row.classList.add(CssClass.DRAGGING);
+                    });
+
+                    row.addEventListener(EventType.DRAG_END, () => {
+                        row.draggable = false;
+                        row.classList.remove(CssClass.DRAGGING);
+                    });
+
+                    row.addEventListener(EventType.DRAG_OVER, event => {
+                        event.preventDefault();
+                        if (runbook.id !== dragSourceRunbookId) {
+                            itemButton.classList.add(CssClass.DRAG_OVER);
+                        }
+                    });
+
+                    row.addEventListener(EventType.DRAG_LEAVE, () => {
+                        itemButton.classList.remove(CssClass.DRAG_OVER);
+                    });
+
+                    row.addEventListener(EventType.DROP, event => {
+                        event.preventDefault();
+                        itemButton.classList.remove(CssClass.DRAG_OVER);
+                        if (isReadMode() || !dragSourceRunbookId) {
+                            return;
+                        }
+
+                        const targetId = runbook.id;
+                        if (dragSourceRunbookId === targetId) {
+                            return;
+                        }
+
+                        const sourceIndex = runbookLibrary.findIndex(item => item.id === dragSourceRunbookId);
+                        const targetIndex = runbookLibrary.findIndex(item => item.id === targetId);
+                        if (sourceIndex < 0 || targetIndex < 0) {
+                            return;
+                        }
+
+                        const [removed] = runbookLibrary.splice(sourceIndex, 1);
+                        runbookLibrary.splice(targetIndex, 0, removed);
+
+                        dragSourceRunbookId = null;
+                        saveRunbookLibrary();
+                        renderRunbookList();
+                    });
+
+                    container.appendChild(row);
+                }
+            }
+
+            const addRow = document.createElement('div');
+            addRow.id = 'runbook-add-row';
+            addRow.innerHTML = `
+        <button class="btn" onclick="openRunbookImportDialog()">
+            <svg viewBox="0 0 16 16">
+                <path d="M8 11V3M5 6l3-3 3 3M3 11v2h10v-2" />
+            </svg>
+            Import
+        </button>
+    `;
+            container.appendChild(addRow);
+        }
+
+        let dragSourceRunbookId = null;
+
+        //  Sidebar section collapse
+
+        function toggleRunbookSection() {
+            toggleSidebarSection(ElementId.RUNBOOK_SECTION);
+        }
+
+        function toggleVariablesSection() {
+            toggleSidebarSection(ElementId.VARIABLES_SECTION);
+        }
+
+        function toggleSidebarSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (!section) {
+                return;
+            }
+
+            section.classList.toggle(CssClass.SECTION_COLLAPSED);
+            saveSidebarSectionState();
+        }
+
+        function saveSidebarSectionState() {
+            try {
+                const runbookSection = document.getElementById(ElementId.RUNBOOK_SECTION);
+                const variablesSection = document.getElementById(ElementId.VARIABLES_SECTION);
+
+                localStorage.setItem(RunbookConfig.SECTIONS_STORAGE_KEY, JSON.stringify({
+                    runbooks: runbookSection?.classList.contains(CssClass.SECTION_COLLAPSED) ?
+                        SectionState.COLLAPSED : SectionState.EXPANDED,
+                    variables: variablesSection?.classList.contains(CssClass.SECTION_COLLAPSED) ?
+                        SectionState.COLLAPSED : SectionState.EXPANDED,
+                }));
+            } catch {}
+        }
+
+        function loadSidebarSectionState() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(RunbookConfig.SECTIONS_STORAGE_KEY));
+                if (!saved) {
+                    return;
+                }
+
+                if (saved.runbooks === SectionState.COLLAPSED) {
+                    document.getElementById(ElementId.RUNBOOK_SECTION)?.classList.add(CssClass.SECTION_COLLAPSED);
+                }
+                if (saved.variables === SectionState.COLLAPSED) {
+                    document.getElementById(ElementId.VARIABLES_SECTION)?.classList.add(CssClass.SECTION_COLLAPSED);
+                }
+            } catch {}
         }
 
         // App mode
@@ -1606,9 +2143,7 @@
 
             if (state.variables.length === 0) {
                 const emptyMsg = document.createElement('p');
-                emptyMsg.className = 'no-user-select';
-                emptyMsg.style.cssText =
-                    'font-size:var(--text-md); font-family:var(--font-mono); color:var(--color-text-muted); padding: var(--space-2) var(--space-12);';
+                emptyMsg.className = CssClass.SIDEBAR_SECTION_EMPTY_MSG;
                 emptyMsg.textContent = 'No variables defined.';
                 container.appendChild(emptyMsg);
             } else {
@@ -2176,13 +2711,12 @@
             }
 
             // Disable header buttons
-            [ElementId.COLLAPSE_ALL_BTN, ElementId.EXPORT_BTN, ElementId.CLEAR_BTN].forEach(id => {
+            [ElementId.COLLAPSE_ALL_BTN, ElementId.EXPORT_BTN].forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn) {
                     btn.classList.toggle(CssClass.BTN_DISABLED, isEmpty);
                 }
             });
-
         }
 
         //  Copy to clipboard
@@ -2413,7 +2947,7 @@
             });
         }
 
-        //  Export / Import
+        //  Export
 
         async function exportToFile() {
             const exportData = JSON.stringify(state, null, 2);
@@ -2454,44 +2988,26 @@
             URL.revokeObjectURL(url);
         }
 
-        function openImportDialog() {
-            document.getElementById(ElementId.IMPORT_FILE_INPUT).click();
-        }
-
-        function handleImport(event) {
-            const file = event.target.files[0];
-            if (!file) {
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function (loadEvent) {
-                try {
-                    const importedState = JSON.parse(loadEvent.target.result);
-                    if (!importedState.variables || !importedState.blocks) throw new Error('Invalid format');
-                    state = importedState;
-                    saveState();
-                    renderVariablesList();
-                    renderBlocksList();
-                    updateEmptyState();
-                    setTimeout(refreshAllPreviews, 0);
-                } catch {
-                    alert('Could not import: invalid file.');
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-
         //  Clear & Toggle
 
-        function clearAllData() {
-            if (!confirm('Are you sure you want to delete all variables and blocks? This action cannot be undone.')) {
+        async function clearAllData() {
+            if (!confirm(
+                    'Are you sure you want to delete all variables, blocks, and runbooks? This action cannot be undone.'
+                )) {
                 return;
             }
 
             state.variables = [];
             state.blocks = [];
+
+            for (const runbook of runbookLibrary) {
+                await deleteRunbookContent(runbook.id);
+            }
+
+            runbookLibrary = [];
+            activeRunbookId = null;
+            saveRunbookLibrary();
+            renderRunbookList();
 
             saveState();
             renderVariablesList();
@@ -2533,13 +3049,22 @@
                         el.classList.remove(CssClass.DRAGGING);
                         el.querySelector(Selector.VARIABLE_INPUTS)?.classList.remove(CssClass.DRAG_OVER);
                     });
+
+                document.querySelectorAll(Selector.RUNBOOK_ROW)
+                    .forEach(el => {
+                        el.classList.remove(CssClass.DRAGGING);
+                        el.querySelector(Selector.RUNBOOK_ITEM_BTN)?.classList.remove(CssClass.DRAG_OVER);
+                    });
             });
         }
 
         function init() {
             loadState();
+            loadRunbookLibrary();
+            loadSidebarSectionState();
             renderVariablesList();
             renderBlocksList();
+            renderRunbookList();
             updateEmptyState();
             setupLassoSelection();
             setupGlobalDragCleanup();
@@ -2600,6 +3125,13 @@
                 if (e.key === Key.E) {
                     e.preventDefault();
                     toggleAppMode();
+                    return;
+                }
+
+                // Toggle sidebar collapse state
+                if (e.key === Key.S) {
+                    e.preventDefault();
+                    toggleSidebar();
                     return;
                 }
 
