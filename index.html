@@ -293,7 +293,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            transition: border-color var(--transition-base), color var(--transition-base);
+            transition: color var(--transition-base);
         }
 
         .runbook-item-btn:hover {
@@ -305,6 +305,10 @@
             background: var(--tag-bg);
             border-color: var(--accent);
             color: var(--accent-text);
+        }
+
+        .runbook-item-btn.active.drag-over {
+            border-color: transparent;
         }
 
         .runbook-drag-handle,
@@ -1143,6 +1147,7 @@
             pointer-events: none;
         }
 
+        body.read-mode .runbook-row,
         body.read-mode .variable-row {
             grid-template-columns: 1fr;
         }
