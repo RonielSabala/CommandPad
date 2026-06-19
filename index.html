@@ -1598,8 +1598,14 @@
             }
 
             await putRunbookContent(id, content);
-            saveRunbookLibrary();
-            renderRunbookList();
+
+            if (existingEntry || activeRunbookId) {
+                saveRunbookLibrary();
+                renderRunbookList();
+                return;
+            }
+
+            await loadRunbookFromLibrary(id);
         }
 
         async function loadRunbookFromLibrary(id) {
