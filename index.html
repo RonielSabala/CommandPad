@@ -1011,8 +1011,7 @@
 
         .btn-disabled {
             opacity: 0.5;
-            pointer-events: none;
-            cursor: default;
+            cursor: not-allowed;
         }
 
         /* Drag handle button */
@@ -1189,7 +1188,7 @@
             <div class="header-spacer"></div>
 
             <div class="header-actions">
-                <button id="export-btn" class="btn btn-lg btn-primary" onclick="exportToFile()" title="Export content">
+                <button id="export-btn" class="btn btn-lg btn-primary" onclick="exportToFile()" title="Export runbook">
                     <svg viewBox="0 0 16 16">
                         <path d="M8 2v8M5 7l3 3 3-3M3 11v2h10v-2" />
                     </svg>
@@ -1197,7 +1196,7 @@
                 </button>
                 <div class="header-separator"></div>
                 <button id="clear-btn" class="btn btn-lg btn-danger-ghost" onclick="clearAllData()"
-                    title="Clear all variables and blocks">
+                    title="Clear workspace">
                     <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"
                         stroke-linecap="round" stroke-linejoin="round" style="display:block">
                         <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" />
@@ -1255,7 +1254,7 @@
 
             <div id="add-block-row">
                 <p class="section-title new-block-row-label no-user-select">NEW BLOCK</p>
-                <button class="btn" onclick="addBlock('command')">
+                <button class="btn" onclick="addBlock('command')" title="Command block">
                     <svg viewBox="0 0 16 16" width="13" height="13">
                         <polyline points="2,4 5,4" />
                         <polyline points="2,8 8,8" />
@@ -1263,14 +1262,14 @@
                     </svg>
                     Command
                 </button>
-                <button class="btn" onclick="addBlock('note')">
+                <button class="btn" onclick="addBlock('note')" title="Note block">
                     <svg viewBox="0 0 16 16" width="13" height="13">
                         <path d="M3 3h10v8l-3 3H3z" />
                         <path d="M10 11v3" />
                     </svg>
                     Note
                 </button>
-                <button class="btn" onclick="addBlock('divider')">
+                <button class="btn" onclick="addBlock('divider')" title="Divider block">
                     <svg viewBox="0 0 16 16">
                         <path d="M1 8 C3 5, 5 11, 7 8 S11 5, 13 8 S15 5, 15 8" />
                     </svg>
@@ -1379,6 +1378,10 @@
             SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
         });
 
+        const CssAttribute = Object.freeze({
+            DISABLED: 'disabled',
+        });
+
         const EventType = Object.freeze({
             ANIMATION_END: 'animationend',
             CLICK: 'click',
@@ -1400,7 +1403,11 @@
             ALT: 'Alt',
             CTRL: 'Control',
             ESCAPE: 'Escape',
+            DELETE: 'Backspace',
+            SHIFT_E: 'E',
             E: 'e',
+            G: 'g',
+            I: 'i',
             S: 's',
         });
 
@@ -1575,17 +1582,33 @@
         }
 
         async function addRunbookToLibrary(content, fallbackLabel) {
-            const id = generateId();
+            let id = null;
             const label = deriveRunbookLabel(content, fallbackLabel || RunbookConfig.DEFAULT_LABEL);
 
-            await putRunbookContent(id, content);
-            runbookLibrary.push({
-                id,
-                label
-            });
+            // Overwrite runbook
+            const existingEntry = runbookLibrary.find(item => item.label === label);
+            if (existingEntry) {
+                id = existingEntry.id;
+            } else {
+                id = generateId();
+                runbookLibrary.push({
+                    id,
+                    label
+                });
 
-            saveRunbookLibrary();
-            renderRunbookList();
+                // Keep the list sorted
+                runbookLibrary.sort((a, b) => a.label.localeCompare(b.label));
+            }
+
+            await putRunbookContent(id, content);
+
+            if (existingEntry || activeRunbookId) {
+                saveRunbookLibrary();
+                renderRunbookList();
+                return;
+            }
+
+            await loadRunbookFromLibrary(id);
         }
 
         async function loadRunbookFromLibrary(id) {
@@ -1633,12 +1656,21 @@
                 return;
             }
 
+            const wasActive = activeRunbookId === id;
+
             runbookLibrary = runbookLibrary.filter(item => item.id !== id);
-            if (activeRunbookId === id) {
+            await deleteRunbookContent(id);
+
+            if (wasActive) {
                 activeRunbookId = null;
+                state.variables = [];
+                state.blocks = [];
+                saveState();
+                renderVariablesList();
+                renderBlocksList();
+                updateEmptyState();
             }
 
-            await deleteRunbookContent(id);
             saveRunbookLibrary();
             renderRunbookList();
         }
@@ -1787,7 +1819,7 @@
             const addRow = document.createElement('div');
             addRow.id = 'runbook-add-row';
             addRow.innerHTML = `
-        <button class="btn" onclick="openRunbookImportDialog()">
+        <button class="btn" onclick="openRunbookImportDialog()" title="Import runbook">
             <svg viewBox="0 0 16 16">
                 <path d="M8 11V3M5 6l3-3 3 3M3 11v2h10v-2" />
             </svg>
@@ -2257,7 +2289,7 @@
             const addRow = document.createElement('div');
             addRow.id = 'variable-add-row';
             addRow.innerHTML = `
-        <button class="btn" onclick="addVariable()">
+        <button class="btn" onclick="addVariable()" title="New variable">
           <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M8 3v10M3 8h10"/>
           </svg>
@@ -2715,12 +2747,14 @@
                 clearBlockSelection();
             }
 
-            // Disable header buttons
             [ElementId.COLLAPSE_ALL_BTN, ElementId.EXPORT_BTN].forEach(id => {
                 const btn = document.getElementById(id);
-                if (btn) {
-                    btn.classList.toggle(CssClass.BTN_DISABLED, isEmpty);
+                if (!btn) {
+                    return;
                 }
+
+                btn.toggleAttribute(CssAttribute.DISABLED, isEmpty);
+                btn.classList.toggle(CssClass.BTN_DISABLED, isEmpty);
             });
         }
 
@@ -3110,6 +3144,10 @@
             document.body.style.cursor = isCursorOverLink ? Cursor.POINTER : Cursor.DEFAULT;
         }
 
+        function removeCtrlHeldClass() {
+            document.body.classList.remove(CssClass.CTRL_HELD);
+        }
+
         function removeAltHeldClass() {
             document.body.classList.remove(CssClass.ALT_HELD);
             document.body.style.cursor = Cursor.DEFAULT;
@@ -3125,39 +3163,49 @@
         });
 
         document.addEventListener(EventType.KEY_DOWN, e => {
-            if (e.ctrlKey) {
-                // Toggle edit/read mode
-                if (e.key === Key.E) {
-                    e.preventDefault();
-                    toggleAppMode();
-                    return;
-                }
-
-                // Toggle sidebar collapse state
-                if (e.key === Key.S) {
-                    e.preventDefault();
-                    toggleSidebar();
-                    return;
-                }
-
-                // Enter ctrl-held mode if the user is not typing
-                if (!document.activeElement?.matches('textarea, input')) {
-                    document.body.classList.add(CssClass.CTRL_HELD);
-                }
-
-                return;
-            }
-
             if (e.altKey) {
                 e.preventDefault();
                 document.body.classList.add(CssClass.ALT_HELD);
                 updateCursorOnLink();
+                return;
+            }
+
+            if (!e.ctrlKey) {
+                return;
+            }
+
+            if (e.key === Key.E) {
+                e.preventDefault();
+                removeCtrlHeldClass();
+                toggleAppMode();
+            } else if (e.shiftKey && e.key === Key.SHIFT_E) {
+                e.preventDefault();
+                removeCtrlHeldClass();
+                exportToFile();
+            } else if (e.shiftKey && e.key === Key.DELETE) {
+                e.preventDefault();
+                removeCtrlHeldClass();
+                clearAllData();
+            } else if (e.key === Key.S) {
+                e.preventDefault();
+                removeCtrlHeldClass();
+                toggleSidebar();
+            } else if (e.key === Key.I && !isReadMode()) {
+                e.preventDefault();
+                removeCtrlHeldClass();
+                openRunbookImportDialog();
+            } else if (e.key === Key.G) {
+                e.preventDefault();
+                removeCtrlHeldClass();
+                toggleAllCommandEditors();
+            } else if (!document.activeElement?.matches('textarea, input')) {
+                document.body.classList.add(CssClass.CTRL_HELD);
             }
         });
 
         document.addEventListener(EventType.KEY_UP, e => {
             if (e.key === Key.CTRL) {
-                document.body.classList.remove(CssClass.CTRL_HELD);
+                removeCtrlHeldClass();
                 return;
             }
 
