@@ -1011,8 +1011,7 @@
 
         .btn-disabled {
             opacity: 0.5;
-            pointer-events: none;
-            cursor: default;
+            cursor: not-allowed;
         }
 
         /* Drag handle button */
@@ -1377,6 +1376,10 @@
             SECTION_COLLAPSED: 'collapsed',
             RUNBOOK_ACTIVE: 'active',
             SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
+        });
+
+        const CssAttribute = Object.freeze({
+            DISABLED: 'disabled',
         });
 
         const EventType = Object.freeze({
@@ -2744,12 +2747,14 @@
                 clearBlockSelection();
             }
 
-            // Disable header buttons
             [ElementId.COLLAPSE_ALL_BTN, ElementId.EXPORT_BTN].forEach(id => {
                 const btn = document.getElementById(id);
-                if (btn) {
-                    btn.classList.toggle(CssClass.BTN_DISABLED, isEmpty);
+                if (!btn) {
+                    return;
                 }
+
+                btn.toggleAttribute(CssAttribute.DISABLED, isEmpty);
+                btn.classList.toggle(CssClass.BTN_DISABLED, isEmpty);
             });
         }
 
