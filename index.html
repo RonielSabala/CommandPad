@@ -1400,6 +1400,8 @@
             ALT: 'Alt',
             CTRL: 'Control',
             ESCAPE: 'Escape',
+            DELETE: 'Backspace',
+            SHIFT_E: 'E',
             E: 'e',
             G: 'g',
             I: 'i',
@@ -3146,30 +3148,37 @@
         });
 
         document.addEventListener(EventType.KEY_DOWN, e => {
-            if (e.ctrlKey) {
-                if (e.key === Key.E) {
-                    e.preventDefault();
-                    toggleAppMode();
-                } else if (e.key === Key.S) {
-                    e.preventDefault();
-                    toggleSidebar();
-                } else if (e.key === Key.I) {
-                    e.preventDefault();
-                    openRunbookImportDialog();
-                } else if (e.key === Key.G) {
-                    e.preventDefault();
-                    toggleAllCommandEditors();
-                } else if (!document.activeElement?.matches('textarea, input')) {
-                    document.body.classList.add(CssClass.CTRL_HELD);
-                }
-
-                return;
-            }
-
             if (e.altKey) {
                 e.preventDefault();
                 document.body.classList.add(CssClass.ALT_HELD);
                 updateCursorOnLink();
+                return;
+            }
+
+            if (!e.ctrlKey) {
+                return;
+            }
+
+            if (e.key === Key.E) {
+                e.preventDefault();
+                toggleAppMode();
+            } else if (e.shiftKey && e.key === Key.SHIFT_E) {
+                e.preventDefault();
+                exportToFile();
+            } else if (e.shiftKey && e.key === Key.DELETE) {
+                e.preventDefault();
+                clearAllData();
+            } else if (e.key === Key.S) {
+                e.preventDefault();
+                toggleSidebar();
+            } else if (e.key === Key.I) {
+                e.preventDefault();
+                openRunbookImportDialog();
+            } else if (e.key === Key.G) {
+                e.preventDefault();
+                toggleAllCommandEditors();
+            } else if (!document.activeElement?.matches('textarea, input')) {
+                document.body.classList.add(CssClass.CTRL_HELD);
             }
         });
 

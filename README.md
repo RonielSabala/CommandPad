@@ -194,6 +194,8 @@ Click the **Export** button in the header to save the active workspace. A native
 | `Ctrl+G`                          | Toggle all command editors (collapse / expand) |
 | `Ctrl+I`                          | Open the runbook import dialog                 |
 | `Ctrl+S`                          | Collapse / expand the sidebar                  |
+| `Ctrl+Shift+E`                    | Export the active workspace                    |
+| `Ctrl+Shift+Del`                  | Clear all variables, blocks, and runbooks      |
 | `Alt` + **click** on a note link  | Open the link in a new tab                     |
 | `Ctrl` + **click/drag** on blocks | Multi-select blocks                            |
 | `Escape`                          | Clear block selection                          |
