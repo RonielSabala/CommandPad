@@ -3144,6 +3144,10 @@
             document.body.style.cursor = isCursorOverLink ? Cursor.POINTER : Cursor.DEFAULT;
         }
 
+        function removeCtrlHeldClass() {
+            document.body.classList.remove(CssClass.CTRL_HELD);
+        }
+
         function removeAltHeldClass() {
             document.body.classList.remove(CssClass.ALT_HELD);
             document.body.style.cursor = Cursor.DEFAULT;
@@ -3172,21 +3176,27 @@
 
             if (e.key === Key.E) {
                 e.preventDefault();
+                removeCtrlHeldClass();
                 toggleAppMode();
             } else if (e.shiftKey && e.key === Key.SHIFT_E) {
                 e.preventDefault();
+                removeCtrlHeldClass();
                 exportToFile();
             } else if (e.shiftKey && e.key === Key.DELETE) {
                 e.preventDefault();
+                removeCtrlHeldClass();
                 clearAllData();
             } else if (e.key === Key.S) {
                 e.preventDefault();
+                removeCtrlHeldClass();
                 toggleSidebar();
-            } else if (e.key === Key.I) {
+            } else if (e.key === Key.I && !isReadMode()) {
                 e.preventDefault();
+                removeCtrlHeldClass();
                 openRunbookImportDialog();
             } else if (e.key === Key.G) {
                 e.preventDefault();
+                removeCtrlHeldClass();
                 toggleAllCommandEditors();
             } else if (!document.activeElement?.matches('textarea, input')) {
                 document.body.classList.add(CssClass.CTRL_HELD);
@@ -3195,7 +3205,7 @@
 
         document.addEventListener(EventType.KEY_UP, e => {
             if (e.key === Key.CTRL) {
-                document.body.classList.remove(CssClass.CTRL_HELD);
+                removeCtrlHeldClass();
                 return;
             }
 
