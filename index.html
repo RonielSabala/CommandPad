@@ -1401,6 +1401,8 @@
             CTRL: 'Control',
             ESCAPE: 'Escape',
             E: 'e',
+            G: 'g',
+            I: 'i',
             S: 's',
         });
 
@@ -3145,22 +3147,19 @@
 
         document.addEventListener(EventType.KEY_DOWN, e => {
             if (e.ctrlKey) {
-                // Toggle edit/read mode
                 if (e.key === Key.E) {
                     e.preventDefault();
                     toggleAppMode();
-                    return;
-                }
-
-                // Toggle sidebar collapse state
-                if (e.key === Key.S) {
+                } else if (e.key === Key.S) {
                     e.preventDefault();
                     toggleSidebar();
-                    return;
-                }
-
-                // Enter ctrl-held mode if the user is not typing
-                if (!document.activeElement?.matches('textarea, input')) {
+                } else if (e.key === Key.I) {
+                    e.preventDefault();
+                    openRunbookImportDialog();
+                } else if (e.key === Key.G) {
+                    e.preventDefault();
+                    toggleAllCommandEditors();
+                } else if (!document.activeElement?.matches('textarea, input')) {
                     document.body.classList.add(CssClass.CTRL_HELD);
                 }
 

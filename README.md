@@ -188,13 +188,15 @@ Click the **Export** button in the header to save the active workspace. A native
 
 ## Keyboard Shortcuts
 
-| Shortcut                          | Action                        |
-| --------------------------------- | ----------------------------- |
-| `Ctrl+E`                          | Toggle Read mode / Edit mode  |
-| `Ctrl+S`                          | Collapse / expand the sidebar |
-| `Alt` + **click** on a note link  | Open the link                 |
-| `Ctrl` + **click/drag** on blocks | Multi-select blocks           |
-| `Escape`                          | Clear block selection         |
+| Shortcut                          | Action                                         |
+| --------------------------------- | ---------------------------------------------- |
+| `Ctrl+E`                          | Toggle Read mode / Edit mode                   |
+| `Ctrl+G`                          | Toggle all command editors (collapse / expand) |
+| `Ctrl+I`                          | Open the runbook import dialog                 |
+| `Ctrl+S`                          | Collapse / expand the sidebar                  |
+| `Alt` + **click** on a note link  | Open the link in a new tab                     |
+| `Ctrl` + **click/drag** on blocks | Multi-select blocks                            |
+| `Escape`                          | Clear block selection                          |
 
 ---
 
