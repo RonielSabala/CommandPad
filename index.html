@@ -1575,15 +1575,25 @@
         }
 
         async function addRunbookToLibrary(content, fallbackLabel) {
-            const id = generateId();
+            let id = null;
             const label = deriveRunbookLabel(content, fallbackLabel || RunbookConfig.DEFAULT_LABEL);
 
-            await putRunbookContent(id, content);
-            runbookLibrary.push({
-                id,
-                label
-            });
+            // Overwrite runbook
+            const existingEntry = runbookLibrary.find(item => item.label === label);
+            if (existingEntry) {
+                id = existingEntry.id;
+            } else {
+                id = generateId();
+                runbookLibrary.push({
+                    id,
+                    label
+                });
 
+                // Keep the list sorted
+                runbookLibrary.sort((a, b) => a.label.localeCompare(b.label));
+            }
+
+            await putRunbookContent(id, content);
             saveRunbookLibrary();
             renderRunbookList();
         }
