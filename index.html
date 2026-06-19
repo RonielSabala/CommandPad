@@ -1643,12 +1643,21 @@
                 return;
             }
 
+            const wasActive = activeRunbookId === id;
+
             runbookLibrary = runbookLibrary.filter(item => item.id !== id);
-            if (activeRunbookId === id) {
+            await deleteRunbookContent(id);
+
+            if (wasActive) {
                 activeRunbookId = null;
+                state.variables = [];
+                state.blocks = [];
+                saveState();
+                renderVariablesList();
+                renderBlocksList();
+                updateEmptyState();
             }
 
-            await deleteRunbookContent(id);
             saveRunbookLibrary();
             renderRunbookList();
         }
