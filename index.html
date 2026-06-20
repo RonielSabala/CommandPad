@@ -1403,8 +1403,10 @@
             ALT: 'Alt',
             CTRL: 'Control',
             ESCAPE: 'Escape',
-            DELETE: 'Backspace',
+            BACKSPACE: 'Backspace',
+            DELETE: 'Delete',
             SHIFT_E: 'E',
+            D: 'd',
             E: 'e',
             G: 'g',
             I: 'i',
@@ -3163,6 +3165,15 @@
         });
 
         document.addEventListener(EventType.KEY_DOWN, e => {
+            if (e.key === Key.DELETE && !e.ctrlKey && !e.altKey) {
+                const active = document.activeElement;
+                const isEditingText = active?.matches('textarea, input');
+                if (!isEditingText && selectedBlockIds.size > 0) {
+                    e.preventDefault();
+                    removeBlock([...selectedBlockIds][0]);
+                }
+            }
+
             if (e.altKey) {
                 e.preventDefault();
                 document.body.classList.add(CssClass.ALT_HELD);
@@ -3182,10 +3193,16 @@
                 e.preventDefault();
                 removeCtrlHeldClass();
                 exportToFile();
-            } else if (e.shiftKey && e.key === Key.DELETE) {
+            } else if (e.shiftKey && e.key === Key.BACKSPACE) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 clearAllData();
+            } else if (e.key === Key.D) {
+                e.preventDefault();
+                removeCtrlHeldClass();
+                if (selectedBlockIds.size > 0) {
+                    duplicateBlock([...selectedBlockIds][0]);
+                }
             } else if (e.key === Key.S) {
                 e.preventDefault();
                 removeCtrlHeldClass();
