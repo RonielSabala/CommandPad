@@ -11,8 +11,8 @@
         :root {
             /* Core config */
             --base-unit: 17px;
-            --font-mono: 'Cascadia Code', monospace;
             --font-sans: 'Inter', sans-serif;
+            --font-mono: 'Cascadia Code', monospace;
 
             /* Accents & semantic colors */
             --accent: #3b82f6;
@@ -76,6 +76,8 @@
             --header-height: 3.5rem;
             --scrollbar-size: 0.625rem;
             --block-min-width: 7.5rem;
+            --modal-min-width: 21.25rem;
+            --modal-max-width: 30rem;
 
             /* Compound tokens */
             --border-standard: 1px solid var(--color-border);
@@ -105,6 +107,11 @@
             color: var(--color-text-primary);
             font-family: var(--font-sans);
             line-height: 1.5;
+            visibility: hidden;
+        }
+
+        body.app-ready {
+            visibility: visible;
         }
 
         /* --- DISABLE USER SELECT --- */
@@ -141,7 +148,7 @@
 
         /* --- LAYOUT --- */
 
-        .app-shell {
+        #app-shell {
             display: grid;
             grid-template-columns: var(--sidebar-width) 1fr;
             grid-template-rows: var(--header-height) 1fr;
@@ -154,7 +161,7 @@
 
         /* --- HEADER --- */
 
-        .app-header {
+        #app-header {
             grid-area: header;
             display: flex;
             align-items: center;
@@ -164,7 +171,7 @@
             background: var(--color-surface);
         }
 
-        .app-name {
+        #app-name {
             font-family: var(--font-mono);
             font-size: var(--text-lg);
             font-weight: 600;
@@ -193,7 +200,7 @@
 
         /* --- SIDEBAR --- */
 
-        .app-sidebar {
+        #app-sidebar {
             grid-area: sidebar;
             background: var(--color-surface);
             border-right: var(--border-standard);
@@ -263,6 +270,59 @@
             flex-shrink: 0;
         }
 
+        /* --- CONFIRM MODAL --- */
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-base);
+        }
+
+        .modal-backdrop.modal-visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: var(--color-surface);
+            border: var(--border-standard);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6) var(--space-8);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            min-width: var(--modal-min-width);
+            max-width: var(--modal-max-width);
+            box-shadow: 0 var(--space-4) var(--space-12) rgba(0, 0, 0, 0.5);
+            transform: translateY(calc(-1 * var(--space-3)));
+            transition: transform var(--transition-base);
+        }
+
+        .modal-backdrop.modal-visible .modal {
+            transform: translateY(0);
+        }
+
+        .modal-message {
+            font-family: var(--font-sans);
+            font-size: var(--text-base);
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-4);
+            padding-top: var(--space-4);
+        }
+
         /* --- RUNBOOK LIBRARY SECTION --- */
 
         #runbook-list {
@@ -311,18 +371,24 @@
             border-color: transparent;
         }
 
+        .runbook-item-btn.runbook-focused {
+            outline: var(--space-1) solid var(--accent);
+            outline-offset: var(--space-1);
+            box-shadow: 0 0 0 var(--space-2) var(--accent-dim);
+        }
+
         .runbook-drag-handle,
-        .runbook-row .btn-danger-ghost {
+        .runbook-row .btn-danger {
             opacity: 0;
             transition: opacity var(--transition-fast), color var(--transition-fast);
         }
 
         .runbook-row:hover .runbook-drag-handle,
-        .runbook-row:hover .btn-danger-ghost {
+        .runbook-row:hover .btn-danger {
             opacity: 1;
         }
 
-        #runbook-add-row {
+        #runbook-add-btn {
             padding: var(--space-3) var(--space-12);
         }
 
@@ -358,17 +424,17 @@
         }
 
         .variable-drag-handle,
-        .variable-row .btn-danger-ghost {
+        .variable-row .btn-danger {
             opacity: 0;
             transition: opacity var(--transition-fast), color var(--transition-fast);
         }
 
         .variable-row:hover .variable-drag-handle,
-        .variable-row:hover .btn-danger-ghost {
+        .variable-row:hover .btn-danger {
             opacity: 1;
         }
 
-        #variable-add-row {
+        #variable-add-btn {
             padding: var(--space-3) var(--space-12);
         }
 
@@ -431,15 +497,15 @@
             z-index: 10;
         }
 
-        .app-shell.sidebar-collapsed {
+        #app-shell.sidebar-collapsed {
             grid-template-columns: 0 1fr;
         }
 
-        .app-shell.sidebar-collapsed #sidebar-chevron {
+        #app-shell.sidebar-collapsed #sidebar-chevron {
             transform: rotate(180deg);
         }
 
-        .app-shell.sidebar-collapsed .app-sidebar {
+        #app-shell.sidebar-collapsed #app-sidebar {
             width: 0;
             overflow: hidden;
             border-right: none;
@@ -447,7 +513,7 @@
 
         /* --- MAIN PANEL --- */
 
-        .app-main {
+        #main-panel {
             grid-area: main;
             overflow-y: auto;
             padding-top: var(--space-4);
@@ -670,6 +736,10 @@
             color: var(--color-text-secondary);
         }
 
+        .command-preview-placeholder {
+            color: var(--color-text-muted);
+        }
+
         .token-resolved {
             color: var(--success);
         }
@@ -807,7 +877,7 @@
             font-size: 0.9em;
             background: var(--code-bg);
             color: var(--code-color);
-            border: 1px solid var(--code-border);
+            border: var(--border-standard);
             border-radius: var(--radius-sm);
             padding: 0.05em var(--space-3);
             white-space: nowrap;
@@ -828,6 +898,10 @@
             position: relative;
             z-index: 1;
             user-select: none;
+        }
+
+        .note-preview-placeholder {
+            color: var(--color-text-muted);
         }
 
         .note-preview.style-heading {
@@ -982,13 +1056,13 @@
             color: #fff;
         }
 
-        .btn-danger-ghost {
+        .btn-danger {
             background: transparent;
             border-color: transparent;
             color: var(--color-text-muted);
         }
 
-        .btn-danger-ghost:hover {
+        .btn-danger:hover {
             background: var(--danger-dim);
             border-color: var(--danger);
             color: var(--danger);
@@ -1090,19 +1164,19 @@
 
         /* --- READ MODE SUPPRESSIONS --- */
 
-        body.read-mode #runbook-add-row,
+        body.read-mode #runbook-add-btn,
         body.read-mode .runbook-drag-handle,
-        body.read-mode .runbook-row .btn-danger-ghost {
+        body.read-mode .runbook-row .btn-danger {
             display: none !important;
         }
 
         body.read-mode #add-block-row,
-        body.read-mode #variable-add-row {
+        body.read-mode #variable-add-btn {
             display: none;
         }
 
         body.read-mode .variable-drag-handle,
-        body.read-mode .variable-row .btn-danger-ghost {
+        body.read-mode .variable-row .btn-danger {
             display: none !important;
         }
 
@@ -1160,10 +1234,10 @@
 </head>
 
 <body>
-    <div class="app-shell">
+    <div id="app-shell">
         <!-- Header -->
-        <header class="app-header">
-            <span class="app-name">CommandPad</span>
+        <header id="app-header">
+            <span id="app-name">CommandPad</span>
 
             <div class="header-spacer"></div>
 
@@ -1195,10 +1269,9 @@
                     Export
                 </button>
                 <div class="header-separator"></div>
-                <button id="clear-btn" class="btn btn-lg btn-danger-ghost" onclick="clearAllData()"
-                    title="Clear workspace">
+                <button id="clear-btn" class="btn btn-lg btn-danger" onclick="clearAllData()" title="Clear workspace">
                     <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"
-                        stroke-linecap="round" stroke-linejoin="round" style="display:block">
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" />
                     </svg>
                 </button>
@@ -1206,36 +1279,36 @@
         </header>
 
         <!-- Sidebar -->
-        <aside class="app-sidebar">
-            <div class="sidebar-section" id="runbook-section">
+        <aside id="app-sidebar">
+            <div id="runbook-section" class="sidebar-section">
                 <div class="sidebar-section-header no-user-select" onclick="toggleRunbookSection()">
                     <svg class="sidebar-section-chevron" viewBox="0 0 16 16">
                         <polyline points="4,6 8,10 12,6" />
                     </svg>
                     <p class="section-title">RUNBOOKS</p>
                 </div>
-                <div class="sidebar-section-body" id="runbook-list"></div>
+                <div id="runbook-list" class="sidebar-section-body"></div>
             </div>
 
             <div class="sidebar-divider"></div>
 
-            <div class="sidebar-section" id="variables-section">
+            <div id="variables-section" class="sidebar-section">
                 <div class="sidebar-section-header no-user-select" onclick="toggleVariablesSection()">
                     <svg class="sidebar-section-chevron" viewBox="0 0 16 16">
                         <polyline points="4,6 8,10 12,6" />
                     </svg>
                     <p class="section-title">VARIABLES</p>
                 </div>
-                <div class="sidebar-section-body" id="variables-list"></div>
+                <div id="variables-list" class="sidebar-section-body"></div>
             </div>
         </aside>
 
         <!-- Hidden import input for adding a runbook to the library -->
-        <input type="file" id="runbook-import-input" accept=".json" multiple onchange="handleRunbookImport(event)" />
+        <input id="runbook-import-input" type="file" accept=".json" multiple onchange="handleRunbookImport(event)" />
 
         <!-- Main panel -->
-        <main class="app-main" id="main-panel">
-            <button class="btn btn-icon sidebar-collapse-btn" id="sidebar-toggle-btn" onclick="toggleSidebar()"
+        <main id="main-panel">
+            <button id="sidebar-toggle-btn" class="btn btn-icon sidebar-collapse-btn" onclick="toggleSidebar()"
                 title="Collapse sidebar">
                 <svg id="sidebar-chevron" viewBox="0 0 16 16">
                     <polyline points="10,4 4,8 10,12" />
@@ -1277,6 +1350,16 @@
                 </button>
             </div>
         </main>
+    </div>
+
+    <div id="confirm-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal">
+            <p id="confirm-modal-message" class="modal-message"></p>
+            <div class="modal-actions">
+                <button id="confirm-modal-cancel-btn" class="btn btn-lg">Cancel</button>
+                <button id="confirm-modal-confirm-btn" class="btn btn-lg btn-danger">Delete</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1355,7 +1438,17 @@
             VALUE: 'value',
         });
 
+        const CssHeight = Object.freeze({
+            AUTO: 'auto',
+        });
+
+        const CssDisplay = Object.freeze({
+            BLOCK: 'block',
+            NONE: 'none',
+        });
+
         const CssClass = Object.freeze({
+            APP_READY: 'app-ready',
             DRAGGING: 'dragging',
             DRAG_OVER: 'drag-over',
             COLLAPSED: 'collapsed',
@@ -1371,11 +1464,15 @@
             BLOCK_SELECTED: 'block-selected',
             SELECTING: 'selecting',
             BTN_DISABLED: 'btn-disabled',
+            BLOCK_ITEM: 'block-item',
             BLOCK_CONTROLS: 'block-controls',
             BLOCK_DRAG_HANDLE: 'block-drag-handle',
             SECTION_COLLAPSED: 'collapsed',
+            RUNBOOK_ROW: 'runbook-row',
             RUNBOOK_ACTIVE: 'active',
+            RUNBOOK_FOCUSED: 'runbook-focused',
             SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
+            MODAL_VISIBLE: 'modal-visible',
         });
 
         const CssAttribute = Object.freeze({
@@ -1400,11 +1497,17 @@
         });
 
         const Key = Object.freeze({
-            ALT: 'Alt',
             CTRL: 'Control',
+            ALT: 'Alt',
+            ENTER: 'Enter',
             ESCAPE: 'Escape',
-            DELETE: 'Backspace',
+            BACKSPACE: 'Backspace',
+            DELETE: 'Delete',
             SHIFT_E: 'E',
+            TAB: 'Tab',
+            ARROW_UP: 'ArrowUp',
+            ARROW_DOWN: 'ArrowDown',
+            D: 'd',
             E: 'e',
             G: 'g',
             I: 'i',
@@ -1421,22 +1524,29 @@
         });
 
         const Selector = Object.freeze({
-            APP_SHELL: '.app-shell',
             BLOCK_ITEM: '.block-item',
+            DRAG_HANDLE: '.drag-handle',
             NOTE_LINK: 'a.note-link',
             NOTE_TEXTAREA: '.note-textarea',
             NOTE_AUTO_WIDTH: '.note-auto-width',
             NOTE_PREVIEW: '.note-preview',
+            NOTE_STYLE_BTN: '.note-style-btn',
             COMMAND_TEXTAREA: '.command-textarea',
+            COMMAND_PREVIEW_TEXT: '.command-preview-text',
             VARIABLE_ROW: '.variable-row',
             VARIABLE_INPUTS: '.variable-inputs',
+            VARIABLE_KEY_INPUT: '.variable-key-input',
+            VARIABLE_VALUE_INPUT: '.variable-value-input',
             VARIABLE_DRAG_HANDLE: '.variable-drag-handle',
-            BLOCK_SELECTED: '.block-item.block-selected',
             COMMAND_BLOCK_EDITOR: '.command-block-editor',
             TOGGLE_EDITOR_BTN: '.toggle-editor-btn',
             RUNBOOK_ROW: '.runbook-row',
             RUNBOOK_ITEM_BTN: '.runbook-item-btn',
             RUNBOOK_DRAG_HANDLE: '.runbook-drag-handle',
+        });
+
+        const InputSelector = Object.freeze({
+            EDITABLE: 'textarea, input',
         });
 
         const Anchor = Object.freeze({
@@ -1445,7 +1555,9 @@
         });
 
         const ElementId = Object.freeze({
+            APP_SHELL: 'app-shell',
             MAIN_PANEL: 'main-panel',
+            MODE_TOGGLE_BTN: 'mode-toggle-btn',
             COLLAPSE_ALL_BTN: 'collapse-all-btn',
             EXPORT_BTN: 'export-btn',
             CLEAR_BTN: 'clear-btn',
@@ -1458,6 +1570,12 @@
             RUNBOOK_SECTION: 'runbook-section',
             VARIABLES_SECTION: 'variables-section',
             RUNBOOK_IMPORT_INPUT: 'runbook-import-input',
+            RUNBOOK_ADD_BTN: 'runbook-add-btn',
+            VARIABLE_ADD_BTN: 'variable-add-btn',
+            CONFIRM_MODAL: 'confirm-modal',
+            CONFIRM_MODAL_MESSAGE: 'confirm-modal-message',
+            CONFIRM_MODAL_CONFIRM_BTN: 'confirm-modal-confirm-btn',
+            CONFIRM_MODAL_CANCEL_BTN: 'confirm-modal-cancel-btn',
         });
 
         const FilePickerConfig = Object.freeze({
@@ -1470,6 +1588,9 @@
         const DragEffect = Object.freeze({
             MOVE: 'move',
         });
+
+        const DRAG_TIMEOUT_MS = 50;
+        const COPY_FEEDBACK_TIMEOUT_MS = 1000;
 
         // State
 
@@ -1497,11 +1618,13 @@
 
                 request.onupgradeneeded = () => {
                     const db = request.result;
-                    if (!db.objectStoreNames.contains(RunbookConfig.STORE_NAME)) {
-                        db.createObjectStore(RunbookConfig.STORE_NAME, {
-                            keyPath: 'id'
-                        });
+                    if (db.objectStoreNames.contains(RunbookConfig.STORE_NAME)) {
+                        return;
                     }
+
+                    db.createObjectStore(RunbookConfig.STORE_NAME, {
+                        keyPath: 'id'
+                    });
                 };
 
                 request.onsuccess = () => {
@@ -1550,6 +1673,7 @@
 
         let runbookLibrary = [];
         let activeRunbookId = null;
+        let focusedRunbookId = null;
 
         function deriveRunbookLabel(runbookContent, fallback) {
             const firstBlock = runbookContent.blocks?.[0];
@@ -1675,6 +1799,45 @@
             renderRunbookList();
         }
 
+        function setRunbookFocus(id) {
+            focusedRunbookId = id;
+            updateRunbookFocusVisuals();
+        }
+
+        function clearRunbookFocus() {
+            focusedRunbookId = null;
+            updateRunbookFocusVisuals();
+        }
+
+        function updateRunbookFocusVisuals() {
+            document.querySelectorAll(Selector.RUNBOOK_ITEM_BTN).forEach(btn => {
+                const row = btn.closest(Selector.RUNBOOK_ROW);
+                btn.classList.toggle(CssClass.RUNBOOK_FOCUSED, row?.dataset.runbookId === focusedRunbookId);
+            });
+        }
+
+        function navigateRunbookList(direction) {
+            const runbookCount = runbookLibrary.length;
+            if (runbookCount === 0) {
+                return;
+            }
+
+            const currentIndex = runbookLibrary.findIndex(item => item.id === focusedRunbookId);
+
+            let nextIndex;
+            if (currentIndex < 0) {
+                nextIndex = direction === Key.ARROW_DOWN ? 0 : runbookCount - 1;
+            } else {
+                nextIndex = direction === Key.ARROW_DOWN ?
+                    (currentIndex + 1) % runbookCount :
+                    (currentIndex - 1 + runbookCount) % runbookCount;
+            }
+
+            const nextId = runbookLibrary[nextIndex].id;
+            focusedRunbookId = nextId;
+            loadRunbookFromLibrary(nextId).then(updateRunbookFocusVisuals);
+        }
+
         function openRunbookImportDialog() {
             document.getElementById(ElementId.RUNBOOK_IMPORT_INPUT).click();
         }
@@ -1717,7 +1880,7 @@
             event.target.value = '';
         }
 
-        //  Runbook library; render
+        //  Render runbook library
 
         function renderRunbookList() {
             const container = document.getElementById(ElementId.RUNBOOK_LIST);
@@ -1731,7 +1894,7 @@
             } else {
                 for (const runbook of runbookLibrary) {
                     const row = document.createElement('div');
-                    row.className = 'runbook-row';
+                    row.className = CssClass.RUNBOOK_ROW;
                     row.dataset.runbookId = runbook.id;
 
                     const isActive = runbook.id === activeRunbookId;
@@ -1741,10 +1904,10 @@
                     <svg viewBox="0 0 16 16"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
                 </div>
                 <button class="runbook-item-btn ${isActive ? CssClass.RUNBOOK_ACTIVE : ''}"
-                    onclick="loadRunbookFromLibrary('${runbook.id}')"
+                    onclick="clearRunbookFocus(); loadRunbookFromLibrary('${runbook.id}')"
                     title="${escapeHtml(runbook.label)}"
                 >${escapeHtml(runbook.label)}</button>
-                <button class="btn btn-icon btn-danger-ghost" onclick="removeRunbookFromLibrary('${runbook.id}')" title="Remove from library">
+                <button class="btn btn-icon btn-danger" onclick="removeRunbookFromLibrary('${runbook.id}')" title="Remove from library">
                     <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                         <path d="M3 3l10 10M13 3L3 13"/>
                     </svg>
@@ -1761,7 +1924,7 @@
                     handle.addEventListener(EventType.MOUSE_UP, () => {
                         setTimeout(() => {
                             row.draggable = false;
-                        }, 50);
+                        }, DRAG_TIMEOUT_MS);
                     });
 
                     row.addEventListener(EventType.DRAG_START, event => {
@@ -1817,7 +1980,7 @@
             }
 
             const addRow = document.createElement('div');
-            addRow.id = 'runbook-add-row';
+            addRow.id = ElementId.RUNBOOK_ADD_BTN;
             addRow.innerHTML = `
         <button class="btn" onclick="openRunbookImportDialog()" title="Import runbook">
             <svg viewBox="0 0 16 16">
@@ -1889,6 +2052,10 @@
             return currentMode === AppMode.READ;
         }
 
+        function getSvgFromButton(btn) {
+            return btn.querySelector('svg');
+        }
+
         function setAppMode(mode) {
             currentMode = mode;
             saveState();
@@ -1897,14 +2064,17 @@
             document.body.classList.toggle(CssClass.READ_MODE, isRead);
 
             // Update toggle button
-            const btn = document.getElementById('mode-toggle-btn');
-            if (btn) {
-                const icon = btn.querySelector('svg');
-                if (icon) icon.innerHTML = isRead ?
-                    '<path d="M13 1l2 2L5 13l-3 1 1-3L13 1z"/>' :
-                    '<path d="M5 7V5a3 3 0 0 1 6 0v2M3 7h10v7H3zM8 11v-1"/>';
-                btn.title = isRead ? 'Switch to Edit mode' : 'Switch to Read mode';
+            const btn = document.getElementById(ElementId.MODE_TOGGLE_BTN);
+            if (!btn) {
+                return;
             }
+
+            const icon = getSvgFromButton(btn);
+            icon.innerHTML = isRead ?
+                '<path d="M13 1l2 2L5 13l-3 1 1-3L13 1z"/>' :
+                '<path d="M5 7V5a3 3 0 0 1 6 0v2M3 7h10v7H3zM8 11v-1"/>';
+
+            btn.title = `Switch to ${isRead ? 'Edit' : 'Read'} mode`;
         }
 
         function toggleAppMode() {
@@ -1925,7 +2095,7 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
                     ...state,
                     mode: currentMode,
-                    sidebar: document.querySelector(Selector.APP_SHELL).classList.contains(CssClass
+                    sidebar: document.getElementById(ElementId.APP_SHELL).classList.contains(CssClass
                             .SIDEBAR_COLLAPSED) ?
                         SidebarState.COLLAPSED : SidebarState.EXPANDED,
                     scrollTop: mainPanel ? mainPanel.scrollTop : 0,
@@ -1947,7 +2117,7 @@
                 state.blocks = saved.blocks ?? [];
 
                 if (saved.sidebar === SidebarState.COLLAPSED) {
-                    document.querySelector(Selector.APP_SHELL).classList.add(CssClass.SIDEBAR_COLLAPSED);
+                    document.getElementById(ElementId.APP_SHELL).classList.add(CssClass.SIDEBAR_COLLAPSED);
                 }
                 if (saved.mode === AppMode.READ || saved.mode === AppMode.EDIT) {
                     setAppMode(saved.mode);
@@ -2040,14 +2210,7 @@
 
         function buildPreviewHTML(rawText) {
             const segments = resolveCommandText(rawText);
-            return segments.map(segment => {
-                const escaped = escapeHtml(segment.text);
-                if (segment.type === SegmentType.RESOLVED)
-                    return `<span class="token-resolved">${escaped}</span>`;
-                if (segment.type === SegmentType.UNRESOLVED)
-                    return `<span class="token-unresolved">${escaped}</span>`;
-                return `<span class="token-literal">${escaped}</span>`;
-            }).join('');
+            return segments.map(s => `<span class="token-${s.type}">${escapeHtml(s.text)}</span>`).join('');
         }
 
         function hasUnresolvedTokens(rawText) {
@@ -2111,9 +2274,11 @@
             renderVariablesList();
 
             // Focus the new key input
-            const rows = document.querySelectorAll('.variable-row');
+            const rows = document.querySelectorAll(Selector.VARIABLE_ROW);
             const lastRow = rows[rows.length - 1];
-            if (lastRow) lastRow.querySelector('.variable-key-input')?.focus();
+            if (lastRow) {
+                lastRow.querySelector(Selector.VARIABLE_KEY_INPUT)?.focus();
+            }
         }
 
         function removeVariable(variableId) {
@@ -2157,7 +2322,7 @@
                             const otherRow = document.querySelector(
                                 `${Selector.VARIABLE_ROW}[data-variable-id="${otherVariable.id}"]`);
 
-                            const otherValueInput = otherRow?.querySelector('.variable-value-input');
+                            const otherValueInput = otherRow?.querySelector(Selector.VARIABLE_VALUE_INPUT);
                             if (otherValueInput) {
                                 otherValueInput.value = otherVariable.value;
                                 otherValueInput.title = otherVariable.value;
@@ -2216,7 +2381,7 @@
               />
             </div>
             <button
-              class="btn btn-icon btn-danger-ghost"
+              class="btn btn-icon btn-danger"
               onclick="removeVariable('${variable.id}')"
               title="Remove variable"
             >
@@ -2235,7 +2400,7 @@
                     handle.addEventListener(EventType.MOUSE_UP, () => {
                         setTimeout(() => {
                             row.draggable = false;
-                        }, 50);
+                        }, DRAG_TIMEOUT_MS);
                     });
 
                     row.addEventListener(EventType.DRAG_START, event => {
@@ -2287,7 +2452,7 @@
 
             // Inline add button at the bottom
             const addRow = document.createElement('div');
-            addRow.id = 'variable-add-row';
+            addRow.id = ElementId.VARIABLE_ADD_BTN;
             addRow.innerHTML = `
         <button class="btn" onclick="addVariable()" title="New variable">
           <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -2338,8 +2503,10 @@
             const allBlockElements = document.querySelectorAll(Selector.BLOCK_ITEM);
             const lastBlockElement = allBlockElements[allBlockElements.length - 1];
             if (lastBlockElement) {
-                const textarea = lastBlockElement.querySelector('textarea');
-                if (textarea) textarea.focus();
+                const textarea = lastBlockElement.querySelector(Selector.TEXTAREA);
+                if (textarea) {
+                    textarea.focus();
+                }
             }
         }
 
@@ -2460,9 +2627,11 @@
             if (preview) {
                 preview.className = `note-preview style-${style}`;
             }
-            blockElement.querySelectorAll('.note-style-btn').forEach(button => {
+
+            blockElement.querySelectorAll(Selector.NOTE_STYLE_BTN).forEach(button => {
                 button.classList.toggle(CssClass.ACTIVE, button.dataset.style === style);
             });
+
             refreshNotePreview(blockId);
         }
 
@@ -2494,7 +2663,7 @@
                 return;
             }
 
-            const previewEl = blockElement.querySelector('.command-preview-text');
+            const previewEl = blockElement.querySelector(Selector.COMMAND_PREVIEW_TEXT);
             if (!previewEl) {
                 return;
             }
@@ -2506,6 +2675,10 @@
             // Auto-resize textarea
             const textarea = blockElement.querySelector(Selector.COMMAND_TEXTAREA);
             if (textarea) autoResizeTextarea(textarea);
+        }
+
+        function getNotePlaceholder(style) {
+            return `Section ${style}...`;
         }
 
         function refreshNotePreview(blockId) {
@@ -2527,7 +2700,7 @@
             const noteStyle = block.style || NoteStyle.BODY;
             previewEl.innerHTML = block.text ?
                 formatNoteText(block.text) :
-                `<span style="color:var(--color-text-muted)">${notePlaceholder(noteStyle)}</span>`;
+                `<span class="note-preview-placeholder">${getNotePlaceholder(noteStyle)}</span>`;
         }
 
         function refreshAllPreviews() {
@@ -2537,17 +2710,19 @@
         }
 
         function autoResizeTextarea(textarea) {
-            textarea.style.height = 'auto';
-            textarea.style.height = textarea.scrollHeight + 'px';
+            textarea.style.height = CssHeight.AUTO;
+            textarea.style.height = `${textarea.scrollHeight}px`;
         }
 
         function autoResizeAllTextarea() {
-            document.querySelectorAll('textarea').forEach(autoResizeTextarea);
+            document.querySelectorAll(Selector.TEXTAREA).forEach(autoResizeTextarea);
         }
 
         function syncNoteWidth(textarea) {
             const label = textarea.closest(Selector.NOTE_AUTO_WIDTH);
-            if (label) label.dataset.value = textarea.value || textarea.placeholder;
+            if (label) {
+                label.dataset.value = textarea.value || textarea.placeholder;
+            }
         }
 
         //  Block rendering
@@ -2567,7 +2742,7 @@
 
         function buildBlockElement(block) {
             const wrapper = document.createElement('div');
-            wrapper.className = 'block-item';
+            wrapper.className = CssClass.BLOCK_ITEM;
             wrapper.dataset.blockId = block.id;
 
             if (block.type === BlockType.COMMAND) {
@@ -2598,14 +2773,14 @@
         <path d="M12 10v4M10 12h4" />
         </svg>
       </button>
-      <button class="btn btn-icon btn-danger-ghost" onclick="removeBlock('${block.id}')" title="Delete block">
-        <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9"/></svg>
+      <button class="btn btn-icon btn-danger" onclick="removeBlock('${block.id}')" title="Delete block">
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9"/></svg>
       </button>
     `;
             wrapper.appendChild(sideControls);
 
             let dragInitiatedFromHandle = false;
-            const dragHandle = dragHandleEl.querySelector('.drag-handle');
+            const dragHandle = dragHandleEl.querySelector(Selector.DRAG_HANDLE);
 
             dragHandle.addEventListener(EventType.MOUSE_DOWN, () => {
                 wrapper.draggable = true;
@@ -2632,7 +2807,7 @@
                 setTimeout(() => {
                     wrapper.draggable = false;
                     dragInitiatedFromHandle = false;
-                }, 50);
+                }, DRAG_TIMEOUT_MS);
             });
 
             wrapper.addEventListener(EventType.MOUSE_ENTER, event => {
@@ -2662,10 +2837,10 @@
             return `
       <div class="command-block">
         <div class="command-preview">
-          <span class="command-preview-text ${isUnresolved ? CssClass.HAS_UNRESOLVED : ''}">${previewHTML || '<span style="color:var(--color-text-muted)">empty command</span>'}</span>
+          <span class="command-preview-text ${isUnresolved ? CssClass.HAS_UNRESOLVED : ''}">${previewHTML || '<span class="command-preview-placeholder">empty command</span>'}</span>
           <button class="btn btn-icon toggle-editor-btn ${isEditorCollapsed ? CssClass.EDITOR_COLLAPSED : ''}"
             onclick="toggleCommandEditor('${block.id}')"
-            title="${isEditorCollapsed ? 'Show editor' : 'Hide editor'}"
+            title="${isEditorCollapsed ? 'Show' : 'Hide'} editor"
           >
             <svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg>
           </button>
@@ -2694,6 +2869,7 @@
             const noteStyle = block.style || NoteStyle.BODY;
             const escapedText = escapeHtml(block.text);
             const previewHTML = formatNoteText(block.text);
+            const notePlaceholder = getNotePlaceholder(noteStyle);
 
             return `
       <div class="note-block">
@@ -2706,17 +2882,17 @@
             >${style}</button>
           `).join('')}
         </div>
-        <label class="note-auto-width style-${noteStyle}" data-value="${block.text || notePlaceholder(noteStyle)}">
+        <label class="note-auto-width style-${noteStyle}" data-value="${block.text || notePlaceholder}">
           <textarea
             class="note-textarea style-${noteStyle}"
-            placeholder="${notePlaceholder(noteStyle)}"
+            placeholder="${notePlaceholder}"
             spellcheck="false"
             rows="1"
             oninput="updateBlockText('${block.id}', this.value); syncNoteWidth(this)"
             onfocus="this.closest('.note-block').classList.add('${CssClass.IS_FOCUSED}')"
             onblur="this.closest('.note-block').classList.remove('${CssClass.IS_FOCUSED}')"
           >${escapedText}</textarea>
-          <div class="note-preview style-${noteStyle}">${previewHTML || `<span style="color:var(--color-text-muted)">${notePlaceholder(noteStyle)}</span>`}</div>
+          <div class="note-preview style-${noteStyle}">${previewHTML || `<span class="note-preview-placeholder">${notePlaceholder}</span>`}</div>
         </label>
       </div>
     `;
@@ -2730,16 +2906,10 @@
     `;
         }
 
-        function notePlaceholder(style) {
-            if (style === NoteStyle.HEADING) return 'Section heading...';
-            if (style === NoteStyle.SUBHEADING) return 'Section subheading...';
-            return 'Section body...';
-        }
-
         function updateEmptyState() {
             const emptyState = document.getElementById(ElementId.EMPTY_STATE);
             if (emptyState) {
-                emptyState.style.display = state.blocks.length === 0 ? 'block' : 'none';
+                emptyState.style.display = state.blocks.length === 0 ? CssDisplay.BLOCK : CssDisplay.NONE;
             }
 
             const isEmpty = state.blocks.length === 0;
@@ -2769,37 +2939,34 @@
             const resolvedText = resolveCommandToString(block.text);
 
             navigator.clipboard.writeText(resolvedText).then(() => {
-                const button = document.getElementById(`copy-btn-${blockId}`);
-                if (button) {
-                    const svg = button.querySelector('svg');
-                    const originalSvg = svg.cloneNode(true);
-                    svg.innerHTML =
-                        '<polyline points="2,8 6,12 14,4" stroke="var(--success)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
-                    setTimeout(() => {
-                        const currentSvg = button.querySelector('svg');
-                        if (currentSvg) currentSvg.replaceWith(originalSvg);
-                    }, 1800);
+                const btn = document.getElementById(`copy-btn-${blockId}`);
+                if (!btn) {
+                    return;
                 }
-            }).catch(() => {
-                // Fallback for older browsers
-                const tempTextArea = document.createElement('textarea');
-                tempTextArea.value = resolvedText;
-                document.body.appendChild(tempTextArea);
-                tempTextArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempTextArea);
+
+                const svg = getSvgFromButton(btn);
+                const originalSvg = svg.cloneNode(true);
+
+                svg.innerHTML =
+                    '<polyline points="2,8 6,12 14,4" stroke="var(--success)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+
+                setTimeout(() => {
+                    const currentSvg = getSvgFromButton(btn);
+                    if (currentSvg) {
+                        currentSvg.replaceWith(originalSvg);
+                    }
+                }, COPY_FEEDBACK_TIMEOUT_MS);
             });
         }
 
         //  Toggle sidebar
 
         function toggleSidebar() {
-            const shell = document.querySelector(Selector.APP_SHELL);
+            const shell = document.getElementById(ElementId.APP_SHELL);
             const isCollapsed = shell.classList.toggle(CssClass.SIDEBAR_COLLAPSED);
 
             const btn = document.getElementById(ElementId.SIDEBAR_TOGGLE_BTN);
-            btn.title = isCollapsed ? 'Expand sidebar' :
-                'Collapse sidebar';
+            btn.title = `${isCollapsed ? 'Expand' : 'Collapse'} sidebar`;
 
             saveState();
         }
@@ -2824,13 +2991,13 @@
                 return;
             }
 
-            const editorEl = blockElement.querySelector('.command-block-editor');
-            const toggleBtn = blockElement.querySelector('.toggle-editor-btn');
+            const editorEl = blockElement.querySelector(Selector.COMMAND_BLOCK_EDITOR);
+            const toggleBtn = blockElement.querySelector(Selector.TOGGLE_EDITOR_BTN);
 
             if (editorEl) editorEl.classList.toggle(CssClass.COLLAPSED, block.editorCollapsed);
             if (toggleBtn) {
                 toggleBtn.classList.toggle(CssClass.EDITOR_COLLAPSED, block.editorCollapsed);
-                toggleBtn.title = block.editorCollapsed ? 'Show editor' : 'Hide editor';
+                toggleBtn.title = `${block.editorCollapsed ? 'Show' : 'Hide'} editor`;
             }
 
             if (block.editorCollapsed) {
@@ -2839,7 +3006,9 @@
 
             // Auto-resize textarea
             const textarea = editorEl.querySelector(Selector.COMMAND_TEXTAREA);
-            if (textarea) autoResizeTextarea(textarea);
+            if (textarea) {
+                autoResizeTextarea(textarea);
+            }
         }
 
         // Multi select
@@ -3029,10 +3198,64 @@
 
         //  Clear & Toggle
 
+        function showConfirmModal(message) {
+            return new Promise(resolve => {
+                const backdrop = document.getElementById(ElementId.CONFIRM_MODAL);
+                const messageEl = document.getElementById(ElementId.CONFIRM_MODAL_MESSAGE);
+                const confirmBtn = document.getElementById(ElementId.CONFIRM_MODAL_CONFIRM_BTN);
+                const cancelBtn = document.getElementById(ElementId.CONFIRM_MODAL_CANCEL_BTN);
+
+                messageEl.textContent = message;
+                backdrop.classList.add(CssClass.MODAL_VISIBLE);
+                confirmBtn.focus();
+
+                function finish(result) {
+                    backdrop.classList.remove(CssClass.MODAL_VISIBLE);
+                    confirmBtn.removeEventListener(EventType.CLICK, onConfirm);
+                    cancelBtn.removeEventListener(EventType.CLICK, onCancel);
+                    backdrop.removeEventListener(EventType.CLICK, onBackdropClick);
+                    document.removeEventListener(EventType.KEY_DOWN, onKey);
+                    resolve(result);
+                }
+
+                function onConfirm() {
+                    finish(true);
+                }
+
+                function onCancel() {
+                    finish(false);
+                }
+
+                function onBackdropClick(event) {
+                    if (event.target === backdrop) {
+                        finish(false);
+                    }
+                }
+
+                function onKey(event) {
+                    if (event.key === Key.ESCAPE) {
+                        event.preventDefault();
+                        finish(false);
+                    } else if (event.key === Key.ENTER) {
+                        event.preventDefault();
+                        finish(true);
+                    }
+                }
+
+                confirmBtn.addEventListener(EventType.CLICK, onConfirm);
+                cancelBtn.addEventListener(EventType.CLICK, onCancel);
+                backdrop.addEventListener(EventType.CLICK, onBackdropClick);
+                document.addEventListener(EventType.KEY_DOWN, onKey);
+            });
+        }
+
         async function clearAllData() {
-            if (!confirm(
-                    'Are you sure you want to delete all variables, blocks, and runbooks? This action cannot be undone.'
-                )) {
+            removeCtrlHeldClass();
+
+            const confirmed = await showConfirmModal(
+                'Delete all variables, blocks, and runbooks? This action cannot be undone.'
+            );
+            if (!confirmed) {
                 return;
             }
 
@@ -3047,7 +3270,6 @@
             activeRunbookId = null;
             saveRunbookLibrary();
             renderRunbookList();
-
             saveState();
             renderVariablesList();
             renderBlocksList();
@@ -3119,6 +3341,10 @@
                     if (mainPanel) {
                         mainPanel.scrollTop = savedScrollTop;
                     }
+
+                    requestAnimationFrame(() => {
+                        document.body.classList.add(CssClass.APP_READY);
+                    });
                 }, 0);
             }, 0);
         }
@@ -3163,6 +3389,24 @@
         });
 
         document.addEventListener(EventType.KEY_DOWN, e => {
+            const key = e.key;
+
+            if (!e.ctrlKey && !e.altKey && !document.activeElement?.matches(InputSelector.EDITABLE)) {
+                if (key === Key.DELETE && selectedBlockIds.size > 0) {
+                    e.preventDefault();
+                    removeBlock([...selectedBlockIds][0]);
+                } else if (key === Key.TAB && runbookLibrary.length > 0) {
+                    e.preventDefault();
+                    const targetId = activeRunbookId ?? runbookLibrary[0].id;
+                    setRunbookFocus(targetId);
+                } else if ((key === Key.ARROW_DOWN || key === Key.ARROW_UP) && focusedRunbookId !== null) {
+                    e.preventDefault();
+                    navigateRunbookList(key);
+                }
+
+                return;
+            }
+
             if (e.altKey) {
                 e.preventDefault();
                 document.body.classList.add(CssClass.ALT_HELD);
@@ -3174,49 +3418,64 @@
                 return;
             }
 
-            if (e.key === Key.E) {
+            if (key === Key.E) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 toggleAppMode();
-            } else if (e.shiftKey && e.key === Key.SHIFT_E) {
+
+            } else if (e.shiftKey && key === Key.SHIFT_E) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 exportToFile();
-            } else if (e.shiftKey && e.key === Key.DELETE) {
+
+            } else if (e.shiftKey && key === Key.BACKSPACE) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 clearAllData();
-            } else if (e.key === Key.S) {
+
+            } else if (key === Key.D) {
+                e.preventDefault();
+                removeCtrlHeldClass();
+                if (selectedBlockIds.size > 0) {
+                    duplicateBlock([...selectedBlockIds][0]);
+                }
+
+            } else if (key === Key.S) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 toggleSidebar();
-            } else if (e.key === Key.I && !isReadMode()) {
+
+            } else if (key === Key.I && !isReadMode()) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 openRunbookImportDialog();
-            } else if (e.key === Key.G) {
+
+            } else if (key === Key.G) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 toggleAllCommandEditors();
-            } else if (!document.activeElement?.matches('textarea, input')) {
+
+            } else if (!document.activeElement?.matches(InputSelector.EDITABLE)) {
                 document.body.classList.add(CssClass.CTRL_HELD);
             }
         });
 
         document.addEventListener(EventType.KEY_UP, e => {
-            if (e.key === Key.CTRL) {
+            const key = e.key;
+            if (key === Key.CTRL) {
                 removeCtrlHeldClass();
                 return;
             }
 
-            if (e.key === Key.ALT) {
+            if (key === Key.ALT) {
                 removeAltHeldClass();
                 return;
             }
 
-            if (e.key === Key.ESCAPE) {
+            if (key === Key.ESCAPE) {
                 document.activeElement?.blur();
                 clearBlockSelection();
+                clearRunbookFocus();
             }
         });
 
@@ -3240,12 +3499,16 @@
                 return;
             }
 
+            // Clear runbook focus unless on runbook item
+            if (focusedRunbookId !== null && !e.target.closest(Selector.RUNBOOK_ITEM_BTN)) {
+                clearRunbookFocus();
+            }
+
             // Clear selection unless on block controls
-
-            const isBlockControl = e.target.closest(
-                `.${CssClass.BLOCK_CONTROLS}, .${CssClass.BLOCK_DRAG_HANDLE}`);
-
-            if (!isBlockControl && selectedBlockIds.size > 0) {
+            if (
+                selectedBlockIds.size > 0 &&
+                !e.target.closest(`.${CssClass.BLOCK_CONTROLS}, .${CssClass.BLOCK_DRAG_HANDLE}`)
+            ) {
                 clearBlockSelection();
             }
         });
