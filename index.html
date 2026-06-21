@@ -670,6 +670,10 @@
             color: var(--color-text-secondary);
         }
 
+        .command-preview-placeholder {
+            color: var(--color-text-muted);
+        }
+
         .token-resolved {
             color: var(--success);
         }
@@ -828,6 +832,10 @@
             position: relative;
             z-index: 1;
             user-select: none;
+        }
+
+        .note-preview-placeholder {
+            color: var(--color-text-muted);
         }
 
         .note-preview.style-heading {
@@ -1198,7 +1206,7 @@
                 <button id="clear-btn" class="btn btn-lg btn-danger-ghost" onclick="clearAllData()"
                     title="Clear workspace">
                     <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"
-                        stroke-linecap="round" stroke-linejoin="round" style="display:block">
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" />
                     </svg>
                 </button>
@@ -2531,7 +2539,7 @@
             const noteStyle = block.style || NoteStyle.BODY;
             previewEl.innerHTML = block.text ?
                 formatNoteText(block.text) :
-                `<span style="color:var(--color-text-muted)">${getNotePlaceholder(noteStyle)}</span>`;
+                `<span class="note-preview-placeholder">${getNotePlaceholder(noteStyle)}</span>`;
         }
 
         function refreshAllPreviews() {
@@ -2603,7 +2611,7 @@
         </svg>
       </button>
       <button class="btn btn-icon btn-danger-ghost" onclick="removeBlock('${block.id}')" title="Delete block">
-        <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9"/></svg>
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9"/></svg>
       </button>
     `;
             wrapper.appendChild(sideControls);
@@ -2666,7 +2674,7 @@
             return `
       <div class="command-block">
         <div class="command-preview">
-          <span class="command-preview-text ${isUnresolved ? CssClass.HAS_UNRESOLVED : ''}">${previewHTML || '<span style="color:var(--color-text-muted)">empty command</span>'}</span>
+          <span class="command-preview-text ${isUnresolved ? CssClass.HAS_UNRESOLVED : ''}">${previewHTML || '<span class="command-preview-placeholder">empty command</span>'}</span>
           <button class="btn btn-icon toggle-editor-btn ${isEditorCollapsed ? CssClass.EDITOR_COLLAPSED : ''}"
             onclick="toggleCommandEditor('${block.id}')"
             title="${isEditorCollapsed ? 'Show editor' : 'Hide editor'}"
@@ -2721,7 +2729,7 @@
             onfocus="this.closest('.note-block').classList.add('${CssClass.IS_FOCUSED}')"
             onblur="this.closest('.note-block').classList.remove('${CssClass.IS_FOCUSED}')"
           >${escapedText}</textarea>
-          <div class="note-preview style-${noteStyle}">${previewHTML || `<span style="color:var(--color-text-muted)">${notePlaceholder}</span>`}</div>
+          <div class="note-preview style-${noteStyle}">${previewHTML || `<span class="note-preview-placeholder">${notePlaceholder}</span>`}</div>
         </label>
       </div>
     `;
