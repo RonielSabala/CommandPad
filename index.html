@@ -1433,7 +1433,6 @@
             VARIABLE_ROW: '.variable-row',
             VARIABLE_INPUTS: '.variable-inputs',
             VARIABLE_DRAG_HANDLE: '.variable-drag-handle',
-            BLOCK_SELECTED: '.block-item.block-selected',
             COMMAND_BLOCK_EDITOR: '.command-block-editor',
             TOGGLE_EDITOR_BTN: '.toggle-editor-btn',
             RUNBOOK_ROW: '.runbook-row',
@@ -2046,14 +2045,7 @@
 
         function buildPreviewHTML(rawText) {
             const segments = resolveCommandText(rawText);
-            return segments.map(segment => {
-                const escaped = escapeHtml(segment.text);
-                if (segment.type === SegmentType.RESOLVED)
-                    return `<span class="token-resolved">${escaped}</span>`;
-                if (segment.type === SegmentType.UNRESOLVED)
-                    return `<span class="token-unresolved">${escaped}</span>`;
-                return `<span class="token-literal">${escaped}</span>`;
-            }).join('');
+            return segments.map(s => `<span class="token-${s.type}">${escapeHtml(s.text)}</span>`).join('');
         }
 
         function hasUnresolvedTokens(rawText) {
@@ -2466,9 +2458,11 @@
             if (preview) {
                 preview.className = `note-preview style-${style}`;
             }
+
             blockElement.querySelectorAll('.note-style-btn').forEach(button => {
                 button.classList.toggle(CssClass.ACTIVE, button.dataset.style === style);
             });
+
             refreshNotePreview(blockId);
         }
 
@@ -2514,6 +2508,10 @@
             if (textarea) autoResizeTextarea(textarea);
         }
 
+        function getNotePlaceholder(style) {
+            return `Section ${style}...`;
+        }
+
         function refreshNotePreview(blockId) {
             const block = state.blocks.find(block => block.id === blockId);
             if (!block || block.type !== BlockType.NOTE) {
@@ -2533,7 +2531,7 @@
             const noteStyle = block.style || NoteStyle.BODY;
             previewEl.innerHTML = block.text ?
                 formatNoteText(block.text) :
-                `<span style="color:var(--color-text-muted)">${notePlaceholder(noteStyle)}</span>`;
+                `<span style="color:var(--color-text-muted)">${getNotePlaceholder(noteStyle)}</span>`;
         }
 
         function refreshAllPreviews() {
@@ -2700,6 +2698,7 @@
             const noteStyle = block.style || NoteStyle.BODY;
             const escapedText = escapeHtml(block.text);
             const previewHTML = formatNoteText(block.text);
+            const notePlaceholder = getNotePlaceholder(noteStyle);
 
             return `
       <div class="note-block">
@@ -2712,17 +2711,17 @@
             >${style}</button>
           `).join('')}
         </div>
-        <label class="note-auto-width style-${noteStyle}" data-value="${block.text || notePlaceholder(noteStyle)}">
+        <label class="note-auto-width style-${noteStyle}" data-value="${block.text || notePlaceholder}">
           <textarea
             class="note-textarea style-${noteStyle}"
-            placeholder="${notePlaceholder(noteStyle)}"
+            placeholder="${notePlaceholder}"
             spellcheck="false"
             rows="1"
             oninput="updateBlockText('${block.id}', this.value); syncNoteWidth(this)"
             onfocus="this.closest('.note-block').classList.add('${CssClass.IS_FOCUSED}')"
             onblur="this.closest('.note-block').classList.remove('${CssClass.IS_FOCUSED}')"
           >${escapedText}</textarea>
-          <div class="note-preview style-${noteStyle}">${previewHTML || `<span style="color:var(--color-text-muted)">${notePlaceholder(noteStyle)}</span>`}</div>
+          <div class="note-preview style-${noteStyle}">${previewHTML || `<span style="color:var(--color-text-muted)">${notePlaceholder}</span>`}</div>
         </label>
       </div>
     `;
@@ -2734,12 +2733,6 @@
         <div class="divider-line"></div>
       </div>
     `;
-        }
-
-        function notePlaceholder(style) {
-            if (style === NoteStyle.HEADING) return 'Section heading...';
-            if (style === NoteStyle.SUBHEADING) return 'Section subheading...';
-            return 'Section body...';
         }
 
         function updateEmptyState() {
@@ -2804,8 +2797,7 @@
             const isCollapsed = shell.classList.toggle(CssClass.SIDEBAR_COLLAPSED);
 
             const btn = document.getElementById(ElementId.SIDEBAR_TOGGLE_BTN);
-            btn.title = isCollapsed ? 'Expand sidebar' :
-                'Collapse sidebar';
+            btn.title = isCollapsed ? 'Expand sidebar' : 'Collapse sidebar';
 
             saveState();
         }
