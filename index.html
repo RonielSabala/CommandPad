@@ -107,6 +107,11 @@
             color: var(--color-text-primary);
             font-family: var(--font-sans);
             line-height: 1.5;
+            visibility: hidden;
+        }
+
+        body.app-ready {
+            visibility: visible;
         }
 
         /* --- DISABLE USER SELECT --- */
@@ -1443,6 +1448,7 @@
         });
 
         const CssClass = Object.freeze({
+            APP_READY: 'app-ready',
             DRAGGING: 'dragging',
             DRAG_OVER: 'drag-over',
             COLLAPSED: 'collapsed',
@@ -3336,6 +3342,10 @@
                     if (mainPanel) {
                         mainPanel.scrollTop = savedScrollTop;
                     }
+
+                    requestAnimationFrame(() => {
+                        document.body.classList.add(CssClass.APP_READY);
+                    });
                 }, 0);
             }, 0);
         }
