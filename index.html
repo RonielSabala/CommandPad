@@ -1363,6 +1363,15 @@
             VALUE: 'value',
         });
 
+        const CssHeight = Object.freeze({
+            AUTO: 'auto',
+        });
+
+        const CssDisplay = Object.freeze({
+            BLOCK: 'block',
+            NONE: 'none',
+        });
+
         const CssClass = Object.freeze({
             DRAGGING: 'dragging',
             DRAG_OVER: 'drag-over',
@@ -1435,6 +1444,7 @@
         const Selector = Object.freeze({
             APP_SHELL: '.app-shell',
             BLOCK_ITEM: '.block-item',
+            DRAG_HANDLE: '.drag-handle',
             NOTE_LINK: 'a.note-link',
             NOTE_TEXTAREA: '.note-textarea',
             NOTE_AUTO_WIDTH: '.note-auto-width',
@@ -2575,8 +2585,8 @@
         }
 
         function autoResizeTextarea(textarea) {
-            textarea.style.height = 'auto';
-            textarea.style.height = textarea.scrollHeight + 'px';
+            textarea.style.height = CssHeight.AUTO;
+            textarea.style.height = `${textarea.scrollHeight}px`;
         }
 
         function autoResizeAllTextarea() {
@@ -2645,7 +2655,7 @@
             wrapper.appendChild(sideControls);
 
             let dragInitiatedFromHandle = false;
-            const dragHandle = dragHandleEl.querySelector('.drag-handle');
+            const dragHandle = dragHandleEl.querySelector(Selector.DRAG_HANDLE);
 
             dragHandle.addEventListener(EventType.MOUSE_DOWN, () => {
                 wrapper.draggable = true;
@@ -2705,7 +2715,7 @@
           <span class="command-preview-text ${isUnresolved ? CssClass.HAS_UNRESOLVED : ''}">${previewHTML || '<span class="command-preview-placeholder">empty command</span>'}</span>
           <button class="btn btn-icon toggle-editor-btn ${isEditorCollapsed ? CssClass.EDITOR_COLLAPSED : ''}"
             onclick="toggleCommandEditor('${block.id}')"
-            title="${isEditorCollapsed ? 'Show editor' : 'Hide editor'}"
+            title="${isEditorCollapsed ? 'Show' : 'Hide'} editor"
           >
             <svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg>
           </button>
@@ -2774,7 +2784,7 @@
         function updateEmptyState() {
             const emptyState = document.getElementById(ElementId.EMPTY_STATE);
             if (emptyState) {
-                emptyState.style.display = state.blocks.length === 0 ? 'block' : 'none';
+                emptyState.style.display = state.blocks.length === 0 ? CssDisplay.BLOCK : CssDisplay.NONE;
             }
 
             const isEmpty = state.blocks.length === 0;
@@ -2831,7 +2841,7 @@
             const isCollapsed = shell.classList.toggle(CssClass.SIDEBAR_COLLAPSED);
 
             const btn = document.getElementById(ElementId.SIDEBAR_TOGGLE_BTN);
-            btn.title = isCollapsed ? 'Expand sidebar' : 'Collapse sidebar';
+            btn.title = `${isCollapsed ? 'Expand' : 'Collapse'} sidebar`;
 
             saveState();
         }
@@ -2862,7 +2872,7 @@
             if (editorEl) editorEl.classList.toggle(CssClass.COLLAPSED, block.editorCollapsed);
             if (toggleBtn) {
                 toggleBtn.classList.toggle(CssClass.EDITOR_COLLAPSED, block.editorCollapsed);
-                toggleBtn.title = block.editorCollapsed ? 'Show editor' : 'Hide editor';
+                toggleBtn.title = `${block.editorCollapsed ? 'Show' : 'Hide'} editor`;
             }
 
             if (block.editorCollapsed) {
