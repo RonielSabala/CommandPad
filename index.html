@@ -368,7 +368,7 @@
             opacity: 1;
         }
 
-        #variable-add-row {
+        #variable-add-btn {
             padding: var(--space-3) var(--space-12);
         }
 
@@ -1105,7 +1105,7 @@
         }
 
         body.read-mode #add-block-row,
-        body.read-mode #variable-add-row {
+        body.read-mode #variable-add-btn {
             display: none;
         }
 
@@ -1441,6 +1441,8 @@
             COMMAND_TEXTAREA: '.command-textarea',
             VARIABLE_ROW: '.variable-row',
             VARIABLE_INPUTS: '.variable-inputs',
+            VARIABLE_KEY_INPUT: '.variable-key-input',
+            VARIABLE_VALUE_INPUT: '.variable-value-input',
             VARIABLE_DRAG_HANDLE: '.variable-drag-handle',
             COMMAND_BLOCK_EDITOR: '.command-block-editor',
             TOGGLE_EDITOR_BTN: '.toggle-editor-btn',
@@ -1475,6 +1477,7 @@
             VARIABLES_SECTION: 'variables-section',
             RUNBOOK_IMPORT_INPUT: 'runbook-import-input',
             RUNBOOK_ADD_BTN: 'runbook-add-btn',
+            VARIABLE_ADD_BTN: 'variable-add-btn',
         });
 
         const FilePickerConfig = Object.freeze({
@@ -2133,9 +2136,11 @@
             renderVariablesList();
 
             // Focus the new key input
-            const rows = document.querySelectorAll('.variable-row');
+            const rows = document.querySelectorAll(Selector.VARIABLE_ROW);
             const lastRow = rows[rows.length - 1];
-            if (lastRow) lastRow.querySelector('.variable-key-input')?.focus();
+            if (lastRow) {
+                lastRow.querySelector(Selector.VARIABLE_KEY_INPUT)?.focus();
+            }
         }
 
         function removeVariable(variableId) {
@@ -2179,7 +2184,7 @@
                             const otherRow = document.querySelector(
                                 `${Selector.VARIABLE_ROW}[data-variable-id="${otherVariable.id}"]`);
 
-                            const otherValueInput = otherRow?.querySelector('.variable-value-input');
+                            const otherValueInput = otherRow?.querySelector(Selector.VARIABLE_VALUE_INPUT);
                             if (otherValueInput) {
                                 otherValueInput.value = otherVariable.value;
                                 otherValueInput.title = otherVariable.value;
@@ -2309,7 +2314,7 @@
 
             // Inline add button at the bottom
             const addRow = document.createElement('div');
-            addRow.id = 'variable-add-row';
+            addRow.id = ElementId.VARIABLE_ADD_BTN;
             addRow.innerHTML = `
         <button class="btn" onclick="addVariable()" title="New variable">
           <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
