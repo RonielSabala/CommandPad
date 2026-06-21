@@ -1449,6 +1449,7 @@
         });
 
         const InputSelector = Object.freeze({
+            TEXTAREA: 'textarea',
             EDITABLE: 'textarea, input',
         });
 
@@ -2344,8 +2345,10 @@
             const allBlockElements = document.querySelectorAll(Selector.BLOCK_ITEM);
             const lastBlockElement = allBlockElements[allBlockElements.length - 1];
             if (lastBlockElement) {
-                const textarea = lastBlockElement.querySelector('textarea');
-                if (textarea) textarea.focus();
+                const textarea = lastBlockElement.querySelector(Selector.TEXTAREA);
+                if (textarea) {
+                    textarea.focus();
+                }
             }
         }
 
@@ -2554,12 +2557,14 @@
         }
 
         function autoResizeAllTextarea() {
-            document.querySelectorAll('textarea').forEach(autoResizeTextarea);
+            document.querySelectorAll(Selector.TEXTAREA).forEach(autoResizeTextarea);
         }
 
         function syncNoteWidth(textarea) {
             const label = textarea.closest(Selector.NOTE_AUTO_WIDTH);
-            if (label) label.dataset.value = textarea.value || textarea.placeholder;
+            if (label) {
+                label.dataset.value = textarea.value || textarea.placeholder;
+            }
         }
 
         //  Block rendering
@@ -2787,14 +2792,6 @@
                         if (currentSvg) currentSvg.replaceWith(originalSvg);
                     }, 1800);
                 }
-            }).catch(() => {
-                // Fallback for older browsers
-                const tempTextArea = document.createElement('textarea');
-                tempTextArea.value = resolvedText;
-                document.body.appendChild(tempTextArea);
-                tempTextArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempTextArea);
             });
         }
 
