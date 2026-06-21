@@ -11,8 +11,8 @@
         :root {
             /* Core config */
             --base-unit: 17px;
-            --font-mono: 'Cascadia Code', monospace;
             --font-sans: 'Inter', sans-serif;
+            --font-mono: 'Cascadia Code', monospace;
 
             /* Accents & semantic colors */
             --accent: #3b82f6;
@@ -76,6 +76,8 @@
             --header-height: 3.5rem;
             --scrollbar-size: 0.625rem;
             --block-min-width: 7.5rem;
+            --modal-min-width: 21.25rem;
+            --modal-max-width: 30rem;
 
             /* Compound tokens */
             --border-standard: 1px solid var(--color-border);
@@ -263,6 +265,59 @@
             flex-shrink: 0;
         }
 
+        /* --- CONFIRM MODAL --- */
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-base);
+        }
+
+        .modal-backdrop.modal-visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: var(--color-surface);
+            border: var(--border-standard);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6) var(--space-8);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            min-width: var(--modal-min-width);
+            max-width: var(--modal-max-width);
+            box-shadow: 0 var(--space-4) var(--space-12) rgba(0, 0, 0, 0.5);
+            transform: translateY(calc(-1 * var(--space-3)));
+            transition: transform var(--transition-base);
+        }
+
+        .modal-backdrop.modal-visible .modal {
+            transform: translateY(0);
+        }
+
+        .modal-message {
+            font-family: var(--font-sans);
+            font-size: var(--text-base);
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-4);
+            padding-top: var(--space-4);
+        }
+
         /* --- RUNBOOK LIBRARY SECTION --- */
 
         #runbook-list {
@@ -312,13 +367,13 @@
         }
 
         .runbook-drag-handle,
-        .runbook-row .btn-danger-ghost {
+        .runbook-row .btn-danger {
             opacity: 0;
             transition: opacity var(--transition-fast), color var(--transition-fast);
         }
 
         .runbook-row:hover .runbook-drag-handle,
-        .runbook-row:hover .btn-danger-ghost {
+        .runbook-row:hover .btn-danger {
             opacity: 1;
         }
 
@@ -358,13 +413,13 @@
         }
 
         .variable-drag-handle,
-        .variable-row .btn-danger-ghost {
+        .variable-row .btn-danger {
             opacity: 0;
             transition: opacity var(--transition-fast), color var(--transition-fast);
         }
 
         .variable-row:hover .variable-drag-handle,
-        .variable-row:hover .btn-danger-ghost {
+        .variable-row:hover .btn-danger {
             opacity: 1;
         }
 
@@ -990,13 +1045,13 @@
             color: #fff;
         }
 
-        .btn-danger-ghost {
+        .btn-danger {
             background: transparent;
             border-color: transparent;
             color: var(--color-text-muted);
         }
 
-        .btn-danger-ghost:hover {
+        .btn-danger:hover {
             background: var(--danger-dim);
             border-color: var(--danger);
             color: var(--danger);
@@ -1100,7 +1155,7 @@
 
         body.read-mode #runbook-add-btn,
         body.read-mode .runbook-drag-handle,
-        body.read-mode .runbook-row .btn-danger-ghost {
+        body.read-mode .runbook-row .btn-danger {
             display: none !important;
         }
 
@@ -1110,7 +1165,7 @@
         }
 
         body.read-mode .variable-drag-handle,
-        body.read-mode .variable-row .btn-danger-ghost {
+        body.read-mode .variable-row .btn-danger {
             display: none !important;
         }
 
@@ -1203,8 +1258,7 @@
                     Export
                 </button>
                 <div class="header-separator"></div>
-                <button id="clear-btn" class="btn btn-lg btn-danger-ghost" onclick="clearAllData()"
-                    title="Clear workspace">
+                <button id="clear-btn" class="btn btn-lg btn-danger" onclick="clearAllData()" title="Clear workspace">
                     <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" />
@@ -1285,6 +1339,16 @@
                 </button>
             </div>
         </main>
+    </div>
+
+    <div id="confirm-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal">
+            <p id="confirm-modal-message" class="modal-message"></p>
+            <div class="modal-actions">
+                <button id="confirm-modal-cancel-btn" class="btn btn-lg">Cancel</button>
+                <button id="confirm-modal-confirm-btn" class="btn btn-lg btn-danger">Delete</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1395,6 +1459,7 @@
             RUNBOOK_ROW: 'runbook-row',
             RUNBOOK_ACTIVE: 'active',
             SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
+            MODAL_VISIBLE: 'modal-visible',
         });
 
         const CssAttribute = Object.freeze({
@@ -1419,8 +1484,9 @@
         });
 
         const Key = Object.freeze({
-            ALT: 'Alt',
             CTRL: 'Control',
+            ALT: 'Alt',
+            ENTER: 'Enter',
             ESCAPE: 'Escape',
             BACKSPACE: 'Backspace',
             DELETE: 'Delete',
@@ -1491,6 +1557,10 @@
             RUNBOOK_IMPORT_INPUT: 'runbook-import-input',
             RUNBOOK_ADD_BTN: 'runbook-add-btn',
             VARIABLE_ADD_BTN: 'variable-add-btn',
+            CONFIRM_MODAL: 'confirm-modal',
+            CONFIRM_MODAL_MESSAGE: 'confirm-modal-message',
+            CONFIRM_MODAL_CONFIRM_BTN: 'confirm-modal-confirm-btn',
+            CONFIRM_MODAL_CANCEL_BTN: 'confirm-modal-cancel-btn',
         });
 
         const FilePickerConfig = Object.freeze({
@@ -1782,7 +1852,7 @@
                     onclick="loadRunbookFromLibrary('${runbook.id}')"
                     title="${escapeHtml(runbook.label)}"
                 >${escapeHtml(runbook.label)}</button>
-                <button class="btn btn-icon btn-danger-ghost" onclick="removeRunbookFromLibrary('${runbook.id}')" title="Remove from library">
+                <button class="btn btn-icon btn-danger" onclick="removeRunbookFromLibrary('${runbook.id}')" title="Remove from library">
                     <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                         <path d="M3 3l10 10M13 3L3 13"/>
                     </svg>
@@ -2256,7 +2326,7 @@
               />
             </div>
             <button
-              class="btn btn-icon btn-danger-ghost"
+              class="btn btn-icon btn-danger"
               onclick="removeVariable('${variable.id}')"
               title="Remove variable"
             >
@@ -2648,7 +2718,7 @@
         <path d="M12 10v4M10 12h4" />
         </svg>
       </button>
-      <button class="btn btn-icon btn-danger-ghost" onclick="removeBlock('${block.id}')" title="Delete block">
+      <button class="btn btn-icon btn-danger" onclick="removeBlock('${block.id}')" title="Delete block">
         <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9"/></svg>
       </button>
     `;
@@ -3073,10 +3143,64 @@
 
         //  Clear & Toggle
 
+        function showConfirmModal(message) {
+            return new Promise(resolve => {
+                const backdrop = document.getElementById(ElementId.CONFIRM_MODAL);
+                const messageEl = document.getElementById(ElementId.CONFIRM_MODAL_MESSAGE);
+                const confirmBtn = document.getElementById(ElementId.CONFIRM_MODAL_CONFIRM_BTN);
+                const cancelBtn = document.getElementById(ElementId.CONFIRM_MODAL_CANCEL_BTN);
+
+                messageEl.textContent = message;
+                backdrop.classList.add(CssClass.MODAL_VISIBLE);
+                confirmBtn.focus();
+
+                function finish(result) {
+                    backdrop.classList.remove(CssClass.MODAL_VISIBLE);
+                    confirmBtn.removeEventListener(EventType.CLICK, onConfirm);
+                    cancelBtn.removeEventListener(EventType.CLICK, onCancel);
+                    backdrop.removeEventListener(EventType.CLICK, onBackdropClick);
+                    document.removeEventListener(EventType.KEY_DOWN, onKey);
+                    resolve(result);
+                }
+
+                function onConfirm() {
+                    finish(true);
+                }
+
+                function onCancel() {
+                    finish(false);
+                }
+
+                function onBackdropClick(event) {
+                    if (event.target === backdrop) {
+                        finish(false);
+                    }
+                }
+
+                function onKey(event) {
+                    if (event.key === Key.ESCAPE) {
+                        event.preventDefault();
+                        finish(false);
+                    } else if (event.key === Key.ENTER) {
+                        event.preventDefault();
+                        finish(true);
+                    }
+                }
+
+                confirmBtn.addEventListener(EventType.CLICK, onConfirm);
+                cancelBtn.addEventListener(EventType.CLICK, onCancel);
+                backdrop.addEventListener(EventType.CLICK, onBackdropClick);
+                document.addEventListener(EventType.KEY_DOWN, onKey);
+            });
+        }
+
         async function clearAllData() {
-            if (!confirm(
-                    'Are you sure you want to delete all variables, blocks, and runbooks? This action cannot be undone.'
-                )) {
+            removeCtrlHeldClass();
+
+            const confirmed = await showConfirmModal(
+                'Delete all variables, blocks, and runbooks? This action cannot be undone.'
+            );
+            if (!confirmed) {
                 return;
             }
 
@@ -3091,7 +3215,6 @@
             activeRunbookId = null;
             saveRunbookLibrary();
             renderRunbookList();
-
             saveState();
             renderVariablesList();
             renderBlocksList();
