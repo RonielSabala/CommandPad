@@ -190,15 +190,17 @@ Click the **Export** button in the header to save the active workspace. A native
 
 | Shortcut                          | Action                                         |
 | --------------------------------- | ---------------------------------------------- |
-| `Ctrl+E`                          | Toggle Read mode / Edit mode                   |
-| `Ctrl+G`                          | Toggle all command editors (collapse / expand) |
+| `Ctrl+E`                          | Toggle Read/Edit mode                          |
+| `Ctrl+G`                          | Toggle all command editors (collapse/expand)   |
 | `Ctrl+I`                          | Open the runbook import dialog                 |
-| `Ctrl+S`                          | Collapse / expand the sidebar                  |
+| `Ctrl+S`                          | Collapse/expand the sidebar                    |
 | `Ctrl+D`                          | Duplicate selected blocks                      |
-| `Del`                             | Delete selected blocks                         |
+| `Del`                             | Delete selected blocks (when not editing text) |
 | `Escape`                          | Clear block selection                          |
 | `Ctrl+Shift+E`                    | Export the active workspace                    |
 | `Ctrl+Shift+Backspace`            | Clear all variables, blocks, and runbooks      |
+| `Tab`                             | Select the active runbook                      |
+| `ArrowUp` / `ArrowDown`           | Navigate between runbooks                      |
 | `Alt` + **click** on a note link  | Open the link in a new tab                     |
 | `Ctrl` + **click/drag** on blocks | Multi-select blocks                            |
 

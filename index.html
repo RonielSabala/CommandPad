@@ -366,6 +366,12 @@
             border-color: transparent;
         }
 
+        .runbook-item-btn.runbook-focused {
+            outline: var(--space-1) solid var(--accent);
+            outline-offset: var(--space-1);
+            box-shadow: 0 0 0 var(--space-2) var(--accent-dim);
+        }
+
         .runbook-drag-handle,
         .runbook-row .btn-danger {
             opacity: 0;
@@ -866,7 +872,7 @@
             font-size: 0.9em;
             background: var(--code-bg);
             color: var(--code-color);
-            border: 1px solid var(--code-border);
+            border: var(--border-standard);
             border-radius: var(--radius-sm);
             padding: 0.05em var(--space-3);
             white-space: nowrap;
@@ -1458,6 +1464,7 @@
             SECTION_COLLAPSED: 'collapsed',
             RUNBOOK_ROW: 'runbook-row',
             RUNBOOK_ACTIVE: 'active',
+            RUNBOOK_FOCUSED: 'runbook-focused',
             SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
             MODAL_VISIBLE: 'modal-visible',
         });
@@ -1491,6 +1498,9 @@
             BACKSPACE: 'Backspace',
             DELETE: 'Delete',
             SHIFT_E: 'E',
+            TAB: 'Tab',
+            ARROW_UP: 'ArrowUp',
+            ARROW_DOWN: 'ArrowDown',
             D: 'd',
             E: 'e',
             G: 'g',
@@ -1658,6 +1668,7 @@
 
         let runbookLibrary = [];
         let activeRunbookId = null;
+        let focusedRunbookId = null;
 
         function deriveRunbookLabel(runbookContent, fallback) {
             const firstBlock = runbookContent.blocks?.[0];
@@ -1783,6 +1794,45 @@
             renderRunbookList();
         }
 
+        function setRunbookFocus(id) {
+            focusedRunbookId = id;
+            updateRunbookFocusVisuals();
+        }
+
+        function clearRunbookFocus() {
+            focusedRunbookId = null;
+            updateRunbookFocusVisuals();
+        }
+
+        function updateRunbookFocusVisuals() {
+            document.querySelectorAll(Selector.RUNBOOK_ITEM_BTN).forEach(btn => {
+                const row = btn.closest(Selector.RUNBOOK_ROW);
+                btn.classList.toggle(CssClass.RUNBOOK_FOCUSED, row?.dataset.runbookId === focusedRunbookId);
+            });
+        }
+
+        function navigateRunbookList(direction) {
+            const runbookCount = runbookLibrary.length;
+            if (runbookCount === 0) {
+                return;
+            }
+
+            const currentIndex = runbookLibrary.findIndex(item => item.id === focusedRunbookId);
+
+            let nextIndex;
+            if (currentIndex < 0) {
+                nextIndex = direction === Key.ARROW_DOWN ? 0 : runbookCount - 1;
+            } else {
+                nextIndex = direction === Key.ARROW_DOWN ?
+                    (currentIndex + 1) % runbookCount :
+                    (currentIndex - 1 + runbookCount) % runbookCount;
+            }
+
+            const nextId = runbookLibrary[nextIndex].id;
+            focusedRunbookId = nextId;
+            loadRunbookFromLibrary(nextId).then(updateRunbookFocusVisuals);
+        }
+
         function openRunbookImportDialog() {
             document.getElementById(ElementId.RUNBOOK_IMPORT_INPUT).click();
         }
@@ -1825,7 +1875,7 @@
             event.target.value = '';
         }
 
-        //  Runbook library; render
+        //  Render runbook library
 
         function renderRunbookList() {
             const container = document.getElementById(ElementId.RUNBOOK_LIST);
@@ -1849,7 +1899,7 @@
                     <svg viewBox="0 0 16 16"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
                 </div>
                 <button class="runbook-item-btn ${isActive ? CssClass.RUNBOOK_ACTIVE : ''}"
-                    onclick="loadRunbookFromLibrary('${runbook.id}')"
+                    onclick="clearRunbookFocus(); loadRunbookFromLibrary('${runbook.id}')"
                     title="${escapeHtml(runbook.label)}"
                 >${escapeHtml(runbook.label)}</button>
                 <button class="btn btn-icon btn-danger" onclick="removeRunbookFromLibrary('${runbook.id}')" title="Remove from library">
@@ -3330,13 +3380,22 @@
         });
 
         document.addEventListener(EventType.KEY_DOWN, e => {
-            if (e.key === Key.DELETE && !e.ctrlKey && !e.altKey) {
-                const active = document.activeElement;
-                const isEditingText = active?.matches(InputSelector.EDITABLE);
-                if (!isEditingText && selectedBlockIds.size > 0) {
+            const key = e.key;
+
+            if (!e.ctrlKey && !e.altKey && !document.activeElement?.matches(InputSelector.EDITABLE)) {
+                if (key === Key.DELETE && selectedBlockIds.size > 0) {
                     e.preventDefault();
                     removeBlock([...selectedBlockIds][0]);
+                } else if (key === Key.TAB && runbookLibrary.length > 0) {
+                    e.preventDefault();
+                    const targetId = activeRunbookId ?? runbookLibrary[0].id;
+                    setRunbookFocus(targetId);
+                } else if ((key === Key.ARROW_DOWN || key === Key.ARROW_UP) && focusedRunbookId !== null) {
+                    e.preventDefault();
+                    navigateRunbookList(key);
                 }
+
+                return;
             }
 
             if (e.altKey) {
@@ -3350,55 +3409,64 @@
                 return;
             }
 
-            if (e.key === Key.E) {
+            if (key === Key.E) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 toggleAppMode();
-            } else if (e.shiftKey && e.key === Key.SHIFT_E) {
+
+            } else if (e.shiftKey && key === Key.SHIFT_E) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 exportToFile();
-            } else if (e.shiftKey && e.key === Key.BACKSPACE) {
+
+            } else if (e.shiftKey && key === Key.BACKSPACE) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 clearAllData();
-            } else if (e.key === Key.D) {
+
+            } else if (key === Key.D) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 if (selectedBlockIds.size > 0) {
                     duplicateBlock([...selectedBlockIds][0]);
                 }
-            } else if (e.key === Key.S) {
+
+            } else if (key === Key.S) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 toggleSidebar();
-            } else if (e.key === Key.I && !isReadMode()) {
+
+            } else if (key === Key.I && !isReadMode()) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 openRunbookImportDialog();
-            } else if (e.key === Key.G) {
+
+            } else if (key === Key.G) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 toggleAllCommandEditors();
+
             } else if (!document.activeElement?.matches(InputSelector.EDITABLE)) {
                 document.body.classList.add(CssClass.CTRL_HELD);
             }
         });
 
         document.addEventListener(EventType.KEY_UP, e => {
-            if (e.key === Key.CTRL) {
+            const key = e.key;
+            if (key === Key.CTRL) {
                 removeCtrlHeldClass();
                 return;
             }
 
-            if (e.key === Key.ALT) {
+            if (key === Key.ALT) {
                 removeAltHeldClass();
                 return;
             }
 
-            if (e.key === Key.ESCAPE) {
+            if (key === Key.ESCAPE) {
                 document.activeElement?.blur();
                 clearBlockSelection();
+                clearRunbookFocus();
             }
         });
 
@@ -3422,12 +3490,16 @@
                 return;
             }
 
+            // Clear runbook focus unless on runbook item
+            if (focusedRunbookId !== null && !e.target.closest(Selector.RUNBOOK_ITEM_BTN)) {
+                clearRunbookFocus();
+            }
+
             // Clear selection unless on block controls
-
-            const isBlockControl = e.target.closest(
-                `.${CssClass.BLOCK_CONTROLS}, .${CssClass.BLOCK_DRAG_HANDLE}`);
-
-            if (!isBlockControl && selectedBlockIds.size > 0) {
+            if (
+                selectedBlockIds.size > 0 &&
+                !e.target.closest(`.${CssClass.BLOCK_CONTROLS}, .${CssClass.BLOCK_DRAG_HANDLE}`)
+            ) {
                 clearBlockSelection();
             }
         });
