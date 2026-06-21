@@ -1461,6 +1461,7 @@
 
         const ElementId = Object.freeze({
             MAIN_PANEL: 'main-panel',
+            MODE_TOGGLE_BTN: 'mode-toggle-btn',
             COLLAPSE_ALL_BTN: 'collapse-all-btn',
             EXPORT_BTN: 'export-btn',
             CLEAR_BTN: 'clear-btn',
@@ -1922,15 +1923,17 @@
             document.body.classList.toggle(CssClass.READ_MODE, isRead);
 
             // Update toggle button
-            const btn = document.getElementById('mode-toggle-btn');
-            if (btn) {
-                const icon = getSvgFromButton(btn);
-                if (icon) icon.innerHTML = isRead ?
-                    '<path d="M13 1l2 2L5 13l-3 1 1-3L13 1z"/>' :
-                    '<path d="M5 7V5a3 3 0 0 1 6 0v2M3 7h10v7H3zM8 11v-1"/>';
-
-                btn.title = isRead ? 'Switch to Edit mode' : 'Switch to Read mode';
+            const btn = document.getElementById(ElementId.MODE_TOGGLE_BTN);
+            if (!btn) {
+                return;
             }
+
+            const icon = getSvgFromButton(btn);
+            icon.innerHTML = isRead ?
+                '<path d="M13 1l2 2L5 13l-3 1 1-3L13 1z"/>' :
+                '<path d="M5 7V5a3 3 0 0 1 6 0v2M3 7h10v7H3zM8 11v-1"/>';
+
+            btn.title = `Switch to ${isRead ? 'Edit' : 'Read'} mode`;
         }
 
         function toggleAppMode() {
