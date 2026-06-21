@@ -1906,6 +1906,10 @@
             return currentMode === AppMode.READ;
         }
 
+        function getSvgFromButton(btn) {
+            return btn.querySelector('svg');
+        }
+
         function setAppMode(mode) {
             currentMode = mode;
             saveState();
@@ -1916,10 +1920,11 @@
             // Update toggle button
             const btn = document.getElementById('mode-toggle-btn');
             if (btn) {
-                const icon = btn.querySelector('svg');
+                const icon = getSvgFromButton(btn);
                 if (icon) icon.innerHTML = isRead ?
                     '<path d="M13 1l2 2L5 13l-3 1 1-3L13 1z"/>' :
                     '<path d="M5 7V5a3 3 0 0 1 6 0v2M3 7h10v7H3zM8 11v-1"/>';
+
                 btn.title = isRead ? 'Switch to Edit mode' : 'Switch to Read mode';
             }
         }
@@ -2784,19 +2789,19 @@
             const resolvedText = resolveCommandToString(block.text);
 
             navigator.clipboard.writeText(resolvedText).then(() => {
-                const button = document.getElementById(`copy-btn-${blockId}`);
-                if (!button) {
+                const btn = document.getElementById(`copy-btn-${blockId}`);
+                if (!btn) {
                     return;
                 }
 
-                const svg = button.querySelector('svg');
+                const svg = getSvgFromButton(btn);
                 const originalSvg = svg.cloneNode(true);
 
                 svg.innerHTML =
                     '<polyline points="2,8 6,12 14,4" stroke="var(--success)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
 
                 setTimeout(() => {
-                    const currentSvg = button.querySelector('svg');
+                    const currentSvg = getSvgFromButton(btn);
                     if (currentSvg) {
                         currentSvg.replaceWith(originalSvg);
                     }
