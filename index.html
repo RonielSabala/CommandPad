@@ -1379,6 +1379,7 @@
             BLOCK_SELECTED: 'block-selected',
             SELECTING: 'selecting',
             BTN_DISABLED: 'btn-disabled',
+            BLOCK_ITEM: 'block-item',
             BLOCK_CONTROLS: 'block-controls',
             BLOCK_DRAG_HANDLE: 'block-drag-handle',
             SECTION_COLLAPSED: 'collapsed',
@@ -1438,7 +1439,9 @@
             NOTE_TEXTAREA: '.note-textarea',
             NOTE_AUTO_WIDTH: '.note-auto-width',
             NOTE_PREVIEW: '.note-preview',
+            NOTE_STYLE_BTN: '.note-style-btn',
             COMMAND_TEXTAREA: '.command-textarea',
+            COMMAND_PREVIEW_TEXT: '.command-preview-text',
             VARIABLE_ROW: '.variable-row',
             VARIABLE_INPUTS: '.variable-inputs',
             VARIABLE_KEY_INPUT: '.variable-key-input',
@@ -2490,7 +2493,7 @@
                 preview.className = `note-preview style-${style}`;
             }
 
-            blockElement.querySelectorAll('.note-style-btn').forEach(button => {
+            blockElement.querySelectorAll(Selector.NOTE_STYLE_BTN).forEach(button => {
                 button.classList.toggle(CssClass.ACTIVE, button.dataset.style === style);
             });
 
@@ -2525,7 +2528,7 @@
                 return;
             }
 
-            const previewEl = blockElement.querySelector('.command-preview-text');
+            const previewEl = blockElement.querySelector(Selector.COMMAND_PREVIEW_TEXT);
             if (!previewEl) {
                 return;
             }
@@ -2604,7 +2607,7 @@
 
         function buildBlockElement(block) {
             const wrapper = document.createElement('div');
-            wrapper.className = 'block-item';
+            wrapper.className = CssClass.BLOCK_ITEM;
             wrapper.dataset.blockId = block.id;
 
             if (block.type === BlockType.COMMAND) {
@@ -2853,8 +2856,8 @@
                 return;
             }
 
-            const editorEl = blockElement.querySelector('.command-block-editor');
-            const toggleBtn = blockElement.querySelector('.toggle-editor-btn');
+            const editorEl = blockElement.querySelector(Selector.COMMAND_BLOCK_EDITOR);
+            const toggleBtn = blockElement.querySelector(Selector.TOGGLE_EDITOR_BTN);
 
             if (editorEl) editorEl.classList.toggle(CssClass.COLLAPSED, block.editorCollapsed);
             if (toggleBtn) {
@@ -2868,7 +2871,9 @@
 
             // Auto-resize textarea
             const textarea = editorEl.querySelector(Selector.COMMAND_TEXTAREA);
-            if (textarea) autoResizeTextarea(textarea);
+            if (textarea) {
+                autoResizeTextarea(textarea);
+            }
         }
 
         // Multi select
