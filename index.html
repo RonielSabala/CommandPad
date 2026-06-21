@@ -322,7 +322,7 @@
             opacity: 1;
         }
 
-        #runbook-add-row {
+        #runbook-add-btn {
             padding: var(--space-3) var(--space-12);
         }
 
@@ -1098,7 +1098,7 @@
 
         /* --- READ MODE SUPPRESSIONS --- */
 
-        body.read-mode #runbook-add-row,
+        body.read-mode #runbook-add-btn,
         body.read-mode .runbook-drag-handle,
         body.read-mode .runbook-row .btn-danger-ghost {
             display: none !important;
@@ -1382,6 +1382,7 @@
             BLOCK_CONTROLS: 'block-controls',
             BLOCK_DRAG_HANDLE: 'block-drag-handle',
             SECTION_COLLAPSED: 'collapsed',
+            RUNBOOK_ROW: 'runbook-row',
             RUNBOOK_ACTIVE: 'active',
             SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
         });
@@ -1472,6 +1473,7 @@
             RUNBOOK_SECTION: 'runbook-section',
             VARIABLES_SECTION: 'variables-section',
             RUNBOOK_IMPORT_INPUT: 'runbook-import-input',
+            RUNBOOK_ADD_BTN: 'runbook-add-btn',
         });
 
         const FilePickerConfig = Object.freeze({
@@ -1514,11 +1516,13 @@
 
                 request.onupgradeneeded = () => {
                     const db = request.result;
-                    if (!db.objectStoreNames.contains(RunbookConfig.STORE_NAME)) {
-                        db.createObjectStore(RunbookConfig.STORE_NAME, {
-                            keyPath: 'id'
-                        });
+                    if (db.objectStoreNames.contains(RunbookConfig.STORE_NAME)) {
+                        return;
                     }
+
+                    db.createObjectStore(RunbookConfig.STORE_NAME, {
+                        keyPath: 'id'
+                    });
                 };
 
                 request.onsuccess = () => {
@@ -1748,7 +1752,7 @@
             } else {
                 for (const runbook of runbookLibrary) {
                     const row = document.createElement('div');
-                    row.className = 'runbook-row';
+                    row.className = CssClass.RUNBOOK_ROW;
                     row.dataset.runbookId = runbook.id;
 
                     const isActive = runbook.id === activeRunbookId;
@@ -1834,7 +1838,7 @@
             }
 
             const addRow = document.createElement('div');
-            addRow.id = 'runbook-add-row';
+            addRow.id = ElementId.RUNBOOK_ADD_BTN;
             addRow.innerHTML = `
         <button class="btn" onclick="openRunbookImportDialog()" title="Import runbook">
             <svg viewBox="0 0 16 16">
