@@ -141,7 +141,7 @@
 
         /* --- LAYOUT --- */
 
-        .app-shell {
+        #app-shell {
             display: grid;
             grid-template-columns: var(--sidebar-width) 1fr;
             grid-template-rows: var(--header-height) 1fr;
@@ -154,7 +154,7 @@
 
         /* --- HEADER --- */
 
-        .app-header {
+        #app-header {
             grid-area: header;
             display: flex;
             align-items: center;
@@ -164,7 +164,7 @@
             background: var(--color-surface);
         }
 
-        .app-name {
+        #app-name {
             font-family: var(--font-mono);
             font-size: var(--text-lg);
             font-weight: 600;
@@ -193,7 +193,7 @@
 
         /* --- SIDEBAR --- */
 
-        .app-sidebar {
+        #app-sidebar {
             grid-area: sidebar;
             background: var(--color-surface);
             border-right: var(--border-standard);
@@ -431,15 +431,15 @@
             z-index: 10;
         }
 
-        .app-shell.sidebar-collapsed {
+        #app-shell.sidebar-collapsed {
             grid-template-columns: 0 1fr;
         }
 
-        .app-shell.sidebar-collapsed #sidebar-chevron {
+        #app-shell.sidebar-collapsed #sidebar-chevron {
             transform: rotate(180deg);
         }
 
-        .app-shell.sidebar-collapsed .app-sidebar {
+        #app-shell.sidebar-collapsed #app-sidebar {
             width: 0;
             overflow: hidden;
             border-right: none;
@@ -447,7 +447,7 @@
 
         /* --- MAIN PANEL --- */
 
-        .app-main {
+        #main-panel {
             grid-area: main;
             overflow-y: auto;
             padding-top: var(--space-4);
@@ -1168,10 +1168,10 @@
 </head>
 
 <body>
-    <div class="app-shell">
+    <div id="app-shell">
         <!-- Header -->
-        <header class="app-header">
-            <span class="app-name">CommandPad</span>
+        <header id="app-header">
+            <span id="app-name">CommandPad</span>
 
             <div class="header-spacer"></div>
 
@@ -1214,36 +1214,36 @@
         </header>
 
         <!-- Sidebar -->
-        <aside class="app-sidebar">
-            <div class="sidebar-section" id="runbook-section">
+        <aside id="app-sidebar">
+            <div id="runbook-section" class="sidebar-section">
                 <div class="sidebar-section-header no-user-select" onclick="toggleRunbookSection()">
                     <svg class="sidebar-section-chevron" viewBox="0 0 16 16">
                         <polyline points="4,6 8,10 12,6" />
                     </svg>
                     <p class="section-title">RUNBOOKS</p>
                 </div>
-                <div class="sidebar-section-body" id="runbook-list"></div>
+                <div id="runbook-list" class="sidebar-section-body"></div>
             </div>
 
             <div class="sidebar-divider"></div>
 
-            <div class="sidebar-section" id="variables-section">
+            <div id="variables-section" class="sidebar-section">
                 <div class="sidebar-section-header no-user-select" onclick="toggleVariablesSection()">
                     <svg class="sidebar-section-chevron" viewBox="0 0 16 16">
                         <polyline points="4,6 8,10 12,6" />
                     </svg>
                     <p class="section-title">VARIABLES</p>
                 </div>
-                <div class="sidebar-section-body" id="variables-list"></div>
+                <div id="variables-list" class="sidebar-section-body"></div>
             </div>
         </aside>
 
         <!-- Hidden import input for adding a runbook to the library -->
-        <input type="file" id="runbook-import-input" accept=".json" multiple onchange="handleRunbookImport(event)" />
+        <input id="runbook-import-input" type="file" accept=".json" multiple onchange="handleRunbookImport(event)" />
 
         <!-- Main panel -->
-        <main class="app-main" id="main-panel">
-            <button class="btn btn-icon sidebar-collapse-btn" id="sidebar-toggle-btn" onclick="toggleSidebar()"
+        <main id="main-panel">
+            <button id="sidebar-toggle-btn" class="btn btn-icon sidebar-collapse-btn" onclick="toggleSidebar()"
                 title="Collapse sidebar">
                 <svg id="sidebar-chevron" viewBox="0 0 16 16">
                     <polyline points="10,4 4,8 10,12" />
@@ -1442,7 +1442,6 @@
         });
 
         const Selector = Object.freeze({
-            APP_SHELL: '.app-shell',
             BLOCK_ITEM: '.block-item',
             DRAG_HANDLE: '.drag-handle',
             NOTE_LINK: 'a.note-link',
@@ -1475,6 +1474,7 @@
         });
 
         const ElementId = Object.freeze({
+            APP_SHELL: 'app-shell',
             MAIN_PANEL: 'main-panel',
             MODE_TOGGLE_BTN: 'mode-toggle-btn',
             COLLAPSE_ALL_BTN: 'collapse-all-btn',
@@ -1970,7 +1970,7 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
                     ...state,
                     mode: currentMode,
-                    sidebar: document.querySelector(Selector.APP_SHELL).classList.contains(CssClass
+                    sidebar: document.getElementById(ElementId.APP_SHELL).classList.contains(CssClass
                             .SIDEBAR_COLLAPSED) ?
                         SidebarState.COLLAPSED : SidebarState.EXPANDED,
                     scrollTop: mainPanel ? mainPanel.scrollTop : 0,
@@ -1992,7 +1992,7 @@
                 state.blocks = saved.blocks ?? [];
 
                 if (saved.sidebar === SidebarState.COLLAPSED) {
-                    document.querySelector(Selector.APP_SHELL).classList.add(CssClass.SIDEBAR_COLLAPSED);
+                    document.getElementById(ElementId.APP_SHELL).classList.add(CssClass.SIDEBAR_COLLAPSED);
                 }
                 if (saved.mode === AppMode.READ || saved.mode === AppMode.EDIT) {
                     setAppMode(saved.mode);
@@ -2837,7 +2837,7 @@
         //  Toggle sidebar
 
         function toggleSidebar() {
-            const shell = document.querySelector(Selector.APP_SHELL);
+            const shell = document.getElementById(ElementId.APP_SHELL);
             const isCollapsed = shell.classList.toggle(CssClass.SIDEBAR_COLLAPSED);
 
             const btn = document.getElementById(ElementId.SIDEBAR_TOGGLE_BTN);
