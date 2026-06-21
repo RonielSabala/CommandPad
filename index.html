@@ -1485,6 +1485,9 @@
             MOVE: 'move',
         });
 
+        const DRAG_TIMEOUT_MS = 50;
+        const COPY_FEEDBACK_TIMEOUT_MS = 1000;
+
         // State
 
         let state = {
@@ -1775,7 +1778,7 @@
                     handle.addEventListener(EventType.MOUSE_UP, () => {
                         setTimeout(() => {
                             row.draggable = false;
-                        }, 50);
+                        }, DRAG_TIMEOUT_MS);
                     });
 
                     row.addEventListener(EventType.DRAG_START, event => {
@@ -2242,7 +2245,7 @@
                     handle.addEventListener(EventType.MOUSE_UP, () => {
                         setTimeout(() => {
                             row.draggable = false;
-                        }, 50);
+                        }, DRAG_TIMEOUT_MS);
                     });
 
                     row.addEventListener(EventType.DRAG_START, event => {
@@ -2649,7 +2652,7 @@
                 setTimeout(() => {
                     wrapper.draggable = false;
                     dragInitiatedFromHandle = false;
-                }, 50);
+                }, DRAG_TIMEOUT_MS);
             });
 
             wrapper.addEventListener(EventType.MOUSE_ENTER, event => {
@@ -2782,16 +2785,22 @@
 
             navigator.clipboard.writeText(resolvedText).then(() => {
                 const button = document.getElementById(`copy-btn-${blockId}`);
-                if (button) {
-                    const svg = button.querySelector('svg');
-                    const originalSvg = svg.cloneNode(true);
-                    svg.innerHTML =
-                        '<polyline points="2,8 6,12 14,4" stroke="var(--success)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
-                    setTimeout(() => {
-                        const currentSvg = button.querySelector('svg');
-                        if (currentSvg) currentSvg.replaceWith(originalSvg);
-                    }, 1800);
+                if (!button) {
+                    return;
                 }
+
+                const svg = button.querySelector('svg');
+                const originalSvg = svg.cloneNode(true);
+
+                svg.innerHTML =
+                    '<polyline points="2,8 6,12 14,4" stroke="var(--success)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+
+                setTimeout(() => {
+                    const currentSvg = button.querySelector('svg');
+                    if (currentSvg) {
+                        currentSvg.replaceWith(originalSvg);
+                    }
+                }, COPY_FEEDBACK_TIMEOUT_MS);
             });
         }
 
