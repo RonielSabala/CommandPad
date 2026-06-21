@@ -1441,6 +1441,10 @@
             RUNBOOK_DRAG_HANDLE: '.runbook-drag-handle',
         });
 
+        const InputSelector = Object.freeze({
+            EDITABLE: 'textarea, input',
+        });
+
         const Anchor = Object.freeze({
             TARGET_BLANK: '_blank',
             REL: 'noopener,noreferrer',
@@ -3167,7 +3171,7 @@
         document.addEventListener(EventType.KEY_DOWN, e => {
             if (e.key === Key.DELETE && !e.ctrlKey && !e.altKey) {
                 const active = document.activeElement;
-                const isEditingText = active?.matches('textarea, input');
+                const isEditingText = active?.matches(InputSelector.EDITABLE);
                 if (!isEditingText && selectedBlockIds.size > 0) {
                     e.preventDefault();
                     removeBlock([...selectedBlockIds][0]);
@@ -3215,7 +3219,7 @@
                 e.preventDefault();
                 removeCtrlHeldClass();
                 toggleAllCommandEditors();
-            } else if (!document.activeElement?.matches('textarea, input')) {
+            } else if (!document.activeElement?.matches(InputSelector.EDITABLE)) {
                 document.body.classList.add(CssClass.CTRL_HELD);
             }
         });
