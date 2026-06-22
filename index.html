@@ -50,6 +50,7 @@
             --space-6: 0.75rem;
             --space-8: 1rem;
             --space-12: 1.5rem;
+            --space-16: 2rem;
             --space-20: 2.5rem;
 
             /* Text scale */
@@ -259,17 +260,20 @@
         }
 
         .sidebar-section-body {
+            min-height: 0;
             max-height: 45vh;
             overflow-y: auto;
             padding: var(--space-6) var(--space-4);
             display: flex;
             flex-direction: column;
-            gap: var(--space-4);
+            gap: var(--space-3);
         }
 
         .sidebar-section-list {
             overflow-y: auto;
             padding: var(--space-2);
+            flex: 1;
+            min-height: 0;
         }
 
         .sidebar-search-input {
@@ -316,11 +320,17 @@
             flex-shrink: 0;
         }
 
-        .sidebar-divider {
-            height: 1px;
-            background: var(--color-border);
+        .sidebar-section-footer {
+            padding: var(--space-4);
+            border-top: var(--space-1) dashed var(--color-border);
+            margin-left: var(--space-12);
+            margin-right: var(--space-16);
+        }
+
+        .sidebar-section-divider {
+            height: var(--space-2);
             margin: var(--space-4) var(--space-6);
-            flex-shrink: 0;
+            background: var(--color-border);
         }
 
         /* --- CONFIRM MODAL --- */
@@ -1214,7 +1224,8 @@
         }
 
         body.read-mode #add-block-row,
-        body.read-mode #variable-add-btn {
+        body.read-mode #variable-add-btn,
+        body.read-mode .sidebar-section-footer {
             display: none;
         }
 
@@ -1341,10 +1352,18 @@
                         </svg>
                     </div>
                     <div id="runbook-list" class="sidebar-section-list"></div>
+                    <div class="sidebar-section-footer">
+                        <button class="btn" onclick="openRunbookImportDialog()" title="Import runbook">
+                            <svg viewBox="0 0 16 16">
+                                <path d="M8 11V3M5 6l3-3 3 3M3 11v2h10v-2" />
+                            </svg>
+                            Import
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-divider"></div>
 
             <div id="variables-section" class="sidebar-section">
                 <div class="sidebar-section-header no-user-select" onclick="toggleVariablesSection()">
@@ -1364,6 +1383,14 @@
                         </svg>
                     </div>
                     <div id="variables-list" class="sidebar-section-list"></div>
+                    <div class="sidebar-section-footer">
+                        <button class="btn" onclick="addVariable()" title="New variable">
+                            <svg viewBox="0 0 16 16">
+                                <path d="M8 3v10M3 8h10" />
+                            </svg>
+                            New
+                        </button>
+                    </div>
                 </div>
             </div>
         </aside>
@@ -1982,29 +2009,34 @@
             const container = document.getElementById(ElementId.RUNBOOK_LIST);
             container.innerHTML = '';
 
-            const visibleRunbooks = runbookLibrary.filter(runbook =>
-                matchesQuery(runbookSearchQuery, runbook.label, runbook.filename)
-            );
-
             if (runbookLibrary.length === 0) {
                 const emptyMsg = document.createElement('p');
                 emptyMsg.className = CssClass.SIDEBAR_SECTION_EMPTY_MSG;
                 emptyMsg.textContent = 'No runbooks imported.';
                 container.appendChild(emptyMsg);
-            } else if (visibleRunbooks.length === 0) {
+                return;
+            }
+
+            const visibleRunbooks = runbookLibrary.filter(runbook =>
+                matchesQuery(runbookSearchQuery, runbook.label, runbook.filename)
+            );
+
+            if (visibleRunbooks.length === 0) {
                 const emptyMsg = document.createElement('p');
                 emptyMsg.className = CssClass.SIDEBAR_SECTION_EMPTY_MSG;
                 emptyMsg.textContent = 'No matches.';
                 container.appendChild(emptyMsg);
-            } else {
-                for (const runbook of visibleRunbooks) {
-                    const row = document.createElement('div');
-                    row.className = CssClass.RUNBOOK_ROW;
-                    row.dataset.runbookId = runbook.id;
+                return;
+            }
 
-                    const isActive = runbook.id === activeRunbookId;
+            for (const runbook of visibleRunbooks) {
+                const row = document.createElement('div');
+                row.className = CssClass.RUNBOOK_ROW;
+                row.dataset.runbookId = runbook.id;
 
-                    row.innerHTML = `
+                const isActive = runbook.id === activeRunbookId;
+
+                row.innerHTML = `
                 <div class="runbook-drag-handle drag-handle" title="Drag to reorder">
                     <svg viewBox="0 0 16 16"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
                 </div>
@@ -2019,86 +2051,68 @@
                 </button>
             `;
 
-                    const handle = row.querySelector(Selector.RUNBOOK_DRAG_HANDLE);
-                    const itemButton = row.querySelector(Selector.RUNBOOK_ITEM_BTN);
+                const handle = row.querySelector(Selector.RUNBOOK_DRAG_HANDLE);
+                const itemButton = row.querySelector(Selector.RUNBOOK_ITEM_BTN);
 
-                    handle.addEventListener(EventType.MOUSE_DOWN, () => {
-                        row.draggable = true;
-                    });
-                    handle.addEventListener(EventType.MOUSE_UP, () => {
-                        setTimeout(() => {
-                            row.draggable = false;
-                        }, DRAG_TIMEOUT_MS);
-                    });
-
-                    row.addEventListener(EventType.DRAG_START, event => {
-                        dragSourceRunbookId = runbook.id;
-                        event.dataTransfer.effectAllowed = DragEffect.MOVE;
-                        row.classList.add(CssClass.DRAGGING);
-                    });
-
-                    row.addEventListener(EventType.DRAG_END, () => {
+                handle.addEventListener(EventType.MOUSE_DOWN, () => {
+                    row.draggable = true;
+                });
+                handle.addEventListener(EventType.MOUSE_UP, () => {
+                    setTimeout(() => {
                         row.draggable = false;
-                        row.classList.remove(CssClass.DRAGGING);
-                    });
+                    }, DRAG_TIMEOUT_MS);
+                });
 
-                    row.addEventListener(EventType.DRAG_OVER, event => {
-                        event.preventDefault();
-                        if (runbook.id !== dragSourceRunbookId) {
-                            itemButton.classList.add(CssClass.DRAG_OVER);
-                        }
-                    });
+                row.addEventListener(EventType.DRAG_START, event => {
+                    dragSourceRunbookId = runbook.id;
+                    event.dataTransfer.effectAllowed = DragEffect.MOVE;
+                    row.classList.add(CssClass.DRAGGING);
+                });
 
-                    row.addEventListener(EventType.DRAG_LEAVE, () => {
-                        itemButton.classList.remove(CssClass.DRAG_OVER);
-                    });
+                row.addEventListener(EventType.DRAG_END, () => {
+                    row.draggable = false;
+                    row.classList.remove(CssClass.DRAGGING);
+                });
 
-                    row.addEventListener(EventType.DROP, event => {
-                        event.preventDefault();
-                        itemButton.classList.remove(CssClass.DRAG_OVER);
-                        if (isReadMode() || !dragSourceRunbookId) {
-                            return;
-                        }
+                row.addEventListener(EventType.DRAG_OVER, event => {
+                    event.preventDefault();
+                    if (runbook.id !== dragSourceRunbookId) {
+                        itemButton.classList.add(CssClass.DRAG_OVER);
+                    }
+                });
 
-                        const targetId = runbook.id;
-                        if (dragSourceRunbookId === targetId) {
-                            return;
-                        }
+                row.addEventListener(EventType.DRAG_LEAVE, () => {
+                    itemButton.classList.remove(CssClass.DRAG_OVER);
+                });
 
-                        const sourceIndex = runbookLibrary.findIndex(item => item.id === dragSourceRunbookId);
-                        const targetIndex = runbookLibrary.findIndex(item => item.id === targetId);
-                        if (sourceIndex < 0 || targetIndex < 0) {
-                            return;
-                        }
+                row.addEventListener(EventType.DROP, event => {
+                    event.preventDefault();
+                    itemButton.classList.remove(CssClass.DRAG_OVER);
+                    if (isReadMode() || !dragSourceRunbookId) {
+                        return;
+                    }
 
-                        const [removed] = runbookLibrary.splice(sourceIndex, 1);
-                        runbookLibrary.splice(targetIndex, 0, removed);
+                    const targetId = runbook.id;
+                    if (dragSourceRunbookId === targetId) {
+                        return;
+                    }
 
-                        dragSourceRunbookId = null;
-                        saveRunbookLibrary();
-                        renderRunbookList();
-                    });
+                    const sourceIndex = runbookLibrary.findIndex(item => item.id === dragSourceRunbookId);
+                    const targetIndex = runbookLibrary.findIndex(item => item.id === targetId);
+                    if (sourceIndex < 0 || targetIndex < 0) {
+                        return;
+                    }
 
-                    container.appendChild(row);
-                }
+                    const [removed] = runbookLibrary.splice(sourceIndex, 1);
+                    runbookLibrary.splice(targetIndex, 0, removed);
+
+                    dragSourceRunbookId = null;
+                    saveRunbookLibrary();
+                    renderRunbookList();
+                });
+
+                container.appendChild(row);
             }
-
-            if (runbookSearchQuery) {
-                return;
-            }
-
-            // Add button at the bottom
-            const addRow = document.createElement('div');
-            addRow.id = ElementId.RUNBOOK_ADD_BTN;
-            addRow.innerHTML = `
-        <button class="btn" onclick="openRunbookImportDialog()" title="Import runbook">
-            <svg viewBox="0 0 16 16">
-                <path d="M8 11V3M5 6l3-3 3 3M3 11v2h10v-2" />
-            </svg>
-            Import
-        </button>
-    `;
-            container.appendChild(addRow);
         }
 
         let dragSourceRunbookId = null;
@@ -2452,27 +2466,32 @@
             const container = document.getElementById(ElementId.VARIABLES_LIST);
             container.innerHTML = '';
 
-            const visibleVariables = state.variables.filter(variable =>
-                matchesQuery(variableSearchQuery, variable.key, variable.value)
-            );
-
             if (state.variables.length === 0) {
                 const emptyMsg = document.createElement('p');
                 emptyMsg.className = CssClass.SIDEBAR_SECTION_EMPTY_MSG;
                 emptyMsg.textContent = 'No variables defined.';
                 container.appendChild(emptyMsg);
-            } else if (visibleVariables.length === 0) {
+                return;
+            }
+
+            const visibleVariables = state.variables.filter(variable =>
+                matchesQuery(variableSearchQuery, variable.key, variable.value)
+            );
+
+            if (visibleVariables.length === 0) {
                 const emptyMsg = document.createElement('p');
                 emptyMsg.className = CssClass.SIDEBAR_SECTION_EMPTY_MSG;
                 emptyMsg.textContent = 'No matches.';
                 container.appendChild(emptyMsg);
-            } else {
-                for (const variable of visibleVariables) {
-                    const row = document.createElement('div');
-                    row.className = 'variable-row';
-                    row.dataset.variableId = variable.id;
+                return;
+            }
 
-                    row.innerHTML = `
+            for (const variable of visibleVariables) {
+                const row = document.createElement('div');
+                row.className = 'variable-row';
+                row.dataset.variableId = variable.id;
+
+                row.innerHTML = `
             <div class="variable-drag-handle" title="Drag to reorder">
               <svg viewBox="0 0 16 16"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
             </div>
@@ -2508,82 +2527,64 @@
               </svg>
             </button>
           `;
-                    // Drag-and-drop
-                    const handle = row.querySelector(Selector.VARIABLE_DRAG_HANDLE);
+                // Drag-and-drop
+                const handle = row.querySelector(Selector.VARIABLE_DRAG_HANDLE);
 
-                    handle.addEventListener(EventType.MOUSE_DOWN, () => {
-                        row.draggable = true;
-                    });
+                handle.addEventListener(EventType.MOUSE_DOWN, () => {
+                    row.draggable = true;
+                });
 
-                    handle.addEventListener(EventType.MOUSE_UP, () => {
-                        setTimeout(() => {
-                            row.draggable = false;
-                        }, DRAG_TIMEOUT_MS);
-                    });
+                handle.addEventListener(EventType.MOUSE_UP, () => {
+                    setTimeout(() => {
+                        row.draggable = false;
+                    }, DRAG_TIMEOUT_MS);
+                });
 
-                    row.addEventListener(EventType.DRAG_START, event => {
-                        dragSourceVariableId = row.dataset.variableId;
-                        event.dataTransfer.effectAllowed = DragEffect.MOVE;
-                        row.classList.add(CssClass.DRAGGING);
-                    });
+                row.addEventListener(EventType.DRAG_START, event => {
+                    dragSourceVariableId = row.dataset.variableId;
+                    event.dataTransfer.effectAllowed = DragEffect.MOVE;
+                    row.classList.add(CssClass.DRAGGING);
+                });
 
-                    row.addEventListener(EventType.DRAG_OVER, event => {
-                        event.preventDefault();
-                        if (row.dataset.variableId === dragSourceVariableId) {
-                            return;
-                        }
+                row.addEventListener(EventType.DRAG_OVER, event => {
+                    event.preventDefault();
+                    if (row.dataset.variableId === dragSourceVariableId) {
+                        return;
+                    }
 
-                        container.querySelectorAll(Selector.VARIABLE_ROW)
-                            .forEach(el => el.querySelector(Selector.VARIABLE_INPUTS)?.classList.remove(CssClass
-                                .DRAG_OVER));
+                    container.querySelectorAll(Selector.VARIABLE_ROW)
+                        .forEach(el => el.querySelector(Selector.VARIABLE_INPUTS)?.classList.remove(CssClass
+                            .DRAG_OVER));
 
-                        row.querySelector(Selector.VARIABLE_INPUTS)?.classList.add(CssClass.DRAG_OVER);
-                    });
+                    row.querySelector(Selector.VARIABLE_INPUTS)?.classList.add(CssClass.DRAG_OVER);
+                });
 
-                    row.addEventListener(EventType.DROP, event => {
-                        event.preventDefault();
-                        if (isReadMode()) {
-                            return;
-                        }
+                row.addEventListener(EventType.DROP, event => {
+                    event.preventDefault();
+                    if (isReadMode()) {
+                        return;
+                    }
 
-                        const targetId = row.dataset.variableId;
-                        if (!dragSourceVariableId || dragSourceVariableId === targetId) {
-                            return;
-                        }
+                    const targetId = row.dataset.variableId;
+                    if (!dragSourceVariableId || dragSourceVariableId === targetId) {
+                        return;
+                    }
 
-                        const sourceIndex = state.variables.findIndex(v => v.id === dragSourceVariableId);
-                        const targetIndex = state.variables.findIndex(v => v.id === targetId);
-                        if (sourceIndex < 0 || targetIndex < 0) {
-                            return;
-                        }
+                    const sourceIndex = state.variables.findIndex(v => v.id === dragSourceVariableId);
+                    const targetIndex = state.variables.findIndex(v => v.id === targetId);
+                    if (sourceIndex < 0 || targetIndex < 0) {
+                        return;
+                    }
 
-                        const [removed] = state.variables.splice(sourceIndex, 1);
-                        state.variables.splice(targetIndex, 0, removed);
+                    const [removed] = state.variables.splice(sourceIndex, 1);
+                    state.variables.splice(targetIndex, 0, removed);
 
-                        saveState();
-                        renderVariablesList();
-                    });
+                    saveState();
+                    renderVariablesList();
+                });
 
-                    container.appendChild(row);
-                }
+                container.appendChild(row);
             }
-
-            if (variableSearchQuery) {
-                return;
-            }
-
-            // Add button at the bottom
-            const addRow = document.createElement('div');
-            addRow.id = ElementId.VARIABLE_ADD_BTN;
-            addRow.innerHTML = `
-        <button class="btn" onclick="addVariable()" title="New variable">
-          <svg viewBox="0 0 16 16">
-            <path d="M8 3v10M3 8h10"/>
-          </svg>
-          New
-        </button>
-      `;
-            container.appendChild(addRow);
         }
 
         //  Blocks
