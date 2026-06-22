@@ -1904,7 +1904,20 @@
 
             const nextId = runbookLibrary[nextIndex].id;
             focusedRunbookId = nextId;
-            loadRunbookFromLibrary(nextId).then(updateRunbookFocusVisuals);
+
+            loadRunbookFromLibrary(nextId).then(() => {
+                updateRunbookFocusVisuals();
+                scrollRunbookItemIntoView(nextId);
+            });
+        }
+
+        function scrollRunbookItemIntoView(runbookId) {
+            const list = document.getElementById(ElementId.RUNBOOK_LIST);
+            const row = list?.querySelector(`[data-runbook-id="${runbookId}"]`);
+            row?.scrollIntoView({
+                block: 'center',
+                behavior: 'smooth'
+            });
         }
 
         function openRunbookImportDialog() {
