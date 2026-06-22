@@ -259,8 +259,35 @@
         }
 
         .sidebar-section-body {
+            max-height: 45vh;
             overflow-y: auto;
             padding: var(--space-6) var(--space-4);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .sidebar-search-input {
+            box-sizing: border-box;
+            width: 100%;
+            font-family: var(--font-mono);
+            font-size: var(--text-md);
+            background: var(--color-surface-alt);
+            border: var(--border-standard);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-primary);
+            padding: var(--space-3);
+            outline: none;
+            transition: border-color var(--transition-fast);
+            flex-shrink: 0;
+        }
+
+        .sidebar-search-input:focus {
+            border-color: var(--color-border-focus);
+        }
+
+        .sidebar-search-input::placeholder {
+            color: var(--color-text-muted);
         }
 
         .sidebar-divider {
@@ -1287,7 +1314,12 @@
                     </svg>
                     <p class="section-title">RUNBOOKS</p>
                 </div>
-                <div id="runbook-list" class="sidebar-section-body"></div>
+                <div class="sidebar-section-body">
+                    <input class="sidebar-search-input" id="runbook-search-input" type="text"
+                        placeholder="Search runbooks…" spellcheck="false" autocomplete="off"
+                        oninput="runbookSearchQuery = this.value; renderRunbookList()" />
+                    <div id="runbook-list"></div>
+                </div>
             </div>
 
             <div class="sidebar-divider"></div>
@@ -1299,7 +1331,12 @@
                     </svg>
                     <p class="section-title">VARIABLES</p>
                 </div>
-                <div id="variables-list" class="sidebar-section-body"></div>
+                <div class="sidebar-section-body">
+                    <input class="sidebar-search-input" id="variable-search-input" type="text"
+                        placeholder="Search variables…" spellcheck="false" autocomplete="off"
+                        oninput="variableSearchQuery = this.value; renderVariablesList()" />
+                    <div id="variables-list"></div>
+                </div>
             </div>
         </aside>
 
@@ -1452,6 +1489,7 @@
             DRAGGING: 'dragging',
             DRAG_OVER: 'drag-over',
             COLLAPSED: 'collapsed',
+            SIDEBAR_SEARCH_INPUT: 'sidebar-search-input',
             SIDEBAR_COLLAPSED: 'sidebar-collapsed',
             EDITOR_COLLAPSED: 'editor-collapsed',
             ACTIVE: 'active',
@@ -1571,6 +1609,8 @@
             VARIABLES_SECTION: 'variables-section',
             RUNBOOK_IMPORT_INPUT: 'runbook-import-input',
             RUNBOOK_ADD_BTN: 'runbook-add-btn',
+            RUNBOOK_SEARCH_INPUT: 'runbook-search-input',
+            VARIABLE_SEARCH_INPUT: 'variable-search-input',
             VARIABLE_ADD_BTN: 'variable-add-btn',
             CONFIRM_MODAL: 'confirm-modal',
             CONFIRM_MODAL_MESSAGE: 'confirm-modal-message',
@@ -1880,19 +1920,42 @@
             event.target.value = '';
         }
 
+        // Sidebar search state
+
+        let runbookSearchQuery = '';
+        let variableSearchQuery = '';
+
+        function matchesQuery(query, ...fields) {
+            if (!query) {
+                return true;
+            }
+
+            const needle = query.toLowerCase();
+            return fields.some(field => field?.toLowerCase().includes(needle));
+        }
+
         //  Render runbook library
 
         function renderRunbookList() {
             const container = document.getElementById(ElementId.RUNBOOK_LIST);
             container.innerHTML = '';
 
+            const visibleRunbooks = runbookLibrary.filter(runbook =>
+                matchesQuery(runbookSearchQuery, runbook.label)
+            );
+
             if (runbookLibrary.length === 0) {
                 const emptyMsg = document.createElement('p');
                 emptyMsg.className = CssClass.SIDEBAR_SECTION_EMPTY_MSG;
                 emptyMsg.textContent = 'No runbooks imported.';
                 container.appendChild(emptyMsg);
+            } else if (visibleRunbooks.length === 0) {
+                const emptyMsg = document.createElement('p');
+                emptyMsg.className = CssClass.SIDEBAR_SECTION_EMPTY_MSG;
+                emptyMsg.textContent = 'No matches.';
+                container.appendChild(emptyMsg);
             } else {
-                for (const runbook of runbookLibrary) {
+                for (const runbook of visibleRunbooks) {
                     const row = document.createElement('div');
                     row.className = CssClass.RUNBOOK_ROW;
                     row.dataset.runbookId = runbook.id;
@@ -1920,7 +1983,6 @@
                     handle.addEventListener(EventType.MOUSE_DOWN, () => {
                         row.draggable = true;
                     });
-
                     handle.addEventListener(EventType.MOUSE_UP, () => {
                         setTimeout(() => {
                             row.draggable = false;
@@ -1979,6 +2041,11 @@
                 }
             }
 
+            if (runbookSearchQuery) {
+                return;
+            }
+
+            // Add button at the bottom
             const addRow = document.createElement('div');
             addRow.id = ElementId.RUNBOOK_ADD_BTN;
             addRow.innerHTML = `
@@ -2343,13 +2410,22 @@
             const container = document.getElementById(ElementId.VARIABLES_LIST);
             container.innerHTML = '';
 
+            const visibleVariables = state.variables.filter(variable =>
+                matchesQuery(variableSearchQuery, variable.key, variable.value)
+            );
+
             if (state.variables.length === 0) {
                 const emptyMsg = document.createElement('p');
                 emptyMsg.className = CssClass.SIDEBAR_SECTION_EMPTY_MSG;
                 emptyMsg.textContent = 'No variables defined.';
                 container.appendChild(emptyMsg);
+            } else if (visibleVariables.length === 0) {
+                const emptyMsg = document.createElement('p');
+                emptyMsg.className = CssClass.SIDEBAR_SECTION_EMPTY_MSG;
+                emptyMsg.textContent = 'No matches.';
+                container.appendChild(emptyMsg);
             } else {
-                for (const variable of state.variables) {
+                for (const variable of visibleVariables) {
                     const row = document.createElement('div');
                     row.className = 'variable-row';
                     row.dataset.variableId = variable.id;
@@ -2450,12 +2526,16 @@
                 }
             }
 
-            // Inline add button at the bottom
+            if (variableSearchQuery) {
+                return;
+            }
+
+            // Add button at the bottom
             const addRow = document.createElement('div');
             addRow.id = ElementId.VARIABLE_ADD_BTN;
             addRow.innerHTML = `
         <button class="btn" onclick="addVariable()" title="New variable">
-          <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <svg viewBox="0 0 16 16">
             <path d="M8 3v10M3 8h10"/>
           </svg>
           New
