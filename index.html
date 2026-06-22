@@ -1745,28 +1745,30 @@
             } catch {}
         }
 
-        async function addRunbookToLibrary(content, fallbackLabel) {
-            let id = null;
-            const label = deriveRunbookLabel(content, fallbackLabel || RunbookConfig.DEFAULT_LABEL);
+        async function addRunbookToLibrary(content, filename) {
+            const label = deriveRunbookLabel(content, filename || RunbookConfig.DEFAULT_LABEL);
 
-            // Overwrite runbook
-            const existingEntry = runbookLibrary.find(item => item.label === label);
+            const existingEntry = runbookLibrary.find(item => item.label === label || item.filename === filename);
             if (existingEntry) {
-                id = existingEntry.id;
-            } else {
-                id = generateId();
-                runbookLibrary.push({
-                    id,
-                    label
-                });
-
-                // Keep the list sorted
-                runbookLibrary.sort((a, b) => a.label.localeCompare(b.label));
+                existingEntry.label = label;
+                existingEntry.filename = filename || '';
+                await putRunbookContent(existingEntry.id, content);
+                saveRunbookLibrary();
+                renderRunbookList();
+                return;
             }
+
+            const id = generateId();
+            runbookLibrary.push({
+                id,
+                label,
+                filename: filename || ''
+            });
+            runbookLibrary.sort((a, b) => a.label.localeCompare(b.label));
 
             await putRunbookContent(id, content);
 
-            if (existingEntry || activeRunbookId) {
+            if (activeRunbookId) {
                 saveRunbookLibrary();
                 renderRunbookList();
                 return;
@@ -1941,7 +1943,7 @@
             container.innerHTML = '';
 
             const visibleRunbooks = runbookLibrary.filter(runbook =>
-                matchesQuery(runbookSearchQuery, runbook.label)
+                matchesQuery(runbookSearchQuery, runbook.label, runbook.filename)
             );
 
             if (runbookLibrary.length === 0) {
