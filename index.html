@@ -269,7 +269,7 @@
 
         .sidebar-section-list {
             overflow-y: auto;
-            padding: var(--space-2) var(--space-1);
+            padding: var(--space-2);
         }
 
         .sidebar-search-input {
@@ -291,6 +291,29 @@
 
         .sidebar-search-input::placeholder {
             color: var(--color-text-muted);
+        }
+
+        .sidebar-search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar-search-wrapper .sidebar-search-input {
+            padding-right: var(--space-12);
+        }
+
+        .sidebar-search-icon {
+            position: absolute;
+            right: var(--space-4);
+            width: var(--icon-md);
+            height: var(--icon-md);
+            stroke: var(--color-text-muted);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            pointer-events: none;
+            flex-shrink: 0;
         }
 
         .sidebar-divider {
@@ -1308,9 +1331,15 @@
                     <p class="section-title">RUNBOOKS</p>
                 </div>
                 <div class="sidebar-section-body">
-                    <input id="runbook-search-input" class="sidebar-search-input" type="text"
-                        placeholder="Search runbooks…" spellcheck="false" autocomplete="off"
-                        oninput="runbookSearchQuery = this.value; renderRunbookList()" />
+                    <div class="sidebar-search-wrapper">
+                        <input id="runbook-search-input" class="sidebar-search-input" type="text"
+                            placeholder="Search runbooks…" spellcheck="false" autocomplete="off"
+                            oninput="runbookSearchQuery = this.value; renderRunbookList()" />
+                        <svg class="sidebar-search-icon" viewBox="0 0 16 16">
+                            <circle cx="6.5" cy="6.5" r="4" />
+                            <line x1="10" y1="10" x2="14" y2="14" />
+                        </svg>
+                    </div>
                     <div id="runbook-list" class="sidebar-section-list"></div>
                 </div>
             </div>
@@ -1325,9 +1354,15 @@
                     <p class="section-title">VARIABLES</p>
                 </div>
                 <div class="sidebar-section-body">
-                    <input id="variable-search-input" class="sidebar-search-input" type="text"
-                        placeholder="Search variables…" spellcheck="false" autocomplete="off"
-                        oninput="variableSearchQuery = this.value; renderVariablesList()" />
+                    <div class="sidebar-search-wrapper">
+                        <input id="variable-search-input" class="sidebar-search-input" type="text"
+                            placeholder="Search variables…" spellcheck="false" autocomplete="off"
+                            oninput="variableSearchQuery = this.value; renderVariablesList()" />
+                        <svg class="sidebar-search-icon" viewBox="0 0 16 16">
+                            <circle cx="6.5" cy="6.5" r="4" />
+                            <line x1="10" y1="10" x2="14" y2="14" />
+                        </svg>
+                    </div>
                     <div id="variables-list" class="sidebar-section-list"></div>
                 </div>
             </div>
