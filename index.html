@@ -2224,6 +2224,14 @@
                     scrollTop: mainPanel ? mainPanel.scrollTop : 0,
                 }));
             } catch {}
+
+            // Persist active runbook in IndexedDB
+            if (activeRunbookId) {
+                putRunbookContent(activeRunbookId, {
+                    variables: state.variables,
+                    blocks: state.blocks,
+                }).catch(() => {});
+            }
         }
 
         let savedScrollTop = 0;
