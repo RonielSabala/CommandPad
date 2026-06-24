@@ -80,6 +80,8 @@ The sidebar's top section holds your imported runbooks.
 
 If a runbook's first block is a note, its text is used as the library label, so you can tell runbooks apart at a glance. Otherwise it falls back to the imported filename.
 
+Edits made to the active runbook are automatically saved back to the library entry.
+
 ---
 
 ### Variables
@@ -182,7 +184,19 @@ Click the **pencil icon** to return to edit mode. The mode is saved across page 
 
 ### Export
 
-Click the **Export** button in the header to save the active workspace. A native OS save dialog opens on supported browsers so you can choose the filename and folder; otherwise the file downloads directly.
+Click the **Export** button in the header to open the export format picker.
+
+Three formats are available:
+
+| Format         | Content                                                                            |
+| -------------- | ---------------------------------------------------------------------------------- |
+| **JSON**       | Full workspace (variables + blocks). Can be re-imported.                           |
+| **Markdown**   | Human-readable `.md` file. Headings, subheadings, dividers, and resolved commands. |
+| **Plain text** | Same content as Markdown, saved as `.txt`.                                         |
+
+A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.
+
+Press `Escape` or click anywhere outside the modal to cancel.
 
 ---
 

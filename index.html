@@ -80,6 +80,10 @@
             --modal-min-width: 21.25rem;
             --modal-max-width: 30rem;
 
+            /* --- Misc & utilities --- */
+            --black-a40: rgba(0, 0, 0, 0.4);
+            --black-a50: rgba(0, 0, 0, 0.5);
+
             /* Compound tokens */
             --border-standard: 1px solid var(--color-border);
             --border-dashed: var(--space-1) dashed var(--accent);
@@ -338,7 +342,7 @@
         .modal-backdrop {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.4);
+            background: var(--black-a40);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -363,7 +367,7 @@
             gap: var(--space-2);
             min-width: var(--modal-min-width);
             max-width: var(--modal-max-width);
-            box-shadow: 0 var(--space-4) var(--space-12) rgba(0, 0, 0, 0.5);
+            box-shadow: 0 var(--space-4) var(--space-12) var(--black-a50);
             transform: translateY(calc(-1 * var(--space-3)));
             transition: transform var(--transition-base);
         }
@@ -381,6 +385,7 @@
 
         .modal-actions {
             display: flex;
+            flex-wrap: wrap;
             justify-content: flex-end;
             gap: var(--space-4);
             padding-top: var(--space-4);
@@ -1106,7 +1111,7 @@
 
         .btn-primary:hover {
             background: var(--accent);
-            color: #fff;
+            color: white;
         }
 
         .btn-danger {
@@ -1316,7 +1321,8 @@
             <div class="header-spacer"></div>
 
             <div class="header-actions">
-                <button id="export-btn" class="btn btn-lg btn-primary" onclick="exportToFile()" title="Export runbook">
+                <button id="export-btn" class="btn btn-lg btn-primary" onclick="showExportModal()"
+                    title="Export runbook">
                     <svg viewBox="0 0 16 16">
                         <path d="M8 2v8M5 7l3 3 3-3M3 11v2h10v-2" />
                     </svg>
@@ -1454,9 +1460,19 @@
         </div>
     </div>
 
+    <div id="export-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal">
+            <p class="modal-message">Choose an export format.</p>
+            <div class="modal-actions">
+                <button class="btn btn-lg btn-primary" onclick="runExport('json')">JSON</button>
+                <button class="btn btn-lg" onclick="runExport('md')">Markdown</button>
+                <button class="btn btn-lg" onclick="runExport('txt')">Plain text</button>
+                <button class="btn btn-lg" onclick="closeExportModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        //  State
-        const SAVE_TIMEOUT_MS = 200;
         const STORAGE_KEY = 'commandpad_v1';
 
         // Enums
@@ -1469,11 +1485,6 @@
         const LassoMode = Object.freeze({
             SELECT: 'select',
             DESELECT: 'deselect',
-        });
-
-        const SidebarState = Object.freeze({
-            EXPANDED: 'expanded',
-            COLLAPSED: 'collapsed',
         });
 
         const SectionState = Object.freeze({
@@ -1559,10 +1570,9 @@
             BLOCK_ITEM: 'block-item',
             BLOCK_CONTROLS: 'block-controls',
             BLOCK_DRAG_HANDLE: 'block-drag-handle',
-            SECTION_COLLAPSED: 'collapsed',
             RUNBOOK_ROW: 'runbook-row',
-            RUNBOOK_ACTIVE: 'active',
             RUNBOOK_FOCUSED: 'runbook-focused',
+            VARIABLE_ROW: 'variable-row',
             SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
             MODAL_VISIBLE: 'modal-visible',
         });
@@ -1652,6 +1662,7 @@
             MODE_TOGGLE_BTN: 'mode-toggle-btn',
             COLLAPSE_ALL_BTN: 'collapse-all-btn',
             EXPORT_BTN: 'export-btn',
+            EXPORT_MODAL: 'export-modal',
             CLEAR_BTN: 'clear-btn',
             SIDEBAR_TOGGLE_BTN: 'sidebar-toggle-btn',
             VARIABLES_LIST: 'variables-list',
@@ -1677,13 +1688,39 @@
             DESCRIPTION: 'CommandPad JSON',
             EXTENSION: '.json',
             MIME_TYPE: 'application/json',
+            MD_SUGGESTED_NAME: 'commandpad-export.md',
+            MD_DESCRIPTION: 'Markdown',
+            MD_EXTENSION: '.md',
+            MD_MIME_TYPE: 'text/markdown',
+            TXT_SUGGESTED_NAME: 'commandpad-export.txt',
+            TXT_DESCRIPTION: 'Plain Text',
+            TXT_EXTENSION: '.txt',
+            TXT_MIME_TYPE: 'text/plain',
+        });
+
+        const ExportFormat = Object.freeze({
+            JSON: 'json',
+            MD: 'md',
+            TXT: 'txt',
+        });
+
+        const MarkdownSyntax = Object.freeze({
+            HEADING: '#',
+            SUBHEADING: '##',
+            DIVIDER: '---',
+            CODE_FENCE: '```plain',
+            CODE_FENCE_END: '```',
         });
 
         const DragEffect = Object.freeze({
             MOVE: 'move',
         });
 
+        // Timeouts
+
+        const DEFER_MS = 0
         const DRAG_TIMEOUT_MS = 50;
+        const SAVE_TIMEOUT_MS = 200;
         const COPY_FEEDBACK_TIMEOUT_MS = 1000;
 
         // State
@@ -1806,9 +1843,18 @@
             if (existingEntry) {
                 existingEntry.label = label;
                 existingEntry.filename = filename || '';
-                await putRunbookContent(existingEntry.id, content);
+
+                const existingEntryId = existingEntry.id
+                await putRunbookContent(existingEntryId, content);
                 saveRunbookLibrary();
-                renderRunbookList();
+
+                // If the overwritten runbook is currently active, reload it into the workspace
+                if (existingEntryId === activeRunbookId) {
+                    await loadRunbookFromLibrary(existingEntryId);
+                } else {
+                    renderRunbookList();
+                }
+
                 return;
             }
 
@@ -1847,7 +1893,7 @@
             renderBlocksList();
             updateEmptyState();
             renderRunbookList();
-            setTimeout(refreshAllPreviews, 0);
+            setTimeout(refreshAllPreviews, DEFER_MS);
         }
 
         async function overwriteActiveRunbookInLibrary() {
@@ -2040,7 +2086,7 @@
                 <div class="runbook-drag-handle drag-handle" title="Drag to reorder">
                     <svg viewBox="0 0 16 16"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
                 </div>
-                <button class="runbook-item-btn ${isActive ? CssClass.RUNBOOK_ACTIVE : ''}"
+                <button class="runbook-item-btn ${isActive ? CssClass.ACTIVE : ''}"
                     onclick="clearRunbookFocus(); loadRunbookFromLibrary('${runbook.id}')"
                     title="${escapeHtml(runbook.label)}"
                 >${escapeHtml(runbook.label)}</button>
@@ -2133,7 +2179,7 @@
                 return;
             }
 
-            section.classList.toggle(CssClass.SECTION_COLLAPSED);
+            section.classList.toggle(CssClass.COLLAPSED);
             saveSidebarSectionState();
         }
 
@@ -2143,9 +2189,9 @@
                 const variablesSection = document.getElementById(ElementId.VARIABLES_SECTION);
 
                 localStorage.setItem(RunbookConfig.SECTIONS_STORAGE_KEY, JSON.stringify({
-                    runbooks: runbookSection?.classList.contains(CssClass.SECTION_COLLAPSED) ?
+                    runbooks: runbookSection?.classList.contains(CssClass.COLLAPSED) ?
                         SectionState.COLLAPSED : SectionState.EXPANDED,
-                    variables: variablesSection?.classList.contains(CssClass.SECTION_COLLAPSED) ?
+                    variables: variablesSection?.classList.contains(CssClass.COLLAPSED) ?
                         SectionState.COLLAPSED : SectionState.EXPANDED,
                 }));
             } catch {}
@@ -2159,10 +2205,10 @@
                 }
 
                 if (saved.runbooks === SectionState.COLLAPSED) {
-                    document.getElementById(ElementId.RUNBOOK_SECTION)?.classList.add(CssClass.SECTION_COLLAPSED);
+                    document.getElementById(ElementId.RUNBOOK_SECTION)?.classList.add(CssClass.COLLAPSED);
                 }
                 if (saved.variables === SectionState.COLLAPSED) {
-                    document.getElementById(ElementId.VARIABLES_SECTION)?.classList.add(CssClass.SECTION_COLLAPSED);
+                    document.getElementById(ElementId.VARIABLES_SECTION)?.classList.add(CssClass.COLLAPSED);
                 }
             } catch {}
         }
@@ -2220,10 +2266,18 @@
                     mode: currentMode,
                     sidebar: document.getElementById(ElementId.APP_SHELL).classList.contains(CssClass
                             .SIDEBAR_COLLAPSED) ?
-                        SidebarState.COLLAPSED : SidebarState.EXPANDED,
+                        SectionState.COLLAPSED : SectionState.EXPANDED,
                     scrollTop: mainPanel ? mainPanel.scrollTop : 0,
                 }));
             } catch {}
+
+            // Persist active runbook in IndexedDB
+            if (activeRunbookId) {
+                putRunbookContent(activeRunbookId, {
+                    variables: state.variables,
+                    blocks: state.blocks,
+                }).catch(() => {});
+            }
         }
 
         let savedScrollTop = 0;
@@ -2239,7 +2293,7 @@
                 state.variables = saved.variables ?? [];
                 state.blocks = saved.blocks ?? [];
 
-                if (saved.sidebar === SidebarState.COLLAPSED) {
+                if (saved.sidebar === SectionState.COLLAPSED) {
                     document.getElementById(ElementId.APP_SHELL).classList.add(CssClass.SIDEBAR_COLLAPSED);
                 }
                 if (saved.mode === AppMode.READ || saved.mode === AppMode.EDIT) {
@@ -2287,8 +2341,7 @@
             return resolvedMap;
         }
 
-        function resolveCommandText(rawText) {
-            const variableMap = getVariableMap();
+        function resolveCommandText(rawText, variableMap) {
             const segments = [];
             const tokenRegex = /\{([^}]+)\}/g;
             let lastIndex = 0;
@@ -2301,6 +2354,7 @@
                         type: SegmentType.LITERAL
                     });
                 }
+
                 const key = match[1];
                 if (Object.prototype.hasOwnProperty.call(variableMap, key)) {
                     const value = variableMap[key];
@@ -2314,6 +2368,7 @@
                         type: SegmentType.UNRESOLVED
                     });
                 }
+
                 lastIndex = match.index + match[0].length;
             }
 
@@ -2327,17 +2382,17 @@
             return segments;
         }
 
-        function resolveCommandToString(rawText) {
-            return resolveCommandText(rawText).map(segment => segment.text).join('');
+        function resolveCommandToString(rawText, variableMap) {
+            return resolveCommandText(rawText, variableMap).map(segment => segment.text).join('');
         }
 
-        function buildPreviewHTML(rawText) {
-            const segments = resolveCommandText(rawText);
+        function buildPreviewHTML(rawText, variableMap) {
+            const segments = resolveCommandText(rawText, variableMap);
             return segments.map(s => `<span class="token-${s.type}">${escapeHtml(s.text)}</span>`).join('');
         }
 
-        function hasUnresolvedTokens(rawText) {
-            return resolveCommandText(rawText).some(segment => segment.type === SegmentType.UNRESOLVED);
+        function hasUnresolvedTokens(rawText, variableMap) {
+            return resolveCommandText(rawText, variableMap).some(segment => segment.type === SegmentType.UNRESOLVED);
         }
 
         function escapeHtml(text) {
@@ -2488,7 +2543,7 @@
 
             for (const variable of visibleVariables) {
                 const row = document.createElement('div');
-                row.className = 'variable-row';
+                row.className = CssClass.VARIABLE_ROW;
                 row.dataset.variableId = variable.id;
 
                 row.innerHTML = `
@@ -2626,7 +2681,7 @@
             const allBlockElements = document.querySelectorAll(Selector.BLOCK_ITEM);
             const lastBlockElement = allBlockElements[allBlockElements.length - 1];
             if (lastBlockElement) {
-                const textarea = lastBlockElement.querySelector(Selector.TEXTAREA);
+                const textarea = lastBlockElement.querySelector(Selector.COMMAND_TEXTAREA);
                 if (textarea) {
                     textarea.focus();
                 }
@@ -2698,6 +2753,31 @@
             });
         }
 
+        function syncActiveRunbookLabel() {
+            if (!activeRunbookId) {
+                return;
+            }
+
+            const entry = runbookLibrary.find(item => item.id === activeRunbookId);
+            if (!entry) {
+                return;
+            }
+
+            const newLabel = deriveRunbookLabel({
+                    blocks: state.blocks
+                },
+                entry.filename || RunbookConfig.DEFAULT_LABEL
+            );
+
+            if (newLabel === entry.label) {
+                return;
+            }
+
+            entry.label = newLabel;
+            saveRunbookLibrary();
+            renderRunbookList();
+        }
+
         function updateBlockText(blockId, text) {
             if (isReadMode()) {
                 return;
@@ -2711,12 +2791,20 @@
             block.text = text;
             saveState();
 
-            if (block.type === BlockType.COMMAND) refreshBlockPreview(blockId);
-            if (block.type === BlockType.NOTE) refreshNotePreview(blockId);
+            if (block.type === BlockType.COMMAND) {
+                refreshBlockPreview(blockId, getVariableMap());
+            } else if (block.type === BlockType.NOTE) {
+                refreshNotePreview(blockId);
+            }
+
+            // Update runbook label
+            if (blockId === state.blocks[0]?.id) {
+                syncActiveRunbookLabel();
+            }
         }
 
         function getBlockFromId(blockId) {
-            return document.querySelector(`[data-block-id="${blockId}"]`);;
+            return document.querySelector(`[data-block-id="${blockId}"]`);
         }
 
         function updateBlockStyle(blockId, style) {
@@ -2775,7 +2863,7 @@
             renderBlocksList();
         }
 
-        function refreshBlockPreview(blockId) {
+        function refreshBlockPreview(blockId, variableMap) {
             const block = state.blocks.find(block => block.id === blockId);
             if (!block || block.type !== BlockType.COMMAND) {
                 return;
@@ -2791,13 +2879,15 @@
                 return;
             }
 
-            previewEl.innerHTML = buildPreviewHTML(block.text);
-            const isUnresolved = hasUnresolvedTokens(block.text);
+            previewEl.innerHTML = buildPreviewHTML(block.text, variableMap);
+            const isUnresolved = hasUnresolvedTokens(block.text, variableMap);
             previewEl.classList.toggle(CssClass.HAS_UNRESOLVED, isUnresolved);
 
             // Auto-resize textarea
             const textarea = blockElement.querySelector(Selector.COMMAND_TEXTAREA);
-            if (textarea) autoResizeTextarea(textarea);
+            if (textarea) {
+                autoResizeTextarea(textarea);
+            }
         }
 
         function getNotePlaceholder(style) {
@@ -2827,8 +2917,13 @@
         }
 
         function refreshAllPreviews() {
+            const variableMap = getVariableMap();
             for (const block of state.blocks) {
-                if (block.type === BlockType.COMMAND) refreshBlockPreview(block.id);
+                if (block.type !== BlockType.COMMAND) {
+                    continue;
+                }
+
+                refreshBlockPreview(block.id, variableMap);
             }
         }
 
@@ -2838,7 +2933,7 @@
         }
 
         function autoResizeAllTextarea() {
-            document.querySelectorAll(Selector.TEXTAREA).forEach(autoResizeTextarea);
+            document.querySelectorAll(Selector.COMMAND_TEXTAREA).forEach(autoResizeTextarea);
         }
 
         function syncNoteWidth(textarea) {
@@ -2952,8 +3047,9 @@
         }
 
         function buildCommandBlockHTML(block) {
-            const previewHTML = buildPreviewHTML(block.text);
-            const isUnresolved = hasUnresolvedTokens(block.text);
+            const variableMap = getVariableMap();
+            const previewHTML = buildPreviewHTML(block.text, variableMap);
+            const isUnresolved = hasUnresolvedTokens(block.text, variableMap);
             const escapedText = escapeHtml(block.text);
             const isEditorCollapsed = block.editorCollapsed === true;
 
@@ -3059,7 +3155,7 @@
                 return;
             }
 
-            const resolvedText = resolveCommandToString(block.text);
+            const resolvedText = resolveCommandToString(block.text, getVariableMap());
 
             navigator.clipboard.writeText(resolvedText).then(() => {
                 const btn = document.getElementById(`copy-btn-${blockId}`);
@@ -3280,43 +3376,146 @@
 
         //  Export
 
-        async function exportToFile() {
-            const exportData = JSON.stringify(state, null, 2);
+        function buildMarkdownExport() {
+            const lines = [];
 
+            for (const block of state.blocks) {
+                if (block.type === BlockType.NOTE) {
+                    const style = block.style || NoteStyle.BODY;
+                    const text = block.text || '';
+
+                    if (style === NoteStyle.HEADING) {
+                        lines.push(`${MarkdownSyntax.HEADING} ${text}`);
+                    } else if (style === NoteStyle.SUBHEADING) {
+                        lines.push(`${MarkdownSyntax.SUBHEADING} ${text}`);
+                    } else {
+                        lines.push(text);
+                    }
+                } else if (block.type === BlockType.COMMAND) {
+                    const resolved = resolveCommandToString(block.text || '', getVariableMap());
+                    lines.push(MarkdownSyntax.CODE_FENCE);
+                    lines.push(resolved);
+                    lines.push(MarkdownSyntax.CODE_FENCE_END);
+                } else if (block.type === BlockType.DIVIDER) {
+                    lines.push(MarkdownSyntax.DIVIDER);
+                }
+
+                lines.push('');
+            }
+
+            return lines.join('\n');
+        }
+
+        // Shared file save utility
+        async function saveFile(content, mimeType, suggestedName, types) {
             if (window.showSaveFilePicker) {
                 try {
                     const fileHandle = await window.showSaveFilePicker({
-                        suggestedName: FilePickerConfig.SUGGESTED_NAME,
-                        types: [{
-                            description: FilePickerConfig.DESCRIPTION,
-                            accept: {
-                                [FilePickerConfig.MIME_TYPE]: [FilePickerConfig.EXTENSION]
-                            },
-                        }],
+                        suggestedName,
+                        types
                     });
-
                     const writable = await fileHandle.createWritable();
-                    await writable.write(exportData);
+                    await writable.write(content);
                     await writable.close();
                     return;
                 } catch (error) {
-                    // User cancelled or browser rejected
-                    if (error.name === 'AbortError') {
-                        return;
-                    }
+                    if (error.name === 'AbortError') return;
                 }
             }
 
             // Legacy fallback
-            const blob = new Blob([exportData], {
-                type: FilePickerConfig.MIME_TYPE
+            const blob = new Blob([content], {
+                type: mimeType
             });
             const url = URL.createObjectURL(blob);
             const anchor = document.createElement('a');
             anchor.href = url;
-            anchor.download = FilePickerConfig.SUGGESTED_NAME;
+            anchor.download = suggestedName;
             anchor.click();
             URL.revokeObjectURL(url);
+        }
+
+        function closeExportModal() {
+            document.getElementById(ElementId.EXPORT_MODAL).classList.remove(CssClass.MODAL_VISIBLE);
+        }
+
+        function showExportModal() {
+            const backdrop = document.getElementById(ElementId.EXPORT_MODAL);
+            backdrop.classList.add(CssClass.MODAL_VISIBLE);
+
+            function cleanup() {
+                closeExportModal();
+                document.removeEventListener(EventType.KEY_DOWN, onKey);
+                backdrop.removeEventListener(EventType.CLICK, onBackdropClick);
+            }
+
+            function onKey(event) {
+                if (event.key === Key.ESCAPE) {
+                    event.preventDefault();
+                    cleanup();
+                }
+            }
+
+            function onBackdropClick(event) {
+                if (event.target === backdrop) {
+                    cleanup();
+                }
+            }
+
+            document.addEventListener(EventType.KEY_DOWN, onKey);
+            backdrop.addEventListener(EventType.CLICK, onBackdropClick);
+        }
+
+        async function runExport(format) {
+            closeExportModal();
+
+            if (format === ExportFormat.JSON) {
+                await saveFile(
+                    JSON.stringify(state, null, 2),
+                    FilePickerConfig.MIME_TYPE,
+                    FilePickerConfig.SUGGESTED_NAME,
+                    [{
+                        description: FilePickerConfig.DESCRIPTION,
+                        accept: {
+                            [FilePickerConfig.MIME_TYPE]: [FilePickerConfig.EXTENSION]
+                        }
+                    }]
+                );
+
+                return;
+            }
+
+            const content = buildMarkdownExport();
+
+            if (format === ExportFormat.MD) {
+                await saveFile(
+                    content,
+                    FilePickerConfig.MD_MIME_TYPE,
+                    FilePickerConfig.MD_SUGGESTED_NAME,
+                    [{
+                        description: FilePickerConfig.MD_DESCRIPTION,
+                        accept: {
+                            [FilePickerConfig.MD_MIME_TYPE]: [FilePickerConfig.MD_EXTENSION]
+                        }
+                    }]
+                );
+
+                return;
+            }
+
+            if (format === ExportFormat.TXT) {
+                await saveFile(
+                    content,
+                    FilePickerConfig.TXT_MIME_TYPE,
+                    FilePickerConfig.TXT_SUGGESTED_NAME,
+                    [{
+                        description: FilePickerConfig.TXT_DESCRIPTION,
+                        accept: {
+                            [FilePickerConfig.TXT_MIME_TYPE]: [FilePickerConfig.TXT_EXTENSION]
+                        }
+                    }]
+                );
+            }
         }
 
         //  Clear & Toggle
@@ -3455,6 +3654,7 @@
 
             setTimeout(() => {
                 autoResizeAllTextarea();
+
                 document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(textarea => syncNoteWidth(textarea));
                 refreshAllPreviews();
 
@@ -3468,8 +3668,8 @@
                     requestAnimationFrame(() => {
                         document.body.classList.add(CssClass.APP_READY);
                     });
-                }, 0);
-            }, 0);
+                }, DEFER_MS);
+            }, DEFER_MS);
         }
 
         // Persist scrollbar position
@@ -3549,7 +3749,7 @@
             } else if (e.shiftKey && key === Key.SHIFT_E) {
                 e.preventDefault();
                 removeCtrlHeldClass();
-                exportToFile();
+                showExportModal();
 
             } else if (e.shiftKey && key === Key.BACKSPACE) {
                 e.preventDefault();
