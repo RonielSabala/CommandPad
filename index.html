@@ -2341,8 +2341,7 @@
             return resolvedMap;
         }
 
-        function resolveCommandText(rawText) {
-            const variableMap = getVariableMap();
+        function resolveCommandText(rawText, variableMap) {
             const segments = [];
             const tokenRegex = /\{([^}]+)\}/g;
             let lastIndex = 0;
@@ -2355,6 +2354,7 @@
                         type: SegmentType.LITERAL
                     });
                 }
+
                 const key = match[1];
                 if (Object.prototype.hasOwnProperty.call(variableMap, key)) {
                     const value = variableMap[key];
@@ -2368,6 +2368,7 @@
                         type: SegmentType.UNRESOLVED
                     });
                 }
+
                 lastIndex = match.index + match[0].length;
             }
 
@@ -2381,17 +2382,17 @@
             return segments;
         }
 
-        function resolveCommandToString(rawText) {
-            return resolveCommandText(rawText).map(segment => segment.text).join('');
+        function resolveCommandToString(rawText, variableMap) {
+            return resolveCommandText(rawText, variableMap).map(segment => segment.text).join('');
         }
 
-        function buildPreviewHTML(rawText) {
-            const segments = resolveCommandText(rawText);
+        function buildPreviewHTML(rawText, variableMap) {
+            const segments = resolveCommandText(rawText, variableMap);
             return segments.map(s => `<span class="token-${s.type}">${escapeHtml(s.text)}</span>`).join('');
         }
 
-        function hasUnresolvedTokens(rawText) {
-            return resolveCommandText(rawText).some(segment => segment.type === SegmentType.UNRESOLVED);
+        function hasUnresolvedTokens(rawText, variableMap) {
+            return resolveCommandText(rawText, variableMap).some(segment => segment.type === SegmentType.UNRESOLVED);
         }
 
         function escapeHtml(text) {
@@ -2791,7 +2792,7 @@
             saveState();
 
             if (block.type === BlockType.COMMAND) {
-                refreshBlockPreview(blockId);
+                refreshBlockPreview(blockId, getVariableMap());
             } else if (block.type === BlockType.NOTE) {
                 refreshNotePreview(blockId);
             }
@@ -2862,7 +2863,7 @@
             renderBlocksList();
         }
 
-        function refreshBlockPreview(blockId) {
+        function refreshBlockPreview(blockId, variableMap) {
             const block = state.blocks.find(block => block.id === blockId);
             if (!block || block.type !== BlockType.COMMAND) {
                 return;
@@ -2878,13 +2879,15 @@
                 return;
             }
 
-            previewEl.innerHTML = buildPreviewHTML(block.text);
-            const isUnresolved = hasUnresolvedTokens(block.text);
+            previewEl.innerHTML = buildPreviewHTML(block.text, variableMap);
+            const isUnresolved = hasUnresolvedTokens(block.text, variableMap);
             previewEl.classList.toggle(CssClass.HAS_UNRESOLVED, isUnresolved);
 
             // Auto-resize textarea
             const textarea = blockElement.querySelector(Selector.COMMAND_TEXTAREA);
-            if (textarea) autoResizeTextarea(textarea);
+            if (textarea) {
+                autoResizeTextarea(textarea);
+            }
         }
 
         function getNotePlaceholder(style) {
@@ -2914,8 +2917,13 @@
         }
 
         function refreshAllPreviews() {
+            const variableMap = getVariableMap();
             for (const block of state.blocks) {
-                if (block.type === BlockType.COMMAND) refreshBlockPreview(block.id);
+                if (block.type !== BlockType.COMMAND) {
+                    continue;
+                }
+
+                refreshBlockPreview(block.id, variableMap);
             }
         }
 
@@ -3039,8 +3047,9 @@
         }
 
         function buildCommandBlockHTML(block) {
-            const previewHTML = buildPreviewHTML(block.text);
-            const isUnresolved = hasUnresolvedTokens(block.text);
+            const variableMap = getVariableMap();
+            const previewHTML = buildPreviewHTML(block.text, variableMap);
+            const isUnresolved = hasUnresolvedTokens(block.text, variableMap);
             const escapedText = escapeHtml(block.text);
             const isEditorCollapsed = block.editorCollapsed === true;
 
@@ -3146,7 +3155,7 @@
                 return;
             }
 
-            const resolvedText = resolveCommandToString(block.text);
+            const resolvedText = resolveCommandToString(block.text, getVariableMap());
 
             navigator.clipboard.writeText(resolvedText).then(() => {
                 const btn = document.getElementById(`copy-btn-${blockId}`);
@@ -3383,7 +3392,7 @@
                         lines.push(text);
                     }
                 } else if (block.type === BlockType.COMMAND) {
-                    const resolved = resolveCommandToString(block.text || '');
+                    const resolved = resolveCommandToString(block.text || '', getVariableMap());
                     lines.push(MarkdownSyntax.CODE_FENCE);
                     lines.push(resolved);
                     lines.push(MarkdownSyntax.CODE_FENCE_END);
