@@ -1843,9 +1843,18 @@
             if (existingEntry) {
                 existingEntry.label = label;
                 existingEntry.filename = filename || '';
-                await putRunbookContent(existingEntry.id, content);
+
+                const existingEntryId = existingEntry.id
+                await putRunbookContent(existingEntryId, content);
                 saveRunbookLibrary();
-                renderRunbookList();
+
+                // If the overwritten runbook is currently active, reload it into the workspace
+                if (existingEntryId === activeRunbookId) {
+                    await loadRunbookFromLibrary(existingEntryId);
+                } else {
+                    renderRunbookList();
+                }
+
                 return;
             }
 
