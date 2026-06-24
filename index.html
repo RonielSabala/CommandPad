@@ -2743,6 +2743,31 @@
             });
         }
 
+        function syncActiveRunbookLabel() {
+            if (!activeRunbookId) {
+                return;
+            }
+
+            const entry = runbookLibrary.find(item => item.id === activeRunbookId);
+            if (!entry) {
+                return;
+            }
+
+            const newLabel = deriveRunbookLabel({
+                    blocks: state.blocks
+                },
+                entry.filename || RunbookConfig.DEFAULT_LABEL
+            );
+
+            if (newLabel === entry.label) {
+                return;
+            }
+
+            entry.label = newLabel;
+            saveRunbookLibrary();
+            renderRunbookList();
+        }
+
         function updateBlockText(blockId, text) {
             if (isReadMode()) {
                 return;
@@ -2756,8 +2781,16 @@
             block.text = text;
             saveState();
 
-            if (block.type === BlockType.COMMAND) refreshBlockPreview(blockId);
-            if (block.type === BlockType.NOTE) refreshNotePreview(blockId);
+            if (block.type === BlockType.COMMAND) {
+                refreshBlockPreview(blockId);
+            } else if (block.type === BlockType.NOTE) {
+                refreshNotePreview(blockId);
+            }
+
+            // Update runbook label
+            if (blockId === state.blocks[0]?.id) {
+                syncActiveRunbookLabel();
+            }
         }
 
         function getBlockFromId(blockId) {
