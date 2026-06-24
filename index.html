@@ -3425,15 +3425,27 @@
             const backdrop = document.getElementById(ElementId.EXPORT_MODAL);
             backdrop.classList.add(CssClass.MODAL_VISIBLE);
 
+            function cleanup() {
+                closeExportModal();
+                document.removeEventListener(EventType.KEY_DOWN, onKey);
+                backdrop.removeEventListener(EventType.CLICK, onBackdropClick);
+            }
+
             function onKey(event) {
                 if (event.key === Key.ESCAPE) {
                     event.preventDefault();
-                    closeExportModal();
-                    document.removeEventListener(EventType.KEY_DOWN, onKey);
+                    cleanup();
+                }
+            }
+
+            function onBackdropClick(event) {
+                if (event.target === backdrop) {
+                    cleanup();
                 }
             }
 
             document.addEventListener(EventType.KEY_DOWN, onKey);
+            backdrop.addEventListener(EventType.CLICK, onBackdropClick);
         }
 
         async function runExport(format) {
@@ -3789,10 +3801,6 @@
 
             if (e.ctrlKey || e.metaKey) {
                 return;
-            }
-
-            if (e.target === document.getElementById(ElementId.EXPORT_MODAL)) {
-                closeExportModal();
             }
 
             // Clear runbook focus unless on runbook item
