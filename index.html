@@ -1473,8 +1473,6 @@
     </div>
 
     <script>
-        //  State
-        const SAVE_TIMEOUT_MS = 200;
         const STORAGE_KEY = 'commandpad_v1';
 
         // Enums
@@ -1718,7 +1716,11 @@
             MOVE: 'move',
         });
 
+        // Timeouts
+
+        const DEFER_MS = 0
         const DRAG_TIMEOUT_MS = 50;
+        const SAVE_TIMEOUT_MS = 200;
         const COPY_FEEDBACK_TIMEOUT_MS = 1000;
 
         // State
@@ -1891,7 +1893,7 @@
             renderBlocksList();
             updateEmptyState();
             renderRunbookList();
-            setTimeout(refreshAllPreviews, 0);
+            setTimeout(refreshAllPreviews, DEFER_MS);
         }
 
         async function overwriteActiveRunbookInLibrary() {
@@ -3656,8 +3658,8 @@
                     requestAnimationFrame(() => {
                         document.body.classList.add(CssClass.APP_READY);
                     });
-                }, 0);
-            }, 0);
+                }, DEFER_MS);
+            }, DEFER_MS);
         }
 
         // Persist scrollbar position
