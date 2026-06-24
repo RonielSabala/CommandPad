@@ -2681,7 +2681,7 @@
             const allBlockElements = document.querySelectorAll(Selector.BLOCK_ITEM);
             const lastBlockElement = allBlockElements[allBlockElements.length - 1];
             if (lastBlockElement) {
-                const textarea = lastBlockElement.querySelector(Selector.TEXTAREA);
+                const textarea = lastBlockElement.querySelector(Selector.COMMAND_TEXTAREA);
                 if (textarea) {
                     textarea.focus();
                 }
@@ -2804,7 +2804,7 @@
         }
 
         function getBlockFromId(blockId) {
-            return document.querySelector(`[data-block-id="${blockId}"]`);;
+            return document.querySelector(`[data-block-id="${blockId}"]`);
         }
 
         function updateBlockStyle(blockId, style) {
@@ -2933,7 +2933,7 @@
         }
 
         function autoResizeAllTextarea() {
-            document.querySelectorAll(Selector.TEXTAREA).forEach(autoResizeTextarea);
+            document.querySelectorAll(Selector.COMMAND_TEXTAREA).forEach(autoResizeTextarea);
         }
 
         function syncNoteWidth(textarea) {
@@ -3654,6 +3654,7 @@
 
             setTimeout(() => {
                 autoResizeAllTextarea();
+
                 document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(textarea => syncNoteWidth(textarea));
                 refreshAllPreviews();
 
