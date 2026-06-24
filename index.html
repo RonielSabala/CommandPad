@@ -80,6 +80,10 @@
             --modal-min-width: 21.25rem;
             --modal-max-width: 30rem;
 
+            /* --- Misc & utilities --- */
+            --black-a40: rgba(0, 0, 0, 0.4);
+            --black-a50: rgba(0, 0, 0, 0.5);
+
             /* Compound tokens */
             --border-standard: 1px solid var(--color-border);
             --border-dashed: var(--space-1) dashed var(--accent);
@@ -338,7 +342,7 @@
         .modal-backdrop {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.4);
+            background: var(--black-a40);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -363,7 +367,7 @@
             gap: var(--space-2);
             min-width: var(--modal-min-width);
             max-width: var(--modal-max-width);
-            box-shadow: 0 var(--space-4) var(--space-12) rgba(0, 0, 0, 0.5);
+            box-shadow: 0 var(--space-4) var(--space-12) var(--black-a50);
             transform: translateY(calc(-1 * var(--space-3)));
             transition: transform var(--transition-base);
         }
@@ -1107,7 +1111,7 @@
 
         .btn-primary:hover {
             background: var(--accent);
-            color: #fff;
+            color: white;
         }
 
         .btn-danger {
@@ -1570,6 +1574,7 @@
             BLOCK_DRAG_HANDLE: 'block-drag-handle',
             RUNBOOK_ROW: 'runbook-row',
             RUNBOOK_FOCUSED: 'runbook-focused',
+            VARIABLE_ROW: 'variable-row',
             SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
             MODAL_VISIBLE: 'modal-visible',
         });
@@ -2535,7 +2540,7 @@
 
             for (const variable of visibleVariables) {
                 const row = document.createElement('div');
-                row.className = 'variable-row';
+                row.className = CssClass.VARIABLE_ROW;
                 row.dataset.variableId = variable.id;
 
                 row.innerHTML = `
