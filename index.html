@@ -1485,11 +1485,6 @@
             DESELECT: 'deselect',
         });
 
-        const SidebarState = Object.freeze({
-            EXPANDED: 'expanded',
-            COLLAPSED: 'collapsed',
-        });
-
         const SectionState = Object.freeze({
             EXPANDED: 'expanded',
             COLLAPSED: 'collapsed',
@@ -1573,9 +1568,7 @@
             BLOCK_ITEM: 'block-item',
             BLOCK_CONTROLS: 'block-controls',
             BLOCK_DRAG_HANDLE: 'block-drag-handle',
-            SECTION_COLLAPSED: 'collapsed',
             RUNBOOK_ROW: 'runbook-row',
-            RUNBOOK_ACTIVE: 'active',
             RUNBOOK_FOCUSED: 'runbook-focused',
             SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
             MODAL_VISIBLE: 'modal-visible',
@@ -2086,7 +2079,7 @@
                 <div class="runbook-drag-handle drag-handle" title="Drag to reorder">
                     <svg viewBox="0 0 16 16"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
                 </div>
-                <button class="runbook-item-btn ${isActive ? CssClass.RUNBOOK_ACTIVE : ''}"
+                <button class="runbook-item-btn ${isActive ? CssClass.ACTIVE : ''}"
                     onclick="clearRunbookFocus(); loadRunbookFromLibrary('${runbook.id}')"
                     title="${escapeHtml(runbook.label)}"
                 >${escapeHtml(runbook.label)}</button>
@@ -2179,7 +2172,7 @@
                 return;
             }
 
-            section.classList.toggle(CssClass.SECTION_COLLAPSED);
+            section.classList.toggle(CssClass.COLLAPSED);
             saveSidebarSectionState();
         }
 
@@ -2189,9 +2182,9 @@
                 const variablesSection = document.getElementById(ElementId.VARIABLES_SECTION);
 
                 localStorage.setItem(RunbookConfig.SECTIONS_STORAGE_KEY, JSON.stringify({
-                    runbooks: runbookSection?.classList.contains(CssClass.SECTION_COLLAPSED) ?
+                    runbooks: runbookSection?.classList.contains(CssClass.COLLAPSED) ?
                         SectionState.COLLAPSED : SectionState.EXPANDED,
-                    variables: variablesSection?.classList.contains(CssClass.SECTION_COLLAPSED) ?
+                    variables: variablesSection?.classList.contains(CssClass.COLLAPSED) ?
                         SectionState.COLLAPSED : SectionState.EXPANDED,
                 }));
             } catch {}
@@ -2205,10 +2198,10 @@
                 }
 
                 if (saved.runbooks === SectionState.COLLAPSED) {
-                    document.getElementById(ElementId.RUNBOOK_SECTION)?.classList.add(CssClass.SECTION_COLLAPSED);
+                    document.getElementById(ElementId.RUNBOOK_SECTION)?.classList.add(CssClass.COLLAPSED);
                 }
                 if (saved.variables === SectionState.COLLAPSED) {
-                    document.getElementById(ElementId.VARIABLES_SECTION)?.classList.add(CssClass.SECTION_COLLAPSED);
+                    document.getElementById(ElementId.VARIABLES_SECTION)?.classList.add(CssClass.COLLAPSED);
                 }
             } catch {}
         }
@@ -2266,7 +2259,7 @@
                     mode: currentMode,
                     sidebar: document.getElementById(ElementId.APP_SHELL).classList.contains(CssClass
                             .SIDEBAR_COLLAPSED) ?
-                        SidebarState.COLLAPSED : SidebarState.EXPANDED,
+                        SectionState.COLLAPSED : SectionState.EXPANDED,
                     scrollTop: mainPanel ? mainPanel.scrollTop : 0,
                 }));
             } catch {}
@@ -2293,7 +2286,7 @@
                 state.variables = saved.variables ?? [];
                 state.blocks = saved.blocks ?? [];
 
-                if (saved.sidebar === SidebarState.COLLAPSED) {
+                if (saved.sidebar === SectionState.COLLAPSED) {
                     document.getElementById(ElementId.APP_SHELL).classList.add(CssClass.SIDEBAR_COLLAPSED);
                 }
                 if (saved.mode === AppMode.READ || saved.mode === AppMode.EDIT) {
