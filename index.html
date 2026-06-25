@@ -164,6 +164,22 @@
             overflow: hidden;
         }
 
+        #app-shell.sidebar-right {
+            grid-template-columns: 1fr var(--sidebar-width);
+            grid-template-areas:
+                "header header"
+                "main sidebar";
+        }
+
+        #app-shell.sidebar-right.sidebar-collapsed {
+            grid-template-columns: 1fr 0;
+        }
+
+        #app-shell.sidebar-right #app-sidebar {
+            border-right: none;
+            border-left: var(--border-standard);
+        }
+
         /* --- HEADER --- */
 
         #app-header {
@@ -547,12 +563,24 @@
 
         /* --- SIDEBAR COLLAPSE --- */
 
-        .sidebar-collapse-btn {
+        #sidebar-toggle-btn {
+            flex-shrink: 0;
+        }
+
+        #sidebar-btn-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: var(--space-3);
+            align-self: flex-start;
             position: sticky;
             top: var(--space-1);
-            align-self: flex-start;
-            flex-shrink: 0;
             z-index: 10;
+        }
+
+        #app-shell.sidebar-right #sidebar-btn-group {
+            flex-direction: row-reverse;
+            align-self: flex-end;
         }
 
         #app-shell.sidebar-collapsed {
@@ -561,6 +589,14 @@
 
         #app-shell.sidebar-collapsed #sidebar-chevron {
             transform: rotate(180deg);
+        }
+
+        #app-shell.sidebar-right #sidebar-chevron {
+            transform: rotate(180deg);
+        }
+
+        #app-shell.sidebar-right.sidebar-collapsed #sidebar-chevron {
+            transform: rotate(0deg);
         }
 
         #app-shell.sidebar-collapsed #app-sidebar {
@@ -1406,12 +1442,20 @@
 
         <!-- Main panel -->
         <main id="main-panel">
-            <button id="sidebar-toggle-btn" class="btn btn-icon sidebar-collapse-btn" onclick="toggleSidebar()"
-                title="Collapse sidebar">
-                <svg id="sidebar-chevron" viewBox="0 0 16 16">
-                    <polyline points="10,4 4,8 10,12" />
-                </svg>
-            </button>
+            <div id="sidebar-btn-group">
+                <button id="sidebar-toggle-btn" class="btn btn-icon" onclick="toggleSidebar()" title="Collapse sidebar">
+                    <svg id="sidebar-chevron" viewBox="0 0 16 16">
+                        <polyline points="10,4 4,8 10,12" />
+                    </svg>
+                </button>
+                <button id="sidebar-position-btn" class="btn btn-icon" onclick="toggleSidebarPosition()"
+                    title="Move sidebar to right">
+                    <svg viewBox="0 0 16 16">
+                        <rect x="1" y="2" width="14" height="12" rx="1" />
+                        <line x1="11" y1="2" x2="11" y2="14" />
+                    </svg>
+                </button>
+            </div>
             <div id="empty-state" class="no-user-select">
                 <svg viewBox="0 0 40 40">
                     <rect x="4" y="6" width="32" height="28" rx="3" />
@@ -1487,6 +1531,11 @@
         const LassoMode = Object.freeze({
             SELECT: 'select',
             DESELECT: 'deselect',
+        });
+
+        const SidebarPosition = Object.freeze({
+            LEFT: 'left',
+            RIGHT: 'right',
         });
 
         const SectionState = Object.freeze({
@@ -1575,6 +1624,7 @@
             RUNBOOK_ROW: 'runbook-row',
             RUNBOOK_FOCUSED: 'runbook-focused',
             VARIABLE_ROW: 'variable-row',
+            SIDEBAR_RIGHT: 'sidebar-right',
             SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
             MODAL_VISIBLE: 'modal-visible',
         });
@@ -1608,6 +1658,7 @@
             BACKSPACE: 'Backspace',
             DELETE: 'Delete',
             SHIFT_E: 'E',
+            SHIFT_S: 'S',
             TAB: 'Tab',
             ARROW_UP: 'ArrowUp',
             ARROW_DOWN: 'ArrowDown',
@@ -1667,6 +1718,7 @@
             EXPORT_MODAL: 'export-modal',
             CLEAR_BTN: 'clear-btn',
             SIDEBAR_TOGGLE_BTN: 'sidebar-toggle-btn',
+            SIDEBAR_POSITION_BTN: 'sidebar-position-btn',
             VARIABLES_LIST: 'variables-list',
             BLOCKS_LIST: 'blocks-list',
             EMPTY_STATE: 'empty-state',
@@ -2261,14 +2313,16 @@
 
         function saveState() {
             try {
+                const shell = document.getElementById(ElementId.APP_SHELL);
                 const mainPanel = document.getElementById(ElementId.MAIN_PANEL);
 
                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
                     ...state,
                     mode: currentMode,
-                    sidebar: document.getElementById(ElementId.APP_SHELL).classList.contains(CssClass
-                            .SIDEBAR_COLLAPSED) ?
+                    sidebar: shell.classList.contains(CssClass.SIDEBAR_COLLAPSED) ?
                         SectionState.COLLAPSED : SectionState.EXPANDED,
+                    sidebarPosition: shell.classList.contains(CssClass.SIDEBAR_RIGHT) ?
+                        SidebarPosition.RIGHT : SidebarPosition.LEFT,
                     scrollTop: mainPanel ? mainPanel.scrollTop : 0,
                 }));
             } catch {}
@@ -2297,7 +2351,20 @@
 
                 if (saved.sidebar === SectionState.COLLAPSED) {
                     document.getElementById(ElementId.APP_SHELL).classList.add(CssClass.SIDEBAR_COLLAPSED);
+                    const btn = document.getElementById(ElementId.SIDEBAR_TOGGLE_BTN);
+                    if (btn) {
+                        btn.title = 'Expand sidebar';
+                    }
                 }
+
+                if (saved.sidebarPosition === SidebarPosition.RIGHT) {
+                    document.getElementById(ElementId.APP_SHELL).classList.add(CssClass.SIDEBAR_RIGHT);
+                    const btn = document.getElementById(ElementId.SIDEBAR_POSITION_BTN);
+                    if (btn) {
+                        btn.title = 'Move sidebar to left';
+                    }
+                }
+
                 if (saved.mode === AppMode.READ || saved.mode === AppMode.EDIT) {
                     setAppMode(saved.mode);
                 }
@@ -3180,7 +3247,7 @@
             });
         }
 
-        //  Toggle sidebar
+        //  Sidebar functions
 
         function toggleSidebar() {
             const shell = document.getElementById(ElementId.APP_SHELL);
@@ -3188,6 +3255,17 @@
 
             const btn = document.getElementById(ElementId.SIDEBAR_TOGGLE_BTN);
             btn.title = `${isCollapsed ? 'Expand' : 'Collapse'} sidebar`;
+
+            saveState();
+        }
+
+        function toggleSidebarPosition() {
+            const shell = document.getElementById(ElementId.APP_SHELL);
+            const isRight = shell.classList.toggle(CssClass.SIDEBAR_RIGHT);
+            const btn = document.getElementById(ElementId.SIDEBAR_POSITION_BTN);
+            if (btn) {
+                btn.title = `Move sidebar to ${isRight ? 'left' : 'right'}`;
+            }
 
             saveState();
         }
@@ -3764,6 +3842,11 @@
                 if (selectedBlockIds.size > 0) {
                     duplicateBlock([...selectedBlockIds][0]);
                 }
+
+            } else if (e.shiftKey && key === Key.SHIFT_S) {
+                e.preventDefault();
+                removeCtrlHeldClass();
+                toggleSidebarPosition();
 
             } else if (key === Key.S) {
                 e.preventDefault();

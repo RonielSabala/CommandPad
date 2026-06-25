@@ -208,6 +208,7 @@ Press `Escape` or click anywhere outside the modal to cancel.
 | `Ctrl+G`                          | Toggle all command editors (collapse/expand)   |
 | `Ctrl+I`                          | Open the runbook import dialog                 |
 | `Ctrl+S`                          | Collapse/expand the sidebar                    |
+| `Ctrl+Shift+S`                    | Move sidebar to left / right                   |
 | `Ctrl+D`                          | Duplicate selected blocks                      |
 | `Del`                             | Delete selected blocks (when not editing text) |
 | `Escape`                          | Clear block selection                          |
