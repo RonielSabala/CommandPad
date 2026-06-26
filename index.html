@@ -49,6 +49,7 @@
             --space-5: 0.625rem;
             --space-6: 0.75rem;
             --space-8: 1rem;
+            --space-10: 1.25rem;
             --space-12: 1.5rem;
             --space-16: 2rem;
             --space-20: 2.5rem;
@@ -391,6 +392,21 @@
             transform: translateY(0);
         }
 
+        .modal-scrollable-body {
+            max-height: 50vh;
+            overflow-y: auto;
+            margin: 0 calc(var(--space-8) * -1);
+            padding: 0 var(--space-8);
+        }
+
+        .modal-title {
+            font-family: var(--font-mono);
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--color-text-primary);
+            padding-bottom: var(--space-7);
+        }
+
         .modal-message {
             font-family: var(--font-sans);
             font-size: var(--text-base);
@@ -405,6 +421,49 @@
             align-items: center;
             gap: var(--space-4);
             padding-top: var(--space-4);
+        }
+
+        /* --- KEYBINDINGS MODAL --- */
+
+        #keybindings-btn svg {
+            width: var(--space-10);
+            height: var(--space-10);
+        }
+
+        .keybindings-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--text-md);
+        }
+
+        .keybindings-table td {
+            padding: var(--space-4) var(--space-2);
+            border-bottom: var(--border-standard);
+            vertical-align: middle;
+        }
+
+        .keybindings-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .keybindings-table .key-cell {
+            white-space: nowrap;
+            padding-right: var(--space-8);
+        }
+
+        .kbd {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: var(--text-md);
+            background: var(--color-surface-alt);
+            border: var(--border-standard);
+            border-radius: var(--radius-sm);
+            padding: var(--space-1) var(--space-4);
+            color: var(--color-text-primary);
+        }
+
+        .keybindings-table .desc-cell {
+            color: var(--color-text-secondary);
         }
 
         /* --- RUNBOOK LIBRARY SECTION --- */
@@ -1139,6 +1198,19 @@
             border-radius: var(--radius-sm);
         }
 
+        .btn-flat-icon {
+            background: transparent;
+            border-color: transparent;
+            color: var(--color-text-muted);
+            padding: var(--space-2);
+        }
+
+        .btn-flat-icon:hover {
+            background: transparent;
+            border-color: transparent;
+            color: var(--color-text-primary);
+        }
+
         .btn-primary {
             background: var(--accent-dim);
             border-color: var(--accent);
@@ -1241,21 +1313,6 @@
             border-color: var(--color-border-focus);
         }
 
-        /* --- MODE TOGGLE BUTTON --- */
-
-        .btn-mode-toggle {
-            background: transparent;
-            border-color: transparent;
-            color: var(--color-text-muted);
-            padding: var(--space-2);
-        }
-
-        .btn-mode-toggle:hover {
-            background: transparent;
-            border-color: transparent;
-            color: var(--color-text-primary);
-        }
-
         /* --- READ MODE SUPPRESSIONS --- */
 
         body.read-mode #runbook-add-btn,
@@ -1337,7 +1394,7 @@
             <div class="header-spacer"></div>
 
             <div class="header-actions">
-                <button class="btn btn-lg btn-mode-toggle" id="mode-toggle-btn" onclick="toggleAppMode()"
+                <button class="btn btn-lg btn-flat-icon" id="mode-toggle-btn" onclick="toggleAppMode()"
                     title="Switch to Read mode">
                     <svg id="mode-icon" viewBox="0 0 16 16">
                         <path d="M5 7V5a3 3 0 0 1 6 0v2M3 7h10v7H3zM8 11v-1" />
@@ -1357,6 +1414,18 @@
             <div class="header-spacer"></div>
 
             <div class="header-actions">
+                <button id="keybindings-btn" class="btn btn-lg btn-flat-icon" onclick="showKeybindingsModal()"
+                    title="App keybindings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <rect x="2" y="6" width="20" height="12" rx="2" />
+                        <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01" />
+                        <path d="M5 14h14" />
+                    </svg>
+                </button>
+
+                <div class="vertical-divider"></div>
+
                 <button id="export-btn" class="btn btn-lg btn-primary" onclick="showExportModal()"
                     title="Export runbook">
                     <svg viewBox="0 0 16 16">
@@ -1364,7 +1433,9 @@
                     </svg>
                     Export
                 </button>
+
                 <div class="vertical-divider"></div>
+
                 <button id="clear-btn" class="btn btn-lg btn-danger" onclick="clearAllData()" title="Clear workspace">
                     <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -1494,19 +1565,21 @@
         </main>
     </div>
 
-    <div id="confirm-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div id="keybindings-modal" class="modal-backdrop" role="dialog" aria-modal="true">
         <div class="modal">
-            <p id="confirm-modal-message" class="modal-message"></p>
+            <p class="modal-title">App Keybindings</p>
+            <div class="modal-scrollable-body">
+                <table class="keybindings-table" id="keybindings-table"></table>
+            </div>
             <div class="modal-actions">
-                <button id="confirm-modal-cancel-btn" class="btn btn-lg">Cancel</button>
-                <div class="vertical-divider"></div>
-                <button id="confirm-modal-confirm-btn" class="btn btn-lg btn-danger">Delete</button>
+                <button class="btn btn-lg" onclick="closeKeybindingsModal()">Close</button>
             </div>
         </div>
     </div>
 
     <div id="export-modal" class="modal-backdrop" role="dialog" aria-modal="true">
         <div class="modal">
+            <p class="modal-title">Export</p>
             <p class="modal-message">Choose an export format.</p>
             <div class="modal-actions">
                 <button class="btn btn-lg btn-primary" onclick="runExport('json')">.json</button>
@@ -1514,6 +1587,18 @@
                 <button class="btn btn-lg" onclick="runExport('txt')">.txt</button>
                 <div class="vertical-divider"></div>
                 <button class="btn btn-lg" onclick="closeExportModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal">
+            <p class="modal-title">Clear Workspace</p>
+            <p id="confirm-modal-message" class="modal-message"></p>
+            <div class="modal-actions">
+                <button id="confirm-modal-cancel-btn" class="btn btn-lg">Cancel</button>
+                <div class="vertical-divider"></div>
+                <button id="confirm-modal-confirm-btn" class="btn btn-lg btn-danger">Delete</button>
             </div>
         </div>
     </div>
@@ -1669,6 +1754,64 @@
             S: 's',
         });
 
+        const KEYBINDINGS = [{
+                keys: 'Ctrl+E',
+                description: 'Toggle read / edit mode'
+            },
+            {
+                keys: 'Ctrl+G',
+                description: 'Toggle all command editors'
+            },
+            {
+                keys: 'Ctrl+I',
+                description: 'Open runbook import dialog'
+            },
+            {
+                keys: 'Ctrl+S',
+                description: 'Collapse / expand sidebar'
+            },
+            {
+                keys: 'Ctrl+Shift+S',
+                description: 'Move sidebar to left / right'
+            },
+            {
+                keys: 'Ctrl+D',
+                description: 'Duplicate selected blocks'
+            },
+            {
+                keys: 'Del',
+                description: 'Delete selected blocks'
+            },
+            {
+                keys: 'Escape',
+                description: 'Clear block selection / close modals'
+            },
+            {
+                keys: 'Ctrl+Shift+E',
+                description: 'Open export dialog'
+            },
+            {
+                keys: 'Ctrl+Shift+Backspace',
+                description: 'Open clear workspace dialog'
+            },
+            {
+                keys: 'Tab',
+                description: 'Select active runbook'
+            },
+            {
+                keys: '↑ / ↓',
+                description: 'Navigate runbooks'
+            },
+            {
+                keys: 'Alt+Click',
+                description: 'Open note link in new tab'
+            },
+            {
+                keys: 'Ctrl+Click / Drag',
+                description: 'Multi-select blocks'
+            },
+        ];
+
         const Cursor = Object.freeze({
             DEFAULT: '',
             POINTER: 'pointer',
@@ -1735,6 +1878,8 @@
             CONFIRM_MODAL_MESSAGE: 'confirm-modal-message',
             CONFIRM_MODAL_CONFIRM_BTN: 'confirm-modal-confirm-btn',
             CONFIRM_MODAL_CANCEL_BTN: 'confirm-modal-cancel-btn',
+            KEYBINDINGS_MODAL: 'keybindings-modal',
+            KEYBINDINGS_TABLE: 'keybindings-table',
         });
 
         const FilePickerConfig = Object.freeze({
@@ -3515,6 +3660,59 @@
             URL.revokeObjectURL(url);
         }
 
+        // Keybindings modal
+
+        function buildKeybindingsTable() {
+            const table = document.getElementById(ElementId.KEYBINDINGS_TABLE);
+            if (!table || table.childElementCount > 0) {
+                return;
+            }
+
+            table.innerHTML = KEYBINDINGS.map(({
+                keys,
+                description
+            }) => `
+                <tr>
+                    <td class="key-cell"><span class="kbd">${escapeHtml(keys)}</span></td>
+                    <td class="desc-cell">${escapeHtml(description)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function showKeybindingsModal() {
+            buildKeybindingsTable();
+            const backdrop = document.getElementById(ElementId.KEYBINDINGS_MODAL);
+            backdrop.classList.add(CssClass.MODAL_VISIBLE);
+
+            function onKey(event) {
+                if (event.key === Key.ESCAPE) {
+                    event.preventDefault();
+                    cleanup();
+                }
+            }
+
+            function onBackdropClick(event) {
+                if (event.target === backdrop) {
+                    cleanup();
+                }
+            }
+
+            function cleanup() {
+                closeKeybindingsModal();
+                document.removeEventListener(EventType.KEY_DOWN, onKey);
+                backdrop.removeEventListener(EventType.CLICK, onBackdropClick);
+            }
+
+            document.addEventListener(EventType.KEY_DOWN, onKey);
+            backdrop.addEventListener(EventType.CLICK, onBackdropClick);
+        }
+
+        function closeKeybindingsModal() {
+            document.getElementById(ElementId.KEYBINDINGS_MODAL).classList.remove(CssClass.MODAL_VISIBLE);
+        }
+
+        // Export modal
+
         function closeExportModal() {
             document.getElementById(ElementId.EXPORT_MODAL).classList.remove(CssClass.MODAL_VISIBLE);
         }
@@ -3598,7 +3796,7 @@
             }
         }
 
-        //  Clear & Toggle
+        //  Clear workspace modal
 
         function showConfirmModal(message) {
             return new Promise(resolve => {
@@ -3829,7 +4027,11 @@
             } else if (e.shiftKey && key === Key.SHIFT_E) {
                 e.preventDefault();
                 removeCtrlHeldClass();
-                showExportModal();
+
+                const exportBtn = document.getElementById(ElementId.EXPORT_BTN);
+                if (!exportBtn?.hasAttribute(CssAttribute.DISABLED)) {
+                    showExportModal();
+                }
 
             } else if (e.shiftKey && key === Key.BACKSPACE) {
                 e.preventDefault();

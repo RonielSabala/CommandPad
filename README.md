@@ -202,22 +202,7 @@ Press `Escape` or click anywhere outside the modal to cancel.
 
 ## Keyboard Shortcuts
 
-| Shortcut                          | Action                                         |
-| --------------------------------- | ---------------------------------------------- |
-| `Ctrl+E`                          | Toggle Read/Edit mode                          |
-| `Ctrl+G`                          | Toggle all command editors (collapse/expand)   |
-| `Ctrl+I`                          | Open the runbook import dialog                 |
-| `Ctrl+S`                          | Collapse/expand the sidebar                    |
-| `Ctrl+Shift+S`                    | Move sidebar to left / right                   |
-| `Ctrl+D`                          | Duplicate selected blocks                      |
-| `Del`                             | Delete selected blocks (when not editing text) |
-| `Escape`                          | Clear block selection                          |
-| `Ctrl+Shift+E`                    | Export the active workspace                    |
-| `Ctrl+Shift+Backspace`            | Clear all variables, blocks, and runbooks      |
-| `Tab`                             | Select the active runbook                      |
-| `ArrowUp` / `ArrowDown`           | Navigate between runbooks                      |
-| `Alt` + **click** on a note link  | Open the link in a new tab                     |
-| `Ctrl` + **click/drag** on blocks | Multi-select blocks                            |
+For a full list of keyboard shortcuts and their descriptions, click the **keyboard button** in the top-right area of the header.
 
 ---
 
