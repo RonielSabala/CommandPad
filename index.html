@@ -2398,7 +2398,7 @@
             try {
                 const saved = JSON.parse(localStorage.getItem(TABS_STORAGE_KEY));
                 if (!saved?.tabOrder?.length) {
-                    return false;
+                    return;
                 }
 
                 const loadedTabs = [];
@@ -2429,7 +2429,7 @@
                 }
 
                 if (loadedTabs.length === 0) {
-                    return false;
+                    return;
                 }
 
                 tabs = loadedTabs;
@@ -2440,10 +2440,7 @@
                     tabs[0].id;
 
                 activeRunbookId = activeTab()?.runbookId ?? null;
-                return true;
-            } catch {
-                return false;
-            }
+            } catch {}
         }
 
         //  Runbook Library
@@ -4486,24 +4483,7 @@
             loadState();
             loadRunbookLibrary();
             loadSidebarSectionState();
-
-            // Restore first runbook as default tab
-            const hasSavedTabs = await loadTabs();
-            if (!hasSavedTabs && runbookLibrary.length > 0) {
-                const first = runbookLibrary[0];
-                const content = await getRunbookContent(first.id);
-                const tab = createTabObject(first.label, first.id);
-
-                if (content) {
-                    tab.variables = content.variables ?? [];
-                    tab.blocks = content.blocks ?? [];
-                }
-
-                tabs = [tab];
-                activeTabId = tab.id;
-                activeRunbookId = first.id;
-            }
-
+            await loadTabs()
             renderTabsBar();
             renderVariablesList();
             renderBlocksList();
