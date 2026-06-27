@@ -4683,6 +4683,7 @@
 
             if (key === Key.ESCAPE) {
                 document.activeElement?.blur();
+                removeCtrlHeldClass();
                 clearBlockSelection();
                 clearRunbookFocus();
             }
