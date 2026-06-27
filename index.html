@@ -4329,8 +4329,9 @@
             closeExportModal();
 
             if (format === ExportFormat.JSON) {
+                const exportData = { variables: state.variables ?? [], blocks: state.blocks ?? [] };
                 await saveFile(
-                    JSON.stringify(state, null, 2),
+                    JSON.stringify(exportData, null, 2),
                     FilePickerConfig.MIME_TYPE,
                     FilePickerConfig.SUGGESTED_NAME,
                     [{
