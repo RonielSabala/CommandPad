@@ -678,12 +678,11 @@
         #tabs-bar {
             display: flex;
             align-items: flex-end;
-            gap: 0;
             background: var(--color-surface);
-            border-bottom: var(--border-standard);
+            border-bottom: var(--space-1) solid var(--color-border);
             overflow-x: auto;
             flex-shrink: 0;
-            padding: 0 var(--space-4);
+            padding: var(--space-3) var(--space-4) 0;
             scrollbar-width: none;
         }
 
@@ -692,6 +691,7 @@
         }
 
         .tab {
+            position: relative;
             display: inline-flex;
             align-items: center;
             gap: var(--space-4);
@@ -699,26 +699,29 @@
             font-family: var(--font-mono);
             font-size: var(--text-md);
             color: var(--color-text-muted);
-            background: transparent;
-            border: none;
-            border-right: var(--border-standard);
-            border-bottom: var(--space-1) solid transparent;
+            background: var(--color-surface-alt);
+            border: var(--border-standard);
+            border-bottom: none;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
             cursor: pointer;
             white-space: nowrap;
             max-width: var(--tab-max-width);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            transition: color var(--transition-fast), border-color var(--transition-fast);
             flex-shrink: 0;
+            transition: color var(--transition-fast), background var(--transition-fast);
+            bottom: calc(-1 * var(--space-1));
         }
 
         .tab:hover {
             color: var(--color-text-secondary);
+            background: var(--color-surface);
         }
 
         .tab.tab-active {
             color: var(--color-text-primary);
-            border-bottom-color: var(--accent);
+            background: var(--color-bg);
+            border-color: var(--color-border);
+            border-bottom: var(--space-1) solid var(--color-bg);
+            z-index: 1;
         }
 
         .tab-close {
