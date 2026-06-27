@@ -2183,22 +2183,20 @@
                 return;
             }
 
-            const index = tabs.findIndex(t => t.id === tabId);
-            if (index < 0) {
+            let idx = tabs.findIndex(t => t.id === tabId);
+            if (idx < 0) {
                 return;
             }
 
-            tabs.splice(index, 1);
+            tabs.splice(idx, 1);
 
             if (tabs.length === 0) {
-                // Always keep at least one tab
-                const newTab = createTabObject();
-                tabs.push(newTab);
-                activeTabId = newTab.id;
+                activeTabId = null;
+                activeRunbookId = null;
             } else if (activeTabId === tabId) {
-                // Switch to nearest
-                const newIndex = Math.min(index, tabs.length - 1);
-                activeTabId = tabs[newIndex].id;
+                idx = Math.min(idx, tabs.length - 1);
+                activeTabId = tabs[idx].id;
+                activeRunbookId = activeTab()?.runbookId ?? null;
             }
 
             saveTabs();
@@ -2532,18 +2530,19 @@
             await deleteRunbookContent(id);
 
             // Close any tab associated with this runbook
-            const tabIndex = tabs.findIndex(t => t.runbookId === id);
-            if (tabIndex >= 0) {
-                tabs.splice(tabIndex, 1);
+            let tabIdx = tabs.findIndex(t => t.runbookId === id);
+            if (tabIdx >= 0) {
+                tabs.splice(tabIdx, 1);
+
                 if (tabs.length === 0) {
-                    const freshTab = createTabObject();
-                    tabs.push(freshTab);
-                    activeTabId = freshTab.id;
-                } else if (activeTabId === tabs[tabIndex]?.id || !tabs.find(t => t.id === activeTabId)) {
-                    activeTabId = tabs[Math.min(tabIndex, tabs.length - 1)].id;
+                    activeTabId = null;
+                    activeRunbookId = null;
+                } else if (activeTabId === tabs[tabIdx]?.id || !tabs.find(t => t.id === activeTabId)) {
+                    tabIdx = Math.min(tabIdx, tabs.length - 1);
+                    activeTabId = tabs[tabIdx].id;
+                    activeRunbookId = activeTab()?.runbookId ?? null;
                 }
 
-                activeRunbookId = activeTab()?.runbookId ?? null;
                 renderTabsBar();
                 renderBlocksList();
                 renderVariablesList();
