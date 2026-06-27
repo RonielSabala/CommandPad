@@ -732,15 +732,24 @@
         }
 
         .tab.dragging {
-            opacity: 0.5;
+            opacity: 0.2;
         }
 
-        .tab.drag-over-left {
-            box-shadow: calc(var(--space-1) * -1) 0 0 0 var(--accent);
+        .tab.drag-over-left::before,
+        .tab.drag-over-right::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            border-left: var(--space-1) dashed var(--accent);
         }
 
-        .tab.drag-over-right {
-            box-shadow: var(--space-1) 0 0 0 var(--accent);
+        .tab.drag-over-left::before {
+            left: -1px;
+        }
+
+        .tab.drag-over-right::after {
+            right: -1px;
         }
 
         .tab-close {
@@ -4330,7 +4339,11 @@
             closeExportModal();
 
             if (format === ExportFormat.JSON) {
-                const exportData = { variables: state.variables ?? [], blocks: state.blocks ?? [] };
+                const exportData = {
+                    variables: state.variables ?? [],
+                    blocks: state.blocks ?? []
+                };
+
                 await saveFile(
                     JSON.stringify(exportData, null, 2),
                     FilePickerConfig.MIME_TYPE,
