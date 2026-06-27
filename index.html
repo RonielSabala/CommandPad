@@ -1885,8 +1885,9 @@
             E: 'e',
             G: 'g',
             I: 'i',
-            N: 'n',
+            T: 't',
             S: 's',
+            W: 'w',
         });
 
         const KEYBINDINGS = [{
@@ -1894,8 +1895,12 @@
                 description: 'Toggle read / edit mode'
             },
             {
-                keys: 'Ctrl+N',
+                keys: 'Ctrl+T',
                 description: 'Open a new tab'
+            },
+            {
+                keys: 'Ctrl+W',
+                description: 'Close the active tab'
             },
             {
                 keys: 'Ctrl+G',
@@ -2488,21 +2493,33 @@
                 return;
             }
 
-            const wasActive = activeRunbookId === id;
-
             runbookLibrary = runbookLibrary.filter(item => item.id !== id);
             await deleteRunbookContent(id);
 
-            if (wasActive) {
-                activeRunbookId = null;
-                state.variables = [];
-                state.blocks = [];
-                saveState();
-                renderVariablesList();
+            // Close any tab associated with this runbook
+            const tabIndex = tabs.findIndex(t => t.runbookId === id);
+            if (tabIndex >= 0) {
+                tabs.splice(tabIndex, 1);
+                if (tabs.length === 0) {
+                    const freshTab = createTabObject();
+                    tabs.push(freshTab);
+                    activeTabId = freshTab.id;
+                } else if (activeTabId === tabs[tabIndex]?.id || !tabs.find(t => t.id === activeTabId)) {
+                    activeTabId = tabs[Math.min(tabIndex, tabs.length - 1)].id;
+                }
+
+                activeRunbookId = activeTab()?.runbookId ?? null;
+                renderTabsBar();
                 renderBlocksList();
+                renderVariablesList();
                 updateEmptyState();
             }
 
+            if (activeRunbookId === id) {
+                activeRunbookId = null;
+            }
+
+            saveTabs();
             saveRunbookLibrary();
             renderRunbookList();
         }
@@ -4430,10 +4447,17 @@
                     duplicateBlock([...selectedBlockIds][0]);
                 }
 
-            } else if (key === Key.N) {
+            } else if (key === Key.T) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 createNewTab();
+
+            } else if (key === Key.W) {
+                e.preventDefault();
+                removeCtrlHeldClass();
+                if (activeTabId) {
+                    closeTab(activeTabId);
+                }
 
             } else if (e.shiftKey && key === Key.SHIFT_S) {
                 e.preventDefault();
