@@ -124,6 +124,7 @@
         /* --- DISABLE USER SELECT --- */
 
         .btn,
+        .tab,
         .no-user-select {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -1732,7 +1733,8 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'commandpad_v1';
+        const STORAGE_KEY = 'commandpad_state';
+        const TABS_STORAGE_KEY = 'commandpad_tabs';
 
         // Enums
 
@@ -2224,7 +2226,7 @@
             bar.querySelectorAll(`.${CssClass.TAB}`).forEach(el => el.remove());
 
             for (const tab of tabs) {
-                const tabLabel = getRunbookLabel(tab.blocks);
+                const tabLabel = tab.label || DEFAULT_TAB_LABEL;
 
                 const tabEl = document.createElement('div');
                 tabEl.className = `${CssClass.TAB} ${tab.id === activeTabId ? CssClass.TAB_ACTIVE : ''}`;
@@ -2263,35 +2265,62 @@
 
         function saveTabs() {
             try {
-                const existing = JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? {};
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                    ...existing,
-                    tabs: tabs.map(t => ({
-                        id: t.id,
-                        label: t.label,
-                        runbookId: t.runbookId,
-                        variables: t.variables ?? [],
-                        blocks: t.blocks ?? [],
+                localStorage.setItem(TABS_STORAGE_KEY, JSON.stringify({
+                    tabOrder: tabs.map(t => ({
+                        tabId: t.id,
+                        runbookId: t.runbookId
                     })),
                     activeTabId,
                 }));
             } catch {}
         }
 
-        function loadTabs() {
+        async function loadTabs() {
             try {
-                const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-                if (!saved?.tabs?.length) return false;
+                const saved = JSON.parse(localStorage.getItem(TABS_STORAGE_KEY));
+                if (!saved?.tabOrder?.length) {
+                    return false;
+                }
 
-                tabs = saved.tabs.map(t => ({
-                    id: t.id,
-                    label: t.label ?? DEFAULT_TAB_LABEL,
-                    runbookId: t.runbookId ?? null,
-                    variables: t.variables ?? [],
-                    blocks: t.blocks ?? [],
-                }));
+                const loadedTabs = [];
+                for (const {
+                        tabId,
+                        runbookId
+                    }
+                    of saved.tabOrder) {
+                    const entry = runbookLibrary.find(r => r.id === runbookId);
 
-                activeTabId = saved.activeTabId ?? tabs[0].id;
+                    // runbook was deleted
+                    if (!entry) {
+                        continue;
+                    }
+
+                    const content = await getRunbookContent(runbookId);
+                    if (!content) {
+                        continue;
+                    }
+
+                    loadedTabs.push({
+                        id: tabId,
+                        label: entry.label,
+                        runbookId,
+                        variables: content.variables ?? [],
+                        blocks: content.blocks ?? [],
+                    });
+                }
+
+                if (loadedTabs.length === 0) {
+                    return false;
+                }
+
+                tabs = loadedTabs;
+
+                const activeId = saved.activeTabId;
+                activeTabId = activeId && tabs.find(t => t.id === activeId) ?
+                    activeId :
+                    tabs[0].id;
+
+                activeRunbookId = activeTab()?.runbookId ?? null;
                 return true;
             } catch {
                 return false;
@@ -2850,7 +2879,7 @@
             saveTabs();
             saveUiState();
 
-            // Persist active runbook in IndexedDB
+            // Persist active tab's runbook content to IndexedDB
             const tab = activeTab();
             if (tab?.runbookId) {
                 putRunbookContent(tab.runbookId, {
@@ -2903,7 +2932,7 @@
                     }
                 }
 
-                if (saved.mode === AppMode.READ || saved.mode === AppMode.EDIT) {
+                if (saved.mode) {
                     setAppMode(saved.mode);
                 }
             } catch {}
@@ -2912,21 +2941,28 @@
         //  Variable resolution
 
         function getVariableMap() {
+            const variables = state.variables ?? [];
+            if (!variables) {
+                return {};
+            }
+
             const rawMap = {};
-            for (const variable of state.variables) {
-                if (!variable.key.trim()) {
+            const resolvedMap = {};
+
+            for (const variable of variables) {
+                const key = variable.key.trim();
+                if (!key) {
                     continue;
                 }
 
-                rawMap[variable.key.trim()] = variable.value;
+                rawMap[key] = variable.value;
             }
-
-            const resolvedMap = {};
 
             function resolveValue(key, visitedKeys = new Set()) {
                 if (key in resolvedMap) {
                     return resolvedMap[key];
                 }
+
                 if (visitedKeys.has(key)) {
                     return `{${key}}`;
                 }
@@ -3125,10 +3161,11 @@
         }
 
         function renderVariablesList() {
+            const variables = state.variables ?? [];
             const container = document.getElementById(ElementId.VARIABLES_LIST);
             container.innerHTML = '';
 
-            if (state.variables.length === 0) {
+            if (variables.length === 0) {
                 const emptyMsg = document.createElement('p');
                 emptyMsg.className = CssClass.SIDEBAR_SECTION_EMPTY_MSG;
                 emptyMsg.textContent = 'No variables defined.';
@@ -3136,7 +3173,7 @@
                 return;
             }
 
-            const visibleVariables = state.variables.filter(variable =>
+            const visibleVariables = variables.filter(variable =>
                 matchesQuery(variableSearchQuery, variable.key, variable.value)
             );
 
@@ -3232,14 +3269,14 @@
                         return;
                     }
 
-                    const sourceIndex = state.variables.findIndex(v => v.id === dragSourceVariableId);
-                    const targetIndex = state.variables.findIndex(v => v.id === targetId);
+                    const sourceIndex = variables.findIndex(v => v.id === dragSourceVariableId);
+                    const targetIndex = variables.findIndex(v => v.id === targetId);
                     if (sourceIndex < 0 || targetIndex < 0) {
                         return;
                     }
 
-                    const [removed] = state.variables.splice(sourceIndex, 1);
-                    state.variables.splice(targetIndex, 0, removed);
+                    const [removed] = variables.splice(sourceIndex, 1);
+                    variables.splice(targetIndex, 0, removed);
 
                     saveState();
                     renderVariablesList();
@@ -3526,8 +3563,10 @@
         }
 
         function refreshAllPreviews() {
+            const blocks = state.blocks ?? [];
             const variableMap = getVariableMap();
-            for (const block of state.blocks) {
+
+            for (const block of blocks) {
                 if (block.type !== BlockType.COMMAND) {
                     continue;
                 }
@@ -3555,10 +3594,11 @@
         //  Block rendering
 
         function renderBlocksList() {
+            const blocks = state.blocks ?? [];
             const container = document.getElementById(ElementId.BLOCKS_LIST);
             container.innerHTML = '';
 
-            for (const block of state.blocks) {
+            for (const block of blocks) {
                 const blockElement = buildBlockElement(block);
                 container.appendChild(blockElement);
             }
@@ -3735,12 +3775,13 @@
         }
 
         function updateEmptyState() {
+            const isEmpty = (state.blocks ?? []).length === 0;
             const emptyState = document.getElementById(ElementId.EMPTY_STATE);
+
             if (emptyState) {
-                emptyState.style.display = state.blocks.length === 0 ? CssDisplay.BLOCK : CssDisplay.NONE;
+                emptyState.style.display = isEmpty ? CssDisplay.BLOCK : CssDisplay.NONE;
             }
 
-            const isEmpty = state.blocks.length === 0;
             if (isEmpty) {
                 clearBlockSelection();
             }
@@ -4318,17 +4359,26 @@
             });
         }
 
-        function init() {
+        async function init() {
             loadState();
             loadRunbookLibrary();
             loadSidebarSectionState();
 
-            // Load tabs
-            const hasSavedTabs = loadTabs();
-            if (!hasSavedTabs) {
-                const defaultTab = createTabObject();
-                tabs.push(defaultTab);
-                activeTabId = defaultTab.id;
+            // Restore first runbook as default tab
+            const hasSavedTabs = await loadTabs();
+            if (!hasSavedTabs && runbookLibrary.length > 0) {
+                const first = runbookLibrary[0];
+                const content = await getRunbookContent(first.id);
+                const tab = createTabObject(first.label, first.id);
+
+                if (content) {
+                    tab.variables = content.variables ?? [];
+                    tab.blocks = content.blocks ?? [];
+                }
+
+                tabs = [tab];
+                activeTabId = tab.id;
+                activeRunbookId = first.id;
             }
 
             renderTabsBar();
@@ -4341,7 +4391,7 @@
 
             setTimeout(() => {
                 autoResizeAllTextarea();
-                document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(textarea => syncNoteWidth(textarea));
+                document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(t => syncNoteWidth(t));
                 refreshAllPreviews();
 
                 // Restore scroll
