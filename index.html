@@ -80,6 +80,7 @@
             --block-min-width: 7.5rem;
             --modal-min-width: 15rem;
             --modal-max-width: 30rem;
+            --tab-max-width: 12rem;
 
             /* --- Misc & utilities --- */
             --black-a40: rgba(0, 0, 0, 0.4);
@@ -699,10 +700,11 @@
             color: var(--color-text-muted);
             background: transparent;
             border: none;
-            border-bottom: 2px solid transparent;
+            border-right: var(--border-standard);
+            border-bottom: var(--space-1) solid transparent;
             cursor: pointer;
             white-space: nowrap;
-            max-width: 12rem;
+            max-width: var(--tab-max-width);
             overflow: hidden;
             text-overflow: ellipsis;
             transition: color var(--transition-fast), border-color var(--transition-fast);
