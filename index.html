@@ -4298,20 +4298,20 @@
                 await deleteRunbookContent(runbook.id);
             }
 
-            runbookLibrary = [];
+            activeTabId = null;
             activeRunbookId = null;
-            saveRunbookLibrary();
 
-            // Reset to a single empty tab
-            const freshTab = createTabObject();
-            tabs = [freshTab];
-            activeTabId = freshTab.id;
+            tabs = []
+            runbookLibrary = [];
 
             saveTabs();
-            renderRunbookList();
+            saveRunbookLibrary();
+
             renderTabsBar();
+            renderRunbookList();
             renderVariablesList();
             renderBlocksList();
+
             updateEmptyState();
         }
 
