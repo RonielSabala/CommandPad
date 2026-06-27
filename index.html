@@ -3849,13 +3849,7 @@
                     return;
                 }
 
-                if (lassoMode === LassoMode.DESELECT) {
-                    selectedBlockIds.delete(block.id);
-                } else {
-                    selectedBlockIds.add(block.id);
-                }
-
-                updateBlockSelectionVisuals();
+                setBlockSelected(block.id, lassoMode === LassoMode.SELECT);
                 updateSelectingBodyClass();
             });
 
@@ -4068,22 +4062,30 @@
         }
 
         function toggleBlockSelection(blockId) {
-            if (selectedBlockIds.has(blockId)) {
-                selectedBlockIds.delete(blockId);
-            } else {
+            setBlockSelected(blockId, !selectedBlockIds.has(blockId));
+            updateSelectingBodyClass();
+        }
+
+        function setBlockSelected(blockId, selected) {
+            if (selected) {
                 selectedBlockIds.add(blockId);
+            } else {
+                selectedBlockIds.delete(blockId);
             }
 
-            updateBlockSelectionVisuals();
-            updateSelectingBodyClass();
+            getBlockFromId(blockId)?.classList.toggle(CssClass.BLOCK_SELECTED, selected);
         }
 
         function clearBlockSelection() {
+            for (const blockId of selectedBlockIds) {
+                getBlockFromId(blockId)?.classList.remove(CssClass.BLOCK_SELECTED);
+            }
+
             selectedBlockIds.clear();
-            updateBlockSelectionVisuals();
             updateSelectingBodyClass();
         }
 
+        // Full resync of every block element to the current selection set
         function updateBlockSelectionVisuals() {
             document.querySelectorAll(Selector.BLOCK_ITEM).forEach(el => {
                 el.classList.toggle(CssClass.BLOCK_SELECTED, selectedBlockIds.has(el.dataset.blockId));
@@ -4105,13 +4107,7 @@
                     const blockId = blockEl.dataset.blockId;
                     lassoMode = selectedBlockIds.has(blockId) ? LassoMode.DESELECT : LassoMode.SELECT;
 
-                    if (lassoMode === LassoMode.DESELECT) {
-                        selectedBlockIds.delete(blockId);
-                    } else {
-                        selectedBlockIds.add(blockId);
-                    }
-
-                    updateBlockSelectionVisuals();
+                    setBlockSelected(blockId, lassoMode === LassoMode.SELECT);
                     updateSelectingBodyClass();
                 } else {
                     lassoMode = LassoMode.SELECT;
