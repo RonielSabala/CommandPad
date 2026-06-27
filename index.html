@@ -2080,6 +2080,7 @@
 
         let tabs = [];
         let activeTabId = null;
+        let appInitialized = false;
 
         function generateId() {
             return Math.random().toString(36).slice(2, 9);
@@ -2878,6 +2879,10 @@
         //  Persistence
 
         function saveState() {
+            if (!appInitialized) {
+                return;
+            }
+
             saveTabs();
             saveUiState();
 
@@ -4403,6 +4408,7 @@
                         tabsContent.scrollTop = savedScrollTop;
                     }
 
+                    appInitialized = true;
                     requestAnimationFrame(() => {
                         document.body.classList.add(CssClass.APP_READY);
                     });
