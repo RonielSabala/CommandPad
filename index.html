@@ -763,6 +763,14 @@
             right: -1px;
         }
 
+        .tab-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 0;
+        }
+
         .tab-close {
             display: inline-flex;
             align-items: flex-start;
@@ -1832,6 +1840,7 @@
             LIBRARY_STORAGE_KEY: 'commandpad_runbook_library',
             SECTIONS_STORAGE_KEY: 'commandpad_sidebar_sections',
             DEFAULT_LABEL: 'Untitled runbook',
+            LABEL_MAX_LENGTH: 60,
         });
 
         const IndexedDbTransactionMode = Object.freeze({
@@ -1887,6 +1896,7 @@
             TAB: 'tab',
             TAB_ACTIVE: 'tab-active',
             TAB_CLOSE: 'tab-close',
+            TAB_LABEL: 'tab-label',
             TABS_BAR: 'tabs-bar',
             APP_READY: 'app-ready',
             DRAGGING: 'dragging',
@@ -1936,6 +1946,11 @@
             MOUSE_ENTER: 'mouseenter',
             MOUSE_MOVE: 'mousemove',
             SCROLL: 'scroll',
+        });
+
+        const MouseButton = Object.freeze({
+            LEFT: 0,
+            MIDDLE: 1,
         });
 
         const Key = Object.freeze({
@@ -2359,7 +2374,7 @@
         function getRunbookLabel(blocks, fallback) {
             const firstBlock = blocks?.[0];
             if (firstBlock?.type === BlockType.NOTE && firstBlock.text?.trim()) {
-                return firstBlock.text.trim().slice(0, 60);
+                return firstBlock.text.trim().slice(0, RunbookConfig.LABEL_MAX_LENGTH);
             }
 
             return fallback || RunbookConfig.DEFAULT_LABEL;
@@ -2400,8 +2415,7 @@
                 tabEl.draggable = true;
 
                 const labelSpan = document.createElement('span');
-                labelSpan.style.cssText =
-                    'overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:0;';
+                labelSpan.className = CssClass.TAB_LABEL;
                 labelSpan.textContent = tabLabel;
 
                 const closeBtn = document.createElement('button');
@@ -2417,12 +2431,12 @@
                 tabEl.appendChild(closeBtn);
                 tabEl.addEventListener(EventType.CLICK, () => switchTab(tab.id));
                 tabEl.addEventListener(EventType.MOUSE_DOWN, e => {
-                    if (e.button === 1) {
+                    if (e.button === MouseButton.MIDDLE) {
                         e.preventDefault();
                     }
                 });
                 tabEl.addEventListener(EventType.MOUSE_UP, e => {
-                    if (e.button === 1) {
+                    if (e.button === MouseButton.MIDDLE) {
                         e.preventDefault();
                         closeTab(tab.id);
                     }
@@ -4114,7 +4128,7 @@
 
         function setupLassoSelection() {
             document.addEventListener(EventType.MOUSE_DOWN, e => {
-                if (!(e.ctrlKey || e.metaKey) || e.button !== 0 || isReadMode()) {
+                if (!(e.ctrlKey || e.metaKey) || e.button !== MouseButton.LEFT || isReadMode()) {
                     return;
                 }
 
