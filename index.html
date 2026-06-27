@@ -77,12 +77,13 @@
             --sidebar-width: 18.75rem;
             --header-height: 3.5rem;
             --scrollbar-size: 0.625rem;
+            --tab-max-width: 12rem;
             --block-min-width: 7.5rem;
             --modal-min-width: 15rem;
             --modal-max-width: 30rem;
-            --tab-max-width: 12rem;
 
             /* --- Misc & utilities --- */
+            --white-a10: rgba(255, 255, 255, 0.1);
             --black-a40: rgba(0, 0, 0, 0.4);
             --black-a50: rgba(0, 0, 0, 0.5);
 
@@ -679,11 +680,12 @@
             display: flex;
             align-items: flex-end;
             background: var(--color-surface);
-            border-bottom: var(--space-1) solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
             overflow-x: auto;
             flex-shrink: 0;
-            padding: var(--space-3) var(--space-4) 0;
+            padding: var(--space-4) var(--space-3) 0;
             scrollbar-width: none;
+            gap: var(--space-1);
         }
 
         #tabs-bar::-webkit-scrollbar {
@@ -694,62 +696,81 @@
             position: relative;
             display: inline-flex;
             align-items: center;
-            gap: var(--space-4);
-            padding: var(--space-4) var(--space-8);
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4) var(--space-3) var(--space-5);
             font-family: var(--font-mono);
-            font-size: var(--text-md);
-            color: var(--color-text-muted);
-            background: var(--color-surface-alt);
-            border: var(--border-standard);
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+            background: transparent;
+            border: 1px solid transparent;
             border-bottom: none;
-            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
             cursor: pointer;
             white-space: nowrap;
             max-width: var(--tab-max-width);
             flex-shrink: 0;
-            transition: color var(--transition-fast), background var(--transition-fast);
-            bottom: calc(-1 * var(--space-1));
+            transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+            bottom: -1px;
         }
 
         .tab:hover {
-            color: var(--color-text-secondary);
-            background: var(--color-surface);
+            color: var(--color-text-primary);
+            background: var(--color-surface-alt);
+            border-color: var(--color-border);
         }
 
         .tab.tab-active {
             color: var(--color-text-primary);
             background: var(--color-bg);
             border-color: var(--color-border);
-            border-bottom: var(--space-1) solid var(--color-bg);
+            border-bottom: 1px solid var(--color-bg);
             z-index: 1;
+        }
+
+        .tab.dragging {
+            opacity: 0.5;
+        }
+
+        .tab.drag-over-left {
+            box-shadow: calc(var(--space-1) * -1) 0 0 0 var(--accent);
+        }
+
+        .tab.drag-over-right {
+            box-shadow: var(--space-1) 0 0 0 var(--accent);
         }
 
         .tab-close {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: var(--icon-base);
-            height: var(--icon-base);
-            border-radius: var(--radius-sm);
+            width: var(--space-8);
+            height: var(--space-8);
+            border-radius: 50%;
             border: none;
             background: transparent;
-            color: var(--color-text-muted);
+            color: var(--color-text-secondary);
             cursor: pointer;
             flex-shrink: 0;
             padding: 0;
-            transition: color var(--transition-fast), background var(--transition-fast);
+            opacity: 0;
+            transition: color var(--transition-fast), background var(--transition-fast), opacity var(--transition-fast);
+        }
+
+        .tab:hover .tab-close,
+        .tab.tab-active .tab-close {
+            opacity: 1;
         }
 
         .tab-close:hover {
-            color: var(--danger);
-            background: var(--danger-dim);
+            color: var(--color-text-primary);
+            background: var(--white-a10);
         }
 
         .tab-close svg {
             width: var(--icon-sm);
             height: var(--icon-sm);
             stroke: currentColor;
-            stroke-width: 2;
+            stroke-width: 2.5;
             stroke-linecap: round;
             fill: none;
             pointer-events: none;
@@ -759,17 +780,22 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: var(--space-4) var(--space-6);
+            width: var(--icon-base);
+            height: var(--icon-base);
             background: transparent;
             border: none;
+            border-radius: var(--radius-md);
             color: var(--color-text-muted);
             cursor: pointer;
             flex-shrink: 0;
-            transition: color var(--transition-fast);
+            align-self: center;
+            margin-bottom: var(--space-2);
+            transition: color var(--transition-fast), background var(--transition-fast);
         }
 
         #add-tab-btn:hover {
             color: var(--color-text-primary);
+            background: var(--color-surface-alt);
         }
 
         #add-tab-btn svg {
@@ -1439,7 +1465,10 @@
         }
 
         body.read-mode #add-tab-btn,
-        body.read-mode .tab-close,
+        body.read-mode .tab-close {
+            visibility: hidden;
+        }
+
         body.read-mode #add-block-row,
         body.read-mode #variable-add-btn,
         body.read-mode .sidebar-section-footer {
@@ -1829,6 +1858,8 @@
             APP_READY: 'app-ready',
             DRAGGING: 'dragging',
             DRAG_OVER: 'drag-over',
+            DRAG_OVER_LEFT: 'drag-over-left',
+            DRAG_OVER_RIGHT: 'drag-over-right',
             COLLAPSED: 'collapsed',
             SIDEBAR_COLLAPSED: 'sidebar-collapsed',
             EDITOR_COLLAPSED: 'editor-collapsed',
@@ -2143,7 +2174,7 @@
                     label: resolvedLabel,
                     filename: ''
                 });
-                runbookLibrary.sort((a, b) => a.label.localeCompare(b.label));
+
                 await putRunbookContent(newRunbookId, {
                     variables: [],
                     blocks: []
@@ -2224,26 +2255,35 @@
             const bar = document.getElementById(ElementId.TABS_BAR);
             const addBtn = document.getElementById(ElementId.ADD_TAB_BTN);
 
-            // Remove all tab elements
             bar.querySelectorAll(`.${CssClass.TAB}`).forEach(el => el.remove());
 
-            for (const tab of tabs) {
-                const tabLabel = tab.label || DEFAULT_TAB_LABEL;
+            let dragSrcId = null;
 
+            const clearDropIndicators = () => {
+                bar.querySelectorAll(`.${CssClass.TAB}`).forEach(t => {
+                    t.classList.remove(CssClass.DRAG_OVER_LEFT, CssClass.DRAG_OVER_RIGHT);
+                });
+            };
+
+            const createTabElement = (tab) => {
+                const tabLabel = tab.label || DEFAULT_TAB_LABEL;
                 const tabEl = document.createElement('div');
-                tabEl.className = `${CssClass.TAB} ${tab.id === activeTabId ? CssClass.TAB_ACTIVE : ''}`;
+                const isActive = tab.id === activeTabId;
+
+                tabEl.className = isActive ? `${CssClass.TAB} ${CssClass.TAB_ACTIVE}` : CssClass.TAB;
                 tabEl.dataset.tabId = tab.id;
                 tabEl.title = tabLabel;
+                tabEl.draggable = true;
 
                 const labelSpan = document.createElement('span');
                 labelSpan.style.cssText =
-                    'overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:9rem;';
+                    'overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:0;';
                 labelSpan.textContent = tabLabel;
 
                 const closeBtn = document.createElement('button');
                 closeBtn.className = CssClass.TAB_CLOSE;
                 closeBtn.title = 'Close tab';
-                closeBtn.innerHTML = `<svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg>`;
+                closeBtn.innerHTML = '<svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
                 closeBtn.addEventListener(EventType.CLICK, e => {
                     e.stopPropagation();
                     closeTab(tab.id);
@@ -2252,6 +2292,11 @@
                 tabEl.appendChild(labelSpan);
                 tabEl.appendChild(closeBtn);
                 tabEl.addEventListener(EventType.CLICK, () => switchTab(tab.id));
+                tabEl.addEventListener(EventType.MOUSE_DOWN, e => {
+                    if (e.button === 1) {
+                        e.preventDefault();
+                    }
+                });
                 tabEl.addEventListener(EventType.MOUSE_UP, e => {
                     if (e.button === 1) {
                         e.preventDefault();
@@ -2259,8 +2304,74 @@
                     }
                 });
 
-                bar.insertBefore(tabEl, addBtn);
-            }
+                setupTabDragHandlers(tabEl, tab, clearDropIndicators);
+
+                return tabEl;
+            };
+
+            const setupTabDragHandlers = (tabEl, tab, clearIndicators) => {
+                tabEl.addEventListener(EventType.DRAG_START, e => {
+                    dragSrcId = tab.id;
+                    tabEl.classList.add(CssClass.DRAGGING);
+                    e.dataTransfer.effectAllowed = DragEffect.MOVE;
+                });
+
+                tabEl.addEventListener(EventType.DRAG_END, () => {
+                    dragSrcId = null;
+                    tabEl.classList.remove(CssClass.DRAGGING);
+                    clearIndicators();
+                });
+
+                tabEl.addEventListener(EventType.DRAG_OVER, e => {
+                    if (!dragSrcId || dragSrcId === tab.id) {
+                        return;
+                    }
+
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = DragEffect.MOVE;
+
+                    const rect = tabEl.getBoundingClientRect();
+                    const isLeftHalf = e.clientX < rect.left + rect.width / 2;
+
+                    clearIndicators();
+                    tabEl.classList.add(isLeftHalf ? CssClass.DRAG_OVER_LEFT : CssClass.DRAG_OVER_RIGHT);
+                });
+
+                tabEl.addEventListener(EventType.DRAG_LEAVE, e => {
+                    if (!tabEl.contains(e.relatedTarget)) {
+                        tabEl.classList.remove(CssClass.DRAG_OVER_LEFT, CssClass.DRAG_OVER_RIGHT);
+                    }
+                });
+
+                tabEl.addEventListener(EventType.DROP, e => {
+                    e.preventDefault();
+                    if (!dragSrcId || dragSrcId === tab.id) {
+                        return;
+                    }
+
+                    const rect = tabEl.getBoundingClientRect();
+                    const isLeftHalf = e.clientX < rect.left + rect.width / 2;
+
+                    const srcIdx = tabs.findIndex(t => t.id === dragSrcId);
+                    if (srcIdx === -1) {
+                        return;
+                    }
+
+                    const [dragged] = tabs.splice(srcIdx, 1);
+                    let dstIdx = tabs.findIndex(t => t.id === tab.id);
+                    if (!isLeftHalf) {
+                        dstIdx++;
+                    }
+
+                    tabs.splice(dstIdx, 0, dragged);
+                    saveTabs();
+                    renderTabsBar();
+                });
+            };
+
+            tabs.forEach(tab => {
+                bar.insertBefore(createTabElement(tab), addBtn);
+            });
         }
 
         // Tab persistence
@@ -2450,7 +2561,6 @@
                 label,
                 filename: filename || ''
             });
-            runbookLibrary.sort((a, b) => a.label.localeCompare(b.label));
 
             await putRunbookContent(id, content);
 
