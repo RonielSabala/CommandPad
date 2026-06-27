@@ -4212,7 +4212,115 @@
             });
         }
 
-        //  Export
+        // Shared file save utility
+
+        async function saveFile(content, mimeType, suggestedName, types) {
+            if (window.showSaveFilePicker) {
+                try {
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName,
+                        types
+                    });
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(content);
+                    await writable.close();
+                    return;
+                } catch (error) {
+                    if (error.name === 'AbortError') return;
+                }
+            }
+
+            // Legacy fallback
+            const blob = new Blob([content], {
+                type: mimeType
+            });
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = suggestedName;
+            anchor.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Shared modal utility
+
+        const modalCleanups = new WeakMap();
+
+        function openModal(backdrop) {
+            closeModal(backdrop);
+            backdrop.classList.add(CssClass.MODAL_VISIBLE);
+
+            function cleanup() {
+                backdrop.classList.remove(CssClass.MODAL_VISIBLE);
+                document.removeEventListener(EventType.KEY_DOWN, onKey);
+                backdrop.removeEventListener(EventType.CLICK, onBackdropClick);
+                modalCleanups.delete(backdrop);
+            }
+
+            function onKey(event) {
+                if (event.key === Key.ESCAPE) {
+                    event.preventDefault();
+                    cleanup();
+                }
+            }
+
+            function onBackdropClick(event) {
+                if (event.target === backdrop) {
+                    cleanup();
+                }
+            }
+
+            document.addEventListener(EventType.KEY_DOWN, onKey);
+            backdrop.addEventListener(EventType.CLICK, onBackdropClick);
+            modalCleanups.set(backdrop, cleanup);
+        }
+
+        function closeModal(backdrop) {
+            const cleanup = modalCleanups.get(backdrop);
+            if (cleanup) {
+                cleanup();
+            } else {
+                backdrop.classList.remove(CssClass.MODAL_VISIBLE);
+            }
+        }
+
+        // Keybindings modal
+
+        function buildKeybindingsTable() {
+            const table = document.getElementById(ElementId.KEYBINDINGS_TABLE);
+            if (!table || table.childElementCount > 0) {
+                return;
+            }
+
+            table.innerHTML = KEYBINDINGS.map(({
+                keys,
+                description
+            }) => `
+                <tr>
+                    <td class="key-cell"><span class="kbd">${escapeHtml(keys)}</span></td>
+                    <td class="desc-cell">${escapeHtml(description)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function showKeybindingsModal() {
+            buildKeybindingsTable();
+            openModal(document.getElementById(ElementId.KEYBINDINGS_MODAL));
+        }
+
+        function closeKeybindingsModal() {
+            closeModal(document.getElementById(ElementId.KEYBINDINGS_MODAL));
+        }
+
+        // Export modal
+
+        function closeExportModal() {
+            closeModal(document.getElementById(ElementId.EXPORT_MODAL));
+        }
+
+        function showExportModal() {
+            openModal(document.getElementById(ElementId.EXPORT_MODAL));
+        }
 
         function buildMarkdownExport() {
             const lines = [];
@@ -4242,119 +4350,6 @@
             }
 
             return lines.join('\n');
-        }
-
-        // Shared file save utility
-        async function saveFile(content, mimeType, suggestedName, types) {
-            if (window.showSaveFilePicker) {
-                try {
-                    const fileHandle = await window.showSaveFilePicker({
-                        suggestedName,
-                        types
-                    });
-                    const writable = await fileHandle.createWritable();
-                    await writable.write(content);
-                    await writable.close();
-                    return;
-                } catch (error) {
-                    if (error.name === 'AbortError') return;
-                }
-            }
-
-            // Legacy fallback
-            const blob = new Blob([content], {
-                type: mimeType
-            });
-            const url = URL.createObjectURL(blob);
-            const anchor = document.createElement('a');
-            anchor.href = url;
-            anchor.download = suggestedName;
-            anchor.click();
-            URL.revokeObjectURL(url);
-        }
-
-        // Keybindings modal
-
-        function buildKeybindingsTable() {
-            const table = document.getElementById(ElementId.KEYBINDINGS_TABLE);
-            if (!table || table.childElementCount > 0) {
-                return;
-            }
-
-            table.innerHTML = KEYBINDINGS.map(({
-                keys,
-                description
-            }) => `
-                <tr>
-                    <td class="key-cell"><span class="kbd">${escapeHtml(keys)}</span></td>
-                    <td class="desc-cell">${escapeHtml(description)}</td>
-                </tr>
-            `).join('');
-        }
-
-        function showKeybindingsModal() {
-            buildKeybindingsTable();
-            const backdrop = document.getElementById(ElementId.KEYBINDINGS_MODAL);
-            backdrop.classList.add(CssClass.MODAL_VISIBLE);
-
-            function onKey(event) {
-                if (event.key === Key.ESCAPE) {
-                    event.preventDefault();
-                    cleanup();
-                }
-            }
-
-            function onBackdropClick(event) {
-                if (event.target === backdrop) {
-                    cleanup();
-                }
-            }
-
-            function cleanup() {
-                closeKeybindingsModal();
-                document.removeEventListener(EventType.KEY_DOWN, onKey);
-                backdrop.removeEventListener(EventType.CLICK, onBackdropClick);
-            }
-
-            document.addEventListener(EventType.KEY_DOWN, onKey);
-            backdrop.addEventListener(EventType.CLICK, onBackdropClick);
-        }
-
-        function closeKeybindingsModal() {
-            document.getElementById(ElementId.KEYBINDINGS_MODAL).classList.remove(CssClass.MODAL_VISIBLE);
-        }
-
-        // Export modal
-
-        function closeExportModal() {
-            document.getElementById(ElementId.EXPORT_MODAL).classList.remove(CssClass.MODAL_VISIBLE);
-        }
-
-        function showExportModal() {
-            const backdrop = document.getElementById(ElementId.EXPORT_MODAL);
-            backdrop.classList.add(CssClass.MODAL_VISIBLE);
-
-            function cleanup() {
-                closeExportModal();
-                document.removeEventListener(EventType.KEY_DOWN, onKey);
-                backdrop.removeEventListener(EventType.CLICK, onBackdropClick);
-            }
-
-            function onKey(event) {
-                if (event.key === Key.ESCAPE) {
-                    event.preventDefault();
-                    cleanup();
-                }
-            }
-
-            function onBackdropClick(event) {
-                if (event.target === backdrop) {
-                    cleanup();
-                }
-            }
-
-            document.addEventListener(EventType.KEY_DOWN, onKey);
-            backdrop.addEventListener(EventType.CLICK, onBackdropClick);
         }
 
         async function runExport(format) {
