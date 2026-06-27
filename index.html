@@ -1885,7 +1885,7 @@
             E: 'e',
             G: 'g',
             I: 'i',
-            T: 't',
+            N: 'n',
             S: 's',
             W: 'w',
         });
@@ -1895,11 +1895,11 @@
                 description: 'Toggle read / edit mode'
             },
             {
-                keys: 'Ctrl+T',
+                keys: 'Ctrl+Alt+N',
                 description: 'Open a new tab'
             },
             {
-                keys: 'Ctrl+W',
+                keys: 'Ctrl+Alt+W',
                 description: 'Close the active tab'
             },
             {
@@ -4399,8 +4399,25 @@
 
         document.addEventListener(EventType.KEY_DOWN, e => {
             const key = e.key;
+            const altPressed = e.altKey;
+            const ctrlPressed = e.ctrlKey;
 
-            if (!e.ctrlKey && !e.altKey && !document.activeElement?.matches(InputSelector.EDITABLE)) {
+            // Tab management
+            if ((ctrlPressed || e.metaKey) && altPressed) {
+                if (key === Key.N) {
+                    e.preventDefault();
+                    createNewTab();
+                } else if (key === Key.W) {
+                    e.preventDefault();
+                    if (activeTabId) {
+                        closeTab(activeTabId);
+                    }
+                }
+
+                return;
+            }
+
+            if (!ctrlPressed && !altPressed && !document.activeElement?.matches(InputSelector.EDITABLE)) {
                 if (key === Key.DELETE && selectedBlockIds.size > 0) {
                     e.preventDefault();
                     removeBlock([...selectedBlockIds][0]);
@@ -4416,14 +4433,14 @@
                 return;
             }
 
-            if (e.altKey) {
+            if (altPressed) {
                 e.preventDefault();
                 document.body.classList.add(CssClass.ALT_HELD);
                 updateCursorOnLink();
                 return;
             }
 
-            if (!e.ctrlKey) {
+            if (!ctrlPressed) {
                 return;
             }
 
@@ -4451,18 +4468,6 @@
                 removeCtrlHeldClass();
                 if (selectedBlockIds.size > 0) {
                     duplicateBlock([...selectedBlockIds][0]);
-                }
-
-            } else if (key === Key.T) {
-                e.preventDefault();
-                removeCtrlHeldClass();
-                createNewTab();
-
-            } else if (key === Key.W) {
-                e.preventDefault();
-                removeCtrlHeldClass();
-                if (activeTabId) {
-                    closeTab(activeTabId);
                 }
 
             } else if (e.shiftKey && key === Key.SHIFT_S) {
