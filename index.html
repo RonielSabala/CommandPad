@@ -664,10 +664,119 @@
             border-right: none;
         }
 
-        /* --- MAIN PANEL --- */
+        /* --- TABS --- */
 
         #main-panel {
             grid-area: main;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #tabs-bar {
+            display: flex;
+            align-items: flex-end;
+            gap: 0;
+            background: var(--color-surface);
+            border-bottom: var(--border-standard);
+            overflow-x: auto;
+            flex-shrink: 0;
+            padding: 0 var(--space-4);
+            scrollbar-width: none;
+        }
+
+        #tabs-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-4) var(--space-8);
+            font-family: var(--font-mono);
+            font-size: var(--text-md);
+            color: var(--color-text-muted);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            max-width: 12rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color var(--transition-fast), border-color var(--transition-fast);
+            flex-shrink: 0;
+        }
+
+        .tab:hover {
+            color: var(--color-text-secondary);
+        }
+
+        .tab.tab-active {
+            color: var(--color-text-primary);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-close {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--icon-base);
+            height: var(--icon-base);
+            border-radius: var(--radius-sm);
+            border: none;
+            background: transparent;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            flex-shrink: 0;
+            padding: 0;
+            transition: color var(--transition-fast), background var(--transition-fast);
+        }
+
+        .tab-close:hover {
+            color: var(--danger);
+            background: var(--danger-dim);
+        }
+
+        .tab-close svg {
+            width: var(--icon-sm);
+            height: var(--icon-sm);
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            fill: none;
+            pointer-events: none;
+        }
+
+        #add-tab-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-4) var(--space-6);
+            background: transparent;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: color var(--transition-fast);
+        }
+
+        #add-tab-btn:hover {
+            color: var(--color-text-primary);
+        }
+
+        #add-tab-btn svg {
+            width: var(--icon-md);
+            height: var(--icon-md);
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            fill: none;
+        }
+
+        #tabs-content {
+            flex: 1;
             overflow-y: auto;
             padding-top: var(--space-4);
             padding-right: var(--space-20);
@@ -684,6 +793,8 @@
             max-width: 100%;
             gap: var(--space-3);
         }
+
+        /* Empty state */
 
         #empty-state {
             margin: auto;
@@ -1321,6 +1432,8 @@
             display: none !important;
         }
 
+        body.read-mode #add-tab-btn,
+        body.read-mode .tab-close,
         body.read-mode #add-block-row,
         body.read-mode #variable-add-btn,
         body.read-mode .sidebar-section-footer {
@@ -1527,40 +1640,52 @@
                     </svg>
                 </button>
             </div>
-            <div id="empty-state" class="no-user-select">
-                <svg viewBox="0 0 40 40">
-                    <rect x="4" y="6" width="32" height="28" rx="3" />
-                    <path d="M10 14l6 6-6 6M18 26h12" />
-                </svg>
-                <p id="empty-state-title">No blocks yet.</p>
-                <p id="empty-state-hint">Add a command or note below.</p>
+
+            <div id="tabs-bar">
+                <!-- Tabs rendered by JS -->
+                <button id="add-tab-btn" onclick="createNewTab()" title="New tab (Ctrl+N)">
+                    <svg viewBox="0 0 16 16">
+                        <path d="M8 3v10M3 8h10" />
+                    </svg>
+                </button>
             </div>
 
-            <div id="blocks-list"></div>
+            <div id="tabs-content">
+                <div id="empty-state" class="no-user-select">
+                    <svg viewBox="0 0 40 40">
+                        <rect x="4" y="6" width="32" height="28" rx="3" />
+                        <path d="M10 14l6 6-6 6M18 26h12" />
+                    </svg>
+                    <p id="empty-state-title">No blocks yet.</p>
+                    <p id="empty-state-hint">Add a command or note below.</p>
+                </div>
 
-            <div id="add-block-row">
-                <p class="section-title new-block-row-label no-user-select">NEW BLOCK</p>
-                <button class="btn" onclick="addBlock('command')" title="Command block">
-                    <svg viewBox="0 0 16 16" width="13" height="13">
-                        <polyline points="2,4 5,4" />
-                        <polyline points="2,8 8,8" />
-                        <polyline points="8,4 14,8 8,12" />
-                    </svg>
-                    Command
-                </button>
-                <button class="btn" onclick="addBlock('note')" title="Note block">
-                    <svg viewBox="0 0 16 16" width="13" height="13">
-                        <path d="M3 3h10v8l-3 3H3z" />
-                        <path d="M10 11v3" />
-                    </svg>
-                    Note
-                </button>
-                <button class="btn" onclick="addBlock('divider')" title="Divider block">
-                    <svg viewBox="0 0 16 16">
-                        <path d="M1 8 C3 5, 5 11, 7 8 S11 5, 13 8 S15 5, 15 8" />
-                    </svg>
-                    Divider
-                </button>
+                <div id="blocks-list"></div>
+
+                <div id="add-block-row">
+                    <p class="section-title new-block-row-label no-user-select">NEW BLOCK</p>
+                    <button class="btn" onclick="addBlock('command')" title="Command block">
+                        <svg viewBox="0 0 16 16" width="13" height="13">
+                            <polyline points="2,4 5,4" />
+                            <polyline points="2,8 8,8" />
+                            <polyline points="8,4 14,8 8,12" />
+                        </svg>
+                        Command
+                    </button>
+                    <button class="btn" onclick="addBlock('note')" title="Note block">
+                        <svg viewBox="0 0 16 16" width="13" height="13">
+                            <path d="M3 3h10v8l-3 3H3z" />
+                            <path d="M10 11v3" />
+                        </svg>
+                        Note
+                    </button>
+                    <button class="btn" onclick="addBlock('divider')" title="Divider block">
+                        <svg viewBox="0 0 16 16">
+                            <path d="M1 8 C3 5, 5 11, 7 8 S11 5, 13 8 S15 5, 15 8" />
+                        </svg>
+                        Divider
+                    </button>
+                </div>
             </div>
         </main>
     </div>
@@ -1628,6 +1753,11 @@
             COLLAPSED: 'collapsed',
         });
 
+        const TabConfig = Object.freeze({
+            DEFAULT_LABEL: 'Untitled',
+            STORAGE_KEY: 'commandpad_tabs_v1',
+        });
+
         const RunbookConfig = Object.freeze({
             DB_NAME: 'commandpad_runbooks_db',
             DB_VERSION: 1,
@@ -1687,6 +1817,10 @@
         });
 
         const CssClass = Object.freeze({
+            TAB: 'tab',
+            TAB_ACTIVE: 'tab-active',
+            TAB_CLOSE: 'tab-close',
+            TABS_BAR: 'tabs-bar',
             APP_READY: 'app-ready',
             DRAGGING: 'dragging',
             DRAG_OVER: 'drag-over',
@@ -1751,12 +1885,17 @@
             E: 'e',
             G: 'g',
             I: 'i',
+            N: 'n',
             S: 's',
         });
 
         const KEYBINDINGS = [{
                 keys: 'Ctrl+E',
                 description: 'Toggle read / edit mode'
+            },
+            {
+                keys: 'Ctrl+N',
+                description: 'Open a new tab'
             },
             {
                 keys: 'Ctrl+G',
@@ -1853,8 +1992,10 @@
         });
 
         const ElementId = Object.freeze({
+            TABS_BAR: 'tabs-bar',
+            ADD_TAB_BTN: 'add-tab-btn',
+            TABS_CONTENT: 'tabs-content',
             APP_SHELL: 'app-shell',
-            MAIN_PANEL: 'main-panel',
             MODE_TOGGLE_BTN: 'mode-toggle-btn',
             COLLAPSE_ALL_BTN: 'collapse-all-btn',
             EXPORT_BTN: 'export-btn',
@@ -1883,14 +2024,17 @@
         });
 
         const FilePickerConfig = Object.freeze({
+            // Json
             SUGGESTED_NAME: 'commandpad-export.json',
             DESCRIPTION: 'CommandPad JSON',
             EXTENSION: '.json',
             MIME_TYPE: 'application/json',
+            // Markdown
             MD_SUGGESTED_NAME: 'commandpad-export.md',
             MD_DESCRIPTION: 'Markdown',
             MD_EXTENSION: '.md',
             MD_MIME_TYPE: 'text/markdown',
+            // Plain text
             TXT_SUGGESTED_NAME: 'commandpad-export.txt',
             TXT_DESCRIPTION: 'Plain Text',
             TXT_EXTENSION: '.txt',
@@ -1924,13 +2068,195 @@
 
         // State
 
-        let state = {
-            variables: [],
-            blocks: [],
-        };
+        let tabs = [];
+        let activeTabId = null;
 
         function generateId() {
             return Math.random().toString(36).slice(2, 9);
+        }
+
+        function activeTab() {
+            return tabs.find(t => t.id === activeTabId) ?? tabs[0] ?? null;
+        }
+
+        const state = new Proxy({}, {
+            get(_, prop) {
+                const tab = activeTab();
+                return tab ? tab[prop] : undefined;
+            },
+            set(_, prop, value) {
+                const tab = activeTab();
+                if (tab) {
+                    tab[prop] = value;
+                }
+
+                return true;
+            },
+        });
+
+        function createTabObject(label = TabConfig.DEFAULT_LABEL, runbookId = null) {
+            return {
+                id: generateId(),
+                label,
+                runbookId,
+                variables: [],
+                blocks: [],
+            };
+        }
+
+        function createNewTab(label, runbookId) {
+            if (isReadMode()) {
+                return;
+            }
+
+            const tab = createTabObject(label ?? TabConfig.DEFAULT_LABEL, runbookId ?? null);
+            tabs.push(tab);
+            activeTabId = tab.id;
+
+            // Persist immediately if it has a runbook association
+            if (tab.runbookId) {
+                putRunbookContent(tab.id, {
+                    variables: tab.variables,
+                    blocks: tab.blocks
+                }).catch(() => {});
+            }
+
+            saveTabs();
+            renderTabsBar();
+            renderBlocksList();
+            renderVariablesList();
+            updateEmptyState();
+            refreshAllPreviews();
+            return tab;
+        }
+
+        function switchTab(tabId) {
+            if (activeTabId === tabId) {
+                return;
+            }
+
+            activeTabId = tabId;
+            activeRunbookId = activeTab()?.runbookId ?? null;
+
+            saveTabs();
+            renderTabsBar();
+            renderRunbookList();
+            renderBlocksList();
+            renderVariablesList();
+            updateEmptyState();
+            setTimeout(() => {
+                autoResizeAllTextarea();
+                document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(t => syncNoteWidth(t));
+                refreshAllPreviews();
+            }, DEFER_MS);
+        }
+
+        function closeTab(tabId) {
+            if (isReadMode()) {
+                return;
+            }
+
+            const index = tabs.findIndex(t => t.id === tabId);
+            if (index < 0) {
+                return;
+            }
+
+            tabs.splice(index, 1);
+
+            if (tabs.length === 0) {
+                // Always keep at least one tab
+                const newTab = createTabObject();
+                tabs.push(newTab);
+                activeTabId = newTab.id;
+            } else if (activeTabId === tabId) {
+                // Switch to nearest
+                const newIndex = Math.min(index, tabs.length - 1);
+                activeTabId = tabs[newIndex].id;
+            }
+
+            saveTabs();
+            renderTabsBar();
+            renderBlocksList();
+            renderVariablesList();
+            updateEmptyState();
+            refreshAllPreviews();
+        }
+
+        function getTabLabel(tab) {
+            const firstNote = tab.blocks?.find(b => b.type === BlockType.NOTE && b.text?.trim());
+            return firstNote ? firstNote.text.trim().slice(0, 40) : tab.label;
+        }
+
+        function renderTabsBar() {
+            const bar = document.getElementById(ElementId.TABS_BAR);
+            const addBtn = document.getElementById(ElementId.ADD_TAB_BTN);
+
+            // Remove all tab elements
+            bar.querySelectorAll(`.${CssClass.TAB}`).forEach(el => el.remove());
+
+            for (const tab of tabs) {
+                const tabEl = document.createElement('div');
+                tabEl.className = `${CssClass.TAB} ${tab.id === activeTabId ? CssClass.TAB_ACTIVE : ''}`;
+                tabEl.dataset.tabId = tab.id;
+                tabEl.title = getTabLabel(tab);
+
+                const labelSpan = document.createElement('span');
+                labelSpan.style.cssText =
+                    'overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:9rem;';
+                labelSpan.textContent = getTabLabel(tab);
+
+                const closeBtn = document.createElement('button');
+                closeBtn.className = CssClass.TAB_CLOSE;
+                closeBtn.title = 'Close tab';
+                closeBtn.innerHTML = `<svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg>`;
+                closeBtn.addEventListener(EventType.CLICK, e => {
+                    e.stopPropagation();
+                    closeTab(tab.id);
+                });
+
+                tabEl.appendChild(labelSpan);
+                tabEl.appendChild(closeBtn);
+                tabEl.addEventListener(EventType.CLICK, () => switchTab(tab.id));
+
+                bar.insertBefore(tabEl, addBtn);
+            }
+        }
+
+        // Tab persistence
+
+        function saveTabs() {
+            try {
+                localStorage.setItem(TabConfig.STORAGE_KEY, JSON.stringify({
+                    tabs: tabs.map(t => ({
+                        id: t.id,
+                        label: t.label,
+                        runbookId: t.runbookId,
+                        variables: t.variables,
+                        blocks: t.blocks,
+                    })),
+                    activeTabId,
+                }));
+            } catch {}
+        }
+
+        function loadTabs() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(TabConfig.STORAGE_KEY));
+                if (!saved?.tabs?.length) return false;
+
+                tabs = saved.tabs.map(t => ({
+                    id: t.id,
+                    label: t.label ?? TabConfig.DEFAULT_LABEL,
+                    runbookId: t.runbookId ?? null,
+                    variables: t.variables ?? [],
+                    blocks: t.blocks ?? [],
+                }));
+
+                activeTabId = saved.activeTabId ?? tabs[0].id;
+                return true;
+            } catch {
+                return false;
+            }
         }
 
         //  Runbook Library
@@ -2076,23 +2402,45 @@
             await loadRunbookFromLibrary(id);
         }
 
-        async function loadRunbookFromLibrary(id) {
-            const content = await getRunbookContent(id);
+        async function loadRunbookFromLibrary(runbookId) {
+            const content = await getRunbookContent(runbookId);
             if (!content) {
                 return;
             }
 
-            state.variables = content.variables ?? [];
-            state.blocks = content.blocks ?? [];
-            activeRunbookId = id;
+            const runbook = runbookLibrary.find(r => r.id === runbookId);
+            const label = runbook?.label ?? TabConfig.DEFAULT_LABEL;
 
-            saveState();
+            // Check if a tab for this runbook is already open
+            const existingTab = tabs.find(t => t.runbookId === runbookId);
+            if (existingTab) {
+                switchTab(existingTab.id);
+                renderRunbookList();
+                return;
+            }
+
+            // Open in a new tab
+            const tab = createTabObject(label, runbookId);
+            tab.variables = content.variables ?? [];
+            tab.blocks = content.blocks ?? [];
+            tabs.push(tab);
+
+            activeTabId = tab.id;
+            activeRunbookId = runbookId;
+
+            saveTabs();
             saveRunbookLibrary();
+            renderTabsBar();
+            renderRunbookList();
             renderVariablesList();
             renderBlocksList();
             updateEmptyState();
-            renderRunbookList();
-            setTimeout(refreshAllPreviews, DEFER_MS);
+
+            setTimeout(() => {
+                autoResizeAllTextarea();
+                document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(t => syncNoteWidth(t));
+                refreshAllPreviews();
+            }, DEFER_MS);
         }
 
         async function overwriteActiveRunbookInLibrary() {
@@ -2457,28 +2805,33 @@
         //  Persistence
 
         function saveState() {
+            saveTabs();
+            saveUiState();
+
+            // Persist active runbook in IndexedDB
+            const tab = activeTab();
+            if (tab?.runbookId) {
+                putRunbookContent(tab.runbookId, {
+                    variables: tab.variables,
+                    blocks: tab.blocks,
+                }).catch(() => {});
+            }
+        }
+
+        function saveUiState() {
             try {
                 const shell = document.getElementById(ElementId.APP_SHELL);
-                const mainPanel = document.getElementById(ElementId.MAIN_PANEL);
+                const tabsContent = document.getElementById(ElementId.TABS_CONTENT);
 
                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                    ...state,
                     mode: currentMode,
                     sidebar: shell.classList.contains(CssClass.SIDEBAR_COLLAPSED) ?
                         SectionState.COLLAPSED : SectionState.EXPANDED,
                     sidebarPosition: shell.classList.contains(CssClass.SIDEBAR_RIGHT) ?
                         SidebarPosition.RIGHT : SidebarPosition.LEFT,
-                    scrollTop: mainPanel ? mainPanel.scrollTop : 0,
+                    scrollTop: tabsContent ? tabsContent.scrollTop : 0,
                 }));
             } catch {}
-
-            // Persist active runbook in IndexedDB
-            if (activeRunbookId) {
-                putRunbookContent(activeRunbookId, {
-                    variables: state.variables,
-                    blocks: state.blocks,
-                }).catch(() => {});
-            }
         }
 
         let savedScrollTop = 0;
@@ -2491,8 +2844,6 @@
                 }
 
                 savedScrollTop = saved.scrollTop ?? 0;
-                state.variables = saved.variables ?? [];
-                state.blocks = saved.blocks ?? [];
 
                 if (saved.sidebar === SectionState.COLLAPSED) {
                     document.getElementById(ElementId.APP_SHELL).classList.add(CssClass.SIDEBAR_COLLAPSED);
@@ -2990,6 +3341,13 @@
             entry.label = newLabel;
             saveRunbookLibrary();
             renderRunbookList();
+
+            // Update tab label
+            const tab = activeTab();
+            if (tab) {
+                tab.label = newLabel;
+                renderTabsBar();
+            }
         }
 
         function updateBlockText(blockId, text) {
@@ -3859,9 +4217,6 @@
                 return;
             }
 
-            state.variables = [];
-            state.blocks = [];
-
             for (const runbook of runbookLibrary) {
                 await deleteRunbookContent(runbook.id);
             }
@@ -3869,8 +4224,15 @@
             runbookLibrary = [];
             activeRunbookId = null;
             saveRunbookLibrary();
+
+            // Reset to a single empty tab
+            const freshTab = createTabObject();
+            tabs = [freshTab];
+            activeTabId = freshTab.id;
+
+            saveTabs();
             renderRunbookList();
-            saveState();
+            renderTabsBar();
             renderVariablesList();
             renderBlocksList();
             updateEmptyState();
@@ -3923,6 +4285,16 @@
             loadState();
             loadRunbookLibrary();
             loadSidebarSectionState();
+
+            // Load tabs
+            const hasSavedTabs = loadTabs();
+            if (!hasSavedTabs) {
+                const defaultTab = createTabObject();
+                tabs.push(defaultTab);
+                activeTabId = defaultTab.id;
+            }
+
+            renderTabsBar();
             renderVariablesList();
             renderBlocksList();
             renderRunbookList();
@@ -3932,15 +4304,14 @@
 
             setTimeout(() => {
                 autoResizeAllTextarea();
-
                 document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(textarea => syncNoteWidth(textarea));
                 refreshAllPreviews();
 
                 // Restore scroll
                 setTimeout(() => {
-                    const mainPanel = document.getElementById(ElementId.MAIN_PANEL);
-                    if (mainPanel) {
-                        mainPanel.scrollTop = savedScrollTop;
+                    const tabsContent = document.getElementById(ElementId.TABS_CONTENT);
+                    if (tabsContent) {
+                        tabsContent.scrollTop = savedScrollTop;
                     }
 
                     requestAnimationFrame(() => {
@@ -3954,9 +4325,9 @@
 
         let scrollSaveTimer = null;
 
-        document.getElementById(ElementId.MAIN_PANEL).addEventListener(EventType.SCROLL, () => {
+        document.getElementById(ElementId.TABS_CONTENT).addEventListener(EventType.SCROLL, () => {
             clearTimeout(scrollSaveTimer);
-            scrollSaveTimer = setTimeout(saveState, SAVE_TIMEOUT_MS);
+            scrollSaveTimer = setTimeout(saveUiState, SAVE_TIMEOUT_MS);
         });
 
         // Click handlers
@@ -4044,6 +4415,11 @@
                 if (selectedBlockIds.size > 0) {
                     duplicateBlock([...selectedBlockIds][0]);
                 }
+
+            } else if (key === Key.N) {
+                e.preventDefault();
+                removeCtrlHeldClass();
+                createNewTab();
 
             } else if (e.shiftKey && key === Key.SHIFT_S) {
                 e.preventDefault();
