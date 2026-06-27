@@ -2248,6 +2248,12 @@
                 tabEl.appendChild(labelSpan);
                 tabEl.appendChild(closeBtn);
                 tabEl.addEventListener(EventType.CLICK, () => switchTab(tab.id));
+                tabEl.addEventListener(EventType.MOUSE_UP, e => {
+                    if (e.button === 1) {
+                        e.preventDefault();
+                        closeTab(tab.id);
+                    }
+                });
 
                 bar.insertBefore(tabEl, addBtn);
             }
