@@ -3470,7 +3470,8 @@
             const allBlockElements = document.querySelectorAll(Selector.BLOCK_ITEM);
             const lastBlockElement = allBlockElements[allBlockElements.length - 1];
             if (lastBlockElement) {
-                const textarea = lastBlockElement.querySelector(Selector.COMMAND_TEXTAREA);
+                const textarea = lastBlockElement.querySelector(Selector.COMMAND_TEXTAREA) ??
+                    lastBlockElement.querySelector(Selector.NOTE_TEXTAREA);
                 if (textarea) {
                     textarea.focus();
                 }
