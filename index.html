@@ -3240,9 +3240,13 @@
 
         //  Variables
 
-        function addVariable() {
+        async function addVariable() {
             if (isReadMode()) {
                 return;
+            }
+
+            if (tabs.length === 0) {
+                await createNewTab();
             }
 
             const newVariable = {
