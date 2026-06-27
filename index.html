@@ -2551,17 +2551,31 @@
                 existingEntry.label = label;
                 existingEntry.filename = filename || '';
 
-                const existingEntryId = existingEntry.id
+                const existingEntryId = existingEntry.id;
                 await putRunbookContent(existingEntryId, content);
                 saveRunbookLibrary();
 
-                // If the overwritten runbook is currently active, reload it into the workspace
-                if (existingEntryId === activeRunbookId) {
-                    await loadRunbookFromLibrary(existingEntryId);
-                } else {
-                    renderRunbookList();
+                // Apply the new content directly to the in-memory tab
+                const openTab = tabs.find(t => t.runbookId === existingEntryId);
+                if (openTab) {
+                    openTab.variables = content.variables ?? [];
+                    openTab.blocks = content.blocks ?? [];
+
+                    if (existingEntryId === activeRunbookId) {
+                        saveTabs();
+                        renderVariablesList();
+                        renderBlocksList();
+                        updateEmptyState();
+                        setTimeout(() => {
+                            autoResizeAllTextarea();
+                            document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(t => syncNoteWidth(
+                                t));
+                            refreshAllPreviews();
+                        }, DEFER_MS);
+                    }
                 }
 
+                renderRunbookList();
                 return;
             }
 
