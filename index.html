@@ -2104,29 +2104,49 @@
             };
         }
 
-        function createNewTab(label, runbookId) {
+        async function createNewTab(label, runbookId) {
             if (isReadMode()) {
                 return;
             }
 
-            const tab = createTabObject(label ?? DEFAULT_TAB_LABEL, runbookId ?? null);
+            // Switch to an already already open runbook
+            if (runbookId) {
+                const existingTab = tabs.find(t => t.runbookId === runbookId);
+                if (existingTab) {
+                    switchTab(existingTab.id);
+                    return;
+                }
+            }
+
+            const resolvedLabel = label ?? DEFAULT_TAB_LABEL;
+            const tab = createTabObject(resolvedLabel, runbookId ?? null);
             tabs.push(tab);
             activeTabId = tab.id;
 
-            // Persist immediately if it has a runbook association
-            if (tab.runbookId) {
-                putRunbookContent(tab.id, {
-                    variables: tab.variables,
-                    blocks: tab.blocks
-                }).catch(() => {});
+            // Register as a library entry so it appears in the sidebar
+            if (!runbookId) {
+                const newRunbookId = generateId();
+                tab.runbookId = newRunbookId;
+                runbookLibrary.push({
+                    id: newRunbookId,
+                    label: resolvedLabel,
+                    filename: ''
+                });
+                runbookLibrary.sort((a, b) => a.label.localeCompare(b.label));
+                await putRunbookContent(newRunbookId, {
+                    variables: [],
+                    blocks: []
+                });
+                activeRunbookId = newRunbookId;
+                saveRunbookLibrary();
             }
 
             saveTabs();
             renderTabsBar();
+            renderRunbookList();
             renderBlocksList();
             renderVariablesList();
             updateEmptyState();
-            refreshAllPreviews();
             return tab;
         }
 
