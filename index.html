@@ -2167,6 +2167,81 @@
         const debouncedRenderRunbookList = debounce(() => renderRunbookList(), DEBOUNCE_SEARCH_MS);
         const debouncedRenderVariablesList = debounce(() => renderVariablesList(), DEBOUNCE_SEARCH_MS);
 
+        // Shared handle-based drag-to-reorder
+        const dragState = {};
+
+        function makeRowReorderable(row, config) {
+            const {
+                id,
+                handle,
+                highlightTarget,
+                stateKey,
+                getItems,
+                onReorder
+            } = config;
+
+            handle.addEventListener(EventType.MOUSE_DOWN, () => {
+                row.draggable = true;
+            });
+            handle.addEventListener(EventType.MOUSE_UP, () => {
+                setTimeout(() => {
+                    row.draggable = false;
+                }, DRAG_TIMEOUT_MS);
+            });
+
+            row.addEventListener(EventType.DRAG_START, event => {
+                dragState[stateKey] = id;
+                event.dataTransfer.effectAllowed = DragEffect.MOVE;
+                row.classList.add(CssClass.DRAGGING);
+            });
+
+            row.addEventListener(EventType.DRAG_END, () => {
+                dragState[stateKey] = null;
+                row.draggable = false;
+                row.classList.remove(CssClass.DRAGGING);
+                highlightTarget.classList.remove(CssClass.DRAG_OVER);
+            });
+
+            row.addEventListener(EventType.DRAG_OVER, event => {
+                if (!dragState[stateKey] || dragState[stateKey] === id) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.dataTransfer.dropEffect = DragEffect.MOVE;
+                highlightTarget.classList.add(CssClass.DRAG_OVER);
+            });
+
+            row.addEventListener(EventType.DRAG_LEAVE, event => {
+                if (!row.contains(event.relatedTarget)) {
+                    highlightTarget.classList.remove(CssClass.DRAG_OVER);
+                }
+            });
+
+            row.addEventListener(EventType.DROP, event => {
+                event.preventDefault();
+                highlightTarget.classList.remove(CssClass.DRAG_OVER);
+
+                const sourceId = dragState[stateKey];
+                if (isReadMode() || !sourceId || sourceId === id) {
+                    return;
+                }
+
+                const items = getItems();
+                const sourceIndex = items.findIndex(item => item.id === sourceId);
+                const targetIndex = items.findIndex(item => item.id === id);
+                if (sourceIndex < 0 || targetIndex < 0) {
+                    return;
+                }
+
+                const [removed] = items.splice(sourceIndex, 1);
+                items.splice(targetIndex, 0, removed);
+
+                dragState[stateKey] = null;
+                onReorder(items);
+            });
+        }
+
         function activeTab() {
             return tabs.find(t => t.id === activeTabId) ?? tabs[0] ?? null;
         }
@@ -2889,71 +2964,21 @@
                 </button>
             `;
 
-                const handle = row.querySelector(Selector.RUNBOOK_DRAG_HANDLE);
-                const itemButton = row.querySelector(Selector.RUNBOOK_ITEM_BTN);
-
-                handle.addEventListener(EventType.MOUSE_DOWN, () => {
-                    row.draggable = true;
-                });
-                handle.addEventListener(EventType.MOUSE_UP, () => {
-                    setTimeout(() => {
-                        row.draggable = false;
-                    }, DRAG_TIMEOUT_MS);
-                });
-
-                row.addEventListener(EventType.DRAG_START, event => {
-                    dragSourceRunbookId = runbook.id;
-                    event.dataTransfer.effectAllowed = DragEffect.MOVE;
-                    row.classList.add(CssClass.DRAGGING);
-                });
-
-                row.addEventListener(EventType.DRAG_END, () => {
-                    row.draggable = false;
-                    row.classList.remove(CssClass.DRAGGING);
-                });
-
-                row.addEventListener(EventType.DRAG_OVER, event => {
-                    event.preventDefault();
-                    if (runbook.id !== dragSourceRunbookId) {
-                        itemButton.classList.add(CssClass.DRAG_OVER);
+                makeRowReorderable(row, {
+                    id: runbook.id,
+                    handle: row.querySelector(Selector.RUNBOOK_DRAG_HANDLE),
+                    highlightTarget: row.querySelector(Selector.RUNBOOK_ITEM_BTN),
+                    stateKey: 'runbook',
+                    getItems: () => runbookLibrary,
+                    onReorder: () => {
+                        saveRunbookLibrary();
+                        renderRunbookList();
                     }
-                });
-
-                row.addEventListener(EventType.DRAG_LEAVE, () => {
-                    itemButton.classList.remove(CssClass.DRAG_OVER);
-                });
-
-                row.addEventListener(EventType.DROP, event => {
-                    event.preventDefault();
-                    itemButton.classList.remove(CssClass.DRAG_OVER);
-                    if (isReadMode() || !dragSourceRunbookId) {
-                        return;
-                    }
-
-                    const targetId = runbook.id;
-                    if (dragSourceRunbookId === targetId) {
-                        return;
-                    }
-
-                    const sourceIndex = runbookLibrary.findIndex(item => item.id === dragSourceRunbookId);
-                    const targetIndex = runbookLibrary.findIndex(item => item.id === targetId);
-                    if (sourceIndex < 0 || targetIndex < 0) {
-                        return;
-                    }
-
-                    const [removed] = runbookLibrary.splice(sourceIndex, 1);
-                    runbookLibrary.splice(targetIndex, 0, removed);
-
-                    dragSourceRunbookId = null;
-                    saveRunbookLibrary();
-                    renderRunbookList();
                 });
 
                 container.appendChild(row);
             }
         }
-
-        let dragSourceRunbookId = null;
 
         //  Sidebar section collapse
 
@@ -3416,60 +3441,16 @@
               </svg>
             </button>
           `;
-                // Drag-and-drop
-                const handle = row.querySelector(Selector.VARIABLE_DRAG_HANDLE);
-
-                handle.addEventListener(EventType.MOUSE_DOWN, () => {
-                    row.draggable = true;
-                });
-
-                handle.addEventListener(EventType.MOUSE_UP, () => {
-                    setTimeout(() => {
-                        row.draggable = false;
-                    }, DRAG_TIMEOUT_MS);
-                });
-
-                row.addEventListener(EventType.DRAG_START, event => {
-                    dragSourceVariableId = row.dataset.variableId;
-                    event.dataTransfer.effectAllowed = DragEffect.MOVE;
-                    row.classList.add(CssClass.DRAGGING);
-                });
-
-                row.addEventListener(EventType.DRAG_OVER, event => {
-                    event.preventDefault();
-                    if (row.dataset.variableId === dragSourceVariableId) {
-                        return;
+                makeRowReorderable(row, {
+                    id: variable.id,
+                    handle: row.querySelector(Selector.VARIABLE_DRAG_HANDLE),
+                    highlightTarget: row.querySelector(Selector.VARIABLE_INPUTS),
+                    stateKey: 'variable',
+                    getItems: () => state.variables,
+                    onReorder: () => {
+                        saveState();
+                        renderVariablesList();
                     }
-
-                    container.querySelectorAll(Selector.VARIABLE_ROW)
-                        .forEach(el => el.querySelector(Selector.VARIABLE_INPUTS)?.classList.remove(CssClass
-                            .DRAG_OVER));
-
-                    row.querySelector(Selector.VARIABLE_INPUTS)?.classList.add(CssClass.DRAG_OVER);
-                });
-
-                row.addEventListener(EventType.DROP, event => {
-                    event.preventDefault();
-                    if (isReadMode()) {
-                        return;
-                    }
-
-                    const targetId = row.dataset.variableId;
-                    if (!dragSourceVariableId || dragSourceVariableId === targetId) {
-                        return;
-                    }
-
-                    const sourceIndex = variables.findIndex(v => v.id === dragSourceVariableId);
-                    const targetIndex = variables.findIndex(v => v.id === targetId);
-                    if (sourceIndex < 0 || targetIndex < 0) {
-                        return;
-                    }
-
-                    const [removed] = variables.splice(sourceIndex, 1);
-                    variables.splice(targetIndex, 0, removed);
-
-                    saveState();
-                    renderVariablesList();
                 });
 
                 container.appendChild(row);
@@ -4157,7 +4138,6 @@
         //  Drag and drop reordering
 
         let dragSourceId = null;
-        let dragSourceVariableId = null;
 
         function setupDragAndDrop() {
             const container = document.getElementById(ElementId.BLOCKS_LIST);
