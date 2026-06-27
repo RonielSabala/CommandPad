@@ -2309,11 +2309,7 @@
             }
 
             saveTabs();
-            renderTabsBar();
-            renderRunbookList();
-            renderBlocksList();
-            renderVariablesList();
-            updateEmptyState();
+            renderWorkspace();
             return tab;
         }
 
@@ -2326,11 +2322,7 @@
             activeRunbookId = activeTab()?.runbookId ?? null;
 
             saveTabs();
-            renderTabsBar();
-            renderRunbookList();
-            renderBlocksList();
-            renderVariablesList();
-            updateEmptyState();
+            renderWorkspace();
             setTimeout(() => {
                 autoResizeAllTextarea();
                 document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(t => syncNoteWidth(t));
@@ -2360,10 +2352,7 @@
             }
 
             saveTabs();
-            renderTabsBar();
-            renderBlocksList();
-            renderVariablesList();
-            updateEmptyState();
+            renderWorkspace();
             refreshAllPreviews();
         }
 
@@ -2374,6 +2363,16 @@
             }
 
             return fallback || RunbookConfig.DEFAULT_LABEL;
+        }
+
+        // Re-render every workspace surface
+
+        function renderWorkspace() {
+            renderTabsBar();
+            renderRunbookList();
+            renderVariablesList();
+            renderBlocksList();
+            updateEmptyState();
         }
 
         function renderTabsBar() {
@@ -2737,11 +2736,7 @@
 
             saveTabs();
             saveRunbookLibrary();
-            renderTabsBar();
-            renderRunbookList();
-            renderVariablesList();
-            renderBlocksList();
-            updateEmptyState();
+            renderWorkspace();
 
             setTimeout(() => {
                 autoResizeAllTextarea();
@@ -2792,11 +2787,6 @@
                     activeTabId = tabs[tabIdx].id;
                     activeRunbookId = activeTab()?.runbookId ?? null;
                 }
-
-                renderTabsBar();
-                renderBlocksList();
-                renderVariablesList();
-                updateEmptyState();
             }
 
             if (activeRunbookId === id) {
@@ -2805,7 +2795,7 @@
 
             saveTabs();
             saveRunbookLibrary();
-            renderRunbookList();
+            renderWorkspace();
         }
 
         function setRunbookFocus(id) {
@@ -4488,12 +4478,7 @@
             saveTabs();
             saveRunbookLibrary();
 
-            renderTabsBar();
-            renderRunbookList();
-            renderVariablesList();
-            renderBlocksList();
-
-            updateEmptyState();
+            renderWorkspace();
         }
 
         function toggleAllCommandEditors() {
@@ -4544,11 +4529,7 @@
             loadRunbookLibrary();
             loadSidebarSectionState();
             await loadTabs()
-            renderTabsBar();
-            renderVariablesList();
-            renderBlocksList();
-            renderRunbookList();
-            updateEmptyState();
+            renderWorkspace();
             setupLassoSelection();
             setupGlobalDragCleanup();
 
