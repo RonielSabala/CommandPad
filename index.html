@@ -2509,7 +2509,9 @@
                     })),
                     activeTabId,
                 }));
-            } catch {}
+            } catch (error) {
+                console.warn('Failed to save tabs:', error);
+            }
         }
 
         async function loadTabs() {
@@ -2558,7 +2560,9 @@
                     tabs[0].id;
 
                 activeRunbookId = activeTab()?.runbookId ?? null;
-            } catch {}
+            } catch (error) {
+                console.warn('Failed to load tabs:', error);
+            }
         }
 
         //  Runbook Library
@@ -2639,7 +2643,9 @@
                     items: runbookLibrary,
                     activeId: activeRunbookId,
                 }));
-            } catch {}
+            } catch (error) {
+                console.warn('Failed to save runbook library:', error);
+            }
         }
 
         function loadRunbookLibrary() {
@@ -2651,7 +2657,9 @@
 
                 runbookLibrary = saved.items ?? [];
                 activeRunbookId = saved.activeId ?? null;
-            } catch {}
+            } catch (error) {
+                console.warn('Failed to load runbook library:', error);
+            }
         }
 
         async function addRunbookToLibrary(content, filename) {
@@ -3001,7 +3009,9 @@
                     variables: variablesSection?.classList.contains(CssClass.COLLAPSED) ?
                         SectionState.COLLAPSED : SectionState.EXPANDED,
                 }));
-            } catch {}
+            } catch (error) {
+                console.warn('Failed to save sidebar section state:', error);
+            }
         }
 
         function loadSidebarSectionState() {
@@ -3017,7 +3027,9 @@
                 if (saved.variables === SectionState.COLLAPSED) {
                     document.getElementById(ElementId.VARIABLES_SECTION)?.classList.add(CssClass.COLLAPSED);
                 }
-            } catch {}
+            } catch (error) {
+                console.warn('Failed to load sidebar section state:', error);
+            }
         }
 
         // App mode
@@ -3086,7 +3098,7 @@
                 putRunbookContent(tab.runbookId, {
                     variables: tab.variables,
                     blocks: tab.blocks,
-                }).catch(() => {});
+                }).catch(error => console.warn('Failed to persist runbook content:', error));
             }
         }
 
@@ -3103,7 +3115,9 @@
                         SidebarPosition.RIGHT : SidebarPosition.LEFT,
                     scrollTop: tabsContent ? tabsContent.scrollTop : 0,
                 }));
-            } catch {}
+            } catch (error) {
+                console.warn('Failed to save UI state:', error);
+            }
         }
 
         let savedScrollTop = 0;
@@ -3136,7 +3150,9 @@
                 if (saved.mode) {
                     setAppMode(saved.mode);
                 }
-            } catch {}
+            } catch (error) {
+                console.warn('Failed to load UI state:', error);
+            }
         }
 
         //  Variable resolution
