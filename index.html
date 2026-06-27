@@ -1756,10 +1756,7 @@
             COLLAPSED: 'collapsed',
         });
 
-        const TabConfig = Object.freeze({
-            DEFAULT_LABEL: 'Untitled',
-            STORAGE_KEY: 'commandpad_tabs_v1',
-        });
+        const DEFAULT_TAB_LABEL = 'Untitled';
 
         const RunbookConfig = Object.freeze({
             DB_NAME: 'commandpad_runbooks_db',
@@ -2097,7 +2094,7 @@
             },
         });
 
-        function createTabObject(label = TabConfig.DEFAULT_LABEL, runbookId = null) {
+        function createTabObject(label = DEFAULT_TAB_LABEL, runbookId = null) {
             return {
                 id: generateId(),
                 label,
@@ -2112,7 +2109,7 @@
                 return;
             }
 
-            const tab = createTabObject(label ?? TabConfig.DEFAULT_LABEL, runbookId ?? null);
+            const tab = createTabObject(label ?? DEFAULT_TAB_LABEL, runbookId ?? null);
             tabs.push(tab);
             activeTabId = tab.id;
 
@@ -2235,13 +2232,15 @@
 
         function saveTabs() {
             try {
-                localStorage.setItem(TabConfig.STORAGE_KEY, JSON.stringify({
+                const existing = JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? {};
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    ...existing,
                     tabs: tabs.map(t => ({
                         id: t.id,
                         label: t.label,
                         runbookId: t.runbookId,
-                        variables: t.variables,
-                        blocks: t.blocks,
+                        variables: t.variables ?? [],
+                        blocks: t.blocks ?? [],
                     })),
                     activeTabId,
                 }));
@@ -2250,12 +2249,12 @@
 
         function loadTabs() {
             try {
-                const saved = JSON.parse(localStorage.getItem(TabConfig.STORAGE_KEY));
+                const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
                 if (!saved?.tabs?.length) return false;
 
                 tabs = saved.tabs.map(t => ({
                     id: t.id,
-                    label: t.label ?? TabConfig.DEFAULT_LABEL,
+                    label: t.label ?? DEFAULT_TAB_LABEL,
                     runbookId: t.runbookId ?? null,
                     variables: t.variables ?? [],
                     blocks: t.blocks ?? [],
@@ -2409,7 +2408,7 @@
             }
 
             const runbook = runbookLibrary.find(r => r.id === runbookId);
-            const label = runbook?.label ?? TabConfig.DEFAULT_LABEL;
+            const label = runbook?.label ?? DEFAULT_TAB_LABEL;
 
             // Check if a tab for this runbook is already open
             const existingTab = tabs.find(t => t.runbookId === runbookId);
