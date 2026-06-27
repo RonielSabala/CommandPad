@@ -51,6 +51,7 @@
             --space-8: 1rem;
             --space-10: 1.25rem;
             --space-12: 1.5rem;
+            --space-14: 1.75rem;
             --space-16: 2rem;
             --space-20: 2.5rem;
 
@@ -259,7 +260,7 @@
             font-size: var(--text-md);
             font-family: var(--font-mono);
             color: var(--color-text-muted);
-            padding: var(--space-2) var(--space-12);
+            padding: var(--space-2) var(--space-14);
         }
 
         .sidebar-section-chevron {
@@ -345,9 +346,9 @@
         }
 
         .sidebar-section-footer {
-            padding: var(--space-4);
+            padding-top: var(--space-5);
             border-top: var(--space-1) dashed var(--color-border);
-            margin-left: var(--space-12);
+            margin-left: var(--space-16);
             margin-right: var(--space-16);
         }
 
@@ -1529,6 +1530,10 @@
 
         body.read-mode .sidebar-search-wrapper {
             padding: 0 var(--space-2);
+        }
+
+        body.read-mode .sidebar-section-empty-msg {
+            padding: 0;
         }
 
         /* Note links become clickable */
