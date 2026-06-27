@@ -324,6 +324,7 @@
             position: relative;
             display: flex;
             align-items: center;
+            padding: 0 var(--space-16);
         }
 
         .sidebar-search-wrapper .sidebar-search-input {
@@ -332,7 +333,7 @@
 
         .sidebar-search-icon {
             position: absolute;
-            right: var(--space-4);
+            right: var(--space-6);
             width: var(--icon-md);
             height: var(--icon-md);
             stroke: var(--color-text-muted);
@@ -1524,6 +1525,10 @@
         body.read-mode .runbook-row,
         body.read-mode .variable-row {
             grid-template-columns: 1fr;
+        }
+
+        body.read-mode .sidebar-search-wrapper {
+            padding: 0 var(--space-2);
         }
 
         /* Note links become clickable */
