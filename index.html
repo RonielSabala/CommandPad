@@ -3408,9 +3408,13 @@
 
         //  Blocks
 
-        function addBlock(blockType) {
+        async function addBlock(blockType) {
             if (isReadMode()) {
                 return;
+            }
+
+            if (tabs.length === 0) {
+                await createNewTab();
             }
 
             let newBlock;
