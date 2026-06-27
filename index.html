@@ -2185,9 +2185,13 @@
             refreshAllPreviews();
         }
 
-        function getTabLabel(tab) {
-            const firstNote = tab.blocks?.find(b => b.type === BlockType.NOTE && b.text?.trim());
-            return firstNote ? firstNote.text.trim().slice(0, 40) : tab.label;
+        function getRunbookLabel(blocks, fallback) {
+            const firstBlock = blocks?.[0];
+            if (firstBlock?.type === BlockType.NOTE && firstBlock.text?.trim()) {
+                return firstBlock.text.trim().slice(0, 60);
+            }
+
+            return fallback || RunbookConfig.DEFAULT_LABEL;
         }
 
         function renderTabsBar() {
@@ -2198,15 +2202,17 @@
             bar.querySelectorAll(`.${CssClass.TAB}`).forEach(el => el.remove());
 
             for (const tab of tabs) {
+                const tabLabel = getRunbookLabel(tab.blocks);
+
                 const tabEl = document.createElement('div');
                 tabEl.className = `${CssClass.TAB} ${tab.id === activeTabId ? CssClass.TAB_ACTIVE : ''}`;
                 tabEl.dataset.tabId = tab.id;
-                tabEl.title = getTabLabel(tab);
+                tabEl.title = tabLabel;
 
                 const labelSpan = document.createElement('span');
                 labelSpan.style.cssText =
                     'overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:9rem;';
-                labelSpan.textContent = getTabLabel(tab);
+                labelSpan.textContent = tabLabel;
 
                 const closeBtn = document.createElement('button');
                 closeBtn.className = CssClass.TAB_CLOSE;
@@ -2334,15 +2340,6 @@
         let activeRunbookId = null;
         let focusedRunbookId = null;
 
-        function deriveRunbookLabel(runbookContent, fallback) {
-            const firstBlock = runbookContent.blocks?.[0];
-            if (firstBlock && firstBlock.type === BlockType.NOTE && firstBlock.text?.trim()) {
-                return firstBlock.text.trim().slice(0, 60);
-            }
-
-            return fallback;
-        }
-
         function saveRunbookLibrary() {
             try {
                 localStorage.setItem(RunbookConfig.LIBRARY_STORAGE_KEY, JSON.stringify({
@@ -2365,7 +2362,7 @@
         }
 
         async function addRunbookToLibrary(content, filename) {
-            const label = deriveRunbookLabel(content, filename || RunbookConfig.DEFAULT_LABEL);
+            const label = getRunbookLabel(content.blocks, filename || RunbookConfig.DEFAULT_LABEL);
 
             const existingEntry = runbookLibrary.find(item => item.label === label || item.filename === filename);
             if (existingEntry) {
@@ -2456,11 +2453,11 @@
                 return;
             }
 
+            entry.label = getRunbookLabel(state.blocks, entry.label);
             const content = {
                 variables: state.variables,
                 blocks: state.blocks
             };
-            entry.label = deriveRunbookLabel(content, entry.label);
 
             await putRunbookContent(activeRunbookId, content);
             saveRunbookLibrary();
@@ -3331,12 +3328,7 @@
                 return;
             }
 
-            const newLabel = deriveRunbookLabel({
-                    blocks: state.blocks
-                },
-                entry.filename || RunbookConfig.DEFAULT_LABEL
-            );
-
+            const newLabel = getRunbookLabel(state.blocks, entry.filename || RunbookConfig.DEFAULT_LABEL);
             if (newLabel === entry.label) {
                 return;
             }
