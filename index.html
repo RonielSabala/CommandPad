@@ -1639,7 +1639,7 @@
                     <div class="sidebar-search-wrapper">
                         <input id="runbook-search-input" class="sidebar-search-input" type="text"
                             placeholder="Search runbooks…" spellcheck="false" autocomplete="off"
-                            oninput="runbookSearchQuery = this.value; renderRunbookList()" />
+                            oninput="runbookSearchQuery = this.value; debouncedRenderRunbookList()" />
                         <svg class="sidebar-search-icon" viewBox="0 0 16 16">
                             <circle cx="6.5" cy="6.5" r="4" />
                             <line x1="10" y1="10" x2="14" y2="14" />
@@ -1670,7 +1670,7 @@
                     <div class="sidebar-search-wrapper">
                         <input id="variable-search-input" class="sidebar-search-input" type="text"
                             placeholder="Search variables…" spellcheck="false" autocomplete="off"
-                            oninput="variableSearchQuery = this.value; renderVariablesList()" />
+                            oninput="variableSearchQuery = this.value; debouncedRenderVariablesList()" />
                         <svg class="sidebar-search-icon" viewBox="0 0 16 16">
                             <circle cx="6.5" cy="6.5" r="4" />
                             <line x1="10" y1="10" x2="14" y2="14" />
@@ -2135,10 +2135,13 @@
 
         // Timeouts
 
-        const DEFER_MS = 0
+        const DEFER_MS = 0;
         const DRAG_TIMEOUT_MS = 50;
-        const SAVE_TIMEOUT_MS = 200;
         const COPY_FEEDBACK_TIMEOUT_MS = 1000;
+        const DEBOUNCE_SEARCH_MS = 100;
+        const DEBOUNCE_SAVE_MS = 150;
+        const DEBOUNCE_PREVIEW_MS = 100;
+        const DEBOUNCE_LABEL_SYNC_MS = 100;
 
         // State
 
@@ -2149,6 +2152,20 @@
         function generateId() {
             return Math.random().toString(36).slice(2, 9);
         }
+
+        function debounce(fn, ms) {
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => fn(...args), ms);
+            };
+        }
+
+        const debouncedSaveState = debounce(() => saveState(), DEBOUNCE_SAVE_MS);
+        const debouncedRefreshAllPreviews = debounce(() => refreshAllPreviews(), DEBOUNCE_PREVIEW_MS);
+        const debouncedSyncActiveRunbookLabel = debounce(() => syncActiveRunbookLabel(), DEBOUNCE_LABEL_SYNC_MS);
+        const debouncedRenderRunbookList = debounce(() => renderRunbookList(), DEBOUNCE_SEARCH_MS);
+        const debouncedRenderVariablesList = debounce(() => renderVariablesList(), DEBOUNCE_SEARCH_MS);
 
         function activeTab() {
             return tabs.find(t => t.id === activeTabId) ?? tabs[0] ?? null;
@@ -3329,8 +3346,8 @@
             }
 
             variable[field] = value;
-            saveState();
-            refreshAllPreviews();
+            debouncedSaveState();
+            debouncedRefreshAllPreviews();
         }
 
         function renderVariablesList() {
@@ -3613,7 +3630,7 @@
             }
 
             block.text = text;
-            saveState();
+            debouncedSaveState();
 
             if (block.type === BlockType.COMMAND) {
                 refreshBlockPreview(blockId, getVariableMap());
@@ -3623,7 +3640,7 @@
 
             // Update runbook label
             if (blockId === state.blocks[0]?.id) {
-                syncActiveRunbookLabel();
+                debouncedSyncActiveRunbookLabel();
             }
         }
 
@@ -3775,9 +3792,10 @@
             const blocks = state.blocks ?? [];
             const container = document.getElementById(ElementId.BLOCKS_LIST);
             container.innerHTML = '';
+            const variableMap = getVariableMap();
 
             for (const block of blocks) {
-                const blockElement = buildBlockElement(block);
+                const blockElement = buildBlockElement(block, variableMap);
                 container.appendChild(blockElement);
             }
 
@@ -3785,13 +3803,13 @@
             setupDragAndDrop();
         }
 
-        function buildBlockElement(block) {
+        function buildBlockElement(block, variableMap) {
             const wrapper = document.createElement('div');
             wrapper.className = CssClass.BLOCK_ITEM;
             wrapper.dataset.blockId = block.id;
 
             if (block.type === BlockType.COMMAND) {
-                wrapper.innerHTML = buildCommandBlockHTML(block);
+                wrapper.innerHTML = buildCommandBlockHTML(block, variableMap);
             } else if (block.type === BlockType.NOTE) {
                 wrapper.innerHTML = buildNoteBlockHTML(block);
             } else if (block.type === BlockType.DIVIDER) {
@@ -3873,8 +3891,7 @@
             return wrapper;
         }
 
-        function buildCommandBlockHTML(block) {
-            const variableMap = getVariableMap();
+        function buildCommandBlockHTML(block, variableMap = getVariableMap()) {
             const previewHTML = buildPreviewHTML(block.text, variableMap);
             const isUnresolved = hasUnresolvedTokens(block.text, variableMap);
             const escapedText = escapeHtml(block.text);
@@ -4581,7 +4598,7 @@
 
         document.getElementById(ElementId.TABS_CONTENT).addEventListener(EventType.SCROLL, () => {
             clearTimeout(scrollSaveTimer);
-            scrollSaveTimer = setTimeout(saveUiState, SAVE_TIMEOUT_MS);
+            scrollSaveTimer = setTimeout(saveUiState, DEBOUNCE_SAVE_MS);
         });
 
         // Click handlers
