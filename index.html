@@ -3021,10 +3021,18 @@
             btn.title = `Switch to ${isRead ? 'Edit' : 'Read'} mode`;
         }
 
+        function clearUserInteraction() {
+            document.activeElement?.blur();
+            removeCtrlHeldClass();
+            removeAltHeldClass();
+            clearBlockSelection();
+            clearRunbookFocus();
+        }
+
         function toggleAppMode() {
             const readMode = isReadMode();
             if (!readMode) {
-                clearBlockSelection();
+                clearUserInteraction();
             }
 
             setAppMode(readMode ? AppMode.EDIT : AppMode.READ);
@@ -4717,10 +4725,7 @@
             }
 
             if (key === Key.ESCAPE) {
-                document.activeElement?.blur();
-                removeCtrlHeldClass();
-                clearBlockSelection();
-                clearRunbookFocus();
+                clearUserInteraction();
             }
         });
 
