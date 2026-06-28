@@ -663,6 +663,10 @@
             color: var(--accent);
         }
 
+        .variable-inputs.is-secret .variable-value-input {
+            -webkit-text-security: disc;
+        }
+
         /* --- SIDEBAR COLLAPSE --- */
 
         #sidebar-toggle-btn {
@@ -2141,11 +2145,6 @@
             REL: 'noopener,noreferrer',
         });
 
-        const InputType = Object.freeze({
-            PASSWORD: 'password',
-            TEXT: 'text',
-        });
-
         const UI = Object.freeze({
             SECRET_MASK: '••••••',
         });
@@ -3562,7 +3561,7 @@
               />
               <input
                 class="variable-value-input"
-                type="${isSecret ? InputType.PASSWORD : InputType.TEXT}"
+                type="text"
                 placeholder="value"
                 value="${escapeHtml(variable.value)}"
                 spellcheck="false"
