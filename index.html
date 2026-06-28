@@ -33,12 +33,12 @@
             --color-text-primary: #f2f3f5;
             --color-text-secondary: #969aa6;
             --color-text-muted: #5a5d6b;
+            --selection-color: #0338a2;
 
             /* Note text styles */
             --code-color: #ffab3d;
             --code-bg: rgba(255, 171, 61, 0.08);
             --code-border: rgba(255, 171, 61, 0.2);
-            --selection-color: #0338a2;
 
             /* Space scale */
             --space-1: 0.125rem;
@@ -92,6 +92,36 @@
             --border-dashed: var(--space-1) dashed var(--accent);
             --transition-fast: 0.15s;
             --transition-base: 0.2s;
+        }
+
+        /* --- LIGHT THEME --- */
+
+        :root.theme-light {
+            /* Accents & semantic colors */
+            --accent: #2563eb;
+            --accent-dim: rgba(37, 99, 235, 0.1);
+            --accent-text: #1d4ed8;
+            --success: #00a32e;
+            --danger: #dc2626;
+            --danger-dim: rgba(220, 38, 38, 0.1);
+
+            /* Surfaces */
+            --color-bg: #eceef2;
+            --color-surface: #fbfcfe;
+            --color-surface-alt: #eef1f5;
+            --color-border: #d8dce3;
+            --color-border-focus: #2563eb;
+
+            /* Text */
+            --color-text-primary: #1a1d23;
+            --color-text-secondary: #565d6b;
+            --color-text-muted: #8a909c;
+            --selection-color: #bcd5fb;
+
+            /* Note text styles */
+            --code-color: #b4490a;
+            --code-bg: rgba(180, 73, 10, 0.08);
+            --code-border: rgba(180, 73, 10, 0.22);
         }
 
         /* --- BASE --- */
@@ -1573,6 +1603,24 @@
             <div class="header-spacer"></div>
 
             <div class="header-actions">
+                <button id="theme-toggle-btn" class="btn btn-lg btn-flat-icon" onclick="toggleTheme()"
+                    title="Switch to light mode">
+                    <svg id="theme-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="8" cy="8" r="3" />
+                        <line x1="8" y1="1" x2="8" y2="2.5" />
+                        <line x1="8" y1="13.5" x2="8" y2="15" />
+                        <line x1="1" y1="8" x2="2.5" y2="8" />
+                        <line x1="13.5" y1="8" x2="15" y2="8" />
+                        <line x1="3.05" y1="3.05" x2="4.1" y2="4.1" />
+                        <line x1="11.9" y1="11.9" x2="12.95" y2="12.95" />
+                        <line x1="12.95" y1="3.05" x2="11.9" y2="4.1" />
+                        <line x1="4.1" y1="11.9" x2="3.05" y2="12.95" />
+                    </svg>
+                </button>
+
+                <div class="vertical-divider"></div>
+
                 <button id="keybindings-btn" class="btn btn-lg btn-flat-icon" onclick="showKeybindingsModal()"
                     title="App keybindings">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -1585,21 +1633,21 @@
 
                 <div class="vertical-divider"></div>
 
+                <button id="clear-btn" class="btn btn-lg btn-danger" onclick="clearAllData()" title="Clear workspace">
+                    <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" />
+                    </svg>
+                </button>
+
+                <div class="vertical-divider"></div>
+
                 <button id="export-btn" class="btn btn-lg btn-primary" onclick="showExportModal()"
                     title="Export runbook">
                     <svg viewBox="0 0 16 16">
                         <path d="M8 2v8M5 7l3 3 3-3M3 11v2h10v-2" />
                     </svg>
                     Export
-                </button>
-
-                <div class="vertical-divider"></div>
-
-                <button id="clear-btn" class="btn btn-lg btn-danger" onclick="clearAllData()" title="Clear workspace">
-                    <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" />
-                    </svg>
                 </button>
             </div>
         </header>
@@ -1894,6 +1942,7 @@
             SIDEBAR_RIGHT: 'sidebar-right',
             SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
             MODAL_VISIBLE: 'modal-visible',
+            THEME_LIGHT: 'theme-light',
         });
 
         const CssAttribute = Object.freeze({
@@ -2078,6 +2127,18 @@
             CONFIRM_MODAL_CANCEL_BTN: 'confirm-modal-cancel-btn',
             KEYBINDINGS_MODAL: 'keybindings-modal',
             KEYBINDINGS_TABLE: 'keybindings-table',
+            THEME_TOGGLE_BTN: 'theme-toggle-btn',
+            THEME_ICON: 'theme-icon',
+        });
+
+        const Theme = Object.freeze({
+            LIGHT: 'light',
+            DARK: 'dark',
+        });
+
+        const ThemeIcon = Object.freeze({
+            SUN: '<circle cx="8" cy="8" r="3.25"/><line x1="8" y1="1" x2="8" y2="2.5"/><line x1="8" y1="13.5" x2="8" y2="15"/><line x1="1" y1="8" x2="2.5" y2="8"/><line x1="13.5" y1="8" x2="15" y2="8"/><line x1="3.05" y1="3.05" x2="4.1" y2="4.1"/><line x1="11.9" y1="11.9" x2="12.95" y2="12.95"/><line x1="12.95" y1="3.05" x2="11.9" y2="4.1"/><line x1="4.1" y1="11.9" x2="3.05" y2="12.95"/>',
+            MOON: '<path d="M13.5 9.2A5.5 5.5 0 0 1 6.8 2.5a5.5 5.5 0 1 0 6.7 6.7z" fill="currentColor" stroke="none"/>',
         });
 
         const FilePickerConfig = Object.freeze({
@@ -3096,6 +3157,8 @@
                     sidebarPosition: shell.classList.contains(CssClass.SIDEBAR_RIGHT) ?
                         SidebarPosition.RIGHT : SidebarPosition.LEFT,
                     scrollTop: tabsContent ? tabsContent.scrollTop : 0,
+                    theme: document.documentElement.classList.contains(CssClass.THEME_LIGHT) ?
+                        Theme.LIGHT : Theme.DARK,
                 }));
             } catch (error) {
                 console.warn('Failed to save UI state:', error);
@@ -3131,6 +3194,11 @@
 
                 if (saved.mode) {
                     setAppMode(saved.mode);
+                }
+
+                if (saved.theme === Theme.LIGHT) {
+                    document.documentElement.classList.add(CssClass.THEME_LIGHT);
+                    syncThemeIndicator(true);
                 }
             } catch (error) {
                 console.warn('Failed to load UI state:', error);
@@ -4007,6 +4075,25 @@
             }
 
             saveState();
+        }
+
+        function syncThemeIndicator(isLight) {
+            const btn = document.getElementById(ElementId.THEME_TOGGLE_BTN);
+            const icon = document.getElementById(ElementId.THEME_ICON);
+
+            if (btn) {
+                btn.title = `Switch to ${isLight ? Theme.DARK : Theme.LIGHT} mode`;
+            }
+
+            if (icon) {
+                icon.innerHTML = isLight ? ThemeIcon.MOON : ThemeIcon.SUN;
+            }
+        }
+
+        function toggleTheme() {
+            const isLight = document.documentElement.classList.toggle(CssClass.THEME_LIGHT);
+            syncThemeIndicator(isLight);
+            saveUiState();
         }
 
         //  Toggle command editor
