@@ -13,12 +13,14 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
   - [Requirements](#requirements)
   - [Run Locally](#run-locally)
 - [Usage](#usage)
+  - [Tabs](#tabs)
   - [Runbook Library](#runbook-library)
   - [Variables](#variables)
   - [Block Types](#block-types)
   - [Multi-select](#multi-select)
   - [Read Mode](#read-mode)
   - [Export](#export)
+  - [Sidebar](#sidebar)
 - [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Examples](#examples)
 - [Contributing](#contributing)
@@ -28,16 +30,21 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 
 ## Features
 
-- **Runbook library**: import one or many `.json` runbooks into a persistent sidebar list. Click any entry to switch the active workspace instantly — no re-importing.
-- **Variables**: define named variables and reference them in any other variable or command block.
-- **Live resolved preview**: every command block shows the fully resolved command.
-- **Three block types**: commands, notes, and dividers can be mixed freely to build structured, annotated runbooks.
-- **Rich note blocks**: notes support three text styles (heading, subheading, body), auto-detect URLs, and support inline markdown: `**bold**`, `_italic_`, `` `code` ``.
-- **Drag-and-drop reordering**: blocks, variables, and runbook library entries can each be reordered independently via their drag handles.
-- **Multi-block selection**: hold `Ctrl` and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the whole group at once.
-- **Read mode**: locks the entire interface against structural edits, while still allowing variable values to change and runbooks to be switched.
-- **Persistent state**: workspace, sidebar state, app mode, and the runbook library are all saved locally and restored on reload.
-- **Export**: save the active workspace to a `.json` file, with a native OS save dialog on supported browsers.
+- **Tabs**: open multiple runbooks simultaneously in separate tabs.
+- **Runbook library**: import one or many `.json` runbooks into a persistent sidebar list.
+- **Variables**: define named variables and reference them in any command block or other variable value.
+- **Live resolved preview**: every command block shows the fully resolved command in real time as you type.
+- **Three block types**: commands, notes, and dividers can be freely mixed to build structured, annotated runbooks.
+- **Rich note blocks**: notes support three text styles (heading, subheading, body), auto-detect URLs, and inline markdown: `**bold**`, `_italic_`, `` `code` ``.
+- **Secret variables**: mark any variable as secret to mask its value in the sidebar and in command previews.
+- **Sidebar search**: filter both the runbook list and the variable list instantly with the search bars.
+- **Drag-and-drop reordering**: blocks, variables, and runbook library entries can each be reordered via their drag handles.
+- **Multi-block selection**: hold `Ctrl` and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the group at once.
+- **Read mode**: locks editing while still allowing variable values to change and runbooks to be switched.
+- **Light and dark theme**: toggle between dark and light mode. The preference is saved and restored on reload.
+- **Adjustable sidebar**: collapse the sidebar to maximize workspace, or move it to the right side of the screen.
+- **Persistent state**: tabs, workspace content, sidebar state, and app mode are all saved locally and restored on reload.
+- **Export**: save the active workspace as `.json`, `.md`, or `.txt` via a native OS save dialog.
 
 ---
 
@@ -46,7 +53,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 ### Requirements
 
 - Any modern browser (Chrome, Firefox, Edge, Safari).
-- No server required.
+- No server, build step, or installation required.
 
 ---
 
@@ -69,16 +76,33 @@ Use **Live Server: Stop Live Server** to stop.
 
 ## Usage
 
+### Tabs
+
+Each tab holds one open runbook. Tabs appear at the top of the main panel.
+
+- Click **+** to open a new untitled tab.
+- Click a tab to switch to it.
+- **Middle-click** a tab to close it.
+- Click the **x** button that appears on hover to close a tab.
+- **Drag** a tab to reorder it.
+- An accent bar at the bottom of the active tab marks it at a glance.
+- Tabs and their active content are persisted across page reloads.
+
+> If you open a runbook from the sidebar that is already open in another tab, the app switches to the existing tab instead of opening a duplicate.
+
+---
+
 ### Runbook Library
 
-The sidebar's top section holds your imported runbooks.
+The sidebar's **RUNBOOKS** section holds your imported runbooks.
 
-- Click **Import** under the Runbooks section to import one or more `.json` files at once.
-- Click any runbook entry to make it the active workspace. The current variables and blocks are replaced with that runbook's content.
-- Delete a runbook from the library with the button that appears on row hover.
-- Drag the handle on the left of an entry to reorder the library list.
+- Click **Import** to load one or more `.json` files at once.
+- Click any runbook entry to open it. If it's already open in a tab, that tab becomes active.
+- Delete a runbook from the library with the button on row hover.
+- Drag the handle on the left of an entry to reorder the list.
+- Use the **search bar** to filter runbooks by name.
 
-If a runbook's first block is a note, its text is used as the library label, so you can tell runbooks apart at a glance. Otherwise it falls back to the imported filename.
+**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label, so entries are self-describing. Otherwise the imported filename is used as the fallback.
 
 Edits made to the active runbook are automatically saved back to the library entry.
 
@@ -86,22 +110,30 @@ Edits made to the active runbook are automatically saved back to the library ent
 
 ### Variables
 
-Variables are defined in the Variables section of the sidebar. Each variable has a **key** and a **value**.
+Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**.
 
-- Click **New** to create a new one.
-- Keys are case-sensitive.
-- Variables with empty keys are ignored.
-- Delete a variable with the button that appears on row hover.
-- Drag the handle on the left to reorder variables.
-- Variables can reference other variables: `URL=https://{HOST}/api`.
-- Renaming a key propagates the change to all command blocks and other variable values automatically.
-- Hovering over a key or value input shows the full content in a tooltip.
+- Click **New** to create a variable.
+- Reference a variable in any command block using curly braces:
 
-Reference a variable in any command block:
+  ```bash
+  kubectl get pods -n {NAMESPACE}
+  ```
 
-```plain
-{VARIABLE_NAME}
-```
+- Variables can reference other variables:
+
+  ```txt
+  BASE_URL = https://{HOST}/api
+  ```
+
+- **Key rename propagation**: renaming a key automatically updates all references across every command block and other variable value.
+- Keys are case-sensitive. Variables with empty keys are ignored.
+- Hovering over a key or value shows the full content as a tooltip.
+- Drag the handle on the left of a row to reorder variables.
+- Use the **search bar** to filter variables by key or value.
+- Delete a variable with the button on row hover.
+- Click the **eye-slash icon** on a variable row to mark it as **secret**. Secret values are masked in the sidebar and are substituted silently in command previews.
+
+> If no tabs are open and you create a variable, a new untitled tab is created automatically.
 
 ---
 
@@ -109,20 +141,24 @@ Reference a variable in any command block:
 
 Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel.
 
+> If no tabs are open and you add a block, a new untitled tab is created automatically.
+
 ---
 
 #### Command Block
 
 A command block has two parts:
 
-- **Preview** (always visible): the resolved command. Click **Copy** to copy the resolved text to the clipboard.
-- **Editor** (collapsible): the raw template prefixed with `$`. Collapse it with the chevron button in the preview row, or toggle all editors globally from the header. Commands can span multiple lines. If a line exceeds the panel width, the editor scrolls horizontally.
+- **Preview** (always visible): the fully resolved command. Unresolved variable references are highlighted. Click **Copy** to copy the resolved text to the clipboard.
+- **Editor** (collapsible): the raw command template, prefixed with `$`. Use the chevron button to collapse it, or toggle all editors globally with the header button.
+
+Commands can span multiple lines. The editor scrolls horizontally when a line exceeds the panel width.
 
 ---
 
 #### Note Block
 
-A free-form text block. Three styles are selectable on hover:
+A free-form text block. Three text styles are selectable on hover:
 
 | Style        | Appearance       |
 | ------------ | ---------------- |
@@ -130,7 +166,7 @@ A free-form text block. Three styles are selectable on hover:
 | `subheading` | Medium, accented |
 | `body`       | Default prose    |
 
-Supports inline markdown:
+Supported inline markdown:
 
 | Syntax        | Result         |
 | ------------- | -------------- |
@@ -139,30 +175,28 @@ Supports inline markdown:
 | `` `text` ``  | `Code pill`    |
 | `https://...` | Clickable link |
 
-To open a link, hold `Alt` and click it.
+To open a link, hold `Alt` and click it. In read mode, links are directly clickable without holding `Alt`.
 
-Note blocks auto-expand horizontally and vertically as you type.
+Note blocks expand horizontally and vertically as you type.
 
 ---
 
 #### Divider Block
 
-A visual separator line. Stretches to match the width of the widest block. Useful for separating runbook sections.
+A visual separator. Stretches to match the width of the widest block. Useful for separating runbook sections visually.
 
 ---
 
 ### Multi-select
 
-Hold `Ctrl` and click blocks to build a selection. You can also hold `Ctrl` and hold down the mouse button while moving the cursor across blocks (lasso select). Hold `Ctrl` over already-selected blocks and lasso to deselect them.
+Hold `Ctrl` and click blocks to build a selection. You can also hold `Ctrl` and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.
 
 With a selection active:
 
-- **Drag** any selected block's handle to move all selected blocks together, preserving their relative order.
-- **Duplicate** any selected block to duplicate the entire group, inserted after the last selected block.
-- **Delete** any selected block to delete the entire group.
-- Press `Escape` or click anywhere outside block controls to clear the selection.
-
-While `Ctrl` is held, the interface is in selection-only mode.
+- **Drag** any selected block's handle to move all selected blocks together, preserving relative order.
+- **Duplicate** (`Ctrl+D`) any selected block to duplicate the entire group, inserted after the last selected block.
+- **Delete** (`Del`) any selected block to delete the entire group.
+- Press `Escape` or click outside block controls to clear the selection.
 
 ---
 
@@ -172,21 +206,20 @@ Read mode locks editing, not navigation.
 
 Click the **padlock icon** in the header to enter read mode:
 
-- All command editors are collapsed and cannot be expanded.
-- Note and command block text cannot be edited.
-- Block structure, variables and runbooks cannot be changed (no adding, deleting, or reordering).
-- Note style pickers are hidden.
+- All command editors collapse and cannot be expanded.
+- Block and note text cannot be edited.
+- Block structure cannot be changed (no adding, deleting, or reordering).
+- Variable values can still be changed.
+- Runbooks can still be switched.
 - Links in notes are directly clickable.
 
-Click the **pencil icon** to return to edit mode. The mode is saved across page reloads.
+Click the **pencil icon** to return to edit mode. The mode persists across page reloads.
 
 ---
 
 ### Export
 
-Click the **Export** button in the header to open the export format picker.
-
-Three formats are available:
+Click **Export** in the header to open the format picker.
 
 | Format         | Content                                                                            |
 | -------------- | ---------------------------------------------------------------------------------- |
@@ -196,13 +229,24 @@ Three formats are available:
 
 A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.
 
-Press `Escape` or click anywhere outside the modal to cancel.
+Press `Escape` or click outside the modal to cancel.
+
+---
+
+### Sidebar
+
+The sidebar holds the runbook library and variables panel.
+
+- **Collapse / expand**: click the chevron button or press `Ctrl+S`.
+- **Move left / right**: click the layout button or press `Ctrl+Shift+S` to move the sidebar to the other side of the screen.
+
+Both preferences persist across page reloads.
 
 ---
 
 ## Keyboard Shortcuts
 
-For a full list of keyboard shortcuts and their descriptions, click the **keyboard button** in the top-right area of the header.
+The full shortcut list is available in-app via the **keyboard icon** in the header.
 
 ---
 

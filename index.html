@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CommandPad</title>
     <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a0a0c'/><text x='4' y='23' font-family='monospace' font-size='20' font-weight='bold' fill='%2334d399'>$_</text></svg>">
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a0a0c'/><text x='4' y='23' font-family='monospace' font-size='20' font-weight='bold' fill='%2315dd9e'>$_</text></svg>">
     <style>
         :root {
             /* Core config */
@@ -16,30 +16,29 @@
 
             /* Accents & semantic colors */
             --accent: #3b82f6;
-            --accent-dim: rgba(59, 130, 246, 0.12);
+            --accent-dim: rgba(77, 139, 245, 0.12);
             --accent-text: #93c5fd;
-            --success: #34d399;
+            --success: #15dd9e;
             --danger: #f87171;
             --danger-dim: rgba(248, 113, 113, 0.12);
-            --tag-bg: rgba(59, 130, 246, 0.1);
 
             /* Surfaces */
-            --color-bg: #0a0a0c;
-            --color-surface: #111114;
-            --color-surface-alt: #18181d;
-            --color-border: #232329;
-            --color-border-focus: #3b82f6;
+            --color-bg: #0a0b0e;
+            --color-surface: #121318;
+            --color-surface-alt: #1a1c22;
+            --color-border: #282a32;
+            --color-border-focus: #4d8bf5;
 
             /* Text */
-            --color-text-primary: #f1f2f4;
-            --color-text-secondary: #8b8d98;
-            --color-text-muted: #3f4150;
+            --color-text-primary: #f2f3f5;
+            --color-text-secondary: #969aa6;
+            --color-text-muted: #5a5d6b;
+            --selection-color: #0338a2;
 
             /* Note text styles */
-            --code-color: #ff9800;
-            --code-bg: rgba(255, 152, 0, 0.08);
-            --code-border: rgba(255, 152, 0, 0.2);
-            --selection-color: #0338a2;
+            --code-color: #ffab3d;
+            --code-bg: rgba(255, 171, 61, 0.08);
+            --code-border: rgba(255, 171, 61, 0.2);
 
             /* Space scale */
             --space-1: 0.125rem;
@@ -51,7 +50,7 @@
             --space-8: 1rem;
             --space-10: 1.25rem;
             --space-12: 1.5rem;
-            --space-16: 2rem;
+            --space-14: 1.75rem;
             --space-20: 2.5rem;
 
             /* Text scale */
@@ -66,6 +65,7 @@
             --radius-sm: 0.25rem;
             --radius-md: 0.375rem;
             --radius-lg: 0.625rem;
+            --radius-pill: 1rem;
 
             /* Icon scale */
             --icon-sm: 0.75rem;
@@ -77,11 +77,13 @@
             --sidebar-width: 18.75rem;
             --header-height: 3.5rem;
             --scrollbar-size: 0.625rem;
+            --tab-max-width: 12rem;
             --block-min-width: 7.5rem;
             --modal-min-width: 15rem;
             --modal-max-width: 30rem;
 
             /* --- Misc & utilities --- */
+            --white-a10: rgba(255, 255, 255, 0.1);
             --black-a40: rgba(0, 0, 0, 0.4);
             --black-a50: rgba(0, 0, 0, 0.5);
 
@@ -90,6 +92,36 @@
             --border-dashed: var(--space-1) dashed var(--accent);
             --transition-fast: 0.15s;
             --transition-base: 0.2s;
+        }
+
+        /* --- LIGHT THEME --- */
+
+        :root.theme-light {
+            /* Accents & semantic colors */
+            --accent: #2563eb;
+            --accent-dim: rgba(37, 99, 235, 0.1);
+            --accent-text: #1d4ed8;
+            --success: #00a32e;
+            --danger: #dc2626;
+            --danger-dim: rgba(220, 38, 38, 0.1);
+
+            /* Surfaces */
+            --color-bg: #eceef2;
+            --color-surface: #fbfcfe;
+            --color-surface-alt: #eef1f5;
+            --color-border: #d8dce3;
+            --color-border-focus: #2563eb;
+
+            /* Text */
+            --color-text-primary: #1a1d23;
+            --color-text-secondary: #565d6b;
+            --color-text-muted: #8a909c;
+            --selection-color: #bcd5fb;
+
+            /* Note text styles */
+            --code-color: #b4490a;
+            --code-bg: rgba(180, 73, 10, 0.08);
+            --code-border: rgba(180, 73, 10, 0.22);
         }
 
         /* --- BASE --- */
@@ -123,6 +155,7 @@
         /* --- DISABLE USER SELECT --- */
 
         .btn,
+        .tab,
         .no-user-select {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -200,6 +233,12 @@
             letter-spacing: -0.02em;
             color: var(--color-text-primary);
             flex-shrink: 0;
+            cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+
+        #app-name:hover {
+            color: var(--accent-text);
         }
 
         .header-spacer {
@@ -231,9 +270,11 @@
         }
 
         .section-title {
-            font-size: var(--text-sm);
+            font-size: var(--text-xs);
             font-family: var(--font-sans);
-            letter-spacing: 0.05em;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
             color: var(--color-text-muted);
             white-space: nowrap;
         }
@@ -248,15 +289,25 @@
             display: flex;
             align-items: center;
             gap: var(--space-3);
-            padding: var(--space-6) var(--space-6) 0 var(--space-6);
+            padding: var(--space-6);
+            border-bottom: var(--border-standard);
             cursor: pointer;
+            user-select: none;
+        }
+
+        .sidebar-section-header:hover .section-title {
+            color: var(--color-text-secondary);
+        }
+
+        .sidebar-section-header:hover .sidebar-section-chevron {
+            stroke: var(--color-text-secondary);
         }
 
         .sidebar-section-empty-msg {
             font-size: var(--text-md);
             font-family: var(--font-mono);
             color: var(--color-text-muted);
-            padding: var(--space-2) var(--space-12);
+            padding: var(--space-3) var(--space-14);
         }
 
         .sidebar-section-chevron {
@@ -267,8 +318,9 @@
             stroke-width: 2;
             stroke-linecap: round;
             stroke-linejoin: round;
-            transition: transform var(--transition-base);
+            transition: transform var(--transition-base), stroke var(--transition-fast);
             flex-shrink: 0;
+            margin-left: auto;
         }
 
         .sidebar-section.collapsed .sidebar-section-chevron {
@@ -283,7 +335,7 @@
             min-height: 0;
             max-height: 45vh;
             overflow-y: auto;
-            padding: var(--space-6) var(--space-4);
+            padding: var(--space-4) var(--space-4) var(--space-2);
             display: flex;
             flex-direction: column;
             gap: var(--space-3);
@@ -291,26 +343,48 @@
 
         .sidebar-section-list {
             overflow-y: auto;
-            padding: var(--space-2);
             flex: 1;
             min-height: 0;
+            padding: var(--space-2) 0;
+        }
+
+        .sidebar-section-row {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: var(--space-3);
+            align-items: center;
+            margin-bottom: var(--space-2);
+            padding: 0 var(--space-2);
+            position: relative;
+        }
+
+        .sidebar-section-row .drag-handle,
+        .sidebar-section-row .btn-danger {
+            opacity: 0;
+            transition: opacity var(--transition-fast), color var(--transition-fast);
+        }
+
+        .sidebar-section-row:hover .drag-handle,
+        .sidebar-section-row:hover .btn-danger {
+            opacity: 1;
         }
 
         .sidebar-search-input {
             width: 100%;
             font-family: var(--font-mono);
             font-size: var(--text-md);
-            background: var(--color-surface-alt);
+            background: var(--color-bg);
             border: var(--border-standard);
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-pill);
             color: var(--color-text-primary);
-            padding: var(--space-3);
+            padding: var(--space-4) var(--space-14);
             outline: none;
-            transition: border-color var(--transition-fast);
+            transition: border-color var(--transition-fast), background var(--transition-fast);
         }
 
         .sidebar-search-input:focus {
             border-color: var(--color-border-focus);
+            background: var(--color-surface-alt);
         }
 
         .sidebar-search-input::placeholder {
@@ -323,13 +397,9 @@
             align-items: center;
         }
 
-        .sidebar-search-wrapper .sidebar-search-input {
-            padding-right: var(--space-12);
-        }
-
         .sidebar-search-icon {
             position: absolute;
-            right: var(--space-4);
+            left: var(--space-5);
             width: var(--icon-md);
             height: var(--icon-md);
             stroke: var(--color-text-muted);
@@ -341,15 +411,13 @@
         }
 
         .sidebar-section-footer {
-            padding: var(--space-4);
+            margin: 0 var(--space-14);
+            padding: var(--space-5) 0;
             border-top: var(--space-1) dashed var(--color-border);
-            margin-left: var(--space-12);
-            margin-right: var(--space-16);
         }
 
         .sidebar-section-divider {
-            height: var(--space-2);
-            margin: var(--space-4) var(--space-6);
+            height: 1px;
             background: var(--color-border);
         }
 
@@ -468,22 +536,13 @@
 
         /* --- RUNBOOK LIBRARY SECTION --- */
 
-        .runbook-row {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            gap: var(--space-3);
-            align-items: center;
-            margin-bottom: var(--space-3);
-            position: relative;
-        }
-
         .runbook-item-btn {
             display: block;
             width: 100%;
             text-align: left;
-            background: var(--color-surface-alt);
-            border: var(--border-standard);
-            border-radius: var(--radius-sm);
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
             color: var(--color-text-secondary);
             font-family: var(--font-mono);
             font-size: var(--text-md);
@@ -492,18 +551,20 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            transition: color var(--transition-base);
+            transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
         }
 
         .runbook-item-btn:hover {
-            border-color: var(--color-border-focus);
+            background: var(--color-surface-alt);
+            border-color: var(--color-border);
             color: var(--color-text-primary);
         }
 
         .runbook-item-btn.active {
-            background: var(--tag-bg);
+            background: var(--accent-dim);
             border-color: var(--accent);
             color: var(--accent-text);
+            font-weight: 500;
         }
 
         .runbook-item-btn.active.drag-over {
@@ -514,17 +575,6 @@
             outline: var(--space-1) solid var(--accent);
             outline-offset: var(--space-1);
             box-shadow: 0 0 0 var(--space-2) var(--accent-dim);
-        }
-
-        .runbook-drag-handle,
-        .runbook-row .btn-danger {
-            opacity: 0;
-            transition: opacity var(--transition-fast), color var(--transition-fast);
-        }
-
-        .runbook-row:hover .runbook-drag-handle,
-        .runbook-row:hover .btn-danger {
-            opacity: 1;
         }
 
         #runbook-add-btn {
@@ -545,26 +595,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: var(--space-3);
-        }
-
-        .variable-row {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            gap: var(--space-3);
-            align-items: center;
-            margin-bottom: var(--space-3);
-            position: relative;
-        }
-
-        .variable-drag-handle,
-        .variable-row .btn-danger {
-            opacity: 0;
-            transition: opacity var(--transition-fast), color var(--transition-fast);
-        }
-
-        .variable-row:hover .variable-drag-handle,
-        .variable-row:hover .btn-danger {
-            opacity: 1;
         }
 
         #variable-add-btn {
@@ -620,6 +650,29 @@
             pointer-events: none;
         }
 
+        .variable-row {
+            grid-template-columns: auto 1fr auto auto;
+        }
+
+        .sidebar-section-row .variable-secret-btn {
+            opacity: 0;
+            transition: opacity var(--transition-fast), color var(--transition-fast);
+            flex-shrink: 0;
+        }
+
+        .sidebar-section-row:hover .variable-secret-btn,
+        .sidebar-section-row.is-secret .variable-secret-btn {
+            opacity: 1;
+        }
+
+        .variable-secret-btn.is-active {
+            color: var(--accent);
+        }
+
+        .variable-inputs.is-secret .variable-value-input {
+            -webkit-text-security: disc;
+        }
+
         /* --- SIDEBAR COLLAPSE --- */
 
         #sidebar-toggle-btn {
@@ -664,10 +717,177 @@
             border-right: none;
         }
 
-        /* --- MAIN PANEL --- */
+        /* --- TABS --- */
 
         #main-panel {
             grid-area: main;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #tabs-bar {
+            display: flex;
+            align-items: flex-end;
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            overflow-x: auto;
+            flex-shrink: 0;
+            padding: var(--space-4) var(--space-3) 0;
+            scrollbar-width: none;
+            gap: var(--space-1);
+        }
+
+        #tabs-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4) var(--space-3) var(--space-5);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+            background: transparent;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            cursor: pointer;
+            white-space: nowrap;
+            max-width: var(--tab-max-width);
+            flex-shrink: 0;
+            transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+            bottom: -1px;
+        }
+
+        .tab:hover {
+            color: var(--color-text-primary);
+            background: var(--color-surface-alt);
+            border-color: var(--color-border);
+        }
+
+        .tab.tab-active {
+            color: var(--color-text-primary);
+            background: var(--color-bg);
+            border-color: var(--color-border);
+            border-bottom: 1px solid var(--color-bg);
+            z-index: 1;
+        }
+
+        .tab.tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: var(--space-5);
+            right: var(--space-5);
+            height: 1px;
+            background: var(--success);
+            border-radius: var(--radius-pill);
+        }
+
+        .tab.dragging {
+            opacity: 0.2;
+        }
+
+        .tab.drag-over-left::before,
+        .tab.drag-over-right::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            border-left: var(--space-1) dashed var(--accent);
+        }
+
+        .tab.drag-over-left::before {
+            left: -1px;
+        }
+
+        .tab.drag-over-right::before {
+            right: -1px;
+        }
+
+        .tab-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tab-close {
+            display: inline-flex;
+            align-items: flex-start;
+            justify-content: center;
+            width: var(--space-8);
+            height: var(--space-8);
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            flex-shrink: 0;
+            padding: 0;
+            opacity: 0;
+            transition: color var(--transition-fast), background var(--transition-fast), opacity var(--transition-fast);
+        }
+
+        .tab:hover .tab-close,
+        .tab.tab-active .tab-close {
+            opacity: 1;
+        }
+
+        .tab-close:hover {
+            color: var(--color-text-primary);
+            background: var(--white-a10);
+        }
+
+        .tab-close svg {
+            width: var(--icon-sm);
+            height: var(--icon-sm);
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            fill: none;
+            pointer-events: none;
+        }
+
+        #add-tab-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--icon-base);
+            height: var(--icon-base);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-md);
+            color: var(--color-text-muted);
+            cursor: pointer;
+            flex-shrink: 0;
+            align-self: center;
+            margin-left: var(--space-3);
+            margin-bottom: var(--space-2);
+            transition: color var(--transition-fast), background var(--transition-fast);
+        }
+
+        #add-tab-btn:hover {
+            color: var(--color-text-primary);
+            background: var(--color-surface-alt);
+        }
+
+        #add-tab-btn svg {
+            width: var(--icon-md);
+            height: var(--icon-md);
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            fill: none;
+        }
+
+        #tabs-content {
+            flex: 1;
             overflow-y: auto;
             padding-top: var(--space-4);
             padding-right: var(--space-20);
@@ -684,6 +904,8 @@
             max-width: 100%;
             gap: var(--space-3);
         }
+
+        /* Empty state */
 
         #empty-state {
             margin: auto;
@@ -897,6 +1119,11 @@
             color: var(--success);
         }
 
+        .token-secret {
+            color: var(--success);
+            letter-spacing: 0.1em;
+        }
+
         .token-unresolved {
             color: var(--danger);
             font-weight: 600;
@@ -904,6 +1131,24 @@
 
         .token-literal {
             color: var(--color-text-secondary);
+        }
+
+        /* --- SYNCING PULSE --- */
+
+        @keyframes sync-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .is-syncing {
+            animation: sync-pulse 0.75s ease-in-out infinite;
         }
 
         .toggle-editor-btn {
@@ -1133,7 +1378,7 @@
         }
 
         .note-style-btn.active {
-            background: var(--tag-bg);
+            background: var(--accent-dim);
             border-color: var(--color-border-focus);
             color: var(--accent-text);
         }
@@ -1256,8 +1501,7 @@
 
         /* Drag handle button */
 
-        .drag-handle,
-        .variable-drag-handle {
+        .drag-handle {
             cursor: grab;
             color: var(--color-text-muted);
             padding: var(--space-2);
@@ -1265,13 +1509,11 @@
             transition: color var(--transition-fast);
         }
 
-        .drag-handle:hover,
-        .variable-drag-handle:hover {
+        .drag-handle:hover {
             color: var(--color-text-primary);
         }
 
-        .drag-handle svg,
-        .variable-drag-handle svg {
+        .drag-handle svg {
             width: var(--icon-md);
             height: var(--icon-md);
             fill: currentColor;
@@ -1313,23 +1555,80 @@
             border-color: var(--color-border-focus);
         }
 
+        /* --- FOOTER --- */
+
+        #app-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-5);
+            border-top: var(--border-standard);
+            flex-shrink: 0;
+        }
+
+        #footer-copyright {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color var(--transition-base);
+        }
+
+        #app-footer:hover #footer-copyright {
+            color: var(--color-text-secondary);
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            flex-shrink: 0;
+        }
+
+        .footer-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--space-10);
+            height: var(--space-10);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-muted);
+            transition: color var(--transition-base), background var(--transition-base);
+        }
+
+        .footer-link:hover {
+            color: var(--accent-text);
+            background: var(--accent-dim);
+        }
+
+        .footer-link svg {
+            width: var(--icon-md);
+            height: var(--icon-md);
+            display: block;
+            fill: currentColor;
+        }
+
         /* --- READ MODE SUPPRESSIONS --- */
 
         body.read-mode #runbook-add-btn,
-        body.read-mode .runbook-drag-handle,
-        body.read-mode .runbook-row .btn-danger {
+        body.read-mode .drag-handle,
+        body.read-mode .sidebar-section-row .btn-danger,
+        body.read-mode .variable-secret-btn {
             display: none !important;
+        }
+
+        body.read-mode #add-tab-btn,
+        body.read-mode .tab-close {
+            visibility: hidden;
         }
 
         body.read-mode #add-block-row,
         body.read-mode #variable-add-btn,
         body.read-mode .sidebar-section-footer {
             display: none;
-        }
-
-        body.read-mode .variable-drag-handle,
-        body.read-mode .variable-row .btn-danger {
-            display: none !important;
         }
 
         /* Hide drag and delete button on blocks */
@@ -1372,8 +1671,7 @@
             pointer-events: none;
         }
 
-        body.read-mode .runbook-row,
-        body.read-mode .variable-row {
+        body.read-mode .sidebar-section-row {
             grid-template-columns: 1fr;
         }
 
@@ -1389,7 +1687,8 @@
     <div id="app-shell">
         <!-- Header -->
         <header id="app-header">
-            <span id="app-name">CommandPad</span>
+            <span id="app-name" role="button" tabindex="0" title="Reload CommandPad" onclick="location.reload()"
+                onkeydown="if (event.key === Key.ENTER) location.reload()">CommandPad</span>
 
             <div class="header-spacer"></div>
 
@@ -1414,6 +1713,24 @@
             <div class="header-spacer"></div>
 
             <div class="header-actions">
+                <button id="theme-toggle-btn" class="btn btn-lg btn-flat-icon" onclick="toggleTheme()"
+                    title="Switch to light mode">
+                    <svg id="theme-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="8" cy="8" r="3" />
+                        <line x1="8" y1="1" x2="8" y2="2.5" />
+                        <line x1="8" y1="13.5" x2="8" y2="15" />
+                        <line x1="1" y1="8" x2="2.5" y2="8" />
+                        <line x1="13.5" y1="8" x2="15" y2="8" />
+                        <line x1="3.05" y1="3.05" x2="4.1" y2="4.1" />
+                        <line x1="11.9" y1="11.9" x2="12.95" y2="12.95" />
+                        <line x1="12.95" y1="3.05" x2="11.9" y2="4.1" />
+                        <line x1="4.1" y1="11.9" x2="3.05" y2="12.95" />
+                    </svg>
+                </button>
+
+                <div class="vertical-divider"></div>
+
                 <button id="keybindings-btn" class="btn btn-lg btn-flat-icon" onclick="showKeybindingsModal()"
                     title="App keybindings">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -1426,21 +1743,21 @@
 
                 <div class="vertical-divider"></div>
 
+                <button id="clear-btn" class="btn btn-lg btn-danger" onclick="clearAllData()" title="Clear workspace">
+                    <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" />
+                    </svg>
+                </button>
+
+                <div class="vertical-divider"></div>
+
                 <button id="export-btn" class="btn btn-lg btn-primary" onclick="showExportModal()"
                     title="Export runbook">
                     <svg viewBox="0 0 16 16">
                         <path d="M8 2v8M5 7l3 3 3-3M3 11v2h10v-2" />
                     </svg>
                     Export
-                </button>
-
-                <div class="vertical-divider"></div>
-
-                <button id="clear-btn" class="btn btn-lg btn-danger" onclick="clearAllData()" title="Clear workspace">
-                    <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" />
-                    </svg>
                 </button>
             </div>
         </header>
@@ -1449,16 +1766,16 @@
         <aside id="app-sidebar">
             <div id="runbook-section" class="sidebar-section">
                 <div class="sidebar-section-header no-user-select" onclick="toggleRunbookSection()">
+                    <p class="section-title">RUNBOOKS</p>
                     <svg class="sidebar-section-chevron" viewBox="0 0 16 16">
                         <polyline points="4,6 8,10 12,6" />
                     </svg>
-                    <p class="section-title">RUNBOOKS</p>
                 </div>
                 <div class="sidebar-section-body">
                     <div class="sidebar-search-wrapper">
                         <input id="runbook-search-input" class="sidebar-search-input" type="text"
                             placeholder="Search runbooks…" spellcheck="false" autocomplete="off"
-                            oninput="runbookSearchQuery = this.value; renderRunbookList()" />
+                            oninput="handleRunbookSearch(this.value)" />
                         <svg class="sidebar-search-icon" viewBox="0 0 16 16">
                             <circle cx="6.5" cy="6.5" r="4" />
                             <line x1="10" y1="10" x2="14" y2="14" />
@@ -1480,16 +1797,16 @@
 
             <div id="variables-section" class="sidebar-section">
                 <div class="sidebar-section-header no-user-select" onclick="toggleVariablesSection()">
+                    <p class="section-title">VARIABLES</p>
                     <svg class="sidebar-section-chevron" viewBox="0 0 16 16">
                         <polyline points="4,6 8,10 12,6" />
                     </svg>
-                    <p class="section-title">VARIABLES</p>
                 </div>
                 <div class="sidebar-section-body">
                     <div class="sidebar-search-wrapper">
                         <input id="variable-search-input" class="sidebar-search-input" type="text"
                             placeholder="Search variables…" spellcheck="false" autocomplete="off"
-                            oninput="variableSearchQuery = this.value; renderVariablesList()" />
+                            oninput="handleVariableSearch(this.value)" />
                         <svg class="sidebar-search-icon" viewBox="0 0 16 16">
                             <circle cx="6.5" cy="6.5" r="4" />
                             <line x1="10" y1="10" x2="14" y2="14" />
@@ -1506,6 +1823,26 @@
                     </div>
                 </div>
             </div>
+
+            <footer id="app-footer" class="no-user-select">
+                <span id="footer-copyright"></span>
+                <div class="footer-links">
+                    <a class="footer-link" href="https://github.com/RonielSabala" target="_blank"
+                        rel="noopener noreferrer" title="GitHub">
+                        <svg viewBox="0 0 24 24" aria-label="GitHub">
+                            <path
+                                d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+                        </svg>
+                    </a>
+                    <a class="footer-link" href="https://www.linkedin.com/in/ronielsabala/" target="_blank"
+                        rel="noopener noreferrer" title="LinkedIn">
+                        <svg viewBox="0 0 24 24" aria-label="LinkedIn">
+                            <path
+                                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" />
+                        </svg>
+                    </a>
+                </div>
+            </footer>
         </aside>
 
         <!-- Hidden import input for adding a runbook to the library -->
@@ -1513,54 +1850,67 @@
 
         <!-- Main panel -->
         <main id="main-panel">
-            <div id="sidebar-btn-group">
-                <button id="sidebar-toggle-btn" class="btn btn-icon" onclick="toggleSidebar()" title="Collapse sidebar">
-                    <svg id="sidebar-chevron" viewBox="0 0 16 16">
-                        <polyline points="10,4 4,8 10,12" />
-                    </svg>
-                </button>
-                <button id="sidebar-position-btn" class="btn btn-icon" onclick="toggleSidebarPosition()"
-                    title="Move sidebar to right">
+            <div id="tabs-bar">
+                <!-- Tabs rendered by JS -->
+                <button id="add-tab-btn" onclick="createNewTab()" title="New tab">
                     <svg viewBox="0 0 16 16">
-                        <rect x="1" y="2" width="14" height="12" rx="1" />
-                        <line x1="11" y1="2" x2="11" y2="14" />
+                        <path d="M8 3v10M3 8h10" />
                     </svg>
                 </button>
             </div>
-            <div id="empty-state" class="no-user-select">
-                <svg viewBox="0 0 40 40">
-                    <rect x="4" y="6" width="32" height="28" rx="3" />
-                    <path d="M10 14l6 6-6 6M18 26h12" />
-                </svg>
-                <p id="empty-state-title">No blocks yet.</p>
-                <p id="empty-state-hint">Add a command or note below.</p>
-            </div>
 
-            <div id="blocks-list"></div>
+            <div id="tabs-content">
+                <div id="sidebar-btn-group">
+                    <button id="sidebar-toggle-btn" class="btn btn-icon" onclick="toggleSidebar()"
+                        title="Collapse sidebar">
+                        <svg id="sidebar-chevron" viewBox="0 0 16 16">
+                            <polyline points="10,4 4,8 10,12" />
+                        </svg>
+                    </button>
+                    <button id="sidebar-position-btn" class="btn btn-icon" onclick="toggleSidebarPosition()"
+                        title="Move sidebar to right">
+                        <svg viewBox="0 0 16 16">
+                            <rect x="1" y="2" width="14" height="12" rx="1" />
+                            <line x1="11" y1="2" x2="11" y2="14" />
+                        </svg>
+                    </button>
+                </div>
 
-            <div id="add-block-row">
-                <p class="section-title new-block-row-label no-user-select">NEW BLOCK</p>
-                <button class="btn" onclick="addBlock('command')" title="Command block">
-                    <svg viewBox="0 0 16 16" width="13" height="13">
-                        <polyline points="2,4 5,4" />
-                        <polyline points="2,8 8,8" />
-                        <polyline points="8,4 14,8 8,12" />
+                <div id="empty-state" class="no-user-select">
+                    <svg viewBox="0 0 40 40">
+                        <rect x="4" y="6" width="32" height="28" rx="3" />
+                        <path d="M10 14l6 6-6 6M18 26h12" />
                     </svg>
-                    Command
-                </button>
-                <button class="btn" onclick="addBlock('note')" title="Note block">
-                    <svg viewBox="0 0 16 16" width="13" height="13">
-                        <path d="M3 3h10v8l-3 3H3z" />
-                        <path d="M10 11v3" />
-                    </svg>
-                    Note
-                </button>
-                <button class="btn" onclick="addBlock('divider')" title="Divider block">
-                    <svg viewBox="0 0 16 16">
-                        <path d="M1 8 C3 5, 5 11, 7 8 S11 5, 13 8 S15 5, 15 8" />
-                    </svg>
-                    Divider
-                </button>
+                    <p id="empty-state-title">No blocks yet.</p>
+                    <p id="empty-state-hint">Add a command or note below.</p>
+                </div>
+
+                <div id="blocks-list"></div>
+
+                <div id="add-block-row">
+                    <p class="section-title new-block-row-label no-user-select">NEW BLOCK</p>
+                    <button class="btn" onclick="addBlock('command')" title="Command block">
+                        <svg viewBox="0 0 16 16" width="13" height="13">
+                            <polyline points="2,4 5,4" />
+                            <polyline points="2,8 8,8" />
+                            <polyline points="8,4 14,8 8,12" />
+                        </svg>
+                        Command
+                    </button>
+                    <button class="btn" onclick="addBlock('note')" title="Note block">
+                        <svg viewBox="0 0 16 16" width="13" height="13">
+                            <path d="M3 3h10v8l-3 3H3z" />
+                            <path d="M10 11v3" />
+                        </svg>
+                        Note
+                    </button>
+                    <button class="btn" onclick="addBlock('divider')" title="Divider block">
+                        <svg viewBox="0 0 16 16">
+                            <path d="M1 8 C3 5, 5 11, 7 8 S11 5, 13 8 S15 5, 15 8" />
+                        </svg>
+                        Divider
+                    </button>
+                </div>
             </div>
         </main>
     </div>
@@ -1603,8 +1953,19 @@
         </div>
     </div>
 
+    <div id="alert-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal">
+            <p class="modal-title">Invalid Format</p>
+            <p id="alert-modal-message" class="modal-message"></p>
+            <div class="modal-actions">
+                <button id="alert-modal-ok-btn" class="btn btn-lg btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const STORAGE_KEY = 'commandpad_v1';
+        const STORAGE_KEY = 'commandpad_state';
+        const TABS_STORAGE_KEY = 'commandpad_tabs';
 
         // Enums
 
@@ -1628,6 +1989,8 @@
             COLLAPSED: 'collapsed',
         });
 
+        const DEFAULT_TAB_LABEL = 'Untitled';
+
         const RunbookConfig = Object.freeze({
             DB_NAME: 'commandpad_runbooks_db',
             DB_VERSION: 1,
@@ -1635,6 +1998,7 @@
             LIBRARY_STORAGE_KEY: 'commandpad_runbook_library',
             SECTIONS_STORAGE_KEY: 'commandpad_sidebar_sections',
             DEFAULT_LABEL: 'Untitled runbook',
+            LABEL_MAX_LENGTH: 60,
         });
 
         const IndexedDbTransactionMode = Object.freeze({
@@ -1665,6 +2029,7 @@
             LITERAL: 'literal',
             RESOLVED: 'resolved',
             UNRESOLVED: 'unresolved',
+            SECRET: 'secret',
         });
 
         const MoveDirection = Object.freeze({
@@ -1675,6 +2040,7 @@
         const VariableField = Object.freeze({
             KEY: 'key',
             VALUE: 'value',
+            SECRET: 'secret',
         });
 
         const CssHeight = Object.freeze({
@@ -1687,9 +2053,16 @@
         });
 
         const CssClass = Object.freeze({
+            TAB: 'tab',
+            TAB_ACTIVE: 'tab-active',
+            TAB_CLOSE: 'tab-close',
+            TAB_LABEL: 'tab-label',
+            TABS_BAR: 'tabs-bar',
             APP_READY: 'app-ready',
             DRAGGING: 'dragging',
             DRAG_OVER: 'drag-over',
+            DRAG_OVER_LEFT: 'drag-over-left',
+            DRAG_OVER_RIGHT: 'drag-over-right',
             COLLAPSED: 'collapsed',
             SIDEBAR_COLLAPSED: 'sidebar-collapsed',
             EDITOR_COLLAPSED: 'editor-collapsed',
@@ -1706,12 +2079,15 @@
             BLOCK_ITEM: 'block-item',
             BLOCK_CONTROLS: 'block-controls',
             BLOCK_DRAG_HANDLE: 'block-drag-handle',
-            RUNBOOK_ROW: 'runbook-row',
+            SIDEBAR_SECTION_ROW: 'sidebar-section-row',
             RUNBOOK_FOCUSED: 'runbook-focused',
-            VARIABLE_ROW: 'variable-row',
             SIDEBAR_RIGHT: 'sidebar-right',
             SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
             MODAL_VISIBLE: 'modal-visible',
+            THEME_LIGHT: 'theme-light',
+            VAR_SECRET: 'is-secret',
+            VAR_SECRET_BTN_ACTIVE: 'is-active',
+            SYNCING: 'is-syncing',
         });
 
         const CssAttribute = Object.freeze({
@@ -1735,6 +2111,11 @@
             SCROLL: 'scroll',
         });
 
+        const MouseButton = Object.freeze({
+            LEFT: 0,
+            MIDDLE: 1,
+        });
+
         const Key = Object.freeze({
             CTRL: 'Control',
             ALT: 'Alt',
@@ -1742,6 +2123,7 @@
             ESCAPE: 'Escape',
             BACKSPACE: 'Backspace',
             DELETE: 'Delete',
+            SHIFT_D: 'D',
             SHIFT_E: 'E',
             SHIFT_S: 'S',
             TAB: 'Tab',
@@ -1751,7 +2133,9 @@
             E: 'e',
             G: 'g',
             I: 'i',
+            N: 'n',
             S: 's',
+            W: 'w',
         });
 
         const KEYBINDINGS = [{
@@ -1759,8 +2143,20 @@
                 description: 'Toggle read / edit mode'
             },
             {
+                keys: 'Ctrl+Alt+N',
+                description: 'Open a new tab'
+            },
+            {
+                keys: 'Ctrl+Alt+W',
+                description: 'Close the active tab'
+            },
+            {
                 keys: 'Ctrl+G',
                 description: 'Toggle all command editors'
+            },
+            {
+                keys: 'Ctrl+Shift+D',
+                description: 'Delete the focused runbook from the library'
             },
             {
                 keys: 'Ctrl+I',
@@ -1800,7 +2196,7 @@
             },
             {
                 keys: '↑ / ↓',
-                description: 'Navigate runbooks'
+                description: 'Navigate runbooks when selected active runbook'
             },
             {
                 keys: 'Alt+Click',
@@ -1831,16 +2227,19 @@
             NOTE_STYLE_BTN: '.note-style-btn',
             COMMAND_TEXTAREA: '.command-textarea',
             COMMAND_PREVIEW_TEXT: '.command-preview-text',
-            VARIABLE_ROW: '.variable-row',
             VARIABLE_INPUTS: '.variable-inputs',
             VARIABLE_KEY_INPUT: '.variable-key-input',
             VARIABLE_VALUE_INPUT: '.variable-value-input',
             VARIABLE_DRAG_HANDLE: '.variable-drag-handle',
             COMMAND_BLOCK_EDITOR: '.command-block-editor',
             TOGGLE_EDITOR_BTN: '.toggle-editor-btn',
-            RUNBOOK_ROW: '.runbook-row',
+            SIDEBAR_SECTION_ROW: '.sidebar-section-row',
             RUNBOOK_ITEM_BTN: '.runbook-item-btn',
             RUNBOOK_DRAG_HANDLE: '.runbook-drag-handle',
+            LABEL_SYNC_TARGETS: '.tab-active .tab-label, .runbook-item-btn.active',
+            RUNBOOK_LIST: '#runbook-list',
+            VARIABLES_LIST: '#variables-list',
+            SIDEBAR_SEARCH_INPUT: '.sidebar-search-input',
         });
 
         const InputSelector = Object.freeze({
@@ -1852,9 +2251,15 @@
             REL: 'noopener,noreferrer',
         });
 
+        const UI = Object.freeze({
+            SECRET_MASK: '******',
+        });
+
         const ElementId = Object.freeze({
+            TABS_BAR: 'tabs-bar',
+            ADD_TAB_BTN: 'add-tab-btn',
+            TABS_CONTENT: 'tabs-content',
             APP_SHELL: 'app-shell',
-            MAIN_PANEL: 'main-panel',
             MODE_TOGGLE_BTN: 'mode-toggle-btn',
             COLLAPSE_ALL_BTN: 'collapse-all-btn',
             EXPORT_BTN: 'export-btn',
@@ -1880,17 +2285,36 @@
             CONFIRM_MODAL_CANCEL_BTN: 'confirm-modal-cancel-btn',
             KEYBINDINGS_MODAL: 'keybindings-modal',
             KEYBINDINGS_TABLE: 'keybindings-table',
+            THEME_TOGGLE_BTN: 'theme-toggle-btn',
+            THEME_ICON: 'theme-icon',
+            ALERT_MODAL: 'alert-modal',
+            ALERT_MODAL_MESSAGE: 'alert-modal-message',
+            ALERT_MODAL_OK_BTN: 'alert-modal-ok-btn',
+            FOOTER_COPYRIGHT: 'footer-copyright',
+        });
+
+        const Theme = Object.freeze({
+            LIGHT: 'light',
+            DARK: 'dark',
+        });
+
+        const ThemeIcon = Object.freeze({
+            SUN: '<circle cx="8" cy="8" r="3.25"/><line x1="8" y1="1" x2="8" y2="2.5"/><line x1="8" y1="13.5" x2="8" y2="15"/><line x1="1" y1="8" x2="2.5" y2="8"/><line x1="13.5" y1="8" x2="15" y2="8"/><line x1="3.05" y1="3.05" x2="4.1" y2="4.1"/><line x1="11.9" y1="11.9" x2="12.95" y2="12.95"/><line x1="12.95" y1="3.05" x2="11.9" y2="4.1"/><line x1="4.1" y1="11.9" x2="3.05" y2="12.95"/>',
+            MOON: '<path d="M13.5 9.2A5.5 5.5 0 0 1 6.8 2.5a5.5 5.5 0 1 0 6.7 6.7z" fill="currentColor" stroke="none"/>',
         });
 
         const FilePickerConfig = Object.freeze({
+            // Json
             SUGGESTED_NAME: 'commandpad-export.json',
             DESCRIPTION: 'CommandPad JSON',
             EXTENSION: '.json',
             MIME_TYPE: 'application/json',
+            // Markdown
             MD_SUGGESTED_NAME: 'commandpad-export.md',
             MD_DESCRIPTION: 'Markdown',
             MD_EXTENSION: '.md',
             MD_MIME_TYPE: 'text/markdown',
+            // Plain text
             TXT_SUGGESTED_NAME: 'commandpad-export.txt',
             TXT_DESCRIPTION: 'Plain Text',
             TXT_EXTENSION: '.txt',
@@ -1907,7 +2331,7 @@
             HEADING: '#',
             SUBHEADING: '##',
             DIVIDER: '---',
-            CODE_FENCE: '```plain',
+            CODE_FENCE: '```bash',
             CODE_FENCE_END: '```',
         });
 
@@ -1917,20 +2341,465 @@
 
         // Timeouts
 
-        const DEFER_MS = 0
+        const DEFER_MS = 0;
         const DRAG_TIMEOUT_MS = 50;
-        const SAVE_TIMEOUT_MS = 200;
         const COPY_FEEDBACK_TIMEOUT_MS = 1000;
+        const DEBOUNCE_SEARCH_MS = 150;
+        const DEBOUNCE_SAVE_MS = 150;
+        const DEBOUNCE_PREVIEW_MS = 200;
+        const DEBOUNCE_LABEL_SYNC_MS = 200;
 
         // State
 
-        let state = {
-            variables: [],
-            blocks: [],
-        };
+        let tabs = [];
+        let activeTabId = null;
+        let appInitialized = false;
 
         function generateId() {
             return Math.random().toString(36).slice(2, 9);
+        }
+
+        function debounce(fn, ms) {
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => fn(...args), ms);
+            };
+        }
+
+        // Syncing helpers
+
+        function markSyncing(selector) {
+            document.querySelectorAll(selector).forEach(el => el.classList.add(CssClass.SYNCING));
+        }
+
+        function clearSyncing(selector) {
+            document.querySelectorAll(selector).forEach(el => el.classList.remove(CssClass.SYNCING));
+        }
+
+        function scheduleSync(value, syncSelector, settle, settleDebounced) {
+            if (value === '') {
+                settle();
+                return;
+            }
+
+            markSyncing(syncSelector);
+            settleDebounced();
+        }
+
+        // Debounced functions
+
+        const debouncedSaveState = debounce(() => saveState(), DEBOUNCE_SAVE_MS);
+        const debouncedRefreshAllPreviews = debounce(() => refreshAllPreviews(), DEBOUNCE_PREVIEW_MS);
+        const debouncedSyncActiveRunbookLabel = debounce(() => syncActiveRunbookLabel(), DEBOUNCE_LABEL_SYNC_MS);
+        const debouncedRenderRunbookList = debounce(() => renderRunbookList(), DEBOUNCE_SEARCH_MS);
+        const debouncedRenderVariablesList = debounce(() => renderVariablesList(), DEBOUNCE_SEARCH_MS);
+
+        function handleRunbookSearch(query) {
+            runbookSearchQuery = query;
+            scheduleSync(query, Selector.RUNBOOK_LIST, renderRunbookList, debouncedRenderRunbookList);
+        }
+
+        function handleVariableSearch(query) {
+            variableSearchQuery = query;
+            scheduleSync(query, Selector.VARIABLES_LIST, renderVariablesList, debouncedRenderVariablesList);
+        }
+
+        // Shared handle-based drag-to-reorder
+        const dragState = {};
+
+        function makeRowReorderable(row, config) {
+            const {
+                id,
+                handle,
+                highlightTarget,
+                stateKey,
+                getItems,
+                onReorder
+            } = config;
+
+            handle.addEventListener(EventType.MOUSE_DOWN, () => {
+                row.draggable = true;
+            });
+            handle.addEventListener(EventType.MOUSE_UP, () => {
+                setTimeout(() => {
+                    row.draggable = false;
+                }, DRAG_TIMEOUT_MS);
+            });
+
+            row.addEventListener(EventType.DRAG_START, event => {
+                dragState[stateKey] = id;
+                event.dataTransfer.effectAllowed = DragEffect.MOVE;
+                row.classList.add(CssClass.DRAGGING);
+            });
+
+            row.addEventListener(EventType.DRAG_END, () => {
+                dragState[stateKey] = null;
+                row.draggable = false;
+                row.classList.remove(CssClass.DRAGGING);
+                highlightTarget.classList.remove(CssClass.DRAG_OVER);
+            });
+
+            row.addEventListener(EventType.DRAG_OVER, event => {
+                if (!dragState[stateKey] || dragState[stateKey] === id) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.dataTransfer.dropEffect = DragEffect.MOVE;
+                highlightTarget.classList.add(CssClass.DRAG_OVER);
+            });
+
+            row.addEventListener(EventType.DRAG_LEAVE, event => {
+                if (!row.contains(event.relatedTarget)) {
+                    highlightTarget.classList.remove(CssClass.DRAG_OVER);
+                }
+            });
+
+            row.addEventListener(EventType.DROP, event => {
+                event.preventDefault();
+                highlightTarget.classList.remove(CssClass.DRAG_OVER);
+
+                const sourceId = dragState[stateKey];
+                if (isReadMode() || !sourceId || sourceId === id) {
+                    return;
+                }
+
+                const items = getItems();
+                const sourceIndex = items.findIndex(item => item.id === sourceId);
+                const targetIndex = items.findIndex(item => item.id === id);
+                if (sourceIndex < 0 || targetIndex < 0) {
+                    return;
+                }
+
+                const [removed] = items.splice(sourceIndex, 1);
+                items.splice(targetIndex, 0, removed);
+
+                dragState[stateKey] = null;
+                onReorder(items);
+            });
+        }
+
+        function activeTab() {
+            return tabs.find(t => t.id === activeTabId) ?? tabs[0] ?? null;
+        }
+
+        const state = new Proxy({}, {
+            get(_, prop) {
+                const tab = activeTab();
+                return tab ? tab[prop] : undefined;
+            },
+            set(_, prop, value) {
+                const tab = activeTab();
+                if (tab) {
+                    tab[prop] = value;
+                }
+
+                return true;
+            },
+        });
+
+        function createTabObject(label = DEFAULT_TAB_LABEL, runbookId = null) {
+            return {
+                id: generateId(),
+                label,
+                runbookId,
+                variables: [],
+                blocks: [],
+            };
+        }
+
+        async function createNewTab(label, runbookId) {
+            if (isReadMode()) {
+                return;
+            }
+
+            // Switch to an already already open runbook
+            if (runbookId) {
+                const existingTab = tabs.find(t => t.runbookId === runbookId);
+                if (existingTab) {
+                    switchTab(existingTab.id);
+                    return;
+                }
+            }
+
+            const resolvedLabel = label ?? DEFAULT_TAB_LABEL;
+            const tab = createTabObject(resolvedLabel, runbookId ?? null);
+            tabs.push(tab);
+            activeTabId = tab.id;
+
+            // Register as a library entry so it appears in the sidebar
+            if (!runbookId) {
+                const newRunbookId = generateId();
+                tab.runbookId = newRunbookId;
+                runbookLibrary.push({
+                    id: newRunbookId,
+                    label: resolvedLabel,
+                    filename: ''
+                });
+
+                await putRunbookContent(newRunbookId, {
+                    variables: [],
+                    blocks: []
+                });
+                activeRunbookId = newRunbookId;
+                saveRunbookLibrary();
+            }
+
+            saveTabs();
+            renderWorkspace();
+            return tab;
+        }
+
+        function switchTab(tabId) {
+            if (activeTabId === tabId) {
+                return;
+            }
+
+            activeTabId = tabId;
+            activeRunbookId = activeTab()?.runbookId ?? null;
+
+            saveTabs();
+            renderWorkspace();
+            setTimeout(() => {
+                autoResizeAllTextarea();
+                document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(t => syncNoteWidth(t));
+                refreshAllPreviews();
+            }, DEFER_MS);
+        }
+
+        function closeTab(tabId) {
+            if (isReadMode()) {
+                return;
+            }
+
+            let idx = tabs.findIndex(t => t.id === tabId);
+            if (idx < 0) {
+                return;
+            }
+
+            tabs.splice(idx, 1);
+
+            if (tabs.length === 0) {
+                activeTabId = null;
+                activeRunbookId = null;
+            } else if (activeTabId === tabId) {
+                idx = Math.min(idx, tabs.length - 1);
+                activeTabId = tabs[idx].id;
+                activeRunbookId = activeTab()?.runbookId ?? null;
+            }
+
+            saveTabs();
+            renderWorkspace();
+            refreshAllPreviews();
+        }
+
+        function getRunbookLabel(blocks, fallback) {
+            const firstBlock = blocks?.[0];
+            if (firstBlock?.type === BlockType.NOTE && firstBlock.text?.trim()) {
+                return firstBlock.text.trim().slice(0, RunbookConfig.LABEL_MAX_LENGTH);
+            }
+
+            return fallback || RunbookConfig.DEFAULT_LABEL;
+        }
+
+        // Re-render every workspace surface
+
+        function renderWorkspace() {
+            renderTabsBar();
+            renderRunbookList();
+            renderVariablesList();
+            renderBlocksList();
+            updateEmptyState();
+        }
+
+        function renderTabsBar() {
+            const bar = document.getElementById(ElementId.TABS_BAR);
+            const addBtn = document.getElementById(ElementId.ADD_TAB_BTN);
+
+            bar.querySelectorAll(`.${CssClass.TAB}`).forEach(el => el.remove());
+
+            let dragSrcId = null;
+
+            const clearDropIndicators = () => {
+                bar.querySelectorAll(`.${CssClass.TAB}`).forEach(t => {
+                    t.classList.remove(CssClass.DRAG_OVER_LEFT, CssClass.DRAG_OVER_RIGHT);
+                });
+            };
+
+            const createTabElement = (tab) => {
+                const tabLabel = tab.label || DEFAULT_TAB_LABEL;
+                const tabEl = document.createElement('div');
+                const isActive = tab.id === activeTabId;
+
+                tabEl.className = isActive ? `${CssClass.TAB} ${CssClass.TAB_ACTIVE}` : CssClass.TAB;
+                tabEl.dataset.tabId = tab.id;
+                tabEl.title = tabLabel;
+                tabEl.draggable = true;
+
+                const labelSpan = document.createElement('span');
+                labelSpan.className = CssClass.TAB_LABEL;
+                labelSpan.textContent = tabLabel;
+
+                const closeBtn = document.createElement('button');
+                closeBtn.className = CssClass.TAB_CLOSE;
+                closeBtn.title = 'Close tab';
+                closeBtn.innerHTML = '<svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
+                closeBtn.addEventListener(EventType.CLICK, e => {
+                    e.stopPropagation();
+                    closeTab(tab.id);
+                });
+
+                tabEl.appendChild(labelSpan);
+                tabEl.appendChild(closeBtn);
+                tabEl.addEventListener(EventType.CLICK, () => switchTab(tab.id));
+                tabEl.addEventListener(EventType.MOUSE_DOWN, e => {
+                    if (e.button === MouseButton.MIDDLE) {
+                        e.preventDefault();
+                    }
+                });
+                tabEl.addEventListener(EventType.MOUSE_UP, e => {
+                    if (e.button === MouseButton.MIDDLE) {
+                        e.preventDefault();
+                        closeTab(tab.id);
+                    }
+                });
+
+                setupTabDragHandlers(tabEl, tab, clearDropIndicators);
+
+                return tabEl;
+            };
+
+            const setupTabDragHandlers = (tabEl, tab, clearIndicators) => {
+                tabEl.addEventListener(EventType.DRAG_START, e => {
+                    dragSrcId = tab.id;
+                    tabEl.classList.add(CssClass.DRAGGING);
+                    e.dataTransfer.effectAllowed = DragEffect.MOVE;
+                });
+
+                tabEl.addEventListener(EventType.DRAG_END, () => {
+                    dragSrcId = null;
+                    tabEl.classList.remove(CssClass.DRAGGING);
+                    clearIndicators();
+                });
+
+                tabEl.addEventListener(EventType.DRAG_OVER, e => {
+                    if (!dragSrcId || dragSrcId === tab.id) {
+                        return;
+                    }
+
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = DragEffect.MOVE;
+
+                    const rect = tabEl.getBoundingClientRect();
+                    const isLeftHalf = e.clientX < rect.left + rect.width / 2;
+
+                    clearIndicators();
+                    tabEl.classList.add(isLeftHalf ? CssClass.DRAG_OVER_LEFT : CssClass.DRAG_OVER_RIGHT);
+                });
+
+                tabEl.addEventListener(EventType.DRAG_LEAVE, e => {
+                    if (!tabEl.contains(e.relatedTarget)) {
+                        tabEl.classList.remove(CssClass.DRAG_OVER_LEFT, CssClass.DRAG_OVER_RIGHT);
+                    }
+                });
+
+                tabEl.addEventListener(EventType.DROP, e => {
+                    e.preventDefault();
+                    if (!dragSrcId || dragSrcId === tab.id) {
+                        return;
+                    }
+
+                    const rect = tabEl.getBoundingClientRect();
+                    const isLeftHalf = e.clientX < rect.left + rect.width / 2;
+
+                    const srcIdx = tabs.findIndex(t => t.id === dragSrcId);
+                    if (srcIdx === -1) {
+                        return;
+                    }
+
+                    const [dragged] = tabs.splice(srcIdx, 1);
+                    let dstIdx = tabs.findIndex(t => t.id === tab.id);
+                    if (!isLeftHalf) {
+                        dstIdx++;
+                    }
+
+                    tabs.splice(dstIdx, 0, dragged);
+                    saveTabs();
+                    renderTabsBar();
+                });
+            };
+
+            tabs.forEach(tab => {
+                bar.insertBefore(createTabElement(tab), addBtn);
+            });
+        }
+
+        // Tab persistence
+
+        function saveTabs() {
+            try {
+                localStorage.setItem(TABS_STORAGE_KEY, JSON.stringify({
+                    tabOrder: tabs.map(t => ({
+                        tabId: t.id,
+                        runbookId: t.runbookId
+                    })),
+                    activeTabId,
+                }));
+            } catch (error) {
+                console.warn('Failed to save tabs:', error);
+            }
+        }
+
+        async function loadTabs() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(TABS_STORAGE_KEY));
+                if (!saved?.tabOrder?.length) {
+                    return;
+                }
+
+                const loadedTabs = [];
+                for (const {
+                        tabId,
+                        runbookId
+                    }
+                    of saved.tabOrder) {
+                    const entry = runbookLibrary.find(r => r.id === runbookId);
+
+                    // runbook was deleted
+                    if (!entry) {
+                        continue;
+                    }
+
+                    const content = await getRunbookContent(runbookId);
+                    if (!content) {
+                        continue;
+                    }
+
+                    loadedTabs.push({
+                        id: tabId,
+                        label: entry.label,
+                        runbookId,
+                        variables: content.variables ?? [],
+                        blocks: content.blocks ?? [],
+                    });
+                }
+
+                if (loadedTabs.length === 0) {
+                    return;
+                }
+
+                tabs = loadedTabs;
+
+                const activeId = saved.activeTabId;
+                activeTabId = activeId && tabs.find(t => t.id === activeId) ?
+                    activeId :
+                    tabs[0].id;
+
+                activeRunbookId = activeTab()?.runbookId ?? null;
+            } catch (error) {
+                console.warn('Failed to load tabs:', error);
+            }
         }
 
         //  Runbook Library
@@ -2005,22 +2874,15 @@
         let activeRunbookId = null;
         let focusedRunbookId = null;
 
-        function deriveRunbookLabel(runbookContent, fallback) {
-            const firstBlock = runbookContent.blocks?.[0];
-            if (firstBlock && firstBlock.type === BlockType.NOTE && firstBlock.text?.trim()) {
-                return firstBlock.text.trim().slice(0, 60);
-            }
-
-            return fallback;
-        }
-
         function saveRunbookLibrary() {
             try {
                 localStorage.setItem(RunbookConfig.LIBRARY_STORAGE_KEY, JSON.stringify({
                     items: runbookLibrary,
                     activeId: activeRunbookId,
                 }));
-            } catch {}
+            } catch (error) {
+                console.warn('Failed to save runbook library:', error);
+            }
         }
 
         function loadRunbookLibrary() {
@@ -2032,28 +2894,44 @@
 
                 runbookLibrary = saved.items ?? [];
                 activeRunbookId = saved.activeId ?? null;
-            } catch {}
+            } catch (error) {
+                console.warn('Failed to load runbook library:', error);
+            }
         }
 
         async function addRunbookToLibrary(content, filename) {
-            const label = deriveRunbookLabel(content, filename || RunbookConfig.DEFAULT_LABEL);
+            const label = getRunbookLabel(content.blocks, filename || RunbookConfig.DEFAULT_LABEL);
 
             const existingEntry = runbookLibrary.find(item => item.label === label || item.filename === filename);
             if (existingEntry) {
                 existingEntry.label = label;
                 existingEntry.filename = filename || '';
 
-                const existingEntryId = existingEntry.id
+                const existingEntryId = existingEntry.id;
                 await putRunbookContent(existingEntryId, content);
                 saveRunbookLibrary();
 
-                // If the overwritten runbook is currently active, reload it into the workspace
-                if (existingEntryId === activeRunbookId) {
-                    await loadRunbookFromLibrary(existingEntryId);
-                } else {
-                    renderRunbookList();
+                // Apply the new content directly to the in-memory tab
+                const openTab = tabs.find(t => t.runbookId === existingEntryId);
+                if (openTab) {
+                    openTab.variables = content.variables ?? [];
+                    openTab.blocks = content.blocks ?? [];
+
+                    if (existingEntryId === activeRunbookId) {
+                        saveTabs();
+                        renderVariablesList();
+                        renderBlocksList();
+                        updateEmptyState();
+                        setTimeout(() => {
+                            autoResizeAllTextarea();
+                            document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(t => syncNoteWidth(
+                                t));
+                            refreshAllPreviews();
+                        }, DEFER_MS);
+                    }
                 }
 
+                renderRunbookList();
                 return;
             }
 
@@ -2063,7 +2941,6 @@
                 label,
                 filename: filename || ''
             });
-            runbookLibrary.sort((a, b) => a.label.localeCompare(b.label));
 
             await putRunbookContent(id, content);
 
@@ -2076,23 +2953,41 @@
             await loadRunbookFromLibrary(id);
         }
 
-        async function loadRunbookFromLibrary(id) {
-            const content = await getRunbookContent(id);
+        async function loadRunbookFromLibrary(runbookId) {
+            const content = await getRunbookContent(runbookId);
             if (!content) {
                 return;
             }
 
-            state.variables = content.variables ?? [];
-            state.blocks = content.blocks ?? [];
-            activeRunbookId = id;
+            const runbook = runbookLibrary.find(r => r.id === runbookId);
+            const label = runbook?.label ?? DEFAULT_TAB_LABEL;
 
-            saveState();
+            // Check if a tab for this runbook is already open
+            const existingTab = tabs.find(t => t.runbookId === runbookId);
+            if (existingTab) {
+                switchTab(existingTab.id);
+                renderRunbookList();
+                return;
+            }
+
+            // Open in a new tab
+            const tab = createTabObject(label, runbookId);
+            tab.variables = content.variables ?? [];
+            tab.blocks = content.blocks ?? [];
+            tabs.push(tab);
+
+            activeTabId = tab.id;
+            activeRunbookId = runbookId;
+
+            saveTabs();
             saveRunbookLibrary();
-            renderVariablesList();
-            renderBlocksList();
-            updateEmptyState();
-            renderRunbookList();
-            setTimeout(refreshAllPreviews, DEFER_MS);
+            renderWorkspace();
+
+            setTimeout(() => {
+                autoResizeAllTextarea();
+                document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(t => syncNoteWidth(t));
+                refreshAllPreviews();
+            }, DEFER_MS);
         }
 
         async function overwriteActiveRunbookInLibrary() {
@@ -2105,11 +3000,11 @@
                 return;
             }
 
+            entry.label = getRunbookLabel(state.blocks, entry.label);
             const content = {
                 variables: state.variables,
                 blocks: state.blocks
             };
-            entry.label = deriveRunbookLabel(content, entry.label);
 
             await putRunbookContent(activeRunbookId, content);
             saveRunbookLibrary();
@@ -2121,23 +3016,31 @@
                 return;
             }
 
-            const wasActive = activeRunbookId === id;
-
             runbookLibrary = runbookLibrary.filter(item => item.id !== id);
             await deleteRunbookContent(id);
 
-            if (wasActive) {
-                activeRunbookId = null;
-                state.variables = [];
-                state.blocks = [];
-                saveState();
-                renderVariablesList();
-                renderBlocksList();
-                updateEmptyState();
+            // Close any tab associated with this runbook
+            let tabIdx = tabs.findIndex(t => t.runbookId === id);
+            if (tabIdx >= 0) {
+                tabs.splice(tabIdx, 1);
+
+                if (tabs.length === 0) {
+                    activeTabId = null;
+                    activeRunbookId = null;
+                } else if (activeTabId === tabs[tabIdx]?.id || !tabs.find(t => t.id === activeTabId)) {
+                    tabIdx = Math.min(tabIdx, tabs.length - 1);
+                    activeTabId = tabs[tabIdx].id;
+                    activeRunbookId = activeTab()?.runbookId ?? null;
+                }
             }
 
+            if (activeRunbookId === id) {
+                activeRunbookId = null;
+            }
+
+            saveTabs();
             saveRunbookLibrary();
-            renderRunbookList();
+            renderWorkspace();
         }
 
         function setRunbookFocus(id) {
@@ -2152,7 +3055,7 @@
 
         function updateRunbookFocusVisuals() {
             document.querySelectorAll(Selector.RUNBOOK_ITEM_BTN).forEach(btn => {
-                const row = btn.closest(Selector.RUNBOOK_ROW);
+                const row = btn.closest(Selector.SIDEBAR_SECTION_ROW);
                 btn.classList.toggle(CssClass.RUNBOOK_FOCUSED, row?.dataset.runbookId === focusedRunbookId);
             });
         }
@@ -2227,7 +3130,9 @@
 
             Promise.all(files.map(readFile)).then(() => {
                 if (failedCount > 0) {
-                    alert(`${failedCount} file(s) could not be imported (invalid format).`);
+                    showAlertModal(
+                        `${failedCount} file(s) could not be imported because their formats aren't recognized.`
+                    );
                 }
             });
 
@@ -2252,6 +3157,7 @@
 
         function renderRunbookList() {
             const container = document.getElementById(ElementId.RUNBOOK_LIST);
+            clearSyncing(Selector.RUNBOOK_LIST);
             container.innerHTML = '';
 
             if (runbookLibrary.length === 0) {
@@ -2276,7 +3182,7 @@
 
             for (const runbook of visibleRunbooks) {
                 const row = document.createElement('div');
-                row.className = CssClass.RUNBOOK_ROW;
+                row.className = CssClass.SIDEBAR_SECTION_ROW;
                 row.dataset.runbookId = runbook.id;
 
                 const isActive = runbook.id === activeRunbookId;
@@ -2296,71 +3202,21 @@
                 </button>
             `;
 
-                const handle = row.querySelector(Selector.RUNBOOK_DRAG_HANDLE);
-                const itemButton = row.querySelector(Selector.RUNBOOK_ITEM_BTN);
-
-                handle.addEventListener(EventType.MOUSE_DOWN, () => {
-                    row.draggable = true;
-                });
-                handle.addEventListener(EventType.MOUSE_UP, () => {
-                    setTimeout(() => {
-                        row.draggable = false;
-                    }, DRAG_TIMEOUT_MS);
-                });
-
-                row.addEventListener(EventType.DRAG_START, event => {
-                    dragSourceRunbookId = runbook.id;
-                    event.dataTransfer.effectAllowed = DragEffect.MOVE;
-                    row.classList.add(CssClass.DRAGGING);
-                });
-
-                row.addEventListener(EventType.DRAG_END, () => {
-                    row.draggable = false;
-                    row.classList.remove(CssClass.DRAGGING);
-                });
-
-                row.addEventListener(EventType.DRAG_OVER, event => {
-                    event.preventDefault();
-                    if (runbook.id !== dragSourceRunbookId) {
-                        itemButton.classList.add(CssClass.DRAG_OVER);
+                makeRowReorderable(row, {
+                    id: runbook.id,
+                    handle: row.querySelector(Selector.RUNBOOK_DRAG_HANDLE),
+                    highlightTarget: row.querySelector(Selector.RUNBOOK_ITEM_BTN),
+                    stateKey: 'runbook',
+                    getItems: () => runbookLibrary,
+                    onReorder: () => {
+                        saveRunbookLibrary();
+                        renderRunbookList();
                     }
-                });
-
-                row.addEventListener(EventType.DRAG_LEAVE, () => {
-                    itemButton.classList.remove(CssClass.DRAG_OVER);
-                });
-
-                row.addEventListener(EventType.DROP, event => {
-                    event.preventDefault();
-                    itemButton.classList.remove(CssClass.DRAG_OVER);
-                    if (isReadMode() || !dragSourceRunbookId) {
-                        return;
-                    }
-
-                    const targetId = runbook.id;
-                    if (dragSourceRunbookId === targetId) {
-                        return;
-                    }
-
-                    const sourceIndex = runbookLibrary.findIndex(item => item.id === dragSourceRunbookId);
-                    const targetIndex = runbookLibrary.findIndex(item => item.id === targetId);
-                    if (sourceIndex < 0 || targetIndex < 0) {
-                        return;
-                    }
-
-                    const [removed] = runbookLibrary.splice(sourceIndex, 1);
-                    runbookLibrary.splice(targetIndex, 0, removed);
-
-                    dragSourceRunbookId = null;
-                    saveRunbookLibrary();
-                    renderRunbookList();
                 });
 
                 container.appendChild(row);
             }
         }
-
-        let dragSourceRunbookId = null;
 
         //  Sidebar section collapse
 
@@ -2393,7 +3249,9 @@
                     variables: variablesSection?.classList.contains(CssClass.COLLAPSED) ?
                         SectionState.COLLAPSED : SectionState.EXPANDED,
                 }));
-            } catch {}
+            } catch (error) {
+                console.warn('Failed to save sidebar section state:', error);
+            }
         }
 
         function loadSidebarSectionState() {
@@ -2409,7 +3267,9 @@
                 if (saved.variables === SectionState.COLLAPSED) {
                     document.getElementById(ElementId.VARIABLES_SECTION)?.classList.add(CssClass.COLLAPSED);
                 }
-            } catch {}
+            } catch (error) {
+                console.warn('Failed to load sidebar section state:', error);
+            }
         }
 
         // App mode
@@ -2445,10 +3305,18 @@
             btn.title = `Switch to ${isRead ? 'Edit' : 'Read'} mode`;
         }
 
+        function clearUserInteraction() {
+            document.activeElement?.blur();
+            removeCtrlHeldClass();
+            removeAltHeldClass();
+            clearBlockSelection();
+            clearRunbookFocus();
+        }
+
         function toggleAppMode() {
             const readMode = isReadMode();
             if (!readMode) {
-                clearBlockSelection();
+                clearUserInteraction();
             }
 
             setAppMode(readMode ? AppMode.EDIT : AppMode.READ);
@@ -2457,27 +3325,40 @@
         //  Persistence
 
         function saveState() {
+            if (!appInitialized) {
+                return;
+            }
+
+            saveTabs();
+            saveUiState();
+
+            // Persist active tab's runbook content to IndexedDB
+            const tab = activeTab();
+            if (tab?.runbookId) {
+                putRunbookContent(tab.runbookId, {
+                    variables: tab.variables,
+                    blocks: tab.blocks,
+                }).catch(error => console.warn('Failed to persist runbook content:', error));
+            }
+        }
+
+        function saveUiState() {
             try {
                 const shell = document.getElementById(ElementId.APP_SHELL);
-                const mainPanel = document.getElementById(ElementId.MAIN_PANEL);
+                const tabsContent = document.getElementById(ElementId.TABS_CONTENT);
 
                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                    ...state,
                     mode: currentMode,
                     sidebar: shell.classList.contains(CssClass.SIDEBAR_COLLAPSED) ?
                         SectionState.COLLAPSED : SectionState.EXPANDED,
                     sidebarPosition: shell.classList.contains(CssClass.SIDEBAR_RIGHT) ?
                         SidebarPosition.RIGHT : SidebarPosition.LEFT,
-                    scrollTop: mainPanel ? mainPanel.scrollTop : 0,
+                    scrollTop: tabsContent ? tabsContent.scrollTop : 0,
+                    theme: document.documentElement.classList.contains(CssClass.THEME_LIGHT) ?
+                        Theme.LIGHT : Theme.DARK,
                 }));
-            } catch {}
-
-            // Persist active runbook in IndexedDB
-            if (activeRunbookId) {
-                putRunbookContent(activeRunbookId, {
-                    variables: state.variables,
-                    blocks: state.blocks,
-                }).catch(() => {});
+            } catch (error) {
+                console.warn('Failed to save UI state:', error);
             }
         }
 
@@ -2491,8 +3372,6 @@
                 }
 
                 savedScrollTop = saved.scrollTop ?? 0;
-                state.variables = saved.variables ?? [];
-                state.blocks = saved.blocks ?? [];
 
                 if (saved.sidebar === SectionState.COLLAPSED) {
                     document.getElementById(ElementId.APP_SHELL).classList.add(CssClass.SIDEBAR_COLLAPSED);
@@ -2510,30 +3389,44 @@
                     }
                 }
 
-                if (saved.mode === AppMode.READ || saved.mode === AppMode.EDIT) {
+                if (saved.mode) {
                     setAppMode(saved.mode);
                 }
-            } catch {}
+
+                if (saved.theme === Theme.LIGHT) {
+                    document.documentElement.classList.add(CssClass.THEME_LIGHT);
+                    syncThemeIndicator(true);
+                }
+            } catch (error) {
+                console.warn('Failed to load UI state:', error);
+            }
         }
 
         //  Variable resolution
 
         function getVariableMap() {
+            const variables = state.variables ?? [];
+            if (!variables) {
+                return {};
+            }
+
             const rawMap = {};
-            for (const variable of state.variables) {
-                if (!variable.key.trim()) {
+            const resolvedMap = {};
+
+            for (const variable of variables) {
+                const key = variable.key.trim();
+                if (!key) {
                     continue;
                 }
 
-                rawMap[variable.key.trim()] = variable.value;
+                rawMap[key] = variable.value;
             }
-
-            const resolvedMap = {};
 
             function resolveValue(key, visitedKeys = new Set()) {
                 if (key in resolvedMap) {
                     return resolvedMap[key];
                 }
+
                 if (visitedKeys.has(key)) {
                     return `{${key}}`;
                 }
@@ -2555,6 +3448,11 @@
             return resolvedMap;
         }
 
+        function getSecretKeys() {
+            const variables = state.variables ?? [];
+            return new Set(variables.filter(v => v.secret && v.key.trim()).map(v => v.key.trim()));
+        }
+
         function resolveCommandText(rawText, variableMap) {
             const segments = [];
             const tokenRegex = /\{([^}]+)\}/g;
@@ -2573,6 +3471,7 @@
                 if (Object.prototype.hasOwnProperty.call(variableMap, key)) {
                     const value = variableMap[key];
                     segments.push({
+                        key,
                         text: value || `{${key}}`,
                         type: value ? SegmentType.RESOLVED : SegmentType.UNRESOLVED
                     });
@@ -2600,9 +3499,15 @@
             return resolveCommandText(rawText, variableMap).map(segment => segment.text).join('');
         }
 
-        function buildPreviewHTML(rawText, variableMap) {
+        function buildPreviewHTML(rawText, variableMap, secretKeys = new Set()) {
             const segments = resolveCommandText(rawText, variableMap);
-            return segments.map(s => `<span class="token-${s.type}">${escapeHtml(s.text)}</span>`).join('');
+            return segments.map(s => {
+                if (s.type === SegmentType.RESOLVED && s.key && secretKeys.has(s.key)) {
+                    return `<span class="token-${SegmentType.SECRET}">${UI.SECRET_MASK}</span>`;
+                }
+
+                return `<span class="token-${s.type}">${escapeHtml(s.text)}</span>`;
+            }).join('');
         }
 
         function hasUnresolvedTokens(rawText, variableMap) {
@@ -2650,9 +3555,13 @@
 
         //  Variables
 
-        function addVariable() {
+        async function addVariable() {
             if (isReadMode()) {
                 return;
+            }
+
+            if (tabs.length === 0) {
+                await createNewTab();
             }
 
             const newVariable = {
@@ -2666,7 +3575,7 @@
             renderVariablesList();
 
             // Focus the new key input
-            const rows = document.querySelectorAll(Selector.VARIABLE_ROW);
+            const rows = document.querySelectorAll(Selector.SIDEBAR_SECTION_ROW);
             const lastRow = rows[rows.length - 1];
             if (lastRow) {
                 lastRow.querySelector(Selector.VARIABLE_KEY_INPUT)?.focus();
@@ -2712,7 +3621,7 @@
 
                             // Keep that variable's value input in sync
                             const otherRow = document.querySelector(
-                                `${Selector.VARIABLE_ROW}[data-variable-id="${otherVariable.id}"]`);
+                                `${Selector.SIDEBAR_SECTION_ROW}[data-variable-id="${otherVariable.id}"]`);
 
                             const otherValueInput = otherRow?.querySelector(Selector.VARIABLE_VALUE_INPUT);
                             if (otherValueInput) {
@@ -2727,15 +3636,29 @@
             }
 
             variable[field] = value;
+            debouncedSaveState();
+            scheduleSync(value, Selector.COMMAND_PREVIEW_TEXT, refreshAllPreviews, debouncedRefreshAllPreviews);
+        }
+
+        function toggleVariableSecret(variableId) {
+            const variable = state.variables.find(v => v.id === variableId);
+            if (!variable) {
+                return;
+            }
+
+            variable.secret = !variable.secret;
             saveState();
+            renderVariablesList();
             refreshAllPreviews();
         }
 
         function renderVariablesList() {
+            const variables = state.variables ?? [];
             const container = document.getElementById(ElementId.VARIABLES_LIST);
+            clearSyncing(Selector.VARIABLES_LIST);
             container.innerHTML = '';
 
-            if (state.variables.length === 0) {
+            if (variables.length === 0) {
                 const emptyMsg = document.createElement('p');
                 emptyMsg.className = CssClass.SIDEBAR_SECTION_EMPTY_MSG;
                 emptyMsg.textContent = 'No variables defined.';
@@ -2743,7 +3666,7 @@
                 return;
             }
 
-            const visibleVariables = state.variables.filter(variable =>
+            const visibleVariables = variables.filter(variable =>
                 matchesQuery(variableSearchQuery, variable.key, variable.value)
             );
 
@@ -2756,15 +3679,17 @@
             }
 
             for (const variable of visibleVariables) {
+                const isSecret = !!variable.secret;
                 const row = document.createElement('div');
-                row.className = CssClass.VARIABLE_ROW;
+                row.className =
+                    `variable-row ${CssClass.SIDEBAR_SECTION_ROW}${isSecret ? ` ${CssClass.VAR_SECRET}` : ''}`;
                 row.dataset.variableId = variable.id;
 
                 row.innerHTML = `
-            <div class="variable-drag-handle" title="Drag to reorder">
+            <div class="variable-drag-handle drag-handle" title="Drag to reorder">
               <svg viewBox="0 0 16 16"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
             </div>
-            <div class="variable-inputs">
+            <div class="variable-inputs${isSecret ? ` ${CssClass.VAR_SECRET}` : ''}">
               <input
                 class="variable-key-input"
                 type="text"
@@ -2783,11 +3708,22 @@
                 spellcheck="false"
                 autocomplete="off"
                 oninput="updateVariable('${variable.id}', '${VariableField.VALUE}', this.value)"
-                title="${escapeHtml(variable.value)}"
+                title="${isSecret ? '' : escapeHtml(variable.value)}"
               />
             </div>
             <button
-              class="btn btn-icon btn-danger"
+              class="btn btn-icon variable-secret-btn${isSecret ? ` ${CssClass.VAR_SECRET_BTN_ACTIVE}` : ''}"
+              onclick="toggleVariableSecret('${variable.id}')"
+              title="${isSecret ? 'Reveal value' : 'Mask value'}"
+            >
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                ${isSecret
+                    ? '<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/><line x1="2" y1="2" x2="14" y2="14"/>'
+                    : '<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/>'}
+              </svg>
+            </button>
+            <button
+              class="btn btn-icon btn-danger variable-row-delete"
               onclick="removeVariable('${variable.id}')"
               title="Remove variable"
             >
@@ -2796,60 +3732,16 @@
               </svg>
             </button>
           `;
-                // Drag-and-drop
-                const handle = row.querySelector(Selector.VARIABLE_DRAG_HANDLE);
-
-                handle.addEventListener(EventType.MOUSE_DOWN, () => {
-                    row.draggable = true;
-                });
-
-                handle.addEventListener(EventType.MOUSE_UP, () => {
-                    setTimeout(() => {
-                        row.draggable = false;
-                    }, DRAG_TIMEOUT_MS);
-                });
-
-                row.addEventListener(EventType.DRAG_START, event => {
-                    dragSourceVariableId = row.dataset.variableId;
-                    event.dataTransfer.effectAllowed = DragEffect.MOVE;
-                    row.classList.add(CssClass.DRAGGING);
-                });
-
-                row.addEventListener(EventType.DRAG_OVER, event => {
-                    event.preventDefault();
-                    if (row.dataset.variableId === dragSourceVariableId) {
-                        return;
+                makeRowReorderable(row, {
+                    id: variable.id,
+                    handle: row.querySelector(Selector.VARIABLE_DRAG_HANDLE),
+                    highlightTarget: row.querySelector(Selector.VARIABLE_INPUTS),
+                    stateKey: 'variable',
+                    getItems: () => state.variables,
+                    onReorder: () => {
+                        saveState();
+                        renderVariablesList();
                     }
-
-                    container.querySelectorAll(Selector.VARIABLE_ROW)
-                        .forEach(el => el.querySelector(Selector.VARIABLE_INPUTS)?.classList.remove(CssClass
-                            .DRAG_OVER));
-
-                    row.querySelector(Selector.VARIABLE_INPUTS)?.classList.add(CssClass.DRAG_OVER);
-                });
-
-                row.addEventListener(EventType.DROP, event => {
-                    event.preventDefault();
-                    if (isReadMode()) {
-                        return;
-                    }
-
-                    const targetId = row.dataset.variableId;
-                    if (!dragSourceVariableId || dragSourceVariableId === targetId) {
-                        return;
-                    }
-
-                    const sourceIndex = state.variables.findIndex(v => v.id === dragSourceVariableId);
-                    const targetIndex = state.variables.findIndex(v => v.id === targetId);
-                    if (sourceIndex < 0 || targetIndex < 0) {
-                        return;
-                    }
-
-                    const [removed] = state.variables.splice(sourceIndex, 1);
-                    state.variables.splice(targetIndex, 0, removed);
-
-                    saveState();
-                    renderVariablesList();
                 });
 
                 container.appendChild(row);
@@ -2858,9 +3750,13 @@
 
         //  Blocks
 
-        function addBlock(blockType) {
+        async function addBlock(blockType) {
             if (isReadMode()) {
                 return;
+            }
+
+            if (tabs.length === 0) {
+                await createNewTab();
             }
 
             let newBlock;
@@ -2895,7 +3791,8 @@
             const allBlockElements = document.querySelectorAll(Selector.BLOCK_ITEM);
             const lastBlockElement = allBlockElements[allBlockElements.length - 1];
             if (lastBlockElement) {
-                const textarea = lastBlockElement.querySelector(Selector.COMMAND_TEXTAREA);
+                const textarea = lastBlockElement.querySelector(Selector.COMMAND_TEXTAREA) ??
+                    lastBlockElement.querySelector(Selector.NOTE_TEXTAREA);
                 if (textarea) {
                     textarea.focus();
                 }
@@ -2968,6 +3865,9 @@
         }
 
         function syncActiveRunbookLabel() {
+            // Settle the pulse whether or not the label actually changes below
+            clearSyncing(Selector.LABEL_SYNC_TARGETS);
+
             if (!activeRunbookId) {
                 return;
             }
@@ -2977,12 +3877,7 @@
                 return;
             }
 
-            const newLabel = deriveRunbookLabel({
-                    blocks: state.blocks
-                },
-                entry.filename || RunbookConfig.DEFAULT_LABEL
-            );
-
+            const newLabel = getRunbookLabel(state.blocks, entry.filename || RunbookConfig.DEFAULT_LABEL);
             if (newLabel === entry.label) {
                 return;
             }
@@ -2990,6 +3885,13 @@
             entry.label = newLabel;
             saveRunbookLibrary();
             renderRunbookList();
+
+            // Update tab label
+            const tab = activeTab();
+            if (tab) {
+                tab.label = newLabel;
+                renderTabsBar();
+            }
         }
 
         function updateBlockText(blockId, text) {
@@ -3003,17 +3905,18 @@
             }
 
             block.text = text;
-            saveState();
+            debouncedSaveState();
 
             if (block.type === BlockType.COMMAND) {
-                refreshBlockPreview(blockId, getVariableMap());
+                refreshBlockPreview(blockId, getVariableMap(), getSecretKeys());
             } else if (block.type === BlockType.NOTE) {
                 refreshNotePreview(blockId);
             }
 
             // Update runbook label
             if (blockId === state.blocks[0]?.id) {
-                syncActiveRunbookLabel();
+                scheduleSync(text, Selector.LABEL_SYNC_TARGETS, syncActiveRunbookLabel,
+                    debouncedSyncActiveRunbookLabel);
             }
         }
 
@@ -3077,7 +3980,7 @@
             renderBlocksList();
         }
 
-        function refreshBlockPreview(blockId, variableMap) {
+        function refreshBlockPreview(blockId, variableMap, secretKeys = new Set()) {
             const block = state.blocks.find(block => block.id === blockId);
             if (!block || block.type !== BlockType.COMMAND) {
                 return;
@@ -3093,7 +3996,8 @@
                 return;
             }
 
-            previewEl.innerHTML = buildPreviewHTML(block.text, variableMap);
+            previewEl.innerHTML = buildPreviewHTML(block.text, variableMap, secretKeys);
+            previewEl.classList.remove(CssClass.SYNCING);
             const isUnresolved = hasUnresolvedTokens(block.text, variableMap);
             previewEl.classList.toggle(CssClass.HAS_UNRESOLVED, isUnresolved);
 
@@ -3131,13 +4035,16 @@
         }
 
         function refreshAllPreviews() {
+            const blocks = state.blocks ?? [];
             const variableMap = getVariableMap();
-            for (const block of state.blocks) {
+            const secretKeys = getSecretKeys();
+
+            for (const block of blocks) {
                 if (block.type !== BlockType.COMMAND) {
                     continue;
                 }
 
-                refreshBlockPreview(block.id, variableMap);
+                refreshBlockPreview(block.id, variableMap, secretKeys);
             }
         }
 
@@ -3160,11 +4067,14 @@
         //  Block rendering
 
         function renderBlocksList() {
+            const blocks = state.blocks ?? [];
             const container = document.getElementById(ElementId.BLOCKS_LIST);
             container.innerHTML = '';
+            const variableMap = getVariableMap();
+            const secretKeys = getSecretKeys();
 
-            for (const block of state.blocks) {
-                const blockElement = buildBlockElement(block);
+            for (const block of blocks) {
+                const blockElement = buildBlockElement(block, variableMap, secretKeys);
                 container.appendChild(blockElement);
             }
 
@@ -3172,13 +4082,13 @@
             setupDragAndDrop();
         }
 
-        function buildBlockElement(block) {
+        function buildBlockElement(block, variableMap, secretKeys = new Set()) {
             const wrapper = document.createElement('div');
             wrapper.className = CssClass.BLOCK_ITEM;
             wrapper.dataset.blockId = block.id;
 
             if (block.type === BlockType.COMMAND) {
-                wrapper.innerHTML = buildCommandBlockHTML(block);
+                wrapper.innerHTML = buildCommandBlockHTML(block, variableMap, secretKeys);
             } else if (block.type === BlockType.NOTE) {
                 wrapper.innerHTML = buildNoteBlockHTML(block);
             } else if (block.type === BlockType.DIVIDER) {
@@ -3247,22 +4157,15 @@
                     return;
                 }
 
-                if (lassoMode === LassoMode.DESELECT) {
-                    selectedBlockIds.delete(block.id);
-                } else {
-                    selectedBlockIds.add(block.id);
-                }
-
-                updateBlockSelectionVisuals();
+                setBlockSelected(block.id, lassoMode === LassoMode.SELECT);
                 updateSelectingBodyClass();
             });
 
             return wrapper;
         }
 
-        function buildCommandBlockHTML(block) {
-            const variableMap = getVariableMap();
-            const previewHTML = buildPreviewHTML(block.text, variableMap);
+        function buildCommandBlockHTML(block, variableMap = getVariableMap(), secretKeys = getSecretKeys()) {
+            const previewHTML = buildPreviewHTML(block.text, variableMap, secretKeys);
             const isUnresolved = hasUnresolvedTokens(block.text, variableMap);
             const escapedText = escapeHtml(block.text);
             const isEditorCollapsed = block.editorCollapsed === true;
@@ -3340,12 +4243,13 @@
         }
 
         function updateEmptyState() {
+            const isEmpty = (state.blocks ?? []).length === 0;
             const emptyState = document.getElementById(ElementId.EMPTY_STATE);
+
             if (emptyState) {
-                emptyState.style.display = state.blocks.length === 0 ? CssDisplay.BLOCK : CssDisplay.NONE;
+                emptyState.style.display = isEmpty ? CssDisplay.BLOCK : CssDisplay.NONE;
             }
 
-            const isEmpty = state.blocks.length === 0;
             if (isEmpty) {
                 clearBlockSelection();
             }
@@ -3415,6 +4319,25 @@
             saveState();
         }
 
+        function syncThemeIndicator(isLight) {
+            const btn = document.getElementById(ElementId.THEME_TOGGLE_BTN);
+            const icon = document.getElementById(ElementId.THEME_ICON);
+
+            if (btn) {
+                btn.title = `Switch to ${isLight ? Theme.DARK : Theme.LIGHT} mode`;
+            }
+
+            if (icon) {
+                icon.innerHTML = isLight ? ThemeIcon.MOON : ThemeIcon.SUN;
+            }
+        }
+
+        function toggleTheme() {
+            const isLight = document.documentElement.classList.toggle(CssClass.THEME_LIGHT);
+            syncThemeIndicator(isLight);
+            saveUiState();
+        }
+
         //  Toggle command editor
 
         function toggleCommandEditor(blockId) {
@@ -3466,22 +4389,30 @@
         }
 
         function toggleBlockSelection(blockId) {
-            if (selectedBlockIds.has(blockId)) {
-                selectedBlockIds.delete(blockId);
-            } else {
+            setBlockSelected(blockId, !selectedBlockIds.has(blockId));
+            updateSelectingBodyClass();
+        }
+
+        function setBlockSelected(blockId, selected) {
+            if (selected) {
                 selectedBlockIds.add(blockId);
+            } else {
+                selectedBlockIds.delete(blockId);
             }
 
-            updateBlockSelectionVisuals();
-            updateSelectingBodyClass();
+            getBlockFromId(blockId)?.classList.toggle(CssClass.BLOCK_SELECTED, selected);
         }
 
         function clearBlockSelection() {
+            for (const blockId of selectedBlockIds) {
+                getBlockFromId(blockId)?.classList.remove(CssClass.BLOCK_SELECTED);
+            }
+
             selectedBlockIds.clear();
-            updateBlockSelectionVisuals();
             updateSelectingBodyClass();
         }
 
+        // Full resync of every block element to the current selection set
         function updateBlockSelectionVisuals() {
             document.querySelectorAll(Selector.BLOCK_ITEM).forEach(el => {
                 el.classList.toggle(CssClass.BLOCK_SELECTED, selectedBlockIds.has(el.dataset.blockId));
@@ -3494,7 +4425,7 @@
 
         function setupLassoSelection() {
             document.addEventListener(EventType.MOUSE_DOWN, e => {
-                if (!(e.ctrlKey || e.metaKey) || e.button !== 0 || isReadMode()) {
+                if (!(e.ctrlKey || e.metaKey) || e.button !== MouseButton.LEFT || isReadMode()) {
                     return;
                 }
 
@@ -3503,13 +4434,7 @@
                     const blockId = blockEl.dataset.blockId;
                     lassoMode = selectedBlockIds.has(blockId) ? LassoMode.DESELECT : LassoMode.SELECT;
 
-                    if (lassoMode === LassoMode.DESELECT) {
-                        selectedBlockIds.delete(blockId);
-                    } else {
-                        selectedBlockIds.add(blockId);
-                    }
-
-                    updateBlockSelectionVisuals();
+                    setBlockSelected(blockId, lassoMode === LassoMode.SELECT);
                     updateSelectingBodyClass();
                 } else {
                     lassoMode = LassoMode.SELECT;
@@ -3526,7 +4451,6 @@
         //  Drag and drop reordering
 
         let dragSourceId = null;
-        let dragSourceVariableId = null;
 
         function setupDragAndDrop() {
             const container = document.getElementById(ElementId.BLOCKS_LIST);
@@ -3599,7 +4523,115 @@
             });
         }
 
-        //  Export
+        // Shared file save utility
+
+        async function saveFile(content, mimeType, suggestedName, types) {
+            if (window.showSaveFilePicker) {
+                try {
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName,
+                        types
+                    });
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(content);
+                    await writable.close();
+                    return;
+                } catch (error) {
+                    if (error.name === 'AbortError') return;
+                }
+            }
+
+            // Legacy fallback
+            const blob = new Blob([content], {
+                type: mimeType
+            });
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = suggestedName;
+            anchor.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Shared modal utility
+
+        const modalCleanups = new WeakMap();
+
+        function openModal(backdrop) {
+            closeModal(backdrop);
+            backdrop.classList.add(CssClass.MODAL_VISIBLE);
+
+            function cleanup() {
+                backdrop.classList.remove(CssClass.MODAL_VISIBLE);
+                document.removeEventListener(EventType.KEY_DOWN, onKey);
+                backdrop.removeEventListener(EventType.CLICK, onBackdropClick);
+                modalCleanups.delete(backdrop);
+            }
+
+            function onKey(event) {
+                if (event.key === Key.ESCAPE) {
+                    event.preventDefault();
+                    cleanup();
+                }
+            }
+
+            function onBackdropClick(event) {
+                if (event.target === backdrop) {
+                    cleanup();
+                }
+            }
+
+            document.addEventListener(EventType.KEY_DOWN, onKey);
+            backdrop.addEventListener(EventType.CLICK, onBackdropClick);
+            modalCleanups.set(backdrop, cleanup);
+        }
+
+        function closeModal(backdrop) {
+            const cleanup = modalCleanups.get(backdrop);
+            if (cleanup) {
+                cleanup();
+            } else {
+                backdrop.classList.remove(CssClass.MODAL_VISIBLE);
+            }
+        }
+
+        // Keybindings modal
+
+        function buildKeybindingsTable() {
+            const table = document.getElementById(ElementId.KEYBINDINGS_TABLE);
+            if (!table || table.childElementCount > 0) {
+                return;
+            }
+
+            table.innerHTML = KEYBINDINGS.map(({
+                keys,
+                description
+            }) => `
+                <tr>
+                    <td class="key-cell"><span class="kbd">${escapeHtml(keys)}</span></td>
+                    <td class="desc-cell">${escapeHtml(description)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function showKeybindingsModal() {
+            buildKeybindingsTable();
+            openModal(document.getElementById(ElementId.KEYBINDINGS_MODAL));
+        }
+
+        function closeKeybindingsModal() {
+            closeModal(document.getElementById(ElementId.KEYBINDINGS_MODAL));
+        }
+
+        // Export modal
+
+        function closeExportModal() {
+            closeModal(document.getElementById(ElementId.EXPORT_MODAL));
+        }
+
+        function showExportModal() {
+            openModal(document.getElementById(ElementId.EXPORT_MODAL));
+        }
 
         function buildMarkdownExport() {
             const lines = [];
@@ -3631,125 +4663,17 @@
             return lines.join('\n');
         }
 
-        // Shared file save utility
-        async function saveFile(content, mimeType, suggestedName, types) {
-            if (window.showSaveFilePicker) {
-                try {
-                    const fileHandle = await window.showSaveFilePicker({
-                        suggestedName,
-                        types
-                    });
-                    const writable = await fileHandle.createWritable();
-                    await writable.write(content);
-                    await writable.close();
-                    return;
-                } catch (error) {
-                    if (error.name === 'AbortError') return;
-                }
-            }
-
-            // Legacy fallback
-            const blob = new Blob([content], {
-                type: mimeType
-            });
-            const url = URL.createObjectURL(blob);
-            const anchor = document.createElement('a');
-            anchor.href = url;
-            anchor.download = suggestedName;
-            anchor.click();
-            URL.revokeObjectURL(url);
-        }
-
-        // Keybindings modal
-
-        function buildKeybindingsTable() {
-            const table = document.getElementById(ElementId.KEYBINDINGS_TABLE);
-            if (!table || table.childElementCount > 0) {
-                return;
-            }
-
-            table.innerHTML = KEYBINDINGS.map(({
-                keys,
-                description
-            }) => `
-                <tr>
-                    <td class="key-cell"><span class="kbd">${escapeHtml(keys)}</span></td>
-                    <td class="desc-cell">${escapeHtml(description)}</td>
-                </tr>
-            `).join('');
-        }
-
-        function showKeybindingsModal() {
-            buildKeybindingsTable();
-            const backdrop = document.getElementById(ElementId.KEYBINDINGS_MODAL);
-            backdrop.classList.add(CssClass.MODAL_VISIBLE);
-
-            function onKey(event) {
-                if (event.key === Key.ESCAPE) {
-                    event.preventDefault();
-                    cleanup();
-                }
-            }
-
-            function onBackdropClick(event) {
-                if (event.target === backdrop) {
-                    cleanup();
-                }
-            }
-
-            function cleanup() {
-                closeKeybindingsModal();
-                document.removeEventListener(EventType.KEY_DOWN, onKey);
-                backdrop.removeEventListener(EventType.CLICK, onBackdropClick);
-            }
-
-            document.addEventListener(EventType.KEY_DOWN, onKey);
-            backdrop.addEventListener(EventType.CLICK, onBackdropClick);
-        }
-
-        function closeKeybindingsModal() {
-            document.getElementById(ElementId.KEYBINDINGS_MODAL).classList.remove(CssClass.MODAL_VISIBLE);
-        }
-
-        // Export modal
-
-        function closeExportModal() {
-            document.getElementById(ElementId.EXPORT_MODAL).classList.remove(CssClass.MODAL_VISIBLE);
-        }
-
-        function showExportModal() {
-            const backdrop = document.getElementById(ElementId.EXPORT_MODAL);
-            backdrop.classList.add(CssClass.MODAL_VISIBLE);
-
-            function cleanup() {
-                closeExportModal();
-                document.removeEventListener(EventType.KEY_DOWN, onKey);
-                backdrop.removeEventListener(EventType.CLICK, onBackdropClick);
-            }
-
-            function onKey(event) {
-                if (event.key === Key.ESCAPE) {
-                    event.preventDefault();
-                    cleanup();
-                }
-            }
-
-            function onBackdropClick(event) {
-                if (event.target === backdrop) {
-                    cleanup();
-                }
-            }
-
-            document.addEventListener(EventType.KEY_DOWN, onKey);
-            backdrop.addEventListener(EventType.CLICK, onBackdropClick);
-        }
-
         async function runExport(format) {
             closeExportModal();
 
             if (format === ExportFormat.JSON) {
+                const exportData = {
+                    variables: state.variables ?? [],
+                    blocks: state.blocks ?? []
+                };
+
                 await saveFile(
-                    JSON.stringify(state, null, 2),
+                    JSON.stringify(exportData, null, 2),
                     FilePickerConfig.MIME_TYPE,
                     FilePickerConfig.SUGGESTED_NAME,
                     [{
@@ -3849,6 +4773,26 @@
             });
         }
 
+        function showAlertModal(message) {
+            return new Promise(resolve => {
+                const backdrop = document.getElementById(ElementId.ALERT_MODAL);
+                const messageEl = document.getElementById(ElementId.ALERT_MODAL_MESSAGE);
+                const okBtn = document.getElementById(ElementId.ALERT_MODAL_OK_BTN);
+
+                messageEl.textContent = message;
+                openModal(backdrop);
+                okBtn.focus();
+
+                function finish() {
+                    closeModal(backdrop);
+                    okBtn.removeEventListener(EventType.CLICK, finish);
+                    resolve();
+                }
+
+                okBtn.addEventListener(EventType.CLICK, finish);
+            });
+        }
+
         async function clearAllData() {
             removeCtrlHeldClass();
 
@@ -3859,21 +4803,27 @@
                 return;
             }
 
-            state.variables = [];
-            state.blocks = [];
-
             for (const runbook of runbookLibrary) {
                 await deleteRunbookContent(runbook.id);
             }
 
-            runbookLibrary = [];
+            activeTabId = null;
             activeRunbookId = null;
+
+            tabs = []
+            runbookLibrary = [];
+
+            saveTabs();
             saveRunbookLibrary();
-            renderRunbookList();
-            saveState();
-            renderVariablesList();
-            renderBlocksList();
-            updateEmptyState();
+
+            // Clear all search inputs and queries
+            runbookSearchQuery = '';
+            variableSearchQuery = '';
+            document.querySelectorAll(Selector.SIDEBAR_SEARCH_INPUT).forEach(input => {
+                input.value = '';
+            });
+
+            renderWorkspace();
         }
 
         function toggleAllCommandEditors() {
@@ -3905,13 +4855,13 @@
                 document.querySelectorAll(Selector.BLOCK_ITEM)
                     .forEach(el => el.classList.remove(CssClass.DRAG_OVER, CssClass.DRAGGING));
 
-                document.querySelectorAll(Selector.VARIABLE_ROW)
+                document.querySelectorAll(Selector.SIDEBAR_SECTION_ROW)
                     .forEach(el => {
                         el.classList.remove(CssClass.DRAGGING);
                         el.querySelector(Selector.VARIABLE_INPUTS)?.classList.remove(CssClass.DRAG_OVER);
                     });
 
-                document.querySelectorAll(Selector.RUNBOOK_ROW)
+                document.querySelectorAll(Selector.SIDEBAR_SECTION_ROW)
                     .forEach(el => {
                         el.classList.remove(CssClass.DRAGGING);
                         el.querySelector(Selector.RUNBOOK_ITEM_BTN)?.classList.remove(CssClass.DRAG_OVER);
@@ -3919,29 +4869,30 @@
             });
         }
 
-        function init() {
+        async function init() {
             loadState();
             loadRunbookLibrary();
             loadSidebarSectionState();
-            renderVariablesList();
-            renderBlocksList();
-            renderRunbookList();
-            updateEmptyState();
+            await loadTabs()
+            renderWorkspace();
             setupLassoSelection();
             setupGlobalDragCleanup();
 
             setTimeout(() => {
                 autoResizeAllTextarea();
-
-                document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(textarea => syncNoteWidth(textarea));
+                document.querySelectorAll(Selector.NOTE_TEXTAREA).forEach(t => syncNoteWidth(t));
                 refreshAllPreviews();
 
                 // Restore scroll
                 setTimeout(() => {
-                    const mainPanel = document.getElementById(ElementId.MAIN_PANEL);
-                    if (mainPanel) {
-                        mainPanel.scrollTop = savedScrollTop;
+                    const tabsContent = document.getElementById(ElementId.TABS_CONTENT);
+                    if (tabsContent) {
+                        tabsContent.scrollTop = savedScrollTop;
                     }
+
+                    appInitialized = true;
+                    document.getElementById(ElementId.FOOTER_COPYRIGHT).textContent =
+                        `© ${new Date().getFullYear()} Roniel Sabala`;
 
                     requestAnimationFrame(() => {
                         document.body.classList.add(CssClass.APP_READY);
@@ -3954,9 +4905,9 @@
 
         let scrollSaveTimer = null;
 
-        document.getElementById(ElementId.MAIN_PANEL).addEventListener(EventType.SCROLL, () => {
+        document.getElementById(ElementId.TABS_CONTENT).addEventListener(EventType.SCROLL, () => {
             clearTimeout(scrollSaveTimer);
-            scrollSaveTimer = setTimeout(saveState, SAVE_TIMEOUT_MS);
+            scrollSaveTimer = setTimeout(saveUiState, DEBOUNCE_SAVE_MS);
         });
 
         // Click handlers
@@ -3991,8 +4942,25 @@
 
         document.addEventListener(EventType.KEY_DOWN, e => {
             const key = e.key;
+            const altPressed = e.altKey;
+            const ctrlPressed = e.ctrlKey;
 
-            if (!e.ctrlKey && !e.altKey && !document.activeElement?.matches(InputSelector.EDITABLE)) {
+            // Tab management
+            if ((ctrlPressed || e.metaKey) && altPressed) {
+                if (key === Key.N) {
+                    e.preventDefault();
+                    createNewTab();
+                } else if (key === Key.W) {
+                    e.preventDefault();
+                    if (activeTabId) {
+                        closeTab(activeTabId);
+                    }
+                }
+
+                return;
+            }
+
+            if (!ctrlPressed && !altPressed && !document.activeElement?.matches(InputSelector.EDITABLE)) {
                 if (key === Key.DELETE && selectedBlockIds.size > 0) {
                     e.preventDefault();
                     removeBlock([...selectedBlockIds][0]);
@@ -4008,14 +4976,14 @@
                 return;
             }
 
-            if (e.altKey) {
+            if (altPressed) {
                 e.preventDefault();
                 document.body.classList.add(CssClass.ALT_HELD);
                 updateCursorOnLink();
                 return;
             }
 
-            if (!e.ctrlKey) {
+            if (!ctrlPressed) {
                 return;
             }
 
@@ -4043,6 +5011,14 @@
                 removeCtrlHeldClass();
                 if (selectedBlockIds.size > 0) {
                     duplicateBlock([...selectedBlockIds][0]);
+                }
+
+            } else if (e.shiftKey && key === Key.SHIFT_D) {
+                e.preventDefault();
+                removeCtrlHeldClass();
+                const deleteId = focusedRunbookId ?? activeRunbookId;
+                if (deleteId && !isReadMode()) {
+                    removeRunbookFromLibrary(deleteId);
                 }
 
             } else if (e.shiftKey && key === Key.SHIFT_S) {
@@ -4083,9 +5059,7 @@
             }
 
             if (key === Key.ESCAPE) {
-                document.activeElement?.blur();
-                clearBlockSelection();
-                clearRunbookFocus();
+                clearUserInteraction();
             }
         });
 
