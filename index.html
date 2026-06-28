@@ -1823,6 +1823,16 @@
         </div>
     </div>
 
+    <div id="alert-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal">
+            <p class="modal-title">Invalid Format</p>
+            <p id="alert-modal-message" class="modal-message"></p>
+            <div class="modal-actions">
+                <button id="alert-modal-ok-btn" class="btn btn-lg btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const STORAGE_KEY = 'commandpad_state';
         const TABS_STORAGE_KEY = 'commandpad_tabs';
@@ -2134,6 +2144,9 @@
             KEYBINDINGS_TABLE: 'keybindings-table',
             THEME_TOGGLE_BTN: 'theme-toggle-btn',
             THEME_ICON: 'theme-icon',
+            ALERT_MODAL: 'alert-modal',
+            ALERT_MODAL_MESSAGE: 'alert-modal-message',
+            ALERT_MODAL_OK_BTN: 'alert-modal-ok-btn',
         });
 
         const Theme = Object.freeze({
@@ -2941,7 +2954,9 @@
 
             Promise.all(files.map(readFile)).then(() => {
                 if (failedCount > 0) {
-                    alert(`${failedCount} file(s) could not be imported (invalid format).`);
+                    showAlertModal(
+                        `${failedCount} file(s) could not be imported because their formats aren't recognized.`
+                    );
                 }
             });
 
@@ -4533,6 +4548,26 @@
                 cancelBtn.addEventListener(EventType.CLICK, onCancel);
                 backdrop.addEventListener(EventType.CLICK, onBackdropClick);
                 document.addEventListener(EventType.KEY_DOWN, onKey);
+            });
+        }
+
+        function showAlertModal(message) {
+            return new Promise(resolve => {
+                const backdrop = document.getElementById(ElementId.ALERT_MODAL);
+                const messageEl = document.getElementById(ElementId.ALERT_MODAL_MESSAGE);
+                const okBtn = document.getElementById(ElementId.ALERT_MODAL_OK_BTN);
+
+                messageEl.textContent = message;
+                openModal(backdrop);
+                okBtn.focus();
+
+                function finish() {
+                    closeModal(backdrop);
+                    okBtn.removeEventListener(EventType.CLICK, finish);
+                    resolve();
+                }
+
+                okBtn.addEventListener(EventType.CLICK, finish);
             });
         }
 
