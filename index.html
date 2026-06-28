@@ -1978,6 +1978,7 @@
             ESCAPE: 'Escape',
             BACKSPACE: 'Backspace',
             DELETE: 'Delete',
+            SHIFT_D: 'D',
             SHIFT_E: 'E',
             SHIFT_S: 'S',
             TAB: 'Tab',
@@ -2007,6 +2008,10 @@
             {
                 keys: 'Ctrl+G',
                 description: 'Toggle all command editors'
+            },
+            {
+                keys: 'Ctrl+Shift+D',
+                description: 'Delete the focused runbook from the library'
             },
             {
                 keys: 'Ctrl+I',
@@ -4739,6 +4744,14 @@
                 removeCtrlHeldClass();
                 if (selectedBlockIds.size > 0) {
                     duplicateBlock([...selectedBlockIds][0]);
+                }
+
+            } else if (e.shiftKey && key === Key.SHIFT_D) {
+                e.preventDefault();
+                removeCtrlHeldClass();
+                const deleteId = focusedRunbookId ?? activeRunbookId;
+                if (deleteId && !isReadMode()) {
+                    removeRunbookFromLibrary(deleteId);
                 }
 
             } else if (e.shiftKey && key === Key.SHIFT_S) {
