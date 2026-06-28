@@ -36,10 +36,12 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 - **Live resolved preview**: every command block shows the fully resolved command in real time as you type.
 - **Three block types**: commands, notes, and dividers can be freely mixed to build structured, annotated runbooks.
 - **Rich note blocks**: notes support three text styles (heading, subheading, body), auto-detect URLs, and inline markdown: `**bold**`, `_italic_`, `` `code` ``.
+- **Secret variables**: mark any variable as secret to mask its value in the sidebar and in command previews.
 - **Sidebar search**: filter both the runbook list and the variable list instantly with the search bars.
 - **Drag-and-drop reordering**: blocks, variables, and runbook library entries can each be reordered via their drag handles.
 - **Multi-block selection**: hold `Ctrl` and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the group at once.
 - **Read mode**: locks editing while still allowing variable values to change and runbooks to be switched.
+- **Light and dark theme**: toggle between dark and light mode. The preference is saved and restored on reload.
 - **Adjustable sidebar**: collapse the sidebar to maximize workspace, or move it to the right side of the screen.
 - **Persistent state**: tabs, workspace content, sidebar state, and app mode are all saved locally and restored on reload.
 - **Export**: save the active workspace as `.json`, `.md`, or `.txt` via a native OS save dialog.
@@ -129,6 +131,7 @@ Variables are defined in the **VARIABLES** section of the sidebar. Each variable
 - Drag the handle on the left of a row to reorder variables.
 - Use the **search bar** to filter variables by key or value.
 - Delete a variable with the button on row hover.
+- Click the **eye-slash icon** on a variable row to mark it as **secret**. Secret values are masked in the sidebar and are substituted silently in command previews.
 
 > If no tabs are open and you create a variable, a new untitled tab is created automatically.
 
