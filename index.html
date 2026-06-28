@@ -1127,6 +1127,24 @@
             color: var(--color-text-secondary);
         }
 
+        /* --- SYNCING PULSE --- */
+
+        @keyframes sync-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .is-syncing {
+            animation: sync-pulse 0.75s ease-in-out infinite;
+        }
+
         .toggle-editor-btn {
             margin-left: auto;
             display: inline-flex;
@@ -1694,7 +1712,7 @@
                     <div class="sidebar-search-wrapper">
                         <input id="runbook-search-input" class="sidebar-search-input" type="text"
                             placeholder="Search runbooks…" spellcheck="false" autocomplete="off"
-                            oninput="runbookSearchQuery = this.value; debouncedRenderRunbookList()" />
+                            oninput="handleRunbookSearch(this.value)" />
                         <svg class="sidebar-search-icon" viewBox="0 0 16 16">
                             <circle cx="6.5" cy="6.5" r="4" />
                             <line x1="10" y1="10" x2="14" y2="14" />
@@ -1725,7 +1743,7 @@
                     <div class="sidebar-search-wrapper">
                         <input id="variable-search-input" class="sidebar-search-input" type="text"
                             placeholder="Search variables…" spellcheck="false" autocomplete="off"
-                            oninput="variableSearchQuery = this.value; debouncedRenderVariablesList()" />
+                            oninput="handleVariableSearch(this.value)" />
                         <svg class="sidebar-search-icon" viewBox="0 0 16 16">
                             <circle cx="6.5" cy="6.5" r="4" />
                             <line x1="10" y1="10" x2="14" y2="14" />
@@ -1986,6 +2004,7 @@
             THEME_LIGHT: 'theme-light',
             VAR_SECRET: 'is-secret',
             VAR_SECRET_BTN_ACTIVE: 'is-active',
+            SYNCING: 'is-syncing',
         });
 
         const CssAttribute = Object.freeze({
@@ -2134,6 +2153,9 @@
             SIDEBAR_SECTION_ROW: '.sidebar-section-row',
             RUNBOOK_ITEM_BTN: '.runbook-item-btn',
             RUNBOOK_DRAG_HANDLE: '.runbook-drag-handle',
+            LABEL_SYNC_TARGETS: '.tab-active .tab-label, .runbook-item-btn.active',
+            RUNBOOK_LIST: '#runbook-list',
+            VARIABLES_LIST: '#variables-list',
         });
 
         const InputSelector = Object.freeze({
@@ -2237,10 +2259,10 @@
         const DEFER_MS = 0;
         const DRAG_TIMEOUT_MS = 50;
         const COPY_FEEDBACK_TIMEOUT_MS = 1000;
-        const DEBOUNCE_SEARCH_MS = 100;
+        const DEBOUNCE_SEARCH_MS = 150;
         const DEBOUNCE_SAVE_MS = 150;
-        const DEBOUNCE_PREVIEW_MS = 100;
-        const DEBOUNCE_LABEL_SYNC_MS = 100;
+        const DEBOUNCE_PREVIEW_MS = 200;
+        const DEBOUNCE_LABEL_SYNC_MS = 200;
 
         // State
 
@@ -2260,11 +2282,43 @@
             };
         }
 
+        // Syncing helpers
+
+        function markSyncing(selector) {
+            document.querySelectorAll(selector).forEach(el => el.classList.add(CssClass.SYNCING));
+        }
+
+        function clearSyncing(selector) {
+            document.querySelectorAll(selector).forEach(el => el.classList.remove(CssClass.SYNCING));
+        }
+
+        function scheduleSync(value, syncSelector, settle, settleDebounced) {
+            if (value === '') {
+                settle();
+                return;
+            }
+
+            markSyncing(syncSelector);
+            settleDebounced();
+        }
+
+        // Debounced functions
+
         const debouncedSaveState = debounce(() => saveState(), DEBOUNCE_SAVE_MS);
         const debouncedRefreshAllPreviews = debounce(() => refreshAllPreviews(), DEBOUNCE_PREVIEW_MS);
         const debouncedSyncActiveRunbookLabel = debounce(() => syncActiveRunbookLabel(), DEBOUNCE_LABEL_SYNC_MS);
         const debouncedRenderRunbookList = debounce(() => renderRunbookList(), DEBOUNCE_SEARCH_MS);
         const debouncedRenderVariablesList = debounce(() => renderVariablesList(), DEBOUNCE_SEARCH_MS);
+
+        function handleRunbookSearch(query) {
+            runbookSearchQuery = query;
+            scheduleSync(query, Selector.RUNBOOK_LIST, renderRunbookList, debouncedRenderRunbookList);
+        }
+
+        function handleVariableSearch(query) {
+            variableSearchQuery = query;
+            scheduleSync(query, Selector.VARIABLES_LIST, renderVariablesList, debouncedRenderVariablesList);
+        }
 
         // Shared handle-based drag-to-reorder
         const dragState = {};
@@ -3018,6 +3072,7 @@
 
         function renderRunbookList() {
             const container = document.getElementById(ElementId.RUNBOOK_LIST);
+            clearSyncing(Selector.RUNBOOK_LIST);
             container.innerHTML = '';
 
             if (runbookLibrary.length === 0) {
@@ -3497,7 +3552,7 @@
 
             variable[field] = value;
             debouncedSaveState();
-            debouncedRefreshAllPreviews();
+            scheduleSync(value, Selector.COMMAND_PREVIEW_TEXT, refreshAllPreviews, debouncedRefreshAllPreviews);
         }
 
         function toggleVariableSecret(variableId) {
@@ -3507,14 +3562,15 @@
             }
 
             variable.secret = !variable.secret;
-            debouncedSaveState();
+            saveState();
             renderVariablesList();
-            debouncedRefreshAllPreviews();
+            refreshAllPreviews();
         }
 
         function renderVariablesList() {
             const variables = state.variables ?? [];
             const container = document.getElementById(ElementId.VARIABLES_LIST);
+            clearSyncing(Selector.VARIABLES_LIST);
             container.innerHTML = '';
 
             if (variables.length === 0) {
@@ -3724,6 +3780,9 @@
         }
 
         function syncActiveRunbookLabel() {
+            // Settle the pulse whether or not the label actually changes below
+            clearSyncing(Selector.LABEL_SYNC_TARGETS);
+
             if (!activeRunbookId) {
                 return;
             }
@@ -3771,7 +3830,8 @@
 
             // Update runbook label
             if (blockId === state.blocks[0]?.id) {
-                debouncedSyncActiveRunbookLabel();
+                scheduleSync(text, Selector.LABEL_SYNC_TARGETS, syncActiveRunbookLabel,
+                    debouncedSyncActiveRunbookLabel);
             }
         }
 
@@ -3852,6 +3912,7 @@
             }
 
             previewEl.innerHTML = buildPreviewHTML(block.text, variableMap, secretKeys);
+            previewEl.classList.remove(CssClass.SYNCING);
             const isUnresolved = hasUnresolvedTokens(block.text, variableMap);
             previewEl.classList.toggle(CssClass.HAS_UNRESOLVED, isUnresolved);
 
