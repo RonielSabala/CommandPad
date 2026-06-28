@@ -2156,6 +2156,7 @@
             LABEL_SYNC_TARGETS: '.tab-active .tab-label, .runbook-item-btn.active',
             RUNBOOK_LIST: '#runbook-list',
             VARIABLES_LIST: '#variables-list',
+            SIDEBAR_SEARCH_INPUT: '.sidebar-search-input',
         });
 
         const InputSelector = Object.freeze({
@@ -4730,6 +4731,13 @@
 
             saveTabs();
             saveRunbookLibrary();
+
+            // Clear all search inputs and queries
+            runbookSearchQuery = '';
+            variableSearchQuery = '';
+            document.querySelectorAll(Selector.SIDEBAR_SEARCH_INPUT).forEach(input => {
+                input.value = '';
+            });
 
             renderWorkspace();
         }
