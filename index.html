@@ -644,6 +644,25 @@
             pointer-events: none;
         }
 
+        .variable-row {
+            grid-template-columns: auto 1fr auto auto;
+        }
+
+        .sidebar-section-row .variable-secret-btn {
+            opacity: 0;
+            transition: opacity var(--transition-fast), color var(--transition-fast);
+            flex-shrink: 0;
+        }
+
+        .sidebar-section-row:hover .variable-secret-btn,
+        .sidebar-section-row.is-secret .variable-secret-btn {
+            opacity: 1;
+        }
+
+        .variable-secret-btn.is-active {
+            color: var(--accent);
+        }
+
         /* --- SIDEBAR COLLAPSE --- */
 
         #sidebar-toggle-btn {
@@ -1090,6 +1109,11 @@
             color: var(--success);
         }
 
+        .token-secret {
+            color: var(--success);
+            letter-spacing: 0.1em;
+        }
+
         .token-unresolved {
             color: var(--danger);
             font-weight: 600;
@@ -1507,7 +1531,8 @@
 
         body.read-mode #runbook-add-btn,
         body.read-mode .drag-handle,
-        body.read-mode .sidebar-section-row .btn-danger {
+        body.read-mode .sidebar-section-row .btn-danger,
+        body.read-mode .variable-secret-btn {
             display: none !important;
         }
 
@@ -1899,6 +1924,7 @@
             LITERAL: 'literal',
             RESOLVED: 'resolved',
             UNRESOLVED: 'unresolved',
+            SECRET: 'secret',
         });
 
         const MoveDirection = Object.freeze({
@@ -1909,6 +1935,7 @@
         const VariableField = Object.freeze({
             KEY: 'key',
             VALUE: 'value',
+            SECRET: 'secret',
         });
 
         const CssHeight = Object.freeze({
@@ -1953,6 +1980,8 @@
             SIDEBAR_SECTION_EMPTY_MSG: 'sidebar-section-empty-msg',
             MODAL_VISIBLE: 'modal-visible',
             THEME_LIGHT: 'theme-light',
+            VAR_SECRET: 'is-secret',
+            VAR_SECRET_BTN_ACTIVE: 'is-active',
         });
 
         const CssAttribute = Object.freeze({
@@ -2110,6 +2139,15 @@
         const Anchor = Object.freeze({
             TARGET_BLANK: '_blank',
             REL: 'noopener,noreferrer',
+        });
+
+        const InputType = Object.freeze({
+            PASSWORD: 'password',
+            TEXT: 'text',
+        });
+
+        const UI = Object.freeze({
+            SECRET_MASK: '••••••',
         });
 
         const ElementId = Object.freeze({
@@ -3271,6 +3309,11 @@
             return resolvedMap;
         }
 
+        function getSecretKeys() {
+            const variables = state.variables ?? [];
+            return new Set(variables.filter(v => v.secret && v.key.trim()).map(v => v.key.trim()));
+        }
+
         function resolveCommandText(rawText, variableMap) {
             const segments = [];
             const tokenRegex = /\{([^}]+)\}/g;
@@ -3289,6 +3332,7 @@
                 if (Object.prototype.hasOwnProperty.call(variableMap, key)) {
                     const value = variableMap[key];
                     segments.push({
+                        key,
                         text: value || `{${key}}`,
                         type: value ? SegmentType.RESOLVED : SegmentType.UNRESOLVED
                     });
@@ -3316,9 +3360,15 @@
             return resolveCommandText(rawText, variableMap).map(segment => segment.text).join('');
         }
 
-        function buildPreviewHTML(rawText, variableMap) {
+        function buildPreviewHTML(rawText, variableMap, secretKeys = new Set()) {
             const segments = resolveCommandText(rawText, variableMap);
-            return segments.map(s => `<span class="token-${s.type}">${escapeHtml(s.text)}</span>`).join('');
+            return segments.map(s => {
+                if (s.type === SegmentType.RESOLVED && s.key && secretKeys.has(s.key)) {
+                    return `<span class="token-${SegmentType.SECRET}">${UI.SECRET_MASK}</span>`;
+                }
+
+                return `<span class="token-${s.type}">${escapeHtml(s.text)}</span>`;
+            }).join('');
         }
 
         function hasUnresolvedTokens(rawText, variableMap) {
@@ -3451,6 +3501,18 @@
             debouncedRefreshAllPreviews();
         }
 
+        function toggleVariableSecret(variableId) {
+            const variable = state.variables.find(v => v.id === variableId);
+            if (!variable) {
+                return;
+            }
+
+            variable.secret = !variable.secret;
+            debouncedSaveState();
+            renderVariablesList();
+            debouncedRefreshAllPreviews();
+        }
+
         function renderVariablesList() {
             const variables = state.variables ?? [];
             const container = document.getElementById(ElementId.VARIABLES_LIST);
@@ -3477,15 +3539,17 @@
             }
 
             for (const variable of visibleVariables) {
+                const isSecret = !!variable.secret;
                 const row = document.createElement('div');
-                row.className = CssClass.SIDEBAR_SECTION_ROW;
+                row.className =
+                    `variable-row ${CssClass.SIDEBAR_SECTION_ROW}${isSecret ? ` ${CssClass.VAR_SECRET}` : ''}`;
                 row.dataset.variableId = variable.id;
 
                 row.innerHTML = `
             <div class="variable-drag-handle drag-handle" title="Drag to reorder">
               <svg viewBox="0 0 16 16"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg>
             </div>
-            <div class="variable-inputs">
+            <div class="variable-inputs${isSecret ? ` ${CssClass.VAR_SECRET}` : ''}">
               <input
                 class="variable-key-input"
                 type="text"
@@ -3498,17 +3562,28 @@
               />
               <input
                 class="variable-value-input"
-                type="text"
+                type="${isSecret ? InputType.PASSWORD : InputType.TEXT}"
                 placeholder="value"
                 value="${escapeHtml(variable.value)}"
                 spellcheck="false"
                 autocomplete="off"
                 oninput="updateVariable('${variable.id}', '${VariableField.VALUE}', this.value)"
-                title="${escapeHtml(variable.value)}"
+                title="${isSecret ? '' : escapeHtml(variable.value)}"
               />
             </div>
             <button
-              class="btn btn-icon btn-danger"
+              class="btn btn-icon variable-secret-btn${isSecret ? ` ${CssClass.VAR_SECRET_BTN_ACTIVE}` : ''}"
+              onclick="toggleVariableSecret('${variable.id}')"
+              title="${isSecret ? 'Reveal value' : 'Mask value'}"
+            >
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                ${isSecret
+                    ? '<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/><line x1="2" y1="2" x2="14" y2="14"/>'
+                    : '<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/>'}
+              </svg>
+            </button>
+            <button
+              class="btn btn-icon btn-danger variable-row-delete"
               onclick="removeVariable('${variable.id}')"
               title="Remove variable"
             >
@@ -3690,7 +3765,7 @@
             debouncedSaveState();
 
             if (block.type === BlockType.COMMAND) {
-                refreshBlockPreview(blockId, getVariableMap());
+                refreshBlockPreview(blockId, getVariableMap(), getSecretKeys());
             } else if (block.type === BlockType.NOTE) {
                 refreshNotePreview(blockId);
             }
@@ -3761,7 +3836,7 @@
             renderBlocksList();
         }
 
-        function refreshBlockPreview(blockId, variableMap) {
+        function refreshBlockPreview(blockId, variableMap, secretKeys = new Set()) {
             const block = state.blocks.find(block => block.id === blockId);
             if (!block || block.type !== BlockType.COMMAND) {
                 return;
@@ -3777,7 +3852,7 @@
                 return;
             }
 
-            previewEl.innerHTML = buildPreviewHTML(block.text, variableMap);
+            previewEl.innerHTML = buildPreviewHTML(block.text, variableMap, secretKeys);
             const isUnresolved = hasUnresolvedTokens(block.text, variableMap);
             previewEl.classList.toggle(CssClass.HAS_UNRESOLVED, isUnresolved);
 
@@ -3817,13 +3892,14 @@
         function refreshAllPreviews() {
             const blocks = state.blocks ?? [];
             const variableMap = getVariableMap();
+            const secretKeys = getSecretKeys();
 
             for (const block of blocks) {
                 if (block.type !== BlockType.COMMAND) {
                     continue;
                 }
 
-                refreshBlockPreview(block.id, variableMap);
+                refreshBlockPreview(block.id, variableMap, secretKeys);
             }
         }
 
@@ -3850,9 +3926,10 @@
             const container = document.getElementById(ElementId.BLOCKS_LIST);
             container.innerHTML = '';
             const variableMap = getVariableMap();
+            const secretKeys = getSecretKeys();
 
             for (const block of blocks) {
-                const blockElement = buildBlockElement(block, variableMap);
+                const blockElement = buildBlockElement(block, variableMap, secretKeys);
                 container.appendChild(blockElement);
             }
 
@@ -3860,13 +3937,13 @@
             setupDragAndDrop();
         }
 
-        function buildBlockElement(block, variableMap) {
+        function buildBlockElement(block, variableMap, secretKeys = new Set()) {
             const wrapper = document.createElement('div');
             wrapper.className = CssClass.BLOCK_ITEM;
             wrapper.dataset.blockId = block.id;
 
             if (block.type === BlockType.COMMAND) {
-                wrapper.innerHTML = buildCommandBlockHTML(block, variableMap);
+                wrapper.innerHTML = buildCommandBlockHTML(block, variableMap, secretKeys);
             } else if (block.type === BlockType.NOTE) {
                 wrapper.innerHTML = buildNoteBlockHTML(block);
             } else if (block.type === BlockType.DIVIDER) {
@@ -3942,8 +4019,8 @@
             return wrapper;
         }
 
-        function buildCommandBlockHTML(block, variableMap = getVariableMap()) {
-            const previewHTML = buildPreviewHTML(block.text, variableMap);
+        function buildCommandBlockHTML(block, variableMap = getVariableMap(), secretKeys = getSecretKeys()) {
+            const previewHTML = buildPreviewHTML(block.text, variableMap, secretKeys);
             const isUnresolved = hasUnresolvedTokens(block.text, variableMap);
             const escapedText = escapeHtml(block.text);
             const isEditorCollapsed = block.editorCollapsed === true;
