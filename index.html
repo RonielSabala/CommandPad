@@ -78,6 +78,7 @@
             --header-height: 3.5rem;
             --scrollbar-size: 0.625rem;
             --tab-max-width: 12rem;
+            --tab-min-width: 4rem;
             --block-min-width: 7.5rem;
             --modal-min-width: 15rem;
             --modal-max-width: 30rem;
@@ -757,8 +758,9 @@
             border-radius: var(--radius-lg) var(--radius-lg) 0 0;
             cursor: pointer;
             white-space: nowrap;
+            flex: 0 1 auto;
+            min-width: var(--tab-min-width);
             max-width: var(--tab-max-width);
-            flex-shrink: 0;
             transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
             bottom: -1px;
         }
