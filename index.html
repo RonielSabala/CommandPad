@@ -2121,92 +2121,171 @@
             ALT: 'Alt',
             ENTER: 'Enter',
             ESCAPE: 'Escape',
-            BACKSPACE: 'Backspace',
-            DELETE: 'Delete',
-            SHIFT_D: 'D',
-            SHIFT_E: 'E',
-            SHIFT_S: 'S',
-            TAB: 'Tab',
             ARROW_UP: 'ArrowUp',
             ARROW_DOWN: 'ArrowDown',
-            D: 'd',
-            E: 'e',
-            G: 'g',
-            I: 'i',
-            N: 'n',
-            S: 's',
-            W: 'w',
         });
 
-        const KEYBINDINGS = [{
-                keys: 'Ctrl+E',
+        const KeyBinding = Object.freeze({
+            TOGGLE_MODE: 'TOGGLE_MODE',
+            NEW_TAB: 'NEW_TAB',
+            CLOSE_TAB: 'CLOSE_TAB',
+            TOGGLE_EDITORS: 'TOGGLE_EDITORS',
+            DELETE_RUNBOOK: 'DELETE_RUNBOOK',
+            IMPORT_RUNBOOK: 'IMPORT_RUNBOOK',
+            TOGGLE_SIDEBAR: 'TOGGLE_SIDEBAR',
+            MOVE_SIDEBAR: 'MOVE_SIDEBAR',
+            DUPLICATE_BLOCK: 'DUPLICATE_BLOCK',
+            DELETE_BLOCK: 'DELETE_BLOCK',
+            ESCAPE: 'ESCAPE',
+            EXPORT: 'EXPORT',
+            CLEAR_WORKSPACE: 'CLEAR_WORKSPACE',
+            FOCUS_RUNBOOK: 'FOCUS_RUNBOOK',
+            NAVIGATE_RUNBOOKS: 'NAVIGATE_RUNBOOKS',
+            ALT_CLICK_LINK: 'ALT_CLICK_LINK',
+            MULTISELECT_BLOCKS: 'MULTISELECT_BLOCKS',
+        });
+
+        const KEYBINDINGS = Object.freeze({
+            [KeyBinding.TOGGLE_MODE]: {
+                binding: 'ctrl+e',
                 description: 'Toggle read / edit mode'
             },
-            {
-                keys: 'Ctrl+Alt+N',
+            [KeyBinding.NEW_TAB]: {
+                binding: 'ctrl+alt+n',
                 description: 'Open a new tab'
             },
-            {
-                keys: 'Ctrl+Alt+W',
+            [KeyBinding.CLOSE_TAB]: {
+                binding: 'ctrl+alt+w',
                 description: 'Close the active tab'
             },
-            {
-                keys: 'Ctrl+G',
+            [KeyBinding.TOGGLE_EDITORS]: {
+                binding: 'ctrl+g',
                 description: 'Toggle all command editors'
             },
-            {
-                keys: 'Ctrl+Shift+D',
+            [KeyBinding.DELETE_RUNBOOK]: {
+                binding: 'ctrl+shift+d',
                 description: 'Delete the focused runbook from the library'
             },
-            {
-                keys: 'Ctrl+I',
+            [KeyBinding.IMPORT_RUNBOOK]: {
+                binding: 'ctrl+i',
                 description: 'Open runbook import dialog'
             },
-            {
-                keys: 'Ctrl+S',
+            [KeyBinding.TOGGLE_SIDEBAR]: {
+                binding: 'ctrl+s',
                 description: 'Collapse / expand sidebar'
             },
-            {
-                keys: 'Ctrl+Shift+S',
+            [KeyBinding.MOVE_SIDEBAR]: {
+                binding: 'ctrl+shift+s',
                 description: 'Move sidebar to left / right'
             },
-            {
-                keys: 'Ctrl+D',
+            [KeyBinding.DUPLICATE_BLOCK]: {
+                binding: 'ctrl+d',
                 description: 'Duplicate selected blocks'
             },
-            {
-                keys: 'Del',
+            [KeyBinding.DELETE_BLOCK]: {
+                binding: 'delete',
                 description: 'Delete selected blocks'
             },
-            {
-                keys: 'Escape',
+            [KeyBinding.ESCAPE]: {
+                binding: 'escape',
                 description: 'Clear block selection / close modals'
             },
-            {
-                keys: 'Ctrl+Shift+E',
+            [KeyBinding.EXPORT]: {
+                binding: 'ctrl+shift+e',
                 description: 'Open export dialog'
             },
-            {
-                keys: 'Ctrl+Shift+Backspace',
+            [KeyBinding.CLEAR_WORKSPACE]: {
+                binding: 'ctrl+shift+backspace',
                 description: 'Open clear workspace dialog'
             },
-            {
-                keys: 'Tab',
+            [KeyBinding.FOCUS_RUNBOOK]: {
+                binding: 'tab',
                 description: 'Select active runbook'
             },
-            {
-                keys: '↑ / ↓',
+            [KeyBinding.NAVIGATE_RUNBOOKS]: {
+                binding: '↑ / ↓',
+                keyboard: false,
                 description: 'Navigate runbooks when selected active runbook'
             },
-            {
-                keys: 'Alt+Click',
+            [KeyBinding.ALT_CLICK_LINK]: {
+                binding: 'alt+click',
+                keyboard: false,
                 description: 'Open note link in new tab'
             },
-            {
-                keys: 'Ctrl+Click / Drag',
+            [KeyBinding.MULTISELECT_BLOCKS]: {
+                binding: 'ctrl+click / drag',
+                keyboard: false,
                 description: 'Multi-select blocks'
             },
-        ];
+        });
+
+        const _BINDING_SEPARATOR = '+';
+        const _MODIFIER_KEYS = ['ctrl', 'shift', 'alt'];
+        const _KEY_ALIASES = {
+            space: ' ',
+        };
+
+        // Pretty labels for tokens that don't title-case cleanly
+        const _KEY_LABELS = {
+            delete: 'Del',
+        };
+
+        function _titleCaseToken(token) {
+            return _KEY_LABELS[token] ?? token.charAt(0).toUpperCase() + token.slice(1);
+        }
+
+        function _titleCaseChord(chord) {
+            return chord
+                .split(_BINDING_SEPARATOR)
+                .map(token => token.length === 1 ? token.toUpperCase() : _titleCaseToken(token))
+                .join(_BINDING_SEPARATOR);
+        }
+
+        function formatBinding(binding) {
+            if (!binding.includes(' ')) {
+                return _titleCaseChord(binding);
+            }
+
+            return binding
+                .split(' ')
+                .map(part => part.includes(_BINDING_SEPARATOR) || /[a-z]/.test(part) ? _titleCaseChord(part) : part)
+                .join(' ');
+        }
+
+        const _parsedBindings = Object.freeze(
+            Object.fromEntries(
+                Object.entries(KEYBINDINGS)
+                .filter(([, {
+                    keyboard
+                }]) => keyboard !== false)
+                .map(([id, {
+                    binding
+                }]) => {
+                    const parts = binding.toLowerCase().split(_BINDING_SEPARATOR);
+                    const rawKey = parts.at(-1);
+                    const modifiers = Object.fromEntries(
+                        _MODIFIER_KEYS.map(mod => [mod, parts.includes(mod)])
+                    );
+
+                    return [id, {
+                        ...modifiers,
+                        key: _KEY_ALIASES[rawKey] ?? rawKey
+                    }];
+                })
+            )
+        );
+
+        function matchesKeybinding(event, bindingId) {
+            const binding = _parsedBindings[bindingId];
+            if (!binding) {
+                return false;
+            }
+
+            return event.key?.toLowerCase() === binding.key &&
+                !!event.ctrlKey === binding.ctrl &&
+                !!event.shiftKey === binding.shift &&
+                !!event.altKey === binding.alt;
+        }
 
         const Cursor = Object.freeze({
             DEFAULT: '',
@@ -4603,12 +4682,12 @@
                 return;
             }
 
-            table.innerHTML = KEYBINDINGS.map(({
-                keys,
+            table.innerHTML = Object.values(KEYBINDINGS).map(({
+                binding,
                 description
             }) => `
                 <tr>
-                    <td class="key-cell"><span class="kbd">${escapeHtml(keys)}</span></td>
+                    <td class="key-cell"><span class="kbd">${escapeHtml(formatBinding(binding))}</span></td>
                     <td class="desc-cell">${escapeHtml(description)}</td>
                 </tr>
             `).join('');
@@ -4941,42 +5020,41 @@
         });
 
         document.addEventListener(EventType.KEY_DOWN, e => {
+            if (matchesKeybinding(e, KeyBinding.NEW_TAB)) {
+                e.preventDefault();
+                createNewTab();
+                return;
+            }
+
+            if (matchesKeybinding(e, KeyBinding.CLOSE_TAB)) {
+                e.preventDefault();
+                if (activeTabId) {
+                    closeTab(activeTabId);
+                }
+
+                return;
+            }
+
             const key = e.key;
             const altPressed = e.altKey;
             const ctrlPressed = e.ctrlKey;
+            const inEditable = !!document.activeElement?.matches(InputSelector.EDITABLE);
 
-            // Tab management
-            if ((ctrlPressed || e.metaKey) && altPressed) {
-                if (key === Key.N) {
-                    e.preventDefault();
-                    createNewTab();
-                } else if (key === Key.W) {
-                    e.preventDefault();
-                    if (activeTabId) {
-                        closeTab(activeTabId);
-                    }
-                }
-
-                return;
-            }
-
-            if (!ctrlPressed && !altPressed && !document.activeElement?.matches(InputSelector.EDITABLE)) {
-                if (key === Key.DELETE && selectedBlockIds.size > 0) {
+            if (!ctrlPressed && !altPressed && !inEditable) {
+                if (matchesKeybinding(e, KeyBinding.DELETE_BLOCK) && selectedBlockIds.size > 0) {
                     e.preventDefault();
                     removeBlock([...selectedBlockIds][0]);
-                } else if (key === Key.TAB && runbookLibrary.length > 0) {
+                } else if (matchesKeybinding(e, KeyBinding.FOCUS_RUNBOOK) && runbookLibrary.length > 0) {
                     e.preventDefault();
-                    const targetId = activeRunbookId ?? runbookLibrary[0].id;
-                    setRunbookFocus(targetId);
-                } else if ((key === Key.ARROW_DOWN || key === Key.ARROW_UP) && focusedRunbookId !== null) {
+                    setRunbookFocus(activeRunbookId ?? runbookLibrary[0].id);
+                } else if (focusedRunbookId !== null && (key === Key.ARROW_DOWN || key === Key.ARROW_UP)) {
                     e.preventDefault();
                     navigateRunbookList(key);
                 }
-
                 return;
             }
 
-            if (altPressed) {
+            if (altPressed && !ctrlPressed) {
                 e.preventDefault();
                 document.body.classList.add(CssClass.ALT_HELD);
                 updateCursorOnLink();
@@ -4987,12 +5065,12 @@
                 return;
             }
 
-            if (key === Key.E) {
+            if (matchesKeybinding(e, KeyBinding.TOGGLE_MODE)) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 toggleAppMode();
 
-            } else if (e.shiftKey && key === Key.SHIFT_E) {
+            } else if (matchesKeybinding(e, KeyBinding.EXPORT)) {
                 e.preventDefault();
                 removeCtrlHeldClass();
 
@@ -5001,47 +5079,48 @@
                     showExportModal();
                 }
 
-            } else if (e.shiftKey && key === Key.BACKSPACE) {
+            } else if (matchesKeybinding(e, KeyBinding.CLEAR_WORKSPACE)) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 clearAllData();
 
-            } else if (key === Key.D) {
+            } else if (matchesKeybinding(e, KeyBinding.DUPLICATE_BLOCK)) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 if (selectedBlockIds.size > 0) {
                     duplicateBlock([...selectedBlockIds][0]);
                 }
 
-            } else if (e.shiftKey && key === Key.SHIFT_D) {
+            } else if (matchesKeybinding(e, KeyBinding.DELETE_RUNBOOK)) {
                 e.preventDefault();
                 removeCtrlHeldClass();
+
                 const deleteId = focusedRunbookId ?? activeRunbookId;
                 if (deleteId && !isReadMode()) {
                     removeRunbookFromLibrary(deleteId);
                 }
 
-            } else if (e.shiftKey && key === Key.SHIFT_S) {
+            } else if (matchesKeybinding(e, KeyBinding.MOVE_SIDEBAR)) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 toggleSidebarPosition();
 
-            } else if (key === Key.S) {
+            } else if (matchesKeybinding(e, KeyBinding.TOGGLE_SIDEBAR)) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 toggleSidebar();
 
-            } else if (key === Key.I && !isReadMode()) {
+            } else if (matchesKeybinding(e, KeyBinding.IMPORT_RUNBOOK) && !isReadMode()) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 openRunbookImportDialog();
 
-            } else if (key === Key.G) {
+            } else if (matchesKeybinding(e, KeyBinding.TOGGLE_EDITORS)) {
                 e.preventDefault();
                 removeCtrlHeldClass();
                 toggleAllCommandEditors();
 
-            } else if (!document.activeElement?.matches(InputSelector.EDITABLE)) {
+            } else if (!inEditable) {
                 document.body.classList.add(CssClass.CTRL_HELD);
             }
         });
