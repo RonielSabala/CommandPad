@@ -3406,6 +3406,10 @@
             }
 
             setAppMode(readMode ? AppMode.EDIT : AppMode.READ);
+
+            if (readMode) {
+                autoResizeAllTextarea();
+            }
         }
 
         //  Persistence
