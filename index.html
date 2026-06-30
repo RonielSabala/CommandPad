@@ -1620,8 +1620,7 @@
             display: none !important;
         }
 
-        body.read-mode #add-tab-btn,
-        body.read-mode .tab-close {
+        body.read-mode #add-tab-btn {
             visibility: hidden;
         }
 
@@ -2648,10 +2647,6 @@
         }
 
         function closeTab(tabId) {
-            if (isReadMode()) {
-                return;
-            }
-
             let idx = tabs.findIndex(t => t.id === tabId);
             if (idx < 0) {
                 return;
