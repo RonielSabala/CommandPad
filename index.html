@@ -2126,6 +2126,12 @@
             ARROW_DOWN: 'ArrowDown',
         });
 
+        const Modifier = Object.freeze({
+            CTRL: 'ctrl',
+            SHIFT: 'shift',
+            ALT: 'alt',
+        });
+
         const KeyBinding = Object.freeze({
             TOGGLE_MODE: 'TOGGLE_MODE',
             NEW_TAB: 'NEW_TAB',
@@ -2221,7 +2227,7 @@
         });
 
         const _BINDING_SEPARATOR = '+';
-        const _MODIFIER_KEYS = ['ctrl', 'shift', 'alt'];
+        const _MODIFIER_KEYS = [Modifier.CTRL, Modifier.SHIFT, Modifier.ALT];
         const _KEY_ALIASES = {
             space: ' ',
         };
@@ -2283,9 +2289,9 @@
             }
 
             return event.key?.toLowerCase() === binding.key &&
-                !!event.ctrlKey === binding.ctrl &&
-                !!event.shiftKey === binding.shift &&
-                !!event.altKey === binding.alt;
+                !!(event.ctrlKey || event.metaKey) === binding[Modifier.CTRL] &&
+                !!event.shiftKey === binding[Modifier.SHIFT] &&
+                !!event.altKey === binding[Modifier.ALT];
         }
 
         const Cursor = Object.freeze({
