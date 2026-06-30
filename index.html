@@ -3120,6 +3120,10 @@
                 activeRunbookId = null;
             }
 
+            if (focusedRunbookId === id) {
+                focusedRunbookId = null;
+            }
+
             saveTabs();
             saveRunbookLibrary();
             renderWorkspace();
