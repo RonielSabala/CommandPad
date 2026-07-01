@@ -52,25 +52,26 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 
 ### Requirements
 
+- [Node.js](https://nodejs.org) 20+ and [pnpm](https://pnpm.io) 9+.
 - Any modern browser (Chrome, Firefox, Edge, Safari).
-- No server, build step, or installation required.
 
 ---
 
 ### Run Locally
 
-**Option A. Open directly:**
+```bash
+pnpm install
+pnpm dev
+```
 
-Double-click `index.html` to open it in your default browser.
+Then open the printed local URL (default <http://localhost:5173>).
 
----
+To create a production build:
 
-**Option B. Use a VS Code extension (recommended):**
-
-1. Install the **Live Server** extension (`ritwickdey.liveserver`), listed in [.vscode/extensions.json](.vscode/extensions.json).
-2. Open the Command Palette (`Ctrl+Shift+P`) and run **Live Server: Open with Live Server**.
-
-Use **Live Server: Stop Live Server** to stop.
+```bash
+pnpm build
+pnpm preview
+```
 
 ---
 

@@ -1,0 +1,124 @@
+/*
+ * Design tokens. Theming changes touch only this file:
+ *   :root            → dark theme (default)
+ *   :root.theme-light → light theme override
+ * Components reference these variables and never hardcode colors.
+ * Note: CSS variables do NOT work inside data: URI SVGs (e.g. the favicon).
+ */
+
+:root {
+  /* Core config */
+  --base-unit: 17px;
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'Cascadia Code', monospace;
+
+  /* Accents & semantic colors */
+  --accent: #3b82f6;
+  --accent-dim: rgba(77, 139, 245, 0.12);
+  --accent-text: #93c5fd;
+  --success: #15dd9e;
+  --danger: #f87171;
+  --danger-dim: rgba(248, 113, 113, 0.12);
+
+  /* Surfaces */
+  --color-bg: #0a0b0e;
+  --color-surface: #121318;
+  --color-surface-alt: #1a1c22;
+  --color-border: #282a32;
+  --color-border-focus: #4d8bf5;
+
+  /* Text */
+  --color-text-primary: #f2f3f5;
+  --color-text-secondary: #969aa6;
+  --color-text-muted: #5a5d6b;
+  --selection-color: #0338a2;
+
+  /* Note text styles */
+  --code-color: #ffab3d;
+  --code-bg: rgba(255, 171, 61, 0.08);
+  --code-border: rgba(255, 171, 61, 0.2);
+
+  /* Space scale */
+  --space-1: 0.125rem;
+  --space-2: 0.25rem;
+  --space-3: 0.375rem;
+  --space-4: 0.5rem;
+  --space-5: 0.625rem;
+  --space-6: 0.75rem;
+  --space-8: 1rem;
+  --space-10: 1.25rem;
+  --space-12: 1.5rem;
+  --space-14: 1.75rem;
+  --space-20: 2.5rem;
+
+  /* Text scale */
+  --text-xs: 0.6875rem;
+  --text-sm: 0.8125rem;
+  --text-md: 0.875rem;
+  --text-base: 1rem;
+  --text-xl: 1.125rem;
+  --text-lg: 1.5rem;
+
+  /* Radius scale */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.625rem;
+  --radius-pill: 1rem;
+
+  /* Icon scale */
+  --icon-sm: 0.75rem;
+  --icon-md: 0.875rem;
+  --icon-base: 1rem;
+  --icon-lg: 2.875rem;
+
+  /* Layout dimensions */
+  --sidebar-width: 18.75rem;
+  --header-height: 3.5rem;
+  --scrollbar-size: 0.625rem;
+  --tab-max-width: 12rem;
+  --tab-min-width: 4rem;
+  --block-min-width: 7.5rem;
+  --modal-min-width: 15rem;
+  --modal-max-width: 30rem;
+
+  /* Misc & utilities */
+  --white-a10: rgba(255, 255, 255, 0.1);
+  --black-a40: rgba(0, 0, 0, 0.4);
+  --black-a50: rgba(0, 0, 0, 0.5);
+
+  /* Compound tokens */
+  --border-standard: 1px solid var(--color-border);
+  --border-dashed: var(--space-1) dashed var(--accent);
+  --transition-fast: 0.15s;
+  --transition-base: 0.2s;
+}
+
+/* --- LIGHT THEME --- */
+
+:root.theme-light {
+  /* Accents & semantic colors */
+  --accent: #2563eb;
+  --accent-dim: rgba(37, 99, 235, 0.1);
+  --accent-text: #1d4ed8;
+  --success: #00a32e;
+  --danger: #dc2626;
+  --danger-dim: rgba(220, 38, 38, 0.1);
+
+  /* Surfaces */
+  --color-bg: #eceef2;
+  --color-surface: #fbfcfe;
+  --color-surface-alt: #eef1f5;
+  --color-border: #d8dce3;
+  --color-border-focus: #2563eb;
+
+  /* Text */
+  --color-text-primary: #1a1d23;
+  --color-text-secondary: #565d6b;
+  --color-text-muted: #8a909c;
+  --selection-color: #bcd5fb;
+
+  /* Note text styles */
+  --code-color: #b4490a;
+  --code-bg: rgba(180, 73, 10, 0.08);
+  --code-border: rgba(180, 73, 10, 0.22);
+}

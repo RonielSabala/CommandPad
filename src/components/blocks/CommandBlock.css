@@ -1,0 +1,152 @@
+/* --- COMMAND BLOCK --- */
+
+.command-block {
+  background: var(--color-surface);
+  border: var(--border-standard);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.command-block-editor {
+  display: flex;
+  align-items: stretch;
+  border-top: var(--border-standard);
+  width: 100%;
+  min-width: 0;
+}
+
+.command-block-editor.collapsed {
+  display: none;
+}
+
+.command-gutter {
+  padding: var(--space-5) var(--space-5) var(--space-5) var(--space-6);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  line-height: 1.6;
+  user-select: none;
+  flex-shrink: 0;
+  border-right: var(--border-standard);
+  display: flex;
+  align-items: flex-start;
+}
+
+.command-gutter-prefix {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.command-textarea {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  padding: var(--space-5) var(--space-6);
+  resize: none;
+  outline: none;
+  overflow: hidden;
+  line-height: 1.6;
+  width: 100%;
+}
+
+.command-preview {
+  padding: var(--space-4) var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  background: var(--color-bg);
+}
+
+.command-preview-text {
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  color: var(--success);
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: pre;
+  min-width: 0;
+  padding-bottom: var(--space-2);
+}
+
+.command-preview-text.has-unresolved {
+  color: var(--color-text-secondary);
+}
+
+.command-preview-placeholder {
+  color: var(--color-text-muted);
+}
+
+.token-resolved {
+  color: var(--success);
+}
+
+.token-secret {
+  color: var(--success);
+  letter-spacing: 0.1em;
+}
+
+.token-unresolved {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.token-literal {
+  color: var(--color-text-secondary);
+}
+
+/* --- SYNCING PULSE --- */
+
+@keyframes sync-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.is-syncing {
+  animation: sync-pulse 0.75s ease-in-out infinite;
+}
+
+.toggle-editor-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.toggle-editor-btn:hover {
+  color: var(--color-text-secondary);
+}
+
+.toggle-editor-btn svg {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  transition: transform var(--transition-base);
+}
+
+.toggle-editor-btn.editor-collapsed svg {
+  transform: rotate(-90deg);
+}

@@ -1,8 +1,8 @@
 {
   "recommendations": [
+    "dbaeumer.vscode-eslint",
     "davidanson.vscode-markdownlint",
     "esbenp.prettier-vscode",
-    "ritwickdey.liveserver",
     "streetsidesoftware.code-spell-checker",
     "yzhang.markdown-all-in-one"
   ]

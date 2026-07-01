@@ -1,0 +1,310 @@
+@import './tokens.css';
+
+/* --- BASE --- */
+
+html {
+  font-size: var(--base-unit);
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  visibility: hidden;
+}
+
+body.app-ready {
+  visibility: visible;
+}
+
+#root {
+  height: 100vh;
+}
+
+/* --- DISABLE USER SELECT --- */
+
+.btn,
+.tab,
+.no-user-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* --- SCROLLBAR --- */
+
+::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* --- SHARED PRIMITIVES --- */
+
+.section-title {
+  font-size: var(--text-xs);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.vertical-divider {
+  width: 1px;
+  height: var(--space-12);
+  background: var(--color-border);
+  margin: 0 var(--space-4);
+}
+
+/* --- BUTTONS --- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  border: var(--border-standard);
+  background: var(--color-surface-alt);
+  color: var(--color-text-secondary);
+  transition:
+    background var(--transition-base),
+    color var(--transition-base),
+    border-color var(--transition-base);
+  outline: none;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: var(--color-surface);
+  border-color: var(--color-border-focus);
+  color: var(--color-text-primary);
+}
+
+.btn svg {
+  width: var(--icon-md);
+  height: var(--icon-md);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.btn-flat-icon {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-text-muted);
+  padding: var(--space-2);
+}
+
+.btn-flat-icon:hover {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-text-primary);
+}
+
+.btn-primary {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.btn-primary:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-danger {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-text-muted);
+}
+
+.btn-danger:hover {
+  background: var(--danger-dim);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.btn-full {
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-lg {
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--text-md);
+}
+
+.btn-lg svg {
+  width: var(--icon-base);
+  height: var(--icon-base);
+}
+
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Drag handle button */
+
+.drag-handle {
+  cursor: grab;
+  color: var(--color-text-muted);
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.drag-handle:hover {
+  color: var(--color-text-primary);
+}
+
+.drag-handle svg {
+  width: var(--icon-md);
+  height: var(--icon-md);
+  fill: currentColor;
+  display: block;
+}
+
+/* --- CTRL-HELD SUPPRESSIONS --- */
+
+body.ctrl-held:not(.read-mode) .block-controls,
+body.ctrl-held:not(.read-mode) .block-drag-handle,
+body.ctrl-held:not(.read-mode) .note-style-row,
+body.ctrl-held:not(.read-mode) .command-preview .btn {
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.ctrl-held:not(.read-mode) * {
+  user-select: none !important;
+}
+
+body.ctrl-held:not(.read-mode) .note-textarea,
+body.ctrl-held:not(.read-mode) .command-textarea,
+body.ctrl-held:not(.read-mode) .command-preview-text {
+  pointer-events: none;
+  cursor: default;
+}
+
+body.ctrl-held:not(.read-mode) .block-item:hover:not(.block-selected) {
+  outline: var(--border-dashed);
+  border-radius: var(--radius-lg);
+}
+
+.block-selected .command-block,
+.block-selected .note-block,
+.block-selected .divider-block {
+  user-select: none;
+  outline: var(--space-1) solid var(--accent);
+}
+
+/* --- READ MODE SUPPRESSIONS --- */
+
+body.read-mode #runbook-add-btn,
+body.read-mode .drag-handle,
+body.read-mode .sidebar-section-row .btn-danger,
+body.read-mode .variable-secret-btn {
+  display: none !important;
+}
+
+body.read-mode #add-tab-btn {
+  visibility: hidden;
+}
+
+body.read-mode #add-block-row,
+body.read-mode #variable-add-btn,
+body.read-mode .sidebar-section-footer {
+  display: none;
+}
+
+/* Hide drag and delete button on blocks */
+body.read-mode .block-drag-handle,
+body.read-mode .block-controls {
+  display: none !important;
+}
+
+/* Hide note style picker */
+body.read-mode .note-style-row {
+  visibility: hidden;
+}
+
+/* Force all command editors collapsed and hide the toggle */
+body.read-mode .command-block-editor {
+  display: none !important;
+}
+
+body.read-mode .toggle-editor-btn {
+  display: none;
+}
+
+/* Make all textareas and inputs non-interactive */
+body.read-mode .note-textarea,
+body.read-mode .command-textarea {
+  pointer-events: none;
+  user-select: none;
+  cursor: default;
+  visibility: hidden;
+}
+
+body.read-mode .note-textarea:focus {
+  caret-color: transparent;
+  outline: none;
+}
+
+body.read-mode .variable-key-input,
+body.read-mode #collapse-all-btn {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+body.read-mode .sidebar-section-row {
+  grid-template-columns: 1fr;
+}
+
+/* Note links become clickable */
+body.read-mode .note-preview a.note-link {
+  pointer-events: auto;
+  cursor: pointer;
+}
