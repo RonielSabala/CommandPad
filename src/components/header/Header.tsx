@@ -46,6 +46,7 @@ export function Header() {
     <header id={ElementId.APP_HEADER}>
       <span
         id={ElementId.APP_NAME}
+        className="no-user-select"
         role="button"
         tabIndex={0}
         title="Reload CommandPad"
