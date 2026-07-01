@@ -219,6 +219,7 @@ export const useStore = create<StoreState>()((set, get) => ({
     }
 
     persistence.saveTabsMeta(state.tabs, state.activeTabId);
+    persistence.saveRunbookLibrary(state.runbookLibrary, state.activeRunbookId);
     persistence.saveUiState({
       mode: state.mode,
       sidebarCollapsed: state.sidebarCollapsed,
