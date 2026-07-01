@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { EventType, Key } from '@/common/constants/events';
 import { useStore } from '@/store/store';
@@ -8,7 +8,15 @@ export function ConfirmModal() {
   const dialog = useStore((s) => s.confirmDialog);
   const resolve = useStore((s) => s.resolveConfirm);
   const open = dialog !== null;
+  const [message, setMessage] = useState('');
   const confirmRef = useRef<HTMLButtonElement>(null);
+
+  // Keep the last message rendered while the modal fades out.
+  useEffect(() => {
+    if (dialog) {
+      setMessage(dialog.message);
+    }
+  }, [dialog]);
 
   useEffect(() => {
     if (!open) {
@@ -28,7 +36,7 @@ export function ConfirmModal() {
   return (
     <Modal open={open} onClose={() => resolve(false)}>
       <p className="modal-title">Clear Workspace</p>
-      <p className="modal-message">{dialog?.message}</p>
+      <p className="modal-message">{message}</p>
       <div className="modal-actions">
         <button className="btn btn-lg" onClick={() => resolve(false)}>
           Cancel
