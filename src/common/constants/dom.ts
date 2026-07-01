@@ -29,7 +29,6 @@ export const ElementId = {
   COLLAPSE_ALL_BTN: 'collapse-all-btn',
   THEME_TOGGLE_BTN: 'theme-toggle-btn',
   RUNBOOK_ADD_BTN: 'runbook-add-btn',
-  VARIABLE_ADD_BTN: 'variable-add-btn',
 } as const;
 
 /** Selectors used by the global document listeners in `useGlobalInteractions`. */

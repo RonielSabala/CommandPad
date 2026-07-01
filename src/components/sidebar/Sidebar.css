@@ -219,10 +219,6 @@
   gap: var(--space-3);
 }
 
-#variable-add-btn {
-  padding: var(--space-3) var(--space-12);
-}
-
 .variable-key-input,
 .variable-value-input {
   font-family: var(--font-mono);

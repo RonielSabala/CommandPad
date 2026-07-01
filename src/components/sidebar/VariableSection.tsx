@@ -31,7 +31,7 @@ export function VariableSection() {
         )}
       </div>
       <div className="sidebar-section-footer">
-        <button id="variable-add-btn" className="btn" onClick={() => void addVariable()} title="New variable">
+        <button className="btn" onClick={() => void addVariable()} title="New variable">
           <svg viewBox="0 0 16 16">
             <path d="M8 3v10M3 8h10" />
           </svg>

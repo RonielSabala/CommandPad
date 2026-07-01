@@ -254,7 +254,6 @@ body.read-mode #add-tab-btn {
 }
 
 body.read-mode #add-block-row,
-body.read-mode #variable-add-btn,
 body.read-mode .sidebar-section-footer {
   display: none;
 }
