@@ -157,6 +157,10 @@
 
 /* --- RUNBOOK LIBRARY SECTION --- */
 
+#runbook-import-input {
+  display: none;
+}
+
 .runbook-item-btn {
   display: block;
   width: 100%;

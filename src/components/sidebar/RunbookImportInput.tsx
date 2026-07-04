@@ -3,8 +3,8 @@ import { registerImportTrigger } from "@/utils/importTrigger";
 import { useEffect, useRef } from "react";
 
 export function RunbookImportInput() {
-  const importRunbooks = useStore((s) => s.importRunbooks);
   const ref = useRef<HTMLInputElement>(null);
+  const importRunbooks = useStore((state) => state.importRunbooks);
 
   useEffect(() => {
     registerImportTrigger(() => ref.current?.click());
@@ -18,13 +18,13 @@ export function RunbookImportInput() {
       type="file"
       accept=".json"
       multiple
-      style={{ display: "none" }}
-      onChange={(e) => {
-        const files = Array.from(e.target.files ?? []);
+      onChange={(event) => {
+        const files = Array.from(event.target.files ?? []);
         if (files.length > 0) {
           void importRunbooks(files);
         }
-        e.target.value = "";
+
+        event.target.value = "";
       }}
     />
   );
