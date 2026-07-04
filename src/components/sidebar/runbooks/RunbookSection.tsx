@@ -46,7 +46,7 @@ export function RunbookSection() {
     >
       <SidebarSearch
         value={searchQuery}
-        placeholder="Search runbooks..."
+        placeholder="Search runbooks…"
         onChange={setQuery}
       />
 

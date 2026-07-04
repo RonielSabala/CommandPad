@@ -30,7 +30,7 @@ export function VariableSection() {
     >
       <SidebarSearch
         value={query}
-        placeholder="Search variables..."
+        placeholder="Search variables…"
         onChange={setQuery}
       />
 

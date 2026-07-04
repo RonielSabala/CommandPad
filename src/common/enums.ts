@@ -17,6 +17,12 @@ export const SidebarPosition = {
 export type SidebarPosition =
   (typeof SidebarPosition)[keyof typeof SidebarPosition];
 
+export const TabDropSide = {
+  LEFT: "left",
+  RIGHT: "right",
+} as const;
+export type TabDropSide = (typeof TabDropSide)[keyof typeof TabDropSide];
+
 export const SectionState = {
   EXPANDED: "expanded",
   COLLAPSED: "collapsed",

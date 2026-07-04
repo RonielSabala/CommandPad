@@ -26,10 +26,6 @@ export const CssClass = {
   EDITOR_COLLAPSED: "editor-collapsed",
   HAS_UNRESOLVED: "has-unresolved",
 
-  // Tabs
-  TAB: "tab",
-  TAB_ACTIVE: "tab-active",
-
   // Rows / lists
   ACTIVE: "active",
   RUNBOOK_FOCUSED: "runbook-focused",

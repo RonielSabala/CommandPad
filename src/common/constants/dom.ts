@@ -2,8 +2,6 @@ export const ElementId = {
   APP_SHELL: "app-shell",
   APP_HEADER: "app-header",
   APP_NAME: "app-name",
-  TABS_BAR: "tabs-bar",
-  ADD_TAB_BTN: "add-tab-btn",
   BLOCKS_LIST: "blocks-list",
   EMPTY_STATE: "empty-state",
   EMPTY_STATE_TITLE: "empty-state-title",
