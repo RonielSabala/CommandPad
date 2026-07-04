@@ -5,8 +5,8 @@
   grid-template-columns: var(--sidebar-width) 1fr;
   grid-template-rows: var(--header-height) 1fr;
   grid-template-areas:
-    'header header'
-    'sidebar main';
+    "header header"
+    "sidebar main";
   height: 100vh;
   overflow: hidden;
 }
@@ -14,8 +14,8 @@
 #app-shell.sidebar-right {
   grid-template-columns: 1fr var(--sidebar-width);
   grid-template-areas:
-    'header header'
-    'main sidebar';
+    "header header"
+    "main sidebar";
 }
 
 #app-shell.sidebar-right.sidebar-collapsed {

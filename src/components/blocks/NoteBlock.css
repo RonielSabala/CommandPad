@@ -12,7 +12,7 @@
 }
 
 .note-auto-width::after {
-  content: attr(data-value) ' ';
+  content: attr(data-value) " ";
   white-space: pre-wrap;
   word-break: break-word;
   visibility: hidden;
