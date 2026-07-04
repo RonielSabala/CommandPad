@@ -1,10 +1,8 @@
-import "./Header.css";
-
-import { ElementId } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { AppMode, Theme } from "@/common/enums";
 import { getActiveTab, useStore } from "@/store/store";
 import { CssClass } from "../../common/constants/css";
+import "./Header.css";
 
 function ThemeIcon({ light }: { light: boolean }) {
   if (light) {
@@ -18,6 +16,7 @@ function ThemeIcon({ light }: { light: boolean }) {
       </svg>
     );
   }
+
   return (
     <svg
       viewBox="0 0 16 16"
@@ -41,30 +40,33 @@ function ThemeIcon({ light }: { light: boolean }) {
 }
 
 export function Header() {
-  const mode = useStore((s) => s.mode);
-  const theme = useStore((s) => s.theme);
-  const toggleAppMode = useStore((s) => s.toggleAppMode);
-  const toggleAllCommandEditors = useStore((s) => s.toggleAllCommandEditors);
-  const toggleTheme = useStore((s) => s.toggleTheme);
-  const openKeybindingsModal = useStore((s) => s.openKeybindingsModal);
-  const clearAllData = useStore((s) => s.clearAllData);
-  const openExportModal = useStore((s) => s.openExportModal);
-  const isEmpty = useStore((s) => (getActiveTab(s)?.blocks.length ?? 0) === 0);
-
-  const isRead = mode === AppMode.READ;
-  const isLight = theme === Theme.LIGHT;
+  const isRead = useStore((state) => state.mode === AppMode.READ);
+  const isLight = useStore((state) => state.theme === Theme.LIGHT);
+  const toggleTheme = useStore((state) => state.toggleTheme);
+  const toggleAppMode = useStore((state) => state.toggleAppMode);
+  const openKeybindingsModal = useStore((state) => state.openKeybindingsModal);
+  const clearAllData = useStore((state) => state.clearAllData);
+  const openExportModal = useStore((state) => state.openExportModal);
+  const toggleAllCommandEditors = useStore(
+    (state) => state.toggleAllCommandEditors,
+  );
+  const isEmpty = useStore(
+    (state) => !(getActiveTab(state)?.blocks.length ?? 0),
+  );
 
   return (
-    <header id={ElementId.APP_HEADER}>
+    <header id="app-header">
       <span
-        id={ElementId.APP_NAME}
+        id="app-name"
         className="no-user-select"
         role="button"
         tabIndex={0}
         title="Reload CommandPad"
         onClick={() => location.reload()}
-        onKeyDown={(e) => {
-          if (e.key === Key.ENTER) location.reload();
+        onKeyDown={(event) => {
+          if (event.key === Key.ENTER) {
+            location.reload();
+          }
         }}
       >
         CommandPad
@@ -75,11 +77,10 @@ export function Header() {
       <div className="header-actions">
         <button
           className="btn btn-lg btn-flat-icon"
-          id={ElementId.MODE_TOGGLE_BTN}
           onClick={toggleAppMode}
           title={`Switch to ${isRead ? "Edit" : "Read"} mode`}
         >
-          <svg id="mode-icon" viewBox="0 0 16 16">
+          <svg viewBox="0 0 16 16">
             {isRead ? (
               <path d="M13 1l2 2L5 13l-3 1 1-3L13 1z" />
             ) : (
@@ -89,7 +90,7 @@ export function Header() {
         </button>
         <div className="vertical-divider" />
         <button
-          id={ElementId.COLLAPSE_ALL_BTN}
+          id="collapse-all-btn"
           className={`btn btn-lg${isEmpty ? ` ${CssClass.BTN_DISABLED}` : ""}`}
           disabled={isEmpty}
           onClick={toggleAllCommandEditors}
@@ -113,7 +114,6 @@ export function Header() {
 
       <div className="header-actions">
         <button
-          id={ElementId.THEME_TOGGLE_BTN}
           className="btn btn-lg btn-flat-icon"
           onClick={toggleTheme}
           title={`Switch to ${isLight ? Theme.DARK : Theme.LIGHT} mode`}
@@ -124,7 +124,7 @@ export function Header() {
         <div className="vertical-divider" />
 
         <button
-          id={ElementId.KEYBINDINGS_BTN}
+          id="keybindings-btn"
           className="btn btn-lg btn-flat-icon"
           onClick={openKeybindingsModal}
           title="App keybindings"
