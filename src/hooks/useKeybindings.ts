@@ -1,14 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { InputSelector } from '@/common/constants/dom';
-import { EventType, Key } from '@/common/constants/events';
-import { AppMode, MoveDirection } from '@/common/enums';
-import { KeyBinding, matchesKeybinding } from '@/common/keybindings';
-import { getActiveTab, useStore } from '@/store/store';
-import { openImportDialog } from '@/utils/importTrigger';
+import { InputSelector } from "@/common/constants/dom";
+import { EventType, Key } from "@/common/constants/events";
+import { AppMode, MoveDirection } from "@/common/enums";
+import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
+import { getActiveTab, useStore } from "@/store/store";
+import { openImportDialog } from "@/utils/importTrigger";
 
-/** Global keyboard shortcuts + ctrl/alt "held" tracking. Faithful port of the
- *  original document keydown/keyup handlers. */
+// Global keyboard shortcuts
+
 export function useKeybindings(): void {
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -31,19 +31,32 @@ export function useKeybindings(): void {
       const key = e.key;
       const altPressed = e.altKey;
       const ctrlPressed = e.ctrlKey || e.metaKey;
-      const inEditable = !!document.activeElement?.matches(InputSelector.EDITABLE);
+      const inEditable = !!document.activeElement?.matches(
+        InputSelector.EDITABLE,
+      );
       const isReadMode = s.mode === AppMode.READ;
 
       if (!ctrlPressed && !altPressed && !inEditable) {
-        if (matchesKeybinding(e, KeyBinding.DELETE_BLOCK) && s.selectedBlockIds.size > 0) {
+        if (
+          matchesKeybinding(e, KeyBinding.DELETE_BLOCK) &&
+          s.selectedBlockIds.size > 0
+        ) {
           e.preventDefault();
           s.removeBlock([...s.selectedBlockIds][0]);
-        } else if (matchesKeybinding(e, KeyBinding.FOCUS_RUNBOOK) && s.runbookLibrary.length > 0) {
+        } else if (
+          matchesKeybinding(e, KeyBinding.FOCUS_RUNBOOK) &&
+          s.runbookLibrary.length > 0
+        ) {
           e.preventDefault();
           s.setRunbookFocus(s.activeRunbookId ?? s.runbookLibrary[0].id);
-        } else if (s.focusedRunbookId !== null && (key === Key.ARROW_DOWN || key === Key.ARROW_UP)) {
+        } else if (
+          s.focusedRunbookId !== null &&
+          (key === Key.ARROW_DOWN || key === Key.ARROW_UP)
+        ) {
           e.preventDefault();
-          s.navigateRunbookList(key === Key.ARROW_DOWN ? MoveDirection.DOWN : MoveDirection.UP);
+          s.navigateRunbookList(
+            key === Key.ARROW_DOWN ? MoveDirection.DOWN : MoveDirection.UP,
+          );
         }
         return;
       }
@@ -93,7 +106,10 @@ export function useKeybindings(): void {
         e.preventDefault();
         s.setCtrlHeld(false);
         s.toggleSidebar();
-      } else if (matchesKeybinding(e, KeyBinding.IMPORT_RUNBOOK) && !isReadMode) {
+      } else if (
+        matchesKeybinding(e, KeyBinding.IMPORT_RUNBOOK) &&
+        !isReadMode
+      ) {
         e.preventDefault();
         s.setCtrlHeld(false);
         openImportDialog();

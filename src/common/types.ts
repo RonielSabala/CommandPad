@@ -1,6 +1,5 @@
-import type { BlockType, NoteStyle, SegmentType } from './enums';
+import type { BlockType, NoteStyle, SegmentType } from "./enums";
 
-/** A single variable definition. `{key}` tokens in commands resolve to `value`. */
 export interface Variable {
   id: string;
   key: string;
@@ -29,7 +28,7 @@ export interface DividerBlock {
 
 export type Block = CommandBlock | NoteBlock | DividerBlock;
 
-/** A workspace tab. Mirrors the active document; may be linked to a runbook. */
+// A workspace tab
 export interface Tab {
   id: string;
   label: string;
@@ -38,20 +37,20 @@ export interface Tab {
   blocks: Block[];
 }
 
-/** Lightweight runbook library metadata (kept in localStorage). */
+// Lightweight runbook library metadata (kept in localStorage)
 export interface RunbookEntry {
   id: string;
   label: string;
   filename: string;
 }
 
-/** Heavy runbook content (kept in IndexedDB). Also the import/export schema. */
+// Heavy runbook content (kept in IndexedDB)
 export interface RunbookContent {
   variables: Variable[];
   blocks: Block[];
 }
 
-/** One piece of a resolved command preview. */
+//  One piece of a resolved command preview
 export interface Segment {
   key?: string;
   text: string;

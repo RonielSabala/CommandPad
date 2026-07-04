@@ -1,5 +1,3 @@
-/* --- SIDEBAR --- */
-
 #app-sidebar {
   grid-area: sidebar;
   background: var(--color-surface);

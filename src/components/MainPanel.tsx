@@ -1,13 +1,13 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 
-import { ElementId } from '@/common/constants/dom';
-import { SidebarPosition } from '@/common/enums';
-import { getActiveTab, useStore } from '@/store/store';
-import { useScrollPersistence } from '@/hooks/useScrollPersistence';
-import { TabsBar } from './tabs/TabsBar';
-import { BlocksList } from './blocks/BlocksList';
-import { AddBlockRow } from './blocks/AddBlockRow';
-import { EmptyState } from './blocks/EmptyState';
+import { ElementId } from "@/common/constants/dom";
+import { SidebarPosition } from "@/common/enums";
+import { useScrollPersistence } from "@/hooks/useScrollPersistence";
+import { getActiveTab, useStore } from "@/store/store";
+import { AddBlockRow } from "./blocks/AddBlockRow";
+import { BlocksList } from "./blocks/BlocksList";
+import { EmptyState } from "./blocks/EmptyState";
+import { TabsBar } from "./tabs/TabsBar";
 
 function SidebarButtons() {
   const sidebarCollapsed = useStore((s) => s.sidebarCollapsed);
@@ -21,7 +21,7 @@ function SidebarButtons() {
         id={ElementId.SIDEBAR_TOGGLE_BTN}
         className="btn btn-icon"
         onClick={toggleSidebar}
-        title={`${sidebarCollapsed ? 'Expand' : 'Collapse'} sidebar`}
+        title={`${sidebarCollapsed ? "Expand" : "Collapse"} sidebar`}
       >
         <svg id={ElementId.SIDEBAR_CHEVRON} viewBox="0 0 16 16">
           <polyline points="10,4 4,8 10,12" />
@@ -31,7 +31,7 @@ function SidebarButtons() {
         id={ElementId.SIDEBAR_POSITION_BTN}
         className="btn btn-icon"
         onClick={toggleSidebarPosition}
-        title={`Move sidebar to ${sidebarPosition === SidebarPosition.RIGHT ? 'left' : 'right'}`}
+        title={`Move sidebar to ${sidebarPosition === SidebarPosition.RIGHT ? "left" : "right"}`}
       >
         <svg viewBox="0 0 16 16">
           <rect x="1" y="2" width="14" height="12" rx="1" />

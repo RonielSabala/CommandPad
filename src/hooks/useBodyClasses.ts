@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
-import { CssClass } from '@/common/constants/css';
-import { AppMode, Theme } from '@/common/enums';
-import { useStore } from '@/store/store';
+import { CssClass } from "@/common/constants/css";
+import { AppMode, Theme } from "@/common/enums";
+import { useStore } from "@/store/store";
+import { useEffect } from "react";
 
-/** Reflect cross-cutting store flags onto <body>/<html> classes (and the cursor). */
+// Reflect cross-cutting store flags onto <body>/<html> classes
+
 export function useBodyClasses(): void {
   const mode = useStore((s) => s.mode);
   const theme = useStore((s) => s.theme);
@@ -16,7 +17,10 @@ export function useBodyClasses(): void {
   }, [mode]);
 
   useEffect(() => {
-    document.documentElement.classList.toggle(CssClass.THEME_LIGHT, theme === Theme.LIGHT);
+    document.documentElement.classList.toggle(
+      CssClass.THEME_LIGHT,
+      theme === Theme.LIGHT,
+    );
   }, [theme]);
 
   useEffect(() => {
@@ -26,7 +30,7 @@ export function useBodyClasses(): void {
   useEffect(() => {
     document.body.classList.toggle(CssClass.ALT_HELD, altHeld);
     if (!altHeld) {
-      document.body.style.cursor = '';
+      document.body.style.cursor = "";
     }
   }, [altHeld]);
 

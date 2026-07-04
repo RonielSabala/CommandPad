@@ -1,6 +1,10 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
-import { DEBOUNCE_SAVE_MS, DEFAULT_TAB_LABEL, RunbookConfig } from '@/common/config';
+import {
+  DEBOUNCE_SAVE_MS,
+  DEFAULT_TAB_LABEL,
+  RunbookConfig,
+} from "@/common/config";
 import {
   AppMode,
   BlockType,
@@ -10,14 +14,25 @@ import {
   SidebarPosition,
   Theme,
   VariableField,
-} from '@/common/enums';
-import type { Block, RunbookContent, RunbookEntry, Tab, Variable } from '@/common/types';
-import { runExport } from '@/utils/export';
-import { debounce, generateId } from '@/utils/id';
-import { getRunbookLabel } from '@/utils/runbook';
+} from "@/common/enums";
+import type {
+  Block,
+  RunbookContent,
+  RunbookEntry,
+  Tab,
+  Variable,
+} from "@/common/types";
+import { runExport } from "@/utils/export";
+import { debounce, generateId } from "@/utils/id";
+import { getRunbookLabel } from "@/utils/runbook";
 
-import * as persistence from './persistence';
-import { deleteRunbookContent, deleteRunbookDb, getRunbookContent, putRunbookContent } from './runbookDb';
+import * as persistence from "./persistence";
+import {
+  deleteRunbookContent,
+  deleteRunbookDb,
+  getRunbookContent,
+  putRunbookContent,
+} from "./runbookDb";
 
 interface Dialog<T> {
   message: string;
@@ -66,21 +81,34 @@ interface StoreState {
   bootstrap: () => Promise<void>;
   saveState: () => void;
 
-  createNewTab: (label?: string, runbookId?: string | null) => Promise<Tab | undefined>;
+  createNewTab: (
+    label?: string,
+    runbookId?: string | null,
+  ) => Promise<Tab | undefined>;
   switchTab: (tabId: string) => void;
   closeTab: (tabId: string) => void;
-  reorderTabs: (sourceId: string, targetId: string, insertAfter: boolean) => void;
+  reorderTabs: (
+    sourceId: string,
+    targetId: string,
+    insertAfter: boolean,
+  ) => void;
 
   loadRunbookFromLibrary: (runbookId: string) => Promise<void>;
   removeRunbookFromLibrary: (id: string) => Promise<void>;
   importRunbooks: (files: File[]) => Promise<void>;
   reorderRunbooks: (sourceId: string, targetId: string) => void;
   setRunbookFocus: (id: string | null) => void;
-  navigateRunbookList: (direction: typeof MoveDirection.UP | typeof MoveDirection.DOWN) => void;
+  navigateRunbookList: (
+    direction: typeof MoveDirection.UP | typeof MoveDirection.DOWN,
+  ) => void;
 
   addVariable: () => Promise<void>;
   removeVariable: (variableId: string) => void;
-  updateVariable: (variableId: string, field: typeof VariableField.KEY | typeof VariableField.VALUE, value: string) => void;
+  updateVariable: (
+    variableId: string,
+    field: typeof VariableField.KEY | typeof VariableField.VALUE,
+    value: string,
+  ) => void;
   toggleVariableSecret: (variableId: string) => void;
   reorderVariables: (sourceId: string, targetId: string) => void;
   consumeVariableFocus: () => void;
@@ -131,15 +159,23 @@ interface StoreState {
 
 /** Resolve the active tab, mirroring the original `activeTab()` fallback. */
 export function getActiveTab(state: StoreState): Tab | null {
-  return state.tabs.find((t) => t.id === state.activeTabId) ?? state.tabs[0] ?? null;
+  return (
+    state.tabs.find((t) => t.id === state.activeTabId) ?? state.tabs[0] ?? null
+  );
 }
 
-function createTabObject(label = DEFAULT_TAB_LABEL, runbookId: string | null = null): Tab {
+function createTabObject(
+  label = DEFAULT_TAB_LABEL,
+  runbookId: string | null = null,
+): Tab {
   return { id: generateId(), label, runbookId, variables: [], blocks: [] };
 }
 
 /** Immutably replace the active tab via `mutate`. */
-function withActiveTab(state: StoreState, mutate: (tab: Tab) => Tab): { tabs: Tab[] } {
+function withActiveTab(
+  state: StoreState,
+  mutate: (tab: Tab) => Tab,
+): { tabs: Tab[] } {
   const active = getActiveTab(state);
   if (!active) {
     return { tabs: state.tabs };
@@ -152,24 +188,34 @@ function withActiveTab(state: StoreState, mutate: (tab: Tab) => Tab): { tabs: Ta
  * runbook library entry. Returns the same references when nothing changed so
  * the tabs bar / runbook list don't re-render needlessly.
  */
-function relabelActive(state: StoreState): { tabs: Tab[]; runbookLibrary: RunbookEntry[] } {
+function relabelActive(state: StoreState): {
+  tabs: Tab[];
+  runbookLibrary: RunbookEntry[];
+} {
   const active = getActiveTab(state);
   if (!active?.runbookId) {
     return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
   }
 
-  const entry = state.runbookLibrary.find((item) => item.id === active.runbookId);
+  const entry = state.runbookLibrary.find(
+    (item) => item.id === active.runbookId,
+  );
   if (!entry) {
     return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
   }
 
-  const newLabel = getRunbookLabel(active.blocks, entry.filename || RunbookConfig.DEFAULT_LABEL);
+  const newLabel = getRunbookLabel(
+    active.blocks,
+    entry.filename || RunbookConfig.DEFAULT_LABEL,
+  );
   if (newLabel === entry.label && newLabel === active.label) {
     return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
   }
 
   return {
-    tabs: state.tabs.map((t) => (t.id === active.id ? { ...t, label: newLabel } : t)),
+    tabs: state.tabs.map((t) =>
+      t.id === active.id ? { ...t, label: newLabel } : t,
+    ),
     runbookLibrary: state.runbookLibrary.map((item) =>
       item.id === entry.id ? { ...item, label: newLabel } : item,
     ),
@@ -200,8 +246,8 @@ export const useStore = create<StoreState>()((set, get) => ({
   pendingFocusBlockId: null,
   pendingFocusVariableId: null,
 
-  runbookSearchQuery: '',
-  variableSearchQuery: '',
+  runbookSearchQuery: "",
+  variableSearchQuery: "",
 
   exportModalOpen: false,
   keybindingsModalOpen: false,
@@ -230,8 +276,11 @@ export const useStore = create<StoreState>()((set, get) => ({
 
     const active = getActiveTab(state);
     if (active?.runbookId) {
-      putRunbookContent(active.runbookId, { variables: active.variables, blocks: active.blocks }).catch(
-        (error) => console.warn('Failed to persist runbook content:', error),
+      putRunbookContent(active.runbookId, {
+        variables: active.variables,
+        blocks: active.blocks,
+      }).catch((error) =>
+        console.warn("Failed to persist runbook content:", error),
       );
     }
   },
@@ -248,7 +297,9 @@ export const useStore = create<StoreState>()((set, get) => ({
 
     set({
       ...(ui ?? {}),
-      ...(library ? { runbookLibrary: library.items, activeRunbookId: library.activeId } : {}),
+      ...(library
+        ? { runbookLibrary: library.items, activeRunbookId: library.activeId }
+        : {}),
       ...(sections ?? {}),
     });
 
@@ -280,15 +331,20 @@ export const useStore = create<StoreState>()((set, get) => ({
 
         if (loadedTabs.length > 0) {
           const activeId =
-            meta.activeTabId && loadedTabs.some((t) => t.id === meta.activeTabId)
+            meta.activeTabId &&
+            loadedTabs.some((t) => t.id === meta.activeTabId)
               ? meta.activeTabId
               : loadedTabs[0].id;
           const activeTab = loadedTabs.find((t) => t.id === activeId);
-          set({ tabs: loadedTabs, activeTabId: activeId, activeRunbookId: activeTab?.runbookId ?? null });
+          set({
+            tabs: loadedTabs,
+            activeTabId: activeId,
+            activeRunbookId: activeTab?.runbookId ?? null,
+          });
         }
       }
     } catch (error) {
-      console.warn('Failed to rehydrate tabs:', error);
+      console.warn("Failed to rehydrate tabs:", error);
     }
 
     set({ initialized: true });
@@ -316,7 +372,11 @@ export const useStore = create<StoreState>()((set, get) => ({
     if (!runbookId) {
       const newRunbookId = generateId();
       tab.runbookId = newRunbookId;
-      const entry: RunbookEntry = { id: newRunbookId, label: resolvedLabel, filename: '' };
+      const entry: RunbookEntry = {
+        id: newRunbookId,
+        label: resolvedLabel,
+        filename: "",
+      };
 
       set((s) => ({
         tabs: [...s.tabs, tab],
@@ -326,7 +386,10 @@ export const useStore = create<StoreState>()((set, get) => ({
       }));
 
       await putRunbookContent(newRunbookId, { variables: [], blocks: [] });
-      persistence.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+      persistence.saveRunbookLibrary(
+        get().runbookLibrary,
+        get().activeRunbookId,
+      );
     } else {
       set((s) => ({ tabs: [...s.tabs, tab], activeTabId: tab.id }));
     }
@@ -341,7 +404,8 @@ export const useStore = create<StoreState>()((set, get) => ({
     }
     set((s) => ({
       activeTabId: tabId,
-      activeRunbookId: getActiveTab({ ...s, activeTabId: tabId })?.runbookId ?? null,
+      activeRunbookId:
+        getActiveTab({ ...s, activeTabId: tabId })?.runbookId ?? null,
       ctrlHeld: false,
     }));
     persistence.saveTabsMeta(get().tabs, get().activeTabId);
@@ -364,7 +428,8 @@ export const useStore = create<StoreState>()((set, get) => ({
       activeTabId = tabs[idx].id;
     }
 
-    const activeRunbookId = tabs.find((t) => t.id === activeTabId)?.runbookId ?? null;
+    const activeRunbookId =
+      tabs.find((t) => t.id === activeTabId)?.runbookId ?? null;
     set({ tabs, activeTabId, activeRunbookId });
     persistence.saveTabsMeta(tabs, activeTabId);
   },
@@ -426,7 +491,9 @@ export const useStore = create<StoreState>()((set, get) => ({
 
     await deleteRunbookContent(id);
 
-    const runbookLibrary = state.runbookLibrary.filter((item) => item.id !== id);
+    const runbookLibrary = state.runbookLibrary.filter(
+      (item) => item.id !== id,
+    );
     let tabs = state.tabs;
     let activeTabId = state.activeTabId;
 
@@ -435,16 +502,27 @@ export const useStore = create<StoreState>()((set, get) => ({
       tabs = state.tabs.filter((t) => t.runbookId !== id);
       if (tabs.length === 0) {
         activeTabId = null;
-      } else if (state.activeTabId === state.tabs[tabIdx]?.id || !tabs.find((t) => t.id === activeTabId)) {
+      } else if (
+        state.activeTabId === state.tabs[tabIdx]?.id ||
+        !tabs.find((t) => t.id === activeTabId)
+      ) {
         tabIdx = Math.min(tabIdx, tabs.length - 1);
         activeTabId = tabs[tabIdx].id;
       }
     }
 
-    const activeRunbookId = tabs.find((t) => t.id === activeTabId)?.runbookId ?? null;
-    const focusedRunbookId = state.focusedRunbookId === id ? null : state.focusedRunbookId;
+    const activeRunbookId =
+      tabs.find((t) => t.id === activeTabId)?.runbookId ?? null;
+    const focusedRunbookId =
+      state.focusedRunbookId === id ? null : state.focusedRunbookId;
 
-    set({ tabs, activeTabId, activeRunbookId, runbookLibrary, focusedRunbookId });
+    set({
+      tabs,
+      activeTabId,
+      activeRunbookId,
+      runbookLibrary,
+      focusedRunbookId,
+    });
     persistence.saveTabsMeta(tabs, activeTabId);
     persistence.saveRunbookLibrary(runbookLibrary, activeRunbookId);
   },
@@ -453,7 +531,10 @@ export const useStore = create<StoreState>()((set, get) => ({
     let failedCount = 0;
 
     const addToLibrary = async (content: RunbookContent, filename: string) => {
-      const label = getRunbookLabel(content.blocks, filename || RunbookConfig.DEFAULT_LABEL);
+      const label = getRunbookLabel(
+        content.blocks,
+        filename || RunbookConfig.DEFAULT_LABEL,
+      );
       const state = get();
       const existing = state.runbookLibrary.find(
         (item) => item.label === label || item.filename === filename,
@@ -463,15 +544,24 @@ export const useStore = create<StoreState>()((set, get) => ({
         await putRunbookContent(existing.id, content);
         set((s) => ({
           runbookLibrary: s.runbookLibrary.map((item) =>
-            item.id === existing.id ? { ...item, label, filename: filename || '' } : item,
+            item.id === existing.id
+              ? { ...item, label, filename: filename || "" }
+              : item,
           ),
           tabs: s.tabs.map((t) =>
             t.runbookId === existing.id
-              ? { ...t, variables: content.variables ?? [], blocks: content.blocks ?? [] }
+              ? {
+                  ...t,
+                  variables: content.variables ?? [],
+                  blocks: content.blocks ?? [],
+                }
               : t,
           ),
         }));
-        persistence.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+        persistence.saveRunbookLibrary(
+          get().runbookLibrary,
+          get().activeRunbookId,
+        );
         if (existing.id === get().activeRunbookId) {
           persistence.saveTabsMeta(get().tabs, get().activeTabId);
         }
@@ -480,10 +570,18 @@ export const useStore = create<StoreState>()((set, get) => ({
 
       const newId = generateId();
       await putRunbookContent(newId, content);
-      set((s) => ({ runbookLibrary: [...s.runbookLibrary, { id: newId, label, filename: filename || '' }] }));
+      set((s) => ({
+        runbookLibrary: [
+          ...s.runbookLibrary,
+          { id: newId, label, filename: filename || "" },
+        ],
+      }));
 
       if (get().activeRunbookId) {
-        persistence.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+        persistence.saveRunbookLibrary(
+          get().runbookLibrary,
+          get().activeRunbookId,
+        );
         return;
       }
       await get().loadRunbookFromLibrary(newId);
@@ -496,15 +594,21 @@ export const useStore = create<StoreState>()((set, get) => ({
           try {
             const parsed = JSON.parse(String(loadEvent.target?.result));
             if (!parsed.variables || !parsed.blocks) {
-              throw new Error('Invalid format');
+              throw new Error("Invalid format");
             }
 
             const content: RunbookContent = {
-              variables: (parsed.variables as Variable[]).map((variable) => ({ ...variable, id: variable.id || generateId() })),
-              blocks: (parsed.blocks as Block[]).map((block) => ({ ...block, id: block.id || generateId() })),
+              variables: (parsed.variables as Variable[]).map((variable) => ({
+                ...variable,
+                id: variable.id || generateId(),
+              })),
+              blocks: (parsed.blocks as Block[]).map((block) => ({
+                ...block,
+                id: block.id || generateId(),
+              })),
             };
 
-            await addToLibrary(content, file.name.replace(/\.json$/i, ''));
+            await addToLibrary(content, file.name.replace(/\.json$/i, ""));
           } catch {
             failedCount += 1;
           }
@@ -550,7 +654,9 @@ export const useStore = create<StoreState>()((set, get) => ({
     }
 
     const count = runbookLibrary.length;
-    const currentIndex = runbookLibrary.findIndex((item) => item.id === focusedRunbookId);
+    const currentIndex = runbookLibrary.findIndex(
+      (item) => item.id === focusedRunbookId,
+    );
 
     let nextIndex: number;
     if (currentIndex < 0) {
@@ -578,9 +684,12 @@ export const useStore = create<StoreState>()((set, get) => ({
       await get().createNewTab();
     }
 
-    const newVariable: Variable = { id: generateId(), key: '', value: '' };
+    const newVariable: Variable = { id: generateId(), key: "", value: "" };
     set((s) => ({
-      ...withActiveTab(s, (tab) => ({ ...tab, variables: [...tab.variables, newVariable] })),
+      ...withActiveTab(s, (tab) => ({
+        ...tab,
+        variables: [...tab.variables, newVariable],
+      })),
       pendingFocusVariableId: newVariable.id,
     }));
     get().saveState();
@@ -590,7 +699,12 @@ export const useStore = create<StoreState>()((set, get) => ({
     if (get().mode === AppMode.READ) {
       return;
     }
-    set((s) => withActiveTab(s, (tab) => ({ ...tab, variables: tab.variables.filter((v) => v.id !== variableId) })));
+    set((s) =>
+      withActiveTab(s, (tab) => ({
+        ...tab,
+        variables: tab.variables.filter((v) => v.id !== variableId),
+      })),
+    );
     get().saveState();
   },
 
@@ -624,7 +738,9 @@ export const useStore = create<StoreState>()((set, get) => ({
           }
         }
 
-        variables = variables.map((v) => (v.id === variableId ? { ...v, [field]: value } : v));
+        variables = variables.map((v) =>
+          v.id === variableId ? { ...v, [field]: value } : v,
+        );
         return { ...tab, blocks, variables };
       }),
     );
@@ -635,7 +751,9 @@ export const useStore = create<StoreState>()((set, get) => ({
     set((s) =>
       withActiveTab(s, (tab) => ({
         ...tab,
-        variables: tab.variables.map((v) => (v.id === variableId ? { ...v, secret: !v.secret } : v)),
+        variables: tab.variables.map((v) =>
+          v.id === variableId ? { ...v, secret: !v.secret } : v,
+        ),
       })),
     );
     get().saveState();
@@ -673,15 +791,23 @@ export const useStore = create<StoreState>()((set, get) => ({
 
     let newBlock: Block;
     if (blockType === BlockType.COMMAND) {
-      newBlock = { id: generateId(), type: BlockType.COMMAND, text: '' };
+      newBlock = { id: generateId(), type: BlockType.COMMAND, text: "" };
     } else if (blockType === BlockType.NOTE) {
-      newBlock = { id: generateId(), type: BlockType.NOTE, text: '', style: NoteStyle.BODY };
+      newBlock = {
+        id: generateId(),
+        type: BlockType.NOTE,
+        text: "",
+        style: NoteStyle.BODY,
+      };
     } else {
       newBlock = { id: generateId(), type: BlockType.DIVIDER };
     }
 
     set((s) => ({
-      ...withActiveTab(s, (tab) => ({ ...tab, blocks: [...tab.blocks, newBlock] })),
+      ...withActiveTab(s, (tab) => ({
+        ...tab,
+        blocks: [...tab.blocks, newBlock],
+      })),
       pendingFocusBlockId: newBlock.id,
     }));
     get().saveState();
@@ -699,7 +825,10 @@ export const useStore = create<StoreState>()((set, get) => ({
         : new Set([blockId]);
 
     set((s) => ({
-      ...withActiveTab(s, (tab) => ({ ...tab, blocks: tab.blocks.filter((b) => !idsToRemove.has(b.id)) })),
+      ...withActiveTab(s, (tab) => ({
+        ...tab,
+        blocks: tab.blocks.filter((b) => !idsToRemove.has(b.id)),
+      })),
       selectedBlockIds: new Set(),
     }));
     get().saveState();
@@ -719,7 +848,9 @@ export const useStore = create<StoreState>()((set, get) => ({
     const idsToDuplicate =
       state.selectedBlockIds.size > 0 && state.selectedBlockIds.has(blockId)
         ? [...state.selectedBlockIds].sort(
-            (a, b) => active.blocks.findIndex((bl) => bl.id === a) - active.blocks.findIndex((bl) => bl.id === b),
+            (a, b) =>
+              active.blocks.findIndex((bl) => bl.id === a) -
+              active.blocks.findIndex((bl) => bl.id === b),
           )
         : [blockId];
 
@@ -765,7 +896,9 @@ export const useStore = create<StoreState>()((set, get) => ({
     set((s) =>
       withActiveTab(s, (tab) => ({
         ...tab,
-        blocks: tab.blocks.map((b) => (b.id === blockId && b.type === BlockType.NOTE ? { ...b, style } : b)),
+        blocks: tab.blocks.map((b) =>
+          b.id === blockId && b.type === BlockType.NOTE ? { ...b, style } : b,
+        ),
       })),
     );
     get().saveState();
@@ -779,7 +912,9 @@ export const useStore = create<StoreState>()((set, get) => ({
       withActiveTab(s, (tab) => ({
         ...tab,
         blocks: tab.blocks.map((b) =>
-          b.id === blockId && b.type === BlockType.COMMAND ? { ...b, editorCollapsed: !b.editorCollapsed } : b,
+          b.id === blockId && b.type === BlockType.COMMAND
+            ? { ...b, editorCollapsed: !b.editorCollapsed }
+            : b,
         ),
       })),
     );
@@ -798,13 +933,19 @@ export const useStore = create<StoreState>()((set, get) => ({
 
     const allCollapsed = active.blocks
       .filter((b) => b.type === BlockType.COMMAND)
-      .every((b) => (b as { editorCollapsed?: boolean }).editorCollapsed === true);
+      .every(
+        (b) => (b as { editorCollapsed?: boolean }).editorCollapsed === true,
+      );
     const newState = !allCollapsed;
 
     set((s) =>
       withActiveTab(s, (tab) => ({
         ...tab,
-        blocks: tab.blocks.map((b) => (b.type === BlockType.COMMAND ? { ...b, editorCollapsed: newState } : b)),
+        blocks: tab.blocks.map((b) =>
+          b.type === BlockType.COMMAND
+            ? { ...b, editorCollapsed: newState }
+            : b,
+        ),
       })),
     );
     get().saveState();
@@ -840,7 +981,8 @@ export const useStore = create<StoreState>()((set, get) => ({
       withActiveTab(s, (tab) => {
         const remaining = tab.blocks.filter((b) => !movingIds.includes(b.id));
         const newTargetIndex = remaining.findIndex((b) => b.id === targetId);
-        const insertIndex = sourceIndex < targetIndex ? newTargetIndex + 1 : newTargetIndex;
+        const insertIndex =
+          sourceIndex < targetIndex ? newTargetIndex + 1 : newTargetIndex;
         remaining.splice(insertIndex, 0, ...movingBlocks);
         return { ...tab, blocks: remaining };
       }),
@@ -873,7 +1015,8 @@ export const useStore = create<StoreState>()((set, get) => ({
       return { selectedBlockIds };
     }),
 
-  toggleBlockSelection: (blockId) => get().setBlockSelected(blockId, !get().selectedBlockIds.has(blockId)),
+  toggleBlockSelection: (blockId) =>
+    get().setBlockSelected(blockId, !get().selectedBlockIds.has(blockId)),
 
   clearBlockSelection: () => {
     if (get().selectedBlockIds.size === 0) {
@@ -915,7 +1058,12 @@ export const useStore = create<StoreState>()((set, get) => ({
   },
 
   toggleSidebarPosition: () => {
-    set((s) => ({ sidebarPosition: s.sidebarPosition === SidebarPosition.RIGHT ? SidebarPosition.LEFT : SidebarPosition.RIGHT }));
+    set((s) => ({
+      sidebarPosition:
+        s.sidebarPosition === SidebarPosition.RIGHT
+          ? SidebarPosition.LEFT
+          : SidebarPosition.RIGHT,
+    }));
     get().saveState();
   },
 
@@ -959,7 +1107,12 @@ export const useStore = create<StoreState>()((set, get) => ({
   },
 
   clearUserInteraction: () =>
-    set({ ctrlHeld: false, altHeld: false, selectedBlockIds: new Set(), focusedRunbookId: null }),
+    set({
+      ctrlHeld: false,
+      altHeld: false,
+      selectedBlockIds: new Set(),
+      focusedRunbookId: null,
+    }),
 
   // --- Modals / export ---
 
@@ -971,17 +1124,24 @@ export const useStore = create<StoreState>()((set, get) => ({
   exportRunbook: async (format) => {
     set({ exportModalOpen: false });
     const active = getActiveTab(get());
-    await runExport(format, { variables: active?.variables ?? [], blocks: active?.blocks ?? [] });
+    await runExport(format, {
+      variables: active?.variables ?? [],
+      blocks: active?.blocks ?? [],
+    });
   },
 
   // --- Dialogs ---
 
-  confirm: (message) => new Promise<boolean>((resolve) => set({ confirmDialog: { message, resolve } })),
+  confirm: (message) =>
+    new Promise<boolean>((resolve) =>
+      set({ confirmDialog: { message, resolve } }),
+    ),
   resolveConfirm: (result) => {
     get().confirmDialog?.resolve(result);
     set({ confirmDialog: null });
   },
-  alert: (message) => new Promise<void>((resolve) => set({ alertDialog: { message, resolve } })),
+  alert: (message) =>
+    new Promise<void>((resolve) => set({ alertDialog: { message, resolve } })),
   resolveAlert: () => {
     get().alertDialog?.resolve();
     set({ alertDialog: null });
@@ -990,7 +1150,7 @@ export const useStore = create<StoreState>()((set, get) => ({
   clearAllData: async () => {
     set({ ctrlHeld: false });
     const confirmed = await get().confirm(
-      'Delete all variables, blocks, and runbooks? This action cannot be undone.',
+      "Delete all variables, blocks, and runbooks? This action cannot be undone.",
     );
     if (!confirmed) {
       return;
@@ -1004,12 +1164,15 @@ export const useStore = create<StoreState>()((set, get) => ({
       activeTabId: null,
       activeRunbookId: null,
       runbookLibrary: [],
-      runbookSearchQuery: '',
-      variableSearchQuery: '',
+      runbookSearchQuery: "",
+      variableSearchQuery: "",
       selectedBlockIds: new Set(),
       focusedRunbookId: null,
     });
   },
 }));
 
-const debouncedSaveState = debounce(() => useStore.getState().saveState(), DEBOUNCE_SAVE_MS);
+const debouncedSaveState = debounce(
+  () => useStore.getState().saveState(),
+  DEBOUNCE_SAVE_MS,
+);

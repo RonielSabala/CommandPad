@@ -1,11 +1,3 @@
-/*
- * Design tokens. Theming changes touch only this file:
- *   :root            → dark theme (default)
- *   :root.theme-light → light theme override
- * Components reference these variables and never hardcode colors.
- * Note: CSS variables do NOT work inside data: URI SVGs (e.g. the favicon).
- */
-
 :root {
   /* Core config */
   --base-unit: 17px;

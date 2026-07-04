@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 interface Props {
   id: string;
@@ -8,10 +8,15 @@ interface Props {
   children: ReactNode;
 }
 
-/** A collapsible sidebar section (header + chevron + body). */
-export function SidebarSection({ id, title, collapsed, onToggle, children }: Props) {
+export function SidebarSection({
+  id,
+  title,
+  collapsed,
+  onToggle,
+  children,
+}: Props) {
   return (
-    <div id={id} className={`sidebar-section${collapsed ? ' collapsed' : ''}`}>
+    <div id={id} className={`sidebar-section${collapsed ? " collapsed" : ""}`}>
       <div className="sidebar-section-header no-user-select" onClick={onToggle}>
         <p className="section-title">{title}</p>
         <svg className="sidebar-section-chevron" viewBox="0 0 16 16">

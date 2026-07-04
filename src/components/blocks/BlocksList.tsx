@@ -1,12 +1,12 @@
-import './Blocks.css';
+import "./Blocks.css";
 
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { ElementId } from '@/common/constants/dom';
-import type { Block, Variable } from '@/common/types';
-import { getActiveTab, useStore } from '@/store/store';
-import { getSecretKeys, getVariableMap } from '@/utils/resolution';
-import { BlockItem } from './BlockItem';
+import { ElementId } from "@/common/constants/dom";
+import type { Block, Variable } from "@/common/types";
+import { getActiveTab, useStore } from "@/store/store";
+import { getSecretKeys, getVariableMap } from "@/utils/resolution";
+import { BlockItem } from "./BlockItem";
 
 const EMPTY_BLOCKS: Block[] = [];
 const EMPTY_VARIABLES: Variable[] = [];
@@ -22,7 +22,12 @@ export function BlocksList() {
   return (
     <div id={ElementId.BLOCKS_LIST}>
       {blocks.map((block) => (
-        <BlockItem key={block.id} block={block} variableMap={variableMap} secretKeys={secretKeys} />
+        <BlockItem
+          key={block.id}
+          block={block}
+          variableMap={variableMap}
+          secretKeys={secretKeys}
+        />
       ))}
     </div>
   );

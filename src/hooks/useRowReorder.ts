@@ -1,9 +1,8 @@
-import { useRef, useState, type DragEvent } from 'react';
-import { DragEffect } from '@/common/constants/events';
+import { DragEffect } from "@/common/constants/events";
+import { useRef, useState, type DragEvent } from "react";
 
 const DRAG_TIMEOUT_MS = 50;
 
-/** Shared "who is being dragged" state, keyed by list group (e.g. 'variable'). */
 const dragGroups: Record<string, string | null> = {};
 
 export interface RowReorder {
@@ -23,11 +22,6 @@ export interface RowReorder {
   };
 }
 
-/**
- * Handle-based drag-to-reorder for a single row, mirroring the original
- * `makeRowReorderable`. Dragging only arms after a mousedown on the handle;
- * `onReorder(sourceId, targetId)` reads live data at drop time.
- */
 export function useRowReorder(
   group: string,
   id: string,

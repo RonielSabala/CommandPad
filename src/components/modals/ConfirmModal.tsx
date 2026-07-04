@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
-import { EventType, Key } from '@/common/constants/events';
-import { useStore } from '@/store/store';
-import { Modal } from './Modal';
+import { EventType, Key } from "@/common/constants/events";
+import { useStore } from "@/store/store";
+import { Modal } from "./Modal";
 
 export function ConfirmModal() {
   const dialog = useStore((s) => s.confirmDialog);
   const resolve = useStore((s) => s.resolveConfirm);
   const open = dialog !== null;
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const confirmRef = useRef<HTMLButtonElement>(null);
 
-  // Keep the last message rendered while the modal fades out.
+  // Keep the last message rendered while the modal fades out
   useEffect(() => {
     if (dialog) {
       setMessage(dialog.message);
@@ -42,7 +42,11 @@ export function ConfirmModal() {
           Cancel
         </button>
         <div className="vertical-divider" />
-        <button ref={confirmRef} className="btn btn-lg btn-danger" onClick={() => resolve(true)}>
+        <button
+          ref={confirmRef}
+          className="btn btn-lg btn-danger"
+          onClick={() => resolve(true)}
+        >
           Delete
         </button>
       </div>

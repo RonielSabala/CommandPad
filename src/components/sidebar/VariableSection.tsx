@@ -1,9 +1,9 @@
-import { ElementId } from '@/common/constants/dom';
-import type { Variable } from '@/common/types';
-import { getActiveTab, useStore } from '@/store/store';
-import { matchesQuery } from '@/utils/runbook';
-import { SidebarSearch, SidebarSection } from './SidebarSection';
-import { VariableRow } from './VariableRow';
+import { ElementId } from "@/common/constants/dom";
+import type { Variable } from "@/common/types";
+import { getActiveTab, useStore } from "@/store/store";
+import { matchesQuery } from "@/utils/runbook";
+import { SidebarSearch, SidebarSection } from "./SidebarSection";
+import { VariableRow } from "./VariableRow";
 
 const EMPTY_VARIABLES: Variable[] = [];
 
@@ -19,19 +19,34 @@ export function VariableSection() {
   const visible = variables.filter((v) => matchesQuery(query, v.key, v.value));
 
   return (
-    <SidebarSection id={ElementId.VARIABLES_SECTION} title="VARIABLES" collapsed={collapsed} onToggle={toggle}>
-      <SidebarSearch value={query} placeholder="Search variables…" onChange={setQuery} />
+    <SidebarSection
+      id={ElementId.VARIABLES_SECTION}
+      title="VARIABLES"
+      collapsed={collapsed}
+      onToggle={toggle}
+    >
+      <SidebarSearch
+        value={query}
+        placeholder="Search variables…"
+        onChange={setQuery}
+      />
       <div id="variables-list" className="sidebar-section-list">
         {variables.length === 0 ? (
           <p className="sidebar-section-empty-msg">No variables defined.</p>
         ) : visible.length === 0 ? (
           <p className="sidebar-section-empty-msg">No matches.</p>
         ) : (
-          visible.map((variable) => <VariableRow key={variable.id} variable={variable} />)
+          visible.map((variable) => (
+            <VariableRow key={variable.id} variable={variable} />
+          ))
         )}
       </div>
       <div className="sidebar-section-footer">
-        <button className="btn" onClick={() => void addVariable()} title="New variable">
+        <button
+          className="btn"
+          onClick={() => void addVariable()}
+          title="New variable"
+        >
           <svg viewBox="0 0 16 16">
             <path d="M8 3v10M3 8h10" />
           </svg>

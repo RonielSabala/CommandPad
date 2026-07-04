@@ -1,16 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { Anchor, Cursor, DataAttr, Selector } from '@/common/constants/dom';
-import { EventType, MouseButton } from '@/common/constants/events';
-import { AppMode, LassoMode } from '@/common/enums';
-import { useStore } from '@/store/store';
-import { lasso } from './lasso';
+import { Anchor, Cursor, DataAttr, Selector } from "@/common/constants/dom";
+import { EventType, MouseButton } from "@/common/constants/events";
+import { AppMode, LassoMode } from "@/common/enums";
+import { useStore } from "@/store/store";
+import { lasso } from "./lasso";
 
-/**
- * Document-level pointer interactions: alt-hover link cursor, alt+click to open
- * links, ctrl+drag lasso multi-select, and click-outside deselect. Faithful
- * port of the original document mousemove/mousedown/mouseup/click handlers.
- */
+//  Document-level pointer interactions
+
 export function useDocumentInteractions(): void {
   useEffect(() => {
     let mouseX = 0;
@@ -19,21 +16,27 @@ export function useDocumentInteractions(): void {
     const isOverLink = (x: number, y: number): HTMLAnchorElement | undefined =>
       document
         .elementsFromPoint(x, y)
-        .find((el): el is HTMLAnchorElement => el.matches(Selector.NOTE_LINK)) as
-        | HTMLAnchorElement
-        | undefined;
+        .find((el): el is HTMLAnchorElement =>
+          el.matches(Selector.NOTE_LINK),
+        ) as HTMLAnchorElement | undefined;
 
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
       if (e.altKey) {
-        document.body.style.cursor = isOverLink(mouseX, mouseY) ? Cursor.POINTER : Cursor.DEFAULT;
+        document.body.style.cursor = isOverLink(mouseX, mouseY)
+          ? Cursor.POINTER
+          : Cursor.DEFAULT;
       }
     };
 
     const onMouseDown = (e: MouseEvent) => {
       const s = useStore.getState();
-      if (!(e.ctrlKey || e.metaKey) || e.button !== MouseButton.LEFT || s.mode === AppMode.READ) {
+      if (
+        !(e.ctrlKey || e.metaKey) ||
+        e.button !== MouseButton.LEFT ||
+        s.mode === AppMode.READ
+      ) {
         return;
       }
 
@@ -41,7 +44,9 @@ export function useDocumentInteractions(): void {
       if (blockEl) {
         const blockId = blockEl.getAttribute(DataAttr.BLOCK_ID);
         if (blockId) {
-          lasso.mode = s.selectedBlockIds.has(blockId) ? LassoMode.DESELECT : LassoMode.SELECT;
+          lasso.mode = s.selectedBlockIds.has(blockId)
+            ? LassoMode.DESELECT
+            : LassoMode.SELECT;
           s.setBlockSelected(blockId, lasso.mode === LassoMode.SELECT);
         }
       } else {
@@ -73,13 +78,18 @@ export function useDocumentInteractions(): void {
       }
 
       const target = e.target as Element;
-      if (s.focusedRunbookId !== null && !target.closest(Selector.RUNBOOK_ITEM_BTN)) {
+      if (
+        s.focusedRunbookId !== null &&
+        !target.closest(Selector.RUNBOOK_ITEM_BTN)
+      ) {
         s.setRunbookFocus(null);
       }
 
       if (
         s.selectedBlockIds.size > 0 &&
-        !target.closest(`${Selector.BLOCK_CONTROLS}, ${Selector.BLOCK_DRAG_HANDLE}`)
+        !target.closest(
+          `${Selector.BLOCK_CONTROLS}, ${Selector.BLOCK_DRAG_HANDLE}`,
+        )
       ) {
         s.clearBlockSelection();
       }

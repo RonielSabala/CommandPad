@@ -1,7 +1,7 @@
-import { FilePickerConfig, MarkdownSyntax } from '@/common/config';
-import { BlockType, ExportFormat, NoteStyle } from '@/common/enums';
-import type { RunbookContent } from '@/common/types';
-import { getVariableMap, resolveCommandToString } from './resolution';
+import { FilePickerConfig, MarkdownSyntax } from "@/common/config";
+import { BlockType, ExportFormat, NoteStyle } from "@/common/enums";
+import type { RunbookContent } from "@/common/types";
+import { getVariableMap, resolveCommandToString } from "./resolution";
 
 interface SaveFilePickerOptions {
   suggestedName?: string;
@@ -14,16 +14,19 @@ interface WritableFile {
 interface FileHandle {
   createWritable(): Promise<WritableFile>;
 }
-type ShowSaveFilePicker = (options?: SaveFilePickerOptions) => Promise<FileHandle>;
+type ShowSaveFilePicker = (
+  options?: SaveFilePickerOptions,
+) => Promise<FileHandle>;
 
-/** Save text via the File System Access API, falling back to a download link. */
 async function saveFile(
   content: string,
   mimeType: string,
   suggestedName: string,
-  types: SaveFilePickerOptions['types'],
+  types: SaveFilePickerOptions["types"],
 ): Promise<void> {
-  const picker = (window as unknown as { showSaveFilePicker?: ShowSaveFilePicker }).showSaveFilePicker;
+  const picker = (
+    window as unknown as { showSaveFilePicker?: ShowSaveFilePicker }
+  ).showSaveFilePicker;
 
   if (picker) {
     try {
@@ -33,7 +36,7 @@ async function saveFile(
       await writable.close();
       return;
     } catch (error) {
-      if ((error as DOMException).name === 'AbortError') {
+      if ((error as DOMException).name === "AbortError") {
         return;
       }
     }
@@ -41,7 +44,7 @@ async function saveFile(
 
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
+  const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = suggestedName;
   anchor.click();
@@ -55,7 +58,7 @@ function buildMarkdownExport(content: RunbookContent): string {
   for (const block of content.blocks) {
     if (block.type === BlockType.NOTE) {
       const style = block.style || NoteStyle.BODY;
-      const text = block.text || '';
+      const text = block.text || "";
 
       if (style === NoteStyle.HEADING) {
         lines.push(`${MarkdownSyntax.HEADING} ${text}`);
@@ -66,20 +69,22 @@ function buildMarkdownExport(content: RunbookContent): string {
       }
     } else if (block.type === BlockType.COMMAND) {
       lines.push(MarkdownSyntax.CODE_FENCE);
-      lines.push(resolveCommandToString(block.text || '', variableMap));
+      lines.push(resolveCommandToString(block.text || "", variableMap));
       lines.push(MarkdownSyntax.CODE_FENCE_END);
     } else if (block.type === BlockType.DIVIDER) {
       lines.push(MarkdownSyntax.DIVIDER);
     }
 
-    lines.push('');
+    lines.push("");
   }
 
-  return lines.join('\n');
+  return lines.join("\n");
 }
 
-/** Serialize the workspace and hand it to the browser save flow. */
-export async function runExport(format: ExportFormat, content: RunbookContent): Promise<void> {
+export async function runExport(
+  format: ExportFormat,
+  content: RunbookContent,
+): Promise<void> {
   if (format === ExportFormat.JSON) {
     const data = {
       variables: (content.variables ?? []).map(({ id, ...rest }) => rest),
@@ -87,10 +92,21 @@ export async function runExport(format: ExportFormat, content: RunbookContent): 
     };
 
     const config = FilePickerConfig.json;
-    await saveFile(JSON.stringify(data, null, 2), config.mimeType, config.suggestedName, [...config.types]);
+    await saveFile(
+      JSON.stringify(data, null, 2),
+      config.mimeType,
+      config.suggestedName,
+      [...config.types],
+    );
     return;
   }
 
-  const config = format === ExportFormat.MD ? FilePickerConfig.md : FilePickerConfig.txt;
-  await saveFile(buildMarkdownExport(content), config.mimeType, config.suggestedName, [...config.types]);
+  const config =
+    format === ExportFormat.MD ? FilePickerConfig.md : FilePickerConfig.txt;
+  await saveFile(
+    buildMarkdownExport(content),
+    config.mimeType,
+    config.suggestedName,
+    [...config.types],
+  );
 }

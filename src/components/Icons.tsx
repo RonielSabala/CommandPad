@@ -1,5 +1,3 @@
-/** Small reused inline SVGs. One-off icons are inlined at their call site. */
-
 export function DragDotsIcon({ size = 16 }: { size?: number }) {
   return (
     <svg viewBox="0 0 16 16" width={size} height={size}>

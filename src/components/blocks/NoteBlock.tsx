@@ -1,14 +1,18 @@
-import './NoteBlock.css';
+import "./NoteBlock.css";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
-import { CssClass } from '@/common/constants/css';
-import { NoteStyle } from '@/common/enums';
-import type { NoteBlock as NoteBlockData } from '@/common/types';
-import { useStore } from '@/store/store';
-import { formatNoteText } from '@/utils/markdown';
+import { CssClass } from "@/common/constants/css";
+import { NoteStyle } from "@/common/enums";
+import type { NoteBlock as NoteBlockData } from "@/common/types";
+import { useStore } from "@/store/store";
+import { formatNoteText } from "@/utils/markdown";
 
-const NOTE_STYLES: NoteStyle[] = [NoteStyle.HEADING, NoteStyle.SUBHEADING, NoteStyle.BODY];
+const NOTE_STYLES: NoteStyle[] = [
+  NoteStyle.HEADING,
+  NoteStyle.SUBHEADING,
+  NoteStyle.BODY,
+];
 
 export function NoteBlock({ block }: { block: NoteBlockData }) {
   const updateBlockText = useStore((s) => s.updateBlockText);
@@ -32,19 +36,22 @@ export function NoteBlock({ block }: { block: NoteBlockData }) {
   }, [pendingFocus, consumeBlockFocus]);
 
   return (
-    <div className={`note-block${focused ? ` ${CssClass.IS_FOCUSED}` : ''}`}>
+    <div className={`note-block${focused ? ` ${CssClass.IS_FOCUSED}` : ""}`}>
       <div className="note-style-row">
         {NOTE_STYLES.map((s) => (
           <button
             key={s}
-            className={`note-style-btn${style === s ? ` ${CssClass.ACTIVE}` : ''}`}
+            className={`note-style-btn${style === s ? ` ${CssClass.ACTIVE}` : ""}`}
             onClick={() => updateBlockStyle(block.id, s)}
           >
             {s}
           </button>
         ))}
       </div>
-      <label className={`note-auto-width style-${style}`} data-value={block.text || placeholder}>
+      <label
+        className={`note-auto-width style-${style}`}
+        data-value={block.text || placeholder}
+      >
         <textarea
           ref={textareaRef}
           className={`note-textarea style-${style}`}
@@ -56,7 +63,10 @@ export function NoteBlock({ block }: { block: NoteBlockData }) {
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
         />
-        <div className={`note-preview style-${style}`} dangerouslySetInnerHTML={{ __html: previewHtml }} />
+        <div
+          className={`note-preview style-${style}`}
+          dangerouslySetInnerHTML={{ __html: previewHtml }}
+        />
       </label>
     </div>
   );

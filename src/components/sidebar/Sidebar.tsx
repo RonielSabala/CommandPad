@@ -1,9 +1,9 @@
-import './Sidebar.css';
+import "./Sidebar.css";
 
-import { ElementId } from '@/common/constants/dom';
-import { RunbookSection } from './RunbookSection';
-import { VariableSection } from './VariableSection';
-import { Footer } from './Footer';
+import { ElementId } from "@/common/constants/dom";
+import { Footer } from "./Footer";
+import { RunbookSection } from "./RunbookSection";
+import { VariableSection } from "./VariableSection";
 
 export function Sidebar() {
   return (

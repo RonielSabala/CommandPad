@@ -1,5 +1,3 @@
-/* --- NOTE BLOCK --- */
-
 .note-block {
   display: inline-grid;
   min-width: var(--block-min-width);

@@ -1,11 +1,6 @@
-import { RunbookConfig, StorageKey } from '@/common/config';
-import { AppMode, SectionState, SidebarPosition, Theme } from '@/common/enums';
-import type { RunbookEntry, Tab } from '@/common/types';
-
-/**
- * localStorage persistence for UI state and lightweight metadata. Runbook
- * *content* lives in IndexedDB (see runbookDb.ts).
- */
+import { RunbookConfig, StorageKey } from "@/common/config";
+import { AppMode, SectionState, SidebarPosition, Theme } from "@/common/enums";
+import type { RunbookEntry, Tab } from "@/common/types";
 
 export interface PersistedUiState {
   mode: AppMode;
@@ -21,20 +16,22 @@ export function saveUiState(ui: PersistedUiState): void {
       StorageKey.STATE,
       JSON.stringify({
         mode: ui.mode,
-        sidebar: ui.sidebarCollapsed ? SectionState.COLLAPSED : SectionState.EXPANDED,
+        sidebar: ui.sidebarCollapsed
+          ? SectionState.COLLAPSED
+          : SectionState.EXPANDED,
         sidebarPosition: ui.sidebarPosition,
         scrollTop: ui.scrollTop,
         theme: ui.theme,
       }),
     );
   } catch (error) {
-    console.warn('Failed to save UI state:', error);
+    console.warn("Failed to save UI state:", error);
   }
 }
 
 export function loadUiState(): Partial<PersistedUiState> | null {
   try {
-    const saved = JSON.parse(localStorage.getItem(StorageKey.STATE) ?? 'null');
+    const saved = JSON.parse(localStorage.getItem(StorageKey.STATE) ?? "null");
     if (!saved) {
       return null;
     }
@@ -42,12 +39,15 @@ export function loadUiState(): Partial<PersistedUiState> | null {
     return {
       mode: saved.mode === AppMode.READ ? AppMode.READ : AppMode.EDIT,
       sidebarCollapsed: saved.sidebar === SectionState.COLLAPSED,
-      sidebarPosition: saved.sidebarPosition === SidebarPosition.RIGHT ? SidebarPosition.RIGHT : SidebarPosition.LEFT,
+      sidebarPosition:
+        saved.sidebarPosition === SidebarPosition.RIGHT
+          ? SidebarPosition.RIGHT
+          : SidebarPosition.LEFT,
       scrollTop: saved.scrollTop ?? 0,
       theme: saved.theme === Theme.LIGHT ? Theme.LIGHT : Theme.DARK,
     };
   } catch (error) {
-    console.warn('Failed to load UI state:', error);
+    console.warn("Failed to load UI state:", error);
     return null;
   }
 }
@@ -67,40 +67,51 @@ export function saveTabsMeta(tabs: Tab[], activeTabId: string | null): void {
       }),
     );
   } catch (error) {
-    console.warn('Failed to save tabs:', error);
+    console.warn("Failed to save tabs:", error);
   }
 }
 
 export function loadTabsMeta(): PersistedTabsMeta | null {
   try {
-    const saved = JSON.parse(localStorage.getItem(StorageKey.TABS) ?? 'null');
+    const saved = JSON.parse(localStorage.getItem(StorageKey.TABS) ?? "null");
     if (!saved?.tabOrder?.length) {
       return null;
     }
     return saved;
   } catch (error) {
-    console.warn('Failed to load tabs:', error);
+    console.warn("Failed to load tabs:", error);
     return null;
   }
 }
 
-export function saveRunbookLibrary(items: RunbookEntry[], activeId: string | null): void {
+export function saveRunbookLibrary(
+  items: RunbookEntry[],
+  activeId: string | null,
+): void {
   try {
-    localStorage.setItem(RunbookConfig.LIBRARY_STORAGE_KEY, JSON.stringify({ items, activeId }));
+    localStorage.setItem(
+      RunbookConfig.LIBRARY_STORAGE_KEY,
+      JSON.stringify({ items, activeId }),
+    );
   } catch (error) {
-    console.warn('Failed to save runbook library:', error);
+    console.warn("Failed to save runbook library:", error);
   }
 }
 
-export function loadRunbookLibrary(): { items: RunbookEntry[]; activeId: string | null } | null {
+export function loadRunbookLibrary(): {
+  items: RunbookEntry[];
+  activeId: string | null;
+} | null {
   try {
-    const saved = JSON.parse(localStorage.getItem(RunbookConfig.LIBRARY_STORAGE_KEY) ?? 'null');
+    const saved = JSON.parse(
+      localStorage.getItem(RunbookConfig.LIBRARY_STORAGE_KEY) ?? "null",
+    );
     if (!saved) {
       return null;
     }
     return { items: saved.items ?? [], activeId: saved.activeId ?? null };
   } catch (error) {
-    console.warn('Failed to load runbook library:', error);
+    console.warn("Failed to load runbook library:", error);
     return null;
   }
 }
@@ -115,18 +126,24 @@ export function saveSidebarSections(sections: PersistedSections): void {
     localStorage.setItem(
       RunbookConfig.SECTIONS_STORAGE_KEY,
       JSON.stringify({
-        runbooks: sections.runbookSectionCollapsed ? SectionState.COLLAPSED : SectionState.EXPANDED,
-        variables: sections.variablesSectionCollapsed ? SectionState.COLLAPSED : SectionState.EXPANDED,
+        runbooks: sections.runbookSectionCollapsed
+          ? SectionState.COLLAPSED
+          : SectionState.EXPANDED,
+        variables: sections.variablesSectionCollapsed
+          ? SectionState.COLLAPSED
+          : SectionState.EXPANDED,
       }),
     );
   } catch (error) {
-    console.warn('Failed to save sidebar section state:', error);
+    console.warn("Failed to save sidebar section state:", error);
   }
 }
 
 export function loadSidebarSections(): PersistedSections | null {
   try {
-    const saved = JSON.parse(localStorage.getItem(RunbookConfig.SECTIONS_STORAGE_KEY) ?? 'null');
+    const saved = JSON.parse(
+      localStorage.getItem(RunbookConfig.SECTIONS_STORAGE_KEY) ?? "null",
+    );
     if (!saved) {
       return null;
     }
@@ -135,7 +152,7 @@ export function loadSidebarSections(): PersistedSections | null {
       variablesSectionCollapsed: saved.variables === SectionState.COLLAPSED,
     };
   } catch (error) {
-    console.warn('Failed to load sidebar section state:', error);
+    console.warn("Failed to load sidebar section state:", error);
     return null;
   }
 }

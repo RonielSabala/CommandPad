@@ -1,19 +1,19 @@
-import { memo, useRef, useState } from 'react';
+import { memo, useRef, useState } from "react";
 
-import { CssClass } from '@/common/constants/css';
-import { DataAttr } from '@/common/constants/dom';
-import { DragEffect } from '@/common/constants/events';
-import { AppMode, BlockType, LassoMode } from '@/common/enums';
-import type { Block } from '@/common/types';
-import { useStore } from '@/store/store';
-import { lasso } from '@/hooks/lasso';
-import { DragDotsIcon } from '../Icons';
-import type { VariableMap } from '@/utils/resolution';
-import { CommandBlock } from './CommandBlock';
-import { NoteBlock } from './NoteBlock';
-import { DividerBlock } from './DividerBlock';
+import { CssClass } from "@/common/constants/css";
+import { DataAttr } from "@/common/constants/dom";
+import { DragEffect } from "@/common/constants/events";
+import { AppMode, BlockType, LassoMode } from "@/common/enums";
+import type { Block } from "@/common/types";
+import { lasso } from "@/hooks/lasso";
+import { useStore } from "@/store/store";
+import type { VariableMap } from "@/utils/resolution";
+import { DragDotsIcon } from "../Icons";
+import { CommandBlock } from "./CommandBlock";
+import { DividerBlock } from "./DividerBlock";
+import { NoteBlock } from "./NoteBlock";
 
-/** Which block is being dragged (shared across block items). */
+// Which block is being dragged
 const blockDrag: { srcId: string | null } = { srcId: null };
 
 interface Props {
@@ -22,7 +22,11 @@ interface Props {
   secretKeys: Set<string>;
 }
 
-export const BlockItem = memo(function BlockItem({ block, variableMap, secretKeys }: Props) {
+export const BlockItem = memo(function BlockItem({
+  block,
+  variableMap,
+  secretKeys,
+}: Props) {
   const selected = useStore((s) => s.selectedBlockIds.has(block.id));
   const flashing = useStore((s) => s.flashBlockIds.has(block.id));
   const clearFlash = useStore((s) => s.clearFlash);
@@ -34,7 +38,9 @@ export const BlockItem = memo(function BlockItem({ block, variableMap, secretKey
   const [draggable, setDraggable] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [dragOver, setDragOver] = useState(false);
-  const disarmTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const disarmTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
 
   const className = [
     CssClass.BLOCK_ITEM,
@@ -44,7 +50,7 @@ export const BlockItem = memo(function BlockItem({ block, variableMap, secretKey
     flashing && CssClass.DUPLICATE_FLASH,
   ]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   return (
     <div
@@ -73,7 +79,8 @@ export const BlockItem = memo(function BlockItem({ block, variableMap, secretKey
         }
       }}
       onDragLeave={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) setDragOver(false);
+        if (!e.currentTarget.contains(e.relatedTarget as Node))
+          setDragOver(false);
       }}
       onDrop={(e) => {
         e.preventDefault();
@@ -93,7 +100,11 @@ export const BlockItem = memo(function BlockItem({ block, variableMap, secretKey
       }}
     >
       {block.type === BlockType.COMMAND ? (
-        <CommandBlock block={block} variableMap={variableMap} secretKeys={secretKeys} />
+        <CommandBlock
+          block={block}
+          variableMap={variableMap}
+          secretKeys={secretKeys}
+        />
       ) : block.type === BlockType.NOTE ? (
         <NoteBlock block={block} />
       ) : (
@@ -110,19 +121,45 @@ export const BlockItem = memo(function BlockItem({ block, variableMap, secretKey
             disarmTimer.current = setTimeout(() => setDraggable(false), 50);
           }}
         >
-          <DragDotsIcon size={14} />
+          <DragDotsIcon />
         </div>
       </div>
 
       <div className="block-controls">
-        <button className="btn btn-icon" onClick={() => duplicateBlock(block.id)} title="Duplicate block">
-          <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <button
+          className="btn btn-icon"
+          onClick={() => duplicateBlock(block.id)}
+          title="Duplicate block"
+        >
+          <svg
+            viewBox="0 0 16 16"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <rect x="2" y="2" width="9" height="9" rx="1" />
             <path d="M12 10v4M10 12h4" />
           </svg>
         </button>
-        <button className="btn btn-icon btn-danger" onClick={() => removeBlock(block.id)} title="Delete block">
-          <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <button
+          className="btn btn-icon btn-danger"
+          onClick={() => removeBlock(block.id)}
+          title="Delete block"
+        >
+          <svg
+            viewBox="0 0 16 16"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" />
           </svg>
         </button>

@@ -1,13 +1,8 @@
-import { SegmentType } from '@/common/enums';
-import type { Segment, Variable } from '@/common/types';
+import { SegmentType } from "@/common/enums";
+import type { Segment, Variable } from "@/common/types";
 
 export type VariableMap = Record<string, string>;
 
-/**
- * Resolve every variable's value, following `{ref}` references between
- * variables (with cycle protection). Expensive — compute once per render cycle
- * and thread the result into command previews rather than recomputing per block.
- */
 export function getVariableMap(variables: Variable[] = []): VariableMap {
   const rawMap: VariableMap = {};
   const resolvedMap: VariableMap = {};
@@ -29,7 +24,7 @@ export function getVariableMap(variables: Variable[] = []): VariableMap {
     }
 
     visitedKeys.add(key);
-    const raw = rawMap[key] ?? '';
+    const raw = rawMap[key] ?? "";
     const resolved = raw.replace(/\{([^}]+)\}/g, (match, refKey: string) =>
       refKey in rawMap ? resolveValue(refKey, new Set(visitedKeys)) : match,
     );
@@ -46,11 +41,16 @@ export function getVariableMap(variables: Variable[] = []): VariableMap {
 }
 
 export function getSecretKeys(variables: Variable[] = []): Set<string> {
-  return new Set(variables.filter((v) => v.secret && v.key.trim()).map((v) => v.key.trim()));
+  return new Set(
+    variables.filter((v) => v.secret && v.key.trim()).map((v) => v.key.trim()),
+  );
 }
 
-/** Split a command into literal / resolved / unresolved segments. */
-export function resolveCommandText(rawText: string, variableMap: VariableMap): Segment[] {
+//  Split a command into literal / resolved / unresolved segments
+export function resolveCommandText(
+  rawText: string,
+  variableMap: VariableMap,
+): Segment[] {
   const segments: Segment[] = [];
   const tokenRegex = /\{([^}]+)\}/g;
   let lastIndex = 0;
@@ -58,7 +58,10 @@ export function resolveCommandText(rawText: string, variableMap: VariableMap): S
 
   while ((match = tokenRegex.exec(rawText)) !== null) {
     if (match.index > lastIndex) {
-      segments.push({ text: rawText.slice(lastIndex, match.index), type: SegmentType.LITERAL });
+      segments.push({
+        text: rawText.slice(lastIndex, match.index),
+        type: SegmentType.LITERAL,
+      });
     }
 
     const key = match[1];
@@ -77,20 +80,29 @@ export function resolveCommandText(rawText: string, variableMap: VariableMap): S
   }
 
   if (lastIndex < rawText.length) {
-    segments.push({ text: rawText.slice(lastIndex), type: SegmentType.LITERAL });
+    segments.push({
+      text: rawText.slice(lastIndex),
+      type: SegmentType.LITERAL,
+    });
   }
 
   return segments;
 }
 
-/** Fully resolved command string (used for copy + export). */
-export function resolveCommandToString(rawText: string, variableMap: VariableMap): string {
+// Fully resolved command string
+export function resolveCommandToString(
+  rawText: string,
+  variableMap: VariableMap,
+): string {
   return resolveCommandText(rawText, variableMap)
     .map((segment) => segment.text)
-    .join('');
+    .join("");
 }
 
-export function hasUnresolvedTokens(rawText: string, variableMap: VariableMap): boolean {
+export function hasUnresolvedTokens(
+  rawText: string,
+  variableMap: VariableMap,
+): boolean {
   return resolveCommandText(rawText, variableMap).some(
     (segment) => segment.type === SegmentType.UNRESOLVED,
   );

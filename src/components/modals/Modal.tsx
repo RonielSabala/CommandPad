@@ -1,8 +1,8 @@
-import './Modal.css';
+import "./Modal.css";
 
-import type { ReactNode } from 'react';
-import { CssClass } from '@/common/constants/css';
-import { useModalDismiss } from '@/hooks/useModalDismiss';
+import { CssClass } from "@/common/constants/css";
+import { useModalDismiss } from "@/hooks/useModalDismiss";
+import type { ReactNode } from "react";
 
 interface Props {
   open: boolean;
@@ -10,14 +10,12 @@ interface Props {
   children: ReactNode;
 }
 
-/** Always-mounted backdrop (so the fade transition plays); Escape + backdrop
- *  click both close. */
 export function Modal({ open, onClose, children }: Props) {
   useModalDismiss(open, onClose);
 
   return (
     <div
-      className={`modal-backdrop${open ? ` ${CssClass.MODAL_VISIBLE}` : ''}`}
+      className={`modal-backdrop${open ? ` ${CssClass.MODAL_VISIBLE}` : ""}`}
       role="dialog"
       aria-modal="true"
       onClick={(e) => {

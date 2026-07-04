@@ -1,19 +1,19 @@
-import './CommandBlock.css';
+import "./CommandBlock.css";
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import { COPY_FEEDBACK_TIMEOUT_MS, UI } from '@/common/config';
-import { CssClass } from '@/common/constants/css';
-import { SegmentType } from '@/common/enums';
-import type { CommandBlock as CommandBlockData } from '@/common/types';
-import { useStore } from '@/store/store';
-import { useAutoResize } from '@/hooks/useAutoResize';
+import { COPY_FEEDBACK_TIMEOUT_MS, UI } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
+import { SegmentType } from "@/common/enums";
+import type { CommandBlock as CommandBlockData } from "@/common/types";
+import { useAutoResize } from "@/hooks/useAutoResize";
+import { useStore } from "@/store/store";
 import {
   hasUnresolvedTokens,
   resolveCommandText,
   resolveCommandToString,
   type VariableMap,
-} from '@/utils/resolution';
+} from "@/utils/resolution";
 
 interface Props {
   block: CommandBlockData;
@@ -32,8 +32,14 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const [copied, setCopied] = useState(false);
 
   const collapsed = block.editorCollapsed === true;
-  const segments = useMemo(() => resolveCommandText(block.text, variableMap), [block.text, variableMap]);
-  const unresolved = useMemo(() => hasUnresolvedTokens(block.text, variableMap), [block.text, variableMap]);
+  const segments = useMemo(
+    () => resolveCommandText(block.text, variableMap),
+    [block.text, variableMap],
+  );
+  const unresolved = useMemo(
+    () => hasUnresolvedTokens(block.text, variableMap),
+    [block.text, variableMap],
+  );
 
   useAutoResize(textareaRef, [block.text, collapsed, mode]);
 
@@ -55,10 +61,14 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   return (
     <div className="command-block">
       <div className="command-preview">
-        <span className={`command-preview-text${unresolved ? ` ${CssClass.HAS_UNRESOLVED}` : ''}`}>
+        <span
+          className={`command-preview-text${unresolved ? ` ${CssClass.HAS_UNRESOLVED}` : ""}`}
+        >
           {block.text ? (
             segments.map((seg, i) =>
-              seg.type === SegmentType.RESOLVED && seg.key && secretKeys.has(seg.key) ? (
+              seg.type === SegmentType.RESOLVED &&
+              seg.key &&
+              secretKeys.has(seg.key) ? (
                 <span key={i} className="token-secret">
                   {UI.SECRET_MASK}
                 </span>
@@ -74,9 +84,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         </span>
 
         <button
-          className={`btn btn-icon toggle-editor-btn${collapsed ? ` ${CssClass.EDITOR_COLLAPSED}` : ''}`}
+          className={`btn btn-icon toggle-editor-btn${collapsed ? ` ${CssClass.EDITOR_COLLAPSED}` : ""}`}
           onClick={() => toggleCommandEditor(block.id)}
-          title={`${collapsed ? 'Show' : 'Hide'} editor`}
+          title={`${collapsed ? "Show" : "Hide"} editor`}
         >
           <svg viewBox="0 0 12 12">
             <polyline points="2,4 6,8 10,4" />
@@ -96,7 +106,16 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
               />
             </svg>
           ) : (
-            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              viewBox="0 0 16 16"
+              width="13"
+              height="13"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <rect x="5" y="5" width="9" height="9" rx="1" />
               <path d="M3 11V2h9" />
             </svg>
@@ -104,7 +123,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         </button>
       </div>
 
-      <div className={`command-block-editor${collapsed ? ` ${CssClass.COLLAPSED}` : ''}`}>
+      <div
+        className={`command-block-editor${collapsed ? ` ${CssClass.COLLAPSED}` : ""}`}
+      >
         <div className="command-gutter">
           <span className="command-gutter-prefix">$</span>
         </div>

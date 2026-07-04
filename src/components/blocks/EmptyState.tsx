@@ -1,4 +1,4 @@
-import { ElementId } from '@/common/constants/dom';
+import { ElementId } from "@/common/constants/dom";
 
 export function EmptyState() {
   return (

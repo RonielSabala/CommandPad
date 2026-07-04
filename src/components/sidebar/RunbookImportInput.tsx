@@ -1,8 +1,7 @@
-import { useEffect, useRef } from 'react';
-import { useStore } from '@/store/store';
-import { registerImportTrigger } from '@/utils/importTrigger';
+import { useStore } from "@/store/store";
+import { registerImportTrigger } from "@/utils/importTrigger";
+import { useEffect, useRef } from "react";
 
-/** Hidden file input for importing runbook JSON. Exposed via `importTrigger`. */
 export function RunbookImportInput() {
   const importRunbooks = useStore((s) => s.importRunbooks);
   const ref = useRef<HTMLInputElement>(null);
@@ -19,13 +18,13 @@ export function RunbookImportInput() {
       type="file"
       accept=".json"
       multiple
-      style={{ display: 'none' }}
+      style={{ display: "none" }}
       onChange={(e) => {
         const files = Array.from(e.target.files ?? []);
         if (files.length > 0) {
           void importRunbooks(files);
         }
-        e.target.value = '';
+        e.target.value = "";
       }}
     />
   );

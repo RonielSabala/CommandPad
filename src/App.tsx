@@ -1,23 +1,23 @@
-import './App.css';
+import "./App.css";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { CssClass } from '@/common/constants/css';
-import { ElementId } from '@/common/constants/dom';
-import { SidebarPosition } from '@/common/enums';
-import { useStore } from '@/store/store';
-import { useBodyClasses } from '@/hooks/useBodyClasses';
-import { useKeybindings } from '@/hooks/useKeybindings';
-import { useDocumentInteractions } from '@/hooks/useDocumentInteractions';
+import { CssClass } from "@/common/constants/css";
+import { ElementId } from "@/common/constants/dom";
+import { SidebarPosition } from "@/common/enums";
+import { useBodyClasses } from "@/hooks/useBodyClasses";
+import { useDocumentInteractions } from "@/hooks/useDocumentInteractions";
+import { useKeybindings } from "@/hooks/useKeybindings";
+import { useStore } from "@/store/store";
 
-import { Header } from './components/header/Header';
-import { Sidebar } from './components/sidebar/Sidebar';
-import { RunbookImportInput } from './components/sidebar/RunbookImportInput';
-import { MainPanel } from './components/MainPanel';
-import { KeybindingsModal } from './components/modals/KeybindingsModal';
-import { ExportModal } from './components/modals/ExportModal';
-import { ConfirmModal } from './components/modals/ConfirmModal';
-import { AlertModal } from './components/modals/AlertModal';
+import { Header } from "./components/header/Header";
+import { MainPanel } from "./components/MainPanel";
+import { AlertModal } from "./components/modals/AlertModal";
+import { ConfirmModal } from "./components/modals/ConfirmModal";
+import { ExportModal } from "./components/modals/ExportModal";
+import { KeybindingsModal } from "./components/modals/KeybindingsModal";
+import { RunbookImportInput } from "./components/sidebar/RunbookImportInput";
+import { Sidebar } from "./components/sidebar/Sidebar";
 
 export default function App() {
   const sidebarCollapsed = useStore((s) => s.sidebarCollapsed);
@@ -35,7 +35,9 @@ export default function App() {
 
   useEffect(() => {
     if (initialized) {
-      requestAnimationFrame(() => document.body.classList.add(CssClass.APP_READY));
+      requestAnimationFrame(() =>
+        document.body.classList.add(CssClass.APP_READY),
+      );
     }
   }, [initialized]);
 
@@ -44,7 +46,7 @@ export default function App() {
     sidebarPosition === SidebarPosition.RIGHT && CssClass.SIDEBAR_RIGHT,
   ]
     .filter(Boolean)
-    .join(' ');
+    .join(" ");
 
   return (
     <>
