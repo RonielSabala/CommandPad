@@ -2,10 +2,10 @@ import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { AppMode } from "@/common/enums";
 import type { RunbookEntry } from "@/common/types";
+import { DragDotsIcon, TrashIcon } from "@/components/Icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useStore } from "@/store/store";
 import { memo } from "react";
-import { DragDotsIcon, TrashIcon } from "../Icons";
 import "./RunbookRow.css";
 
 interface Props {

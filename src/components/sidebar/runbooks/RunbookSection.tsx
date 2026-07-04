@@ -3,11 +3,11 @@ import { useStore } from "@/store/store";
 import { openImportDialog } from "@/utils/importTrigger";
 import { matchesQuery } from "@/utils/runbook";
 import { useEffect, useRef } from "react";
+import { SidebarSearch } from "../shared/SidebarSearch";
+import { SidebarSection } from "../shared/SidebarSection";
+import { SidebarSectionFooter } from "../shared/SidebarSectionFooter";
+import { SidebarSectionList } from "../shared/SidebarSectionList";
 import { RunbookRow } from "./RunbookRow";
-import { SidebarSearch } from "./SidebarSearch";
-import { SidebarSection } from "./SidebarSection";
-import { SidebarSectionFooter } from "./SidebarSectionFooter";
-import { SidebarSectionList } from "./sidebarSectionList";
 
 export function RunbookSection() {
   const isCollapsed = useStore((state) => state.runbookSectionCollapsed);

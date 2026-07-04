@@ -1,7 +1,7 @@
 import { Footer } from "./Footer";
-import { RunbookSection } from "./RunbookSection";
+import { RunbookSection } from "./runbooks/RunbookSection";
 import "./Sidebar.css";
-import { VariableSection } from "./VariableSection";
+import { VariableSection } from "./variables/VariableSection";
 
 export function Sidebar() {
   return (

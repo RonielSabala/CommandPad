@@ -1,11 +1,11 @@
 import type { Variable } from "@/common/types";
 import { getActiveTab, useStore } from "@/store/store";
 import { matchesQuery } from "@/utils/runbook";
-import { SidebarSearch } from "./SidebarSearch";
-import { SidebarSection } from "./SidebarSection";
-import { SidebarSectionFooter } from "./SidebarSectionFooter";
+import { SidebarSearch } from "../shared/SidebarSearch";
+import { SidebarSection } from "../shared/SidebarSection";
+import { SidebarSectionFooter } from "../shared/SidebarSectionFooter";
+import { SidebarSectionList } from "../shared/SidebarSectionList";
 import { VariableRow } from "./VariableRow";
-import { SidebarSectionList } from "./sidebarSectionList";
 
 const EMPTY_VARIABLES: Variable[] = [];
 

@@ -2,10 +2,10 @@ import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { AppMode, VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
+import { DragDotsIcon, TrashIcon } from "@/components/Icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useStore } from "@/store/store";
 import { memo, useEffect, useRef } from "react";
-import { DragDotsIcon, TrashIcon } from "../Icons";
 import "./VariableRow.css";
 
 function SecretIcon({ masked }: { masked: boolean }) {
