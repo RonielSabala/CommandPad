@@ -1,31 +1,45 @@
-import { ElementId } from "@/common/constants/dom";
-import { Github, Linkedin } from "react-bootstrap-icons";
+import "./Footer.css";
+
+import { Github, Linkedin, type Icon } from "react-bootstrap-icons";
+
+interface FooterLinkProps {
+  icon: Icon;
+  title: string;
+  href: string;
+}
+
+export function FooterLink({ icon, title, href }: FooterLinkProps) {
+  const IconComponent = icon;
+  return (
+    <a
+      className="footer-link"
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={title}
+    >
+      <IconComponent aria-label={title} />
+    </a>
+  );
+}
 
 export function Footer() {
   return (
-    <footer id={ElementId.APP_FOOTER} className="no-user-select">
-      <span id={ElementId.FOOTER_COPYRIGHT}>
+    <footer id="app-footer" className="no-user-select">
+      <span id="footer-copyright">
         © {new Date().getFullYear()} Roniel Sabala
       </span>
       <div className="footer-links">
-        <a
-          className="footer-link"
-          href="https://github.com/RonielSabala"
-          target="_blank"
-          rel="noopener noreferrer"
+        <FooterLink
+          icon={Github}
           title="GitHub"
-        >
-          <Github aria-label="GitHub" />
-        </a>
-        <a
-          className="footer-link"
-          href="https://www.linkedin.com/in/ronielsabala/"
-          target="_blank"
-          rel="noopener noreferrer"
+          href="https://github.com/RonielSabala"
+        />
+        <FooterLink
+          icon={Linkedin}
           title="LinkedIn"
-        >
-          <Linkedin aria-label="LinkedIn" />
-        </a>
+          href="https://www.linkedin.com/in/ronielsabala/"
+        />
       </div>
     </footer>
   );

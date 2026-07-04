@@ -15,8 +15,6 @@ export const ElementId = {
   SIDEBAR_TOGGLE_BTN: "sidebar-toggle-btn",
   SIDEBAR_CHEVRON: "sidebar-chevron",
   SIDEBAR_POSITION_BTN: "sidebar-position-btn",
-  APP_FOOTER: "app-footer",
-  FOOTER_COPYRIGHT: "footer-copyright",
   RUNBOOK_SECTION: "runbook-section",
   VARIABLES_SECTION: "variables-section",
   ADD_BLOCK_ROW: "add-block-row",
