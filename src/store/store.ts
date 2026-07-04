@@ -339,7 +339,11 @@ export const useStore = create<StoreState>()((set, get) => ({
     if (get().activeTabId === tabId) {
       return;
     }
-    set((s) => ({ activeTabId: tabId, activeRunbookId: getActiveTab({ ...s, activeTabId: tabId })?.runbookId ?? null }));
+    set((s) => ({
+      activeTabId: tabId,
+      activeRunbookId: getActiveTab({ ...s, activeTabId: tabId })?.runbookId ?? null,
+      ctrlHeld: false,
+    }));
     persistence.saveTabsMeta(get().tabs, get().activeTabId);
   },
 
