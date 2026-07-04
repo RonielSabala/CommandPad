@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-
 import { EventType, Key } from "@/common/constants/events";
 import { useStore } from "@/store/store";
+import { useEffect, useRef, useState } from "react";
 import { Modal } from "./Modal";
 
 export function ConfirmModal() {
-  const dialog = useStore((s) => s.confirmDialog);
-  const resolve = useStore((s) => s.resolveConfirm);
-  const open = dialog !== null;
+  const dialog = useStore((state) => state.confirmDialog);
+  const resolve = useStore((state) => state.resolveConfirm);
+
+  const isOpen = dialog !== null;
   const [message, setMessage] = useState("");
   const confirmRef = useRef<HTMLButtonElement>(null);
 
@@ -19,22 +19,24 @@ export function ConfirmModal() {
   }, [dialog]);
 
   useEffect(() => {
-    if (!open) {
+    if (!isOpen) {
       return;
     }
+
     confirmRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === Key.ENTER) {
-        e.preventDefault();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === Key.ENTER) {
+        event.preventDefault();
         resolve(true);
       }
     };
+
     document.addEventListener(EventType.KEY_DOWN, onKey);
     return () => document.removeEventListener(EventType.KEY_DOWN, onKey);
-  }, [open, resolve]);
+  }, [isOpen, resolve]);
 
   return (
-    <Modal open={open} onClose={() => resolve(false)}>
+    <Modal open={isOpen} onClose={() => resolve(false)}>
       <p className="modal-title">Clear Workspace</p>
       <p className="modal-message">{message}</p>
       <div className="modal-actions">

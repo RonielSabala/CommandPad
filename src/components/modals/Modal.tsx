@@ -1,7 +1,6 @@
-import "./Modal.css";
-
 import { useModalDismiss } from "@/hooks/useModalDismiss";
 import type { ReactNode } from "react";
+import "./Modal.css";
 
 interface Props {
   open: boolean;

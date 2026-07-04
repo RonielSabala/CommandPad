@@ -1,13 +1,14 @@
 import { KEYBINDINGS, formatBinding } from "@/common/keybindings";
 import { useStore } from "@/store/store";
+import "./KeybindingsModal.css";
 import { Modal } from "./Modal";
 
 export function KeybindingsModal() {
-  const open = useStore((s) => s.keybindingsModalOpen);
-  const close = useStore((s) => s.closeKeybindingsModal);
+  const isOpen = useStore((state) => state.keybindingsModalOpen);
+  const onClose = useStore((state) => state.closeKeybindingsModal);
 
   return (
-    <Modal open={open} onClose={close}>
+    <Modal open={isOpen} onClose={onClose}>
       <p className="modal-title">App Keybindings</p>
       <div className="modal-scrollable-body">
         <table className="keybindings-table">
@@ -16,7 +17,7 @@ export function KeybindingsModal() {
               ([id, { binding, description }]) => (
                 <tr key={id}>
                   <td className="key-cell">
-                    <span className="kbd">{formatBinding(binding)}</span>
+                    <span className="keybinding">{formatBinding(binding)}</span>
                   </td>
                   <td className="desc-cell">{description}</td>
                 </tr>
@@ -26,7 +27,7 @@ export function KeybindingsModal() {
         </table>
       </div>
       <div className="modal-actions">
-        <button className="btn btn-lg" onClick={close}>
+        <button className="btn btn-lg" onClick={onClose}>
           Close
         </button>
       </div>

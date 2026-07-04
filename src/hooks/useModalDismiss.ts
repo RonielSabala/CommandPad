@@ -7,9 +7,9 @@ export function useModalDismiss(open: boolean, onClose: () => void): void {
       return;
     }
 
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === Key.ESCAPE) {
-        e.preventDefault();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === Key.ESCAPE) {
+        event.preventDefault();
         onClose();
       }
     };
