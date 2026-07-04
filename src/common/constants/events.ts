@@ -8,6 +8,7 @@ export const EventType = {
   MOUSE_MOVE: 'mousemove',
   SCROLL: 'scroll',
   DRAG_END: 'dragend',
+  BLUR: 'blur',
 } as const;
 
 export const Key = {

@@ -118,11 +118,19 @@ export function useKeybindings(): void {
       }
     };
 
+    const onBlur = () => {
+      const state = useStore.getState();
+      state.setCtrlHeld(false);
+      state.setAltHeld(false);
+    };
+
     document.addEventListener(EventType.KEY_DOWN, onKeyDown);
     document.addEventListener(EventType.KEY_UP, onKeyUp);
+    window.addEventListener(EventType.BLUR, onBlur);
     return () => {
       document.removeEventListener(EventType.KEY_DOWN, onKeyDown);
       document.removeEventListener(EventType.KEY_UP, onKeyUp);
+      window.removeEventListener(EventType.BLUR, onBlur);
     };
   }, []);
 }
