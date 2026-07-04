@@ -11,7 +11,7 @@ import { TabsBar } from "./tabs/TabsBar";
 export function MainPanel() {
   const tabsContentRef = useRef<HTMLDivElement>(null);
   const isEmpty = useStore(
-    (state) => (getActiveTab(state)?.blocks.length ?? 0) === 0,
+    (state) => !(getActiveTab(state)?.blocks.length ?? 0),
   );
 
   useScrollPersistence(tabsContentRef);

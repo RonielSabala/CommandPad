@@ -1,18 +1,23 @@
 import { useLayoutEffect, type RefObject } from "react";
 
-// Grow/shrink a textarea to fit its content
-
 export function useAutoResize(
   ref: RefObject<HTMLTextAreaElement | null>,
   deps: unknown[],
 ): void {
   useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) {
+    const element = ref.current;
+    if (!element) {
       return;
     }
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
+
+    const resize = () => {
+      element.style.height = "auto";
+      element.style.height = `${element.scrollHeight}px`;
+    };
+
+    resize();
+    const raf = requestAnimationFrame(resize);
+    return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }
