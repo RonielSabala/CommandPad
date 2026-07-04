@@ -11,6 +11,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 - [Features](#features)
 - [Quick Start](#quick-start)
   - [Requirements](#requirements)
+  - [Installation](#installation)
   - [Run Locally](#run-locally)
 - [Usage](#usage)
   - [Tabs](#tabs)
@@ -52,26 +53,27 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 
 ### Requirements
 
-- [Node.js](https://nodejs.org) 20+ and [pnpm](https://pnpm.io) 9+.
-- Any modern browser (Chrome, Firefox, Edge, Safari).
+- [Node.js](https://nodejs.org)
+- [pnpm](https://pnpm.io)
+- [Visual Studio Code](https://code.visualstudio.com) (Recommended)
+
+---
+
+### Installation
+
+```bash
+pnpm install
+```
 
 ---
 
 ### Run Locally
 
 ```bash
-pnpm install
 pnpm dev
 ```
 
-Then open the printed local URL (default <http://localhost:5173>).
-
-To create a production build:
-
-```bash
-pnpm build
-pnpm preview
-```
+Access at `http://localhost:5173`. Use `Ctrl+C` to stop.
 
 ---
 
@@ -266,6 +268,21 @@ Contributions are welcome. Suggested workflow:
 3. Make your changes following the existing code style.
 4. Include appropriate documentation or tests.
 5. Commit, push, and open a pull request describing the change and the reason for it.
+
+### Pre-commit Hooks <!-- omit in toc -->
+
+This project uses [pre-commit](https://pre-commit.com/) to enforce code quality checks before each commit. Run once from the **repo root** to set it up:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+Checks run automatically on every `git commit`. To run them manually:
+
+```bash
+pre-commit run --all-files
+```
 
 ---
 
