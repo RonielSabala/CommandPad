@@ -17,7 +17,7 @@ import { debounce, generateId } from '@/utils/id';
 import { getRunbookLabel } from '@/utils/runbook';
 
 import * as persistence from './persistence';
-import { deleteRunbookContent, getRunbookContent, putRunbookContent } from './runbookDb';
+import { deleteRunbookContent, deleteRunbookDb, getRunbookContent, putRunbookContent } from './runbookDb';
 
 interface Dialog<T> {
   message: string;
@@ -996,9 +996,8 @@ export const useStore = create<StoreState>()((set, get) => ({
       return;
     }
 
-    for (const runbook of get().runbookLibrary) {
-      await deleteRunbookContent(runbook.id);
-    }
+    await deleteRunbookDb();
+    localStorage.clear();
 
     set({
       tabs: [],
@@ -1010,9 +1009,6 @@ export const useStore = create<StoreState>()((set, get) => ({
       selectedBlockIds: new Set(),
       focusedRunbookId: null,
     });
-
-    persistence.saveTabsMeta([], null);
-    persistence.saveRunbookLibrary([], null);
   },
 }));
 

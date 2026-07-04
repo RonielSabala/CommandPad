@@ -63,3 +63,17 @@ export async function deleteRunbookContent(id: string): Promise<void> {
     tx.onerror = () => reject(tx.error);
   });
 }
+
+export function deleteRunbookDb(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (runbookDbInstance) {
+      runbookDbInstance.close();
+      runbookDbInstance = null;
+    }
+
+    const request = indexedDB.deleteDatabase(RunbookConfig.DB_NAME);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+    request.onblocked = () => resolve();
+  });
+}
