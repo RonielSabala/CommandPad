@@ -42,3 +42,8 @@ export const Anchor = {
   TARGET_BLANK: "_blank",
   REL: "noopener,noreferrer",
 } as const;
+
+export const ScrollIntoView = {
+  BLOCK_CENTER: "center",
+  BEHAVIOR_SMOOTH: "smooth",
+} as const;

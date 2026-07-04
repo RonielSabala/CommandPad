@@ -1,4 +1,4 @@
-import { DataAttr } from "@/common/constants/dom";
+import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
 import { useStore } from "@/store/store";
 import { openImportDialog } from "@/utils/importTrigger";
 import { matchesQuery } from "@/utils/runbook";
@@ -31,7 +31,10 @@ export function RunbookSection() {
       `[${DataAttr.RUNBOOK_ID}="${focusedRunbookId}"]`,
     );
 
-    row?.scrollIntoView({ block: "center", behavior: "smooth" });
+    row?.scrollIntoView({
+      block: ScrollIntoView.BLOCK_CENTER,
+      behavior: ScrollIntoView.BEHAVIOR_SMOOTH,
+    });
   }, [focusedRunbookId]);
 
   return (
