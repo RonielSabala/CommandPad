@@ -1,6 +1,5 @@
 import "./Modal.css";
 
-import { CssClass } from "@/common/constants/css";
 import { useModalDismiss } from "@/hooks/useModalDismiss";
 import type { ReactNode } from "react";
 
@@ -15,11 +14,13 @@ export function Modal({ open, onClose, children }: Props) {
 
   return (
     <div
-      className={`modal-backdrop${open ? ` ${CssClass.MODAL_VISIBLE}` : ""}`}
+      className={`modal-backdrop${open ? " modal-visible" : ""}`}
       role="dialog"
       aria-modal="true"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+      onClick={(event) => {
+        if (event.target === event.currentTarget) {
+          onClose();
+        }
       }}
     >
       <div className="modal">{children}</div>

@@ -14,11 +14,11 @@ export interface RowReorder {
   };
   rowProps: {
     draggable: boolean;
-    onDragStart: (e: DragEvent) => void;
+    onDragStart: (event: DragEvent) => void;
     onDragEnd: () => void;
-    onDragOver: (e: DragEvent) => void;
-    onDragLeave: (e: DragEvent) => void;
-    onDrop: (e: DragEvent) => void;
+    onDragOver: (event: DragEvent) => void;
+    onDragLeave: (event: DragEvent) => void;
+    onDrop: (event: DragEvent) => void;
   };
 }
 
@@ -31,6 +31,7 @@ export function useRowReorder(
   const [draggable, setDraggable] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
+
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   return {
@@ -45,9 +46,9 @@ export function useRowReorder(
     },
     rowProps: {
       draggable,
-      onDragStart: (e) => {
+      onDragStart: (event) => {
         dragGroups[group] = id;
-        e.dataTransfer.effectAllowed = DragEffect.MOVE;
+        event.dataTransfer.effectAllowed = DragEffect.MOVE;
         setIsDragging(true);
       },
       onDragEnd: () => {
@@ -56,27 +57,30 @@ export function useRowReorder(
         setIsDragging(false);
         setIsDragOver(false);
       },
-      onDragOver: (e) => {
+      onDragOver: (event) => {
         const source = dragGroups[group];
         if (!source || source === id) {
           return;
         }
-        e.preventDefault();
-        e.dataTransfer.dropEffect = DragEffect.MOVE;
+
+        event.preventDefault();
+        event.dataTransfer.dropEffect = DragEffect.MOVE;
         setIsDragOver(true);
       },
-      onDragLeave: (e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      onDragLeave: (event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node)) {
           setIsDragOver(false);
         }
       },
-      onDrop: (e) => {
-        e.preventDefault();
+      onDrop: (event) => {
+        event.preventDefault();
         setIsDragOver(false);
+
         const source = dragGroups[group];
         if (!enabled || !source || source === id) {
           return;
         }
+
         dragGroups[group] = null;
         onReorder(source, id);
       },

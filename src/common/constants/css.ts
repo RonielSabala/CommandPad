@@ -1,5 +1,5 @@
 export const CssClass = {
-  // Root / body flags
+  // Body flags
   APP_READY: "app-ready",
   READ_MODE: "read-mode",
   CTRL_HELD: "ctrl-held",
@@ -7,7 +7,7 @@ export const CssClass = {
   THEME_LIGHT: "theme-light",
   SELECTING: "selecting",
 
-  // Shell / sidebar
+  // Sidebar flags
   SIDEBAR_COLLAPSED: "sidebar-collapsed",
   SIDEBAR_RIGHT: "sidebar-right",
   COLLAPSED: "collapsed",
@@ -15,8 +15,6 @@ export const CssClass = {
   // Drag & drop
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",
-  DRAG_OVER_LEFT: "drag-over-left",
-  DRAG_OVER_RIGHT: "drag-over-right",
 
   // Blocks
   BLOCK_ITEM: "block-item",
@@ -35,12 +33,8 @@ export const CssClass = {
   // Rows / lists
   ACTIVE: "active",
   RUNBOOK_FOCUSED: "runbook-focused",
-  SIDEBAR_SECTION_ROW: "sidebar-section-row",
   VAR_SECRET: "is-secret",
-  VAR_SECRET_BTN_ACTIVE: "is-active",
 
   // Misc
-  SYNCING: "is-syncing",
-  MODAL_VISIBLE: "modal-visible",
   BTN_DISABLED: "btn-disabled",
 } as const;

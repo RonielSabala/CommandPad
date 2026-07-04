@@ -4,6 +4,7 @@ import { ElementId } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { AppMode, Theme } from "@/common/enums";
 import { getActiveTab, useStore } from "@/store/store";
+import { CssClass } from "../../common/constants/css";
 
 function ThemeIcon({ light }: { light: boolean }) {
   if (light) {
@@ -89,7 +90,7 @@ export function Header() {
         <div className="vertical-divider" />
         <button
           id={ElementId.COLLAPSE_ALL_BTN}
-          className={`btn btn-lg${isEmpty ? " btn-disabled" : ""}`}
+          className={`btn btn-lg${isEmpty ? ` ${CssClass.BTN_DISABLED}` : ""}`}
           disabled={isEmpty}
           onClick={toggleAllCommandEditors}
           title="Expand/collapse all command editors"
@@ -166,7 +167,7 @@ export function Header() {
         <div className="vertical-divider" />
 
         <button
-          className={`btn btn-lg btn-primary${isEmpty ? " btn-disabled" : ""}`}
+          className={`btn btn-lg btn-primary${isEmpty ? ` ${CssClass.BTN_DISABLED}` : ""}`}
           disabled={isEmpty}
           onClick={openExportModal}
           title="Export runbook"

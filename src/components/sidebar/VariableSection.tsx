@@ -1,58 +1,55 @@
-import { ElementId } from "@/common/constants/dom";
 import type { Variable } from "@/common/types";
 import { getActiveTab, useStore } from "@/store/store";
 import { matchesQuery } from "@/utils/runbook";
-import { SidebarSearch, SidebarSection } from "./SidebarSection";
+import { SidebarSearch } from "./SidebarSearch";
+import { SidebarSection } from "./SidebarSection";
+import { SidebarSectionFooter } from "./SidebarSectionFooter";
 import { VariableRow } from "./VariableRow";
+import { SidebarSectionList } from "./sidebarSectionList";
 
 const EMPTY_VARIABLES: Variable[] = [];
 
 export function VariableSection() {
-  const collapsed = useStore((s) => s.variablesSectionCollapsed);
-  const toggle = useStore((s) => s.toggleVariablesSection);
+  const collapsed = useStore((state) => state.variablesSectionCollapsed);
+  const toggle = useStore((state) => state.toggleVariablesSection);
   const activeTab = useStore(getActiveTab);
   const variables = activeTab?.variables ?? EMPTY_VARIABLES;
-  const query = useStore((s) => s.variableSearchQuery);
-  const setQuery = useStore((s) => s.setVariableSearchQuery);
-  const addVariable = useStore((s) => s.addVariable);
-
-  const visible = variables.filter((v) => matchesQuery(query, v.key, v.value));
+  const query = useStore((state) => state.variableSearchQuery);
+  const setQuery = useStore((state) => state.setVariableSearchQuery);
+  const addVariable = useStore((state) => state.addVariable);
+  const visibleItems = variables.filter((variable) =>
+    matchesQuery(query, variable.key, variable.value),
+  );
 
   return (
     <SidebarSection
-      id={ElementId.VARIABLES_SECTION}
+      id="variables-section"
       title="VARIABLES"
       collapsed={collapsed}
       onToggle={toggle}
     >
       <SidebarSearch
         value={query}
-        placeholder="Search variables…"
+        placeholder="Search variables..."
         onChange={setQuery}
       />
-      <div id="variables-list" className="sidebar-section-list">
-        {variables.length === 0 ? (
-          <p className="sidebar-section-empty-msg">No variables defined.</p>
-        ) : visible.length === 0 ? (
-          <p className="sidebar-section-empty-msg">No matches.</p>
-        ) : (
-          visible.map((variable) => (
-            <VariableRow key={variable.id} variable={variable} />
-          ))
+
+      <SidebarSectionList
+        items={variables}
+        visibleItems={visibleItems}
+        emptyMessage="No variables defined."
+        getKey={(variable) => variable.id}
+        renderItem={(variable) => (
+          <VariableRow key={variable.id} variable={variable} />
         )}
-      </div>
-      <div className="sidebar-section-footer">
-        <button
-          className="btn"
-          onClick={() => void addVariable()}
-          title="New variable"
-        >
-          <svg viewBox="0 0 16 16">
-            <path d="M8 3v10M3 8h10" />
-          </svg>
-          New
-        </button>
-      </div>
+      />
+
+      <SidebarSectionFooter
+        onClick={() => void addVariable()}
+        title="New variable"
+        label="New"
+        icon={<path d="M8 3v10M3 8h10" />}
+      />
     </SidebarSection>
   );
 }

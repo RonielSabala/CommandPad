@@ -1,6 +1,5 @@
-import "./Footer.css";
-
 import { Github, Linkedin, type Icon } from "react-bootstrap-icons";
+import "./Footer.css";
 
 interface FooterLinkProps {
   icon: Icon;
@@ -27,7 +26,7 @@ export function Footer() {
   return (
     <footer id="app-footer" className="no-user-select">
       <span id="footer-copyright">
-        © {new Date().getFullYear()} Roniel Sabala
+        &copy; {new Date().getFullYear()} Roniel Sabala
       </span>
       <div className="footer-links">
         <FooterLink

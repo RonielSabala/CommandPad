@@ -1,37 +1,44 @@
-import { memo } from "react";
-
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { AppMode } from "@/common/enums";
 import type { RunbookEntry } from "@/common/types";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useStore } from "@/store/store";
+import { memo } from "react";
 import { DragDotsIcon, TrashIcon } from "../Icons";
+import "./RunbookRow.css";
 
-export const RunbookRow = memo(function RunbookRow({
-  runbook,
-}: {
+interface Props {
   runbook: RunbookEntry;
-}) {
-  const active = useStore((s) => s.activeRunbookId === runbook.id);
-  const focused = useStore((s) => s.focusedRunbookId === runbook.id);
-  const readMode = useStore((s) => s.mode === AppMode.READ);
-  const setRunbookFocus = useStore((s) => s.setRunbookFocus);
-  const loadRunbookFromLibrary = useStore((s) => s.loadRunbookFromLibrary);
-  const removeRunbookFromLibrary = useStore((s) => s.removeRunbookFromLibrary);
-  const reorderRunbooks = useStore((s) => s.reorderRunbooks);
+}
+
+export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
+  const id = runbook.id;
+  const label = runbook.label;
+
+  const isActive = useStore((state) => state.activeRunbookId === id);
+  const isFocused = useStore((state) => state.focusedRunbookId === id);
+  const readMode = useStore((state) => state.mode === AppMode.READ);
+  const setRunbookFocus = useStore((state) => state.setRunbookFocus);
+  const reorderRunbooks = useStore((state) => state.reorderRunbooks);
+  const loadRunbookFromLibrary = useStore(
+    (state) => state.loadRunbookFromLibrary,
+  );
+  const removeRunbookFromLibrary = useStore(
+    (state) => state.removeRunbookFromLibrary,
+  );
 
   const { isDragging, isDragOver, handleProps, rowProps } = useRowReorder(
-    "runbook",
-    runbook.id,
+    "runbook-group",
+    id,
     reorderRunbooks,
     !readMode,
   );
 
   const btnClass = [
     "runbook-item-btn",
-    active && CssClass.ACTIVE,
-    focused && CssClass.RUNBOOK_FOCUSED,
+    isActive && CssClass.ACTIVE,
+    isFocused && CssClass.RUNBOOK_FOCUSED,
     isDragOver && CssClass.DRAG_OVER,
   ]
     .filter(Boolean)
@@ -39,30 +46,26 @@ export const RunbookRow = memo(function RunbookRow({
 
   return (
     <div
-      className={`sidebar-section-row${isDragging ? " dragging" : ""}`}
-      {...{ [DataAttr.RUNBOOK_ID]: runbook.id }}
+      className={`sidebar-section-list-row${isDragging ? ` ${CssClass.DRAGGING}` : ""}`}
+      {...{ [DataAttr.RUNBOOK_ID]: id }}
       {...rowProps}
     >
-      <div
-        className="runbook-drag-handle drag-handle"
-        title="Drag to reorder"
-        {...handleProps}
-      >
+      <div className="drag-handle" title="Drag to reorder" {...handleProps}>
         <DragDotsIcon />
       </div>
       <button
         className={btnClass}
         onClick={() => {
           setRunbookFocus(null);
-          void loadRunbookFromLibrary(runbook.id);
+          void loadRunbookFromLibrary(id);
         }}
-        title={runbook.label}
+        title={label}
       >
-        {runbook.label}
+        {label}
       </button>
       <button
         className="btn btn-icon btn-danger"
-        onClick={() => void removeRunbookFromLibrary(runbook.id)}
+        onClick={() => void removeRunbookFromLibrary(id)}
         title="Remove from library"
       >
         <TrashIcon />

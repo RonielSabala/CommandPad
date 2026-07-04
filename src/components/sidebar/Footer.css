@@ -11,7 +11,7 @@
 #footer-copyright {
   font-size: var(--text-xs);
   color: var(--color-text-muted);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

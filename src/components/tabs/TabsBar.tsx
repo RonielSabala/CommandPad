@@ -31,8 +31,8 @@ function TabItem({ tab }: { tab: Tab }) {
     CssClass.TAB,
     isActive && CssClass.TAB_ACTIVE,
     dragging && CssClass.DRAGGING,
-    dropSide === "left" && CssClass.DRAG_OVER_LEFT,
-    dropSide === "right" && CssClass.DRAG_OVER_RIGHT,
+    dropSide === "left" && "drag-over-left",
+    dropSide === "right" && "drag-over-right",
   ]
     .filter(Boolean)
     .join(" ");

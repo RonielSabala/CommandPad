@@ -1,11 +1,12 @@
-import { memo, useEffect, useRef } from "react";
-
+import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { AppMode, VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useStore } from "@/store/store";
+import { memo, useEffect, useRef } from "react";
 import { DragDotsIcon, TrashIcon } from "../Icons";
+import "./VariableRow.css";
 
 function SecretIcon({ masked }: { masked: boolean }) {
   return (
@@ -26,25 +27,28 @@ function SecretIcon({ masked }: { masked: boolean }) {
   );
 }
 
-export const VariableRow = memo(function VariableRow({
-  variable,
-}: {
+interface Props {
   variable: Variable;
-}) {
-  const readMode = useStore((s) => s.mode === AppMode.READ);
-  const updateVariable = useStore((s) => s.updateVariable);
-  const removeVariable = useStore((s) => s.removeVariable);
-  const toggleVariableSecret = useStore((s) => s.toggleVariableSecret);
-  const reorderVariables = useStore((s) => s.reorderVariables);
-  const pendingFocus = useStore(
-    (s) => s.pendingFocusVariableId === variable.id,
-  );
-  const consumeVariableFocus = useStore((s) => s.consumeVariableFocus);
+}
+
+export const VariableRow = memo(function VariableRow({ variable }: Props) {
+  const id = variable.id;
+  const key = variable.key;
+  const value = variable.value;
+  const isSecret = !!variable.secret;
+
+  const readMode = useStore((state) => state.mode === AppMode.READ);
+  const updateVariable = useStore((state) => state.updateVariable);
+  const removeVariable = useStore((state) => state.removeVariable);
+  const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
+  const reorderVariables = useStore((state) => state.reorderVariables);
+  const pendingFocus = useStore((state) => state.pendingFocusVariableId === id);
+  const consumeVariableFocus = useStore((state) => state.consumeVariableFocus);
   const keyRef = useRef<HTMLInputElement>(null);
 
   const { isDragging, isDragOver, handleProps, rowProps } = useRowReorder(
-    "variable",
-    variable.id,
+    "variable-group",
+    id,
     reorderVariables,
     !readMode,
   );
@@ -56,60 +60,54 @@ export const VariableRow = memo(function VariableRow({
     }
   }, [pendingFocus, consumeVariableFocus]);
 
-  const isSecret = !!variable.secret;
-
   return (
     <div
-      className={`variable-row sidebar-section-row${isSecret ? " is-secret" : ""}${isDragging ? " dragging" : ""}`}
-      {...{ [DataAttr.VARIABLE_ID]: variable.id }}
+      className={`sidebar-section-list-row variable-row${isDragging ? ` ${CssClass.DRAGGING}` : ""}${isSecret ? ` ${CssClass.VAR_SECRET}` : ""}`}
+      {...{ [DataAttr.VARIABLE_ID]: id }}
       {...rowProps}
     >
-      <div
-        className="variable-drag-handle drag-handle"
-        title="Drag to reorder"
-        {...handleProps}
-      >
+      <div className="drag-handle" title="Drag to reorder" {...handleProps}>
         <DragDotsIcon />
       </div>
       <div
-        className={`variable-inputs${isSecret ? " is-secret" : ""}${isDragOver ? " drag-over" : ""}`}
+        className={`variable-inputs${isDragOver ? ` ${CssClass.DRAG_OVER}` : ""}${isSecret ? ` ${CssClass.VAR_SECRET}` : ""}`}
       >
         <input
           ref={keyRef}
           className="variable-key-input"
           type="text"
           placeholder="key"
-          value={variable.key}
+          value={key}
           spellCheck={false}
           autoComplete="off"
-          onChange={(e) =>
-            updateVariable(variable.id, VariableField.KEY, e.target.value)
+          onChange={(event) =>
+            updateVariable(id, VariableField.KEY, event.target.value)
           }
-          title={variable.key}
+          title={key}
         />
         <input
           className="variable-value-input"
           type="text"
           placeholder="value"
-          value={variable.value}
+          value={value}
           spellCheck={false}
           autoComplete="off"
-          onChange={(e) =>
-            updateVariable(variable.id, VariableField.VALUE, e.target.value)
+          onChange={(event) =>
+            updateVariable(id, VariableField.VALUE, event.target.value)
           }
-          title={isSecret ? "" : variable.value}
+          title={isSecret ? "" : value}
         />
       </div>
       <button
         className={`btn btn-icon variable-secret-btn${isSecret ? " is-active" : ""}`}
-        onClick={() => toggleVariableSecret(variable.id)}
+        onClick={() => toggleVariableSecret(id)}
         title={isSecret ? "Reveal value" : "Mask value"}
       >
         <SecretIcon masked={isSecret} />
       </button>
       <button
-        className="btn btn-icon btn-danger variable-row-delete"
-        onClick={() => removeVariable(variable.id)}
+        className="btn btn-icon btn-danger"
+        onClick={() => removeVariable(id)}
         title="Remove variable"
       >
         <TrashIcon />

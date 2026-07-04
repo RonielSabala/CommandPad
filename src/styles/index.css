@@ -242,9 +242,8 @@ body.ctrl-held:not(.read-mode) .block-item:hover:not(.block-selected) {
 
 /* --- READ MODE SUPPRESSIONS --- */
 
-body.read-mode #runbook-add-btn,
 body.read-mode .drag-handle,
-body.read-mode .sidebar-section-row .btn-danger,
+body.read-mode .sidebar-section-list-row .btn-danger,
 body.read-mode .variable-secret-btn {
   display: none !important;
 }
@@ -298,7 +297,7 @@ body.read-mode #collapse-all-btn {
   pointer-events: none;
 }
 
-body.read-mode .sidebar-section-row {
+body.read-mode .sidebar-section-list-row {
   grid-template-columns: 1fr;
 }
 
