@@ -498,7 +498,13 @@ export const useStore = create<StoreState>()((set, get) => ({
             if (!parsed.variables || !parsed.blocks) {
               throw new Error('Invalid format');
             }
-            await addToLibrary(parsed, file.name.replace(/\.json$/i, ''));
+
+            const content: RunbookContent = {
+              variables: (parsed.variables as Variable[]).map((variable) => ({ ...variable, id: variable.id || generateId() })),
+              blocks: (parsed.blocks as Block[]).map((block) => ({ ...block, id: block.id || generateId() })),
+            };
+
+            await addToLibrary(content, file.name.replace(/\.json$/i, ''));
           } catch {
             failedCount += 1;
           }

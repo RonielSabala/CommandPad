@@ -81,12 +81,16 @@ function buildMarkdownExport(content: RunbookContent): string {
 /** Serialize the workspace and hand it to the browser save flow. */
 export async function runExport(format: ExportFormat, content: RunbookContent): Promise<void> {
   if (format === ExportFormat.JSON) {
-    const data = { variables: content.variables ?? [], blocks: content.blocks ?? [] };
-    const cfg = FilePickerConfig.json;
-    await saveFile(JSON.stringify(data, null, 2), cfg.mimeType, cfg.suggestedName, [...cfg.types]);
+    const data = {
+      variables: (content.variables ?? []).map(({ id, ...rest }) => rest),
+      blocks: (content.blocks ?? []).map(({ id, ...rest }) => rest),
+    };
+
+    const config = FilePickerConfig.json;
+    await saveFile(JSON.stringify(data, null, 2), config.mimeType, config.suggestedName, [...config.types]);
     return;
   }
 
-  const cfg = format === ExportFormat.MD ? FilePickerConfig.md : FilePickerConfig.txt;
-  await saveFile(buildMarkdownExport(content), cfg.mimeType, cfg.suggestedName, [...cfg.types]);
+  const config = format === ExportFormat.MD ? FilePickerConfig.md : FilePickerConfig.txt;
+  await saveFile(buildMarkdownExport(content), config.mimeType, config.suggestedName, [...config.types]);
 }
