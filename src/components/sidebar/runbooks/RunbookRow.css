@@ -25,6 +25,10 @@
   color: var(--color-text-primary);
 }
 
+.runbook-item-btn:focus:not(.runbook-focused) {
+  outline: none;
+}
+
 .runbook-item-btn.active,
 .runbook-item-btn.runbook-focused {
   background: var(--accent-dim);
