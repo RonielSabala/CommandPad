@@ -6,7 +6,6 @@ export const EventType = {
   MOUSE_DOWN: "mousedown",
   MOUSE_MOVE: "mousemove",
   SCROLL: "scroll",
-  DRAG_END: "dragend",
   BLUR: "blur",
   FOCUS: "focus",
 } as const;

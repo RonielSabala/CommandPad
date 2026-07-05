@@ -51,7 +51,7 @@ export function useKeybindings(): void {
           void state.loadRunbookFromLibrary(runbookId);
         } else if (
           state.focusedRunbookId !== null &&
-          (key === Key.ARROW_DOWN || key === Key.ARROW_UP)
+          (key === Key.ARROW_UP || key === Key.ARROW_DOWN)
         ) {
           event.preventDefault();
           state.navigateRunbookList(

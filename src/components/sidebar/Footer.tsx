@@ -1,3 +1,4 @@
+import { Anchor } from "@/common/constants/dom";
 import { Github, Linkedin, type Icon } from "react-bootstrap-icons";
 import "./Footer.css";
 
@@ -13,8 +14,8 @@ export function FooterLink({ icon, title, href }: FooterLinkProps) {
     <a
       className="footer-link"
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
+      target={Anchor.TARGET_BLANK}
+      rel={Anchor.REL}
       title={title}
     >
       <IconComponent aria-label={title} />

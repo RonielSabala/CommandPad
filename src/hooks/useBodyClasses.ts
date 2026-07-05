@@ -1,3 +1,4 @@
+import { Cursor } from "@/common/constants/dom";
 import { AppMode, Theme } from "@/common/enums";
 import { useStore } from "@/store/store";
 import { useEffect } from "react";
@@ -19,7 +20,7 @@ export function useBodyClasses(): void {
   useEffect(() => {
     document.body.classList.toggle("alt-held", altHeld);
     if (!altHeld) {
-      document.body.style.cursor = "";
+      document.body.style.cursor = Cursor.DEFAULT;
     }
   }, [altHeld]);
 
