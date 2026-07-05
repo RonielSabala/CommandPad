@@ -9,6 +9,10 @@
   overflow: hidden;
 }
 
+#app-shell:focus {
+  outline: none;
+}
+
 #app-shell.sidebar-collapsed {
   grid-template-columns: 0 1fr;
 }

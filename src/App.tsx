@@ -50,7 +50,7 @@ export default function App() {
 
   return (
     <>
-      <div id={ElementId.APP_SHELL} className={shellClass}>
+      <div id={ElementId.APP_SHELL} className={shellClass} tabIndex={-1}>
         <Header />
         <Sidebar />
         <RunbookImportInput />
