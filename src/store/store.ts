@@ -383,6 +383,7 @@ export const useStore = create<StoreState>()((set, get) => ({
         activeTabId: tab.id,
         runbookLibrary: [...s.runbookLibrary, entry],
         activeRunbookId: newRunbookId,
+        focusedRunbookId: null,
       }));
 
       await putRunbookContent(newRunbookId, { variables: [], blocks: [] });
@@ -391,7 +392,11 @@ export const useStore = create<StoreState>()((set, get) => ({
         get().activeRunbookId,
       );
     } else {
-      set((s) => ({ tabs: [...s.tabs, tab], activeTabId: tab.id }));
+      set((s) => ({
+        tabs: [...s.tabs, tab],
+        activeTabId: tab.id,
+        focusedRunbookId: null,
+      }));
     }
 
     persistence.saveTabsMeta(get().tabs, get().activeTabId);
