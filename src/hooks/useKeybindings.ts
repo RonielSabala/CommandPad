@@ -48,7 +48,9 @@ export function useKeybindings(): void {
           s.runbookLibrary.length > 0
         ) {
           e.preventDefault();
-          s.setRunbookFocus(s.activeRunbookId ?? s.runbookLibrary[0].id);
+          const runbookId = s.activeRunbookId ?? s.runbookLibrary[0].id;
+          s.setRunbookFocus(runbookId);
+          void s.loadRunbookFromLibrary(runbookId);
         } else if (
           s.focusedRunbookId !== null &&
           (key === Key.ARROW_DOWN || key === Key.ARROW_UP)
