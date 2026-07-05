@@ -215,23 +215,6 @@ body.app-ready {
   display: block;
 }
 
-/* --- SYNCING PULSE --- */
-
-@keyframes sync-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.4;
-  }
-}
-
-.is-syncing {
-  animation: sync-pulse 0.75s ease-in-out infinite;
-}
-
 /* --- CTRL-HELD SUPPRESSIONS --- */
 
 body.ctrl-held:not(.read-mode) .block-controls,
