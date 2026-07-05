@@ -6,19 +6,13 @@ export const CssClass = {
   ALT_HELD: "alt-held",
   THEME_LIGHT: "theme-light",
 
-  // Sidebar flags
-  SIDEBAR_COLLAPSED: "sidebar-collapsed",
-  SIDEBAR_RIGHT: "sidebar-right",
-  COLLAPSED: "collapsed",
-
   // Drag & drop
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",
 
-  // Rows / lists
-  ACTIVE: "active",
-  VAR_SECRET: "is-secret",
-
   // Misc
+  ACTIVE: "active",
+  COLLAPSED: "collapsed",
+  VAR_SECRET: "is-secret",
   BTN_DISABLED: "btn-disabled",
 } as const;

@@ -1,7 +1,3 @@
-import "./App.css";
-
-import { useEffect } from "react";
-
 import { CssClass } from "@/common/constants/css";
 import { ElementId } from "@/common/constants/dom";
 import { SidebarPosition } from "@/common/enums";
@@ -9,7 +5,8 @@ import { useBodyClasses } from "@/hooks/useBodyClasses";
 import { useDocumentInteractions } from "@/hooks/useDocumentInteractions";
 import { useKeybindings } from "@/hooks/useKeybindings";
 import { useStore } from "@/store/store";
-
+import { useEffect } from "react";
+import "./App.css";
 import { Header } from "./components/header/Header";
 import { MainPanel } from "./components/MainPanel";
 import { AlertModal } from "./components/modals/AlertModal";
@@ -20,10 +17,10 @@ import { RunbookImportInput } from "./components/sidebar/runbooks/RunbookImportI
 import { Sidebar } from "./components/sidebar/Sidebar";
 
 export default function App() {
-  const sidebarCollapsed = useStore((s) => s.sidebarCollapsed);
-  const sidebarPosition = useStore((s) => s.sidebarPosition);
-  const bootstrap = useStore((s) => s.bootstrap);
-  const initialized = useStore((s) => s.initialized);
+  const bootstrap = useStore((state) => state.bootstrap);
+  const sidebarPosition = useStore((state) => state.sidebarPosition);
+  const isInitialized = useStore((state) => state.initialized);
+  const isSidebarCollapsed = useStore((state) => state.sidebarCollapsed);
 
   useBodyClasses();
   useKeybindings();
@@ -34,16 +31,16 @@ export default function App() {
   }, [bootstrap]);
 
   useEffect(() => {
-    if (initialized) {
+    if (isInitialized) {
       requestAnimationFrame(() =>
         document.body.classList.add(CssClass.APP_READY),
       );
     }
-  }, [initialized]);
+  }, [isInitialized]);
 
   const shellClass = [
-    sidebarCollapsed && CssClass.SIDEBAR_COLLAPSED,
-    sidebarPosition === SidebarPosition.RIGHT && CssClass.SIDEBAR_RIGHT,
+    isSidebarCollapsed && "sidebar-collapsed",
+    sidebarPosition === SidebarPosition.RIGHT && "sidebar-right",
   ]
     .filter(Boolean)
     .join(" ");
