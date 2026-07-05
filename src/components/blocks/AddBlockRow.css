@@ -30,3 +30,7 @@
   position: relative;
   border-color: var(--color-border-focus);
 }
+
+body.read-mode #add-block-row {
+  display: none;
+}

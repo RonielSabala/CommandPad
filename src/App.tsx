@@ -1,4 +1,3 @@
-import { CssClass } from "@/common/constants/css";
 import { ElementId } from "@/common/constants/dom";
 import { SidebarPosition } from "@/common/enums";
 import { useBodyClasses } from "@/hooks/useBodyClasses";
@@ -32,9 +31,7 @@ export default function App() {
 
   useEffect(() => {
     if (isInitialized) {
-      requestAnimationFrame(() =>
-        document.body.classList.add(CssClass.APP_READY),
-      );
+      requestAnimationFrame(() => document.body.classList.add("app-ready"));
     }
   }, [isInitialized]);
 

@@ -1,11 +1,4 @@
 export const CssClass = {
-  // Body flags
-  APP_READY: "app-ready",
-  READ_MODE: "read-mode",
-  CTRL_HELD: "ctrl-held",
-  ALT_HELD: "alt-held",
-  THEME_LIGHT: "theme-light",
-
   // Drag & drop
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",

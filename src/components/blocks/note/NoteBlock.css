@@ -17,6 +17,15 @@
   opacity: 1;
 }
 
+body.read-mode .note-style-row {
+  visibility: hidden;
+}
+
+body.ctrl-held:not(.read-mode) .note-style-row {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .note-block.is-focused .note-preview {
   display: none;
 }
@@ -115,6 +124,11 @@
 .note-textarea::selection,
 .note-textarea::placeholder {
   background: transparent;
+}
+
+body.read-mode .note-textarea:focus {
+  caret-color: transparent;
+  outline: none;
 }
 
 body:not(.ctrl-held) .note-textarea::selection {

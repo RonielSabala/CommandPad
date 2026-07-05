@@ -23,6 +23,11 @@
   color: var(--accent-text);
 }
 
+body.read-mode #collapse-all-btn {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .header-spacer {
   flex: 1;
 }

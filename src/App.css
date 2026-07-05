@@ -1,3 +1,7 @@
+body.app-ready {
+  visibility: visible;
+}
+
 #app-shell {
   display: grid;
   grid-template-columns: var(--sidebar-width) 1fr;

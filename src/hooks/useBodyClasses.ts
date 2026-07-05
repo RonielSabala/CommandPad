@@ -1,4 +1,3 @@
-import { CssClass } from "@/common/constants/css";
 import { AppMode, Theme } from "@/common/enums";
 import { useStore } from "@/store/store";
 import { useEffect } from "react";
@@ -10,24 +9,24 @@ export function useBodyClasses(): void {
   const altHeld = useStore((state) => state.altHeld);
 
   useEffect(() => {
-    document.body.classList.toggle(CssClass.READ_MODE, mode === AppMode.READ);
+    document.body.classList.toggle("read-mode", mode === AppMode.READ);
   }, [mode]);
 
   useEffect(() => {
-    document.documentElement.classList.toggle(
-      CssClass.THEME_LIGHT,
-      theme === Theme.LIGHT,
-    );
-  }, [theme]);
-
-  useEffect(() => {
-    document.body.classList.toggle(CssClass.CTRL_HELD, ctrlHeld);
+    document.body.classList.toggle("ctrl-held", ctrlHeld);
   }, [ctrlHeld]);
 
   useEffect(() => {
-    document.body.classList.toggle(CssClass.ALT_HELD, altHeld);
+    document.body.classList.toggle("alt-held", altHeld);
     if (!altHeld) {
       document.body.style.cursor = "";
     }
   }, [altHeld]);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle(
+      "theme-light",
+      theme === Theme.LIGHT,
+    );
+  }, [theme]);
 }

@@ -24,10 +24,6 @@ body {
   visibility: hidden;
 }
 
-body.app-ready {
-  visibility: visible;
-}
-
 #root {
   height: 100vh;
 }
@@ -66,6 +62,13 @@ body.app-ready {
 
 /* --- SHARED PRIMITIVES --- */
 
+.vertical-divider {
+  width: 1px;
+  height: var(--space-12);
+  background: var(--color-border);
+  margin: 0 var(--space-4);
+}
+
 .section-title {
   font-size: var(--text-xs);
   font-family: var(--font-sans);
@@ -74,22 +77,6 @@ body.app-ready {
   text-transform: uppercase;
   color: var(--color-text-muted);
   white-space: nowrap;
-}
-
-.vertical-divider {
-  width: 1px;
-  height: var(--space-12);
-  background: var(--color-border);
-  margin: 0 var(--space-4);
-}
-
-.dragging {
-  opacity: 0.5;
-}
-
-.drag-over {
-  outline: var(--border-dashed);
-  border-radius: var(--radius-sm);
 }
 
 /* --- BUTTONS --- */
@@ -174,11 +161,6 @@ body.app-ready {
   color: var(--danger);
 }
 
-.btn-full {
-  width: 100%;
-  justify-content: center;
-}
-
 .btn-lg {
   padding: var(--space-4) var(--space-5);
   font-size: var(--text-md);
@@ -194,7 +176,16 @@ body.app-ready {
   cursor: not-allowed;
 }
 
-/* Drag handle button */
+/* --- DRAG HANDLE --- */
+
+.dragging {
+  opacity: 0.5;
+}
+
+.drag-over {
+  outline: var(--border-dashed);
+  border-radius: var(--radius-sm);
+}
 
 .drag-handle {
   cursor: grab;
@@ -217,82 +208,24 @@ body.app-ready {
 
 /* --- CTRL-HELD SUPPRESSIONS --- */
 
-body.ctrl-held:not(.read-mode) .block-controls,
-body.ctrl-held:not(.read-mode) .block-drag-handle,
-body.ctrl-held:not(.read-mode) .note-style-row,
-body.ctrl-held:not(.read-mode) .command-preview .btn {
-  opacity: 0;
-  pointer-events: none;
-}
-
 body.ctrl-held:not(.read-mode) * {
-  user-select: none !important;
+  user-select: none;
 }
 
-body.ctrl-held:not(.read-mode) .note-textarea,
-body.ctrl-held:not(.read-mode) .command-textarea,
-body.ctrl-held:not(.read-mode) .command-preview-text {
-  pointer-events: none;
+body.ctrl-held:not(.read-mode) textarea {
   cursor: default;
+  pointer-events: none;
 }
 
-/* --- READ MODE SUPPRESSIONS --- */
+/* --- READ-MODE SUPPRESSIONS --- */
 
-body.read-mode .drag-handle,
-body.read-mode .sidebar-section-list-row .btn-danger,
-body.read-mode .variable-secret-btn {
-  display: none !important;
-}
-
-body.read-mode #add-tab-btn {
-  visibility: hidden;
-}
-
-body.read-mode #add-block-row,
-body.read-mode .sidebar-section-footer {
-  display: none;
-}
-
-/* Hide drag and delete button on blocks */
-body.read-mode .block-drag-handle,
-body.read-mode .block-controls {
-  display: none !important;
-}
-
-/* Hide note style picker */
-body.read-mode .note-style-row {
-  visibility: hidden;
-}
-
-/* Force all command editors collapsed and hide the toggle */
-body.read-mode .command-block-editor {
-  display: none !important;
-}
-
-body.read-mode .toggle-editor-btn {
-  display: none;
-}
-
-/* Make all textareas and inputs non-interactive */
-body.read-mode .note-textarea,
-body.read-mode .command-textarea {
+body.read-mode textarea {
+  cursor: default;
   pointer-events: none;
   user-select: none;
-  cursor: default;
   visibility: hidden;
 }
 
-body.read-mode .note-textarea:focus {
-  caret-color: transparent;
-  outline: none;
-}
-
-body.read-mode .variable-key-input,
-body.read-mode #collapse-all-btn {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-body.read-mode .sidebar-section-list-row {
-  grid-template-columns: 1fr;
+body.read-mode .drag-handle {
+  display: none;
 }

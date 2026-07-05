@@ -15,6 +15,14 @@
   position: relative;
 }
 
+body.read-mode .sidebar-section-list-row {
+  grid-template-columns: 1fr;
+}
+
+body.read-mode .sidebar-section-list-row .btn-danger {
+  display: none;
+}
+
 .sidebar-section-list-row .drag-handle,
 .sidebar-section-list-row .btn-danger {
   opacity: 0;

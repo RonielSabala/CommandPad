@@ -46,3 +46,7 @@
   stroke-width: 2;
   stroke-linecap: round;
 }
+
+body.read-mode #add-tab-btn {
+  display: none;
+}

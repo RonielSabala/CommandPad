@@ -37,6 +37,11 @@
   color: var(--color-text-muted);
 }
 
+body.ctrl-held:not(.read-mode) .command-preview .btn {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* Token styles */
 
 .token-resolved {
@@ -102,7 +107,8 @@
   min-width: 0;
 }
 
-.command-block-editor.collapsed {
+.command-block-editor.collapsed,
+body.read-mode :is(.toggle-editor-btn, .command-block-editor) {
   display: none;
 }
 

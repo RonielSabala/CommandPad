@@ -30,15 +30,24 @@
   opacity: 1;
 }
 
-.block-selected:not(.drag-over)
-  :is(.command-block, .note-block, .divider-block) {
-  user-select: none;
-  outline: var(--space-1) solid var(--accent);
+body.read-mode :is(.block-controls, .block-drag-handle) {
+  display: none;
+}
+
+body.ctrl-held:not(.read-mode) :is(.block-controls, .block-drag-handle) {
+  opacity: 0;
+  pointer-events: none;
 }
 
 body.ctrl-held:not(.read-mode) .block-item:hover:not(.block-selected) {
   outline: var(--border-dashed);
   border-radius: var(--radius-lg);
+}
+
+.block-selected:not(.drag-over)
+  :is(.command-block, .note-block, .divider-block) {
+  user-select: none;
+  outline: var(--space-1) solid var(--accent);
 }
 
 .block-item.drag-over {

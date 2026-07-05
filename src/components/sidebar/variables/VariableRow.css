@@ -41,6 +41,11 @@
   color: var(--color-text-muted);
 }
 
+body.read-mode .variable-key-input {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 /* Tooltip */
 .variable-key-input[title]:hover::after,
 .variable-value-input[title]:hover::after {
@@ -81,4 +86,8 @@
     opacity var(--transition-fast),
     color var(--transition-fast);
   flex-shrink: 0;
+}
+
+body.read-mode .variable-secret-btn {
+  display: none;
 }
