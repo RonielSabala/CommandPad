@@ -10,9 +10,9 @@ import type { VariableMap } from "@/utils/resolution";
 import { memo, useRef, useState } from "react";
 import { DragDotsIcon } from "../Icons";
 import "./BlockItem.css";
-import { CommandBlock } from "./CommandBlock";
-import { DividerBlock } from "./DividerBlock";
-import { NoteBlock } from "./NoteBlock";
+import { CommandBlock } from "./command/CommandBlock";
+import { DividerBlock } from "./divider/DividerBlock";
+import { NoteBlock } from "./note/NoteBlock";
 
 const blockDrag: { srcId: string | null } = { srcId: null };
 
