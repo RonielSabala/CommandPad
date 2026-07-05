@@ -1,7 +1,6 @@
+import { DRAG_TIMEOUT_MS } from "@/common/config";
 import { DragEffect } from "@/common/constants/events";
 import { useRef, useState, type DragEvent } from "react";
-
-const DRAG_TIMEOUT_MS = 50;
 
 const dragGroups: Record<string, string | null> = {};
 

@@ -1,0 +1,36 @@
+.note-bold {
+  font-weight: 800;
+}
+
+.note-italic {
+  font-style: italic;
+}
+
+.note-code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--code-bg);
+  color: var(--code-color);
+  border: var(--border-standard);
+  border-radius: var(--radius-sm);
+  padding: 0.05em var(--space-3);
+  white-space: nowrap;
+}
+
+.note-link {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-dim);
+  transition:
+    color var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.note-link:hover {
+  color: var(--accent-text);
+  border-bottom-color: var(--accent);
+}
+
+:is(body.alt-held, body.read-mode) .note-link {
+  pointer-events: auto;
+}

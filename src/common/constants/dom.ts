@@ -1,10 +1,5 @@
 export const ElementId = {
   APP_SHELL: "app-shell",
-  BLOCKS_LIST: "blocks-list",
-  EMPTY_STATE: "empty-state",
-  EMPTY_STATE_TITLE: "empty-state-title",
-  EMPTY_STATE_HINT: "empty-state-hint",
-  ADD_BLOCK_ROW: "add-block-row",
 } as const;
 
 export const Selector = {

@@ -1,0 +1,32 @@
+#add-block-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: var(--space-8) 0 0;
+  border-top: var(--space-1) dashed var(--color-border);
+  margin-top: var(--space-4);
+}
+
+.new-block-label {
+  margin-right: var(--space-6);
+}
+
+#add-block-row .btn {
+  border-radius: 0;
+  border-right-width: 0;
+}
+
+#add-block-row .btn:first-of-type {
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+#add-block-row .btn:last-of-type {
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  border-right-width: 1px;
+}
+
+#add-block-row .btn:hover {
+  z-index: 1;
+  position: relative;
+  border-color: var(--color-border-focus);
+}

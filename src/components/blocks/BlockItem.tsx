@@ -1,5 +1,4 @@
-import { memo, useRef, useState } from "react";
-
+import { DRAG_TIMEOUT_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
@@ -8,12 +7,13 @@ import type { Block } from "@/common/types";
 import { lasso } from "@/hooks/lasso";
 import { useStore } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
+import { memo, useRef, useState } from "react";
 import { DragDotsIcon } from "../Icons";
+import "./BlockItem.css";
 import { CommandBlock } from "./CommandBlock";
 import { DividerBlock } from "./DividerBlock";
 import { NoteBlock } from "./NoteBlock";
 
-// Which block is being dragged
 const blockDrag: { srcId: string | null } = { srcId: null };
 
 interface Props {
@@ -27,27 +27,28 @@ export const BlockItem = memo(function BlockItem({
   variableMap,
   secretKeys,
 }: Props) {
-  const selected = useStore((s) => s.selectedBlockIds.has(block.id));
-  const flashing = useStore((s) => s.flashBlockIds.has(block.id));
-  const clearFlash = useStore((s) => s.clearFlash);
-  const duplicateBlock = useStore((s) => s.duplicateBlock);
-  const removeBlock = useStore((s) => s.removeBlock);
-  const reorderBlocks = useStore((s) => s.reorderBlocks);
-  const setBlockSelected = useStore((s) => s.setBlockSelected);
+  const isSelected = useStore((state) => state.selectedBlockIds.has(block.id));
+  const isFlashing = useStore((state) => state.flashBlockIds.has(block.id));
+  const clearFlash = useStore((state) => state.clearFlash);
+  const duplicateBlock = useStore((state) => state.duplicateBlock);
+  const removeBlock = useStore((state) => state.removeBlock);
+  const reorderBlocks = useStore((state) => state.reorderBlocks);
+  const setBlockSelected = useStore((state) => state.setBlockSelected);
 
   const [draggable, setDraggable] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+
   const disarmTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
 
   const className = [
-    CssClass.BLOCK_ITEM,
-    selected && CssClass.BLOCK_SELECTED,
+    "block-item",
+    isSelected && "block-selected",
+    isFlashing && "duplicate-flash",
     dragging && CssClass.DRAGGING,
     dragOver && CssClass.DRAG_OVER,
-    flashing && CssClass.DUPLICATE_FLASH,
   ]
     .filter(Boolean)
     .join(" ");
@@ -57,14 +58,16 @@ export const BlockItem = memo(function BlockItem({
       className={className}
       {...{ [DataAttr.BLOCK_ID]: block.id }}
       draggable={draggable}
-      onDragStart={(e) => {
+      onDragStart={(event) => {
         if (!draggable) {
-          e.preventDefault();
+          event.preventDefault();
           return;
         }
+
         blockDrag.srcId = block.id;
         setDragging(true);
-        e.dataTransfer.effectAllowed = DragEffect.MOVE;
+
+        event.dataTransfer.effectAllowed = DragEffect.MOVE;
       }}
       onDragEnd={() => {
         blockDrag.srcId = null;
@@ -72,19 +75,20 @@ export const BlockItem = memo(function BlockItem({
         setDragging(false);
         setDragOver(false);
       }}
-      onDragOver={(e) => {
-        e.preventDefault();
+      onDragOver={(event) => {
+        event.preventDefault();
         if (blockDrag.srcId && blockDrag.srcId !== block.id) {
           setDragOver(true);
         }
       }}
-      onDragLeave={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node))
+      onDragLeave={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node))
           setDragOver(false);
       }}
-      onDrop={(e) => {
-        e.preventDefault();
+      onDrop={(event) => {
+        event.preventDefault();
         setDragOver(false);
+
         const srcId = blockDrag.srcId;
         if (srcId && srcId !== block.id) {
           reorderBlocks(srcId, block.id);
@@ -96,7 +100,9 @@ export const BlockItem = memo(function BlockItem({
         }
       }}
       onAnimationEnd={() => {
-        if (flashing) clearFlash(block.id);
+        if (isFlashing) {
+          clearFlash(block.id);
+        }
       }}
     >
       {block.type === BlockType.COMMAND ? (
@@ -118,7 +124,10 @@ export const BlockItem = memo(function BlockItem({
           onMouseDown={() => setDraggable(true)}
           onMouseUp={() => {
             clearTimeout(disarmTimer.current);
-            disarmTimer.current = setTimeout(() => setDraggable(false), 50);
+            disarmTimer.current = setTimeout(
+              () => setDraggable(false),
+              DRAG_TIMEOUT_MS,
+            );
           }}
         >
           <DragDotsIcon />

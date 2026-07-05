@@ -16,19 +16,8 @@ export const CssClass = {
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",
 
-  // Blocks
-  BLOCK_ITEM: "block-item",
-  BLOCK_CONTROLS: "block-controls",
-  BLOCK_DRAG_HANDLE: "block-drag-handle",
-  BLOCK_SELECTED: "block-selected",
-  DUPLICATE_FLASH: "duplicate-flash",
-  IS_FOCUSED: "is-focused",
-  EDITOR_COLLAPSED: "editor-collapsed",
-  HAS_UNRESOLVED: "has-unresolved",
-
   // Rows / lists
   ACTIVE: "active",
-  RUNBOOK_FOCUSED: "runbook-focused",
   VAR_SECRET: "is-secret",
 
   // Misc

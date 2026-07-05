@@ -51,6 +51,16 @@ export const SegmentType = {
 } as const;
 export type SegmentType = (typeof SegmentType)[keyof typeof SegmentType];
 
+export const NoteSegmentType = {
+  TEXT: "text",
+  BOLD: "bold",
+  ITALIC: "italic",
+  CODE: "code",
+  LINK: "link",
+} as const;
+export type NoteSegmentType =
+  (typeof NoteSegmentType)[keyof typeof NoteSegmentType];
+
 export const LassoMode = {
   SELECT: "select",
   DESELECT: "deselect",

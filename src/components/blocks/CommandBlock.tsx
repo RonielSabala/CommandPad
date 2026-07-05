@@ -1,7 +1,3 @@
-import "./CommandBlock.css";
-
-import { useEffect, useMemo, useRef, useState } from "react";
-
 import { COPY_FEEDBACK_TIMEOUT_MS, UI } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { SegmentType } from "@/common/enums";
@@ -14,6 +10,8 @@ import {
   resolveCommandToString,
   type VariableMap,
 } from "@/utils/resolution";
+import { useEffect, useMemo, useRef, useState } from "react";
+import "./CommandBlock.css";
 
 interface Props {
   block: CommandBlockData;
@@ -22,26 +20,31 @@ interface Props {
 }
 
 export function CommandBlock({ block, variableMap, secretKeys }: Props) {
-  const mode = useStore((s) => s.mode);
-  const updateBlockText = useStore((s) => s.updateBlockText);
-  const toggleCommandEditor = useStore((s) => s.toggleCommandEditor);
-  const pendingFocus = useStore((s) => s.pendingFocusBlockId === block.id);
-  const consumeBlockFocus = useStore((s) => s.consumeBlockFocus);
+  const blockId = block.id;
+  const blockText = block.text;
+  const isEditorCollapsed = block.editorCollapsed === true;
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const mode = useStore((state) => state.mode);
+  const updateBlockText = useStore((state) => state.updateBlockText);
+  const toggleCommandEditor = useStore((state) => state.toggleCommandEditor);
+  const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
+  const pendingFocus = useStore(
+    (state) => state.pendingFocusBlockId === blockId,
+  );
+
   const [copied, setCopied] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const collapsed = block.editorCollapsed === true;
   const segments = useMemo(
-    () => resolveCommandText(block.text, variableMap),
-    [block.text, variableMap],
+    () => resolveCommandText(blockText, variableMap),
+    [blockText, variableMap],
   );
   const unresolved = useMemo(
-    () => hasUnresolvedTokens(block.text, variableMap),
-    [block.text, variableMap],
+    () => hasUnresolvedTokens(blockText, variableMap),
+    [blockText, variableMap],
   );
 
-  useAutoResize(textareaRef, [block.text, collapsed, mode]);
+  useAutoResize(textareaRef, [blockText, isEditorCollapsed, mode]);
 
   useEffect(() => {
     if (pendingFocus) {
@@ -51,7 +54,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   }, [pendingFocus, consumeBlockFocus]);
 
   const copy = () => {
-    const resolved = resolveCommandToString(block.text, variableMap);
+    const resolved = resolveCommandToString(blockText, variableMap);
     void navigator.clipboard.writeText(resolved).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), COPY_FEEDBACK_TIMEOUT_MS);
@@ -62,9 +65,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     <div className="command-block">
       <div className="command-preview">
         <span
-          className={`command-preview-text${unresolved ? ` ${CssClass.HAS_UNRESOLVED}` : ""}`}
+          className={`command-preview-text${unresolved ? " has-unresolved" : ""}`}
         >
-          {block.text ? (
+          {blockText ? (
             segments.map((seg, i) =>
               seg.type === SegmentType.RESOLVED &&
               seg.key &&
@@ -84,9 +87,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         </span>
 
         <button
-          className={`btn btn-icon toggle-editor-btn${collapsed ? ` ${CssClass.EDITOR_COLLAPSED}` : ""}`}
-          onClick={() => toggleCommandEditor(block.id)}
-          title={`${collapsed ? "Show" : "Hide"} editor`}
+          className={`btn btn-icon toggle-editor-btn${isEditorCollapsed ? " editor-collapsed" : ""}`}
+          onClick={() => toggleCommandEditor(blockId)}
+          title={isEditorCollapsed ? "Show editor" : "Hide editor"}
         >
           <svg viewBox="0 0 12 12">
             <polyline points="2,4 6,8 10,4" />
@@ -124,7 +127,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
       </div>
 
       <div
-        className={`command-block-editor${collapsed ? ` ${CssClass.COLLAPSED}` : ""}`}
+        className={`command-block-editor${isEditorCollapsed ? ` ${CssClass.COLLAPSED}` : ""}`}
       >
         <div className="command-gutter">
           <span className="command-gutter-prefix">$</span>
@@ -136,8 +139,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           spellCheck={false}
           autoComplete="off"
           rows={1}
-          value={block.text}
-          onChange={(e) => updateBlockText(block.id, e.target.value)}
+          value={blockText}
+          onChange={(event) => updateBlockText(blockId, event.target.value)}
         />
       </div>
     </div>

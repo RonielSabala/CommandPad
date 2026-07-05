@@ -1,0 +1,6 @@
+#blocks-list {
+  display: grid;
+  grid-template-columns: minmax(var(--block-min-width), max-content);
+  max-width: 100%;
+  gap: var(--space-3);
+}

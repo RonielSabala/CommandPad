@@ -1,47 +1,53 @@
 import { MarkdownToken } from "@/common/config";
-import { Anchor } from "@/common/constants/dom";
+import { NoteSegmentType } from "@/common/enums";
+import type { NoteSegment } from "@/common/types";
 
-export function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
+const NOTE_TOKEN_REGEX = new RegExp(
+  [
+    MarkdownToken.CODE_REGEX.source,
+    MarkdownToken.BOLD_REGEX.source,
+    MarkdownToken.ITALIC_REGEX.source,
+    MarkdownToken.URL_REGEX.source,
+  ].join("|"),
+  "g",
+);
 
-export function formatNoteText(text: string): string {
-  const placeholders: string[] = [];
+export function parseNoteText(text: string): NoteSegment[] {
+  const segments: NoteSegment[] = [];
 
-  let escaped = escapeHtml(text).replace(
-    MarkdownToken.CODE_REGEX,
-    (_, inner: string) => {
-      const index = placeholders.length;
-      placeholders.push(`<span class="note-code">${inner}</span>`);
-      return `\x00CODE${index}\x00`;
-    },
-  );
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
 
-  escaped = escaped.replace(
-    MarkdownToken.BOLD_REGEX,
-    (_, inner: string) => `<span class="note-bold">${inner}</span>`,
-  );
+  NOTE_TOKEN_REGEX.lastIndex = 0;
+  while ((match = NOTE_TOKEN_REGEX.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({
+        type: NoteSegmentType.TEXT,
+        text: text.slice(lastIndex, match.index),
+      });
+    }
 
-  escaped = escaped.replace(
-    MarkdownToken.ITALIC_REGEX,
-    (_, g1: string, g2: string) =>
-      `<span class="note-italic">${g1 ?? g2}</span>`,
-  );
+    const [, code, bold, italicStar, italicUnderscore, url] = match;
 
-  escaped = escaped.replace(
-    MarkdownToken.URL_REGEX,
-    (url: string) =>
-      `<a href="${url}" class="note-link" target="${Anchor.TARGET_BLANK}" rel="${Anchor.REL}">${url}</a>`,
-  );
+    if (code !== undefined) {
+      segments.push({ type: NoteSegmentType.CODE, text: code });
+    } else if (bold !== undefined) {
+      segments.push({ type: NoteSegmentType.BOLD, text: bold });
+    } else if (italicStar !== undefined || italicUnderscore !== undefined) {
+      segments.push({
+        type: NoteSegmentType.ITALIC,
+        text: (italicStar ?? italicUnderscore) as string,
+      });
+    } else if (url !== undefined) {
+      segments.push({ type: NoteSegmentType.LINK, text: url });
+    }
 
-  escaped = escaped.replace(
-    /\x00CODE(\d+)\x00/g,
-    (_, i: string) => placeholders[Number(i)],
-  );
+    lastIndex = match.index + match[0].length;
+  }
 
-  return escaped;
+  if (lastIndex < text.length) {
+    segments.push({ type: NoteSegmentType.TEXT, text: text.slice(lastIndex) });
+  }
+
+  return segments;
 }

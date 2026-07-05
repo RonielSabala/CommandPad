@@ -38,7 +38,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
   const btnClass = [
     "runbook-item-btn",
     isActive && CssClass.ACTIVE,
-    isFocused && CssClass.RUNBOOK_FOCUSED,
+    isFocused && "runbook-focused",
     isDragOver && CssClass.DRAG_OVER,
   ]
     .filter(Boolean)

@@ -1,4 +1,9 @@
-import type { BlockType, NoteStyle, SegmentType } from "./enums";
+import type {
+  BlockType,
+  NoteSegmentType,
+  NoteStyle,
+  SegmentType,
+} from "./enums";
 
 export interface Variable {
   id: string;
@@ -50,9 +55,15 @@ export interface RunbookContent {
   blocks: Block[];
 }
 
-//  One piece of a resolved command preview
+// One piece of a resolved command preview
 export interface Segment {
   key?: string;
   text: string;
   type: SegmentType;
+}
+
+// One piece of parsed note markdown
+export interface NoteSegment {
+  text: string;
+  type: NoteSegmentType;
 }

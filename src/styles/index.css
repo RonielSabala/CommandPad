@@ -35,7 +35,6 @@ body.app-ready {
 /* --- DISABLE USER SELECT --- */
 
 .btn,
-.tab,
 .no-user-select {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -82,6 +81,15 @@ body.app-ready {
   height: var(--space-12);
   background: var(--color-border);
   margin: 0 var(--space-4);
+}
+
+.dragging {
+  opacity: 0.5;
+}
+
+.drag-over {
+  outline: var(--border-dashed);
+  border-radius: var(--radius-sm);
 }
 
 /* --- BUTTONS --- */
@@ -207,6 +215,23 @@ body.app-ready {
   display: block;
 }
 
+/* --- SYNCING PULSE --- */
+
+@keyframes sync-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.is-syncing {
+  animation: sync-pulse 0.75s ease-in-out infinite;
+}
+
 /* --- CTRL-HELD SUPPRESSIONS --- */
 
 body.ctrl-held:not(.read-mode) .block-controls,
@@ -226,18 +251,6 @@ body.ctrl-held:not(.read-mode) .command-textarea,
 body.ctrl-held:not(.read-mode) .command-preview-text {
   pointer-events: none;
   cursor: default;
-}
-
-body.ctrl-held:not(.read-mode) .block-item:hover:not(.block-selected) {
-  outline: var(--border-dashed);
-  border-radius: var(--radius-lg);
-}
-
-.block-selected .command-block,
-.block-selected .note-block,
-.block-selected .divider-block {
-  user-select: none;
-  outline: var(--space-1) solid var(--accent);
 }
 
 /* --- READ MODE SUPPRESSIONS --- */
@@ -299,10 +312,4 @@ body.read-mode #collapse-all-btn {
 
 body.read-mode .sidebar-section-list-row {
   grid-template-columns: 1fr;
-}
-
-/* Note links become clickable */
-body.read-mode .note-preview a.note-link {
-  pointer-events: auto;
-  cursor: pointer;
 }

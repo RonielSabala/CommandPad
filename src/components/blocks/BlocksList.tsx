@@ -1,12 +1,9 @@
-import "./Blocks.css";
-
-import { useMemo } from "react";
-
-import { ElementId } from "@/common/constants/dom";
 import type { Block, Variable } from "@/common/types";
 import { getActiveTab, useStore } from "@/store/store";
 import { getSecretKeys, getVariableMap } from "@/utils/resolution";
+import { useMemo } from "react";
 import { BlockItem } from "./BlockItem";
+import "./BlocksList.css";
 
 const EMPTY_BLOCKS: Block[] = [];
 const EMPTY_VARIABLES: Variable[] = [];
@@ -20,7 +17,7 @@ export function BlocksList() {
   const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
 
   return (
-    <div id={ElementId.BLOCKS_LIST}>
+    <div id="blocks-list">
       {blocks.map((block) => (
         <BlockItem
           key={block.id}

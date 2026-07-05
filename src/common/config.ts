@@ -32,6 +32,7 @@ export const DEBOUNCE_SAVE_MS = 150;
 export const DEBOUNCE_PREVIEW_MS = 200;
 export const DEBOUNCE_LABEL_SYNC_MS = 200;
 export const DUPLICATE_FLASH_MS = 500;
+export const DRAG_TIMEOUT_MS = 50;
 
 export const MarkdownSyntax = {
   HEADING: "#",
