@@ -3,14 +3,11 @@ import { AppMode, Theme } from "@/common/enums";
 import { useStore } from "@/store/store";
 import { useEffect } from "react";
 
-// Reflect cross-cutting store flags onto <body>/<html> classes
-
 export function useBodyClasses(): void {
-  const mode = useStore((s) => s.mode);
-  const theme = useStore((s) => s.theme);
-  const ctrlHeld = useStore((s) => s.ctrlHeld);
-  const altHeld = useStore((s) => s.altHeld);
-  const selecting = useStore((s) => s.selectedBlockIds.size > 0);
+  const mode = useStore((state) => state.mode);
+  const theme = useStore((state) => state.theme);
+  const ctrlHeld = useStore((state) => state.ctrlHeld);
+  const altHeld = useStore((state) => state.altHeld);
 
   useEffect(() => {
     document.body.classList.toggle(CssClass.READ_MODE, mode === AppMode.READ);
@@ -33,8 +30,4 @@ export function useBodyClasses(): void {
       document.body.style.cursor = "";
     }
   }, [altHeld]);
-
-  useEffect(() => {
-    document.body.classList.toggle(CssClass.SELECTING, selecting);
-  }, [selecting]);
 }

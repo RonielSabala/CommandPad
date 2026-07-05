@@ -5,28 +5,31 @@ import { debounce } from "@/utils/id";
 import { useEffect, type RefObject } from "react";
 
 export function useScrollPersistence(ref: RefObject<HTMLElement | null>): void {
-  const initialized = useStore((s) => s.initialized);
+  const initialized = useStore((state) => state.initialized);
 
   useEffect(() => {
     if (!initialized || !ref.current) {
       return;
     }
-    const el = ref.current;
+
+    const element = ref.current;
     requestAnimationFrame(() => {
-      el.scrollTop = useStore.getState().scrollTop;
+      element.scrollTop = useStore.getState().scrollTop;
     });
   }, [initialized, ref]);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) {
+    const element = ref.current;
+    if (!element) {
       return;
     }
+
     const persist = debounce(
-      () => useStore.getState().setScrollTop(el.scrollTop),
+      () => useStore.getState().setScrollTop(element.scrollTop),
       DEBOUNCE_SAVE_MS,
     );
-    el.addEventListener(EventType.SCROLL, persist);
-    return () => el.removeEventListener(EventType.SCROLL, persist);
+
+    element.addEventListener(EventType.SCROLL, persist);
+    return () => element.removeEventListener(EventType.SCROLL, persist);
   }, [ref]);
 }

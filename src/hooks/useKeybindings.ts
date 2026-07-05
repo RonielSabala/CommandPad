@@ -1,71 +1,70 @@
-import { useEffect } from "react";
-
 import { InputSelector } from "@/common/constants/dom";
 import { EventType, Key } from "@/common/constants/events";
-import { AppMode, MoveDirection } from "@/common/enums";
+import { MoveDirection } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import { getActiveTab, useStore } from "@/store/store";
 import { openImportDialog } from "@/utils/importTrigger";
-
-// Global keyboard shortcuts
+import { useEffect } from "react";
 
 export function useKeybindings(): void {
   useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      const s = useStore.getState();
+    const onKeyDown = (event: KeyboardEvent) => {
+      const state = useStore.getState();
 
-      if (matchesKeybinding(e, KeyBinding.NEW_TAB)) {
-        e.preventDefault();
-        void s.createNewTab();
+      if (matchesKeybinding(event, KeyBinding.NEW_TAB)) {
+        event.preventDefault();
+        void state.createNewTab();
         return;
       }
 
-      if (matchesKeybinding(e, KeyBinding.CLOSE_TAB)) {
-        e.preventDefault();
-        if (s.activeTabId) {
-          s.closeTab(s.activeTabId);
+      if (matchesKeybinding(event, KeyBinding.CLOSE_TAB)) {
+        event.preventDefault();
+        if (state.activeTabId) {
+          state.closeTab(state.activeTabId);
         }
+
         return;
       }
 
-      const key = e.key;
-      const altPressed = e.altKey;
-      const ctrlPressed = e.ctrlKey || e.metaKey;
+      const key = event.key;
+      const altPressed = event.altKey;
+      const ctrlPressed = event.ctrlKey || event.metaKey;
       const inEditable = !!document.activeElement?.matches(
         InputSelector.EDITABLE,
       );
-      const isReadMode = s.mode === AppMode.READ;
 
       if (!ctrlPressed && !altPressed && !inEditable) {
         if (
-          matchesKeybinding(e, KeyBinding.DELETE_BLOCK) &&
-          s.selectedBlockIds.size > 0
+          matchesKeybinding(event, KeyBinding.DELETE_BLOCK) &&
+          state.selectedBlockIds.size > 0
         ) {
-          e.preventDefault();
-          s.removeBlock([...s.selectedBlockIds][0]);
+          event.preventDefault();
+          state.removeBlock([...state.selectedBlockIds][0]);
         } else if (
-          matchesKeybinding(e, KeyBinding.FOCUS_RUNBOOK) &&
-          s.runbookLibrary.length > 0
+          matchesKeybinding(event, KeyBinding.FOCUS_RUNBOOK) &&
+          state.runbookLibrary.length > 0
         ) {
-          e.preventDefault();
-          const runbookId = s.activeRunbookId ?? s.runbookLibrary[0].id;
-          s.setRunbookFocus(runbookId);
-          void s.loadRunbookFromLibrary(runbookId);
+          event.preventDefault();
+
+          const runbookId = state.activeRunbookId ?? state.runbookLibrary[0].id;
+          state.setRunbookFocus(runbookId);
+          void state.loadRunbookFromLibrary(runbookId);
         } else if (
-          s.focusedRunbookId !== null &&
+          state.focusedRunbookId !== null &&
           (key === Key.ARROW_DOWN || key === Key.ARROW_UP)
         ) {
-          e.preventDefault();
-          s.navigateRunbookList(
+          event.preventDefault();
+          state.navigateRunbookList(
             key === Key.ARROW_DOWN ? MoveDirection.DOWN : MoveDirection.UP,
           );
         }
+
         return;
       }
 
       if (altPressed && !ctrlPressed) {
-        e.preventDefault();
-        s.setAltHeld(true);
+        event.preventDefault();
+        state.setAltHeld(true);
         return;
       }
 
@@ -73,73 +72,73 @@ export function useKeybindings(): void {
         return;
       }
 
-      if (matchesKeybinding(e, KeyBinding.TOGGLE_MODE)) {
-        e.preventDefault();
-        s.setCtrlHeld(false);
-        s.toggleAppMode();
-      } else if (matchesKeybinding(e, KeyBinding.EXPORT)) {
-        e.preventDefault();
-        s.setCtrlHeld(false);
-        if ((getActiveTab(s)?.blocks.length ?? 0) > 0) {
-          s.openExportModal();
+      let hit = false;
+
+      if (matchesKeybinding(event, KeyBinding.TOGGLE_MODE)) {
+        state.toggleAppMode();
+        hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.EXPORT)) {
+        if ((getActiveTab(state)?.blocks.length ?? 0) > 0) {
+          state.openExportModal();
         }
-      } else if (matchesKeybinding(e, KeyBinding.CLEAR_WORKSPACE)) {
-        e.preventDefault();
-        s.setCtrlHeld(false);
-        void s.clearAllData();
-      } else if (matchesKeybinding(e, KeyBinding.DUPLICATE_BLOCK)) {
-        e.preventDefault();
-        s.setCtrlHeld(false);
-        if (s.selectedBlockIds.size > 0) {
-          s.duplicateBlock([...s.selectedBlockIds][0]);
+
+        hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.CLEAR_WORKSPACE)) {
+        void state.clearAllData();
+        hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.DUPLICATE_BLOCK)) {
+        if (state.selectedBlockIds.size > 0) {
+          state.duplicateBlock([...state.selectedBlockIds][0]);
         }
-      } else if (matchesKeybinding(e, KeyBinding.DELETE_RUNBOOK)) {
-        e.preventDefault();
-        s.setCtrlHeld(false);
-        const deleteId = s.focusedRunbookId ?? s.activeRunbookId;
-        if (deleteId && !isReadMode) {
-          void s.removeRunbookFromLibrary(deleteId);
+
+        hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.DELETE_RUNBOOK)) {
+        const deleteId = state.focusedRunbookId ?? state.activeRunbookId;
+        if (deleteId) {
+          void state.removeRunbookFromLibrary(deleteId);
         }
-      } else if (matchesKeybinding(e, KeyBinding.MOVE_SIDEBAR)) {
-        e.preventDefault();
-        s.setCtrlHeld(false);
-        s.toggleSidebarPosition();
-      } else if (matchesKeybinding(e, KeyBinding.TOGGLE_SIDEBAR)) {
-        e.preventDefault();
-        s.setCtrlHeld(false);
-        s.toggleSidebar();
-      } else if (
-        matchesKeybinding(e, KeyBinding.IMPORT_RUNBOOK) &&
-        !isReadMode
-      ) {
-        e.preventDefault();
-        s.setCtrlHeld(false);
+
+        hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.MOVE_SIDEBAR)) {
+        state.toggleSidebarPosition();
+        hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.TOGGLE_SIDEBAR)) {
+        state.toggleSidebar();
+        hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.IMPORT_RUNBOOK)) {
         openImportDialog();
-      } else if (matchesKeybinding(e, KeyBinding.TOGGLE_EDITORS)) {
-        e.preventDefault();
-        s.setCtrlHeld(false);
-        s.toggleAllCommandEditors();
+        hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.TOGGLE_EDITORS)) {
+        state.toggleAllCommandEditors();
+        hit = true;
       } else if (!inEditable) {
-        s.setCtrlHeld(true);
+        state.setCtrlHeld(true);
+      }
+
+      if (hit) {
+        event.preventDefault();
+        state.setCtrlHeld(false);
       }
     };
 
-    const onKeyUp = (e: KeyboardEvent) => {
-      const s = useStore.getState();
-      if (e.key === Key.CTRL) {
-        s.setCtrlHeld(false);
-      } else if (e.key === Key.ALT) {
-        s.setAltHeld(false);
-      } else if (e.key === Key.ESCAPE) {
+    const onKeyUp = (event: KeyboardEvent) => {
+      const key = event.key;
+      const state = useStore.getState();
+
+      if (key === Key.CTRL) {
+        state.setCtrlHeld(false);
+      } else if (key === Key.ALT) {
+        state.setAltHeld(false);
+      } else if (key === Key.ESCAPE) {
         (document.activeElement as HTMLElement | null)?.blur?.();
-        s.clearUserInteraction();
+        state.clearUserInteraction();
       }
     };
 
     const onBlur = () => {
       const state = useStore.getState();
-      state.setCtrlHeld(false);
       state.setAltHeld(false);
+      state.setCtrlHeld(false);
     };
 
     document.addEventListener(EventType.KEY_DOWN, onKeyDown);

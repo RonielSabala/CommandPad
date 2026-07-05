@@ -20,9 +20,9 @@ export const Key = {
 } as const;
 
 export const Modifier = {
+  ALT: "alt",
   CTRL: "ctrl",
   SHIFT: "shift",
-  ALT: "alt",
 } as const;
 export type Modifier = (typeof Modifier)[keyof typeof Modifier];
 

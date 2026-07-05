@@ -1,3 +1,4 @@
+import { toTitleCase } from "../utils/string";
 import { Modifier } from "./constants/events";
 
 export const KeyBinding = {
@@ -86,36 +87,31 @@ export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
   },
   [KeyBinding.NAVIGATE_RUNBOOKS]: {
     binding: "↑ / ↓",
-    keyboard: false,
     description: "Navigate runbooks when selected active runbook",
+    keyboard: false,
   },
   [KeyBinding.ALT_CLICK_LINK]: {
     binding: "alt+click",
-    keyboard: false,
     description: "Open note link in new tab",
+    keyboard: false,
   },
   [KeyBinding.MULTISELECT_BLOCKS]: {
     binding: "ctrl+click / drag",
-    keyboard: false,
     description: "Multi-select blocks",
+    keyboard: false,
   },
 };
 
 const BINDING_SEPARATOR = "+";
-const MODIFIER_KEYS = [Modifier.CTRL, Modifier.SHIFT, Modifier.ALT] as const;
+const MODIFIER_KEYS = [Modifier.ALT, Modifier.CTRL, Modifier.SHIFT] as const;
+
 const KEY_ALIASES: Record<string, string> = { space: " " };
 const KEY_LABELS: Record<string, string> = { delete: "Del" };
-
-function titleCaseToken(token: string): string {
-  return KEY_LABELS[token] ?? token.charAt(0).toUpperCase() + token.slice(1);
-}
 
 function titleCaseChord(chord: string): string {
   return chord
     .split(BINDING_SEPARATOR)
-    .map((token) =>
-      token.length === 1 ? token.toUpperCase() : titleCaseToken(token),
-    )
+    .map((token) => KEY_LABELS[token] ?? toTitleCase(token))
     .join(BINDING_SEPARATOR);
 }
 
@@ -135,9 +131,9 @@ export function formatBinding(binding: string): string {
 }
 
 interface ParsedBinding {
+  alt: boolean;
   ctrl: boolean;
   shift: boolean;
-  alt: boolean;
   key: string;
 }
 
@@ -149,8 +145,9 @@ const parsedBindings: Partial<Record<KeyBinding, ParsedBinding>> =
         const parts = binding.toLowerCase().split(BINDING_SEPARATOR);
         const rawKey = parts.at(-1) ?? "";
         const modifiers = Object.fromEntries(
-          MODIFIER_KEYS.map((mod) => [mod, parts.includes(mod)]),
+          MODIFIER_KEYS.map((modifier) => [modifier, parts.includes(modifier)]),
         );
+
         return [id, { ...modifiers, key: KEY_ALIASES[rawKey] ?? rawKey }];
       }),
   );

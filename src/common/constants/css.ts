@@ -5,7 +5,6 @@ export const CssClass = {
   CTRL_HELD: "ctrl-held",
   ALT_HELD: "alt-held",
   THEME_LIGHT: "theme-light",
-  SELECTING: "selecting",
 
   // Sidebar flags
   SIDEBAR_COLLAPSED: "sidebar-collapsed",
