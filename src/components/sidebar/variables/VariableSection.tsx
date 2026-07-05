@@ -1,6 +1,6 @@
 import type { Variable } from "@/common/types";
 import { getActiveTab, useStore } from "@/store/store";
-import { matchesQuery } from "@/utils/runbook";
+import { matchesQuery } from "@/utils/string";
 import { SidebarSearch } from "../shared/SidebarSearch";
 import { SidebarSection } from "../shared/SidebarSection";
 import { SidebarSectionFooter } from "../shared/SidebarSectionFooter";

@@ -1,7 +1,7 @@
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
 import { useStore } from "@/store/store";
 import { openImportDialog } from "@/utils/importTrigger";
-import { matchesQuery } from "@/utils/runbook";
+import { matchesQuery } from "@/utils/string";
 import { useEffect, useRef } from "react";
 import { SidebarSearch } from "../shared/SidebarSearch";
 import { SidebarSection } from "../shared/SidebarSection";

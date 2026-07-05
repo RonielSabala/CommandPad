@@ -1,3 +1,4 @@
+import { VariableTokenRegex } from "@/common/config";
 import { SegmentType } from "@/common/enums";
 import type { Segment, Variable } from "@/common/types";
 
@@ -12,6 +13,7 @@ export function getVariableMap(variables: Variable[] = []): VariableMap {
     if (!key) {
       continue;
     }
+
     rawMap[key] = variable.value;
   }
 
@@ -19,13 +21,14 @@ export function getVariableMap(variables: Variable[] = []): VariableMap {
     if (key in resolvedMap) {
       return resolvedMap[key];
     }
+
     if (visitedKeys.has(key)) {
       return `{${key}}`;
     }
 
     visitedKeys.add(key);
     const raw = rawMap[key] ?? "";
-    const resolved = raw.replace(/\{([^}]+)\}/g, (match, refKey: string) =>
+    const resolved = raw.replace(VariableTokenRegex, (match, refKey: string) =>
       refKey in rawMap ? resolveValue(refKey, new Set(visitedKeys)) : match,
     );
 
@@ -42,24 +45,25 @@ export function getVariableMap(variables: Variable[] = []): VariableMap {
 
 export function getSecretKeys(variables: Variable[] = []): Set<string> {
   return new Set(
-    variables.filter((v) => v.secret && v.key.trim()).map((v) => v.key.trim()),
+    variables
+      .filter((variable) => variable.secret && variable.key.trim())
+      .map((variable) => variable.key.trim()),
   );
 }
 
-//  Split a command into literal / resolved / unresolved segments
 export function resolveCommandText(
   rawText: string,
   variableMap: VariableMap,
 ): Segment[] {
-  const segments: Segment[] = [];
-  const tokenRegex = /\{([^}]+)\}/g;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
+  const segments: Segment[] = [];
 
-  while ((match = tokenRegex.exec(rawText)) !== null) {
-    if (match.index > lastIndex) {
+  while ((match = VariableTokenRegex.exec(rawText)) !== null) {
+    const matchIdx = match.index;
+    if (matchIdx > lastIndex) {
       segments.push({
-        text: rawText.slice(lastIndex, match.index),
+        text: rawText.slice(lastIndex, matchIdx),
         type: SegmentType.LITERAL,
       });
     }
@@ -76,7 +80,7 @@ export function resolveCommandText(
       segments.push({ text: match[0], type: SegmentType.UNRESOLVED });
     }
 
-    lastIndex = match.index + match[0].length;
+    lastIndex = matchIdx + match[0].length;
   }
 
   if (lastIndex < rawText.length) {
@@ -89,7 +93,6 @@ export function resolveCommandText(
   return segments;
 }
 
-// Fully resolved command string
 export function resolveCommandToString(
   rawText: string,
   variableMap: VariableMap,

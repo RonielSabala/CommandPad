@@ -1,3 +1,5 @@
+import type { ExportFormat } from "./enums";
+
 export const StorageKey = {
   TABS: "commandpad_tabs",
   UI_STATE: "commandpad_ui_state",
@@ -6,8 +8,8 @@ export const StorageKey = {
 } as const;
 
 export const RunbookConfig = {
-  DEFAULT_LABEL: "Untitled runbook",
   LABEL_MAX_LENGTH: 60,
+  DEFAULT_LABEL: "Untitled runbook",
 } as const;
 
 export const RunbookDbConfig = {
@@ -28,10 +30,8 @@ export const UI = {
 } as const;
 
 // Debounce / timeout durations
-export const DEFER_MS = 0;
 export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
 export const DEBOUNCE_SAVE_MS = 150;
-export const DUPLICATE_FLASH_MS = 500;
 export const DRAG_TIMEOUT_MS = 50;
 
 export const MarkdownSyntax = {
@@ -49,41 +49,38 @@ export const MarkdownToken = {
   URL_REGEX: /(https?:\/\/[^\s<>"{}|\\^`[\]]*[^\s<>"{}|\\^`[\].,;:!?()-])/g,
 } as const;
 
-export interface FilePickerType {
+export const VariableTokenRegex = /\{([^}]+)\}/g;
+
+interface FilePickerType {
   description: string;
   accept: Record<string, string[]>;
 }
 
-export interface FilePickerFormat {
+interface FilePickerFormat {
   suggestedName: string;
   mimeType: string;
   types: FilePickerType[];
 }
 
-export const FilePickerConfig: Record<"json" | "md" | "txt", FilePickerFormat> =
-  {
-    json: {
-      suggestedName: "commandpad-export.json",
-      mimeType: "application/json",
-      types: [
-        {
-          description: "CommandPad JSON",
-          accept: { "application/json": [".json"] },
-        },
-      ],
-    },
-    md: {
-      suggestedName: "commandpad-export.md",
-      mimeType: "text/markdown",
-      types: [
-        { description: "Markdown", accept: { "text/markdown": [".md"] } },
-      ],
-    },
-    txt: {
-      suggestedName: "commandpad-export.txt",
-      mimeType: "text/plain",
-      types: [
-        { description: "Plain Text", accept: { "text/plain": [".txt"] } },
-      ],
-    },
-  };
+export const FilePickerConfig: Record<ExportFormat, FilePickerFormat> = {
+  json: {
+    suggestedName: "commandpad-export.json",
+    mimeType: "application/json",
+    types: [
+      {
+        description: "CommandPad JSON",
+        accept: { "application/json": [".json"] },
+      },
+    ],
+  },
+  md: {
+    suggestedName: "commandpad-export.md",
+    mimeType: "text/markdown",
+    types: [{ description: "Markdown", accept: { "text/markdown": [".md"] } }],
+  },
+  txt: {
+    suggestedName: "commandpad-export.txt",
+    mimeType: "text/plain",
+    types: [{ description: "Plain Text", accept: { "text/plain": [".txt"] } }],
+  },
+};

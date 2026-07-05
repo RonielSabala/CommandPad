@@ -22,8 +22,9 @@ import type {
   Tab,
   Variable,
 } from "@/common/types";
+import { debounce } from "@/utils/debounce";
 import { runExport } from "@/utils/export";
-import { debounce, generateId } from "@/utils/id";
+import { generateId } from "@/utils/id";
 import { getRunbookLabel } from "@/utils/runbook";
 
 import * as persistence from "./persistence";
@@ -759,6 +760,7 @@ export const useStore = create<StoreState>()((set, get) => ({
         return { ...tab, blocks, variables };
       }),
     );
+
     debouncedSaveState();
   },
 
@@ -901,6 +903,7 @@ export const useStore = create<StoreState>()((set, get) => ({
       }));
       return { ...updated, ...relabelActive({ ...s, ...updated }) };
     });
+
     debouncedSaveState();
   },
 

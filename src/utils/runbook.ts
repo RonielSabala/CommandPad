@@ -7,22 +7,12 @@ export function getRunbookLabel(
   fallback: string,
 ): string {
   const firstBlock = blocks?.[0];
-  if (firstBlock?.type === BlockType.NOTE && firstBlock.text?.trim()) {
-    return firstBlock.text.trim().slice(0, RunbookConfig.LABEL_MAX_LENGTH);
+  if (firstBlock?.type === BlockType.NOTE) {
+    const text = firstBlock.text.trim();
+    if (text) {
+      return text.slice(0, RunbookConfig.LABEL_MAX_LENGTH);
+    }
   }
 
   return fallback || RunbookConfig.DEFAULT_LABEL;
-}
-
-// Case-insensitive substring match across the given fields
-export function matchesQuery(
-  query: string,
-  ...fields: (string | undefined)[]
-): boolean {
-  if (!query) {
-    return true;
-  }
-
-  const needle = query.toLowerCase();
-  return fields.some((field) => field?.toLowerCase().includes(needle));
 }

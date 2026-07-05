@@ -19,11 +19,13 @@ export function parseNoteText(text: string): NoteSegment[] {
   let match: RegExpExecArray | null;
 
   NOTE_TOKEN_REGEX.lastIndex = 0;
+
   while ((match = NOTE_TOKEN_REGEX.exec(text)) !== null) {
-    if (match.index > lastIndex) {
+    const matchIdx = match.index;
+    if (matchIdx > lastIndex) {
       segments.push({
         type: NoteSegmentType.TEXT,
-        text: text.slice(lastIndex, match.index),
+        text: text.slice(lastIndex, matchIdx),
       });
     }
 
@@ -36,13 +38,13 @@ export function parseNoteText(text: string): NoteSegment[] {
     } else if (italicStar !== undefined || italicUnderscore !== undefined) {
       segments.push({
         type: NoteSegmentType.ITALIC,
-        text: (italicStar ?? italicUnderscore) as string,
+        text: italicStar ?? italicUnderscore,
       });
     } else if (url !== undefined) {
       segments.push({ type: NoteSegmentType.LINK, text: url });
     }
 
-    lastIndex = match.index + match[0].length;
+    lastIndex = matchIdx + match[0].length;
   }
 
   if (lastIndex < text.length) {

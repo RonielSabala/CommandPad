@@ -7,13 +7,16 @@ interface SaveFilePickerOptions {
   suggestedName?: string;
   types?: { description: string; accept: Record<string, string[]> }[];
 }
+
 interface WritableFile {
   write(data: string): Promise<void>;
   close(): Promise<void>;
 }
+
 interface FileHandle {
   createWritable(): Promise<WritableFile>;
 }
+
 type ShowSaveFilePicker = (
   options?: SaveFilePickerOptions,
 ) => Promise<FileHandle>;
@@ -52,13 +55,13 @@ async function saveFile(
 }
 
 function buildMarkdownExport(content: RunbookContent): string {
-  const variableMap = getVariableMap(content.variables);
   const lines: string[] = [];
+  const variableMap = getVariableMap(content.variables);
 
   for (const block of content.blocks) {
     if (block.type === BlockType.NOTE) {
-      const style = block.style || NoteStyle.BODY;
       const text = block.text || "";
+      const style = block.style || NoteStyle.BODY;
 
       if (style === NoteStyle.HEADING) {
         lines.push(`${MarkdownSyntax.HEADING} ${text}`);
@@ -68,8 +71,12 @@ function buildMarkdownExport(content: RunbookContent): string {
         lines.push(text);
       }
     } else if (block.type === BlockType.COMMAND) {
+      if (!block.text) {
+        continue;
+      }
+
       lines.push(MarkdownSyntax.CODE_FENCE);
-      lines.push(resolveCommandToString(block.text || "", variableMap));
+      lines.push(resolveCommandToString(block.text, variableMap));
       lines.push(MarkdownSyntax.CODE_FENCE_END);
     } else if (block.type === BlockType.DIVIDER) {
       lines.push(MarkdownSyntax.DIVIDER);
@@ -98,11 +105,13 @@ export async function runExport(
       config.suggestedName,
       [...config.types],
     );
+
     return;
   }
 
   const config =
     format === ExportFormat.MD ? FilePickerConfig.md : FilePickerConfig.txt;
+
   await saveFile(
     buildMarkdownExport(content),
     config.mimeType,
