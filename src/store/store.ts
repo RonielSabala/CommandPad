@@ -518,8 +518,18 @@ export const useStore = create<StoreState>()((set, get) => ({
 
     const activeRunbookId =
       tabs.find((t) => t.id === activeTabId)?.runbookId ?? null;
-    const focusedRunbookId =
-      state.focusedRunbookId === id ? null : state.focusedRunbookId;
+
+    let focusedRunbookId = state.focusedRunbookId;
+    if (focusedRunbookId === id) {
+      const removedIdx = state.runbookLibrary.findIndex(
+        (item) => item.id === id,
+      );
+
+      focusedRunbookId =
+        runbookLibrary.length === 0
+          ? null
+          : runbookLibrary[Math.min(removedIdx, runbookLibrary.length - 1)].id;
+    }
 
     set({
       tabs,
