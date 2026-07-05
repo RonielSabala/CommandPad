@@ -1,16 +1,19 @@
 export const StorageKey = {
-  STATE: "commandpad_state",
   TABS: "commandpad_tabs",
+  UI_STATE: "commandpad_ui_state",
+  RUNBOOK_LIBRARY: "commandpad_runbook_library",
+  SIDEBAR_SECTIONS: "commandpad_sidebar_sections",
 } as const;
 
 export const RunbookConfig = {
-  DB_NAME: "commandpad_runbooks_db",
-  DB_VERSION: 1,
-  STORE_NAME: "runbooks",
-  LIBRARY_STORAGE_KEY: "commandpad_runbook_library",
-  SECTIONS_STORAGE_KEY: "commandpad_sidebar_sections",
   DEFAULT_LABEL: "Untitled runbook",
   LABEL_MAX_LENGTH: 60,
+} as const;
+
+export const RunbookDbConfig = {
+  DB_VERSION: 1,
+  DB_NAME: "commandpad_runbooks_db",
+  STORE_NAME: "runbooks",
 } as const;
 
 export const IndexedDbTransactionMode = {
