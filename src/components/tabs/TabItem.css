@@ -59,7 +59,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  border-left: var(--space-1) dashed var(--accent);
+  border-left: var(--border-dashed);
 }
 
 .tab.drag-over-left::before {
