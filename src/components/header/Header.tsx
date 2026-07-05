@@ -50,9 +50,11 @@ export function Header() {
   const toggleAllCommandEditors = useStore(
     (state) => state.toggleAllCommandEditors,
   );
+
   const isEmpty = useStore(
     (state) => !(getActiveTab(state)?.blocks.length ?? 0),
   );
+  const emptyClass = isEmpty ? CssClass.BTN_DISABLED : "";
 
   return (
     <header id="app-header">
@@ -91,7 +93,7 @@ export function Header() {
         <div className="vertical-divider" />
         <button
           id="collapse-all-btn"
-          className={`btn btn-lg${isEmpty ? ` ${CssClass.BTN_DISABLED}` : ""}`}
+          className={`btn btn-lg ${emptyClass}`}
           disabled={isEmpty}
           onClick={toggleAllCommandEditors}
           title="Expand/collapse all command editors"
@@ -167,7 +169,7 @@ export function Header() {
         <div className="vertical-divider" />
 
         <button
-          className={`btn btn-lg btn-primary${isEmpty ? ` ${CssClass.BTN_DISABLED}` : ""}`}
+          className={`btn btn-lg btn-primary ${emptyClass}`}
           disabled={isEmpty}
           onClick={openExportModal}
           title="Export runbook"

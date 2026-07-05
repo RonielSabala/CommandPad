@@ -62,18 +62,33 @@ export const VariableRow = memo(function VariableRow({ variable }: Props) {
     }
   }, [pendingFocus, consumeVariableFocus]);
 
+  const rowClass = [
+    "variable-row",
+    "sidebar-section-list-row",
+    isSecret && "is-secret",
+    isDragging && CssClass.DRAGGING,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const variableInputsClass = [
+    "variable-inputs",
+    isSecret && "is-secret",
+    isDragOver && CssClass.DRAG_OVER,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <div
-      className={`sidebar-section-list-row variable-row${isDragging ? ` ${CssClass.DRAGGING}` : ""}${isSecret ? ` ${CssClass.VAR_SECRET}` : ""}`}
+      className={rowClass}
       {...{ [DataAttr.VARIABLE_ID]: variableId }}
       {...rowProps}
     >
       <div className="drag-handle" title="Drag to reorder" {...handleProps}>
         <DragDotsIcon />
       </div>
-      <div
-        className={`variable-inputs${isDragOver ? ` ${CssClass.DRAG_OVER}` : ""}${isSecret ? ` ${CssClass.VAR_SECRET}` : ""}`}
-      >
+      <div className={variableInputsClass}>
         <input
           ref={keyRef}
           className="variable-key-input"

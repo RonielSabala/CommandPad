@@ -6,6 +6,5 @@ export const CssClass = {
   // Misc
   ACTIVE: "active",
   COLLAPSED: "collapsed",
-  VAR_SECRET: "is-secret",
   BTN_DISABLED: "btn-disabled",
 } as const;
