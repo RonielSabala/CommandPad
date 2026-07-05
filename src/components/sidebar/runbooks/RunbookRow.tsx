@@ -13,11 +13,11 @@ interface Props {
 }
 
 export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
-  const id = runbook.id;
-  const label = runbook.label;
+  const runbookId = runbook.id;
+  const runbookLabel = runbook.label;
 
-  const isActive = useStore((state) => state.activeRunbookId === id);
-  const isFocused = useStore((state) => state.focusedRunbookId === id);
+  const isActive = useStore((state) => state.activeRunbookId === runbookId);
+  const isFocused = useStore((state) => state.focusedRunbookId === runbookId);
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const setRunbookFocus = useStore((state) => state.setRunbookFocus);
   const reorderRunbooks = useStore((state) => state.reorderRunbooks);
@@ -30,7 +30,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
 
   const { isDragging, isDragOver, handleProps, rowProps } = useRowReorder(
     "runbook-group",
-    id,
+    runbookId,
     reorderRunbooks,
     !readMode,
   );
@@ -47,7 +47,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
   return (
     <div
       className={`sidebar-section-list-row${isDragging ? ` ${CssClass.DRAGGING}` : ""}`}
-      {...{ [DataAttr.RUNBOOK_ID]: id }}
+      {...{ [DataAttr.RUNBOOK_ID]: runbookId }}
       {...rowProps}
     >
       <div className="drag-handle" title="Drag to reorder" {...handleProps}>
@@ -57,15 +57,15 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
         className={btnClass}
         onClick={() => {
           setRunbookFocus(null);
-          void loadRunbookFromLibrary(id);
+          void loadRunbookFromLibrary(runbookId);
         }}
-        title={label}
+        title={runbookLabel}
       >
-        {label}
+        {runbookLabel}
       </button>
       <button
         className="btn btn-icon btn-danger"
-        onClick={() => void removeRunbookFromLibrary(id)}
+        onClick={() => void removeRunbookFromLibrary(runbookId)}
         title="Remove from library"
       >
         <TrashIcon />

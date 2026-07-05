@@ -15,10 +15,10 @@ interface Props {
 }
 
 export function TabItem({ tab }: Props) {
-  const id = tab.id;
-  const label = tab.label || DEFAULT_TAB_LABEL;
+  const tabId = tab.id;
+  const tabLabel = tab.label || DEFAULT_TAB_LABEL;
 
-  const isActive = useStore((state) => state.activeTabId === id);
+  const isActive = useStore((state) => state.activeTabId === tabId);
   const switchTab = useStore((state) => state.switchTab);
   const closeTab = useStore((state) => state.closeTab);
   const reorderTabs = useStore((state) => state.reorderTabs);
@@ -44,9 +44,9 @@ export function TabItem({ tab }: Props) {
   return (
     <div
       className={className}
-      title={label}
+      title={tabLabel}
       draggable
-      onClick={() => switchTab(id)}
+      onClick={() => switchTab(tabId)}
       onMouseDown={(event) => {
         if (event.button === MouseButton.MIDDLE) {
           event.preventDefault();
@@ -55,11 +55,11 @@ export function TabItem({ tab }: Props) {
       onMouseUp={(event) => {
         if (event.button === MouseButton.MIDDLE) {
           event.preventDefault();
-          closeTab(id);
+          closeTab(tabId);
         }
       }}
       onDragStart={(event) => {
-        tabDrag.srcId = id;
+        tabDrag.srcId = tabId;
         setDragging(true);
         event.dataTransfer.effectAllowed = DragEffect.MOVE;
       }}
@@ -69,7 +69,7 @@ export function TabItem({ tab }: Props) {
         setDropSide(null);
       }}
       onDragOver={(event) => {
-        if (!tabDrag.srcId || tabDrag.srcId === id) {
+        if (!tabDrag.srcId || tabDrag.srcId === tabId) {
           return;
         }
 
@@ -86,20 +86,20 @@ export function TabItem({ tab }: Props) {
         setDropSide(null);
 
         const srcId = tabDrag.srcId;
-        if (!srcId || srcId === id) {
+        if (!srcId || srcId === tabId) {
           return;
         }
 
-        reorderTabs(srcId, id, !isLeftHalf(event));
+        reorderTabs(srcId, tabId, !isLeftHalf(event));
       }}
     >
-      <span className="tab-label">{label}</span>
+      <span className="tab-label">{tabLabel}</span>
       <button
         className="tab-close"
         title="Close tab"
         onClick={(event) => {
           event.stopPropagation();
-          closeTab(id);
+          closeTab(tabId);
         }}
       >
         <CloseIcon />
