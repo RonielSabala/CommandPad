@@ -1,4 +1,4 @@
-import type { ExportFormat } from "./enums";
+import { ExportFormat } from "./enums";
 
 export const StorageKey = {
   TABS: "commandpad_tabs",
@@ -25,14 +25,12 @@ export const IndexedDbTransactionMode = {
 
 export const DEFAULT_TAB_LABEL = "Untitled";
 
-export const UI = {
-  SECRET_MASK: "******",
-} as const;
-
-// Debounce / timeout durations
-export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
-export const DEBOUNCE_SAVE_MS = 150;
+// Timeout durations
 export const DRAG_TIMEOUT_MS = 50;
+export const DEBOUNCE_SAVE_MS = 150;
+export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
+
+// Markdown config
 
 export const MarkdownSyntax = {
   HEADING: "#",
@@ -51,6 +49,8 @@ export const MarkdownToken = {
 
 export const VariableTokenRegex = /\{([^}]+)\}/g;
 
+// Supported file types
+
 interface FilePickerType {
   description: string;
   accept: Record<string, string[]>;
@@ -62,25 +62,30 @@ interface FilePickerFormat {
   types: FilePickerType[];
 }
 
-export const FilePickerConfig: Record<ExportFormat, FilePickerFormat> = {
-  json: {
-    suggestedName: "commandpad-export.json",
+interface FilePickerInfo {
+  mimeType: string;
+  description: string;
+}
+
+const FILE_PICKER_INFO: Record<ExportFormat, FilePickerInfo> = {
+  [ExportFormat.JSON]: {
     mimeType: "application/json",
-    types: [
-      {
-        description: "CommandPad JSON",
-        accept: { "application/json": [".json"] },
-      },
-    ],
+    description: "CommandPad JSON",
   },
-  md: {
-    suggestedName: "commandpad-export.md",
-    mimeType: "text/markdown",
-    types: [{ description: "Markdown", accept: { "text/markdown": [".md"] } }],
-  },
-  txt: {
-    suggestedName: "commandpad-export.txt",
-    mimeType: "text/plain",
-    types: [{ description: "Plain Text", accept: { "text/plain": [".txt"] } }],
-  },
+  [ExportFormat.MD]: { mimeType: "text/markdown", description: "Markdown" },
+  [ExportFormat.TXT]: { mimeType: "text/plain", description: "Plain Text" },
 };
+
+export const FilePickerConfig: Record<ExportFormat, FilePickerFormat> =
+  Object.fromEntries(
+    Object.entries(FILE_PICKER_INFO).map(
+      ([format, { mimeType, description }]) => [
+        format,
+        {
+          suggestedName: `commandpad-export.${format}`,
+          mimeType,
+          types: [{ description, accept: { [mimeType]: [`.${format}`] } }],
+        },
+      ],
+    ),
+  ) as Record<ExportFormat, FilePickerFormat>;

@@ -1,4 +1,4 @@
-import { COPY_FEEDBACK_TIMEOUT_MS, UI } from "@/common/config";
+import { COPY_FEEDBACK_TIMEOUT_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { CommandSegmentType } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
@@ -73,7 +73,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
               seg.key &&
               secretKeys.has(seg.key) ? (
                 <span key={i} className="token-secret">
-                  {UI.SECRET_MASK}
+                  ******
                 </span>
               ) : (
                 <span key={i} className={`token-${seg.type}`}>
