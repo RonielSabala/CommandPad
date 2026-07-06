@@ -37,7 +37,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
   );
 
   const runbookBtnClass = classNames(
-    "runbook-item-btn",
+    CssClass.RUNBOOK_ITEM_BTN,
     isActive && CssClass.ACTIVE,
     isFocused && "runbook-focused",
     isDragOver && CssClass.DRAG_OVER,

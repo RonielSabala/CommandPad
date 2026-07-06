@@ -45,7 +45,7 @@ export const BlockItem = memo(function BlockItem({
   );
 
   const blockClass = classNames(
-    "block-item",
+    CssClass.BLOCK_ITEM,
     isSelected && "block-selected",
     isFlashing && "duplicate-flash",
     dragging && CssClass.DRAGGING,
@@ -116,7 +116,7 @@ export const BlockItem = memo(function BlockItem({
         <DividerBlock />
       )}
 
-      <div className="block-drag-handle">
+      <div className={CssClass.BLOCK_DRAG_HANDLE}>
         <div
           className="drag-handle"
           title="Drag to reorder"
@@ -133,7 +133,7 @@ export const BlockItem = memo(function BlockItem({
         </div>
       </div>
 
-      <div className="block-controls">
+      <div className={CssClass.BLOCK_CONTROLS}>
         <button
           className="btn btn-icon"
           onClick={() => duplicateBlock(block.id)}

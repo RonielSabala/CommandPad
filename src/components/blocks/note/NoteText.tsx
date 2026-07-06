@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { Anchor } from "@/common/constants/dom";
 import { NoteSegmentType } from "@/common/enums";
 import { parseNoteText } from "@/utils/markdown";
@@ -35,7 +36,7 @@ export function NoteText({ text }: Props) {
               <a
                 key={i}
                 href={segment.text}
-                className="note-link"
+                className={CssClass.NOTE_LINK}
                 target={Anchor.TARGET_BLANK}
                 rel={Anchor.REL}
               >

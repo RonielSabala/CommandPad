@@ -2,14 +2,6 @@ export const ElementId = {
   APP_SHELL: "app-shell",
 } as const;
 
-export const Selector = {
-  NOTE_LINK: "a.note-link",
-  BLOCK_ITEM: ".block-item",
-  BLOCK_CONTROLS: ".block-controls",
-  BLOCK_DRAG_HANDLE: ".block-drag-handle",
-  RUNBOOK_ITEM_BTN: ".runbook-item-btn",
-} as const;
-
 export const InputSelector = {
   EDITABLE: "textarea, input",
 } as const;

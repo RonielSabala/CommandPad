@@ -1,4 +1,5 @@
-import { Anchor, Cursor, DataAttr, Selector } from "@/common/constants/dom";
+import { CssClass } from "@/common/constants/css";
+import { Anchor, Cursor, DataAttr } from "@/common/constants/dom";
 import { EventType, MouseButton } from "@/common/constants/events";
 import { AppMode, LassoMode } from "@/common/enums";
 import { useStore } from "@/store/store";
@@ -14,7 +15,7 @@ export function useDocumentInteractions(): void {
       document
         .elementsFromPoint(x, y)
         .find((element): element is HTMLAnchorElement =>
-          element.matches(Selector.NOTE_LINK),
+          element.matches(`.${CssClass.NOTE_LINK}`),
         ) as HTMLAnchorElement | undefined;
 
     const onMouseMove = (event: MouseEvent) => {
@@ -41,7 +42,7 @@ export function useDocumentInteractions(): void {
       }
 
       const blockElement = (event.target as Element).closest(
-        Selector.BLOCK_ITEM,
+        `.${CssClass.BLOCK_ITEM}`,
       );
 
       if (blockElement) {
@@ -85,7 +86,7 @@ export function useDocumentInteractions(): void {
       const target = event.target as Element;
       if (
         state.focusedRunbookId !== null &&
-        !target.closest(Selector.RUNBOOK_ITEM_BTN)
+        !target.closest(`.${CssClass.RUNBOOK_ITEM_BTN}`)
       ) {
         state.setRunbookFocus(null);
       }
@@ -93,7 +94,7 @@ export function useDocumentInteractions(): void {
       if (
         state.selectedBlockIds.size > 0 &&
         !target.closest(
-          `${Selector.BLOCK_CONTROLS}, ${Selector.BLOCK_DRAG_HANDLE}`,
+          `.${CssClass.BLOCK_CONTROLS}, .${CssClass.BLOCK_DRAG_HANDLE}`,
         )
       ) {
         state.clearBlockSelection();
