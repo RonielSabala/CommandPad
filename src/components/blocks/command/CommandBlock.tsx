@@ -48,7 +48,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
 
   useEffect(() => {
     if (pendingFocus) {
-      textareaRef.current?.focus();
+      textareaRef.current?.focus({ preventScroll: true });
       consumeBlockFocus();
     }
   }, [pendingFocus, consumeBlockFocus]);

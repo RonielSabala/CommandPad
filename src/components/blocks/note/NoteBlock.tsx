@@ -35,7 +35,7 @@ export function NoteBlock({ block }: Props) {
 
   useEffect(() => {
     if (pendingFocus) {
-      textareaRef.current?.focus();
+      textareaRef.current?.focus({ preventScroll: true });
       consumeBlockFocus();
     }
   }, [pendingFocus, consumeBlockFocus]);
