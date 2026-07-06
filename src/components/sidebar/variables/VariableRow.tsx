@@ -1,6 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
-import { AppMode, VariableField } from "@/common/enums";
+import { AppMode, DragGroup, VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
 import { DragDotsIcon, TrashIcon } from "@/components/Icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
@@ -50,7 +50,7 @@ export const VariableRow = memo(function VariableRow({ variable }: Props) {
   const keyRef = useRef<HTMLInputElement>(null);
 
   const { isDragging, isDragOver, handleProps, rowProps } = useRowReorder(
-    "variable-group",
+    DragGroup.VARIABLE,
     variableId,
     reorderVariables,
     !readMode,

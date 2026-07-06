@@ -1,5 +1,6 @@
 import { DRAG_TIMEOUT_MS } from "@/common/config";
 import { DragEffect } from "@/common/constants/events";
+import type { DragGroup } from "@/common/enums";
 import { useRef, useState, type DragEvent } from "react";
 
 const dragGroups: Record<string, string | null> = {};
@@ -22,7 +23,7 @@ export interface RowReorder {
 }
 
 export function useRowReorder(
-  group: string,
+  group: DragGroup,
   id: string,
   onReorder: (sourceId: string, targetId: string) => void,
   enabled = true,

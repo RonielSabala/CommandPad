@@ -1,6 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
-import { AppMode } from "@/common/enums";
+import { AppMode, DragGroup } from "@/common/enums";
 import type { RunbookEntry } from "@/common/types";
 import { DragDotsIcon, TrashIcon } from "@/components/Icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
@@ -30,7 +30,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
   );
 
   const { isDragging, isDragOver, handleProps, rowProps } = useRowReorder(
-    "runbook-group",
+    DragGroup.RUNBOOK,
     runbookId,
     reorderRunbooks,
     !readMode,
