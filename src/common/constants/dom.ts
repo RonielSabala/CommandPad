@@ -1,7 +1,3 @@
-export const ElementId = {
-  APP_SHELL: "app-shell",
-} as const;
-
 export const InputSelector = {
   EDITABLE: "textarea, input",
 } as const;

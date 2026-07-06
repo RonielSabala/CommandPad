@@ -1,4 +1,4 @@
-import { ElementId, InputSelector } from "@/common/constants/dom";
+import { InputSelector } from "@/common/constants/dom";
 import { EventType, Key } from "@/common/constants/events";
 import { MoveDirection } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
@@ -141,24 +141,13 @@ export function useKeybindings(): void {
       state.setCtrlHeld(false);
     };
 
-    const onFocus = () => {
-      requestAnimationFrame(() => {
-        const active = document.activeElement;
-        if (!active || active === document.body) {
-          document.getElementById(ElementId.APP_SHELL)?.focus();
-        }
-      });
-    };
-
     document.addEventListener(EventType.KEY_DOWN, onKeyDown);
     document.addEventListener(EventType.KEY_UP, onKeyUp);
     window.addEventListener(EventType.BLUR, onBlur);
-    window.addEventListener(EventType.FOCUS, onFocus);
     return () => {
       document.removeEventListener(EventType.KEY_DOWN, onKeyDown);
       document.removeEventListener(EventType.KEY_UP, onKeyUp);
       window.removeEventListener(EventType.BLUR, onBlur);
-      window.removeEventListener(EventType.FOCUS, onFocus);
     };
   }, []);
 }

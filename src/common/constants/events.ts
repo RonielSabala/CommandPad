@@ -7,7 +7,6 @@ export const EventType = {
   MOUSE_MOVE: "mousemove",
   SCROLL: "scroll",
   BLUR: "blur",
-  FOCUS: "focus",
 } as const;
 
 export const Key = {

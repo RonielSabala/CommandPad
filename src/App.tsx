@@ -1,4 +1,3 @@
-import { ElementId } from "@/common/constants/dom";
 import { SidebarPosition } from "@/common/enums";
 import { useBodyClasses } from "@/hooks/useBodyClasses";
 import { useDocumentInteractions } from "@/hooks/useDocumentInteractions";
@@ -43,7 +42,7 @@ export default function App() {
 
   return (
     <>
-      <div id={ElementId.APP_SHELL} className={shellClass} tabIndex={-1}>
+      <div id="app-shell" className={shellClass}>
         <Header />
         <Sidebar />
         <RunbookImportInput />
