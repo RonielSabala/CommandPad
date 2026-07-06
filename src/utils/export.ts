@@ -60,15 +60,15 @@ function buildMarkdownExport(content: RunbookContent): string {
 
   for (const block of content.blocks) {
     if (block.type === BlockType.NOTE) {
-      const text = block.text || "";
-      const style = block.style || NoteStyle.BODY;
+      const blockText = block.text || "";
+      const blockStyle = block.style || NoteStyle.BODY;
 
-      if (style === NoteStyle.HEADING) {
-        lines.push(`${MarkdownSyntax.HEADING} ${text}`);
-      } else if (style === NoteStyle.SUBHEADING) {
-        lines.push(`${MarkdownSyntax.SUBHEADING} ${text}`);
+      if (blockStyle === NoteStyle.HEADING) {
+        lines.push(`${MarkdownSyntax.HEADING} ${blockText}`);
+      } else if (blockStyle === NoteStyle.SUBHEADING) {
+        lines.push(`${MarkdownSyntax.SUBHEADING} ${blockText}`);
       } else {
-        lines.push(text);
+        lines.push(blockText);
       }
     } else if (block.type === BlockType.COMMAND) {
       if (!block.text) {

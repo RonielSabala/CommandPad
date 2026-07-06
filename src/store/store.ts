@@ -99,15 +99,13 @@ interface StoreState {
   importRunbooks: (files: File[]) => Promise<void>;
   reorderRunbooks: (sourceId: string, targetId: string) => void;
   setRunbookFocus: (id: string | null) => void;
-  navigateRunbookList: (
-    direction: typeof MoveDirection.UP | typeof MoveDirection.DOWN,
-  ) => void;
+  navigateRunbookList: (direction: MoveDirection) => void;
 
   addVariable: () => Promise<void>;
   removeVariable: (variableId: string) => void;
   updateVariable: (
     variableId: string,
-    field: typeof VariableField.KEY | typeof VariableField.VALUE,
+    field: VariableField,
     value: string,
   ) => void;
   toggleVariableSecret: (variableId: string) => void;

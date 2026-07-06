@@ -30,8 +30,8 @@ export function NoteBlock({ block }: Props) {
   const [focused, setFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const style = block.style || NoteStyle.BODY;
-  const placeholder = `Section ${style}...`;
+  const blockStyle = block.style || NoteStyle.BODY;
+  const placeholder = `Section ${blockStyle}...`;
 
   useEffect(() => {
     if (pendingFocus) {
@@ -43,23 +43,23 @@ export function NoteBlock({ block }: Props) {
   return (
     <div className={`note-block${focused ? " is-focused" : ""}`}>
       <div className="note-style-row">
-        {NOTE_STYLES.map((noteStyle) => (
+        {NOTE_STYLES.map((style) => (
           <button
-            key={noteStyle}
-            className={`note-style-btn${style === noteStyle ? ` ${CssClass.ACTIVE}` : ""}`}
-            onClick={() => updateBlockStyle(blockId, noteStyle)}
+            key={style}
+            className={`note-style-btn${blockStyle === style ? ` ${CssClass.ACTIVE}` : ""}`}
+            onClick={() => updateBlockStyle(blockId, style)}
           >
-            {noteStyle}
+            {style}
           </button>
         ))}
       </div>
       <label
-        className={`note-auto-width style-${style}`}
+        className={`note-auto-width style-${blockStyle}`}
         data-value={blockText || placeholder}
       >
         <textarea
           ref={textareaRef}
-          className={`note-textarea style-${style}`}
+          className={`note-textarea style-${blockStyle}`}
           placeholder={placeholder}
           spellCheck={false}
           rows={1}
@@ -68,7 +68,7 @@ export function NoteBlock({ block }: Props) {
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
         />
-        <div className={`note-preview style-${style}`}>
+        <div className={`note-preview style-${blockStyle}`}>
           {blockText ? (
             <NoteText text={blockText} />
           ) : (

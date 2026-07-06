@@ -1,6 +1,6 @@
 import { VariableTokenRegex } from "@/common/config";
-import { SegmentType } from "@/common/enums";
-import type { Segment, Variable } from "@/common/types";
+import { CommandSegmentType } from "@/common/enums";
+import type { CommandSegment, Variable } from "@/common/types";
 
 export type VariableMap = Record<string, string>;
 
@@ -54,17 +54,17 @@ export function getSecretKeys(variables: Variable[] = []): Set<string> {
 export function resolveCommandText(
   rawText: string,
   variableMap: VariableMap,
-): Segment[] {
+): CommandSegment[] {
   let lastIndex = 0;
   let match: RegExpExecArray | null;
-  const segments: Segment[] = [];
+  const segments: CommandSegment[] = [];
 
   while ((match = VariableTokenRegex.exec(rawText)) !== null) {
     const matchIdx = match.index;
     if (matchIdx > lastIndex) {
       segments.push({
         text: rawText.slice(lastIndex, matchIdx),
-        type: SegmentType.LITERAL,
+        type: CommandSegmentType.LITERAL,
       });
     }
 
@@ -74,10 +74,12 @@ export function resolveCommandText(
       segments.push({
         key,
         text: value || `{${key}}`,
-        type: value ? SegmentType.RESOLVED : SegmentType.UNRESOLVED,
+        type: value
+          ? CommandSegmentType.RESOLVED
+          : CommandSegmentType.UNRESOLVED,
       });
     } else {
-      segments.push({ text: match[0], type: SegmentType.UNRESOLVED });
+      segments.push({ text: match[0], type: CommandSegmentType.UNRESOLVED });
     }
 
     lastIndex = matchIdx + match[0].length;
@@ -86,7 +88,7 @@ export function resolveCommandText(
   if (lastIndex < rawText.length) {
     segments.push({
       text: rawText.slice(lastIndex),
-      type: SegmentType.LITERAL,
+      type: CommandSegmentType.LITERAL,
     });
   }
 
@@ -107,6 +109,6 @@ export function hasUnresolvedTokens(
   variableMap: VariableMap,
 ): boolean {
   return resolveCommandText(rawText, variableMap).some(
-    (segment) => segment.type === SegmentType.UNRESOLVED,
+    (segment) => segment.type === CommandSegmentType.UNRESOLVED,
   );
 }

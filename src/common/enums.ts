@@ -1,14 +1,27 @@
+export const Theme = {
+  DARK: "dark",
+  LIGHT: "light",
+} as const;
+export type Theme = (typeof Theme)[keyof typeof Theme];
+
 export const AppMode = {
   EDIT: "edit",
   READ: "read",
 } as const;
 export type AppMode = (typeof AppMode)[keyof typeof AppMode];
 
-export const Theme = {
-  LIGHT: "light",
-  DARK: "dark",
+export const ExportFormat = {
+  JSON: "json",
+  MD: "md",
+  TXT: "txt",
 } as const;
-export type Theme = (typeof Theme)[keyof typeof Theme];
+export type ExportFormat = (typeof ExportFormat)[keyof typeof ExportFormat];
+
+export const SectionState = {
+  EXPANDED: "expanded",
+  COLLAPSED: "collapsed",
+} as const;
+export type SectionState = (typeof SectionState)[keyof typeof SectionState];
 
 export const SidebarPosition = {
   LEFT: "left",
@@ -23,11 +36,11 @@ export const TabDropSide = {
 } as const;
 export type TabDropSide = (typeof TabDropSide)[keyof typeof TabDropSide];
 
-export const SectionState = {
-  EXPANDED: "expanded",
-  COLLAPSED: "collapsed",
+export const MoveDirection = {
+  UP: "up",
+  DOWN: "down",
 } as const;
-export type SectionState = (typeof SectionState)[keyof typeof SectionState];
+export type MoveDirection = (typeof MoveDirection)[keyof typeof MoveDirection];
 
 export const BlockType = {
   NOTE: "note",
@@ -43,13 +56,14 @@ export const NoteStyle = {
 } as const;
 export type NoteStyle = (typeof NoteStyle)[keyof typeof NoteStyle];
 
-export const SegmentType = {
+export const CommandSegmentType = {
   LITERAL: "literal",
   RESOLVED: "resolved",
   UNRESOLVED: "unresolved",
   SECRET: "secret",
 } as const;
-export type SegmentType = (typeof SegmentType)[keyof typeof SegmentType];
+export type CommandSegmentType =
+  (typeof CommandSegmentType)[keyof typeof CommandSegmentType];
 
 export const NoteSegmentType = {
   TEXT: "text",
@@ -61,18 +75,6 @@ export const NoteSegmentType = {
 export type NoteSegmentType =
   (typeof NoteSegmentType)[keyof typeof NoteSegmentType];
 
-export const LassoMode = {
-  SELECT: "select",
-  DESELECT: "deselect",
-} as const;
-export type LassoMode = (typeof LassoMode)[keyof typeof LassoMode];
-
-export const MoveDirection = {
-  UP: "up",
-  DOWN: "down",
-} as const;
-export type MoveDirection = (typeof MoveDirection)[keyof typeof MoveDirection];
-
 export const VariableField = {
   KEY: "key",
   VALUE: "value",
@@ -80,9 +82,8 @@ export const VariableField = {
 } as const;
 export type VariableField = (typeof VariableField)[keyof typeof VariableField];
 
-export const ExportFormat = {
-  JSON: "json",
-  MD: "md",
-  TXT: "txt",
+export const LassoMode = {
+  SELECT: "select",
+  DESELECT: "deselect",
 } as const;
-export type ExportFormat = (typeof ExportFormat)[keyof typeof ExportFormat];
+export type LassoMode = (typeof LassoMode)[keyof typeof LassoMode];

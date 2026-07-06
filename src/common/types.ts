@@ -1,8 +1,8 @@
 import type {
   BlockType,
+  CommandSegmentType,
   NoteSegmentType,
   NoteStyle,
-  SegmentType,
 } from "./enums";
 
 export interface Variable {
@@ -56,10 +56,10 @@ export interface RunbookContent {
 }
 
 // One piece of a resolved command preview
-export interface Segment {
+export interface CommandSegment {
   key?: string;
   text: string;
-  type: SegmentType;
+  type: CommandSegmentType;
 }
 
 // One piece of parsed note markdown

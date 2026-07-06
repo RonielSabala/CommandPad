@@ -1,6 +1,6 @@
 import { COPY_FEEDBACK_TIMEOUT_MS, UI } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { SegmentType } from "@/common/enums";
+import { CommandSegmentType } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
 import { useAutoResize } from "@/hooks/useAutoResize";
 import { useStore } from "@/store/store";
@@ -69,7 +69,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         >
           {blockText ? (
             segments.map((seg, i) =>
-              seg.type === SegmentType.RESOLVED &&
+              seg.type === CommandSegmentType.RESOLVED &&
               seg.key &&
               secretKeys.has(seg.key) ? (
                 <span key={i} className="token-secret">
