@@ -15,13 +15,13 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
   - [Run Locally](#run-locally)
 - [Usage](#usage)
   - [Tabs](#tabs)
+  - [Sidebar](#sidebar)
   - [Runbook Library](#runbook-library)
   - [Variables](#variables)
   - [Block Types](#block-types)
   - [Multi-select](#multi-select)
   - [Read Mode](#read-mode)
   - [Export](#export)
-  - [Sidebar](#sidebar)
 - [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Examples](#examples)
 - [Contributing](#contributing)
@@ -32,17 +32,15 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 ## Features
 
 - **Tabs**: open multiple runbooks simultaneously in separate tabs.
-- **Runbook library**: import one or many `.json` runbooks into a persistent sidebar list.
 - **Variables**: define named variables and reference them in any command block or other variable value.
 - **Live resolved preview**: every command block shows the fully resolved command in real time as you type.
 - **Three block types**: commands, notes, and dividers can be freely mixed to build structured, annotated runbooks.
 - **Rich note blocks**: notes support three text styles (heading, subheading, body), auto-detect URLs, and inline markdown: `**bold**`, `_italic_`, `` `code` ``.
 - **Secret variables**: mark any variable as secret to mask its value in the sidebar and in command previews.
-- **Sidebar search**: filter both the runbook list and the variable list instantly with the search bars.
 - **Drag-and-drop reordering**: blocks, variables, and runbook library entries can each be reordered via their drag handles.
 - **Multi-block selection**: hold `Ctrl` and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the group at once.
 - **Read mode**: locks editing while still allowing variable values to change and runbooks to be switched.
-- **Light and dark theme**: toggle between dark and light mode. The preference is saved and restored on reload.
+- **Light and dark theme**: toggle between dark and light mode.
 - **Adjustable sidebar**: collapse the sidebar to maximize workspace, or move it to the right side of the screen.
 - **Persistent state**: tabs, workspace content, sidebar state, and app mode are all saved locally and restored on reload.
 - **Export**: save the active workspace as `.json`, `.md`, or `.txt` via a native OS save dialog.
@@ -81,17 +79,21 @@ Access at `http://localhost:5173`. Use `Ctrl+C` to stop.
 
 ### Tabs
 
-Each tab holds one open runbook. Tabs appear at the top of the main panel.
+Each tab holds one open runbook.
 
-- Click **+** to open a new untitled tab.
 - Click a tab to switch to it.
 - **Middle-click** a tab to close it.
-- Click the **x** button that appears on hover to close a tab.
 - **Drag** a tab to reorder it.
 - An accent bar at the bottom of the active tab marks it at a glance.
-- Tabs and their active content are persisted across page reloads.
 
-> If you open a runbook from the sidebar that is already open in another tab, the app switches to the existing tab instead of opening a duplicate.
+---
+
+### Sidebar
+
+The sidebar holds the runbook library and variables panel.
+
+- **Collapse / expand**: click the chevron button or press `Ctrl+S`.
+- **Move left / right**: click the layout button or press `Ctrl+Shift+S` to move the sidebar to the other side of the screen.
 
 ---
 
@@ -107,7 +109,8 @@ The sidebar's **RUNBOOKS** section holds your imported runbooks.
 
 **Auto-labelling:** if a runbook's first block is a note, its text is used as the library label, so entries are self-describing. Otherwise the imported filename is used as the fallback.
 
-Edits made to the active runbook are automatically saved back to the library entry.
+> [!NOTE]
+> Edits made to the active runbook are automatically saved back to the library entry.
 
 ---
 
@@ -132,11 +135,12 @@ Variables are defined in the **VARIABLES** section of the sidebar. Each variable
 - Keys are case-sensitive. Variables with empty keys are ignored.
 - Hovering over a key or value shows the full content as a tooltip.
 - Drag the handle on the left of a row to reorder variables.
-- Use the **search bar** to filter variables by key or value.
 - Delete a variable with the button on row hover.
-- Click the **eye-slash icon** on a variable row to mark it as **secret**. Secret values are masked in the sidebar and are substituted silently in command previews.
+- Use the **search bar** to filter variables by key or value.
+- Click the **eye icon** on a variable row to mark it as **secret**. Secret values are masked in the sidebar and are substituted silently in command previews.
 
-> If no tabs are open and you create a variable, a new untitled tab is created automatically.
+> [!TIP]
+> If no tabs are open and you create a new variable, a new untitled tab is created automatically.
 
 ---
 
@@ -144,6 +148,7 @@ Variables are defined in the **VARIABLES** section of the sidebar. Each variable
 
 Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel.
 
+> [!TIP]
 > If no tabs are open and you add a block, a new untitled tab is created automatically.
 
 ---
@@ -171,12 +176,12 @@ A free-form text block. Three text styles are selectable on hover:
 
 Supported inline markdown:
 
-| Syntax        | Result         |
-| ------------- | -------------- |
-| `**text**`    | **Bold**       |
-| `_text_`      | _Italic_       |
-| `` `text` ``  | `Code pill`    |
-| `https://...` | Clickable link |
+| Syntax               | Result         |
+| -------------------- | -------------- |
+| `**text**`           | **Bold**       |
+| `_text_` or `*text*` | _Italic_       |
+| `` `text` ``         | `Code pill`    |
+| `https://...`        | Clickable link |
 
 To open a link, hold `Alt` and click it. In read mode, links are directly clickable without holding `Alt`.
 
@@ -216,7 +221,7 @@ Click the **padlock icon** in the header to enter read mode:
 - Runbooks can still be switched.
 - Links in notes are directly clickable.
 
-Click the **pencil icon** to return to edit mode. The mode persists across page reloads.
+Click the **pencil icon** to return to edit mode.
 
 ---
 
@@ -233,17 +238,6 @@ Click **Export** in the header to open the format picker.
 A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.
 
 Press `Escape` or click outside the modal to cancel.
-
----
-
-### Sidebar
-
-The sidebar holds the runbook library and variables panel.
-
-- **Collapse / expand**: click the chevron button or press `Ctrl+S`.
-- **Move left / right**: click the layout button or press `Ctrl+Shift+S` to move the sidebar to the other side of the screen.
-
-Both preferences persist across page reloads.
 
 ---
 
