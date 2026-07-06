@@ -1,7 +1,6 @@
 import { Key } from "@/common/constants/events";
 import { AppMode, Theme } from "@/common/enums";
 import { getActiveTab, useStore } from "@/store/store";
-import { CssClass } from "../../common/constants/css";
 import "./Header.css";
 
 function ThemeIcon({ light }: { light: boolean }) {
@@ -50,11 +49,9 @@ export function Header() {
   const toggleAllCommandEditors = useStore(
     (state) => state.toggleAllCommandEditors,
   );
-
   const isEmpty = useStore(
     (state) => !(getActiveTab(state)?.blocks.length ?? 0),
   );
-  const emptyClass = isEmpty ? CssClass.BTN_DISABLED : "";
 
   return (
     <header id="app-header">
@@ -92,9 +89,8 @@ export function Header() {
         </button>
         <div className="vertical-divider" />
         <button
-          id="collapse-all-btn"
-          className={`btn btn-lg ${emptyClass}`}
-          disabled={isEmpty}
+          className="btn btn-lg"
+          disabled={isEmpty || isRead}
           onClick={toggleAllCommandEditors}
           title="Expand/collapse all command editors"
         >
@@ -169,7 +165,7 @@ export function Header() {
         <div className="vertical-divider" />
 
         <button
-          className={`btn btn-lg btn-primary ${emptyClass}`}
+          className="btn btn-lg btn-primary"
           disabled={isEmpty}
           onClick={openExportModal}
           title="Export runbook"

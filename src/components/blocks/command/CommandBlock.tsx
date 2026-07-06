@@ -96,7 +96,12 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           </svg>
         </button>
 
-        <button className="btn" onClick={copy} title="Copy command">
+        <button
+          className="btn"
+          onClick={copy}
+          disabled={!blockText}
+          title="Copy command"
+        >
           {copied ? (
             <svg viewBox="0 0 16 16" width="13" height="13">
               <polyline

@@ -109,6 +109,15 @@ body {
   color: var(--color-text-primary);
 }
 
+.btn:disabled,
+.btn:disabled:hover {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-alt);
+  border-color: var(--color-border);
+}
+
 .btn svg {
   width: var(--icon-md);
   height: var(--icon-md);
@@ -169,11 +178,6 @@ body {
 .btn-lg svg {
   width: var(--icon-base);
   height: var(--icon-base);
-}
-
-.btn-disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 /* --- DRAG HANDLE --- */
