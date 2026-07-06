@@ -297,19 +297,24 @@ export const useStore = create<StoreState>()((set, get) => ({
     const ui = persistence.loadUiState();
     const library = persistence.loadRunbookLibrary();
     const sections = persistence.loadSidebarSections();
+    const meta = persistence.loadTabsMeta();
+
+    const activeTabMeta = meta
+      ? (meta.tabOrder.find((tab) => tab.tabId === meta.activeTabId) ??
+        meta.tabOrder[0])
+      : undefined;
+
+    const initialActiveRunbookId =
+      activeTabMeta?.runbookId ?? library?.activeId ?? null;
 
     set({
       ...(ui ?? {}),
-      ...(library
-        ? { runbookLibrary: library.items, activeRunbookId: library.activeId }
-        : {}),
+      ...(library ? { runbookLibrary: library.items } : {}),
+      activeRunbookId: initialActiveRunbookId,
       ...(sections ?? {}),
     });
 
-    // Rehydrate tab content from IndexedDB. Guarded so a storage failure still
-    // lets the app finish booting (otherwise the body stays hidden).
     try {
-      const meta = persistence.loadTabsMeta();
       if (meta) {
         const currentLibrary = get().runbookLibrary;
         const loadedTabs: Tab[] = [];
