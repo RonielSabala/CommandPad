@@ -7,6 +7,7 @@
 }
 
 .note-code {
+  font-size: 0.95em;
   font-family: var(--font-mono);
   background: var(--code-bg);
   color: var(--code-color);

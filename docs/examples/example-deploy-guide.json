@@ -33,7 +33,7 @@
     },
     {
       "type": "note",
-      "text": "A complete workflow for deploying and debugging your application in Kubernetes. Contains common kubectl commands and debugging procedures.",
+      "text": "A complete workflow for deploying and debugging your application in **Kubernetes**. Contains common `kubectl` commands and debugging procedures.",
       "style": "body"
     },
     {
@@ -46,7 +46,7 @@
     },
     {
       "type": "note",
-      "text": "Make sure you have kubectl installed and configured. Visit https://kubernetes.io/docs/tasks/tools/ for installation instructions.",
+      "text": "Make sure you have `kubectl` installed and configured. Visit https://kubernetes.io/docs/tasks/tools/ for installation instructions.",
       "style": "body"
     },
     {
@@ -117,7 +117,7 @@
     },
     {
       "type": "note",
-      "text": "Useful for viewing logs from a crashed container that has been restarted.",
+      "text": "Useful for viewing logs from a crashed container that has been restarted. The `--previous` flag reads the _prior_ container instance's logs.",
       "style": "body"
     },
     {
@@ -135,7 +135,7 @@
     },
     {
       "type": "note",
-      "text": "Enter interactive shell in the pod. Check environment variables, logs, and running processes.",
+      "text": "Enter an interactive shell in the pod using `/bin/bash`. Check environment variables, logs, and running processes from _inside_ the container.",
       "style": "body"
     },
     {
@@ -145,7 +145,7 @@
     },
     {
       "type": "note",
-      "text": "Forward local port 8080 to the pod's port 8080. Now access the service at http://localhost:8080",
+      "text": "Forward **local** port `8080` to the pod's port `8080`. Now access the service at http://localhost:8080",
       "style": "body"
     },
     {
