@@ -28,7 +28,11 @@ export function SidebarSection({
           <polyline points="4,6 8,10 12,6" />
         </svg>
       </div>
-      <div className="sidebar-section-body">{children}</div>
+      <div className="sidebar-section-body-wrapper">
+        <div className="sidebar-section-body">
+          <div className="sidebar-section-scroll">{children}</div>
+        </div>
+      </div>
     </div>
   );
 }
