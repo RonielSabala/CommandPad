@@ -1,0 +1,52 @@
+#tabs-bar {
+  display: flex;
+  align-items: flex-end;
+  background: var(--color-surface);
+  border-bottom: var(--border-standard);
+  overflow-x: auto;
+  flex-shrink: 0;
+  padding: var(--space-4) var(--space-3) 0;
+  scrollbar-width: none;
+  gap: var(--space-1);
+}
+
+#tabs-bar::-webkit-scrollbar {
+  display: none;
+}
+
+#add-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-base);
+  height: var(--icon-base);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  align-self: center;
+  margin-left: var(--space-3);
+  margin-bottom: var(--space-2);
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+#add-tab-btn:hover {
+  color: var(--color-text-primary);
+  background: var(--color-surface-alt);
+}
+
+#add-tab-btn svg {
+  width: var(--icon-md);
+  height: var(--icon-md);
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+body.read-mode #add-tab-btn {
+  display: none;
+}

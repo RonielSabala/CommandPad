@@ -1,8 +1,10 @@
 {
   "recommendations": [
+    "antfu.vite",
+    "dbaeumer.vscode-eslint",
     "davidanson.vscode-markdownlint",
     "esbenp.prettier-vscode",
-    "ritwickdey.liveserver",
+    "redhat.vscode-yaml",
     "streetsidesoftware.code-spell-checker",
     "yzhang.markdown-all-in-one"
   ]

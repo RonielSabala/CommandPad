@@ -1,0 +1,29 @@
+body.app-ready {
+  visibility: visible;
+}
+
+#app-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-rows: var(--header-height) 1fr;
+  grid-template-areas:
+    "header header"
+    "sidebar main";
+  height: 100vh;
+  overflow: hidden;
+}
+
+#app-shell.sidebar-collapsed {
+  grid-template-columns: 0 1fr;
+}
+
+#app-shell.sidebar-right {
+  grid-template-columns: 1fr var(--sidebar-width);
+  grid-template-areas:
+    "header header"
+    "main sidebar";
+}
+
+#app-shell.sidebar-right.sidebar-collapsed {
+  grid-template-columns: 1fr 0;
+}

@@ -1,0 +1,48 @@
+.runbook-item-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.runbook-item-btn:hover {
+  background: var(--color-surface-alt);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.runbook-item-btn:focus:not(.runbook-focused) {
+  outline: none;
+}
+
+.runbook-item-btn.active,
+.runbook-item-btn.runbook-focused {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  font-weight: 500;
+}
+
+.runbook-item-btn.active.drag-over {
+  border-color: transparent;
+}
+
+.runbook-item-btn.runbook-focused {
+  outline: var(--space-1) solid var(--accent);
+  outline-offset: var(--space-1);
+  box-shadow: 0 0 0 var(--space-2) var(--accent-dim);
+}

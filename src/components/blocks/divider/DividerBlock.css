@@ -1,0 +1,14 @@
+.divider-block {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-4) 0;
+  min-width: var(--block-min-width);
+  border-radius: var(--radius-md);
+}
+
+.divider-line {
+  flex: 1;
+  height: var(--space-2);
+  background: var(--color-border);
+}

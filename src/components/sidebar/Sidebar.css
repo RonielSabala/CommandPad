@@ -1,0 +1,27 @@
+#app-sidebar {
+  grid-area: sidebar;
+  background: var(--color-surface);
+  border-right: var(--border-standard);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-collapsed #app-sidebar {
+  width: 0;
+  overflow: hidden;
+  border-right: none;
+}
+
+.sidebar-right #app-sidebar {
+  border-right: none;
+  border-left: var(--border-standard);
+}
+
+#runbook-import-input {
+  display: none;
+}
+
+#variables-section {
+  flex: 1 1 auto;
+}

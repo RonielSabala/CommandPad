@@ -1,0 +1,31 @@
+#sidebar-btn-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-3);
+  align-self: flex-start;
+  position: sticky;
+  top: var(--space-1);
+  z-index: 10;
+}
+
+.sidebar-right #sidebar-btn-group {
+  flex-direction: row-reverse;
+  align-self: flex-end;
+}
+
+#sidebar-toggle-btn {
+  flex-shrink: 0;
+}
+
+.sidebar-collapsed #sidebar-chevron {
+  transform: rotate(180deg);
+}
+
+.sidebar-right #sidebar-chevron {
+  transform: rotate(180deg);
+}
+
+.sidebar-right.sidebar-collapsed #sidebar-chevron {
+  transform: rotate(0deg);
+}
