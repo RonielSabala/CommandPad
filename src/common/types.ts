@@ -39,6 +39,7 @@ export interface Tab {
   runbookId: string | null;
   blocks: Block[];
   variables: Variable[];
+  scrollTop: number;
 }
 
 export interface RunbookEntry {

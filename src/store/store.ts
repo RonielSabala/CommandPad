@@ -54,7 +54,6 @@ interface StoreState {
   sidebarPosition: SidebarPosition;
   runbookSectionCollapsed: boolean;
   variablesSectionCollapsed: boolean;
-  scrollTop: number;
 
   // Interaction / selection
   focusedRunbookId: string | null;
@@ -167,7 +166,14 @@ function createTabObject(
   label = DEFAULT_TAB_LABEL,
   runbookId: string | null = null,
 ): Tab {
-  return { id: generateId(), label, runbookId, variables: [], blocks: [] };
+  return {
+    id: generateId(),
+    label,
+    runbookId,
+    variables: [],
+    blocks: [],
+    scrollTop: 0,
+  };
 }
 
 /** Immutably replace the active tab via `mutate`. */
@@ -235,7 +241,6 @@ export const useStore = create<StoreState>()((set, get) => ({
   sidebarPosition: SidebarPosition.LEFT,
   runbookSectionCollapsed: false,
   variablesSectionCollapsed: false,
-  scrollTop: 0,
 
   focusedRunbookId: null,
   selectedBlockIds: new Set(),
@@ -269,7 +274,6 @@ export const useStore = create<StoreState>()((set, get) => ({
       mode: state.mode,
       sidebarCollapsed: state.sidebarCollapsed,
       sidebarPosition: state.sidebarPosition,
-      scrollTop: state.scrollTop,
       theme: state.theme,
     });
 
@@ -310,7 +314,7 @@ export const useStore = create<StoreState>()((set, get) => ({
         const currentLibrary = get().runbookLibrary;
         const loadedTabs: Tab[] = [];
 
-        for (const { tabId, runbookId } of meta.tabOrder) {
+        for (const { tabId, runbookId, scrollTop } of meta.tabOrder) {
           const entry = currentLibrary.find((r) => r.id === runbookId);
           if (!entry || runbookId === null) {
             continue;
@@ -325,6 +329,7 @@ export const useStore = create<StoreState>()((set, get) => ({
             runbookId,
             variables: content.variables ?? [],
             blocks: content.blocks ?? [],
+            scrollTop: scrollTop ?? 0,
           });
         }
 
@@ -1064,7 +1069,6 @@ export const useStore = create<StoreState>()((set, get) => ({
       mode: state.mode,
       sidebarCollapsed: state.sidebarCollapsed,
       sidebarPosition: state.sidebarPosition,
-      scrollTop: state.scrollTop,
       theme: state.theme,
     });
   },
@@ -1112,15 +1116,8 @@ export const useStore = create<StoreState>()((set, get) => ({
   setCtrlHeld: (held) => set({ ctrlHeld: held }),
   setAltHeld: (held) => set({ altHeld: held }),
   setScrollTop: (scrollTop) => {
-    set({ scrollTop });
-    const state = get();
-    persistence.saveUiState({
-      mode: state.mode,
-      sidebarCollapsed: state.sidebarCollapsed,
-      sidebarPosition: state.sidebarPosition,
-      scrollTop,
-      theme: state.theme,
-    });
+    set((s) => withActiveTab(s, (tab) => ({ ...tab, scrollTop })));
+    persistence.saveTabsMeta(get().tabs, get().activeTabId);
   },
 
   clearUserInteraction: () =>

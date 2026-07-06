@@ -1,23 +1,27 @@
 import { DEBOUNCE_SAVE_MS } from "@/common/config";
 import { EventType } from "@/common/constants/events";
-import { useStore } from "@/store/store";
+import { getActiveTab, useStore } from "@/store/store";
 import { debounce } from "@/utils/debounce";
 import { useEffect, type RefObject } from "react";
 
 export function useScrollPersistence(ref: RefObject<HTMLElement | null>): void {
   const initialized = useStore((state) => state.initialized);
+  const activeTabId = useStore((state) => state.activeTabId);
 
+  // Restore the active tab's saved scroll position
   useEffect(() => {
-    if (!initialized || !ref.current) {
+    const element = ref.current;
+    if (!initialized || !element) {
       return;
     }
 
-    const element = ref.current;
-    requestAnimationFrame(() => {
-      element.scrollTop = useStore.getState().scrollTop;
+    const frame = requestAnimationFrame(() => {
+      element.scrollTop = getActiveTab(useStore.getState())?.scrollTop ?? 0;
     });
-  }, [initialized, ref]);
+    return () => cancelAnimationFrame(frame);
+  }, [initialized, activeTabId, ref]);
 
+  // Persist scroll changes onto the active tab
   useEffect(() => {
     const element = ref.current;
     if (!element) {

@@ -11,7 +11,6 @@ function getSavedItemByKey(key: string) {
 interface PersistedUiState {
   mode: AppMode;
   theme: Theme;
-  scrollTop: number;
   sidebarCollapsed: boolean;
   sidebarPosition: SidebarPosition;
 }
@@ -23,7 +22,6 @@ export function saveUiState(ui: PersistedUiState): void {
       JSON.stringify({
         mode: ui.mode,
         theme: ui.theme,
-        scrollTop: ui.scrollTop,
         sidebarCollapsed: ui.sidebarCollapsed
           ? SectionState.COLLAPSED
           : SectionState.EXPANDED,
@@ -45,7 +43,6 @@ export function loadUiState(): Partial<PersistedUiState> | null {
     return {
       mode: saved.mode === AppMode.READ ? AppMode.READ : AppMode.EDIT,
       theme: saved.theme === Theme.LIGHT ? Theme.LIGHT : Theme.DARK,
-      scrollTop: saved.scrollTop ?? 0,
       sidebarCollapsed: saved.sidebarCollapsed === SectionState.COLLAPSED,
       sidebarPosition:
         saved.sidebarPosition === SidebarPosition.RIGHT
@@ -62,7 +59,7 @@ export function loadUiState(): Partial<PersistedUiState> | null {
 
 interface PersistedTabs {
   activeTabId: string | null;
-  tabOrder: { tabId: string; runbookId: string | null }[];
+  tabOrder: { tabId: string; runbookId: string | null; scrollTop?: number }[];
 }
 
 export function saveTabsMeta(tabs: Tab[], activeTabId: string | null): void {
@@ -74,6 +71,7 @@ export function saveTabsMeta(tabs: Tab[], activeTabId: string | null): void {
         tabOrder: tabs.map((tab) => ({
           tabId: tab.id,
           runbookId: tab.runbookId,
+          scrollTop: tab.scrollTop,
         })),
       }),
     );
