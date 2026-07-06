@@ -4,6 +4,7 @@ import { useBodyClasses } from "@/hooks/useBodyClasses";
 import { useDocumentInteractions } from "@/hooks/useDocumentInteractions";
 import { useKeybindings } from "@/hooks/useKeybindings";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { useEffect } from "react";
 import "./App.css";
 import { Header } from "./components/header/Header";
@@ -35,12 +36,10 @@ export default function App() {
     }
   }, [isInitialized]);
 
-  const shellClass = [
+  const shellClass = classNames(
     isSidebarCollapsed && "sidebar-collapsed",
     sidebarPosition === SidebarPosition.RIGHT && "sidebar-right",
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
     <>

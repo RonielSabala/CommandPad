@@ -5,6 +5,7 @@ import type { RunbookEntry } from "@/common/types";
 import { DragDotsIcon, TrashIcon } from "@/components/Icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { memo } from "react";
 import "./RunbookRow.css";
 
@@ -35,14 +36,12 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
     !readMode,
   );
 
-  const btnClass = [
+  const runbookBtnClass = classNames(
     "runbook-item-btn",
     isActive && CssClass.ACTIVE,
     isFocused && "runbook-focused",
     isDragOver && CssClass.DRAG_OVER,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
     <div
@@ -54,7 +53,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
         <DragDotsIcon />
       </div>
       <button
-        className={btnClass}
+        className={runbookBtnClass}
         onClick={() => {
           setRunbookFocus(null);
           void loadRunbookFromLibrary(runbookId);

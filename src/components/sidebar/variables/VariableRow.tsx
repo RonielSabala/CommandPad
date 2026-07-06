@@ -5,6 +5,7 @@ import type { Variable } from "@/common/types";
 import { DragDotsIcon, TrashIcon } from "@/components/Icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { memo, useEffect, useRef } from "react";
 import "./VariableRow.css";
 
@@ -62,22 +63,18 @@ export const VariableRow = memo(function VariableRow({ variable }: Props) {
     }
   }, [pendingFocus, consumeVariableFocus]);
 
-  const rowClass = [
+  const rowClass = classNames(
     "variable-row",
     "sidebar-section-list-row",
     isSecret && "is-secret",
     isDragging && CssClass.DRAGGING,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
-  const variableInputsClass = [
+  const variableInputsClass = classNames(
     "variable-inputs",
     isSecret && "is-secret",
     isDragOver && CssClass.DRAG_OVER,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
     <div

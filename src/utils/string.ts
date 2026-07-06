@@ -13,3 +13,9 @@ export function matchesQuery(
   const needle = query.toLowerCase();
   return fields.some((field) => field?.toLowerCase().includes(needle));
 }
+
+export function classNames(
+  ...classes: (string | false | null | undefined)[]
+): string {
+  return classes.filter(Boolean).join(" ");
+}

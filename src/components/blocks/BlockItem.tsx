@@ -7,6 +7,7 @@ import type { Block } from "@/common/types";
 import { lasso } from "@/hooks/lasso";
 import { useStore } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
+import { classNames } from "@/utils/string";
 import { memo, useRef, useState } from "react";
 import { DragDotsIcon } from "../Icons";
 import "./BlockItem.css";
@@ -43,19 +44,17 @@ export const BlockItem = memo(function BlockItem({
     undefined,
   );
 
-  const className = [
+  const blockClass = classNames(
     "block-item",
     isSelected && "block-selected",
     isFlashing && "duplicate-flash",
     dragging && CssClass.DRAGGING,
     dragOver && CssClass.DRAG_OVER,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
     <div
-      className={className}
+      className={blockClass}
       {...{ [DataAttr.BLOCK_ID]: block.id }}
       draggable={draggable}
       onDragStart={(event) => {

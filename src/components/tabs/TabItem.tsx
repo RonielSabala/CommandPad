@@ -4,6 +4,7 @@ import { DragEffect, MouseButton } from "@/common/constants/events";
 import { TabDropSide } from "@/common/enums";
 import type { Tab } from "@/common/types";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { useState, type DragEvent } from "react";
 import { CloseIcon } from "../Icons";
 import "./TabItem.css";
@@ -31,19 +32,17 @@ export function TabItem({ tab }: Props) {
     return event.clientX < rect.left + rect.width / 2;
   };
 
-  const className = [
+  const tabClass = classNames(
     "tab",
     isActive && "tab-active",
     dragging && CssClass.DRAGGING,
     dropSide === TabDropSide.LEFT && "drag-over-left",
     dropSide === TabDropSide.RIGHT && "drag-over-right",
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
     <div
-      className={className}
+      className={tabClass}
       title={tabLabel}
       draggable
       onClick={() => switchTab(tabId)}
