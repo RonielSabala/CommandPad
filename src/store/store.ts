@@ -886,6 +886,7 @@ export const useStore = create<StoreState>()((set, get) => ({
         return { ...tab, blocks };
       }),
       flashBlockIds: new Set(duplicated.map((b) => b.id)),
+      pendingFocusBlockId: duplicated[duplicated.length - 1]?.id ?? null,
     }));
     get().saveState();
   },
