@@ -129,7 +129,7 @@ export const BlockItem = memo(function BlockItem({
             );
           }}
         >
-          <DragIcon />
+          <DragIcon className="icon-md" />
         </div>
       </div>
 
@@ -139,14 +139,14 @@ export const BlockItem = memo(function BlockItem({
           onClick={() => duplicateBlock(block.id)}
           title="Duplicate block"
         >
-          <DuplicateIcon />
+          <DuplicateIcon className="icon-md icon-bold" />
         </button>
         <button
           className="btn btn-icon btn-danger"
           onClick={() => removeBlock(block.id)}
           title="Delete block"
         >
-          <TrashIcon />
+          <TrashIcon className="icon-md icon-bold" />
         </button>
       </div>
     </div>

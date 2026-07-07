@@ -96,7 +96,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           onClick={() => toggleCommandEditor(blockId)}
           title={isEditorCollapsed ? "Show editor" : "Hide editor"}
         >
-          <EditorToggleChevronIcon />
+          <EditorToggleChevronIcon className="toggle-editor-icon icon-md icon-bold" />
         </button>
 
         <button
@@ -105,7 +105,11 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           disabled={!blockText}
           title="Copy command"
         >
-          {copied ? <CheckIcon /> : <CopyIcon />}
+          {copied ? (
+            <CheckIcon className="icon-md icon-bold" />
+          ) : (
+            <CopyIcon className="icon-md icon-bold" />
+          )}
         </button>
       </div>
 

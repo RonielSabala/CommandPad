@@ -3,10 +3,10 @@ import { CssClass } from "@/common/constants/css";
 import { DragEffect, MouseButton } from "@/common/constants/events";
 import { TabDropSide } from "@/common/enums";
 import type { Tab } from "@/common/types";
+import { CloseIcon } from "@/components/icons";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useState, type DragEvent } from "react";
-import { CloseIcon } from "@/components/icons";
 import "./TabItem.css";
 
 const tabDrag: { srcId: string | null } = { srcId: null };
@@ -101,7 +101,7 @@ export function TabItem({ tab }: Props) {
           closeTab(tabId);
         }}
       >
-        <CloseIcon />
+        <CloseIcon className="tab-close-icon icon-sm icon-bold" />
       </button>
     </div>
   );

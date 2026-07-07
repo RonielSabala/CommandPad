@@ -29,9 +29,18 @@ export function AddBlockRow() {
   return (
     <div id="add-block-row">
       <p className="new-block-label section-title no-user-select">NEW BLOCK</p>
-      <AddBlockButton type={BlockType.NOTE} icon={<NoteIcon />} />
-      <AddBlockButton type={BlockType.COMMAND} icon={<CommandIcon />} />
-      <AddBlockButton type={BlockType.DIVIDER} icon={<DividerIcon />} />
+      <AddBlockButton
+        type={BlockType.NOTE}
+        icon={<NoteIcon className="icon-md icon-bold" />}
+      />
+      <AddBlockButton
+        type={BlockType.COMMAND}
+        icon={<CommandIcon className="icon-md icon-bold" />}
+      />
+      <AddBlockButton
+        type={BlockType.DIVIDER}
+        icon={<DividerIcon className="icon-md icon-bold" />}
+      />
     </div>
   );
 }

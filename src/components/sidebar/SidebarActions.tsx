@@ -19,14 +19,17 @@ export function SidebarActions() {
         onClick={toggleSidebar}
         title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
-        <SidebarCollapseIcon id="sidebar-chevron" />
+        <SidebarCollapseIcon
+          id="sidebar-chevron"
+          className="icon-md icon-bold"
+        />
       </button>
       <button
         className="btn btn-icon"
         onClick={toggleSidebarPosition}
         title={`Move sidebar to ${sidebarPosition === SidebarPosition.RIGHT ? "left" : "right"}`}
       >
-        <SidebarPositionIcon />
+        <SidebarPositionIcon className="icon-md icon-bold" />
       </button>
     </div>
   );

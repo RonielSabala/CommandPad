@@ -83,17 +83,11 @@ body.ctrl-held:not(.read-mode) .command-preview .btn {
   color: var(--color-text-secondary);
 }
 
-.toggle-editor-btn svg {
-  width: var(--icon-sm);
-  height: var(--icon-sm);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
+.toggle-editor-btn .toggle-editor-icon {
   transition: transform var(--transition-base);
 }
 
-.toggle-editor-btn.editor-collapsed svg {
+.toggle-editor-btn.editor-collapsed .toggle-editor-icon {
   transform: rotate(-90deg);
 }
 

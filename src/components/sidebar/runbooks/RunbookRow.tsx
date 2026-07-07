@@ -50,7 +50,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
       {...rowProps}
     >
       <div className="drag-handle" title="Drag to reorder" {...handleProps}>
-        <DragIcon />
+        <DragIcon className="icon-md" />
       </div>
       <button
         className={runbookBtnClass}
@@ -67,7 +67,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
         onClick={() => void removeRunbookFromLibrary(runbookId)}
         title="Remove from library"
       >
-        <XIcon />
+        <XIcon className="icon-md icon-bold" />
       </button>
     </div>
   );

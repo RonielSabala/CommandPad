@@ -25,7 +25,7 @@ export function SidebarSection({
     >
       <div className="sidebar-section-header no-user-select" onClick={onToggle}>
         <p className="section-title">{title}</p>
-        <SidebarSectionChevronIcon className="sidebar-section-chevron" />
+        <SidebarSectionChevronIcon className="sidebar-section-chevron icon-md icon-bold" />
       </div>
       <div className="sidebar-section-body-wrapper">
         <div className="sidebar-section-body">

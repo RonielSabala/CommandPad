@@ -66,7 +66,7 @@ export function RunbookSection() {
         onClick={openImportDialog}
         title="Import runbook"
         label="Import"
-        icon={<ImportIcon />}
+        icon={<ImportIcon className="icon-md icon-bold" />}
       />
     </SidebarSection>
   );

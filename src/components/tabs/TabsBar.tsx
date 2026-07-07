@@ -17,7 +17,7 @@ export function TabsBar() {
         title="New tab"
         onClick={() => void createNewTab()}
       >
-        <PlusIcon />
+        <PlusIcon className="icon-md icon-bold" />
       </button>
     </div>
   );

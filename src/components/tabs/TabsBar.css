@@ -39,14 +39,6 @@
   background: var(--color-surface-alt);
 }
 
-#add-tab-btn svg {
-  width: var(--icon-md);
-  height: var(--icon-md);
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-
 body.read-mode #add-tab-btn {
   display: none;
 }

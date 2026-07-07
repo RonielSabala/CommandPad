@@ -49,7 +49,7 @@ export function VariableSection() {
         onClick={() => void addVariable()}
         title="New variable"
         label="New"
-        icon={<PlusIcon />}
+        icon={<PlusIcon className="icon-md icon-bold" />}
       />
     </SidebarSection>
   );

@@ -54,7 +54,11 @@ export function Header() {
           onClick={toggleAppMode}
           title={`Switch to ${isRead ? "Edit" : "Read"} mode`}
         >
-          {isRead ? <PencilIcon /> : <PadlockIcon />}
+          {isRead ? (
+            <PencilIcon className="icon icon-bold" />
+          ) : (
+            <PadlockIcon className="icon icon-bold" />
+          )}
         </button>
         <div className="vertical-divider" />
         <button
@@ -63,7 +67,7 @@ export function Header() {
           onClick={toggleAllCommandEditors}
           title="Expand/collapse all command editors"
         >
-          <ChevronsRightIcon />
+          <ChevronsRightIcon className="icon icon-bold" />
           Collapse All
         </button>
       </div>
@@ -76,7 +80,11 @@ export function Header() {
           onClick={toggleTheme}
           title={`Switch to ${isLight ? Theme.DARK : Theme.LIGHT} mode`}
         >
-          {isLight ? <MoonIcon /> : <SunIcon />}
+          {isLight ? (
+            <MoonIcon className="icon" />
+          ) : (
+            <SunIcon className="icon icon-bold" />
+          )}
         </button>
 
         <div className="vertical-divider" />
@@ -87,7 +95,7 @@ export function Header() {
           onClick={openKeybindingsModal}
           title="App keybindings"
         >
-          <KeyboardIcon />
+          <KeyboardIcon id="keybindings-icon" className="icon icon-bold" />
         </button>
 
         <div className="vertical-divider" />
@@ -97,7 +105,7 @@ export function Header() {
           onClick={clearAllData}
           title="Clear workspace"
         >
-          <TrashIcon />
+          <TrashIcon className="icon icon-bold" />
         </button>
 
         <div className="vertical-divider" />
@@ -108,7 +116,7 @@ export function Header() {
           onClick={openExportModal}
           title="Export runbook"
         >
-          <ExportIcon />
+          <ExportIcon className="icon icon-bold" />
           Export
         </button>
       </div>

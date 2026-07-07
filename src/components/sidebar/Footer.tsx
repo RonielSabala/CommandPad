@@ -18,7 +18,7 @@ export function FooterLink({ icon, title, href }: FooterLinkProps) {
       rel={Anchor.REL}
       title={title}
     >
-      <IconComponent aria-label={title} />
+      <IconComponent className="icon-md" aria-label={title} />
     </a>
   );
 }

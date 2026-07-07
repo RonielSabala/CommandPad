@@ -19,7 +19,7 @@ export function SidebarSearch({ value, placeholder, onChange }: Props) {
         value={value}
         onChange={(event) => onChange(event.target.value)}
       />
-      <SearchIcon className="sidebar-search-icon" />
+      <SearchIcon className="sidebar-search-icon icon-md icon-bold" />
     </div>
   );
 }

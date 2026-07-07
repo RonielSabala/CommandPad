@@ -64,7 +64,7 @@ export const VariableRow = memo(function VariableRow({ variable }: Props) {
       {...rowProps}
     >
       <div className="drag-handle" title="Drag to reorder" {...handleProps}>
-        <DragIcon />
+        <DragIcon className="icon-md" />
       </div>
       <div className={variableInputsClass}>
         <input
@@ -98,14 +98,18 @@ export const VariableRow = memo(function VariableRow({ variable }: Props) {
         onClick={() => toggleVariableSecret(variableId)}
         title={isSecret ? "Reveal value" : "Mask value"}
       >
-        {isSecret ? <EyeSlashIcon /> : <EyeIcon />}
+        {isSecret ? (
+          <EyeSlashIcon className="icon-md icon-bold" />
+        ) : (
+          <EyeIcon className="icon-md icon-bold" />
+        )}
       </button>
       <button
         className="btn btn-icon btn-danger"
         onClick={() => removeVariable(variableId)}
         title="Remove variable"
       >
-        <XIcon />
+        <XIcon className="icon-md icon-bold" />
       </button>
     </div>
   );
