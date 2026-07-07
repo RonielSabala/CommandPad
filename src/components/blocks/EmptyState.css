@@ -6,6 +6,7 @@
 }
 
 #empty-state-icon {
+  display: inline;
   stroke: var(--color-text-muted);
   stroke-width: 2.3;
 }

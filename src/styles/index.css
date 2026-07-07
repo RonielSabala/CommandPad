@@ -199,6 +199,7 @@ body {
 .icon-md,
 .icon-lg,
 .icon-bold {
+  display: block;
   flex-shrink: 0;
 }
 
