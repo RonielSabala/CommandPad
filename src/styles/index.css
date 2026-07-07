@@ -118,17 +118,6 @@ body {
   border-color: var(--color-border);
 }
 
-.btn svg {
-  width: var(--icon-md);
-  height: var(--icon-md);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  flex-shrink: 0;
-}
-
 .btn-icon {
   padding: var(--space-2);
   border-radius: var(--radius-sm);
@@ -175,9 +164,43 @@ body {
   font-size: var(--text-md);
 }
 
-.btn-lg svg {
+/* ICONS */
+
+.icon {
   width: var(--icon-base);
   height: var(--icon-base);
+}
+
+.icon-sm {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+}
+
+.icon-md {
+  width: var(--icon-md);
+  height: var(--icon-md);
+}
+
+.icon-lg {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+}
+
+.icon-bold {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon,
+.icon-sm,
+.icon-md,
+.icon-lg,
+.icon-bold {
+  display: block;
+  flex-shrink: 0;
 }
 
 /* --- DRAG HANDLE --- */
@@ -201,13 +224,6 @@ body {
 
 .drag-handle:hover {
   color: var(--color-text-primary);
-}
-
-.drag-handle svg {
-  width: var(--icon-md);
-  height: var(--icon-md);
-  fill: currentColor;
-  display: block;
 }
 
 /* --- CTRL-HELD SUPPRESSIONS --- */

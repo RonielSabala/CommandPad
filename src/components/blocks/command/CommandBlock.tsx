@@ -2,6 +2,11 @@ import { COPY_FEEDBACK_TIMEOUT_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { CommandSegmentType } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
+import {
+  CheckIcon,
+  CopyIcon,
+  EditorToggleChevronIcon,
+} from "@/components/icons";
 import { useAutoResize } from "@/hooks/useAutoResize";
 import { useStore } from "@/store/store";
 import {
@@ -91,9 +96,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           onClick={() => toggleCommandEditor(blockId)}
           title={isEditorCollapsed ? "Show editor" : "Hide editor"}
         >
-          <svg viewBox="0 0 12 12">
-            <polyline points="2,4 6,8 10,4" />
-          </svg>
+          <EditorToggleChevronIcon className="toggle-editor-icon icon-md icon-bold" />
         </button>
 
         <button
@@ -103,30 +106,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           title="Copy command"
         >
           {copied ? (
-            <svg viewBox="0 0 16 16" width="13" height="13">
-              <polyline
-                points="2,8 6,12 14,4"
-                stroke="var(--success)"
-                fill="none"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <CheckIcon className="icon-md icon-bold" />
           ) : (
-            <svg
-              viewBox="0 0 16 16"
-              width="13"
-              height="13"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="5" y="5" width="9" height="9" rx="1" />
-              <path d="M3 11V2h9" />
-            </svg>
+            <CopyIcon className="icon-md icon-bold" />
           )}
         </button>
       </div>

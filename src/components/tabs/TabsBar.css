@@ -1,11 +1,11 @@
 #tabs-bar {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   background: var(--color-surface);
   border-bottom: var(--border-standard);
   overflow-x: auto;
   flex-shrink: 0;
-  padding: var(--space-4) var(--space-3) 0;
+  padding: var(--space-2) var(--space-3);
   scrollbar-width: none;
   gap: var(--space-1);
 }
@@ -27,8 +27,7 @@
   cursor: pointer;
   flex-shrink: 0;
   align-self: center;
-  margin-left: var(--space-3);
-  margin-bottom: var(--space-2);
+  margin-left: var(--space-2);
   transition:
     color var(--transition-fast),
     background var(--transition-fast);
@@ -37,14 +36,6 @@
 #add-tab-btn:hover {
   color: var(--color-text-primary);
   background: var(--color-surface-alt);
-}
-
-#add-tab-btn svg {
-  width: var(--icon-md);
-  height: var(--icon-md);
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
 }
 
 body.read-mode #add-tab-btn {

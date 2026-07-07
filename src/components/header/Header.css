@@ -33,7 +33,7 @@
   gap: var(--space-3);
 }
 
-#keybindings-btn svg {
+#keybindings-icon {
   width: var(--space-10);
   height: var(--space-10);
 }

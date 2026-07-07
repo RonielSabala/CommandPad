@@ -20,13 +20,20 @@
     color var(--transition-fast),
     background var(--transition-fast),
     border-color var(--transition-fast);
-  bottom: -1px;
 }
 
 .tab:hover {
   color: var(--color-text-primary);
+}
+
+.tab:not(.tab-active):hover:not(.drag-over-left):not(.drag-over-right)::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
   background: var(--color-surface-alt);
-  border-color: var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  z-index: 0;
 }
 
 .tab.tab-active {
@@ -35,6 +42,9 @@
   border-color: var(--color-border);
   border-bottom: var(--border-standard);
   z-index: 1;
+  align-self: stretch;
+  margin-bottom: calc(-1 * var(--space-2));
+  bottom: -1px;
 }
 
 /* Accent bar */
@@ -47,6 +57,26 @@
   height: var(--space-1);
   background: var(--accent);
   border-radius: var(--radius-pill);
+}
+
+/* Tabs separator */
+.tab:not(.tab-active)::after {
+  content: "";
+  position: absolute;
+  right: calc(var(--space-1) / -2);
+  top: 30%;
+  bottom: 30%;
+  width: var(--space-1);
+  background: var(--color-border);
+  transition: opacity var(--transition-base);
+}
+
+/* Hide the separator */
+.tab:not(.tab-active):hover::after,
+.tab:not(.tab-active):has(+ .tab-active)::after,
+.tab:not(.tab-active):has(+ .tab:hover)::after,
+.tab:not(.tab-active):has(+ #add-tab-btn)::after {
+  opacity: 0;
 }
 
 .tab.dragging {
@@ -71,6 +101,8 @@
 }
 
 .tab-label {
+  position: relative;
+  z-index: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -79,6 +111,8 @@
 }
 
 .tab-close {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: flex-start;
   justify-content: center;
@@ -108,11 +142,6 @@
   background: var(--white-a10);
 }
 
-.tab-close svg {
-  width: var(--icon-sm);
-  height: var(--icon-sm);
-  stroke: currentColor;
+.tab-close .tab-close-icon {
   stroke-width: 2.5;
-  stroke-linecap: round;
-  pointer-events: none;
 }

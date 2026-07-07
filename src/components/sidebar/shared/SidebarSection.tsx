@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { SidebarSectionChevronIcon } from "@/components/icons";
 import type { ReactNode } from "react";
 import "./SidebarSection.css";
 
@@ -24,9 +25,7 @@ export function SidebarSection({
     >
       <div className="sidebar-section-header no-user-select" onClick={onToggle}>
         <p className="section-title">{title}</p>
-        <svg className="sidebar-section-chevron" viewBox="0 0 16 16">
-          <polyline points="4,6 8,10 12,6" />
-        </svg>
+        <SidebarSectionChevronIcon className="sidebar-section-chevron icon-md icon-bold" />
       </div>
       <div className="sidebar-section-body-wrapper">
         <div className="sidebar-section-body">

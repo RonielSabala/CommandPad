@@ -5,11 +5,9 @@
   font-family: var(--font-mono);
 }
 
-#empty-state svg {
-  width: var(--icon-lg);
-  height: var(--icon-lg);
+#empty-state-icon {
+  display: inline;
   stroke: var(--color-text-muted);
-  fill: none;
   stroke-width: 2.3;
 }
 

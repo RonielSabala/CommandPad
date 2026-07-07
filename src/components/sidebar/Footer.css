@@ -46,10 +46,3 @@
   color: var(--accent-text);
   background: var(--accent-dim);
 }
-
-.footer-link svg {
-  width: var(--icon-md);
-  height: var(--icon-md);
-  display: block;
-  fill: currentColor;
-}

@@ -23,19 +23,12 @@
   color: var(--color-text-secondary);
 }
 
-.sidebar-section-chevron {
-  width: var(--icon-md);
-  height: var(--icon-md);
-  fill: none;
+.section-title + .sidebar-section-chevron {
+  margin-left: auto;
   stroke: var(--color-text-muted);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
   transition:
     transform var(--transition-base),
     stroke var(--transition-fast);
-  flex-shrink: 0;
-  margin-left: auto;
 }
 
 .sidebar-section-header:hover .sidebar-section-chevron {
