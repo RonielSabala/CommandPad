@@ -2,7 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { AppMode, DragGroup } from "@/common/enums";
 import type { RunbookEntry } from "@/common/types";
-import { DragDotsIcon, TrashIcon } from "@/components/Icons";
+import { DragIcon, XIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -50,7 +50,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
       {...rowProps}
     >
       <div className="drag-handle" title="Drag to reorder" {...handleProps}>
-        <DragDotsIcon />
+        <DragIcon />
       </div>
       <button
         className={runbookBtnClass}
@@ -67,7 +67,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
         onClick={() => void removeRunbookFromLibrary(runbookId)}
         title="Remove from library"
       >
-        <TrashIcon />
+        <XIcon />
       </button>
     </div>
   );

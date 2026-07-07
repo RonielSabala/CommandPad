@@ -1,4 +1,5 @@
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
+import { ImportIcon } from "@/components/icons";
 import { useStore } from "@/store/store";
 import { openImportDialog } from "@/utils/importTrigger";
 import { matchesQuery } from "@/utils/string";
@@ -65,7 +66,7 @@ export function RunbookSection() {
         onClick={openImportDialog}
         title="Import runbook"
         label="Import"
-        icon={<path d="M8 11V3M5 6l3-3 3 3M3 11v2h10v-2" />}
+        icon={<ImportIcon />}
       />
     </SidebarSection>
   );

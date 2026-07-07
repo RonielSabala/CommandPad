@@ -1,3 +1,4 @@
+import { PlusIcon } from "@/components/icons";
 import { useStore } from "@/store/store";
 import { TabItem } from "./TabItem";
 import "./TabsBar.css";
@@ -16,9 +17,7 @@ export function TabsBar() {
         title="New tab"
         onClick={() => void createNewTab()}
       >
-        <svg viewBox="0 0 16 16">
-          <path d="M8 3v10M3 8h10" />
-        </svg>
+        <PlusIcon />
       </button>
     </div>
   );

@@ -6,7 +6,7 @@ import type { Tab } from "@/common/types";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useState, type DragEvent } from "react";
-import { CloseIcon } from "../Icons";
+import { CloseIcon } from "@/components/icons";
 import "./TabItem.css";
 
 const tabDrag: { srcId: string | null } = { srcId: null };

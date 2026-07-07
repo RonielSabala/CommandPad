@@ -1,4 +1,5 @@
 import type { Variable } from "@/common/types";
+import { PlusIcon } from "@/components/icons";
 import { getActiveTab, useStore } from "@/store/store";
 import { matchesQuery } from "@/utils/string";
 import { SidebarSearch } from "../shared/SidebarSearch";
@@ -48,7 +49,7 @@ export function VariableSection() {
         onClick={() => void addVariable()}
         title="New variable"
         label="New"
-        icon={<path d="M8 3v10M3 8h10" />}
+        icon={<PlusIcon />}
       />
     </SidebarSection>
   );

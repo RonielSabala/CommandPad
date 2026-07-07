@@ -2,31 +2,12 @@ import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { AppMode, DragGroup, VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
-import { DragDotsIcon, TrashIcon } from "@/components/Icons";
+import { DragIcon, EyeIcon, EyeSlashIcon, XIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { memo, useEffect, useRef } from "react";
 import "./VariableRow.css";
-
-function SecretIcon({ masked }: { masked: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      width="13"
-      height="13"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" />
-      <circle cx="8" cy="8" r="2" />
-      {masked && <line x1="2" y1="2" x2="14" y2="14" />}
-    </svg>
-  );
-}
 
 interface Props {
   variable: Variable;
@@ -83,7 +64,7 @@ export const VariableRow = memo(function VariableRow({ variable }: Props) {
       {...rowProps}
     >
       <div className="drag-handle" title="Drag to reorder" {...handleProps}>
-        <DragDotsIcon />
+        <DragIcon />
       </div>
       <div className={variableInputsClass}>
         <input
@@ -117,14 +98,14 @@ export const VariableRow = memo(function VariableRow({ variable }: Props) {
         onClick={() => toggleVariableSecret(variableId)}
         title={isSecret ? "Reveal value" : "Mask value"}
       >
-        <SecretIcon masked={isSecret} />
+        {isSecret ? <EyeSlashIcon /> : <EyeIcon />}
       </button>
       <button
         className="btn btn-icon btn-danger"
         onClick={() => removeVariable(variableId)}
         title="Remove variable"
       >
-        <TrashIcon />
+        <XIcon />
       </button>
     </div>
   );

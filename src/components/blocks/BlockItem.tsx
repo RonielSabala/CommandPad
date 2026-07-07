@@ -4,12 +4,12 @@ import { DataAttr } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
 import { AppMode, BlockType, LassoMode } from "@/common/enums";
 import type { Block } from "@/common/types";
+import { DragIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
 import { lasso } from "@/hooks/lasso";
 import { useStore } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { memo, useRef, useState } from "react";
-import { DragDotsIcon } from "../Icons";
 import "./BlockItem.css";
 import { CommandBlock } from "./command/CommandBlock";
 import { DividerBlock } from "./divider/DividerBlock";
@@ -129,7 +129,7 @@ export const BlockItem = memo(function BlockItem({
             );
           }}
         >
-          <DragDotsIcon />
+          <DragIcon />
         </div>
       </div>
 
@@ -139,37 +139,14 @@ export const BlockItem = memo(function BlockItem({
           onClick={() => duplicateBlock(block.id)}
           title="Duplicate block"
         >
-          <svg
-            viewBox="0 0 16 16"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect x="2" y="2" width="9" height="9" rx="1" />
-            <path d="M12 10v4M10 12h4" />
-          </svg>
+          <DuplicateIcon />
         </button>
         <button
           className="btn btn-icon btn-danger"
           onClick={() => removeBlock(block.id)}
           title="Delete block"
         >
-          <svg
-            viewBox="0 0 16 16"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" />
-          </svg>
+          <TrashIcon />
         </button>
       </div>
     </div>

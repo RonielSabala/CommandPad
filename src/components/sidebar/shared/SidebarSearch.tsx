@@ -1,3 +1,4 @@
+import { SearchIcon } from "@/components/icons";
 import "./SidebarSearch.css";
 
 interface Props {
@@ -18,10 +19,7 @@ export function SidebarSearch({ value, placeholder, onChange }: Props) {
         value={value}
         onChange={(event) => onChange(event.target.value)}
       />
-      <svg className="sidebar-search-icon" viewBox="0 0 16 16">
-        <circle cx="6.5" cy="6.5" r="4" />
-        <line x1="10" y1="10" x2="14" y2="14" />
-      </svg>
+      <SearchIcon className="sidebar-search-icon" />
     </div>
   );
 }
