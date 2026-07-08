@@ -13,7 +13,6 @@
   color: var(--code-color);
   border-radius: var(--radius-sm);
   padding: 0.05em var(--space-3);
-  white-space: nowrap;
 }
 
 .note-link {
