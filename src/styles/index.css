@@ -47,6 +47,10 @@ body {
   height: var(--scrollbar-size);
 }
 
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }

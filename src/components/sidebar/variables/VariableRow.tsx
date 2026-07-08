@@ -1,5 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
+import { Key } from "@/common/constants/events";
 import { AppMode, DragGroup, VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
 import { DragIcon, EyeIcon, EyeSlashIcon, XIcon } from "@/components/icons";
@@ -78,6 +79,11 @@ export const VariableRow = memo(function VariableRow({ variable }: Props) {
           onChange={(event) =>
             updateVariable(variableId, VariableField.KEY, event.target.value)
           }
+          onKeyDown={(event) => {
+            if (event.key === Key.ENTER) {
+              event.currentTarget.blur();
+            }
+          }}
           title={variableKey}
         />
         <input
@@ -90,6 +96,11 @@ export const VariableRow = memo(function VariableRow({ variable }: Props) {
           onChange={(event) =>
             updateVariable(variableId, VariableField.VALUE, event.target.value)
           }
+          onKeyDown={(event) => {
+            if (event.key === Key.ENTER) {
+              event.currentTarget.blur();
+            }
+          }}
           title={isSecret ? "" : variableValue}
         />
       </div>

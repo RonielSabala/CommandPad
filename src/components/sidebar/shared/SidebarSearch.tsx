@@ -1,4 +1,4 @@
-import { SearchIcon } from "@/components/icons";
+import { SearchIcon, XIcon } from "@/components/icons";
 import "./SidebarSearch.css";
 
 interface Props {
@@ -20,6 +20,15 @@ export function SidebarSearch({ value, placeholder, onChange }: Props) {
         onChange={(event) => onChange(event.target.value)}
       />
       <SearchIcon className="sidebar-search-icon icon-md icon-bold" />
+      {value && (
+        <button
+          className="sidebar-search-clear-btn"
+          title="Clear search"
+          onClick={() => onChange("")}
+        >
+          <XIcon className="icon-sm icon-bold" />
+        </button>
+      )}
     </div>
   );
 }

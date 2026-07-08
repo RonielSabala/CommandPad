@@ -33,3 +33,22 @@
   left: var(--space-5);
   stroke: var(--color-text-muted);
 }
+
+.sidebar-search-clear-btn {
+  position: absolute;
+  right: var(--space-5);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: var(--space-1);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.sidebar-search-clear-btn:hover {
+  color: var(--color-text-primary);
+}

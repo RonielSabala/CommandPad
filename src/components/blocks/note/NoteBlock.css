@@ -152,6 +152,16 @@ body:not(.ctrl-held) .note-textarea::selection {
   user-select: none;
 }
 
+body.read-mode .note-preview {
+  pointer-events: auto;
+  cursor: text;
+  user-select: text;
+}
+
+body.read-mode :is(.note-preview::selection, .note-preview *::selection) {
+  background-color: var(--selection-color);
+}
+
 .note-preview.style-heading {
   color: var(--color-text-primary);
 }

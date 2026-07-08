@@ -19,6 +19,9 @@ export const KeyBinding = {
   NAVIGATE_RUNBOOKS: "NAVIGATE_RUNBOOKS",
   ALT_CLICK_LINK: "ALT_CLICK_LINK",
   MULTISELECT_BLOCKS: "MULTISELECT_BLOCKS",
+  NOTE_BOLD: "NOTE_BOLD",
+  NOTE_ITALIC: "NOTE_ITALIC",
+  NOTE_CODE: "NOTE_CODE",
 } as const;
 export type KeyBinding = (typeof KeyBinding)[keyof typeof KeyBinding];
 
@@ -98,6 +101,21 @@ export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
   [KeyBinding.MULTISELECT_BLOCKS]: {
     binding: "ctrl+click / drag",
     description: "Multi-select blocks",
+    keyboard: false,
+  },
+  [KeyBinding.NOTE_BOLD]: {
+    binding: "ctrl+b",
+    description: "Bold selected text (note block)",
+    keyboard: false,
+  },
+  [KeyBinding.NOTE_ITALIC]: {
+    binding: "ctrl+i",
+    description: "Italicize selected text (note block)",
+    keyboard: false,
+  },
+  [KeyBinding.NOTE_CODE]: {
+    binding: "ctrl+´",
+    description: "Wrap selected text in backticks (note block)",
     keyboard: false,
   },
 };

@@ -4,6 +4,7 @@ import {
   DEBOUNCE_SAVE_MS,
   DEFAULT_TAB_LABEL,
   RunbookConfig,
+  VariableSyntax,
 } from "@/common/config";
 import {
   AppMode,
@@ -746,19 +747,34 @@ export const useStore = create<StoreState>()((set, get) => ({
         if (field === VariableField.KEY) {
           const oldKey = target.key.trim();
           const newKey = value.trim();
+
           if (oldKey && newKey && oldKey !== newKey) {
-            const oldToken = `{${oldKey}}`;
-            const newToken = `{${newKey}}`;
-            blocks = tab.blocks.map((b) =>
-              b.type === BlockType.COMMAND && b.text.includes(oldToken)
-                ? { ...b, text: b.text.split(oldToken).join(newToken) }
-                : b,
-            );
-            variables = tab.variables.map((v) =>
-              v.id !== variableId && v.value.includes(oldToken)
-                ? { ...v, value: v.value.split(oldToken).join(newToken) }
-                : v,
-            );
+            // Rewrite both plain {KEY} tokens and templated {KEY;param=...} usages
+            const separator = VariableSyntax.PARAM_SEPARATOR;
+            const renameTokens = (text: string) =>
+              text
+                .split(`{${oldKey}}`)
+                .join(`{${newKey}}`)
+                .split(`{${oldKey}${separator}`)
+                .join(`{${newKey}${separator}`);
+
+            blocks = tab.blocks.map((b) => {
+              if (b.type !== BlockType.COMMAND) {
+                return b;
+              }
+
+              const text = renameTokens(b.text);
+              return text === b.text ? b : { ...b, text };
+            });
+
+            variables = tab.variables.map((v) => {
+              if (v.id === variableId) {
+                return v;
+              }
+
+              const value = renameTokens(v.value);
+              return value === v.value ? v : { ...v, value };
+            });
           }
         }
 

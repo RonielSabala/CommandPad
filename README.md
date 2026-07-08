@@ -131,6 +131,20 @@ Variables are defined in the **VARIABLES** section of the sidebar. Each variable
   BASE_URL = https://{HOST}/api
   ```
 
+- **Parameterized placeholders**: a variable's value can contain a `{:name}` placeholder that isn't filled in until it's referenced:
+
+  ```txt
+  A = generic_path/{:user_path}
+  ```
+
+  Fill it in per-reference with `{key;name=value}`:
+
+  ```bash
+  {A;user_path=my_path}
+  ```
+
+  resolves to `generic_path/my_path`. Supply multiple placeholders by separating them with `;`: `{A;p1=v1;p2=v2}`. If a reference omits a placeholder's value, the `{:name}` marker is left in place and the command is treated as unresolved.
+
 - **Key rename propagation**: renaming a key automatically updates all references across every command block and other variable value.
 - Keys are case-sensitive. Variables with empty keys are ignored.
 - Hovering over a key or value shows the full content as a tooltip.

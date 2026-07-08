@@ -14,9 +14,12 @@ export const Key = {
   ALT: "Alt",
   ENTER: "Enter",
   ESCAPE: "Escape",
+  TAB: "Tab",
   ARROW_UP: "ArrowUp",
   ARROW_DOWN: "ArrowDown",
 } as const;
+
+export const TAB_CHARACTER = "\t";
 
 export const Modifier = {
   ALT: "alt",

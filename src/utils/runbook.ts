@@ -1,6 +1,17 @@
 import { RunbookConfig } from "@/common/config";
 import { BlockType } from "@/common/enums";
 import type { Block } from "@/common/types";
+import { parseNoteText } from "@/utils/markdown";
+
+const LABEL_STRIP_REGEX = /[*`´]/g;
+
+function cleanNoteLabel(text: string): string {
+  const plain = parseNoteText(text)
+    .map((segment) => segment.text)
+    .join("");
+
+  return plain.replace(LABEL_STRIP_REGEX, "").replace(/\s+/g, " ").trim();
+}
 
 export function getRunbookLabel(
   blocks: Block[] | undefined,
@@ -8,9 +19,9 @@ export function getRunbookLabel(
 ): string {
   const firstBlock = blocks?.[0];
   if (firstBlock?.type === BlockType.NOTE) {
-    const text = firstBlock.text.trim();
-    if (text) {
-      return text.slice(0, RunbookConfig.LABEL_MAX_LENGTH);
+    const label = cleanNoteLabel(firstBlock.text);
+    if (label) {
+      return label.slice(0, RunbookConfig.LABEL_MAX_LENGTH);
     }
   }
 

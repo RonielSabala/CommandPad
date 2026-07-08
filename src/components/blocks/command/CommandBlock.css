@@ -42,6 +42,10 @@ body.ctrl-held:not(.read-mode) .command-preview .btn {
   pointer-events: none;
 }
 
+body.ctrl-held:not(.read-mode) .command-preview-text::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
 /* Token styles */
 
 .token-resolved {

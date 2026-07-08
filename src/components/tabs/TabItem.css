@@ -66,7 +66,7 @@
   right: calc(var(--space-1) / -2);
   top: 30%;
   bottom: 30%;
-  width: var(--space-1);
+  width: 1px;
   background: var(--color-border);
   transition: opacity var(--transition-base);
 }
