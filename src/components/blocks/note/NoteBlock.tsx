@@ -1,6 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { NoteStyle } from "@/common/enums";
 import type { NoteBlock as NoteBlockData } from "@/common/types";
+import { useTabInsertion } from "@/hooks/useTabInsertion";
 import { useStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
 import "./NoteBlock.css";
@@ -32,6 +33,9 @@ export function NoteBlock({ block }: Props) {
 
   const blockStyle = block.style || NoteStyle.BODY;
   const placeholder = `Section ${blockStyle}...`;
+  const handleTabKey = useTabInsertion((value) =>
+    updateBlockText(blockId, value),
+  );
 
   useEffect(() => {
     if (pendingFocus) {
@@ -65,6 +69,7 @@ export function NoteBlock({ block }: Props) {
           rows={1}
           value={blockText}
           onChange={(event) => updateBlockText(blockId, event.target.value)}
+          onKeyDown={handleTabKey}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
         />

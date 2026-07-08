@@ -8,6 +8,7 @@ import {
   EditorToggleChevronIcon,
 } from "@/components/icons";
 import { useAutoResize } from "@/hooks/useAutoResize";
+import { useTabInsertion } from "@/hooks/useTabInsertion";
 import { useStore } from "@/store/store";
 import {
   hasUnresolvedTokens,
@@ -50,6 +51,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   );
 
   useAutoResize(textareaRef, [blockText, isEditorCollapsed, mode]);
+  const handleTabKey = useTabInsertion((value) =>
+    updateBlockText(blockId, value),
+  );
 
   useEffect(() => {
     if (pendingFocus) {
@@ -128,6 +132,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           rows={1}
           value={blockText}
           onChange={(event) => updateBlockText(blockId, event.target.value)}
+          onKeyDown={handleTabKey}
         />
       </div>
     </div>
