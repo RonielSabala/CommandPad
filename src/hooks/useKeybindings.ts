@@ -105,7 +105,7 @@ export function useKeybindings(): void {
       } else if (matchesKeybinding(event, KeyBinding.TOGGLE_SIDEBAR)) {
         state.toggleSidebar();
         hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.IMPORT_RUNBOOK)) {
+      } else if (!inEditable && matchesKeybinding(event, KeyBinding.IMPORT_RUNBOOK)) {
         openImportDialog();
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.TOGGLE_EDITORS)) {

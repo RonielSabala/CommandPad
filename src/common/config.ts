@@ -47,6 +47,12 @@ export const MarkdownToken = {
   URL_REGEX: /(https?:\/\/[^\s<>"{}|\\^`[\]]*[^\s<>"{}|\\^`[\].,;:!?()-])/g,
 } as const;
 
+export const MarkdownWrap = {
+  BOLD: "**",
+  ITALIC: "_",
+  CODE: "`",
+} as const;
+
 // Variables
 
 export const VariableTokenRegex = /\{([^}]+)\}/g;
