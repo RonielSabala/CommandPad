@@ -48,6 +48,7 @@ export const MarkdownToken = {
 } as const;
 
 export const VariableTokenRegex = /\{([^}]+)\}/g;
+export const VariableParamPlaceholderRegex = /\{:([^};]+)\}/g;
 
 // Supported file types
 
