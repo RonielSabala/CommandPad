@@ -1,5 +1,6 @@
 import {
   VariableParamPlaceholderRegex,
+  VariableSyntax,
   VariableTokenRegex,
 } from "@/common/config";
 import { CommandSegmentType } from "@/common/enums";
@@ -13,11 +14,11 @@ interface ParsedVariableToken {
 }
 
 function parseVariableToken(raw: string): ParsedVariableToken {
-  const [rawKey, ...rawParams] = raw.split(";");
+  const [rawKey, ...rawParams] = raw.split(VariableSyntax.PARAM_SEPARATOR);
   const params: Record<string, string> = {};
 
   for (const part of rawParams) {
-    const eqIndex = part.indexOf("=");
+    const eqIndex = part.indexOf(VariableSyntax.PARAM_ASSIGNMENT);
     if (eqIndex === -1) {
       continue;
     }
@@ -116,7 +117,7 @@ export function resolveCommandText(
     }
 
     const raw = match[1];
-    if (raw.includes(";")) {
+    if (raw.includes(VariableSyntax.PARAM_SEPARATOR)) {
       const { key, params } = parseVariableToken(raw);
       if (Object.prototype.hasOwnProperty.call(variableMap, key)) {
         const template = variableMap[key];

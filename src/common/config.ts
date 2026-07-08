@@ -47,8 +47,15 @@ export const MarkdownToken = {
   URL_REGEX: /(https?:\/\/[^\s<>"{}|\\^`[\]]*[^\s<>"{}|\\^`[\].,;:!?()-])/g,
 } as const;
 
+// Variables
+
 export const VariableTokenRegex = /\{([^}]+)\}/g;
 export const VariableParamPlaceholderRegex = /\{:([^};]+)\}/g;
+
+export const VariableSyntax = {
+  PARAM_SEPARATOR: ";",
+  PARAM_ASSIGNMENT: "=",
+} as const;
 
 // Supported file types
 
