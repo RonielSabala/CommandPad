@@ -55,7 +55,7 @@ export const MarkdownWrap = {
 
 // Variables
 
-export const VariableTokenRegex = /\{([^}]+)\}/g;
+export const VariableTokenRegex = /\{((?:[^{}]|\{[^{}]*\})+)\}/g;
 export const VariableParamPlaceholderRegex = /\{:([^};]+)\}/g;
 
 export const VariableSyntax = {

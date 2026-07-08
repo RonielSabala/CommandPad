@@ -32,6 +32,33 @@ function parseVariableToken(raw: string): ParsedVariableToken {
   return { key: rawKey.trim(), params };
 }
 
+function resolveParamRefs(
+  params: Record<string, string>,
+  variableMap: VariableMap,
+): { params: Record<string, string>; fullyResolved: boolean } {
+  let fullyResolved = true;
+  const resolved: Record<string, string> = {};
+
+  for (const [name, value] of Object.entries(params)) {
+    resolved[name] = value.replace(
+      VariableTokenRegex,
+      (match, refKey: string) => {
+        if (
+          Object.prototype.hasOwnProperty.call(variableMap, refKey) &&
+          variableMap[refKey]
+        ) {
+          return variableMap[refKey];
+        }
+
+        fullyResolved = false;
+        return match;
+      },
+    );
+  }
+
+  return { params: resolved, fullyResolved };
+}
+
 function applyTemplateParams(
   template: string,
   params: Record<string, string>,
@@ -105,10 +132,9 @@ export function resolveCommandText(
   variableMap: VariableMap,
 ): CommandSegment[] {
   let lastIndex = 0;
-  let match: RegExpExecArray | null;
   const segments: CommandSegment[] = [];
 
-  while ((match = VariableTokenRegex.exec(rawText)) !== null) {
+  for (const match of rawText.matchAll(VariableTokenRegex)) {
     const matchIdx = match.index;
     if (matchIdx > lastIndex) {
       segments.push({
@@ -123,13 +149,17 @@ export function resolveCommandText(
 
       if (Object.prototype.hasOwnProperty.call(variableMap, key)) {
         const template = variableMap[key];
-        const { text, fullyResolved } = applyTemplateParams(template, params);
+        const paramRefs = resolveParamRefs(params, variableMap);
+        const { text, fullyResolved } = applyTemplateParams(
+          template,
+          paramRefs.params,
+        );
 
         segments.push({
           key,
           text: template ? text : match[0],
           type:
-            template && fullyResolved
+            template && fullyResolved && paramRefs.fullyResolved
               ? CommandSegmentType.RESOLVED
               : CommandSegmentType.UNRESOLVED,
         });
