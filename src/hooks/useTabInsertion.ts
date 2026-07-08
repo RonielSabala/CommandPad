@@ -14,6 +14,7 @@ export function useTabInsertion(
 
       const textarea = event.currentTarget;
       const { selectionStart, selectionEnd, value } = textarea;
+
       const nextValue =
         value.slice(0, selectionStart) +
         TAB_CHARACTER +

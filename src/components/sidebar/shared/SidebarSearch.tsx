@@ -22,7 +22,6 @@ export function SidebarSearch({ value, placeholder, onChange }: Props) {
       <SearchIcon className="sidebar-search-icon icon-md icon-bold" />
       {value && (
         <button
-          type="button"
           className="sidebar-search-clear-btn"
           title="Clear search"
           onClick={() => onChange("")}

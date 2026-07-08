@@ -44,6 +44,7 @@ function applyTemplateParams(
       if (paramName in params) {
         return params[paramName];
       }
+
       fullyResolved = false;
       return match;
     },
@@ -119,9 +120,11 @@ export function resolveCommandText(
     const raw = match[1];
     if (raw.includes(VariableSyntax.PARAM_SEPARATOR)) {
       const { key, params } = parseVariableToken(raw);
+
       if (Object.prototype.hasOwnProperty.call(variableMap, key)) {
         const template = variableMap[key];
         const { text, fullyResolved } = applyTemplateParams(template, params);
+
         segments.push({
           key,
           text: template ? text : match[0],

@@ -42,7 +42,6 @@ export function useNoteFormatting(
       const nextEnd = nextStart + selected.length;
 
       onChange(nextValue);
-
       queueMicrotask(() => {
         textarea.selectionStart = nextStart;
         textarea.selectionEnd = nextEnd;
