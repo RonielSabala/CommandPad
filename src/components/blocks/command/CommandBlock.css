@@ -20,6 +20,10 @@
 .command-preview-text {
   font-family: var(--font-mono);
   font-size: var(--text-base);
+  font-variant-ligatures: none;
+  font-feature-settings:
+    "liga" 0,
+    "calt" 0;
   color: var(--success);
   flex: 1;
   overflow-x: auto;
@@ -133,6 +137,10 @@ body.read-mode :is(.toggle-editor-btn, .command-block-editor) {
   min-width: 0;
   font-family: var(--font-mono);
   font-size: var(--text-base);
+  font-variant-ligatures: none;
+  font-feature-settings:
+    "liga" 0,
+    "calt" 0;
   background: transparent;
   border: none;
   color: var(--color-text-primary);
