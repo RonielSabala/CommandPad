@@ -46,7 +46,7 @@
     },
     {
       "type": "note",
-      "text": "Make sure you have `kubectl` installed and configured. Visit https://kubernetes.io/docs/tasks/tools/ for installation instructions.",
+      "text": "Make sure you have `kubectl` installed and configured. Visit [Kubernetes installation guide](https://kubernetes.io/docs/tasks/tools/) for setup instructions.",
       "style": "body"
     },
     {
@@ -158,7 +158,7 @@
     },
     {
       "type": "note",
-      "text": "Check the official kubectl documentation at https://kubernetes.io/docs/reference/kubectl/ for more commands.\n\nLearn more about debugging Kubernetes applications: https://kubernetes.io/docs/tasks/debug-application-cluster/",
+      "text": "Check the official [kubectl reference](https://kubernetes.io/docs/reference/kubectl/) for more commands.\n\nLearn more about [debugging Kubernetes applications](https://kubernetes.io/docs/tasks/debug-application-cluster/).",
       "style": "body"
     }
   ]

@@ -44,6 +44,7 @@ export const MarkdownToken = {
   CODE_REGEX: /[`´](.+?)[`´]/g,
   BOLD_REGEX: /\*\*(.+?)\*\*/g,
   ITALIC_REGEX: /(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)|_(.+?)_/g,
+  LINK_REGEX: /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
   URL_REGEX: /(https?:\/\/[^\s<>"{}|\\^`[\]]*[^\s<>"{}|\\^`[\].,;:!?()-])/g,
 } as const;
 

@@ -35,7 +35,7 @@ export function NoteText({ text }: Props) {
             return (
               <a
                 key={i}
-                href={segment.text}
+                href={segment.href ?? segment.text}
                 className={CssClass.NOTE_LINK}
                 target={Anchor.TARGET_BLANK}
                 rel={Anchor.REL}

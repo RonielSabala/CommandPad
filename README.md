@@ -205,6 +205,7 @@ Supported inline markdown:
 | `_text_` or `*text*` | _Italic_       |
 | `` `text` ``         | `Code pill`    |
 | `https://...`        | Clickable link |
+| `[label](https://…)` | Labelled link  |
 
 To open a link, hold `Alt` and click it. In read mode, links are directly clickable without holding `Alt`.
 
