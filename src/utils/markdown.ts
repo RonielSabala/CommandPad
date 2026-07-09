@@ -7,6 +7,7 @@ const NOTE_TOKEN_REGEX = new RegExp(
     MarkdownToken.CODE_REGEX.source,
     MarkdownToken.BOLD_REGEX.source,
     MarkdownToken.ITALIC_REGEX.source,
+    MarkdownToken.LINK_REGEX.source,
     MarkdownToken.URL_REGEX.source,
   ].join("|"),
   "g",
@@ -29,7 +30,16 @@ export function parseNoteText(text: string): NoteSegment[] {
       });
     }
 
-    const [, code, bold, italicStar, italicUnderscore, url] = match;
+    const [
+      ,
+      code,
+      bold,
+      italicStar,
+      italicUnderscore,
+      linkLabel,
+      linkHref,
+      url,
+    ] = match;
 
     if (code !== undefined) {
       segments.push({ type: NoteSegmentType.CODE, text: code });
@@ -39,6 +49,12 @@ export function parseNoteText(text: string): NoteSegment[] {
       segments.push({
         type: NoteSegmentType.ITALIC,
         text: italicStar ?? italicUnderscore,
+      });
+    } else if (linkLabel !== undefined && linkHref !== undefined) {
+      segments.push({
+        type: NoteSegmentType.LINK,
+        text: linkLabel,
+        href: linkHref,
       });
     } else if (url !== undefined) {
       segments.push({ type: NoteSegmentType.LINK, text: url });

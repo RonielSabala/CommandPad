@@ -1,4 +1,4 @@
-import { MarkdownWrap } from "@/common/config";
+import { BracketPairs, MarkdownWrap } from "@/common/config";
 import { useCallback, type KeyboardEvent } from "react";
 
 const WRAP_BY_KEY: Record<string, string> = {
@@ -9,43 +9,65 @@ const WRAP_BY_KEY: Record<string, string> = {
   "´": MarkdownWrap.CODE,
 };
 
+function wrapSelection(
+  textarea: HTMLTextAreaElement,
+  open: string,
+  close: string,
+  onChange: (value: string) => void,
+): void {
+  const { selectionStart, selectionEnd, value } = textarea;
+  const selected = value.slice(selectionStart, selectionEnd);
+
+  const nextValue =
+    value.slice(0, selectionStart) +
+    open +
+    selected +
+    close +
+    value.slice(selectionEnd);
+
+  const nextStart = selectionStart + open.length;
+  const nextEnd = nextStart + selected.length;
+
+  onChange(nextValue);
+  queueMicrotask(() => {
+    textarea.selectionStart = nextStart;
+    textarea.selectionEnd = nextEnd;
+  });
+}
+
 export function useNoteFormatting(
   onChange: (value: string) => void,
 ): (event: KeyboardEvent<HTMLTextAreaElement>) => void {
   return useCallback(
     (event) => {
-      const ctrl = event.ctrlKey || event.metaKey;
-      if (!ctrl || event.altKey) {
+      if (event.altKey) {
         return;
       }
-
-      const wrap = WRAP_BY_KEY[event.key.toLowerCase()];
-      if (!wrap) {
-        return;
-      }
-
-      event.preventDefault();
 
       const textarea = event.currentTarget;
-      const { selectionStart, selectionEnd, value } = textarea;
-      const selected = value.slice(selectionStart, selectionEnd);
+      const ctrl = event.ctrlKey || event.metaKey;
 
-      const nextValue =
-        value.slice(0, selectionStart) +
-        wrap +
-        selected +
-        wrap +
-        value.slice(selectionEnd);
+      // bold / italic / code
+      if (ctrl) {
+        const wrap = WRAP_BY_KEY[event.key.toLowerCase()];
+        if (wrap) {
+          event.preventDefault();
+          wrapSelection(textarea, wrap, wrap, onChange);
+        }
 
-      // Keep the original text selected
-      const nextStart = selectionStart + wrap.length;
-      const nextEnd = nextStart + selected.length;
+        return;
+      }
 
-      onChange(nextValue);
-      queueMicrotask(() => {
-        textarea.selectionStart = nextStart;
-        textarea.selectionEnd = nextEnd;
-      });
+      // Bracket wrapping
+      if (textarea.selectionStart === textarea.selectionEnd) {
+        return;
+      }
+
+      const close = BracketPairs[event.key as keyof typeof BracketPairs];
+      if (close) {
+        event.preventDefault();
+        wrapSelection(textarea, event.key, close, onChange);
+      }
     },
     [onChange],
   );

@@ -84,6 +84,7 @@ Each tab holds one open runbook.
 - Click a tab to switch to it.
 - **Middle-click** a tab to close it.
 - **Drag** a tab to reorder it.
+- **Drop blocks on a tab** to copy them into it.
 - An accent bar at the bottom of the active tab marks it at a glance.
 
 ---
@@ -131,10 +132,10 @@ Variables are defined in the **VARIABLES** section of the sidebar. Each variable
   BASE_URL = https://{HOST}/api
   ```
 
-- **Parameterized placeholders**: a variable's value can contain a `{:name}` placeholder that isn't filled in until it's referenced:
+- **Parameterized placeholders**: a variable's value can contain a `{;name}` placeholder that isn't filled in until it's referenced:
 
   ```txt
-  A = generic_path/{:user_path}
+  A = generic_path/{;user_path}
   ```
 
   Fill it in per-reference with `{key;name=value}`:
@@ -143,9 +144,18 @@ Variables are defined in the **VARIABLES** section of the sidebar. Each variable
   {A;user_path=my_path}
   ```
 
-  resolves to `generic_path/my_path`. Supply multiple placeholders by separating them with `;`: `{A;p1=v1;p2=v2}`. If a reference omits a placeholder's value, the `{:name}` marker is left in place and the command is treated as unresolved.
+  resolves to `generic_path/my_path`. Supply multiple placeholders by separating them with `;`: `{A;p1=v1;p2=v2}`. If a reference omits a placeholder's value, the `{;name}` marker is left in place and the command is treated as unresolved.
+
+- **Escaping braces**: prefix `{` or `}` with a backslash in a command block to output it literally instead of starting a variable reference. The backslash is dropped from the resolved command:
+
+  ```bash
+  awk '\{print $1\}'
+  ```
+
+  resolves to `awk '{print $1}'`. Escaping applies to command blocks only; backslashes inside variable values are always literal.
 
 - **Key rename propagation**: renaming a key automatically updates all references across every command block and other variable value.
+- **Unused variables**: a variable that isn't referenced by any command block, directly or through another variable's value, is dimmed and italicized in the sidebar, so stale entries are easy to spot.
 - Keys are case-sensitive. Variables with empty keys are ignored.
 - Hovering over a key or value shows the full content as a tooltip.
 - Drag the handle on the left of a row to reorder variables.
@@ -180,7 +190,9 @@ Commands can span multiple lines. The editor scrolls horizontally when a line ex
 
 #### Note Block
 
-A free-form text block. Three text styles are selectable on hover:
+A free-form text block. Note blocks expand horizontally and vertically as you type.
+
+Three text styles are selectable on hover:
 
 | Style        | Appearance       |
 | ------------ | ---------------- |
@@ -196,10 +208,18 @@ Supported inline markdown:
 | `_text_` or `*text*` | _Italic_       |
 | `` `text` ``         | `Code pill`    |
 | `https://...`        | Clickable link |
+| `[label](https://…)` | Labelled link  |
 
 To open a link, hold `Alt` and click it. In read mode, links are directly clickable without holding `Alt`.
 
-Note blocks expand horizontally and vertically as you type.
+**Wrap the selection:** with text selected in a note, these keys wrap it in one step:
+
+| Keys             | Wraps selection in |
+| ---------------- | ------------------ |
+| `Ctrl+B`         | \*\*Bold\*\*       |
+| `Ctrl+I`         | \_Italic\_         |
+| `` Ctrl+` ``     | \`Code pill\`      |
+| `(`, `[`, or `{` | that bracket pair  |
 
 ---
 
@@ -216,6 +236,7 @@ Hold `Ctrl` and click blocks to build a selection. You can also hold `Ctrl` and 
 With a selection active:
 
 - **Drag** any selected block's handle to move all selected blocks together, preserving relative order.
+- **Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab.
 - **Duplicate** (`Ctrl+D`) any selected block to duplicate the entire group, inserted after the last selected block.
 - **Delete** (`Del`) any selected block to delete the entire group.
 - Press `Escape` or click outside block controls to clear the selection.

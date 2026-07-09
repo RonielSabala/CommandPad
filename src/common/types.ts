@@ -62,4 +62,5 @@ export interface CommandSegment {
 export interface NoteSegment {
   text: string;
   type: NoteSegmentType;
+  href?: string;
 }

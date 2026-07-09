@@ -4,6 +4,7 @@ import { EventType, MouseButton } from "@/common/constants/events";
 import { AppMode, LassoMode } from "@/common/enums";
 import { useStore } from "@/store/store";
 import { useEffect } from "react";
+import { blockDrag, clearBlockDrag } from "./blockDrag";
 import { lasso } from "./lasso";
 
 export function useDocumentInteractions(): void {
@@ -21,6 +22,10 @@ export function useDocumentInteractions(): void {
     const onMouseMove = (event: MouseEvent) => {
       mouseX = event.clientX;
       mouseY = event.clientY;
+
+      if (blockDrag.srcId && event.buttons === 0) {
+        clearBlockDrag();
+      }
 
       if (!event.altKey) {
         return;

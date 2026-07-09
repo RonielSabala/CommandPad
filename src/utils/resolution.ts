@@ -1,10 +1,12 @@
 import {
+  CommandVariableTokenRegex,
+  EscapedBraceRegex,
   VariableParamPlaceholderRegex,
   VariableSyntax,
   VariableTokenRegex,
 } from "@/common/config";
-import { CommandSegmentType } from "@/common/enums";
-import type { CommandSegment, Variable } from "@/common/types";
+import { BlockType, CommandSegmentType } from "@/common/enums";
+import type { Block, CommandSegment, Variable } from "@/common/types";
 
 export type VariableMap = Record<string, string>;
 
@@ -119,12 +121,72 @@ export function getVariableMap(variables: Variable[] = []): VariableMap {
   return resolvedMap;
 }
 
+export function getUsedVariableKeys(
+  blocks: Block[] = [],
+  variables: Variable[] = [],
+): Set<string> {
+  const rawValues: Record<string, string> = {};
+  for (const variable of variables) {
+    const key = variable.key.trim();
+    if (key) {
+      rawValues[key] = variable.value;
+    }
+  }
+
+  const pending: string[] = [];
+
+  function collectRefs(text: string, tokenRegex: RegExp): void {
+    for (const match of text.matchAll(tokenRegex)) {
+      const raw = match[1];
+      const key = raw.split(VariableSyntax.PARAM_SEPARATOR)[0].trim();
+      if (key) {
+        pending.push(key);
+      }
+
+      // Nested refs inside param values
+      for (const inner of raw.matchAll(VariableTokenRegex)) {
+        const innerKey = inner[1]
+          .split(VariableSyntax.PARAM_SEPARATOR)[0]
+          .trim();
+        if (innerKey) {
+          pending.push(innerKey);
+        }
+      }
+    }
+  }
+
+  for (const block of blocks) {
+    if (block.type === BlockType.COMMAND) {
+      collectRefs(block.text, CommandVariableTokenRegex);
+    }
+  }
+
+  const used = new Set<string>();
+  while (pending.length > 0) {
+    const key = pending.pop() as string;
+    if (used.has(key)) {
+      continue;
+    }
+
+    used.add(key);
+    if (key in rawValues) {
+      collectRefs(rawValues[key], VariableTokenRegex);
+    }
+  }
+
+  return used;
+}
+
 export function getSecretKeys(variables: Variable[] = []): Set<string> {
   return new Set(
     variables
       .filter((variable) => variable.secret && variable.key.trim())
       .map((variable) => variable.key.trim()),
   );
+}
+
+function unescapeBraces(text: string): string {
+  return text.replace(EscapedBraceRegex, "$1");
 }
 
 export function resolveCommandText(
@@ -134,11 +196,11 @@ export function resolveCommandText(
   let lastIndex = 0;
   const segments: CommandSegment[] = [];
 
-  for (const match of rawText.matchAll(VariableTokenRegex)) {
+  for (const match of rawText.matchAll(CommandVariableTokenRegex)) {
     const matchIdx = match.index;
     if (matchIdx > lastIndex) {
       segments.push({
-        text: rawText.slice(lastIndex, matchIdx),
+        text: unescapeBraces(rawText.slice(lastIndex, matchIdx)),
         type: CommandSegmentType.LITERAL,
       });
     }
@@ -184,7 +246,7 @@ export function resolveCommandText(
 
   if (lastIndex < rawText.length) {
     segments.push({
-      text: rawText.slice(lastIndex),
+      text: unescapeBraces(rawText.slice(lastIndex)),
       type: CommandSegmentType.LITERAL,
     });
   }

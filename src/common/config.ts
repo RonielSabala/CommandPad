@@ -29,6 +29,7 @@ export const DEFAULT_TAB_LABEL = "Untitled";
 export const DRAG_TIMEOUT_MS = 50;
 export const DEBOUNCE_SAVE_MS = 150;
 export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
+export const TAB_HOVER_SWITCH_MS = 300;
 
 // Markdown config
 
@@ -44,6 +45,7 @@ export const MarkdownToken = {
   CODE_REGEX: /[`´](.+?)[`´]/g,
   BOLD_REGEX: /\*\*(.+?)\*\*/g,
   ITALIC_REGEX: /(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)|_(.+?)_/g,
+  LINK_REGEX: /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
   URL_REGEX: /(https?:\/\/[^\s<>"{}|\\^`[\]]*[^\s<>"{}|\\^`[\].,;:!?()-])/g,
 } as const;
 
@@ -53,10 +55,18 @@ export const MarkdownWrap = {
   CODE: "`",
 } as const;
 
+export const BracketPairs = {
+  "(": ")",
+  "[": "]",
+  "{": "}",
+} as const;
+
 // Variables
 
 export const VariableTokenRegex = /\{((?:[^{}]|\{[^{}]*\})+)\}/g;
-export const VariableParamPlaceholderRegex = /\{:([^};]+)\}/g;
+export const CommandVariableTokenRegex = /(?<!\\)\{((?:[^{}]|\{[^{}]*\})+)\}/g;
+export const EscapedBraceRegex = /\\([{}])/g;
+export const VariableParamPlaceholderRegex = /\{;([^};]+)\}/g;
 
 export const VariableSyntax = {
   PARAM_SEPARATOR: ";",

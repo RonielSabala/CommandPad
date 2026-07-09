@@ -12,9 +12,13 @@ import "./VariableRow.css";
 
 interface Props {
   variable: Variable;
+  unused?: boolean;
 }
 
-export const VariableRow = memo(function VariableRow({ variable }: Props) {
+export const VariableRow = memo(function VariableRow({
+  variable,
+  unused,
+}: Props) {
   const variableId = variable.id;
   const variableKey = variable.key;
   const variableValue = variable.value;
@@ -49,6 +53,7 @@ export const VariableRow = memo(function VariableRow({ variable }: Props) {
     "variable-row",
     "sidebar-section-list-row",
     isSecret && "is-secret",
+    unused && "is-unused",
     isDragging && CssClass.DRAGGING,
   );
 
@@ -84,7 +89,7 @@ export const VariableRow = memo(function VariableRow({ variable }: Props) {
               event.currentTarget.blur();
             }
           }}
-          title={variableKey}
+          title={unused ? `${variableKey} (unused)` : variableKey}
         />
         <input
           className="variable-value-input"

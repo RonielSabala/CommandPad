@@ -35,7 +35,7 @@
     },
     {
       "type": "note",
-      "text": "Fetch users with authentication using `curl`. See https://curl.se for more curl options.",
+      "text": "Fetch users with authentication using `curl`. See [curl documentation](https://curl.se) for more curl options.",
       "style": "body"
     },
     {
@@ -65,7 +65,7 @@
     },
     {
       "type": "note",
-      "text": "Learn more at https://docs.docker.com/engine/reference/commandline/logs/",
+      "text": "Learn more at [Docker logs reference](https://docs.docker.com/engine/reference/commandline/logs/).",
       "style": "body"
     }
   ]
