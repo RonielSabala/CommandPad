@@ -154,6 +154,7 @@ Variables are defined in the **VARIABLES** section of the sidebar. Each variable
   resolves to `awk '{print $1}'`. Escaping applies to command blocks only; backslashes inside variable values are always literal.
 
 - **Key rename propagation**: renaming a key automatically updates all references across every command block and other variable value.
+- **Unused variables**: a variable that isn't referenced by any command block, directly or through another variable's value, is dimmed and italicized in the sidebar, so stale entries are easy to spot.
 - Keys are case-sensitive. Variables with empty keys are ignored.
 - Hovering over a key or value shows the full content as a tooltip.
 - Drag the handle on the left of a row to reorder variables.

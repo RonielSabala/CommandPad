@@ -6,6 +6,23 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-3);
+  transition: opacity var(--transition-base);
+}
+
+/* Unused variable */
+
+.variable-row.is-unused .variable-inputs {
+  opacity: 0.5;
+}
+
+.variable-row.is-unused .variable-key-input {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.variable-row.is-unused:hover .variable-inputs,
+.variable-row.is-unused .variable-inputs:focus-within {
+  opacity: 1;
 }
 
 .variable-key-input {
