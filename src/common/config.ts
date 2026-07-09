@@ -58,7 +58,7 @@ export const MarkdownWrap = {
 export const VariableTokenRegex = /\{((?:[^{}]|\{[^{}]*\})+)\}/g;
 export const CommandVariableTokenRegex = /(?<!\\)\{((?:[^{}]|\{[^{}]*\})+)\}/g;
 export const EscapedBraceRegex = /\\([{}])/g;
-export const VariableParamPlaceholderRegex = /\{:([^};]+)\}/g;
+export const VariableParamPlaceholderRegex = /\{;([^};]+)\}/g;
 
 export const VariableSyntax = {
   PARAM_SEPARATOR: ";",
