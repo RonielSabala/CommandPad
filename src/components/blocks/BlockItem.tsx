@@ -5,9 +5,9 @@ import { DragEffect } from "@/common/constants/events";
 import { AppMode, BlockType, LassoMode } from "@/common/enums";
 import type { Block } from "@/common/types";
 import { DragIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
-import { blockDrag } from "@/hooks/blockDrag";
+import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
-import { useStore } from "@/store/store";
+import { getActiveTab, useStore } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { memo, useRef, useState } from "react";
@@ -62,21 +62,36 @@ export const BlockItem = memo(function BlockItem({
           return;
         }
 
+        const state = useStore.getState();
+
         blockDrag.srcId = block.id;
+        blockDrag.sourceTabId = getActiveTab(state)?.id ?? null;
+        blockDrag.blockIds = state.selectedBlockIds.has(block.id)
+          ? [...state.selectedBlockIds]
+          : [block.id];
+
         setDragging(true);
 
-        // Move within the list, copy when dropped onto a tab
+        // Move within the list, copy when dropped onto another tab
         event.dataTransfer.effectAllowed = DragEffect.COPY_MOVE;
       }}
       onDragEnd={() => {
-        blockDrag.srcId = null;
+        clearBlockDrag();
         setDraggable(false);
         setDragging(false);
         setDragOver(false);
       }}
       onDragOver={(event) => {
         event.preventDefault();
-        event.dataTransfer.dropEffect = DragEffect.MOVE;
+
+        const activeTabId = getActiveTab(useStore.getState())?.id ?? null;
+        const isCrossTab =
+          !!blockDrag.srcId && blockDrag.sourceTabId !== activeTabId;
+
+        event.dataTransfer.dropEffect = isCrossTab
+          ? DragEffect.COPY
+          : DragEffect.MOVE;
+
         if (blockDrag.srcId && blockDrag.srcId !== block.id) {
           setDragOver(true);
         }
@@ -87,10 +102,24 @@ export const BlockItem = memo(function BlockItem({
       }}
       onDrop={(event) => {
         event.preventDefault();
+        event.stopPropagation();
         setDragOver(false);
 
-        const srcId = blockDrag.srcId;
-        if (srcId && srcId !== block.id) {
+        const { srcId, sourceTabId, blockIds } = blockDrag;
+        if (!srcId) {
+          return;
+        }
+
+        const state = useStore.getState();
+        const activeTabId = getActiveTab(state)?.id ?? null;
+
+        // Blocks arriving from another tab
+        if (sourceTabId && activeTabId && sourceTabId !== activeTabId) {
+          state.copyBlocksToTab(sourceTabId, activeTabId, blockIds, block.id);
+          return;
+        }
+
+        if (srcId !== block.id) {
           reorderBlocks(srcId, block.id);
         }
       }}

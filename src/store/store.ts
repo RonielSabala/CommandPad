@@ -121,7 +121,12 @@ interface StoreState {
   toggleCommandEditor: (blockId: string) => void;
   toggleAllCommandEditors: () => void;
   reorderBlocks: (sourceId: string, targetId: string) => void;
-  copyBlocksToTab: (targetTabId: string, blockIds: string[]) => void;
+  copyBlocksToTab: (
+    sourceTabId: string,
+    targetTabId: string,
+    blockIds: string[],
+    beforeBlockId?: string,
+  ) => void;
   clearFlash: (blockId: string) => void;
   consumeBlockFocus: () => void;
 
@@ -926,13 +931,13 @@ export const useStore = create<StoreState>()((set, get) => ({
     get().saveState();
   },
 
-  copyBlocksToTab: (targetTabId, blockIds) => {
+  copyBlocksToTab: (sourceTabId, targetTabId, blockIds, beforeBlockId) => {
     const state = get();
     if (state.mode === AppMode.READ) {
       return;
     }
 
-    const source = getActiveTab(state);
+    const source = state.tabs.find((t) => t.id === sourceTabId);
     const target = state.tabs.find((t) => t.id === targetTabId);
     if (!source || !target || source.id === target.id) {
       return;
@@ -957,15 +962,29 @@ export const useStore = create<StoreState>()((set, get) => ({
       .map((v) => ({ ...v, id: generateId() }));
 
     set((s) => {
-      const tabs = s.tabs.map((t) =>
-        t.id === targetTabId
-          ? {
-              ...t,
-              blocks: [...t.blocks, ...copies],
-              variables: [...t.variables, ...carriedVariables],
-            }
-          : t,
-      );
+      const tabs = s.tabs.map((t) => {
+        if (t.id !== targetTabId) {
+          return t;
+        }
+
+        // Insert before the given block, or append at the end
+        const blocks = [...t.blocks];
+        const beforeIndex = beforeBlockId
+          ? blocks.findIndex((b) => b.id === beforeBlockId)
+          : -1;
+
+        blocks.splice(
+          beforeIndex >= 0 ? beforeIndex : blocks.length,
+          0,
+          ...copies,
+        );
+
+        return {
+          ...t,
+          blocks,
+          variables: [...t.variables, ...carriedVariables],
+        };
+      });
 
       const next = { ...s, tabs };
       return {
@@ -974,7 +993,7 @@ export const useStore = create<StoreState>()((set, get) => ({
       };
     });
 
-    // The target isn't the active tab, so persist its content explicitly
+    // The target may not be the active tab, so persist its content explicitly
     const updated = get().tabs.find((t) => t.id === targetTabId);
     if (updated?.runbookId) {
       putRunbookContent(updated.runbookId, {

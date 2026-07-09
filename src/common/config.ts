@@ -29,6 +29,7 @@ export const DEFAULT_TAB_LABEL = "Untitled";
 export const DRAG_TIMEOUT_MS = 50;
 export const DEBOUNCE_SAVE_MS = 150;
 export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
+export const TAB_HOVER_SWITCH_MS = 300;
 
 // Markdown config
 

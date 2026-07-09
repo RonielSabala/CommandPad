@@ -236,7 +236,7 @@ Hold `Ctrl` and click blocks to build a selection. You can also hold `Ctrl` and 
 With a selection active:
 
 - **Drag** any selected block's handle to move all selected blocks together, preserving relative order.
-- **Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab. The copies are appended at the end of the target tab (the originals stay put) and flash when you switch to it.
+- **Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab.
 - **Duplicate** (`Ctrl+D`) any selected block to duplicate the entire group, inserted after the last selected block.
 - **Delete** (`Del`) any selected block to delete the entire group.
 - Press `Escape` or click outside block controls to clear the selection.
