@@ -1,4 +1,6 @@
 import {
+  CommandVariableTokenRegex,
+  EscapedBraceRegex,
   VariableParamPlaceholderRegex,
   VariableSyntax,
   VariableTokenRegex,
@@ -127,6 +129,10 @@ export function getSecretKeys(variables: Variable[] = []): Set<string> {
   );
 }
 
+function unescapeBraces(text: string): string {
+  return text.replace(EscapedBraceRegex, "$1");
+}
+
 export function resolveCommandText(
   rawText: string,
   variableMap: VariableMap,
@@ -134,11 +140,11 @@ export function resolveCommandText(
   let lastIndex = 0;
   const segments: CommandSegment[] = [];
 
-  for (const match of rawText.matchAll(VariableTokenRegex)) {
+  for (const match of rawText.matchAll(CommandVariableTokenRegex)) {
     const matchIdx = match.index;
     if (matchIdx > lastIndex) {
       segments.push({
-        text: rawText.slice(lastIndex, matchIdx),
+        text: unescapeBraces(rawText.slice(lastIndex, matchIdx)),
         type: CommandSegmentType.LITERAL,
       });
     }
@@ -184,7 +190,7 @@ export function resolveCommandText(
 
   if (lastIndex < rawText.length) {
     segments.push({
-      text: rawText.slice(lastIndex),
+      text: unescapeBraces(rawText.slice(lastIndex)),
       type: CommandSegmentType.LITERAL,
     });
   }

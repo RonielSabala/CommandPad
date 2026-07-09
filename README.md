@@ -145,6 +145,14 @@ Variables are defined in the **VARIABLES** section of the sidebar. Each variable
 
   resolves to `generic_path/my_path`. Supply multiple placeholders by separating them with `;`: `{A;p1=v1;p2=v2}`. If a reference omits a placeholder's value, the `{:name}` marker is left in place and the command is treated as unresolved.
 
+- **Escaping braces**: prefix `{` or `}` with a backslash in a command block to output it literally instead of starting a variable reference. The backslash is dropped from the resolved command:
+
+  ```bash
+  awk '\{print $1\}'
+  ```
+
+  resolves to `awk '{print $1}'`. Escaping applies to command blocks only; backslashes inside variable values are always literal.
+
 - **Key rename propagation**: renaming a key automatically updates all references across every command block and other variable value.
 - Keys are case-sensitive. Variables with empty keys are ignored.
 - Hovering over a key or value shows the full content as a tooltip.
