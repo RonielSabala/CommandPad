@@ -189,7 +189,9 @@ Commands can span multiple lines. The editor scrolls horizontally when a line ex
 
 #### Note Block
 
-A free-form text block. Three text styles are selectable on hover:
+A free-form text block. Note blocks expand horizontally and vertically as you type.
+
+Three text styles are selectable on hover:
 
 | Style        | Appearance       |
 | ------------ | ---------------- |
@@ -209,7 +211,14 @@ Supported inline markdown:
 
 To open a link, hold `Alt` and click it. In read mode, links are directly clickable without holding `Alt`.
 
-Note blocks expand horizontally and vertically as you type.
+**Wrap the selection:** with text selected in a note, these keys wrap it in one step:
+
+| Keys             | Wraps selection in |
+| ---------------- | ------------------ |
+| `Ctrl+B`         | \*\*Bold\*\*       |
+| `Ctrl+I`         | \_Italic\_         |
+| `` Ctrl+` ``     | \`Code pill\`      |
+| `(`, `[`, or `{` | that bracket pair  |
 
 ---
 

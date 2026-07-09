@@ -54,6 +54,12 @@ export const MarkdownWrap = {
   CODE: "`",
 } as const;
 
+export const BracketPairs = {
+  "(": ")",
+  "[": "]",
+  "{": "}",
+} as const;
+
 // Variables
 
 export const VariableTokenRegex = /\{((?:[^{}]|\{[^{}]*\})+)\}/g;
