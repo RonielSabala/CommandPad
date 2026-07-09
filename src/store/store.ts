@@ -26,6 +26,7 @@ import type {
 import { debounce } from "@/utils/debounce";
 import { runExport } from "@/utils/export";
 import { generateId } from "@/utils/id";
+import { getUsedVariableKeys } from "@/utils/resolution";
 import { getRunbookLabel } from "@/utils/runbook";
 
 import * as persistence from "./persistence";
@@ -120,6 +121,7 @@ interface StoreState {
   toggleCommandEditor: (blockId: string) => void;
   toggleAllCommandEditors: () => void;
   reorderBlocks: (sourceId: string, targetId: string) => void;
+  copyBlocksToTab: (targetTabId: string, blockIds: string[]) => void;
   clearFlash: (blockId: string) => void;
   consumeBlockFocus: () => void;
 
@@ -190,42 +192,49 @@ function withActiveTab(
 }
 
 /**
- * Recompute the active tab's label from its blocks and mirror it into the
- * runbook library entry. Returns the same references when nothing changed so
- * the tabs bar / runbook list don't re-render needlessly.
+ * Recompute a tab's label from its blocks and mirror it into the runbook
+ * library entry. Returns the same references when nothing changed so the
+ * tabs bar / runbook list don't re-render needlessly.
  */
-function relabelActive(state: StoreState): {
+function relabelTab(
+  state: StoreState,
+  tab: Tab | null,
+): {
   tabs: Tab[];
   runbookLibrary: RunbookEntry[];
 } {
-  const active = getActiveTab(state);
-  if (!active?.runbookId) {
+  if (!tab?.runbookId) {
     return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
   }
 
-  const entry = state.runbookLibrary.find(
-    (item) => item.id === active.runbookId,
-  );
+  const entry = state.runbookLibrary.find((item) => item.id === tab.runbookId);
   if (!entry) {
     return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
   }
 
   const newLabel = getRunbookLabel(
-    active.blocks,
+    tab.blocks,
     entry.filename || RunbookConfig.DEFAULT_LABEL,
   );
-  if (newLabel === entry.label && newLabel === active.label) {
+  if (newLabel === entry.label && newLabel === tab.label) {
     return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
   }
 
   return {
     tabs: state.tabs.map((t) =>
-      t.id === active.id ? { ...t, label: newLabel } : t,
+      t.id === tab.id ? { ...t, label: newLabel } : t,
     ),
     runbookLibrary: state.runbookLibrary.map((item) =>
       item.id === entry.id ? { ...item, label: newLabel } : item,
     ),
   };
+}
+
+function relabelActive(state: StoreState): {
+  tabs: Tab[];
+  runbookLibrary: RunbookEntry[];
+} {
+  return relabelTab(state, getActiveTab(state));
 }
 
 let bootstrapped = false;
@@ -917,10 +926,73 @@ export const useStore = create<StoreState>()((set, get) => ({
     get().saveState();
   },
 
+  copyBlocksToTab: (targetTabId, blockIds) => {
+    const state = get();
+    if (state.mode === AppMode.READ) {
+      return;
+    }
+
+    const source = getActiveTab(state);
+    const target = state.tabs.find((t) => t.id === targetTabId);
+    if (!source || !target || source.id === target.id) {
+      return;
+    }
+
+    // Copy in source document order, regardless of selection order
+    const ordered = source.blocks.filter((b) => blockIds.includes(b.id));
+    if (ordered.length === 0) {
+      return;
+    }
+
+    const copies = ordered.map((b) => ({ ...b, id: generateId() }));
+
+    // Carry over referenced variables the target doesn't define yet
+    const usedKeys = getUsedVariableKeys(ordered, source.variables);
+    const targetKeys = new Set(target.variables.map((v) => v.key.trim()));
+    const carriedVariables = source.variables
+      .filter((v) => {
+        const key = v.key.trim();
+        return key && usedKeys.has(key) && !targetKeys.has(key);
+      })
+      .map((v) => ({ ...v, id: generateId() }));
+
+    set((s) => {
+      const tabs = s.tabs.map((t) =>
+        t.id === targetTabId
+          ? {
+              ...t,
+              blocks: [...t.blocks, ...copies],
+              variables: [...t.variables, ...carriedVariables],
+            }
+          : t,
+      );
+
+      const next = { ...s, tabs };
+      return {
+        ...relabelTab(next, tabs.find((t) => t.id === targetTabId) ?? null),
+        flashBlockIds: new Set(copies.map((b) => b.id)),
+      };
+    });
+
+    // The target isn't the active tab, so persist its content explicitly
+    const updated = get().tabs.find((t) => t.id === targetTabId);
+    if (updated?.runbookId) {
+      putRunbookContent(updated.runbookId, {
+        variables: updated.variables,
+        blocks: updated.blocks,
+      }).catch((error) =>
+        console.warn("Failed to persist runbook content:", error),
+      );
+    }
+
+    get().saveState();
+  },
+
   updateBlockText: (blockId, text) => {
     if (get().mode === AppMode.READ) {
       return;
     }
+
     set((s) => {
       const updated = withActiveTab(s, (tab) => ({
         ...tab,
@@ -944,6 +1016,7 @@ export const useStore = create<StoreState>()((set, get) => ({
         ),
       })),
     );
+
     get().saveState();
   },
 

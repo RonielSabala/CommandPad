@@ -35,4 +35,6 @@ export const MouseButton = {
 
 export const DragEffect = {
   MOVE: "move",
+  COPY: "copy",
+  COPY_MOVE: "copyMove",
 } as const;

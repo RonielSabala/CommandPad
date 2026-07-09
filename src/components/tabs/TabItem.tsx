@@ -4,6 +4,7 @@ import { DragEffect, MouseButton } from "@/common/constants/events";
 import { TabDropSide } from "@/common/enums";
 import type { Tab } from "@/common/types";
 import { CloseIcon } from "@/components/icons";
+import { blockDrag } from "@/hooks/blockDrag";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useState, type DragEvent } from "react";
@@ -23,9 +24,11 @@ export function TabItem({ tab }: Props) {
   const switchTab = useStore((state) => state.switchTab);
   const closeTab = useStore((state) => state.closeTab);
   const reorderTabs = useStore((state) => state.reorderTabs);
+  const copyBlocksToTab = useStore((state) => state.copyBlocksToTab);
 
   const [dragging, setDragging] = useState(false);
   const [dropSide, setDropSide] = useState<TabDropSide | null>(null);
+  const [blockDropTarget, setBlockDropTarget] = useState(false);
 
   const isLeftHalf = (event: DragEvent) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -38,6 +41,7 @@ export function TabItem({ tab }: Props) {
     dragging && CssClass.DRAGGING,
     dropSide === TabDropSide.LEFT && "drag-over-left",
     dropSide === TabDropSide.RIGHT && "drag-over-right",
+    blockDropTarget && "block-drop-target",
   );
 
   return (
@@ -68,6 +72,18 @@ export function TabItem({ tab }: Props) {
         setDropSide(null);
       }}
       onDragOver={(event) => {
+        // A block drag
+        if (blockDrag.srcId) {
+          if (isActive) {
+            return;
+          }
+
+          event.preventDefault();
+          event.dataTransfer.dropEffect = DragEffect.COPY;
+          setBlockDropTarget(true);
+          return;
+        }
+
         if (!tabDrag.srcId || tabDrag.srcId === tabId) {
           return;
         }
@@ -77,12 +93,26 @@ export function TabItem({ tab }: Props) {
         setDropSide(isLeftHalf(event) ? TabDropSide.LEFT : TabDropSide.RIGHT);
       }}
       onDragLeave={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node))
+        if (!event.currentTarget.contains(event.relatedTarget as Node)) {
           setDropSide(null);
+          setBlockDropTarget(false);
+        }
       }}
       onDrop={(event) => {
         event.preventDefault();
         setDropSide(null);
+        setBlockDropTarget(false);
+
+        // Copy into this tab
+        if (blockDrag.srcId) {
+          const { selectedBlockIds } = useStore.getState();
+          const blockIds = selectedBlockIds.has(blockDrag.srcId)
+            ? [...selectedBlockIds]
+            : [blockDrag.srcId];
+
+          copyBlocksToTab(tabId, blockIds);
+          return;
+        }
 
         const srcId = tabDrag.srcId;
         if (!srcId || srcId === tabId) {

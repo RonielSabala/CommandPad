@@ -5,6 +5,7 @@ import { DragEffect } from "@/common/constants/events";
 import { AppMode, BlockType, LassoMode } from "@/common/enums";
 import type { Block } from "@/common/types";
 import { DragIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
+import { blockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
 import { useStore } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
@@ -14,8 +15,6 @@ import "./BlockItem.css";
 import { CommandBlock } from "./command/CommandBlock";
 import { DividerBlock } from "./divider/DividerBlock";
 import { NoteBlock } from "./note/NoteBlock";
-
-const blockDrag: { srcId: string | null } = { srcId: null };
 
 interface Props {
   block: Block;
@@ -66,7 +65,8 @@ export const BlockItem = memo(function BlockItem({
         blockDrag.srcId = block.id;
         setDragging(true);
 
-        event.dataTransfer.effectAllowed = DragEffect.MOVE;
+        // Move within the list, copy when dropped onto a tab
+        event.dataTransfer.effectAllowed = DragEffect.COPY_MOVE;
       }}
       onDragEnd={() => {
         blockDrag.srcId = null;
@@ -76,6 +76,7 @@ export const BlockItem = memo(function BlockItem({
       }}
       onDragOver={(event) => {
         event.preventDefault();
+        event.dataTransfer.dropEffect = DragEffect.MOVE;
         if (blockDrag.srcId && blockDrag.srcId !== block.id) {
           setDragOver(true);
         }
