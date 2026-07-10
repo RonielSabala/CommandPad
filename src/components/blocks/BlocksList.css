@@ -3,4 +3,9 @@
   grid-template-columns: fit-content(calc(100% - var(--space-20)));
   max-width: 100%;
   gap: var(--space-3);
+  justify-items: start;
+}
+
+#blocks-list .block-item:has(.divider-block) {
+  justify-self: stretch;
 }
