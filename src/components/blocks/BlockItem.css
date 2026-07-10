@@ -1,6 +1,7 @@
 .block-item {
   position: relative;
   min-width: var(--block-min-width);
+  max-width: 100%;
 }
 
 .block-controls {
