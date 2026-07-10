@@ -2,6 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { Anchor, Cursor, DataAttr } from "@/common/constants/dom";
 import { EventType, MouseButton } from "@/common/constants/events";
 import { AppMode, LassoMode } from "@/common/enums";
+import { isModifierPressed, ModifierAction } from "@/common/keybindings";
 import { useStore } from "@/store/store";
 import { useEffect } from "react";
 import { blockDrag, clearBlockDrag } from "./blockDrag";
@@ -27,7 +28,7 @@ export function useDocumentInteractions(): void {
         clearBlockDrag();
       }
 
-      if (!event.altKey) {
+      if (!isModifierPressed(event, ModifierAction.OPEN_LINK)) {
         return;
       }
 
@@ -39,7 +40,7 @@ export function useDocumentInteractions(): void {
     const onMouseDown = (event: MouseEvent) => {
       const state = useStore.getState();
       if (
-        !(event.ctrlKey || event.metaKey) ||
+        !isModifierPressed(event, ModifierAction.SELECT_BLOCKS) ||
         event.button !== MouseButton.LEFT ||
         state.mode === AppMode.READ
       ) {
@@ -72,19 +73,19 @@ export function useDocumentInteractions(): void {
     const onClick = (event: MouseEvent) => {
       const state = useStore.getState();
 
-      if (event.altKey) {
+      if (isModifierPressed(event, ModifierAction.OPEN_LINK)) {
         const link = isOverLink(event.clientX, event.clientY);
         if (!link) {
           return;
         }
 
         event.preventDefault();
-        state.setAltHeld(false);
+        state.setLinkKeyHeld(false);
         window.open(link.href, Anchor.TARGET_BLANK, Anchor.REL);
         return;
       }
 
-      if (event.ctrlKey || event.metaKey) {
+      if (isModifierPressed(event, ModifierAction.SELECT_BLOCKS)) {
         return;
       }
 

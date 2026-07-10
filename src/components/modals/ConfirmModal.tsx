@@ -1,3 +1,4 @@
+import { DEFAULT_CONFIRM_LABEL } from "@/common/config";
 import { EventType, Key } from "@/common/constants/events";
 import { useStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
@@ -9,12 +10,18 @@ export function ConfirmModal() {
 
   const isOpen = dialog !== null;
   const [message, setMessage] = useState("");
+  const [title, setTitle] = useState(DEFAULT_CONFIRM_LABEL);
+  const [confirmLabel, setConfirmLabel] = useState(DEFAULT_CONFIRM_LABEL);
+  const [isDanger, setDanger] = useState(false);
   const confirmRef = useRef<HTMLButtonElement>(null);
 
   // Keep the last message rendered while the modal fades out
   useEffect(() => {
     if (dialog) {
       setMessage(dialog.message);
+      setTitle(dialog.title);
+      setConfirmLabel(dialog.confirmLabel);
+      setDanger(dialog.danger);
     }
   }, [dialog]);
 
@@ -37,7 +44,7 @@ export function ConfirmModal() {
 
   return (
     <Modal open={isOpen} onClose={() => resolve(false)}>
-      <p className="modal-title">Clear Workspace</p>
+      <p className="modal-title">{title}</p>
       <p className="modal-message">{message}</p>
       <div className="modal-actions">
         <button className="btn btn-lg" onClick={() => resolve(false)}>
@@ -46,10 +53,10 @@ export function ConfirmModal() {
         <div className="vertical-divider" />
         <button
           ref={confirmRef}
-          className="btn btn-lg btn-danger"
+          className={`btn btn-lg${isDanger ? " btn-danger" : " btn-primary"}`}
           onClick={() => resolve(true)}
         >
-          Delete
+          {confirmLabel}
         </button>
       </div>
     </Modal>

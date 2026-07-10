@@ -1,6 +1,25 @@
 import { toTitleCase } from "../utils/string";
 import { Modifier } from "./constants/events";
 
+export const ModifierAction = {
+  SELECT_BLOCKS: Modifier.SHIFT,
+  OPEN_LINK: Modifier.CTRL,
+} as const;
+
+export function isModifierPressed(
+  event: KeyboardEvent | MouseEvent,
+  modifier: Modifier,
+): boolean {
+  switch (modifier) {
+    case Modifier.CTRL:
+      return event.ctrlKey || event.metaKey;
+    case Modifier.ALT:
+      return event.altKey;
+    case Modifier.SHIFT:
+      return event.shiftKey;
+  }
+}
+
 export const KeyBinding = {
   TOGGLE_MODE: "TOGGLE_MODE",
   NEW_TAB: "NEW_TAB",
@@ -17,7 +36,7 @@ export const KeyBinding = {
   CLEAR_WORKSPACE: "CLEAR_WORKSPACE",
   FOCUS_RUNBOOK: "FOCUS_RUNBOOK",
   NAVIGATE_RUNBOOKS: "NAVIGATE_RUNBOOKS",
-  ALT_CLICK_LINK: "ALT_CLICK_LINK",
+  OPEN_LINK: "OPEN_LINK",
   MULTISELECT_BLOCKS: "MULTISELECT_BLOCKS",
   NOTE_BOLD: "NOTE_BOLD",
   NOTE_ITALIC: "NOTE_ITALIC",
@@ -93,13 +112,13 @@ export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
     description: "Navigate runbooks when selected active runbook",
     keyboard: false,
   },
-  [KeyBinding.ALT_CLICK_LINK]: {
-    binding: "alt+click",
+  [KeyBinding.OPEN_LINK]: {
+    binding: `${ModifierAction.OPEN_LINK}+click`,
     description: "Open note link in new tab",
     keyboard: false,
   },
   [KeyBinding.MULTISELECT_BLOCKS]: {
-    binding: "ctrl+click / drag",
+    binding: `${ModifierAction.SELECT_BLOCKS}+click / drag`,
     description: "Multi-select blocks",
     keyboard: false,
   },

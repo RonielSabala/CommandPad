@@ -163,7 +163,10 @@ export const BlockItem = memo(function BlockItem({
         </div>
       </div>
 
-      <div className={CssClass.BLOCK_CONTROLS}>
+      <div
+        className={CssClass.BLOCK_CONTROLS}
+        onMouseDown={(event) => event.preventDefault()}
+      >
         <button
           className="btn btn-icon"
           onClick={() => duplicateBlock(block.id)}

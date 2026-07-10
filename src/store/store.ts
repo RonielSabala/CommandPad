@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 import {
   DEBOUNCE_SAVE_MS,
+  DEFAULT_CONFIRM_LABEL,
   DEFAULT_TAB_LABEL,
   RunbookConfig,
   VariableSyntax,
@@ -42,6 +43,18 @@ interface Dialog<T> {
   resolve: (value: T) => void;
 }
 
+interface ConfirmDialog extends Dialog<boolean> {
+  title: string;
+  confirmLabel: string;
+  danger: boolean;
+}
+
+interface ConfirmOptions {
+  title?: string;
+  confirmLabel?: string;
+  danger?: boolean;
+}
+
 interface StoreState {
   // Data
   tabs: Tab[];
@@ -61,8 +74,8 @@ interface StoreState {
   focusedRunbookId: string | null;
   selectedBlockIds: Set<string>;
   flashBlockIds: Set<string>;
-  ctrlHeld: boolean;
-  altHeld: boolean;
+  selectKeyHeld: boolean;
+  linkKeyHeld: boolean;
   pendingFocusBlockId: string | null;
   pendingFocusVariableId: string | null;
 
@@ -73,7 +86,7 @@ interface StoreState {
   // Modals / dialogs
   exportModalOpen: boolean;
   keybindingsModalOpen: boolean;
-  confirmDialog: Dialog<boolean> | null;
+  confirmDialog: ConfirmDialog | null;
   alertDialog: Dialog<void> | null;
 
   // Bootstrap
@@ -145,8 +158,8 @@ interface StoreState {
   setRunbookSearchQuery: (query: string) => void;
   setVariableSearchQuery: (query: string) => void;
 
-  setCtrlHeld: (held: boolean) => void;
-  setAltHeld: (held: boolean) => void;
+  setSelectKeyHeld: (held: boolean) => void;
+  setLinkKeyHeld: (held: boolean) => void;
   setScrollTop: (scrollTop: number) => void;
   clearUserInteraction: () => void;
 
@@ -156,7 +169,7 @@ interface StoreState {
   closeKeybindingsModal: () => void;
   exportRunbook: (format: ExportFormat) => Promise<void>;
 
-  confirm: (message: string) => Promise<boolean>;
+  confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
   resolveConfirm: (result: boolean) => void;
   alert: (message: string) => Promise<void>;
   resolveAlert: () => void;
@@ -260,8 +273,8 @@ export const useStore = create<StoreState>()((set, get) => ({
   focusedRunbookId: null,
   selectedBlockIds: new Set(),
   flashBlockIds: new Set(),
-  ctrlHeld: false,
-  altHeld: false,
+  selectKeyHeld: false,
+  linkKeyHeld: false,
   pendingFocusBlockId: null,
   pendingFocusVariableId: null,
 
@@ -435,7 +448,7 @@ export const useStore = create<StoreState>()((set, get) => ({
       activeTabId: tabId,
       activeRunbookId:
         getActiveTab({ ...s, activeTabId: tabId })?.runbookId ?? null,
-      ctrlHeld: false,
+      selectKeyHeld: false,
     }));
     persistence.saveTabsMeta(get().tabs, get().activeTabId);
   },
@@ -569,7 +582,11 @@ export const useStore = create<StoreState>()((set, get) => ({
   importRunbooks: async (files) => {
     let failedCount = 0;
 
-    const addToLibrary = async (content: RunbookContent, filename: string) => {
+    const addToLibrary = async (
+      content: RunbookContent,
+      filename: string,
+      rawFilename: string,
+    ) => {
       const label = getRunbookLabel(
         content.blocks,
         filename || RunbookConfig.DEFAULT_LABEL,
@@ -580,6 +597,20 @@ export const useStore = create<StoreState>()((set, get) => ({
       );
 
       if (existing) {
+        const existingName = existing.label || existing.filename;
+        const confirmed = await get().confirm(
+          `"${rawFilename}" matches an existing runbook. Importing it will overwrite "${existingName}".`,
+          {
+            title: "Overwrite Runbook",
+            confirmLabel: "Overwrite",
+            danger: true,
+          },
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
         await putRunbookContent(existing.id, content);
         set((s) => ({
           runbookLibrary: s.runbookLibrary.map((item) =>
@@ -647,7 +678,11 @@ export const useStore = create<StoreState>()((set, get) => ({
               })),
             };
 
-            await addToLibrary(content, file.name.replace(/\.json$/i, ""));
+            await addToLibrary(
+              content,
+              file.name.replace(/\.json$/i, ""),
+              file.name,
+            );
           } catch {
             failedCount += 1;
           }
@@ -660,7 +695,9 @@ export const useStore = create<StoreState>()((set, get) => ({
         reader.readAsText(file);
       });
 
-    await Promise.all(files.map(readFile));
+    for (const file of files) {
+      await readFile(file);
+    }
 
     if (failedCount > 0) {
       await get().alert(
@@ -1226,8 +1263,8 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   // --- Interaction ---
 
-  setCtrlHeld: (held) => set({ ctrlHeld: held }),
-  setAltHeld: (held) => set({ altHeld: held }),
+  setSelectKeyHeld: (held) => set({ selectKeyHeld: held }),
+  setLinkKeyHeld: (held) => set({ linkKeyHeld: held }),
   setScrollTop: (scrollTop) => {
     set((s) => withActiveTab(s, (tab) => ({ ...tab, scrollTop })));
     persistence.saveTabsMeta(get().tabs, get().activeTabId);
@@ -1235,8 +1272,8 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   clearUserInteraction: () =>
     set({
-      ctrlHeld: false,
-      altHeld: false,
+      selectKeyHeld: false,
+      linkKeyHeld: false,
       selectedBlockIds: new Set(),
       focusedRunbookId: null,
     }),
@@ -1259,9 +1296,17 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   // --- Dialogs ---
 
-  confirm: (message) =>
+  confirm: (message, options) =>
     new Promise<boolean>((resolve) =>
-      set({ confirmDialog: { message, resolve } }),
+      set({
+        confirmDialog: {
+          message,
+          resolve,
+          title: options?.title ?? DEFAULT_CONFIRM_LABEL,
+          confirmLabel: options?.confirmLabel ?? DEFAULT_CONFIRM_LABEL,
+          danger: options?.danger ?? false,
+        },
+      }),
     ),
   resolveConfirm: (result) => {
     get().confirmDialog?.resolve(result);
@@ -1275,9 +1320,10 @@ export const useStore = create<StoreState>()((set, get) => ({
   },
 
   clearAllData: async () => {
-    set({ ctrlHeld: false });
+    set({ selectKeyHeld: false });
     const confirmed = await get().confirm(
       "Delete all variables, blocks, and runbooks? This action cannot be undone.",
+      { title: "Clear Workspace", confirmLabel: "Delete", danger: true },
     );
     if (!confirmed) {
       return;

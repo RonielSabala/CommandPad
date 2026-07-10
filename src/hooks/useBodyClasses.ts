@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { Cursor } from "@/common/constants/dom";
 import { AppMode, Theme } from "@/common/enums";
 import { useStore } from "@/store/store";
@@ -6,23 +7,23 @@ import { useEffect } from "react";
 export function useBodyClasses(): void {
   const mode = useStore((state) => state.mode);
   const theme = useStore((state) => state.theme);
-  const ctrlHeld = useStore((state) => state.ctrlHeld);
-  const altHeld = useStore((state) => state.altHeld);
+  const selectKeyHeld = useStore((state) => state.selectKeyHeld);
+  const linkKeyHeld = useStore((state) => state.linkKeyHeld);
 
   useEffect(() => {
     document.body.classList.toggle("read-mode", mode === AppMode.READ);
   }, [mode]);
 
   useEffect(() => {
-    document.body.classList.toggle("ctrl-held", ctrlHeld);
-  }, [ctrlHeld]);
+    document.body.classList.toggle(CssClass.SELECT_KEY_HELD, selectKeyHeld);
+  }, [selectKeyHeld]);
 
   useEffect(() => {
-    document.body.classList.toggle("alt-held", altHeld);
-    if (!altHeld) {
+    document.body.classList.toggle(CssClass.LINK_KEY_HELD, linkKeyHeld);
+    if (!linkKeyHeld) {
       document.body.style.cursor = Cursor.DEFAULT;
     }
-  }, [altHeld]);
+  }, [linkKeyHeld]);
 
   useEffect(() => {
     document.documentElement.classList.toggle(

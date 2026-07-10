@@ -24,6 +24,7 @@ export const IndexedDbTransactionMode = {
 } as const;
 
 export const DEFAULT_TAB_LABEL = "Untitled";
+export const DEFAULT_CONFIRM_LABEL = "Confirm";
 
 // Timeout durations
 export const DRAG_TIMEOUT_MS = 50;

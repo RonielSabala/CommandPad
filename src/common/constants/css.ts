@@ -4,6 +4,10 @@ export const CssClass = {
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",
 
+  // Modifier-key states
+  SELECT_KEY_HELD: "select-key-held",
+  LINK_KEY_HELD: "link-key-held",
+
   // Specific classes
   NOTE_LINK: "note-link",
   BLOCK_ITEM: "block-item",

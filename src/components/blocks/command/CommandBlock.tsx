@@ -31,6 +31,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const isEditorCollapsed = block.editorCollapsed === true;
 
   const mode = useStore((state) => state.mode);
+  const isSidebarCollapsed = useStore((state) => state.sidebarCollapsed);
   const updateBlockText = useStore((state) => state.updateBlockText);
   const toggleCommandEditor = useStore((state) => state.toggleCommandEditor);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
@@ -50,7 +51,12 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     [blockText, variableMap],
   );
 
-  useAutoResize(textareaRef, [blockText, isEditorCollapsed, mode]);
+  useAutoResize(textareaRef, [
+    blockText,
+    isEditorCollapsed,
+    mode,
+    isSidebarCollapsed,
+  ]);
   const handleTabKey = useTabInsertion((value) =>
     updateBlockText(blockId, value),
   );

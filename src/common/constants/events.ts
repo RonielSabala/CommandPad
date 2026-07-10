@@ -12,6 +12,7 @@ export const EventType = {
 export const Key = {
   CTRL: "Control",
   ALT: "Alt",
+  SHIFT: "Shift",
   ENTER: "Enter",
   ESCAPE: "Escape",
   TAB: "Tab",
@@ -27,6 +28,12 @@ export const Modifier = {
   SHIFT: "shift",
 } as const;
 export type Modifier = (typeof Modifier)[keyof typeof Modifier];
+
+export const ModifierKeyName: Record<Modifier, string> = {
+  [Modifier.ALT]: Key.ALT,
+  [Modifier.CTRL]: Key.CTRL,
+  [Modifier.SHIFT]: Key.SHIFT,
+};
 
 export const MouseButton = {
   LEFT: 0,

@@ -38,7 +38,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 - **Rich note blocks**: notes support three text styles (heading, subheading, body), auto-detect URLs, and inline markdown: `**bold**`, `_italic_`, `` `code` ``.
 - **Secret variables**: mark any variable as secret to mask its value in the sidebar and in command previews.
 - **Drag-and-drop reordering**: blocks, variables, and runbook library entries can each be reordered via their drag handles.
-- **Multi-block selection**: hold `Ctrl` and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the group at once.
+- **Multi-block selection**: hold `Shift` and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the group at once.
 - **Read mode**: locks editing while still allowing variable values to change and runbooks to be switched.
 - **Light and dark theme**: toggle between dark and light mode.
 - **Adjustable sidebar**: collapse the sidebar to maximize workspace, or move it to the right side of the screen.
@@ -152,7 +152,7 @@ Variables are defined in the **VARIABLES** section of the sidebar. Each variable
   awk '\{print $1\}'
   ```
 
-  resolves to `awk '{print $1}'`. Escaping applies to command blocks only; backslashes inside variable values are always literal.
+  resolves to `awk '{print $1}'`. This also works inside a parameter value, so you can pass a literal brace instead of a nested reference. Escaping applies to command blocks only; backslashes inside variable values are always literal.
 
 - **Key rename propagation**: renaming a key automatically updates all references across every command block and other variable value.
 - **Unused variables**: a variable that isn't referenced by any command block, directly or through another variable's value, is dimmed and italicized in the sidebar, so stale entries are easy to spot.
@@ -210,7 +210,7 @@ Supported inline markdown:
 | `https://...`        | Clickable link |
 | `[label](https://…)` | Labelled link  |
 
-To open a link, hold `Alt` and click it. In read mode, links are directly clickable without holding `Alt`.
+To open a link, hold `Ctrl` and click it. In read mode, links are directly clickable without holding `Ctrl`.
 
 **Wrap the selection:** with text selected in a note, these keys wrap it in one step:
 
@@ -231,7 +231,7 @@ A visual separator. Stretches to match the width of the widest block. Useful for
 
 ### Multi-select
 
-Hold `Ctrl` and click blocks to build a selection. You can also hold `Ctrl` and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.
+Hold `Shift` and click blocks to build a selection. You can also hold `Shift` and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.
 
 With a selection active:
 

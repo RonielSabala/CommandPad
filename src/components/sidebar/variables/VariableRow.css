@@ -17,12 +17,6 @@
 
 .variable-row.is-unused .variable-key-input {
   color: var(--color-text-secondary);
-  font-style: italic;
-}
-
-.variable-row.is-unused:hover .variable-inputs,
-.variable-row.is-unused .variable-inputs:focus-within {
-  opacity: 1;
 }
 
 .variable-key-input {
@@ -59,8 +53,11 @@
 }
 
 body.read-mode .variable-key-input {
-  opacity: 0.5;
   pointer-events: none;
+}
+
+body.read-mode .variable-row:not(.is-unused) .variable-key-input {
+  opacity: 0.5;
 }
 
 /* Tooltip */

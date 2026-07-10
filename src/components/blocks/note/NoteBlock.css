@@ -21,7 +21,7 @@ body.read-mode .note-style-row {
   visibility: hidden;
 }
 
-body.ctrl-held:not(.read-mode) .note-style-row {
+body.select-key-held:not(.read-mode) .note-style-row {
   opacity: 0;
   pointer-events: none;
 }
@@ -74,7 +74,11 @@ body.ctrl-held:not(.read-mode) .note-style-row {
   padding: var(--space-2) 0;
 }
 
-body.ctrl-held:not(.read-mode) .note-auto-width {
+.note-block:not(.is-focused) .note-auto-width::after {
+  content: none;
+}
+
+body.select-key-held:not(.read-mode) .note-auto-width {
   cursor: default;
   pointer-events: none;
 }
@@ -136,7 +140,7 @@ body.read-mode .note-textarea:focus {
   outline: none;
 }
 
-body:not(.ctrl-held) .note-textarea::selection {
+body:not(.select-key-held) .note-textarea::selection {
   background-color: var(--selection-color);
 }
 

@@ -26,8 +26,10 @@ function parseVariableToken(raw: string): ParsedVariableToken {
     }
 
     const paramKey = part.slice(0, eqIndex).trim();
-    if (paramKey) {
-      params[paramKey] = part.slice(eqIndex + 1);
+    const paramValue = part.slice(eqIndex + 1);
+
+    if (paramKey && paramValue) {
+      params[paramKey] = paramValue;
     }
   }
 
@@ -43,7 +45,7 @@ function resolveParamRefs(
 
   for (const [name, value] of Object.entries(params)) {
     resolved[name] = value.replace(
-      VariableTokenRegex,
+      CommandVariableTokenRegex,
       (match, refKey: string) => {
         if (
           Object.prototype.hasOwnProperty.call(variableMap, refKey) &&
@@ -219,7 +221,7 @@ export function resolveCommandText(
 
         segments.push({
           key,
-          text: template ? text : match[0],
+          text: template ? unescapeBraces(text) : match[0],
           type:
             template && fullyResolved && paramRefs.fullyResolved
               ? CommandSegmentType.RESOLVED
@@ -230,12 +232,15 @@ export function resolveCommandText(
       }
     } else if (Object.prototype.hasOwnProperty.call(variableMap, raw)) {
       const value = variableMap[raw];
+      const { text, fullyResolved } = applyTemplateParams(value, {});
+
       segments.push({
         key: raw,
-        text: value || `{${raw}}`,
-        type: value
-          ? CommandSegmentType.RESOLVED
-          : CommandSegmentType.UNRESOLVED,
+        text: value ? text : `{${raw}}`,
+        type:
+          value && fullyResolved
+            ? CommandSegmentType.RESOLVED
+            : CommandSegmentType.UNRESOLVED,
       });
     } else {
       segments.push({ text: match[0], type: CommandSegmentType.UNRESOLVED });
