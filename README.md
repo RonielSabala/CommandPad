@@ -38,7 +38,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 - **Rich note blocks**: notes support three text styles (heading, subheading, body), auto-detect URLs, and inline markdown: `**bold**`, `_italic_`, `` `code` ``.
 - **Secret variables**: mark any variable as secret to mask its value in the sidebar and in command previews.
 - **Drag-and-drop reordering**: blocks, variables, and runbook library entries can each be reordered via their drag handles.
-- **Multi-block selection**: hold `Shift` and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the group at once.
+- **Multi-block selection**: hold <kbd>Shift</kbd> and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the group at once.
 - **Read mode**: locks editing while still allowing variable values to change and runbooks to be switched.
 - **Light and dark theme**: toggle between dark and light mode.
 - **Adjustable sidebar**: collapse the sidebar to maximize workspace, or move it to the right side of the screen.
@@ -71,7 +71,7 @@ pnpm install
 pnpm dev
 ```
 
-Access at `http://localhost:5173`. Use `Ctrl+C` to stop.
+Access at `http://localhost:5173`. Use <kbd>Ctrl</kbd>+<kbd>C</kbd> to stop.
 
 ---
 
@@ -93,8 +93,8 @@ Each tab holds one open runbook.
 
 The sidebar holds the runbook library and variables panel.
 
-- **Collapse / expand**: click the chevron button or press `Ctrl+S`.
-- **Move left / right**: click the layout button or press `Ctrl+Shift+S` to move the sidebar to the other side of the screen.
+- **Collapse / expand**: click the chevron button or press <kbd>Ctrl</kbd>+<kbd>S</kbd>.
+- **Move left / right**: click the layout button or press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> to move the sidebar to the other side of the screen.
 
 ---
 
@@ -155,7 +155,7 @@ Variables are defined in the **VARIABLES** section of the sidebar. Each variable
   resolves to `awk '{print $1}'`. This also works inside a parameter value, so you can pass a literal brace instead of a nested reference. Escaping applies to command blocks only; backslashes inside variable values are always literal.
 
 - **Key rename propagation**: renaming a key automatically updates all references across every command block and other variable value.
-- **Unused variables**: a variable that isn't referenced by any command block, directly or through another variable's value, is dimmed and italicized in the sidebar, so stale entries are easy to spot.
+- **Unused variables**: a variable that isn't referenced by any command block, directly or through another variable's value, is dimmed so stale entries are easy to spot.
 - Keys are case-sensitive. Variables with empty keys are ignored.
 - Hovering over a key or value shows the full content as a tooltip.
 - Drag the handle on the left of a row to reorder variables.
@@ -202,24 +202,24 @@ Three text styles are selectable on hover:
 
 Supported inline markdown:
 
-| Syntax               | Result         |
-| -------------------- | -------------- |
-| `**text**`           | **Bold**       |
-| `_text_` or `*text*` | _Italic_       |
-| `` `text` ``         | `Code pill`    |
-| `https://...`        | Clickable link |
-| `[label](https://…)` | Labelled link  |
+| Syntax                             | Result                       |
+| ---------------------------------- | ---------------------------- |
+| \*\*bold-text\*\*                  | **bold-text**                |
+| \_italic-text\_ or \*italic-text\* | _italic-text_                |
+| \`code-text\`                      | `code-text`                  |
+| https://...                        | [https://...](https://...)   |
+| \[labelled-link\]\(https://…\)     | [labelled-link](https://...) |
 
-To open a link, hold `Ctrl` and click it. In read mode, links are directly clickable without holding `Ctrl`.
+To open a link, hold <kbd>Ctrl</kbd> and click it. In read mode, links are directly clickable.
 
 **Wrap the selection:** with text selected in a note, these keys wrap it in one step:
 
-| Keys             | Wraps selection in |
-| ---------------- | ------------------ |
-| `Ctrl+B`         | \*\*Bold\*\*       |
-| `Ctrl+I`         | \_Italic\_         |
-| `` Ctrl+` ``     | \`Code pill\`      |
-| `(`, `[`, or `{` | that bracket pair  |
+| Keys                                        | Wraps selection in |
+| ------------------------------------------- | ------------------ |
+| <kbd>Ctrl</kbd>+<kbd>B</kbd>                | \*\*bold\*\*       |
+| <kbd>Ctrl</kbd>+<kbd>I</kbd>                | \_italic\_         |
+| <kbd>Ctrl</kbd>+<kbd>´</kbd>                | \`code\`           |
+| <kbd>(</kbd>, <kbd>[</kbd>, or <kbd>{</kbd> | that bracket pair  |
 
 ---
 
@@ -231,15 +231,15 @@ A visual separator. Stretches to match the width of the widest block. Useful for
 
 ### Multi-select
 
-Hold `Shift` and click blocks to build a selection. You can also hold `Shift` and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.
+Hold <kbd>Shift</kbd> and click blocks to build a selection. You can also hold <kbd>Shift</kbd> and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.
 
 With a selection active:
 
 - **Drag** any selected block's handle to move all selected blocks together, preserving relative order.
 - **Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab.
-- **Duplicate** (`Ctrl+D`) any selected block to duplicate the entire group, inserted after the last selected block.
-- **Delete** (`Del`) any selected block to delete the entire group.
-- Press `Escape` or click outside block controls to clear the selection.
+- **Duplicate** (<kbd>Ctrl</kbd>+<kbd>D</kbd>) any selected block to duplicate the entire group, inserted after the last selected block.
+- **Delete** (<kbd>Del</kbd>) any selected block to delete the entire group.
+- Press <kbd>Escape</kbd> or click outside block controls to clear the selection.
 
 ---
 
@@ -272,7 +272,7 @@ Click **Export** in the header to open the format picker.
 
 A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.
 
-Press `Escape` or click outside the modal to cancel.
+Press <kbd>Escape</kbd> or click outside the modal to cancel.
 
 ---
 
