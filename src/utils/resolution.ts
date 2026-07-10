@@ -232,12 +232,15 @@ export function resolveCommandText(
       }
     } else if (Object.prototype.hasOwnProperty.call(variableMap, raw)) {
       const value = variableMap[raw];
+      const { text, fullyResolved } = applyTemplateParams(value, {});
+
       segments.push({
         key: raw,
-        text: value || `{${raw}}`,
-        type: value
-          ? CommandSegmentType.RESOLVED
-          : CommandSegmentType.UNRESOLVED,
+        text: value ? text : `{${raw}}`,
+        type:
+          value && fullyResolved
+            ? CommandSegmentType.RESOLVED
+            : CommandSegmentType.UNRESOLVED,
       });
     } else {
       segments.push({ text: match[0], type: CommandSegmentType.UNRESOLVED });
