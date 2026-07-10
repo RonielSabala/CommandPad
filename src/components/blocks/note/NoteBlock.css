@@ -74,6 +74,10 @@ body.ctrl-held:not(.read-mode) .note-style-row {
   padding: var(--space-2) 0;
 }
 
+.note-block:not(.is-focused) .note-auto-width::after {
+  content: none;
+}
+
 body.ctrl-held:not(.read-mode) .note-auto-width {
   cursor: default;
   pointer-events: none;
