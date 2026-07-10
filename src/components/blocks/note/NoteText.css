@@ -29,6 +29,6 @@
   border-bottom-color: var(--accent);
 }
 
-:is(body.alt-held, body.read-mode) .note-link {
+:is(body.link-key-held, body.read-mode) .note-link {
   pointer-events: auto;
 }

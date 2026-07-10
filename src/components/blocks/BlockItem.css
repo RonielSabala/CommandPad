@@ -36,12 +36,12 @@ body.read-mode :is(.block-controls, .block-drag-handle) {
   display: none;
 }
 
-body.ctrl-held:not(.read-mode) :is(.block-controls, .block-drag-handle) {
+body.select-key-held:not(.read-mode) :is(.block-controls, .block-drag-handle) {
   opacity: 0;
   pointer-events: none;
 }
 
-body.ctrl-held:not(.read-mode) .block-item:hover:not(.block-selected) {
+body.select-key-held:not(.read-mode) .block-item:hover:not(.block-selected) {
   outline: var(--border-dashed);
   border-radius: var(--radius-lg);
 }

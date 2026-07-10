@@ -230,13 +230,13 @@ body {
   color: var(--color-text-primary);
 }
 
-/* --- CTRL-HELD SUPPRESSIONS --- */
+/* --- SELECT-KEY-HELD SUPPRESSIONS --- */
 
-body.ctrl-held:not(.read-mode) * {
+body.select-key-held:not(.read-mode) * {
   user-select: none;
 }
 
-body.ctrl-held:not(.read-mode) textarea {
+body.select-key-held:not(.read-mode) textarea {
   cursor: default;
   pointer-events: none;
 }

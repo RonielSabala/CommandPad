@@ -74,8 +74,8 @@ interface StoreState {
   focusedRunbookId: string | null;
   selectedBlockIds: Set<string>;
   flashBlockIds: Set<string>;
-  ctrlHeld: boolean;
-  altHeld: boolean;
+  selectKeyHeld: boolean;
+  linkKeyHeld: boolean;
   pendingFocusBlockId: string | null;
   pendingFocusVariableId: string | null;
 
@@ -158,8 +158,8 @@ interface StoreState {
   setRunbookSearchQuery: (query: string) => void;
   setVariableSearchQuery: (query: string) => void;
 
-  setCtrlHeld: (held: boolean) => void;
-  setAltHeld: (held: boolean) => void;
+  setSelectKeyHeld: (held: boolean) => void;
+  setLinkKeyHeld: (held: boolean) => void;
   setScrollTop: (scrollTop: number) => void;
   clearUserInteraction: () => void;
 
@@ -273,8 +273,8 @@ export const useStore = create<StoreState>()((set, get) => ({
   focusedRunbookId: null,
   selectedBlockIds: new Set(),
   flashBlockIds: new Set(),
-  ctrlHeld: false,
-  altHeld: false,
+  selectKeyHeld: false,
+  linkKeyHeld: false,
   pendingFocusBlockId: null,
   pendingFocusVariableId: null,
 
@@ -448,7 +448,7 @@ export const useStore = create<StoreState>()((set, get) => ({
       activeTabId: tabId,
       activeRunbookId:
         getActiveTab({ ...s, activeTabId: tabId })?.runbookId ?? null,
-      ctrlHeld: false,
+      selectKeyHeld: false,
     }));
     persistence.saveTabsMeta(get().tabs, get().activeTabId);
   },
@@ -1263,8 +1263,8 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   // --- Interaction ---
 
-  setCtrlHeld: (held) => set({ ctrlHeld: held }),
-  setAltHeld: (held) => set({ altHeld: held }),
+  setSelectKeyHeld: (held) => set({ selectKeyHeld: held }),
+  setLinkKeyHeld: (held) => set({ linkKeyHeld: held }),
   setScrollTop: (scrollTop) => {
     set((s) => withActiveTab(s, (tab) => ({ ...tab, scrollTop })));
     persistence.saveTabsMeta(get().tabs, get().activeTabId);
@@ -1272,8 +1272,8 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   clearUserInteraction: () =>
     set({
-      ctrlHeld: false,
-      altHeld: false,
+      selectKeyHeld: false,
+      linkKeyHeld: false,
       selectedBlockIds: new Set(),
       focusedRunbookId: null,
     }),
@@ -1320,7 +1320,7 @@ export const useStore = create<StoreState>()((set, get) => ({
   },
 
   clearAllData: async () => {
-    set({ ctrlHeld: false });
+    set({ selectKeyHeld: false });
     const confirmed = await get().confirm(
       "Delete all variables, blocks, and runbooks? This action cannot be undone.",
       { title: "Clear Workspace", confirmLabel: "Delete", danger: true },

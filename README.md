@@ -38,7 +38,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 - **Rich note blocks**: notes support three text styles (heading, subheading, body), auto-detect URLs, and inline markdown: `**bold**`, `_italic_`, `` `code` ``.
 - **Secret variables**: mark any variable as secret to mask its value in the sidebar and in command previews.
 - **Drag-and-drop reordering**: blocks, variables, and runbook library entries can each be reordered via their drag handles.
-- **Multi-block selection**: hold `Ctrl` and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the group at once.
+- **Multi-block selection**: hold `Shift` and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the group at once.
 - **Read mode**: locks editing while still allowing variable values to change and runbooks to be switched.
 - **Light and dark theme**: toggle between dark and light mode.
 - **Adjustable sidebar**: collapse the sidebar to maximize workspace, or move it to the right side of the screen.
@@ -210,7 +210,7 @@ Supported inline markdown:
 | `https://...`        | Clickable link |
 | `[label](https://…)` | Labelled link  |
 
-To open a link, hold `Alt` and click it. In read mode, links are directly clickable without holding `Alt`.
+To open a link, hold `Ctrl` and click it. In read mode, links are directly clickable without holding `Ctrl`.
 
 **Wrap the selection:** with text selected in a note, these keys wrap it in one step:
 
@@ -231,7 +231,7 @@ A visual separator. Stretches to match the width of the widest block. Useful for
 
 ### Multi-select
 
-Hold `Ctrl` and click blocks to build a selection. You can also hold `Ctrl` and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.
+Hold `Shift` and click blocks to build a selection. You can also hold `Shift` and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.
 
 With a selection active:
 

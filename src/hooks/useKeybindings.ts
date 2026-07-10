@@ -1,7 +1,17 @@
 import { InputSelector } from "@/common/constants/dom";
-import { EventType, Key } from "@/common/constants/events";
+import {
+  EventType,
+  Key,
+  Modifier,
+  ModifierKeyName,
+} from "@/common/constants/events";
 import { MoveDirection } from "@/common/enums";
-import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
+import {
+  isModifierPressed,
+  KeyBinding,
+  matchesKeybinding,
+  ModifierAction,
+} from "@/common/keybindings";
 import { getActiveTab, useStore } from "@/store/store";
 import { openImportDialog } from "@/utils/importTrigger";
 import { useEffect } from "react";
@@ -27,13 +37,17 @@ export function useKeybindings(): void {
       }
 
       const key = event.key;
-      const altPressed = event.altKey;
-      const ctrlPressed = event.ctrlKey || event.metaKey;
+      const ctrlPressed = isModifierPressed(event, Modifier.CTRL);
+      const linkKeyPressed = isModifierPressed(event, ModifierAction.OPEN_LINK);
+      const selectKeyPressed = isModifierPressed(
+        event,
+        ModifierAction.SELECT_BLOCKS,
+      );
       const inEditable = !!document.activeElement?.matches(
         InputSelector.EDITABLE,
       );
 
-      if (!ctrlPressed && !altPressed && !inEditable) {
+      if (!ctrlPressed && !linkKeyPressed && !selectKeyPressed && !inEditable) {
         if (
           matchesKeybinding(event, KeyBinding.DELETE_BLOCK) &&
           state.selectedBlockIds.size > 0
@@ -62,13 +76,17 @@ export function useKeybindings(): void {
         return;
       }
 
-      if (altPressed && !ctrlPressed) {
+      if (linkKeyPressed && !ctrlPressed) {
         event.preventDefault();
-        state.setAltHeld(true);
+        state.setLinkKeyHeld(true);
         return;
       }
 
       if (!ctrlPressed) {
+        if (selectKeyPressed && !inEditable) {
+          state.setSelectKeyHeld(true);
+        }
+
         return;
       }
 
@@ -114,13 +132,20 @@ export function useKeybindings(): void {
       } else if (matchesKeybinding(event, KeyBinding.TOGGLE_EDITORS)) {
         state.toggleAllCommandEditors();
         hit = true;
-      } else if (!inEditable) {
-        state.setCtrlHeld(true);
+      } else {
+        if (selectKeyPressed && !inEditable) {
+          state.setSelectKeyHeld(true);
+        }
+
+        if (linkKeyPressed) {
+          state.setLinkKeyHeld(true);
+        }
       }
 
       if (hit) {
         event.preventDefault();
-        state.setCtrlHeld(false);
+        state.setSelectKeyHeld(false);
+        state.setLinkKeyHeld(false);
       }
     };
 
@@ -128,10 +153,10 @@ export function useKeybindings(): void {
       const key = event.key;
       const state = useStore.getState();
 
-      if (key === Key.CTRL) {
-        state.setCtrlHeld(false);
-      } else if (key === Key.ALT) {
-        state.setAltHeld(false);
+      if (key === ModifierKeyName[ModifierAction.SELECT_BLOCKS]) {
+        state.setSelectKeyHeld(false);
+      } else if (key === ModifierKeyName[ModifierAction.OPEN_LINK]) {
+        state.setLinkKeyHeld(false);
       } else if (key === Key.ESCAPE) {
         (document.activeElement as HTMLElement | null)?.blur?.();
         state.clearUserInteraction();
@@ -140,8 +165,8 @@ export function useKeybindings(): void {
 
     const onBlur = () => {
       const state = useStore.getState();
-      state.setAltHeld(false);
-      state.setCtrlHeld(false);
+      state.setLinkKeyHeld(false);
+      state.setSelectKeyHeld(false);
     };
 
     document.addEventListener(EventType.KEY_DOWN, onKeyDown);
