@@ -152,7 +152,7 @@ Variables are defined in the **VARIABLES** section of the sidebar. Each variable
   awk '\{print $1\}'
   ```
 
-  resolves to `awk '{print $1}'`. Escaping applies to command blocks only; backslashes inside variable values are always literal.
+  resolves to `awk '{print $1}'`. This also works inside a parameter value, so you can pass a literal brace instead of a nested reference. Escaping applies to command blocks only; backslashes inside variable values are always literal.
 
 - **Key rename propagation**: renaming a key automatically updates all references across every command block and other variable value.
 - **Unused variables**: a variable that isn't referenced by any command block, directly or through another variable's value, is dimmed and italicized in the sidebar, so stale entries are easy to spot.

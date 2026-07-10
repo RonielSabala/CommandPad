@@ -45,7 +45,7 @@ function resolveParamRefs(
 
   for (const [name, value] of Object.entries(params)) {
     resolved[name] = value.replace(
-      VariableTokenRegex,
+      CommandVariableTokenRegex,
       (match, refKey: string) => {
         if (
           Object.prototype.hasOwnProperty.call(variableMap, refKey) &&
@@ -221,7 +221,7 @@ export function resolveCommandText(
 
         segments.push({
           key,
-          text: template ? text : match[0],
+          text: template ? unescapeBraces(text) : match[0],
           type:
             template && fullyResolved && paramRefs.fullyResolved
               ? CommandSegmentType.RESOLVED
