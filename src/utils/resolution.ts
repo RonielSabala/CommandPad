@@ -26,8 +26,10 @@ function parseVariableToken(raw: string): ParsedVariableToken {
     }
 
     const paramKey = part.slice(0, eqIndex).trim();
-    if (paramKey) {
-      params[paramKey] = part.slice(eqIndex + 1);
+    const paramValue = part.slice(eqIndex + 1);
+
+    if (paramKey && paramValue) {
+      params[paramKey] = paramValue;
     }
   }
 
