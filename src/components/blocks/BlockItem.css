@@ -68,5 +68,6 @@ body.ctrl-held:not(.read-mode) .block-item:hover:not(.block-selected) {
 }
 
 .block-item.duplicate-flash {
+  z-index: 1;
   animation: duplicate-flash 0.5s ease-out forwards;
 }
