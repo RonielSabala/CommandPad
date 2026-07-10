@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 import {
   DEBOUNCE_SAVE_MS,
+  DEFAULT_CONFIRM_LABEL,
   DEFAULT_TAB_LABEL,
   RunbookConfig,
   VariableSyntax,
@@ -42,6 +43,18 @@ interface Dialog<T> {
   resolve: (value: T) => void;
 }
 
+interface ConfirmDialog extends Dialog<boolean> {
+  title: string;
+  confirmLabel: string;
+  danger: boolean;
+}
+
+interface ConfirmOptions {
+  title?: string;
+  confirmLabel?: string;
+  danger?: boolean;
+}
+
 interface StoreState {
   // Data
   tabs: Tab[];
@@ -73,7 +86,7 @@ interface StoreState {
   // Modals / dialogs
   exportModalOpen: boolean;
   keybindingsModalOpen: boolean;
-  confirmDialog: Dialog<boolean> | null;
+  confirmDialog: ConfirmDialog | null;
   alertDialog: Dialog<void> | null;
 
   // Bootstrap
@@ -156,7 +169,7 @@ interface StoreState {
   closeKeybindingsModal: () => void;
   exportRunbook: (format: ExportFormat) => Promise<void>;
 
-  confirm: (message: string) => Promise<boolean>;
+  confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
   resolveConfirm: (result: boolean) => void;
   alert: (message: string) => Promise<void>;
   resolveAlert: () => void;
@@ -569,7 +582,11 @@ export const useStore = create<StoreState>()((set, get) => ({
   importRunbooks: async (files) => {
     let failedCount = 0;
 
-    const addToLibrary = async (content: RunbookContent, filename: string) => {
+    const addToLibrary = async (
+      content: RunbookContent,
+      filename: string,
+      rawFilename: string,
+    ) => {
       const label = getRunbookLabel(
         content.blocks,
         filename || RunbookConfig.DEFAULT_LABEL,
@@ -580,6 +597,20 @@ export const useStore = create<StoreState>()((set, get) => ({
       );
 
       if (existing) {
+        const existingName = existing.label || existing.filename;
+        const confirmed = await get().confirm(
+          `"${rawFilename}" matches an existing runbook. Importing it will overwrite "${existingName}".`,
+          {
+            title: "Overwrite Runbook",
+            confirmLabel: "Overwrite",
+            danger: true,
+          },
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
         await putRunbookContent(existing.id, content);
         set((s) => ({
           runbookLibrary: s.runbookLibrary.map((item) =>
@@ -647,7 +678,11 @@ export const useStore = create<StoreState>()((set, get) => ({
               })),
             };
 
-            await addToLibrary(content, file.name.replace(/\.json$/i, ""));
+            await addToLibrary(
+              content,
+              file.name.replace(/\.json$/i, ""),
+              file.name,
+            );
           } catch {
             failedCount += 1;
           }
@@ -660,7 +695,9 @@ export const useStore = create<StoreState>()((set, get) => ({
         reader.readAsText(file);
       });
 
-    await Promise.all(files.map(readFile));
+    for (const file of files) {
+      await readFile(file);
+    }
 
     if (failedCount > 0) {
       await get().alert(
@@ -1259,9 +1296,17 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   // --- Dialogs ---
 
-  confirm: (message) =>
+  confirm: (message, options) =>
     new Promise<boolean>((resolve) =>
-      set({ confirmDialog: { message, resolve } }),
+      set({
+        confirmDialog: {
+          message,
+          resolve,
+          title: options?.title ?? DEFAULT_CONFIRM_LABEL,
+          confirmLabel: options?.confirmLabel ?? DEFAULT_CONFIRM_LABEL,
+          danger: options?.danger ?? false,
+        },
+      }),
     ),
   resolveConfirm: (result) => {
     get().confirmDialog?.resolve(result);
@@ -1278,6 +1323,7 @@ export const useStore = create<StoreState>()((set, get) => ({
     set({ ctrlHeld: false });
     const confirmed = await get().confirm(
       "Delete all variables, blocks, and runbooks? This action cannot be undone.",
+      { title: "Clear Workspace", confirmLabel: "Delete", danger: true },
     );
     if (!confirmed) {
       return;
