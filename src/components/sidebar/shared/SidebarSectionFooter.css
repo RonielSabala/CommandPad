@@ -1,4 +1,6 @@
 .sidebar-section-footer {
+  display: flex;
+  gap: var(--space-4);
   margin: 0 var(--space-14);
   padding: var(--space-5) 0;
   border-top: var(--space-1) dashed var(--color-border);

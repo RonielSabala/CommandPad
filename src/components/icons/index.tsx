@@ -147,6 +147,14 @@ export function ImportIcon(props: IconProps) {
   );
 }
 
+export function ClipIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 16 16" {...props}>
+      <path d="M9.5 3.5L4.5 8.5a2 2 0 002.83 2.83l5-5A3.33 3.33 0 007.5 1.5l-5 5a4.67 4.67 0 006.6 6.6l4.9-4.9" />
+    </svg>
+  );
+}
+
 export function TrashIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 16 16" {...props}>

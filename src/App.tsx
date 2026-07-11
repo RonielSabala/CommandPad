@@ -12,6 +12,7 @@ import { AlertModal } from "./components/modals/AlertModal";
 import { ConfirmModal } from "./components/modals/ConfirmModal";
 import { ExportModal } from "./components/modals/ExportModal";
 import { KeybindingsModal } from "./components/modals/KeybindingsModal";
+import { PasteRunbookModal } from "./components/modals/PasteRunbookModal";
 import { RunbookImportInput } from "./components/sidebar/runbooks/RunbookImportInput";
 import { Sidebar } from "./components/sidebar/Sidebar";
 
@@ -51,6 +52,7 @@ export default function App() {
 
       <KeybindingsModal />
       <ExportModal />
+      <PasteRunbookModal />
       <ConfirmModal />
       <AlertModal />
     </>
