@@ -1,6 +1,12 @@
+.runbook-row {
+  grid-template-columns: auto fit-content(100%) auto;
+  justify-content: start;
+}
+
 .runbook-item-btn {
   display: block;
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
   text-align: left;
   background: transparent;
   border: 1px solid transparent;

@@ -1,17 +1,32 @@
 #sidebar-btn-group {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
-  align-self: flex-start;
-  position: sticky;
-  top: var(--space-1);
-  z-index: 10;
+  gap: var(--space-2);
+  position: absolute;
+  top: var(--space-4);
+  left: 0;
+  transform: translateX(-50%);
 }
 
-.sidebar-right #sidebar-btn-group {
-  flex-direction: row-reverse;
-  align-self: flex-end;
+.sidebar-collapsed #sidebar-btn-group {
+  left: var(--space-4);
+  transform: none;
+}
+
+.sidebar-right.sidebar-collapsed #sidebar-btn-group {
+  left: auto;
+  right: var(--space-4);
+  transform: none;
+}
+
+#sidebar-btn-group .btn {
+  border-radius: 50%;
+  background-color: var(--color-surface);
+}
+
+#sidebar-btn-group .btn:hover {
+  background-color: var(--color-border);
 }
 
 #sidebar-toggle-btn {

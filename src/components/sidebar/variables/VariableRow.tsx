@@ -3,7 +3,7 @@ import { DataAttr } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { AppMode, DragGroup, VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
-import { DragIcon, EyeIcon, EyeSlashIcon, XIcon } from "@/components/icons";
+import { DragIcon, EyeIcon, XIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -114,11 +114,7 @@ export const VariableRow = memo(function VariableRow({
         onClick={() => toggleVariableSecret(variableId)}
         title={isSecret ? "Reveal value" : "Mask value"}
       >
-        {isSecret ? (
-          <EyeSlashIcon className="icon-md icon-bold" />
-        ) : (
-          <EyeIcon className="icon-md icon-bold" />
-        )}
+        <EyeIcon slashed={isSecret} className="icon-md icon-bold" />
       </button>
       <button
         className="btn btn-icon btn-danger"

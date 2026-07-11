@@ -42,6 +42,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const [copied, setCopied] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const lineCount = useMemo(() => blockText.split("\n").length, [blockText]);
   const segments = useMemo(
     () => resolveCommandText(blockText, variableMap),
     [blockText, variableMap],
@@ -128,6 +129,11 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
       >
         <div className="command-gutter">
           <span className="command-gutter-prefix">$</span>
+          {Array.from({ length: lineCount - 1 }, (_, i) => (
+            <span key={i} className="command-gutter-line">
+              {i + 2}
+            </span>
+          ))}
         </div>
         <textarea
           ref={textareaRef}

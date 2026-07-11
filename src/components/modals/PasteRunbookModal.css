@@ -1,0 +1,35 @@
+.paste-runbook-input {
+  width: 100%;
+  min-width: 24rem;
+  min-height: 12rem;
+  resize: vertical;
+  padding: var(--space-4);
+  border: var(--border-standard);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  outline: none;
+  transition: border-color var(--transition-base);
+}
+
+.paste-runbook-input:focus {
+  border-color: var(--color-border-focus);
+}
+
+.paste-runbook-input.has-error {
+  border-color: var(--danger);
+}
+
+.paste-runbook-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.paste-runbook-error {
+  margin-top: calc(-1 * var(--space-2));
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--danger);
+}

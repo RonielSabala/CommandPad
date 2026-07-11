@@ -5,13 +5,25 @@
   border-bottom: var(--border-standard);
   overflow-x: auto;
   flex-shrink: 0;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-8);
   scrollbar-width: none;
   gap: var(--space-1);
 }
 
 #tabs-bar::-webkit-scrollbar {
   display: none;
+}
+
+.sidebar-collapsed:not(.sidebar-right) #tabs-bar {
+  padding-left: var(--space-20);
+}
+
+.sidebar-right #tabs-bar {
+  padding-right: var(--space-10);
+}
+
+.sidebar-right.sidebar-collapsed #tabs-bar {
+  padding-right: var(--space-20);
 }
 
 #add-tab-btn {

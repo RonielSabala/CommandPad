@@ -64,6 +64,8 @@
 
   /* Layout dimensions */
   --sidebar-width: 18.75rem;
+  --sidebar-rail-width: 1.75rem;
+  --sidebar-section-margin-right: 0.25rem;
   --header-height: 3.5rem;
   --scrollbar-size: 0.625rem;
   --tab-max-width: 12rem;

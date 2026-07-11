@@ -1,6 +1,8 @@
+import { SECTION_ANIMATION_FALLBACK_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { SidebarSectionChevronIcon } from "@/components/icons";
-import type { ReactNode } from "react";
+import { classNames } from "@/utils/string";
+import { useEffect, useState, type ReactNode } from "react";
 import "./SidebarSection.css";
 
 interface Props {
@@ -18,16 +20,45 @@ export function SidebarSection({
   onToggle,
   children,
 }: Props) {
+  const [animating, setAnimating] = useState(false);
+  const [prevCollapsed, setPrevCollapsed] = useState(collapsed);
+  if (prevCollapsed !== collapsed) {
+    setPrevCollapsed(collapsed);
+    setAnimating(true);
+  }
+
+  useEffect(() => {
+    if (!animating) {
+      return;
+    }
+
+    const timer = window.setTimeout(
+      () => setAnimating(false),
+      SECTION_ANIMATION_FALLBACK_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [animating]);
+
+  const classes = classNames(
+    "sidebar-section",
+    collapsed && CssClass.COLLAPSED,
+    animating && CssClass.ANIMATING,
+  );
+
   return (
-    <div
-      id={id}
-      className={`sidebar-section${collapsed ? ` ${CssClass.COLLAPSED}` : ""}`}
-    >
+    <div id={id} className={classes}>
       <div className="sidebar-section-header no-user-select" onClick={onToggle}>
         <p className="section-title">{title}</p>
         <SidebarSectionChevronIcon className="sidebar-section-chevron icon-md icon-bold" />
       </div>
-      <div className="sidebar-section-body-wrapper">
+      <div
+        className="sidebar-section-body-wrapper"
+        onTransitionEnd={(event) => {
+          if (event.target === event.currentTarget) {
+            setAnimating(false);
+          }
+        }}
+      >
         <div className="sidebar-section-body">
           <div className="sidebar-section-scroll">{children}</div>
         </div>

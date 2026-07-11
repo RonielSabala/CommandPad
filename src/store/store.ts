@@ -5,6 +5,7 @@ import {
   DEFAULT_CONFIRM_LABEL,
   DEFAULT_TAB_LABEL,
   RunbookConfig,
+  SidebarWidth,
   VariableSyntax,
 } from "@/common/config";
 import {
@@ -67,6 +68,7 @@ interface StoreState {
   theme: Theme;
   sidebarCollapsed: boolean;
   sidebarPosition: SidebarPosition;
+  sidebarWidth: number;
   runbookSectionCollapsed: boolean;
   variablesSectionCollapsed: boolean;
 
@@ -85,6 +87,7 @@ interface StoreState {
 
   // Modals / dialogs
   exportModalOpen: boolean;
+  pasteRunbookModalOpen: boolean;
   keybindingsModalOpen: boolean;
   confirmDialog: ConfirmDialog | null;
   alertDialog: Dialog<void> | null;
@@ -110,7 +113,13 @@ interface StoreState {
 
   loadRunbookFromLibrary: (runbookId: string) => Promise<void>;
   removeRunbookFromLibrary: (id: string) => Promise<void>;
+  addRunbookToLibrary: (
+    content: RunbookContent,
+    filename: string,
+    rawFilename: string,
+  ) => Promise<void>;
   importRunbooks: (files: File[]) => Promise<void>;
+  importRunbookFromText: (text: string) => Promise<boolean>;
   reorderRunbooks: (sourceId: string, targetId: string) => void;
   setRunbookFocus: (id: string | null) => void;
   navigateRunbookList: (direction: MoveDirection) => void;
@@ -152,6 +161,8 @@ interface StoreState {
   toggleTheme: () => void;
   toggleSidebar: () => void;
   toggleSidebarPosition: () => void;
+  setSidebarSize: (width: number) => void;
+  resetSidebarSize: () => void;
   toggleRunbookSection: () => void;
   toggleVariablesSection: () => void;
 
@@ -165,6 +176,8 @@ interface StoreState {
 
   openExportModal: () => void;
   closeExportModal: () => void;
+  openPasteRunbookModal: () => void;
+  closePasteRunbookModal: () => void;
   openKeybindingsModal: () => void;
   closeKeybindingsModal: () => void;
   exportRunbook: (format: ExportFormat) => Promise<void>;
@@ -194,6 +207,28 @@ function createTabObject(
     variables: [],
     blocks: [],
     scrollTop: 0,
+  };
+}
+
+/**
+ * Parse raw JSON text into a `RunbookContent`, filling missing ids.
+ * Throws when the JSON is malformed or lacks `variables`/`blocks`.
+ */
+function parseRunbookContent(raw: string): RunbookContent {
+  const parsed = JSON.parse(raw);
+  if (!parsed.variables || !parsed.blocks) {
+    throw new Error("Invalid format");
+  }
+
+  return {
+    variables: (parsed.variables as Variable[]).map((variable) => ({
+      ...variable,
+      id: variable.id || generateId(),
+    })),
+    blocks: (parsed.blocks as Block[]).map((block) => ({
+      ...block,
+      id: block.id || generateId(),
+    })),
   };
 }
 
@@ -267,6 +302,7 @@ export const useStore = create<StoreState>()((set, get) => ({
   theme: Theme.DARK,
   sidebarCollapsed: false,
   sidebarPosition: SidebarPosition.LEFT,
+  sidebarWidth: SidebarWidth.DEFAULT,
   runbookSectionCollapsed: false,
   variablesSectionCollapsed: false,
 
@@ -282,6 +318,7 @@ export const useStore = create<StoreState>()((set, get) => ({
   variableSearchQuery: "",
 
   exportModalOpen: false,
+  pasteRunbookModalOpen: false,
   keybindingsModalOpen: false,
   confirmDialog: null,
   alertDialog: null,
@@ -302,6 +339,7 @@ export const useStore = create<StoreState>()((set, get) => ({
       mode: state.mode,
       sidebarCollapsed: state.sidebarCollapsed,
       sidebarPosition: state.sidebarPosition,
+      sidebarWidth: state.sidebarWidth,
       theme: state.theme,
     });
 
@@ -579,106 +617,90 @@ export const useStore = create<StoreState>()((set, get) => ({
     persistence.saveRunbookLibrary(runbookLibrary, activeRunbookId);
   },
 
+  addRunbookToLibrary: async (content, filename, rawFilename) => {
+    const label = getRunbookLabel(
+      content.blocks,
+      filename || RunbookConfig.DEFAULT_LABEL,
+    );
+    const state = get();
+    const existing = state.runbookLibrary.find(
+      (item) => item.label === label || item.filename === filename,
+    );
+
+    if (existing) {
+      const existingName = existing.label || existing.filename;
+      const confirmed = await get().confirm(
+        `"${rawFilename}" matches an existing runbook. Importing it will overwrite "${existingName}".`,
+        {
+          title: "Overwrite Runbook",
+          confirmLabel: "Overwrite",
+          danger: true,
+        },
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      await putRunbookContent(existing.id, content);
+      set((s) => ({
+        runbookLibrary: s.runbookLibrary.map((item) =>
+          item.id === existing.id
+            ? { ...item, label, filename: filename || "" }
+            : item,
+        ),
+        tabs: s.tabs.map((t) =>
+          t.runbookId === existing.id
+            ? {
+                ...t,
+                variables: content.variables ?? [],
+                blocks: content.blocks ?? [],
+              }
+            : t,
+        ),
+      }));
+      persistence.saveRunbookLibrary(
+        get().runbookLibrary,
+        get().activeRunbookId,
+      );
+      if (existing.id === get().activeRunbookId) {
+        persistence.saveTabsMeta(get().tabs, get().activeTabId);
+      }
+      return;
+    }
+
+    const newId = generateId();
+    await putRunbookContent(newId, content);
+    set((s) => ({
+      runbookLibrary: [
+        ...s.runbookLibrary,
+        { id: newId, label, filename: filename || "" },
+      ],
+    }));
+
+    if (get().activeRunbookId) {
+      persistence.saveRunbookLibrary(
+        get().runbookLibrary,
+        get().activeRunbookId,
+      );
+      return;
+    }
+
+    await get().loadRunbookFromLibrary(newId);
+  },
+
   importRunbooks: async (files) => {
     let failedCount = 0;
-
-    const addToLibrary = async (
-      content: RunbookContent,
-      filename: string,
-      rawFilename: string,
-    ) => {
-      const label = getRunbookLabel(
-        content.blocks,
-        filename || RunbookConfig.DEFAULT_LABEL,
-      );
-      const state = get();
-      const existing = state.runbookLibrary.find(
-        (item) => item.label === label || item.filename === filename,
-      );
-
-      if (existing) {
-        const existingName = existing.label || existing.filename;
-        const confirmed = await get().confirm(
-          `"${rawFilename}" matches an existing runbook. Importing it will overwrite "${existingName}".`,
-          {
-            title: "Overwrite Runbook",
-            confirmLabel: "Overwrite",
-            danger: true,
-          },
-        );
-
-        if (!confirmed) {
-          return;
-        }
-
-        await putRunbookContent(existing.id, content);
-        set((s) => ({
-          runbookLibrary: s.runbookLibrary.map((item) =>
-            item.id === existing.id
-              ? { ...item, label, filename: filename || "" }
-              : item,
-          ),
-          tabs: s.tabs.map((t) =>
-            t.runbookId === existing.id
-              ? {
-                  ...t,
-                  variables: content.variables ?? [],
-                  blocks: content.blocks ?? [],
-                }
-              : t,
-          ),
-        }));
-        persistence.saveRunbookLibrary(
-          get().runbookLibrary,
-          get().activeRunbookId,
-        );
-        if (existing.id === get().activeRunbookId) {
-          persistence.saveTabsMeta(get().tabs, get().activeTabId);
-        }
-        return;
-      }
-
-      const newId = generateId();
-      await putRunbookContent(newId, content);
-      set((s) => ({
-        runbookLibrary: [
-          ...s.runbookLibrary,
-          { id: newId, label, filename: filename || "" },
-        ],
-      }));
-
-      if (get().activeRunbookId) {
-        persistence.saveRunbookLibrary(
-          get().runbookLibrary,
-          get().activeRunbookId,
-        );
-        return;
-      }
-      await get().loadRunbookFromLibrary(newId);
-    };
 
     const readFile = (file: File) =>
       new Promise<void>((resolve) => {
         const reader = new FileReader();
         reader.onload = async (loadEvent) => {
           try {
-            const parsed = JSON.parse(String(loadEvent.target?.result));
-            if (!parsed.variables || !parsed.blocks) {
-              throw new Error("Invalid format");
-            }
-
-            const content: RunbookContent = {
-              variables: (parsed.variables as Variable[]).map((variable) => ({
-                ...variable,
-                id: variable.id || generateId(),
-              })),
-              blocks: (parsed.blocks as Block[]).map((block) => ({
-                ...block,
-                id: block.id || generateId(),
-              })),
-            };
-
-            await addToLibrary(
+            const content = parseRunbookContent(
+              String(loadEvent.target?.result),
+            );
+            await get().addRunbookToLibrary(
               content,
               file.name.replace(/\.json$/i, ""),
               file.name,
@@ -704,6 +726,18 @@ export const useStore = create<StoreState>()((set, get) => ({
         `${failedCount} file(s) could not be imported because their formats aren't recognized.`,
       );
     }
+  },
+
+  importRunbookFromText: async (text) => {
+    let content: RunbookContent;
+    try {
+      content = parseRunbookContent(text);
+    } catch {
+      return false;
+    }
+
+    await get().addRunbookToLibrary(content, generateId(), "Pasted runbook");
+    return true;
   },
 
   reorderRunbooks: (sourceId, targetId) => {
@@ -1219,12 +1253,16 @@ export const useStore = create<StoreState>()((set, get) => ({
       mode: state.mode,
       sidebarCollapsed: state.sidebarCollapsed,
       sidebarPosition: state.sidebarPosition,
+      sidebarWidth: state.sidebarWidth,
       theme: state.theme,
     });
   },
 
   toggleSidebar: () => {
-    set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed }));
+    set((s) => ({
+      sidebarCollapsed: !s.sidebarCollapsed,
+      sidebarWidth: s.sidebarCollapsed ? SidebarWidth.DEFAULT : s.sidebarWidth,
+    }));
     get().saveState();
   },
 
@@ -1235,6 +1273,26 @@ export const useStore = create<StoreState>()((set, get) => ({
           ? SidebarPosition.LEFT
           : SidebarPosition.RIGHT,
     }));
+    get().saveState();
+  },
+
+  setSidebarSize: (width: number) => {
+    const shouldCollapse = width < SidebarWidth.COLLAPSE_SNAP;
+    const max = Math.floor(
+      window.innerWidth * SidebarWidth.MAX_SCREEN_FRACTION,
+    );
+
+    set({
+      sidebarCollapsed: shouldCollapse,
+      sidebarWidth: shouldCollapse
+        ? SidebarWidth.DEFAULT
+        : Math.min(max, Math.round(width)),
+    });
+    debouncedSaveState();
+  },
+
+  resetSidebarSize: () => {
+    set({ sidebarWidth: SidebarWidth.DEFAULT });
     get().saveState();
   },
 
@@ -1282,16 +1340,22 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   openExportModal: () => set({ exportModalOpen: true }),
   closeExportModal: () => set({ exportModalOpen: false }),
+  openPasteRunbookModal: () => set({ pasteRunbookModalOpen: true }),
+  closePasteRunbookModal: () => set({ pasteRunbookModalOpen: false }),
   openKeybindingsModal: () => set({ keybindingsModalOpen: true }),
   closeKeybindingsModal: () => set({ keybindingsModalOpen: false }),
 
   exportRunbook: async (format) => {
     set({ exportModalOpen: false });
     const active = getActiveTab(get());
-    await runExport(format, {
-      variables: active?.variables ?? [],
-      blocks: active?.blocks ?? [],
-    });
+    await runExport(
+      format,
+      {
+        variables: active?.variables ?? [],
+        blocks: active?.blocks ?? [],
+      },
+      active?.label ?? "",
+    );
   },
 
   // --- Dialogs ---

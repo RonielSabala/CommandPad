@@ -1,5 +1,5 @@
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
-import { ImportIcon } from "@/components/icons";
+import { ClipIcon, ImportIcon } from "@/components/icons";
 import { useStore } from "@/store/store";
 import { openImportDialog } from "@/utils/importTrigger";
 import { matchesQuery } from "@/utils/string";
@@ -17,6 +17,9 @@ export function RunbookSection() {
   const searchQuery = useStore((state) => state.runbookSearchQuery);
   const setQuery = useStore((state) => state.setRunbookSearchQuery);
   const focusedRunbookId = useStore((state) => state.focusedRunbookId);
+  const openPasteRunbookModal = useStore(
+    (state) => state.openPasteRunbookModal,
+  );
   const visibleItems = library.filter((runbook) =>
     matchesQuery(searchQuery, runbook.label, runbook.filename),
   );
@@ -66,7 +69,13 @@ export function RunbookSection() {
         onClick={openImportDialog}
         title="Import runbook"
         label="Import"
-        icon={<ImportIcon className="icon-md icon-bold" />}
+        icon={ImportIcon}
+        secondaryAction={{
+          onClick: openPasteRunbookModal,
+          title: "Paste runbook JSON",
+          label: "Paste",
+          icon: ClipIcon,
+        }}
       />
     </SidebarSection>
   );

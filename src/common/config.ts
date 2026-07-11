@@ -26,11 +26,21 @@ export const IndexedDbTransactionMode = {
 export const DEFAULT_TAB_LABEL = "Untitled";
 export const DEFAULT_CONFIRM_LABEL = "Confirm";
 
+const DEFAULT_SIDEBAR_WIDTH = 320;
+
+export const SidebarWidth = {
+  MIN: 0,
+  MAX_SCREEN_FRACTION: 0.5,
+  DEFAULT: DEFAULT_SIDEBAR_WIDTH,
+  COLLAPSE_SNAP: Math.round(DEFAULT_SIDEBAR_WIDTH / 3),
+} as const;
+
 // Timeout durations
 export const DRAG_TIMEOUT_MS = 50;
 export const DEBOUNCE_SAVE_MS = 150;
 export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
 export const TAB_HOVER_SWITCH_MS = 300;
+export const SECTION_ANIMATION_FALLBACK_MS = 250;
 
 // Markdown config
 
@@ -82,7 +92,7 @@ interface FilePickerType {
 }
 
 interface FilePickerFormat {
-  suggestedName: string;
+  defaultName: string;
   mimeType: string;
   types: FilePickerType[];
 }
@@ -107,7 +117,7 @@ export const FilePickerConfig: Record<ExportFormat, FilePickerFormat> =
       ([format, { mimeType, description }]) => [
         format,
         {
-          suggestedName: `commandpad-export.${format}`,
+          defaultName: `runbook.commandpad_export.${format}`,
           mimeType,
           types: [{ description, accept: { [mimeType]: [`.${format}`] } }],
         },

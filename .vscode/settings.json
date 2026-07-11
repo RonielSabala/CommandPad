@@ -12,6 +12,9 @@
   "markdown.extension.toc.omittedFromToc": {
     "README.md": ["## Table of Contents"]
   },
+  "markdownlint.config": {
+    "MD033": false
+  },
   "[yaml]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
   }

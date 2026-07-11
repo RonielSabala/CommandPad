@@ -7,7 +7,6 @@ import { AddBlockRow } from "./blocks/AddBlockRow";
 import { BlocksList } from "./blocks/BlocksList";
 import { EmptyState } from "./blocks/EmptyState";
 import "./MainPanel.css";
-import { SidebarActions } from "./sidebar/SidebarActions";
 import { TabsBar } from "./tabs/TabsBar";
 
 function isCrossTabBlockDrag(): boolean {
@@ -59,7 +58,6 @@ export function MainPanel() {
           }
         }}
       >
-        <SidebarActions />
         {isEmpty && <EmptyState />}
         <BlocksList />
         <AddBlockRow />

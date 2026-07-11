@@ -27,3 +27,11 @@ export function getRunbookLabel(
 
   return fallback || RunbookConfig.DEFAULT_LABEL;
 }
+
+export function slugifyLabel(label: string): string {
+  return label
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}

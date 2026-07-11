@@ -5,6 +5,8 @@ export const EventType = {
   MOUSE_UP: "mouseup",
   MOUSE_DOWN: "mousedown",
   MOUSE_MOVE: "mousemove",
+  POINTER_UP: "pointerup",
+  POINTER_MOVE: "pointermove",
   SCROLL: "scroll",
   BLUR: "blur",
 } as const;
