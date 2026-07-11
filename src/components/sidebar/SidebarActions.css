@@ -3,16 +3,21 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-3);
+  position: absolute;
+  top: var(--space-4);
+  left: 0;
+  transform: translateX(-50%);
 }
 
 .sidebar-collapsed #sidebar-btn-group {
-  position: absolute;
-  left: calc(50% + var(--space-4));
+  left: var(--space-4);
+  transform: none;
 }
 
 .sidebar-right.sidebar-collapsed #sidebar-btn-group {
   left: auto;
-  right: calc(50% + var(--space-4));
+  right: calc(100% + var(--space-4));
+  transform: none;
 }
 
 #sidebar-toggle-btn {
