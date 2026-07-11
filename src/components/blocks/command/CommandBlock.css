@@ -33,6 +33,10 @@
   padding-bottom: var(--space-2);
 }
 
+.command-preview-text::after {
+  content: "\200b";
+}
+
 .command-preview-text.has-unresolved {
   color: var(--color-text-secondary);
 }
