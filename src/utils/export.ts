@@ -1,7 +1,18 @@
-import { FilePickerConfig, MarkdownSyntax } from "@/common/config";
+import {
+  DEFAULT_TAB_LABEL,
+  FilePickerConfig,
+  MarkdownSyntax,
+  RunbookConfig,
+} from "@/common/config";
 import { BlockType, ExportFormat, NoteStyle } from "@/common/enums";
 import type { RunbookContent } from "@/common/types";
 import { getVariableMap, resolveCommandToString } from "./resolution";
+import { slugifyLabel } from "./runbook";
+
+const UNTITLED_LABELS: readonly string[] = [
+  DEFAULT_TAB_LABEL,
+  RunbookConfig.DEFAULT_LABEL,
+];
 
 interface SaveFilePickerOptions {
   suggestedName?: string;
@@ -88,10 +99,25 @@ function buildMarkdownExport(content: RunbookContent): string {
   return lines.join("\n");
 }
 
+function getExportFilename(format: ExportFormat, label: string): string {
+  const config = FilePickerConfig[format];
+  if (label && !UNTITLED_LABELS.includes(label)) {
+    const slug = slugifyLabel(label);
+    if (slug) {
+      return `${slug}.${format}`;
+    }
+  }
+
+  return config.defaultName;
+}
+
 export async function runExport(
   format: ExportFormat,
   content: RunbookContent,
+  label: string,
 ): Promise<void> {
+  const suggestedName = getExportFilename(format, label);
+
   if (format === ExportFormat.JSON) {
     const data = {
       variables: (content.variables ?? []).map(({ id, ...rest }) => rest),
@@ -102,7 +128,7 @@ export async function runExport(
     await saveFile(
       JSON.stringify(data, null, 2),
       config.mimeType,
-      config.suggestedName,
+      suggestedName,
       [...config.types],
     );
 
@@ -112,10 +138,7 @@ export async function runExport(
   const config =
     format === ExportFormat.MD ? FilePickerConfig.md : FilePickerConfig.txt;
 
-  await saveFile(
-    buildMarkdownExport(content),
-    config.mimeType,
-    config.suggestedName,
-    [...config.types],
-  );
+  await saveFile(buildMarkdownExport(content), config.mimeType, suggestedName, [
+    ...config.types,
+  ]);
 }

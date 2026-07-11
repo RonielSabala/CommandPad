@@ -1288,10 +1288,14 @@ export const useStore = create<StoreState>()((set, get) => ({
   exportRunbook: async (format) => {
     set({ exportModalOpen: false });
     const active = getActiveTab(get());
-    await runExport(format, {
-      variables: active?.variables ?? [],
-      blocks: active?.blocks ?? [],
-    });
+    await runExport(
+      format,
+      {
+        variables: active?.variables ?? [],
+        blocks: active?.blocks ?? [],
+      },
+      active?.label ?? "",
+    );
   },
 
   // --- Dialogs ---
