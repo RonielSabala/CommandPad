@@ -1,3 +1,4 @@
+import { SidebarWidth } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { Cursor } from "@/common/constants/dom";
 import { EventType, MouseButton } from "@/common/constants/events";
@@ -12,6 +13,7 @@ import {
 export function useSidebarResize() {
   const setSidebarSize = useStore((state) => state.setSidebarSize);
   const toggleSidebar = useStore((state) => state.toggleSidebar);
+  const resetSidebarSize = useStore((state) => state.resetSidebarSize);
 
   const onPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -65,9 +67,16 @@ export function useSidebarResize() {
       }
 
       event.preventDefault();
+
+      const { sidebarCollapsed, sidebarWidth } = useStore.getState();
+      if (!sidebarCollapsed && sidebarWidth > SidebarWidth.DEFAULT) {
+        resetSidebarSize();
+        return;
+      }
+
       toggleSidebar();
     },
-    [toggleSidebar],
+    [toggleSidebar, resetSidebarSize],
   );
 
   return { onPointerDown, onDoubleClick };

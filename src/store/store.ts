@@ -162,6 +162,7 @@ interface StoreState {
   toggleSidebar: () => void;
   toggleSidebarPosition: () => void;
   setSidebarSize: (width: number) => void;
+  resetSidebarSize: () => void;
   toggleRunbookSection: () => void;
   toggleVariablesSection: () => void;
 
@@ -1288,6 +1289,11 @@ export const useStore = create<StoreState>()((set, get) => ({
         : Math.min(max, Math.round(width)),
     });
     debouncedSaveState();
+  },
+
+  resetSidebarSize: () => {
+    set({ sidebarWidth: SidebarWidth.DEFAULT });
+    get().saveState();
   },
 
   toggleRunbookSection: () => {
