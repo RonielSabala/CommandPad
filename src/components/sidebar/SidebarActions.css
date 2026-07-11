@@ -1,17 +1,18 @@
 #sidebar-btn-group {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   gap: var(--space-3);
-  align-self: flex-start;
-  position: sticky;
-  top: var(--space-1);
-  z-index: 10;
 }
 
-.sidebar-right #sidebar-btn-group {
-  flex-direction: row-reverse;
-  align-self: flex-end;
+.sidebar-collapsed #sidebar-btn-group {
+  position: absolute;
+  left: calc(50% + var(--space-4));
+}
+
+.sidebar-right.sidebar-collapsed #sidebar-btn-group {
+  left: auto;
+  right: calc(50% + var(--space-4));
 }
 
 #sidebar-toggle-btn {

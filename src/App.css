@@ -4,7 +4,7 @@ body.app-ready {
 
 #app-shell {
   display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-columns: min(var(--sidebar-width), 50vw) 1fr;
   grid-template-rows: var(--header-height) 1fr;
   grid-template-areas:
     "header header"
@@ -18,7 +18,7 @@ body.app-ready {
 }
 
 #app-shell.sidebar-right {
-  grid-template-columns: 1fr var(--sidebar-width);
+  grid-template-columns: 1fr min(var(--sidebar-width), 50vw);
   grid-template-areas:
     "header header"
     "main sidebar";

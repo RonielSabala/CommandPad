@@ -1,15 +1,21 @@
 #app-sidebar {
   grid-area: sidebar;
+  position: relative;
   background: var(--color-surface);
   border-right: var(--border-standard);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
   min-width: 0;
 }
 
-#app-sidebar > * {
-  min-width: var(--sidebar-width);
+#sidebar-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#sidebar-content > * {
+  min-width: min(var(--sidebar-width), 50vw);
 }
 
 .sidebar-collapsed #app-sidebar {
@@ -27,4 +33,70 @@
 
 #runbook-import-input {
   display: none;
+}
+
+/* --- RESIZE HANDLE --- */
+
+#sidebar-resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: var(--sidebar-rail-width);
+  z-index: 10;
+  cursor: col-resize;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: var(--space-4);
+  transform: translateX(50%);
+}
+
+.sidebar-right #sidebar-resize-handle {
+  right: auto;
+  left: 0;
+  transform: translateX(-50%);
+}
+
+#sidebar-resize-handle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--space-2);
+  background: transparent;
+  transition: background var(--transition-base);
+}
+
+.sidebar-collapsed #sidebar-resize-handle::before {
+  transform: none;
+  background: var(--color-border);
+}
+
+.sidebar-right.sidebar-collapsed #sidebar-resize-handle::before {
+  left: auto;
+  right: 50%;
+}
+
+#sidebar-resize-handle:hover::before,
+body.sidebar-resizing #sidebar-resize-handle::before {
+  background: var(--accent);
+}
+
+#sidebar-resize-handle #sidebar-btn-group {
+  position: relative;
+  z-index: 1;
+  cursor: default;
+}
+
+#sidebar-resize-handle .btn {
+  cursor: pointer;
+}
+
+body.sidebar-resizing,
+body.sidebar-resizing * {
+  user-select: none;
+  cursor: col-resize !important;
 }

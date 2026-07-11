@@ -26,6 +26,13 @@ export const IndexedDbTransactionMode = {
 export const DEFAULT_TAB_LABEL = "Untitled";
 export const DEFAULT_CONFIRM_LABEL = "Confirm";
 
+export const SidebarWidth = {
+  MIN: 0,
+  MAX_SCREEN_FRACTION: 0.5,
+  DEFAULT: 320,
+  COLLAPSE_SNAP: 70,
+} as const;
+
 // Timeout durations
 export const DRAG_TIMEOUT_MS = 50;
 export const DEBOUNCE_SAVE_MS = 150;

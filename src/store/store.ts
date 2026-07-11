@@ -5,6 +5,7 @@ import {
   DEFAULT_CONFIRM_LABEL,
   DEFAULT_TAB_LABEL,
   RunbookConfig,
+  SidebarWidth,
   VariableSyntax,
 } from "@/common/config";
 import {
@@ -67,6 +68,7 @@ interface StoreState {
   theme: Theme;
   sidebarCollapsed: boolean;
   sidebarPosition: SidebarPosition;
+  sidebarWidth: number;
   runbookSectionCollapsed: boolean;
   variablesSectionCollapsed: boolean;
 
@@ -159,6 +161,7 @@ interface StoreState {
   toggleTheme: () => void;
   toggleSidebar: () => void;
   toggleSidebarPosition: () => void;
+  setSidebarSize: (width: number) => void;
   toggleRunbookSection: () => void;
   toggleVariablesSection: () => void;
 
@@ -298,6 +301,7 @@ export const useStore = create<StoreState>()((set, get) => ({
   theme: Theme.DARK,
   sidebarCollapsed: false,
   sidebarPosition: SidebarPosition.LEFT,
+  sidebarWidth: SidebarWidth.DEFAULT,
   runbookSectionCollapsed: false,
   variablesSectionCollapsed: false,
 
@@ -334,6 +338,7 @@ export const useStore = create<StoreState>()((set, get) => ({
       mode: state.mode,
       sidebarCollapsed: state.sidebarCollapsed,
       sidebarPosition: state.sidebarPosition,
+      sidebarWidth: state.sidebarWidth,
       theme: state.theme,
     });
 
@@ -1247,12 +1252,16 @@ export const useStore = create<StoreState>()((set, get) => ({
       mode: state.mode,
       sidebarCollapsed: state.sidebarCollapsed,
       sidebarPosition: state.sidebarPosition,
+      sidebarWidth: state.sidebarWidth,
       theme: state.theme,
     });
   },
 
   toggleSidebar: () => {
-    set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed }));
+    set((s) => ({
+      sidebarCollapsed: !s.sidebarCollapsed,
+      sidebarWidth: s.sidebarCollapsed ? SidebarWidth.DEFAULT : s.sidebarWidth,
+    }));
     get().saveState();
   },
 
@@ -1264,6 +1273,21 @@ export const useStore = create<StoreState>()((set, get) => ({
           : SidebarPosition.RIGHT,
     }));
     get().saveState();
+  },
+
+  setSidebarSize: (width: number) => {
+    const shouldCollapse = width < SidebarWidth.COLLAPSE_SNAP;
+    const max = Math.floor(
+      window.innerWidth * SidebarWidth.MAX_SCREEN_FRACTION,
+    );
+
+    set({
+      sidebarCollapsed: shouldCollapse,
+      sidebarWidth: shouldCollapse
+        ? SidebarWidth.DEFAULT
+        : Math.min(max, Math.round(width)),
+    });
+    debouncedSaveState();
   },
 
   toggleRunbookSection: () => {

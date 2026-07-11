@@ -11,6 +11,7 @@ export const DataAttr = {
 export const Cursor = {
   DEFAULT: "",
   POINTER: "pointer",
+  COL_RESIZE: "col-resize",
 } as const;
 
 export const Anchor = {
