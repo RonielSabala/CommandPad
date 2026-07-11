@@ -29,7 +29,10 @@ export function SidebarActions() {
         onClick={toggleSidebarPosition}
         title={`Move sidebar to ${sidebarPosition === SidebarPosition.RIGHT ? "left" : "right"}`}
       >
-        <SidebarPositionIcon className="icon-md icon-bold" />
+        <SidebarPositionIcon
+          className="icon-md icon-bold"
+          mirrored={sidebarPosition === SidebarPosition.RIGHT}
+        />
       </button>
     </div>
   );

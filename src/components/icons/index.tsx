@@ -47,11 +47,19 @@ export function SidebarCollapseIcon(props: IconProps) {
   );
 }
 
-export function SidebarPositionIcon(props: IconProps) {
+export function SidebarPositionIcon({
+  mirrored,
+  ...props
+}: IconProps & { mirrored?: boolean }) {
   return (
     <svg viewBox="0 0 16 16" {...props}>
       <rect x="1" y="2" width="14" height="12" rx="1" />
-      <line x1="11" y1="2" x2="11" y2="14" />
+      <line
+        x1={mirrored ? "5" : "11"}
+        y1="2"
+        x2={mirrored ? "5" : "11"}
+        y2="14"
+      />
     </svg>
   );
 }

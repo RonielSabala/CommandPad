@@ -20,6 +20,15 @@
   transform: none;
 }
 
+#sidebar-btn-group .btn {
+  border-radius: 50%;
+  background-color: var(--color-surface);
+}
+
+#sidebar-btn-group .btn:hover {
+  background-color: var(--color-border);
+}
+
 #sidebar-toggle-btn {
   flex-shrink: 0;
 }
