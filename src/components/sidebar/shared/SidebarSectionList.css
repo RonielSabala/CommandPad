@@ -1,5 +1,6 @@
 .sidebar-section-list {
   overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-gutter: stable;
   flex: 1;
   min-height: 0;
