@@ -5,11 +5,14 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 0;
+}
+
+#app-sidebar > * {
+  min-width: var(--sidebar-width);
 }
 
 .sidebar-collapsed #app-sidebar {
-  width: 0;
-  overflow: hidden;
   border-right: none;
 }
 
@@ -18,10 +21,10 @@
   border-left: var(--border-standard);
 }
 
-#runbook-import-input {
-  display: none;
+.sidebar-right.sidebar-collapsed #app-sidebar {
+  border-left: none;
 }
 
-#variables-section {
-  flex: 1 1 auto;
+#runbook-import-input {
+  display: none;
 }

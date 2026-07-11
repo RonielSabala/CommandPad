@@ -6,6 +6,7 @@
   padding: var(--space-3) var(--space-5);
   border-top: var(--border-standard);
   flex-shrink: 0;
+  margin-top: auto;
 }
 
 #footer-copyright {

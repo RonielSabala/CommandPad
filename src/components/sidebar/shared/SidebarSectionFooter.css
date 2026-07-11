@@ -1,5 +1,6 @@
 .sidebar-section-footer {
   display: flex;
+  flex-shrink: 0;
   gap: var(--space-4);
   margin: 0 var(--space-14);
   padding: var(--space-5) 0;
