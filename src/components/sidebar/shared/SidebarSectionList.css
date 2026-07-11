@@ -8,7 +8,6 @@
 
 .sidebar-section-list-row {
   display: grid;
-  grid-template-columns: auto 1fr auto;
   gap: var(--space-3);
   align-items: center;
   margin-bottom: var(--space-2);

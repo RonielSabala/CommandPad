@@ -36,6 +36,12 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
     !readMode,
   );
 
+  const rowClass = classNames(
+    "runbook-row",
+    "sidebar-section-list-row",
+    isDragging && CssClass.DRAGGING,
+  );
+
   const runbookBtnClass = classNames(
     CssClass.RUNBOOK_ITEM_BTN,
     isActive && CssClass.ACTIVE,
@@ -45,7 +51,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
 
   return (
     <div
-      className={`sidebar-section-list-row${isDragging ? ` ${CssClass.DRAGGING}` : ""}`}
+      className={rowClass}
       {...{ [DataAttr.RUNBOOK_ID]: runbookId }}
       {...rowProps}
     >
