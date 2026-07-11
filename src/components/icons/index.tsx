@@ -171,21 +171,15 @@ export function TrashIcon(props: IconProps) {
   );
 }
 
-export function EyeIcon(props: IconProps) {
+export function EyeIcon({
+  slashed,
+  ...props
+}: IconProps & { slashed?: boolean }) {
   return (
     <svg viewBox="0 0 16 16" {...props}>
       <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" />
       <circle cx="8" cy="8" r="2" />
-    </svg>
-  );
-}
-
-export function EyeSlashIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 16 16" {...props}>
-      <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" />
-      <circle cx="8" cy="8" r="2" />
-      <line x1="2" y1="2" x2="14" y2="14" />
+      {slashed && <line x1="2" y1="2" x2="14" y2="14" />}
     </svg>
   );
 }
