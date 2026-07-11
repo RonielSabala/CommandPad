@@ -117,20 +117,28 @@ body.read-mode :is(.toggle-editor-btn, .command-block-editor) {
 
 .command-gutter {
   padding: var(--space-5) var(--space-5) var(--space-5) var(--space-6);
+  background: var(--color-surface-alt);
   color: var(--color-text-muted);
   font-family: var(--font-mono);
   font-size: var(--text-md);
-  line-height: 1.6;
+  line-height: calc(var(--text-base) * 1.6);
   user-select: none;
   flex-shrink: 0;
   border-right: var(--border-standard);
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
 }
 
 .command-gutter-prefix {
   color: var(--success);
   font-weight: 600;
+}
+
+.command-gutter-line {
+  font-size: var(--text-md);
+  color: var(--color-text-secondary);
 }
 
 .command-textarea {
@@ -148,7 +156,9 @@ body.read-mode :is(.toggle-editor-btn, .command-block-editor) {
   padding: var(--space-5) var(--space-6);
   resize: none;
   outline: none;
-  overflow: hidden;
+  white-space: pre;
+  overflow-x: auto;
+  overflow-y: hidden;
   line-height: 1.6;
   width: 100%;
 }
