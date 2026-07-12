@@ -11,7 +11,9 @@ import { GettingStartedDocs } from "./sections/GettingStartedSection";
 import { LanguageDocs } from "./sections/LanguageSection";
 import { MultiSelectDocs } from "./sections/MultiSelectSection";
 import { ReadModeDocs } from "./sections/ReadModeSection";
+import { RunbookLibraryDocs } from "./sections/RunbookLibrarySection";
 import { KeyboardShortcutsDocs } from "./sections/ShortcutsSection";
+import { TabsDocs } from "./sections/TabsSection";
 import {
   EscapingBracesDocs,
   ParameterizedPlaceholdersDocs,
@@ -19,12 +21,7 @@ import {
   VariableReferencesDocs,
   VariablesDocs,
 } from "./sections/VariablesSection";
-import {
-  RunbookLibraryDocs,
-  SidebarDocs,
-  TabsDocs,
-  WorkspaceDocs,
-} from "./sections/WorkspaceSection";
+import { SidebarDocs, WorkspaceDocs } from "./sections/WorkspaceSection";
 
 // Content rendered below each numbered section heading
 export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {

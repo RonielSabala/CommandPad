@@ -1,23 +1,10 @@
 import { KeyBinding } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
-import { DemoRunbookRows } from "../demos/DemoRunbookRows";
-import { DemoTabs } from "../demos/DemoTabs";
 import { Kbd, Prose, ProseList } from "../Prose";
 
 export function WorkspaceDocs() {
   const t = useTranslation();
   return <Prose text={t.docs.workspace.intro} />;
-}
-
-export function TabsDocs() {
-  const t = useTranslation();
-  return (
-    <>
-      <Prose text={t.docs.tabs.intro} />
-      <ProseList items={t.docs.tabs.items} />
-      <DemoTabs />
-    </>
-  );
 }
 
 export function SidebarDocs() {
@@ -34,19 +21,6 @@ export function SidebarDocs() {
         <Kbd binding={KeyBinding.MOVE_SIDEBAR} />
         <span>{t.keybindings[KeyBinding.MOVE_SIDEBAR]}</span>
       </p>
-    </>
-  );
-}
-
-export function RunbookLibraryDocs() {
-  const t = useTranslation();
-  return (
-    <>
-      <Prose text={t.docs.runbookLibrary.intro} />
-      <ProseList items={t.docs.runbookLibrary.items} />
-      <DemoRunbookRows />
-      <Prose text={t.docs.runbookLibrary.autoLabel} />
-      <Prose text={t.docs.runbookLibrary.autoSave} />
     </>
   );
 }

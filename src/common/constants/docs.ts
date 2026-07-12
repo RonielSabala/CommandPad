@@ -34,26 +34,28 @@ interface DocsSectionEntry {
   level: DocsSectionLevel;
 }
 
-// Display order; numbering (1, 1.1, 2, ...) derives from this list
+// Display order; numbering (1, 1.1, 2, ...) derives from this list.
+// Ordered as a guided first-session journey: workspace, blocks, variables,
+// tabs, bulk editing, library, then reference material.
 export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.GETTING_STARTED, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.WORKSPACE, level: DocsSectionLevel.SECTION },
-  { id: DocsSectionId.TABS, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.SIDEBAR, level: DocsSectionLevel.SUBSECTION },
-  { id: DocsSectionId.RUNBOOK_LIBRARY, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.BLOCKS, level: DocsSectionLevel.SECTION },
+  { id: DocsSectionId.COMMAND_BLOCK, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.NOTE_BLOCK, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.DIVIDER_BLOCK, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.VARIABLES, level: DocsSectionLevel.SECTION },
+  { id: DocsSectionId.SECRET_VARIABLES, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.VARIABLE_REFERENCES, level: DocsSectionLevel.SUBSECTION },
   {
     id: DocsSectionId.PARAMETERIZED_PLACEHOLDERS,
     level: DocsSectionLevel.SUBSECTION,
   },
   { id: DocsSectionId.ESCAPING_BRACES, level: DocsSectionLevel.SUBSECTION },
-  { id: DocsSectionId.SECRET_VARIABLES, level: DocsSectionLevel.SUBSECTION },
-  { id: DocsSectionId.BLOCKS, level: DocsSectionLevel.SECTION },
-  { id: DocsSectionId.COMMAND_BLOCK, level: DocsSectionLevel.SUBSECTION },
-  { id: DocsSectionId.NOTE_BLOCK, level: DocsSectionLevel.SUBSECTION },
-  { id: DocsSectionId.DIVIDER_BLOCK, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.TABS, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.MULTI_SELECT, level: DocsSectionLevel.SECTION },
+  { id: DocsSectionId.RUNBOOK_LIBRARY, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.READ_MODE, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.EXPORT, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.LANGUAGE, level: DocsSectionLevel.SECTION },
