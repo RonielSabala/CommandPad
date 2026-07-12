@@ -19,6 +19,7 @@ export const DocsSectionId = {
   EXPORT: "export",
   LANGUAGE: "language",
   KEYBOARD_SHORTCUTS: "keyboard-shortcuts",
+  QA: "qa",
 } as const;
 export type DocsSectionId = (typeof DocsSectionId)[keyof typeof DocsSectionId];
 
@@ -60,6 +61,7 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.EXPORT, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.LANGUAGE, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.KEYBOARD_SHORTCUTS, level: DocsSectionLevel.SECTION },
+  { id: DocsSectionId.QA, level: DocsSectionLevel.SECTION },
 ];
 
 export function getDocsSectionNumbers(): Record<DocsSectionId, string> {

@@ -234,5 +234,9 @@ export interface Messages {
     keyboardShortcuts: {
       intro: string;
     };
+    qa: {
+      intro: string;
+      items: { question: string; answer: string }[];
+    };
   };
 }

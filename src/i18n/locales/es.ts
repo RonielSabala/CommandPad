@@ -181,6 +181,7 @@ export const es: Messages = {
       [DocsSectionId.EXPORT]: "Exportar",
       [DocsSectionId.LANGUAGE]: "Idioma",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Atajos de teclado",
+      [DocsSectionId.QA]: "Preguntas y respuestas",
     },
     demo: {
       tryIt: "Pruébalo",
@@ -360,7 +361,50 @@ export const es: Messages = {
     },
     keyboardShortcuts: {
       intro:
-        "Estos atajos también están disponibles en la app en cualquier momento mediante el **icono de teclado** de la cabecera.",
+        "Todos los atajos disponibles en la app, generados a partir de las mismas definiciones que usa la propia app.",
+    },
+    qa: {
+      intro:
+        "Respuestas rápidas a las preguntas que surgen con más frecuencia.",
+      items: [
+        {
+          question: "¿Dónde se guardan mis datos?",
+          answer:
+            "Todo vive en tu navegador: las preferencias y los metadatos de pestañas en localStorage, el contenido de los libros en IndexedDB. Nada se envía a ningún servidor y no hay cuentas.",
+        },
+        {
+          question:
+            "¿Cómo respaldo un libro o lo llevo a otra máquina?",
+          answer:
+            "Expórtalo como **JSON** e importa el archivo en la otra máquina. La exportación JSON contiene el espacio de trabajo completo (variables y bloques) y siempre puede reimportarse.",
+        },
+        {
+          question: "¿Qué elimina exactamente Resetear espacio de trabajo?",
+          answer:
+            "Todo: cada pestaña, cada libro de la biblioteca, cada variable y cada preferencia. Es un borrado completo del almacenamiento local de la app y no se puede deshacer, así que exporta antes lo que te importe.",
+        },
+        {
+          question: "¿Por qué parte de mi comando aparece resaltada en rojo?",
+          answer:
+            "Esa parte es una referencia sin resolver: no existe ninguna variable con esa clave (las claves distinguen mayúsculas de minúsculas), o a un marcador `{;nombre}` no se le dio valor. Copiar un comando sin resolver copia el texto de la referencia tal cual.",
+        },
+        {
+          question: "¿Las variables secretas están cifradas?",
+          answer:
+            "No. Marcar una variable como secreta solo oculta su valor en la barra lateral y en las vistas previas de comandos. El valor sigue guardado en texto plano en el almacenamiento local de tu navegador.",
+        },
+        {
+          question:
+            "¿Por qué la exportación descarga directamente en vez de preguntar dónde guardar?",
+          answer:
+            "El diálogo nativo de guardado usa la File System Access API, disponible en navegadores basados en Chromium (Chrome, Edge, Brave). Los navegadores sin ella recurren a una descarga directa.",
+        },
+        {
+          question: "¿Puedo agregar otro idioma a la interfaz?",
+          answer:
+            "Sí, mediante una contribución al proyecto. Cada idioma es un único archivo de catálogo, y el compilador exige que todas las cadenas estén traducidas, así que agregar uno es un cambio solo de datos.",
+        },
+      ],
     },
   },
 };

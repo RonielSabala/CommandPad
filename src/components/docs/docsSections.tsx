@@ -10,6 +10,7 @@ import { ExportDocs } from "./sections/ExportSection";
 import { GettingStartedDocs } from "./sections/GettingStartedSection";
 import { LanguageDocs } from "./sections/LanguageSection";
 import { MultiSelectDocs } from "./sections/MultiSelectSection";
+import { QaDocs } from "./sections/QaSection";
 import { ReadModeDocs } from "./sections/ReadModeSection";
 import { RunbookLibraryDocs } from "./sections/RunbookLibrarySection";
 import { KeyboardShortcutsDocs } from "./sections/ShortcutsSection";
@@ -44,4 +45,5 @@ export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {
   [DocsSectionId.EXPORT]: ExportDocs,
   [DocsSectionId.LANGUAGE]: LanguageDocs,
   [DocsSectionId.KEYBOARD_SHORTCUTS]: KeyboardShortcutsDocs,
+  [DocsSectionId.QA]: QaDocs,
 };

@@ -175,6 +175,7 @@ export const en: Messages = {
       [DocsSectionId.EXPORT]: "Export",
       [DocsSectionId.LANGUAGE]: "Language",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Keyboard shortcuts",
+      [DocsSectionId.QA]: "Q&A",
     },
     demo: {
       tryIt: "Try it",
@@ -350,7 +351,47 @@ export const en: Messages = {
     },
     keyboardShortcuts: {
       intro:
-        "These shortcuts are also available in-app at any time via the **keyboard icon** in the header.",
+        "Every shortcut available in the app, generated from the same definitions the app itself uses.",
+    },
+    qa: {
+      intro: "Quick answers to the questions that come up most often.",
+      items: [
+        {
+          question: "Where is my data stored?",
+          answer:
+            "Everything lives in your browser: preferences and tab metadata in localStorage, runbook content in IndexedDB. Nothing is sent to any server, and there is no account.",
+        },
+        {
+          question: "How do I back up a runbook or move it to another machine?",
+          answer:
+            "Export it as **JSON** and import the file on the other machine. The JSON export contains the full workspace (variables and blocks) and can always be re-imported.",
+        },
+        {
+          question: "What exactly does Reset workspace delete?",
+          answer:
+            "All of it: every tab, every runbook in the library, every variable, and every preference. It is a full wipe of the app's local storage and it cannot be undone, so export anything you care about first.",
+        },
+        {
+          question: "Why is part of my command highlighted in red?",
+          answer:
+            "That part is an unresolved reference: no variable with that key exists (keys are case-sensitive), or a `{;name}` placeholder was not given a value. Copying an unresolved command copies the reference text as-is.",
+        },
+        {
+          question: "Are secret variables encrypted?",
+          answer:
+            "No. Marking a variable as secret only masks its value in the sidebar and in command previews. The value is still stored in plain text in your browser's local storage.",
+        },
+        {
+          question: "Why does export download directly instead of asking where to save?",
+          answer:
+            "The native save dialog uses the File System Access API, which is available in Chromium-based browsers (Chrome, Edge, Brave). Browsers without it fall back to a direct download.",
+        },
+        {
+          question: "Can I add another language to the UI?",
+          answer:
+            "Yes, via a contribution to the project. Each language is a single catalog file, and the compiler enforces that every string is translated, so adding one is a data-only change.",
+        },
+      ],
     },
   },
 };
