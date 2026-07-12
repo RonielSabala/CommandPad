@@ -280,6 +280,8 @@ export const en: Messages = {
         "**Editor** (collapsible): the raw command template, prefixed with `$`. Use the chevron button to collapse it, or toggle all editors globally with the header button.",
       multiline:
         "Commands can span multiple lines. The editor scrolls horizontally when a line exceeds the panel width.",
+      gutterNote:
+        "The gutter marks the first line with `$` and numbers every additional line, as in the example below. Try adding a line to watch the numbering grow.",
     },
     noteBlock: {
       intro:

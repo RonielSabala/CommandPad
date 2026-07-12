@@ -286,6 +286,8 @@ export const es: Messages = {
         "**Editor** (contraíble): la plantilla del comando en bruto, con el prefijo `$`. Usa el botón de flecha para contraerlo, o alterna todos los editores globalmente con el botón de la cabecera.",
       multiline:
         "Los comandos pueden ocupar varias líneas. El editor se desplaza horizontalmente cuando una línea excede el ancho del panel.",
+      gutterNote:
+        "El margen izquierdo marca la primera línea con `$` y numera cada línea adicional, como en el ejemplo de abajo. Prueba a agregar una línea para ver crecer la numeración.",
     },
     noteBlock: {
       intro:

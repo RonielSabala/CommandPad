@@ -195,6 +195,7 @@ export interface Messages {
       preview: string;
       editor: string;
       multiline: string;
+      gutterNote: string;
     };
     noteBlock: {
       intro: string;
