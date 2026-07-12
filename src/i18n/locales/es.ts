@@ -190,6 +190,11 @@ export const es: Messages = {
       tryIt: "Pruébalo",
       reset: "Reiniciar demo",
       tabSamples: ["Checklist de despliegue", "Respaldo de base de datos", ""],
+      runbookSamples: [
+        "Checklist de release",
+        "Respaldo de Postgres",
+        "Depuración de K8s",
+      ],
       noteSample:
         "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace a https://example.com. Haz clic fuera para verla renderizada de nuevo.",
     },

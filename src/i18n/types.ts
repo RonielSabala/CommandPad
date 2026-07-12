@@ -145,6 +145,7 @@ export interface Messages {
       reset: string;
       noteSample: string;
       tabSamples: string[];
+      runbookSamples: string[];
     };
     gettingStarted: {
       intro: string;

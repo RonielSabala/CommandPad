@@ -67,13 +67,8 @@
   border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 
-/* Static sidebar rows replica */
+/* Sidebar rows replica */
 
 .docs-demo-sidebar-frame {
   max-width: 20rem;
-}
-
-.docs-demo-sidebar-frame .runbook-item-btn,
-.docs-demo-sidebar-frame .btn {
-  cursor: default;
 }

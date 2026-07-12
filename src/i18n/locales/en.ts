@@ -184,6 +184,7 @@ export const en: Messages = {
       tryIt: "Try it",
       reset: "Reset demo",
       tabSamples: ["Deploy checklist", "Database backup", ""],
+      runbookSamples: ["Release checklist", "Postgres backup", "K8s debugging"],
       noteSample:
         "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link to https://example.com. Click away to see it rendered again.",
     },
