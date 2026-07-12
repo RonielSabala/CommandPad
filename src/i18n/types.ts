@@ -15,6 +15,11 @@ export const LANGUAGE_LABELS: Record<Language, string> = {
   [Language.ES]: "ES",
 };
 
+export const LANGUAGE_NAMES: Record<Language, string> = {
+  [Language.EN]: "English",
+  [Language.ES]: "Español",
+};
+
 // The full translation catalog
 export interface Messages {
   common: {

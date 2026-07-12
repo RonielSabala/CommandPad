@@ -280,7 +280,7 @@ Press <kbd>Escape</kbd> or click outside the modal to cancel.
 
 ### Language
 
-Click the **translate button** in the header to cycle the UI language. Currently available:
+Use the **language selector** in the header to pick the UI language. Currently available:
 
 - English
 - Español

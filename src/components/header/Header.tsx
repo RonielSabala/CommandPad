@@ -10,17 +10,15 @@ import {
   SunIcon,
   TrashIcon,
 } from "@/components/icons";
-import { LANGUAGE_LABELS, LANGUAGE_ORDER, useTranslation } from "@/i18n";
+import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
-import { Translate } from "react-bootstrap-icons";
 import "./Header.css";
+import { LanguageSelect } from "./LanguageSelect";
 
 export function Header() {
   const t = useTranslation();
   const isRead = useStore((state) => state.mode === AppMode.READ);
   const isLight = useStore((state) => state.theme === Theme.LIGHT);
-  const language = useStore((state) => state.language);
-  const setLanguage = useStore((state) => state.setLanguage);
   const toggleTheme = useStore((state) => state.toggleTheme);
   const toggleAppMode = useStore((state) => state.toggleAppMode);
   const openKeybindingsModal = useStore((state) => state.openKeybindingsModal);
@@ -32,11 +30,6 @@ export function Header() {
   const isEmpty = useStore(
     (state) => !(getActiveTab(state)?.blocks.length ?? 0),
   );
-
-  const cycleLanguage = () => {
-    const index = LANGUAGE_ORDER.indexOf(language);
-    setLanguage(LANGUAGE_ORDER[(index + 1) % LANGUAGE_ORDER.length]);
-  };
 
   return (
     <header id="app-header">
@@ -99,14 +92,7 @@ export function Header() {
 
         <div className="vertical-divider" />
 
-        <button
-          className="btn"
-          onClick={cycleLanguage}
-          title={t.header.changeLanguage}
-        >
-          {LANGUAGE_LABELS[language]}
-          <Translate className="icon" />
-        </button>
+        <LanguageSelect />
 
         <div className="vertical-divider" />
 
