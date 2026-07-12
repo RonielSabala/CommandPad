@@ -190,18 +190,27 @@ body {
   height: var(--icon-lg);
 }
 
+.icon-semibold,
 .icon-bold {
   fill: none;
   stroke: currentColor;
-  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.icon-semibold {
+  stroke-width: 1.1;
+}
+
+.icon-bold {
+  stroke-width: 2;
 }
 
 .icon,
 .icon-sm,
 .icon-md,
 .icon-lg,
+.icon-semibold,
 .icon-bold {
   display: block;
   flex-shrink: 0;

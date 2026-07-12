@@ -1,6 +1,7 @@
-import { RunbookConfig } from "@/common/config";
+import { DEFAULT_TAB_LABEL, RunbookConfig } from "@/common/config";
 import { BlockType } from "@/common/enums";
 import type { Block } from "@/common/types";
+import type { Messages } from "@/i18n/types";
 import { parseNoteText } from "@/utils/markdown";
 
 const LABEL_STRIP_REGEX = /[*`´]/g;
@@ -26,6 +27,18 @@ export function getRunbookLabel(
   }
 
   return fallback || RunbookConfig.DEFAULT_LABEL;
+}
+
+export function displayLabel(label: string, t: Messages): string {
+  if (label === DEFAULT_TAB_LABEL) {
+    return t.common.untitledTab;
+  }
+
+  if (label === RunbookConfig.DEFAULT_LABEL) {
+    return t.common.untitledRunbook;
+  }
+
+  return label;
 }
 
 export function slugifyLabel(label: string): string {

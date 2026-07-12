@@ -1,10 +1,12 @@
 import { DEFAULT_CONFIRM_LABEL } from "@/common/config";
 import { EventType, Key } from "@/common/constants/events";
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
 import { Modal } from "./Modal";
 
 export function ConfirmModal() {
+  const t = useTranslation();
   const dialog = useStore((state) => state.confirmDialog);
   const resolve = useStore((state) => state.resolveConfirm);
 
@@ -48,7 +50,7 @@ export function ConfirmModal() {
       <p className="modal-message">{message}</p>
       <div className="modal-actions">
         <button className="btn btn-lg" onClick={() => resolve(false)}>
-          Cancel
+          {t.common.cancel}
         </button>
         <div className="vertical-divider" />
         <button

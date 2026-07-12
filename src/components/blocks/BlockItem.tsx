@@ -7,6 +7,7 @@ import type { Block } from "@/common/types";
 import { DragIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
 import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
+import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
@@ -27,6 +28,7 @@ export const BlockItem = memo(function BlockItem({
   variableMap,
   secretKeys,
 }: Props) {
+  const t = useTranslation();
   const isSelected = useStore((state) => state.selectedBlockIds.has(block.id));
   const isFlashing = useStore((state) => state.flashBlockIds.has(block.id));
   const clearFlash = useStore((state) => state.clearFlash);
@@ -149,7 +151,7 @@ export const BlockItem = memo(function BlockItem({
       <div className={CssClass.BLOCK_DRAG_HANDLE}>
         <div
           className="drag-handle"
-          title="Drag to reorder"
+          title={t.common.dragToReorder}
           onMouseDown={() => setDraggable(true)}
           onMouseUp={() => {
             clearTimeout(disarmTimer.current);
@@ -170,14 +172,14 @@ export const BlockItem = memo(function BlockItem({
         <button
           className="btn btn-icon"
           onClick={() => duplicateBlock(block.id)}
-          title="Duplicate block"
+          title={t.blocks.duplicate}
         >
           <DuplicateIcon className="icon-md icon-bold" />
         </button>
         <button
           className="btn btn-icon btn-danger"
           onClick={() => removeBlock(block.id)}
-          title="Delete block"
+          title={t.blocks.delete}
         >
           <TrashIcon className="icon-md icon-bold" />
         </button>

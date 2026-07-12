@@ -1,16 +1,16 @@
 import { InputSelector } from "@/common/constants/dom";
 import {
-  EventType,
-  Key,
-  Modifier,
-  ModifierKeyName,
+    EventType,
+    Key,
+    Modifier,
+    ModifierKeyName,
 } from "@/common/constants/events";
 import { MoveDirection } from "@/common/enums";
 import {
-  isModifierPressed,
-  KeyBinding,
-  matchesKeybinding,
-  ModifierAction,
+    isModifierPressed,
+    KeyBinding,
+    matchesKeybinding,
+    ModifierAction,
 } from "@/common/keybindings";
 import { getActiveTab, useStore } from "@/store/store";
 import { openImportDialog } from "@/utils/importTrigger";
@@ -101,7 +101,7 @@ export function useKeybindings(): void {
         }
 
         hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.CLEAR_WORKSPACE)) {
+      } else if (matchesKeybinding(event, KeyBinding.RESET_WORKSPACE)) {
         void state.clearAllData();
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.DUPLICATE_BLOCK)) {

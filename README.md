@@ -22,6 +22,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
   - [Multi-select](#multi-select)
   - [Read Mode](#read-mode)
   - [Export](#export)
+  - [Language](#language)
 - [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Examples](#examples)
 - [Contributing](#contributing)
@@ -41,6 +42,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 - **Multi-block selection**: hold <kbd>Shift</kbd> and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the group at once.
 - **Read mode**: locks editing while still allowing variable values to change and runbooks to be switched.
 - **Light and dark theme**: toggle between dark and light mode.
+- **Multi-language UI**: switch between English and Spanish from the header.
 - **Adjustable sidebar**: collapse the sidebar to maximize workspace, or move it to the right side of the screen.
 - **Persistent state**: tabs, workspace content, sidebar state, and app mode are all saved locally and restored on reload.
 - **Export**: save the active workspace as `.json`, `.md`, or `.txt` via a native OS save dialog.
@@ -273,6 +275,17 @@ Click **Export** in the header to open the format picker.
 A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.
 
 Press <kbd>Escape</kbd> or click outside the modal to cancel.
+
+---
+
+### Language
+
+Use the **language selector** in the header to pick the UI language. Currently available:
+
+- English
+- Español
+
+The app detects your browser language on first visit, and your choice is remembered afterward.
 
 ---
 

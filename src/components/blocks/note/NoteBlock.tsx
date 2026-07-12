@@ -3,6 +3,7 @@ import { NoteStyle } from "@/common/enums";
 import type { NoteBlock as NoteBlockData } from "@/common/types";
 import { useNoteFormatting } from "@/hooks/useNoteFormatting";
 import { useTabInsertion } from "@/hooks/useTabInsertion";
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
 import "./NoteBlock.css";
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function NoteBlock({ block }: Props) {
+  const t = useTranslation();
   const blockId = block.id;
   const blockText = block.text;
 
@@ -33,7 +35,7 @@ export function NoteBlock({ block }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const blockStyle = block.style || NoteStyle.BODY;
-  const placeholder = `Section ${blockStyle}...`;
+  const placeholder = t.note.stylePlaceholder[blockStyle];
   const applyText = (value: string) => updateBlockText(blockId, value);
   const handleTabKey = useTabInsertion(applyText);
   const handleFormatKey = useNoteFormatting(applyText);
@@ -54,7 +56,7 @@ export function NoteBlock({ block }: Props) {
             className={`note-style-btn${blockStyle === style ? ` ${CssClass.ACTIVE}` : ""}`}
             onClick={() => updateBlockStyle(blockId, style)}
           >
-            {style}
+            {t.note.styleLabel[style]}
           </button>
         ))}
       </div>

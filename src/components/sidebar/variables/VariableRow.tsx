@@ -5,6 +5,7 @@ import { AppMode, DragGroup, VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
 import { DragIcon, EyeIcon, XIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { memo, useEffect, useRef } from "react";
@@ -19,6 +20,7 @@ export const VariableRow = memo(function VariableRow({
   variable,
   unused,
 }: Props) {
+  const t = useTranslation();
   const variableId = variable.id;
   const variableKey = variable.key;
   const variableValue = variable.value;
@@ -69,7 +71,11 @@ export const VariableRow = memo(function VariableRow({
       {...{ [DataAttr.VARIABLE_ID]: variableId }}
       {...rowProps}
     >
-      <div className="drag-handle" title="Drag to reorder" {...handleProps}>
+      <div
+        className="drag-handle"
+        title={t.common.dragToReorder}
+        {...handleProps}
+      >
         <DragIcon className="icon-md" />
       </div>
       <div className={variableInputsClass}>
@@ -77,7 +83,7 @@ export const VariableRow = memo(function VariableRow({
           ref={keyRef}
           className="variable-key-input"
           type="text"
-          placeholder="key"
+          placeholder={t.variables.keyPlaceholder}
           value={variableKey}
           spellCheck={false}
           autoComplete="off"
@@ -89,12 +95,12 @@ export const VariableRow = memo(function VariableRow({
               event.currentTarget.blur();
             }
           }}
-          title={unused ? `${variableKey} (unused)` : variableKey}
+          title={unused ? t.variables.unusedTitle(variableKey) : variableKey}
         />
         <input
           className="variable-value-input"
           type="text"
-          placeholder="value"
+          placeholder={t.variables.valuePlaceholder}
           value={variableValue}
           spellCheck={false}
           autoComplete="off"
@@ -112,14 +118,14 @@ export const VariableRow = memo(function VariableRow({
       <button
         className={`btn btn-icon variable-secret-btn${isSecret ? " is-active" : ""}`}
         onClick={() => toggleVariableSecret(variableId)}
-        title={isSecret ? "Reveal value" : "Mask value"}
+        title={isSecret ? t.variables.reveal : t.variables.mask}
       >
         <EyeIcon slashed={isSecret} className="icon-md icon-bold" />
       </button>
       <button
         className="btn btn-icon btn-danger"
         onClick={() => removeVariable(variableId)}
-        title="Remove variable"
+        title={t.variables.remove}
       >
         <XIcon className="icon-md icon-bold" />
       </button>

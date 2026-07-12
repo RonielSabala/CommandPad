@@ -83,7 +83,7 @@ export function SearchIcon(props: IconProps) {
 
 export function MoonIcon(props: IconProps) {
   return (
-    <svg viewBox="0 0 16 16" fill="currentColor" {...props}>
+    <svg viewBox="0 0 16 16" {...props}>
       <path d="M13.5 9.2A5.5 5.5 0 0 1 6.8 2.5a5.5 5.5 0 1 0 6.7 6.7z" />
     </svg>
   );
@@ -196,9 +196,9 @@ export function NoteIcon(props: IconProps) {
 export function CommandIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 16 16" {...props}>
-      <polyline points="2,4 5,4" />
-      <polyline points="2,8 8,8" />
-      <polyline points="8,4 14,8 8,12" />
+      <line x1="2" y1="4.5" x2="5.5" y2="4.5" />
+      <line x1="2" y1="8" x2="8.5" y2="8" />
+      <polyline points="9,3.5 14,8 9,12.5" />
     </svg>
   );
 }

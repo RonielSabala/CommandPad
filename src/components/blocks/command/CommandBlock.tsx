@@ -9,6 +9,7 @@ import {
 } from "@/components/icons";
 import { useAutoResize } from "@/hooks/useAutoResize";
 import { useTabInsertion } from "@/hooks/useTabInsertion";
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import {
   hasUnresolvedTokens,
@@ -26,6 +27,7 @@ interface Props {
 }
 
 export function CommandBlock({ block, variableMap, secretKeys }: Props) {
+  const t = useTranslation();
   const blockId = block.id;
   const blockText = block.text;
   const isEditorCollapsed = block.editorCollapsed === true;
@@ -98,14 +100,18 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
               ),
             )
           ) : (
-            <span className="command-preview-placeholder">empty command</span>
+            <span className="command-preview-placeholder">
+              {t.command.emptyPreview}
+            </span>
           )}
         </span>
 
         <button
           className={`btn btn-icon toggle-editor-btn${isEditorCollapsed ? " editor-collapsed" : ""}`}
           onClick={() => toggleCommandEditor(blockId)}
-          title={isEditorCollapsed ? "Show editor" : "Hide editor"}
+          title={
+            isEditorCollapsed ? t.command.showEditor : t.command.hideEditor
+          }
         >
           <EditorToggleChevronIcon className="toggle-editor-icon icon-md icon-bold" />
         </button>
@@ -114,7 +120,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           className="btn"
           onClick={copy}
           disabled={!blockText}
-          title="Copy command"
+          title={t.command.copy}
         >
           {copied ? (
             <CheckIcon className="icon-md icon-bold" />
@@ -138,7 +144,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         <textarea
           ref={textareaRef}
           className="command-textarea"
-          placeholder="ssh {USER}@{HOST}"
+          placeholder={t.command.placeholder}
           spellCheck={false}
           autoComplete="off"
           rows={1}

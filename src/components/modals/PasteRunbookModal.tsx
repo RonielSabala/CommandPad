@@ -1,9 +1,11 @@
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
 import { Modal } from "./Modal";
 import "./PasteRunbookModal.css";
 
 export function PasteRunbookModal() {
+  const t = useTranslation();
   const isOpen = useStore((state) => state.pasteRunbookModalOpen);
   const onClose = useStore((state) => state.closePasteRunbookModal);
   const importRunbookFromText = useStore(
@@ -39,10 +41,8 @@ export function PasteRunbookModal() {
 
   return (
     <Modal open={isOpen} onClose={onClose}>
-      <p className="modal-title">Paste Runbook</p>
-      <p className="modal-message">
-        Paste raw runbook JSON to create a new runbook.
-      </p>
+      <p className="modal-title">{t.pasteModal.title}</p>
+      <p className="modal-message">{t.pasteModal.message}</p>
       <textarea
         ref={textareaRef}
         className={`paste-runbook-input${hasError ? " has-error" : ""}`}
@@ -54,21 +54,17 @@ export function PasteRunbookModal() {
           setHasError(false);
         }}
       />
-      {hasError && (
-        <p className="paste-runbook-error">
-          That doesn't look like valid runbook JSON.
-        </p>
-      )}
+      {hasError && <p className="paste-runbook-error">{t.pasteModal.error}</p>}
       <div className="modal-actions">
         <button className="btn btn-lg" onClick={onClose}>
-          Cancel
+          {t.common.cancel}
         </button>
         <div className="vertical-divider" />
         <button
           className="btn btn-lg btn-primary"
           onClick={() => void handleCreate()}
         >
-          Create
+          {t.common.create}
         </button>
       </div>
     </Modal>
