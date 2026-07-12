@@ -186,5 +186,163 @@ export const es: Messages = {
       [DocsSectionId.LANGUAGE]: "Idioma",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Atajos de teclado",
     },
+    gettingStarted: {
+      intro:
+        "CommandPad es una herramienta ligera de libros de comandos con soporte de variables. Define variables una vez, referéncialas en cualquier número de bloques de comando y copia comandos totalmente resueltos al instante. Está pensada para ingenieros que ejecutan las mismas secuencias de comandos una y otra vez con distintos entornos, credenciales u objetivos.",
+      concept:
+        "Un **libro** es un documento que mezcla bloques de comando, bloques de nota y divisores. Referencia cualquier variable dentro de un comando con llaves — `{NOMBRE}` — y el comando resuelto se actualiza en vivo mientras escribes.",
+      features: [
+        "**Pestañas** — abre varios libros a la vez en pestañas separadas.",
+        "**Vista previa resuelta en vivo** — cada bloque de comando muestra el comando totalmente resuelto en tiempo real.",
+        "**Tres tipos de bloque** — comandos, notas y divisores se combinan libremente para construir libros estructurados y anotados.",
+        "**Variables secretas** — oculta valores sensibles en la barra lateral y en las vistas previas de comandos.",
+        "**Reordenar arrastrando** — los bloques, las variables y las entradas de libros se reordenan con sus controles de arrastre.",
+        "**Estado persistente** — las pestañas, el contenido, la barra lateral y las preferencias se guardan localmente y se restauran al recargar.",
+      ],
+    },
+    workspace: {
+      intro:
+        "El espacio de trabajo es la pantalla principal de la app: una cabecera con acciones globales, una barra lateral con la biblioteca de libros y el panel de variables, y el panel principal donde viven los bloques del libro activo.",
+    },
+    tabs: {
+      intro: "Cada pestaña contiene un libro abierto.",
+      items: [
+        "Haz clic en una pestaña para cambiar a ella.",
+        "**Clic con la rueda** en una pestaña para cerrarla.",
+        "**Arrastra** una pestaña para reordenarla.",
+        "**Suelta bloques sobre una pestaña** para copiarlos dentro de ella.",
+        "Una barra de acento en la parte inferior marca la pestaña activa de un vistazo.",
+      ],
+    },
+    sidebar: {
+      intro:
+        "La barra lateral contiene la biblioteca de libros y el panel de variables.",
+      items: [
+        "**Contraer / expandir** — haz clic en el botón de flecha o usa el atajo de la barra lateral.",
+        "**Mover a izquierda / derecha** — haz clic en el botón de disposición para mover la barra lateral al otro lado de la pantalla.",
+        "**Redimensionar** — arrastra el borde interior de la barra lateral; doble clic para contraerla.",
+      ],
+    },
+    runbookLibrary: {
+      intro:
+        "La sección **LIBROS** de la barra lateral contiene tus libros importados.",
+      items: [
+        "Haz clic en **Importar** para cargar uno o varios archivos `.json` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.",
+        "Haz clic en cualquier entrada para abrirla. Si ya está abierta en una pestaña, esa pestaña pasa a estar activa.",
+        "Elimina un libro de la biblioteca con el botón que aparece al pasar el cursor sobre la fila.",
+        "Arrastra el control a la izquierda de una entrada para reordenar la lista.",
+        "Usa la **barra de búsqueda** para filtrar libros por nombre.",
+      ],
+      autoLabel:
+        "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca, de modo que las entradas se describen solas. En caso contrario se usa el nombre del archivo importado.",
+      autoSave:
+        "Los cambios hechos al libro activo se guardan automáticamente en su entrada de la biblioteca.",
+    },
+    variables: {
+      intro:
+        "Las variables se definen en la sección **VARIABLES** de la barra lateral. Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas, y las variables con clave vacía se ignoran.",
+      usage:
+        "Referencia una variable en cualquier bloque de comando envolviendo su clave en llaves, p. ej. `{NAMESPACE}`. Renombrar una clave actualiza automáticamente todas las referencias, y las variables que ningún comando referencia se atenúan para detectar entradas obsoletas fácilmente.",
+    },
+    variableReferences: {
+      intro:
+        "El valor de una variable puede referenciar otras variables. Las referencias se resuelven recursivamente, así que puedes construir valores como `https://{HOST}/api` a partir de piezas más pequeñas.",
+    },
+    parameterizedPlaceholders: {
+      intro:
+        "El valor de una variable puede contener un marcador `{;nombre}` que no se rellena hasta que la variable es referenciada.",
+      fill:
+        "Rellénalo por referencia con `{clave;nombre=valor}`. Proporciona varios marcadores separándolos con `;`, p. ej. `{A;p1=v1;p2=v2}`.",
+      unresolved:
+        "Si una referencia omite el valor de un marcador, el marcador `{;nombre}` se deja en su lugar y el comando se considera sin resolver.",
+    },
+    escapingBraces: {
+      intro:
+        "Antepón una barra invertida a `{` o `}` en un bloque de comando para mostrar la llave literalmente en vez de iniciar una referencia de variable. La barra invertida se elimina del comando resuelto.",
+      scope:
+        "El escape aplica solo a bloques de comando; las barras invertidas dentro de valores de variables son siempre literales. También funciona dentro del valor de un parámetro, para pasar una llave literal en lugar de una referencia anidada.",
+    },
+    secretVariables: {
+      intro:
+        "Haz clic en el **icono de ojo** de una fila de variable para marcarla como **secreta**. Los valores secretos se ocultan en la barra lateral y se sustituyen silenciosamente en las vistas previas de comandos.",
+    },
+    blocks: {
+      intro:
+        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal.",
+      tip:
+        "Si no hay pestañas abiertas y agregas un bloque (o creas una variable), se crea automáticamente una pestaña sin título.",
+    },
+    commandBlock: {
+      intro: "Un bloque de comando tiene dos partes:",
+      preview:
+        "**Vista previa** (siempre visible) — el comando totalmente resuelto. Las referencias sin resolver se resaltan. Haz clic en **Copiar** para copiar el texto resuelto al portapapeles.",
+      editor:
+        "**Editor** (contraíble) — la plantilla del comando en bruto, con el prefijo `$`. Usa el botón de flecha para contraerlo, o alterna todos los editores globalmente con el botón de la cabecera.",
+      multiline:
+        "Los comandos pueden ocupar varias líneas. El editor se desplaza horizontalmente cuando una línea excede el ancho del panel.",
+    },
+    noteBlock: {
+      intro:
+        "Un bloque de texto libre. Los bloques de nota se expanden horizontal y verticalmente mientras escribes.",
+      styles:
+        "Hay tres estilos de texto seleccionables al pasar el cursor: **título** (grande, en negrita), **subtítulo** (mediano, acentuado) y **cuerpo** (prosa por defecto).",
+      markdown: "Las notas soportan markdown en línea:",
+      tableSyntax: "Sintaxis",
+      tableResult: "Resultado",
+      links:
+        "Para abrir un enlace, mantén `Ctrl` y haz clic en él. En modo lectura, los enlaces se pueden abrir con un clic directo.",
+      wrapKeys:
+        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva, `Ctrl+´` en comillas invertidas, y escribir `(`, `[` o `{` lo envuelve en ese par de corchetes.",
+    },
+    dividerBlock: {
+      intro:
+        "Un separador visual. Se estira hasta igualar el ancho del bloque más ancho — útil para separar secciones de un libro visualmente.",
+    },
+    multiSelect: {
+      intro:
+        "Mantén `Shift` y haz clic en bloques para construir una selección. También puedes mantener `Shift` y arrastrar el ratón sobre los bloques para seleccionarlos con un lazo. Lazar bloques ya seleccionados los deselecciona.",
+      actions: [
+        "**Arrastra** el control de cualquier bloque seleccionado para mover todos los bloques seleccionados juntos, conservando el orden relativo.",
+        "**Copiar a otra pestaña** — arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella.",
+        "**Duplicar** — `Ctrl+D` duplica el grupo completo, insertado después del último bloque seleccionado.",
+        "**Eliminar** — `Supr` elimina el grupo completo.",
+      ],
+      clear:
+        "Pulsa `Escape` o haz clic fuera de los controles de bloque para limpiar la selección.",
+    },
+    readMode: {
+      intro:
+        "El modo lectura bloquea la edición, no la navegación. Haz clic en el **icono de candado** de la cabecera para activarlo:",
+      rules: [
+        "Todos los editores de comandos se contraen y no pueden expandirse.",
+        "El texto de bloques y notas no puede editarse.",
+        "La estructura de bloques no puede cambiarse (sin agregar, eliminar ni reordenar).",
+        "Los valores de las variables sí pueden cambiarse.",
+        "Los libros sí pueden cambiarse.",
+        "Los enlaces en notas se abren con un clic directo.",
+      ],
+      exit: "Haz clic en el **icono de lápiz** para volver al modo edición.",
+    },
+    export: {
+      intro:
+        "Haz clic en **Exportar** en la cabecera para abrir el selector de formato.",
+      formats: [
+        "**JSON** — el espacio de trabajo completo (variables + bloques). Puede reimportarse.",
+        "**Markdown** — un archivo `.md` legible con títulos, subtítulos, divisores y comandos resueltos.",
+        "**Texto plano** — el mismo contenido que Markdown, guardado como `.txt`.",
+      ],
+      saveDialog:
+        "En navegadores compatibles se abre un diálogo nativo de guardado para elegir nombre y carpeta. En los demás, el archivo se descarga directamente.",
+    },
+    language: {
+      intro:
+        "Usa el **selector de idioma** de la cabecera para elegir el idioma de la interfaz. Actualmente están disponibles English y Español.",
+      detection:
+        "La app detecta el idioma de tu navegador en la primera visita, y tu elección se recuerda después.",
+    },
+    keyboardShortcuts: {
+      intro:
+        "Estos atajos también están disponibles en la app en cualquier momento mediante el **icono de teclado** de la cabecera.",
+    },
   },
 };

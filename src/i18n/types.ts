@@ -140,5 +140,90 @@ export interface Messages {
       tocTitle: string;
     };
     toc: Record<DocsSectionId, string>;
+    gettingStarted: {
+      intro: string;
+      concept: string;
+      features: string[];
+    };
+    workspace: {
+      intro: string;
+    };
+    tabs: {
+      intro: string;
+      items: string[];
+    };
+    sidebar: {
+      intro: string;
+      items: string[];
+    };
+    runbookLibrary: {
+      intro: string;
+      items: string[];
+      autoLabel: string;
+      autoSave: string;
+    };
+    variables: {
+      intro: string;
+      usage: string;
+    };
+    variableReferences: {
+      intro: string;
+    };
+    parameterizedPlaceholders: {
+      intro: string;
+      fill: string;
+      unresolved: string;
+    };
+    escapingBraces: {
+      intro: string;
+      scope: string;
+    };
+    secretVariables: {
+      intro: string;
+    };
+    blocks: {
+      intro: string;
+      tip: string;
+    };
+    commandBlock: {
+      intro: string;
+      preview: string;
+      editor: string;
+      multiline: string;
+    };
+    noteBlock: {
+      intro: string;
+      styles: string;
+      markdown: string;
+      tableSyntax: string;
+      tableResult: string;
+      links: string;
+      wrapKeys: string;
+    };
+    dividerBlock: {
+      intro: string;
+    };
+    multiSelect: {
+      intro: string;
+      actions: string[];
+      clear: string;
+    };
+    readMode: {
+      intro: string;
+      rules: string[];
+      exit: string;
+    };
+    export: {
+      intro: string;
+      formats: string[];
+      saveDialog: string;
+    };
+    language: {
+      intro: string;
+      detection: string;
+    };
+    keyboardShortcuts: {
+      intro: string;
+    };
   };
 }

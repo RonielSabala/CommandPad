@@ -59,7 +59,7 @@ export function DocsPage() {
                 number={SECTION_NUMBERS[id]}
                 title={t.docs.toc[id]}
               >
-                {Content ? <Content /> : null}
+                <Content />
               </DocsSection>
             );
           })}

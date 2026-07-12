@@ -180,5 +180,163 @@ export const en: Messages = {
       [DocsSectionId.LANGUAGE]: "Language",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Keyboard shortcuts",
     },
+    gettingStarted: {
+      intro:
+        "CommandPad is a lightweight, variable-aware command runbook tool. Define variables once, reference them across any number of command blocks, and copy fully resolved commands instantly. It is designed for engineers who run the same sequences of commands repeatedly with different environments, credentials, or targets.",
+      concept:
+        "A **runbook** is a document that mixes command blocks, note blocks, and dividers. Reference any variable inside a command with curly braces — `{NAME}` — and the resolved command updates live as you type.",
+      features: [
+        "**Tabs** — open multiple runbooks simultaneously in separate tabs.",
+        "**Live resolved preview** — every command block shows the fully resolved command in real time.",
+        "**Three block types** — commands, notes, and dividers can be freely mixed to build structured, annotated runbooks.",
+        "**Secret variables** — mask sensitive values in the sidebar and in command previews.",
+        "**Drag-and-drop reordering** — blocks, variables, and runbook entries can each be reordered via their drag handles.",
+        "**Persistent state** — tabs, content, sidebar state, and preferences are saved locally and restored on reload.",
+      ],
+    },
+    workspace: {
+      intro:
+        "The workspace is the main screen of the app: a header with global actions, a sidebar holding the runbook library and the variables panel, and the main panel where the active runbook's blocks live.",
+    },
+    tabs: {
+      intro: "Each tab holds one open runbook.",
+      items: [
+        "Click a tab to switch to it.",
+        "**Middle-click** a tab to close it.",
+        "**Drag** a tab to reorder it.",
+        "**Drop blocks on a tab** to copy them into it.",
+        "An accent bar at the bottom of the active tab marks it at a glance.",
+      ],
+    },
+    sidebar: {
+      intro:
+        "The sidebar holds the runbook library and the variables panel.",
+      items: [
+        "**Collapse / expand** — click the chevron button or press the sidebar shortcut.",
+        "**Move left / right** — click the layout button to move the sidebar to the other side of the screen.",
+        "**Resize** — drag the sidebar's inner edge; double-click it to collapse.",
+      ],
+    },
+    runbookLibrary: {
+      intro:
+        "The sidebar's **RUNBOOKS** section holds your imported runbooks.",
+      items: [
+        "Click **Import** to load one or more `.json` files at once, or **Paste** to create a runbook from raw JSON.",
+        "Click any runbook entry to open it. If it's already open in a tab, that tab becomes active.",
+        "Delete a runbook from the library with the button shown on row hover.",
+        "Drag the handle on the left of an entry to reorder the list.",
+        "Use the **search bar** to filter runbooks by name.",
+      ],
+      autoLabel:
+        "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label, so entries are self-describing. Otherwise the imported filename is used as the fallback.",
+      autoSave:
+        "Edits made to the active runbook are automatically saved back to its library entry.",
+    },
+    variables: {
+      intro:
+        "Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**. Keys are case-sensitive, and variables with empty keys are ignored.",
+      usage:
+        "Reference a variable in any command block by wrapping its key in curly braces, e.g. `{NAMESPACE}`. Renaming a key automatically updates all references, and variables not referenced by any command are dimmed so stale entries are easy to spot.",
+    },
+    variableReferences: {
+      intro:
+        "A variable's value can reference other variables. References resolve recursively, so you can build values like `https://{HOST}/api` out of smaller pieces.",
+    },
+    parameterizedPlaceholders: {
+      intro:
+        "A variable's value can contain a `{;name}` placeholder that isn't filled in until the variable is referenced.",
+      fill:
+        "Fill it in per-reference with `{key;name=value}`. Supply multiple placeholders by separating them with `;`, e.g. `{A;p1=v1;p2=v2}`.",
+      unresolved:
+        "If a reference omits a placeholder's value, the `{;name}` marker is left in place and the command is treated as unresolved.",
+    },
+    escapingBraces: {
+      intro:
+        "Prefix `{` or `}` with a backslash in a command block to output it literally instead of starting a variable reference. The backslash is dropped from the resolved command.",
+      scope:
+        "Escaping applies to command blocks only; backslashes inside variable values are always literal. It also works inside a parameter value, so you can pass a literal brace instead of a nested reference.",
+    },
+    secretVariables: {
+      intro:
+        "Click the **eye icon** on a variable row to mark it as **secret**. Secret values are masked in the sidebar and are substituted silently in command previews.",
+    },
+    blocks: {
+      intro:
+        "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel.",
+      tip:
+        "If no tabs are open and you add a block (or create a variable), a new untitled tab is created automatically.",
+    },
+    commandBlock: {
+      intro: "A command block has two parts:",
+      preview:
+        "**Preview** (always visible) — the fully resolved command. Unresolved variable references are highlighted. Click **Copy** to copy the resolved text to the clipboard.",
+      editor:
+        "**Editor** (collapsible) — the raw command template, prefixed with `$`. Use the chevron button to collapse it, or toggle all editors globally with the header button.",
+      multiline:
+        "Commands can span multiple lines. The editor scrolls horizontally when a line exceeds the panel width.",
+    },
+    noteBlock: {
+      intro:
+        "A free-form text block. Note blocks expand horizontally and vertically as you type.",
+      styles:
+        "Three text styles are selectable on hover: **heading** (large, bold), **subheading** (medium, accented), and **body** (default prose).",
+      markdown: "Notes support inline markdown:",
+      tableSyntax: "Syntax",
+      tableResult: "Result",
+      links:
+        "To open a link, hold `Ctrl` and click it. In read mode, links are directly clickable.",
+      wrapKeys:
+        "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, `Ctrl+´` in backticks, and typing `(`, `[`, or `{` wraps it in that bracket pair.",
+    },
+    dividerBlock: {
+      intro:
+        "A visual separator. It stretches to match the width of the widest block — useful for separating runbook sections visually.",
+    },
+    multiSelect: {
+      intro:
+        "Hold `Shift` and click blocks to build a selection. You can also hold `Shift` and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.",
+      actions: [
+        "**Drag** any selected block's handle to move all selected blocks together, preserving relative order.",
+        "**Copy to another tab** — drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab.",
+        "**Duplicate** — `Ctrl+D` duplicates the entire group, inserted after the last selected block.",
+        "**Delete** — `Del` deletes the entire group.",
+      ],
+      clear:
+        "Press `Escape` or click outside block controls to clear the selection.",
+    },
+    readMode: {
+      intro:
+        "Read mode locks editing, not navigation. Click the **padlock icon** in the header to enter it:",
+      rules: [
+        "All command editors collapse and cannot be expanded.",
+        "Block and note text cannot be edited.",
+        "Block structure cannot be changed (no adding, deleting, or reordering).",
+        "Variable values can still be changed.",
+        "Runbooks can still be switched.",
+        "Links in notes are directly clickable.",
+      ],
+      exit: "Click the **pencil icon** to return to edit mode.",
+    },
+    export: {
+      intro:
+        "Click **Export** in the header to open the format picker.",
+      formats: [
+        "**JSON** — the full workspace (variables + blocks). Can be re-imported.",
+        "**Markdown** — a human-readable `.md` file with headings, subheadings, dividers, and resolved commands.",
+        "**Plain text** — the same content as Markdown, saved as `.txt`.",
+      ],
+      saveDialog:
+        "A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.",
+    },
+    language: {
+      intro:
+        "Use the **language selector** in the header to pick the UI language. English and Español are currently available.",
+      detection:
+        "The app detects your browser language on first visit, and your choice is remembered afterward.",
+    },
+    keyboardShortcuts: {
+      intro:
+        "These shortcuts are also available in-app at any time via the **keyboard icon** in the header.",
+    },
   },
 };
