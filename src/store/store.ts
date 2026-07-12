@@ -955,17 +955,19 @@ export const useStore = create<StoreState>()((set, get) => ({
       return;
     }
 
-    const idsToRemove =
-      state.selectedBlockIds.size > 0 && state.selectedBlockIds.has(blockId)
-        ? new Set(state.selectedBlockIds)
-        : new Set([blockId]);
+    const isSelected =
+      state.selectedBlockIds.size > 0 && state.selectedBlockIds.has(blockId);
+
+    const idsToRemove = isSelected
+      ? new Set(state.selectedBlockIds)
+      : new Set([blockId]);
 
     set((s) => ({
       ...withActiveTab(s, (tab) => ({
         ...tab,
         blocks: tab.blocks.filter((b) => !idsToRemove.has(b.id)),
       })),
-      selectedBlockIds: new Set(),
+      selectedBlockIds: isSelected ? new Set() : s.selectedBlockIds,
     }));
     get().saveState();
   },
