@@ -183,7 +183,7 @@ export const en: Messages = {
     demo: {
       tryIt: "Try it",
       noteSample:
-        "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link to https://example.com — click away to see it rendered again.",
+        "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link to https://example.com. Click away to see it rendered again.",
     },
     gettingStarted: {
       intro:
@@ -218,9 +218,9 @@ export const en: Messages = {
       intro:
         "The sidebar holds the runbook library and the variables panel.",
       items: [
-        "**Collapse / expand** — click the chevron button or press the sidebar shortcut.",
-        "**Move left / right** — click the layout button to move the sidebar to the other side of the screen.",
-        "**Resize** — drag the sidebar's inner edge; double-click it to collapse.",
+        "**Collapse / expand**: click the chevron button or press the sidebar shortcut.",
+        "**Move left / right**: click the layout button to move the sidebar to the other side of the screen.",
+        "**Resize**: drag the sidebar's inner edge; double-click it to collapse.",
       ],
     },
     runbookLibrary: {
@@ -275,9 +275,9 @@ export const en: Messages = {
     commandBlock: {
       intro: "A command block has two parts:",
       preview:
-        "**Preview** (always visible) — the fully resolved command. Unresolved variable references are highlighted. Click **Copy** to copy the resolved text to the clipboard.",
+        "**Preview** (always visible): the fully resolved command. Unresolved variable references are highlighted. Click **Copy** to copy the resolved text to the clipboard.",
       editor:
-        "**Editor** (collapsible) — the raw command template, prefixed with `$`. Use the chevron button to collapse it, or toggle all editors globally with the header button.",
+        "**Editor** (collapsible): the raw command template, prefixed with `$`. Use the chevron button to collapse it, or toggle all editors globally with the header button.",
       multiline:
         "Commands can span multiple lines. The editor scrolls horizontally when a line exceeds the panel width.",
     },
@@ -296,16 +296,16 @@ export const en: Messages = {
     },
     dividerBlock: {
       intro:
-        "A visual separator. It stretches to match the width of the widest block — useful for separating runbook sections visually.",
+        "A visual separator. It stretches to match the width of the widest block, which makes it perfect for splitting a runbook into visual sections.",
     },
     multiSelect: {
       intro:
         "Hold `Shift` and click blocks to build a selection. You can also hold `Shift` and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.",
       actions: [
         "**Drag** any selected block's handle to move all selected blocks together, preserving relative order.",
-        "**Copy to another tab** — drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab.",
-        "**Duplicate** — `Ctrl+D` duplicates the entire group, inserted after the last selected block.",
-        "**Delete** — `Del` deletes the entire group.",
+        "**Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab.",
+        "**Duplicate**: `Ctrl+D` duplicates the entire group, inserted after the last selected block.",
+        "**Delete**: `Del` deletes the entire group.",
       ],
       clear:
         "Press `Escape` or click outside block controls to clear the selection.",
@@ -327,9 +327,9 @@ export const en: Messages = {
       intro:
         "Click **Export** in the header to open the format picker.",
       formats: [
-        "**JSON** — the full workspace (variables + blocks). Can be re-imported.",
-        "**Markdown** — a human-readable `.md` file with headings, subheadings, dividers, and resolved commands.",
-        "**Plain text** — the same content as Markdown, saved as `.txt`.",
+        "**JSON**: the full workspace (variables + blocks). Can be re-imported.",
+        "**Markdown**: a human-readable `.md` file with headings, subheadings, dividers, and resolved commands.",
+        "**Plain text**: the same content as Markdown, saved as `.txt`.",
       ],
       saveDialog:
         "A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.",

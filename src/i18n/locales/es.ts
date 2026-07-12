@@ -189,7 +189,7 @@ export const es: Messages = {
     demo: {
       tryIt: "Pruébalo",
       noteSample:
-        "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace a https://example.com — haz clic fuera para verla renderizada de nuevo.",
+        "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace a https://example.com. Haz clic fuera para verla renderizada de nuevo.",
     },
     gettingStarted: {
       intro:
@@ -224,9 +224,9 @@ export const es: Messages = {
       intro:
         "La barra lateral contiene la biblioteca de libros y el panel de variables.",
       items: [
-        "**Contraer / expandir** — haz clic en el botón de flecha o usa el atajo de la barra lateral.",
-        "**Mover a izquierda / derecha** — haz clic en el botón de disposición para mover la barra lateral al otro lado de la pantalla.",
-        "**Redimensionar** — arrastra el borde interior de la barra lateral; doble clic para contraerla.",
+        "**Contraer / expandir**: haz clic en el botón de flecha o usa el atajo de la barra lateral.",
+        "**Mover a izquierda / derecha**: haz clic en el botón de disposición para mover la barra lateral al otro lado de la pantalla.",
+        "**Redimensionar**: arrastra el borde interior de la barra lateral; doble clic para contraerla.",
       ],
     },
     runbookLibrary: {
@@ -281,9 +281,9 @@ export const es: Messages = {
     commandBlock: {
       intro: "Un bloque de comando tiene dos partes:",
       preview:
-        "**Vista previa** (siempre visible) — el comando totalmente resuelto. Las referencias sin resolver se resaltan. Haz clic en **Copiar** para copiar el texto resuelto al portapapeles.",
+        "**Vista previa** (siempre visible): el comando totalmente resuelto. Las referencias sin resolver se resaltan. Haz clic en **Copiar** para copiar el texto resuelto al portapapeles.",
       editor:
-        "**Editor** (contraíble) — la plantilla del comando en bruto, con el prefijo `$`. Usa el botón de flecha para contraerlo, o alterna todos los editores globalmente con el botón de la cabecera.",
+        "**Editor** (contraíble): la plantilla del comando en bruto, con el prefijo `$`. Usa el botón de flecha para contraerlo, o alterna todos los editores globalmente con el botón de la cabecera.",
       multiline:
         "Los comandos pueden ocupar varias líneas. El editor se desplaza horizontalmente cuando una línea excede el ancho del panel.",
     },
@@ -302,16 +302,16 @@ export const es: Messages = {
     },
     dividerBlock: {
       intro:
-        "Un separador visual. Se estira hasta igualar el ancho del bloque más ancho — útil para separar secciones de un libro visualmente.",
+        "Un separador visual. Se estira hasta igualar el ancho del bloque más ancho, lo que lo hace perfecto para dividir un libro en secciones visuales.",
     },
     multiSelect: {
       intro:
         "Mantén `Shift` y haz clic en bloques para construir una selección. También puedes mantener `Shift` y arrastrar el ratón sobre los bloques para seleccionarlos con un lazo. Lazar bloques ya seleccionados los deselecciona.",
       actions: [
         "**Arrastra** el control de cualquier bloque seleccionado para mover todos los bloques seleccionados juntos, conservando el orden relativo.",
-        "**Copiar a otra pestaña** — arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella.",
-        "**Duplicar** — `Ctrl+D` duplica el grupo completo, insertado después del último bloque seleccionado.",
-        "**Eliminar** — `Supr` elimina el grupo completo.",
+        "**Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella.",
+        "**Duplicar**: `Ctrl+D` duplica el grupo completo, insertado después del último bloque seleccionado.",
+        "**Eliminar**: `Supr` elimina el grupo completo.",
       ],
       clear:
         "Pulsa `Escape` o haz clic fuera de los controles de bloque para limpiar la selección.",
@@ -333,9 +333,9 @@ export const es: Messages = {
       intro:
         "Haz clic en **Exportar** en la cabecera para abrir el selector de formato.",
       formats: [
-        "**JSON** — el espacio de trabajo completo (variables + bloques). Puede reimportarse.",
-        "**Markdown** — un archivo `.md` legible con títulos, subtítulos, divisores y comandos resueltos.",
-        "**Texto plano** — el mismo contenido que Markdown, guardado como `.txt`.",
+        "**JSON**: el espacio de trabajo completo (variables + bloques). Puede reimportarse.",
+        "**Markdown**: un archivo `.md` legible con títulos, subtítulos, divisores y comandos resueltos.",
+        "**Texto plano**: el mismo contenido que Markdown, guardado como `.txt`.",
       ],
       saveDialog:
         "En navegadores compatibles se abre un diálogo nativo de guardado para elegir nombre y carpeta. En los demás, el archivo se descarga directamente.",
