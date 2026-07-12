@@ -4,36 +4,92 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 
 ![Hero](docs/screenshots/hero.jpg)
 
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Documentation](#documentation)
+- [Quick Start](#quick-start)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+  - [Run Locally](#run-locally)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
 ## Features
 
-- **Variables** with live resolved previews, cross-references, parameterized placeholders, and secret masking.
-- **Three block types** — commands, notes (with inline markdown), and dividers — freely mixed into structured runbooks.
-- **Tabs** and a **runbook library** with import/export (JSON, Markdown, plain text).
-- **Read mode**, multi-block selection, drag-and-drop reordering, light/dark theme, English/Spanish UI.
-- **Persistent state** — everything is saved locally and restored on reload.
+- **Tabs**: open multiple runbooks simultaneously in separate tabs.
+- **Variables**: define named variables and reference them in any command block or other variable value.
+- **Live resolved preview**: every command block shows the fully resolved command in real time as you type.
+- **Three block types**: commands, notes, and dividers can be freely mixed to build structured, annotated runbooks.
+- **Rich note blocks**: notes support three text styles (heading, subheading, body), auto-detect URLs, and inline markdown: `**bold**`, `_italic_`, `` `code` ``.
+- **Secret variables**: mark any variable as secret to mask its value in the sidebar and in command previews.
+- **Drag-and-drop reordering**: blocks, variables, and runbook library entries can each be reordered via their drag handles.
+- **Multi-block selection**: hold <kbd>Shift</kbd> and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the group at once.
+- **Read mode**: locks editing while still allowing variable values to change and runbooks to be switched.
+- **Light and dark theme**: toggle between dark and light mode.
+- **Multi-language UI**: switch between English and Spanish from the header.
+- **Adjustable sidebar**: collapse the sidebar to maximize workspace, or move it to the right side of the screen.
+- **Persistent state**: tabs, workspace content, sidebar state, and app mode are all saved locally and restored on reload.
+- **Export**: save the active workspace as `.json`, `.md`, or `.txt` via a native OS save dialog.
+
+---
 
 ## Documentation
 
 Full usage documentation lives **inside the app**: click the book icon in the header, or open `/docs` directly. It covers every concept with live, interactive examples.
 
+---
+
 ## Quick Start
 
-Requires [Node.js](https://nodejs.org) and [pnpm](https://pnpm.io).
+### Requirements
+
+- [Node.js](https://nodejs.org)
+- [pnpm](https://pnpm.io)
+- [Visual Studio Code](https://code.visualstudio.com) (Recommended)
+
+---
+
+### Installation
 
 ```bash
 pnpm install
+```
+
+---
+
+### Run Locally
+
+```bash
 pnpm dev
 ```
 
 Access at `http://localhost:5173`. Use <kbd>Ctrl</kbd>+<kbd>C</kbd> to stop.
 
+---
+
 ## Examples
 
 Browse the [docs/examples/](/docs/examples/) folder for sample runbooks.
 
+---
+
 ## Contributing
 
-Contributions are welcome. Fork the repository, create a feature branch (`feat/my-change`), follow the existing code style, and open a pull request describing the change.
+Contributions are welcome. Suggested workflow:
+
+1. Fork the repository.
+2. Create a feature branch: `feat/my-change`.
+3. Make your changes following the existing code style.
+4. Include appropriate documentation or tests.
+5. Commit, push, and open a pull request describing the change and the reason for it.
+
+### Pre-commit Hooks <!-- omit in toc -->
 
 This project uses [pre-commit](https://pre-commit.com/) to enforce code quality checks before each commit. Run once from the **repo root** to set it up:
 
@@ -41,6 +97,14 @@ This project uses [pre-commit](https://pre-commit.com/) to enforce code quality 
 pip install pre-commit
 pre-commit install
 ```
+
+Checks run automatically on every `git commit`. To run them manually:
+
+```bash
+pre-commit run --all-files
+```
+
+---
 
 ## License
 
