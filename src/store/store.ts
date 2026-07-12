@@ -2,7 +2,6 @@ import { create } from "zustand";
 
 import {
   DEBOUNCE_SAVE_MS,
-  DEFAULT_CONFIRM_LABEL,
   DEFAULT_TAB_LABEL,
   RunbookConfig,
   SidebarWidth,
@@ -25,6 +24,8 @@ import type {
   Tab,
   Variable,
 } from "@/common/types";
+import { detectLanguage, getMessages } from "@/i18n/messages";
+import { Language } from "@/i18n/types";
 import { debounce } from "@/utils/debounce";
 import { runExport } from "@/utils/export";
 import { generateId } from "@/utils/id";
@@ -66,6 +67,7 @@ interface StoreState {
   // UI
   mode: AppMode;
   theme: Theme;
+  language: Language;
   sidebarCollapsed: boolean;
   sidebarPosition: SidebarPosition;
   sidebarWidth: number;
@@ -159,6 +161,7 @@ interface StoreState {
   setAppMode: (mode: AppMode) => void;
   toggleAppMode: () => void;
   toggleTheme: () => void;
+  setLanguage: (language: Language) => void;
   toggleSidebar: () => void;
   toggleSidebarPosition: () => void;
   setSidebarSize: (width: number) => void;
@@ -300,6 +303,7 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   mode: AppMode.EDIT,
   theme: Theme.DARK,
+  language: detectLanguage(),
   sidebarCollapsed: false,
   sidebarPosition: SidebarPosition.LEFT,
   sidebarWidth: SidebarWidth.DEFAULT,
@@ -341,6 +345,7 @@ export const useStore = create<StoreState>()((set, get) => ({
       sidebarPosition: state.sidebarPosition,
       sidebarWidth: state.sidebarWidth,
       theme: state.theme,
+      language: state.language,
     });
 
     const active = getActiveTab(state);
@@ -629,11 +634,12 @@ export const useStore = create<StoreState>()((set, get) => ({
 
     if (existing) {
       const existingName = existing.label || existing.filename;
+      const t = getMessages(get().language);
       const confirmed = await get().confirm(
-        `"${rawFilename}" matches an existing runbook. Importing it will overwrite "${existingName}".`,
+        t.dialogs.overwriteMessage(rawFilename, existingName),
         {
-          title: "Overwrite Runbook",
-          confirmLabel: "Overwrite",
+          title: t.dialogs.overwriteTitle,
+          confirmLabel: t.dialogs.overwriteConfirm,
           danger: true,
         },
       );
@@ -723,7 +729,7 @@ export const useStore = create<StoreState>()((set, get) => ({
 
     if (failedCount > 0) {
       await get().alert(
-        `${failedCount} file(s) could not be imported because their formats aren't recognized.`,
+        getMessages(get().language).dialogs.importFailed(failedCount),
       );
     }
   },
@@ -736,7 +742,11 @@ export const useStore = create<StoreState>()((set, get) => ({
       return false;
     }
 
-    await get().addRunbookToLibrary(content, generateId(), "Pasted runbook");
+    await get().addRunbookToLibrary(
+      content,
+      generateId(),
+      getMessages(get().language).dialogs.pastedRunbook,
+    );
     return true;
   },
 
@@ -1255,6 +1265,23 @@ export const useStore = create<StoreState>()((set, get) => ({
       sidebarPosition: state.sidebarPosition,
       sidebarWidth: state.sidebarWidth,
       theme: state.theme,
+      language: state.language,
+    });
+  },
+
+  setLanguage: (language) => {
+    if (get().language === language) {
+      return;
+    }
+    set({ language });
+    const state = get();
+    persistence.saveUiState({
+      mode: state.mode,
+      sidebarCollapsed: state.sidebarCollapsed,
+      sidebarPosition: state.sidebarPosition,
+      sidebarWidth: state.sidebarWidth,
+      theme: state.theme,
+      language: state.language,
     });
   },
 
@@ -1361,17 +1388,18 @@ export const useStore = create<StoreState>()((set, get) => ({
   // --- Dialogs ---
 
   confirm: (message, options) =>
-    new Promise<boolean>((resolve) =>
+    new Promise<boolean>((resolve) => {
+      const defaultLabel = getMessages(get().language).confirm.defaultTitle;
       set({
         confirmDialog: {
           message,
           resolve,
-          title: options?.title ?? DEFAULT_CONFIRM_LABEL,
-          confirmLabel: options?.confirmLabel ?? DEFAULT_CONFIRM_LABEL,
+          title: options?.title ?? defaultLabel,
+          confirmLabel: options?.confirmLabel ?? defaultLabel,
           danger: options?.danger ?? false,
         },
-      }),
-    ),
+      });
+    }),
   resolveConfirm: (result) => {
     get().confirmDialog?.resolve(result);
     set({ confirmDialog: null });
@@ -1385,10 +1413,12 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   clearAllData: async () => {
     set({ selectKeyHeld: false });
-    const confirmed = await get().confirm(
-      "Delete all variables, blocks, and runbooks? This action cannot be undone.",
-      { title: "Clear Workspace", confirmLabel: "Delete", danger: true },
-    );
+    const t = getMessages(get().language);
+    const confirmed = await get().confirm(t.dialogs.clearMessage, {
+      title: t.dialogs.clearTitle,
+      confirmLabel: t.dialogs.clearConfirm,
+      danger: true,
+    });
     if (!confirmed) {
       return;
     }

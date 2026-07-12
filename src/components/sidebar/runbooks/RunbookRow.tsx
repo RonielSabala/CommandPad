@@ -4,7 +4,9 @@ import { AppMode, DragGroup } from "@/common/enums";
 import type { RunbookEntry } from "@/common/types";
 import { DragIcon, XIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { memo } from "react";
 import "./RunbookRow.css";
@@ -14,8 +16,9 @@ interface Props {
 }
 
 export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
+  const t = useTranslation();
   const runbookId = runbook.id;
-  const runbookLabel = runbook.label;
+  const runbookLabel = displayLabel(runbook.label, t);
 
   const isActive = useStore((state) => state.activeRunbookId === runbookId);
   const isFocused = useStore((state) => state.focusedRunbookId === runbookId);
@@ -55,7 +58,11 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
       {...{ [DataAttr.RUNBOOK_ID]: runbookId }}
       {...rowProps}
     >
-      <div className="drag-handle" title="Drag to reorder" {...handleProps}>
+      <div
+        className="drag-handle"
+        title={t.common.dragToReorder}
+        {...handleProps}
+      >
         <DragIcon className="icon-md" />
       </div>
       <button
@@ -71,7 +78,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
       <button
         className="btn btn-icon btn-danger"
         onClick={() => void removeRunbookFromLibrary(runbookId)}
-        title="Remove from library"
+        title={t.runbooks.removeFromLibrary}
       >
         <XIcon className="icon-md icon-bold" />
       </button>

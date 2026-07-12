@@ -1,0 +1,129 @@
+import type { BlockType, NoteStyle } from "@/common/enums";
+import type { KeyBinding } from "@/common/keybindings";
+
+// Supported UI languages
+export const Language = {
+  EN: "en",
+  ES: "es",
+} as const;
+export type Language = (typeof Language)[keyof typeof Language];
+
+export const LANGUAGE_ORDER: readonly Language[] = [Language.EN, Language.ES];
+
+export const LANGUAGE_LABELS: Record<Language, string> = {
+  [Language.EN]: "EN",
+  [Language.ES]: "ES",
+};
+
+// The full translation catalog
+export interface Messages {
+  common: {
+    cancel: string;
+    close: string;
+    ok: string;
+    create: string;
+    dragToReorder: string;
+    clearSearch: string;
+    noMatches: string;
+    untitledTab: string;
+    untitledRunbook: string;
+  };
+  header: {
+    reloadTitle: string;
+    switchToEdit: string;
+    switchToRead: string;
+    switchToDark: string;
+    switchToLight: string;
+    collapseAll: string;
+    toggleEditorsTitle: string;
+    keybindingsTitle: string;
+    clearWorkspaceTitle: string;
+    exportTitle: string;
+    export: string;
+    changeLanguage: string;
+  };
+  sidebar: {
+    expand: string;
+    collapse: string;
+    moveLeft: string;
+    moveRight: string;
+    doubleClickExpand: string;
+    dragResizeCollapse: string;
+  };
+  runbooks: {
+    title: string;
+    searchPlaceholder: string;
+    empty: string;
+    import: string;
+    importTitle: string;
+    paste: string;
+    pasteTitle: string;
+    removeFromLibrary: string;
+  };
+  variables: {
+    title: string;
+    searchPlaceholder: string;
+    empty: string;
+    new: string;
+    newTitle: string;
+    keyPlaceholder: string;
+    valuePlaceholder: string;
+    reveal: string;
+    mask: string;
+    remove: string;
+    unusedTitle: (key: string) => string;
+  };
+  tabs: {
+    newTab: string;
+    closeTab: string;
+  };
+  blocks: {
+    newBlockLabel: string;
+    typeLabel: Record<BlockType, string>;
+    typeTitle: (label: string) => string;
+    duplicate: string;
+    delete: string;
+    emptyTitle: string;
+    emptyHint: string;
+  };
+  command: {
+    emptyPreview: string;
+    showEditor: string;
+    hideEditor: string;
+    copy: string;
+    placeholder: string;
+  };
+  note: {
+    styleLabel: Record<NoteStyle, string>;
+    stylePlaceholder: Record<NoteStyle, string>;
+  };
+  exportModal: {
+    title: string;
+    message: string;
+  };
+  pasteModal: {
+    title: string;
+    message: string;
+    error: string;
+  };
+  keybindingsModal: {
+    title: string;
+  };
+  alert: {
+    invalidFormatTitle: string;
+  };
+  confirm: {
+    defaultTitle: string;
+  };
+  dialogs: {
+    overwriteTitle: string;
+    overwriteConfirm: string;
+    overwriteMessage: (filename: string, existingName: string) => string;
+    importFailed: (count: number) => string;
+    pastedRunbook: string;
+    clearTitle: string;
+    clearConfirm: string;
+    clearMessage: string;
+  };
+  keybindings: Record<KeyBinding, string>;
+}

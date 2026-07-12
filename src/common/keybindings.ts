@@ -46,97 +46,36 @@ export type KeyBinding = (typeof KeyBinding)[keyof typeof KeyBinding];
 
 interface KeybindingDef {
   binding: string;
-  description: string;
   keyboard?: boolean;
 }
 
 export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
-  [KeyBinding.TOGGLE_MODE]: {
-    binding: "ctrl+e",
-    description: "Toggle read / edit mode",
-  },
-  [KeyBinding.NEW_TAB]: {
-    binding: "ctrl+alt+n",
-    description: "Open a new tab",
-  },
-  [KeyBinding.CLOSE_TAB]: {
-    binding: "ctrl+alt+w",
-    description: "Close the active tab",
-  },
-  [KeyBinding.TOGGLE_EDITORS]: {
-    binding: "ctrl+g",
-    description: "Toggle all command editors",
-  },
-  [KeyBinding.DELETE_RUNBOOK]: {
-    binding: "ctrl+shift+d",
-    description: "Delete the focused runbook from the library",
-  },
-  [KeyBinding.IMPORT_RUNBOOK]: {
-    binding: "ctrl+i",
-    description: "Open runbook import dialog",
-  },
-  [KeyBinding.TOGGLE_SIDEBAR]: {
-    binding: "ctrl+s",
-    description: "Collapse / expand sidebar",
-  },
-  [KeyBinding.MOVE_SIDEBAR]: {
-    binding: "ctrl+shift+s",
-    description: "Move sidebar to left / right",
-  },
-  [KeyBinding.DUPLICATE_BLOCK]: {
-    binding: "ctrl+d",
-    description: "Duplicate selected blocks",
-  },
-  [KeyBinding.DELETE_BLOCK]: {
-    binding: "delete",
-    description: "Delete selected blocks",
-  },
-  [KeyBinding.ESCAPE]: {
-    binding: "escape",
-    description: "Clear block selection / close modals",
-  },
-  [KeyBinding.EXPORT]: {
-    binding: "ctrl+shift+e",
-    description: "Open export dialog",
-  },
-  [KeyBinding.CLEAR_WORKSPACE]: {
-    binding: "ctrl+shift+backspace",
-    description: "Open clear workspace dialog",
-  },
-  [KeyBinding.FOCUS_RUNBOOK]: {
-    binding: "tab",
-    description: "Select active runbook",
-  },
-  [KeyBinding.NAVIGATE_RUNBOOKS]: {
-    binding: "↑ / ↓",
-    description: "Navigate runbooks when selected active runbook",
-    keyboard: false,
-  },
+  [KeyBinding.TOGGLE_MODE]: { binding: "ctrl+e" },
+  [KeyBinding.NEW_TAB]: { binding: "ctrl+alt+n" },
+  [KeyBinding.CLOSE_TAB]: { binding: "ctrl+alt+w" },
+  [KeyBinding.TOGGLE_EDITORS]: { binding: "ctrl+g" },
+  [KeyBinding.DELETE_RUNBOOK]: { binding: "ctrl+shift+d" },
+  [KeyBinding.IMPORT_RUNBOOK]: { binding: "ctrl+i" },
+  [KeyBinding.TOGGLE_SIDEBAR]: { binding: "ctrl+s" },
+  [KeyBinding.MOVE_SIDEBAR]: { binding: "ctrl+shift+s" },
+  [KeyBinding.DUPLICATE_BLOCK]: { binding: "ctrl+d" },
+  [KeyBinding.DELETE_BLOCK]: { binding: "delete" },
+  [KeyBinding.ESCAPE]: { binding: "escape" },
+  [KeyBinding.EXPORT]: { binding: "ctrl+shift+e" },
+  [KeyBinding.CLEAR_WORKSPACE]: { binding: "ctrl+shift+backspace" },
+  [KeyBinding.FOCUS_RUNBOOK]: { binding: "tab" },
+  [KeyBinding.NAVIGATE_RUNBOOKS]: { binding: "↑ / ↓", keyboard: false },
   [KeyBinding.OPEN_LINK]: {
     binding: `${ModifierAction.OPEN_LINK}+click`,
-    description: "Open note link in new tab",
     keyboard: false,
   },
   [KeyBinding.MULTISELECT_BLOCKS]: {
     binding: `${ModifierAction.SELECT_BLOCKS}+click / drag`,
-    description: "Multi-select blocks",
     keyboard: false,
   },
-  [KeyBinding.NOTE_BOLD]: {
-    binding: "ctrl+b",
-    description: "Bold selected text (note block)",
-    keyboard: false,
-  },
-  [KeyBinding.NOTE_ITALIC]: {
-    binding: "ctrl+i",
-    description: "Italicize selected text (note block)",
-    keyboard: false,
-  },
-  [KeyBinding.NOTE_CODE]: {
-    binding: "ctrl+´",
-    description: "Wrap selected text in backticks (note block)",
-    keyboard: false,
-  },
+  [KeyBinding.NOTE_BOLD]: { binding: "ctrl+b", keyboard: false },
+  [KeyBinding.NOTE_ITALIC]: { binding: "ctrl+i", keyboard: false },
+  [KeyBinding.NOTE_CODE]: { binding: "ctrl+´", keyboard: false },
 };
 
 const BINDING_SEPARATOR = "+";

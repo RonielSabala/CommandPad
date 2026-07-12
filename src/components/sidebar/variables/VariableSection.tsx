@@ -1,5 +1,6 @@
 import type { Block, Variable } from "@/common/types";
 import { PlusIcon } from "@/components/icons";
+import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { getUsedVariableKeys } from "@/utils/resolution";
 import { matchesQuery } from "@/utils/string";
@@ -14,6 +15,7 @@ const EMPTY_VARIABLES: Variable[] = [];
 const EMPTY_BLOCKS: Block[] = [];
 
 export function VariableSection() {
+  const t = useTranslation();
   const collapsed = useStore((state) => state.variablesSectionCollapsed);
   const toggle = useStore((state) => state.toggleVariablesSection);
   const activeTab = useStore(getActiveTab);
@@ -33,20 +35,20 @@ export function VariableSection() {
   return (
     <SidebarSection
       id="variables-section"
-      title="VARIABLES"
+      title={t.variables.title}
       collapsed={collapsed}
       onToggle={toggle}
     >
       <SidebarSearch
         value={query}
-        placeholder="Search variables…"
+        placeholder={t.variables.searchPlaceholder}
         onChange={setQuery}
       />
 
       <SidebarSectionList
         items={variables}
         visibleItems={visibleItems}
-        emptyMessage="No variables defined."
+        emptyMessage={t.variables.empty}
         getKey={(variable) => variable.id}
         renderItem={(variable) => (
           <VariableRow
@@ -59,8 +61,8 @@ export function VariableSection() {
 
       <SidebarSectionFooter
         onClick={() => void addVariable()}
-        title="New variable"
-        label="New"
+        title={t.variables.newTitle}
+        label={t.variables.new}
         icon={PlusIcon}
       />
     </SidebarSection>

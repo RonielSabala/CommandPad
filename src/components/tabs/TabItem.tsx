@@ -1,11 +1,13 @@
-import { DEFAULT_TAB_LABEL, TAB_HOVER_SWITCH_MS } from "@/common/config";
+import { TAB_HOVER_SWITCH_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DragEffect, MouseButton } from "@/common/constants/events";
 import { TabDropSide } from "@/common/enums";
 import type { Tab } from "@/common/types";
 import { CloseIcon } from "@/components/icons";
 import { blockDrag } from "@/hooks/blockDrag";
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { useEffect, useRef, useState, type DragEvent } from "react";
 import "./TabItem.css";
@@ -17,8 +19,9 @@ interface Props {
 }
 
 export function TabItem({ tab }: Props) {
+  const t = useTranslation();
   const tabId = tab.id;
-  const tabLabel = tab.label || DEFAULT_TAB_LABEL;
+  const tabLabel = displayLabel(tab.label || t.common.untitledTab, t);
 
   const isActive = useStore((state) => state.activeTabId === tabId);
   const switchTab = useStore((state) => state.switchTab);
@@ -149,7 +152,7 @@ export function TabItem({ tab }: Props) {
       <span className="tab-label">{tabLabel}</span>
       <button
         className="tab-close"
-        title="Close tab"
+        title={t.tabs.closeTab}
         onClick={(event) => {
           event.stopPropagation();
           closeTab(tabId);

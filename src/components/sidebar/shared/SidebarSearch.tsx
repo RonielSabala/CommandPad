@@ -1,4 +1,5 @@
 import { SearchIcon, XIcon } from "@/components/icons";
+import { useTranslation } from "@/i18n";
 import "./SidebarSearch.css";
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export function SidebarSearch({ value, placeholder, onChange }: Props) {
+  const t = useTranslation();
   return (
     <div className="sidebar-search-wrapper">
       <input
@@ -23,7 +25,7 @@ export function SidebarSearch({ value, placeholder, onChange }: Props) {
       {value && (
         <button
           className="sidebar-search-clear-btn"
-          title="Clear search"
+          title={t.common.clearSearch}
           onClick={() => onChange("")}
         >
           <XIcon className="icon-sm icon-bold" />

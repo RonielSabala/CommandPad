@@ -1,4 +1,5 @@
 import { useSidebarResize } from "@/hooks/useSidebarResize";
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { Footer } from "./Footer";
 import { RunbookSection } from "./runbooks/RunbookSection";
@@ -7,6 +8,7 @@ import { SidebarActions } from "./SidebarActions";
 import { VariableSection } from "./variables/VariableSection";
 
 export function Sidebar() {
+  const t = useTranslation();
   const { onPointerDown, onDoubleClick } = useSidebarResize();
   const isSidebarCollapsed = useStore((state) => state.sidebarCollapsed);
 
@@ -26,8 +28,8 @@ export function Sidebar() {
         onDoubleClick={onDoubleClick}
         title={
           isSidebarCollapsed
-            ? "Double-click to expand"
-            : "Drag to resize · double-click to collapse"
+            ? t.sidebar.doubleClickExpand
+            : t.sidebar.dragResizeCollapse
         }
       >
         <SidebarActions />

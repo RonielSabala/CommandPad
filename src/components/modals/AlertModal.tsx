@@ -1,8 +1,10 @@
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
 import { Modal } from "./Modal";
 
 export function AlertModal() {
+  const t = useTranslation();
   const dialog = useStore((state) => state.alertDialog);
   const resolve = useStore((state) => state.resolveAlert);
   const open = dialog !== null;
@@ -25,7 +27,7 @@ export function AlertModal() {
 
   return (
     <Modal open={open} onClose={resolve}>
-      <p className="modal-title">Invalid Format</p>
+      <p className="modal-title">{t.alert.invalidFormatTitle}</p>
       <p className="modal-message">{message}</p>
       <div className="modal-actions">
         <button
@@ -33,7 +35,7 @@ export function AlertModal() {
           className="btn btn-lg btn-primary"
           onClick={resolve}
         >
-          OK
+          {t.common.ok}
         </button>
       </div>
     </Modal>

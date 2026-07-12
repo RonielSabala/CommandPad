@@ -1,6 +1,8 @@
 import { StorageKey } from "@/common/config";
 import { AppMode, SectionState, SidebarPosition, Theme } from "@/common/enums";
 import type { RunbookEntry, Tab } from "@/common/types";
+import { detectLanguage, isLanguage } from "@/i18n/messages";
+import type { Language } from "@/i18n/types";
 
 function getSavedItemByKey(key: string) {
   return JSON.parse(localStorage.getItem(key) ?? "null");
@@ -11,6 +13,7 @@ function getSavedItemByKey(key: string) {
 interface PersistedUiState {
   mode: AppMode;
   theme: Theme;
+  language: Language;
   sidebarCollapsed: boolean;
   sidebarPosition: SidebarPosition;
   sidebarWidth: number;
@@ -23,6 +26,7 @@ export function saveUiState(ui: PersistedUiState): void {
       JSON.stringify({
         mode: ui.mode,
         theme: ui.theme,
+        language: ui.language,
         sidebarCollapsed: ui.sidebarCollapsed
           ? SectionState.COLLAPSED
           : SectionState.EXPANDED,
@@ -45,6 +49,7 @@ export function loadUiState(): Partial<PersistedUiState> | null {
     return {
       mode: saved.mode === AppMode.READ ? AppMode.READ : AppMode.EDIT,
       theme: saved.theme === Theme.LIGHT ? Theme.LIGHT : Theme.DARK,
+      language: isLanguage(saved.language) ? saved.language : detectLanguage(),
       sidebarCollapsed: saved.sidebarCollapsed === SectionState.COLLAPSED,
       sidebarPosition:
         saved.sidebarPosition === SidebarPosition.RIGHT

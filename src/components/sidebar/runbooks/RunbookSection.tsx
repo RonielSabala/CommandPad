@@ -1,5 +1,6 @@
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
 import { ClipIcon, ImportIcon } from "@/components/icons";
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { openImportDialog } from "@/utils/importTrigger";
 import { matchesQuery } from "@/utils/string";
@@ -11,6 +12,7 @@ import { SidebarSectionList } from "../shared/SidebarSectionList";
 import { RunbookRow } from "./RunbookRow";
 
 export function RunbookSection() {
+  const t = useTranslation();
   const isCollapsed = useStore((state) => state.runbookSectionCollapsed);
   const onToggle = useStore((state) => state.toggleRunbookSection);
   const library = useStore((state) => state.runbookLibrary);
@@ -44,20 +46,20 @@ export function RunbookSection() {
   return (
     <SidebarSection
       id="runbook-section"
-      title="RUNBOOKS"
+      title={t.runbooks.title}
       collapsed={isCollapsed}
       onToggle={onToggle}
     >
       <SidebarSearch
         value={searchQuery}
-        placeholder="Search runbooks…"
+        placeholder={t.runbooks.searchPlaceholder}
         onChange={setQuery}
       />
 
       <SidebarSectionList
         items={library}
         visibleItems={visibleItems}
-        emptyMessage="No runbooks imported."
+        emptyMessage={t.runbooks.empty}
         getKey={(runbook) => runbook.id}
         renderItem={(runbook) => (
           <RunbookRow key={runbook.id} runbook={runbook} />
@@ -67,13 +69,13 @@ export function RunbookSection() {
 
       <SidebarSectionFooter
         onClick={openImportDialog}
-        title="Import runbook"
-        label="Import"
+        title={t.runbooks.importTitle}
+        label={t.runbooks.import}
         icon={ImportIcon}
         secondaryAction={{
           onClick: openPasteRunbookModal,
-          title: "Paste runbook JSON",
-          label: "Paste",
+          title: t.runbooks.pasteTitle,
+          label: t.runbooks.paste,
           icon: ClipIcon,
         }}
       />

@@ -10,12 +10,17 @@ import {
   SunIcon,
   TrashIcon,
 } from "@/components/icons";
+import { LANGUAGE_LABELS, LANGUAGE_ORDER, useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
+import { Translate } from "react-bootstrap-icons";
 import "./Header.css";
 
 export function Header() {
+  const t = useTranslation();
   const isRead = useStore((state) => state.mode === AppMode.READ);
   const isLight = useStore((state) => state.theme === Theme.LIGHT);
+  const language = useStore((state) => state.language);
+  const setLanguage = useStore((state) => state.setLanguage);
   const toggleTheme = useStore((state) => state.toggleTheme);
   const toggleAppMode = useStore((state) => state.toggleAppMode);
   const openKeybindingsModal = useStore((state) => state.openKeybindingsModal);
@@ -28,6 +33,11 @@ export function Header() {
     (state) => !(getActiveTab(state)?.blocks.length ?? 0),
   );
 
+  const cycleLanguage = () => {
+    const index = LANGUAGE_ORDER.indexOf(language);
+    setLanguage(LANGUAGE_ORDER[(index + 1) % LANGUAGE_ORDER.length]);
+  };
+
   return (
     <header id="app-header">
       <span
@@ -35,7 +45,7 @@ export function Header() {
         className="no-user-select"
         role="button"
         tabIndex={0}
-        title="Reload CommandPad"
+        title={t.header.reloadTitle}
         onClick={() => location.reload()}
         onKeyDown={(event) => {
           if (event.key === Key.ENTER) {
@@ -52,7 +62,7 @@ export function Header() {
         <button
           className="btn btn-lg btn-flat-icon"
           onClick={toggleAppMode}
-          title={`Switch to ${isRead ? "Edit" : "Read"} mode`}
+          title={isRead ? t.header.switchToEdit : t.header.switchToRead}
         >
           {isRead ? (
             <PencilIcon className="icon icon-bold" />
@@ -65,10 +75,10 @@ export function Header() {
           className="btn btn-lg"
           disabled={isEmpty || isRead}
           onClick={toggleAllCommandEditors}
-          title="Expand/collapse all command editors"
+          title={t.header.toggleEditorsTitle}
         >
           <ChevronsRightIcon className="icon icon-bold" />
-          Collapse All
+          {t.header.collapseAll}
         </button>
       </div>
 
@@ -78,7 +88,7 @@ export function Header() {
         <button
           className="btn btn-lg btn-flat-icon"
           onClick={toggleTheme}
-          title={`Switch to ${isLight ? Theme.DARK : Theme.LIGHT} mode`}
+          title={isLight ? t.header.switchToDark : t.header.switchToLight}
         >
           {isLight ? (
             <MoonIcon className="icon" />
@@ -90,10 +100,21 @@ export function Header() {
         <div className="vertical-divider" />
 
         <button
+          className="btn"
+          onClick={cycleLanguage}
+          title={t.header.changeLanguage}
+        >
+          {LANGUAGE_LABELS[language]}
+          <Translate className="icon" />
+        </button>
+
+        <div className="vertical-divider" />
+
+        <button
           id="keybindings-btn"
           className="btn btn-lg btn-flat-icon"
           onClick={openKeybindingsModal}
-          title="App keybindings"
+          title={t.header.keybindingsTitle}
         >
           <KeyboardIcon id="keybindings-icon" className="icon icon-bold" />
         </button>
@@ -103,7 +124,7 @@ export function Header() {
         <button
           className="btn btn-lg btn-danger"
           onClick={clearAllData}
-          title="Clear workspace"
+          title={t.header.clearWorkspaceTitle}
         >
           <TrashIcon className="icon icon-bold" />
         </button>
@@ -114,10 +135,10 @@ export function Header() {
           className="btn btn-lg btn-primary"
           disabled={isEmpty}
           onClick={openExportModal}
-          title="Export runbook"
+          title={t.header.exportTitle}
         >
           <ExportIcon className="icon icon-bold" />
-          Export
+          {t.header.export}
         </button>
       </div>
     </header>

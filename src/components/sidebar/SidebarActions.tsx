@@ -1,9 +1,11 @@
 import { SidebarPosition } from "@/common/enums";
 import { SidebarCollapseIcon, SidebarPositionIcon } from "@/components/icons";
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import "./SidebarActions.css";
 
 export function SidebarActions() {
+  const t = useTranslation();
   const isSidebarCollapsed = useStore((state) => state.sidebarCollapsed);
   const sidebarPosition = useStore((state) => state.sidebarPosition);
   const toggleSidebar = useStore((state) => state.toggleSidebar);
@@ -17,7 +19,7 @@ export function SidebarActions() {
         id="sidebar-toggle-btn"
         className="btn btn-icon"
         onClick={toggleSidebar}
-        title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        title={isSidebarCollapsed ? t.sidebar.expand : t.sidebar.collapse}
       >
         <SidebarCollapseIcon
           id="sidebar-chevron"
@@ -27,7 +29,11 @@ export function SidebarActions() {
       <button
         className="btn btn-icon"
         onClick={toggleSidebarPosition}
-        title={`Move sidebar to ${sidebarPosition === SidebarPosition.RIGHT ? "left" : "right"}`}
+        title={
+          sidebarPosition === SidebarPosition.RIGHT
+            ? t.sidebar.moveLeft
+            : t.sidebar.moveRight
+        }
       >
         <SidebarPositionIcon
           className="icon-md icon-bold"
