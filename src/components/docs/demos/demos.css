@@ -67,6 +67,26 @@
   border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 
+/* Multi-select playground */
+
+.docs-demo-multiselect {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-6);
+  outline: none;
+}
+
+.docs-demo-multiselect-block {
+  cursor: default;
+  align-self: stretch;
+}
+
+/* The user cannot select demo text while building a block selection */
+.docs-demo-multiselect-block .note-preview {
+  pointer-events: none;
+}
+
 /* Sidebar rows replica */
 
 .docs-demo-sidebar-frame {

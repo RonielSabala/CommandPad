@@ -185,6 +185,7 @@ export const en: Messages = {
       reset: "Reset demo",
       tabSamples: ["Deploy checklist", "Database backup", ""],
       runbookSamples: ["Release checklist", "Postgres backup", "K8s debugging"],
+      multiSelectNotes: ["**Start the stack**", "**Tear it down**"],
       noteSample:
         "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link to https://example.com. Click away to see it rendered again.",
     },
@@ -316,6 +317,8 @@ export const en: Messages = {
       ],
       clear:
         "Press `Escape` or click outside block controls to clear the selection.",
+      demoHint:
+        "Try it on the blocks below: hold `Shift` and click a few blocks, then press `Ctrl+D` to duplicate them or `Del` to delete them. `Escape` clears the selection.",
     },
     readMode: {
       intro:

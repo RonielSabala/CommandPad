@@ -146,6 +146,7 @@ export interface Messages {
       noteSample: string;
       tabSamples: string[];
       runbookSamples: string[];
+      multiSelectNotes: string[];
     };
     gettingStarted: {
       intro: string;
@@ -217,6 +218,7 @@ export interface Messages {
       intro: string;
       actions: string[];
       clear: string;
+      demoHint: string;
     };
     readMode: {
       intro: string;
