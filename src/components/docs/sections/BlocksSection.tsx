@@ -77,9 +77,7 @@ export function NoteBlockDocs() {
         <tbody>
           {MARKDOWN_EXAMPLES.map((example) => (
             <tr key={example}>
-              <td>
-                <code className="note-code">{example}</code>
-              </td>
+              <td>{example}</td>
               <td>
                 <NoteText text={example} />
               </td>
