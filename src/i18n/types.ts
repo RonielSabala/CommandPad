@@ -42,7 +42,7 @@ export interface Messages {
     collapseAll: string;
     toggleEditorsTitle: string;
     keybindingsTitle: string;
-    clearWorkspaceTitle: string;
+    resetWorkspaceTitle: string;
     exportTitle: string;
     export: string;
     changeLanguage: string;
@@ -126,9 +126,9 @@ export interface Messages {
     overwriteMessage: (filename: string, existingName: string) => string;
     importFailed: (count: number) => string;
     pastedRunbook: string;
-    clearTitle: string;
-    clearConfirm: string;
-    clearMessage: string;
+    resetTitle: string;
+    resetConfirm: string;
+    resetMessage: string;
   };
   keybindings: Record<KeyBinding, string>;
 }

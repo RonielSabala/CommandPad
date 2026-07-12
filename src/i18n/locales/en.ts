@@ -23,7 +23,7 @@ export const en: Messages = {
     collapseAll: "Collapse All",
     toggleEditorsTitle: "Expand/collapse all command editors",
     keybindingsTitle: "App keybindings",
-    clearWorkspaceTitle: "Clear workspace",
+    resetWorkspaceTitle: "Reset workspace",
     exportTitle: "Export runbook",
     export: "Export",
     changeLanguage: "Change language",
@@ -123,9 +123,9 @@ export const en: Messages = {
         ? "1 file could not be imported because its format isn't recognized."
         : `${count} files could not be imported because their formats aren't recognized.`,
     pastedRunbook: "Pasted runbook",
-    clearTitle: "Clear Workspace",
-    clearConfirm: "Delete",
-    clearMessage:
+    resetTitle: "Reset Workspace",
+    resetConfirm: "Reset",
+    resetMessage:
       "Delete all variables, blocks, runbooks, and preferences? This action cannot be undone.",
   },
   keybindings: {
@@ -141,7 +141,7 @@ export const en: Messages = {
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
     [KeyBinding.ESCAPE]: "Clear block selection / close modals",
     [KeyBinding.EXPORT]: "Open export dialog",
-    [KeyBinding.CLEAR_WORKSPACE]: "Open clear workspace dialog",
+    [KeyBinding.RESET_WORKSPACE]: "Open reset workspace dialog",
     [KeyBinding.FOCUS_RUNBOOK]: "Select active runbook",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navigate runbooks when selected active runbook",

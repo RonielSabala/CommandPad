@@ -23,7 +23,7 @@ export const es: Messages = {
     collapseAll: "Contraer todo",
     toggleEditorsTitle: "Expandir/contraer todos los editores de comandos",
     keybindingsTitle: "Atajos de teclado",
-    clearWorkspaceTitle: "Limpiar espacio de trabajo",
+    resetWorkspaceTitle: "Resetear espacio de trabajo",
     exportTitle: "Exportar libro",
     export: "Exportar",
     changeLanguage: "Cambiar idioma",
@@ -124,9 +124,9 @@ export const es: Messages = {
         ? "No se pudo importar 1 archivo porque su formato no se reconoce."
         : `No se pudieron importar ${count} archivos porque sus formatos no se reconocen.`,
     pastedRunbook: "Libro pegado",
-    clearTitle: "Limpiar Espacio de Trabajo",
-    clearConfirm: "Eliminar",
-    clearMessage:
+    resetTitle: "Resetear Espacio de Trabajo",
+    resetConfirm: "Resetear",
+    resetMessage:
       "¿Eliminar todas las variables, bloques, libros y preferencias? Esta acción no se puede deshacer.",
   },
   keybindings: {
@@ -142,8 +142,8 @@ export const es: Messages = {
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
     [KeyBinding.ESCAPE]: "Limpiar selección de bloques / cerrar diálogos",
     [KeyBinding.EXPORT]: "Abrir el diálogo de exportación",
-    [KeyBinding.CLEAR_WORKSPACE]:
-      "Abrir el diálogo de limpiar espacio de trabajo",
+    [KeyBinding.RESET_WORKSPACE]:
+      "Abrir el diálogo de resetear espacio de trabajo",
     [KeyBinding.FOCUS_RUNBOOK]: "Seleccionar libro activo",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navegar libros con el libro activo seleccionado",

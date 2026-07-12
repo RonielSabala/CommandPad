@@ -1416,9 +1416,9 @@ export const useStore = create<StoreState>()((set, get) => ({
   clearAllData: async () => {
     set({ selectKeyHeld: false });
     const t = getMessages(get().language);
-    const confirmed = await get().confirm(t.dialogs.clearMessage, {
-      title: t.dialogs.clearTitle,
-      confirmLabel: t.dialogs.clearConfirm,
+    const confirmed = await get().confirm(t.dialogs.resetMessage, {
+      title: t.dialogs.resetTitle,
+      confirmLabel: t.dialogs.resetConfirm,
       danger: true,
     });
     if (!confirmed) {

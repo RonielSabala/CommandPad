@@ -111,10 +111,10 @@ export function Header() {
         <button
           className="btn btn-lg btn-danger"
           onClick={clearAllData}
-          title={t.header.clearWorkspaceTitle}
+          title={t.header.resetWorkspaceTitle}
         >
           <ArrowCounterclockwise
-            id="clear-workspace-icon"
+            id="reset-workspace-icon"
             className="icon icon-semibold"
           />
         </button>
