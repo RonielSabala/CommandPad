@@ -127,7 +127,7 @@ export const es: Messages = {
     clearTitle: "Limpiar Espacio de Trabajo",
     clearConfirm: "Eliminar",
     clearMessage:
-      "¿Eliminar todas las variables, bloques y libros? Esta acción no se puede deshacer.",
+      "¿Eliminar todas las variables, bloques, libros y preferencias? Esta acción no se puede deshacer.",
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Alternar modo lectura / edición",

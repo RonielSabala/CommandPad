@@ -126,7 +126,7 @@ export const en: Messages = {
     clearTitle: "Clear Workspace",
     clearConfirm: "Delete",
     clearMessage:
-      "Delete all variables, blocks, and runbooks? This action cannot be undone.",
+      "Delete all variables, blocks, runbooks, and preferences? This action cannot be undone.",
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Toggle read / edit mode",
