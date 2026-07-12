@@ -1,6 +1,9 @@
 import { DividerBlock } from "@/components/blocks/divider/DividerBlock";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { useTranslation } from "@/i18n";
+import { DemoNoteBlock } from "../demos/DemoNoteBlock";
+import { DemoVariables } from "../demos/DemoVariables";
+import { DocsDemo } from "../demos/DocsDemo";
 import { Prose } from "../Prose";
 
 const MARKDOWN_EXAMPLES = [
@@ -28,6 +31,13 @@ export function CommandBlockDocs() {
       <Prose text={t.docs.commandBlock.preview} />
       <Prose text={t.docs.commandBlock.editor} />
       <Prose text={t.docs.commandBlock.multiline} />
+      <DemoVariables
+        variables={[
+          { key: "USER", value: "admin" },
+          { key: "HOST", value: "server-01.example.com" },
+        ]}
+        command="ssh {USER}@{HOST}"
+      />
     </>
   );
 }
@@ -61,6 +71,10 @@ export function NoteBlockDocs() {
       </table>
       <Prose text={t.docs.noteBlock.links} />
       <Prose text={t.docs.noteBlock.wrapKeys} />
+      <DemoNoteBlock
+        key={t.docs.demo.noteSample}
+        initialText={t.docs.demo.noteSample}
+      />
     </>
   );
 }
@@ -70,7 +84,9 @@ export function DividerBlockDocs() {
   return (
     <>
       <Prose text={t.docs.dividerBlock.intro} />
-      <DividerBlock />
+      <DocsDemo>
+        <DividerBlock />
+      </DocsDemo>
     </>
   );
 }

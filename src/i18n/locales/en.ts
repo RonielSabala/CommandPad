@@ -180,6 +180,11 @@ export const en: Messages = {
       [DocsSectionId.LANGUAGE]: "Language",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Keyboard shortcuts",
     },
+    demo: {
+      tryIt: "Try it",
+      noteSample:
+        "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link to https://example.com — click away to see it rendered again.",
+    },
     gettingStarted: {
       intro:
         "CommandPad is a lightweight, variable-aware command runbook tool. Define variables once, reference them across any number of command blocks, and copy fully resolved commands instantly. It is designed for engineers who run the same sequences of commands repeatedly with different environments, credentials, or targets.",

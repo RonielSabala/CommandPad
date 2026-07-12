@@ -1,5 +1,7 @@
 import { KeyBinding } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
+import { DemoRunbookRows } from "../demos/DemoRunbookRows";
+import { DemoTabs } from "../demos/DemoTabs";
 import { Kbd, Prose, ProseList } from "../Prose";
 
 export function WorkspaceDocs() {
@@ -13,6 +15,7 @@ export function TabsDocs() {
     <>
       <Prose text={t.docs.tabs.intro} />
       <ProseList items={t.docs.tabs.items} />
+      <DemoTabs />
     </>
   );
 }
@@ -41,6 +44,7 @@ export function RunbookLibraryDocs() {
     <>
       <Prose text={t.docs.runbookLibrary.intro} />
       <ProseList items={t.docs.runbookLibrary.items} />
+      <DemoRunbookRows />
       <Prose text={t.docs.runbookLibrary.autoLabel} />
       <Prose text={t.docs.runbookLibrary.autoSave} />
     </>

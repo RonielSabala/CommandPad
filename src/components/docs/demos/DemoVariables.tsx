@@ -1,0 +1,94 @@
+import { EyeIcon } from "@/components/icons";
+import { useTranslation } from "@/i18n";
+import { getSecretKeys, getVariableMap } from "@/utils/resolution";
+import { classNames } from "@/utils/string";
+import { useMemo, useState } from "react";
+import "@/components/sidebar/variables/VariableRow.css";
+import { DemoCommandBlock } from "./DemoCommandBlock";
+import { DocsDemo } from "./DocsDemo";
+
+interface DemoVariableSeed {
+  key: string;
+  value: string;
+  secret?: boolean;
+}
+
+interface Props {
+  variables?: DemoVariableSeed[];
+  command: string;
+}
+
+// Live playground: editable variable rows feeding a command block replica,
+// resolved with the app's real resolution utilities
+export function DemoVariables({ variables = [], command }: Props) {
+  const t = useTranslation();
+  const [vars, setVars] = useState(() =>
+    variables.map((seed, index) => ({ id: `demo-${index}`, ...seed })),
+  );
+  const [text, setText] = useState(command);
+
+  const variableMap = useMemo(() => getVariableMap(vars), [vars]);
+  const secretKeys = useMemo(() => getSecretKeys(vars), [vars]);
+
+  const updateVar = (index: number, patch: Partial<DemoVariableSeed>) =>
+    setVars((current) =>
+      current.map((variable, i) =>
+        i === index ? { ...variable, ...patch } : variable,
+      ),
+    );
+
+  return (
+    <DocsDemo>
+      {vars.length > 0 && (
+        <div className="docs-demo-variables">
+          {vars.map((variable, index) => (
+            <div key={variable.id} className="docs-demo-variable-row">
+              <div
+                className={classNames(
+                  "variable-inputs",
+                  variable.secret && "is-secret",
+                )}
+              >
+                <input
+                  className="variable-key-input"
+                  type="text"
+                  placeholder={t.variables.keyPlaceholder}
+                  value={variable.key}
+                  spellCheck={false}
+                  autoComplete="off"
+                  onChange={(event) =>
+                    updateVar(index, { key: event.target.value })
+                  }
+                />
+                <input
+                  className="variable-value-input"
+                  type="text"
+                  placeholder={t.variables.valuePlaceholder}
+                  value={variable.value}
+                  spellCheck={false}
+                  autoComplete="off"
+                  onChange={(event) =>
+                    updateVar(index, { value: event.target.value })
+                  }
+                />
+              </div>
+              <button
+                className={`btn btn-icon variable-secret-btn${variable.secret ? " is-active" : ""}`}
+                onClick={() => updateVar(index, { secret: !variable.secret })}
+                title={variable.secret ? t.variables.reveal : t.variables.mask}
+              >
+                <EyeIcon slashed={variable.secret} className="icon-md icon-bold" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      <DemoCommandBlock
+        text={text}
+        onTextChange={setText}
+        variableMap={variableMap}
+        secretKeys={secretKeys}
+      />
+    </DocsDemo>
+  );
+}

@@ -186,6 +186,11 @@ export const es: Messages = {
       [DocsSectionId.LANGUAGE]: "Idioma",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Atajos de teclado",
     },
+    demo: {
+      tryIt: "Pruébalo",
+      noteSample:
+        "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace a https://example.com — haz clic fuera para verla renderizada de nuevo.",
+    },
     gettingStarted: {
       intro:
         "CommandPad es una herramienta ligera de libros de comandos con soporte de variables. Define variables una vez, referéncialas en cualquier número de bloques de comando y copia comandos totalmente resueltos al instante. Está pensada para ingenieros que ejecutan las mismas secuencias de comandos una y otra vez con distintos entornos, credenciales u objetivos.",

@@ -1,0 +1,67 @@
+.docs-demo {
+  position: relative;
+  border: var(--border-standard);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  padding: var(--space-12);
+  padding-top: var(--space-14);
+  margin-bottom: var(--space-10);
+}
+
+.docs-demo-label {
+  position: absolute;
+  top: 0;
+  left: var(--space-8);
+  transform: translateY(-50%);
+  padding: var(--space-1) var(--space-4);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--accent-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Variable rows (always-visible controls, unlike the hover-gated sidebar) */
+
+.docs-demo-variables {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 26rem;
+  margin-bottom: var(--space-8);
+}
+
+.docs-demo-variable-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+/* Static tabs replica */
+
+.docs-demo-tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-6) 0;
+  border-bottom: var(--border-standard);
+  background: var(--color-surface-alt);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  pointer-events: none;
+}
+
+/* Static sidebar rows replica */
+
+.docs-demo-sidebar-frame {
+  max-width: 20rem;
+}
+
+.docs-demo-sidebar-frame .runbook-item-btn,
+.docs-demo-sidebar-frame .btn {
+  cursor: default;
+}

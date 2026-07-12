@@ -140,6 +140,10 @@ export interface Messages {
       tocTitle: string;
     };
     toc: Record<DocsSectionId, string>;
+    demo: {
+      tryIt: string;
+      noteSample: string;
+    };
     gettingStarted: {
       intro: string;
       concept: string;
