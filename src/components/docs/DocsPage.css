@@ -38,10 +38,6 @@
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
   text-decoration: none;
-  transition:
-    color var(--transition-fast),
-    background var(--transition-fast),
-    border-color var(--transition-fast);
 }
 
 .docs-toc-item:hover {
