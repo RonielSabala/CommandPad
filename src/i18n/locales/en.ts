@@ -182,6 +182,8 @@ export const en: Messages = {
     },
     demo: {
       tryIt: "Try it",
+      reset: "Reset demo",
+      tabSamples: ["Deploy checklist", "Database backup", ""],
       noteSample:
         "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link to https://example.com. Click away to see it rendered again.",
     },
@@ -213,6 +215,8 @@ export const en: Messages = {
         "**Drop blocks on a tab** to copy them into it.",
         "An accent bar at the bottom of the active tab marks it at a glance.",
       ],
+      labelDemo:
+        "A tab is named by the first note block of its runbook, so your tabs describe themselves. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try switching, reordering, and closing tabs too.",
     },
     sidebar: {
       intro:

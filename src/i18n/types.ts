@@ -142,7 +142,9 @@ export interface Messages {
     toc: Record<DocsSectionId, string>;
     demo: {
       tryIt: string;
+      reset: string;
       noteSample: string;
+      tabSamples: string[];
     };
     gettingStarted: {
       intro: string;
@@ -156,6 +158,7 @@ export interface Messages {
     tabs: {
       intro: string;
       items: string[];
+      labelDemo: string;
     };
     sidebar: {
       intro: string;

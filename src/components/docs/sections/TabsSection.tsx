@@ -8,6 +8,7 @@ export function TabsDocs() {
     <>
       <Prose text={t.docs.tabs.intro} />
       <ProseList items={t.docs.tabs.items} />
+      <Prose text={t.docs.tabs.labelDemo} />
       <DemoTabs />
     </>
   );

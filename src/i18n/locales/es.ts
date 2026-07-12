@@ -188,6 +188,8 @@ export const es: Messages = {
     },
     demo: {
       tryIt: "Pruébalo",
+      reset: "Reiniciar demo",
+      tabSamples: ["Checklist de despliegue", "Respaldo de base de datos", ""],
       noteSample:
         "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace a https://example.com. Haz clic fuera para verla renderizada de nuevo.",
     },
@@ -219,6 +221,8 @@ export const es: Messages = {
         "**Suelta bloques sobre una pestaña** para copiarlos dentro de ella.",
         "Una barra de acento en la parte inferior marca la pestaña activa de un vistazo.",
       ],
+      labelDemo:
+        "Una pestaña toma su nombre del primer bloque de nota de su libro, así que tus pestañas se describen solas. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Prueba también a cambiar, reordenar y cerrar pestañas.",
     },
     sidebar: {
       intro:

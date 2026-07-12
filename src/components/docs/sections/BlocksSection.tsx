@@ -1,6 +1,7 @@
 import { DividerBlock } from "@/components/blocks/divider/DividerBlock";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { useTranslation } from "@/i18n";
+import { useState } from "react";
 import { DemoNoteBlock } from "../demos/DemoNoteBlock";
 import { DemoVariables } from "../demos/DemoVariables";
 import { DocsDemo } from "../demos/DocsDemo";
@@ -12,6 +13,16 @@ const MARKDOWN_EXAMPLES = [
   "`code-text`",
   "[labelled-link](https://example.com)",
 ];
+
+function NoteDemo() {
+  const t = useTranslation();
+  const [text, setText] = useState(t.docs.demo.noteSample);
+  return (
+    <DocsDemo>
+      <DemoNoteBlock text={text} onTextChange={setText} />
+    </DocsDemo>
+  );
+}
 
 export function BlocksDocs() {
   const t = useTranslation();
@@ -78,10 +89,7 @@ export function NoteBlockDocs() {
       </table>
       <Prose text={t.docs.noteBlock.links} />
       <Prose text={t.docs.noteBlock.wrapKeys} />
-      <DemoNoteBlock
-        key={t.docs.demo.noteSample}
-        initialText={t.docs.demo.noteSample}
-      />
+      <NoteDemo key={t.docs.demo.noteSample} />
     </>
   );
 }

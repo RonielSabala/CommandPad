@@ -47,7 +47,7 @@
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
 }
 
-/* Static tabs replica */
+/* Interactive tabs replica */
 
 .docs-demo-tabs {
   display: flex;
@@ -57,7 +57,14 @@
   border-bottom: var(--border-standard);
   background: var(--color-surface-alt);
   border-radius: var(--radius-md) var(--radius-md) 0 0;
-  pointer-events: none;
+}
+
+.docs-demo-tab-panel {
+  padding: var(--space-8) var(--space-10);
+  background: var(--color-bg);
+  border: var(--border-standard);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 
 /* Static sidebar rows replica */
