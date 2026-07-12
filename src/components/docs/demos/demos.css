@@ -67,6 +67,15 @@
   border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 
+/* Divider demo: the divider tracks the note width above it */
+
+.docs-demo-divider-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  max-width: 100%;
+}
+
 /* Multi-select playground */
 
 .docs-demo-multiselect {

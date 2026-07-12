@@ -213,6 +213,7 @@ export interface Messages {
     };
     dividerBlock: {
       intro: string;
+      demoNote: string;
     };
     multiSelect: {
       intro: string;

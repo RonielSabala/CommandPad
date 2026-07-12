@@ -96,11 +96,15 @@ export function NoteBlockDocs() {
 
 export function DividerBlockDocs() {
   const t = useTranslation();
+  const [text, setText] = useState(t.docs.dividerBlock.demoNote);
   return (
     <>
       <Prose text={t.docs.dividerBlock.intro} />
       <DocsDemo>
-        <DividerBlock />
+        <div className="docs-demo-divider-stack">
+          <DemoNoteBlock text={text} onTextChange={setText} />
+          <DividerBlock />
+        </div>
       </DocsDemo>
     </>
   );

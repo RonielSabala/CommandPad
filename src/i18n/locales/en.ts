@@ -305,6 +305,8 @@ export const en: Messages = {
     dividerBlock: {
       intro:
         "A visual separator. It stretches to match the width of the widest block, which makes it perfect for splitting a runbook into visual sections.",
+      demoNote:
+        "Type inside this note and watch the divider below grow and shrink with it.",
     },
     multiSelect: {
       intro:
