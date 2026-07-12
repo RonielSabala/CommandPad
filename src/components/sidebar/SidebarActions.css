@@ -26,6 +26,7 @@
 }
 
 #sidebar-btn-group .btn:hover {
+  border-color: var(--color-border);
   background-color: var(--color-border);
 }
 
