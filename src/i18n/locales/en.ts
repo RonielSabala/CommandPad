@@ -23,7 +23,6 @@ export const en: Messages = {
     switchToLight: "Switch to light mode",
     collapseAll: "Collapse All",
     toggleEditorsTitle: "Expand/collapse all command editors",
-    keybindingsTitle: "App keybindings",
     resetWorkspaceTitle: "Reset workspace",
     exportTitle: "Export runbook",
     export: "Export",
@@ -104,9 +103,6 @@ export const en: Messages = {
     title: "Paste Runbook",
     message: "Paste raw runbook JSON to create a new runbook.",
     error: "That doesn't look like valid runbook JSON.",
-  },
-  keybindingsModal: {
-    title: "App Keybindings",
   },
   alert: {
     invalidFormatTitle: "Invalid Format",

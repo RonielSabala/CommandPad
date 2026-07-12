@@ -5,7 +5,6 @@ import {
   BookIcon,
   ChevronsRightIcon,
   ExportIcon,
-  KeyboardIcon,
   MoonIcon,
   PadlockIcon,
   PencilIcon,
@@ -24,7 +23,6 @@ export function Header() {
   const isLight = useStore((state) => state.theme === Theme.LIGHT);
   const toggleTheme = useStore((state) => state.toggleTheme);
   const toggleAppMode = useStore((state) => state.toggleAppMode);
-  const openKeybindingsModal = useStore((state) => state.openKeybindingsModal);
   const clearAllData = useStore((state) => state.clearAllData);
   const openExportModal = useStore((state) => state.openExportModal);
   const toggleAllCommandEditors = useStore(
@@ -97,17 +95,6 @@ export function Header() {
         <div className="vertical-divider" />
 
         <LanguageSelect />
-
-        <div className="vertical-divider" />
-
-        <button
-          id="keybindings-btn"
-          className="btn btn-lg btn-flat-icon"
-          onClick={openKeybindingsModal}
-          title={t.header.keybindingsTitle}
-        >
-          <KeyboardIcon id="keybindings-icon" className="icon icon-bold" />
-        </button>
 
         <div className="vertical-divider" />
 

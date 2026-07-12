@@ -90,7 +90,6 @@ interface StoreState {
   // Modals / dialogs
   exportModalOpen: boolean;
   pasteRunbookModalOpen: boolean;
-  keybindingsModalOpen: boolean;
   confirmDialog: ConfirmDialog | null;
   alertDialog: Dialog<void> | null;
 
@@ -181,8 +180,6 @@ interface StoreState {
   closeExportModal: () => void;
   openPasteRunbookModal: () => void;
   closePasteRunbookModal: () => void;
-  openKeybindingsModal: () => void;
-  closeKeybindingsModal: () => void;
   exportRunbook: (format: ExportFormat) => Promise<void>;
 
   confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
@@ -323,7 +320,6 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   exportModalOpen: false,
   pasteRunbookModalOpen: false,
-  keybindingsModalOpen: false,
   confirmDialog: null,
   alertDialog: null,
 
@@ -1371,8 +1367,6 @@ export const useStore = create<StoreState>()((set, get) => ({
   closeExportModal: () => set({ exportModalOpen: false }),
   openPasteRunbookModal: () => set({ pasteRunbookModalOpen: true }),
   closePasteRunbookModal: () => set({ pasteRunbookModalOpen: false }),
-  openKeybindingsModal: () => set({ keybindingsModalOpen: true }),
-  closeKeybindingsModal: () => set({ keybindingsModalOpen: false }),
 
   exportRunbook: async (format) => {
     set({ exportModalOpen: false });

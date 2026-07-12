@@ -44,11 +44,6 @@
   gap: var(--space-3);
 }
 
-#keybindings-icon {
-  width: var(--space-10);
-  height: var(--space-10);
-}
-
 #reset-workspace-icon {
   fill: currentColor;
 }

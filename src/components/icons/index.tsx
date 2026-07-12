@@ -129,16 +129,6 @@ export function ChevronsRightIcon(props: IconProps) {
   );
 }
 
-export function KeyboardIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" {...props}>
-      <rect x="2" y="6" width="20" height="12" rx="2" />
-      <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01" />
-      <path d="M5 14h14" />
-    </svg>
-  );
-}
-
 export function ExportIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 16 16" {...props}>

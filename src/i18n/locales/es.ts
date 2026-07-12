@@ -23,7 +23,6 @@ export const es: Messages = {
     switchToLight: "Cambiar a modo claro",
     collapseAll: "Contraer todo",
     toggleEditorsTitle: "Expandir/contraer todos los editores de comandos",
-    keybindingsTitle: "Atajos de teclado",
     resetWorkspaceTitle: "Resetear espacio de trabajo",
     exportTitle: "Exportar libro",
     export: "Exportar",
@@ -105,9 +104,6 @@ export const es: Messages = {
     title: "Pegar Libro",
     message: "Pega el JSON del libro para crear uno nuevo.",
     error: "Eso no parece un JSON de libro válido.",
-  },
-  keybindingsModal: {
-    title: "Atajos de Teclado",
   },
   alert: {
     invalidFormatTitle: "Formato Inválido",

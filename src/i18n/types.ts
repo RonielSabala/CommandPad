@@ -42,7 +42,6 @@ export interface Messages {
     switchToLight: string;
     collapseAll: string;
     toggleEditorsTitle: string;
-    keybindingsTitle: string;
     resetWorkspaceTitle: string;
     exportTitle: string;
     export: string;
@@ -111,9 +110,6 @@ export interface Messages {
     title: string;
     message: string;
     error: string;
-  };
-  keybindingsModal: {
-    title: string;
   };
   alert: {
     invalidFormatTitle: string;

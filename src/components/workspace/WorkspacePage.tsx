@@ -10,7 +10,6 @@ import { MainPanel } from "../MainPanel";
 import { AlertModal } from "../modals/AlertModal";
 import { ConfirmModal } from "../modals/ConfirmModal";
 import { ExportModal } from "../modals/ExportModal";
-import { KeybindingsModal } from "../modals/KeybindingsModal";
 import { PasteRunbookModal } from "../modals/PasteRunbookModal";
 import { RunbookImportInput } from "../sidebar/runbooks/RunbookImportInput";
 import { Sidebar } from "../sidebar/Sidebar";
@@ -42,7 +41,6 @@ export function WorkspacePage() {
         <MainPanel />
       </div>
 
-      <KeybindingsModal />
       <ExportModal />
       <PasteRunbookModal />
       <ConfirmModal />
