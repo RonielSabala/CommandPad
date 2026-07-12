@@ -73,6 +73,9 @@
   --block-min-width: 7.5rem;
   --modal-min-width: 15rem;
   --modal-max-width: 30rem;
+  --docs-sidebar-width: 16rem;
+  --docs-max-width: 52rem;
+  --docs-heading-lg: 1.75rem;
 
   /* --- MISC & UTILITIES --- */
   --white-a10: rgba(255, 255, 255, 0.1);

@@ -156,4 +156,12 @@ export const es: Messages = {
     [KeyBinding.NOTE_CODE]:
       "Envolver el texto seleccionado en comillas invertidas (bloque de nota)",
   },
+  docs: {
+    meta: {
+      title: "Documentación",
+      openDocs: "Abrir documentación",
+      backToApp: "Volver a la app",
+      tocTitle: "Contenido",
+    },
+  },
 };

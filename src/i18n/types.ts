@@ -131,4 +131,12 @@ export interface Messages {
     resetMessage: string;
   };
   keybindings: Record<KeyBinding, string>;
+  docs: {
+    meta: {
+      title: string;
+      openDocs: string;
+      backToApp: string;
+      tocTitle: string;
+    };
+  };
 }

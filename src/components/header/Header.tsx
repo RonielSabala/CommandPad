@@ -1,6 +1,8 @@
 import { Key } from "@/common/constants/events";
+import { AppRoute } from "@/common/constants/routes";
 import { AppMode, Theme } from "@/common/enums";
 import {
+  BookIcon,
   ChevronsRightIcon,
   ExportIcon,
   KeyboardIcon,
@@ -12,6 +14,7 @@ import {
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
+import { Link } from "react-router-dom";
 import "./Header.css";
 import { LanguageSelect } from "./LanguageSelect";
 
@@ -105,6 +108,16 @@ export function Header() {
         >
           <KeyboardIcon id="keybindings-icon" className="icon icon-bold" />
         </button>
+
+        <div className="vertical-divider" />
+
+        <Link
+          to={AppRoute.DOCS}
+          className="btn btn-lg btn-flat-icon"
+          title={t.docs.meta.openDocs}
+        >
+          <BookIcon className="icon icon-bold" />
+        </Link>
 
         <div className="vertical-divider" />
 

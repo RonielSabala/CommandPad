@@ -1,0 +1,38 @@
+.docs-header {
+  grid-area: header;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-12);
+  gap: var(--space-8);
+  border-bottom: var(--border-standard);
+  background: var(--color-surface);
+}
+
+.docs-logo {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.docs-logo:hover .logo-word {
+  color: var(--accent-text);
+}
+
+.docs-header-title {
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding-left: var(--space-8);
+  border-left: var(--border-standard);
+}

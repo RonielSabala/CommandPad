@@ -151,4 +151,12 @@ export const en: Messages = {
     [KeyBinding.NOTE_ITALIC]: "Italicize selected text (note block)",
     [KeyBinding.NOTE_CODE]: "Wrap selected text in backticks (note block)",
   },
+  docs: {
+    meta: {
+      title: "Documentation",
+      openDocs: "Open documentation",
+      backToApp: "Back to app",
+      tocTitle: "Contents",
+    },
+  },
 };

@@ -245,6 +245,15 @@ export function DuplicateIcon(props: IconProps) {
   );
 }
 
+export function BookIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 16 16" {...props}>
+      <path d="M8 3.5C6.8 2.3 5 2 3 2v11c2 0 3.8.3 5 1.5 1.2-1.2 3-1.5 5-1.5V2c-2 0-3.8.3-5 1.5z" />
+      <path d="M8 3.5v11" />
+    </svg>
+  );
+}
+
 export function EmptyStateIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 40 40" {...props}>

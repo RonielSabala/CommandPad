@@ -1,0 +1,16 @@
+.docs-shell {
+  display: grid;
+  grid-template-rows: var(--header-height) 1fr;
+  grid-template-columns: var(--docs-sidebar-width) 1fr;
+  grid-template-areas:
+    "header header"
+    "toc main";
+  height: 100vh;
+  overflow: hidden;
+}
+
+.docs-main {
+  grid-area: main;
+  overflow-y: auto;
+  background: var(--color-bg);
+}
