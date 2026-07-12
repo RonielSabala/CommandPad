@@ -1,3 +1,4 @@
+import { DocsSectionId } from "@/common/constants/docs";
 import { BlockType, NoteStyle } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
 import type { Messages } from "../types";
@@ -157,6 +158,27 @@ export const en: Messages = {
       openDocs: "Open documentation",
       backToApp: "Back to app",
       tocTitle: "Contents",
+    },
+    toc: {
+      [DocsSectionId.GETTING_STARTED]: "Getting started",
+      [DocsSectionId.WORKSPACE]: "Workspace",
+      [DocsSectionId.TABS]: "Tabs",
+      [DocsSectionId.SIDEBAR]: "Sidebar",
+      [DocsSectionId.RUNBOOK_LIBRARY]: "Runbook library",
+      [DocsSectionId.VARIABLES]: "Variables",
+      [DocsSectionId.VARIABLE_REFERENCES]: "Variable references",
+      [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Parameterized placeholders",
+      [DocsSectionId.ESCAPING_BRACES]: "Escaping braces",
+      [DocsSectionId.SECRET_VARIABLES]: "Secret variables",
+      [DocsSectionId.BLOCKS]: "Blocks",
+      [DocsSectionId.COMMAND_BLOCK]: "Command block",
+      [DocsSectionId.NOTE_BLOCK]: "Note block",
+      [DocsSectionId.DIVIDER_BLOCK]: "Divider block",
+      [DocsSectionId.MULTI_SELECT]: "Multi-select",
+      [DocsSectionId.READ_MODE]: "Read mode",
+      [DocsSectionId.EXPORT]: "Export",
+      [DocsSectionId.LANGUAGE]: "Language",
+      [DocsSectionId.KEYBOARD_SHORTCUTS]: "Keyboard shortcuts",
     },
   },
 };

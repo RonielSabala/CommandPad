@@ -1,3 +1,4 @@
+import type { DocsSectionId } from "@/common/constants/docs";
 import type { BlockType, NoteStyle } from "@/common/enums";
 import type { KeyBinding } from "@/common/keybindings";
 
@@ -138,5 +139,6 @@ export interface Messages {
       backToApp: string;
       tocTitle: string;
     };
+    toc: Record<DocsSectionId, string>;
   };
 }

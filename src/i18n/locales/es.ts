@@ -1,3 +1,4 @@
+import { DocsSectionId } from "@/common/constants/docs";
 import { BlockType, NoteStyle } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
 import type { Messages } from "../types";
@@ -162,6 +163,28 @@ export const es: Messages = {
       openDocs: "Abrir documentación",
       backToApp: "Volver a la app",
       tocTitle: "Contenido",
+    },
+    toc: {
+      [DocsSectionId.GETTING_STARTED]: "Primeros pasos",
+      [DocsSectionId.WORKSPACE]: "Espacio de trabajo",
+      [DocsSectionId.TABS]: "Pestañas",
+      [DocsSectionId.SIDEBAR]: "Barra lateral",
+      [DocsSectionId.RUNBOOK_LIBRARY]: "Biblioteca de libros",
+      [DocsSectionId.VARIABLES]: "Variables",
+      [DocsSectionId.VARIABLE_REFERENCES]: "Referencias de variables",
+      [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]:
+        "Marcadores parametrizados",
+      [DocsSectionId.ESCAPING_BRACES]: "Escapar llaves",
+      [DocsSectionId.SECRET_VARIABLES]: "Variables secretas",
+      [DocsSectionId.BLOCKS]: "Bloques",
+      [DocsSectionId.COMMAND_BLOCK]: "Bloque de comando",
+      [DocsSectionId.NOTE_BLOCK]: "Bloque de nota",
+      [DocsSectionId.DIVIDER_BLOCK]: "Bloque divisor",
+      [DocsSectionId.MULTI_SELECT]: "Selección múltiple",
+      [DocsSectionId.READ_MODE]: "Modo lectura",
+      [DocsSectionId.EXPORT]: "Exportar",
+      [DocsSectionId.LANGUAGE]: "Idioma",
+      [DocsSectionId.KEYBOARD_SHORTCUTS]: "Atajos de teclado",
     },
   },
 };

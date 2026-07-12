@@ -9,8 +9,160 @@
   overflow: hidden;
 }
 
+.docs-header {
+  grid-area: header;
+}
+
+/* --- TOC SIDEBAR --- */
+
+.docs-toc {
+  grid-area: toc;
+  overflow-y: auto;
+  padding: var(--space-12) var(--space-6) var(--space-20);
+  border-right: var(--border-standard);
+  background: var(--color-surface);
+}
+
+.docs-toc-title {
+  display: block;
+  padding: 0 var(--space-6) var(--space-6);
+}
+
+.docs-toc-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-6);
+  border-left: 2px solid transparent;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.docs-toc-item:hover {
+  color: var(--color-text-primary);
+  background: var(--color-surface-alt);
+}
+
+.docs-toc-sub {
+  padding-left: var(--space-14);
+}
+
+.docs-toc-active {
+  color: var(--accent-text);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+}
+
+.docs-toc-number {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  min-width: var(--space-10);
+}
+
+.docs-toc-active .docs-toc-number {
+  color: var(--accent-text);
+}
+
+/* --- MAIN CONTENT --- */
+
 .docs-main {
   grid-area: main;
   overflow-y: auto;
   background: var(--color-bg);
+}
+
+.docs-article {
+  max-width: var(--docs-max-width);
+  margin: 0 auto;
+  padding: var(--space-12) var(--space-20) 60vh;
+}
+
+.docs-section {
+  scroll-margin-top: var(--space-12);
+  margin-bottom: var(--space-20);
+}
+
+.docs-h2,
+.docs-h3 {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-6);
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.docs-h2 {
+  font-size: var(--docs-heading-lg);
+  margin-bottom: var(--space-10);
+  padding-bottom: var(--space-6);
+  border-bottom: var(--border-standard);
+}
+
+.docs-h3 {
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-8);
+}
+
+.docs-section-number {
+  font-family: var(--font-mono);
+  color: var(--accent-text);
+  font-weight: 500;
+}
+
+/* --- PROSE --- */
+
+.docs-prose {
+  font-size: var(--text-base);
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-8);
+  overflow-wrap: break-word;
+}
+
+.docs-prose .note-bold {
+  color: var(--color-text-primary);
+}
+
+/* Docs links are always clickable (notes gate them behind ctrl/read mode) */
+.docs-prose .note-link {
+  pointer-events: auto;
+}
+
+.docs-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.docs-list li {
+  padding-left: var(--space-10);
+  position: relative;
+}
+
+.docs-list li::before {
+  content: "–";
+  position: absolute;
+  left: var(--space-2);
+  color: var(--accent-text);
+}
+
+.docs-kbd {
+  display: inline-block;
+  padding: 0 var(--space-3);
+  border: var(--border-standard);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-alt);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  white-space: nowrap;
 }
