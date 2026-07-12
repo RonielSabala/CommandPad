@@ -297,7 +297,7 @@ export const es: Messages = {
       links:
         "Para abrir un enlace, mantén `Ctrl` y haz clic en él. En modo lectura, los enlaces se pueden abrir con un clic directo.",
       wrapKeys:
-        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva, `Ctrl+´` en comillas invertidas, y escribir `(`, `[` o `{` lo envuelve en ese par de corchetes.",
+        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y **Ctrl+´** en comillas invertidas; escribir **(**, **[** o **{** lo envuelve en ese par de corchetes.",
     },
     dividerBlock: {
       intro:

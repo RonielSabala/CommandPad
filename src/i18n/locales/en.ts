@@ -291,7 +291,7 @@ export const en: Messages = {
       links:
         "To open a link, hold `Ctrl` and click it. In read mode, links are directly clickable.",
       wrapKeys:
-        "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, `Ctrl+´` in backticks, and typing `(`, `[`, or `{` wraps it in that bracket pair.",
+        "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and **Ctrl+´** in backticks; typing **(**, **[** or **{** wraps it in that bracket pair.",
     },
     dividerBlock: {
       intro:
