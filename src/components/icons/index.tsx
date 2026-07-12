@@ -83,7 +83,7 @@ export function SearchIcon(props: IconProps) {
 
 export function MoonIcon(props: IconProps) {
   return (
-    <svg viewBox="0 0 16 16" fill="currentColor" {...props}>
+    <svg viewBox="0 0 16 16" {...props}>
       <path d="M13.5 9.2A5.5 5.5 0 0 1 6.8 2.5a5.5 5.5 0 1 0 6.7 6.7z" />
     </svg>
   );

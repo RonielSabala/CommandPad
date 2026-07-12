@@ -91,7 +91,7 @@ export function Header() {
           title={isLight ? t.header.switchToDark : t.header.switchToLight}
         >
           {isLight ? (
-            <MoonIcon className="icon" />
+            <MoonIcon className="icon icon-bold" />
           ) : (
             <SunIcon className="icon icon-bold" />
           )}
