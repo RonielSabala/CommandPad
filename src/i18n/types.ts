@@ -146,8 +146,9 @@ export interface Messages {
     };
     gettingStarted: {
       intro: string;
-      concept: string;
-      features: string[];
+      journey: string;
+      outcomesLead: string;
+      outcomes: string[];
     };
     workspace: {
       intro: string;

@@ -187,16 +187,17 @@ export const en: Messages = {
     },
     gettingStarted: {
       intro:
-        "CommandPad is a lightweight, variable-aware command runbook tool. Define variables once, reference them across any number of command blocks, and copy fully resolved commands instantly. It is designed for engineers who run the same sequences of commands repeatedly with different environments, credentials, or targets.",
-      concept:
-        "A **runbook** is a document that mixes command blocks, note blocks, and dividers. Reference any variable inside a command with curly braces — `{NAME}` — and the resolved command updates live as you type.",
-      features: [
-        "**Tabs** — open multiple runbooks simultaneously in separate tabs.",
-        "**Live resolved preview** — every command block shows the fully resolved command in real time.",
-        "**Three block types** — commands, notes, and dividers can be freely mixed to build structured, annotated runbooks.",
-        "**Secret variables** — mask sensitive values in the sidebar and in command previews.",
-        "**Drag-and-drop reordering** — blocks, variables, and runbook entries can each be reordered via their drag handles.",
-        "**Persistent state** — tabs, content, sidebar state, and preferences are saved locally and restored on reload.",
+        "Welcome to CommandPad. Here you build **runbooks**: documents that mix the commands you run repeatedly with the notes that explain them, while **variables** fill in the parts that change between environments, credentials, or targets.",
+      journey:
+        "This guide walks you through the app in the same order you would naturally discover it. You start in the workspace and its sidebar, then meet the three block types every runbook is built from, and then variables, the feature that makes command blocks truly powerful. After that come tabs, bulk editing with multi-select, and the runbook library where your work lives. The final sections cover read mode, exporting, languages, and every keyboard shortcut. Most sections include a live example marked **Try it**: these are real, interactive pieces of the app, so experiment freely, nothing you do in them touches your actual workspace.",
+      outcomesLead: "By the end of this guide you will know how to:",
+      outcomes: [
+        "Build a runbook out of command blocks, notes, and dividers.",
+        "Define a variable once and reuse it in any command, including secrets that stay masked.",
+        "Copy fully resolved commands with one click.",
+        "Organize runbooks across tabs and reorder anything by dragging.",
+        "Import, save, and export runbooks from the library.",
+        "Lock everything with read mode when it is time to execute, not edit.",
       ],
     },
     workspace: {

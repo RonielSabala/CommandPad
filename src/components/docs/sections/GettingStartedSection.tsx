@@ -6,8 +6,9 @@ export function GettingStartedDocs() {
   return (
     <>
       <Prose text={t.docs.gettingStarted.intro} />
-      <Prose text={t.docs.gettingStarted.concept} />
-      <ProseList items={t.docs.gettingStarted.features} />
+      <Prose text={t.docs.gettingStarted.journey} />
+      <Prose text={t.docs.gettingStarted.outcomesLead} />
+      <ProseList items={t.docs.gettingStarted.outcomes} />
     </>
   );
 }
