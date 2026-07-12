@@ -168,8 +168,7 @@ export const es: Messages = {
       [DocsSectionId.RUNBOOK_LIBRARY]: "Biblioteca de libros",
       [DocsSectionId.VARIABLES]: "Variables",
       [DocsSectionId.VARIABLE_REFERENCES]: "Referencias de variables",
-      [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]:
-        "Marcadores parametrizados",
+      [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
       [DocsSectionId.ESCAPING_BRACES]: "Escapar llaves",
       [DocsSectionId.SECRET_VARIABLES]: "Variables secretas",
       [DocsSectionId.BLOCKS]: "Bloques",
@@ -274,8 +273,7 @@ export const es: Messages = {
     parameterizedPlaceholders: {
       intro:
         "El valor de una variable puede contener un marcador `{;nombre}` que no se rellena hasta que la variable es referenciada.",
-      fill:
-        "Rellénalo por referencia con `{clave;nombre=valor}`. Proporciona varios marcadores separándolos con `;`, p. ej. `{A;p1=v1;p2=v2}`.",
+      fill: "Rellénalo por referencia con `{clave;nombre=valor}`. Proporciona varios marcadores separándolos con `;`, p. ej. `{A;p1=v1;p2=v2}`.",
       unresolved:
         "Si una referencia omite el valor de un marcador, el marcador `{;nombre}` se deja en su lugar y el comando se considera sin resolver.",
     },
@@ -292,8 +290,7 @@ export const es: Messages = {
     blocks: {
       intro:
         "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal.",
-      tip:
-        "Si no hay pestañas abiertas y agregas un bloque (o creas una variable), se crea automáticamente una pestaña sin título.",
+      tip: "Si no hay pestañas abiertas y agregas un bloque (o creas una variable), se crea automáticamente una pestaña sin título.",
     },
     commandBlock: {
       intro: "Un bloque de comando tiene dos partes:",
@@ -382,8 +379,7 @@ export const es: Messages = {
         "La app detecta el idioma de tu navegador en la primera visita, y tu elección se recuerda después.",
     },
     keyboardShortcuts: {
-      intro:
-        "Todos los atajos disponibles en la app, generados a partir de las mismas definiciones que usa la propia app.",
+      intro: "Todos los atajos disponibles en la app.",
     },
     qa: {
       intro:
@@ -395,8 +391,7 @@ export const es: Messages = {
             "Todo vive en tu navegador: las preferencias y los metadatos de pestañas en localStorage, el contenido de los libros en IndexedDB. Nada se envía a ningún servidor y no hay cuentas.",
         },
         {
-          question:
-            "¿Cómo respaldo un libro o lo llevo a otra máquina?",
+          question: "¿Cómo respaldo un libro o lo llevo a otra máquina?",
           answer:
             "Expórtalo como **JSON** e importa el archivo en la otra máquina. La exportación JSON contiene el espacio de trabajo completo (variables y bloques) y siempre puede reimportarse.",
         },

@@ -220,8 +220,7 @@ export const en: Messages = {
         "A tab is named by the first note block of its runbook, so your tabs describe themselves. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try switching, reordering, and closing tabs too.",
     },
     sidebar: {
-      intro:
-        "The sidebar holds the runbook library and the variables panel.",
+      intro: "The sidebar holds the runbook library and the variables panel.",
       items: [
         "**Collapse / expand**: click the chevron button or press the sidebar shortcut.",
         "**Move left / right**: click the layout button to move the sidebar to the other side of the screen.",
@@ -231,8 +230,7 @@ export const en: Messages = {
         "Resizing has guard rails: dragging the sidebar narrower than about a third of its default width snaps it fully collapsed, and it can never grow wider than half of the screen. Expanding it again always restores the default width.",
     },
     runbookLibrary: {
-      intro:
-        "The sidebar's **RUNBOOKS** section holds your imported runbooks.",
+      intro: "The sidebar's **RUNBOOKS** section holds your imported runbooks.",
       items: [
         "Click **Import** to load one or more `.json` files at once, or **Paste** to create a runbook from raw JSON.",
         "Click any runbook entry to open it. If it's already open in a tab, that tab becomes active.",
@@ -264,8 +262,7 @@ export const en: Messages = {
     parameterizedPlaceholders: {
       intro:
         "A variable's value can contain a `{;name}` placeholder that isn't filled in until the variable is referenced.",
-      fill:
-        "Fill it in per-reference with `{key;name=value}`. Supply multiple placeholders by separating them with `;`, e.g. `{A;p1=v1;p2=v2}`.",
+      fill: "Fill it in per-reference with `{key;name=value}`. Supply multiple placeholders by separating them with `;`, e.g. `{A;p1=v1;p2=v2}`.",
       unresolved:
         "If a reference omits a placeholder's value, the `{;name}` marker is left in place and the command is treated as unresolved.",
     },
@@ -282,8 +279,7 @@ export const en: Messages = {
     blocks: {
       intro:
         "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel.",
-      tip:
-        "If no tabs are open and you add a block (or create a variable), a new untitled tab is created automatically.",
+      tip: "If no tabs are open and you add a block (or create a variable), a new untitled tab is created automatically.",
     },
     commandBlock: {
       intro: "A command block has two parts:",
@@ -353,8 +349,7 @@ export const en: Messages = {
       exit: "Click the **pencil icon** to return to edit mode.",
     },
     export: {
-      intro:
-        "Click **Export** in the header to open the format picker.",
+      intro: "Click **Export** in the header to open the format picker.",
       formats: [
         "**JSON**: the full workspace (variables + blocks). Can be re-imported.",
         "**Markdown**: a human-readable `.md` file with headings, subheadings, dividers, and resolved commands.",
@@ -372,8 +367,7 @@ export const en: Messages = {
         "The app detects your browser language on first visit, and your choice is remembered afterward.",
     },
     keyboardShortcuts: {
-      intro:
-        "Every shortcut available in the app, generated from the same definitions the app itself uses.",
+      intro: "Every shortcut available in the app.",
     },
     qa: {
       intro: "Quick answers to the questions that come up most often.",
@@ -404,7 +398,8 @@ export const en: Messages = {
             "No. Marking a variable as secret only masks its value in the sidebar and in command previews. The value is still stored in plain text in your browser's local storage.",
         },
         {
-          question: "Why does export download directly instead of asking where to save?",
+          question:
+            "Why does export download directly instead of asking where to save?",
           answer:
             "The native save dialog uses the File System Access API, which is available in Chromium-based browsers (Chrome, Edge, Brave). Browsers without it fall back to a direct download.",
         },
