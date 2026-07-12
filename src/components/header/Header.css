@@ -9,19 +9,30 @@
 }
 
 #app-name {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
   font-family: var(--font-mono);
   font-size: var(--text-lg);
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--color-text-primary);
   flex-shrink: 0;
   cursor: pointer;
   transition: color var(--transition-fast);
 }
 
-#app-name:hover {
+#app-name:hover .logo-word {
   color: var(--accent-text);
 }
+
+.logo-pad {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--accent-dim);
+  color: var(--accent-text);
+}
+
+/* Header actions */
 
 .header-spacer {
   flex: 1;

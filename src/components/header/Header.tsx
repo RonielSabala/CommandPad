@@ -46,7 +46,8 @@ export function Header() {
           }
         }}
       >
-        CommandPad
+        <span className="logo-word">Command</span>
+        <span className="logo-pad">{"{Pad}"}</span>
       </span>
 
       <div className="header-spacer" />
