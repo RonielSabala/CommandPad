@@ -1,3 +1,4 @@
+import { Key } from "@/common/constants/events";
 import { NoteStyle } from "@/common/enums";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { useNoteFormatting } from "@/hooks/useNoteFormatting";
@@ -63,6 +64,11 @@ export function DemoNoteBlock({
           value={text}
           onChange={(event) => onTextChange(event.target.value)}
           onKeyDown={(event) => {
+            if (event.key === Key.ESCAPE) {
+              event.currentTarget.blur();
+              return;
+            }
+
             handleFormatKey(event);
             handleTabKey(event);
           }}
