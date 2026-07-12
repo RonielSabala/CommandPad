@@ -8,10 +8,10 @@ import {
   PadlockIcon,
   PencilIcon,
   SunIcon,
-  TrashIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
+import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import "./Header.css";
 import { LanguageSelect } from "./LanguageSelect";
 
@@ -113,7 +113,10 @@ export function Header() {
           onClick={clearAllData}
           title={t.header.clearWorkspaceTitle}
         >
-          <TrashIcon className="icon icon-bold" />
+          <ArrowCounterclockwise
+            id="clear-workspace-icon"
+            className="icon icon-semibold"
+          />
         </button>
 
         <div className="vertical-divider" />

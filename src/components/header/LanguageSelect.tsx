@@ -73,7 +73,7 @@ export function LanguageSelect() {
         onClick={() => setOpen((isOpen) => !isOpen)}
       >
         <FlagCircle language={language} />
-        {LANGUAGE_LABELS[language]}
+        <span className="language-code">{LANGUAGE_LABELS[language]}</span>
         <Translate className="icon" />
         <SidebarSectionChevronIcon
           className={classNames(

@@ -14,6 +14,10 @@
   border: 1px solid var(--white-a10);
 }
 
+.language-code {
+  letter-spacing: 0.05em;
+}
+
 /* Chevron */
 
 .language-select-chevron {

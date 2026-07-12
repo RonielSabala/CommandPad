@@ -196,9 +196,8 @@ export function NoteIcon(props: IconProps) {
 export function CommandIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 16 16" {...props}>
-      <polyline points="2,4 5,4" />
-      <polyline points="2,8 8,8" />
-      <polyline points="8,4 14,8 8,12" />
+      <path d="M3 4L7.5 8L3 12" />
+      <line x1="8.5" y1="12" x2="13" y2="12" />
     </svg>
   );
 }
