@@ -152,6 +152,7 @@ export interface Messages {
     };
     workspace: {
       intro: string;
+      persistence: string;
     };
     tabs: {
       intro: string;
@@ -161,19 +162,23 @@ export interface Messages {
     sidebar: {
       intro: string;
       items: string[];
+      resizeDetails: string;
     };
     runbookLibrary: {
       intro: string;
       items: string[];
       autoLabel: string;
+      labelDetails: string;
       autoSave: string;
     };
     variables: {
       intro: string;
       usage: string;
+      duplicatesAndEmpty: string;
     };
     variableReferences: {
       intro: string;
+      circular: string;
     };
     parameterizedPlaceholders: {
       intro: string;
@@ -197,6 +202,7 @@ export interface Messages {
       editor: string;
       multiline: string;
       gutterNote: string;
+      copyUnresolved: string;
     };
     noteBlock: {
       intro: string;
@@ -204,6 +210,8 @@ export interface Messages {
       markdown: string;
       tableSyntax: string;
       tableResult: string;
+      autoUrls: string;
+      noNesting: string;
       links: string;
       wrapKeys: string;
     };
@@ -215,17 +223,20 @@ export interface Messages {
       intro: string;
       actions: string[];
       clear: string;
+      dragToTabDelay: string;
       demoHint: string;
     };
     readMode: {
       intro: string;
       rules: string[];
+      persisted: string;
       exit: string;
     };
     export: {
       intro: string;
       formats: string[];
       saveDialog: string;
+      untitledNote: string;
     };
     language: {
       intro: string;

@@ -8,6 +8,7 @@ export function ExportDocs() {
       <Prose text={t.docs.export.intro} />
       <ProseList items={t.docs.export.formats} />
       <Prose text={t.docs.export.saveDialog} />
+      <Prose text={t.docs.export.untitledNote} />
     </>
   );
 }

@@ -204,6 +204,8 @@ export const en: Messages = {
     workspace: {
       intro:
         "The workspace is the main screen of the app: a header with global actions, a sidebar holding the runbook library and the variables panel, and the main panel where the active runbook's blocks live.",
+      persistence:
+        "Everything you do is saved automatically: edits are written to your browser's local storage moments after you make them. Preferences and tab metadata live in localStorage, runbook content in IndexedDB, and it all survives a reload.",
     },
     tabs: {
       intro: "Each tab holds one open runbook.",
@@ -225,6 +227,8 @@ export const en: Messages = {
         "**Move left / right**: click the layout button to move the sidebar to the other side of the screen.",
         "**Resize**: drag the sidebar's inner edge; double-click it to collapse.",
       ],
+      resizeDetails:
+        "Resizing has guard rails: dragging the sidebar narrower than about a third of its default width snaps it fully collapsed, and it can never grow wider than half of the screen. Expanding it again always restores the default width.",
     },
     runbookLibrary: {
       intro:
@@ -238,6 +242,8 @@ export const en: Messages = {
       ],
       autoLabel:
         "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label, so entries are self-describing. Otherwise the imported filename is used as the fallback.",
+      labelDetails:
+        "Labels are cleaned before display: markdown syntax is stripped, whitespace is collapsed, and the result is capped at 60 characters.",
       autoSave:
         "Edits made to the active runbook are automatically saved back to its library entry.",
     },
@@ -246,10 +252,14 @@ export const en: Messages = {
         "Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**. Keys are case-sensitive, and variables with empty keys are ignored.",
       usage:
         "Reference a variable in any command block by wrapping its key in curly braces, e.g. `{NAMESPACE}`. Renaming a key automatically updates all references, and variables not referenced by any command are dimmed so stale entries are easy to spot.",
+      duplicatesAndEmpty:
+        "Two edge cases worth knowing: if two variables share the same key, the one defined last wins, and a variable whose value is empty is treated as unresolved wherever it is referenced.",
     },
     variableReferences: {
       intro:
         "A variable's value can reference other variables. References resolve recursively, so you can build values like `https://{HOST}/api` out of smaller pieces.",
+      circular:
+        "Circular references are safe: if A references B and B references A, the cycle is detected and the looping reference is left as literal text instead of resolving forever.",
     },
     parameterizedPlaceholders: {
       intro:
@@ -285,6 +295,8 @@ export const en: Messages = {
         "Commands can span multiple lines. The editor scrolls horizontally when a line exceeds the panel width.",
       gutterNote:
         "The gutter marks the first line with `$` and numbers every additional line, as in the example below. Try adding a line to watch the numbering grow.",
+      copyUnresolved:
+        "Copy works even while a command is unresolved: unresolved references are copied exactly as written, like {NAME}, so the template stays intact wherever you paste it.",
     },
     noteBlock: {
       intro:
@@ -294,6 +306,10 @@ export const en: Messages = {
       markdown: "Notes support inline markdown:",
       tableSyntax: "Syntax",
       tableResult: "Result",
+      autoUrls:
+        "Bare URLs are detected automatically and become clickable links, no markdown needed.",
+      noNesting:
+        "Styles do not combine: the first complete token wins and its content renders literally, so wrapping code in bold shows the backticks inside the bold text instead of bold code.",
       links:
         "To open a link, hold `Ctrl` and click it. In read mode, links are directly clickable.",
       wrapKeys:
@@ -316,6 +332,8 @@ export const en: Messages = {
       ],
       clear:
         "Press `Escape` or click outside block controls to clear the selection.",
+      dragToTabDelay:
+        "While dragging blocks over the tabs bar, hovering a tab for a moment switches to it, so you can drop the selection into a runbook that is not currently active.",
       demoHint:
         "Try it on the blocks below: hold `Shift` and click a few blocks, then press `Ctrl+D` to duplicate them or `Del` to delete them. `Escape` clears the selection.",
     },
@@ -330,6 +348,8 @@ export const en: Messages = {
         "Runbooks can still be switched.",
         "Links in notes are directly clickable.",
       ],
+      persisted:
+        "The mode is part of your saved preferences, so reloading the app keeps you in read mode.",
       exit: "Click the **pencil icon** to return to edit mode.",
     },
     export: {
@@ -342,6 +362,8 @@ export const en: Messages = {
       ],
       saveDialog:
         "A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.",
+      untitledNote:
+        "The neutral Untitled label is a placeholder, not content: it is never written into the exported file as a real title.",
     },
     language: {
       intro:

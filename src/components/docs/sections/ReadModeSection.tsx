@@ -7,6 +7,7 @@ export function ReadModeDocs() {
     <>
       <Prose text={t.docs.readMode.intro} />
       <ProseList items={t.docs.readMode.rules} />
+      <Prose text={t.docs.readMode.persisted} />
       <Prose text={t.docs.readMode.exit} />
     </>
   );

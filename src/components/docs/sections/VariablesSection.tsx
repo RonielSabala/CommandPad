@@ -8,6 +8,7 @@ export function VariablesDocs() {
     <>
       <Prose text={t.docs.variables.intro} />
       <Prose text={t.docs.variables.usage} />
+      <Prose text={t.docs.variables.duplicatesAndEmpty} />
       <DemoVariables
         variables={[{ key: "NAMESPACE", value: "production" }]}
         command="kubectl get pods -n {NAMESPACE}"
@@ -21,6 +22,7 @@ export function VariableReferencesDocs() {
   return (
     <>
       <Prose text={t.docs.variableReferences.intro} />
+      <Prose text={t.docs.variableReferences.circular} />
       <DemoVariables
         variables={[
           { key: "HOST", value: "api.example.com" },

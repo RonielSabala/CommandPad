@@ -40,6 +40,7 @@ export function CommandBlockDocs() {
     <>
       <Prose text={t.docs.commandBlock.intro} />
       <Prose text={t.docs.commandBlock.preview} />
+      <Prose text={t.docs.commandBlock.copyUnresolved} />
       <Prose text={t.docs.commandBlock.editor} />
       <DemoVariables
         variables={[
@@ -85,6 +86,8 @@ export function NoteBlockDocs() {
           ))}
         </tbody>
       </table>
+      <Prose text={t.docs.noteBlock.autoUrls} />
+      <Prose text={t.docs.noteBlock.noNesting} />
       <Prose text={t.docs.noteBlock.links} />
       <Prose text={t.docs.noteBlock.wrapKeys} />
       <NoteDemo key={t.docs.demo.noteSample} />

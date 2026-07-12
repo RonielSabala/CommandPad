@@ -8,6 +8,7 @@ export function MultiSelectDocs() {
     <>
       <Prose text={t.docs.multiSelect.intro} />
       <ProseList items={t.docs.multiSelect.actions} />
+      <Prose text={t.docs.multiSelect.dragToTabDelay} />
       <Prose text={t.docs.multiSelect.clear} />
       <Prose text={t.docs.multiSelect.demoHint} />
       <DemoMultiSelect />

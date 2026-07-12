@@ -10,6 +10,7 @@ export function RunbookLibraryDocs() {
       <ProseList items={t.docs.runbookLibrary.items} />
       <DemoRunbookRows />
       <Prose text={t.docs.runbookLibrary.autoLabel} />
+      <Prose text={t.docs.runbookLibrary.labelDetails} />
       <Prose text={t.docs.runbookLibrary.autoSave} />
     </>
   );
