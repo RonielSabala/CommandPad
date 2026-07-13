@@ -1,3 +1,4 @@
+import { MouseButton } from "@/common/constants/events";
 import { BlockType } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import { NoteText } from "@/components/blocks/note/NoteText";
@@ -22,6 +23,7 @@ interface DemoBlock {
 export function DemoMultiSelect() {
   const t = useTranslation();
   const nextId = useRef(100);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const seed = (): DemoBlock[] => [
     { id: 0, type: BlockType.NOTE, text: t.docs.demo.multiSelectNotes[0] },
@@ -98,6 +100,7 @@ export function DemoMultiSelect() {
   return (
     <DocsDemo onReset={reset}>
       <div
+        ref={wrapperRef}
         className="docs-demo-multiselect"
         tabIndex={0}
         onKeyDown={onKeyDown}
@@ -110,8 +113,14 @@ export function DemoMultiSelect() {
               "docs-demo-multiselect-block",
               selectedIds.has(block.id) && "block-selected",
             )}
-            onClick={(event) => {
-              if (event.shiftKey) {
+            // Select on mousedown: a shift+click on text starts a browser
+            // text selection, and the slightest drag swallows the click event
+            onMouseDown={(event) => {
+              if (event.shiftKey && event.button === MouseButton.LEFT) {
+                // preventDefault also skips the focus move; refocus so the
+                // Ctrl+D / Del / Escape shortcuts keep working
+                event.preventDefault();
+                wrapperRef.current?.focus();
                 toggleSelection(block.id);
               }
             }}
