@@ -173,6 +173,7 @@ export interface Messages {
     variables: {
       intro: string;
       usage: string;
+      unresolved: string;
       duplicatesAndEmpty: string;
     };
     variableReferences: {
@@ -201,7 +202,7 @@ export interface Messages {
       editor: string;
       multiline: string;
       gutterNote: string;
-      copyUnresolved: string;
+      variablesTeaser: string;
     };
     noteBlock: {
       intro: string;

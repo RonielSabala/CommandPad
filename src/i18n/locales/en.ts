@@ -198,7 +198,7 @@ export const en: Messages = {
       intro:
         "The workspace is the main screen of the app: a header with global actions, a sidebar holding the runbook library and the variables panel, and the main panel where the active runbook's blocks live.",
       persistence:
-        "Everything you do is saved automatically: edits are written to your browser's local storage moments after you make them. Preferences and tab metadata live in localStorage, runbook content in IndexedDB, and it all survives a reload.",
+        "Everything you do is saved automatically in your browser and restored when you come back. Nothing is ever sent to a server.",
     },
     tabs: {
       intro: "Each tab holds one open runbook.",
@@ -220,7 +220,7 @@ export const en: Messages = {
         "**Resize**: drag the sidebar's inner edge; double-click it to collapse.",
       ],
       resizeDetails:
-        "Resizing has guard rails: dragging the sidebar narrower than about a third of its default width snaps it fully collapsed, and it can never grow wider than half of the screen. Expanding it again always restores the default width.",
+        "Dragging the sidebar very narrow collapses it completely, and it can never grow wider than half of the screen. Expanding it again restores its normal width.",
     },
     runbookLibrary: {
       intro: "The sidebar's **RUNBOOKS** section holds your imported runbooks.",
@@ -234,7 +234,7 @@ export const en: Messages = {
       autoLabel:
         "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label, so entries are self-describing. Otherwise the imported filename is used as the fallback.",
       labelDetails:
-        "Labels are cleaned before display: markdown syntax is stripped, whitespace is collapsed, and the result is capped at 60 characters.",
+        "Labels are tidied up first: markdown marks are removed and anything longer than 60 characters is cut.",
       autoSave:
         "Edits made to the active runbook are automatically saved back to its library entry.",
     },
@@ -242,15 +242,17 @@ export const en: Messages = {
       intro:
         "Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**. Keys are case-sensitive, and variables with empty keys are ignored.",
       usage:
-        "Reference a variable in any command block by wrapping its key in curly braces, e.g. `{NAMESPACE}`. Renaming a key automatically updates all references, and variables not referenced by any command are dimmed so stale entries are easy to spot.",
+        "Use a variable in any command by wrapping its key in curly braces, e.g. `{NAMESPACE}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot leftovers.",
+      unresolved:
+        "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**. Copying still works: the reference is copied as written, like {NAME}.",
       duplicatesAndEmpty:
-        "Two edge cases worth knowing: if two variables share the same key, the one defined last wins, and a variable whose value is empty is treated as unresolved wherever it is referenced.",
+        "One more detail: if two variables share the same key, the one defined last wins.",
     },
     variableReferences: {
       intro:
         "A variable's value can reference other variables. References resolve recursively, so you can build values like `https://{HOST}/api` out of smaller pieces.",
       circular:
-        "Circular references are safe: if A references B and B references A, the cycle is detected and the looping reference is left as literal text instead of resolving forever.",
+        "Circular references are safe: if two variables reference each other, the app detects the loop and leaves the reference as plain text.",
     },
     parameterizedPlaceholders: {
       intro:
@@ -263,7 +265,7 @@ export const en: Messages = {
       intro:
         "Prefix `{` or `}` with a backslash in a command block to output it literally instead of starting a variable reference. The backslash is dropped from the resolved command.",
       scope:
-        "Escaping applies to command blocks only; backslashes inside variable values are always literal. It also works inside a parameter value, so you can pass a literal brace instead of a nested reference.",
+        "Escaping only applies inside command blocks; backslashes in variable values are always literal.",
     },
     secretVariables: {
       intro:
@@ -275,17 +277,18 @@ export const en: Messages = {
       tip: "If no tabs are open and you add a block (or create a variable), a new untitled tab is created automatically.",
     },
     commandBlock: {
-      intro: "A command block has two parts:",
+      intro:
+        "A command block holds one command you want to keep at hand. It has two parts:",
       preview:
-        "**Preview** (always visible): the fully resolved command. Unresolved variable references are highlighted. Click **Copy** to copy the resolved text to the clipboard.",
+        "**Preview** (always visible): the command exactly as it will be copied. Click **Copy** to send it to your clipboard.",
       editor:
-        "**Editor** (collapsible): the raw command template, prefixed with `$`. Use the chevron button to collapse it, or toggle all editors globally with the header button.",
+        "**Editor** (collapsible): where you write the command, prefixed with `$`. Use the chevron button to hide it when you only need the preview.",
       multiline:
-        "Commands can span multiple lines. The editor scrolls horizontally when a line exceeds the panel width.",
+        "Commands can span several lines, and the editor scrolls sideways when a line gets too long.",
       gutterNote:
-        "The gutter marks the first line with `$` and numbers every additional line, as in the example below. Try adding a line to watch the numbering grow.",
-      copyUnresolved:
-        "Copy works even while a command is unresolved: unresolved references are copied exactly as written, like {NAME}, so the template stays intact wherever you paste it.",
+        "The left margin marks the first line with `$` and numbers every extra line. Try adding a line below to watch the numbering grow.",
+      variablesTeaser:
+        "Command blocks become far more useful with **variables**, which fill in the parts of a command that change. They are covered in the next section.",
     },
     noteBlock: {
       intro:
@@ -298,7 +301,7 @@ export const en: Messages = {
       autoUrls:
         "Bare URLs are detected automatically and become clickable links, no markdown needed.",
       noNesting:
-        "Styles do not combine: the first complete token wins and its content renders literally, so wrapping code in bold shows the backticks inside the bold text instead of bold code.",
+        "Styles do not combine: bold and code cannot be mixed on the same words, for example. Whichever style starts first wins.",
       links:
         "To open a link, hold `Ctrl` and click it. In read mode, links are directly clickable.",
       wrapKeys:
@@ -322,7 +325,7 @@ export const en: Messages = {
       clear:
         "Press `Escape` or click outside block controls to clear the selection.",
       dragToTabDelay:
-        "While dragging blocks over the tabs bar, hovering a tab for a moment switches to it, so you can drop the selection into a runbook that is not currently active.",
+        "While dragging blocks over the tabs bar, hover a tab for a moment to switch to it, then drop.",
       demoHint:
         "Try it on the blocks below: hold `Shift` and click a few blocks, then press `Ctrl+D` to duplicate them or `Del` to delete them. `Escape` clears the selection.",
     },
@@ -351,7 +354,7 @@ export const en: Messages = {
       saveDialog:
         "A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.",
       untitledNote:
-        "The neutral Untitled label is a placeholder, not content: it is never written into the exported file as a real title.",
+        "Untitled placeholders are not written into the exported file.",
     },
     language: {
       intro:

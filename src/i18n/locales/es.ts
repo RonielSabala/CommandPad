@@ -207,7 +207,7 @@ export const es: Messages = {
       intro:
         "El espacio de trabajo es la pantalla principal de la app: una cabecera con acciones globales, una barra lateral con la biblioteca de libros y el panel de variables, y el panel principal donde viven los bloques del libro activo.",
       persistence:
-        "Todo lo que haces se guarda automáticamente: los cambios se escriben en el almacenamiento local de tu navegador momentos después de hacerlos. Las preferencias y los metadatos de pestañas viven en localStorage, el contenido de los libros en IndexedDB, y todo sobrevive a una recarga.",
+        "Todo lo que haces se guarda automáticamente en tu navegador y se restaura cuando vuelves. Nada se envía nunca a un servidor.",
     },
     tabs: {
       intro: "Cada pestaña contiene un libro abierto.",
@@ -230,7 +230,7 @@ export const es: Messages = {
         "**Redimensionar**: arrastra el borde interior de la barra lateral; doble clic para contraerla.",
       ],
       resizeDetails:
-        "El redimensionado tiene topes: arrastrar la barra lateral por debajo de un tercio de su ancho por defecto la contrae por completo, y nunca puede crecer más allá de la mitad de la pantalla. Al expandirla de nuevo siempre vuelve a su ancho por defecto.",
+        "Arrastrar la barra lateral hasta dejarla muy estrecha la contrae por completo, y nunca puede crecer más allá de la mitad de la pantalla. Al expandirla de nuevo vuelve a su ancho normal.",
     },
     runbookLibrary: {
       intro:
@@ -245,7 +245,7 @@ export const es: Messages = {
       autoLabel:
         "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca, de modo que las entradas se describen solas. En caso contrario se usa el nombre del archivo importado.",
       labelDetails:
-        "Las etiquetas se limpian antes de mostrarse: se elimina la sintaxis markdown, se colapsan los espacios y el resultado se limita a 60 caracteres.",
+        "Las etiquetas se limpian primero: se quitan las marcas de markdown y lo que pase de 60 caracteres se recorta.",
       autoSave:
         "Los cambios hechos al libro activo se guardan automáticamente en su entrada de la biblioteca.",
     },
@@ -253,15 +253,17 @@ export const es: Messages = {
       intro:
         "Las variables se definen en la sección **VARIABLES** de la barra lateral. Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas, y las variables con clave vacía se ignoran.",
       usage:
-        "Referencia una variable en cualquier bloque de comando envolviendo su clave en llaves, p. ej. `{NAMESPACE}`. Renombrar una clave actualiza automáticamente todas las referencias, y las variables que ningún comando referencia se atenúan para detectar entradas obsoletas fácilmente.",
+        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{NAMESPACE}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para detectar sobras.",
+      unresolved:
+        "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**. Copiar sigue funcionando: la referencia se copia tal cual está escrita, como {NOMBRE}.",
       duplicatesAndEmpty:
-        "Dos casos límite que conviene conocer: si dos variables comparten la misma clave, gana la definida en último lugar, y una variable con valor vacío se considera sin resolver allí donde se referencie.",
+        "Un detalle más: si dos variables comparten la misma clave, gana la definida en último lugar.",
     },
     variableReferences: {
       intro:
         "El valor de una variable puede referenciar otras variables. Las referencias se resuelven recursivamente, así que puedes construir valores como `https://{HOST}/api` a partir de piezas más pequeñas.",
       circular:
-        "Las referencias circulares son seguras: si A referencia a B y B referencia a A, el ciclo se detecta y la referencia en bucle se deja como texto literal en vez de resolverse para siempre.",
+        "Las referencias circulares son seguras: si dos variables se referencian entre sí, la app detecta el bucle y deja la referencia como texto plano.",
     },
     parameterizedPlaceholders: {
       intro:
@@ -274,7 +276,7 @@ export const es: Messages = {
       intro:
         "Antepón una barra invertida a `{` o `}` en un bloque de comando para mostrar la llave literalmente en vez de iniciar una referencia de variable. La barra invertida se elimina del comando resuelto.",
       scope:
-        "El escape aplica solo a bloques de comando; las barras invertidas dentro de valores de variables son siempre literales. También funciona dentro del valor de un parámetro, para pasar una llave literal en lugar de una referencia anidada.",
+        "El escape aplica solo dentro de bloques de comando; las barras invertidas en valores de variables son siempre literales.",
     },
     secretVariables: {
       intro:
@@ -286,17 +288,18 @@ export const es: Messages = {
       tip: "Si no hay pestañas abiertas y agregas un bloque (o creas una variable), se crea automáticamente una pestaña sin título.",
     },
     commandBlock: {
-      intro: "Un bloque de comando tiene dos partes:",
+      intro:
+        "Un bloque de comando guarda un comando que quieres tener a mano. Tiene dos partes:",
       preview:
-        "**Vista previa** (siempre visible): el comando totalmente resuelto. Las referencias sin resolver se resaltan. Haz clic en **Copiar** para copiar el texto resuelto al portapapeles.",
+        "**Vista previa** (siempre visible): el comando exactamente como se copiará. Haz clic en **Copiar** para enviarlo a tu portapapeles.",
       editor:
-        "**Editor** (contraíble): la plantilla del comando en bruto, con el prefijo `$`. Usa el botón de flecha para contraerlo, o alterna todos los editores globalmente con el botón de la cabecera.",
+        "**Editor** (contraíble): donde escribes el comando, con el prefijo `$`. Usa el botón de flecha para ocultarlo cuando solo necesites la vista previa.",
       multiline:
-        "Los comandos pueden ocupar varias líneas. El editor se desplaza horizontalmente cuando una línea excede el ancho del panel.",
+        "Los comandos pueden ocupar varias líneas, y el editor se desplaza hacia los lados cuando una línea se hace demasiado larga.",
       gutterNote:
-        "El margen izquierdo marca la primera línea con `$` y numera cada línea adicional, como en el ejemplo de abajo. Prueba a agregar una línea para ver crecer la numeración.",
-      copyUnresolved:
-        "Copiar funciona incluso con un comando sin resolver: las referencias sin resolver se copian tal cual están escritas, como {NOMBRE}, así la plantilla queda intacta donde la pegues.",
+        "El margen izquierdo marca la primera línea con `$` y numera cada línea extra. Prueba a agregar una línea abajo para ver crecer la numeración.",
+      variablesTeaser:
+        "Los bloques de comando se vuelven mucho más útiles con las **variables**, que rellenan las partes de un comando que cambian. Se explican en la siguiente sección.",
     },
     noteBlock: {
       intro:
@@ -309,7 +312,7 @@ export const es: Messages = {
       autoUrls:
         "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables, sin necesidad de markdown.",
       noNesting:
-        "Los estilos no se combinan: el primer token completo gana y su contenido se muestra literal, así que envolver código en negrita muestra las comillas invertidas dentro del texto en negrita en lugar de código en negrita.",
+        "Los estilos no se combinan: negrita y código no pueden mezclarse en las mismas palabras, por ejemplo. Gana el estilo que empieza primero.",
       links:
         "Para abrir un enlace, mantén `Ctrl` y haz clic en él. En modo lectura, los enlaces se pueden abrir con un clic directo.",
       wrapKeys:
@@ -333,7 +336,7 @@ export const es: Messages = {
       clear:
         "Pulsa `Escape` o haz clic fuera de los controles de bloque para limpiar la selección.",
       dragToTabDelay:
-        "Mientras arrastras bloques sobre la barra de pestañas, mantener el cursor un momento sobre una pestaña cambia a ella, de modo que puedes soltar la selección en un libro que no esté activo.",
+        "Mientras arrastras bloques sobre la barra de pestañas, mantén el cursor un momento sobre una pestaña para cambiar a ella, y luego suelta.",
       demoHint:
         "Pruébalo con los bloques de abajo: mantén `Shift` y haz clic en algunos bloques, luego pulsa `Ctrl+D` para duplicarlos o `Supr` para eliminarlos. `Escape` limpia la selección.",
     },
@@ -363,7 +366,7 @@ export const es: Messages = {
       saveDialog:
         "En navegadores compatibles se abre un diálogo nativo de guardado para elegir nombre y carpeta. En los demás, el archivo se descarga directamente.",
       untitledNote:
-        "La etiqueta neutra Sin título es un marcador, no contenido: nunca se escribe en el archivo exportado como un título real.",
+        "Los marcadores Sin título no se escriben en el archivo exportado.",
     },
     language: {
       intro:

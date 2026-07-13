@@ -47,23 +47,16 @@ export function CommandBlockDocs() {
     <>
       <Prose text={t.docs.commandBlock.intro} />
       <Prose text={t.docs.commandBlock.preview} />
-      <Prose text={t.docs.commandBlock.copyUnresolved} />
       <Prose text={t.docs.commandBlock.editor} />
-      <DemoVariables
-        variables={[
-          { key: "USER", value: "admin" },
-          { key: "HOST", value: "server-01.example.com" },
-        ]}
-        command="ssh {USER}@{HOST}"
-      />
+      <DemoVariables command="ssh admin@server-01.example.com" />
       <Prose text={t.docs.commandBlock.multiline} />
       <Prose text={t.docs.commandBlock.gutterNote} />
       <DemoVariables
-        variables={[{ key: "IMAGE", value: "nginx:latest" }]}
         command={
-          "docker run --rm \\\n  --name web \\\n  -p 8080:80 \\\n  {IMAGE}"
+          "docker run --rm \\\n  --name web \\\n  -p 8080:80 \\\n  nginx:latest"
         }
       />
+      <Prose text={t.docs.commandBlock.variablesTeaser} />
     </>
   );
 }

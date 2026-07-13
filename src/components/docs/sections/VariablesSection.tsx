@@ -8,6 +8,7 @@ export function VariablesDocs() {
     <>
       <Prose text={t.docs.variables.intro} />
       <Prose text={t.docs.variables.usage} />
+      <Prose text={t.docs.variables.unresolved} />
       <Prose text={t.docs.variables.duplicatesAndEmpty} />
       <DemoVariables
         variables={[{ key: "NAMESPACE", value: "production" }]}
