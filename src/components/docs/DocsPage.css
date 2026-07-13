@@ -18,7 +18,9 @@
 .docs-toc {
   grid-area: toc;
   overflow-y: auto;
-  padding: var(--space-12) var(--space-6) var(--space-20);
+  /* Keep bottom padding small: extra padding counts as scrollable height
+     and makes a scrollbar appear even when every entry is visible */
+  padding: var(--space-12) var(--space-6) var(--space-6);
   border-right: var(--border-standard);
   background: var(--color-surface);
 }
