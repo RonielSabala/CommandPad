@@ -25,6 +25,29 @@
   text-transform: uppercase;
 }
 
+.docs-demo-reset {
+  position: absolute;
+  top: 0;
+  right: var(--space-8);
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-14);
+  height: var(--space-14);
+  padding: 0;
+  border: var(--border-standard);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.docs-demo-reset:hover {
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+
 /* Variable rows (always-visible controls, unlike the hover-gated sidebar) */
 
 .docs-demo-variables {

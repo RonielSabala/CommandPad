@@ -90,8 +90,13 @@ export function DemoMultiSelect() {
     }
   };
 
+  const reset = () => {
+    setBlocks(seed());
+    setSelectedIds(new Set());
+  };
+
   return (
-    <DocsDemo>
+    <DocsDemo onReset={reset}>
       <div
         className="docs-demo-multiselect"
         tabIndex={0}
@@ -128,15 +133,6 @@ export function DemoMultiSelect() {
             )}
           </div>
         ))}
-        <button
-          className="btn btn-lg"
-          onClick={() => {
-            setBlocks(seed());
-            setSelectedIds(new Set());
-          }}
-        >
-          {t.docs.demo.reset}
-        </button>
       </div>
     </DocsDemo>
   );

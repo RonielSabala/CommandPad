@@ -17,9 +17,16 @@ const MARKDOWN_EXAMPLES = [
 function NoteDemo() {
   const t = useTranslation();
   const [text, setText] = useState(t.docs.demo.noteSample);
+  const [resetCount, setResetCount] = useState(0);
+
+  const reset = () => {
+    setText(t.docs.demo.noteSample);
+    setResetCount((count) => count + 1);
+  };
+
   return (
-    <DocsDemo>
-      <DemoNoteBlock text={text} onTextChange={setText} />
+    <DocsDemo onReset={reset}>
+      <DemoNoteBlock key={resetCount} text={text} onTextChange={setText} />
     </DocsDemo>
   );
 }
@@ -98,12 +105,19 @@ export function NoteBlockDocs() {
 export function DividerBlockDocs() {
   const t = useTranslation();
   const [text, setText] = useState(t.docs.dividerBlock.demoNote);
+  const [resetCount, setResetCount] = useState(0);
+
+  const reset = () => {
+    setText(t.docs.dividerBlock.demoNote);
+    setResetCount((count) => count + 1);
+  };
+
   return (
     <>
       <Prose text={t.docs.dividerBlock.intro} />
-      <DocsDemo>
+      <DocsDemo onReset={reset}>
         <div className="docs-demo-divider-stack">
-          <DemoNoteBlock text={text} onTextChange={setText} />
+          <DemoNoteBlock key={resetCount} text={text} onTextChange={setText} />
           <DividerBlock />
         </div>
       </DocsDemo>

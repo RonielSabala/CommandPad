@@ -199,7 +199,9 @@ export const es: Messages = {
       intro:
         "Bienvenido a CommandPad. Aquí construyes **libros de comandos**: documentos que mezclan los comandos que ejecutas una y otra vez con las notas que los explican, mientras las **variables** rellenan las partes que cambian entre entornos, credenciales u objetivos.",
       journey:
-        "Esta guía recorre la app en el mismo orden en que la descubrirías de forma natural. Empiezas en el espacio de trabajo y su barra lateral, luego conoces los tres tipos de bloque con los que se construye todo libro, y después las variables, la característica que hace realmente potentes a los bloques de comando. A continuación vienen las pestañas, la edición en bloque con selección múltiple y la biblioteca donde vive tu trabajo. Las secciones finales cubren el modo lectura, la exportación, los idiomas y todos los atajos de teclado. La mayoría de secciones incluye un ejemplo en vivo marcado como **Pruébalo**: son piezas reales e interactivas de la app, así que experimenta con libertad, nada de lo que hagas en ellas toca tu espacio de trabajo real.",
+        "Esta guía recorre la app en el mismo orden en que la descubrirías de forma natural. Empiezas en el espacio de trabajo y su barra lateral, luego conoces los tres tipos de bloque con los que se construye todo libro, y después las variables, la característica que hace realmente potentes a los bloques de comando. A continuación vienen las pestañas, la edición en bloque con selección múltiple y la biblioteca donde vive tu trabajo. Las secciones finales cubren el modo lectura, la exportación, los idiomas y todos los atajos de teclado.",
+      tryIt:
+        "La mayoría de secciones incluye un ejemplo en vivo marcado como **Pruébalo**. Son piezas reales e interactivas de la app: experimenta con libertad, nada de lo que hagas en ellas toca tu espacio de trabajo real, y el botón de flecha en la esquina de cada ejemplo lo reinicia en cualquier momento.",
       outcomesLead: "Al terminar esta guía sabrás cómo:",
       outcomes: [
         "Construir un libro con bloques de comando, notas y divisores.",

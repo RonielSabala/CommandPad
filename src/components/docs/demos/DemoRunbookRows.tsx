@@ -95,8 +95,13 @@ export function DemoRunbookRows() {
       return next;
     });
 
+  const reset = () => {
+    setRunbooks(seed());
+    setActiveId("demo-runbook-0");
+  };
+
   return (
-    <DocsDemo>
+    <DocsDemo onReset={reset}>
       <div className="docs-demo-sidebar-frame">
         {runbooks.map((runbook) => (
           <DemoRunbookRow
@@ -112,17 +117,6 @@ export function DemoRunbookRows() {
             onReorder={reorder}
           />
         ))}
-        {runbooks.length === 0 && (
-          <button
-            className="btn btn-lg btn-primary"
-            onClick={() => {
-              setRunbooks(seed());
-              setActiveId("demo-runbook-0");
-            }}
-          >
-            {t.docs.demo.reset}
-          </button>
-        )}
       </div>
     </DocsDemo>
   );

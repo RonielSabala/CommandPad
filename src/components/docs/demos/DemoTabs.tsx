@@ -51,7 +51,7 @@ export function DemoTabs() {
   };
 
   return (
-    <DocsDemo>
+    <DocsDemo onReset={resetTabs}>
       <div className="docs-demo-tabs">
         {tabs.map((tab) => (
           <div
@@ -86,8 +86,8 @@ export function DemoTabs() {
           </div>
         ))}
       </div>
-      <div className="docs-demo-tab-panel">
-        {activeTab ? (
+      {activeTab && (
+        <div className="docs-demo-tab-panel">
           <DemoNoteBlock
             key={activeTab.id}
             text={activeTab.note}
@@ -101,12 +101,8 @@ export function DemoTabs() {
             initialStyle={NoteStyle.HEADING}
             showStyleRow={false}
           />
-        ) : (
-          <button className="btn btn-lg btn-primary" onClick={resetTabs}>
-            {t.docs.demo.reset}
-          </button>
-        )}
-      </div>
+        </div>
+      )}
     </DocsDemo>
   );
 }

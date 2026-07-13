@@ -147,6 +147,7 @@ export interface Messages {
     gettingStarted: {
       intro: string;
       journey: string;
+      tryIt: string;
       outcomesLead: string;
       outcomes: string[];
     };

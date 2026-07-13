@@ -190,7 +190,9 @@ export const en: Messages = {
       intro:
         "Welcome to CommandPad. Here you build **runbooks**: documents that mix the commands you run repeatedly with the notes that explain them, while **variables** fill in the parts that change between environments, credentials, or targets.",
       journey:
-        "This guide walks you through the app in the same order you would naturally discover it. You start in the workspace and its sidebar, then meet the three block types every runbook is built from, and then variables, the feature that makes command blocks truly powerful. After that come tabs, bulk editing with multi-select, and the runbook library where your work lives. The final sections cover read mode, exporting, languages, and every keyboard shortcut. Most sections include a live example marked **Try it**: these are real, interactive pieces of the app, so experiment freely, nothing you do in them touches your actual workspace.",
+        "This guide walks you through the app in the same order you would naturally discover it. You start in the workspace and its sidebar, then meet the three block types every runbook is built from, and then variables, the feature that makes command blocks truly powerful. After that come tabs, bulk editing with multi-select, and the runbook library where your work lives. The final sections cover read mode, exporting, languages, and every keyboard shortcut.",
+      tryIt:
+        "Most sections include a live example marked **Try it**. These are real, interactive pieces of the app: experiment freely, nothing you do in them touches your actual workspace, and the arrow button in the corner of each example resets it at any time.",
       outcomesLead: "By the end of this guide you will know how to:",
       outcomes: [
         "Build a runbook out of command blocks, notes, and dividers.",

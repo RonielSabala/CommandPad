@@ -22,10 +22,18 @@ interface Props {
 // resolved with the app's real resolution utilities
 export function DemoVariables({ variables = [], command }: Props) {
   const t = useTranslation();
-  const [vars, setVars] = useState(() =>
-    variables.map((seed, index) => ({ id: `demo-${index}`, ...seed })),
-  );
+  const seed = () =>
+    variables.map((entry, index) => ({ id: `demo-${index}`, ...entry }));
+
+  const [vars, setVars] = useState(seed);
   const [text, setText] = useState(command);
+  const [resetCount, setResetCount] = useState(0);
+
+  const reset = () => {
+    setVars(seed());
+    setText(command);
+    setResetCount((count) => count + 1);
+  };
 
   const variableMap = useMemo(() => getVariableMap(vars), [vars]);
   const secretKeys = useMemo(() => getSecretKeys(vars), [vars]);
@@ -38,7 +46,7 @@ export function DemoVariables({ variables = [], command }: Props) {
     );
 
   return (
-    <DocsDemo>
+    <DocsDemo onReset={reset}>
       {vars.length > 0 && (
         <div className="docs-demo-variables">
           {vars.map((variable, index) => (
@@ -84,6 +92,7 @@ export function DemoVariables({ variables = [], command }: Props) {
         </div>
       )}
       <DemoCommandBlock
+        key={resetCount}
         text={text}
         onTextChange={setText}
         variableMap={variableMap}
