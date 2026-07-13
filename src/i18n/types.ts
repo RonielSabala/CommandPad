@@ -148,8 +148,6 @@ export interface Messages {
       intro: string;
       journey: string;
       tryIt: string;
-      outcomesLead: string;
-      outcomes: string[];
     };
     workspace: {
       intro: string;

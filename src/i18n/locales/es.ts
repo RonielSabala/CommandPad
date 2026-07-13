@@ -197,20 +197,11 @@ export const es: Messages = {
     },
     gettingStarted: {
       intro:
-        "Bienvenido a CommandPad. Aquí construyes **libros de comandos**: documentos que mezclan los comandos que ejecutas una y otra vez con las notas que los explican, mientras las **variables** rellenan las partes que cambian entre entornos, credenciales u objetivos.",
+        "Bienvenido a CommandPad. Aquí construyes **libros de comandos**: documentos que mezclan los comandos que ejecutas a menudo con las notas que los explican.",
       journey:
-        "Esta guía recorre la app en el mismo orden en que la descubrirías de forma natural. Empiezas en el espacio de trabajo y su barra lateral, luego conoces los tres tipos de bloque con los que se construye todo libro, y después las variables, la característica que hace realmente potentes a los bloques de comando. A continuación vienen las pestañas, la edición en bloque con selección múltiple y la biblioteca donde vive tu trabajo. Las secciones finales cubren el modo lectura, la exportación, los idiomas y todos los atajos de teclado.",
+        "Esta guía sigue el orden en que descubrirías la app de forma natural: primero el espacio de trabajo, luego los bloques, después las variables y por último todo lo demás. Léela de arriba abajo, o salta a cualquier sección desde el contenido de la izquierda.",
       tryIt:
         "La mayoría de secciones incluye un ejemplo en vivo marcado como **Pruébalo**. Son piezas reales e interactivas de la app: experimenta con libertad, nada de lo que hagas en ellas toca tu espacio de trabajo real, y el botón de flecha en la esquina de cada ejemplo lo reinicia en cualquier momento.",
-      outcomesLead: "Al terminar esta guía sabrás cómo:",
-      outcomes: [
-        "Construir un libro con bloques de comando, notas y divisores.",
-        "Definir una variable una vez y reutilizarla en cualquier comando, incluidos secretos que permanecen ocultos.",
-        "Copiar comandos totalmente resueltos con un clic.",
-        "Organizar libros en pestañas y reordenar cualquier cosa arrastrando.",
-        "Importar, guardar y exportar libros desde la biblioteca.",
-        "Bloquearlo todo con el modo lectura cuando toca ejecutar, no editar.",
-      ],
     },
     workspace: {
       intro:

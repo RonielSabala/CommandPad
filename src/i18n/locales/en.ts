@@ -188,20 +188,11 @@ export const en: Messages = {
     },
     gettingStarted: {
       intro:
-        "Welcome to CommandPad. Here you build **runbooks**: documents that mix the commands you run repeatedly with the notes that explain them, while **variables** fill in the parts that change between environments, credentials, or targets.",
+        "Welcome to CommandPad. Here you build **runbooks**: documents that mix the commands you run often with the notes that explain them.",
       journey:
-        "This guide walks you through the app in the same order you would naturally discover it. You start in the workspace and its sidebar, then meet the three block types every runbook is built from, and then variables, the feature that makes command blocks truly powerful. After that come tabs, bulk editing with multi-select, and the runbook library where your work lives. The final sections cover read mode, exporting, languages, and every keyboard shortcut.",
+        "This guide follows the order in which you would naturally discover the app: the workspace first, then blocks, then variables, then everything else. Read it top to bottom, or jump to any section from the contents on the left.",
       tryIt:
         "Most sections include a live example marked **Try it**. These are real, interactive pieces of the app: experiment freely, nothing you do in them touches your actual workspace, and the arrow button in the corner of each example resets it at any time.",
-      outcomesLead: "By the end of this guide you will know how to:",
-      outcomes: [
-        "Build a runbook out of command blocks, notes, and dividers.",
-        "Define a variable once and reuse it in any command, including secrets that stay masked.",
-        "Copy fully resolved commands with one click.",
-        "Organize runbooks across tabs and reorder anything by dragging.",
-        "Import, save, and export runbooks from the library.",
-        "Lock everything with read mode when it is time to execute, not edit.",
-      ],
     },
     workspace: {
       intro:
