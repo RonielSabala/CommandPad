@@ -151,6 +151,8 @@
   position: absolute;
   left: var(--space-2);
   color: var(--accent-text);
+  font-size: 1.4em;
+  line-height: 1.2;
 }
 
 .docs-kbd-row {
