@@ -191,6 +191,20 @@ function unescapeBraces(text: string): string {
   return text.replace(EscapedBraceRegex, "$1");
 }
 
+// Rewrite both plain {KEY} tokens and templated {KEY;param=...} usages
+export function renameVariableTokens(
+  text: string,
+  oldKey: string,
+  newKey: string,
+): string {
+  const separator = VariableSyntax.PARAM_SEPARATOR;
+  return text
+    .split(`{${oldKey}}`)
+    .join(`{${newKey}}`)
+    .split(`{${oldKey}${separator}`)
+    .join(`{${newKey}${separator}`);
+}
+
 export function resolveCommandText(
   rawText: string,
   variableMap: VariableMap,

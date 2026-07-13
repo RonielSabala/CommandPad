@@ -5,7 +5,6 @@ import {
   DEFAULT_TAB_LABEL,
   RunbookConfig,
   SidebarWidth,
-  VariableSyntax,
 } from "@/common/config";
 import {
   AppMode,
@@ -29,7 +28,10 @@ import { Language } from "@/i18n/types";
 import { debounce } from "@/utils/debounce";
 import { runExport } from "@/utils/export";
 import { generateId } from "@/utils/id";
-import { getUsedVariableKeys } from "@/utils/resolution";
+import {
+  getUsedVariableKeys,
+  renameVariableTokens,
+} from "@/utils/resolution";
 import { getRunbookLabel } from "@/utils/runbook";
 
 import * as persistence from "./persistence";
@@ -840,14 +842,8 @@ export const useStore = create<StoreState>()((set, get) => ({
           const newKey = value.trim();
 
           if (oldKey && newKey && oldKey !== newKey) {
-            // Rewrite both plain {KEY} tokens and templated {KEY;param=...} usages
-            const separator = VariableSyntax.PARAM_SEPARATOR;
             const renameTokens = (text: string) =>
-              text
-                .split(`{${oldKey}}`)
-                .join(`{${newKey}}`)
-                .split(`{${oldKey}${separator}`)
-                .join(`{${newKey}${separator}`);
+              renameVariableTokens(text, oldKey, newKey);
 
             blocks = tab.blocks.map((b) => {
               if (b.type !== BlockType.COMMAND) {

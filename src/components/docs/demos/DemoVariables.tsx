@@ -1,6 +1,10 @@
 import { EyeIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { getSecretKeys, getVariableMap } from "@/utils/resolution";
+import {
+  getSecretKeys,
+  getVariableMap,
+  renameVariableTokens,
+} from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { useMemo, useState } from "react";
 import "@/components/sidebar/variables/VariableRow.css";
@@ -45,6 +49,32 @@ export function DemoVariables({ variables = [], command }: Props) {
       ),
     );
 
+  // Renaming a key rewrites its references, mirroring the real app
+  const renameVarKey = (index: number, nextKey: string) => {
+    const oldKey = vars[index].key.trim();
+    const newKey = nextKey.trim();
+    const shouldRename = !!oldKey && !!newKey && oldKey !== newKey;
+
+    setVars((current) =>
+      current.map((variable, i) => {
+        if (i === index) {
+          return { ...variable, key: nextKey };
+        }
+
+        if (!shouldRename) {
+          return variable;
+        }
+
+        const value = renameVariableTokens(variable.value, oldKey, newKey);
+        return value === variable.value ? variable : { ...variable, value };
+      }),
+    );
+
+    if (shouldRename) {
+      setText((current) => renameVariableTokens(current, oldKey, newKey));
+    }
+  };
+
   return (
     <DocsDemo onReset={reset}>
       {vars.length > 0 && (
@@ -65,7 +95,7 @@ export function DemoVariables({ variables = [], command }: Props) {
                   spellCheck={false}
                   autoComplete="off"
                   onChange={(event) =>
-                    updateVar(index, { key: event.target.value })
+                    renameVarKey(index, event.target.value)
                   }
                 />
                 <input
