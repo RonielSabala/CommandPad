@@ -23,24 +23,34 @@ export function FooterLink({ icon, title, href }: FooterLinkProps) {
   );
 }
 
+export function FooterCopyright() {
+  return <>&copy; {new Date().getFullYear()} Roniel Sabala</>;
+}
+
+export function FooterLinks() {
+  return (
+    <div className="footer-links">
+      <FooterLink
+        icon={Github}
+        title="GitHub"
+        href="https://github.com/RonielSabala"
+      />
+      <FooterLink
+        icon={Linkedin}
+        title="LinkedIn"
+        href="https://www.linkedin.com/in/ronielsabala/"
+      />
+    </div>
+  );
+}
+
 export function Footer() {
   return (
     <footer id="app-footer" className="no-user-select">
       <span id="footer-copyright">
-        &copy; {new Date().getFullYear()} Roniel Sabala
+        <FooterCopyright />
       </span>
-      <div className="footer-links">
-        <FooterLink
-          icon={Github}
-          title="GitHub"
-          href="https://github.com/RonielSabala"
-        />
-        <FooterLink
-          icon={Linkedin}
-          title="LinkedIn"
-          href="https://www.linkedin.com/in/ronielsabala/"
-        />
-      </div>
+      <FooterLinks />
     </footer>
   );
 }

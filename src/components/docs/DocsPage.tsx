@@ -8,6 +8,7 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { DocsFooter } from "./DocsFooter";
 import { DocsHeader } from "./DocsHeader";
 import "./DocsPage.css";
 import { DocsSection } from "./DocsSection";
@@ -66,6 +67,7 @@ export function DocsPage() {
               </DocsSection>
             );
           })}
+          <DocsFooter />
         </article>
       </main>
     </div>

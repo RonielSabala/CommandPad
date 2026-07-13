@@ -185,6 +185,29 @@
   border-bottom: var(--border-standard);
 }
 
+/* --- FOOTER --- */
+
+.docs-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-20);
+  padding-top: var(--space-8);
+  border-top: var(--border-standard);
+}
+
+.docs-footer-copyright {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+  transition: color var(--transition-base);
+}
+
+.docs-footer:hover .docs-footer-copyright {
+  color: var(--color-text-secondary);
+}
+
 /* --- Q&A --- */
 
 .docs-qa-list {
