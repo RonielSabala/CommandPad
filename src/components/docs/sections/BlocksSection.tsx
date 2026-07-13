@@ -97,7 +97,7 @@ export function NoteBlockDocs() {
       <Prose text={t.docs.noteBlock.noNesting} />
       <Prose text={t.docs.noteBlock.links} />
       <Prose text={t.docs.noteBlock.wrapKeys} />
-      <NoteDemo key={t.docs.demo.noteSample} />
+      <NoteDemo />
     </>
   );
 }

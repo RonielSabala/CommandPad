@@ -5,6 +5,7 @@ import {
 } from "@/common/constants/docs";
 import { ScrollIntoView } from "@/common/constants/dom";
 import { useTranslation } from "@/i18n";
+import { useStore } from "@/store/store";
 import { useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { DocsHeader } from "./DocsHeader";
@@ -19,6 +20,7 @@ const SECTION_IDS = DOCS_SECTION_ORDER.map((entry) => entry.id);
 
 export function DocsPage() {
   const t = useTranslation();
+  const language = useStore((state) => state.language);
   const location = useLocation();
   const mainRef = useRef<HTMLElement>(null);
   const activeId = useScrollSpy(SECTION_IDS, mainRef);
@@ -59,7 +61,8 @@ export function DocsPage() {
                 number={SECTION_NUMBERS[id]}
                 title={t.docs.toc[id]}
               >
-                <Content />
+                {/* Keyed by language so demo state reseeds with localized samples */}
+                <Content key={language} />
               </DocsSection>
             );
           })}
