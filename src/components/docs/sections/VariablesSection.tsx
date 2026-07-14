@@ -13,6 +13,7 @@ export function VariablesDocs() {
       <DemoVariables
         variables={[{ key: "NAMESPACE", value: "production" }]}
         command="kubectl get pods -n {NAMESPACE}"
+        secretToggleDisabled
       />
     </>
   );

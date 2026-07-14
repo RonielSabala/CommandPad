@@ -20,11 +20,17 @@ interface DemoVariableSeed {
 interface Props {
   variables?: DemoVariableSeed[];
   command: string;
+  /** Keep the eye button inert in sections that precede the secrets docs */
+  secretToggleDisabled?: boolean;
 }
 
 // Live playground: editable variable rows feeding a command block replica,
 // resolved with the app's real resolution utilities
-export function DemoVariables({ variables = [], command }: Props) {
+export function DemoVariables({
+  variables = [],
+  command,
+  secretToggleDisabled = false,
+}: Props) {
   const t = useTranslation();
   const seed = () =>
     variables.map((entry, index) => ({ id: `demo-${index}`, ...entry }));
@@ -112,6 +118,7 @@ export function DemoVariables({ variables = [], command }: Props) {
               </div>
               <button
                 className={`btn btn-icon variable-secret-btn${variable.secret ? " is-active" : ""}`}
+                disabled={secretToggleDisabled}
                 onClick={() => updateVar(index, { secret: !variable.secret })}
                 title={variable.secret ? t.variables.reveal : t.variables.mask}
               >
