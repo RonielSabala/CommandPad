@@ -5,7 +5,7 @@ import { useState } from "react";
 import { DemoNoteBlock } from "../demos/DemoNoteBlock";
 import { DemoVariables } from "../demos/DemoVariables";
 import { DocsDemo } from "../demos/DocsDemo";
-import { Prose } from "../Prose";
+import { Prose, ProseList } from "../Prose";
 
 const MARKDOWN_EXAMPLES = [
   "**bold-text**",
@@ -45,8 +45,7 @@ export function CommandBlockDocs() {
   return (
     <>
       <Prose text={t.docs.commandBlock.intro} />
-      <Prose text={t.docs.commandBlock.preview} />
-      <Prose text={t.docs.commandBlock.editor} />
+      <ProseList items={t.docs.commandBlock.parts} />
       <DemoVariables command="ssh admin@server-01.example.com" />
       <Prose text={t.docs.commandBlock.multiline} />
       <Prose text={t.docs.commandBlock.gutterNote} />

@@ -307,10 +307,10 @@ export const en: Messages = {
     commandBlock: {
       intro:
         "A command block holds one command you want to keep at hand. It has two parts:",
-      preview:
+      parts: [
         "**Preview** (always visible): the command exactly as it will be copied. Click **Copy** to send it to your clipboard.",
-      editor:
         "**Editor** (collapsible): where you write the command. Use the chevron button to hide it when you only need the preview.",
+      ],
       multiline:
         "Commands can span several lines, and the editor scrolls sideways when a line gets too long.",
       gutterNote:
@@ -319,8 +319,7 @@ export const en: Messages = {
         "Command blocks become far more useful with **variables**, which fill in the parts of a command that change. They are explained a little further ahead, in their own section.",
     },
     noteBlock: {
-      intro:
-        "A free-form text block. Notes grow wider and taller as you type.",
+      intro: "A free-form text block. Notes grow wider and taller as you type.",
       styles:
         "Three text styles are selectable on hover: **heading** (large, bold), **subheading** (medium, accented), and **body** (the default prose).",
       markdown: "Notes support markdown formatting:",

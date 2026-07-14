@@ -208,8 +208,7 @@ export interface Messages {
     };
     commandBlock: {
       intro: string;
-      preview: string;
-      editor: string;
+      parts: string[];
       multiline: string;
       gutterNote: string;
       variablesTeaser: string;

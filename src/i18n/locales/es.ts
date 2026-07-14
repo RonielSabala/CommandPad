@@ -318,10 +318,10 @@ export const es: Messages = {
     commandBlock: {
       intro:
         "Un bloque de comando guarda un comando que quieres tener a mano. Tiene dos partes:",
-      preview:
+      parts: [
         "**Vista previa** (siempre visible): el comando exactamente como se copiará. Haz clic en **Copiar** para enviarlo a tu portapapeles.",
-      editor:
         "**Editor** (contraíble): donde escribes el comando. Usa el botón de flecha para ocultarlo cuando solo necesites la vista previa.",
+      ],
       multiline:
         "Los comandos pueden ocupar varias líneas, y el editor se desplaza hacia los lados cuando una línea se hace demasiado larga.",
       gutterNote:
