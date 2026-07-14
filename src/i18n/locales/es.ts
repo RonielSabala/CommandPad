@@ -203,9 +203,9 @@ export const es: Messages = {
       journey:
         "Esta guía te ayudará a entender cómo funciona la aplicación para que le saques todo el provecho. Comenzarás aprendiendo sobre el espacio de trabajo y su barra lateral, luego conocerás los tres tipos de bloques con los que construirás tus libros de comandos y, para terminar, las variables: la característica que hace que los bloques de comando sean realmente potentes.",
       navigate:
-        "Léela de principio a fin o salta a cualquier sección desde el índice de la izquierda.",
+        "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el índice de la izquierda: tú eliges el ritmo.",
       tryIt:
-        "La mayoría de secciones incluye un ejemplo interactivo marcado como **Pruébalo**. Son piezas reales de la aplicación en las que puedes experimentar con total libertad: nada de lo que hagas en ellas toca tu espacio de trabajo. Aquí se aprende haciendo. Y siempre puedes reiniciar un ejemplo con el botón de flecha de su esquina superior derecha.",
+        "Y no te quedes solo leyendo: la mayoría de las secciones trae un ejemplo interactivo marcado **Pruébalo**, una pieza real de la app donde puedes jugar sin miedo, nada de lo que hagas ahí toca tu espacio de trabajo real. Aquí se aprende haciendo. Si te pierdes, el botón de flecha en su esquina te devuelve al punto de partida.",
     },
     workspace: {
       intro:

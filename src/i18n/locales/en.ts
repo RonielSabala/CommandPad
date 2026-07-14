@@ -194,9 +194,9 @@ export const en: Messages = {
       journey:
         "This guide will help you understand how the app works so you can get the most out of it. You start by learning the workspace and its sidebar, then you meet the three block types you will build your runbooks from and, to wrap up, variables: the feature that makes command blocks truly powerful.",
       navigate:
-        "Read it top to bottom, or jump to any section from the contents on the left.",
+        "Read it start to finish, or jump straight to whatever interests you from the contents on the left: you set the pace.",
       tryIt:
-        "Most sections include an interactive example marked **Try it**. These are real pieces of the app where you can experiment with total freedom: nothing you do in them touches your workspace. Here you learn by doing. And you can always reset an example with the arrow button in its top-right corner.",
+        "And don't just read: most sections come with an interactive example marked **Try it**, a real piece of the app where you can play around without fear, nothing you do there touches your actual workspace. This is learning by doing. If you ever get lost, the arrow button in its corner brings it back to where it started.",
     },
     workspace: {
       intro:
