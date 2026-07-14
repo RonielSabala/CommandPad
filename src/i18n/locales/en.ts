@@ -397,7 +397,7 @@ export const en: Messages = {
         {
           question: "Where is my data stored?",
           answer:
-            "Everything lives in your browser: preferences and tab metadata in localStorage, runbook content in IndexedDB. Nothing is sent to any server, and there is no account.",
+            "Everything lives in your browser: preferences and tab metadata in localStorage, runbook content in IndexedDB. Nothing is sent to any server.",
         },
         {
           question: "How do I back up a runbook or move it to another machine?",
@@ -412,7 +412,7 @@ export const en: Messages = {
         {
           question: "Why is part of my command highlighted in red?",
           answer:
-            "That part is an unresolved reference: no variable with that key exists (keys are case-sensitive), or a `{;name}` placeholder was not given a value. Copying an unresolved command copies the reference text as-is.",
+            "That part is an unresolved reference: no variable with that key exists (keys are case-sensitive), or a `{;name}` placeholder was not given a value.",
         },
         {
           question: "Are secret variables encrypted?",
@@ -428,7 +428,7 @@ export const en: Messages = {
         {
           question: "Can I add another language to the UI?",
           answer:
-            "Yes, via a contribution to the project. Each language is a single catalog file, and the compiler enforces that every string is translated, so adding one is a data-only change.",
+            "Yes, via a contribution to the project. Each language is a single catalog file, so adding one is a data-only change.",
         },
       ],
     },

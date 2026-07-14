@@ -297,7 +297,7 @@ export const es: Messages = {
     parameterizedPlaceholders: {
       intro:
         "El valor de una variable puede contener un marcador `{;nombre}` que no se rellena hasta que la variable es referenciada.",
-      fill: "Rellénalo por referencia con `{clave;nombre=valor}`: el valor se inyecta justo donde está el marcador, algo que una variable normal no puede hacer con la misma limpieza. Proporciona varios marcadores separándolos con `;`, p. ej. `{A;p1=v1;p2=v2}`.",
+      fill: "Rellénalo por referencia con `{clave;nombre=valor}`: el valor se inyecta justo donde está el marcador, algo que una variable normal no puede hacer con la misma elegancia. Proporciona varios marcadores separándolos con `;`, p. ej. `{A;p1=v1;p2=v2}`.",
       unresolved:
         "Si una referencia omite el valor de un marcador, el marcador `{;nombre}` se deja en su lugar y el comando se considera sin resolver.",
     },
@@ -411,7 +411,7 @@ export const es: Messages = {
         {
           question: "¿Dónde se guardan mis datos?",
           answer:
-            "Todo vive en tu navegador: las preferencias y los metadatos de pestañas en localStorage, el contenido de los libros en IndexedDB. Nada se envía a ningún servidor y no hay cuentas.",
+            "Todo vive en tu navegador: las preferencias y los metadatos de pestañas en localStorage, el contenido de los libros en IndexedDB. Nada se envía a ningún servidor.",
         },
         {
           question: "¿Cómo respaldo un libro o lo llevo a otra máquina?",
@@ -426,7 +426,7 @@ export const es: Messages = {
         {
           question: "¿Por qué parte de mi comando aparece resaltada en rojo?",
           answer:
-            "Esa parte es una referencia sin resolver: no existe ninguna variable con esa clave (las claves distinguen mayúsculas de minúsculas), o a un marcador `{;nombre}` no se le dio valor. Copiar un comando sin resolver copia el texto de la referencia tal cual.",
+            "Esa parte es una referencia sin resolver: no existe ninguna variable con esa clave (las claves distinguen mayúsculas de minúsculas), o a un marcador `{;nombre}` no se le dio valor.",
         },
         {
           question: "¿Las variables secretas están cifradas?",
@@ -442,7 +442,7 @@ export const es: Messages = {
         {
           question: "¿Puedo agregar otro idioma a la interfaz?",
           answer:
-            "Sí, mediante una contribución al proyecto. Cada idioma es un único archivo de catálogo, y el compilador exige que todas las cadenas estén traducidas, así que agregar uno es un cambio solo de datos.",
+            "Sí, mediante una contribución al proyecto. Cada idioma es un único archivo de catálogo, así que agregar uno es un cambio solo de datos.",
         },
       ],
     },
