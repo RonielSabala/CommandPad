@@ -186,15 +186,17 @@ export const en: Messages = {
       runbookSamples: ["Release checklist", "Postgres backup", "K8s debugging"],
       multiSelectNotes: ["**Start the stack**", "**Tear it down**"],
       noteSample:
-        "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link to https://example.com. Click away to see it rendered again.",
+        "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link, e.g. https://example.com. Click away to see it rendered again.",
     },
     gettingStarted: {
       intro:
-        "Welcome to CommandPad. Here you build **runbooks**: documents that mix the commands you run often with the notes that explain them.",
+        "Welcome to CommandPad. Here you build **runbooks**: documents that mix the commands you run often with the notes that help explain them.",
       journey:
-        "This guide walks you through the app in the same order you would naturally discover it. You start in the workspace and its sidebar, then meet the three block types every runbook is built from, and then variables, the feature that makes command blocks truly powerful. Read it top to bottom, or jump to any section from the contents on the left.",
+        "This guide will help you understand how the app works so you can get the most out of it. You start by learning the workspace and its sidebar, then you meet the three block types you will build your runbooks from and, to wrap up, variables: the feature that makes command blocks truly powerful.",
+      navigate:
+        "Read it top to bottom, or jump to any section from the contents on the left.",
       tryIt:
-        "Most sections include a live example marked **Try it**. These are real, interactive pieces of the app: experiment freely, nothing you do in them touches your actual workspace, and the arrow button in the corner of each example resets it at any time.",
+        "Most sections include an interactive example marked **Try it**. These are real pieces of the app where you can experiment with total freedom: nothing you do in them touches your workspace. Here you learn by doing. And you can always reset an example with the arrow button in its top-right corner.",
     },
     workspace: {
       intro:
@@ -230,19 +232,19 @@ export const en: Messages = {
     tabs: {
       intro: "Each tab holds one open runbook.",
       items: [
-        "Click a tab to switch to it.",
-        "**Middle-click** a tab to close it.",
+        "**Click** a tab to switch to it.",
         "**Drag** a tab to reorder it.",
-        "**Drop blocks on a tab** to copy them into it.",
-        "An accent bar at the bottom of the active tab marks it at a glance.",
+        "**Middle-click** a tab to close it.",
       ],
+      autoCreate:
+        "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
         "A tab is named by the first note block of its runbook, so your tabs describe themselves. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try switching, reordering, and closing tabs too.",
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",
       items: [
-        "**Collapse / expand**: click the chevron button or press the sidebar shortcut.",
+        "**Collapse / expand**: click the chevron button or use its keyboard shortcut.",
         "**Move left / right**: click the layout button to move the sidebar to the other side of the screen.",
         "**Resize**: drag the sidebar's inner edge; double-click it to collapse.",
       ],
@@ -256,12 +258,12 @@ export const en: Messages = {
         "Click any runbook entry to open it. If it's already open in a tab, that tab becomes active.",
         "Delete a runbook from the library with the button shown on row hover.",
         "Drag the handle on the left of an entry to reorder the list.",
-        "Use the **search bar** to filter runbooks by name.",
+        "Use the **search bar** to filter runbooks by label or filename.",
       ],
       autoLabel:
         "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label, so entries are self-describing. Otherwise the imported filename is used as the fallback.",
       labelDetails:
-        "Labels are tidied up first: markdown marks are removed and anything longer than 60 characters is cut.",
+        "Labels are normalized: markdown marks are removed and anything longer than 60 characters is cut.",
       autoSave:
         "Edits made to the active runbook are automatically saved back to its library entry.",
     },
@@ -269,7 +271,7 @@ export const en: Messages = {
       intro:
         "Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**. Keys are case-sensitive, and variables with empty keys are ignored.",
       usage:
-        "Use a variable in any command by wrapping its key in curly braces, e.g. `{NAMESPACE}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot leftovers.",
+        "Use a variable in any command by wrapping its key in curly braces, e.g. `{NAMESPACE}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
       unresolved:
         "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**. Copying still works: the reference is copied as written, like {NAME}.",
       duplicatesAndEmpty:
@@ -277,7 +279,7 @@ export const en: Messages = {
     },
     variableReferences: {
       intro:
-        "A variable's value can reference other variables. References resolve recursively, so you can build values like `https://{HOST}/api` out of smaller pieces.",
+        "A variable's value can reference other variables; these resolve recursively. That way you can build values like `https://{HOST}/api` out of smaller pieces.",
       circular:
         "Circular references are safe: if two variables reference each other, the app detects the loop and leaves the reference as plain text.",
     },
@@ -301,7 +303,6 @@ export const en: Messages = {
     blocks: {
       intro:
         "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel.",
-      tip: "If no tabs are open and you add a block (or create a variable), a new untitled tab is created automatically.",
     },
     commandBlock: {
       intro:
@@ -309,34 +310,33 @@ export const en: Messages = {
       preview:
         "**Preview** (always visible): the command exactly as it will be copied. Click **Copy** to send it to your clipboard.",
       editor:
-        "**Editor** (collapsible): where you write the command, prefixed with `$`. Use the chevron button to hide it when you only need the preview.",
+        "**Editor** (collapsible): where you write the command. Use the chevron button to hide it when you only need the preview.",
       multiline:
         "Commands can span several lines, and the editor scrolls sideways when a line gets too long.",
       gutterNote:
         "The left margin marks the first line with `$` and numbers every extra line. Try adding a line below to watch the numbering grow.",
       variablesTeaser:
-        "Command blocks become far more useful with **variables**, which fill in the parts of a command that change. They are covered in the next section.",
+        "Command blocks become far more useful with **variables**, which fill in the parts of a command that change. They are explained a little further ahead, in their own section.",
     },
     noteBlock: {
       intro:
-        "A free-form text block. Note blocks expand horizontally and vertically as you type.",
+        "A free-form text block. Notes grow wider and taller as you type.",
       styles:
-        "Three text styles are selectable on hover: **heading** (large, bold), **subheading** (medium, accented), and **body** (default prose).",
-      markdown: "Notes support inline markdown:",
+        "Three text styles are selectable on hover: **heading** (large, bold), **subheading** (medium, accented), and **body** (the default prose).",
+      markdown: "Notes support markdown formatting:",
       tableSyntax: "Syntax",
       tableResult: "Result",
       autoUrls:
         "Bare URLs are detected automatically and become clickable links, no markdown needed.",
       noNesting:
-        "Styles do not combine: bold and code cannot be mixed on the same words, for example. Whichever style starts first wins.",
-      links:
-        "To open a link, hold `Ctrl` and click it. In read mode, links are directly clickable.",
+        "Styles do not combine: bold and italics cannot be mixed on the same words, for example. Whichever style starts first wins.",
+      links: "To open a link, hold `Ctrl` and click it.",
       wrapKeys:
-        "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and **Ctrl+´** in backticks; typing **(**, **[** or **{** wraps it in that bracket pair.",
+        "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and **Ctrl+´** in backticks; typing **(**, **[** or **{** wraps it in that pair.",
     },
     dividerBlock: {
       intro:
-        "A visual separator. It stretches to match the width of the widest block, which makes it perfect for splitting a runbook into visual sections.",
+        "Nothing more than a visual separator. It stretches to match the width of the widest block, which makes it perfect for splitting a runbook into sections. It does keep a minimum width, though, so it can never shrink into something unreadable.",
       demoNote:
         "Type inside this note and watch the divider below grow and shrink with it.",
     },
@@ -364,11 +364,11 @@ export const en: Messages = {
         "Block and note text cannot be edited.",
         "Block structure cannot be changed (no adding, deleting, or reordering).",
         "Variable values can still be changed.",
-        "Runbooks can still be switched.",
-        "Links in notes are directly clickable.",
+        "Runbooks can still be opened.",
+        "Links can be opened with a direct click.",
       ],
       persisted:
-        "The mode is part of your saved preferences, so reloading the app keeps you in read mode.",
+        "This mode is part of your saved preferences, so reloading the app keeps you in read mode.",
       exit: "Click the **pencil icon** to return to edit mode.",
     },
     export: {
@@ -385,7 +385,7 @@ export const en: Messages = {
     },
     language: {
       intro:
-        "Use the **language selector** in the header to pick the UI language. English and Español are currently available.",
+        "Use the **language selector** in the header to pick the interface language.",
       detection:
         "The app detects your browser language on first visit, and your choice is remembered afterward.",
     },

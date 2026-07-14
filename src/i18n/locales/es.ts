@@ -195,15 +195,17 @@ export const es: Messages = {
       ],
       multiSelectNotes: ["**Levantar el stack**", "**Apagarlo todo**"],
       noteSample:
-        "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace a https://example.com. Haz clic fuera para verla renderizada de nuevo.",
+        "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace, p. ej. https://example.com. Haz clic fuera para verla renderizada de nuevo.",
     },
     gettingStarted: {
       intro:
-        "Bienvenido a CommandPad. Aquí construyes **libros de comandos**: documentos que mezclan los comandos que ejecutas a menudo con las notas que los explican.",
+        "Bienvenido a CommandPad. Aquí construyes **libros de comandos**: documentos que mezclan los comandos que ejecutas a menudo con las notas que ayudan a explicarlos.",
       journey:
-        "Esta guía te acompaña a través de la aplicación en el mismo orden en que la descubrirías naturalmente. Comienzas en el espacio de trabajo y su barra lateral, luego conoces los tres tipos de bloques con los que se construye todo libro y, finalmente, las variables, la característica que hace que los bloques de comandos sean realmente potentes. Léela de principio a fin o salta a cualquier sección desde el índice de la izquierda.",
+        "Esta guía te ayudará a entender cómo funciona la aplicación para que le saques todo el provecho. Comenzarás aprendiendo sobre el espacio de trabajo y su barra lateral, luego conocerás los tres tipos de bloques con los que construirás tus libros de comandos y, para terminar, las variables: la característica que hace que los bloques de comando sean realmente potentes.",
+      navigate:
+        "Léela de principio a fin o salta a cualquier sección desde el índice de la izquierda.",
       tryIt:
-        "La mayoría de secciones incluye un ejemplo en vivo marcado como **Pruébalo**. Son piezas reales e interactivas de la app: experimenta con libertad, nada de lo que hagas en ellas toca tu espacio de trabajo real, y el botón de flecha en la esquina de cada ejemplo lo reinicia en cualquier momento.",
+        "La mayoría de secciones incluye un ejemplo interactivo marcado como **Pruébalo**. Son piezas reales de la aplicación en las que puedes experimentar con total libertad: nada de lo que hagas en ellas toca tu espacio de trabajo. Aquí se aprende haciendo. Y siempre puedes reiniciar un ejemplo con el botón de flecha de su esquina superior derecha.",
     },
     workspace: {
       intro:
@@ -239,12 +241,12 @@ export const es: Messages = {
     tabs: {
       intro: "Cada pestaña contiene un libro abierto.",
       items: [
-        "Haz clic en una pestaña para cambiar a ella.",
-        "**Clic con la rueda** en una pestaña para cerrarla.",
+        "**Haz clic** en una pestaña para cambiar a ella.",
         "**Arrastra** una pestaña para reordenarla.",
-        "**Suelta bloques sobre una pestaña** para copiarlos dentro de ella.",
-        "Una barra de acento en la parte inferior marca la pestaña activa de un vistazo.",
+        "**Clic con la rueda** del ratón en una pestaña para cerrarla.",
       ],
+      autoCreate:
+        "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:
         "Una pestaña toma su nombre del primer bloque de nota de su libro, así que tus pestañas se describen solas. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Prueba también a cambiar, reordenar y cerrar pestañas.",
     },
@@ -252,7 +254,7 @@ export const es: Messages = {
       intro:
         "La barra lateral contiene la biblioteca de libros y el panel de variables.",
       items: [
-        "**Contraer / expandir**: haz clic en el botón de flecha o usa el atajo de la barra lateral.",
+        "**Contraer / expandir**: haz clic en el botón de flecha o usa su atajo de teclado.",
         "**Mover a izquierda / derecha**: haz clic en el botón de disposición para mover la barra lateral al otro lado de la pantalla.",
         "**Redimensionar**: arrastra el borde interior de la barra lateral; doble clic para contraerla.",
       ],
@@ -267,12 +269,12 @@ export const es: Messages = {
         "Haz clic en cualquier entrada para abrirla. Si ya está abierta en una pestaña, esa pestaña pasa a estar activa.",
         "Elimina un libro de la biblioteca con el botón que aparece al pasar el cursor sobre la fila.",
         "Arrastra el control a la izquierda de una entrada para reordenar la lista.",
-        "Usa la **barra de búsqueda** para filtrar libros por nombre.",
+        "Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.",
       ],
       autoLabel:
         "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca, de modo que las entradas se describen solas. En caso contrario se usa el nombre del archivo importado.",
       labelDetails:
-        "Las etiquetas se limpian primero: se quitan las marcas de markdown y lo que pase de 60 caracteres se recorta.",
+        "Las etiquetas se normalizan: se quita el formato markdown y lo que pase de 60 caracteres se recorta.",
       autoSave:
         "Los cambios hechos al libro activo se guardan automáticamente en su entrada de la biblioteca.",
     },
@@ -280,7 +282,7 @@ export const es: Messages = {
       intro:
         "Las variables se definen en la sección **VARIABLES** de la barra lateral. Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas, y las variables con clave vacía se ignoran.",
       usage:
-        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{NAMESPACE}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para detectar sobras.",
+        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{NAMESPACE}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
       unresolved:
         "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**. Copiar sigue funcionando: la referencia se copia tal cual está escrita, como {NOMBRE}.",
       duplicatesAndEmpty:
@@ -288,7 +290,7 @@ export const es: Messages = {
     },
     variableReferences: {
       intro:
-        "El valor de una variable puede referenciar otras variables. Las referencias se resuelven recursivamente, así que puedes construir valores como `https://{HOST}/api` a partir de piezas más pequeñas.",
+        "El valor de una variable puede referenciar otras variables; estas se resuelven recursivamente. Así puedes construir valores como `https://{HOST}/api` a partir de piezas más pequeñas.",
       circular:
         "Las referencias circulares son seguras: si dos variables se referencian entre sí, la app detecta el bucle y deja la referencia como texto plano.",
     },
@@ -312,7 +314,6 @@ export const es: Messages = {
     blocks: {
       intro:
         "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal.",
-      tip: "Si no hay pestañas abiertas y agregas un bloque (o creas una variable), se crea automáticamente una pestaña sin título.",
     },
     commandBlock: {
       intro:
@@ -320,34 +321,33 @@ export const es: Messages = {
       preview:
         "**Vista previa** (siempre visible): el comando exactamente como se copiará. Haz clic en **Copiar** para enviarlo a tu portapapeles.",
       editor:
-        "**Editor** (contraíble): donde escribes el comando, con el prefijo `$`. Usa el botón de flecha para ocultarlo cuando solo necesites la vista previa.",
+        "**Editor** (contraíble): donde escribes el comando. Usa el botón de flecha para ocultarlo cuando solo necesites la vista previa.",
       multiline:
         "Los comandos pueden ocupar varias líneas, y el editor se desplaza hacia los lados cuando una línea se hace demasiado larga.",
       gutterNote:
         "El margen izquierdo marca la primera línea con `$` y numera cada línea extra. Prueba a agregar una línea abajo para ver crecer la numeración.",
       variablesTeaser:
-        "Los bloques de comando se vuelven mucho más útiles con las **variables**, que rellenan las partes de un comando que cambian. Se explican en la siguiente sección.",
+        "Los bloques de comando se vuelven mucho más útiles con las **variables**, que rellenan las partes de un comando que cambian. Se explican un poco más adelante, en su propia sección.",
     },
     noteBlock: {
       intro:
-        "Un bloque de texto libre. Los bloques de nota se expanden horizontal y verticalmente mientras escribes.",
+        "Un bloque de texto libre. Las notas se expanden a lo alto y a lo ancho mientras escribes.",
       styles:
-        "Hay tres estilos de texto seleccionables al pasar el cursor: **título** (grande, en negrita), **subtítulo** (mediano, acentuado) y **cuerpo** (prosa por defecto).",
-      markdown: "Las notas soportan markdown en línea:",
+        "Hay tres estilos de texto seleccionables al pasar el cursor: **título** (grande, en negrita), **subtítulo** (mediano, acentuado) y **cuerpo** (la prosa por defecto).",
+      markdown: "Las notas soportan formato markdown:",
       tableSyntax: "Sintaxis",
       tableResult: "Resultado",
       autoUrls:
         "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables, sin necesidad de markdown.",
       noNesting:
-        "Los estilos no se combinan: negrita y código no pueden mezclarse en las mismas palabras, por ejemplo. Gana el estilo que empieza primero.",
-      links:
-        "Para abrir un enlace, mantén `Ctrl` y haz clic en él. En modo lectura, los enlaces se pueden abrir con un clic directo.",
+        "Los estilos no se combinan: negrita y cursiva no pueden mezclarse en las mismas palabras, por ejemplo. Gana el estilo que empieza primero.",
+      links: "Para abrir un enlace, mantén `Ctrl` y haz clic en él.",
       wrapKeys:
-        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y **Ctrl+´** en comillas invertidas; escribir **(**, **[** o **{** lo envuelve en ese par de corchetes.",
+        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y **Ctrl+´** en comillas invertidas; escribir **(**, **[** o **{** lo envuelve en ese par.",
     },
     dividerBlock: {
       intro:
-        "Un separador visual. Se estira hasta igualar el ancho del bloque más ancho, lo que lo hace perfecto para dividir un libro en secciones visuales.",
+        "No es más que un separador visual. Se estira hasta igualar el ancho del bloque más ancho, lo que lo hace perfecto para dividir un libro en secciones. Eso sí, tiene una anchura mínima que le impide encogerse hasta volverse ilegible.",
       demoNote:
         "Escribe dentro de esta nota y observa cómo el divisor de abajo crece y se encoge con ella.",
     },
@@ -375,11 +375,11 @@ export const es: Messages = {
         "El texto de bloques y notas no puede editarse.",
         "La estructura de bloques no puede cambiarse (sin agregar, eliminar ni reordenar).",
         "Los valores de las variables sí pueden cambiarse.",
-        "Los libros sí pueden cambiarse.",
-        "Los enlaces en notas se abren con un clic directo.",
+        "Los libros sí pueden abrirse.",
+        "Los enlaces se pueden abrir con un clic directo.",
       ],
       persisted:
-        "El modo forma parte de tus preferencias guardadas, así que recargar la app te mantiene en modo lectura.",
+        "Este modo forma parte de tus preferencias guardadas, así que recargar la app te mantiene en modo lectura.",
       exit: "Haz clic en el **icono de lápiz** para volver al modo edición.",
     },
     export: {
@@ -397,7 +397,7 @@ export const es: Messages = {
     },
     language: {
       intro:
-        "Usa el **selector de idioma** de la cabecera para elegir el idioma de la interfaz. Actualmente están disponibles English y Español.",
+        "Usa el **selector de idioma** de la cabecera para elegir el idioma de la interfaz.",
       detection:
         "La app detecta el idioma de tu navegador en la primera visita, y tu elección se recuerda después.",
     },

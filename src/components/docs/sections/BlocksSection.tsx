@@ -36,7 +36,6 @@ export function BlocksDocs() {
   return (
     <>
       <Prose text={t.docs.blocks.intro} />
-      <Prose text={t.docs.blocks.tip} />
     </>
   );
 }
@@ -86,8 +85,8 @@ export function NoteBlockDocs() {
           ))}
         </tbody>
       </table>
-      <Prose text={t.docs.noteBlock.autoUrls} />
       <Prose text={t.docs.noteBlock.noNesting} />
+      <Prose text={t.docs.noteBlock.autoUrls} />
       <Prose text={t.docs.noteBlock.links} />
       <Prose text={t.docs.noteBlock.wrapKeys} />
       <NoteDemo />

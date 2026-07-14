@@ -147,6 +147,7 @@ export interface Messages {
     gettingStarted: {
       intro: string;
       journey: string;
+      navigate: string;
       tryIt: string;
     };
     workspace: {
@@ -165,6 +166,7 @@ export interface Messages {
     tabs: {
       intro: string;
       items: string[];
+      autoCreate: string;
       labelDemo: string;
     };
     sidebar: {
@@ -203,7 +205,6 @@ export interface Messages {
     };
     blocks: {
       intro: string;
-      tip: string;
     };
     commandBlock: {
       intro: string;
