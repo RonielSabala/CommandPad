@@ -8,7 +8,7 @@ import { DragIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
 import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import { getActiveTab, useStore, useStoreApi } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { memo, useRef, useState } from "react";
@@ -29,6 +29,7 @@ export const BlockItem = memo(function BlockItem({
   secretKeys,
 }: Props) {
   const t = useTranslation();
+  const store = useStoreApi();
   const isSelected = useStore((state) => state.selectedBlockIds.has(block.id));
   const isFlashing = useStore((state) => state.flashBlockIds.has(block.id));
   const clearFlash = useStore((state) => state.clearFlash);
@@ -64,7 +65,7 @@ export const BlockItem = memo(function BlockItem({
           return;
         }
 
-        const state = useStore.getState();
+        const state = store.getState();
 
         blockDrag.srcId = block.id;
         blockDrag.sourceTabId = getActiveTab(state)?.id ?? null;
@@ -86,7 +87,7 @@ export const BlockItem = memo(function BlockItem({
       onDragOver={(event) => {
         event.preventDefault();
 
-        const activeTabId = getActiveTab(useStore.getState())?.id ?? null;
+        const activeTabId = getActiveTab(store.getState())?.id ?? null;
         const isCrossTab =
           !!blockDrag.srcId && blockDrag.sourceTabId !== activeTabId;
 
@@ -112,7 +113,7 @@ export const BlockItem = memo(function BlockItem({
           return;
         }
 
-        const state = useStore.getState();
+        const state = store.getState();
         const activeTabId = getActiveTab(state)?.id ?? null;
 
         // Blocks arriving from another tab
@@ -126,7 +127,7 @@ export const BlockItem = memo(function BlockItem({
         }
       }}
       onMouseEnter={() => {
-        if (lasso.active && useStore.getState().mode !== AppMode.READ) {
+        if (lasso.active && store.getState().mode !== AppMode.READ) {
           setBlockSelected(block.id, lasso.mode === LassoMode.SELECT);
         }
       }}

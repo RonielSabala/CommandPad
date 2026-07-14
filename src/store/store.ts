@@ -1,4 +1,9 @@
-import { create } from "zustand";
+import { createContext, useContext } from "react";
+import {
+  createStore,
+  useStore as useZustandStore,
+  type StoreApi,
+} from "zustand";
 
 import {
   DEBOUNCE_SAVE_MS,
@@ -56,7 +61,7 @@ interface ConfirmOptions {
   danger?: boolean;
 }
 
-interface StoreState {
+export interface StoreState {
   // Data
   tabs: Tab[];
   activeTabId: string | null;
@@ -289,10 +294,76 @@ function relabelActive(state: StoreState): {
   return relabelTab(state, getActiveTab(state));
 }
 
-let bootstrapped = false;
+export type AppStoreApi = StoreApi<StoreState>;
 
-export const useStore = create<StoreState>()((set, get) => ({
-  tabs: [],
+export interface AppStoreOptions {
+  /**
+   * Demo stores back the real components inside the docs playgrounds: same
+   * state and actions, but persistence writes become no-ops, runbook content
+   * lives in an in-memory map instead of IndexedDB, and dialogs auto-resolve
+   * (the docs route mounts no modals).
+   */
+  isDemo?: boolean;
+  /** Pre-seeded runbook content for demo stores, keyed by runbook id */
+  contentSeed?: Record<string, RunbookContent>;
+}
+
+// The persistence writes actions perform; demo stores swap them for no-ops
+type PersistenceWrites = Pick<
+  typeof persistence,
+  "saveTabsMeta" | "saveRunbookLibrary" | "saveUiState" | "saveSidebarSections"
+>;
+
+const NOOP_PERSISTENCE: PersistenceWrites = {
+  saveTabsMeta: () => {},
+  saveRunbookLibrary: () => {},
+  saveUiState: () => {},
+  saveSidebarSections: () => {},
+};
+
+// Where runbook content lives: IndexedDB for the app, a Map for demo stores
+interface ContentDb {
+  get: (id: string) => Promise<RunbookContent | null>;
+  put: (id: string, content: RunbookContent) => Promise<void>;
+  delete: (id: string) => Promise<void>;
+}
+
+const REAL_CONTENT_DB: ContentDb = {
+  get: getRunbookContent,
+  put: putRunbookContent,
+  delete: deleteRunbookContent,
+};
+
+function createMemoryContentDb(
+  seed: Record<string, RunbookContent> = {},
+): ContentDb {
+  const contents = new Map(Object.entries(seed));
+  return {
+    get: async (id) => contents.get(id) ?? null,
+    put: async (id, content) => {
+      contents.set(id, content);
+    },
+    delete: async (id) => {
+      contents.delete(id);
+    },
+  };
+}
+
+export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
+  const { isDemo = false, contentSeed } = options;
+  const persist = isDemo ? NOOP_PERSISTENCE : persistence;
+  const contentDb = isDemo ? createMemoryContentDb(contentSeed) : REAL_CONTENT_DB;
+
+  let bootstrapped = false;
+
+  return createStore<StoreState>()((set, get) => {
+    const debouncedSaveState = debounce(
+      () => get().saveState(),
+      DEBOUNCE_SAVE_MS,
+    );
+
+    return {
+      tabs: [],
   activeTabId: null,
   runbookLibrary: [],
   activeRunbookId: null,
@@ -332,9 +403,9 @@ export const useStore = create<StoreState>()((set, get) => ({
       return;
     }
 
-    persistence.saveTabsMeta(state.tabs, state.activeTabId);
-    persistence.saveRunbookLibrary(state.runbookLibrary, state.activeRunbookId);
-    persistence.saveUiState({
+    persist.saveTabsMeta(state.tabs, state.activeTabId);
+    persist.saveRunbookLibrary(state.runbookLibrary, state.activeRunbookId);
+    persist.saveUiState({
       mode: state.mode,
       sidebarCollapsed: state.sidebarCollapsed,
       sidebarPosition: state.sidebarPosition,
@@ -345,7 +416,7 @@ export const useStore = create<StoreState>()((set, get) => ({
 
     const active = getActiveTab(state);
     if (active?.runbookId) {
-      putRunbookContent(active.runbookId, {
+      contentDb.put(active.runbookId, {
         variables: active.variables,
         blocks: active.blocks,
       }).catch((error) =>
@@ -390,7 +461,7 @@ export const useStore = create<StoreState>()((set, get) => ({
           if (!entry || runbookId === null) {
             continue;
           }
-          const content = await getRunbookContent(runbookId);
+          const content = await contentDb.get(runbookId);
           if (!content) {
             continue;
           }
@@ -461,8 +532,8 @@ export const useStore = create<StoreState>()((set, get) => ({
         focusedRunbookId: null,
       }));
 
-      await putRunbookContent(newRunbookId, { variables: [], blocks: [] });
-      persistence.saveRunbookLibrary(
+      await contentDb.put(newRunbookId, { variables: [], blocks: [] });
+      persist.saveRunbookLibrary(
         get().runbookLibrary,
         get().activeRunbookId,
       );
@@ -474,7 +545,7 @@ export const useStore = create<StoreState>()((set, get) => ({
       }));
     }
 
-    persistence.saveTabsMeta(get().tabs, get().activeTabId);
+    persist.saveTabsMeta(get().tabs, get().activeTabId);
     return tab;
   },
 
@@ -488,7 +559,7 @@ export const useStore = create<StoreState>()((set, get) => ({
         getActiveTab({ ...s, activeTabId: tabId })?.runbookId ?? null,
       selectKeyHeld: false,
     }));
-    persistence.saveTabsMeta(get().tabs, get().activeTabId);
+    persist.saveTabsMeta(get().tabs, get().activeTabId);
   },
 
   closeTab: (tabId) => {
@@ -511,7 +582,7 @@ export const useStore = create<StoreState>()((set, get) => ({
     const activeRunbookId =
       tabs.find((t) => t.id === activeTabId)?.runbookId ?? null;
     set({ tabs, activeTabId, activeRunbookId });
-    persistence.saveTabsMeta(tabs, activeTabId);
+    persist.saveTabsMeta(tabs, activeTabId);
   },
 
   reorderTabs: (sourceId, targetId, insertAfter) => {
@@ -529,13 +600,13 @@ export const useStore = create<StoreState>()((set, get) => ({
     tabs.splice(dstIdx, 0, dragged);
 
     set({ tabs });
-    persistence.saveTabsMeta(tabs, get().activeTabId);
+    persist.saveTabsMeta(tabs, get().activeTabId);
   },
 
   // --- Runbook library ---
 
   loadRunbookFromLibrary: async (runbookId) => {
-    const content = await getRunbookContent(runbookId);
+    const content = await contentDb.get(runbookId);
     if (!content) {
       return;
     }
@@ -559,8 +630,8 @@ export const useStore = create<StoreState>()((set, get) => ({
       activeRunbookId: runbookId,
     }));
 
-    persistence.saveTabsMeta(get().tabs, get().activeTabId);
-    persistence.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+    persist.saveTabsMeta(get().tabs, get().activeTabId);
+    persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
   },
 
   removeRunbookFromLibrary: async (id) => {
@@ -569,7 +640,7 @@ export const useStore = create<StoreState>()((set, get) => ({
       return;
     }
 
-    await deleteRunbookContent(id);
+    await contentDb.delete(id);
 
     const runbookLibrary = state.runbookLibrary.filter(
       (item) => item.id !== id,
@@ -613,8 +684,8 @@ export const useStore = create<StoreState>()((set, get) => ({
       runbookLibrary,
       focusedRunbookId,
     });
-    persistence.saveTabsMeta(tabs, activeTabId);
-    persistence.saveRunbookLibrary(runbookLibrary, activeRunbookId);
+    persist.saveTabsMeta(tabs, activeTabId);
+    persist.saveRunbookLibrary(runbookLibrary, activeRunbookId);
   },
 
   addRunbookToLibrary: async (content, filename, rawFilename) => {
@@ -643,7 +714,7 @@ export const useStore = create<StoreState>()((set, get) => ({
         return;
       }
 
-      await putRunbookContent(existing.id, content);
+      await contentDb.put(existing.id, content);
       set((s) => ({
         runbookLibrary: s.runbookLibrary.map((item) =>
           item.id === existing.id
@@ -660,18 +731,18 @@ export const useStore = create<StoreState>()((set, get) => ({
             : t,
         ),
       }));
-      persistence.saveRunbookLibrary(
+      persist.saveRunbookLibrary(
         get().runbookLibrary,
         get().activeRunbookId,
       );
       if (existing.id === get().activeRunbookId) {
-        persistence.saveTabsMeta(get().tabs, get().activeTabId);
+        persist.saveTabsMeta(get().tabs, get().activeTabId);
       }
       return;
     }
 
     const newId = generateId();
-    await putRunbookContent(newId, content);
+    await contentDb.put(newId, content);
     set((s) => ({
       runbookLibrary: [
         ...s.runbookLibrary,
@@ -680,7 +751,7 @@ export const useStore = create<StoreState>()((set, get) => ({
     }));
 
     if (get().activeRunbookId) {
-      persistence.saveRunbookLibrary(
+      persist.saveRunbookLibrary(
         get().runbookLibrary,
         get().activeRunbookId,
       );
@@ -757,7 +828,7 @@ export const useStore = create<StoreState>()((set, get) => ({
     items.splice(targetIndex, 0, removed);
 
     set({ runbookLibrary: items });
-    persistence.saveRunbookLibrary(items, get().activeRunbookId);
+    persist.saveRunbookLibrary(items, get().activeRunbookId);
   },
 
   setRunbookFocus: (id) => set({ focusedRunbookId: id }),
@@ -1068,7 +1139,7 @@ export const useStore = create<StoreState>()((set, get) => ({
     // The target may not be the active tab, so persist its content explicitly
     const updated = get().tabs.find((t) => t.id === targetTabId);
     if (updated?.runbookId) {
-      putRunbookContent(updated.runbookId, {
+      contentDb.put(updated.runbookId, {
         variables: updated.variables,
         blocks: updated.blocks,
       }).catch((error) =>
@@ -1250,7 +1321,7 @@ export const useStore = create<StoreState>()((set, get) => ({
   toggleTheme: () => {
     set((s) => ({ theme: s.theme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT }));
     const state = get();
-    persistence.saveUiState({
+    persist.saveUiState({
       mode: state.mode,
       sidebarCollapsed: state.sidebarCollapsed,
       sidebarPosition: state.sidebarPosition,
@@ -1266,7 +1337,7 @@ export const useStore = create<StoreState>()((set, get) => ({
     }
     set({ language });
     const state = get();
-    persistence.saveUiState({
+    persist.saveUiState({
       mode: state.mode,
       sidebarCollapsed: state.sidebarCollapsed,
       sidebarPosition: state.sidebarPosition,
@@ -1317,7 +1388,7 @@ export const useStore = create<StoreState>()((set, get) => ({
   toggleRunbookSection: () => {
     set((s) => ({ runbookSectionCollapsed: !s.runbookSectionCollapsed }));
     const state = get();
-    persistence.saveSidebarSections({
+    persist.saveSidebarSections({
       runbookSectionCollapsed: state.runbookSectionCollapsed,
       variablesSectionCollapsed: state.variablesSectionCollapsed,
     });
@@ -1326,7 +1397,7 @@ export const useStore = create<StoreState>()((set, get) => ({
   toggleVariablesSection: () => {
     set((s) => ({ variablesSectionCollapsed: !s.variablesSectionCollapsed }));
     const state = get();
-    persistence.saveSidebarSections({
+    persist.saveSidebarSections({
       runbookSectionCollapsed: state.runbookSectionCollapsed,
       variablesSectionCollapsed: state.variablesSectionCollapsed,
     });
@@ -1343,7 +1414,7 @@ export const useStore = create<StoreState>()((set, get) => ({
   setLinkKeyHeld: (held) => set({ linkKeyHeld: held }),
   setScrollTop: (scrollTop) => {
     set((s) => withActiveTab(s, (tab) => ({ ...tab, scrollTop })));
-    persistence.saveTabsMeta(get().tabs, get().activeTabId);
+    persist.saveTabsMeta(get().tabs, get().activeTabId);
   },
 
   clearUserInteraction: () =>
@@ -1376,8 +1447,13 @@ export const useStore = create<StoreState>()((set, get) => ({
 
   // --- Dialogs ---
 
-  confirm: (message, options) =>
-    new Promise<boolean>((resolve) => {
+  confirm: (message, options) => {
+    // Demo stores have no modals mounted; treat every confirm as accepted
+    if (isDemo) {
+      return Promise.resolve(true);
+    }
+
+    return new Promise<boolean>((resolve) => {
       const defaultLabel = getMessages(get().language).confirm.defaultTitle;
       set({
         confirmDialog: {
@@ -1388,13 +1464,21 @@ export const useStore = create<StoreState>()((set, get) => ({
           danger: options?.danger ?? false,
         },
       });
-    }),
+    });
+  },
   resolveConfirm: (result) => {
     get().confirmDialog?.resolve(result);
     set({ confirmDialog: null });
   },
-  alert: (message) =>
-    new Promise<void>((resolve) => set({ alertDialog: { message, resolve } })),
+  alert: (message) => {
+    if (isDemo) {
+      return Promise.resolve();
+    }
+
+    return new Promise<void>((resolve) =>
+      set({ alertDialog: { message, resolve } }),
+    );
+  },
   resolveAlert: () => {
     get().alertDialog?.resolve();
     set({ alertDialog: null });
@@ -1412,8 +1496,11 @@ export const useStore = create<StoreState>()((set, get) => ({
       return;
     }
 
-    await deleteRunbookDb();
-    localStorage.clear();
+    // Never let a demo store wipe the user's real data
+    if (!isDemo) {
+      await deleteRunbookDb();
+      localStorage.clear();
+    }
 
     set({
       tabs: [],
@@ -1426,9 +1513,25 @@ export const useStore = create<StoreState>()((set, get) => ({
       focusedRunbookId: null,
     });
   },
-}));
+    };
+  });
+}
 
-const debouncedSaveState = debounce(
-  () => useStore.getState().saveState(),
-  DEBOUNCE_SAVE_MS,
-);
+/** The app's real store: persisted, bootstrapped once from App. */
+export const appStore = createAppStore();
+
+// Components resolve their store from context so the same components can run
+// against an isolated demo store inside the docs playgrounds. Everything not
+// wrapped in a provider gets the real app store.
+const StoreContext = createContext<AppStoreApi>(appStore);
+
+export const StoreProvider = StoreContext.Provider;
+
+/** The store api (getState/setState) of the nearest provider. */
+export function useStoreApi(): AppStoreApi {
+  return useContext(StoreContext);
+}
+
+export function useStore<T>(selector: (state: StoreState) => T): T {
+  return useZustandStore(useContext(StoreContext), selector);
+}

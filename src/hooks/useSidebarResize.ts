@@ -3,7 +3,7 @@ import { CssClass } from "@/common/constants/css";
 import { Cursor } from "@/common/constants/dom";
 import { EventType, MouseButton } from "@/common/constants/events";
 import { SidebarPosition } from "@/common/enums";
-import { useStore } from "@/store/store";
+import { useStore, useStoreApi } from "@/store/store";
 import {
   useCallback,
   type MouseEvent as ReactMouseEvent,
@@ -11,6 +11,7 @@ import {
 } from "react";
 
 export function useSidebarResize() {
+  const store = useStoreApi();
   const setSidebarSize = useStore((state) => state.setSidebarSize);
   const toggleSidebar = useStore((state) => state.toggleSidebar);
   const resetSidebarSize = useStore((state) => state.resetSidebarSize);
@@ -34,7 +35,7 @@ export function useSidebarResize() {
 
       const rect = sidebar.getBoundingClientRect();
       const isRight =
-        useStore.getState().sidebarPosition === SidebarPosition.RIGHT;
+        store.getState().sidebarPosition === SidebarPosition.RIGHT;
 
       document.body.classList.add(CssClass.SIDEBAR_RESIZING);
       document.body.style.cursor = Cursor.COL_RESIZE;
@@ -57,7 +58,7 @@ export function useSidebarResize() {
       window.addEventListener(EventType.POINTER_MOVE, onMove);
       window.addEventListener(EventType.POINTER_UP, onUp);
     },
-    [setSidebarSize],
+    [setSidebarSize, store],
   );
 
   const onDoubleClick = useCallback(
@@ -68,7 +69,7 @@ export function useSidebarResize() {
 
       event.preventDefault();
 
-      const { sidebarCollapsed, sidebarWidth } = useStore.getState();
+      const { sidebarCollapsed, sidebarWidth } = store.getState();
       if (!sidebarCollapsed && sidebarWidth > SidebarWidth.DEFAULT) {
         resetSidebarSize();
         return;
@@ -76,7 +77,7 @@ export function useSidebarResize() {
 
       toggleSidebar();
     },
-    [toggleSidebar, resetSidebarSize],
+    [toggleSidebar, resetSidebarSize, store],
   );
 
   return { onPointerDown, onDoubleClick };

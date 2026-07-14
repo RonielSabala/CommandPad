@@ -3,12 +3,14 @@ import { Anchor, Cursor, DataAttr } from "@/common/constants/dom";
 import { EventType, MouseButton } from "@/common/constants/events";
 import { AppMode, LassoMode } from "@/common/enums";
 import { isModifierPressed, ModifierAction } from "@/common/keybindings";
-import { useStore } from "@/store/store";
+import { useStoreApi } from "@/store/store";
 import { useEffect } from "react";
 import { blockDrag, clearBlockDrag } from "./blockDrag";
 import { lasso } from "./lasso";
 
 export function useDocumentInteractions(): void {
+  const store = useStoreApi();
+
   useEffect(() => {
     let mouseX = 0;
     let mouseY = 0;
@@ -38,7 +40,7 @@ export function useDocumentInteractions(): void {
     };
 
     const onMouseDown = (event: MouseEvent) => {
-      const state = useStore.getState();
+      const state = store.getState();
       if (
         !isModifierPressed(event, ModifierAction.SELECT_BLOCKS) ||
         event.button !== MouseButton.LEFT ||
@@ -71,7 +73,7 @@ export function useDocumentInteractions(): void {
     };
 
     const onClick = (event: MouseEvent) => {
-      const state = useStore.getState();
+      const state = store.getState();
 
       if (isModifierPressed(event, ModifierAction.OPEN_LINK)) {
         const link = isOverLink(event.clientX, event.clientY);
@@ -117,5 +119,5 @@ export function useDocumentInteractions(): void {
       document.removeEventListener(EventType.MOUSE_UP, onMouseUp);
       document.removeEventListener(EventType.CLICK, onClick);
     };
-  }, []);
+  }, [store]);
 }

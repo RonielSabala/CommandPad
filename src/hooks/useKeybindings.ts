@@ -12,14 +12,16 @@ import {
     matchesKeybinding,
     ModifierAction,
 } from "@/common/keybindings";
-import { getActiveTab, useStore } from "@/store/store";
+import { getActiveTab, useStoreApi } from "@/store/store";
 import { openImportDialog } from "@/utils/importTrigger";
 import { useEffect } from "react";
 
 export function useKeybindings(): void {
+  const store = useStoreApi();
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      const state = useStore.getState();
+      const state = store.getState();
 
       if (matchesKeybinding(event, KeyBinding.NEW_TAB)) {
         event.preventDefault();
@@ -151,7 +153,7 @@ export function useKeybindings(): void {
 
     const onKeyUp = (event: KeyboardEvent) => {
       const key = event.key;
-      const state = useStore.getState();
+      const state = store.getState();
 
       if (key === ModifierKeyName[ModifierAction.SELECT_BLOCKS]) {
         state.setSelectKeyHeld(false);
@@ -164,7 +166,7 @@ export function useKeybindings(): void {
     };
 
     const onBlur = () => {
-      const state = useStore.getState();
+      const state = store.getState();
       state.setLinkKeyHeld(false);
       state.setSelectKeyHeld(false);
     };
@@ -177,5 +179,5 @@ export function useKeybindings(): void {
       document.removeEventListener(EventType.KEY_UP, onKeyUp);
       window.removeEventListener(EventType.BLUR, onBlur);
     };
-  }, []);
+  }, [store]);
 }
