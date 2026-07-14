@@ -191,7 +191,6 @@ function unescapeBraces(text: string): string {
   return text.replace(EscapedBraceRegex, "$1");
 }
 
-// Rewrite both plain {KEY} tokens and templated {KEY;param=...} usages
 export function renameVariableTokens(
   text: string,
   oldKey: string,

@@ -28,10 +28,7 @@ import { Language } from "@/i18n/types";
 import { debounce } from "@/utils/debounce";
 import { runExport } from "@/utils/export";
 import { generateId } from "@/utils/id";
-import {
-  getUsedVariableKeys,
-  renameVariableTokens,
-} from "@/utils/resolution";
+import { getUsedVariableKeys, renameVariableTokens } from "@/utils/resolution";
 import { getRunbookLabel } from "@/utils/runbook";
 
 import * as persistence from "./persistence";

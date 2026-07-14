@@ -28,7 +28,6 @@ export function DocsPage() {
 
   const initialHash = useMemo(
     () => location.hash.replace("#", ""),
-    // Only the hash present on mount matters (deep link); TOC clicks scroll directly
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
@@ -43,6 +42,7 @@ export function DocsPage() {
     document.getElementById(id)?.scrollIntoView({
       behavior: ScrollIntoView.BEHAVIOR_SMOOTH,
     });
+
     window.history.replaceState(null, "", `#${id}`);
   };
 
@@ -62,7 +62,6 @@ export function DocsPage() {
                 number={SECTION_NUMBERS[id]}
                 title={t.docs.toc[id]}
               >
-                {/* Keyed by language so demo state reseeds with localized samples */}
                 <Content key={language} />
               </DocsSection>
             );

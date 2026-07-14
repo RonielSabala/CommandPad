@@ -1,5 +1,6 @@
 import { COPY_FEEDBACK_TIMEOUT_MS } from "@/common/config";
 import { CommandSegmentType } from "@/common/enums";
+import "@/components/blocks/command/CommandBlock.css";
 import {
   CheckIcon,
   CopyIcon,
@@ -15,7 +16,6 @@ import {
   type VariableMap,
 } from "@/utils/resolution";
 import { useMemo, useRef, useState } from "react";
-import "@/components/blocks/command/CommandBlock.css";
 
 interface Props {
   text: string;

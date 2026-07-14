@@ -3,6 +3,7 @@ import { Prose, ProseList } from "../Prose";
 
 export function ExportDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.export.intro} />

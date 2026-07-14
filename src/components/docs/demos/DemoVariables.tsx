@@ -1,4 +1,5 @@
 import { EyeIcon } from "@/components/icons";
+import "@/components/sidebar/variables/VariableRow.css";
 import { useTranslation } from "@/i18n";
 import {
   getSecretKeys,
@@ -7,7 +8,6 @@ import {
 } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { useMemo, useState } from "react";
-import "@/components/sidebar/variables/VariableRow.css";
 import { DemoCommandBlock } from "./DemoCommandBlock";
 import { DocsDemo } from "./DocsDemo";
 
@@ -100,9 +100,7 @@ export function DemoVariables({
                   value={variable.key}
                   spellCheck={false}
                   autoComplete="off"
-                  onChange={(event) =>
-                    renameVarKey(index, event.target.value)
-                  }
+                  onChange={(event) => renameVarKey(index, event.target.value)}
                 />
                 <input
                   className="variable-value-input"
@@ -126,7 +124,10 @@ export function DemoVariables({
                 onClick={() => updateVar(index, { secret: !variable.secret })}
                 title={variable.secret ? t.variables.reveal : t.variables.mask}
               >
-                <EyeIcon slashed={variable.secret} className="icon-md icon-bold" />
+                <EyeIcon
+                  slashed={variable.secret}
+                  className="icon-md icon-bold"
+                />
               </button>
             </div>
           ))}

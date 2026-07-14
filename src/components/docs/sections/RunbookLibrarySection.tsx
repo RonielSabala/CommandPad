@@ -4,6 +4,7 @@ import { Prose, ProseList } from "../Prose";
 
 export function RunbookLibraryDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.runbookLibrary.intro} />

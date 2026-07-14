@@ -1,13 +1,13 @@
 import { MouseButton } from "@/common/constants/events";
 import { BlockType } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
+import "@/components/blocks/BlockItem.css";
+import "@/components/blocks/command/CommandBlock.css";
+import "@/components/blocks/note/NoteBlock.css";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
 import { useRef, useState, type KeyboardEvent } from "react";
-import "@/components/blocks/BlockItem.css";
-import "@/components/blocks/command/CommandBlock.css";
-import "@/components/blocks/note/NoteBlock.css";
 import { DocsDemo } from "./DocsDemo";
 
 type DemoBlockType = typeof BlockType.COMMAND | typeof BlockType.NOTE;

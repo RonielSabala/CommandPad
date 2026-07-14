@@ -3,6 +3,7 @@ import { Prose } from "../Prose";
 
 export function LanguageDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.language.intro} />

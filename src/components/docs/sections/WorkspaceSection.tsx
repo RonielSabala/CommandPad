@@ -4,6 +4,7 @@ import { Kbd, Prose, ProseList } from "../Prose";
 
 export function WorkspaceDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.workspace.intro} />
@@ -15,6 +16,7 @@ export function WorkspaceDocs() {
 
 export function HeaderDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.header.intro} />
@@ -25,6 +27,7 @@ export function HeaderDocs() {
 
 export function MainPanelDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.mainPanel.intro} />
@@ -35,6 +38,7 @@ export function MainPanelDocs() {
 
 export function SidebarDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.sidebar.intro} />

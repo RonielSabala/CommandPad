@@ -34,6 +34,7 @@ function QaItem({ question, answer }: { question: string; answer: string }) {
 
 export function QaDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.qa.intro} />

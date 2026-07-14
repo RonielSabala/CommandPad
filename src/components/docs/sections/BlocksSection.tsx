@@ -33,6 +33,7 @@ function NoteDemo() {
 
 export function BlocksDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.blocks.intro} />
@@ -42,6 +43,7 @@ export function BlocksDocs() {
 
 export function CommandBlockDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.commandBlock.intro} />
@@ -61,6 +63,7 @@ export function CommandBlockDocs() {
 
 export function NoteBlockDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.noteBlock.intro} />

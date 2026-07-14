@@ -4,7 +4,6 @@ import { AppMode, Theme } from "@/common/enums";
 import { useStore } from "@/store/store";
 import { useEffect } from "react";
 
-// Theme applies on every route (workspace and docs alike)
 export function useThemeClass(): void {
   const theme = useStore((state) => state.theme);
 
@@ -16,7 +15,6 @@ export function useThemeClass(): void {
   }, [theme]);
 }
 
-// Workspace-only flags; cleanup on unmount so they never leak into other routes
 export function useWorkspaceBodyClasses(): void {
   const mode = useStore((state) => state.mode);
   const selectKeyHeld = useStore((state) => state.selectKeyHeld);

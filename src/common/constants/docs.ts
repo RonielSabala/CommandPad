@@ -1,22 +1,21 @@
-// Documentation section ids double as URL hash anchors (/docs#<id>)
 export const DocsSectionId = {
   GETTING_STARTED: "getting-started",
   WORKSPACE: "workspace",
   HEADER: "header",
-  TABS: "tabs",
   SIDEBAR: "sidebar",
   MAIN_PANEL: "main-panel",
-  RUNBOOK_LIBRARY: "runbook-library",
-  VARIABLES: "variables",
-  VARIABLE_REFERENCES: "variable-references",
-  PARAMETERIZED_PLACEHOLDERS: "parameterized-placeholders",
-  ESCAPING_BRACES: "escaping-braces",
-  SECRET_VARIABLES: "secret-variables",
   BLOCKS: "blocks",
   COMMAND_BLOCK: "command-block",
   NOTE_BLOCK: "note-block",
   DIVIDER_BLOCK: "divider-block",
+  VARIABLES: "variables",
+  SECRET_VARIABLES: "secret-variables",
+  VARIABLE_REFERENCES: "variable-references",
+  PARAMETERIZED_PLACEHOLDERS: "parameterized-placeholders",
+  ESCAPING_BRACES: "escaping-braces",
+  TABS: "tabs",
   MULTI_SELECT: "multi-select",
+  RUNBOOK_LIBRARY: "runbook-library",
   READ_MODE: "read-mode",
   EXPORT: "export",
   LANGUAGE: "language",
@@ -37,9 +36,7 @@ interface DocsSectionEntry {
   level: DocsSectionLevel;
 }
 
-// Display order; numbering (1, 1.1, 2, ...) derives from this list.
-// Ordered as a guided first-session journey: workspace, blocks, variables,
-// tabs, bulk editing, library, then reference material.
+// Display order
 export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.GETTING_STARTED, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.WORKSPACE, level: DocsSectionLevel.SECTION },
@@ -69,9 +66,9 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
 ];
 
 export function getDocsSectionNumbers(): Record<DocsSectionId, string> {
-  const numbers = {} as Record<DocsSectionId, string>;
   let section = 0;
   let subsection = 0;
+  const numbers = {} as Record<DocsSectionId, string>;
 
   for (const entry of DOCS_SECTION_ORDER) {
     if (entry.level === DocsSectionLevel.SECTION) {

@@ -27,10 +27,7 @@ export default function App() {
     <Routes>
       <Route path={AppRoute.WORKSPACE} element={<WorkspacePage />} />
       <Route path={AppRoute.DOCS} element={<DocsPage />} />
-      <Route
-        path="*"
-        element={<Navigate to={AppRoute.WORKSPACE} replace />}
-      />
+      <Route path="*" element={<Navigate to={AppRoute.WORKSPACE} replace />} />
     </Routes>
   );
 }

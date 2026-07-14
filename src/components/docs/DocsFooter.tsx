@@ -1,13 +1,10 @@
-import {
-  FooterCopyright,
-  FooterLinks,
-} from "@/components/sidebar/Footer";
+import { FooterCopyright, FooterLinks } from "@/components/sidebar/Footer";
+import "./DocsFooter.css";
 
-// Same author line and social links as the workspace sidebar footer
 export function DocsFooter() {
   return (
-    <footer className="docs-footer no-user-select">
-      <span className="docs-footer-copyright">
+    <footer id="docs-footer" className="no-user-select">
+      <span id="docs-footer-copyright">
         <FooterCopyright />
       </span>
       <FooterLinks />

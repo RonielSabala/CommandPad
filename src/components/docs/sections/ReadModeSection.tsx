@@ -3,6 +3,7 @@ import { Prose, ProseList } from "../Prose";
 
 export function ReadModeDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.readMode.intro} />

@@ -1,9 +1,9 @@
 import { MouseButton } from "@/common/constants/events";
 import { NoteStyle } from "@/common/enums";
 import { CloseIcon } from "@/components/icons";
+import "@/components/tabs/TabItem.css";
 import { useTranslation } from "@/i18n";
 import { useState, type DragEvent } from "react";
-import "@/components/tabs/TabItem.css";
 import { DemoNoteBlock } from "./DemoNoteBlock";
 import { DocsDemo } from "./DocsDemo";
 

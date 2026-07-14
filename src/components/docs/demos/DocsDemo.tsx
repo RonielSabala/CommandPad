@@ -8,10 +8,9 @@ interface Props {
   onReset: () => void;
 }
 
-// Framed live example; children are store-free replicas of real components.
-// Every demo is resettable so the reader can never break an example for good.
 export function DocsDemo({ children, onReset }: Props) {
   const t = useTranslation();
+
   return (
     <div className="docs-demo">
       <span className="docs-demo-label no-user-select">

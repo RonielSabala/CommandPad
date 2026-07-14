@@ -1,11 +1,11 @@
 import { DragGroup } from "@/common/enums";
 import { DragIcon, XIcon } from "@/components/icons";
+import "@/components/sidebar/runbooks/RunbookRow.css";
+import "@/components/sidebar/shared/SidebarSectionList.css";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
 import { useState } from "react";
-import "@/components/sidebar/runbooks/RunbookRow.css";
-import "@/components/sidebar/shared/SidebarSectionList.css";
 import { DocsDemo } from "./DocsDemo";
 
 interface DemoRunbook {

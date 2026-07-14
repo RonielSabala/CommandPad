@@ -1,11 +1,11 @@
 import { Key } from "@/common/constants/events";
 import { NoteStyle } from "@/common/enums";
+import "@/components/blocks/note/NoteBlock.css";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { useNoteFormatting } from "@/hooks/useNoteFormatting";
 import { useTabInsertion } from "@/hooks/useTabInsertion";
 import { useTranslation } from "@/i18n";
 import { useState } from "react";
-import "@/components/blocks/note/NoteBlock.css";
 
 const NOTE_STYLES: NoteStyle[] = [
   NoteStyle.HEADING,

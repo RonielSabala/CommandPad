@@ -4,6 +4,7 @@ import { Prose, ProseList } from "../Prose";
 
 export function MultiSelectDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.multiSelect.intro} />

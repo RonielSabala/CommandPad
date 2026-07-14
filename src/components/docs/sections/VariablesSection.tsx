@@ -4,6 +4,7 @@ import { Prose } from "../Prose";
 
 export function VariablesDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.variables.intro} />
@@ -21,6 +22,7 @@ export function VariablesDocs() {
 
 export function VariableReferencesDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.variableReferences.intro} />
@@ -38,6 +40,7 @@ export function VariableReferencesDocs() {
 
 export function ParameterizedPlaceholdersDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.parameterizedPlaceholders.intro} />
@@ -53,6 +56,7 @@ export function ParameterizedPlaceholdersDocs() {
 
 export function EscapingBracesDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.escapingBraces.intro} />
@@ -67,6 +71,7 @@ export function EscapingBracesDocs() {
 
 export function SecretVariablesDocs() {
   const t = useTranslation();
+
   return (
     <>
       <Prose text={t.docs.secretVariables.intro} />

@@ -1,10 +1,6 @@
 import { DocsScrollSpy } from "@/common/config";
 import { useEffect, useState, type RefObject } from "react";
 
-// Tracks which docs section currently occupies the top quarter of the
-// scroll container. Sections span the band while being read, so the first
-// intersecting id (in document order) is the active one; when the viewport
-// sits in a gap between sections, fall back to the last section above it.
 export function useScrollSpy(
   ids: readonly string[],
   rootRef: RefObject<HTMLElement | null>,
@@ -17,8 +13,8 @@ export function useScrollSpy(
       return;
     }
 
-    const intersecting = new Set<string>();
     const above = new Set<string>();
+    const intersecting = new Set<string>();
 
     const observer = new IntersectionObserver(
       (entries) => {
