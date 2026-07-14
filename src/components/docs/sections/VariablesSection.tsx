@@ -57,7 +57,10 @@ export function EscapingBracesDocs() {
     <>
       <Prose text={t.docs.escapingBraces.intro} />
       <Prose text={t.docs.escapingBraces.scope} />
-      <DemoVariables command="awk '\{print $1\}'" />
+      <DemoVariables
+        variables={[{ key: "USER", value: "admin" }]}
+        command={'echo "\\{USER\\} = {USER}"'}
+      />
     </>
   );
 }
