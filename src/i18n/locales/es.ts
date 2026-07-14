@@ -358,14 +358,14 @@ export const es: Messages = {
         "**Arrastra** el control de cualquier bloque seleccionado para mover todos los bloques seleccionados juntos, conservando el orden relativo.",
         "**Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella.",
         "**Duplicar**: `Ctrl+D` duplica el grupo completo, insertado después del último bloque seleccionado.",
-        "**Eliminar**: `Supr` elimina el grupo completo.",
+        "**Eliminar**: `Del` elimina el grupo completo.",
       ],
       clear:
         "Pulsa `Escape` o haz clic fuera de los controles de bloque para limpiar la selección.",
       dragToTabDelay:
         "Mientras arrastras bloques sobre la barra de pestañas, mantén el cursor un momento sobre una pestaña para cambiar a ella, y luego suelta.",
       demoHint:
-        "Pruébalo con los bloques de abajo: mantén `Shift` y haz clic en algunos bloques, luego pulsa `Ctrl+D` para duplicarlos o `Supr` para eliminarlos. `Escape` limpia la selección.",
+        "Pruébalo con los bloques de abajo: mantén `Shift` y haz clic en algunos bloques, luego pulsa `Ctrl+D` para duplicarlos o `Del` para eliminarlos. `Escape` limpia la selección.",
     },
     readMode: {
       intro:
