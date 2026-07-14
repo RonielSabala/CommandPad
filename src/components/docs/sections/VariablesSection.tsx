@@ -44,8 +44,8 @@ export function ParameterizedPlaceholdersDocs() {
       <Prose text={t.docs.parameterizedPlaceholders.fill} />
       <Prose text={t.docs.parameterizedPlaceholders.unresolved} />
       <DemoVariables
-        variables={[{ key: "A", value: "generic_path/{;user_path}" }]}
-        command="cd {A;user_path=my_path}"
+        variables={[{ key: "PROJECT", value: "projects/{;name}/src" }]}
+        command="cd {PROJECT;name=commandpad}"
       />
     </>
   );

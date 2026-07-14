@@ -295,7 +295,7 @@ export const es: Messages = {
     parameterizedPlaceholders: {
       intro:
         "El valor de una variable puede contener un marcador `{;nombre}` que no se rellena hasta que la variable es referenciada.",
-      fill: "Rellénalo por referencia con `{clave;nombre=valor}`. Proporciona varios marcadores separándolos con `;`, p. ej. `{A;p1=v1;p2=v2}`.",
+      fill: "Rellénalo por referencia con `{clave;nombre=valor}`: el valor se inyecta justo donde está el marcador, algo que una variable normal no puede hacer con la misma limpieza. Proporciona varios marcadores separándolos con `;`, p. ej. `{A;p1=v1;p2=v2}`.",
       unresolved:
         "Si una referencia omite el valor de un marcador, el marcador `{;nombre}` se deja en su lugar y el comando se considera sin resolver.",
     },

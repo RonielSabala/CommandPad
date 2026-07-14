@@ -284,7 +284,7 @@ export const en: Messages = {
     parameterizedPlaceholders: {
       intro:
         "A variable's value can contain a `{;name}` placeholder that isn't filled in until the variable is referenced.",
-      fill: "Fill it in per-reference with `{key;name=value}`. Supply multiple placeholders by separating them with `;`, e.g. `{A;p1=v1;p2=v2}`.",
+      fill: "Fill it in per-reference with `{key;name=value}`: the value is injected exactly where the placeholder sits, something a normal variable cannot do as cleanly. Supply multiple placeholders by separating them with `;`, e.g. `{A;p1=v1;p2=v2}`.",
       unresolved:
         "If a reference omits a placeholder's value, the `{;name}` marker is left in place and the command is treated as unresolved.",
     },
