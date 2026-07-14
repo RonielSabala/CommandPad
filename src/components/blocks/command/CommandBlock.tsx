@@ -1,5 +1,6 @@
 import { COPY_FEEDBACK_TIMEOUT_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
+import { Key } from "@/common/constants/events";
 import { CommandSegmentType } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
 import {
@@ -150,7 +151,14 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           rows={1}
           value={blockText}
           onChange={(event) => updateBlockText(blockId, event.target.value)}
-          onKeyDown={handleTabKey}
+          onKeyDown={(event) => {
+            if (event.key === Key.ESCAPE) {
+              event.currentTarget.blur();
+              return;
+            }
+
+            handleTabKey(event);
+          }}
         />
       </div>
     </div>

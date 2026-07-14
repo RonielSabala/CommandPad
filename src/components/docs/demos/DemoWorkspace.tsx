@@ -1,6 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr, InputSelector } from "@/common/constants/dom";
-import { MouseButton } from "@/common/constants/events";
+import { EventType, Key, MouseButton } from "@/common/constants/events";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import type { Block, Variable } from "@/common/types";
 import { RunbookRow } from "@/components/sidebar/runbooks/RunbookRow";
@@ -15,6 +15,7 @@ import {
 } from "@/store/store";
 import { getUsedVariableKeys } from "@/utils/resolution";
 import {
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -131,6 +132,38 @@ export function DemoRunbookList() {
 export function DemoSelectionArea({ children }: { children: ReactNode }) {
   const store = useStoreApi();
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  // Mirror the workspace's select-mode affordance: holding Shift toggles the
+  // body class that drives the dashed hover outline and disables the textarea
+  // text cursor. `useWorkspaceBodyClasses` is workspace-only, so scope it here.
+  useEffect(() => {
+    const setHeld = (held: boolean) =>
+      document.body.classList.toggle(CssClass.SELECT_KEY_HELD, held);
+
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === Key.SHIFT) {
+        setHeld(true);
+      }
+    };
+
+    const onKeyUp = (event: globalThis.KeyboardEvent) => {
+      if (event.key === Key.SHIFT) {
+        setHeld(false);
+      }
+    };
+
+    const onBlur = () => setHeld(false);
+
+    document.addEventListener(EventType.KEY_DOWN, onKeyDown);
+    document.addEventListener(EventType.KEY_UP, onKeyUp);
+    window.addEventListener(EventType.BLUR, onBlur);
+    return () => {
+      document.removeEventListener(EventType.KEY_DOWN, onKeyDown);
+      document.removeEventListener(EventType.KEY_UP, onKeyUp);
+      window.removeEventListener(EventType.BLUR, onBlur);
+      setHeld(false);
+    };
+  }, []);
 
   // Select on mousedown: a shift+click on text starts a browser text
   // selection, and the slightest drag swallows the click event

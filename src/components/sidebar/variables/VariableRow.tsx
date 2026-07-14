@@ -91,7 +91,7 @@ export const VariableRow = memo(function VariableRow({
             updateVariable(variableId, VariableField.KEY, event.target.value)
           }
           onKeyDown={(event) => {
-            if (event.key === Key.ENTER) {
+            if (event.key === Key.ENTER || event.key === Key.ESCAPE) {
               event.currentTarget.blur();
             }
           }}
@@ -108,7 +108,7 @@ export const VariableRow = memo(function VariableRow({
             updateVariable(variableId, VariableField.VALUE, event.target.value)
           }
           onKeyDown={(event) => {
-            if (event.key === Key.ENTER) {
+            if (event.key === Key.ENTER || event.key === Key.ESCAPE) {
               event.currentTarget.blur();
             }
           }}
