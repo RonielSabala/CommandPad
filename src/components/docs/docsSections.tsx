@@ -22,14 +22,21 @@ import {
   VariableReferencesDocs,
   VariablesDocs,
 } from "./sections/VariablesSection";
-import { SidebarDocs, WorkspaceDocs } from "./sections/WorkspaceSection";
+import {
+  HeaderDocs,
+  MainPanelDocs,
+  SidebarDocs,
+  WorkspaceDocs,
+} from "./sections/WorkspaceSection";
 
 // Content rendered below each numbered section heading
 export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {
   [DocsSectionId.GETTING_STARTED]: GettingStartedDocs,
   [DocsSectionId.WORKSPACE]: WorkspaceDocs,
+  [DocsSectionId.HEADER]: HeaderDocs,
   [DocsSectionId.TABS]: TabsDocs,
   [DocsSectionId.SIDEBAR]: SidebarDocs,
+  [DocsSectionId.MAIN_PANEL]: MainPanelDocs,
   [DocsSectionId.RUNBOOK_LIBRARY]: RunbookLibraryDocs,
   [DocsSectionId.VARIABLES]: VariablesDocs,
   [DocsSectionId.VARIABLE_REFERENCES]: VariableReferencesDocs,

@@ -158,8 +158,10 @@ export const en: Messages = {
     toc: {
       [DocsSectionId.GETTING_STARTED]: "Getting started",
       [DocsSectionId.WORKSPACE]: "Workspace",
+      [DocsSectionId.HEADER]: "Header",
       [DocsSectionId.TABS]: "Tabs",
       [DocsSectionId.SIDEBAR]: "Sidebar",
+      [DocsSectionId.MAIN_PANEL]: "Main panel",
       [DocsSectionId.RUNBOOK_LIBRARY]: "Runbook library",
       [DocsSectionId.VARIABLES]: "Variables",
       [DocsSectionId.VARIABLE_REFERENCES]: "Variable references",
@@ -196,9 +198,34 @@ export const en: Messages = {
     },
     workspace: {
       intro:
-        "The workspace is the main screen of the app: a header with global actions, a sidebar holding the runbook library and the variables panel, and the main panel where the active runbook's blocks live.",
+        "The workspace is the app's main screen. It is where you will spend most of your time building and polishing your runbooks. It is made of three areas:",
+      items: [
+        "The **header**: gathers the buttons with the app's global actions.",
+        "The **sidebar**: holds the runbook library and the variables panel.",
+        "The **main panel**: where every runbook you have open lives and, inside them, their blocks.",
+      ],
       persistence:
-        "Everything you do is saved automatically in your browser and restored when you come back. Nothing is ever sent to a server.",
+        "Everything you do is saved automatically in your browser and restored when you reload the page. Your data is never sent to a server.",
+    },
+    header: {
+      intro:
+        "The header gathers the actions that affect the whole app. From left to right:",
+      items: [
+        "The **CommandPad logo**: click it to reload the app.",
+        "The **padlock / pencil**: switches between read mode and edit mode. It has its own section later in this guide.",
+        "**Collapse all**: collapses or expands every command editor in the active runbook at once.",
+        "The **sun / moon**: switches between the dark and light themes.",
+        "The **language selector**: changes the interface language.",
+        "The **book**: opens this documentation.",
+        "The **red arrow**: resets the workspace. It wipes everything, so the app always asks you to confirm first.",
+        "**Export**: saves the active runbook to a file. It also has its own section later.",
+      ],
+    },
+    mainPanel: {
+      intro:
+        "The main panel is your workbench. At the top sits the **tabs bar** with your open runbooks; below it, the blocks of the active runbook; and at the end, the **NEW BLOCK** row to keep adding content.",
+      teaser:
+        "Blocks? Tabs? Don't worry: they are exactly what you will learn next.",
     },
     tabs: {
       intro: "Each tab holds one open runbook.",

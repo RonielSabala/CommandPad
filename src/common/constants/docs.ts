@@ -2,8 +2,10 @@
 export const DocsSectionId = {
   GETTING_STARTED: "getting-started",
   WORKSPACE: "workspace",
+  HEADER: "header",
   TABS: "tabs",
   SIDEBAR: "sidebar",
+  MAIN_PANEL: "main-panel",
   RUNBOOK_LIBRARY: "runbook-library",
   VARIABLES: "variables",
   VARIABLE_REFERENCES: "variable-references",
@@ -41,7 +43,9 @@ interface DocsSectionEntry {
 export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.GETTING_STARTED, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.WORKSPACE, level: DocsSectionLevel.SECTION },
+  { id: DocsSectionId.HEADER, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.SIDEBAR, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.MAIN_PANEL, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.BLOCKS, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.COMMAND_BLOCK, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.NOTE_BLOCK, level: DocsSectionLevel.SUBSECTION },

@@ -151,7 +151,16 @@ export interface Messages {
     };
     workspace: {
       intro: string;
+      items: string[];
       persistence: string;
+    };
+    header: {
+      intro: string;
+      items: string[];
+    };
+    mainPanel: {
+      intro: string;
+      teaser: string;
     };
     tabs: {
       intro: string;

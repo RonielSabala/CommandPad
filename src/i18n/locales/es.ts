@@ -163,8 +163,10 @@ export const es: Messages = {
     toc: {
       [DocsSectionId.GETTING_STARTED]: "Primeros pasos",
       [DocsSectionId.WORKSPACE]: "Espacio de trabajo",
+      [DocsSectionId.HEADER]: "Cabecera",
       [DocsSectionId.TABS]: "Pestañas",
       [DocsSectionId.SIDEBAR]: "Barra lateral",
+      [DocsSectionId.MAIN_PANEL]: "Panel principal",
       [DocsSectionId.RUNBOOK_LIBRARY]: "Biblioteca de libros",
       [DocsSectionId.VARIABLES]: "Variables",
       [DocsSectionId.VARIABLE_REFERENCES]: "Referencias de variables",
@@ -205,9 +207,34 @@ export const es: Messages = {
     },
     workspace: {
       intro:
-        "El espacio de trabajo es la pantalla principal de la app: una cabecera con acciones globales, una barra lateral con la biblioteca de libros y el panel de variables, y el panel principal donde viven los bloques del libro activo.",
+        "El espacio de trabajo es la pantalla principal de la app. Aquí es donde pasarás la mayor parte del tiempo armando y puliendo tus libros. Está formado por tres zonas:",
+      items: [
+        "La **cabecera**: reúne los botones con las acciones globales de la app.",
+        "La **barra lateral**: contiene la biblioteca de libros y el panel de variables.",
+        "El **panel principal**: aquí viven todos los libros que tengas abiertos y, dentro de ellos, sus bloques.",
+      ],
       persistence:
-        "Todo lo que haces se guarda automáticamente en tu navegador y se restaura cuando vuelves. Nada se envía nunca a un servidor.",
+        "Todo lo que haces se guarda automáticamente en tu navegador y se restaura al recargar la página. Tus datos nunca se envían a un servidor.",
+    },
+    header: {
+      intro:
+        "La cabecera reúne las acciones que afectan a toda la app. De izquierda a derecha:",
+      items: [
+        "El **logo de CommandPad**: haz clic en él para recargar la app.",
+        "El **candado / lápiz**: alterna entre el modo lectura y el modo edición. Tiene su propia sección más adelante.",
+        "**Colapsar todo**: contrae o expande de golpe todos los editores de comandos del libro activo.",
+        "El **sol / la luna**: cambia entre el tema oscuro y el claro.",
+        "El **selector de idioma**: cambia el idioma de la interfaz.",
+        "El **libro**: abre esta documentación.",
+        "La **flecha roja**: resetea el espacio de trabajo. Lo borra todo, así que la app siempre te pide confirmación antes.",
+        "**Exportar**: guarda el libro activo en un archivo. También tiene su propia sección más adelante.",
+      ],
+    },
+    mainPanel: {
+      intro:
+        "El panel principal es tu mesa de trabajo. Arriba está la **barra de pestañas** con tus libros abiertos; debajo, los bloques del libro activo; y al final, la fila **NUEVO BLOQUE** para seguir agregando contenido.",
+      teaser:
+        "¿Bloques? ¿Pestañas? No te preocupes: son justo lo que vas a aprender a continuación.",
     },
     tabs: {
       intro: "Cada pestaña contiene un libro abierto.",
