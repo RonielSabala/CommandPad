@@ -3,8 +3,7 @@
   border: var(--border-standard);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
-  padding: var(--space-12);
-  padding-top: var(--space-14);
+  padding: var(--space-14) var(--space-10) var(--space-12) var(--space-10);
   margin-bottom: var(--space-10);
 }
 
