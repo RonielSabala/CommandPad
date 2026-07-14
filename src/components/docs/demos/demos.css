@@ -70,6 +70,12 @@
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
 }
 
+/* Secret toggle stays inert before its own section explains it, without the disabled look */
+.docs-demo-secret-btn-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* Interactive tabs replica */
 
 .docs-demo-tabs {
