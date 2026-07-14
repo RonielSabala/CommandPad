@@ -72,7 +72,7 @@ export function SecretVariablesDocs() {
       <Prose text={t.docs.secretVariables.intro} />
       <DemoVariables
         variables={[{ key: "TOKEN", value: "s3cr3t-value", secret: true }]}
-        command='curl -H "Authorization: Bearer {TOKEN}" https://api.example.com'
+        command="curl -u admin:{TOKEN} https://api.example.com"
       />
     </>
   );
