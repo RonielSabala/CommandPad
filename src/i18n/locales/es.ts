@@ -244,11 +244,12 @@ export const es: Messages = {
         "**Haz clic** en una pestaña para cambiar a ella.",
         "**Arrastra** una pestaña para reordenarla.",
         "**Clic con la rueda** del ratón en una pestaña para cerrarla.",
+        "**Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva en blanco.",
       ],
       autoCreate:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:
-        "Una pestaña toma su nombre del primer bloque de nota de su libro, así que tus pestañas se describen solas. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Prueba también a cambiar, reordenar y cerrar pestañas.",
+        "Una pestaña toma su nombre del primer bloque de nota de su libro, así que tus pestañas se describen solas. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas y cierra alguna.",
     },
     sidebar: {
       intro:
@@ -286,7 +287,7 @@ export const es: Messages = {
       unresolved:
         "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**. Copiar sigue funcionando: la referencia se copia tal cual está escrita, como {NOMBRE}.",
       duplicatesAndEmpty:
-        "Un detalle más: si dos variables comparten la misma clave, gana la definida en último lugar.",
+        "Un detalle más: si dos variables comparten la misma clave, gana la definida en último lugar. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla y un botón de eliminar a la derecha. Pruébalos en las demos de esta sección.",
     },
     variableReferences: {
       intro:
@@ -313,7 +314,7 @@ export const es: Messages = {
     },
     blocks: {
       intro:
-        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal.",
+        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o usa los botones de **duplicar** y **eliminar** de la derecha. Cada demo de abajo es interactiva, así que pruébalos sin miedo.",
     },
     commandBlock: {
       intro:

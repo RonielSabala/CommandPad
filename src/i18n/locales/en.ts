@@ -235,11 +235,12 @@ export const en: Messages = {
         "**Click** a tab to switch to it.",
         "**Drag** a tab to reorder it.",
         "**Middle-click** a tab to close it.",
+        "**Click** the **+** at the end of the tabs bar to open a new blank tab.",
       ],
       autoCreate:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
-        "A tab is named by the first note block of its runbook, so your tabs describe themselves. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try switching, reordering, and closing tabs too.",
+        "A tab is named by the first note block of its runbook, so your tabs describe themselves. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, and close one.",
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",
@@ -275,7 +276,7 @@ export const en: Messages = {
       unresolved:
         "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**. Copying still works: the reference is copied as written, like {NAME}.",
       duplicatesAndEmpty:
-        "One more detail: if two variables share the same key, the one defined last wins.",
+        "One more detail: if two variables share the same key, the one defined last wins. Hover over a row to reveal its controls: a drag handle on the left to reorder it and a delete button on the right. Try them out in the demos throughout this section.",
     },
     variableReferences: {
       intro:
@@ -302,7 +303,7 @@ export const en: Messages = {
     },
     blocks: {
       intro:
-        "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel.",
+        "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or use the **duplicate** and **delete** buttons on the right. Every demo below is live, so go ahead and try them.",
     },
     commandBlock: {
       intro:

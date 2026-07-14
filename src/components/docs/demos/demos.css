@@ -65,11 +65,9 @@
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
 }
 
-/* The secret toggle stays inert before its own section explains it */
-.docs-demo-hide-secret .variable-secret-btn,
-.docs-demo-hide-secret .sidebar-section-list-row:hover .variable-secret-btn {
-  opacity: 0;
-  pointer-events: none;
+/* Hide the secret toggle before its own section explains it */
+.docs-demo-hide-secret .variable-secret-btn {
+  display: none;
 }
 
 /* Tabs demo: frame the panel below the real tabs bar */
