@@ -190,7 +190,7 @@ export const en: Messages = {
       intro:
         "Welcome to CommandPad. Here you build **runbooks**: documents that mix the commands you run often with the notes that explain them.",
       journey:
-        "This guide follows the order in which you would naturally discover the app: the workspace first, then blocks, then variables, then everything else. Read it top to bottom, or jump to any section from the contents on the left.",
+        "This guide walks you through the app in the same order you would naturally discover it. You start in the workspace and its sidebar, then meet the three block types every runbook is built from, and then variables, the feature that makes command blocks truly powerful. Read it top to bottom, or jump to any section from the contents on the left.",
       tryIt:
         "Most sections include a live example marked **Try it**. These are real, interactive pieces of the app: experiment freely, nothing you do in them touches your actual workspace, and the arrow button in the corner of each example resets it at any time.",
     },

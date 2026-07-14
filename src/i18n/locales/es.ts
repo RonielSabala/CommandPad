@@ -199,7 +199,7 @@ export const es: Messages = {
       intro:
         "Bienvenido a CommandPad. Aquí construyes **libros de comandos**: documentos que mezclan los comandos que ejecutas a menudo con las notas que los explican.",
       journey:
-        "Esta guía sigue el orden en que descubrirías la app de forma natural: primero el espacio de trabajo, luego los bloques, después las variables y por último todo lo demás. Léela de arriba abajo, o salta a cualquier sección desde el contenido de la izquierda.",
+        "Esta guía te acompaña a través de la aplicación en el mismo orden en que la descubrirías naturalmente. Comienzas en el espacio de trabajo y su barra lateral, luego conoces los tres tipos de bloques con los que se construye todo libro y, finalmente, las variables, la característica que hace que los bloques de comandos sean realmente potentes. Léela de principio a fin o salta a cualquier sección desde el índice de la izquierda.",
       tryIt:
         "La mayoría de secciones incluye un ejemplo en vivo marcado como **Pruébalo**. Son piezas reales e interactivas de la app: experimenta con libertad, nada de lo que hagas en ellas toca tu espacio de trabajo real, y el botón de flecha en la esquina de cada ejemplo lo reinicia en cualquier momento.",
     },
