@@ -1,5 +1,7 @@
+import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
-import { DemoVariables } from "../demos/DemoVariables";
+import { demoCommand, demoVariable } from "../demos/demoSeeds";
+import { DemoVariableRows, DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
 
 export function VariablesDocs() {
@@ -11,11 +13,19 @@ export function VariablesDocs() {
       <Prose text={t.docs.variables.usage} />
       <Prose text={t.docs.variables.unresolved} />
       <Prose text={t.docs.variables.duplicatesAndEmpty} />
-      <DemoVariables
-        variables={[{ key: "NAMESPACE", value: "production" }]}
-        command="kubectl get pods -n {NAMESPACE}"
-        secretToggleHidden
-      />
+      {/* The secret toggle stays hidden until its own section explains it */}
+      <DemoWorkspace
+        className="docs-demo-hide-secret"
+        tabs={[
+          {
+            variables: [demoVariable("NAMESPACE", "production")],
+            blocks: [demoCommand("kubectl get pods -n {NAMESPACE}")],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }
@@ -27,13 +37,20 @@ export function VariableReferencesDocs() {
     <>
       <Prose text={t.docs.variableReferences.intro} />
       <Prose text={t.docs.variableReferences.circular} />
-      <DemoVariables
-        variables={[
-          { key: "HOST", value: "api.example.com" },
-          { key: "BASE_URL", value: "https://{HOST}/api" },
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("HOST", "api.example.com"),
+              demoVariable("BASE_URL", "https://{HOST}/api"),
+            ],
+            blocks: [demoCommand("curl {BASE_URL}/health")],
+          },
         ]}
-        command="curl {BASE_URL}/health"
-      />
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }
@@ -46,10 +63,17 @@ export function ParameterizedPlaceholdersDocs() {
       <Prose text={t.docs.parameterizedPlaceholders.intro} />
       <Prose text={t.docs.parameterizedPlaceholders.fill} />
       <Prose text={t.docs.parameterizedPlaceholders.unresolved} />
-      <DemoVariables
-        variables={[{ key: "PROJECT", value: "projects/{;name}/src" }]}
-        command="cd {PROJECT;name=commandpad}"
-      />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("PROJECT", "projects/{;name}/src")],
+            blocks: [demoCommand("cd {PROJECT;name=commandpad}")],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }
@@ -61,10 +85,17 @@ export function EscapingBracesDocs() {
     <>
       <Prose text={t.docs.escapingBraces.intro} />
       <Prose text={t.docs.escapingBraces.scope} />
-      <DemoVariables
-        variables={[{ key: "USER", value: "admin" }]}
-        command={'echo "\\{USER\\} = {USER}"'}
-      />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("USER", "admin")],
+            blocks: [demoCommand('echo "\\{USER\\} = {USER}"')],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }
@@ -75,10 +106,19 @@ export function SecretVariablesDocs() {
   return (
     <>
       <Prose text={t.docs.secretVariables.intro} />
-      <DemoVariables
-        variables={[{ key: "TOKEN", value: "s3cr3t-value", secret: true }]}
-        command="curl -u admin:{TOKEN} https://api.example.com"
-      />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("TOKEN", "s3cr3t-value", true)],
+            blocks: [
+              demoCommand("curl -u admin:{TOKEN} https://api.example.com"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }

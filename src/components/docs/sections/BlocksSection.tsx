@@ -1,10 +1,8 @@
-import { DividerBlock } from "@/components/blocks/divider/DividerBlock";
+import { BlocksList } from "@/components/blocks/BlocksList";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { useTranslation } from "@/i18n";
-import { useState } from "react";
-import { DemoNoteBlock } from "../demos/DemoNoteBlock";
-import { DemoVariables } from "../demos/DemoVariables";
-import { DocsDemo } from "../demos/DocsDemo";
+import { demoCommand, demoDivider, demoNote } from "../demos/demoSeeds";
+import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose, ProseList } from "../Prose";
 
 const MARKDOWN_EXAMPLES = [
@@ -13,23 +11,6 @@ const MARKDOWN_EXAMPLES = [
   "`code-text`",
   "[labelled-link](https://example.com)",
 ];
-
-function NoteDemo() {
-  const t = useTranslation();
-  const [text, setText] = useState(t.docs.demo.noteSample);
-  const [resetCount, setResetCount] = useState(0);
-
-  const reset = () => {
-    setText(t.docs.demo.noteSample);
-    setResetCount((count) => count + 1);
-  };
-
-  return (
-    <DocsDemo onReset={reset}>
-      <DemoNoteBlock key={resetCount} text={text} onTextChange={setText} />
-    </DocsDemo>
-  );
-}
 
 export function BlocksDocs() {
   const t = useTranslation();
@@ -48,14 +29,26 @@ export function CommandBlockDocs() {
     <>
       <Prose text={t.docs.commandBlock.intro} />
       <ProseList items={t.docs.commandBlock.parts} />
-      <DemoVariables command="ssh admin@server-01.example.com" />
+      <DemoWorkspace
+        tabs={[{ blocks: [demoCommand("ssh admin@server-01.example.com")] }]}
+      >
+        <BlocksList />
+      </DemoWorkspace>
       <Prose text={t.docs.commandBlock.multiline} />
       <Prose text={t.docs.commandBlock.gutterNote} />
-      <DemoVariables
-        command={
-          "docker run --rm \\\n  --name web \\\n  -p 8080:80 \\\n  nginx:latest"
-        }
-      />
+      <DemoWorkspace
+        tabs={[
+          {
+            blocks: [
+              demoCommand(
+                "docker run --rm \\\n  --name web \\\n  -p 8080:80 \\\n  nginx:latest",
+              ),
+            ],
+          },
+        ]}
+      >
+        <BlocksList />
+      </DemoWorkspace>
       <Prose text={t.docs.commandBlock.variablesTeaser} />
     </>
   );
@@ -91,30 +84,26 @@ export function NoteBlockDocs() {
       <Prose text={t.docs.noteBlock.autoUrls} />
       <Prose text={t.docs.noteBlock.links} />
       <Prose text={t.docs.noteBlock.wrapKeys} />
-      <NoteDemo />
+      <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.noteSample)] }]}>
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }
 
 export function DividerBlockDocs() {
   const t = useTranslation();
-  const [text, setText] = useState(t.docs.dividerBlock.demoNote);
-  const [resetCount, setResetCount] = useState(0);
-
-  const reset = () => {
-    setText(t.docs.dividerBlock.demoNote);
-    setResetCount((count) => count + 1);
-  };
 
   return (
     <>
       <Prose text={t.docs.dividerBlock.intro} />
-      <DocsDemo onReset={reset}>
-        <div className="docs-demo-divider-stack">
-          <DemoNoteBlock key={resetCount} text={text} onTextChange={setText} />
-          <DividerBlock />
-        </div>
-      </DocsDemo>
+      <DemoWorkspace
+        tabs={[
+          { blocks: [demoNote(t.docs.dividerBlock.demoNote), demoDivider()] },
+        ]}
+      >
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }

@@ -1,5 +1,9 @@
+import { NoteStyle } from "@/common/enums";
+import { BlocksList } from "@/components/blocks/BlocksList";
+import { TabsBar } from "@/components/tabs/TabsBar";
 import { useTranslation } from "@/i18n";
-import { DemoTabs } from "../demos/DemoTabs";
+import { demoNote } from "../demos/demoSeeds";
+import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose, ProseList } from "../Prose";
 
 export function TabsDocs() {
@@ -11,7 +15,16 @@ export function TabsDocs() {
       <ProseList items={t.docs.tabs.items} />
       <Prose text={t.docs.tabs.autoCreate} />
       <Prose text={t.docs.tabs.labelDemo} />
-      <DemoTabs />
+      <DemoWorkspace
+        tabs={t.docs.demo.tabSamples.map((note) => ({
+          blocks: [demoNote(note, NoteStyle.HEADING)],
+        }))}
+      >
+        <TabsBar />
+        <div className="docs-demo-tab-panel">
+          <BlocksList />
+        </div>
+      </DemoWorkspace>
     </>
   );
 }
