@@ -8,6 +8,10 @@
   margin-bottom: var(--space-10);
 }
 
+.docs-demo #blocks-list {
+  padding: 0 var(--space-16);
+}
+
 .docs-demo-label {
   position: absolute;
   top: 0;
@@ -46,6 +50,27 @@
 .docs-demo-reset:hover {
   color: var(--accent-text);
   border-color: var(--accent);
+}
+
+.docs-demo-reset:active {
+  transform: translateY(-50%) scale(0.9);
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+@keyframes docs-demo-reset-spin {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.docs-demo-reset .icon.animating {
+  animation: docs-demo-reset-spin 0.5s ease;
 }
 
 /* Lets the reset-remount wrapper stay invisible to the demo layout */
