@@ -1,16 +1,16 @@
 import { InputSelector } from "@/common/constants/dom";
 import {
-    EventType,
-    Key,
-    Modifier,
-    ModifierKeyName,
+  EventType,
+  Key,
+  Modifier,
+  ModifierKeyName,
 } from "@/common/constants/events";
 import { MoveDirection } from "@/common/enums";
 import {
-    isModifierPressed,
-    KeyBinding,
-    matchesKeybinding,
-    ModifierAction,
+  isModifierPressed,
+  KeyBinding,
+  matchesKeybinding,
+  ModifierAction,
 } from "@/common/keybindings";
 import { getActiveTab, useStoreApi } from "@/store/store";
 import { openImportDialog } from "@/utils/importTrigger";
