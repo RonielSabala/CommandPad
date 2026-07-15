@@ -1,10 +1,5 @@
 import { InputSelector } from "@/common/constants/dom";
-import {
-  EventType,
-  Key,
-  Modifier,
-  ModifierKeyName,
-} from "@/common/constants/events";
+import { EventType, Key, Modifier } from "@/common/constants/events";
 import { MoveDirection } from "@/common/enums";
 import {
   isModifierPressed,
@@ -78,12 +73,6 @@ export function useKeybindings(): void {
         return;
       }
 
-      if (linkKeyPressed && !ctrlPressed) {
-        event.preventDefault();
-        state.setLinkKeyHeld(true);
-        return;
-      }
-
       if (!ctrlPressed) {
         return;
       }
@@ -130,13 +119,10 @@ export function useKeybindings(): void {
       } else if (matchesKeybinding(event, KeyBinding.TOGGLE_EDITORS)) {
         state.toggleAllCommandEditors();
         hit = true;
-      } else if (linkKeyPressed) {
-        state.setLinkKeyHeld(true);
       }
 
       if (hit) {
         event.preventDefault();
-        state.setLinkKeyHeld(false);
       }
     };
 
@@ -144,25 +130,17 @@ export function useKeybindings(): void {
       const key = event.key;
       const state = store.getState();
 
-      if (key === ModifierKeyName[ModifierAction.OPEN_LINK]) {
-        state.setLinkKeyHeld(false);
-      } else if (key === Key.ESCAPE) {
+      if (key === Key.ESCAPE) {
         (document.activeElement as HTMLElement | null)?.blur?.();
         state.clearUserInteraction();
       }
     };
 
-    const onBlur = () => {
-      store.getState().setLinkKeyHeld(false);
-    };
-
     document.addEventListener(EventType.KEY_DOWN, onKeyDown);
     document.addEventListener(EventType.KEY_UP, onKeyUp);
-    window.addEventListener(EventType.BLUR, onBlur);
     return () => {
       document.removeEventListener(EventType.KEY_DOWN, onKeyDown);
       document.removeEventListener(EventType.KEY_UP, onKeyUp);
-      window.removeEventListener(EventType.BLUR, onBlur);
     };
   }, [store]);
 }

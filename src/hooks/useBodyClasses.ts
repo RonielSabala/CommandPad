@@ -24,15 +24,8 @@ export function useSelectModeBodyClass(): void {
   }, [selectKeyHeld]);
 }
 
-export function useWorkspaceBodyClasses(): void {
-  const mode = useStore((state) => state.mode);
+export function useLinkModeBodyClass(): void {
   const linkKeyHeld = useStore((state) => state.linkKeyHeld);
-
-  useSelectModeBodyClass();
-  useEffect(() => {
-    document.body.classList.toggle("read-mode", mode === AppMode.READ);
-    return () => document.body.classList.remove("read-mode");
-  }, [mode]);
 
   useEffect(() => {
     document.body.classList.toggle(CssClass.LINK_KEY_HELD, linkKeyHeld);
@@ -45,4 +38,16 @@ export function useWorkspaceBodyClasses(): void {
       document.body.style.cursor = Cursor.DEFAULT;
     };
   }, [linkKeyHeld]);
+}
+
+export function useWorkspaceBodyClasses(): void {
+  const mode = useStore((state) => state.mode);
+
+  useSelectModeBodyClass();
+  useLinkModeBodyClass();
+
+  useEffect(() => {
+    document.body.classList.toggle("read-mode", mode === AppMode.READ);
+    return () => document.body.classList.remove("read-mode");
+  }, [mode]);
 }

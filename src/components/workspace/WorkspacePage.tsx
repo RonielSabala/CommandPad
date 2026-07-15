@@ -3,6 +3,7 @@ import { useBlockSelection } from "@/hooks/useBlockSelection";
 import { useWorkspaceBodyClasses } from "@/hooks/useBodyClasses";
 import { useDocumentInteractions } from "@/hooks/useDocumentInteractions";
 import { useKeybindings } from "@/hooks/useKeybindings";
+import { useLinkActivation } from "@/hooks/useLinkActivation";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import type { CSSProperties } from "react";
@@ -24,6 +25,7 @@ export function WorkspacePage() {
   useKeybindings();
   useDocumentInteractions();
   useBlockSelection(document);
+  useLinkActivation(document);
 
   const shellClass = classNames(
     isSidebarCollapsed && "sidebar-collapsed",
