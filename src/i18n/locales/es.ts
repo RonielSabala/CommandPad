@@ -320,7 +320,7 @@ export const es: Messages = {
       intro:
         "Un bloque de comando guarda un comando que quieres tener a mano. Tiene dos partes:",
       parts: [
-        "**Vista previa** (siempre visible): el comando exactamente como se copiará. Haz clic en **Copiar** para enviarlo a tu portapapeles.",
+        "**Vista previa** (siempre visible): el comando exactamente como se copiará. Haz clic en el botón **Copiar** para enviarlo a tu portapapeles. Este botón se deshabilita si el comando está vacío.",
         "**Editor** (contraíble): donde escribes el comando. Usa el botón de flecha para ocultarlo cuando solo necesites la vista previa.",
       ],
       multiline:

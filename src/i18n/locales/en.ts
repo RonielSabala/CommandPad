@@ -309,7 +309,7 @@ export const en: Messages = {
       intro:
         "A command block holds one command you want to keep at hand. It has two parts:",
       parts: [
-        "**Preview** (always visible): the command exactly as it will be copied. Click **Copy** to send it to your clipboard.",
+        "**Preview** (always visible): the command exactly as it will be copied. Click the **Copy** button to send it to your clipboard. This button is disabled if the command is empty.",
         "**Editor** (collapsible): where you write the command. Use the chevron button to hide it when you only need the preview.",
       ],
       multiline:
