@@ -179,6 +179,14 @@ export function getUsedVariableKeys(
   return used;
 }
 
+export function isVariableUnused(
+  variable: Variable,
+  usedKeys: Set<string>,
+): boolean {
+  const key = variable.key.trim();
+  return !!key && !usedKeys.has(key);
+}
+
 export function getSecretKeys(variables: Variable[] = []): Set<string> {
   return new Set(
     variables

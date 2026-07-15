@@ -13,7 +13,7 @@ import {
   useStore,
   useStoreApi,
 } from "@/store/store";
-import { getUsedVariableKeys } from "@/utils/resolution";
+import { getUsedVariableKeys, isVariableUnused } from "@/utils/resolution";
 import { useMemo, useState, type KeyboardEvent, type ReactNode } from "react";
 import { buildDemoSeed, type DemoContent } from "./demoSeeds";
 import { DocsDemo } from "./DocsDemo";
@@ -86,7 +86,7 @@ export function DemoVariableRows() {
         <VariableRow
           key={variable.id}
           variable={variable}
-          unused={!!variable.key.trim() && !usedKeys.has(variable.key.trim())}
+          unused={isVariableUnused(variable, usedKeys)}
         />
       ))}
     </div>

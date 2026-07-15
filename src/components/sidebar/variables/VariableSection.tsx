@@ -2,7 +2,7 @@ import type { Block, Variable } from "@/common/types";
 import { PlusIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
-import { getUsedVariableKeys } from "@/utils/resolution";
+import { getUsedVariableKeys, isVariableUnused } from "@/utils/resolution";
 import { matchesQuery } from "@/utils/string";
 import { useMemo } from "react";
 import { SidebarSearch } from "../shared/SidebarSearch";
@@ -54,7 +54,7 @@ export function VariableSection() {
           <VariableRow
             key={variable.id}
             variable={variable}
-            unused={!!variable.key.trim() && !usedKeys.has(variable.key.trim())}
+            unused={isVariableUnused(variable, usedKeys)}
           />
         )}
       />
