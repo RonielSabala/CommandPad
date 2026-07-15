@@ -1,12 +1,10 @@
 import { CssClass } from "@/common/constants/css";
-import { Anchor, Cursor, DataAttr } from "@/common/constants/dom";
-import { EventType, MouseButton } from "@/common/constants/events";
-import { AppMode, LassoMode } from "@/common/enums";
+import { Anchor, Cursor } from "@/common/constants/dom";
+import { EventType } from "@/common/constants/events";
 import { isModifierPressed, ModifierAction } from "@/common/keybindings";
 import { useStoreApi } from "@/store/store";
 import { useEffect } from "react";
 import { blockDrag, clearBlockDrag } from "./blockDrag";
-import { lasso } from "./lasso";
 
 export function useDocumentInteractions(): void {
   const store = useStoreApi();
@@ -39,39 +37,6 @@ export function useDocumentInteractions(): void {
         : Cursor.DEFAULT;
     };
 
-    const onMouseDown = (event: MouseEvent) => {
-      const state = store.getState();
-      if (
-        !isModifierPressed(event, ModifierAction.SELECT_BLOCKS) ||
-        event.button !== MouseButton.LEFT ||
-        state.mode === AppMode.READ
-      ) {
-        return;
-      }
-
-      const blockElement = (event.target as Element).closest(
-        `.${CssClass.BLOCK_ITEM}`,
-      );
-
-      if (blockElement) {
-        const blockId = blockElement.getAttribute(DataAttr.BLOCK_ID);
-        if (blockId) {
-          lasso.mode = state.selectedBlockIds.has(blockId)
-            ? LassoMode.DESELECT
-            : LassoMode.SELECT;
-          state.setBlockSelected(blockId, lasso.mode === LassoMode.SELECT);
-        }
-      } else {
-        lasso.mode = LassoMode.SELECT;
-      }
-
-      lasso.active = true;
-    };
-
-    const onMouseUp = () => {
-      lasso.active = false;
-    };
-
     const onClick = (event: MouseEvent) => {
       const state = store.getState();
 
@@ -98,25 +63,12 @@ export function useDocumentInteractions(): void {
       ) {
         state.setRunbookFocus(null);
       }
-
-      if (
-        state.selectedBlockIds.size > 0 &&
-        !target.closest(
-          `.${CssClass.BLOCK_CONTROLS}, .${CssClass.BLOCK_DRAG_HANDLE}`,
-        )
-      ) {
-        state.clearBlockSelection();
-      }
     };
 
     document.addEventListener(EventType.MOUSE_MOVE, onMouseMove);
-    document.addEventListener(EventType.MOUSE_DOWN, onMouseDown);
-    document.addEventListener(EventType.MOUSE_UP, onMouseUp);
     document.addEventListener(EventType.CLICK, onClick);
     return () => {
       document.removeEventListener(EventType.MOUSE_MOVE, onMouseMove);
-      document.removeEventListener(EventType.MOUSE_DOWN, onMouseDown);
-      document.removeEventListener(EventType.MOUSE_UP, onMouseUp);
       document.removeEventListener(EventType.CLICK, onClick);
     };
   }, [store]);

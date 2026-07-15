@@ -1,11 +1,11 @@
-import { CssClass } from "@/common/constants/css";
-import { DataAttr, InputSelector } from "@/common/constants/dom";
-import { EventType, Key, MouseButton } from "@/common/constants/events";
+import { InputSelector } from "@/common/constants/dom";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import type { Block, Variable } from "@/common/types";
 import { RunbookRow } from "@/components/sidebar/runbooks/RunbookRow";
 import "@/components/sidebar/shared/SidebarSectionList.css";
 import { VariableRow } from "@/components/sidebar/variables/VariableRow";
+import { useBlockSelection } from "@/hooks/useBlockSelection";
+import { useSelectModeBodyClass } from "@/hooks/useBodyClasses";
 import {
   createAppStore,
   getActiveTab,
@@ -14,35 +14,21 @@ import {
   useStoreApi,
 } from "@/store/store";
 import { getUsedVariableKeys } from "@/utils/resolution";
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type KeyboardEvent,
-  type MouseEvent,
-  type ReactNode,
-} from "react";
+import { useMemo, useState, type KeyboardEvent, type ReactNode } from "react";
 import { buildDemoSeed, type DemoContent } from "./demoSeeds";
 import { DocsDemo } from "./DocsDemo";
 
 const EMPTY_CONTENT: DemoContent[] = [];
 
 interface DemoWorkspaceProps {
-  /** Open tabs; the first one is active. Defaults to a single empty tab. */
   tabs?: DemoContent[];
-  /** Additional library entries without an open tab */
   library?: DemoContent[];
-  /** Extra class on the demo frame (e.g. to hide the secret toggle) */
   className?: string;
   children: ReactNode;
 }
 
 /**
- * A docs playground running the REAL app components against an isolated
- * demo store: same state shape and actions, but nothing is persisted and
- * nothing touches the user's actual workspace. Children (BlocksList,
- * TabsBar, VariableRow, RunbookRow, ...) resolve the store from context.
+ * A docs playground running the REAL app components against an isolated demo store.
  */
 export function DemoWorkspace({
   tabs = EMPTY_CONTENT,
@@ -50,8 +36,6 @@ export function DemoWorkspace({
   className,
   children,
 }: DemoWorkspaceProps) {
-  // The app store's language; sections remount per language, so reading it
-  // at store creation keeps demo UI strings in sync with the switcher
   const language = useStore((state) => state.language);
 
   const buildStore = () => {
@@ -72,7 +56,6 @@ export function DemoWorkspace({
   return (
     <StoreProvider value={store}>
       <DocsDemo onReset={reset} className={className}>
-        {/* Remount on reset so component-local state clears too */}
         <div key={version} className="docs-demo-content">
           {children}
         </div>
@@ -84,7 +67,6 @@ export function DemoWorkspace({
 const EMPTY_VARIABLES: Variable[] = [];
 const EMPTY_BLOCKS: Block[] = [];
 
-/** The active tab's variables as real sidebar rows (sans section chrome) */
 export function DemoVariableRows() {
   const activeTab = useStore(getActiveTab);
   const variables = activeTab?.variables ?? EMPTY_VARIABLES;
@@ -111,7 +93,6 @@ export function DemoVariableRows() {
   );
 }
 
-/** The demo store's library as real runbook rows (sans section chrome) */
 export function DemoRunbookList() {
   const library = useStore((state) => state.runbookLibrary);
 
@@ -124,67 +105,13 @@ export function DemoRunbookList() {
   );
 }
 
-/**
- * Multi-select wiring for a demo: the workspace handles shift+click and the
- * selection shortcuts at the document level (workspace-only hooks), so the
- * playground scopes the same behaviors to its own container.
- */
+/** Multi-select for a demo */
 export function DemoSelectionArea({ children }: { children: ReactNode }) {
   const store = useStoreApi();
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [root, setRoot] = useState<HTMLDivElement | null>(null);
 
-  // Mirror the workspace's select-mode affordance: holding Shift toggles the
-  // body class that drives the dashed hover outline and disables the textarea
-  // text cursor. `useWorkspaceBodyClasses` is workspace-only, so scope it here.
-  useEffect(() => {
-    const setHeld = (held: boolean) =>
-      document.body.classList.toggle(CssClass.SELECT_KEY_HELD, held);
-
-    const onKeyDown = (event: globalThis.KeyboardEvent) => {
-      if (event.key === Key.SHIFT) {
-        setHeld(true);
-      }
-    };
-
-    const onKeyUp = (event: globalThis.KeyboardEvent) => {
-      if (event.key === Key.SHIFT) {
-        setHeld(false);
-      }
-    };
-
-    const onBlur = () => setHeld(false);
-
-    document.addEventListener(EventType.KEY_DOWN, onKeyDown);
-    document.addEventListener(EventType.KEY_UP, onKeyUp);
-    window.addEventListener(EventType.BLUR, onBlur);
-    return () => {
-      document.removeEventListener(EventType.KEY_DOWN, onKeyDown);
-      document.removeEventListener(EventType.KEY_UP, onKeyUp);
-      window.removeEventListener(EventType.BLUR, onBlur);
-      setHeld(false);
-    };
-  }, []);
-
-  // Select on mousedown: a shift+click on text starts a browser text
-  // selection, and the slightest drag swallows the click event
-  const onMouseDown = (event: MouseEvent<HTMLDivElement>) => {
-    if (!event.shiftKey || event.button !== MouseButton.LEFT) {
-      return;
-    }
-
-    const blockId = (event.target as Element)
-      .closest(`.${CssClass.BLOCK_ITEM}`)
-      ?.getAttribute(DataAttr.BLOCK_ID);
-    if (!blockId) {
-      return;
-    }
-
-    // preventDefault also skips the focus move; refocus so the
-    // Ctrl+D / Del / Escape shortcuts keep working
-    event.preventDefault();
-    wrapperRef.current?.focus();
-    store.getState().toggleBlockSelection(blockId);
-  };
+  useBlockSelection(root);
+  useSelectModeBodyClass();
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if ((event.target as Element).matches(InputSelector.EDITABLE)) {
@@ -211,10 +138,9 @@ export function DemoSelectionArea({ children }: { children: ReactNode }) {
 
   return (
     <div
-      ref={wrapperRef}
+      ref={setRoot}
       className="docs-demo-multiselect"
       tabIndex={0}
-      onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
     >
       {children}

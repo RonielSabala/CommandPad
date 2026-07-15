@@ -15,20 +15,24 @@ export function useThemeClass(): void {
   }, [theme]);
 }
 
-export function useWorkspaceBodyClasses(): void {
-  const mode = useStore((state) => state.mode);
+export function useSelectModeBodyClass(): void {
   const selectKeyHeld = useStore((state) => state.selectKeyHeld);
-  const linkKeyHeld = useStore((state) => state.linkKeyHeld);
-
-  useEffect(() => {
-    document.body.classList.toggle("read-mode", mode === AppMode.READ);
-    return () => document.body.classList.remove("read-mode");
-  }, [mode]);
 
   useEffect(() => {
     document.body.classList.toggle(CssClass.SELECT_KEY_HELD, selectKeyHeld);
     return () => document.body.classList.remove(CssClass.SELECT_KEY_HELD);
   }, [selectKeyHeld]);
+}
+
+export function useWorkspaceBodyClasses(): void {
+  const mode = useStore((state) => state.mode);
+  const linkKeyHeld = useStore((state) => state.linkKeyHeld);
+
+  useSelectModeBodyClass();
+  useEffect(() => {
+    document.body.classList.toggle("read-mode", mode === AppMode.READ);
+    return () => document.body.classList.remove("read-mode");
+  }, [mode]);
 
   useEffect(() => {
     document.body.classList.toggle(CssClass.LINK_KEY_HELD, linkKeyHeld);

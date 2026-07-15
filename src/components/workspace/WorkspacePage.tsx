@@ -1,4 +1,5 @@
 import { SidebarPosition } from "@/common/enums";
+import { useBlockSelection } from "@/hooks/useBlockSelection";
 import { useWorkspaceBodyClasses } from "@/hooks/useBodyClasses";
 import { useDocumentInteractions } from "@/hooks/useDocumentInteractions";
 import { useKeybindings } from "@/hooks/useKeybindings";
@@ -22,6 +23,7 @@ export function WorkspacePage() {
   useWorkspaceBodyClasses();
   useKeybindings();
   useDocumentInteractions();
+  useBlockSelection(document);
 
   const shellClass = classNames(
     isSidebarCollapsed && "sidebar-collapsed",

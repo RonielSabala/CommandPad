@@ -85,10 +85,6 @@ export function useKeybindings(): void {
       }
 
       if (!ctrlPressed) {
-        if (selectKeyPressed && !inEditable) {
-          state.setSelectKeyHeld(true);
-        }
-
         return;
       }
 
@@ -134,19 +130,12 @@ export function useKeybindings(): void {
       } else if (matchesKeybinding(event, KeyBinding.TOGGLE_EDITORS)) {
         state.toggleAllCommandEditors();
         hit = true;
-      } else {
-        if (selectKeyPressed && !inEditable) {
-          state.setSelectKeyHeld(true);
-        }
-
-        if (linkKeyPressed) {
-          state.setLinkKeyHeld(true);
-        }
+      } else if (linkKeyPressed) {
+        state.setLinkKeyHeld(true);
       }
 
       if (hit) {
         event.preventDefault();
-        state.setSelectKeyHeld(false);
         state.setLinkKeyHeld(false);
       }
     };
@@ -155,9 +144,7 @@ export function useKeybindings(): void {
       const key = event.key;
       const state = store.getState();
 
-      if (key === ModifierKeyName[ModifierAction.SELECT_BLOCKS]) {
-        state.setSelectKeyHeld(false);
-      } else if (key === ModifierKeyName[ModifierAction.OPEN_LINK]) {
+      if (key === ModifierKeyName[ModifierAction.OPEN_LINK]) {
         state.setLinkKeyHeld(false);
       } else if (key === Key.ESCAPE) {
         (document.activeElement as HTMLElement | null)?.blur?.();
@@ -166,9 +153,7 @@ export function useKeybindings(): void {
     };
 
     const onBlur = () => {
-      const state = store.getState();
-      state.setLinkKeyHeld(false);
-      state.setSelectKeyHeld(false);
+      store.getState().setLinkKeyHeld(false);
     };
 
     document.addEventListener(EventType.KEY_DOWN, onKeyDown);

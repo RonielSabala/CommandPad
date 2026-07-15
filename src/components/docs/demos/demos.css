@@ -77,8 +77,7 @@
   display: contents;
 }
 
-/* Variable rows: constrain to a sidebar-like width inside the wide frame */
-
+/* Variable rows */
 .docs-demo-variables {
   max-width: 34rem;
   margin-bottom: var(--space-8);
@@ -94,7 +93,7 @@
   display: none;
 }
 
-/* Tabs demo: frame the panel below the real tabs bar */
+/* Tabs demo */
 
 .docs-demo-tab-panel {
   padding: var(--space-8) var(--space-10);
@@ -105,13 +104,11 @@
 }
 
 /* Multi-select playground */
-
 .docs-demo-multiselect {
   outline: none;
 }
 
-/* Sidebar rows: constrain to a sidebar-like width */
-
+/* Sidebar rows */
 .docs-demo-sidebar-frame {
-  max-width: 20rem;
+  max-width: var(--sidebar-width);
 }
