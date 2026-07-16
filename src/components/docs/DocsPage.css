@@ -21,44 +21,6 @@
 
 /* --- PROSE --- */
 
-.docs-prose {
-  font-size: var(--text-base);
-  line-height: 1.7;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-8);
-  overflow-wrap: break-word;
-}
-
-.docs-prose .note-bold {
-  color: var(--color-text-primary);
-}
-
-/* Docs links are always clickable (notes gate them behind ctrl/read mode) */
-.docs-prose .note-link {
-  pointer-events: auto;
-}
-
-.docs-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.docs-list li {
-  padding-left: var(--space-10);
-  position: relative;
-}
-
-.docs-list li::before {
-  content: "•";
-  position: absolute;
-  left: var(--space-2);
-  color: var(--color-text-primary);
-  font-size: 1.4em;
-  line-height: 1.2;
-}
-
 .docs-kbd-row {
   display: flex;
   align-items: center;
@@ -129,17 +91,4 @@
 .docs-qa-answer {
   padding: 0 var(--space-2) var(--space-6) var(--space-12);
   margin-bottom: 0;
-}
-
-.docs-kbd {
-  display: inline-block;
-  padding: 0 var(--space-3);
-  border: var(--border-standard);
-  border-bottom-width: 2px;
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-alt);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--color-text-primary);
-  white-space: nowrap;
 }

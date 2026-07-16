@@ -1,0 +1,55 @@
+/* Docs prose */
+
+.docs-prose {
+  font-size: var(--text-base);
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-8);
+  overflow-wrap: break-word;
+}
+
+.docs-prose .note-bold {
+  color: var(--color-text-primary);
+}
+
+.docs-prose .note-link {
+  pointer-events: auto;
+}
+
+/* Docs list */
+
+.docs-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.docs-list li {
+  padding-left: var(--space-10);
+  position: relative;
+}
+
+.docs-list li::before {
+  content: "•";
+  position: absolute;
+  left: var(--space-2);
+  color: var(--color-text-primary);
+  font-size: 1.5em;
+  line-height: 1.1;
+}
+
+/* Docs keybinding */
+
+.docs-kbd {
+  display: inline-block;
+  padding: 0 var(--space-3);
+  border: var(--border-standard);
+  border-bottom-width: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-alt);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}

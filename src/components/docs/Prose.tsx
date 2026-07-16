@@ -4,6 +4,7 @@ import {
   type KeyBinding,
 } from "@/common/keybindings";
 import { NoteText } from "@/components/blocks/note/NoteText";
+import "./Prose.css";
 
 export function Prose({ text }: { text: string }) {
   return (
