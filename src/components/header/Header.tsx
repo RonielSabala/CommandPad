@@ -33,7 +33,7 @@ export function Header() {
   );
 
   return (
-    <header id="app-header">
+    <header className="header-bar">
       <span
         className="logo no-user-select"
         role="button"

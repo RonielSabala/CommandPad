@@ -15,7 +15,7 @@ export function DocsHeader() {
   const toggleTheme = useStore((state) => state.toggleTheme);
 
   return (
-    <header className="docs-header">
+    <header className="header-bar">
       <Link
         to={AppRoute.WORKSPACE}
         className="logo docs-logo no-user-select"
