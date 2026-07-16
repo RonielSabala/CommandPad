@@ -205,7 +205,7 @@ export const es: Messages = {
       navigate:
         "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el índice de la izquierda: tú eliges el ritmo.",
       tryIt:
-        "Y no te quedes solo leyendo: la mayoría de las secciones trae un ejemplo real y funcional marcado **Pruébalo**, una pieza de la app que puedes trastear a tu gusto, nada de lo que hagas ahí toca tu espacio de trabajo real. Anímate a toquetear un poco: es la forma más rápida de entender cómo funciona algo. ¿Te perdiste? El botón de flecha en la esquina lo devuelve justo a donde empezó.",
+        "Y no te quedes solo leyendo: la mayoría de las secciones trae un ejemplo real y funcional marcado **Pruébalo**, una pieza de la app con la que puedes jugar, nada de lo que hagas ahí toca tu espacio de trabajo real. Anímate a toquetear un poco: es la forma más rápida de entender cómo funciona algo. Si te pierdes, el botón de flecha en su esquina te devuelve al punto de partida.",
     },
     workspace: {
       intro:
@@ -298,7 +298,7 @@ export const es: Messages = {
     parameterizedPlaceholders: {
       intro:
         "El valor de una variable puede incluir un marcador `{;nombre}` que queda vacío hasta que referencias la variable.",
-      fill: "Al referenciar la variable, rellena ese marcador con `{clave;nombre=valor}`: el valor se inyecta justo donde está el marcador, algo que una variable normal no logra con la misma limpieza. Si hay varios marcadores, sepáralos con `;`, p. ej. `{A;p1=v1;p2=v2}`.",
+      fill: "Al referenciar la variable, rellena ese marcador con `{clave;nombre=valor}`: el valor se inyecta justo donde está el marcador, algo que una variable normal no logra con la misma elegancia. Si hay varios marcadores, sepáralos con `;`, p. ej. `{A;p1=v1;p2=v2}`.",
       unresolved:
         "Si una referencia no le da valor a un marcador, este se queda en su lugar y el comando se considera sin resolver.",
     },
@@ -349,8 +349,7 @@ export const es: Messages = {
     dividerBlock: {
       intro:
         "No es más que un separador visual. Se estira hasta igualar el ancho del bloque más ancho, lo que lo hace perfecto para dividir un libro en secciones. Eso sí, tiene una anchura mínima que le impide encogerse hasta volverse ilegible.",
-      demoNote:
-        "Escribe dentro de esta nota y observa cómo el divisor de abajo crece y se encoge con ella.",
+      demoNote: "Escribe aquí y observa cómo el divisor crece o se encoge.",
     },
     multiSelect: {
       intro:

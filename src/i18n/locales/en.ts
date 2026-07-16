@@ -141,7 +141,7 @@ export const en: Messages = {
     [KeyBinding.RESET_WORKSPACE]: "Open reset workspace dialog",
     [KeyBinding.FOCUS_RUNBOOK]: "Select active runbook",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
-      "Navigate runbooks when selected active runbook",
+      "Navigate runbooks with the active runbook selected",
     [KeyBinding.OPEN_LINK]: "Open note link in new tab",
     [KeyBinding.MULTISELECT_BLOCKS]: "Multi-select blocks",
     [KeyBinding.NOTE_BOLD]: "Bold selected text (note block)",
@@ -196,7 +196,7 @@ export const en: Messages = {
       navigate:
         "Read it start to finish, or jump straight to whatever interests you from the contents on the left: you set the pace.",
       tryIt:
-        "And don't just read: most sections come with a real, working example marked **Try it**, a piece of the app you're free to mess with, nothing you do there touches your actual workspace. Go ahead and poke at it: that's the fastest way to get a feel for how something works. Lost your way? The arrow button in the corner puts it right back where it started.",
+        "And don't just read: most sections come with a real, working example marked **Try it**, a piece of the app you're free to mess with, nothing you do there touches your actual workspace. Go ahead and poke at it: that's the fastest way to get a feel for how something works. If you ever get lost, the arrow button in its corner brings it back to where it started.",
     },
     workspace: {
       intro:
@@ -338,8 +338,7 @@ export const en: Messages = {
     dividerBlock: {
       intro:
         "Nothing more than a visual separator. It stretches to match the width of the widest block, which makes it perfect for splitting a runbook into sections. It does keep a minimum width, though, so it can never shrink into something unreadable.",
-      demoNote:
-        "Type inside this note and watch the divider below grow and shrink with it.",
+      demoNote: "Type here and watch how the divisor grows or shrinks.",
     },
     multiSelect: {
       intro:
