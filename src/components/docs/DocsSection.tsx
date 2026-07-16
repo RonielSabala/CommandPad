@@ -1,5 +1,6 @@
 import { DocsSectionLevel, type DocsSectionId } from "@/common/constants/docs";
 import type { ReactNode } from "react";
+import "./DocsSection.css";
 
 interface Props {
   id: DocsSectionId;
