@@ -1,6 +1,6 @@
-import { formatBinding, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
+import { KeyBinding, KEYBINDINGS } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
-import { Prose } from "../Prose";
+import { Kbd, Prose } from "../Prose";
 
 const BINDING_IDS = Object.keys(KEYBINDINGS) as KeyBinding[];
 
@@ -15,9 +15,7 @@ export function KeyboardShortcutsDocs() {
           {BINDING_IDS.map((id) => (
             <tr key={id}>
               <td>
-                <kbd className="docs-kbd">
-                  {formatBinding(KEYBINDINGS[id].binding)}
-                </kbd>
+                <Kbd binding={id} />
               </td>
               <td>{t.keybindings[id]}</td>
             </tr>

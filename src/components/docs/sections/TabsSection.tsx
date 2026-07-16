@@ -5,6 +5,7 @@ import { useTranslation } from "@/i18n";
 import { demoNote } from "../demos/demoSeeds";
 import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose, ProseList } from "../Prose";
+import "./TabsSection.css";
 
 export function TabsDocs() {
   const t = useTranslation();
