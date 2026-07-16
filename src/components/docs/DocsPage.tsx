@@ -47,7 +47,7 @@ export function DocsPage() {
   };
 
   return (
-    <div className="docs-shell">
+    <div className="grid-shell docs-shell">
       <DocsHeader />
       <DocsToc activeId={activeId} onNavigate={navigate} />
       <main ref={mainRef} className="docs-main">

@@ -28,6 +28,7 @@ export function WorkspacePage() {
   useLinkActivation(document);
 
   const shellClass = classNames(
+    "grid-shell",
     isSidebarCollapsed && "sidebar-collapsed",
     sidebarPosition === SidebarPosition.RIGHT && "sidebar-right",
   );
