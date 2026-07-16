@@ -5,8 +5,6 @@
     "toc main";
 }
 
-/* --- MAIN CONTENT --- */
-
 .docs-main {
   grid-area: main;
   overflow-y: auto;
@@ -19,13 +17,7 @@
   padding: var(--space-12) var(--space-20) 60vh;
 }
 
-/* --- PROSE --- */
-
-.docs-kbd-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-6);
-}
+/* --- DOCS TABLE --- */
 
 .docs-table {
   border-collapse: collapse;
@@ -36,7 +28,7 @@
 
 .docs-table th {
   text-align: left;
-  font-size: var(--text-xs);
+  font-size: var(--text-md);
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -47,48 +39,4 @@
 .docs-table td {
   padding: var(--space-4) var(--space-12) var(--space-4) 0;
   border-bottom: var(--border-standard);
-}
-
-/* --- Q&A --- */
-
-.docs-qa-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.docs-qa-item {
-  border-bottom: var(--border-standard);
-}
-
-.docs-qa-question {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  width: 100%;
-  padding: var(--space-6) var(--space-2);
-  background: transparent;
-  border: none;
-  text-align: left;
-  font-size: var(--text-base);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  cursor: pointer;
-}
-
-.docs-qa-question:hover {
-  color: var(--accent-text);
-}
-
-.docs-qa-chevron {
-  flex-shrink: 0;
-  transform: rotate(-90deg);
-}
-
-.docs-qa-chevron.is-open {
-  transform: rotate(0deg);
-}
-
-.docs-qa-answer {
-  padding: 0 var(--space-2) var(--space-6) var(--space-12);
-  margin-bottom: 0;
 }

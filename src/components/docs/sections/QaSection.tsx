@@ -4,6 +4,7 @@ import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
 import { useState } from "react";
 import { Prose } from "../Prose";
+import "./QaSection.css";
 
 function QaItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false);
