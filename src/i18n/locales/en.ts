@@ -190,13 +190,13 @@ export const en: Messages = {
     },
     gettingStarted: {
       intro:
-        "Welcome to CommandPad. Here you build **runbooks**: documents that mix the commands you run often with the notes that help explain them.",
+        "Welcome to CommandPad! Here you'll build **runbooks**: documents that mix the commands you run often with the notes that help explain them.",
       journey:
-        "This guide will help you understand how the app works so you can get the most out of it. You start by learning the workspace and its sidebar, then you meet the three block types you will build your runbooks from and, to wrap up, variables: the feature that makes command blocks truly powerful.",
+        "This guide walks you through how the app works, one piece at a time, so you can get the most out of it. You'll start with the workspace and its sidebar, meet the three block types your runbooks are built from and, to wrap up, variables: the feature that makes command blocks truly powerful.",
       navigate:
         "Read it start to finish, or jump straight to whatever interests you from the contents on the left: you set the pace.",
       tryIt:
-        "And don't just read: most sections come with an interactive example marked **Try it**, a real piece of the app where you can play around without fear, nothing you do there touches your actual workspace. This is learning by doing. If you ever get lost, the arrow button in its corner brings it back to where it started.",
+        "And don't just read: most sections come with a real, working example marked **Try it**, a piece of the app you're free to mess with, nothing you do there touches your actual workspace. Go ahead and poke at it: that's the fastest way to get a feel for how something works. Lost your way? The arrow button in the corner puts it right back where it started.",
     },
     workspace: {
       intro:

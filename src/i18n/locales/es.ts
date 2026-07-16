@@ -199,13 +199,13 @@ export const es: Messages = {
     },
     gettingStarted: {
       intro:
-        "Bienvenido a CommandPad. Aquí construyes **libros de comandos**: documentos que mezclan los comandos que ejecutas a menudo con las notas que ayudan a explicarlos.",
+        "¡Bienvenido a CommandPad! Aquí vas a construir **libros de comandos**: documentos que mezclan los comandos que ejecutas a menudo con las notas que ayudan a explicarlos.",
       journey:
-        "Esta guía te ayudará a entender cómo funciona la aplicación para que le saques todo el provecho. Comenzarás aprendiendo sobre el espacio de trabajo y su barra lateral, luego conocerás los tres tipos de bloques con los que construirás tus libros de comandos y, para terminar, las variables: la característica que hace que los bloques de comando sean realmente potentes.",
+        "Esta guía te acompaña paso a paso por cómo funciona la aplicación, para que le saques todo el provecho. Empezarás por el espacio de trabajo y su barra lateral, luego conocerás los tres tipos de bloques con los que se construyen tus libros de comandos y, para cerrar, las variables: la característica que hace que los bloques de comando sean realmente potentes.",
       navigate:
         "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el índice de la izquierda: tú eliges el ritmo.",
       tryIt:
-        "Y no te quedes solo leyendo: la mayoría de las secciones trae un ejemplo interactivo marcado **Pruébalo**, una pieza real de la app donde puedes jugar sin miedo, nada de lo que hagas ahí toca tu espacio de trabajo real. Aquí se aprende haciendo. Si te pierdes, el botón de flecha en su esquina te devuelve al punto de partida.",
+        "Y no te quedes solo leyendo: la mayoría de las secciones trae un ejemplo real y funcional marcado **Pruébalo**, una pieza de la app que puedes trastear a tu gusto, nada de lo que hagas ahí toca tu espacio de trabajo real. Anímate a toquetear un poco: es la forma más rápida de entender cómo funciona algo. ¿Te perdiste? El botón de flecha en la esquina lo devuelve justo a donde empezó.",
     },
     workspace: {
       intro:
