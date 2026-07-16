@@ -46,8 +46,8 @@ export function FooterLinks() {
 
 export function Footer() {
   return (
-    <footer id="app-footer" className="no-user-select">
-      <span id="footer-copyright">
+    <footer id="app-footer" className="footer no-user-select">
+      <span id="footer-copyright" className="footer-copyright">
         <FooterCopyright />
       </span>
       <FooterLinks />
