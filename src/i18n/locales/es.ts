@@ -194,6 +194,7 @@ export const es: Messages = {
         "Depuración de K8s",
       ],
       multiSelectNotes: ["**Levantar el stack**", "**Apagarlo todo**"],
+      greetingTemplate: "¡Hola {;name}, bienvenido a {;place}!",
       noteSample:
         "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace, p. ej. https://example.com. Haz clic fuera para verla renderizada de nuevo.",
     },
@@ -297,10 +298,12 @@ export const es: Messages = {
     },
     parameterizedPlaceholders: {
       intro:
-        "El valor de una variable puede incluir un marcador `{;nombre}` que queda vacío hasta que referencias la variable.",
-      fill: "Al referenciar la variable, rellena ese marcador con `{clave;nombre=valor}`: el valor se inyecta justo donde está el marcador, algo que una variable normal no logra con la misma elegancia. Si hay varios marcadores, sepáralos con `;`, p. ej. `{A;p1=v1;p2=v2}`.",
+        "A veces una variable te sirve para casi todo, excepto por una pequeña parte que cambia cada vez que la usas. Los marcadores parametrizados te permiten dejar ese trozo en blanco dentro de la variable, y rellenarlo distinto cada vez que la uses.",
+      fill: "Marca el espacio en blanco con `{;param}` dentro del valor de la variable. Funciona como una frase para completar: la variable guarda el texto fijo, y tú pones la palabra que falta cada vez que la usas. Donde referencies esa variable, rellena el hueco con `{clave;param=valor_param}`, y tu valor cae justo donde estaba el espacio en blanco.",
       unresolved:
-        "Si una referencia no le da valor a un marcador, este se queda en su lugar y el comando se considera sin resolver.",
+        "¿Olvidaste rellenar un espacio? El comando se resalta como sin resolver, igual que una variable que no existe, así que lo notarás enseguida.",
+      multiple:
+        "Un valor puede tener varios huecos. Dale a cada uno un nombre distinto y rellénalos todos en la misma referencia, separados por punto y coma:",
     },
     escapingBraces: {
       intro:

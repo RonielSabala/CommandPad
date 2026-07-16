@@ -13,7 +13,6 @@ export function VariablesDocs() {
       <Prose text={t.docs.variables.usage} />
       <Prose text={t.docs.variables.unresolved} />
       <Prose text={t.docs.variables.duplicatesAndEmpty} />
-      {/* The secret toggle stays hidden until its own section explains it */}
       <DemoWorkspace
         className="docs-demo-hide-secret"
         tabs={[
@@ -68,6 +67,20 @@ export function ParameterizedPlaceholdersDocs() {
           {
             variables: [demoVariable("PROJECT", "projects/{;name}/src")],
             blocks: [demoCommand("cd {PROJECT;name=commandpad}")],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.parameterizedPlaceholders.multiple} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("GREETING", t.docs.demo.greetingTemplate)],
+            blocks: [
+              demoCommand('echo "{GREETING;name=Sam;place=CommandPad}"'),
+            ],
           },
         ]}
       >

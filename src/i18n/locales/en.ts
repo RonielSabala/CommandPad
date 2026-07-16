@@ -185,6 +185,7 @@ export const en: Messages = {
       tabSamples: ["Deploy checklist", "Database backup", ""],
       runbookSamples: ["Release checklist", "Postgres backup", "K8s debugging"],
       multiSelectNotes: ["**Start the stack**", "**Tear it down**"],
+      greetingTemplate: "Hi {;name}, welcome to {;place}!",
       noteSample:
         "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link, e.g. https://example.com. Click away to see it rendered again.",
     },
@@ -286,10 +287,12 @@ export const en: Messages = {
     },
     parameterizedPlaceholders: {
       intro:
-        "A variable's value can include a `{;name}` placeholder that stays empty until you reference the variable.",
-      fill: "When you reference the variable, fill that placeholder in with `{key;name=value}`: the value is injected exactly where the placeholder sits, something a normal variable cannot do as cleanly. If there are several placeholders, separate them with `;`, e.g. `{A;p1=v1;p2=v2}`.",
+        "Sometimes a variable is almost right for every command, except for one small part that changes each time. Parameterized placeholders let you leave that part blank in the variable, then fill it in differently wherever you use it.",
+      fill: "Mark the blank with `{;param}` inside the variable's value. It works like a fill-in-the-blank sentence: the variable holds the fixed wording, and you drop in the missing word each time you use it. Wherever you reference that variable, fill the blank with `{key;param=param_value}`, and your value lands right where the blank sat.",
       unresolved:
-        "If a reference does not give a placeholder its value, the `{;name}` marker stays in place and the command is treated as unresolved.",
+        "Forget to fill in a blank? The command is highlighted as unresolved, just like a variable that doesn't exist, so you'll notice right away.",
+      multiple:
+        "A value can have several blanks. Give each one a different name, then fill them all in the same reference, separated by semicolons:",
     },
     escapingBraces: {
       intro:

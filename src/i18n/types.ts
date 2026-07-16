@@ -143,6 +143,7 @@ export interface Messages {
       tabSamples: string[];
       runbookSamples: string[];
       multiSelectNotes: string[];
+      greetingTemplate: string;
     };
     gettingStarted: {
       intro: string;
@@ -195,6 +196,7 @@ export interface Messages {
       intro: string;
       fill: string;
       unresolved: string;
+      multiple: string;
     };
     escapingBraces: {
       intro: string;
