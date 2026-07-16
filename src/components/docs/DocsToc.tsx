@@ -7,6 +7,7 @@ import {
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
 import { useRef } from "react";
+import "./DocsToc.css";
 
 const SECTION_NUMBERS = getDocsSectionNumbers();
 
