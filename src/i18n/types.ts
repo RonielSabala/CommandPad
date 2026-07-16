@@ -187,6 +187,7 @@ export interface Messages {
       usage: string;
       unresolved: string;
       duplicatesAndEmpty: string;
+      tooltip: string;
     };
     variableReferences: {
       intro: string;

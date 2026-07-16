@@ -278,6 +278,8 @@ export const en: Messages = {
         "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**.",
       duplicatesAndEmpty:
         "If two variables share the same key, the one defined last wins. Hover over a row to reveal its controls: a drag handle on the left to reorder it among the others and a delete button on the right. Try them out in the demos throughout this section.",
+      tooltip:
+        "If a key or value is too long to fit its box, hover over it to see the full text in a tooltip.",
     },
     variableReferences: {
       intro:
