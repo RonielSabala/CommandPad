@@ -11,11 +11,11 @@
 
 /* Unused variable */
 
-.variable-row.is-unused .variable-inputs {
+.variable-row.is-unused:not(:focus-within) .variable-inputs {
   opacity: 0.5;
 }
 
-.variable-row.is-unused .variable-key-input {
+.variable-row.is-unused:not(:focus-within) .variable-key-input {
   color: var(--color-text-secondary);
 }
 
