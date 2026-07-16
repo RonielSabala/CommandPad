@@ -28,7 +28,7 @@ interface DemoWorkspaceProps {
 }
 
 /**
- * A docs playground running the REAL app components against an isolated demo store.
+ * A docs playground running the real app components against an isolated demo store.
  */
 export function DemoWorkspace({
   tabs = EMPTY_CONTENT,
@@ -105,7 +105,7 @@ export function DemoRunbookList() {
   );
 }
 
-/** Multi-select for a demo */
+/** Multi-select for a demo. */
 export function DemoSelectionArea({ children }: { children: ReactNode }) {
   const store = useStoreApi();
   const [root, setRoot] = useState<HTMLDivElement | null>(null);

@@ -78,14 +78,14 @@
 }
 
 /* Variable rows */
+
 .docs-demo-variables {
   max-width: 34rem;
   margin-bottom: var(--space-8);
 }
 
-/* Values are longer than keys in the docs examples; keep both fully visible */
 .docs-demo-variables .variable-inputs {
-  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
 }
 
 /* Multi-select playground */

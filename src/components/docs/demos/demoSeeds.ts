@@ -11,7 +11,7 @@ import type { StoreState } from "@/store/store";
 import { generateId } from "@/utils/id";
 import { getRunbookLabel } from "@/utils/runbook";
 
-// Seed helpers: build real Block/Variable objects for a demo workspace
+// Build real Block/Variable objects for a demo workspace
 export const demoCommand = (
   text: string,
   editorCollapsed?: boolean,
