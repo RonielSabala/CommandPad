@@ -18,7 +18,7 @@ export function DocsHeader() {
     <header className="docs-header">
       <Link
         to={AppRoute.WORKSPACE}
-        className="docs-logo no-user-select"
+        className="logo docs-logo no-user-select"
         title={t.docs.meta.backToApp}
       >
         <span className="logo-word">Command</span>

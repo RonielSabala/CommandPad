@@ -8,7 +8,7 @@
   background: var(--color-surface);
 }
 
-#app-name {
+.logo {
   display: inline-flex;
   align-items: baseline;
   gap: var(--space-1);
@@ -21,7 +21,7 @@
   transition: color var(--transition-fast);
 }
 
-#app-name:hover .logo-word {
+.logo:hover .logo-word {
   color: var(--accent-text);
 }
 

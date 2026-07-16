@@ -35,8 +35,7 @@ export function Header() {
   return (
     <header id="app-header">
       <span
-        id="app-name"
-        className="no-user-select"
+        className="logo no-user-select"
         role="button"
         tabIndex={0}
         title={t.header.reloadTitle}

@@ -9,22 +9,8 @@
 }
 
 .docs-logo {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-1);
-  font-family: var(--font-mono);
-  font-size: var(--text-lg);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  flex-shrink: 0;
-  cursor: pointer;
   color: var(--color-text-primary);
   text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-.docs-logo:hover .logo-word {
-  color: var(--accent-text);
 }
 
 .docs-header-title {
