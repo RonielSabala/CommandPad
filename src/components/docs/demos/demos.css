@@ -88,11 +88,6 @@
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
 }
 
-/* Hide the secret toggle before its own section explains it */
-.docs-demo-hide-secret .variable-secret-btn {
-  display: none;
-}
-
 /* Multi-select playground */
 .docs-demo-multiselect {
   outline: none;

@@ -3,6 +3,7 @@ import { useTranslation } from "@/i18n";
 import { demoCommand, demoVariable } from "../demos/demoSeeds";
 import { DemoVariableRows, DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
+import "./VariablesSection.css";
 
 export function VariablesDocs() {
   const t = useTranslation();
