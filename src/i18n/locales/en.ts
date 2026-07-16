@@ -256,71 +256,72 @@ export const en: Messages = {
       intro: "The sidebar's **RUNBOOKS** section holds your imported runbooks.",
       items: [
         "Click **Import** to load one or more `.json` files at once, or **Paste** to create a runbook from raw JSON.",
-        "Click any runbook entry to open it. If it's already open in a tab, that tab becomes active.",
+        "Click any runbook to open it. If it's already open in a tab, that tab becomes active.",
         "Delete a runbook from the library with the button shown on row hover.",
-        "Drag the handle on the left of an entry to reorder the list.",
+        "Drag the handle on the left of a runbook to reorder it in the list.",
         "Use the **search bar** to filter runbooks by label or filename.",
       ],
       autoLabel:
-        "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label, so entries are self-describing. Otherwise the imported filename is used as the fallback.",
+        "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label, so runbooks are self-describing. Otherwise the imported filename is used as the fallback.",
       labelDetails:
-        "Labels are normalized: markdown marks are removed and anything longer than 60 characters is cut.",
+        "Labels are normalized: markdown formatting is stripped and they are trimmed to 60 characters.",
       autoSave:
-        "Edits made to the active runbook are automatically saved back to its library entry.",
+        "Edits made to the active runbook are automatically saved back to the library.",
     },
     variables: {
       intro:
-        "Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**. Keys are case-sensitive, and variables with empty keys are ignored.",
+        "Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**. Keys are case-sensitive.",
       usage:
         "Use a variable in any command by wrapping its key in curly braces, e.g. `{NAMESPACE}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
       unresolved:
-        "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**. Copying still works: the reference is copied as written, like {NAME}.",
+        "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**.",
       duplicatesAndEmpty:
-        "One more detail: if two variables share the same key, the one defined last wins. Hover over a row to reveal its controls: a drag handle on the left to reorder it and a delete button on the right. Try them out in the demos throughout this section.",
+        "If two variables share the same key, the one defined last wins. Hover over a row to reveal its controls: a drag handle on the left to reorder it among the others and a delete button on the right. Try them out in the demos throughout this section.",
     },
     variableReferences: {
       intro:
-        "A variable's value can reference other variables; these resolve recursively. That way you can build values like `https://{HOST}/api` out of smaller pieces.",
+        "A variable's value can reference other variables. That way you can build values like `https://{HOST}/api` out of smaller pieces.",
       circular:
         "Circular references are safe: if two variables reference each other, the app detects the loop and leaves the reference as plain text.",
     },
     parameterizedPlaceholders: {
       intro:
-        "A variable's value can contain a `{;name}` placeholder that isn't filled in until the variable is referenced.",
-      fill: "Fill it in per-reference with `{key;name=value}`: the value is injected exactly where the placeholder sits, something a normal variable cannot do as cleanly. Supply multiple placeholders by separating them with `;`, e.g. `{A;p1=v1;p2=v2}`.",
+        "A variable's value can include a `{;name}` placeholder that stays empty until you reference the variable.",
+      fill: "When you reference the variable, fill that placeholder in with `{key;name=value}`: the value is injected exactly where the placeholder sits, something a normal variable cannot do as cleanly. If there are several placeholders, separate them with `;`, e.g. `{A;p1=v1;p2=v2}`.",
       unresolved:
-        "If a reference omits a placeholder's value, the `{;name}` marker is left in place and the command is treated as unresolved.",
+        "If a reference does not give a placeholder its value, the `{;name}` marker stays in place and the command is treated as unresolved.",
     },
     escapingBraces: {
       intro:
-        "Prefix `{` or `}` with a backslash in a command block to output it literally instead of starting a variable reference. The backslash is dropped from the resolved command.",
+        "Prefix `{` or `}` with a backslash in a command block to output it literally instead of starting a variable reference. The backslash is left out of the resolved command.",
       scope:
-        "Escaping only applies inside command blocks; backslashes in variable values are always literal.",
+        "Escaping only applies inside command blocks; backslashes in variable values are always shown as-is.",
     },
     secretVariables: {
       intro:
-        "Click the **eye icon** on a variable row to mark it as **secret**. Secret values are masked in the sidebar and are substituted silently in command previews.",
+        "Click the **eye icon** on a variable row to mark it as **secret**. Secret values are masked in the sidebar and are substituted with asterisks in command previews.",
     },
     blocks: {
       intro:
-        "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or use the **duplicate** and **delete** buttons on the right. Every demo below is live, so go ahead and try them.",
+        "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or use the **duplicate** and **delete** buttons on the right.",
     },
     commandBlock: {
       intro:
-        "A command block holds one command you want to keep at hand. It has two parts:",
+        "It's a block that holds a command you want to keep at hand. It has two parts:",
       parts: [
         "**Preview** (always visible): the command exactly as it will be copied. Click the **Copy** button to send it to your clipboard. This button is disabled if the command is empty.",
         "**Editor** (collapsible): where you write the command. Use the chevron button to hide it when you only need the preview.",
       ],
       multiline:
-        "Commands can span several lines, and the editor scrolls sideways when a line gets too long.",
+        "Commands can span several lines, and the editor can scroll sideways when a line gets too long.",
       gutterNote:
-        "The left margin marks the first line with `$` and numbers every extra line. Try adding a line below to watch the numbering grow.",
+        "The left margin marks the first line with `$` and numbers every extra line. Try adding more lines below to watch the numbering grow.",
       variablesTeaser:
         "Command blocks become far more useful with **variables**, which fill in the parts of a command that change. They are explained a little further ahead, in their own section.",
     },
     noteBlock: {
-      intro: "A free-form text block. Notes grow wider and taller as you type.",
+      intro:
+        "It's a free-form text block. Notes grow wider and taller as you type.",
       styles:
         "Three text styles are selectable on hover: **heading** (large, bold), **subheading** (medium, accented), and **body** (the default prose).",
       markdown: "Notes support markdown formatting:",
@@ -353,8 +354,7 @@ export const en: Messages = {
         "Press `Escape` or click outside block controls to clear the selection.",
       dragToTabDelay:
         "While dragging blocks over the tabs bar, hover a tab for a moment to switch to it, then drop.",
-      demoHint:
-        "Try it on the blocks below: hold `Shift` and click a few blocks, then press `Ctrl+D` to duplicate them or `Del` to delete them. `Escape` clears the selection.",
+      demoHint: "Try it on the blocks below:",
     },
     readMode: {
       intro:
@@ -380,8 +380,6 @@ export const en: Messages = {
       ],
       saveDialog:
         "A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.",
-      untitledNote:
-        "Untitled placeholders are not written into the exported file.",
     },
     language: {
       intro:
@@ -398,7 +396,7 @@ export const en: Messages = {
         {
           question: "Where is my data stored?",
           answer:
-            "Everything lives in your browser: preferences and tab metadata in localStorage, runbook content in IndexedDB. Nothing is sent to any server.",
+            "Everything lives in your browser: preferences and tab metadata in **localStorage** and runbook content in **IndexedDB**. Nothing is sent to any server.",
         },
         {
           question: "How do I back up a runbook or move it to another machine?",
@@ -406,9 +404,9 @@ export const en: Messages = {
             "Export it as **JSON** and import the file on the other machine. The JSON export contains the full workspace (variables and blocks) and can always be re-imported.",
         },
         {
-          question: "What exactly does Reset workspace delete?",
+          question: "What exactly does Reset Workspace delete?",
           answer:
-            "All of it: every tab, every runbook in the library, every variable, and every preference. It is a full wipe of the app's local storage and it cannot be undone, so export anything you care about first.",
+            "All of it: every tab, every runbook in the library, every variable, and every preference. It is a full wipe of the app's local storage and it cannot be undone, so export anything you want to save first.",
         },
         {
           question: "Why is part of my command highlighted in red?",
@@ -429,7 +427,7 @@ export const en: Messages = {
         {
           question: "Can I add another language to the UI?",
           answer:
-            "Yes, via a contribution to the project. Each language is a single catalog file, so adding one is a data-only change.",
+            "Yes, via a contribution to the project. Each language is a single catalog file, so adding one is just a data change.",
         },
       ],
     },

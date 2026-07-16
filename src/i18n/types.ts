@@ -245,7 +245,6 @@ export interface Messages {
       intro: string;
       formats: string[];
       saveDialog: string;
-      untitledNote: string;
     };
     language: {
       intro: string;

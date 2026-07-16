@@ -249,7 +249,7 @@ export const es: Messages = {
       autoCreate:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:
-        "Una pestaña toma su nombre del primer bloque de nota de su libro, así que tus pestañas se describen solas. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas y cierra alguna.",
+        "Una pestaña toma su nombre del primer bloque de nota de su libro, así tus pestañas se describen solas. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas y cierra alguna.",
     },
     sidebar: {
       intro:
@@ -267,72 +267,72 @@ export const es: Messages = {
         "La sección **LIBROS** de la barra lateral contiene tus libros importados.",
       items: [
         "Haz clic en **Importar** para cargar uno o varios archivos `.json` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.",
-        "Haz clic en cualquier entrada para abrirla. Si ya está abierta en una pestaña, esa pestaña pasa a estar activa.",
+        "Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.",
         "Elimina un libro de la biblioteca con el botón que aparece al pasar el cursor sobre la fila.",
-        "Arrastra el control a la izquierda de una entrada para reordenar la lista.",
+        "Arrastra el control a la izquierda de un libro para reordenarlo en la lista.",
         "Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.",
       ],
       autoLabel:
-        "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca, de modo que las entradas se describen solas. En caso contrario se usa el nombre del archivo importado.",
+        "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca, de modo que los libros se describen solos. En caso contrario se usa el nombre del archivo importado.",
       labelDetails:
-        "Las etiquetas se normalizan: se quita el formato markdown y lo que pase de 60 caracteres se recorta.",
+        "Las etiquetas se normalizan: se limpia el formato markdown y se recorta hasta 60 caracteres.",
       autoSave:
-        "Los cambios hechos al libro activo se guardan automáticamente en su entrada de la biblioteca.",
+        "Los cambios hechos al libro activo se guardan automáticamente en la biblioteca.",
     },
     variables: {
       intro:
-        "Las variables se definen en la sección **VARIABLES** de la barra lateral. Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas, y las variables con clave vacía se ignoran.",
+        "Las variables se definen en la sección **VARIABLES** de la barra lateral. Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas.",
       usage:
         "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{NAMESPACE}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
       unresolved:
-        "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**. Copiar sigue funcionando: la referencia se copia tal cual está escrita, como {NOMBRE}.",
+        "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**.",
       duplicatesAndEmpty:
-        "Un detalle más: si dos variables comparten la misma clave, gana la definida en último lugar. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla y un botón de eliminar a la derecha. Pruébalos en las demos de esta sección.",
+        "Si dos variables comparten la misma clave, gana la definida en último lugar. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables y un botón de eliminar a la derecha. Pruébalos en las demos de esta sección.",
     },
     variableReferences: {
       intro:
-        "El valor de una variable puede referenciar otras variables; estas se resuelven recursivamente. Así puedes construir valores como `https://{HOST}/api` a partir de piezas más pequeñas.",
+        "El valor de una variable puede referenciar otras variables. Así puedes construir valores como `https://{HOST}/api` a partir de piezas más pequeñas.",
       circular:
         "Las referencias circulares son seguras: si dos variables se referencian entre sí, la app detecta el bucle y deja la referencia como texto plano.",
     },
     parameterizedPlaceholders: {
       intro:
-        "El valor de una variable puede contener un marcador `{;nombre}` que no se rellena hasta que la variable es referenciada.",
-      fill: "Rellénalo por referencia con `{clave;nombre=valor}`: el valor se inyecta justo donde está el marcador, algo que una variable normal no puede hacer con la misma elegancia. Proporciona varios marcadores separándolos con `;`, p. ej. `{A;p1=v1;p2=v2}`.",
+        "El valor de una variable puede incluir un marcador `{;nombre}` que queda vacío hasta que referencias la variable.",
+      fill: "Al referenciar la variable, rellena ese marcador con `{clave;nombre=valor}`: el valor se inyecta justo donde está el marcador, algo que una variable normal no logra con la misma limpieza. Si hay varios marcadores, sepáralos con `;`, p. ej. `{A;p1=v1;p2=v2}`.",
       unresolved:
-        "Si una referencia omite el valor de un marcador, el marcador `{;nombre}` se deja en su lugar y el comando se considera sin resolver.",
+        "Si una referencia no le da valor a un marcador, este se queda en su lugar y el comando se considera sin resolver.",
     },
     escapingBraces: {
       intro:
-        "Antepón una barra invertida a `{` o `}` en un bloque de comando para mostrar la llave literalmente en vez de iniciar una referencia de variable. La barra invertida se elimina del comando resuelto.",
+        "Antepón una barra invertida a `{` o `}` en un bloque de comando para mostrar la llave literalmente en vez de iniciar una referencia de variable. La barra invertida se excluye del comando resuelto.",
       scope:
-        "El escape aplica solo dentro de bloques de comando; las barras invertidas en valores de variables son siempre literales.",
+        "El escape solo aplica dentro de bloques de comando; las barras invertidas en valores de variables se muestran siempre tal cual.",
     },
     secretVariables: {
       intro:
-        "Haz clic en el **icono de ojo** de una fila de variable para marcarla como **secreta**. Los valores secretos se ocultan en la barra lateral y se sustituyen silenciosamente en las vistas previas de comandos.",
+        "Haz clic en el **icono de ojo** de una fila de variable para marcarla como **secreta**. Los valores secretos se ocultan en la barra lateral y se sustituyen por asteriscos en las vistas previas de comandos.",
     },
     blocks: {
       intro:
-        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o usa los botones de **duplicar** y **eliminar** de la derecha. Cada demo de abajo es interactiva, así que pruébalos sin miedo.",
+        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o usa los botones de **duplicar** y **eliminar** de la derecha.",
     },
     commandBlock: {
       intro:
-        "Un bloque de comando guarda un comando que quieres tener a mano. Tiene dos partes:",
+        "Es un bloque que guarda un comando que quieras tener a mano. Tiene dos partes:",
       parts: [
         "**Vista previa** (siempre visible): el comando exactamente como se copiará. Haz clic en el botón **Copiar** para enviarlo a tu portapapeles. Este botón se deshabilita si el comando está vacío.",
         "**Editor** (contraíble): donde escribes el comando. Usa el botón de flecha para ocultarlo cuando solo necesites la vista previa.",
       ],
       multiline:
-        "Los comandos pueden ocupar varias líneas, y el editor se desplaza hacia los lados cuando una línea se hace demasiado larga.",
+        "Los comandos pueden ocupar varias líneas, y el editor se puede scrollear hacia los lados cuando una línea se hace demasiado larga.",
       gutterNote:
-        "El margen izquierdo marca la primera línea con `$` y numera cada línea extra. Prueba a agregar una línea abajo para ver crecer la numeración.",
+        "El margen izquierdo marca la primera línea con `$` y numera cada línea extra. Prueba a agregar más líneas abajo para ver crecer la numeración.",
       variablesTeaser:
         "Los bloques de comando se vuelven mucho más útiles con las **variables**, que rellenan las partes de un comando que cambian. Se explican un poco más adelante, en su propia sección.",
     },
     noteBlock: {
       intro:
-        "Un bloque de texto libre. Las notas se expanden a lo alto y a lo ancho mientras escribes.",
+        "Es un bloque de texto libre. Las notas se expanden a lo alto y a lo ancho mientras escribes.",
       styles:
         "Hay tres estilos de texto seleccionables al pasar el cursor: **título** (grande, en negrita), **subtítulo** (mediano, acentuado) y **cuerpo** (la prosa por defecto).",
       markdown: "Las notas soportan formato markdown:",
@@ -365,8 +365,7 @@ export const es: Messages = {
         "Pulsa `Escape` o haz clic fuera de los controles de bloque para limpiar la selección.",
       dragToTabDelay:
         "Mientras arrastras bloques sobre la barra de pestañas, mantén el cursor un momento sobre una pestaña para cambiar a ella, y luego suelta.",
-      demoHint:
-        "Pruébalo con los bloques de abajo: mantén `Shift` y haz clic en algunos bloques, luego pulsa `Ctrl+D` para duplicarlos o `Del` para eliminarlos. `Escape` limpia la selección.",
+      demoHint: "Pruébalo con los bloques de abajo:",
     },
     readMode: {
       intro:
@@ -393,8 +392,6 @@ export const es: Messages = {
       ],
       saveDialog:
         "En navegadores compatibles se abre un diálogo nativo de guardado para elegir nombre y carpeta. En los demás, el archivo se descarga directamente.",
-      untitledNote:
-        "Los marcadores Sin título no se escriben en el archivo exportado.",
     },
     language: {
       intro:
@@ -412,7 +409,7 @@ export const es: Messages = {
         {
           question: "¿Dónde se guardan mis datos?",
           answer:
-            "Todo vive en tu navegador: las preferencias y los metadatos de pestañas en localStorage, el contenido de los libros en IndexedDB. Nada se envía a ningún servidor.",
+            "Todo vive en tu navegador: las preferencias y los metadatos de pestañas en **localStorage** y el contenido de los libros en **IndexedDB**. Nada se envía a ningún servidor.",
         },
         {
           question: "¿Cómo respaldo un libro o lo llevo a otra máquina?",
@@ -420,12 +417,12 @@ export const es: Messages = {
             "Expórtalo como **JSON** e importa el archivo en la otra máquina. La exportación JSON contiene el espacio de trabajo completo (variables y bloques) y siempre puede reimportarse.",
         },
         {
-          question: "¿Qué elimina exactamente Resetear espacio de trabajo?",
+          question: "¿Qué elimina exactamente Resetear el Espacio de Trabajo?",
           answer:
-            "Todo: cada pestaña, cada libro de la biblioteca, cada variable y cada preferencia. Es un borrado completo del almacenamiento local de la app y no se puede deshacer, así que exporta antes lo que te importe.",
+            "Todo: cada pestaña, cada libro de la biblioteca, cada variable y cada preferencia. Es un borrado completo del almacenamiento local de la app y no se puede deshacer, así que exporta antes lo que quieras salvar.",
         },
         {
-          question: "¿Por qué parte de mi comando aparece resaltada en rojo?",
+          question: "¿Por qué parte de mi comando aparece resaltado en rojo?",
           answer:
             "Esa parte es una referencia sin resolver: no existe ninguna variable con esa clave (las claves distinguen mayúsculas de minúsculas), o a un marcador `{;nombre}` no se le dio valor.",
         },
@@ -443,7 +440,7 @@ export const es: Messages = {
         {
           question: "¿Puedo agregar otro idioma a la interfaz?",
           answer:
-            "Sí, mediante una contribución al proyecto. Cada idioma es un único archivo de catálogo, así que agregar uno es un cambio solo de datos.",
+            "Sí, mediante una contribución al proyecto. Cada idioma es un único archivo de catálogo, así que agregar uno involucra un simple cambio de datos.",
         },
       ],
     },
