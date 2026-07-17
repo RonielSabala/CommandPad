@@ -18,14 +18,17 @@ export function DocsHeader() {
     <header className="header-bar">
       <Link
         to={AppRoute.WORKSPACE}
-        className="logo docs-logo no-user-select"
+        id="docs-logo"
+        className="logo no-user-select"
         title={t.docs.meta.backToApp}
       >
         <span className="logo-word">Command</span>
         <span className="logo-pad">{"{Pad}"}</span>
       </Link>
 
-      <span className="docs-header-title">{t.docs.meta.title}</span>
+      <span id="docs-header-title" className="no-user-select">
+        {t.docs.meta.title}
+      </span>
 
       <div className="header-spacer" />
 

@@ -22,7 +22,7 @@ export function DocsToc({ activeId, onNavigate }: Props) {
 
   return (
     <aside className="docs-toc">
-      <span className="section-title docs-toc-title">
+      <span className="section-title docs-toc-title no-user-select">
         {t.docs.meta.tocTitle}
       </span>
       <nav ref={navRef}>
@@ -32,6 +32,7 @@ export function DocsToc({ activeId, onNavigate }: Props) {
             href={`#${id}`}
             className={classNames(
               "docs-toc-item",
+              "no-user-select",
               level === DocsSectionLevel.SUBSECTION && "docs-toc-sub",
               id === activeId && "docs-toc-active",
             )}

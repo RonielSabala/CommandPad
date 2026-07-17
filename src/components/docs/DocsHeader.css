@@ -1,9 +1,9 @@
-.docs-logo {
+#docs-logo {
   color: var(--color-text-primary);
   text-decoration: none;
 }
 
-.docs-header-title {
+#docs-header-title {
   font-size: var(--text-md);
   font-weight: 600;
   letter-spacing: 0.06em;
