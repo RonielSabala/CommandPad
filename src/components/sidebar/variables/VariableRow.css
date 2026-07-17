@@ -9,19 +9,11 @@
   transition: opacity var(--transition-base);
 }
 
-/* Unused variable */
-
-.variable-row.is-unused:not(:focus-within) .variable-inputs {
-  opacity: 0.5;
-}
-
-.variable-row.is-unused:not(:focus-within) .variable-key-input {
-  color: var(--color-text-secondary);
-}
+/* Variable inputs */
 
 .variable-key-input {
-  color: var(--accent-text);
   font-weight: 500;
+  color: var(--accent-text);
 }
 
 .variable-value-input {
@@ -52,11 +44,16 @@
   color: var(--color-text-muted);
 }
 
-body.read-mode .variable-key-input {
-  pointer-events: none;
+/* Unused variable */
+
+body:not(.read-mode)
+  .variable-row.is-unused:not(:focus-within)
+  .variable-inputs {
+  opacity: 0.5;
 }
 
-body.read-mode .variable-row:not(.is-unused) .variable-key-input {
+body.read-mode .variable-key-input {
+  pointer-events: none;
   opacity: 0.5;
 }
 
