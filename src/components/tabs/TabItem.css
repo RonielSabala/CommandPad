@@ -76,8 +76,7 @@
 /* Hide the separator */
 .tab:not(.tab-active):hover::after,
 .tab:not(.tab-active):has(+ .tab-active)::after,
-.tab:not(.tab-active):has(+ .tab:hover)::after,
-.tab:not(.tab-active):has(+ #add-tab-btn)::after {
+.tab:not(.tab-active):has(+ .tab:hover)::after {
   opacity: 0;
 }
 
