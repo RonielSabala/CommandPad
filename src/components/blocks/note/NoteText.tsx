@@ -1,8 +1,9 @@
 import { CssClass } from "@/common/constants/css";
 import { Anchor } from "@/common/constants/dom";
-import { NoteSegmentType } from "@/common/enums";
+import { AppMode, NoteSegmentType } from "@/common/enums";
 import { formatBinding, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
+import { useStore } from "@/store/store";
 import { parseNoteText } from "@/utils/markdown";
 import "./NoteText.css";
 
@@ -12,8 +13,11 @@ interface Props {
 
 export function NoteText({ text }: Props) {
   const t = useTranslation();
+  const readMode = useStore((state) => state.mode === AppMode.READ);
   const followLinkTooltip = t.note.followLinkTooltip(
-    formatBinding(KEYBINDINGS[KeyBinding.OPEN_LINK].binding),
+    readMode
+      ? undefined
+      : formatBinding(KEYBINDINGS[KeyBinding.OPEN_LINK].binding),
   );
 
   return (

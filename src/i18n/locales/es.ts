@@ -95,7 +95,8 @@ export const es: Messages = {
       [NoteStyle.SUBHEADING]: "Sección de subtítulo...",
       [NoteStyle.BODY]: "Sección de cuerpo...",
     },
-    followLinkTooltip: (binding: string) => `Seguir enlace (${binding})`,
+    followLinkTooltip: (binding?: string) =>
+      binding ? `Seguir enlace (${binding})` : "Seguir enlace",
   },
   exportModal: {
     title: "Exportar",

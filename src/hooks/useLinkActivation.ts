@@ -1,6 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { Anchor, Cursor } from "@/common/constants/dom";
 import { EventType } from "@/common/constants/events";
+import { AppMode } from "@/common/enums";
 import { isModifierPressed, ModifierAction } from "@/common/keybindings";
 import { useStoreApi } from "@/store/store";
 import { useEffect } from "react";
@@ -64,7 +65,10 @@ export function useLinkActivation(root: Document | HTMLElement | null): void {
     };
 
     const onClick = (event: MouseEvent) => {
-      if (!isModifierPressed(event, ModifierAction.OPEN_LINK)) {
+      if (
+        store.getState().mode === AppMode.READ ||
+        isModifierPressed(event, ModifierAction.OPEN_LINK)
+      ) {
         return;
       }
 
@@ -74,7 +78,6 @@ export function useLinkActivation(root: Document | HTMLElement | null): void {
       }
 
       event.preventDefault();
-      setLinkMode(false);
       window.open(link.href, Anchor.TARGET_BLANK, Anchor.REL);
     };
 
