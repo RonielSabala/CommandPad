@@ -5,6 +5,7 @@
   border-bottom: var(--border-standard);
   overflow-x: auto;
   flex-shrink: 0;
+  height: var(--space-20);
   padding: var(--space-2) var(--space-8);
   scrollbar-width: none;
   gap: var(--space-1);
