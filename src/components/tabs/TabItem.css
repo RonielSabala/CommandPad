@@ -97,6 +97,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
+  z-index: 1;
   border-left: var(--border-dashed);
 }
 
