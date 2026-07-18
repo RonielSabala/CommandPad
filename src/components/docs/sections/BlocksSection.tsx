@@ -30,7 +30,7 @@ export function CommandBlockDocs() {
       <Prose text={t.docs.commandBlock.intro} />
       <ProseList items={t.docs.commandBlock.parts} />
       <DemoWorkspace
-        tabs={[{ blocks: [demoCommand("ssh admin@server-01.example.com")] }]}
+        tabs={[{ blocks: [demoCommand("ls -ltr ~/Documents/reports")] }]}
       >
         <BlocksList />
       </DemoWorkspace>
@@ -41,7 +41,7 @@ export function CommandBlockDocs() {
           {
             blocks: [
               demoCommand(
-                "docker run --rm \\\n  --name web \\\n  -p 8080:80 \\\n  nginx:latest",
+                "pnpm install \\\n  --save-dev \\\n  prettier eslint",
               ),
             ],
           },

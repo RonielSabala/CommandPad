@@ -19,8 +19,8 @@ export function VariablesDocs() {
         className="docs-demo-hide-secret"
         tabs={[
           {
-            variables: [demoVariable("NAMESPACE", "production")],
-            blocks: [demoCommand("kubectl get pods -n {NAMESPACE}")],
+            variables: [demoVariable("HOST", "example.com")],
+            blocks: [demoCommand("ping {HOST}")],
           },
         ]}
       >
