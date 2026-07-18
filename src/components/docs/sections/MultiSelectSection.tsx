@@ -19,10 +19,10 @@ export function MultiSelectDocs() {
           {
             blocks: [
               demoNote(t.docs.demo.multiSelectNotes[0]),
-              demoCommand("docker compose up -d", true),
-              demoCommand("docker compose logs -f api", true),
+              demoCommand("zip -r backup.zip ~/Documents", true),
+              demoCommand("cp backup.zip ~/Backups", true),
               demoNote(t.docs.demo.multiSelectNotes[1]),
-              demoCommand("docker compose down", true),
+              demoCommand("rm backup.zip", true),
             ],
           },
         ]}

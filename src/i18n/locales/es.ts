@@ -195,7 +195,7 @@ export const es: Messages = {
         "Respaldo de Postgres",
         "Depuración de K8s",
       ],
-      multiSelectNotes: ["Levantar el stack", "Apagarlo todo"],
+      multiSelectNotes: ["Crear la copia de seguridad", "Limpiar"],
       greetingTemplate: "¡Hola {;name}, bienvenido a {;place}!",
       noteSample:
         "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace, p. ej. https://example.com. Haz clic fuera para verla renderizada de nuevo.",

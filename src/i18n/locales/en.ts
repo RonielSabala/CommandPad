@@ -186,7 +186,7 @@ export const en: Messages = {
       reset: "Reset demo",
       tabSamples: ["Deploy checklist", "Database backup", ""],
       runbookSamples: ["Release checklist", "Postgres backup", "K8s debugging"],
-      multiSelectNotes: ["Start the stack", "Tear it down"],
+      multiSelectNotes: ["Create the backup", "Clean up"],
       greetingTemplate: "Hi {;name}, welcome to {;place}!",
       noteSample:
         "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link, e.g. https://example.com. Click away to see it rendered again.",
