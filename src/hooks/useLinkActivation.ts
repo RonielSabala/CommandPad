@@ -65,10 +65,7 @@ export function useLinkActivation(root: Document | HTMLElement | null): void {
     };
 
     const onClick = (event: MouseEvent) => {
-      if (
-        store.getState().mode === AppMode.READ ||
-        isModifierPressed(event, ModifierAction.OPEN_LINK)
-      ) {
+      if (store.getState().mode === AppMode.READ) {
         return;
       }
 
@@ -78,7 +75,15 @@ export function useLinkActivation(root: Document | HTMLElement | null): void {
       }
 
       event.preventDefault();
-      window.open(link.href, Anchor.TARGET_BLANK, Anchor.REL);
+      if (isModifierPressed(event, ModifierAction.OPEN_LINK)) {
+        window.open(link.href, Anchor.TARGET_BLANK, Anchor.REL);
+        return;
+      }
+
+      // Focus the note
+      const control = (link.closest("label") as HTMLLabelElement | null)
+        ?.control;
+      control?.focus();
     };
 
     document.addEventListener(EventType.KEY_DOWN, onKeyDown);
