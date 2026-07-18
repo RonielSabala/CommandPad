@@ -25,6 +25,10 @@
   --color-text-muted: #6a6f7d;
   --selection-color: #0338a2;
 
+  /* Scrollbar */
+  --scrollbar-thumb: #2c2f3a;
+  --scrollbar-thumb-hover: #6a6f7d;
+
   /* Note text styles */
   --code-color: #ffab3d;
   --code-bg: rgba(255, 171, 61, 0.09);
@@ -111,6 +115,10 @@
   --color-text-secondary: #4b5260;
   --color-text-muted: #868d9a;
   --selection-color: #c5d9fb;
+
+  /* Scrollbar */
+  --scrollbar-thumb: #b6bcc8;
+  --scrollbar-thumb-hover: #868d9a;
 
   /* Note text styles */
   --code-color: #b4490a;
