@@ -72,10 +72,12 @@ export const MarkdownWrap = {
   CODE: "`",
 } as const;
 
-export const BracketPairs = {
+export const WrapPairs = {
   "(": ")",
   "[": "]",
   "{": "}",
+  '"': '"',
+  "'": "'",
 } as const;
 
 // Variables

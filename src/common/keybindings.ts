@@ -41,6 +41,7 @@ export const KeyBinding = {
   NOTE_BOLD: "NOTE_BOLD",
   NOTE_ITALIC: "NOTE_ITALIC",
   NOTE_CODE: "NOTE_CODE",
+  WRAP_SELECTION: "WRAP_SELECTION",
 } as const;
 export type KeyBinding = (typeof KeyBinding)[keyof typeof KeyBinding];
 
@@ -76,6 +77,10 @@ export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
   [KeyBinding.NOTE_BOLD]: { binding: "ctrl+b", keyboard: false },
   [KeyBinding.NOTE_ITALIC]: { binding: "ctrl+i", keyboard: false },
   [KeyBinding.NOTE_CODE]: { binding: "ctrl+´", keyboard: false },
+  [KeyBinding.WRAP_SELECTION]: {
+    binding: `( [ { " '`,
+    keyboard: false,
+  },
 };
 
 const BINDING_SEPARATOR = "+";

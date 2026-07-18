@@ -1,4 +1,4 @@
-import { BracketPairs, MarkdownWrap } from "@/common/config";
+import { MarkdownWrap, WrapPairs } from "@/common/config";
 import { useCallback, type KeyboardEvent } from "react";
 
 const WRAP_BY_KEY: Record<string, string> = {
@@ -58,12 +58,12 @@ export function useNoteFormatting(
         return;
       }
 
-      // Bracket wrapping
+      // Bracket / quote wrapping
       if (textarea.selectionStart === textarea.selectionEnd) {
         return;
       }
 
-      const close = BracketPairs[event.key as keyof typeof BracketPairs];
+      const close = WrapPairs[event.key as keyof typeof WrapPairs];
       if (close) {
         event.preventDefault();
         wrapSelection(textarea, event.key, close, onChange);

@@ -149,6 +149,8 @@ export const en: Messages = {
     [KeyBinding.NOTE_BOLD]: "Bold selected text (note block)",
     [KeyBinding.NOTE_ITALIC]: "Italicize selected text (note block)",
     [KeyBinding.NOTE_CODE]: "Wrap selected text in backticks (note block)",
+    [KeyBinding.WRAP_SELECTION]:
+      "Wrap selected text in the typed pair (note block)",
   },
   docs: {
     meta: {
@@ -352,7 +354,7 @@ export const en: Messages = {
         "Styles do not combine: bold and italics cannot be mixed on the same words, for example. Whichever style starts first wins.",
       links: "To open a link, hold `Ctrl` and click it.",
       wrapKeys:
-        "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and **Ctrl+´** in backticks; typing **(**, **[** or **{** wraps it in that pair.",
+        "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and **Ctrl+´** in backticks; typing **(**, **[**, **{**, **\"** or **'** wraps it in that pair.",
     },
     dividerBlock: {
       intro:

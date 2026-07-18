@@ -154,6 +154,8 @@ export const es: Messages = {
       "Poner en cursiva el texto seleccionado (bloque de nota)",
     [KeyBinding.NOTE_CODE]:
       "Envolver el texto seleccionado en comillas invertidas (bloque de nota)",
+    [KeyBinding.WRAP_SELECTION]:
+      "Envolver el texto seleccionado en el par escrito (bloque de nota)",
   },
   docs: {
     meta: {
@@ -363,7 +365,7 @@ export const es: Messages = {
         "Los estilos no se combinan: negrita y cursiva no pueden mezclarse en las mismas palabras, por ejemplo. Gana el estilo que empieza primero.",
       links: "Para abrir un enlace, mantén `Ctrl` y haz clic en él.",
       wrapKeys:
-        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y **Ctrl+´** en comillas invertidas; escribir **(**, **[** o **{** lo envuelve en ese par.",
+        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y **Ctrl+´** en comillas invertidas; escribir **(**, **[**, **{**, **\"** o **'** lo envuelve en ese par.",
     },
     dividerBlock: {
       intro:
