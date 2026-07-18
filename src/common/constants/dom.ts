@@ -2,6 +2,10 @@ export const InputSelector = {
   EDITABLE: "textarea, input",
 } as const;
 
+export const EditCommand = {
+  INSERT_TEXT: "insertText",
+} as const;
+
 export const DataAttr = {
   BLOCK_ID: "data-block-id",
   RUNBOOK_ID: "data-runbook-id",

@@ -1,0 +1,14 @@
+#docs-logo {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+#docs-header-title {
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding-left: var(--space-8);
+  border-left: var(--border-standard);
+}

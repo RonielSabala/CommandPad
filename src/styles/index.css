@@ -56,12 +56,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: var(--scrollbar-thumb);
   border-radius: var(--radius-md);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* --- SHARED PRIMITIVES --- */

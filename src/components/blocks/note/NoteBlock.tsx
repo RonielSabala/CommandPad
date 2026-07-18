@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { Key } from "@/common/constants/events";
 import { NoteStyle } from "@/common/enums";
 import type { NoteBlock as NoteBlockData } from "@/common/types";
 import { useNoteFormatting } from "@/hooks/useNoteFormatting";
@@ -73,6 +74,11 @@ export function NoteBlock({ block }: Props) {
           value={blockText}
           onChange={(event) => updateBlockText(blockId, event.target.value)}
           onKeyDown={(event) => {
+            if (event.key === Key.ESCAPE) {
+              event.currentTarget.blur();
+              return;
+            }
+
             handleFormatKey(event);
             handleTabKey(event);
           }}

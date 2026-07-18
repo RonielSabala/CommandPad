@@ -46,6 +46,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
   );
 
   const runbookBtnClass = classNames(
+    "no-user-select",
     CssClass.RUNBOOK_ITEM_BTN,
     isActive && CssClass.ACTIVE,
     isFocused && "runbook-focused",

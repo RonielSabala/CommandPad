@@ -1,3 +1,4 @@
+import type { DocsSectionId } from "@/common/constants/docs";
 import type { BlockType, NoteStyle } from "@/common/enums";
 import type { KeyBinding } from "@/common/keybindings";
 
@@ -41,7 +42,6 @@ export interface Messages {
     switchToLight: string;
     collapseAll: string;
     toggleEditorsTitle: string;
-    keybindingsTitle: string;
     resetWorkspaceTitle: string;
     exportTitle: string;
     export: string;
@@ -101,6 +101,7 @@ export interface Messages {
   note: {
     styleLabel: Record<NoteStyle, string>;
     stylePlaceholder: Record<NoteStyle, string>;
+    followLinkTooltip: (binding?: string) => string;
   };
   exportModal: {
     title: string;
@@ -110,9 +111,6 @@ export interface Messages {
     title: string;
     message: string;
     error: string;
-  };
-  keybindingsModal: {
-    title: string;
   };
   alert: {
     invalidFormatTitle: string;
@@ -131,4 +129,144 @@ export interface Messages {
     resetMessage: string;
   };
   keybindings: Record<KeyBinding, string>;
+  docs: {
+    meta: {
+      title: string;
+      openDocs: string;
+      backToApp: string;
+      tocTitle: string;
+    };
+    toc: Record<DocsSectionId, string>;
+    demo: {
+      tryIt: string;
+      reset: string;
+      noteSample: string;
+      tabSamples: string[];
+      runbookSamples: string[];
+      multiSelectNotes: string[];
+      greetingTemplate: string;
+    };
+    gettingStarted: {
+      intro: string;
+      why: string;
+      journey: string;
+      navigate: string;
+      tryIt: string;
+    };
+    workspace: {
+      intro: string;
+      items: string[];
+      persistence: string;
+    };
+    header: {
+      intro: string;
+      items: string[];
+    };
+    mainPanel: {
+      intro: string;
+      teaser: string;
+    };
+    tabs: {
+      intro: string;
+      items: string[];
+      autoCreate: string;
+      labelDemo: string;
+    };
+    sidebar: {
+      intro: string;
+      items: string[];
+      resizeDetails: string;
+    };
+    runbookLibrary: {
+      intro: string;
+      items: string[];
+      autoLabel: string;
+      labelDetails: string;
+      autoSave: string;
+    };
+    variables: {
+      why: string;
+      intro: string;
+      usage: string;
+      unresolved: string;
+      duplicatesAndEmpty: string;
+      tooltip: string;
+      demoHint: string;
+    };
+    variableReferences: {
+      intro: string;
+      demoHint: string;
+      circular: string;
+    };
+    parameterizedPlaceholders: {
+      intro: string;
+      fill: string;
+      seeExample: string;
+      multiple: string;
+      nested: string;
+    };
+    escapingBraces: {
+      intro: string;
+      tryHint: string;
+      scope: string;
+    };
+    secretVariables: {
+      intro: string;
+      copyNote: string;
+    };
+    blocks: {
+      intro: string;
+    };
+    commandBlock: {
+      intro: string;
+      parts: string[];
+      multiline: string;
+      gutterNote: string;
+      variablesTeaser: string;
+    };
+    noteBlock: {
+      intro: string;
+      styles: string;
+      markdown: string;
+      tableSyntax: string;
+      tableResult: string;
+      autoUrls: string;
+      noNesting: string;
+      links: string;
+      wrapKeys: string;
+    };
+    dividerBlock: {
+      intro: string;
+      demoNote: string;
+    };
+    multiSelect: {
+      intro: string;
+      actions: string[];
+      clear: string;
+      dragToTabDelay: string;
+      demoHint: string;
+    };
+    readMode: {
+      intro: string;
+      rules: string[];
+      persisted: string;
+      exit: string;
+    };
+    export: {
+      intro: string;
+      formats: string[];
+      saveDialog: string;
+    };
+    language: {
+      intro: string;
+      detection: string;
+    };
+    keyboardShortcuts: {
+      intro: string;
+    };
+    qa: {
+      intro: string;
+      items: { question: string; answer: string }[];
+    };
+  };
 }

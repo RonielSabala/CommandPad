@@ -1,31 +1,17 @@
-import { SidebarPosition } from "@/common/enums";
-import { useBodyClasses } from "@/hooks/useBodyClasses";
-import { useDocumentInteractions } from "@/hooks/useDocumentInteractions";
-import { useKeybindings } from "@/hooks/useKeybindings";
+import { AppRoute } from "@/common/constants/routes";
+import { useThemeClass } from "@/hooks/useBodyClasses";
 import { useStore } from "@/store/store";
-import { classNames } from "@/utils/string";
-import { useEffect, type CSSProperties } from "react";
+import { useEffect } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import { Header } from "./components/header/Header";
-import { MainPanel } from "./components/MainPanel";
-import { AlertModal } from "./components/modals/AlertModal";
-import { ConfirmModal } from "./components/modals/ConfirmModal";
-import { ExportModal } from "./components/modals/ExportModal";
-import { KeybindingsModal } from "./components/modals/KeybindingsModal";
-import { PasteRunbookModal } from "./components/modals/PasteRunbookModal";
-import { RunbookImportInput } from "./components/sidebar/runbooks/RunbookImportInput";
-import { Sidebar } from "./components/sidebar/Sidebar";
+import { DocsPage } from "./components/docs/DocsPage";
+import { WorkspacePage } from "./components/workspace/WorkspacePage";
 
 export default function App() {
   const bootstrap = useStore((state) => state.bootstrap);
-  const sidebarPosition = useStore((state) => state.sidebarPosition);
   const isInitialized = useStore((state) => state.initialized);
-  const isSidebarCollapsed = useStore((state) => state.sidebarCollapsed);
-  const sidebarWidth = useStore((state) => state.sidebarWidth);
 
-  useBodyClasses();
-  useKeybindings();
-  useDocumentInteractions();
+  useThemeClass();
 
   useEffect(() => {
     void bootstrap();
@@ -37,31 +23,11 @@ export default function App() {
     }
   }, [isInitialized]);
 
-  const shellClass = classNames(
-    isSidebarCollapsed && "sidebar-collapsed",
-    sidebarPosition === SidebarPosition.RIGHT && "sidebar-right",
-  );
-
   return (
-    <>
-      <div
-        id="app-shell"
-        className={shellClass}
-        style={
-          { "--sidebar-width": `${sidebarWidth}px` } as CSSProperties
-        }
-      >
-        <Header />
-        <Sidebar />
-        <RunbookImportInput />
-        <MainPanel />
-      </div>
-
-      <KeybindingsModal />
-      <ExportModal />
-      <PasteRunbookModal />
-      <ConfirmModal />
-      <AlertModal />
-    </>
+    <Routes>
+      <Route path={AppRoute.WORKSPACE} element={<WorkspacePage />} />
+      <Route path={AppRoute.DOCS} element={<DocsPage />} />
+      <Route path="*" element={<Navigate to={AppRoute.WORKSPACE} replace />} />
+    </Routes>
   );
 }

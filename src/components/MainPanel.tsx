@@ -1,7 +1,12 @@
 import { DragEffect } from "@/common/constants/events";
 import { blockDrag } from "@/hooks/blockDrag";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
-import { getActiveTab, useStore } from "@/store/store";
+import {
+  getActiveTab,
+  useStore,
+  useStoreApi,
+  type AppStoreApi,
+} from "@/store/store";
 import { useRef } from "react";
 import { AddBlockRow } from "./blocks/AddBlockRow";
 import { BlocksList } from "./blocks/BlocksList";
@@ -9,8 +14,8 @@ import { EmptyState } from "./blocks/EmptyState";
 import "./MainPanel.css";
 import { TabsBar } from "./tabs/TabsBar";
 
-function isCrossTabBlockDrag(): boolean {
-  const activeTabId = getActiveTab(useStore.getState())?.id ?? null;
+function isCrossTabBlockDrag(store: AppStoreApi): boolean {
+  const activeTabId = getActiveTab(store.getState())?.id ?? null;
   return (
     !!blockDrag.srcId &&
     !!blockDrag.sourceTabId &&
@@ -20,6 +25,7 @@ function isCrossTabBlockDrag(): boolean {
 }
 
 export function MainPanel() {
+  const store = useStoreApi();
   const tabsContentRef = useRef<HTMLDivElement>(null);
   const isEmpty = useStore(
     (state) => !(getActiveTab(state)?.blocks.length ?? 0),
@@ -34,19 +40,19 @@ export function MainPanel() {
         id="tabs-content"
         ref={tabsContentRef}
         onDragOver={(event) => {
-          if (isCrossTabBlockDrag()) {
+          if (isCrossTabBlockDrag(store)) {
             event.preventDefault();
             event.dataTransfer.dropEffect = DragEffect.COPY;
           }
         }}
         onDrop={(event) => {
-          if (!isCrossTabBlockDrag()) {
+          if (!isCrossTabBlockDrag(store)) {
             return;
           }
 
           event.preventDefault();
 
-          const state = useStore.getState();
+          const state = store.getState();
           const activeTabId = getActiveTab(state)?.id;
 
           if (blockDrag.sourceTabId && activeTabId) {

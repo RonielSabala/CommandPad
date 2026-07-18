@@ -129,16 +129,6 @@ export function ChevronsRightIcon(props: IconProps) {
   );
 }
 
-export function KeyboardIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" {...props}>
-      <rect x="2" y="6" width="20" height="12" rx="2" />
-      <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01" />
-      <path d="M5 14h14" />
-    </svg>
-  );
-}
-
 export function ExportIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 16 16" {...props}>
@@ -188,7 +178,7 @@ export function NoteIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 16 16" {...props}>
       <path d="M3 3h10v8l-3 3H3z" />
-      <path d="M10 11v3" />
+      <path d="M13 11h-3v3" />
     </svg>
   );
 }
@@ -222,7 +212,7 @@ export function EditorToggleChevronIcon(props: IconProps) {
 export function CheckIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 16 16" {...props}>
-      <polyline points="2,8 6,12 14,4" stroke="var(--success)" />
+      <polyline points="2.5,8.5 6,12 13.5,3.5" stroke="var(--success)" />
     </svg>
   );
 }
@@ -239,8 +229,17 @@ export function CopyIcon(props: IconProps) {
 export function DuplicateIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 16 16" {...props}>
-      <rect x="2" y="2" width="9" height="9" rx="1" />
-      <path d="M12 10v4M10 12h4" />
+      <path d="M2 2H9V6L6 9H2Z" />
+      <path d="M12 9v6M9 12h6" />
+    </svg>
+  );
+}
+
+export function BookIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 16 16" {...props}>
+      <path d="M8 3.5C6.8 2.3 5 2 3 2v11c2 0 3.8.3 5 1.5 1.2-1.2 3-1.5 5-1.5V2c-2 0-3.8.3-5 1.5z" />
+      <path d="M8 3.5v11" />
     </svg>
   );
 }

@@ -4,26 +4,8 @@ import { AppMode, Theme } from "@/common/enums";
 import { useStore } from "@/store/store";
 import { useEffect } from "react";
 
-export function useBodyClasses(): void {
-  const mode = useStore((state) => state.mode);
+export function useThemeClass(): void {
   const theme = useStore((state) => state.theme);
-  const selectKeyHeld = useStore((state) => state.selectKeyHeld);
-  const linkKeyHeld = useStore((state) => state.linkKeyHeld);
-
-  useEffect(() => {
-    document.body.classList.toggle("read-mode", mode === AppMode.READ);
-  }, [mode]);
-
-  useEffect(() => {
-    document.body.classList.toggle(CssClass.SELECT_KEY_HELD, selectKeyHeld);
-  }, [selectKeyHeld]);
-
-  useEffect(() => {
-    document.body.classList.toggle(CssClass.LINK_KEY_HELD, linkKeyHeld);
-    if (!linkKeyHeld) {
-      document.body.style.cursor = Cursor.DEFAULT;
-    }
-  }, [linkKeyHeld]);
 
   useEffect(() => {
     document.documentElement.classList.toggle(
@@ -31,4 +13,41 @@ export function useBodyClasses(): void {
       theme === Theme.LIGHT,
     );
   }, [theme]);
+}
+
+export function useSelectModeBodyClass(): void {
+  const selectKeyHeld = useStore((state) => state.selectKeyHeld);
+
+  useEffect(() => {
+    document.body.classList.toggle(CssClass.SELECT_KEY_HELD, selectKeyHeld);
+    return () => document.body.classList.remove(CssClass.SELECT_KEY_HELD);
+  }, [selectKeyHeld]);
+}
+
+export function useLinkModeBodyClass(): void {
+  const linkKeyHeld = useStore((state) => state.linkKeyHeld);
+
+  useEffect(() => {
+    document.body.classList.toggle(CssClass.LINK_KEY_HELD, linkKeyHeld);
+    if (!linkKeyHeld) {
+      document.body.style.cursor = Cursor.DEFAULT;
+    }
+
+    return () => {
+      document.body.classList.remove(CssClass.LINK_KEY_HELD);
+      document.body.style.cursor = Cursor.DEFAULT;
+    };
+  }, [linkKeyHeld]);
+}
+
+export function useWorkspaceBodyClasses(): void {
+  const mode = useStore((state) => state.mode);
+
+  useSelectModeBodyClass();
+  useLinkModeBodyClass();
+
+  useEffect(() => {
+    document.body.classList.toggle("read-mode", mode === AppMode.READ);
+    return () => document.body.classList.remove("read-mode");
+  }, [mode]);
 }

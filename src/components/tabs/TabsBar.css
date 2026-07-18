@@ -5,6 +5,7 @@
   border-bottom: var(--border-standard);
   overflow-x: auto;
   flex-shrink: 0;
+  height: var(--space-20);
   padding: var(--space-2) var(--space-8);
   scrollbar-width: none;
   gap: var(--space-1);
@@ -27,6 +28,8 @@
 }
 
 #add-tab-btn {
+  position: relative;
+  z-index: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -34,19 +37,34 @@
   height: var(--icon-base);
   background: transparent;
   border: none;
-  border-radius: var(--radius-md);
   color: var(--color-text-muted);
   cursor: pointer;
   flex-shrink: 0;
   align-self: center;
-  margin-left: var(--space-2);
-  transition:
-    color var(--transition-fast),
-    background var(--transition-fast);
+  margin-left: var(--space-3);
+  transition: color var(--transition-fast);
+}
+
+/* Hover circle */
+#add-tab-btn::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 50%;
+  width: var(--space-12);
+  height: var(--space-12);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: transparent;
+  transition: background var(--transition-fast);
 }
 
 #add-tab-btn:hover {
   color: var(--color-text-primary);
+}
+
+#add-tab-btn:hover::before {
   background: var(--color-surface-alt);
 }
 

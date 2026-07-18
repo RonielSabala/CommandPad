@@ -1,0 +1,42 @@
+#docs-shell {
+  grid-template-columns: var(--docs-sidebar-width) 1fr;
+  grid-template-areas:
+    "header header"
+    "toc main";
+}
+
+#docs-main {
+  grid-area: main;
+  overflow-y: auto;
+  background: var(--color-bg);
+}
+
+#docs-article {
+  max-width: var(--docs-max-width);
+  margin: 0 auto;
+  padding: var(--space-12) var(--space-20) 60vh;
+}
+
+/* --- DOCS TABLE --- */
+
+.docs-table {
+  border-collapse: collapse;
+  margin-bottom: var(--space-8);
+  font-size: var(--text-md);
+  color: var(--color-text-secondary);
+}
+
+.docs-table th {
+  text-align: left;
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.docs-table th,
+.docs-table td {
+  padding: var(--space-4) var(--space-12) var(--space-4) 0;
+  border-bottom: var(--border-standard);
+}

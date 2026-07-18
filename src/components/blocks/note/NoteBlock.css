@@ -37,7 +37,7 @@ body.select-key-held:not(.read-mode) .note-style-row {
 /* Note style btn */
 
 .note-style-btn {
-  padding: var(--space-1) var(--space-4);
+  padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   background: transparent;
@@ -45,6 +45,7 @@ body.select-key-held:not(.read-mode) .note-style-row {
   font-family: var(--font-mono);
   color: var(--color-text-muted);
   transition: all var(--transition-fast);
+  outline: none;
 }
 
 .note-style-btn:hover {
@@ -56,6 +57,10 @@ body.select-key-held:not(.read-mode) .note-style-row {
   background: var(--accent-dim);
   border-color: var(--color-border-focus);
   color: var(--accent-text);
+}
+
+.block-selected .note-style-btn {
+  border-radius: var(--radius-lg);
 }
 
 /* Note auto width */

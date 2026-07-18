@@ -11,6 +11,7 @@
   align-items: center;
   flex-shrink: 0;
   gap: var(--space-3);
+  height: var(--space-20);
   padding: var(--space-6);
   padding-right: var(--sidebar-rail-width);
   border-bottom: var(--border-standard);

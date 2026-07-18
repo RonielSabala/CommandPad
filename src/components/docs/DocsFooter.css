@@ -1,0 +1,8 @@
+#docs-footer {
+  margin-top: var(--space-20);
+  padding-top: var(--space-8);
+}
+
+#docs-footer-copyright {
+  font-size: var(--text-sm);
+}

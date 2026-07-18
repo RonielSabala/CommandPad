@@ -42,6 +42,12 @@ export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
 export const TAB_HOVER_SWITCH_MS = 300;
 export const SECTION_ANIMATION_FALLBACK_MS = 250;
 
+// A docs section counts as current while its top edge sits in the upper quarter of the scroll container
+export const DocsScrollSpy = {
+  ROOT_MARGIN: "0px 0px -75% 0px",
+  THRESHOLD: 0,
+} as const;
+
 // Markdown config
 
 export const MarkdownSyntax = {
@@ -66,10 +72,12 @@ export const MarkdownWrap = {
   CODE: "`",
 } as const;
 
-export const BracketPairs = {
+export const WrapPairs = {
   "(": ")",
   "[": "]",
   "{": "}",
+  '"': '"',
+  "'": "'",
 } as const;
 
 // Variables

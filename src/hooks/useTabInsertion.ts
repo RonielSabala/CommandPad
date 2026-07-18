@@ -1,3 +1,4 @@
+import { EditCommand } from "@/common/constants/dom";
 import { Key, TAB_CHARACTER } from "@/common/constants/events";
 import { useCallback, type KeyboardEvent } from "react";
 
@@ -14,6 +15,10 @@ export function useTabInsertion(
 
       const textarea = event.currentTarget;
       const { selectionStart, selectionEnd, value } = textarea;
+
+      if (document.execCommand(EditCommand.INSERT_TEXT, false, TAB_CHARACTER)) {
+        return;
+      }
 
       const nextValue =
         value.slice(0, selectionStart) +

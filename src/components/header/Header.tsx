@@ -1,9 +1,10 @@
 import { Key } from "@/common/constants/events";
+import { AppRoute } from "@/common/constants/routes";
 import { AppMode, Theme } from "@/common/enums";
 import {
+  BookIcon,
   ChevronsRightIcon,
   ExportIcon,
-  KeyboardIcon,
   MoonIcon,
   PadlockIcon,
   PencilIcon,
@@ -12,6 +13,7 @@ import {
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
+import { Link } from "react-router-dom";
 import "./Header.css";
 import { LanguageSelect } from "./LanguageSelect";
 
@@ -21,7 +23,6 @@ export function Header() {
   const isLight = useStore((state) => state.theme === Theme.LIGHT);
   const toggleTheme = useStore((state) => state.toggleTheme);
   const toggleAppMode = useStore((state) => state.toggleAppMode);
-  const openKeybindingsModal = useStore((state) => state.openKeybindingsModal);
   const clearAllData = useStore((state) => state.clearAllData);
   const openExportModal = useStore((state) => state.openExportModal);
   const toggleAllCommandEditors = useStore(
@@ -32,10 +33,9 @@ export function Header() {
   );
 
   return (
-    <header id="app-header">
+    <header className="header-bar">
       <span
-        id="app-name"
-        className="no-user-select"
+        className="logo no-user-select"
         role="button"
         tabIndex={0}
         title={t.header.reloadTitle}
@@ -97,14 +97,13 @@ export function Header() {
 
         <div className="vertical-divider" />
 
-        <button
-          id="keybindings-btn"
+        <Link
+          to={AppRoute.DOCS}
           className="btn btn-lg btn-flat-icon"
-          onClick={openKeybindingsModal}
-          title={t.header.keybindingsTitle}
+          title={t.docs.meta.openDocs}
         >
-          <KeyboardIcon id="keybindings-icon" className="icon icon-bold" />
-        </button>
+          <BookIcon className="icon icon-bold" />
+        </Link>
 
         <div className="vertical-divider" />
 

@@ -1,4 +1,4 @@
-#app-header {
+.header-bar {
   grid-area: header;
   display: flex;
   align-items: center;
@@ -8,7 +8,7 @@
   background: var(--color-surface);
 }
 
-#app-name {
+.logo {
   display: inline-flex;
   align-items: baseline;
   gap: var(--space-1);
@@ -21,7 +21,7 @@
   transition: color var(--transition-fast);
 }
 
-#app-name:hover .logo-word {
+.logo:hover .logo-word {
   color: var(--accent-text);
 }
 
@@ -42,11 +42,6 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-}
-
-#keybindings-icon {
-  width: var(--space-10);
-  height: var(--space-10);
 }
 
 #reset-workspace-icon {

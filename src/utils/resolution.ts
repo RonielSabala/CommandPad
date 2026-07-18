@@ -179,6 +179,14 @@ export function getUsedVariableKeys(
   return used;
 }
 
+export function isVariableUnused(
+  variable: Variable,
+  usedKeys: Set<string>,
+): boolean {
+  const key = variable.key.trim();
+  return !!key && !usedKeys.has(key);
+}
+
 export function getSecretKeys(variables: Variable[] = []): Set<string> {
   return new Set(
     variables
@@ -189,6 +197,19 @@ export function getSecretKeys(variables: Variable[] = []): Set<string> {
 
 function unescapeBraces(text: string): string {
   return text.replace(EscapedBraceRegex, "$1");
+}
+
+export function renameVariableTokens(
+  text: string,
+  oldKey: string,
+  newKey: string,
+): string {
+  const separator = VariableSyntax.PARAM_SEPARATOR;
+  return text
+    .split(`{${oldKey}}`)
+    .join(`{${newKey}}`)
+    .split(`{${oldKey}${separator}`)
+    .join(`{${newKey}${separator}`);
 }
 
 export function resolveCommandText(

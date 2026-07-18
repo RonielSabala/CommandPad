@@ -1,5 +1,6 @@
 import { COPY_FEEDBACK_TIMEOUT_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
+import { Key } from "@/common/constants/events";
 import { CommandSegmentType } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
 import {
@@ -8,6 +9,7 @@ import {
   EditorToggleChevronIcon,
 } from "@/components/icons";
 import { useAutoResize } from "@/hooks/useAutoResize";
+import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useTabInsertion } from "@/hooks/useTabInsertion";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -61,6 +63,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     isSidebarCollapsed,
   ]);
   const handleTabKey = useTabInsertion((value) =>
+    updateBlockText(blockId, value),
+  );
+  const handlePairWrap = usePairWrapping((value) =>
     updateBlockText(blockId, value),
   );
 
@@ -150,7 +155,15 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           rows={1}
           value={blockText}
           onChange={(event) => updateBlockText(blockId, event.target.value)}
-          onKeyDown={handleTabKey}
+          onKeyDown={(event) => {
+            if (event.key === Key.ESCAPE) {
+              event.currentTarget.blur();
+              return;
+            }
+
+            handlePairWrap(event);
+            handleTabKey(event);
+          }}
         />
       </div>
     </div>

@@ -91,5 +91,6 @@ export type LassoMode = (typeof LassoMode)[keyof typeof LassoMode];
 export const DragGroup = {
   RUNBOOK: "runbook",
   VARIABLE: "variable",
+  DOCS_DEMO: "docs-demo",
 } as const;
 export type DragGroup = (typeof DragGroup)[keyof typeof DragGroup];

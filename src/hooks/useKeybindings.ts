@@ -1,25 +1,22 @@
 import { InputSelector } from "@/common/constants/dom";
-import {
-    EventType,
-    Key,
-    Modifier,
-    ModifierKeyName,
-} from "@/common/constants/events";
+import { EventType, Key, Modifier } from "@/common/constants/events";
 import { MoveDirection } from "@/common/enums";
 import {
-    isModifierPressed,
-    KeyBinding,
-    matchesKeybinding,
-    ModifierAction,
+  isModifierPressed,
+  KeyBinding,
+  matchesKeybinding,
+  ModifierAction,
 } from "@/common/keybindings";
-import { getActiveTab, useStore } from "@/store/store";
+import { getActiveTab, useStoreApi } from "@/store/store";
 import { openImportDialog } from "@/utils/importTrigger";
 import { useEffect } from "react";
 
 export function useKeybindings(): void {
+  const store = useStoreApi();
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      const state = useStore.getState();
+      const state = store.getState();
 
       if (matchesKeybinding(event, KeyBinding.NEW_TAB)) {
         event.preventDefault();
@@ -76,17 +73,7 @@ export function useKeybindings(): void {
         return;
       }
 
-      if (linkKeyPressed && !ctrlPressed) {
-        event.preventDefault();
-        state.setLinkKeyHeld(true);
-        return;
-      }
-
       if (!ctrlPressed) {
-        if (selectKeyPressed && !inEditable) {
-          state.setSelectKeyHeld(true);
-        }
-
         return;
       }
 
@@ -132,50 +119,28 @@ export function useKeybindings(): void {
       } else if (matchesKeybinding(event, KeyBinding.TOGGLE_EDITORS)) {
         state.toggleAllCommandEditors();
         hit = true;
-      } else {
-        if (selectKeyPressed && !inEditable) {
-          state.setSelectKeyHeld(true);
-        }
-
-        if (linkKeyPressed) {
-          state.setLinkKeyHeld(true);
-        }
       }
 
       if (hit) {
         event.preventDefault();
-        state.setSelectKeyHeld(false);
-        state.setLinkKeyHeld(false);
       }
     };
 
     const onKeyUp = (event: KeyboardEvent) => {
       const key = event.key;
-      const state = useStore.getState();
+      const state = store.getState();
 
-      if (key === ModifierKeyName[ModifierAction.SELECT_BLOCKS]) {
-        state.setSelectKeyHeld(false);
-      } else if (key === ModifierKeyName[ModifierAction.OPEN_LINK]) {
-        state.setLinkKeyHeld(false);
-      } else if (key === Key.ESCAPE) {
+      if (key === Key.ESCAPE) {
         (document.activeElement as HTMLElement | null)?.blur?.();
         state.clearUserInteraction();
       }
     };
 
-    const onBlur = () => {
-      const state = useStore.getState();
-      state.setLinkKeyHeld(false);
-      state.setSelectKeyHeld(false);
-    };
-
     document.addEventListener(EventType.KEY_DOWN, onKeyDown);
     document.addEventListener(EventType.KEY_UP, onKeyUp);
-    window.addEventListener(EventType.BLUR, onBlur);
     return () => {
       document.removeEventListener(EventType.KEY_DOWN, onKeyDown);
       document.removeEventListener(EventType.KEY_UP, onKeyUp);
-      window.removeEventListener(EventType.BLUR, onBlur);
     };
-  }, []);
+  }, [store]);
 }
