@@ -4,6 +4,7 @@ import { Key } from "@/common/constants/events";
 import { AppMode, DragGroup, VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
 import { DragIcon, EyeIcon, XIcon } from "@/components/icons";
+import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -36,6 +37,13 @@ export const VariableRow = memo(function VariableRow({
   );
   const consumeVariableFocus = useStore((state) => state.consumeVariableFocus);
   const keyRef = useRef<HTMLInputElement>(null);
+
+  const handleKeyPairWrap = usePairWrapping((value) =>
+    updateVariable(variableId, VariableField.KEY, value),
+  );
+  const handleValuePairWrap = usePairWrapping((value) =>
+    updateVariable(variableId, VariableField.VALUE, value),
+  );
 
   const { isDragging, isDragOver, handleProps, rowProps } = useRowReorder(
     DragGroup.VARIABLE,
@@ -93,7 +101,10 @@ export const VariableRow = memo(function VariableRow({
           onKeyDown={(event) => {
             if (event.key === Key.ENTER || event.key === Key.ESCAPE) {
               event.currentTarget.blur();
+              return;
             }
+
+            handleKeyPairWrap(event);
           }}
           title={unused ? t.variables.unusedTitle(variableKey) : variableKey}
         />
@@ -110,7 +121,10 @@ export const VariableRow = memo(function VariableRow({
           onKeyDown={(event) => {
             if (event.key === Key.ENTER || event.key === Key.ESCAPE) {
               event.currentTarget.blur();
+              return;
             }
+
+            handleValuePairWrap(event);
           }}
           title={isSecret ? "" : variableValue}
         />

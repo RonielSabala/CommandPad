@@ -9,6 +9,7 @@ import {
   EditorToggleChevronIcon,
 } from "@/components/icons";
 import { useAutoResize } from "@/hooks/useAutoResize";
+import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useTabInsertion } from "@/hooks/useTabInsertion";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -62,6 +63,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     isSidebarCollapsed,
   ]);
   const handleTabKey = useTabInsertion((value) =>
+    updateBlockText(blockId, value),
+  );
+  const handlePairWrap = usePairWrapping((value) =>
     updateBlockText(blockId, value),
   );
 
@@ -157,6 +161,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
               return;
             }
 
+            handlePairWrap(event);
             handleTabKey(event);
           }}
         />
