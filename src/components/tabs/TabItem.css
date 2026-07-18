@@ -127,7 +127,6 @@
   justify-content: center;
   width: var(--space-8);
   height: var(--space-8);
-  border-radius: 50%;
   border: none;
   background: transparent;
   color: var(--color-text-secondary);
@@ -137,8 +136,22 @@
   opacity: 0;
   transition:
     color var(--transition-fast),
-    background var(--transition-fast),
     opacity var(--transition-fast);
+}
+
+/* Hover circle */
+.tab-close::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: calc(var(--icon-sm) / 2);
+  width: var(--space-8);
+  height: var(--space-8);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: transparent;
+  transition: background var(--transition-fast);
 }
 
 .tab:hover .tab-close,
@@ -148,6 +161,9 @@
 
 .tab-close:hover {
   color: var(--color-text-primary);
+}
+
+.tab-close:hover::before {
   background: var(--white-a10);
 }
 
