@@ -286,7 +286,7 @@ export const es: Messages = {
       intro:
         "Las variables se definen en la sección **VARIABLES** de la barra lateral. Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas.",
       usage:
-        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{NAMESPACE}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
+        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{SERVER}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
       unresolved:
         "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**.",
       duplicatesAndEmpty:

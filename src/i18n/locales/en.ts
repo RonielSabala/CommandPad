@@ -275,7 +275,7 @@ export const en: Messages = {
       intro:
         "Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**. Keys are case-sensitive.",
       usage:
-        "Use a variable in any command by wrapping its key in curly braces, e.g. `{NAMESPACE}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
+        "Use a variable in any command by wrapping its key in curly braces, e.g. `{SERVER}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
       unresolved:
         "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**.",
       duplicatesAndEmpty:

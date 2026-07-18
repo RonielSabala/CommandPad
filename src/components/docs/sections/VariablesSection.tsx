@@ -19,8 +19,11 @@ export function VariablesDocs() {
         className="docs-demo-hide-secret"
         tabs={[
           {
-            variables: [demoVariable("HOST", "example.com")],
-            blocks: [demoCommand("ping {HOST}")],
+            variables: [demoVariable("SERVER", "192.168.1.50")],
+            blocks: [
+              demoCommand("ping {SERVER}"),
+              demoCommand("ssh admin@{SERVER}"),
+            ],
           },
         ]}
       >
@@ -124,9 +127,9 @@ export function SecretVariablesDocs() {
       <DemoWorkspace
         tabs={[
           {
-            variables: [demoVariable("TOKEN", "s3cr3t-value", true)],
+            variables: [demoVariable("PASSWORD", "s3cr3t-value", true)],
             blocks: [
-              demoCommand("curl -u admin:{TOKEN} https://api.example.com"),
+              demoCommand("zip -r -P {PASSWORD} backup.zip ~/Documents"),
             ],
           },
         ]}
