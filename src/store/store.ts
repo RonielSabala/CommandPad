@@ -297,18 +297,11 @@ function relabelActive(state: StoreState): {
 export type AppStoreApi = StoreApi<StoreState>;
 
 export interface AppStoreOptions {
-  /**
-   * Demo stores back the real components inside the docs playgrounds: same
-   * state and actions, but persistence writes become no-ops, runbook content
-   * lives in an in-memory map instead of IndexedDB, and dialogs auto-resolve
-   * (the docs route mounts no modals).
-   */
   isDemo?: boolean;
   /** Pre-seeded runbook content for demo stores, keyed by runbook id */
   contentSeed?: Record<string, RunbookContent>;
 }
 
-// The persistence writes actions perform; demo stores swap them for no-ops
 type PersistenceWrites = Pick<
   typeof persistence,
   "saveTabsMeta" | "saveRunbookLibrary" | "saveUiState" | "saveSidebarSections"
@@ -321,7 +314,6 @@ const NOOP_PERSISTENCE: PersistenceWrites = {
   saveSidebarSections: () => {},
 };
 
-// Where runbook content lives: IndexedDB for the app, a Map for demo stores
 interface ContentDb {
   get: (id: string) => Promise<RunbookContent | null>;
   put: (id: string, content: RunbookContent) => Promise<void>;
@@ -1541,17 +1533,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
   });
 }
 
-/** The app's real store: persisted, bootstrapped once from App. */
 export const appStore = createAppStore();
 
-// Components resolve their store from context so the same components can run
-// against an isolated demo store inside the docs playgrounds. Everything not
-// wrapped in a provider gets the real app store.
 const StoreContext = createContext<AppStoreApi>(appStore);
 
 export const StoreProvider = StoreContext.Provider;
 
-/** The store api (getState/setState) of the nearest provider. */
 export function useStoreApi(): AppStoreApi {
   return useContext(StoreContext);
 }
