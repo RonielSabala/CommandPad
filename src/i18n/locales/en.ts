@@ -194,12 +194,13 @@ export const en: Messages = {
     gettingStarted: {
       intro:
         "Welcome to CommandPad! Here you'll build **runbooks**: documents that mix the commands you run often with the notes that help explain them.",
+      why: "You know the ritual: scrolling through shell history, digging through old chat messages, or keeping a `commands.txt` somewhere on your computer. A runbook ends that. Each command lives next to the note that explains it, with the changing parts filled in for you, ready to copy.",
       journey:
         "This guide walks you through how the app works, one piece at a time, so you can get the most out of it. You'll start with the workspace and its sidebar, meet the three block types your runbooks are built from and, to wrap up, variables: the feature that makes command blocks truly powerful.",
       navigate:
         "Read it start to finish, or jump straight to whatever interests you from the contents on the left: you set the pace.",
       tryIt:
-        "And don't just read: most sections come with a real, working example marked **Try it**, a piece of the app you're free to mess with, nothing you do there touches your actual workspace. Go ahead and poke at it: that's the fastest way to get a feel for how something works. If you ever get lost, the arrow button in its corner brings it back to where it started.",
+        "Most sections come with a real, working example marked **Try it**, a piece of the app you're free to mess with, nothing you do there touches your actual workspace. Go ahead and poke at it, that's the fastest way to get a feel for how something works. If you ever get lost, the arrow button in its corner brings it back to where it started.",
     },
     workspace: {
       intro:
@@ -238,7 +239,7 @@ export const en: Messages = {
         "**Click** a tab to switch to it.",
         "**Drag** a tab to reorder it.",
         "**Middle-click** a tab to close it.",
-        "**Click** the **+** at the end of the tabs bar to open a new blank tab.",
+        "**Click** the **+** at the end of the tabs bar to open a new tab.",
       ],
       autoCreate:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
@@ -272,6 +273,7 @@ export const en: Messages = {
         "Edits made to the active runbook are automatically saved back to the library.",
     },
     variables: {
+      why: "This is the feature everything else has been building toward. A server name, a file path, a version number: the same little values repeat across half the commands you keep, and the day one changes you get to hunt it down in every single command. With variables you write that value **once**, and every command that needs it stays current on its own.",
       intro:
         "Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**. Keys are case-sensitive.",
       usage:
@@ -282,10 +284,14 @@ export const en: Messages = {
         "If two variables share the same key, the one defined last wins. Hover over a row to reveal its controls: a drag handle on the left to reorder it among the others and a delete button on the right. Try them out in the demos throughout this section.",
       tooltip:
         "If a key or value is too long to fit its box, hover over it to see the full text in a tooltip.",
+      demoHint:
+        "See it for yourself below: one `SERVER` variable feeds two commands. Edit its value and watch both previews follow along as you type. That's the whole idea in one gesture.",
     },
     variableReferences: {
       intro:
-        "A variable's value can reference other variables. That way you can build values like `https://{HOST}/api` out of smaller pieces.",
+        "A variable's value can reference other variables. That way you can build values out of smaller pieces.",
+      demoHint:
+        "Below, `BASE_URL` is built from `HOST`. Change `HOST` and watch the change ripple through to the command:",
       circular:
         "Circular references are safe: if two variables reference each other, the app detects the loop and leaves the reference as plain text.",
     },
@@ -293,20 +299,26 @@ export const en: Messages = {
       intro:
         "Sometimes a variable is almost right for every command, except for one small part that changes each time. Parameterized placeholders let you leave that part blank in the variable, then fill it in differently wherever you use it.",
       fill: "Mark the blank with `{;param}` inside the variable's value. It works like a fill-in-the-blank sentence: the variable holds the fixed wording, and you drop in the missing word each time you use it. Wherever you reference that variable, fill the blank with `{key;param=param_value}`, and your value lands right where the blank sat.",
-      unresolved:
-        "Forget to fill in a blank? The command is highlighted as unresolved, just like a variable that doesn't exist, so you'll notice right away.",
+      seeExample:
+        "If that sounds abstract, don't worry: it clicks the moment you see it. Take a look at the example below before reading on.",
       multiple:
         "A value can have several blanks. Give each one a different name, then fill them all in the same reference, separated by semicolons:",
+      nested:
+        "A blank can even be filled with another variable. That way the same value can fill a blank in one command and be used on its own in another:",
     },
     escapingBraces: {
       intro:
         "Prefix `{` or `}` with a backslash in a command block to output it literally instead of starting a variable reference. The backslash is left out of the resolved command.",
+      tryHint:
+        "Try deleting the backslashes in the command below and watch the literal braces turn into an active reference:",
       scope:
         "Escaping only applies inside command blocks; backslashes in variable values are always shown as-is.",
     },
     secretVariables: {
       intro:
         "Click the **eye icon** on a variable row to mark it as **secret**. Secret values are masked in the sidebar and are substituted with asterisks in command previews.",
+      copyNote:
+        "The mask is purely visual: the **Copy** button always puts the **real** value on your clipboard, so your commands keep working. Try it below, and click the eye icon to reveal or hide the value.",
     },
     blocks: {
       intro:

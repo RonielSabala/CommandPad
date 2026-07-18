@@ -148,6 +148,7 @@ export interface Messages {
     };
     gettingStarted: {
       intro: string;
+      why: string;
       journey: string;
       navigate: string;
       tryIt: string;
@@ -184,28 +185,34 @@ export interface Messages {
       autoSave: string;
     };
     variables: {
+      why: string;
       intro: string;
       usage: string;
       unresolved: string;
       duplicatesAndEmpty: string;
       tooltip: string;
+      demoHint: string;
     };
     variableReferences: {
       intro: string;
+      demoHint: string;
       circular: string;
     };
     parameterizedPlaceholders: {
       intro: string;
       fill: string;
-      unresolved: string;
+      seeExample: string;
       multiple: string;
+      nested: string;
     };
     escapingBraces: {
       intro: string;
+      tryHint: string;
       scope: string;
     };
     secretVariables: {
       intro: string;
+      copyNote: string;
     };
     blocks: {
       intro: string;

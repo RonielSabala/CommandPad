@@ -203,12 +203,13 @@ export const es: Messages = {
     gettingStarted: {
       intro:
         "¡Bienvenido a CommandPad! Aquí vas a construir **libros de comandos**: documentos que mezclan los comandos que ejecutas a menudo con las notas que ayudan a explicarlos.",
+      why: "Ya conoces el ritual: rebuscar en el historial de la terminal, escarbar en mensajes de chat antiguos o mantener un `comandos.txt` en alguna parte de tu computadora. Un libro de comandos acaba con eso. Cada comando vive junto a la nota que lo explica, con las partes que cambian ya rellenadas, listo para copiar.",
       journey:
         "Esta guía te acompaña paso a paso por cómo funciona la aplicación, para que le saques todo el provecho. Empezarás por el espacio de trabajo y su barra lateral, luego conocerás los tres tipos de bloques con los que se construyen tus libros de comandos y, para cerrar, las variables: la característica que hace que los bloques de comando sean realmente potentes.",
       navigate:
         "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el índice de la izquierda: tú eliges el ritmo.",
       tryIt:
-        "Y no te quedes solo leyendo: la mayoría de las secciones trae un ejemplo real y funcional marcado **Pruébalo**, una pieza de la app con la que puedes jugar, nada de lo que hagas ahí toca tu espacio de trabajo real. Anímate a toquetear un poco: es la forma más rápida de entender cómo funciona algo. Si te pierdes, el botón de flecha en su esquina te devuelve al punto de partida.",
+        "La mayoría de las secciones trae un ejemplo real y funcional marcado **Pruébalo**, una pieza de la app con la que puedes jugar, nada de lo que hagas ahí toca tu espacio de trabajo real. Anímate a toquetear un poco, es la forma más rápida de entender cómo funciona algo. Si te pierdes, el botón de flecha en su esquina te devuelve al punto de partida.",
     },
     workspace: {
       intro:
@@ -247,7 +248,7 @@ export const es: Messages = {
         "**Haz clic** en una pestaña para cambiar a ella.",
         "**Arrastra** una pestaña para reordenarla.",
         "**Clic con la rueda** del ratón en una pestaña para cerrarla.",
-        "**Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva en blanco.",
+        "**Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.",
       ],
       autoCreate:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
@@ -283,6 +284,7 @@ export const es: Messages = {
         "Los cambios hechos al libro activo se guardan automáticamente en la biblioteca.",
     },
     variables: {
+      why: "Esta es la característica sobre la que gira todo lo demás. Un nombre de servidor, una ruta, un número de versión: los mismos valores se repiten en la mitad de los comandos que guardas, y el día que uno cambia toca buscarlo comando por comando. Con las variables defines ese valor **una vez**, y todos los comandos que lo usan se actualizan solos.",
       intro:
         "Las variables se definen en la sección **VARIABLES** de la barra lateral. Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas.",
       usage:
@@ -293,10 +295,14 @@ export const es: Messages = {
         "Si dos variables comparten la misma clave, gana la definida en último lugar. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables y un botón de eliminar a la derecha. Pruébalos en las demos de esta sección.",
       tooltip:
         "Si una clave o un valor no cabe en su casilla, pasa el cursor sobre ella para ver el texto completo en un tooltip.",
+      demoHint:
+        "Compruébalo abajo: una sola variable `SERVER` alimenta dos comandos. Edita su valor y mira cómo las dos vistas previas cambian mientras escribes. Esa es toda la idea.",
     },
     variableReferences: {
       intro:
-        "El valor de una variable puede referenciar otras variables. Así puedes construir valores como `https://{HOST}/api` a partir de piezas más pequeñas.",
+        "El valor de una variable puede referenciar otras variables. Así puedes construir valores a partir de piezas más pequeñas.",
+      demoHint:
+        "Abajo, `BASE_URL` se construye a partir de `HOST`. Cambia `HOST` y observa cómo el cambio se propaga hasta el comando:",
       circular:
         "Las referencias circulares son seguras: si dos variables se referencian entre sí, la app detecta el bucle y deja la referencia como texto plano.",
     },
@@ -304,20 +310,26 @@ export const es: Messages = {
       intro:
         "A veces una variable te sirve para casi todo, excepto por una pequeña parte que cambia cada vez que la usas. Los marcadores parametrizados te permiten dejar ese trozo en blanco dentro de la variable, y rellenarlo distinto cada vez que la uses.",
       fill: "Marca el espacio en blanco con `{;param}` dentro del valor de la variable. Funciona como una frase para completar: la variable guarda el texto fijo, y tú pones la palabra que falta cada vez que la usas. Donde referencies esa variable, rellena el hueco con `{clave;param=valor_param}`, y tu valor cae justo donde estaba el espacio en blanco.",
-      unresolved:
-        "¿Olvidaste rellenar un espacio? El comando se resalta como sin resolver, igual que una variable que no existe, así que lo notarás enseguida.",
+      seeExample:
+        "Si suena abstracto, no te preocupes: se entiende al instante en cuanto lo ves. Échale un vistazo al ejemplo de abajo antes de seguir leyendo.",
       multiple:
         "Un valor puede tener varios huecos. Dale a cada uno un nombre distinto y rellénalos todos en la misma referencia, separados por punto y coma:",
+      nested:
+        "Un hueco también puede rellenarse con otra variable. Así, un mismo valor puede rellenar el hueco de un comando y usarse por su cuenta en otro:",
     },
     escapingBraces: {
       intro:
         "Antepón una barra invertida a `{` o `}` en un bloque de comando para mostrar la llave literalmente en vez de iniciar una referencia de variable. La barra invertida se excluye del comando resuelto.",
+      tryHint:
+        "Prueba a borrar las barras invertidas del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
       scope:
         "El escape solo aplica dentro de bloques de comando; las barras invertidas en valores de variables se muestran siempre tal cual.",
     },
     secretVariables: {
       intro:
         "Haz clic en el **icono de ojo** de una fila de variable para marcarla como **secreta**. Los valores secretos se ocultan en la barra lateral y se sustituyen por asteriscos en las vistas previas de comandos.",
+      copyNote:
+        "El enmascarado es puramente visual: el botón **Copiar** siempre pone el valor **real** en tu portapapeles, así que tus comandos siguen funcionando. Pruébalo abajo, y haz clic en el icono de ojo para mostrar u ocultar el valor.",
     },
     blocks: {
       intro:

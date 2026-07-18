@@ -10,11 +10,10 @@ export function VariablesDocs() {
 
   return (
     <>
+      <Prose text={t.docs.variables.why} />
       <Prose text={t.docs.variables.intro} />
       <Prose text={t.docs.variables.usage} />
-      <Prose text={t.docs.variables.unresolved} />
-      <Prose text={t.docs.variables.duplicatesAndEmpty} />
-      <Prose text={t.docs.variables.tooltip} />
+      <Prose text={t.docs.variables.demoHint} />
       <DemoWorkspace
         className="docs-demo-hide-secret"
         tabs={[
@@ -30,6 +29,9 @@ export function VariablesDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variables.unresolved} />
+      <Prose text={t.docs.variables.duplicatesAndEmpty} />
+      <Prose text={t.docs.variables.tooltip} />
     </>
   );
 }
@@ -40,7 +42,7 @@ export function VariableReferencesDocs() {
   return (
     <>
       <Prose text={t.docs.variableReferences.intro} />
-      <Prose text={t.docs.variableReferences.circular} />
+      <Prose text={t.docs.variableReferences.demoHint} />
       <DemoWorkspace
         tabs={[
           {
@@ -55,6 +57,7 @@ export function VariableReferencesDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variableReferences.circular} />
     </>
   );
 }
@@ -66,7 +69,7 @@ export function ParameterizedPlaceholdersDocs() {
     <>
       <Prose text={t.docs.parameterizedPlaceholders.intro} />
       <Prose text={t.docs.parameterizedPlaceholders.fill} />
-      <Prose text={t.docs.parameterizedPlaceholders.unresolved} />
+      <Prose text={t.docs.parameterizedPlaceholders.seeExample} />
       <DemoWorkspace
         tabs={[
           {
@@ -92,6 +95,24 @@ export function ParameterizedPlaceholdersDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.parameterizedPlaceholders.nested} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("PROJECT", "commandpad"),
+              demoVariable("FOLDER", "~/Projects/{;name}"),
+            ],
+            blocks: [
+              demoCommand("cd {FOLDER;name={PROJECT}}"),
+              demoCommand("git clone https://github.com/user/{PROJECT}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }
@@ -102,7 +123,7 @@ export function EscapingBracesDocs() {
   return (
     <>
       <Prose text={t.docs.escapingBraces.intro} />
-      <Prose text={t.docs.escapingBraces.scope} />
+      <Prose text={t.docs.escapingBraces.tryHint} />
       <DemoWorkspace
         tabs={[
           {
@@ -114,6 +135,7 @@ export function EscapingBracesDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.escapingBraces.scope} />
     </>
   );
 }
@@ -124,6 +146,7 @@ export function SecretVariablesDocs() {
   return (
     <>
       <Prose text={t.docs.secretVariables.intro} />
+      <Prose text={t.docs.secretVariables.copyNote} />
       <DemoWorkspace
         tabs={[
           {
