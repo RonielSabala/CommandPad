@@ -1,6 +1,8 @@
 import { CssClass } from "@/common/constants/css";
 import { Anchor } from "@/common/constants/dom";
 import { NoteSegmentType } from "@/common/enums";
+import { formatBinding, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
+import { useTranslation } from "@/i18n";
 import { parseNoteText } from "@/utils/markdown";
 import "./NoteText.css";
 
@@ -9,6 +11,11 @@ interface Props {
 }
 
 export function NoteText({ text }: Props) {
+  const t = useTranslation();
+  const followLinkTooltip = t.note.followLinkTooltip(
+    formatBinding(KEYBINDINGS[KeyBinding.OPEN_LINK].binding),
+  );
+
   return (
     <>
       {parseNoteText(text).map((segment, i) => {
@@ -39,6 +46,7 @@ export function NoteText({ text }: Props) {
                 className={CssClass.NOTE_LINK}
                 target={Anchor.TARGET_BLANK}
                 rel={Anchor.REL}
+                title={followLinkTooltip}
               >
                 {segment.text}
               </a>

@@ -101,6 +101,7 @@ export interface Messages {
   note: {
     styleLabel: Record<NoteStyle, string>;
     stylePlaceholder: Record<NoteStyle, string>;
+    followLinkTooltip: (binding: string) => string;
   };
   exportModal: {
     title: string;
