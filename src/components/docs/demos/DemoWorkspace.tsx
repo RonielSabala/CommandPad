@@ -16,6 +16,7 @@ import {
 import { getUsedVariableKeys, isVariableUnused } from "@/utils/resolution";
 import { useMemo, useState, type KeyboardEvent, type ReactNode } from "react";
 import { buildDemoSeed, type DemoContent } from "./demoSeeds";
+import "./DemoWorkspace.css";
 import { DocsDemo } from "./DocsDemo";
 
 const EMPTY_CONTENT: DemoContent[] = [];

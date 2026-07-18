@@ -22,7 +22,7 @@ export function TabsDocs() {
         }))}
       >
         <TabsBar />
-        <div className="docs-demo-tab-panel">
+        <div id="docs-demo-tab-panel">
           <BlocksList />
         </div>
       </DemoWorkspace>

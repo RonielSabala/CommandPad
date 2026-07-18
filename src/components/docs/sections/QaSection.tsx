@@ -39,7 +39,7 @@ export function QaDocs() {
   return (
     <>
       <Prose text={t.docs.qa.intro} />
-      <div className="docs-qa-list">
+      <div id="docs-qa-list">
         {t.docs.qa.items.map((item) => (
           <QaItem key={item.question} {...item} />
         ))}

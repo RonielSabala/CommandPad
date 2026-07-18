@@ -1,0 +1,24 @@
+.docs-demo-content {
+  display: contents;
+}
+
+/* Variable rows */
+
+.docs-demo-variables {
+  max-width: 34rem;
+  margin-bottom: var(--space-8);
+}
+
+.docs-demo-variables .variable-inputs {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+}
+
+/* Multi-select playground */
+.docs-demo-multiselect {
+  outline: none;
+}
+
+/* Sidebar rows */
+.docs-demo-sidebar-frame {
+  max-width: var(--sidebar-width);
+}

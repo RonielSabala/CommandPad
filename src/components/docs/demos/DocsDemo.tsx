@@ -5,7 +5,7 @@ import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
 import { useState, type ReactNode } from "react";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
-import "./demos.css";
+import "./DocsDemo.css";
 
 interface Props {
   children: ReactNode;

@@ -21,8 +21,8 @@ export function DocsToc({ activeId, onNavigate }: Props) {
   const navRef = useRef<HTMLElement>(null);
 
   return (
-    <aside className="docs-toc">
-      <span className="section-title docs-toc-title no-user-select">
+    <aside id="docs-toc">
+      <span id="docs-toc-title" className="section-title no-user-select">
         {t.docs.meta.tocTitle}
       </span>
       <nav ref={navRef}>

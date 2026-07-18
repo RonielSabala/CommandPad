@@ -1,4 +1,4 @@
-/* Docs prose */
+/* Prose */
 
 .docs-prose {
   font-size: var(--text-base);
@@ -16,7 +16,7 @@
   pointer-events: auto;
 }
 
-/* Docs list */
+/* List */
 
 .docs-list {
   list-style: none;
@@ -39,7 +39,7 @@
   line-height: 1.1;
 }
 
-/* Docs keybinding */
+/* Keybinding */
 
 .docs-kbd {
   display: inline-block;

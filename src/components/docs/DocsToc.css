@@ -1,4 +1,4 @@
-.docs-toc {
+#docs-toc {
   grid-area: toc;
   overflow-y: auto;
   padding: var(--space-12) var(--space-6) var(--space-6);
@@ -6,7 +6,7 @@
   background: var(--color-surface);
 }
 
-.docs-toc-title {
+#docs-toc-title {
   display: block;
   padding: 0 var(--space-6) var(--space-6);
 }

@@ -1,17 +1,17 @@
-.docs-shell {
+#docs-shell {
   grid-template-columns: var(--docs-sidebar-width) 1fr;
   grid-template-areas:
     "header header"
     "toc main";
 }
 
-.docs-main {
+#docs-main {
   grid-area: main;
   overflow-y: auto;
   background: var(--color-bg);
 }
 
-.docs-article {
+#docs-article {
   max-width: var(--docs-max-width);
   margin: 0 auto;
   padding: var(--space-12) var(--space-20) 60vh;

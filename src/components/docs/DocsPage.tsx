@@ -47,11 +47,11 @@ export function DocsPage() {
   };
 
   return (
-    <div className="grid-shell docs-shell">
+    <div id="docs-shell" className="grid-shell">
       <DocsHeader />
       <DocsToc activeId={activeId} onNavigate={navigate} />
-      <main ref={mainRef} className="docs-main">
-        <article className="docs-article">
+      <main ref={mainRef} id="docs-main">
+        <article id="docs-article">
           {DOCS_SECTION_ORDER.map(({ id, level }) => {
             const Content = DOCS_SECTION_CONTENT[id];
             return (

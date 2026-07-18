@@ -11,7 +11,6 @@ import type { StoreState } from "@/store/store";
 import { generateId } from "@/utils/id";
 import { getRunbookLabel } from "@/utils/runbook";
 
-// Build real Block/Variable objects for a demo workspace
 export const demoCommand = (
   text: string,
   editorCollapsed?: boolean,
@@ -58,8 +57,6 @@ export interface DemoSeed {
   contentSeed: Record<string, RunbookContent>;
 }
 
-// Every seeded runbook gets a library entry + content, mirroring the app's
-// invariants so behaviors like tab relabeling and row activation just work
 export function buildDemoSeed(
   tabs: DemoContent[],
   library: DemoContent[],
