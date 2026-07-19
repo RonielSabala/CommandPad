@@ -46,6 +46,8 @@ export const en: Messages = {
     pasteTitle: "Paste runbook JSON",
     removeFromLibrary: "Remove from library",
     dropToImport: "Drop runbooks to import",
+    clearLibrary: "Delete All",
+    clearLibraryTitle: "Delete all runbooks from the library",
   },
   variables: {
     title: "VARIABLES",
@@ -127,6 +129,10 @@ export const en: Messages = {
     resetConfirm: "Reset",
     resetMessage:
       "Delete all variables, blocks, runbooks, and preferences? This action cannot be undone.",
+    clearLibraryTitle: "Delete All Runbooks",
+    clearLibraryConfirm: "Delete All",
+    clearLibraryMessage:
+      "Delete every runbook in the library, along with its variables and blocks? This action cannot be undone.",
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Toggle read / edit mode",
@@ -141,7 +147,7 @@ export const en: Messages = {
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
     [KeyBinding.ESCAPE]: "Clear block selection / close modals",
     [KeyBinding.EXPORT]: "Open export dialog",
-    [KeyBinding.RESET_WORKSPACE]: "Open reset workspace dialog",
+    [KeyBinding.CLEAR_LIBRARY]: "Open delete all runbooks dialog",
     [KeyBinding.FOCUS_RUNBOOK]: "Select active runbook",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navigate runbooks with the active runbook selected",
@@ -266,6 +272,7 @@ export const en: Messages = {
         "You can also **drag files** from your file explorer and drop them onto the section to import them.",
         "Click any runbook to open it. If it's already open in a tab, that tab becomes active.",
         "Delete a runbook from the library with the button shown on row hover.",
+        "Click **Delete All** to empty the whole library at once.",
         "Drag the handle on the left of a runbook to reorder it in the list.",
         "Use the **search bar** to filter runbooks by label or filename.",
       ],

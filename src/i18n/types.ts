@@ -65,6 +65,8 @@ export interface Messages {
     pasteTitle: string;
     removeFromLibrary: string;
     dropToImport: string;
+    clearLibrary: string;
+    clearLibraryTitle: string;
   };
   variables: {
     title: string;
@@ -128,6 +130,9 @@ export interface Messages {
     resetTitle: string;
     resetConfirm: string;
     resetMessage: string;
+    clearLibraryTitle: string;
+    clearLibraryConfirm: string;
+    clearLibraryMessage: string;
   };
   keybindings: Record<KeyBinding, string>;
   docs: {

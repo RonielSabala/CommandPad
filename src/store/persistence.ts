@@ -139,6 +139,15 @@ export function loadRunbookLibrary(): PersistedRunbooks | null {
   }
 }
 
+export function clearStoredRunbooks(): void {
+  try {
+    localStorage.removeItem(StorageKey.TABS);
+    localStorage.removeItem(StorageKey.RUNBOOK_LIBRARY);
+  } catch (error) {
+    console.warn("Failed to clear stored runbooks:", error);
+  }
+}
+
 // Sidebar sections
 
 export interface PersistedSections {

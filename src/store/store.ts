@@ -195,6 +195,7 @@ export interface StoreState {
   resolveConfirm: (result: boolean) => void;
   alert: (message: string) => Promise<void>;
   resolveAlert: () => void;
+  clearRunbookLibrary: () => Promise<void>;
   clearAllData: () => Promise<void>;
 }
 
@@ -1508,6 +1509,41 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       resolveAlert: () => {
         get().alertDialog?.resolve();
         set({ alertDialog: null });
+      },
+
+      clearRunbookLibrary: async () => {
+        if (get().mode === AppMode.READ) {
+          return;
+        }
+
+        set({ selectKeyHeld: false });
+        const t = getMessages(get().language);
+        const confirmed = await get().confirm(t.dialogs.clearLibraryMessage, {
+          title: t.dialogs.clearLibraryTitle,
+          confirmLabel: t.dialogs.clearLibraryConfirm,
+          danger: true,
+        });
+
+        if (!confirmed) {
+          return;
+        }
+
+        // Drops runbook content only
+        if (!isDemo) {
+          await deleteRunbookDb();
+          persistence.clearStoredRunbooks();
+        }
+
+        set({
+          tabs: [],
+          activeTabId: null,
+          activeRunbookId: null,
+          runbookLibrary: [],
+          runbookSearchQuery: "",
+          variableSearchQuery: "",
+          selectedBlockIds: new Set(),
+          focusedRunbookId: null,
+        });
       },
 
       clearAllData: async () => {

@@ -33,7 +33,7 @@ export const KeyBinding = {
   DELETE_BLOCK: "DELETE_BLOCK",
   ESCAPE: "ESCAPE",
   EXPORT: "EXPORT",
-  RESET_WORKSPACE: "RESET_WORKSPACE",
+  CLEAR_LIBRARY: "CLEAR_LIBRARY",
   FOCUS_RUNBOOK: "FOCUS_RUNBOOK",
   NAVIGATE_RUNBOOKS: "NAVIGATE_RUNBOOKS",
   OPEN_LINK: "OPEN_LINK",
@@ -63,7 +63,7 @@ export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
   [KeyBinding.DELETE_BLOCK]: { binding: "delete" },
   [KeyBinding.ESCAPE]: { binding: "escape" },
   [KeyBinding.EXPORT]: { binding: "ctrl+shift+e" },
-  [KeyBinding.RESET_WORKSPACE]: { binding: "ctrl+shift+backspace" },
+  [KeyBinding.CLEAR_LIBRARY]: { binding: "ctrl+shift+backspace" },
   [KeyBinding.FOCUS_RUNBOOK]: { binding: "tab" },
   [KeyBinding.NAVIGATE_RUNBOOKS]: { binding: "↑ / ↓", keyboard: false },
   [KeyBinding.OPEN_LINK]: {

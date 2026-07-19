@@ -1,6 +1,6 @@
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
 import { AppMode } from "@/common/enums";
-import { ClipIcon, ImportIcon } from "@/components/icons";
+import { ClipIcon, ImportIcon, TrashIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -26,6 +26,7 @@ export function RunbookSection() {
   );
 
   const importRunbooks = useStore((state) => state.importRunbooks);
+  const clearRunbookLibrary = useStore((state) => state.clearRunbookLibrary);
   const isReadMode = useStore((state) => state.mode === AppMode.READ);
   const fileDrop = useFileDrop(
     (files) => void importRunbooks(files),
@@ -89,6 +90,17 @@ export function RunbookSection() {
           label: t.runbooks.paste,
           icon: ClipIcon,
         }}
+        tertiaryAction={
+          library.length > 0
+            ? {
+                onClick: () => void clearRunbookLibrary(),
+                title: t.runbooks.clearLibraryTitle,
+                label: t.runbooks.clearLibrary,
+                icon: TrashIcon,
+                danger: true,
+              }
+            : undefined
+        }
       />
     </SidebarSection>
   );

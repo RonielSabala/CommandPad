@@ -47,6 +47,8 @@ export const es: Messages = {
     pasteTitle: "Pegar JSON de libro",
     removeFromLibrary: "Quitar de la biblioteca",
     dropToImport: "Suelta los libros para importarlos",
+    clearLibrary: "Eliminar todo",
+    clearLibraryTitle: "Eliminar todos los libros de la biblioteca",
   },
   variables: {
     title: "VARIABLES",
@@ -128,6 +130,10 @@ export const es: Messages = {
     resetConfirm: "Resetear",
     resetMessage:
       "¿Eliminar todas las variables, bloques, libros y preferencias? Esta acción no se puede deshacer.",
+    clearLibraryTitle: "Eliminar Todos los Libros",
+    clearLibraryConfirm: "Eliminar todo",
+    clearLibraryMessage:
+      "¿Eliminar todos los libros de la biblioteca, junto con sus variables y bloques? Esta acción no se puede deshacer.",
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Alternar modo lectura / edición",
@@ -142,8 +148,7 @@ export const es: Messages = {
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
     [KeyBinding.ESCAPE]: "Limpiar selección de bloques / cerrar diálogos",
     [KeyBinding.EXPORT]: "Abrir el diálogo de exportación",
-    [KeyBinding.RESET_WORKSPACE]:
-      "Abrir el diálogo de resetear espacio de trabajo",
+    [KeyBinding.CLEAR_LIBRARY]: "Abrir el diálogo de eliminar todos los libros",
     [KeyBinding.FOCUS_RUNBOOK]: "Seleccionar libro activo",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navegar libros con el libro activo seleccionado",
@@ -277,6 +282,7 @@ export const es: Messages = {
         "También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.",
         "Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.",
         "Elimina un libro de la biblioteca con el botón que aparece al pasar el cursor sobre la fila.",
+        "Haz clic en **Eliminar todo** para vaciar la biblioteca completa de una vez.",
         "Arrastra el control a la izquierda de un libro para reordenarlo en la lista.",
         "Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.",
       ],
