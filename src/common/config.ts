@@ -90,6 +90,7 @@ export const VariableParamPlaceholderRegex = /\{;([^};]+)\}/g;
 export const VariableSyntax = {
   PARAM_SEPARATOR: ";",
   PARAM_ASSIGNMENT: "=",
+  COPY_SUFFIX: "_COPY",
 } as const;
 
 // Supported file types

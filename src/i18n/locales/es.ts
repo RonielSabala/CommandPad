@@ -379,9 +379,9 @@ export const es: Messages = {
         "Mantén `Shift` y haz clic en bloques para construir una selección. También puedes mantener `Shift` y arrastrar el ratón sobre los bloques para seleccionarlos con un lazo. Lazar bloques ya seleccionados los deselecciona.",
       actions: [
         "**Arrastra** el control de cualquier bloque seleccionado para mover todos los bloques seleccionados juntos, conservando el orden relativo.",
-        "**Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella.",
         "**Duplicar**: `Ctrl+D` duplica el grupo completo, insertado después del último bloque seleccionado.",
         "**Eliminar**: `Del` elimina el grupo completo.",
+        "**Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella. Las variables referenciadas viajan con los bloques; si la pestaña de destino ya define alguna con un valor distinto, la copia se añade con un nuevo nombre `CLAVE_COPY` y los bloques copiados se reescriben para referenciarla, de modo que no se tocan los valores de ninguna pestaña.",
       ],
       clear:
         "Pulsa `Escape` o haz clic fuera de los controles de bloque para limpiar la selección.",

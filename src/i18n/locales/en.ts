@@ -368,9 +368,9 @@ export const en: Messages = {
         "Hold `Shift` and click blocks to build a selection. You can also hold `Shift` and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.",
       actions: [
         "**Drag** any selected block's handle to move all selected blocks together, preserving relative order.",
-        "**Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab.",
         "**Duplicate**: `Ctrl+D` duplicates the entire group, inserted after the last selected block.",
         "**Delete**: `Del` deletes the entire group.",
+        "**Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab. Referenced variables travel with the blocks; if the target tab already defines one of them with a different value, the copy is added under a new `KEY_COPY` name and the copied blocks are rewritten to reference it, so neither tab's values are touched.",
       ],
       clear:
         "Press `Escape` or click outside block controls to clear the selection.",
