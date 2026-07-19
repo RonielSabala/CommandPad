@@ -88,7 +88,10 @@ export function useKeybindings(): void {
         }
 
         hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.CLEAR_LIBRARY)) {
+      } else if (
+        matchesKeybinding(event, KeyBinding.CLEAR_LIBRARY) &&
+        state.runbookLibrary.length > 0
+      ) {
         void state.clearRunbookLibrary();
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.DUPLICATE_BLOCK)) {
