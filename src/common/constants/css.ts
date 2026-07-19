@@ -5,6 +5,8 @@ export const CssClass = {
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",
   DROP_TARGET: "drop-target",
+  MINIMAP_ON: "minimap-on",
+  MINIMAP_LEFT: "minimap-left",
 
   // Modifier-key states
   SELECT_KEY_HELD: "select-key-held",
@@ -12,6 +14,7 @@ export const CssClass = {
   SIDEBAR_RESIZING: "sidebar-resizing",
 
   // Specific classes
+  CONTEXT_MENU: "context-menu",
   NOTE_LINK: "note-link",
   BLOCK_ITEM: "block-item",
   RUNBOOK_ITEM_BTN: "runbook-item-btn",

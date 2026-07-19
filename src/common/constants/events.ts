@@ -10,6 +10,7 @@ export const EventType = {
   POINTER_UP: "pointerup",
   POINTER_MOVE: "pointermove",
   SCROLL: "scroll",
+  WHEEL: "wheel",
   BLUR: "blur",
 } as const;
 

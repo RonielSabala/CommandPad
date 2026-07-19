@@ -42,6 +42,12 @@ export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
 export const TAB_HOVER_SWITCH_MS = 300;
 export const SECTION_ANIMATION_FALLBACK_MS = 250;
 
+export const MinimapConfig = {
+  /* Extra scroll space so the runbook can scroll until only its last block
+     remains visible (VS Code's "scroll beyond last line") */
+  OVERSCROLL_PROPERTY: "--minimap-overscroll",
+} as const;
+
 // A docs section counts as current while its top edge sits in the upper quarter of the scroll container
 export const DocsScrollSpy = {
   ROOT_MARGIN: "0px 0px -75% 0px",

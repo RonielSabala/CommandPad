@@ -17,6 +17,8 @@ interface PersistedUiState {
   sidebarCollapsed: boolean;
   sidebarPosition: SidebarPosition;
   sidebarWidth: number;
+  minimapEnabled: boolean;
+  minimapPosition: SidebarPosition;
 }
 
 export function saveUiState(ui: PersistedUiState): void {
@@ -32,6 +34,8 @@ export function saveUiState(ui: PersistedUiState): void {
           : SectionState.EXPANDED,
         sidebarPosition: ui.sidebarPosition,
         sidebarWidth: ui.sidebarWidth,
+        minimapEnabled: ui.minimapEnabled,
+        minimapPosition: ui.minimapPosition,
       }),
     );
   } catch (error) {
@@ -58,6 +62,11 @@ export function loadUiState(): Partial<PersistedUiState> | null {
       ...(typeof saved.sidebarWidth === "number"
         ? { sidebarWidth: saved.sidebarWidth }
         : {}),
+      minimapEnabled: saved.minimapEnabled !== false,
+      minimapPosition:
+        saved.minimapPosition === SidebarPosition.LEFT
+          ? SidebarPosition.LEFT
+          : SidebarPosition.RIGHT,
     };
   } catch (error) {
     console.warn("Failed to load UI state:", error);

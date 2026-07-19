@@ -212,7 +212,7 @@ export function EditorToggleChevronIcon(props: IconProps) {
 export function CheckIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 16 16" {...props}>
-      <polyline points="2.5,8.5 6,12 13.5,3.5" stroke="var(--success)" />
+      <polyline points="2.5,8.5 6,12 13.5,3.5" />
     </svg>
   );
 }

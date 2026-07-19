@@ -128,7 +128,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           title={t.command.copy}
         >
           {copied ? (
-            <CheckIcon className="icon-md icon-bold" />
+            <CheckIcon className="icon-md icon-bold copy-check-icon" />
           ) : (
             <CopyIcon className="icon-md icon-bold" />
           )}

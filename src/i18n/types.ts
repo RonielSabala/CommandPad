@@ -55,6 +55,11 @@ export interface Messages {
     doubleClickExpand: string;
     dragResizeCollapse: string;
   };
+  contextMenu: {
+    minimap: string;
+    moveMinimapLeft: string;
+    moveMinimapRight: string;
+  };
   runbooks: {
     title: string;
     searchPlaceholder: string;
@@ -170,6 +175,7 @@ export interface Messages {
     };
     mainPanel: {
       intro: string;
+      minimap: string;
       teaser: string;
     };
     tabs: {

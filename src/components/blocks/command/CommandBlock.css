@@ -77,6 +77,10 @@ body.select-key-held:not(.read-mode)
 
 /* Toggle editor btn */
 
+.copy-check-icon {
+  color: var(--success);
+}
+
 .toggle-editor-btn {
   margin-left: auto;
   display: inline-flex;

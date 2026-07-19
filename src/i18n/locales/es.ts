@@ -37,6 +37,11 @@ export const es: Messages = {
     dragResizeCollapse:
       "Arrastra para redimensionar · doble clic para contraer",
   },
+  contextMenu: {
+    minimap: "Minimapa",
+    moveMinimapLeft: "Mover minimapa a la izquierda",
+    moveMinimapRight: "Mover minimapa a la derecha",
+  },
   runbooks: {
     title: "LIBROS",
     searchPlaceholder: "Buscar libros…",
@@ -149,6 +154,8 @@ export const es: Messages = {
     [KeyBinding.ESCAPE]: "Limpiar selección de bloques / cerrar diálogos",
     [KeyBinding.EXPORT]: "Abrir el diálogo de exportación",
     [KeyBinding.CLEAR_LIBRARY]: "Abrir el diálogo de eliminar todos los libros",
+    [KeyBinding.TOGGLE_MINIMAP]:
+      "Abrir el menú del minimapa (en el contenido del libro)",
     [KeyBinding.FOCUS_RUNBOOK]: "Seleccionar libro activo",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navegar libros con el libro activo seleccionado",
@@ -247,6 +254,8 @@ export const es: Messages = {
     mainPanel: {
       intro:
         "El panel principal es tu mesa de trabajo. Arriba está la **barra de pestañas** con tus libros abiertos; debajo, los bloques del libro activo; y al final, la fila **NUEVO BLOQUE** para seguir agregando contenido.",
+      minimap:
+        "En el borde derecho vive el **minimapa**: una miniatura de los bloques reales del libro que reemplaza a la barra de desplazamiento. Haz clic o arrastra sobre él para saltar a cualquier punto de un libro largo. Haz **clic derecho** en cualquier parte del contenido del libro para abrir un pequeño menú donde puedes activarlo o desactivarlo, o moverlo al otro borde.",
       teaser:
         "¿Bloques? ¿Pestañas? No te preocupes: son justo lo que vas a aprender a continuación.",
     },

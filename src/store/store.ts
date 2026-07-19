@@ -80,6 +80,8 @@ export interface StoreState {
   sidebarCollapsed: boolean;
   sidebarPosition: SidebarPosition;
   sidebarWidth: number;
+  minimapEnabled: boolean;
+  minimapPosition: SidebarPosition;
   runbookSectionCollapsed: boolean;
   variablesSectionCollapsed: boolean;
 
@@ -171,6 +173,8 @@ export interface StoreState {
   toggleTheme: () => void;
   setLanguage: (language: Language) => void;
   toggleSidebar: () => void;
+  toggleMinimap: () => void;
+  toggleMinimapPosition: () => void;
   toggleSidebarPosition: () => void;
   setSidebarSize: (width: number) => void;
   resetSidebarSize: () => void;
@@ -374,6 +378,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       sidebarCollapsed: false,
       sidebarPosition: SidebarPosition.LEFT,
       sidebarWidth: SidebarWidth.DEFAULT,
+      minimapEnabled: true,
+      minimapPosition: SidebarPosition.RIGHT,
       runbookSectionCollapsed: false,
       variablesSectionCollapsed: false,
 
@@ -410,6 +416,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           sidebarCollapsed: state.sidebarCollapsed,
           sidebarPosition: state.sidebarPosition,
           sidebarWidth: state.sidebarWidth,
+          minimapEnabled: state.minimapEnabled,
+          minimapPosition: state.minimapPosition,
           theme: state.theme,
           language: state.language,
         });
@@ -1349,6 +1357,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           sidebarCollapsed: state.sidebarCollapsed,
           sidebarPosition: state.sidebarPosition,
           sidebarWidth: state.sidebarWidth,
+          minimapEnabled: state.minimapEnabled,
+          minimapPosition: state.minimapPosition,
           theme: state.theme,
           language: state.language,
         });
@@ -1365,6 +1375,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           sidebarCollapsed: state.sidebarCollapsed,
           sidebarPosition: state.sidebarPosition,
           sidebarWidth: state.sidebarWidth,
+          minimapEnabled: state.minimapEnabled,
+          minimapPosition: state.minimapPosition,
           theme: state.theme,
           language: state.language,
         });
@@ -1376,6 +1388,21 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           sidebarWidth: s.sidebarCollapsed
             ? SidebarWidth.DEFAULT
             : s.sidebarWidth,
+        }));
+        get().saveState();
+      },
+
+      toggleMinimap: () => {
+        set((s) => ({ minimapEnabled: !s.minimapEnabled }));
+        get().saveState();
+      },
+
+      toggleMinimapPosition: () => {
+        set((s) => ({
+          minimapPosition:
+            s.minimapPosition === SidebarPosition.RIGHT
+              ? SidebarPosition.LEFT
+              : SidebarPosition.RIGHT,
         }));
         get().saveState();
       },

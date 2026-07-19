@@ -36,6 +36,11 @@ export const en: Messages = {
     doubleClickExpand: "Double-click to expand",
     dragResizeCollapse: "Drag to resize · double-click to collapse",
   },
+  contextMenu: {
+    minimap: "Minimap",
+    moveMinimapLeft: "Move minimap left",
+    moveMinimapRight: "Move minimap right",
+  },
   runbooks: {
     title: "RUNBOOKS",
     searchPlaceholder: "Search runbooks…",
@@ -148,6 +153,8 @@ export const en: Messages = {
     [KeyBinding.ESCAPE]: "Clear block selection / close modals",
     [KeyBinding.EXPORT]: "Open export dialog",
     [KeyBinding.CLEAR_LIBRARY]: "Open delete all runbooks dialog",
+    [KeyBinding.TOGGLE_MINIMAP]:
+      "Open the minimap menu (in the runbook content)",
     [KeyBinding.FOCUS_RUNBOOK]: "Select active runbook",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navigate runbooks with the active runbook selected",
@@ -239,6 +246,8 @@ export const en: Messages = {
     mainPanel: {
       intro:
         "The main panel is your workbench. At the top sits the **tabs bar** with your open runbooks; below it, the blocks of the active runbook; and at the end, the **NEW BLOCK** row to keep adding content.",
+      minimap:
+        "On the right edge lives the **minimap**: a miniature of the real runbook blocks that replaces the scrollbar. Click or drag on it to jump anywhere in a long runbook. **Right-click** anywhere in the runbook content to open a small menu where you can turn it on or off or move it to the other edge.",
       teaser:
         "Blocks? Tabs? Don't worry: they are exactly what you will learn next.",
     },
