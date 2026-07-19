@@ -49,3 +49,7 @@ export const DragEffect = {
   COPY: "copy",
   COPY_MOVE: "copyMove",
 } as const;
+
+export const DataTransferType = {
+  FILES: "Files",
+} as const;

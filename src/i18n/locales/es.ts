@@ -46,6 +46,7 @@ export const es: Messages = {
     paste: "Pegar",
     pasteTitle: "Pegar JSON de libro",
     removeFromLibrary: "Quitar de la biblioteca",
+    dropToImport: "Suelta los libros para importarlos",
   },
   variables: {
     title: "VARIABLES",
@@ -273,6 +274,7 @@ export const es: Messages = {
         "La sección **LIBROS** de la barra lateral contiene tus libros importados.",
       items: [
         "Haz clic en **Importar** para cargar uno o varios archivos `.json` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.",
+        "También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.",
         "Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.",
         "Elimina un libro de la biblioteca con el botón que aparece al pasar el cursor sobre la fila.",
         "Arrastra el control a la izquierda de un libro para reordenarlo en la lista.",

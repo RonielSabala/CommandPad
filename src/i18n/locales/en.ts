@@ -45,6 +45,7 @@ export const en: Messages = {
     paste: "Paste",
     pasteTitle: "Paste runbook JSON",
     removeFromLibrary: "Remove from library",
+    dropToImport: "Drop runbooks to import",
   },
   variables: {
     title: "VARIABLES",
@@ -262,6 +263,7 @@ export const en: Messages = {
       intro: "The sidebar's **RUNBOOKS** section holds your imported runbooks.",
       items: [
         "Click **Import** to load one or more `.json` files at once, or **Paste** to create a runbook from raw JSON.",
+        "You can also **drag files** from your file explorer and drop them onto the section to import them.",
         "Click any runbook to open it. If it's already open in a tab, that tab becomes active.",
         "Delete a runbook from the library with the button shown on row hover.",
         "Drag the handle on the left of a runbook to reorder it in the list.",

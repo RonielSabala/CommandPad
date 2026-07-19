@@ -1,5 +1,7 @@
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
+import { AppMode } from "@/common/enums";
 import { ClipIcon, ImportIcon } from "@/components/icons";
+import { useFileDrop } from "@/hooks/useFileDrop";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { openImportDialog } from "@/utils/importTrigger";
@@ -22,6 +24,14 @@ export function RunbookSection() {
   const openPasteRunbookModal = useStore(
     (state) => state.openPasteRunbookModal,
   );
+
+  const importRunbooks = useStore((state) => state.importRunbooks);
+  const isReadMode = useStore((state) => state.mode === AppMode.READ);
+  const fileDrop = useFileDrop(
+    (files) => void importRunbooks(files),
+    !isReadMode && !isCollapsed,
+  );
+
   const visibleItems = library.filter((runbook) =>
     matchesQuery(searchQuery, runbook.label, runbook.filename),
   );
@@ -49,6 +59,7 @@ export function RunbookSection() {
       title={t.runbooks.title}
       collapsed={isCollapsed}
       onToggle={onToggle}
+      dropZone={{ ...fileDrop, hint: t.runbooks.dropToImport }}
     >
       <SidebarSearch
         value={searchQuery}

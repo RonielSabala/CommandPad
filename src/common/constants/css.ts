@@ -4,6 +4,7 @@ export const CssClass = {
   COLLAPSED: "collapsed",
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",
+  DROP_TARGET: "drop-target",
 
   // Modifier-key states
   SELECT_KEY_HELD: "select-key-held",

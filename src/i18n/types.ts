@@ -64,6 +64,7 @@ export interface Messages {
     paste: string;
     pasteTitle: string;
     removeFromLibrary: string;
+    dropToImport: string;
   };
   variables: {
     title: string;
