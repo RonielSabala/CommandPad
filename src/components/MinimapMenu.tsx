@@ -24,13 +24,15 @@ export function MinimapMenu({ x, y, onClose }: Props) {
   const toggleMinimapPosition = useStore(
     (state) => state.toggleMinimapPosition,
   );
+
   const menuRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x, y });
 
-  // Keep the menu fully on screen even when opened near an edge
+  // Keep the menu fully on screen
   useLayoutEffect(() => {
     const menu = menuRef.current;
     const host = menu?.offsetParent as HTMLElement | null;
+
     if (!menu || !host) {
       return;
     }
@@ -51,6 +53,7 @@ export function MinimapMenu({ x, y, onClose }: Props) {
         onClose();
       }
     };
+
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === Key.ESCAPE) {
         onClose();

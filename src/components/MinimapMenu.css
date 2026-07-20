@@ -13,6 +13,7 @@
 }
 
 .context-menu-item {
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -22,9 +23,8 @@
   border: none;
   border-radius: var(--radius-sm);
   color: var(--color-text-primary);
-  font: inherit;
   font-size: var(--text-md);
-  cursor: pointer;
+  white-space: nowrap;
 }
 
 .context-menu-item:hover {
@@ -32,8 +32,8 @@
 }
 
 .context-menu-check {
+  flex-shrink: 0;
   display: inline-flex;
   justify-content: center;
   width: var(--icon-base);
-  flex-shrink: 0;
 }

@@ -16,7 +16,6 @@
   order: -1;
 }
 
-/* The minimap replaces the scrollbar, like VS Code */
 #tabs-content-wrapper.minimap-on > #tabs-content {
   scrollbar-width: none;
 }
@@ -25,8 +24,6 @@
   display: none;
 }
 
-/* Overscroll spacer sized by the minimap (--minimap-overscroll) so the last
-   block can reach the top of the view */
 #tabs-content-wrapper.minimap-on > #tabs-content::after {
   content: "";
   flex: 0 0 var(--minimap-overscroll, 0px);

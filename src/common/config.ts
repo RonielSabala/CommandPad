@@ -43,8 +43,7 @@ export const TAB_HOVER_SWITCH_MS = 300;
 export const SECTION_ANIMATION_FALLBACK_MS = 250;
 
 export const MinimapConfig = {
-  /* Extra scroll space so the runbook can scroll until only its last block
-     remains visible (VS Code's "scroll beyond last line") */
+  SCALE: 0.12,
   OVERSCROLL_PROPERTY: "--minimap-overscroll",
 } as const;
 

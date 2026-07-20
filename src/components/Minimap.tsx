@@ -25,7 +25,6 @@ const BLOCKS_LIST_SELECTOR = `#${ElementId.BLOCKS_LIST}`;
 interface MinimapMetrics {
   scrollHeight: number;
   clientHeight: number;
-  hostWidth: number;
   hostHeight: number;
   listWidth: number;
 }
@@ -33,7 +32,6 @@ interface MinimapMetrics {
 const INITIAL_METRICS: MinimapMetrics = {
   scrollHeight: 0,
   clientHeight: 0,
-  hostWidth: 0,
   hostHeight: 0,
   listWidth: 0,
 };
@@ -42,19 +40,12 @@ function sameMetrics(a: MinimapMetrics, b: MinimapMetrics): boolean {
   return (
     a.scrollHeight === b.scrollHeight &&
     a.clientHeight === b.clientHeight &&
-    a.hostWidth === b.hostWidth &&
     a.hostHeight === b.hostHeight &&
     a.listWidth === b.listWidth
   );
 }
 
-/**
- * The real blocks, rendered a second time at miniature scale. `inert` keeps
- * focus, clicks and drags away from the copies, while store subscriptions
- * (selection, flashes, edits) keep them in sync with the workspace for free.
- * Memoized on `width` so scroll-driven re-renders of the shell skip it, and
- * the `BlockItem` memo skips untouched blocks inside it.
- */
+/** The real blocks, rendered a second time at miniature scale. */
 const MinimapMirror = memo(function MinimapMirror({
   width,
 }: {
@@ -95,12 +86,12 @@ export function Minimap({ scrollRef }: Props) {
     const container = scrollRef.current;
     const host = hostRef.current;
     const list = container?.querySelector<HTMLElement>(BLOCKS_LIST_SELECTOR);
+
     if (!container || !host || !list) {
       return;
     }
 
-    // Reserve scroll space below the content so the last block can reach the
-    // top of the view (VS Code's "scroll beyond last line")
+    // Reserve scroll space below the content so the last block can reach the top of the view
     const lastBlock = list.lastElementChild as HTMLElement | null;
     const previousReserve = overscrollRef.current;
     const baseHeight = container.scrollHeight - previousReserve;
@@ -111,6 +102,7 @@ export function Minimap({ scrollRef }: Props) {
         lastBlock.getBoundingClientRect().top -
         container.getBoundingClientRect().top +
         container.scrollTop;
+
       reserve = Math.max(
         0,
         Math.round(container.clientHeight - (baseHeight - lastTop)),
@@ -128,7 +120,6 @@ export function Minimap({ scrollRef }: Props) {
     const next: MinimapMetrics = {
       scrollHeight: container.scrollHeight,
       clientHeight: container.clientHeight,
-      hostWidth: host.clientWidth,
       hostHeight: host.clientHeight,
       listWidth: list.clientWidth,
     };
@@ -145,14 +136,14 @@ export function Minimap({ scrollRef }: Props) {
     };
   }, [scrollRef]);
 
-  // One observer for all geometry sources: the scroll container (viewport
-  // size), the host (minimap size) and the blocks list (grows while typing)
+  // Observer for all geometry sources
   useLayoutEffect(() => {
     measure();
 
     const container = scrollRef.current;
     const host = hostRef.current;
     const list = container?.querySelector<HTMLElement>(BLOCKS_LIST_SELECTOR);
+
     if (!container || !host || !list) {
       return;
     }
@@ -165,6 +156,7 @@ export function Minimap({ scrollRef }: Props) {
     return () => observer.disconnect();
   }, [measure, scrollRef]);
 
+  // Scroll
   useLayoutEffect(() => {
     const container = scrollRef.current;
     if (!container) {
@@ -176,9 +168,11 @@ export function Minimap({ scrollRef }: Props) {
     return () => container.removeEventListener(EventType.SCROLL, onScroll);
   }, [scrollRef]);
 
+  // Scroll wheel
   useLayoutEffect(() => {
     const host = hostRef.current;
     const container = scrollRef.current;
+
     if (!host || !container) {
       return;
     }
@@ -191,18 +185,16 @@ export function Minimap({ scrollRef }: Props) {
     return () => host.removeEventListener(EventType.WHEEL, onWheel);
   }, [scrollRef]);
 
-  // Center the viewport slider on the pointed spot (from live DOM so drags
-  // never act on stale measurements). When the miniature overflows the track,
-  // the full track maps linearly onto the full scroll range, like a scrollbar.
+  // When the miniature overflows the track, the full track maps linearly onto the full scroll range
   const scrollFromPointer = (clientY: number) => {
     const container = scrollRef.current;
     const host = hostRef.current;
-    const list = container?.querySelector<HTMLElement>(BLOCKS_LIST_SELECTOR);
-    if (!container || !host || !list || !list.clientWidth) {
+
+    if (!container || !host) {
       return;
     }
 
-    const scale = host.clientWidth / list.clientWidth;
+    const scale = MinimapConfig.SCALE;
     const y = clientY - host.getBoundingClientRect().top;
     const contentHeight = container.scrollHeight * scale;
 
@@ -214,6 +206,7 @@ export function Minimap({ scrollRef }: Props) {
     const sliderHeight = container.clientHeight * scale;
     const track = host.clientHeight - sliderHeight;
     const maxScroll = container.scrollHeight - container.clientHeight;
+
     container.scrollTop =
       track > 0 ? ((y - sliderHeight / 2) / track) * maxScroll : 0;
   };
@@ -234,11 +227,7 @@ export function Minimap({ scrollRef }: Props) {
     }
   };
 
-  // The miniature is the real content scaled to the minimap width, so the
-  // slider always has the same size and the miniature itself scrolls when it
-  // doesn't fit the track, like VS Code
-  const scale =
-    metrics.listWidth > 0 ? metrics.hostWidth / metrics.listWidth : 0;
+  const scale = MinimapConfig.SCALE;
   const contentHeight = metrics.scrollHeight * scale;
   const maxScroll = Math.max(0, metrics.scrollHeight - metrics.clientHeight);
   const overflow = Math.max(0, contentHeight - metrics.hostHeight);

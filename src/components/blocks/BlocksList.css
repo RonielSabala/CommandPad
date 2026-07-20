@@ -1,5 +1,4 @@
-#blocks-list,
-.minimap-mirror {
+:is(#blocks-list, .minimap-mirror) {
   display: grid;
   grid-template-columns: fit-content(calc(100% - var(--space-20)));
   max-width: 100%;
@@ -7,7 +6,6 @@
   justify-items: start;
 }
 
-#blocks-list .block-item:has(.divider-block),
-.minimap-mirror .block-item:has(.divider-block) {
+:is(#blocks-list, .minimap-mirror) .block-item:has(.divider-block) {
   justify-self: stretch;
 }

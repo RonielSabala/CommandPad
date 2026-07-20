@@ -1,3 +1,11 @@
+.minimap-mirror * {
+  scrollbar-width: none;
+}
+
+.minimap-mirror *::-webkit-scrollbar {
+  display: none;
+}
+
 .minimap {
   position: relative;
   flex: 0 0 var(--minimap-width);
@@ -6,7 +14,6 @@
   touch-action: none;
 }
 
-/* The real blocks at miniature scale; translated to follow the scroll */
 .minimap-content {
   position: absolute;
   top: 0;
@@ -16,17 +23,8 @@
   pointer-events: none;
 }
 
-.minimap-mirror * {
-  scrollbar-width: none;
-}
+/* Progressive highlight */
 
-.minimap-mirror *::-webkit-scrollbar {
-  display: none;
-}
-
-/* Progressive highlight, like VS Code: hidden until the pointer enters the
-   track, stronger over the slider itself. The translucent overlay lets the
-   miniature show through unchanged; it does not change while dragging. */
 .minimap-viewport {
   position: absolute;
   left: 0;
@@ -41,9 +39,9 @@
 }
 
 .minimap:hover .minimap-viewport:hover {
-  opacity: 0.12;
+  opacity: 0.1;
 }
 
 .minimap:hover .minimap-viewport:active {
-  opacity: 0.18;
+  opacity: 0.15;
 }

@@ -247,7 +247,7 @@ export const en: Messages = {
       intro:
         "The main panel is your workbench. At the top sits the **tabs bar** with your open runbooks; below it, the blocks of the active runbook; and at the end, the **NEW BLOCK** row to keep adding content.",
       minimap:
-        "On the right edge lives the **minimap**: a miniature of the real runbook blocks that replaces the scrollbar. Click or drag on it to jump anywhere in a long runbook. **Right-click** anywhere in the runbook content to open a small menu where you can turn it on or off or move it to the other edge.",
+        "On the right edge lives the **minimap**: a miniature of the real runbook blocks that replaces the scrollbar. Click or drag on it to jump anywhere in a runbook. **Right-click** anywhere in the runbook content to open a small menu where you can turn it on or off or move it to the other side.",
       teaser:
         "Blocks? Tabs? Don't worry: they are exactly what you will learn next.",
     },

@@ -75,7 +75,7 @@ body.select-key-held:not(.read-mode)
   letter-spacing: 0.1em;
 }
 
-/* Toggle editor btn */
+/* Command preview */
 
 .copy-check-icon {
   color: var(--success);

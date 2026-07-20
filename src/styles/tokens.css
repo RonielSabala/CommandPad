@@ -25,12 +25,10 @@
   --color-text-muted: #6a6f7d;
   --selection-color: #0338a2;
 
-  /* Scrollbar */
+  /* Scroll */
+  --minimap-slider: #ffffff;
   --scrollbar-thumb: #2c2f3a;
   --scrollbar-thumb-hover: #6a6f7d;
-
-  /* Minimap slider: lightens content in dark mode, darkens it in light mode */
-  --minimap-slider: #ffffff;
 
   /* Note text styles */
   --code-color: #ffab3d;
@@ -81,9 +79,9 @@
   --block-min-width: 7.5rem;
   --modal-min-width: 15rem;
   --modal-max-width: 30rem;
+  --minimap-width: 7rem;
   --context-menu-min-width: 10rem;
   --context-menu-min-height: 3rem;
-  --minimap-width: 6.5rem;
   --docs-sidebar-width: 16rem;
   --docs-max-width: 52rem;
   --docs-heading-lg: 1.75rem;
@@ -122,12 +120,10 @@
   --color-text-muted: #868d9a;
   --selection-color: #c5d9fb;
 
-  /* Scrollbar */
+  /* Scroll */
+  --minimap-slider: #000000;
   --scrollbar-thumb: #b6bcc8;
   --scrollbar-thumb-hover: #868d9a;
-
-  /* Minimap slider */
-  --minimap-slider: #000000;
 
   /* Note text styles */
   --code-color: #b4490a;

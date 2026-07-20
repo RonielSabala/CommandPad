@@ -36,12 +36,13 @@ export function MainPanel() {
   const isEmpty = useStore(
     (state) => !(getActiveTab(state)?.blocks.length ?? 0),
   );
+
   const minimapEnabled = useStore((state) => state.minimapEnabled);
   const minimapOnLeft = useStore(
     (state) => state.minimapPosition === SidebarPosition.LEFT,
   );
-  const showMinimap = minimapEnabled && !isEmpty;
 
+  const showMinimap = minimapEnabled && !isEmpty;
   const [menuPosition, setMenuPosition] = useState<{
     x: number;
     y: number;
@@ -60,8 +61,6 @@ export function MainPanel() {
         )}
         onContextMenu={(event) => {
           const target = event.target as HTMLElement;
-
-          // Text fields keep their native cut/copy/paste menu
           if (target.closest(InputSelector.EDITABLE)) {
             return;
           }
