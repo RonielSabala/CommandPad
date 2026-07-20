@@ -1,5 +1,5 @@
 import { AppRoute } from "@/common/constants/routes";
-import { useThemeClass } from "@/hooks/useBodyClasses";
+import { useDocumentLanguage, useThemeClass } from "@/hooks/useBodyClasses";
 import { useStore } from "@/store/store";
 import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
@@ -12,6 +12,7 @@ export default function App() {
   const isInitialized = useStore((state) => state.initialized);
 
   useThemeClass();
+  useDocumentLanguage();
 
   useEffect(() => {
     void bootstrap();

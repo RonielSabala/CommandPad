@@ -2,6 +2,7 @@ import { DEFAULT_CONFIRM_LABEL } from "@/common/config";
 import { EventType, Key } from "@/common/constants/events";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { useEffect, useRef, useState } from "react";
 import { Modal } from "./Modal";
 
@@ -55,7 +56,11 @@ export function ConfirmModal() {
         <div className="vertical-divider" />
         <button
           ref={confirmRef}
-          className={`btn btn-lg${isDanger ? " btn-danger" : " btn-primary"}`}
+          className={classNames(
+            "btn",
+            "btn-lg",
+            isDanger ? "btn-danger" : "btn-primary",
+          )}
           onClick={() => resolve(true)}
         >
           {confirmLabel}

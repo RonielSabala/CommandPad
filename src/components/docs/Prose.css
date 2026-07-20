@@ -12,8 +12,9 @@
   color: var(--color-text-primary);
 }
 
-.docs-prose .note-link {
-  pointer-events: auto;
+.docs-table .note-link:hover {
+  cursor: pointer;
+  color: var(--accent-text);
 }
 
 /* List */

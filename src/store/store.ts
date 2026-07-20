@@ -33,7 +33,12 @@ import { Language } from "@/i18n/types";
 import { debounce } from "@/utils/debounce";
 import { runExport } from "@/utils/export";
 import { generateId } from "@/utils/id";
-import { getUsedVariableKeys, renameVariableTokens } from "@/utils/resolution";
+import {
+  carryVariables,
+  getVariableKey,
+  renameAllVariableTokens,
+  renameVariableTokens,
+} from "@/utils/resolution";
 import { getRunbookLabel } from "@/utils/runbook";
 
 import * as persistence from "./persistence";
@@ -75,6 +80,8 @@ export interface StoreState {
   sidebarCollapsed: boolean;
   sidebarPosition: SidebarPosition;
   sidebarWidth: number;
+  minimapEnabled: boolean;
+  minimapPosition: SidebarPosition;
   runbookSectionCollapsed: boolean;
   variablesSectionCollapsed: boolean;
 
@@ -166,6 +173,8 @@ export interface StoreState {
   toggleTheme: () => void;
   setLanguage: (language: Language) => void;
   toggleSidebar: () => void;
+  toggleMinimap: () => void;
+  toggleMinimapPosition: () => void;
   toggleSidebarPosition: () => void;
   setSidebarSize: (width: number) => void;
   resetSidebarSize: () => void;
@@ -190,6 +199,7 @@ export interface StoreState {
   resolveConfirm: (result: boolean) => void;
   alert: (message: string) => Promise<void>;
   resolveAlert: () => void;
+  clearRunbookLibrary: () => Promise<void>;
   clearAllData: () => Promise<void>;
 }
 
@@ -368,6 +378,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       sidebarCollapsed: false,
       sidebarPosition: SidebarPosition.LEFT,
       sidebarWidth: SidebarWidth.DEFAULT,
+      minimapEnabled: true,
+      minimapPosition: SidebarPosition.RIGHT,
       runbookSectionCollapsed: false,
       variablesSectionCollapsed: false,
 
@@ -404,6 +416,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           sidebarCollapsed: state.sidebarCollapsed,
           sidebarPosition: state.sidebarPosition,
           sidebarWidth: state.sidebarWidth,
+          minimapEnabled: state.minimapEnabled,
+          minimapPosition: state.minimapPosition,
           theme: state.theme,
           language: state.language,
         });
@@ -903,7 +917,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             let variables = tab.variables;
 
             if (field === VariableField.KEY) {
-              const oldKey = target.key.trim();
+              const oldKey = getVariableKey(target);
               const newKey = value.trim();
 
               if (oldKey && newKey && oldKey !== newKey) {
@@ -1090,17 +1104,22 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
 
-        const copies = ordered.map((b) => ({ ...b, id: generateId() }));
+        // Carry over referenced variables
+        const { variables: carriedVariables, renames } = carryVariables(
+          ordered,
+          source.variables,
+          target.variables,
+        );
 
-        // Carry over referenced variables the target doesn't define yet
-        const usedKeys = getUsedVariableKeys(ordered, source.variables);
-        const targetKeys = new Set(target.variables.map((v) => v.key.trim()));
-        const carriedVariables = source.variables
-          .filter((v) => {
-            const key = v.key.trim();
-            return key && usedKeys.has(key) && !targetKeys.has(key);
-          })
-          .map((v) => ({ ...v, id: generateId() }));
+        const copies = ordered.map((b) =>
+          b.type === BlockType.COMMAND
+            ? {
+                ...b,
+                id: generateId(),
+                text: renameAllVariableTokens(b.text, renames),
+              }
+            : { ...b, id: generateId() },
+        );
 
         set((s) => {
           const tabs = s.tabs.map((t) => {
@@ -1338,6 +1357,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           sidebarCollapsed: state.sidebarCollapsed,
           sidebarPosition: state.sidebarPosition,
           sidebarWidth: state.sidebarWidth,
+          minimapEnabled: state.minimapEnabled,
+          minimapPosition: state.minimapPosition,
           theme: state.theme,
           language: state.language,
         });
@@ -1354,6 +1375,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           sidebarCollapsed: state.sidebarCollapsed,
           sidebarPosition: state.sidebarPosition,
           sidebarWidth: state.sidebarWidth,
+          minimapEnabled: state.minimapEnabled,
+          minimapPosition: state.minimapPosition,
           theme: state.theme,
           language: state.language,
         });
@@ -1365,6 +1388,21 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           sidebarWidth: s.sidebarCollapsed
             ? SidebarWidth.DEFAULT
             : s.sidebarWidth,
+        }));
+        get().saveState();
+      },
+
+      toggleMinimap: () => {
+        set((s) => ({ minimapEnabled: !s.minimapEnabled }));
+        get().saveState();
+      },
+
+      toggleMinimapPosition: () => {
+        set((s) => ({
+          minimapPosition:
+            s.minimapPosition === SidebarPosition.RIGHT
+              ? SidebarPosition.LEFT
+              : SidebarPosition.RIGHT,
         }));
         get().saveState();
       },
@@ -1498,6 +1536,41 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       resolveAlert: () => {
         get().alertDialog?.resolve();
         set({ alertDialog: null });
+      },
+
+      clearRunbookLibrary: async () => {
+        if (get().mode === AppMode.READ) {
+          return;
+        }
+
+        set({ selectKeyHeld: false });
+        const t = getMessages(get().language);
+        const confirmed = await get().confirm(t.dialogs.clearLibraryMessage, {
+          title: t.dialogs.clearLibraryTitle,
+          confirmLabel: t.dialogs.clearLibraryConfirm,
+          danger: true,
+        });
+
+        if (!confirmed) {
+          return;
+        }
+
+        // Drops runbook content only
+        if (!isDemo) {
+          await deleteRunbookDb();
+          persistence.clearStoredRunbooks();
+        }
+
+        set({
+          tabs: [],
+          activeTabId: null,
+          activeRunbookId: null,
+          runbookLibrary: [],
+          runbookSearchQuery: "",
+          variableSearchQuery: "",
+          selectedBlockIds: new Set(),
+          focusedRunbookId: null,
+        });
       },
 
       clearAllData: async () => {

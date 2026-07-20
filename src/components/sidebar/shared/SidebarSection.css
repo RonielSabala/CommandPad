@@ -1,9 +1,30 @@
 .sidebar-section {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 0;
   flex: 1 1 0;
   max-height: max-content;
+}
+
+.sidebar-section-drop-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1px;
+  border: var(--border-dashed);
+  border-radius: var(--radius-md);
+  background: var(--accent-dim);
+  color: var(--accent-text);
+  font-size: var(--text-md);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.sidebar-section.drop-target > :not(.sidebar-section-drop-overlay) {
+  opacity: 0.2;
 }
 
 .sidebar-section-header {
@@ -15,6 +36,7 @@
   padding: var(--space-6);
   padding-right: var(--sidebar-rail-width);
   border-bottom: var(--border-standard);
+  outline: none;
   cursor: pointer;
   user-select: none;
   transition: background var(--transition-fast);

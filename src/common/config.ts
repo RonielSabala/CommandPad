@@ -42,6 +42,11 @@ export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
 export const TAB_HOVER_SWITCH_MS = 300;
 export const SECTION_ANIMATION_FALLBACK_MS = 250;
 
+export const MinimapConfig = {
+  SCALE: 0.12,
+  OVERSCROLL_PROPERTY: "--minimap-overscroll",
+} as const;
+
 // A docs section counts as current while its top edge sits in the upper quarter of the scroll container
 export const DocsScrollSpy = {
   ROOT_MARGIN: "0px 0px -75% 0px",
@@ -90,6 +95,7 @@ export const VariableParamPlaceholderRegex = /\{;([^};]+)\}/g;
 export const VariableSyntax = {
   PARAM_SEPARATOR: ";",
   PARAM_ASSIGNMENT: "=",
+  COPY_SUFFIX: "_COPY",
 } as const;
 
 // Supported file types

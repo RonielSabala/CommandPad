@@ -1,0 +1,47 @@
+.minimap-mirror * {
+  scrollbar-width: none;
+}
+
+.minimap-mirror *::-webkit-scrollbar {
+  display: none;
+}
+
+.minimap {
+  position: relative;
+  flex: 0 0 var(--minimap-width);
+  overflow: hidden;
+  user-select: none;
+  touch-action: none;
+}
+
+.minimap-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* Progressive highlight */
+
+.minimap-viewport {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: var(--minimap-slider);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.minimap:hover .minimap-viewport {
+  opacity: 0.07;
+}
+
+.minimap:hover .minimap-viewport:hover {
+  opacity: 0.1;
+}
+
+.minimap:hover .minimap-viewport:active {
+  opacity: 0.15;
+}

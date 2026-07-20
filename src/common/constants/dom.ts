@@ -1,3 +1,7 @@
+export const ElementId = {
+  BLOCKS_LIST: "blocks-list",
+} as const;
+
 export const InputSelector = {
   EDITABLE: "textarea, input",
 } as const;

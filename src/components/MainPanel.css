@@ -5,8 +5,33 @@
   overflow: hidden;
 }
 
+#tabs-content-wrapper {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+#tabs-content-wrapper.minimap-left > .minimap {
+  order: -1;
+}
+
+#tabs-content-wrapper.minimap-on > #tabs-content {
+  scrollbar-width: none;
+}
+
+#tabs-content-wrapper.minimap-on > #tabs-content::-webkit-scrollbar {
+  display: none;
+}
+
+#tabs-content-wrapper.minimap-on > #tabs-content::after {
+  content: "";
+  flex: 0 0 var(--minimap-overscroll, 0px);
+}
+
 #tabs-content {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
   padding-top: var(--space-4);
   padding-right: var(--space-20);

@@ -37,6 +37,11 @@ export const es: Messages = {
     dragResizeCollapse:
       "Arrastra para redimensionar · doble clic para contraer",
   },
+  contextMenu: {
+    minimap: "Minimapa",
+    moveMinimapLeft: "Mover minimapa a la izquierda",
+    moveMinimapRight: "Mover minimapa a la derecha",
+  },
   runbooks: {
     title: "LIBROS",
     searchPlaceholder: "Buscar libros…",
@@ -46,6 +51,9 @@ export const es: Messages = {
     paste: "Pegar",
     pasteTitle: "Pegar JSON de libro",
     removeFromLibrary: "Quitar de la biblioteca",
+    dropToImport: "Suelta los libros para importarlos",
+    clearLibrary: "Eliminar todo",
+    clearLibraryTitle: "Eliminar todos los libros de la biblioteca",
   },
   variables: {
     title: "VARIABLES",
@@ -127,6 +135,10 @@ export const es: Messages = {
     resetConfirm: "Resetear",
     resetMessage:
       "¿Eliminar todas las variables, bloques, libros y preferencias? Esta acción no se puede deshacer.",
+    clearLibraryTitle: "Eliminar Todos los Libros",
+    clearLibraryConfirm: "Eliminar todo",
+    clearLibraryMessage:
+      "¿Eliminar todos los libros de la biblioteca, junto con sus variables y bloques? Esta acción no se puede deshacer.",
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Alternar modo lectura / edición",
@@ -141,8 +153,9 @@ export const es: Messages = {
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
     [KeyBinding.ESCAPE]: "Limpiar selección de bloques / cerrar diálogos",
     [KeyBinding.EXPORT]: "Abrir el diálogo de exportación",
-    [KeyBinding.RESET_WORKSPACE]:
-      "Abrir el diálogo de resetear espacio de trabajo",
+    [KeyBinding.CLEAR_LIBRARY]: "Abrir el diálogo de eliminar todos los libros",
+    [KeyBinding.TOGGLE_MINIMAP]:
+      "Abrir el menú del minimapa (en el contenido del libro)",
     [KeyBinding.FOCUS_RUNBOOK]: "Seleccionar libro activo",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navegar libros con el libro activo seleccionado",
@@ -241,6 +254,8 @@ export const es: Messages = {
     mainPanel: {
       intro:
         "El panel principal es tu mesa de trabajo. Arriba está la **barra de pestañas** con tus libros abiertos; debajo, los bloques del libro activo; y al final, la fila **NUEVO BLOQUE** para seguir agregando contenido.",
+      minimap:
+        "En el borde derecho vive el **minimapa**: una miniatura de los bloques reales del libro que reemplaza a la barra de desplazamiento. Haz clic o arrastra sobre él para saltar a cualquier punto de un libro. Haz **clic derecho** en cualquier parte del contenido del libro para abrir un pequeño menú donde puedes activarlo o desactivarlo, o moverlo al otro lado.",
       teaser:
         "¿Bloques? ¿Pestañas? No te preocupes: son justo lo que vas a aprender a continuación.",
     },
@@ -273,8 +288,10 @@ export const es: Messages = {
         "La sección **LIBROS** de la barra lateral contiene tus libros importados.",
       items: [
         "Haz clic en **Importar** para cargar uno o varios archivos `.json` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.",
+        "También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.",
         "Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.",
         "Elimina un libro de la biblioteca con el botón que aparece al pasar el cursor sobre la fila.",
+        "Haz clic en **Eliminar todo** para vaciar la biblioteca completa de una vez.",
         "Arrastra el control a la izquierda de un libro para reordenarlo en la lista.",
         "Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.",
       ],
@@ -377,9 +394,9 @@ export const es: Messages = {
         "Mantén `Shift` y haz clic en bloques para construir una selección. También puedes mantener `Shift` y arrastrar el ratón sobre los bloques para seleccionarlos con un lazo. Lazar bloques ya seleccionados los deselecciona.",
       actions: [
         "**Arrastra** el control de cualquier bloque seleccionado para mover todos los bloques seleccionados juntos, conservando el orden relativo.",
-        "**Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella.",
         "**Duplicar**: `Ctrl+D` duplica el grupo completo, insertado después del último bloque seleccionado.",
         "**Eliminar**: `Del` elimina el grupo completo.",
+        "**Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella. Las variables referenciadas viajan con los bloques; si la pestaña de destino ya define alguna con un valor distinto, la copia se añade con un nuevo nombre `CLAVE_COPY` y los bloques copiados se reescriben para referenciarla, de modo que no se tocan los valores de ninguna pestaña.",
       ],
       clear:
         "Pulsa `Escape` o haz clic fuera de los controles de bloque para limpiar la selección.",

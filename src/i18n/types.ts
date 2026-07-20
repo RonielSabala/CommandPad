@@ -55,6 +55,11 @@ export interface Messages {
     doubleClickExpand: string;
     dragResizeCollapse: string;
   };
+  contextMenu: {
+    minimap: string;
+    moveMinimapLeft: string;
+    moveMinimapRight: string;
+  };
   runbooks: {
     title: string;
     searchPlaceholder: string;
@@ -64,6 +69,9 @@ export interface Messages {
     paste: string;
     pasteTitle: string;
     removeFromLibrary: string;
+    dropToImport: string;
+    clearLibrary: string;
+    clearLibraryTitle: string;
   };
   variables: {
     title: string;
@@ -127,6 +135,9 @@ export interface Messages {
     resetTitle: string;
     resetConfirm: string;
     resetMessage: string;
+    clearLibraryTitle: string;
+    clearLibraryConfirm: string;
+    clearLibraryMessage: string;
   };
   keybindings: Record<KeyBinding, string>;
   docs: {
@@ -164,6 +175,7 @@ export interface Messages {
     };
     mainPanel: {
       intro: string;
+      minimap: string;
       teaser: string;
     };
     tabs: {

@@ -10,6 +10,7 @@ export const EventType = {
   POINTER_UP: "pointerup",
   POINTER_MOVE: "pointermove",
   SCROLL: "scroll",
+  WHEEL: "wheel",
   BLUR: "blur",
 } as const;
 
@@ -18,6 +19,7 @@ export const Key = {
   ALT: "Alt",
   SHIFT: "Shift",
   ENTER: "Enter",
+  SPACE: " ",
   ESCAPE: "Escape",
   TAB: "Tab",
   ARROW_UP: "ArrowUp",
@@ -48,4 +50,8 @@ export const DragEffect = {
   MOVE: "move",
   COPY: "copy",
   COPY_MOVE: "copyMove",
+} as const;
+
+export const DataTransferType = {
+  FILES: "Files",
 } as const;

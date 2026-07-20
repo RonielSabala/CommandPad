@@ -15,6 +15,14 @@ export function useThemeClass(): void {
   }, [theme]);
 }
 
+export function useDocumentLanguage(): void {
+  const language = useStore((state) => state.language);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+}
+
 export function useSelectModeBodyClass(): void {
   const selectKeyHeld = useStore((state) => state.selectKeyHeld);
 

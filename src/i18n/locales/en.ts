@@ -36,6 +36,11 @@ export const en: Messages = {
     doubleClickExpand: "Double-click to expand",
     dragResizeCollapse: "Drag to resize · double-click to collapse",
   },
+  contextMenu: {
+    minimap: "Minimap",
+    moveMinimapLeft: "Move minimap left",
+    moveMinimapRight: "Move minimap right",
+  },
   runbooks: {
     title: "RUNBOOKS",
     searchPlaceholder: "Search runbooks…",
@@ -45,6 +50,9 @@ export const en: Messages = {
     paste: "Paste",
     pasteTitle: "Paste runbook JSON",
     removeFromLibrary: "Remove from library",
+    dropToImport: "Drop runbooks to import",
+    clearLibrary: "Delete All",
+    clearLibraryTitle: "Delete all runbooks from the library",
   },
   variables: {
     title: "VARIABLES",
@@ -126,6 +134,10 @@ export const en: Messages = {
     resetConfirm: "Reset",
     resetMessage:
       "Delete all variables, blocks, runbooks, and preferences? This action cannot be undone.",
+    clearLibraryTitle: "Delete All Runbooks",
+    clearLibraryConfirm: "Delete All",
+    clearLibraryMessage:
+      "Delete every runbook in the library, along with its variables and blocks? This action cannot be undone.",
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Toggle read / edit mode",
@@ -140,7 +152,9 @@ export const en: Messages = {
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
     [KeyBinding.ESCAPE]: "Clear block selection / close modals",
     [KeyBinding.EXPORT]: "Open export dialog",
-    [KeyBinding.RESET_WORKSPACE]: "Open reset workspace dialog",
+    [KeyBinding.CLEAR_LIBRARY]: "Open delete all runbooks dialog",
+    [KeyBinding.TOGGLE_MINIMAP]:
+      "Open the minimap menu (in the runbook content)",
     [KeyBinding.FOCUS_RUNBOOK]: "Select active runbook",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navigate runbooks with the active runbook selected",
@@ -232,6 +246,8 @@ export const en: Messages = {
     mainPanel: {
       intro:
         "The main panel is your workbench. At the top sits the **tabs bar** with your open runbooks; below it, the blocks of the active runbook; and at the end, the **NEW BLOCK** row to keep adding content.",
+      minimap:
+        "On the right edge lives the **minimap**: a miniature of the real runbook blocks that replaces the scrollbar. Click or drag on it to jump anywhere in a runbook. **Right-click** anywhere in the runbook content to open a small menu where you can turn it on or off or move it to the other side.",
       teaser:
         "Blocks? Tabs? Don't worry: they are exactly what you will learn next.",
     },
@@ -262,8 +278,10 @@ export const en: Messages = {
       intro: "The sidebar's **RUNBOOKS** section holds your imported runbooks.",
       items: [
         "Click **Import** to load one or more `.json` files at once, or **Paste** to create a runbook from raw JSON.",
+        "You can also **drag files** from your file explorer and drop them onto the section to import them.",
         "Click any runbook to open it. If it's already open in a tab, that tab becomes active.",
         "Delete a runbook from the library with the button shown on row hover.",
+        "Click **Delete All** to empty the whole library at once.",
         "Drag the handle on the left of a runbook to reorder it in the list.",
         "Use the **search bar** to filter runbooks by label or filename.",
       ],
@@ -366,9 +384,9 @@ export const en: Messages = {
         "Hold `Shift` and click blocks to build a selection. You can also hold `Shift` and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.",
       actions: [
         "**Drag** any selected block's handle to move all selected blocks together, preserving relative order.",
-        "**Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab.",
         "**Duplicate**: `Ctrl+D` duplicates the entire group, inserted after the last selected block.",
         "**Delete**: `Del` deletes the entire group.",
+        "**Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab. Referenced variables travel with the blocks; if the target tab already defines one of them with a different value, the copy is added under a new `KEY_COPY` name and the copied blocks are rewritten to reference it, so neither tab's values are touched.",
       ],
       clear:
         "Press `Escape` or click outside block controls to clear the selection.",

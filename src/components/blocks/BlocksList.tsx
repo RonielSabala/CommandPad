@@ -1,4 +1,4 @@
-import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
+import { DataAttr, ElementId, ScrollIntoView } from "@/common/constants/dom";
 import type { Block, Variable } from "@/common/types";
 import { getActiveTab, useStore } from "@/store/store";
 import { getSecretKeys, getVariableMap } from "@/utils/resolution";
@@ -36,7 +36,7 @@ export function BlocksList() {
   }, [pendingFocusBlockId]);
 
   return (
-    <div id="blocks-list" ref={listRef}>
+    <div id={ElementId.BLOCKS_LIST} ref={listRef}>
       {blocks.map((block) => (
         <BlockItem
           key={block.id}
