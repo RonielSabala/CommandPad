@@ -19,6 +19,7 @@ export const Key = {
   ALT: "Alt",
   SHIFT: "Shift",
   ENTER: "Enter",
+  SPACE: " ",
   ESCAPE: "Escape",
   TAB: "Tab",
   ARROW_UP: "ArrowUp",

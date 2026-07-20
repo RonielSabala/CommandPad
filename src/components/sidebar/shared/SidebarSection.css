@@ -36,6 +36,7 @@
   padding: var(--space-6);
   padding-right: var(--sidebar-rail-width);
   border-bottom: var(--border-standard);
+  outline: none;
   cursor: pointer;
   user-select: none;
   transition: background var(--transition-fast);

@@ -237,6 +237,7 @@ export function Minimap({ scrollRef }: Props) {
     <div
       className="minimap"
       ref={hostRef}
+      aria-hidden="true"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
     >

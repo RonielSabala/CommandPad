@@ -1,5 +1,6 @@
 import { SECTION_ANIMATION_FALLBACK_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
+import { Key } from "@/common/constants/events";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import type { FileDrop } from "@/hooks/useFileDrop";
 import { classNames } from "@/utils/string";
@@ -60,7 +61,19 @@ export function SidebarSection({
           {dropZone.hint}
         </div>
       )}
-      <div className="sidebar-section-header no-user-select" onClick={onToggle}>
+      <div
+        className="sidebar-section-header no-user-select"
+        role="button"
+        tabIndex={0}
+        aria-expanded={!collapsed}
+        onClick={onToggle}
+        onKeyDown={(event) => {
+          if (event.key === Key.ENTER || event.key === Key.SPACE) {
+            event.preventDefault();
+            onToggle();
+          }
+        }}
+      >
         <p className="section-title">{title}</p>
         <SidebarSectionChevronIcon className="sidebar-section-chevron icon-md icon-bold" />
       </div>

@@ -5,7 +5,7 @@ type FlagProps = SVGProps<SVGSVGElement>;
 
 function UkFlag(props: FlagProps) {
   return (
-    <svg viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
       <rect width="16" height="16" fill="#012169" />
       <path d="M0 0 16 16 M16 0 0 16" stroke="#ffffff" strokeWidth="3.2" />
       <path d="M0 0 16 16 M16 0 0 16" stroke="#c8102e" strokeWidth="1.6" />
@@ -17,7 +17,7 @@ function UkFlag(props: FlagProps) {
 
 function SpainFlag(props: FlagProps) {
   return (
-    <svg viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
       <rect width="16" height="16" fill="#aa151b" />
       <rect y="4" width="16" height="8" fill="#f1bf00" />
     </svg>

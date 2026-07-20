@@ -72,10 +72,13 @@ export function MinimapMenu({ x, y, onClose }: Props) {
     <div
       className={classNames(CssClass.CONTEXT_MENU, "no-user-select")}
       ref={menuRef}
+      role="menu"
       style={{ left: position.x, top: position.y }}
     >
       <button
         className="context-menu-item"
+        role="menuitemcheckbox"
+        aria-checked={minimapEnabled}
         onClick={() => {
           toggleMinimap();
           onClose();
@@ -89,6 +92,7 @@ export function MinimapMenu({ x, y, onClose }: Props) {
       {minimapEnabled && (
         <button
           className="context-menu-item"
+          role="menuitem"
           onClick={() => {
             toggleMinimapPosition();
             onClose();

@@ -16,6 +16,8 @@ export function Modal({ open, onClose, children }: Props) {
       className={`modal-backdrop${open ? " modal-visible" : ""}`}
       role="dialog"
       aria-modal="true"
+      aria-hidden={!open}
+      inert={!open}
       onClick={(event) => {
         if (event.target === event.currentTarget) {
           onClose();
