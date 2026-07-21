@@ -10,7 +10,9 @@ import type { CSSProperties } from "react";
 import { Header } from "../header/Header";
 import { MainPanel } from "../MainPanel";
 import { AlertModal } from "../modals/AlertModal";
+import { CloudImportModal } from "../modals/CloudImportModal";
 import { ConfirmModal } from "../modals/ConfirmModal";
+import { DestinationModal } from "../modals/DestinationModal";
 import { ExportModal } from "../modals/ExportModal";
 import { PasteRunbookModal } from "../modals/PasteRunbookModal";
 import { RunbookImportInput } from "../sidebar/runbooks/RunbookImportInput";
@@ -48,6 +50,8 @@ export function WorkspacePage() {
 
       <ExportModal />
       <PasteRunbookModal />
+      <DestinationModal />
+      <CloudImportModal />
       <ConfirmModal />
       <AlertModal />
     </>

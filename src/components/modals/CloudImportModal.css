@@ -1,0 +1,62 @@
+.cloud-modal-account {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-2);
+  border-bottom: var(--border-standard);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.cloud-modal-files-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cloud-modal-files {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 24rem;
+}
+
+.cloud-modal-file-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: var(--border-standard);
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--transition-base);
+}
+
+.cloud-modal-file-row:hover {
+  border-color: var(--color-border-focus);
+}
+
+.cloud-modal-file-name {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cloud-modal-empty {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.cloud-modal-error {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--danger);
+}

@@ -6,7 +6,7 @@ import {
   DividerBlockDocs,
   NoteBlockDocs,
 } from "./sections/BlocksSection";
-import { ExportDocs } from "./sections/ExportSection";
+import { CloudSyncDocs, ExportDocs } from "./sections/ExportSection";
 import { GettingStartedDocs } from "./sections/GettingStartedSection";
 import { LanguageDocs } from "./sections/LanguageSection";
 import { MultiSelectDocs } from "./sections/MultiSelectSection";
@@ -49,6 +49,7 @@ export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {
   [DocsSectionId.RUNBOOK_LIBRARY]: RunbookLibraryDocs,
   [DocsSectionId.READ_MODE]: ReadModeDocs,
   [DocsSectionId.EXPORT]: ExportDocs,
+  [DocsSectionId.CLOUD_SYNC]: CloudSyncDocs,
   [DocsSectionId.LANGUAGE]: LanguageDocs,
   [DocsSectionId.KEYBOARD_SHORTCUTS]: KeyboardShortcutsDocs,
   [DocsSectionId.QA]: QaDocs,

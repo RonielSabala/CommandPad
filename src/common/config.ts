@@ -138,3 +138,40 @@ export const FilePickerConfig: Record<ExportFormat, FilePickerFormat> =
       ],
     ),
   ) as Record<ExportFormat, FilePickerFormat>;
+
+// Cloud sync (SharePoint / Google Drive)
+//
+// Both providers are configured at build time via env vars (see `.env.example`).
+// CommandPad is a static, backend-less app, so there is no server to hold a
+// client secret: both flows use browser-only OAuth (Microsoft's MSAL "SPA"
+// app type with PKCE, and Google's Identity Services token client), which
+// only ever needs a public Client ID.
+
+export const CloudSyncConfig = {
+  // Runbooks are stored as flat files inside a single dedicated "CommandPad"
+  // folder in the signed-in account's own storage, so neither provider needs
+  // broad, admin-consent-gated file/site browsing permissions.
+  APP_FOLDER_NAME: "CommandPad",
+} as const;
+
+export const SharePointConfig = {
+  CLIENT_ID: import.meta.env.VITE_MSAL_CLIENT_ID ?? "",
+  // "common" allows both personal Microsoft accounts and any work/school
+  // (Entra ID) tenant to sign in; set VITE_MSAL_TENANT_ID to a tenant id to
+  // restrict sign-in to a single organization.
+  AUTHORITY: `https://login.microsoftonline.com/${import.meta.env.VITE_MSAL_TENANT_ID ?? "common"}`,
+  REDIRECT_URI: window.location.origin,
+  // Delegated, non-admin-consent scopes: Files.ReadWrite.AppFolder limits
+  // the app to its own OneDrive/SharePoint app folder only.
+  SCOPES: ["User.Read", "Files.ReadWrite.AppFolder"],
+  GRAPH_BASE_URL: "https://graph.microsoft.com/v1.0",
+} as const;
+
+export const GoogleDriveConfig = {
+  CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID ?? "",
+  // drive.file: the app can only see/manage files it creates itself, never
+  // the rest of the user's Drive.
+  SCOPES: "https://www.googleapis.com/auth/drive.file",
+  API_BASE_URL: "https://www.googleapis.com/drive/v3",
+  UPLOAD_BASE_URL: "https://www.googleapis.com/upload/drive/v3",
+} as const;

@@ -1,10 +1,9 @@
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
-import { AppMode } from "@/common/enums";
+import { AppMode, SyncModalMode } from "@/common/enums";
 import { ClipIcon, ImportIcon, TrashIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { openImportDialog } from "@/utils/importTrigger";
 import { matchesQuery } from "@/utils/string";
 import { useEffect, useRef } from "react";
 import { SidebarSearch } from "../shared/SidebarSearch";
@@ -27,6 +26,7 @@ export function RunbookSection() {
 
   const importRunbooks = useStore((state) => state.importRunbooks);
   const clearRunbookLibrary = useStore((state) => state.clearRunbookLibrary);
+  const openDestinationModal = useStore((state) => state.openDestinationModal);
   const isReadMode = useStore((state) => state.mode === AppMode.READ);
   const fileDrop = useFileDrop(
     (files) => void importRunbooks(files),
@@ -80,7 +80,7 @@ export function RunbookSection() {
       />
 
       <SidebarSectionFooter
-        onClick={openImportDialog}
+        onClick={() => openDestinationModal(SyncModalMode.IMPORT)}
         title={t.runbooks.importTitle}
         label={t.runbooks.import}
         icon={ImportIcon}

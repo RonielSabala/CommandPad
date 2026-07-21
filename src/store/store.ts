@@ -8,16 +8,20 @@ import {
 import {
   DEBOUNCE_SAVE_MS,
   DEFAULT_TAB_LABEL,
+  FilePickerConfig,
   RunbookConfig,
   SidebarWidth,
 } from "@/common/config";
 import {
   AppMode,
   BlockType,
+  CloudProvider,
   ExportFormat,
   MoveDirection,
   NoteStyle,
   SidebarPosition,
+  SyncDestination,
+  SyncModalMode,
   Theme,
   VariableField,
 } from "@/common/enums";
@@ -30,9 +34,15 @@ import type {
 } from "@/common/types";
 import { detectLanguage, getMessages } from "@/i18n/messages";
 import { Language } from "@/i18n/types";
+import { getCloudClient, type CloudFile } from "@/services/cloud";
 import { debounce } from "@/utils/debounce";
-import { runExport } from "@/utils/export";
+import {
+  buildRunbookExportContent,
+  getExportFilename,
+  runExport,
+} from "@/utils/export";
 import { generateId } from "@/utils/id";
+import { openImportDialog } from "@/utils/importTrigger";
 import {
   carryVariables,
   getVariableKey,
@@ -103,6 +113,17 @@ export interface StoreState {
   pasteRunbookModalOpen: boolean;
   confirmDialog: ConfirmDialog | null;
   alertDialog: Dialog<void> | null;
+
+  // Cloud sync (SharePoint / Google Drive)
+  destinationModalMode: SyncModalMode | null;
+  exportDestination: SyncDestination;
+  cloudImportModalOpen: boolean;
+  cloudProvider: CloudProvider;
+  cloudSignedIn: boolean;
+  cloudAccountLabel: string | null;
+  cloudFiles: CloudFile[];
+  cloudLoading: boolean;
+  cloudError: string | null;
 
   // Bootstrap
   initialized: boolean;
@@ -189,11 +210,20 @@ export interface StoreState {
   setScrollTop: (scrollTop: number) => void;
   clearUserInteraction: () => void;
 
-  openExportModal: () => void;
   closeExportModal: () => void;
   openPasteRunbookModal: () => void;
   closePasteRunbookModal: () => void;
   exportRunbook: (format: ExportFormat) => Promise<void>;
+
+  openDestinationModal: (mode: SyncModalMode) => void;
+  closeDestinationModal: () => void;
+  chooseDestination: (mode: SyncModalMode, destination: SyncDestination) => void;
+  startCloudImportBrowse: (provider: CloudProvider) => Promise<void>;
+  closeCloudImportModal: () => void;
+  signInToCloud: () => Promise<void>;
+  signOutOfCloud: () => Promise<void>;
+  refreshCloudFiles: () => Promise<void>;
+  importRunbookFromCloud: (file: CloudFile) => Promise<void>;
 
   confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
   resolveConfirm: (result: boolean) => void;
@@ -398,6 +428,16 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       pasteRunbookModalOpen: false,
       confirmDialog: null,
       alertDialog: null,
+
+      destinationModalMode: null,
+      exportDestination: SyncDestination.LOCAL,
+      cloudImportModalOpen: false,
+      cloudProvider: CloudProvider.SHAREPOINT,
+      cloudSignedIn: false,
+      cloudAccountLabel: null,
+      cloudFiles: [],
+      cloudLoading: false,
+      cloudError: null,
 
       initialized: false,
 
@@ -1481,22 +1521,185 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       // --- Modals / export ---
 
-      openExportModal: () => set({ exportModalOpen: true }),
       closeExportModal: () => set({ exportModalOpen: false }),
       openPasteRunbookModal: () => set({ pasteRunbookModalOpen: true }),
       closePasteRunbookModal: () => set({ pasteRunbookModalOpen: false }),
 
       exportRunbook: async (format) => {
+        const destination = get().exportDestination;
         set({ exportModalOpen: false });
         const active = getActiveTab(get());
-        await runExport(
-          format,
-          {
-            variables: active?.variables ?? [],
-            blocks: active?.blocks ?? [],
-          },
-          active?.label ?? "",
+        const content = {
+          variables: active?.variables ?? [],
+          blocks: active?.blocks ?? [],
+        };
+
+        if (destination === SyncDestination.LOCAL) {
+          await runExport(format, content, active?.label ?? "");
+          return;
+        }
+
+        const client = getCloudClient(destination);
+        try {
+          await client.init();
+          if (!client.isSignedIn()) {
+            await client.signIn();
+          }
+          await client.writeFile(
+            getExportFilename(format, active?.label ?? ""),
+            buildRunbookExportContent(format, content),
+            FilePickerConfig[format].mimeType,
+          );
+        } catch (error) {
+          console.error("Cloud export failed", error);
+          await get().alert(
+            getMessages(get().language).cloudModal.genericError,
+          );
+        }
+      },
+
+      // --- Cloud sync ---
+
+      openDestinationModal: (mode) => set({ destinationModalMode: mode }),
+      closeDestinationModal: () => set({ destinationModalMode: null }),
+
+      chooseDestination: (mode, destination) => {
+        set({ destinationModalMode: null });
+
+        if (destination === SyncDestination.LOCAL) {
+          if (mode === SyncModalMode.EXPORT) {
+            set({
+              exportDestination: SyncDestination.LOCAL,
+              exportModalOpen: true,
+            });
+          } else {
+            openImportDialog();
+          }
+          return;
+        }
+
+        if (mode === SyncModalMode.EXPORT) {
+          set({ exportDestination: destination, exportModalOpen: true });
+          return;
+        }
+
+        void get().startCloudImportBrowse(destination);
+      },
+
+      startCloudImportBrowse: async (provider) => {
+        set({
+          cloudProvider: provider,
+          cloudImportModalOpen: true,
+          cloudError: null,
+          cloudFiles: [],
+          cloudSignedIn: false,
+          cloudAccountLabel: null,
+          cloudLoading: true,
+        });
+
+        const client = getCloudClient(provider);
+        try {
+          await client.init();
+        } finally {
+          if (get().cloudProvider === provider) {
+            set({
+              cloudLoading: false,
+              cloudSignedIn: client.isSignedIn(),
+              cloudAccountLabel: client.getAccountLabel(),
+            });
+          }
+        }
+
+        if (
+          client.isSignedIn() &&
+          get().cloudProvider === provider &&
+          get().cloudImportModalOpen
+        ) {
+          await get().refreshCloudFiles();
+        }
+      },
+
+      closeCloudImportModal: () =>
+        set({ cloudImportModalOpen: false, cloudError: null }),
+
+      signInToCloud: async () => {
+        const client = getCloudClient(get().cloudProvider);
+        set({ cloudLoading: true, cloudError: null });
+        try {
+          await client.signIn();
+          set({
+            cloudSignedIn: client.isSignedIn(),
+            cloudAccountLabel: client.getAccountLabel(),
+          });
+          if (get().cloudImportModalOpen) {
+            await get().refreshCloudFiles();
+          }
+        } catch (error) {
+          console.error("Cloud sign-in failed", error);
+          set({ cloudError: getMessages(get().language).cloudModal.signInError });
+        } finally {
+          set({ cloudLoading: false });
+        }
+      },
+
+      signOutOfCloud: async () => {
+        const client = getCloudClient(get().cloudProvider);
+        try {
+          await client.signOut();
+        } catch (error) {
+          console.error("Cloud sign-out failed", error);
+        }
+        set({
+          cloudFiles: [],
+          cloudError: null,
+          cloudSignedIn: false,
+          cloudAccountLabel: null,
+        });
+      },
+
+      refreshCloudFiles: async () => {
+        const client = getCloudClient(get().cloudProvider);
+        set({ cloudLoading: true, cloudError: null });
+        try {
+          const files = await client.listFiles();
+          set({ cloudFiles: files });
+        } catch (error) {
+          console.error("Failed to list cloud files", error);
+          set({ cloudError: getMessages(get().language).cloudModal.genericError });
+        } finally {
+          set({ cloudLoading: false });
+        }
+      },
+
+      importRunbookFromCloud: async (file) => {
+        const client = getCloudClient(get().cloudProvider);
+        const t = getMessages(get().language);
+
+        set({ cloudLoading: true, cloudError: null });
+        let text: string;
+        try {
+          text = await client.readFile(file);
+        } catch (error) {
+          console.error("Cloud file read failed", error);
+          set({ cloudLoading: false, cloudError: t.cloudModal.genericError });
+          return;
+        }
+
+        let content: RunbookContent;
+        try {
+          content = parseRunbookContent(text);
+        } catch {
+          set({ cloudLoading: false, cloudError: t.cloudModal.invalidFileError });
+          return;
+        }
+
+        set({ cloudLoading: false });
+        const baseName = file.name.replace(
+          new RegExp(`\\.${ExportFormat.JSON}$`, "i"),
+          "",
         );
+        await get().addRunbookToLibrary(content, baseName, file.name);
+        set({ cloudImportModalOpen: false });
       },
 
       // --- Dialogs ---

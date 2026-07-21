@@ -99,7 +99,8 @@ function buildMarkdownExport(content: RunbookContent): string {
   return lines.join("\n");
 }
 
-function getExportFilename(format: ExportFormat, label: string): string {
+/** Filename used when saving a runbook, locally or to a cloud provider's app folder. */
+export function getExportFilename(format: ExportFormat, label: string): string {
   const config = FilePickerConfig[format];
   if (label && !UNTITLED_LABELS.includes(label)) {
     const slug = slugifyLabel(label);
@@ -111,34 +112,37 @@ function getExportFilename(format: ExportFormat, label: string): string {
   return config.defaultName;
 }
 
+/** The import/export JSON shape (variables/blocks with runtime-only ids stripped). */
+function buildRunbookExportJson(content: RunbookContent): string {
+  const data = {
+    variables: (content.variables ?? []).map(({ id, ...rest }) => rest),
+    blocks: (content.blocks ?? []).map(({ id, ...rest }) => rest),
+  };
+  return JSON.stringify(data, null, 2);
+}
+
+/** Serialized file content for a given export format. */
+export function buildRunbookExportContent(
+  format: ExportFormat,
+  content: RunbookContent,
+): string {
+  return format === ExportFormat.JSON
+    ? buildRunbookExportJson(content)
+    : buildMarkdownExport(content);
+}
+
 export async function runExport(
   format: ExportFormat,
   content: RunbookContent,
   label: string,
 ): Promise<void> {
   const suggestedName = getExportFilename(format, label);
+  const config = FilePickerConfig[format];
 
-  if (format === ExportFormat.JSON) {
-    const data = {
-      variables: (content.variables ?? []).map(({ id, ...rest }) => rest),
-      blocks: (content.blocks ?? []).map(({ id, ...rest }) => rest),
-    };
-
-    const config = FilePickerConfig.json;
-    await saveFile(
-      JSON.stringify(data, null, 2),
-      config.mimeType,
-      suggestedName,
-      [...config.types],
-    );
-
-    return;
-  }
-
-  const config =
-    format === ExportFormat.MD ? FilePickerConfig.md : FilePickerConfig.txt;
-
-  await saveFile(buildMarkdownExport(content), config.mimeType, suggestedName, [
-    ...config.types,
-  ]);
+  await saveFile(
+    buildRunbookExportContent(format, content),
+    config.mimeType,
+    suggestedName,
+    [...config.types],
+  );
 }

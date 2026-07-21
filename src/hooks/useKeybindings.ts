@@ -1,6 +1,6 @@
 import { InputSelector } from "@/common/constants/dom";
 import { EventType, Key, Modifier } from "@/common/constants/events";
-import { MoveDirection } from "@/common/enums";
+import { MoveDirection, SyncModalMode } from "@/common/enums";
 import {
   isModifierPressed,
   KeyBinding,
@@ -8,7 +8,6 @@ import {
   ModifierAction,
 } from "@/common/keybindings";
 import { getActiveTab, useStoreApi } from "@/store/store";
-import { openImportDialog } from "@/utils/importTrigger";
 import { useEffect } from "react";
 
 export function useKeybindings(): void {
@@ -84,7 +83,7 @@ export function useKeybindings(): void {
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.EXPORT)) {
         if ((getActiveTab(state)?.blocks.length ?? 0) > 0) {
-          state.openExportModal();
+          state.openDestinationModal(SyncModalMode.EXPORT);
         }
 
         hit = true;
@@ -117,7 +116,7 @@ export function useKeybindings(): void {
         !inEditable &&
         matchesKeybinding(event, KeyBinding.IMPORT_RUNBOOK)
       ) {
-        openImportDialog();
+        state.openDestinationModal(SyncModalMode.IMPORT);
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.TOGGLE_EDITORS)) {
         state.toggleAllCommandEditors();
