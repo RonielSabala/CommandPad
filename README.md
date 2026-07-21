@@ -14,6 +14,9 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
   - [Requirements](#requirements)
   - [Installation](#installation)
   - [Run Locally](#run-locally)
+- [Cloud Sync (Optional)](#cloud-sync-optional)
+  - [SharePoint / OneDrive](#sharepoint--onedrive)
+  - [Google Drive](#google-drive)
 - [Examples](#examples)
 - [Contributing](#contributing)
 - [License](#license)
@@ -36,6 +39,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 - **Adjustable sidebar**: collapse the sidebar to maximize workspace, or move it to the right side of the screen.
 - **Persistent state**: tabs, workspace content, sidebar state, and app mode are all saved locally and restored on reload.
 - **Export**: save the active workspace as `.json`, `.md`, or `.txt` via a native OS save dialog.
+- **Cloud sync (optional)**: export/import runbooks directly to SharePoint or Google Drive. See [Cloud Sync](#cloud-sync-optional).
 
 ---
 
@@ -70,6 +74,31 @@ pnpm dev
 ```
 
 Access at `http://localhost:5173`. Use <kbd>Ctrl</kbd>+<kbd>C</kbd> to stop.
+
+---
+
+## Cloud Sync (Optional)
+
+CommandPad can export/import runbooks straight to SharePoint or Google Drive, in addition to the local device. Both are entirely optional: the app works normally with neither configured, and a provider only appears as a destination option once it's set up below.
+
+Runbooks are stored as flat files inside a dedicated `CommandPad` folder in the signed-in account's own storage.
+
+### SharePoint / OneDrive
+
+1. In the [Azure Portal](https://portal.azure.com), go to **Microsoft Entra ID > App registrations > New registration**.
+2. Set the **Redirect URI** platform to **Single-page application (SPA)** and its value to the URL CommandPad is served from (e.g. `http://localhost:5173`).
+3. Under **API permissions**, add the delegated permissions **User.Read** and **Files.ReadWrite.AppFolder** (no admin consent is normally required for these).
+4. Copy the **Application (client) ID** from the app's Overview page.
+5. Set `VITE_MSAL_CLIENT_ID` to that value in a `.env.local` file (copy `.env.example` as a starting point), then rebuild. `VITE_MSAL_TENANT_ID` is optional and restricts sign-in to a single organization; it defaults to allowing any Microsoft account.
+
+---
+
+### Google Drive
+
+1. In the [Google Cloud Console](https://console.cloud.google.com), create (or pick) a project, then open **APIs & Services > OAuth consent screen** and configure it.
+2. Go to **Credentials > Create Credentials > OAuth client ID**, choose **Web application**, and add the URL CommandPad is served from under **Authorized JavaScript origins**.
+3. Copy the generated **Client ID**.
+4. Set `VITE_GOOGLE_CLIENT_ID` to that value in a `.env.local` file, then rebuild.
 
 ---
 

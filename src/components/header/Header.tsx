@@ -1,6 +1,6 @@
 import { Key } from "@/common/constants/events";
 import { AppRoute } from "@/common/constants/routes";
-import { AppMode, Theme } from "@/common/enums";
+import { AppMode, SyncModalMode, Theme } from "@/common/enums";
 import {
   BookIcon,
   ChevronsRightIcon,
@@ -24,7 +24,7 @@ export function Header() {
   const toggleTheme = useStore((state) => state.toggleTheme);
   const toggleAppMode = useStore((state) => state.toggleAppMode);
   const clearAllData = useStore((state) => state.clearAllData);
-  const openExportModal = useStore((state) => state.openExportModal);
+  const openDestinationModal = useStore((state) => state.openDestinationModal);
   const toggleAllCommandEditors = useStore(
     (state) => state.toggleAllCommandEditors,
   );
@@ -123,7 +123,7 @@ export function Header() {
         <button
           className="btn btn-lg btn-primary"
           disabled={isEmpty}
-          onClick={openExportModal}
+          onClick={() => openDestinationModal(SyncModalMode.EXPORT)}
           title={t.header.exportTitle}
         >
           <ExportIcon className="icon icon-bold" />

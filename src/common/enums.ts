@@ -94,3 +94,23 @@ export const DragGroup = {
   DOCS_DEMO: "docs-demo",
 } as const;
 export type DragGroup = (typeof DragGroup)[keyof typeof DragGroup];
+
+export const CloudProvider = {
+  SHAREPOINT: "sharepoint",
+  GOOGLE_DRIVE: "google-drive",
+} as const;
+export type CloudProvider = (typeof CloudProvider)[keyof typeof CloudProvider];
+
+export const SyncDestination = {
+  LOCAL: "local",
+  SHAREPOINT: CloudProvider.SHAREPOINT,
+  GOOGLE_DRIVE: CloudProvider.GOOGLE_DRIVE,
+} as const;
+export type SyncDestination =
+  (typeof SyncDestination)[keyof typeof SyncDestination];
+
+export const SyncModalMode = {
+  EXPORT: "export",
+  IMPORT: "import",
+} as const;
+export type SyncModalMode = (typeof SyncModalMode)[keyof typeof SyncModalMode];

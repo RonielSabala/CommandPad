@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Cloud sync credentials
+.env
+.env.local
+
 # Editor directories and files
 .idea
 .DS_Store

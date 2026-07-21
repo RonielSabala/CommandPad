@@ -135,6 +135,27 @@ export interface Messages {
     message: string;
     error: string;
   };
+  destinationModal: {
+    exportTitle: string;
+    exportMessage: string;
+    importTitle: string;
+    importMessage: string;
+    local: string;
+  };
+  cloudModal: {
+    importTitle: string;
+    signInSharePoint: string;
+    signInGoogleDrive: string;
+    signOut: string;
+    signedInAs: (account: string) => string;
+    refresh: string;
+    loading: string;
+    emptyFiles: string;
+    importAction: (filename: string) => string;
+    signInError: string;
+    genericError: string;
+    invalidFileError: string;
+  };
   alert: {
     invalidFormatTitle: string;
   };
@@ -317,6 +338,12 @@ export interface Messages {
       formats: string[];
       saveDialog: string;
       copyMarkdown: string;
+    };
+    cloudSync: {
+      intro: string;
+      howItWorks: string;
+      storage: string;
+      setupNote: string;
     };
     language: {
       intro: string;

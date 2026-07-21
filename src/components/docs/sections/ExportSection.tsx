@@ -13,3 +13,16 @@ export function ExportDocs() {
     </>
   );
 }
+
+export function CloudSyncDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.cloudSync.intro} />
+      <Prose text={t.docs.cloudSync.howItWorks} />
+      <Prose text={t.docs.cloudSync.storage} />
+      <Prose text={t.docs.cloudSync.setupNote} />
+    </>
+  );
+}

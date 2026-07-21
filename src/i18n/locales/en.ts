@@ -116,6 +116,27 @@ export const en: Messages = {
     message: "Paste raw runbook JSON to create a new runbook.",
     error: "That doesn't look like valid runbook JSON.",
   },
+  destinationModal: {
+    exportTitle: "Export",
+    exportMessage: "Choose where to export this runbook.",
+    importTitle: "Import",
+    importMessage: "Choose where to import a runbook from.",
+    local: "This Device",
+  },
+  cloudModal: {
+    importTitle: "Import from Cloud",
+    signInSharePoint: "Sign in with Microsoft",
+    signInGoogleDrive: "Sign in with Google",
+    signOut: "Sign out",
+    signedInAs: (account) => `Signed in as ${account}`,
+    refresh: "Refresh",
+    loading: "Loading…",
+    emptyFiles: "No runbooks saved here yet.",
+    importAction: (filename) => `Import ${filename}`,
+    signInError: "Sign-in failed. Please try again.",
+    genericError: "Something went wrong. Please try again.",
+    invalidFileError: "That file doesn't look like valid runbook JSON.",
+  },
   alert: {
     invalidFormatTitle: "Invalid Format",
   },
@@ -368,6 +389,7 @@ export const en: Messages = {
       [DocsSectionId.MULTI_SELECT]: "Multi-select",
       [DocsSectionId.READ_MODE]: "Read mode",
       [DocsSectionId.EXPORT]: "Export",
+      [DocsSectionId.CLOUD_SYNC]: "Cloud sync",
       [DocsSectionId.LANGUAGE]: "Language",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Keyboard shortcuts",
       [DocsSectionId.QA]: "Q&A",
@@ -597,6 +619,16 @@ export const en: Messages = {
         "A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.",
       copyMarkdown:
         "To skip files entirely, right-click anywhere inside the runbook and choose **Copy runbook as Markdown**. It puts the same Markdown content on your clipboard, ready to paste into a chat, a ticket, or a document.",
+    },
+    cloudSync: {
+      intro:
+        "**Export** and **Import** can go straight to SharePoint or Google Drive, not just this device.",
+      howItWorks:
+        "Click **Export** or **Import** and first pick a destination: this device, SharePoint, or Google Drive. For export, you're then asked for a format (JSON, Markdown, or plain text). For import from the cloud, you pick which saved runbook to load.",
+      storage:
+        "Cloud runbooks live in a dedicated **CommandPad** folder in your own account, never anywhere else.",
+      setupNote:
+        "SharePoint and Google Drive only appear as options once they've been configured for this deployment of CommandPad. See the project's README for setup details.",
     },
     language: {
       intro:

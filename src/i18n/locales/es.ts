@@ -118,6 +118,27 @@ export const es: Messages = {
     message: "Pega el JSON del libro para crear uno nuevo.",
     error: "Eso no parece un JSON de libro válido.",
   },
+  destinationModal: {
+    exportTitle: "Exportar",
+    exportMessage: "Elige dónde exportar este libro.",
+    importTitle: "Importar",
+    importMessage: "Elige desde dónde importar un libro.",
+    local: "Este dispositivo",
+  },
+  cloudModal: {
+    importTitle: "Importar desde la nube",
+    signInSharePoint: "Iniciar sesión con Microsoft",
+    signInGoogleDrive: "Iniciar sesión con Google",
+    signOut: "Cerrar sesión",
+    signedInAs: (account) => `Sesión iniciada como ${account}`,
+    refresh: "Actualizar",
+    loading: "Cargando…",
+    emptyFiles: "Aún no hay libros guardados aquí.",
+    importAction: (filename) => `Importar ${filename}`,
+    signInError: "No se pudo iniciar sesión. Inténtalo de nuevo.",
+    genericError: "Algo salió mal. Inténtalo de nuevo.",
+    invalidFileError: "Ese archivo no parece un JSON de libro válido.",
+  },
   alert: {
     invalidFormatTitle: "Formato Inválido",
   },
@@ -373,6 +394,7 @@ export const es: Messages = {
       [DocsSectionId.MULTI_SELECT]: "Selección múltiple",
       [DocsSectionId.READ_MODE]: "Modo lectura",
       [DocsSectionId.EXPORT]: "Exportar",
+      [DocsSectionId.CLOUD_SYNC]: "Sincronización en la nube",
       [DocsSectionId.LANGUAGE]: "Idioma",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Atajos de teclado",
       [DocsSectionId.QA]: "Preguntas y respuestas",
@@ -609,6 +631,16 @@ export const es: Messages = {
         "En navegadores compatibles se abre un diálogo nativo de guardado para elegir nombre y carpeta. En los demás, el archivo se descarga directamente.",
       copyMarkdown:
         "Para saltarte los archivos por completo, haz clic derecho dentro del libro y elige **Copiar libro como Markdown**. Pone el mismo contenido Markdown en tu portapapeles, listo para pegarlo en un chat, un ticket o un documento.",
+    },
+    cloudSync: {
+      intro:
+        "**Exportar** e **Importar** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo.",
+      howItWorks:
+        "Haz clic en **Exportar** o **Importar** y primero elige un destino: este dispositivo, SharePoint o Google Drive. Al exportar, después se te pide un formato (JSON, Markdown o texto plano). Al importar desde la nube, eliges qué libro guardado cargar.",
+      storage:
+        "Los libros en la nube se guardan en una carpeta dedicada llamada **CommandPad** en tu propia cuenta, nunca en ningún otro lugar.",
+      setupNote:
+        "SharePoint y Google Drive solo aparecen como opciones una vez configurados para esta instancia de CommandPad. Consulta el README del proyecto para los detalles de configuración.",
     },
     language: {
       intro:
