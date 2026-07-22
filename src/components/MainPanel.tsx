@@ -15,9 +15,9 @@ import { useRef, useState } from "react";
 import { AddBlockRow } from "./blocks/AddBlockRow";
 import { BlocksList } from "./blocks/BlocksList";
 import { EmptyState } from "./blocks/EmptyState";
+import { ContextMenu } from "./ContextMenu";
 import "./MainPanel.css";
 import { Minimap } from "./Minimap";
-import { MinimapMenu } from "./MinimapMenu";
 import { TabsBar } from "./tabs/TabsBar";
 
 function isCrossTabBlockDrag(store: AppStoreApi): boolean {
@@ -114,7 +114,7 @@ export function MainPanel() {
         </div>
         {showMinimap && <Minimap scrollRef={tabsContentRef} />}
         {menuPosition && (
-          <MinimapMenu
+          <ContextMenu
             x={menuPosition.x}
             y={menuPosition.y}
             onClose={() => setMenuPosition(null)}

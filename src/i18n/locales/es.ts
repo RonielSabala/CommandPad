@@ -38,6 +38,7 @@ export const es: Messages = {
       "Arrastra para redimensionar · doble clic para contraer",
   },
   contextMenu: {
+    copyMarkdown: "Copiar libro como Markdown",
     minimap: "Minimapa",
     moveMinimapLeft: "Mover minimapa a la izquierda",
     moveMinimapRight: "Mover minimapa a la derecha",
@@ -429,6 +430,8 @@ export const es: Messages = {
       ],
       saveDialog:
         "En navegadores compatibles se abre un diálogo nativo de guardado para elegir nombre y carpeta. En los demás, el archivo se descarga directamente.",
+      copyMarkdown:
+        "Para saltarte los archivos por completo, haz clic derecho dentro del libro y elige **Copiar libro como Markdown**. Pone el mismo contenido Markdown en tu portapapeles, listo para pegarlo en un chat, un ticket o un documento.",
     },
     language: {
       intro:

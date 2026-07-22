@@ -37,6 +37,7 @@ export const en: Messages = {
     dragResizeCollapse: "Drag to resize · double-click to collapse",
   },
   contextMenu: {
+    copyMarkdown: "Copy runbook as Markdown",
     minimap: "Minimap",
     moveMinimapLeft: "Move minimap left",
     moveMinimapRight: "Move minimap right",
@@ -418,6 +419,8 @@ export const en: Messages = {
       ],
       saveDialog:
         "A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.",
+      copyMarkdown:
+        "To skip files entirely, right-click anywhere inside the runbook and choose **Copy runbook as Markdown**. It puts the same Markdown content on your clipboard, ready to paste into a chat, a ticket, or a document.",
     },
     language: {
       intro:

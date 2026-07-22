@@ -31,7 +31,7 @@ import type {
 import { detectLanguage, getMessages } from "@/i18n/messages";
 import { Language } from "@/i18n/types";
 import { debounce } from "@/utils/debounce";
-import { runExport } from "@/utils/export";
+import { buildMarkdownExport, runExport } from "@/utils/export";
 import { generateId } from "@/utils/id";
 import {
   carryVariables,
@@ -194,6 +194,7 @@ export interface StoreState {
   openPasteRunbookModal: () => void;
   closePasteRunbookModal: () => void;
   exportRunbook: (format: ExportFormat) => Promise<void>;
+  copyRunbookMarkdown: () => Promise<void>;
 
   confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
   resolveConfirm: (result: boolean) => void;
@@ -1497,6 +1498,16 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           },
           active?.label ?? "",
         );
+      },
+
+      copyRunbookMarkdown: async () => {
+        const active = getActiveTab(get());
+        const text = buildMarkdownExport({
+          variables: active?.variables ?? [],
+          blocks: active?.blocks ?? [],
+        });
+
+        await navigator.clipboard.writeText(text);
       },
 
       // --- Dialogs ---
