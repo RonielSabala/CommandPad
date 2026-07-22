@@ -48,7 +48,7 @@ export function MinimapMenu({ x, y, onClose }: Props) {
   }, [x, y]);
 
   useEffect(() => {
-    const onMouseDown = (event: MouseEvent) => {
+    const onPointerDown = (event: PointerEvent) => {
       if (!menuRef.current?.contains(event.target as Node)) {
         onClose();
       }
@@ -60,10 +60,10 @@ export function MinimapMenu({ x, y, onClose }: Props) {
       }
     };
 
-    document.addEventListener(EventType.MOUSE_DOWN, onMouseDown);
+    document.addEventListener(EventType.POINTER_DOWN, onPointerDown);
     document.addEventListener(EventType.KEY_DOWN, onKeyDown);
     return () => {
-      document.removeEventListener(EventType.MOUSE_DOWN, onMouseDown);
+      document.removeEventListener(EventType.POINTER_DOWN, onPointerDown);
       document.removeEventListener(EventType.KEY_DOWN, onKeyDown);
     };
   }, [onClose]);
