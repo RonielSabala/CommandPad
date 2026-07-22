@@ -4,6 +4,7 @@
   background: var(--color-surface);
   border-bottom: var(--border-standard);
   overflow-x: auto;
+  overflow-y: hidden;
   flex-shrink: 0;
   height: var(--space-20);
   padding: var(--space-2) var(--space-8);
