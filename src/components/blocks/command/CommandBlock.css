@@ -2,7 +2,7 @@
   background: var(--color-surface);
   border: var(--border-standard);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  overflow: clip;
   max-width: 100%;
   min-width: 0;
 }
@@ -17,6 +17,13 @@
   background: var(--color-bg);
 }
 
+.command-preview-scroll {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .command-preview-text {
   font-family: var(--font-mono);
   font-size: var(--text-base);
@@ -25,12 +32,20 @@
     "liga" 0,
     "calt" 0;
   color: var(--success);
-  flex: 1;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: pre;
   min-width: 0;
   padding-bottom: var(--space-2);
+}
+
+.command-preview-actions {
+  position: sticky;
+  top: var(--space-4);
+  bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
 }
 
 .command-preview-text::after {
@@ -50,9 +65,14 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
   pointer-events: none;
 }
 
-body.select-key-held:not(.read-mode)
-  .command-preview-text::-webkit-scrollbar-thumb {
-  background: transparent;
+.command-preview-text,
+.command-textarea {
+  scrollbar-width: none;
+}
+
+.command-preview-text::-webkit-scrollbar,
+.command-textarea::-webkit-scrollbar {
+  display: none;
 }
 
 /* Token styles */
@@ -82,7 +102,6 @@ body.select-key-held:not(.read-mode)
 }
 
 .toggle-editor-btn {
-  margin-left: auto;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -149,9 +168,15 @@ body.read-mode :is(.toggle-editor-btn, .command-block-editor) {
   color: var(--color-text-secondary);
 }
 
-.command-textarea {
+.command-editor-scroll {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.command-textarea {
+  flex: none;
   font-family: var(--font-mono);
   font-size: var(--text-base);
   font-variant-ligatures: none;

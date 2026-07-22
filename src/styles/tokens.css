@@ -13,22 +13,23 @@
   --danger-dim: rgba(248, 113, 113, 0.14);
 
   /* Surfaces */
-  --color-bg: #0a0b0f;
-  --color-surface: #14161d;
-  --color-surface-alt: #1d2029;
-  --color-border: #2c2f3a;
+  --color-bg: #0b0d12;
+  --color-surface: #161920;
+  --color-surface-alt: #1f232c;
+  --color-border: #323844;
   --color-border-focus: #4d8bf5;
+  --block-backdrop: var(--color-bg);
 
   /* Text */
-  --color-text-primary: #f3f4f7;
-  --color-text-secondary: #9aa0ad;
-  --color-text-muted: #6a6f7d;
-  --selection-color: #0338a2;
+  --color-text-primary: #eef1f6;
+  --color-text-secondary: #9aa3b2;
+  --color-text-muted: #656d7d;
+  --selection-color: #0d3a8c;
 
   /* Scroll */
   --minimap-slider: #ffffff;
-  --scrollbar-thumb: #2c2f3a;
-  --scrollbar-thumb-hover: #6a6f7d;
+  --scrollbar-thumb: #323844;
+  --scrollbar-thumb-hover: #454c5a;
 
   /* Note text styles */
   --code-color: #ffab3d;
@@ -77,6 +78,7 @@
   --tab-max-width: 12rem;
   --tab-min-width: 4rem;
   --block-min-width: 7.5rem;
+  --variable-split-width: 0.5rem;
   --modal-min-width: 15rem;
   --modal-max-width: 30rem;
   --minimap-width: 7rem;
@@ -103,27 +105,27 @@
   --accent: #2f5de0;
   --accent-dim: rgba(47, 93, 224, 0.09);
   --accent-text: #1e46c7;
-  --success: #08873a;
+  --success: #0f8a5f;
   --danger: #dc2626;
   --danger-dim: rgba(220, 38, 38, 0.09);
 
   /* Surfaces */
   --color-bg: #eef0f4;
-  --color-surface: #fcfcfd;
-  --color-surface-alt: #f1f3f7;
-  --color-border: #e0e3ea;
+  --color-surface: #ffffff;
+  --color-surface-alt: #eef0f4;
+  --color-border: #cbd2dc;
   --color-border-focus: #2f5de0;
 
   /* Text */
-  --color-text-primary: #191d24;
-  --color-text-secondary: #4b5260;
-  --color-text-muted: #868d9a;
-  --selection-color: #c5d9fb;
+  --color-text-primary: #161a22;
+  --color-text-secondary: #4d5666;
+  --color-text-muted: #838c9c;
+  --selection-color: #cddcfb;
 
   /* Scroll */
   --minimap-slider: #000000;
-  --scrollbar-thumb: #b6bcc8;
-  --scrollbar-thumb-hover: #868d9a;
+  --scrollbar-thumb: #b0b8c4;
+  --scrollbar-thumb-hover: #838c9c;
 
   /* Note text styles */
   --code-color: #b4490a;

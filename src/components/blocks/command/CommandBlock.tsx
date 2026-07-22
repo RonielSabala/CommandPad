@@ -21,6 +21,7 @@ import {
 } from "@/utils/resolution";
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./CommandBlock.css";
+import { StickyScrollbar } from "./StickyScrollbar";
 
 interface Props {
   block: CommandBlockData;
@@ -44,6 +45,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   );
 
   const [copied, setCopied] = useState(false);
+  const previewRef = useRef<HTMLSpanElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const lineCount = useMemo(() => blockText.split("\n").length, [blockText]);
@@ -87,52 +89,58 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   return (
     <div className="command-block">
       <div className="command-preview">
-        <span
-          className={`command-preview-text${unresolved ? " has-unresolved" : ""}`}
-        >
-          {blockText ? (
-            segments.map((seg, i) =>
-              seg.type === CommandSegmentType.RESOLVED &&
-              seg.key &&
-              secretKeys.has(seg.key) ? (
-                <span key={i} className="token-secret">
-                  ******
-                </span>
-              ) : (
-                <span key={i} className={`token-${seg.type}`}>
-                  {seg.text}
-                </span>
-              ),
-            )
-          ) : (
-            <span className="command-preview-placeholder">
-              {t.command.emptyPreview}
-            </span>
-          )}
-        </span>
+        <div className="command-preview-scroll">
+          <span
+            ref={previewRef}
+            className={`command-preview-text${unresolved ? " has-unresolved" : ""}`}
+          >
+            {blockText ? (
+              segments.map((seg, i) =>
+                seg.type === CommandSegmentType.RESOLVED &&
+                seg.key &&
+                secretKeys.has(seg.key) ? (
+                  <span key={i} className="token-secret">
+                    ******
+                  </span>
+                ) : (
+                  <span key={i} className={`token-${seg.type}`}>
+                    {seg.text}
+                  </span>
+                ),
+              )
+            ) : (
+              <span className="command-preview-placeholder">
+                {t.command.emptyPreview}
+              </span>
+            )}
+          </span>
+          <StickyScrollbar targetRef={previewRef} deps={[segments]} />
+        </div>
 
-        <button
-          className={`btn btn-icon toggle-editor-btn${isEditorCollapsed ? " editor-collapsed" : ""}`}
-          onClick={() => toggleCommandEditor(blockId)}
-          title={
-            isEditorCollapsed ? t.command.showEditor : t.command.hideEditor
-          }
-        >
-          <EditorToggleChevronIcon className="toggle-editor-icon icon-md icon-bold" />
-        </button>
+        <div className="command-preview-actions">
+          <button
+            className={`btn btn-icon toggle-editor-btn${isEditorCollapsed ? " editor-collapsed" : ""}`}
+            onClick={() => toggleCommandEditor(blockId)}
+            title={
+              isEditorCollapsed ? t.command.showEditor : t.command.hideEditor
+            }
+          >
+            <EditorToggleChevronIcon className="toggle-editor-icon icon-md icon-bold" />
+          </button>
 
-        <button
-          className="btn"
-          onClick={copy}
-          disabled={!blockText}
-          title={t.command.copy}
-        >
-          {copied ? (
-            <CheckIcon className="icon-md icon-bold copy-check-icon" />
-          ) : (
-            <CopyIcon className="icon-md icon-bold" />
-          )}
-        </button>
+          <button
+            className="btn"
+            onClick={copy}
+            disabled={!blockText}
+            title={t.command.copy}
+          >
+            {copied ? (
+              <CheckIcon className="icon-md icon-bold copy-check-icon" />
+            ) : (
+              <CopyIcon className="icon-md icon-bold" />
+            )}
+          </button>
+        </div>
       </div>
 
       <div
@@ -146,25 +154,28 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
             </span>
           ))}
         </div>
-        <textarea
-          ref={textareaRef}
-          className="command-textarea"
-          placeholder={t.command.placeholder}
-          spellCheck={false}
-          autoComplete="off"
-          rows={1}
-          value={blockText}
-          onChange={(event) => updateBlockText(blockId, event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === Key.ESCAPE) {
-              event.currentTarget.blur();
-              return;
-            }
+        <div className="command-editor-scroll">
+          <textarea
+            ref={textareaRef}
+            className="command-textarea"
+            placeholder={t.command.placeholder}
+            spellCheck={false}
+            autoComplete="off"
+            rows={1}
+            value={blockText}
+            onChange={(event) => updateBlockText(blockId, event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === Key.ESCAPE) {
+                event.currentTarget.blur();
+                return;
+              }
 
-            handlePairWrap(event);
-            handleTabKey(event);
-          }}
-        />
+              handlePairWrap(event);
+              handleTabKey(event);
+            }}
+          />
+          <StickyScrollbar targetRef={textareaRef} deps={[blockText]} />
+        </div>
       </div>
     </div>
   );

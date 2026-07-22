@@ -38,6 +38,7 @@ export const es: Messages = {
       "Arrastra para redimensionar · doble clic para contraer",
   },
   contextMenu: {
+    copyMarkdown: "Copiar libro como Markdown",
     minimap: "Minimapa",
     moveMinimapLeft: "Mover minimapa a la izquierda",
     moveMinimapRight: "Mover minimapa a la derecha",
@@ -66,6 +67,8 @@ export const es: Messages = {
     reveal: "Mostrar valor",
     mask: "Ocultar valor",
     remove: "Eliminar variable",
+    dragResizeSplit:
+      "Arrastra para redimensionar clave y valor · doble clic para igualarlos",
     unusedTitle: (key) => `${key} (sin usar)`,
   },
   tabs: {
@@ -314,6 +317,8 @@ export const es: Messages = {
         "Si dos variables comparten la misma clave, gana la definida en último lugar. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables y un botón de eliminar a la derecha. Pruébalos en las demos de esta sección.",
       tooltip:
         "Si una clave o un valor no cabe en su casilla, pasa el cursor sobre ella para ver el texto completo en un tooltip.",
+      split:
+        "Las claves y los valores se reparten la fila en partes iguales, pero puedes cambiarlo: arrastra el divisor entre ambos para dar más espacio a uno de los lados, y haz doble clic para volver al reparto equitativo. El nuevo reparto se aplica a todas las variables y se recuerda entre sesiones.",
       demoHint:
         "Compruébalo abajo: una sola variable `SERVER` alimenta dos comandos. Edita su valor y mira cómo las dos vistas previas cambian mientras escribes. Esa es toda la idea.",
     },
@@ -429,6 +434,8 @@ export const es: Messages = {
       ],
       saveDialog:
         "En navegadores compatibles se abre un diálogo nativo de guardado para elegir nombre y carpeta. En los demás, el archivo se descarga directamente.",
+      copyMarkdown:
+        "Para saltarte los archivos por completo, haz clic derecho dentro del libro y elige **Copiar libro como Markdown**. Pone el mismo contenido Markdown en tu portapapeles, listo para pegarlo en un chat, un ticket o un documento.",
     },
     language: {
       intro:

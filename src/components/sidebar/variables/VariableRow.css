@@ -4,9 +4,54 @@
 
 .variable-inputs {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-  transition: opacity var(--transition-base);
+  grid-template-columns:
+    minmax(0, var(--variable-key-fr, 1fr))
+    var(--variable-split-width)
+    minmax(0, var(--variable-value-fr, 1fr));
+}
+
+/* Variable split handle */
+
+.variable-split-handle {
+  position: relative;
+  cursor: col-resize;
+}
+
+.variable-split-handle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: calc(-1 * var(--space-2));
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--space-1);
+  background: var(--color-border);
+  transition: background var(--transition-base);
+}
+
+.sidebar-section-list-row:last-child .variable-split-handle::before {
+  bottom: 0;
+}
+
+body.variable-split-resizing,
+body.variable-split-resizing * {
+  user-select: none;
+  cursor: col-resize !important;
+}
+
+body.variable-split-resizing
+  .variable-row
+  :is(.drag-handle, .btn-danger, .variable-secret-btn) {
+  opacity: 0;
+}
+
+/* Hovering or dragging one segment lights that list's whole line */
+:has(> .sidebar-section-list-row .variable-split-handle:active)
+  .variable-split-handle::before,
+body:not(.variable-split-resizing)
+  :has(> .sidebar-section-list-row .variable-split-handle:hover)
+  .variable-split-handle::before {
+  background: var(--accent);
 }
 
 /* Variable inputs */
@@ -30,7 +75,9 @@
   padding: var(--space-2) var(--space-4);
   width: 100%;
   outline: none;
-  transition: border-color var(--transition-base);
+  transition:
+    border-color var(--transition-base),
+    opacity var(--transition-base);
   position: relative;
 }
 
@@ -48,7 +95,7 @@
 
 body:not(.read-mode)
   .variable-row.is-unused:not(:focus-within)
-  .variable-inputs {
+  :is(.variable-key-input, .variable-value-input) {
   opacity: 0.5;
 }
 

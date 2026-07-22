@@ -65,7 +65,7 @@ async function saveFile(
   URL.revokeObjectURL(url);
 }
 
-function buildMarkdownExport(content: RunbookContent): string {
+export function buildMarkdownExport(content: RunbookContent): string {
   const lines: string[] = [];
   const variableMap = getVariableMap(content.variables);
 

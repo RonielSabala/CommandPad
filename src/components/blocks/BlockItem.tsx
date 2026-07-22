@@ -170,20 +170,22 @@ export const BlockItem = memo(function BlockItem({
         className={CssClass.BLOCK_CONTROLS}
         onMouseDown={(event) => event.preventDefault()}
       >
-        <button
-          className="btn btn-icon"
-          onClick={() => duplicateBlock(block.id)}
-          title={t.blocks.duplicate}
-        >
-          <DuplicateIcon className="icon-md icon-bold" />
-        </button>
-        <button
-          className="btn btn-icon btn-danger"
-          onClick={() => removeBlock(block.id)}
-          title={t.blocks.delete}
-        >
-          <TrashIcon className="icon-md icon-bold" />
-        </button>
+        <div className="block-controls-inner">
+          <button
+            className="btn btn-icon"
+            onClick={() => duplicateBlock(block.id)}
+            title={t.blocks.duplicate}
+          >
+            <DuplicateIcon className="icon-md icon-bold" />
+          </button>
+          <button
+            className="btn btn-icon btn-danger"
+            onClick={() => removeBlock(block.id)}
+            title={t.blocks.delete}
+          >
+            <TrashIcon className="icon-md icon-bold" />
+          </button>
+        </div>
       </div>
     </div>
   );

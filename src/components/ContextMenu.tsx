@@ -1,12 +1,12 @@
 import { CssClass } from "@/common/constants/css";
 import { EventType, Key } from "@/common/constants/events";
 import { SidebarPosition } from "@/common/enums";
-import { CheckIcon } from "@/components/icons";
+import { CheckIcon, CopyIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { getActiveTab, useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import "./MinimapMenu.css";
+import "./ContextMenu.css";
 
 interface Props {
   x: number;
@@ -14,8 +14,10 @@ interface Props {
   onClose: () => void;
 }
 
-export function MinimapMenu({ x, y, onClose }: Props) {
+export function ContextMenu({ x, y, onClose }: Props) {
   const t = useTranslation();
+  const copyRunbookMarkdown = useStore((state) => state.copyRunbookMarkdown);
+  const isEmpty = useStore((state) => !getActiveTab(state)?.blocks.length);
   const minimapEnabled = useStore((state) => state.minimapEnabled);
   const toggleMinimap = useStore((state) => state.toggleMinimap);
   const minimapOnLeft = useStore(
@@ -48,7 +50,7 @@ export function MinimapMenu({ x, y, onClose }: Props) {
   }, [x, y]);
 
   useEffect(() => {
-    const onMouseDown = (event: MouseEvent) => {
+    const onPointerDown = (event: PointerEvent) => {
       if (!menuRef.current?.contains(event.target as Node)) {
         onClose();
       }
@@ -60,10 +62,10 @@ export function MinimapMenu({ x, y, onClose }: Props) {
       }
     };
 
-    document.addEventListener(EventType.MOUSE_DOWN, onMouseDown);
+    document.addEventListener(EventType.POINTER_DOWN, onPointerDown);
     document.addEventListener(EventType.KEY_DOWN, onKeyDown);
     return () => {
-      document.removeEventListener(EventType.MOUSE_DOWN, onMouseDown);
+      document.removeEventListener(EventType.POINTER_DOWN, onPointerDown);
       document.removeEventListener(EventType.KEY_DOWN, onKeyDown);
     };
   }, [onClose]);
@@ -75,6 +77,23 @@ export function MinimapMenu({ x, y, onClose }: Props) {
       role="menu"
       style={{ left: position.x, top: position.y }}
     >
+      <button
+        className="context-menu-item"
+        role="menuitem"
+        disabled={isEmpty}
+        onClick={() => {
+          void copyRunbookMarkdown();
+          onClose();
+        }}
+      >
+        <span className="context-menu-check">
+          <CopyIcon className="icon-md icon-bold" />
+        </span>
+        {t.contextMenu.copyMarkdown}
+      </button>
+
+      <div className="context-menu-separator" />
+
       <button
         className="context-menu-item"
         role="menuitemcheckbox"

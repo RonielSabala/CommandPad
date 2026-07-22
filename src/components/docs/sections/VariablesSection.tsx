@@ -32,6 +32,7 @@ export function VariablesDocs() {
       <Prose text={t.docs.variables.unresolved} />
       <Prose text={t.docs.variables.duplicatesAndEmpty} />
       <Prose text={t.docs.variables.tooltip} />
+      <Prose text={t.docs.variables.split} />
     </>
   );
 }

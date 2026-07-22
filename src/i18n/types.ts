@@ -56,6 +56,7 @@ export interface Messages {
     dragResizeCollapse: string;
   };
   contextMenu: {
+    copyMarkdown: string;
     minimap: string;
     moveMinimapLeft: string;
     moveMinimapRight: string;
@@ -84,6 +85,7 @@ export interface Messages {
     reveal: string;
     mask: string;
     remove: string;
+    dragResizeSplit: string;
     unusedTitle: (key: string) => string;
   };
   tabs: {
@@ -203,6 +205,7 @@ export interface Messages {
       unresolved: string;
       duplicatesAndEmpty: string;
       tooltip: string;
+      split: string;
       demoHint: string;
     };
     variableReferences: {
@@ -268,6 +271,7 @@ export interface Messages {
       intro: string;
       formats: string[];
       saveDialog: string;
+      copyMarkdown: string;
     };
     language: {
       intro: string;
