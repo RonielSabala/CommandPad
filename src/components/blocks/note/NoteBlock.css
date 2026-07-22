@@ -5,16 +5,22 @@
 }
 
 .note-style-row {
+  position: sticky;
+  top: var(--space-4);
+  z-index: 2;
   display: flex;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-2);
+  background: var(--block-backdrop);
   opacity: 0;
+  pointer-events: none;
   transition: opacity var(--transition-base);
 }
 
 .note-block:hover .note-style-row,
 .note-block.is-focused .note-style-row {
   opacity: 1;
+  pointer-events: auto;
 }
 
 body.read-mode .note-style-row {

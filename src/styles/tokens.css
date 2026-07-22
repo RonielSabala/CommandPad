@@ -18,6 +18,7 @@
   --color-surface-alt: #1f232c;
   --color-border: #323844;
   --color-border-focus: #4d8bf5;
+  --block-backdrop: var(--color-bg);
 
   /* Text */
   --color-text-primary: #eef1f6;

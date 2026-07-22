@@ -1,4 +1,5 @@
 .docs-demo {
+  --block-backdrop: var(--color-surface);
   position: relative;
   border: var(--border-standard);
   border-radius: var(--radius-lg);
