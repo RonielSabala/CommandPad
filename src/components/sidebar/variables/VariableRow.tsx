@@ -6,10 +6,11 @@ import type { Variable } from "@/common/types";
 import { DragIcon, EyeIcon, XIcon } from "@/components/icons";
 import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useRowReorder } from "@/hooks/useRowReorder";
+import { useVariableSplitResize } from "@/hooks/useVariableSplitResize";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
-import { memo, useEffect, useRef } from "react";
+import { memo, useEffect, useRef, type CSSProperties } from "react";
 import "./VariableRow.css";
 
 interface Props {
@@ -36,6 +37,8 @@ export const VariableRow = memo(function VariableRow({
     (state) => state.pendingFocusVariableId === variableId,
   );
   const consumeVariableFocus = useStore((state) => state.consumeVariableFocus);
+  const keyRatio = useStore((state) => state.variableKeyRatio);
+  const splitResize = useVariableSplitResize();
   const keyRef = useRef<HTMLInputElement>(null);
 
   const handleKeyPairWrap = usePairWrapping((value) =>
@@ -73,6 +76,11 @@ export const VariableRow = memo(function VariableRow({
     isDragOver && CssClass.DRAG_OVER,
   );
 
+  const splitStyle = {
+    "--variable-key-fr": `${keyRatio}fr`,
+    "--variable-value-fr": `${1 - keyRatio}fr`,
+  } as CSSProperties;
+
   return (
     <div
       className={rowClass}
@@ -86,7 +94,7 @@ export const VariableRow = memo(function VariableRow({
       >
         <DragIcon className="icon-md" />
       </div>
-      <div className={variableInputsClass}>
+      <div className={variableInputsClass} style={splitStyle}>
         <input
           ref={keyRef}
           className="variable-key-input"
@@ -107,6 +115,11 @@ export const VariableRow = memo(function VariableRow({
             handleKeyPairWrap(event);
           }}
           title={unused ? t.variables.unusedTitle(variableKey) : variableKey}
+        />
+        <div
+          className="variable-split-handle no-user-select"
+          title={t.variables.dragResizeSplit}
+          {...splitResize}
         />
         <input
           className="variable-value-input"

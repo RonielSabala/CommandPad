@@ -10,6 +10,7 @@ import {
   DEFAULT_TAB_LABEL,
   RunbookConfig,
   SidebarWidth,
+  VariableSplit,
 } from "@/common/config";
 import {
   AppMode,
@@ -33,6 +34,7 @@ import { Language } from "@/i18n/types";
 import { debounce } from "@/utils/debounce";
 import { buildMarkdownExport, runExport } from "@/utils/export";
 import { generateId } from "@/utils/id";
+import { clamp } from "@/utils/number";
 import {
   carryVariables,
   getVariableKey,
@@ -80,6 +82,7 @@ export interface StoreState {
   sidebarCollapsed: boolean;
   sidebarPosition: SidebarPosition;
   sidebarWidth: number;
+  variableKeyRatio: number;
   minimapEnabled: boolean;
   minimapPosition: SidebarPosition;
   runbookSectionCollapsed: boolean;
@@ -178,6 +181,8 @@ export interface StoreState {
   toggleSidebarPosition: () => void;
   setSidebarSize: (width: number) => void;
   resetSidebarSize: () => void;
+  setVariableKeyRatio: (ratio: number) => void;
+  resetVariableKeyRatio: () => void;
   toggleRunbookSection: () => void;
   toggleVariablesSection: () => void;
 
@@ -379,6 +384,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       sidebarCollapsed: false,
       sidebarPosition: SidebarPosition.LEFT,
       sidebarWidth: SidebarWidth.DEFAULT,
+      variableKeyRatio: VariableSplit.DEFAULT,
       minimapEnabled: true,
       minimapPosition: SidebarPosition.RIGHT,
       runbookSectionCollapsed: false,
@@ -417,6 +423,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           sidebarCollapsed: state.sidebarCollapsed,
           sidebarPosition: state.sidebarPosition,
           sidebarWidth: state.sidebarWidth,
+          variableKeyRatio: state.variableKeyRatio,
           minimapEnabled: state.minimapEnabled,
           minimapPosition: state.minimapPosition,
           theme: state.theme,
@@ -1358,6 +1365,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           sidebarCollapsed: state.sidebarCollapsed,
           sidebarPosition: state.sidebarPosition,
           sidebarWidth: state.sidebarWidth,
+          variableKeyRatio: state.variableKeyRatio,
           minimapEnabled: state.minimapEnabled,
           minimapPosition: state.minimapPosition,
           theme: state.theme,
@@ -1376,6 +1384,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           sidebarCollapsed: state.sidebarCollapsed,
           sidebarPosition: state.sidebarPosition,
           sidebarWidth: state.sidebarWidth,
+          variableKeyRatio: state.variableKeyRatio,
           minimapEnabled: state.minimapEnabled,
           minimapPosition: state.minimapPosition,
           theme: state.theme,
@@ -1435,6 +1444,18 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       resetSidebarSize: () => {
         set({ sidebarWidth: SidebarWidth.DEFAULT });
+        get().saveState();
+      },
+
+      setVariableKeyRatio: (ratio: number) => {
+        set({
+          variableKeyRatio: clamp(ratio, VariableSplit.MIN, VariableSplit.MAX),
+        });
+        debouncedSaveState();
+      },
+
+      resetVariableKeyRatio: () => {
+        set({ variableKeyRatio: VariableSplit.DEFAULT });
         get().saveState();
       },
 

@@ -85,6 +85,7 @@ export interface Messages {
     reveal: string;
     mask: string;
     remove: string;
+    dragResizeSplit: string;
     unusedTitle: (key: string) => string;
   };
   tabs: {
@@ -204,6 +205,7 @@ export interface Messages {
       unresolved: string;
       duplicatesAndEmpty: string;
       tooltip: string;
+      split: string;
       demoHint: string;
     };
     variableReferences: {

@@ -66,6 +66,7 @@ export const en: Messages = {
     reveal: "Reveal value",
     mask: "Mask value",
     remove: "Remove variable",
+    dragResizeSplit: "Drag to resize key and value · double-click to even out",
     unusedTitle: (key) => `${key} (unused)`,
   },
   tabs: {
@@ -305,6 +306,8 @@ export const en: Messages = {
         "If two variables share the same key, the one defined last wins. Hover over a row to reveal its controls: a drag handle on the left to reorder it among the others and a delete button on the right. Try them out in the demos throughout this section.",
       tooltip:
         "If a key or value is too long to fit its box, hover over it to see the full text in a tooltip.",
+      split:
+        "Keys and values split the row evenly, but you can change that: drag the divider between them to give one side more room, and double-click it to go back to an even split. The new balance applies to every variable and is remembered between sessions.",
       demoHint:
         "See it for yourself below: one `SERVER` variable feeds two commands. Edit its value and watch both previews follow along as you type. That's the whole idea in one gesture.",
     },

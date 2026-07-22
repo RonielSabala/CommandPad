@@ -35,6 +35,13 @@ export const SidebarWidth = {
   COLLAPSE_SNAP: Math.round(DEFAULT_SIDEBAR_WIDTH / 3),
 } as const;
 
+// Share of the variable row given to the key input
+export const VariableSplit = {
+  MIN: 0.15,
+  MAX: 0.85,
+  DEFAULT: 0.5,
+} as const;
+
 // Timeout durations
 export const DRAG_TIMEOUT_MS = 50;
 export const DEBOUNCE_SAVE_MS = 150;

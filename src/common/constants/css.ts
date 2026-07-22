@@ -12,6 +12,7 @@ export const CssClass = {
   SELECT_KEY_HELD: "select-key-held",
   LINK_KEY_HELD: "link-key-held",
   SIDEBAR_RESIZING: "sidebar-resizing",
+  VARIABLE_SPLIT_RESIZING: "variable-split-resizing",
 
   // Specific classes
   CONTEXT_MENU: "context-menu",

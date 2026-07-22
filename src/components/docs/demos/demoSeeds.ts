@@ -47,6 +47,8 @@ export const demoVariable = (
   ...(secret !== undefined ? { secret } : {}),
 });
 
+const DEMO_VARIABLE_KEY_RATIO = 0.25;
+
 export interface DemoContent {
   blocks?: Block[];
   variables?: Variable[];
@@ -104,6 +106,7 @@ export function buildDemoSeed(
         seededTabs[0]?.runbookId ?? runbookLibrary[0]?.id ?? null,
       runbookLibrary,
       language,
+      variableKeyRatio: DEMO_VARIABLE_KEY_RATIO,
       initialized: true,
     },
   };

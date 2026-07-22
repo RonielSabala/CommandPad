@@ -1,8 +1,9 @@
-import { StorageKey } from "@/common/config";
+import { StorageKey, VariableSplit } from "@/common/config";
 import { AppMode, SectionState, SidebarPosition, Theme } from "@/common/enums";
 import type { RunbookEntry, Tab } from "@/common/types";
 import { detectLanguage, isLanguage } from "@/i18n/messages";
 import type { Language } from "@/i18n/types";
+import { clamp } from "@/utils/number";
 
 function getSavedItemByKey(key: string) {
   return JSON.parse(localStorage.getItem(key) ?? "null");
@@ -17,6 +18,7 @@ interface PersistedUiState {
   sidebarCollapsed: boolean;
   sidebarPosition: SidebarPosition;
   sidebarWidth: number;
+  variableKeyRatio: number;
   minimapEnabled: boolean;
   minimapPosition: SidebarPosition;
 }
@@ -34,6 +36,7 @@ export function saveUiState(ui: PersistedUiState): void {
           : SectionState.EXPANDED,
         sidebarPosition: ui.sidebarPosition,
         sidebarWidth: ui.sidebarWidth,
+        variableKeyRatio: ui.variableKeyRatio,
         minimapEnabled: ui.minimapEnabled,
         minimapPosition: ui.minimapPosition,
       }),
@@ -61,6 +64,15 @@ export function loadUiState(): Partial<PersistedUiState> | null {
           : SidebarPosition.LEFT,
       ...(typeof saved.sidebarWidth === "number"
         ? { sidebarWidth: saved.sidebarWidth }
+        : {}),
+      ...(typeof saved.variableKeyRatio === "number"
+        ? {
+            variableKeyRatio: clamp(
+              saved.variableKeyRatio,
+              VariableSplit.MIN,
+              VariableSplit.MAX,
+            ),
+          }
         : {}),
       minimapEnabled: saved.minimapEnabled !== false,
       minimapPosition:
