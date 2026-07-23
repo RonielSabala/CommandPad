@@ -4,11 +4,8 @@
   padding: 0 var(--space-12) var(--space-12);
 }
 
-/* Full-width band: the symbol rain (SymbolField) fills it edge to edge while the
-   hero/demo content stays centered in .home-intro-inner. */
 .home-intro {
   position: relative;
-  overflow: hidden;
   padding-top: var(--space-16);
 }
 
