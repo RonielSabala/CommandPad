@@ -162,7 +162,6 @@ export interface Messages {
   home: {
     meta: {
       openApp: string;
-      openDocs: string;
     };
     hero: {
       eyebrow: string;

@@ -180,7 +180,6 @@ export const es: Messages = {
   home: {
     meta: {
       openApp: "Abrir app",
-      openDocs: "Documentación",
     },
     hero: {
       eyebrow: "Libros de comandos con variables",

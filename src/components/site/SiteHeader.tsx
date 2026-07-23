@@ -1,14 +1,14 @@
 import { AppRoute } from "@/common/constants/routes";
 import { Theme } from "@/common/enums";
-import { BookIcon, MoonIcon, SunIcon } from "@/components/icons";
+import "@/components/docs/DocsHeader.css";
+import "@/components/header/Header.css";
 import { LanguageSelect } from "@/components/header/LanguageSelect";
+import { BookIcon, MoonIcon, SunIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { markHomeVisited } from "@/utils/session";
 import { BoxArrowInRight } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
-import "@/components/header/Header.css";
-import "@/components/docs/DocsHeader.css";
 import "./SiteHeader.css";
 
 interface Props {
@@ -61,7 +61,7 @@ export function SiteHeader({ title, showDocsLink }: Props) {
             <Link
               to={AppRoute.DOCS}
               className="btn btn-lg btn-flat-icon"
-              title={t.home.meta.openDocs}
+              title={t.docs.meta.openDocs}
             >
               <BookIcon className="icon icon-bold" />
             </Link>

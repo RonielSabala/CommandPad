@@ -175,7 +175,6 @@ export const en: Messages = {
   home: {
     meta: {
       openApp: "Open app",
-      openDocs: "Documentation",
     },
     hero: {
       eyebrow: "Variable-aware command runbooks",
