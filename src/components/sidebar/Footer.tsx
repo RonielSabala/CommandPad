@@ -1,5 +1,9 @@
 import { Anchor } from "@/common/constants/dom";
+import { AppRoute } from "@/common/constants/routes";
+import { useTranslation } from "@/i18n";
+import { classNames } from "@/utils/string";
 import { Github, Linkedin, type Icon } from "react-bootstrap-icons";
+import { Link } from "react-router-dom";
 import "./Footer.css";
 
 interface FooterLinkProps {
@@ -27,6 +31,24 @@ export function FooterCopyright() {
   return <>&copy; {new Date().getFullYear()} Roniel Sabala</>;
 }
 
+export function FooterLegalLinks() {
+  const t = useTranslation();
+
+  return (
+    <nav className="footer-legal">
+      <Link className="footer-legal-link" to={AppRoute.PRIVACY}>
+        {t.footer.privacy}
+      </Link>
+      <span className="footer-legal-sep" aria-hidden="true">
+        ·
+      </span>
+      <Link className="footer-legal-link" to={AppRoute.TERMS}>
+        {t.footer.terms}
+      </Link>
+    </nav>
+  );
+}
+
 export function FooterLinks() {
   return (
     <div className="footer-links">
@@ -44,13 +66,36 @@ export function FooterLinks() {
   );
 }
 
+/** Copyright on the left, legal + social links grouped on the right. */
+export function FooterContent() {
+  return (
+    <>
+      <span className="footer-copyright">
+        <FooterCopyright />
+      </span>
+      <div className="footer-right">
+        <FooterLegalLinks />
+        <FooterLinks />
+      </div>
+    </>
+  );
+}
+
+/** Footer used by the home and legal pages. */
+export function PageFooter({ className }: { className?: string }) {
+  return (
+    <footer
+      className={classNames("footer page-footer no-user-select", className)}
+    >
+      <FooterContent />
+    </footer>
+  );
+}
+
 export function Footer() {
   return (
     <footer id="app-footer" className="footer no-user-select">
-      <span id="footer-copyright" className="footer-copyright">
-        <FooterCopyright />
-      </span>
-      <FooterLinks />
+      <FooterContent />
     </footer>
   );
 }

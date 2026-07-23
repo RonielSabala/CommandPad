@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "A variable-aware command runbook tool: define variables once, reference them with {NAME} across command blocks, and copy fully-resolved commands.",
+  "description": "A variable-aware command runbook tool: define variables once, reference them across command blocks, and copy fully-resolved commands.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
