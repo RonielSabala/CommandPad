@@ -1,0 +1,182 @@
+.home-content {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 0 var(--space-12) var(--space-12);
+}
+
+/* Full-width band: the symbol rain (SymbolField) fills it edge to edge while the
+   hero/demo content stays centered in .home-intro-inner. */
+.home-intro {
+  position: relative;
+  overflow: hidden;
+  padding-top: var(--space-16);
+}
+
+.home-intro-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 0 var(--space-12);
+}
+
+/* --- HERO --- */
+
+.home-hero {
+  text-align: center;
+  padding: var(--space-16) 0 var(--space-20);
+}
+
+.home-eyebrow {
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin-bottom: var(--space-8);
+}
+
+.home-title {
+  font-size: clamp(2.75rem, 7vw, 4.75rem);
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--color-text-primary);
+  max-width: 16ch;
+  margin: 0 auto var(--space-10);
+}
+
+.home-subtitle {
+  font-size: var(--text-xl);
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  max-width: 46rem;
+  margin: 0 auto var(--space-14);
+}
+
+.home-subtitle .note-bold {
+  color: var(--color-text-primary);
+}
+
+.home-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+}
+
+.home-cta {
+  padding: var(--space-6) var(--space-12);
+  font-size: var(--text-base);
+  border-radius: var(--radius-lg);
+}
+
+/* --- SHARED SECTION HEADINGS --- */
+
+.home-section-title {
+  text-align: center;
+  font-size: var(--docs-heading-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-6);
+}
+
+.home-section-hint {
+  text-align: center;
+  font-size: var(--text-base);
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  max-width: 44rem;
+  margin: 0 auto var(--space-12);
+}
+
+/* --- LIVE DEMO --- */
+
+.home-demo {
+  padding: var(--space-12) 0;
+}
+
+.home-demo-workspace {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+/* --- FEATURES --- */
+
+.home-features {
+  padding: var(--space-16) 0;
+}
+
+.home-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--space-8);
+}
+
+.home-feature {
+  padding: var(--space-12);
+  border: var(--border-standard);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  transition:
+    border-color var(--transition-base),
+    transform var(--transition-base);
+}
+
+.home-feature:hover {
+  border-color: var(--color-border-focus);
+  transform: translateY(-2px);
+}
+
+.home-feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-20);
+  height: var(--space-20);
+  margin-bottom: var(--space-8);
+  border-radius: var(--radius-md);
+  background: var(--accent-dim);
+  color: var(--accent-text);
+  font-size: var(--text-xl);
+}
+
+.home-feature-title {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.home-feature-body {
+  font-size: var(--text-md);
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+/* --- CLOSING --- */
+
+.home-closing {
+  text-align: center;
+  padding: var(--space-20) var(--space-12);
+  margin: var(--space-12) 0;
+  border: var(--border-standard);
+  border-radius: var(--radius-lg);
+  background: var(--accent-dim);
+}
+
+.home-closing-title {
+  font-size: var(--docs-heading-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-6);
+}
+
+.home-closing-body {
+  font-size: var(--text-base);
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  max-width: 40rem;
+  margin: 0 auto var(--space-12);
+}

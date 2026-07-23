@@ -173,6 +173,181 @@ export const es: Messages = {
     [KeyBinding.WRAP_SELECTION]:
       "Envolver el texto seleccionado en el par escrito (cualquier campo de texto)",
   },
+  footer: {
+    privacy: "Privacidad",
+    terms: "Términos",
+  },
+  home: {
+    meta: {
+      openApp: "Abrir app",
+      openDocs: "Documentación",
+    },
+    hero: {
+      eyebrow: "Libros de comandos con variables",
+      title: "Escribe los comandos una vez. Reutilízalos en todas partes.",
+      subtitle:
+        "Define tus variables una sola vez, referéncialas con **{NAME}** en cada comando y copia comandos totalmente resueltos con un clic. Sin servidor, sin cuentas, todo se queda en tu navegador.",
+      primaryCta: "Abrir CommandPad",
+      secondaryCta: "Ver la documentación",
+    },
+    demo: {
+      title: "Míralo en acción",
+      hint: "Cambia un valor abajo y observa cómo cada comando se actualiza en vivo. Es solo un ejemplo pequeño para mostrar la idea, no el aspecto que tendrá tu espacio de trabajo.",
+    },
+    features: {
+      title: "Por qué te va a encantar",
+      subtitle:
+        "Herramienta pequeña, gran mejora en tu día a día. Esto es lo que hace especial a CommandPad.",
+      items: [
+        {
+          title: "Cambia una vez, actualiza en todos lados",
+          body: "Edita una sola variable y cada comando que la usa se actualiza al instante. Se acabó buscar y reemplazar valores en un muro de historial de terminal.",
+        },
+        {
+          title: "Copia comandos listos para ejecutar",
+          body: "Las vistas previas resuelven cada `{NAME}` en tiempo real. Un solo clic copia un comando con los valores reales ya rellenados, así que solo pegas y listo.",
+        },
+        {
+          title: "Libros que de verdad vas a entender",
+          body: "Combina comandos, notas en Markdown y separadores en un manual claro y paso a paso que seguirá teniendo sentido dentro de unos meses.",
+        },
+        {
+          title: "Tuyo, y solo tuyo",
+          body: "Sin backend, sin cuentas, sin seguimiento. Todo vive en tu navegador, así que ni siquiera las variables secretas salen de tu equipo.",
+        },
+        {
+          title: "Hecho para no estorbarte",
+          body: "Pestañas, reordenar arrastrando, selección de varios bloques, modo lectura, atajos de teclado, tema claro y oscuro, inglés y español.",
+        },
+        {
+          title: "Lleva tus libros a donde sea",
+          body: "Exporta a JSON, Markdown o texto plano y vuelve a importarlos en otro equipo. Tu trabajo viaja contigo y nunca queda atrapado.",
+        },
+      ],
+    },
+    closing: {
+      title: "¿Listo para crear tu primer libro?",
+      body: "CommandPad funciona por completo en tu navegador. Nada que instalar, nada que registrar.",
+      cta: "Abrir CommandPad",
+    },
+  },
+  privacy: {
+    title: "Política de Privacidad",
+    updated: "Última actualización: 22 de julio de 2026",
+    intro:
+      "CommandPad es una aplicación del lado del cliente que funciona por completo en tu navegador. Esta política explica qué datos maneja la app y, más importante aún, cuáles no.",
+    sections: [
+      {
+        heading: "La versión corta",
+        paragraphs: [
+          "CommandPad no tiene servidor backend, ni cuentas de usuario, ni analítica o seguimiento. La app no recopila, transmite ni vende ninguno de tus datos. Todo lo que creas se queda en tu dispositivo.",
+        ],
+      },
+      {
+        heading: "Qué datos se almacenan",
+        paragraphs: [
+          "Todos los datos que introduces, como variables, comandos, notas y libros, se guardan localmente en tu navegador para que tu trabajo siga ahí cuando vuelvas.",
+        ],
+        bullets: [
+          "**localStorage** guarda tus preferencias (tema, idioma, disposición) y metadatos ligeros de las pestañas.",
+          "**IndexedDB** guarda el contenido real de los libros (tus variables y bloques de comandos).",
+          "**sessionStorage** guarda una única marca que indica que ya viste la página de inicio en esta sesión.",
+        ],
+      },
+      {
+        heading: "Qué no hacemos",
+        paragraphs: [
+          "Queremos ser explícitos sobre las cosas que CommandPad evita deliberadamente.",
+        ],
+        bullets: [
+          "No enviamos tus datos a ningún servidor. No hay servidor al que enviarlos.",
+          "No usamos cookies, identificadores publicitarios ni analítica de terceros.",
+          "No seguimos tu comportamiento entre sitios ni construimos un perfil sobre ti.",
+          "No requerimos una cuenta, un correo electrónico ni ningún inicio de sesión.",
+        ],
+      },
+      {
+        heading: "Variables secretas",
+        paragraphs: [
+          "Las variables marcadas como secretas solo se **enmascaran** en la interfaz. No están cifradas y se almacenan en texto plano en el almacenamiento local de tu navegador, igual que cualquier otra variable. No trates las variables secretas como una bóveda segura.",
+        ],
+      },
+      {
+        heading: "Enlaces externos",
+        paragraphs: [
+          "Las notas pueden contener enlaces que tú mismo añades, y la app enlaza a sitios externos como GitHub y LinkedIn. Una vez que sigues un enlace, se aplican las prácticas de privacidad de ese destino. Esta política solo cubre a CommandPad.",
+        ],
+      },
+      {
+        heading: "Control de tus datos",
+        paragraphs: [
+          "Como todo es local, siempre tienes el control. Usa **Exportar** para respaldar un libro como JSON, y usa **Restablecer espacio de trabajo** para borrar de forma permanente todos los datos almacenados localmente. Borrar los datos del sitio en tu navegador tiene el mismo efecto.",
+        ],
+      },
+      {
+        heading: "Cambios en esta política",
+        paragraphs: [
+          "Si esta política cambia, la fecha de actualización en la parte superior de la página cambiará con ella. El uso continuado de la app refleja tu aceptación de la política vigente.",
+        ],
+      },
+    ],
+  },
+  terms: {
+    title: "Términos del Servicio",
+    updated: "Última actualización: 22 de julio de 2026",
+    intro:
+      "Estos términos rigen tu uso de CommandPad. Al usar la app aceptas estos términos. Por favor, léelos, ya que son breves y están redactados para ser comprensibles.",
+    sections: [
+      {
+        heading: "Aceptación de los términos",
+        paragraphs: [
+          "Al acceder o usar CommandPad, aceptas quedar sujeto a estos términos. Si no estás de acuerdo, por favor no uses la app.",
+        ],
+      },
+      {
+        heading: "El servicio",
+        paragraphs: [
+          "CommandPad es una herramienta gratuita del lado del cliente para crear libros de comandos con variables. Funciona en tu navegador y almacena tu trabajo localmente en tu dispositivo. Se ofrece tal cual, y las funciones pueden cambiar o eliminarse con el tiempo.",
+        ],
+      },
+      {
+        heading: "Tus responsabilidades",
+        paragraphs: [
+          "Eres responsable de los comandos y del contenido que creas y de cómo los usas.",
+        ],
+        bullets: [
+          "Revisa cada comando antes de ejecutarlo. CommandPad resuelve y copia texto; no ejecuta nada por ti.",
+          "Mantén tus propias copias de seguridad de lo importante exportando tus libros.",
+          "No confíes en las variables secretas como almacenamiento seguro de credenciales sensibles.",
+          "Usa la app cumpliendo las leyes y políticas que se te apliquen.",
+        ],
+      },
+      {
+        heading: "Sin garantía",
+        paragraphs: [
+          "CommandPad se ofrece **sin garantías de ningún tipo**, expresas o implícitas, incluida la idoneidad para un propósito concreto. No garantizamos que la app funcione sin interrupciones, sin errores, ni que los datos almacenados localmente nunca se pierdan.",
+        ],
+      },
+      {
+        heading: "Limitación de responsabilidad",
+        paragraphs: [
+          "En la máxima medida permitida por la ley, el autor no es responsable de ningún daño derivado de tu uso de la app, incluida la pérdida de datos o cualquier consecuencia de ejecutar comandos que hayas ensamblado con ella.",
+        ],
+      },
+      {
+        heading: "Datos y privacidad",
+        paragraphs: [
+          "CommandPad almacena tus datos localmente y no los transmite. Para más detalles, consulta la Política de Privacidad, que se incorpora a estos términos por referencia.",
+        ],
+      },
+      {
+        heading: "Cambios en estos términos",
+        paragraphs: [
+          "Estos términos pueden actualizarse de vez en cuando. La fecha de actualización en la parte superior refleja la última revisión, y el uso continuado de la app constituye la aceptación de los términos vigentes.",
+        ],
+      },
+    ],
+  },
   docs: {
     meta: {
       title: "Documentación",

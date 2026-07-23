@@ -168,6 +168,181 @@ export const en: Messages = {
     [KeyBinding.WRAP_SELECTION]:
       "Wrap selected text in the typed pair (any text field)",
   },
+  footer: {
+    privacy: "Privacy",
+    terms: "Terms",
+  },
+  home: {
+    meta: {
+      openApp: "Open app",
+      openDocs: "Documentation",
+    },
+    hero: {
+      eyebrow: "Variable-aware command runbooks",
+      title: "Write commands once. Reuse them everywhere.",
+      subtitle:
+        "Define your variables a single time, reference them with **{NAME}** across every command, and copy fully-resolved commands in one click. No server, no accounts, everything stays in your browser.",
+      primaryCta: "Open CommandPad",
+      secondaryCta: "Read the docs",
+    },
+    demo: {
+      title: "See it in action",
+      hint: "Change a value below and watch every command update live. It is just a small example to show the idea, not what your workspace will look like.",
+    },
+    features: {
+      title: "Why you'll love it",
+      subtitle:
+        "Small tool, big quality-of-life upgrade. Here is what makes CommandPad click.",
+      items: [
+        {
+          title: "Change once, update everywhere",
+          body: "Edit a single variable and every command that uses it updates instantly. No more hunting and replacing values across a wall of terminal history.",
+        },
+        {
+          title: "Copy commands ready to run",
+          body: "Previews resolve every `{NAME}` in real time. One click copies a command with the real values already filled in, so you just paste and go.",
+        },
+        {
+          title: "Runbooks you'll actually understand",
+          body: "Mix commands, Markdown notes, and dividers into a clear, step-by-step playbook that still makes sense to you months from now.",
+        },
+        {
+          title: "Yours, and only yours",
+          body: "No backend, no accounts, no tracking. Everything lives in your browser, so even secret variables never leave your machine.",
+        },
+        {
+          title: "Built to stay out of your way",
+          body: "Tabs, drag-and-drop reordering, multi-block select, read mode, keyboard shortcuts, light and dark themes, English and Spanish.",
+        },
+        {
+          title: "Take your runbooks anywhere",
+          body: "Export to JSON, Markdown, or plain text and re-import on another machine. Your work travels with you and is never locked in.",
+        },
+      ],
+    },
+    closing: {
+      title: "Ready to build your first runbook?",
+      body: "CommandPad runs entirely in your browser. Nothing to install, nothing to sign up for.",
+      cta: "Open CommandPad",
+    },
+  },
+  privacy: {
+    title: "Privacy Policy",
+    updated: "Last updated: July 22, 2026",
+    intro:
+      "CommandPad is a client-side application that runs entirely in your web browser. This policy explains what data the app handles and, more importantly, what it does not.",
+    sections: [
+      {
+        heading: "The short version",
+        paragraphs: [
+          "CommandPad has no backend server, no user accounts, and no analytics or tracking. The app does not collect, transmit, or sell any of your data. Everything you create stays on your device.",
+        ],
+      },
+      {
+        heading: "What data we store",
+        paragraphs: [
+          "All data you enter, such as variables, commands, notes, and runbooks, is saved locally in your browser so your work is still there when you return.",
+        ],
+        bullets: [
+          "**localStorage** holds your preferences (theme, language, layout) and lightweight tab metadata.",
+          "**IndexedDB** holds the actual runbook content (your variables and command blocks).",
+          "**sessionStorage** holds a single flag noting that you have already seen the home page this session.",
+        ],
+      },
+      {
+        heading: "What we do not do",
+        paragraphs: [
+          "We want to be explicit about the things CommandPad deliberately avoids.",
+        ],
+        bullets: [
+          "We do not send your data to any server. There is no server to send it to.",
+          "We do not use cookies, advertising identifiers, or third-party analytics.",
+          "We do not track your behavior across sites or build a profile about you.",
+          "We do not require an account, an email address, or any sign-in.",
+        ],
+      },
+      {
+        heading: "Secret variables",
+        paragraphs: [
+          "Variables marked as secret are only **masked** in the interface. They are not encrypted, and are stored in plain text in your browser's local storage just like any other variable. Do not treat secret variables as a secure vault.",
+        ],
+      },
+      {
+        heading: "External links",
+        paragraphs: [
+          "Notes may contain links you add yourself, and the app links to external sites such as GitHub and LinkedIn. Once you follow a link, the privacy practices of that destination apply. This policy only covers CommandPad itself.",
+        ],
+      },
+      {
+        heading: "Controlling your data",
+        paragraphs: [
+          "Because everything is local, you are always in control. Use **Export** to back up a runbook as JSON, and use **Reset Workspace** to permanently erase all locally stored data. Clearing your browser's site data for this app has the same effect.",
+        ],
+      },
+      {
+        heading: "Changes to this policy",
+        paragraphs: [
+          "If this policy changes, the updated date at the top of the page will change with it. Continued use of the app reflects your acceptance of the current policy.",
+        ],
+      },
+    ],
+  },
+  terms: {
+    title: "Terms of Service",
+    updated: "Last updated: July 22, 2026",
+    intro:
+      "These terms govern your use of CommandPad. By using the app you agree to them. Please read them, as they are short and written to be understandable.",
+    sections: [
+      {
+        heading: "Acceptance of terms",
+        paragraphs: [
+          "By accessing or using CommandPad, you agree to be bound by these terms. If you do not agree, please do not use the app.",
+        ],
+      },
+      {
+        heading: "The service",
+        paragraphs: [
+          "CommandPad is a free, client-side tool for building variable-aware command runbooks. It runs in your browser and stores your work locally on your device. It is provided as-is, and features may change or be removed over time.",
+        ],
+      },
+      {
+        heading: "Your responsibilities",
+        paragraphs: [
+          "You are responsible for the commands and content you create and for how you use them.",
+        ],
+        bullets: [
+          "Review every command before you run it. CommandPad resolves and copies text; it does not execute anything for you.",
+          "Keep your own backups of anything important by exporting your runbooks.",
+          "Do not rely on secret variables as secure storage for sensitive credentials.",
+          "Use the app in compliance with the laws and policies that apply to you.",
+        ],
+      },
+      {
+        heading: "No warranty",
+        paragraphs: [
+          "CommandPad is provided **without warranties of any kind**, express or implied, including fitness for a particular purpose. We do not guarantee that the app will be uninterrupted, error-free, or that locally stored data will never be lost.",
+        ],
+      },
+      {
+        heading: "Limitation of liability",
+        paragraphs: [
+          "To the fullest extent permitted by law, the author is not liable for any damages arising from your use of the app, including the loss of data or any consequences of running commands you assembled with it.",
+        ],
+      },
+      {
+        heading: "Data and privacy",
+        paragraphs: [
+          "CommandPad stores your data locally and does not transmit it. For details, see the Privacy Policy, which is incorporated into these terms by reference.",
+        ],
+      },
+      {
+        heading: "Changes to these terms",
+        paragraphs: [
+          "These terms may be updated from time to time. The updated date at the top reflects the latest revision, and continued use of the app constitutes acceptance of the current terms.",
+        ],
+      },
+    ],
+  },
   docs: {
     meta: {
       title: "Documentation",

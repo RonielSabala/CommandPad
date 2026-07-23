@@ -21,6 +21,19 @@ export const LANGUAGE_NAMES: Record<Language, string> = {
   [Language.ES]: "Español",
 };
 
+interface LegalSectionMessage {
+  heading: string;
+  paragraphs: string[];
+  bullets?: string[];
+}
+
+export interface LegalPageMessages {
+  title: string;
+  updated: string;
+  intro: string;
+  sections: LegalSectionMessage[];
+}
+
 // The full translation catalog
 export interface Messages {
   common: {
@@ -142,6 +155,39 @@ export interface Messages {
     clearLibraryMessage: string;
   };
   keybindings: Record<KeyBinding, string>;
+  footer: {
+    privacy: string;
+    terms: string;
+  };
+  home: {
+    meta: {
+      openApp: string;
+      openDocs: string;
+    };
+    hero: {
+      eyebrow: string;
+      title: string;
+      subtitle: string;
+      primaryCta: string;
+      secondaryCta: string;
+    };
+    demo: {
+      title: string;
+      hint: string;
+    };
+    features: {
+      title: string;
+      subtitle: string;
+      items: { title: string; body: string }[];
+    };
+    closing: {
+      title: string;
+      body: string;
+      cta: string;
+    };
+  };
+  privacy: LegalPageMessages;
+  terms: LegalPageMessages;
   docs: {
     meta: {
       title: string;

@@ -1,0 +1,20 @@
+/* Shared shell for the home and legal pages (header row + scrollable main). */
+
+.site-shell {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "header"
+    "main";
+}
+
+.site-main {
+  grid-area: main;
+  overflow-y: auto;
+  background: var(--color-bg);
+  scrollbar-gutter: stable both-edges;
+}
+
+.page-footer {
+  padding-top: var(--space-8);
+  margin-top: var(--space-16);
+}
