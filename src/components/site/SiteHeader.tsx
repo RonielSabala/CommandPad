@@ -1,3 +1,4 @@
+import { Key } from "@/common/constants/events";
 import { AppRoute } from "@/common/constants/routes";
 import { Theme } from "@/common/enums";
 import "@/components/docs/DocsHeader.css";
@@ -25,7 +26,17 @@ export function SiteHeader({ title, showDocsLink }: Props) {
 
   return (
     <header className="header-bar">
-      <Link to={AppRoute.HOME} id="site-logo" className="logo no-user-select">
+      <Link
+        to={AppRoute.HOME}
+        id="site-logo"
+        className="logo no-user-select"
+        title={t.header.reloadTitle}
+        onKeyDown={(event) => {
+          if (event.key === Key.ENTER) {
+            location.reload();
+          }
+        }}
+      >
         <span className="logo-word">Command</span>
         <span className="logo-pad">{"{Pad}"}</span>
       </Link>

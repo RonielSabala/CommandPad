@@ -51,7 +51,7 @@ export function DocsHeader() {
 
         <div className="vertical-divider" />
 
-        <Link to={AppRoute.WORKSPACE} className="btn btn-lg btn-primary">
+        <Link to={AppRoute.HOME} className="btn btn-lg btn-primary">
           <BoxArrowLeft className="icon" />
           {t.docs.meta.backToApp}
         </Link>
