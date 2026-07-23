@@ -185,42 +185,42 @@ export const es: Messages = {
       eyebrow: "Libros de comandos con variables",
       title: "Escribe los comandos una vez. Reutilízalos en todas partes.",
       subtitle:
-        "Define tus variables una sola vez, referéncialas con **{NAME}** en cada comando y copia comandos totalmente resueltos con un clic. Sin servidor, sin cuentas, todo se queda en tu navegador.",
+        "Define tus variables una sola vez, referéncialas en cada comando y copia comandos totalmente resueltos con un clic. Sin servidor, sin cuentas, todo se queda en tu navegador.",
       primaryCta: "Abrir CommandPad",
       secondaryCta: "Ver la documentación",
     },
     demo: {
       title: "Míralo en acción",
-      hint: "Cambia un valor abajo y observa cómo cada comando se actualiza en vivo. Es solo un ejemplo pequeño para mostrar la idea, no el aspecto que tendrá tu espacio de trabajo.",
+      hint: "Cambia un valor abajo y observa cómo cada comando se actualiza en vivo.",
     },
     features: {
-      title: "Por qué te va a encantar",
+      title: "Por qué no vas a querer soltarlo",
       subtitle:
-        "Herramienta pequeña, gran mejora en tu día a día. Esto es lo que hace especial a CommandPad.",
+        "Una herramienta pequeña que resuelve, sin hacer ruido, una molestia de todos los días. Esto es lo que suele conquistar a la gente.",
       items: [
         {
-          title: "Cambia una vez, actualiza en todos lados",
-          body: "Edita una sola variable y cada comando que la usa se actualiza al instante. Se acabó buscar y reemplazar valores en un muro de historial de terminal.",
+          title: "Cambia una cosa, no veinte",
+          body: "Actualiza un host o un número de versión en un solo sitio y cada comando que lo menciona se pone al día al instante. Nada de buscar y reemplazar, ni de una copia vieja del valor escondida tres líneas más abajo.",
         },
         {
           title: "Copia comandos listos para ejecutar",
-          body: "Las vistas previas resuelven cada `{NAME}` en tiempo real. Un solo clic copia un comando con los valores reales ya rellenados, así que solo pegas y listo.",
+          body: "Cada `{VARIABLE}` se resuelve mientras escribes, así que la vista previa es el comando de verdad. Un clic lo deja en tu portapapeles con los valores reales ya puestos: pega, ejecuta y listo.",
         },
         {
-          title: "Libros que de verdad vas a entender",
-          body: "Combina comandos, notas en Markdown y separadores en un manual claro y paso a paso que seguirá teniendo sentido dentro de unos meses.",
+          title: "Libros que seguirás entendiendo con el tiempo",
+          body: "Entrelaza comandos con notas en Markdown y separadores para que un libro se lea como la explicación que le darías a un compañero, y no como una pila de líneas de terminal que tendrás que descifrar dentro de unos meses.",
         },
         {
-          title: "Tuyo, y solo tuyo",
-          body: "Sin backend, sin cuentas, sin seguimiento. Todo vive en tu navegador, así que ni siquiera las variables secretas salen de tu equipo.",
+          title: "Tuyo, y de nadie más",
+          body: "Sin backend, sin cuenta, sin analíticas mandando datos a escondidas. Todo vive en tu navegador, y las variables secretas nunca salen del equipo donde las escribiste.",
         },
         {
           title: "Hecho para no estorbarte",
-          body: "Pestañas, reordenar arrastrando, selección de varios bloques, modo lectura, atajos de teclado, tema claro y oscuro, inglés y español.",
+          body: "Pestañas, reordenar arrastrando, selección de varios bloques, modo lectura, atajos de teclado, tema claro y oscuro, inglés y español. Esos pequeños detalles que dejas de notar porque sencillamente funcionan.",
         },
         {
-          title: "Lleva tus libros a donde sea",
-          body: "Exporta a JSON, Markdown o texto plano y vuelve a importarlos en otro equipo. Tu trabajo viaja contigo y nunca queda atrapado.",
+          title: "Tu trabajo va contigo",
+          body: "Exporta a JSON, Markdown o texto plano y vuelve a cargarlo sin problema en otro equipo. Tus libros son archivos normales que te pertenecen, nunca atrapados en un formato que solo esta app sepa leer.",
         },
       ],
     },
@@ -250,7 +250,6 @@ export const es: Messages = {
         bullets: [
           "**localStorage** guarda tus preferencias (tema, idioma, disposición) y metadatos ligeros de las pestañas.",
           "**IndexedDB** guarda el contenido real de los libros (tus variables y bloques de comandos).",
-          "**sessionStorage** guarda una única marca que indica que ya viste la página de inicio en esta sesión.",
         ],
       },
       {

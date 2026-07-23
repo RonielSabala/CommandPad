@@ -1,8 +1,6 @@
 import { useMemo } from "react";
 import "./SymbolField.css";
 
-// Fragments that evoke command blocks: shell punctuation, braces, pipes, and
-// tiny snippets. This is the landing page's decorative "code rain".
 const GLYPHS = [
   "{",
   "}",
@@ -64,18 +62,14 @@ function randomGlyph() {
 
 /**
  * A subtle, animated field of command-like symbols drifting downward behind the
- * hero and demo. Purely decorative (aria-hidden) and pointer-transparent.
- *
- * Each column is a single pre-formatted text node (one glyph per line) rather
- * than one element per glyph, so the whole field is ~22 DOM nodes and animates
- * cheaply on the GPU.
+ * hero and demo.
  */
 export function SymbolField() {
   const columns = useMemo<Column[]>(
     () =>
       Array.from({ length: COLUMN_COUNT }, () => {
         const half = Array.from({ length: GLYPHS_PER_COLUMN }, randomGlyph);
-        // Duplicated so the vertical scroll loops seamlessly at -50%.
+
         return {
           text: [...half, ...half].join("\n"),
           duration: 26 + Math.random() * 34,

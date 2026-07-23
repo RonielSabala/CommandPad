@@ -180,42 +180,42 @@ export const en: Messages = {
       eyebrow: "Variable-aware command runbooks",
       title: "Write commands once. Reuse them everywhere.",
       subtitle:
-        "Define your variables a single time, reference them with **{NAME}** across every command, and copy fully-resolved commands in one click. No server, no accounts, everything stays in your browser.",
+        "Define your variables a single time, reference them across every command, and copy fully-resolved commands in one click. No server, no accounts, everything stays in your browser.",
       primaryCta: "Open CommandPad",
       secondaryCta: "Read the docs",
     },
     demo: {
       title: "See it in action",
-      hint: "Change a value below and watch every command update live. It is just a small example to show the idea, not what your workspace will look like.",
+      hint: "Change a value below and watch every command update live.",
     },
     features: {
-      title: "Why you'll love it",
+      title: "Why you'll keep it around",
       subtitle:
-        "Small tool, big quality-of-life upgrade. Here is what makes CommandPad click.",
+        "A small tool that quietly fixes an everyday annoyance. Here is what tends to win people over.",
       items: [
         {
-          title: "Change once, update everywhere",
-          body: "Edit a single variable and every command that uses it updates instantly. No more hunting and replacing values across a wall of terminal history.",
+          title: "Change one thing, not twenty",
+          body: "Update a hostname or a version number in a single place and every command that mentions it catches up instantly. No find-and-replace, no stale copy of the old value hiding three lines down.",
         },
         {
-          title: "Copy commands ready to run",
-          body: "Previews resolve every `{NAME}` in real time. One click copies a command with the real values already filled in, so you just paste and go.",
+          title: "Copy commands that just run",
+          body: "Every `{VARIABLE}` resolves as you type, so the preview is the real thing. One click drops the command on your clipboard with the actual values already filled in: paste, run, done.",
         },
         {
-          title: "Runbooks you'll actually understand",
-          body: "Mix commands, Markdown notes, and dividers into a clear, step-by-step playbook that still makes sense to you months from now.",
+          title: "Runbooks that still make sense later",
+          body: "Weave commands together with Markdown notes and dividers, so a runbook reads like the walkthrough you'd give a teammate, not a bare stack of shell lines you'll be squinting at next quarter.",
         },
         {
           title: "Yours, and only yours",
-          body: "No backend, no accounts, no tracking. Everything lives in your browser, so even secret variables never leave your machine.",
+          body: "No backend, no account, no analytics quietly phoning home. Everything lives in your browser, and secret variables never leave the machine you typed them on.",
         },
         {
-          title: "Built to stay out of your way",
-          body: "Tabs, drag-and-drop reordering, multi-block select, read mode, keyboard shortcuts, light and dark themes, English and Spanish.",
+          title: "It stays out of your way",
+          body: "Tabs, drag-to-reorder, multi-block select, read mode, keyboard shortcuts, light and dark, English and Spanish. The small comforts you stop noticing because they simply work.",
         },
         {
-          title: "Take your runbooks anywhere",
-          body: "Export to JSON, Markdown, or plain text and re-import on another machine. Your work travels with you and is never locked in.",
+          title: "Your work comes with you",
+          body: "Export to JSON, Markdown, or plain text and load it right back on another machine. Your runbooks are plain files you own, never trapped in a format only this app can read.",
         },
       ],
     },
@@ -245,7 +245,6 @@ export const en: Messages = {
         bullets: [
           "**localStorage** holds your preferences (theme, language, layout) and lightweight tab metadata.",
           "**IndexedDB** holds the actual runbook content (your variables and command blocks).",
-          "**sessionStorage** holds a single flag noting that you have already seen the home page this session.",
         ],
       },
       {

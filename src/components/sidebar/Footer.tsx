@@ -33,6 +33,7 @@ export function FooterCopyright() {
 
 export function FooterLegalLinks() {
   const t = useTranslation();
+
   return (
     <nav className="footer-legal">
       <Link className="footer-legal-link" to={AppRoute.PRIVACY}>
@@ -80,7 +81,7 @@ export function FooterContent() {
   );
 }
 
-/** Standalone page footer used by the home and legal pages. */
+/** Footer used by the home and legal pages. */
 export function PageFooter({ className }: { className?: string }) {
   return (
     <footer

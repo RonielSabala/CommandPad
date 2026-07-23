@@ -40,8 +40,6 @@ export function HomePage() {
   const t = useTranslation();
   const language = useStore((state) => state.language);
 
-  // The landing page is shown until the user explicitly enters the app; once
-  // they have, returning to `/` in the same session skips straight to it.
   if (hasVisitedHome()) {
     return <Navigate to={AppRoute.WORKSPACE} replace />;
   }
@@ -50,8 +48,6 @@ export function HomePage() {
     <div className="grid-shell site-shell">
       <SiteHeader showDocsLink />
       <main className="site-main">
-        {/* Full-width band so the symbol rain reaches the viewport edges; the
-            hero/demo stay centered in the inner wrapper. */}
         <div className="home-intro">
           <SymbolField />
 
@@ -64,6 +60,7 @@ export function HomePage() {
               <p className="home-subtitle">
                 <NoteText text={t.home.hero.subtitle} />
               </p>
+
               <div className="home-cta-row">
                 <Link
                   to={AppRoute.WORKSPACE}
@@ -73,6 +70,7 @@ export function HomePage() {
                   <BoxArrowInRight className="icon" />
                   {t.home.hero.primaryCta}
                 </Link>
+
                 <Link to={AppRoute.DOCS} className="btn btn-lg home-cta">
                   <BookIcon className="icon icon-bold" />
                   {t.home.hero.secondaryCta}
@@ -112,14 +110,17 @@ export function HomePage() {
           <section className="home-features">
             <h2 className="home-section-title">{t.home.features.title}</h2>
             <p className="home-section-hint">{t.home.features.subtitle}</p>
+
             <div className="home-feature-grid">
               {t.home.features.items.map((feature, i) => {
                 const FeatureIcon = FEATURE_ICONS[i % FEATURE_ICONS.length];
+
                 return (
                   <div key={feature.title} className="home-feature">
                     <div className="home-feature-icon" aria-hidden="true">
                       <FeatureIcon />
                     </div>
+
                     <h3 className="home-feature-title">{feature.title}</h3>
                     <p className="home-feature-body">
                       <NoteText text={feature.body} />

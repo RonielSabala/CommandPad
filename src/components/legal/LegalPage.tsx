@@ -48,16 +48,20 @@ export function LegalPage({ content }: { content: LegalPageMessages }) {
   return (
     <div className="grid-shell site-shell">
       <SiteHeader title={content.title} showDocsLink />
+
       <main className="site-main">
         <article className="legal-article">
           <h1 className="legal-title">{content.title}</h1>
           <p className="legal-updated no-user-select">{content.updated}</p>
+
           <Prose text={content.intro} />
+
           <div className="legal-sections">
             {content.sections.map((section) => (
               <LegalSection key={section.heading} {...section} />
             ))}
           </div>
+
           <PageFooter />
         </article>
       </main>

@@ -9,11 +9,7 @@
   pointer-events: none;
   padding: 0 var(--space-8);
   contain: layout paint style;
-  /* Fade in on mount so a page refresh eases the rain in instead of popping. */
   animation: home-symbol-appear 1.6s ease-out both;
-  /* Clear only the central reading column (horizontal fade) and dissolve at the
-     top/bottom edges (vertical fade). The left/right extremes stay fully opaque
-     so the outermost columns are always readable, never clipped. */
   -webkit-mask-image:
     linear-gradient(to bottom, transparent, black 12%, black 58%, transparent),
     linear-gradient(
@@ -57,10 +53,8 @@
   will-change: transform;
 }
 
-/* Give every other column a cooler tint for a bit of depth. */
 .home-symbol-col:nth-child(even) {
   color: var(--color-text-muted);
-  opacity: 0.12;
 }
 
 /* Light mode needs more weight to read against the pale background. */
@@ -71,16 +65,6 @@
 
 :root.theme-light .home-symbol-col:nth-child(even) {
   color: var(--color-text-secondary);
-  opacity: 0.28;
-}
-
-@keyframes home-symbol-fall {
-  from {
-    transform: translate3d(0, -50%, 0);
-  }
-  to {
-    transform: translate3d(0, 0, 0);
-  }
 }
 
 @keyframes home-symbol-appear {
@@ -89,6 +73,15 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes home-symbol-fall {
+  from {
+    transform: translate3d(0, -50%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
   }
 }
 

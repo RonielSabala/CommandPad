@@ -1,5 +1,3 @@
-/* Shared shell for the home and legal pages (header row + scrollable main). */
-
 .site-shell {
   grid-template-columns: 1fr;
   grid-template-areas:

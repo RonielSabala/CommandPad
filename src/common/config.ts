@@ -5,8 +5,6 @@ export const StorageKey = {
   UI_STATE: "commandpad_ui_state",
   RUNBOOK_LIBRARY: "commandpad_runbook_library",
   SIDEBAR_SECTIONS: "commandpad_sidebar_sections",
-  // Persisted (localStorage) so returning to the app in a later window skips the
-  // landing page; cleared only by a full workspace reset.
   VISITED_HOME: "commandpad_visited_home",
 } as const;
 

@@ -13,9 +13,8 @@ import { Link } from "react-router-dom";
 import "./SiteHeader.css";
 
 interface Props {
-  /** Optional label shown next to the logo (like the docs header title). */
+  /** Optional label shown next to the logo */
   title?: string;
-  /** Show the documentation shortcut in the actions row. */
   showDocsLink?: boolean;
 }
 
