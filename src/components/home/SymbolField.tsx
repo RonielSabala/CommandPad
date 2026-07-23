@@ -50,6 +50,11 @@ const GLYPHS = [
 const COLUMN_COUNT = 22;
 const GLYPHS_PER_COLUMN = 24;
 
+// Per-column animation timing
+const MIN_FALL_DURATION_S = 26;
+const FALL_DURATION_RANGE_S = 34;
+const MAX_START_DELAY_S = 40;
+
 interface Column {
   text: string;
   duration: number;
@@ -72,8 +77,8 @@ export function SymbolField() {
 
         return {
           text: [...half, ...half].join("\n"),
-          duration: 26 + Math.random() * 34,
-          delay: -Math.random() * 40,
+          duration: MIN_FALL_DURATION_S + Math.random() * FALL_DURATION_RANGE_S,
+          delay: -Math.random() * MAX_START_DELAY_S,
         };
       }),
     [],
