@@ -1,0 +1,44 @@
+.collapsible {
+  border-bottom: var(--border-standard);
+}
+
+.collapsible-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-8) var(--space-2);
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.collapsible-trigger:hover {
+  color: var(--accent-text);
+}
+
+.collapsible-chevron {
+  flex-shrink: 0;
+  transform: rotate(-90deg);
+}
+
+.collapsible-chevron.is-open {
+  transform: rotate(0deg);
+}
+
+.collapsible-panel {
+  padding: 0 var(--space-2) var(--space-6) var(--space-12);
+}
+
+.collapsible-panel .docs-prose:last-child {
+  margin-bottom: 0;
+}
+
+.collapsible-compact .collapsible-trigger {
+  padding: var(--space-6) var(--space-2);
+  font-size: var(--text-base);
+}
