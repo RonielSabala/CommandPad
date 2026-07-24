@@ -49,6 +49,10 @@
   white-space: nowrap;
 }
 
+.signin-button {
+  margin-top: var(--space-3);
+}
+
 .cloud-modal-empty {
   font-family: var(--font-sans);
   font-size: var(--text-sm);

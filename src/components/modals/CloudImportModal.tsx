@@ -59,7 +59,7 @@ export function CloudImportModal() {
 
       {!signedIn && (
         <button
-          className="btn btn-lg btn-primary"
+          className="btn btn-lg btn-primary signin-button"
           onClick={() => void signInToCloud()}
           disabled={loading}
         >
