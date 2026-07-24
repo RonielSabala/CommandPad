@@ -128,7 +128,10 @@ export interface Messages {
   };
   exportModal: {
     title: string;
-    message: string;
+    destinationLabel: string;
+    formatLabel: string;
+    filenameLabel: string;
+    confirm: string;
   };
   pasteModal: {
     title: string;
@@ -136,10 +139,8 @@ export interface Messages {
     error: string;
   };
   destinationModal: {
-    exportTitle: string;
-    exportMessage: string;
-    importTitle: string;
-    importMessage: string;
+    title: string;
+    message: string;
     local: string;
   };
   cloudModal: {

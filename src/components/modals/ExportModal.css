@@ -1,0 +1,105 @@
+.export-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.export-modal-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  padding-top: var(--space-3);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.export-modal-options {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.export-modal-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  border: var(--border-standard);
+  background: var(--color-surface-alt);
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition:
+    background var(--transition-base),
+    color var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.export-modal-option:hover {
+  background: var(--color-surface);
+  border-color: var(--color-border-focus);
+  color: var(--color-text-primary);
+}
+
+.export-modal-option .icon-md {
+  color: var(--color-text-muted);
+  transition: color var(--transition-base);
+}
+
+.export-modal-option:hover .icon-md {
+  color: var(--accent);
+}
+
+.export-modal-option.is-selected {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.export-modal-option.is-selected .icon-md {
+  color: var(--accent);
+}
+
+.export-modal-filename {
+  display: flex;
+  align-items: stretch;
+  border-radius: var(--radius-md);
+  border: var(--border-standard);
+  background: var(--color-surface-alt);
+  overflow: hidden;
+  transition: border-color var(--transition-base);
+}
+
+.export-modal-filename:focus-within {
+  border-color: var(--color-border-focus);
+}
+
+.export-modal-filename-input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-4) var(--space-5);
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+}
+
+.export-modal-filename-input:focus {
+  outline: none;
+}
+
+.export-modal-extension {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-5);
+  border-left: var(--border-standard);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  user-select: none;
+}

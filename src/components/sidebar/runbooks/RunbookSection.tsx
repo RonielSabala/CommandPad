@@ -1,5 +1,5 @@
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
-import { AppMode, SyncModalMode } from "@/common/enums";
+import { AppMode } from "@/common/enums";
 import { ClipIcon, ImportIcon, TrashIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useTranslation } from "@/i18n";
@@ -80,7 +80,7 @@ export function RunbookSection() {
       />
 
       <SidebarSectionFooter
-        onClick={() => openDestinationModal(SyncModalMode.IMPORT)}
+        onClick={openDestinationModal}
         title={t.runbooks.importTitle}
         label={t.runbooks.import}
         icon={ImportIcon}

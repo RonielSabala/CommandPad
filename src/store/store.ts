@@ -22,7 +22,6 @@ import {
   NoteStyle,
   SidebarPosition,
   SyncDestination,
-  SyncModalMode,
   Theme,
   VariableField,
 } from "@/common/enums";
@@ -40,7 +39,6 @@ import { debounce } from "@/utils/debounce";
 import {
   buildMarkdownExport,
   buildRunbookExportContent,
-  getExportFilename,
   runExport,
 } from "@/utils/export";
 import { generateId } from "@/utils/id";
@@ -119,8 +117,7 @@ export interface StoreState {
   alertDialog: Dialog<void> | null;
 
   // Cloud sync (SharePoint / Google Drive)
-  destinationModalMode: SyncModalMode | null;
-  exportDestination: SyncDestination;
+  destinationModalOpen: boolean;
   cloudImportModalOpen: boolean;
   cloudProvider: CloudProvider;
   cloudSignedIn: boolean;
@@ -216,18 +213,20 @@ export interface StoreState {
   setScrollTop: (scrollTop: number) => void;
   clearUserInteraction: () => void;
 
+  openExportModal: () => void;
   closeExportModal: () => void;
   openPasteRunbookModal: () => void;
   closePasteRunbookModal: () => void;
-  exportRunbook: (format: ExportFormat) => Promise<void>;
+  exportRunbook: (
+    destination: SyncDestination,
+    format: ExportFormat,
+    filename: string,
+  ) => Promise<void>;
   copyRunbookMarkdown: () => Promise<void>;
 
-  openDestinationModal: (mode: SyncModalMode) => void;
+  openDestinationModal: () => void;
   closeDestinationModal: () => void;
-  chooseDestination: (
-    mode: SyncModalMode,
-    destination: SyncDestination,
-  ) => void;
+  chooseDestination: (destination: SyncDestination) => void;
   startCloudImportBrowse: (provider: CloudProvider) => Promise<void>;
   closeCloudImportModal: () => void;
   signInToCloud: () => Promise<void>;
@@ -440,8 +439,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       confirmDialog: null,
       alertDialog: null,
 
-      destinationModalMode: null,
-      exportDestination: SyncDestination.LOCAL,
+      destinationModalOpen: false,
       cloudImportModalOpen: false,
       cloudProvider: CloudProvider.SHAREPOINT,
       cloudSignedIn: false,
@@ -1547,12 +1545,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       // --- Modals / export ---
 
+      openExportModal: () => set({ exportModalOpen: true }),
       closeExportModal: () => set({ exportModalOpen: false }),
       openPasteRunbookModal: () => set({ pasteRunbookModalOpen: true }),
       closePasteRunbookModal: () => set({ pasteRunbookModalOpen: false }),
 
-      exportRunbook: async (format) => {
-        const destination = get().exportDestination;
+      exportRunbook: async (destination, format, filename) => {
         set({ exportModalOpen: false });
         const active = getActiveTab(get());
         const content = {
@@ -1560,8 +1558,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           blocks: active?.blocks ?? [],
         };
 
+        const fullName = `${filename}.${format}`;
+
         if (destination === SyncDestination.LOCAL) {
-          await runExport(format, content, active?.label ?? "");
+          await runExport(format, content, fullName);
           return;
         }
 
@@ -1572,7 +1572,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             await client.signIn();
           }
           await client.writeFile(
-            getExportFilename(format, active?.label ?? ""),
+            fullName,
             buildRunbookExportContent(format, content),
             FilePickerConfig[format].mimeType,
           );
@@ -1586,26 +1586,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       // --- Cloud sync ---
 
-      openDestinationModal: (mode) => set({ destinationModalMode: mode }),
-      closeDestinationModal: () => set({ destinationModalMode: null }),
+      openDestinationModal: () => set({ destinationModalOpen: true }),
+      closeDestinationModal: () => set({ destinationModalOpen: false }),
 
-      chooseDestination: (mode, destination) => {
-        set({ destinationModalMode: null });
+      chooseDestination: (destination) => {
+        set({ destinationModalOpen: false });
 
         if (destination === SyncDestination.LOCAL) {
-          if (mode === SyncModalMode.EXPORT) {
-            set({
-              exportDestination: SyncDestination.LOCAL,
-              exportModalOpen: true,
-            });
-          } else {
-            openImportDialog();
-          }
-          return;
-        }
-
-        if (mode === SyncModalMode.EXPORT) {
-          set({ exportDestination: destination, exportModalOpen: true });
+          openImportDialog();
           return;
         }
 

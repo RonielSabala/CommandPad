@@ -111,7 +111,10 @@ export const es: Messages = {
   },
   exportModal: {
     title: "Exportar",
-    message: "Elige un formato de exportación.",
+    destinationLabel: "Destino",
+    formatLabel: "Formato",
+    filenameLabel: "Nombre del archivo",
+    confirm: "Exportar",
   },
   pasteModal: {
     title: "Pegar Libro",
@@ -119,10 +122,8 @@ export const es: Messages = {
     error: "Eso no parece un JSON de libro válido.",
   },
   destinationModal: {
-    exportTitle: "Exportar",
-    exportMessage: "Elige dónde exportar este libro.",
-    importTitle: "Importar",
-    importMessage: "Elige desde dónde importar un libro.",
+    title: "Importar",
+    message: "Elige desde dónde importar un libro.",
     local: "Este dispositivo",
   },
   cloudModal: {
@@ -659,7 +660,7 @@ export const es: Messages = {
       intro:
         "**Exportar** e **Importar** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo.",
       howItWorks:
-        "Haz clic en **Exportar** o **Importar** y primero elige un destino: este dispositivo, SharePoint o Google Drive. Al exportar, después se te pide un formato (JSON, Markdown o texto plano). Al importar desde la nube, eliges qué libro guardado cargar.",
+        "Haz clic en **Exportar** para abrir un único diálogo donde eliges un destino (este dispositivo, SharePoint o Google Drive), un formato (JSON, Markdown o texto plano) y un nombre de archivo, y luego exportas. **Importar** primero pregunta desde dónde importar; para la nube, después eliges qué libro guardado cargar.",
       storage:
         "Los libros en la nube se guardan en una carpeta dedicada llamada **CommandPad** en tu propia cuenta, nunca en ningún otro lugar.",
       setupNote:

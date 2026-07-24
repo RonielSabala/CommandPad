@@ -114,7 +114,6 @@ interface FilePickerType {
 }
 
 interface FilePickerFormat {
-  defaultName: string;
   mimeType: string;
   types: FilePickerType[];
 }
@@ -139,7 +138,6 @@ export const FilePickerConfig: Record<ExportFormat, FilePickerFormat> =
       ([format, { mimeType, description }]) => [
         format,
         {
-          defaultName: `runbook.commandpad_export.${format}`,
           mimeType,
           types: [{ description, accept: { [mimeType]: [`.${format}`] } }],
         },

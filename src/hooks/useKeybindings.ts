@@ -1,6 +1,6 @@
 import { InputSelector } from "@/common/constants/dom";
 import { EventType, Key, Modifier } from "@/common/constants/events";
-import { MoveDirection, SyncModalMode } from "@/common/enums";
+import { MoveDirection } from "@/common/enums";
 import {
   isModifierPressed,
   KeyBinding,
@@ -83,7 +83,7 @@ export function useKeybindings(): void {
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.EXPORT)) {
         if ((getActiveTab(state)?.blocks.length ?? 0) > 0) {
-          state.openDestinationModal(SyncModalMode.EXPORT);
+          state.openExportModal();
         }
 
         hit = true;
@@ -116,7 +116,7 @@ export function useKeybindings(): void {
         !inEditable &&
         matchesKeybinding(event, KeyBinding.IMPORT_RUNBOOK)
       ) {
-        state.openDestinationModal(SyncModalMode.IMPORT);
+        state.openDestinationModal();
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.TOGGLE_EDITORS)) {
         state.toggleAllCommandEditors();

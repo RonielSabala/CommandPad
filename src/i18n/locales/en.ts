@@ -109,7 +109,10 @@ export const en: Messages = {
   },
   exportModal: {
     title: "Export",
-    message: "Choose an export format.",
+    destinationLabel: "Destination",
+    formatLabel: "Format",
+    filenameLabel: "Filename",
+    confirm: "Export",
   },
   pasteModal: {
     title: "Paste Runbook",
@@ -117,10 +120,8 @@ export const en: Messages = {
     error: "That doesn't look like valid runbook JSON.",
   },
   destinationModal: {
-    exportTitle: "Export",
-    exportMessage: "Choose where to export this runbook.",
-    importTitle: "Import",
-    importMessage: "Choose where to import a runbook from.",
+    title: "Import",
+    message: "Choose where to import a runbook from.",
     local: "This Device",
   },
   cloudModal: {
@@ -647,7 +648,7 @@ export const en: Messages = {
       intro:
         "**Export** and **Import** can go straight to SharePoint or Google Drive, not just this device.",
       howItWorks:
-        "Click **Export** or **Import** and first pick a destination: this device, SharePoint, or Google Drive. For export, you're then asked for a format (JSON, Markdown, or plain text). For import from the cloud, you pick which saved runbook to load.",
+        "Click **Export** to open one dialog where you choose a destination (this device, SharePoint, or Google Drive), a format (JSON, Markdown, or plain text), and a filename, then export. **Import** first asks where to import from; for the cloud, you then pick which saved runbook to load.",
       storage:
         "Cloud runbooks live in a dedicated **CommandPad** folder in your own account, never anywhere else.",
       setupNote:

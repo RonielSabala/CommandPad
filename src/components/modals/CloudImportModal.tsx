@@ -2,20 +2,10 @@ import { CloudProvider } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import type { CloudFile } from "@/services/cloud";
 import { useStore } from "@/store/store";
-import {
-  ArrowClockwise,
-  CloudArrowDownFill,
-  Google,
-  Windows,
-  type Icon,
-} from "react-bootstrap-icons";
-import { Modal } from "./Modal";
+import { ArrowClockwise, CloudArrowDownFill } from "react-bootstrap-icons";
 import "./CloudImportModal.css";
-
-const PROVIDER_ICON: Record<CloudProvider, Icon> = {
-  [CloudProvider.SHAREPOINT]: Windows,
-  [CloudProvider.GOOGLE_DRIVE]: Google,
-};
+import { PROVIDER_ICON } from "./cloudProviders";
+import { Modal } from "./Modal";
 
 function CloudFileRow({
   file,

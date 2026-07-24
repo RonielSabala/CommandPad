@@ -108,9 +108,3 @@ export const SyncDestination = {
 } as const;
 export type SyncDestination =
   (typeof SyncDestination)[keyof typeof SyncDestination];
-
-export const SyncModalMode = {
-  EXPORT: "export",
-  IMPORT: "import",
-} as const;
-export type SyncModalMode = (typeof SyncModalMode)[keyof typeof SyncModalMode];

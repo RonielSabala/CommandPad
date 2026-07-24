@@ -14,6 +14,8 @@ const UNTITLED_LABELS: readonly string[] = [
   RunbookConfig.DEFAULT_LABEL,
 ];
 
+const DEFAULT_EXPORT_BASENAME = "runbook.commandpad_export";
+
 interface SaveFilePickerOptions {
   suggestedName?: string;
   types?: { description: string; accept: Record<string, string[]> }[];
@@ -99,17 +101,15 @@ export function buildMarkdownExport(content: RunbookContent): string {
   return lines.join("\n");
 }
 
-/** Filename used when saving a runbook, locally or to a cloud provider's app folder. */
-export function getExportFilename(format: ExportFormat, label: string): string {
-  const config = FilePickerConfig[format];
+export function getExportBasename(label: string): string {
   if (label && !UNTITLED_LABELS.includes(label)) {
     const slug = slugifyLabel(label);
     if (slug) {
-      return `${slug}.${format}`;
+      return slug;
     }
   }
 
-  return config.defaultName;
+  return DEFAULT_EXPORT_BASENAME;
 }
 
 /** The import/export JSON shape (variables/blocks with runtime-only ids stripped). */
@@ -134,15 +134,14 @@ export function buildRunbookExportContent(
 export async function runExport(
   format: ExportFormat,
   content: RunbookContent,
-  label: string,
+  filename: string,
 ): Promise<void> {
-  const suggestedName = getExportFilename(format, label);
   const config = FilePickerConfig[format];
 
   await saveFile(
     buildRunbookExportContent(format, content),
     config.mimeType,
-    suggestedName,
+    filename,
     [...config.types],
   );
 }
