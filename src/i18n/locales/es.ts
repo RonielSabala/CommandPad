@@ -116,6 +116,10 @@ export const es: Messages = {
     formatLabel: "Formato",
     filenameLabel: "Nombre del archivo",
     confirm: "Exportar",
+    savingTo: (provider) => `Guardando en ${provider}…`,
+    savedTo: (provider) => `Guardado en ${provider}`,
+    exportError: "La exportación falló. Inténtalo de nuevo.",
+    tryAgain: "Intentar de nuevo",
   },
   pasteModal: {
     title: "Pegar Libro",
@@ -661,7 +665,7 @@ export const es: Messages = {
       intro:
         "**Exportar** e **Importar** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo.",
       howItWorks:
-        "Haz clic en **Exportar** para abrir un único diálogo donde eliges un destino (este dispositivo, SharePoint o Google Drive), un formato (JSON, Markdown o texto plano) y un nombre de archivo, y luego exportas. Se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados.",
+        "Haz clic en **Exportar** para abrir un único diálogo donde eliges un destino (este dispositivo, SharePoint o Google Drive), un formato (JSON, Markdown o texto plano) y un nombre de archivo, y luego exportas. Se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados, y una exportación a la nube muestra su progreso y confirma cuando el libro se ha guardado.",
       storage:
         "Los libros en la nube se guardan en una carpeta dedicada llamada **CommandPad** en tu propia cuenta, nunca en ningún otro lugar.",
       setupNote:

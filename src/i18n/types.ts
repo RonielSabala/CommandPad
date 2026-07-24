@@ -133,6 +133,10 @@ export interface Messages {
     formatLabel: string;
     filenameLabel: string;
     confirm: string;
+    savingTo: (provider: string) => string;
+    savedTo: (provider: string) => string;
+    exportError: string;
+    tryAgain: string;
   };
   pasteModal: {
     title: string;

@@ -108,3 +108,12 @@ export const SyncDestination = {
 } as const;
 export type SyncDestination =
   (typeof SyncDestination)[keyof typeof SyncDestination];
+
+export const CloudExportStatus = {
+  IDLE: "idle",
+  UPLOADING: "uploading",
+  SUCCESS: "success",
+  ERROR: "error",
+} as const;
+export type CloudExportStatus =
+  (typeof CloudExportStatus)[keyof typeof CloudExportStatus];

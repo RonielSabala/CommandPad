@@ -16,6 +16,7 @@ import {
 import {
   AppMode,
   BlockType,
+  CloudExportStatus,
   CloudProvider,
   ExportFormat,
   MoveDirection,
@@ -112,6 +113,8 @@ export interface StoreState {
 
   // Modals / dialogs
   exportModalOpen: boolean;
+  cloudExportStatus: CloudExportStatus;
+  cloudExportProvider: CloudProvider | null;
   pasteRunbookModalOpen: boolean;
   confirmDialog: ConfirmDialog | null;
   alertDialog: Dialog<void> | null;
@@ -220,6 +223,7 @@ export interface StoreState {
 
   openExportModal: () => void;
   closeExportModal: () => void;
+  resetCloudExportStatus: () => void;
   openPasteRunbookModal: () => void;
   closePasteRunbookModal: () => void;
   exportRunbook: (
@@ -459,6 +463,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       variableSearchQuery: "",
 
       exportModalOpen: false,
+      cloudExportStatus: CloudExportStatus.IDLE,
+      cloudExportProvider: null,
       pasteRunbookModalOpen: false,
       confirmDialog: null,
       alertDialog: null,
@@ -1546,14 +1552,19 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       // --- Modals / export ---
 
-      openExportModal: () => set({ exportModalOpen: true }),
+      openExportModal: () =>
+        set({
+          exportModalOpen: true,
+          cloudExportStatus: CloudExportStatus.IDLE,
+        }),
       closeExportModal: () => set({ exportModalOpen: false }),
+      resetCloudExportStatus: () =>
+        set({ cloudExportStatus: CloudExportStatus.IDLE }),
       openPasteRunbookModal: () => set({ pasteRunbookModalOpen: true }),
       closePasteRunbookModal: () => set({ pasteRunbookModalOpen: false }),
 
       exportRunbook: async (destination, format, filename) => {
         set({
-          exportModalOpen: false,
           lastExportDestination: destination,
           lastExportFormat: format,
         });
@@ -1568,10 +1579,18 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         const fullName = `${filename}.${format}`;
 
+        // Local export
         if (destination === SyncDestination.LOCAL) {
+          set({ exportModalOpen: false });
           await runExport(format, content, fullName);
           return;
         }
+
+        // Cloud export
+        set({
+          cloudExportStatus: CloudExportStatus.UPLOADING,
+          cloudExportProvider: destination,
+        });
 
         const client = getCloudClient(destination);
         try {
@@ -1579,16 +1598,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           if (!client.isSignedIn()) {
             await client.signIn();
           }
+
           await client.writeFile(
             fullName,
             buildRunbookExportContent(format, content),
             FilePickerConfig[format].mimeType,
           );
+
+          set({ cloudExportStatus: CloudExportStatus.SUCCESS });
         } catch (error) {
           console.error("Cloud export failed", error);
-          await get().alert(
-            getMessages(get().language).cloudModal.genericError,
-          );
+          set({ cloudExportStatus: CloudExportStatus.ERROR });
         }
       },
 

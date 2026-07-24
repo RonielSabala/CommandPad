@@ -114,6 +114,10 @@ export const en: Messages = {
     formatLabel: "Format",
     filenameLabel: "Filename",
     confirm: "Export",
+    savingTo: (provider) => `Saving to ${provider}…`,
+    savedTo: (provider) => `Saved to ${provider}`,
+    exportError: "Export failed. Please try again.",
+    tryAgain: "Try again",
   },
   pasteModal: {
     title: "Paste Runbook",
@@ -649,7 +653,7 @@ export const en: Messages = {
       intro:
         "**Export** and **Import** can go straight to SharePoint or Google Drive, not just this device.",
       howItWorks:
-        "Click **Export** to open one dialog where you choose a destination (this device, SharePoint, or Google Drive), a format (JSON, Markdown, or plain text), and a filename, then export. It reopens with the destination and format you used last time already selected.",
+        "Click **Export** to open one dialog where you choose a destination (this device, SharePoint, or Google Drive), a format (JSON, Markdown, or plain text), and a filename, then export. It reopens with the destination and format you used last time already selected, and a cloud export shows its progress and confirms once the runbook is saved.",
       storage:
         "Cloud runbooks live in a dedicated **CommandPad** folder in your own account, never anywhere else.",
       setupNote:
