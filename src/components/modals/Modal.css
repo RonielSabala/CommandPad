@@ -17,6 +17,7 @@
 }
 
 .modal {
+  position: relative;
   background: var(--color-surface);
   border: var(--border-standard);
   border-radius: var(--radius-lg);
@@ -29,6 +30,14 @@
   box-shadow: 0 var(--space-4) var(--space-12) var(--black-a50);
   transform: translateY(calc(-1 * var(--space-3)));
   transition: transform var(--transition-base);
+}
+
+.modal-close {
+  position: absolute;
+  width: var(--space-16);
+  height: var(--space-16);
+  top: var(--space-4);
+  right: var(--space-4);
 }
 
 .modal-backdrop.modal-visible .modal {
@@ -48,6 +57,7 @@
   font-weight: 600;
   color: var(--color-text-primary);
   padding-bottom: var(--space-7);
+  padding-right: var(--space-8);
 }
 
 .modal-message {
