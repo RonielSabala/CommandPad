@@ -61,7 +61,11 @@ export function MainPanel() {
         )}
         onContextMenu={(event) => {
           const target = event.target as HTMLElement;
-          if (target.closest(InputSelector.EDITABLE)) {
+
+          if (
+            target.closest(InputSelector.EDITABLE) ||
+            target.closest(`.${CssClass.BLOCK_ITEM}`)
+          ) {
             return;
           }
 
