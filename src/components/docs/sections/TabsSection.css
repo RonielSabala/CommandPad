@@ -1,4 +1,5 @@
 #docs-demo-tab-panel {
+  --block-backdrop: var(--color-bg);
   padding: var(--space-8) var(--space-10);
   background: var(--color-bg);
   border: var(--border-standard);
