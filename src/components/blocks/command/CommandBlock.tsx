@@ -154,7 +154,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
             </span>
           ))}
         </div>
-        <div className="command-editor-scroll">
+        <div className="command-editor-scroll" data-value={blockText}>
           <textarea
             ref={textareaRef}
             className="command-textarea"

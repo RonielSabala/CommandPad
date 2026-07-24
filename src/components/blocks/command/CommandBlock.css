@@ -175,6 +175,22 @@ body.read-mode :is(.toggle-editor-btn, .command-block-editor) {
   flex-direction: column;
 }
 
+.command-editor-scroll::after {
+  content: attr(data-value) " ";
+  flex: none;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  white-space: pre;
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  font-variant-ligatures: none;
+  font-feature-settings:
+    "liga" 0,
+    "calt" 0;
+  padding: 0 var(--space-6);
+}
+
 .command-textarea {
   flex: none;
   font-family: var(--font-mono);
