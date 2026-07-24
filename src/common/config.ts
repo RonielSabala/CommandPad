@@ -6,6 +6,7 @@ export const StorageKey = {
   RUNBOOK_LIBRARY: "commandpad_runbook_library",
   SIDEBAR_SECTIONS: "commandpad_sidebar_sections",
   VISITED_HOME: "commandpad_visited_home",
+  GOOGLE_SESSION: "commandpad_google_session",
 } as const;
 
 export const RunbookConfig = {

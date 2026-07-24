@@ -1,4 +1,8 @@
-import { CloudSyncConfig, GoogleDriveConfig } from "@/common/config";
+import {
+  CloudSyncConfig,
+  GoogleDriveConfig,
+  StorageKey,
+} from "@/common/config";
 import { CloudProvider, ExportFormat } from "@/common/enums";
 import type { CloudClient, CloudFile } from "./types";
 import { CloudSyncError } from "./types";
@@ -7,6 +11,8 @@ const GIS_SCRIPT_URL = "https://accounts.google.com/gsi/client";
 const FOLDER_MIME_TYPE = "application/vnd.google-apps.folder";
 const JSON_EXTENSION = `.${ExportFormat.JSON}`;
 
+const TOKEN_EXPIRY_MARGIN_MS = 60_000;
+
 interface DriveFileResource {
   id: string;
   name: string;
@@ -14,10 +20,62 @@ interface DriveFileResource {
   mimeType?: string;
 }
 
+interface StoredGoogleSession {
+  accessToken: string;
+  accountLabel: string | null;
+  expiresAt: number;
+}
+
 let scriptPromise: Promise<void> | null = null;
 let accessToken: string | null = null;
 let accountLabel: string | null = null;
 let appFolderId: string | null = null;
+let tokenExpiresAt = 0;
+
+function persistSession(): void {
+  if (!accessToken) {
+    localStorage.removeItem(StorageKey.GOOGLE_SESSION);
+    return;
+  }
+
+  const session: StoredGoogleSession = {
+    accessToken,
+    accountLabel,
+    expiresAt: tokenExpiresAt,
+  };
+
+  localStorage.setItem(StorageKey.GOOGLE_SESSION, JSON.stringify(session));
+}
+
+function restoreSession(): void {
+  const raw = localStorage.getItem(StorageKey.GOOGLE_SESSION);
+  if (!raw) {
+    return;
+  }
+
+  try {
+    const session = JSON.parse(raw) as StoredGoogleSession;
+    accessToken = session.accessToken;
+    accountLabel = session.accountLabel;
+    tokenExpiresAt = session.expiresAt;
+  } catch {
+    localStorage.removeItem(StorageKey.GOOGLE_SESSION);
+  }
+}
+
+function clearSession(): void {
+  accessToken = null;
+  accountLabel = null;
+  appFolderId = null;
+  tokenExpiresAt = 0;
+  localStorage.removeItem(StorageKey.GOOGLE_SESSION);
+}
+
+function isTokenFresh(): boolean {
+  return (
+    accessToken !== null && Date.now() < tokenExpiresAt - TOKEN_EXPIRY_MARGIN_MS
+  );
+}
 
 function loadScript(): Promise<void> {
   if (!scriptPromise) {
@@ -39,7 +97,7 @@ function loadScript(): Promise<void> {
   return scriptPromise;
 }
 
-function requestToken(prompt: string): Promise<string> {
+function requestToken(prompt: string): Promise<GoogleTokenResponse> {
   return new Promise((resolve, reject) => {
     void loadScript().then(() => {
       if (!window.google) {
@@ -57,7 +115,7 @@ function requestToken(prompt: string): Promise<string> {
             reject(new CloudSyncError("Google sign-in failed"));
             return;
           }
-          resolve(response.access_token);
+          resolve(response);
         },
         error_callback: () => {
           reject(new CloudSyncError("Google sign-in was cancelled"));
@@ -68,13 +126,34 @@ function requestToken(prompt: string): Promise<string> {
   });
 }
 
-async function driveFetch(
-  url: string,
-  init?: RequestInit,
-): Promise<Response> {
+function applyToken(response: GoogleTokenResponse): void {
+  accessToken = response.access_token;
+  tokenExpiresAt = Date.now() + response.expires_in * 1000;
+  persistSession();
+}
+
+/** Guarantees `accessToken` is usable before a Drive request */
+async function ensureToken(): Promise<void> {
+  if (isTokenFresh()) {
+    return;
+  }
+
   if (!accessToken) {
     throw new CloudSyncError("Not signed in to Google Drive");
   }
+
+  try {
+    applyToken(await requestToken(""));
+  } catch (error) {
+    clearSession();
+    throw error instanceof CloudSyncError
+      ? error
+      : new CloudSyncError("Google session expired; sign in again");
+  }
+}
+
+async function driveFetch(url: string, init?: RequestInit): Promise<Response> {
+  await ensureToken();
 
   const response = await fetch(url, {
     ...init,
@@ -82,7 +161,9 @@ async function driveFetch(
   });
 
   if (!response.ok) {
-    throw new CloudSyncError(`Google Drive request failed (${response.status})`);
+    throw new CloudSyncError(
+      `Google Drive request failed (${response.status})`,
+    );
   }
 
   return response;
@@ -149,6 +230,12 @@ class GoogleDriveClient implements CloudClient {
     if (!this.isConfigured()) {
       return;
     }
+
+    // Rehydrate a session cached by a previous page load before the SDK loads
+    if (!accessToken) {
+      restoreSession();
+    }
+
     await loadScript();
   }
 
@@ -161,7 +248,7 @@ class GoogleDriveClient implements CloudClient {
   }
 
   async signIn(): Promise<void> {
-    accessToken = await requestToken("consent");
+    applyToken(await requestToken("consent"));
 
     try {
       const response = await driveFetch(
@@ -174,15 +261,16 @@ class GoogleDriveClient implements CloudClient {
     } catch {
       accountLabel = null;
     }
+
+    persistSession();
   }
 
   async signOut(): Promise<void> {
     if (accessToken && window.google) {
       window.google.accounts.oauth2.revoke(accessToken, () => {});
     }
-    accessToken = null;
-    accountLabel = null;
-    appFolderId = null;
+
+    clearSession();
   }
 
   async listFiles(): Promise<CloudFile[]> {
