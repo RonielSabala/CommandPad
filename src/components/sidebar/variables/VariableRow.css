@@ -26,7 +26,9 @@
   transform: translateX(-50%);
   width: var(--space-1);
   background: var(--color-border);
-  transition: background var(--transition-base);
+  transition:
+    width var(--transition-base),
+    background var(--transition-base);
 }
 
 .sidebar-section-list-row:last-child .variable-split-handle::before {
@@ -51,6 +53,7 @@ body.variable-split-resizing
 body:not(.variable-split-resizing)
   :has(> .sidebar-section-list-row .variable-split-handle:hover)
   .variable-split-handle::before {
+  width: var(--space-2);
   background: var(--accent);
 }
 
