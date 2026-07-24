@@ -1586,7 +1586,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       // --- Cloud sync ---
 
-      openDestinationModal: () => set({ destinationModalOpen: true }),
+      openDestinationModal: () => {
+        if (get().mode === AppMode.READ) {
+          return;
+        }
+
+        set({ destinationModalOpen: true });
+      },
       closeDestinationModal: () => set({ destinationModalOpen: false }),
 
       chooseDestination: (destination) => {
