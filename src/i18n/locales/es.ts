@@ -253,14 +253,14 @@ export const es: Messages = {
   },
   privacy: {
     title: "Política de Privacidad",
-    updated: "Última actualización: 22 de julio de 2026",
+    updated: "Última actualización: 23 de julio de 2026",
     intro:
       "CommandPad es una aplicación del lado del cliente que funciona por completo en tu navegador. Esta política explica qué datos maneja la app y, más importante aún, cuáles no.",
     sections: [
       {
         heading: "La versión corta",
         paragraphs: [
-          "CommandPad no tiene servidor backend, ni cuentas de usuario, ni analítica o seguimiento. La app no recopila, transmite ni vende ninguno de tus datos. Todo lo que creas se queda en tu dispositivo.",
+          "CommandPad no tiene servidor backend, ni cuentas de usuario, ni analítica o seguimiento. La app no recopila, transmite ni vende ninguno de tus datos. Todo lo que creas se queda en tu dispositivo, salvo que elijas sincronizar un libro con tu propia cuenta de SharePoint o Google Drive.",
         ],
       },
       {
@@ -279,10 +279,22 @@ export const es: Messages = {
           "Queremos ser explícitos sobre las cosas que CommandPad evita deliberadamente.",
         ],
         bullets: [
-          "No enviamos tus datos a ningún servidor. No hay servidor al que enviarlos.",
+          "No operamos un servidor backend que reciba tus datos. La única vez que tus libros salen de tu dispositivo es cuando los exportas o los sincronizas explícitamente con tu propia cuenta en la nube.",
           "No usamos cookies, identificadores publicitarios ni analítica de terceros.",
           "No seguimos tu comportamiento entre sitios ni construimos un perfil sobre ti.",
-          "No requerimos una cuenta, un correo electrónico ni ningún inicio de sesión.",
+          "No requerimos una cuenta de CommandPad, un correo electrónico ni ningún inicio de sesión para usar la app.",
+        ],
+      },
+      {
+        heading: "Sincronización en la nube (opcional)",
+        paragraphs: [
+          "CommandPad puede, de forma opcional, exportar un libro a tu propia cuenta de SharePoint o Google Drive, o importar uno desde ella. Esta función está desactivada hasta que elijas usarla.",
+        ],
+        bullets: [
+          "Inicias sesión mediante el propio flujo del proveedor (Microsoft o Google). CommandPad nunca ve tu contraseña y solo solicita acceso a la carpeta dedicada **CommandPad** que crea para tus libros.",
+          "Los libros sincronizados se guardan en esa carpeta dentro de tu propia cuenta. No se envían ni se almacenan en ningún servidor operado por nosotros.",
+          "Los datos que sincronizas viajan entre tu navegador y el proveedor que elijas. Una vez que llegan a ese proveedor, se aplican su política de privacidad y sus términos.",
+          "Puedes cerrar sesión en cualquier momento y puedes eliminar los archivos sincronizados directamente desde tu cuenta en la nube.",
         ],
       },
       {
@@ -313,7 +325,7 @@ export const es: Messages = {
   },
   terms: {
     title: "Términos del Servicio",
-    updated: "Última actualización: 22 de julio de 2026",
+    updated: "Última actualización: 23 de julio de 2026",
     intro:
       "Estos términos rigen tu uso de CommandPad. Al usar la app aceptas estos términos. Por favor, léelos, ya que son breves y están redactados para ser comprensibles.",
     sections: [
@@ -326,7 +338,7 @@ export const es: Messages = {
       {
         heading: "El servicio",
         paragraphs: [
-          "CommandPad es una herramienta gratuita del lado del cliente para crear libros de comandos con variables. Funciona en tu navegador y almacena tu trabajo localmente en tu dispositivo. Se ofrece tal cual, y las funciones pueden cambiar o eliminarse con el tiempo.",
+          "CommandPad es una herramienta gratuita del lado del cliente para crear libros de comandos con variables. Funciona en tu navegador y almacena tu trabajo localmente en tu dispositivo. De forma opcional, puede conectarse a tu propia cuenta de SharePoint o Google Drive para exportar e importar libros, totalmente a tu discreción. Se ofrece tal cual, y las funciones pueden cambiar o eliminarse con el tiempo.",
         ],
       },
       {
@@ -354,9 +366,20 @@ export const es: Messages = {
         ],
       },
       {
+        heading: "Servicios de terceros en la nube",
+        paragraphs: [
+          "Si eliges sincronizar libros con SharePoint o Google Drive, lo haces a través de tu propia cuenta con Microsoft o Google. Tu uso de esos servicios se rige por sus términos y políticas de privacidad, no por los nuestros.",
+        ],
+        bullets: [
+          "CommandPad solo accede a la carpeta dedicada que crea para tus libros; no lee el resto de tu almacenamiento en la nube.",
+          "No somos responsables de la disponibilidad, el comportamiento ni el manejo de datos de Microsoft, Google o cualquier otro proveedor externo.",
+          "Eres responsable de mantener segura tu cuenta en la nube y de cualquier contenido que almacenes en ella.",
+        ],
+      },
+      {
         heading: "Datos y privacidad",
         paragraphs: [
-          "CommandPad almacena tus datos localmente y no los transmite. Para más detalles, consulta la Política de Privacidad, que se incorpora a estos términos por referencia.",
+          "CommandPad almacena tus datos localmente y no los transmite, salvo cuando sincronizas explícitamente un libro con tu propia cuenta en la nube. Para más detalles, consulta la Política de Privacidad, que se incorpora a estos términos por referencia.",
         ],
       },
       {

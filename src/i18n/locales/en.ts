@@ -248,14 +248,14 @@ export const en: Messages = {
   },
   privacy: {
     title: "Privacy Policy",
-    updated: "Last updated: July 22, 2026",
+    updated: "Last updated: July 23, 2026",
     intro:
       "CommandPad is a client-side application that runs entirely in your web browser. This policy explains what data the app handles and, more importantly, what it does not.",
     sections: [
       {
         heading: "The short version",
         paragraphs: [
-          "CommandPad has no backend server, no user accounts, and no analytics or tracking. The app does not collect, transmit, or sell any of your data. Everything you create stays on your device.",
+          "CommandPad has no backend server, no user accounts, and no analytics or tracking. The app does not collect, transmit, or sell any of your data. Everything you create stays on your device, unless you choose to sync a runbook to your own SharePoint or Google Drive account.",
         ],
       },
       {
@@ -274,10 +274,22 @@ export const en: Messages = {
           "We want to be explicit about the things CommandPad deliberately avoids.",
         ],
         bullets: [
-          "We do not send your data to any server. There is no server to send it to.",
+          "We do not operate a backend server that receives your data. The only time your runbooks leave your device is when you explicitly export or sync them to your own cloud account.",
           "We do not use cookies, advertising identifiers, or third-party analytics.",
           "We do not track your behavior across sites or build a profile about you.",
-          "We do not require an account, an email address, or any sign-in.",
+          "We do not require a CommandPad account, an email address, or any sign-in to use the app.",
+        ],
+      },
+      {
+        heading: "Cloud sync (optional)",
+        paragraphs: [
+          "CommandPad can optionally export a runbook to, or import one from, your own SharePoint or Google Drive account. This feature is off until you choose to use it.",
+        ],
+        bullets: [
+          "You sign in through the provider's own sign-in flow (Microsoft or Google). CommandPad never sees your password, and it only requests access to the dedicated **CommandPad** folder it creates for your runbooks.",
+          "Synced runbooks are stored in that folder inside your own account. They are not sent to, or stored on, any server operated by us.",
+          "The data you sync travels between your browser and the provider you chose. Once it reaches that provider, their privacy policy and terms apply to it.",
+          "You can sign out at any time, and you can delete synced files directly from your cloud account.",
         ],
       },
       {
@@ -308,7 +320,7 @@ export const en: Messages = {
   },
   terms: {
     title: "Terms of Service",
-    updated: "Last updated: July 22, 2026",
+    updated: "Last updated: July 23, 2026",
     intro:
       "These terms govern your use of CommandPad. By using the app you agree to them. Please read them, as they are short and written to be understandable.",
     sections: [
@@ -321,7 +333,7 @@ export const en: Messages = {
       {
         heading: "The service",
         paragraphs: [
-          "CommandPad is a free, client-side tool for building variable-aware command runbooks. It runs in your browser and stores your work locally on your device. It is provided as-is, and features may change or be removed over time.",
+          "CommandPad is a free, client-side tool for building variable-aware command runbooks. It runs in your browser and stores your work locally on your device. It can optionally connect to your own SharePoint or Google Drive account to export and import runbooks, entirely at your discretion. It is provided as-is, and features may change or be removed over time.",
         ],
       },
       {
@@ -349,9 +361,20 @@ export const en: Messages = {
         ],
       },
       {
+        heading: "Third-party cloud services",
+        paragraphs: [
+          "If you choose to sync runbooks with SharePoint or Google Drive, you do so through your own account with Microsoft or Google. Your use of those services is governed by their terms and privacy policies, not ours.",
+        ],
+        bullets: [
+          "CommandPad only accesses the dedicated folder it creates for your runbooks; it does not read the rest of your cloud storage.",
+          "We are not responsible for the availability, behavior, or data handling of Microsoft, Google, or any other third-party provider.",
+          "You are responsible for keeping your cloud account secure and for any content you store there.",
+        ],
+      },
+      {
         heading: "Data and privacy",
         paragraphs: [
-          "CommandPad stores your data locally and does not transmit it. For details, see the Privacy Policy, which is incorporated into these terms by reference.",
+          "CommandPad stores your data locally and does not transmit it, except when you explicitly sync a runbook to your own cloud account. For details, see the Privacy Policy, which is incorporated into these terms by reference.",
         ],
       },
       {
