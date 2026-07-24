@@ -224,7 +224,10 @@ export interface StoreState {
 
   openDestinationModal: (mode: SyncModalMode) => void;
   closeDestinationModal: () => void;
-  chooseDestination: (mode: SyncModalMode, destination: SyncDestination) => void;
+  chooseDestination: (
+    mode: SyncModalMode,
+    destination: SyncDestination,
+  ) => void;
   startCloudImportBrowse: (provider: CloudProvider) => Promise<void>;
   closeCloudImportModal: () => void;
   signInToCloud: () => Promise<void>;
@@ -1642,8 +1645,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
       },
 
-      closeCloudImportModal: () =>
-        set({ cloudImportModalOpen: false, cloudError: null }),
+      closeCloudImportModal: () => set({ cloudImportModalOpen: false }),
 
       signInToCloud: async () => {
         const client = getCloudClient(get().cloudProvider);
@@ -1659,7 +1661,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           }
         } catch (error) {
           console.error("Cloud sign-in failed", error);
-          set({ cloudError: getMessages(get().language).cloudModal.signInError });
+          set({
+            cloudError: getMessages(get().language).cloudModal.signInError,
+          });
         } finally {
           set({ cloudLoading: false });
         }
@@ -1688,7 +1692,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           set({ cloudFiles: files });
         } catch (error) {
           console.error("Failed to list cloud files", error);
-          set({ cloudError: getMessages(get().language).cloudModal.genericError });
+          set({
+            cloudError: getMessages(get().language).cloudModal.genericError,
+          });
         } finally {
           set({ cloudLoading: false });
         }
@@ -1712,7 +1718,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         try {
           content = parseRunbookContent(text);
         } catch {
-          set({ cloudLoading: false, cloudError: t.cloudModal.invalidFileError });
+          set({
+            cloudLoading: false,
+            cloudError: t.cloudModal.invalidFileError,
+          });
           return;
         }
 

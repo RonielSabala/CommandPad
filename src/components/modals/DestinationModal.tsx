@@ -1,9 +1,10 @@
 import { CloudProvider, SyncDestination, SyncModalMode } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { useEffect, useState } from "react";
 import { Google, LaptopFill, Windows, type Icon } from "react-bootstrap-icons";
-import { Modal } from "./Modal";
 import "./DestinationModal.css";
+import { Modal } from "./Modal";
 
 const PROVIDER_ICON: Record<CloudProvider, Icon> = {
   [CloudProvider.SHAREPOINT]: Windows,
@@ -30,6 +31,15 @@ export function DestinationModal() {
   const chooseDestination = useStore((state) => state.chooseDestination);
 
   const isOpen = mode !== null;
+  const [displayMode, setDisplayMode] = useState<SyncModalMode>(
+    SyncModalMode.EXPORT,
+  );
+
+  useEffect(() => {
+    if (mode) {
+      setDisplayMode(mode);
+    }
+  }, [mode]);
 
   const handleChoose = (destination: SyncDestination) => {
     if (mode) {
@@ -40,12 +50,12 @@ export function DestinationModal() {
   return (
     <Modal open={isOpen} onClose={closeDestinationModal}>
       <p className="modal-title">
-        {mode === SyncModalMode.EXPORT
+        {displayMode === SyncModalMode.EXPORT
           ? t.destinationModal.exportTitle
           : t.destinationModal.importTitle}
       </p>
       <p className="modal-message">
-        {mode === SyncModalMode.EXPORT
+        {displayMode === SyncModalMode.EXPORT
           ? t.destinationModal.exportMessage
           : t.destinationModal.importMessage}
       </p>
