@@ -21,12 +21,18 @@ export function useLinkActivation(root: Document | HTMLElement | null): void {
     const setLinkMode = (held: boolean) =>
       store.getState().setLinkKeyHeld(held);
 
-    const linkAt = (x: number, y: number): HTMLAnchorElement | undefined =>
-      document
-        .elementsFromPoint(x, y)
+    const linkForEvent = (event: MouseEvent): HTMLAnchorElement | undefined => {
+      const target = event.target as Element | null;
+      if (!target?.closest(`.${CssClass.BLOCK_ITEM}`)) {
+        return undefined;
+      }
+
+      return document
+        .elementsFromPoint(event.clientX, event.clientY)
         .find((element): element is HTMLAnchorElement =>
           element.matches(`.${CssClass.NOTE_LINK}`),
         );
+    };
 
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (pointerInside && isModifierPressed(event, ModifierAction.OPEN_LINK)) {
@@ -59,7 +65,7 @@ export function useLinkActivation(root: Document | HTMLElement | null): void {
         return;
       }
 
-      document.body.style.cursor = linkAt(event.clientX, event.clientY)
+      document.body.style.cursor = linkForEvent(event)
         ? Cursor.POINTER
         : Cursor.DEFAULT;
     };
@@ -69,7 +75,7 @@ export function useLinkActivation(root: Document | HTMLElement | null): void {
         return;
       }
 
-      const link = linkAt(event.clientX, event.clientY);
+      const link = linkForEvent(event);
       if (!link) {
         return;
       }
