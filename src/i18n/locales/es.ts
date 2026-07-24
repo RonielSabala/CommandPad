@@ -7,6 +7,7 @@ export const es: Messages = {
   common: {
     cancel: "Cancelar",
     close: "Cerrar",
+    back: "Atrás",
     ok: "Aceptar",
     create: "Crear",
     dragToReorder: "Arrastra para reordenar",
@@ -660,7 +661,7 @@ export const es: Messages = {
       intro:
         "**Exportar** e **Importar** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo.",
       howItWorks:
-        "Haz clic en **Exportar** para abrir un único diálogo donde eliges un destino (este dispositivo, SharePoint o Google Drive), un formato (JSON, Markdown o texto plano) y un nombre de archivo, y luego exportas. **Importar** primero pregunta desde dónde importar; para la nube, después eliges qué libro guardado cargar.",
+        "Haz clic en **Exportar** para abrir un único diálogo donde eliges un destino (este dispositivo, SharePoint o Google Drive), un formato (JSON, Markdown o texto plano) y un nombre de archivo, y luego exportas. Se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados.",
       storage:
         "Los libros en la nube se guardan en una carpeta dedicada llamada **CommandPad** en tu propia cuenta, nunca en ningún otro lugar.",
       setupNote:

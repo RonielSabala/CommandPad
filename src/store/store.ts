@@ -126,6 +126,11 @@ export interface StoreState {
   cloudLoading: boolean;
   cloudError: string | null;
 
+  // Remembered cloud-sync choices
+  lastExportDestination: SyncDestination;
+  lastExportFormat: ExportFormat;
+  lastImportSource: SyncDestination;
+
   // Bootstrap
   initialized: boolean;
 
@@ -224,10 +229,12 @@ export interface StoreState {
   ) => Promise<void>;
   copyRunbookMarkdown: () => Promise<void>;
 
+  beginImport: () => void;
   openDestinationModal: () => void;
   closeDestinationModal: () => void;
   chooseDestination: (destination: SyncDestination) => void;
   startCloudImportBrowse: (provider: CloudProvider) => Promise<void>;
+  returnToDestinationModal: () => void;
   closeCloudImportModal: () => void;
   signInToCloud: () => Promise<void>;
   signOutOfCloud: () => Promise<void>;
@@ -247,6 +254,23 @@ export function getActiveTab(state: StoreState): Tab | null {
   return (
     state.tabs.find((t) => t.id === state.activeTabId) ?? state.tabs[0] ?? null
   );
+}
+
+function uiStateSnapshot(state: StoreState) {
+  return {
+    mode: state.mode,
+    theme: state.theme,
+    language: state.language,
+    sidebarCollapsed: state.sidebarCollapsed,
+    sidebarPosition: state.sidebarPosition,
+    sidebarWidth: state.sidebarWidth,
+    variableKeyRatio: state.variableKeyRatio,
+    minimapEnabled: state.minimapEnabled,
+    minimapPosition: state.minimapPosition,
+    lastExportDestination: state.lastExportDestination,
+    lastExportFormat: state.lastExportFormat,
+    lastImportSource: state.lastImportSource,
+  };
 }
 
 function createTabObject(
@@ -448,6 +472,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       cloudLoading: false,
       cloudError: null,
 
+      lastExportDestination: SyncDestination.LOCAL,
+      lastExportFormat: ExportFormat.JSON,
+      lastImportSource: SyncDestination.LOCAL,
+
       initialized: false,
 
       // --- Persistence ---
@@ -460,17 +488,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         persist.saveTabsMeta(state.tabs, state.activeTabId);
         persist.saveRunbookLibrary(state.runbookLibrary, state.activeRunbookId);
-        persist.saveUiState({
-          mode: state.mode,
-          sidebarCollapsed: state.sidebarCollapsed,
-          sidebarPosition: state.sidebarPosition,
-          sidebarWidth: state.sidebarWidth,
-          variableKeyRatio: state.variableKeyRatio,
-          minimapEnabled: state.minimapEnabled,
-          minimapPosition: state.minimapPosition,
-          theme: state.theme,
-          language: state.language,
-        });
+        persist.saveUiState(uiStateSnapshot(state));
 
         const active = getActiveTab(state);
         if (active?.runbookId) {
@@ -852,6 +870,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         for (const file of files) {
           await readFile(file);
+        }
+
+        if (failedCount < files.length) {
+          set({ lastImportSource: SyncDestination.LOCAL });
+          persist.saveUiState(uiStateSnapshot(get()));
         }
 
         if (failedCount > 0) {
@@ -1401,18 +1424,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set((s) => ({
           theme: s.theme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT,
         }));
-        const state = get();
-        persist.saveUiState({
-          mode: state.mode,
-          sidebarCollapsed: state.sidebarCollapsed,
-          sidebarPosition: state.sidebarPosition,
-          sidebarWidth: state.sidebarWidth,
-          variableKeyRatio: state.variableKeyRatio,
-          minimapEnabled: state.minimapEnabled,
-          minimapPosition: state.minimapPosition,
-          theme: state.theme,
-          language: state.language,
-        });
+        persist.saveUiState(uiStateSnapshot(get()));
       },
 
       setLanguage: (language) => {
@@ -1420,18 +1432,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
         set({ language });
-        const state = get();
-        persist.saveUiState({
-          mode: state.mode,
-          sidebarCollapsed: state.sidebarCollapsed,
-          sidebarPosition: state.sidebarPosition,
-          sidebarWidth: state.sidebarWidth,
-          variableKeyRatio: state.variableKeyRatio,
-          minimapEnabled: state.minimapEnabled,
-          minimapPosition: state.minimapPosition,
-          theme: state.theme,
-          language: state.language,
-        });
+        persist.saveUiState(uiStateSnapshot(get()));
       },
 
       toggleSidebar: () => {
@@ -1551,7 +1552,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       closePasteRunbookModal: () => set({ pasteRunbookModalOpen: false }),
 
       exportRunbook: async (destination, format, filename) => {
-        set({ exportModalOpen: false });
+        set({
+          exportModalOpen: false,
+          lastExportDestination: destination,
+          lastExportFormat: format,
+        });
+
+        persist.saveUiState(uiStateSnapshot(get()));
+
         const active = getActiveTab(get());
         const content = {
           variables: active?.variables ?? [],
@@ -1585,6 +1593,20 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       // --- Cloud sync ---
+
+      beginImport: () => {
+        if (get().mode === AppMode.READ) {
+          return;
+        }
+
+        const source = get().lastImportSource;
+        if (source === SyncDestination.LOCAL) {
+          get().openDestinationModal();
+          return;
+        }
+
+        void get().startCloudImportBrowse(source);
+      },
 
       openDestinationModal: () => {
         if (get().mode === AppMode.READ) {
@@ -1638,6 +1660,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           await get().refreshCloudFiles();
         }
       },
+
+      returnToDestinationModal: () =>
+        set({ cloudImportModalOpen: false, destinationModalOpen: true }),
 
       closeCloudImportModal: () => set({ cloudImportModalOpen: false }),
 
@@ -1724,8 +1749,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           new RegExp(`\\.${ExportFormat.JSON}$`, "i"),
           "",
         );
+
         await get().addRunbookToLibrary(content, baseName, file.name);
-        set({ cloudImportModalOpen: false });
+        set({
+          cloudImportModalOpen: false,
+          lastImportSource: get().cloudProvider,
+        });
+
+        persist.saveUiState(uiStateSnapshot(get()));
       },
 
       copyRunbookMarkdown: async () => {

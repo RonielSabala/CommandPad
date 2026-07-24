@@ -26,7 +26,7 @@ export function RunbookSection() {
 
   const importRunbooks = useStore((state) => state.importRunbooks);
   const clearRunbookLibrary = useStore((state) => state.clearRunbookLibrary);
-  const openDestinationModal = useStore((state) => state.openDestinationModal);
+  const beginImport = useStore((state) => state.beginImport);
   const isReadMode = useStore((state) => state.mode === AppMode.READ);
   const fileDrop = useFileDrop(
     (files) => void importRunbooks(files),
@@ -80,7 +80,7 @@ export function RunbookSection() {
       />
 
       <SidebarSectionFooter
-        onClick={openDestinationModal}
+        onClick={beginImport}
         title={t.runbooks.importTitle}
         label={t.runbooks.import}
         icon={ImportIcon}

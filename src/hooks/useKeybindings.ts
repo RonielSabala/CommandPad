@@ -116,7 +116,7 @@ export function useKeybindings(): void {
         !inEditable &&
         matchesKeybinding(event, KeyBinding.IMPORT_RUNBOOK)
       ) {
-        state.openDestinationModal();
+        state.beginImport();
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.TOGGLE_EDITORS)) {
         state.toggleAllCommandEditors();

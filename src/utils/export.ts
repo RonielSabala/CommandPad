@@ -14,7 +14,7 @@ const UNTITLED_LABELS: readonly string[] = [
   RunbookConfig.DEFAULT_LABEL,
 ];
 
-const DEFAULT_EXPORT_BASENAME = "runbook.commandpad_export";
+const DEFAULT_EXPORT_BASENAME = "runbook-commandpad-export";
 
 interface SaveFilePickerOptions {
   suggestedName?: string;

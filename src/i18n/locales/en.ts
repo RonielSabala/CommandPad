@@ -7,6 +7,7 @@ export const en: Messages = {
   common: {
     cancel: "Cancel",
     close: "Close",
+    back: "Back",
     ok: "OK",
     create: "Create",
     dragToReorder: "Drag to reorder",
@@ -648,7 +649,7 @@ export const en: Messages = {
       intro:
         "**Export** and **Import** can go straight to SharePoint or Google Drive, not just this device.",
       howItWorks:
-        "Click **Export** to open one dialog where you choose a destination (this device, SharePoint, or Google Drive), a format (JSON, Markdown, or plain text), and a filename, then export. **Import** first asks where to import from; for the cloud, you then pick which saved runbook to load.",
+        "Click **Export** to open one dialog where you choose a destination (this device, SharePoint, or Google Drive), a format (JSON, Markdown, or plain text), and a filename, then export. It reopens with the destination and format you used last time already selected.",
       storage:
         "Cloud runbooks live in a dedicated **CommandPad** folder in your own account, never anywhere else.",
       setupNote:

@@ -1,5 +1,12 @@
 import { StorageKey, VariableSplit } from "@/common/config";
-import { AppMode, SectionState, SidebarPosition, Theme } from "@/common/enums";
+import {
+  AppMode,
+  ExportFormat,
+  SectionState,
+  SidebarPosition,
+  SyncDestination,
+  Theme,
+} from "@/common/enums";
 import type { RunbookEntry, Tab } from "@/common/types";
 import { detectLanguage, isLanguage } from "@/i18n/messages";
 import type { Language } from "@/i18n/types";
@@ -8,6 +15,12 @@ import { clamp } from "@/utils/number";
 function getSavedItemByKey(key: string) {
   return JSON.parse(localStorage.getItem(key) ?? "null");
 }
+
+const isSyncDestination = (value: unknown): value is SyncDestination =>
+  Object.values(SyncDestination).includes(value as SyncDestination);
+
+const isExportFormat = (value: unknown): value is ExportFormat =>
+  Object.values(ExportFormat).includes(value as ExportFormat);
 
 // UI state
 
@@ -21,6 +34,9 @@ interface PersistedUiState {
   variableKeyRatio: number;
   minimapEnabled: boolean;
   minimapPosition: SidebarPosition;
+  lastExportDestination: SyncDestination;
+  lastExportFormat: ExportFormat;
+  lastImportSource: SyncDestination;
 }
 
 export function saveUiState(ui: PersistedUiState): void {
@@ -39,6 +55,9 @@ export function saveUiState(ui: PersistedUiState): void {
         variableKeyRatio: ui.variableKeyRatio,
         minimapEnabled: ui.minimapEnabled,
         minimapPosition: ui.minimapPosition,
+        lastExportDestination: ui.lastExportDestination,
+        lastExportFormat: ui.lastExportFormat,
+        lastImportSource: ui.lastImportSource,
       }),
     );
   } catch (error) {
@@ -79,6 +98,15 @@ export function loadUiState(): Partial<PersistedUiState> | null {
         saved.minimapPosition === SidebarPosition.LEFT
           ? SidebarPosition.LEFT
           : SidebarPosition.RIGHT,
+      ...(isSyncDestination(saved.lastExportDestination)
+        ? { lastExportDestination: saved.lastExportDestination }
+        : {}),
+      ...(isExportFormat(saved.lastExportFormat)
+        ? { lastExportFormat: saved.lastExportFormat }
+        : {}),
+      ...(isSyncDestination(saved.lastImportSource)
+        ? { lastImportSource: saved.lastImportSource }
+        : {}),
     };
   } catch (error) {
     console.warn("Failed to load UI state:", error);

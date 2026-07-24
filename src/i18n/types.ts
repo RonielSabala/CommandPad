@@ -39,6 +39,7 @@ export interface Messages {
   common: {
     cancel: string;
     close: string;
+    back: string;
     ok: string;
     create: string;
     dragToReorder: string;

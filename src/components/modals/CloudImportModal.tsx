@@ -2,7 +2,11 @@ import { CloudProvider } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import type { CloudFile } from "@/services/cloud";
 import { useStore } from "@/store/store";
-import { ArrowClockwise, CloudArrowDownFill } from "react-bootstrap-icons";
+import {
+  ArrowClockwise,
+  ArrowLeft,
+  CloudArrowDownFill,
+} from "react-bootstrap-icons";
 import "./CloudImportModal.css";
 import { PROVIDER_ICON } from "./cloudProviders";
 import { Modal } from "./Modal";
@@ -40,6 +44,10 @@ export function CloudImportModal() {
   const closeCloudImportModal = useStore(
     (state) => state.closeCloudImportModal,
   );
+  const returnToDestinationModal = useStore(
+    (state) => state.returnToDestinationModal,
+  );
+
   const signInToCloud = useStore((state) => state.signInToCloud);
   const signOutOfCloud = useStore((state) => state.signOutOfCloud);
   const refreshCloudFiles = useStore((state) => state.refreshCloudFiles);
@@ -113,6 +121,15 @@ export function CloudImportModal() {
       {error && <p className="cloud-modal-error">{error}</p>}
 
       <div className="modal-actions">
+        <button
+          className="btn btn-lg"
+          onClick={returnToDestinationModal}
+          title={t.destinationModal.title}
+        >
+          <ArrowLeft className="icon-md" />
+          {t.common.back}
+        </button>
+
         <button className="btn btn-lg" onClick={closeCloudImportModal}>
           {t.common.close}
         </button>

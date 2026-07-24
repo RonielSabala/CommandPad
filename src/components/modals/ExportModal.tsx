@@ -22,6 +22,8 @@ export function ExportModal() {
   const onClose = useStore((state) => state.closeExportModal);
   const exportRunbook = useStore((state) => state.exportRunbook);
   const label = useStore((state) => getActiveTab(state)?.label ?? "");
+  const lastDestination = useStore((state) => state.lastExportDestination);
+  const lastFormat = useStore((state) => state.lastExportFormat);
 
   const [destination, setDestination] = useState<SyncDestination>(
     SyncDestination.LOCAL,
@@ -34,10 +36,10 @@ export function ExportModal() {
       return;
     }
 
-    setDestination(SyncDestination.LOCAL);
-    setFormat(ExportFormat.JSON);
+    setDestination(lastDestination);
+    setFormat(lastFormat);
     setFilename(getExportBasename(label));
-  }, [isOpen, label]);
+  }, [isOpen, label, lastDestination, lastFormat]);
 
   const trimmed = filename.trim();
   const canExport = trimmed.length > 0;
