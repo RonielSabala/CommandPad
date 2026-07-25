@@ -8,6 +8,7 @@
   --accent: #3b82f6;
   --accent-dim: rgba(77, 139, 245, 0.12);
   --accent-text: #a6c8ff;
+  --constant-text: #ae81ff;
   --success: #15dd9e;
   --danger: #f87171;
   --danger-dim: rgba(248, 113, 113, 0.14);
@@ -105,6 +106,7 @@
   --accent: #2f5de0;
   --accent-dim: rgba(47, 93, 224, 0.09);
   --accent-text: #1e46c7;
+  --constant-text: #6d28d9;
   --success: #0f8a5f;
   --danger: #dc2626;
   --danger-dim: rgba(220, 38, 38, 0.09);

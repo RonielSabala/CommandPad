@@ -64,6 +64,10 @@ body:not(.variable-split-resizing)
   color: var(--accent-text);
 }
 
+.variable-key-input.is-constant {
+  color: var(--constant-text);
+}
+
 .variable-value-input {
   color: var(--color-text-primary);
 }

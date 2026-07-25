@@ -521,19 +521,21 @@ export const en: Messages = {
     variables: {
       why: "This is the feature everything else has been building toward. A server name, a file path, a version number: the same little values repeat across half the commands you keep, and the day one changes you get to hunt it down in every single command. With variables you write that value **once**, and every command that needs it stays current on its own.",
       intro:
-        "Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**. Keys are case-sensitive.",
+        "Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**. Keys are case-sensitive. If two variables share the same key, the one defined last wins.",
       usage:
-        "Use a variable in any command by wrapping its key in curly braces, e.g. `{SERVER}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
+        "Use a variable in any command by wrapping its key in curly braces, e.g. `{server}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
       unresolved:
         "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**.",
-      duplicatesAndEmpty:
-        "If two variables share the same key, the one defined last wins. Hover over a row to reveal its controls: a drag handle on the left to reorder it among the others and a delete button on the right. Try them out in the demos throughout this section.",
       tooltip:
         "If a key or value is too long to fit its box, hover over it to see the full text in a tooltip.",
       split:
         "Keys and values split the row evenly, but you can change that: drag the divider between them to give one side more room, and double-click it to go back to an even split. The new balance applies to every variable and is remembered between sessions.",
       demoHint:
-        "See it for yourself below: one `SERVER` variable feeds two commands. Edit its value and watch both previews follow along as you type. That's the whole idea in one gesture.",
+        "See it for yourself below: one variable feeds two commands. Edit its value and watch both previews follow along as you type. Hover over a row to reveal its controls: a drag handle on the left to reorder it among the others and a delete button on the right.",
+      constants:
+        "Not every variable changes for the same reason. Some are values you swap all the time, and some are **constants**: they stay the same for the whole life of the runbook, and they are only variables because the same value shows up in command after command. CommandPad tells them apart by naming convention: a key written entirely in **capitals** is treated as a constant and its key is shown in purple. Anything with a **lowercase** letter in it keeps the usual blue.",
+      constantsDemoHint:
+        "The convention is purely a naming one: constants resolve, get referenced and get renamed exactly like any other variable. Rename a key below from capitals to lowercase and back to see the color follow along.",
     },
     variableReferences: {
       intro:
@@ -656,8 +658,6 @@ export const en: Messages = {
         "Click **Export** to open one dialog where you choose a destination (this device, SharePoint, or Google Drive), a format (JSON, Markdown, or plain text), and a filename, then export. It reopens with the destination and format you used last time already selected, and a cloud export shows its progress and confirms once the runbook is saved.",
       storage:
         "Cloud runbooks live in a dedicated **CommandPad** folder in your own account, never anywhere else.",
-      setupNote:
-        "SharePoint and Google Drive only appear as options once they've been configured for this deployment of CommandPad. See the project's README for setup details.",
     },
     language: {
       intro:

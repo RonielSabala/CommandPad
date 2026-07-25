@@ -275,10 +275,11 @@ export interface Messages {
       intro: string;
       usage: string;
       unresolved: string;
-      duplicatesAndEmpty: string;
       tooltip: string;
       split: string;
       demoHint: string;
+      constants: string;
+      constantsDemoHint: string;
     };
     variableReferences: {
       intro: string;
@@ -349,7 +350,6 @@ export interface Messages {
       intro: string;
       howItWorks: string;
       storage: string;
-      setupNote: string;
     };
     language: {
       intro: string;

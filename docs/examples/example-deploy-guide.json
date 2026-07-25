@@ -1,11 +1,11 @@
 {
   "variables": [
     {
-      "key": "NAMESPACE",
-      "value": "production"
+      "key": "image_tag",
+      "value": "v2.1.0-prod"
     },
     {
-      "key": "POD_NAME",
+      "key": "pod_name",
       "value": "my-app-deployment-5d4f8c6b7-x9k2m"
     },
     {
@@ -13,16 +13,12 @@
       "value": "api-server"
     },
     {
-      "key": "IMAGE_TAG",
-      "value": "v2.1.0-prod"
+      "key": "NAMESPACE",
+      "value": "production"
     },
     {
       "key": "DOCKER_REGISTRY",
       "value": "gcr.io/my-project"
-    },
-    {
-      "key": "CLUSTER_NAME",
-      "value": "prod-us-central1"
     }
   ],
   "blocks": [
@@ -69,17 +65,17 @@
     },
     {
       "type": "command",
-      "text": "docker build -t {DOCKER_REGISTRY}/my-app:{IMAGE_TAG} .",
+      "text": "docker build -t {DOCKER_REGISTRY}/my-app:{image_tag} .",
       "editorCollapsed": true
     },
     {
       "type": "command",
-      "text": "docker push {DOCKER_REGISTRY}/my-app:{IMAGE_TAG}",
+      "text": "docker push {DOCKER_REGISTRY}/my-app:{image_tag}",
       "editorCollapsed": true
     },
     {
       "type": "command",
-      "text": "kubectl set image deployment/my-app-deployment my-app={DOCKER_REGISTRY}/my-app:{IMAGE_TAG} -n {NAMESPACE}",
+      "text": "kubectl set image deployment/my-app-deployment my-app={DOCKER_REGISTRY}/my-app:{image_tag} -n {NAMESPACE}",
       "editorCollapsed": true
     },
     {
@@ -102,17 +98,17 @@
     },
     {
       "type": "command",
-      "text": "kubectl describe pod {POD_NAME} -n {NAMESPACE}",
+      "text": "kubectl describe pod {pod_name} -n {NAMESPACE}",
       "editorCollapsed": true
     },
     {
       "type": "command",
-      "text": "kubectl logs {POD_NAME} -n {NAMESPACE} -c {CONTAINER_NAME} --tail=100",
+      "text": "kubectl logs {pod_name} -n {NAMESPACE} -c {CONTAINER_NAME} --tail=100",
       "editorCollapsed": true
     },
     {
       "type": "command",
-      "text": "kubectl logs {POD_NAME} -n {NAMESPACE} -c {CONTAINER_NAME} --previous",
+      "text": "kubectl logs {pod_name} -n {NAMESPACE} -c {CONTAINER_NAME} --previous",
       "editorCollapsed": true
     },
     {
@@ -130,7 +126,7 @@
     },
     {
       "type": "command",
-      "text": "kubectl exec -it {POD_NAME} -n {NAMESPACE} -c {CONTAINER_NAME} -- /bin/bash",
+      "text": "kubectl exec -it {pod_name} -n {NAMESPACE} -c {CONTAINER_NAME} -- /bin/bash",
       "editorCollapsed": true
     },
     {
@@ -140,7 +136,7 @@
     },
     {
       "type": "command",
-      "text": "kubectl port-forward {POD_NAME} 8080:8080 -n {NAMESPACE}",
+      "text": "kubectl port-forward {pod_name} 8080:8080 -n {NAMESPACE}",
       "editorCollapsed": true
     },
     {

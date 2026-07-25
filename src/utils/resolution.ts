@@ -15,6 +15,11 @@ export function getVariableKey(variable: Variable): string {
   return variable.key.trim();
 }
 
+export function isConstantVariableKey(key: string): boolean {
+  const trimmed = key.trim();
+  return trimmed === trimmed.toUpperCase() && trimmed !== trimmed.toLowerCase();
+}
+
 interface ParsedVariableToken {
   key: string;
   params: Record<string, string>;

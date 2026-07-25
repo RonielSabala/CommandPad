@@ -532,19 +532,21 @@ export const es: Messages = {
     variables: {
       why: "Esta es la característica sobre la que gira todo lo demás. Un nombre de servidor, una ruta, un número de versión: los mismos valores se repiten en la mitad de los comandos que guardas, y el día que uno cambia toca buscarlo comando por comando. Con las variables defines ese valor **una vez**, y todos los comandos que lo usan se actualizan solos.",
       intro:
-        "Las variables se definen en la sección **VARIABLES** de la barra lateral. Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas.",
+        "Las variables se definen en la sección **VARIABLES** de la barra lateral. Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas. Si dos variables comparten la misma clave, gana la definida en último lugar.",
       usage:
-        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{SERVER}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
+        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{server}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
       unresolved:
         "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**.",
-      duplicatesAndEmpty:
-        "Si dos variables comparten la misma clave, gana la definida en último lugar. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables y un botón de eliminar a la derecha. Pruébalos en las demos de esta sección.",
       tooltip:
         "Si una clave o un valor no cabe en su casilla, pasa el cursor sobre ella para ver el texto completo en un tooltip.",
       split:
         "Las claves y los valores se reparten la fila en partes iguales, pero puedes cambiarlo: arrastra el divisor entre ambos para dar más espacio a uno de los lados, y haz doble clic para volver al reparto equitativo. El nuevo reparto se aplica a todas las variables y se recuerda entre sesiones.",
       demoHint:
-        "Compruébalo abajo: una sola variable `SERVER` alimenta dos comandos. Edita su valor y mira cómo las dos vistas previas cambian mientras escribes. Esa es toda la idea.",
+        "Compruébalo abajo: una sola variable alimenta dos comandos. Edita su valor y mira cómo las dos vistas previas cambian mientras escribes. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables y un botón de eliminar a la derecha.",
+      constants:
+        "No todas las variables cambian por el mismo motivo. Unas son valores que cambias a cada rato y otras son **constantes**: se mantienen igual durante toda la vida del libro, y solo son variables porque ese mismo valor aparece en comando tras comando. CommandPad las distingue por convención de nombres: una clave escrita entera en **mayúsculas** se considera una constante y su clave se muestra en morado. Cualquier clave con alguna **minúscula** conserva el azul de siempre.",
+      constantsDemoHint:
+        "La convención es solo de nombres: las constantes se resuelven, se referencian y se renombran igual que cualquier otra variable. Renombra abajo una clave de mayúsculas a minúsculas y al revés para ver cómo el color la sigue.",
     },
     variableReferences: {
       intro:
@@ -668,8 +670,6 @@ export const es: Messages = {
         "Haz clic en **Exportar** para abrir un único diálogo donde eliges un destino (este dispositivo, SharePoint o Google Drive), un formato (JSON, Markdown o texto plano) y un nombre de archivo, y luego exportas. Se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados, y una exportación a la nube muestra su progreso y confirma cuando el libro se ha guardado.",
       storage:
         "Los libros en la nube se guardan en una carpeta dedicada llamada **CommandPad** en tu propia cuenta, nunca en ningún otro lugar.",
-      setupNote:
-        "SharePoint y Google Drive solo aparecen como opciones una vez configurados para esta instancia de CommandPad. Consulta el README del proyecto para los detalles de configuración.",
     },
     language: {
       intro:

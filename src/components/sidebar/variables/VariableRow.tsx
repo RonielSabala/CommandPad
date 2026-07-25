@@ -9,6 +9,7 @@ import { useRowReorder } from "@/hooks/useRowReorder";
 import { useVariableSplitResize } from "@/hooks/useVariableSplitResize";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { isConstantVariableKey } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { memo, useEffect, useRef, type CSSProperties } from "react";
 import "./VariableRow.css";
@@ -70,6 +71,11 @@ export const VariableRow = memo(function VariableRow({
     isDragging && CssClass.DRAGGING,
   );
 
+  const keyInputClass = classNames(
+    "variable-key-input",
+    isConstantVariableKey(variableKey) && "is-constant",
+  );
+
   const variableInputsClass = classNames(
     "variable-inputs",
     isSecret && "is-secret",
@@ -97,7 +103,7 @@ export const VariableRow = memo(function VariableRow({
       <div className={variableInputsClass} style={splitStyle}>
         <input
           ref={keyRef}
-          className="variable-key-input"
+          className={keyInputClass}
           type="text"
           placeholder={t.variables.keyPlaceholder}
           value={variableKey}

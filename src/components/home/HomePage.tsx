@@ -89,11 +89,11 @@ export function HomePage() {
                 tabs={[
                   {
                     variables: [
-                      demoVariable("USER", "admin"),
+                      demoVariable("user", "admin"),
                       demoVariable("HOST", "192.168.1.50"),
                     ],
                     blocks: [
-                      demoCommand("ssh {USER}@{HOST}"),
+                      demoCommand("ssh {user}@{HOST}"),
                       demoCommand("ping {HOST}"),
                     ],
                   },
