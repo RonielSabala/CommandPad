@@ -16,6 +16,8 @@ const UNTITLED_LABELS: readonly string[] = [
 
 const DEFAULT_EXPORT_BASENAME = "runbook-commandpad-export";
 
+const JSON_EXTENSION_REGEX = new RegExp(`\\.${ExportFormat.JSON}$`, "i");
+
 interface SaveFilePickerOptions {
   suggestedName?: string;
   types?: { description: string; accept: Record<string, string[]> }[];
@@ -99,6 +101,14 @@ export function buildMarkdownExport(content: RunbookContent): string {
   }
 
   return lines.join("\n");
+}
+
+export function stripJsonExtension(filename: string): string {
+  return filename.replace(JSON_EXTENSION_REGEX, "");
+}
+
+export function withJsonExtension(filename: string): string {
+  return `${stripJsonExtension(filename)}.${ExportFormat.JSON}`;
 }
 
 export function getExportBasename(label: string): string {

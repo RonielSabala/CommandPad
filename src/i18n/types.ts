@@ -158,9 +158,17 @@ export interface Messages {
     loading: string;
     emptyFiles: string;
     importAction: (filename: string) => string;
+    renameAction: (filename: string) => string;
+    deleteAction: (filename: string) => string;
+    saveName: string;
+    cancelRename: string;
+    namePlaceholder: string;
     signInError: string;
     genericError: string;
     invalidFileError: string;
+    renameError: string;
+    deleteError: string;
+    nameTakenError: (filename: string) => string;
   };
   alert: {
     invalidFormatTitle: string;
@@ -180,6 +188,12 @@ export interface Messages {
     clearLibraryTitle: string;
     clearLibraryConfirm: string;
     clearLibraryMessage: string;
+    deleteCloudFileTitle: string;
+    deleteCloudFileConfirm: string;
+    deleteCloudFileMessage: (filename: string) => string;
+    signOutCloudTitle: string;
+    signOutCloudConfirm: string;
+    signOutCloudMessage: string;
   };
   keybindings: Record<KeyBinding, string>;
   footer: {
@@ -349,6 +363,7 @@ export interface Messages {
     cloudSync: {
       intro: string;
       howItWorks: string;
+      manage: string;
       storage: string;
     };
     language: {

@@ -4,6 +4,7 @@ export interface CloudFile {
   id: string;
   name: string;
   modifiedAt: string | null;
+  size: number | null;
 }
 
 export class CloudSyncError extends Error {}
@@ -29,4 +30,6 @@ export interface CloudClient {
   listFiles(): Promise<CloudFile[]>;
   readFile(file: CloudFile): Promise<string>;
   writeFile(filename: string, content: string, mimeType: string): Promise<void>;
+  renameFile(file: CloudFile, filename: string): Promise<void>;
+  deleteFile(file: CloudFile): Promise<void>;
 }

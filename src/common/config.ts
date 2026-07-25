@@ -153,6 +153,17 @@ export const CloudSyncConfig = {
   APP_FOLDER_NAME: "CommandPad",
 } as const;
 
+export const FileSizeConfig = {
+  BASE: 1024,
+  UNITS: ["B", "KB", "MB", "GB"],
+  DECIMALS: 1,
+} as const;
+
+export const FileDateFormat: Intl.DateTimeFormatOptions = {
+  dateStyle: "medium",
+  timeStyle: "short",
+};
+
 export const SharePointConfig = {
   CLIENT_ID: import.meta.env.VITE_MSAL_CLIENT_ID ?? "",
   AUTHORITY: `https://login.microsoftonline.com/${import.meta.env.VITE_MSAL_TENANT_ID ?? "common"}`,

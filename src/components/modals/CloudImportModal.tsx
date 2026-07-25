@@ -1,33 +1,140 @@
-import { CloudProvider } from "@/common/enums";
+import { Key } from "@/common/constants/events";
+import { CloudProvider, ExportFormat } from "@/common/enums";
+import { CheckIcon, PencilIcon, TrashIcon, XIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import type { CloudFile } from "@/services/cloud";
 import { useStore } from "@/store/store";
-import {
-  ArrowClockwise,
-  ArrowLeft,
-  CloudArrowDownFill,
-} from "react-bootstrap-icons";
+import { stripJsonExtension } from "@/utils/export";
+import { formatFileSize, formatTimestamp } from "@/utils/format";
+import { useState } from "react";
+import { ArrowClockwise, ArrowLeft } from "react-bootstrap-icons";
 import "./CloudImportModal.css";
 import { PROVIDER_ICON } from "./cloudProviders";
 import { Modal } from "./Modal";
 
-function CloudFileRow({
-  file,
-  onImport,
-}: {
-  file: CloudFile;
-  onImport: (file: CloudFile) => void;
-}) {
-  const t = useTranslation();
+function CloudFileMeta({ file }: { file: CloudFile }) {
+  const language = useStore((state) => state.language);
+  const modifiedAt =
+    file.modifiedAt === null
+      ? null
+      : formatTimestamp(file.modifiedAt, language);
+
+  const size = file.size === null ? null : formatFileSize(file.size, language);
+
+  if (modifiedAt === null && size === null) {
+    return null;
+  }
+
   return (
-    <button
-      className="cloud-modal-file-row"
-      onClick={() => onImport(file)}
-      title={t.cloudModal.importAction(file.name)}
-    >
-      <span className="cloud-modal-file-name">{file.name}</span>
-      <CloudArrowDownFill className="icon-md" />
-    </button>
+    <span className="cloud-modal-file-meta">
+      {modifiedAt !== null && (
+        <span className="cloud-modal-file-date">{modifiedAt}</span>
+      )}
+
+      {size !== null && <span className="cloud-modal-file-size">{size}</span>}
+    </span>
+  );
+}
+
+function CloudFileRow({ file }: { file: CloudFile }) {
+  const t = useTranslation();
+  const renameCloudFile = useStore((state) => state.renameCloudFile);
+  const deleteCloudFile = useStore((state) => state.deleteCloudFile);
+  const importRunbookFromCloud = useStore(
+    (state) => state.importRunbookFromCloud,
+  );
+
+  // A non-null draft means this row is being renamed
+  const [draft, setDraft] = useState<string | null>(null);
+
+  const commitRename = () => {
+    if (draft === null || !draft.trim()) {
+      return;
+    }
+
+    void renameCloudFile(file, draft);
+    setDraft(null);
+  };
+
+  if (draft !== null) {
+    return (
+      <div className="cloud-modal-file-row">
+        <div className="cloud-modal-file-rename">
+          <input
+            className="cloud-modal-file-input"
+            value={draft}
+            spellCheck={false}
+            autoComplete="off"
+            autoFocus
+            placeholder={t.cloudModal.namePlaceholder}
+            onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === Key.ENTER) {
+                event.preventDefault();
+                commitRename();
+              } else if (event.key === Key.ESCAPE) {
+                event.preventDefault();
+                setDraft(null);
+              }
+            }}
+          />
+
+          <span className="cloud-modal-file-extension">
+            .{ExportFormat.JSON}
+          </span>
+        </div>
+
+        <div className="cloud-modal-file-actions">
+          <button
+            className="btn btn-flat-icon"
+            onClick={commitRename}
+            disabled={!draft.trim()}
+            title={t.cloudModal.saveName}
+          >
+            <CheckIcon className="icon-md icon-bold" />
+          </button>
+
+          <button
+            className="btn btn-flat-icon"
+            onClick={() => setDraft(null)}
+            title={t.cloudModal.cancelRename}
+          >
+            <XIcon className="icon-md icon-bold" />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="cloud-modal-file-row">
+      <button
+        className="cloud-modal-file-main"
+        onClick={() => void importRunbookFromCloud(file)}
+        title={t.cloudModal.importAction(file.name)}
+      >
+        <span className="cloud-modal-file-name">{file.name}</span>
+        <CloudFileMeta file={file} />
+      </button>
+
+      <div className="cloud-modal-file-actions">
+        <button
+          className="btn btn-flat-icon"
+          onClick={() => setDraft(stripJsonExtension(file.name))}
+          title={t.cloudModal.renameAction(file.name)}
+        >
+          <PencilIcon className="icon-md icon-bold" />
+        </button>
+
+        <button
+          className="btn btn-danger btn-icon"
+          onClick={() => void deleteCloudFile(file)}
+          title={t.cloudModal.deleteAction(file.name)}
+        >
+          <TrashIcon className="icon-md icon-bold" />
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -51,9 +158,6 @@ export function CloudImportModal() {
   const signInToCloud = useStore((state) => state.signInToCloud);
   const signOutOfCloud = useStore((state) => state.signOutOfCloud);
   const refreshCloudFiles = useStore((state) => state.refreshCloudFiles);
-  const importRunbookFromCloud = useStore(
-    (state) => state.importRunbookFromCloud,
-  );
 
   const ProviderIcon = PROVIDER_ICON[provider];
   const signInLabel =
@@ -95,7 +199,10 @@ export function CloudImportModal() {
               disabled={loading}
               title={t.cloudModal.refresh}
             >
-              <ArrowClockwise className="icon-md" />
+              <ArrowClockwise
+                id="refresh-cloud-files-icon"
+                className="icon-md icon-semibold"
+              />
             </button>
           </div>
 
@@ -107,13 +214,7 @@ export function CloudImportModal() {
               <p className="cloud-modal-empty">{t.cloudModal.emptyFiles}</p>
             )}
             {!loading &&
-              files.map((file) => (
-                <CloudFileRow
-                  key={file.id}
-                  file={file}
-                  onImport={(f) => void importRunbookFromCloud(f)}
-                />
-              ))}
+              files.map((file) => <CloudFileRow key={file.id} file={file} />)}
           </div>
         </>
       )}
@@ -126,7 +227,7 @@ export function CloudImportModal() {
           onClick={returnToDestinationModal}
           title={t.destinationModal.title}
         >
-          <ArrowLeft className="icon-md" />
+          <ArrowLeft className="icon-md icon-semibold" />
           {t.common.back}
         </button>
 

@@ -1,3 +1,132 @@
+/* File meta */
+
+.cloud-modal-file-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.cloud-modal-file-date,
+.cloud-modal-file-size {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.cloud-modal-file-size {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+/* -- File row --- */
+
+.cloud-modal-file-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  border: var(--border-standard);
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+  transition:
+    border-color var(--transition-base),
+    background var(--transition-base);
+}
+
+.cloud-modal-file-row:hover,
+.cloud-modal-file-row:focus-within {
+  border-color: var(--color-border-focus);
+  background: var(--color-surface);
+}
+
+.cloud-modal-file-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* -- File rename --- */
+
+.cloud-modal-file-rename {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: stretch;
+  border-radius: var(--radius-sm);
+  border: var(--border-standard);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.cloud-modal-file-input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-3) var(--space-4);
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.cloud-modal-file-input:focus {
+  outline: none;
+}
+
+.cloud-modal-file-extension {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-4);
+  border-left: var(--border-standard);
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  user-select: none;
+}
+
+/* File main */
+
+.cloud-modal-file-main {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.cloud-modal-file-name {
+  max-width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color var(--transition-base);
+}
+
+.cloud-modal-file-main:hover .cloud-modal-file-name {
+  color: var(--accent);
+}
+
+/* Cloud modal */
+
+.signin-button {
+  margin-top: var(--space-3);
+}
+
 .cloud-modal-account {
   display: flex;
   align-items: center;
@@ -15,42 +144,15 @@
   justify-content: flex-end;
 }
 
+#refresh-cloud-files-icon {
+  fill: currentColor;
+}
+
 .cloud-modal-files {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  min-width: 24rem;
-}
-
-.cloud-modal-file-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  border: var(--border-standard);
-  background: var(--color-surface-alt);
-  color: var(--color-text-primary);
-  cursor: pointer;
-  text-align: left;
-  transition: border-color var(--transition-base);
-}
-
-.cloud-modal-file-row:hover {
-  border-color: var(--color-border-focus);
-}
-
-.cloud-modal-file-name {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.signin-button {
-  margin-top: var(--space-3);
+  gap: var(--space-3);
+  min-width: 26rem;
 }
 
 .cloud-modal-empty {

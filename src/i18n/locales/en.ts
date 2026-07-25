@@ -139,9 +139,17 @@ export const en: Messages = {
     loading: "Loading…",
     emptyFiles: "No runbooks saved here yet.",
     importAction: (filename) => `Import ${filename}`,
+    renameAction: (filename) => `Rename ${filename}`,
+    deleteAction: (filename) => `Delete ${filename}`,
+    saveName: "Save name",
+    cancelRename: "Cancel rename",
+    namePlaceholder: "Filename",
     signInError: "Sign-in failed. Please try again.",
     genericError: "Something went wrong. Please try again.",
     invalidFileError: "That file doesn't look like valid runbook JSON.",
+    renameError: "Could not rename that file. Please try again.",
+    deleteError: "Could not delete that file. Please try again.",
+    nameTakenError: (filename) => `${filename} already exists in this folder.`,
   },
   alert: {
     invalidFormatTitle: "Invalid Format",
@@ -167,6 +175,13 @@ export const en: Messages = {
     clearLibraryConfirm: "Delete All",
     clearLibraryMessage:
       "Delete every runbook in the library, along with its variables and blocks? This action cannot be undone.",
+    deleteCloudFileTitle: "Delete Cloud Runbook",
+    deleteCloudFileConfirm: "Delete",
+    deleteCloudFileMessage: (filename) =>
+      `Delete \`${filename}\` from your cloud folder? This action cannot be undone.`,
+    signOutCloudTitle: "Sign Out",
+    signOutCloudConfirm: "Sign Out",
+    signOutCloudMessage: "Sign out of this account?",
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Toggle read / edit mode",
@@ -656,6 +671,8 @@ export const en: Messages = {
         "**Export** and **Import** can go straight to SharePoint or Google Drive, not just this device.",
       howItWorks:
         "Click **Export** to open one dialog where you choose a destination (this device, SharePoint, or Google Drive), a format (JSON, Markdown, or plain text), and a filename, then export. It reopens with the destination and format you used last time already selected, and a cloud export shows its progress and confirms once the runbook is saved.",
+      manage:
+        "When you browse a cloud folder, every runbook lists the date it was last modified and its file size. The **pencil** button renames a file and the **trash** button deletes it from the cloud after you confirm.",
       storage:
         "Cloud runbooks live in a dedicated **CommandPad** folder in your own account, never anywhere else.",
     },

@@ -18,6 +18,7 @@ interface DriveFileResource {
   name: string;
   modifiedTime?: string;
   mimeType?: string;
+  size?: string;
 }
 
 interface StoredGoogleSession {
@@ -282,7 +283,7 @@ class GoogleDriveClient implements CloudClient {
       `'${folderId}' in parents and trashed=false`,
     );
     const response = await driveFetch(
-      `${GoogleDriveConfig.API_BASE_URL}/files?q=${query}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc&spaces=drive`,
+      `${GoogleDriveConfig.API_BASE_URL}/files?q=${query}&fields=files(id,name,modifiedTime,size)&orderBy=modifiedTime desc&spaces=drive`,
     );
 
     const data = (await response.json()) as { files: DriveFileResource[] };
@@ -292,6 +293,7 @@ class GoogleDriveClient implements CloudClient {
         id: item.id,
         name: item.name,
         modifiedAt: item.modifiedTime ?? null,
+        size: item.size === undefined ? null : Number(item.size),
       }));
   }
 
@@ -340,6 +342,24 @@ class GoogleDriveClient implements CloudClient {
         headers: { "Content-Type": `multipart/related; boundary=${boundary}` },
         body,
       },
+    );
+  }
+
+  async renameFile(file: CloudFile, filename: string): Promise<void> {
+    await driveFetch(
+      `${GoogleDriveConfig.API_BASE_URL}/files/${encodeURIComponent(file.id)}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: filename }),
+      },
+    );
+  }
+
+  async deleteFile(file: CloudFile): Promise<void> {
+    await driveFetch(
+      `${GoogleDriveConfig.API_BASE_URL}/files/${encodeURIComponent(file.id)}`,
+      { method: "DELETE" },
     );
   }
 }

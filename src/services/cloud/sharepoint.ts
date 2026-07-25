@@ -14,6 +14,7 @@ interface DriveItem {
   id: string;
   name: string;
   lastModifiedDateTime?: string;
+  size?: number;
   folder?: unknown;
 }
 
@@ -145,7 +146,7 @@ class SharePointClient implements CloudClient {
 
   async listFiles(): Promise<CloudFile[]> {
     const response = await graphFetch(
-      "/me/drive/special/approot/children?$select=id,name,lastModifiedDateTime,folder&$orderby=lastModifiedDateTime desc",
+      "/me/drive/special/approot/children?$select=id,name,lastModifiedDateTime,size,folder&$orderby=lastModifiedDateTime desc",
     );
 
     const data = (await response.json()) as { value: DriveItem[] };
@@ -155,6 +156,7 @@ class SharePointClient implements CloudClient {
         id: item.id,
         name: item.name,
         modifiedAt: item.lastModifiedDateTime ?? null,
+        size: item.size ?? null,
       }));
   }
 
@@ -179,6 +181,20 @@ class SharePointClient implements CloudClient {
         body: content,
       },
     );
+  }
+
+  async renameFile(file: CloudFile, filename: string): Promise<void> {
+    await graphFetch(`/me/drive/items/${encodeURIComponent(file.id)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: filename }),
+    });
+  }
+
+  async deleteFile(file: CloudFile): Promise<void> {
+    await graphFetch(`/me/drive/items/${encodeURIComponent(file.id)}`, {
+      method: "DELETE",
+    });
   }
 }
 

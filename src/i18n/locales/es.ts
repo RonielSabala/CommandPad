@@ -141,9 +141,17 @@ export const es: Messages = {
     loading: "Cargando…",
     emptyFiles: "Aún no hay libros guardados aquí.",
     importAction: (filename) => `Importar ${filename}`,
+    renameAction: (filename) => `Renombrar ${filename}`,
+    deleteAction: (filename) => `Eliminar ${filename}`,
+    saveName: "Guardar nombre",
+    cancelRename: "Cancelar renombrado",
+    namePlaceholder: "Nombre del archivo",
     signInError: "No se pudo iniciar sesión. Inténtalo de nuevo.",
     genericError: "Algo salió mal. Inténtalo de nuevo.",
     invalidFileError: "Ese archivo no parece un JSON de libro válido.",
+    renameError: "No se pudo renombrar el archivo. Inténtalo de nuevo.",
+    deleteError: "No se pudo eliminar el archivo. Inténtalo de nuevo.",
+    nameTakenError: (filename) => `${filename} ya existe en esta carpeta.`,
   },
   alert: {
     invalidFormatTitle: "Formato Inválido",
@@ -169,6 +177,13 @@ export const es: Messages = {
     clearLibraryConfirm: "Eliminar todo",
     clearLibraryMessage:
       "¿Eliminar todos los libros de la biblioteca, junto con sus variables y bloques? Esta acción no se puede deshacer.",
+    deleteCloudFileTitle: "Eliminar Libro de la Nube",
+    deleteCloudFileConfirm: "Eliminar",
+    deleteCloudFileMessage: (filename) =>
+      `¿Eliminar \`${filename}\` de tu carpeta en la nube? Esta acción no se puede deshacer.`,
+    signOutCloudTitle: "Cerrar Sesión",
+    signOutCloudConfirm: "Cerrar Sesión",
+    signOutCloudMessage: "¿Cerrar sesión de esta cuenta?",
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Alternar modo lectura / edición",
@@ -668,6 +683,8 @@ export const es: Messages = {
         "**Exportar** e **Importar** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo.",
       howItWorks:
         "Haz clic en **Exportar** para abrir un único diálogo donde eliges un destino (este dispositivo, SharePoint o Google Drive), un formato (JSON, Markdown o texto plano) y un nombre de archivo, y luego exportas. Se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados, y una exportación a la nube muestra su progreso y confirma cuando el libro se ha guardado.",
+      manage:
+        "Al explorar una carpeta en la nube, cada libro muestra la fecha en que se modificó por última vez y su tamaño. El botón del **lápiz** renombra un archivo y el botón de la **papelera** lo elimina de la nube después de confirmarlo.",
       storage:
         "Los libros en la nube se guardan en una carpeta dedicada llamada **CommandPad** en tu propia cuenta, nunca en ningún otro lugar.",
     },

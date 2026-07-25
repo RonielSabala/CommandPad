@@ -41,6 +41,8 @@ import {
   buildMarkdownExport,
   buildRunbookExportContent,
   runExport,
+  stripJsonExtension,
+  withJsonExtension,
 } from "@/utils/export";
 import { generateId } from "@/utils/id";
 import { openImportDialog } from "@/utils/importTrigger";
@@ -244,6 +246,8 @@ export interface StoreState {
   signOutOfCloud: () => Promise<void>;
   refreshCloudFiles: () => Promise<void>;
   importRunbookFromCloud: (file: CloudFile) => Promise<void>;
+  renameCloudFile: (file: CloudFile, basename: string) => Promise<void>;
+  deleteCloudFile: (file: CloudFile) => Promise<void>;
 
   confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
   resolveConfirm: (result: boolean) => void;
@@ -1709,6 +1713,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       signOutOfCloud: async () => {
+        const t = getMessages(get().language);
+        const confirmed = await get().confirm(t.dialogs.signOutCloudMessage, {
+          title: t.dialogs.signOutCloudTitle,
+          confirmLabel: t.dialogs.signOutCloudConfirm,
+          danger: true,
+        });
+
+        if (!confirmed) {
+          return;
+        }
+
         const client = getCloudClient(get().cloudProvider);
         try {
           await client.signOut();
@@ -1765,10 +1780,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         set({ cloudLoading: false });
-        const baseName = file.name.replace(
-          new RegExp(`\\.${ExportFormat.JSON}$`, "i"),
-          "",
-        );
+        const baseName = stripJsonExtension(file.name);
 
         await get().addRunbookToLibrary(content, baseName, file.name);
         set({
@@ -1777,6 +1789,72 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         });
 
         persist.saveUiState(uiStateSnapshot(get()));
+      },
+
+      renameCloudFile: async (file, basename) => {
+        const trimmed = basename.trim();
+        if (!trimmed) {
+          return;
+        }
+
+        const filename = withJsonExtension(trimmed);
+        if (filename === file.name) {
+          return;
+        }
+
+        const t = getMessages(get().language);
+        const taken = get().cloudFiles.some(
+          (other) =>
+            other.id !== file.id &&
+            other.name.toLowerCase() === filename.toLowerCase(),
+        );
+
+        if (taken) {
+          set({ cloudError: t.cloudModal.nameTakenError(filename) });
+          return;
+        }
+
+        const client = getCloudClient(get().cloudProvider);
+        set({ cloudLoading: true, cloudError: null });
+        try {
+          await client.renameFile(file, filename);
+        } catch (error) {
+          console.error("Cloud file rename failed", error);
+          set({ cloudLoading: false, cloudError: t.cloudModal.renameError });
+          return;
+        }
+
+        set({ cloudLoading: false });
+        await get().refreshCloudFiles();
+      },
+
+      deleteCloudFile: async (file) => {
+        const t = getMessages(get().language);
+        const confirmed = await get().confirm(
+          t.dialogs.deleteCloudFileMessage(file.name),
+          {
+            title: t.dialogs.deleteCloudFileTitle,
+            confirmLabel: t.dialogs.deleteCloudFileConfirm,
+            danger: true,
+          },
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
+        const client = getCloudClient(get().cloudProvider);
+        set({ cloudLoading: true, cloudError: null });
+        try {
+          await client.deleteFile(file);
+        } catch (error) {
+          console.error("Cloud file delete failed", error);
+          set({ cloudLoading: false, cloudError: t.cloudModal.deleteError });
+          return;
+        }
+
+        set({ cloudLoading: false });
+        await get().refreshCloudFiles();
       },
 
       copyRunbookMarkdown: async () => {
