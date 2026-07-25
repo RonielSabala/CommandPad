@@ -10,8 +10,9 @@
   z-index: 2;
   display: flex;
   gap: var(--space-2);
-  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-2);
   background: var(--block-backdrop);
+  border-radius: var(--radius-sm);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--transition-base);
@@ -65,7 +66,7 @@ body.select-key-held:not(.read-mode) .note-style-row {
   color: var(--accent-text);
 }
 
-.block-selected .note-style-btn {
+.block-selected :is(.note-style-row, .note-style-btn) {
   border-radius: var(--radius-lg);
 }
 
