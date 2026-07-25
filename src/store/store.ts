@@ -53,7 +53,7 @@ import {
   renameAllVariableTokens,
   renameVariableTokens,
 } from "@/utils/resolution";
-import { getRunbookLabel } from "@/utils/runbook";
+import { displayLabel, getRunbookLabel } from "@/utils/runbook";
 
 import * as persistence from "./persistence";
 import {
@@ -726,6 +726,31 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const state = get();
         if (state.mode === AppMode.READ) {
           return;
+        }
+
+        const openTab = state.tabs.find((t) => t.runbookId === id);
+        const content = openTab ?? (await contentDb.get(id));
+        const isEmpty =
+          (content?.blocks.length ?? 0) === 0 &&
+          (content?.variables.length ?? 0) === 0;
+
+        if (!isEmpty) {
+          const runbook = state.runbookLibrary.find((item) => item.id === id);
+          const t = getMessages(get().language);
+          const confirmed = await get().confirm(
+            t.dialogs.deleteRunbookMessage(
+              displayLabel(runbook?.label ?? "", t),
+            ),
+            {
+              title: t.dialogs.deleteRunbookTitle,
+              confirmLabel: t.dialogs.deleteRunbookConfirm,
+              danger: true,
+            },
+          );
+
+          if (!confirmed) {
+            return;
+          }
         }
 
         await contentDb.delete(id);

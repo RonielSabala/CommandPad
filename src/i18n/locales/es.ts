@@ -176,11 +176,15 @@ export const es: Messages = {
     clearLibraryTitle: "Eliminar Todos los Libros",
     clearLibraryConfirm: "Eliminar todo",
     clearLibraryMessage:
-      "¿Eliminar todos los libros de la biblioteca, junto con sus variables y bloques? Esta acción no se puede deshacer.",
+      "¿Eliminar todos los libros de la biblioteca? Esta acción no se puede deshacer.",
+    deleteRunbookTitle: "Eliminar Libro",
+    deleteRunbookConfirm: "Eliminar",
+    deleteRunbookMessage: (label) =>
+      `¿Eliminar "${label}"? Esta acción no se puede deshacer.`,
     deleteCloudFileTitle: "Eliminar Libro de la Nube",
     deleteCloudFileConfirm: "Eliminar",
     deleteCloudFileMessage: (filename) =>
-      `¿Eliminar \`${filename}\` de tu carpeta en la nube? Esta acción no se puede deshacer.`,
+      `¿Eliminar "${filename}" de tu carpeta en la nube? Esta acción no se puede deshacer.`,
     signOutCloudTitle: "Cerrar Sesión",
     signOutCloudConfirm: "Cerrar Sesión",
     signOutCloudMessage: "¿Cerrar sesión de esta cuenta?",

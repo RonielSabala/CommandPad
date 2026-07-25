@@ -174,11 +174,15 @@ export const en: Messages = {
     clearLibraryTitle: "Delete All Runbooks",
     clearLibraryConfirm: "Delete All",
     clearLibraryMessage:
-      "Delete every runbook in the library, along with its variables and blocks? This action cannot be undone.",
+      "Delete every runbook in the library? This action cannot be undone.",
+    deleteRunbookTitle: "Delete Runbook",
+    deleteRunbookConfirm: "Delete",
+    deleteRunbookMessage: (label) =>
+      `Delete "${label}"? This action cannot be undone.`,
     deleteCloudFileTitle: "Delete Cloud Runbook",
     deleteCloudFileConfirm: "Delete",
     deleteCloudFileMessage: (filename) =>
-      `Delete \`${filename}\` from your cloud folder? This action cannot be undone.`,
+      `Delete "${filename}" from your cloud folder? This action cannot be undone.`,
     signOutCloudTitle: "Sign Out",
     signOutCloudConfirm: "Sign Out",
     signOutCloudMessage: "Sign out of this account?",

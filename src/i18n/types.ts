@@ -188,6 +188,9 @@ export interface Messages {
     clearLibraryTitle: string;
     clearLibraryConfirm: string;
     clearLibraryMessage: string;
+    deleteRunbookTitle: string;
+    deleteRunbookConfirm: string;
+    deleteRunbookMessage: (label: string) => string;
     deleteCloudFileTitle: string;
     deleteCloudFileConfirm: string;
     deleteCloudFileMessage: (filename: string) => string;
