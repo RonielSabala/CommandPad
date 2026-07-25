@@ -1,5 +1,10 @@
-import { FileDateFormat, FileSizeConfig } from "@/common/config";
+import {
+  CloudSyncConfig,
+  FileDateFormat,
+  FileSizeConfig,
+} from "@/common/config";
 import type { Language } from "@/i18n";
+import type { CloudFolderRef } from "@/services/cloud";
 
 export function formatFileSize(bytes: number, language: Language): string {
   let value = bytes;
@@ -20,6 +25,13 @@ export function formatFileSize(bytes: number, language: Language): string {
   }).format(value);
 
   return `${formatted} ${FileSizeConfig.UNITS[unitIndex]}`;
+}
+
+export function formatCloudPath(path: CloudFolderRef[]): string {
+  return [
+    CloudSyncConfig.APP_FOLDER_NAME,
+    ...path.map((folder) => folder.name),
+  ].join(CloudSyncConfig.PATH_SEPARATOR);
 }
 
 export function formatTimestamp(

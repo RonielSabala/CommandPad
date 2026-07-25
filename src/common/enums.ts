@@ -118,6 +118,13 @@ export const SyncDestination = {
 export type SyncDestination =
   (typeof SyncDestination)[keyof typeof SyncDestination];
 
+export const HistoryDirection = {
+  BACK: "back",
+  FORWARD: "forward",
+} as const;
+export type HistoryDirection =
+  (typeof HistoryDirection)[keyof typeof HistoryDirection];
+
 export const CloudExportStatus = {
   IDLE: "idle",
   UPLOADING: "uploading",

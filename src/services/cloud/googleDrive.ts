@@ -3,12 +3,12 @@ import {
   CONTENT_TYPE_HEADER,
   contentTypeHeaders,
   GoogleDriveConfig,
-  JSON_EXTENSION,
   MimeType,
   StorageKey,
 } from "@/common/config";
 import { CloudProvider, HttpMethod } from "@/common/enums";
-import type { CloudClient, CloudFile } from "./types";
+import { isBrowsableEntry, sortCloudEntries } from "./entries";
+import type { CloudClient, CloudEntry } from "./types";
 import { CloudSyncError } from "./types";
 
 const GIS_SCRIPT_URL = "https://accounts.google.com/gsi/client";
@@ -25,6 +25,10 @@ function fileUrl(fileId: string): string {
 
 function uploadFileUrl(fileId: string): string {
   return `${UPLOAD_FILES_URL}/${encodeURIComponent(fileId)}`;
+}
+
+function escapeQueryValue(value: string): string {
+  return value.replace(/(['\\])/g, "\\$1");
 }
 
 interface DriveFileResource {
@@ -192,7 +196,7 @@ async function findAppFolderId(): Promise<string> {
   }
 
   const query = encodeURIComponent(
-    `mimeType='${FOLDER_MIME_TYPE}' and name='${CloudSyncConfig.APP_FOLDER_NAME}' and 'root' in parents and trashed=false`,
+    `mimeType='${FOLDER_MIME_TYPE}' and name='${escapeQueryValue(CloudSyncConfig.APP_FOLDER_NAME)}' and 'root' in parents and trashed=false`,
   );
   const searchResponse = await driveFetch(
     `${FILES_URL}?q=${query}&fields=files(id,name)&spaces=drive`,
@@ -219,12 +223,16 @@ async function findAppFolderId(): Promise<string> {
   return appFolderId;
 }
 
+async function resolveFolderId(folderId: string | null): Promise<string> {
+  return folderId ?? (await findAppFolderId());
+}
+
 async function findFileByName(
   folderId: string,
   filename: string,
 ): Promise<string | null> {
   const query = encodeURIComponent(
-    `'${folderId}' in parents and name='${filename}' and trashed=false`,
+    `'${escapeQueryValue(folderId)}' in parents and name='${escapeQueryValue(filename)}' and trashed=false`,
   );
   const response = await driveFetch(
     `${FILES_URL}?q=${query}&fields=files(id)&spaces=drive`,
@@ -288,27 +296,42 @@ class GoogleDriveClient implements CloudClient {
     clearSession();
   }
 
-  async listFiles(): Promise<CloudFile[]> {
-    const folderId = await findAppFolderId();
+  async listEntries(folderId: string | null): Promise<CloudEntry[]> {
+    const parentId = await resolveFolderId(folderId);
     const query = encodeURIComponent(
-      `'${folderId}' in parents and trashed=false`,
+      `'${escapeQueryValue(parentId)}' in parents and trashed=false`,
     );
     const response = await driveFetch(
-      `${FILES_URL}?q=${query}&fields=files(id,name,modifiedTime,size)&orderBy=modifiedTime desc&spaces=drive`,
+      `${FILES_URL}?q=${query}&fields=files(id,name,mimeType,modifiedTime,size)&orderBy=modifiedTime desc&spaces=drive`,
     );
 
     const data = (await response.json()) as { files: DriveFileResource[] };
-    return data.files
-      .filter((item) => item.name.endsWith(JSON_EXTENSION))
-      .map((item) => ({
-        id: item.id,
-        name: item.name,
-        modifiedAt: item.modifiedTime ?? null,
-        size: item.size === undefined ? null : Number(item.size),
-      }));
+    const entries = data.files.map((item) => ({
+      id: item.id,
+      name: item.name,
+      isFolder: item.mimeType === FOLDER_MIME_TYPE,
+      modifiedAt: item.modifiedTime ?? null,
+      size: item.size === undefined ? null : Number(item.size),
+    }));
+
+    return sortCloudEntries(entries.filter(isBrowsableEntry));
   }
 
-  async readFile(file: CloudFile): Promise<string> {
+  async createFolder(name: string, parentId: string | null): Promise<void> {
+    const folderId = await resolveFolderId(parentId);
+
+    await driveFetch(`${FILES_URL}?fields=id`, {
+      method: HttpMethod.POST,
+      headers: contentTypeHeaders(MimeType.JSON),
+      body: JSON.stringify({
+        name,
+        mimeType: FOLDER_MIME_TYPE,
+        parents: [folderId],
+      }),
+    });
+  }
+
+  async readFile(file: CloudEntry): Promise<string> {
     const response = await driveFetch(`${fileUrl(file.id)}?alt=media`);
     return response.text();
   }
@@ -317,8 +340,9 @@ class GoogleDriveClient implements CloudClient {
     filename: string,
     content: string,
     mimeType: string,
+    targetFolderId: string | null,
   ): Promise<void> {
-    const folderId = await findAppFolderId();
+    const folderId = await resolveFolderId(targetFolderId);
     const existingId = await findFileByName(folderId, filename);
 
     if (existingId) {
@@ -347,7 +371,7 @@ class GoogleDriveClient implements CloudClient {
     });
   }
 
-  async renameFile(file: CloudFile, filename: string): Promise<void> {
+  async renameFile(file: CloudEntry, filename: string): Promise<void> {
     await driveFetch(fileUrl(file.id), {
       method: HttpMethod.PATCH,
       headers: contentTypeHeaders(MimeType.JSON),
@@ -355,7 +379,7 @@ class GoogleDriveClient implements CloudClient {
     });
   }
 
-  async deleteFile(file: CloudFile): Promise<void> {
+  async deleteFile(file: CloudEntry): Promise<void> {
     await driveFetch(fileUrl(file.id), { method: HttpMethod.DELETE });
   }
 }

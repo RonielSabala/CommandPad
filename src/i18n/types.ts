@@ -132,6 +132,10 @@ export interface Messages {
     destinationLabel: string;
     formatLabel: string;
     filenameLabel: string;
+    folderLabel: string;
+    changeFolder: string;
+    chooseFolder: string;
+    selectFolder: string;
     confirm: string;
     savingTo: (provider: string) => string;
     savedTo: (provider: string) => string;
@@ -157,6 +161,14 @@ export interface Messages {
     refresh: string;
     loading: string;
     emptyFiles: string;
+    emptyFolders: string;
+    navigateBack: string;
+    navigateForward: string;
+    openFolderAction: (name: string) => string;
+    newFolder: string;
+    folderNamePlaceholder: string;
+    createFolder: string;
+    cancelNewFolder: string;
     importAction: (filename: string) => string;
     renameAction: (filename: string) => string;
     deleteAction: (filename: string) => string;
@@ -168,6 +180,7 @@ export interface Messages {
     invalidFileError: string;
     renameError: string;
     deleteError: string;
+    createFolderError: string;
     nameTakenError: (filename: string) => string;
   };
   alert: {
@@ -366,6 +379,7 @@ export interface Messages {
     cloudSync: {
       intro: string;
       howItWorks: string;
+      folders: string;
       manage: string;
       storage: string;
     };

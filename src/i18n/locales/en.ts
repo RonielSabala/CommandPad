@@ -113,6 +113,10 @@ export const en: Messages = {
     destinationLabel: "Destination",
     formatLabel: "Format",
     filenameLabel: "Filename",
+    folderLabel: "Folder",
+    changeFolder: "Change",
+    chooseFolder: "Choose a folder to save into.",
+    selectFolder: "Save here",
     confirm: "Export",
     savingTo: (provider) => `Saving to ${provider}…`,
     savedTo: (provider) => `Saved to ${provider}`,
@@ -137,7 +141,15 @@ export const en: Messages = {
     signedInAs: (account) => `Signed in as ${account}`,
     refresh: "Refresh",
     loading: "Loading…",
-    emptyFiles: "No runbooks saved here yet.",
+    emptyFiles: "Nothing saved in this folder yet.",
+    emptyFolders: "No folders in here yet.",
+    navigateBack: "Back",
+    navigateForward: "Forward",
+    openFolderAction: (name) => `Open ${name}`,
+    newFolder: "New folder",
+    folderNamePlaceholder: "Folder name",
+    createFolder: "Create folder",
+    cancelNewFolder: "Cancel new folder",
     importAction: (filename) => `Import ${filename}`,
     renameAction: (filename) => `Rename ${filename}`,
     deleteAction: (filename) => `Delete ${filename}`,
@@ -149,6 +161,7 @@ export const en: Messages = {
     invalidFileError: "That file doesn't look like valid runbook JSON.",
     renameError: "Could not rename that file. Please try again.",
     deleteError: "Could not delete that file. Please try again.",
+    createFolderError: "Could not create that folder. Please try again.",
     nameTakenError: (filename) => `${filename} already exists in this folder.`,
   },
   alert: {
@@ -675,6 +688,8 @@ export const en: Messages = {
         "**Export** and **Import** can go straight to SharePoint or Google Drive, not just this device.",
       howItWorks:
         "Click **Export** to open one dialog where you choose a destination (this device, SharePoint, or Google Drive), a format (JSON, Markdown, or plain text), and a filename, then export. It reopens with the destination and format you used last time already selected, and a cloud export shows its progress and confirms once the runbook is saved.",
+      folders:
+        "Cloud runbooks can live in folders. Browsing shows folders first and files after them: click a folder to open it, click a file to import it. The **arrow** buttons move back and forward through the folders you visited, and the path above the list lets you jump straight back to any folder in it. When you export to the cloud, the **Folder** field picks where the runbook lands, and the **new folder** button creates a folder on the spot.",
       manage:
         "When you browse a cloud folder, every runbook lists the date it was last modified and its file size. The **pencil** button renames a file and the **trash** button deletes it from the cloud after you confirm.",
       storage:

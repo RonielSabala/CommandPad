@@ -11,7 +11,7 @@ export type FilenameInputSize =
 
 interface FilenameInputProps {
   value: string;
-  extension: string;
+  extension?: string;
   onChange: (value: string) => void;
   onSubmit?: () => void;
   onCancel?: () => void;
@@ -54,7 +54,9 @@ export function FilenameInput({
         }}
       />
 
-      <span className="filename-input-extension">.{extension}</span>
+      {extension !== undefined && (
+        <span className="filename-input-extension">.{extension}</span>
+      )}
     </div>
   );
 }

@@ -63,6 +63,62 @@
   color: var(--accent);
 }
 
+/* Cloud folder */
+
+.export-modal-folder {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  border: var(--border-standard);
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition:
+    background var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.export-modal-folder:hover {
+  background: var(--color-surface);
+  border-color: var(--color-border-focus);
+}
+
+.export-modal-folder .icon-md {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: color var(--transition-base);
+}
+
+.export-modal-folder:hover .icon-md {
+  color: var(--accent);
+}
+
+.export-modal-folder-path {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.export-modal-folder-change {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: color var(--transition-base);
+}
+
+.export-modal-folder:hover .export-modal-folder-change {
+  color: var(--accent);
+}
+
 /* Cloud export progress */
 
 .cloud-export-status {

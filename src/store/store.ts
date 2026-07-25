@@ -19,6 +19,7 @@ import {
   CloudExportStatus,
   CloudProvider,
   ExportFormat,
+  HistoryDirection,
   MoveDirection,
   NoteStyle,
   SidebarPosition,
@@ -35,7 +36,11 @@ import type {
 } from "@/common/types";
 import { detectLanguage, getMessages } from "@/i18n/messages";
 import { Language } from "@/i18n/types";
-import { getCloudClient, type CloudFile } from "@/services/cloud";
+import {
+  getCloudClient,
+  type CloudEntry,
+  type CloudFolderRef,
+} from "@/services/cloud";
 import { debounce } from "@/utils/debounce";
 import {
   buildMarkdownExport,
@@ -121,15 +126,20 @@ export interface StoreState {
   confirmDialog: ConfirmDialog | null;
   alertDialog: Dialog<void> | null;
 
-  // Cloud sync (SharePoint / Google Drive)
+  // Cloud sync
   destinationModalOpen: boolean;
   cloudImportModalOpen: boolean;
   cloudProvider: CloudProvider;
   cloudSignedIn: boolean;
   cloudAccountLabel: string | null;
-  cloudFiles: CloudFile[];
+  cloudEntries: CloudEntry[];
   cloudLoading: boolean;
   cloudError: string | null;
+
+  // Cloud folder navigation
+  cloudPath: CloudFolderRef[];
+  cloudHistory: CloudFolderRef[][];
+  cloudHistoryIndex: number;
 
   // Remembered cloud-sync choices
   lastExportDestination: SyncDestination;
@@ -232,6 +242,7 @@ export interface StoreState {
     destination: SyncDestination,
     format: ExportFormat,
     filename: string,
+    folderId: string | null,
   ) => Promise<void>;
   copyRunbookMarkdown: () => Promise<void>;
 
@@ -239,15 +250,24 @@ export interface StoreState {
   openDestinationModal: () => void;
   closeDestinationModal: () => void;
   chooseDestination: (destination: SyncDestination) => void;
+  startCloudBrowse: (
+    provider: CloudProvider,
+    path?: CloudFolderRef[],
+  ) => Promise<void>;
   startCloudImportBrowse: (provider: CloudProvider) => Promise<void>;
   returnToDestinationModal: () => void;
   closeCloudImportModal: () => void;
   signInToCloud: () => Promise<void>;
   signOutOfCloud: () => Promise<void>;
-  refreshCloudFiles: () => Promise<void>;
-  importRunbookFromCloud: (file: CloudFile) => Promise<void>;
-  renameCloudFile: (file: CloudFile, basename: string) => Promise<void>;
-  deleteCloudFile: (file: CloudFile) => Promise<void>;
+  refreshCloudEntries: () => Promise<void>;
+  openCloudFolder: (folder: CloudEntry) => void;
+  navigateCloudHistory: (direction: HistoryDirection) => void;
+  navigateCloudToDepth: (depth: number) => void;
+  navigateCloudToPath: (path: CloudFolderRef[]) => void;
+  createCloudFolder: (name: string) => Promise<void>;
+  importRunbookFromCloud: (file: CloudEntry) => Promise<void>;
+  renameCloudFile: (file: CloudEntry, basename: string) => Promise<void>;
+  deleteCloudFile: (file: CloudEntry) => Promise<void>;
 
   confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
   resolveConfirm: (result: boolean) => void;
@@ -255,6 +275,12 @@ export interface StoreState {
   resolveAlert: () => void;
   clearRunbookLibrary: () => Promise<void>;
   clearAllData: () => Promise<void>;
+}
+
+const ROOT_CLOUD_PATH: CloudFolderRef[] = [];
+
+function currentFolderId(path: CloudFolderRef[]): string | null {
+  return path.at(-1)?.id ?? null;
 }
 
 /** Resolve the active tab, mirroring the original `activeTab()` fallback. */
@@ -478,9 +504,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       cloudProvider: CloudProvider.SHAREPOINT,
       cloudSignedIn: false,
       cloudAccountLabel: null,
-      cloudFiles: [],
+      cloudEntries: [],
       cloudLoading: false,
       cloudError: null,
+
+      cloudPath: ROOT_CLOUD_PATH,
+      cloudHistory: [ROOT_CLOUD_PATH],
+      cloudHistoryIndex: 0,
 
       lastExportDestination: SyncDestination.LOCAL,
       lastExportFormat: ExportFormat.JSON,
@@ -1592,7 +1622,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       openPasteRunbookModal: () => set({ pasteRunbookModalOpen: true }),
       closePasteRunbookModal: () => set({ pasteRunbookModalOpen: false }),
 
-      exportRunbook: async (destination, format, filename) => {
+      exportRunbook: async (destination, format, filename, folderId) => {
         set({
           lastExportDestination: destination,
           lastExportFormat: format,
@@ -1632,6 +1662,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             fullName,
             buildRunbookExportContent(format, content),
             FilePickerConfig[format].mimeType,
+            folderId,
           );
 
           set({ cloudExportStatus: CloudExportStatus.SUCCESS });
@@ -1677,15 +1708,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         void get().startCloudImportBrowse(destination);
       },
 
-      startCloudImportBrowse: async (provider) => {
+      startCloudBrowse: async (provider, path = ROOT_CLOUD_PATH) => {
         set({
           cloudProvider: provider,
-          cloudImportModalOpen: true,
           cloudError: null,
-          cloudFiles: [],
+          cloudEntries: [],
           cloudSignedIn: false,
           cloudAccountLabel: null,
           cloudLoading: true,
+          cloudPath: path,
+          cloudHistory: [path],
+          cloudHistoryIndex: 0,
         });
 
         const client = getCloudClient(provider);
@@ -1701,13 +1734,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           }
         }
 
-        if (
-          client.isSignedIn() &&
-          get().cloudProvider === provider &&
-          get().cloudImportModalOpen
-        ) {
-          await get().refreshCloudFiles();
+        if (client.isSignedIn() && get().cloudProvider === provider) {
+          await get().refreshCloudEntries();
         }
+      },
+
+      startCloudImportBrowse: async (provider) => {
+        set({ cloudImportModalOpen: true });
+        await get().startCloudBrowse(provider);
       },
 
       returnToDestinationModal: () =>
@@ -1724,9 +1758,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             cloudSignedIn: client.isSignedIn(),
             cloudAccountLabel: client.getAccountLabel(),
           });
-          if (get().cloudImportModalOpen) {
-            await get().refreshCloudFiles();
-          }
+          await get().refreshCloudEntries();
         } catch (error) {
           console.error("Cloud sign-in failed", error);
           set({
@@ -1756,27 +1788,105 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           console.error("Cloud sign-out failed", error);
         }
         set({
-          cloudFiles: [],
+          cloudEntries: [],
           cloudError: null,
           cloudSignedIn: false,
           cloudAccountLabel: null,
+          cloudPath: ROOT_CLOUD_PATH,
+          cloudHistory: [ROOT_CLOUD_PATH],
+          cloudHistoryIndex: 0,
         });
       },
 
-      refreshCloudFiles: async () => {
+      refreshCloudEntries: async () => {
         const client = getCloudClient(get().cloudProvider);
         set({ cloudLoading: true, cloudError: null });
         try {
-          const files = await client.listFiles();
-          set({ cloudFiles: files });
+          const entries = await client.listEntries(
+            currentFolderId(get().cloudPath),
+          );
+          set({ cloudEntries: entries });
         } catch (error) {
-          console.error("Failed to list cloud files", error);
+          console.error("Failed to list cloud entries", error);
           set({
+            cloudEntries: [],
             cloudError: getMessages(get().language).cloudModal.genericError,
           });
         } finally {
           set({ cloudLoading: false });
         }
+      },
+
+      openCloudFolder: (folder) =>
+        get().navigateCloudToPath([
+          ...get().cloudPath,
+          { id: folder.id, name: folder.name },
+        ]),
+
+      navigateCloudToDepth: (depth) =>
+        get().navigateCloudToPath(get().cloudPath.slice(0, depth)),
+
+      navigateCloudToPath: (path) => {
+        // Browsing away from a history entry drops everything ahead of it
+        const history = get().cloudHistory.slice(
+          0,
+          get().cloudHistoryIndex + 1,
+        );
+
+        set({
+          cloudPath: path,
+          cloudHistory: [...history, path],
+          cloudHistoryIndex: history.length,
+          cloudError: null,
+        });
+
+        void get().refreshCloudEntries();
+      },
+
+      navigateCloudHistory: (direction) => {
+        const step = direction === HistoryDirection.BACK ? -1 : 1;
+        const index = get().cloudHistoryIndex + step;
+        const path = get().cloudHistory[index];
+
+        if (!path) {
+          return;
+        }
+
+        set({ cloudPath: path, cloudHistoryIndex: index, cloudError: null });
+        void get().refreshCloudEntries();
+      },
+
+      createCloudFolder: async (name) => {
+        const trimmed = name.trim();
+        if (!trimmed) {
+          return;
+        }
+
+        const t = getMessages(get().language);
+        const taken = get().cloudEntries.some(
+          (entry) => entry.name.toLowerCase() === trimmed.toLowerCase(),
+        );
+
+        if (taken) {
+          set({ cloudError: t.cloudModal.nameTakenError(trimmed) });
+          return;
+        }
+
+        const client = getCloudClient(get().cloudProvider);
+        set({ cloudLoading: true, cloudError: null });
+        try {
+          await client.createFolder(trimmed, currentFolderId(get().cloudPath));
+        } catch (error) {
+          console.error("Cloud folder creation failed", error);
+          set({
+            cloudLoading: false,
+            cloudError: t.cloudModal.createFolderError,
+          });
+          return;
+        }
+
+        set({ cloudLoading: false });
+        await get().refreshCloudEntries();
       },
 
       importRunbookFromCloud: async (file) => {
@@ -1828,7 +1938,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         const t = getMessages(get().language);
-        const taken = get().cloudFiles.some(
+        const taken = get().cloudEntries.some(
           (other) =>
             other.id !== file.id &&
             other.name.toLowerCase() === filename.toLowerCase(),
@@ -1850,7 +1960,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         set({ cloudLoading: false });
-        await get().refreshCloudFiles();
+        await get().refreshCloudEntries();
       },
 
       deleteCloudFile: async (file) => {
@@ -1879,7 +1989,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         set({ cloudLoading: false });
-        await get().refreshCloudFiles();
+        await get().refreshCloudEntries();
       },
 
       copyRunbookMarkdown: async () => {

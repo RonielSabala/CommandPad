@@ -6,16 +6,20 @@ import {
 } from "@/common/enums";
 import { FilenameInput } from "@/components/common/FilenameInput";
 import { useTranslation } from "@/i18n";
+import type { CloudFolderRef } from "@/services/cloud";
 import { getActiveTab, useStore } from "@/store/store";
 import { getExportBasename } from "@/utils/export";
+import { formatCloudPath } from "@/utils/format";
 import { classNames } from "@/utils/string";
 import { useEffect, useState } from "react";
 import {
   ArrowRepeat,
   CheckCircleFill,
   ExclamationTriangleFill,
+  FolderFill,
   LaptopFill,
 } from "react-bootstrap-icons";
+import { CloudFolderPicker } from "./CloudFolderPicker";
 import { PROVIDER_ICON, PROVIDER_NAME, PROVIDERS } from "./cloudProviders";
 import "./ExportModal.css";
 import { Modal } from "./Modal";
@@ -25,6 +29,8 @@ const FORMATS: readonly ExportFormat[] = [
   ExportFormat.MD,
   ExportFormat.TXT,
 ];
+
+const ROOT_FOLDER_PATH: CloudFolderRef[] = [];
 
 function CloudExportStatusView({ onDone }: { onDone: () => void }) {
   const t = useTranslation();
@@ -102,12 +108,15 @@ export function ExportModal() {
   const lastFormat = useStore((state) => state.lastExportFormat);
   const cloudExportStatus = useStore((state) => state.cloudExportStatus);
   const isExporting = cloudExportStatus !== CloudExportStatus.IDLE;
-
   const [destination, setDestination] = useState<SyncDestination>(
     SyncDestination.LOCAL,
   );
+
   const [format, setFormat] = useState<ExportFormat>(ExportFormat.JSON);
   const [filename, setFilename] = useState("");
+  const [pickingFolder, setPickingFolder] = useState(false);
+  const [folderPath, setFolderPath] =
+    useState<CloudFolderRef[]>(ROOT_FOLDER_PATH);
 
   useEffect(() => {
     if (!isOpen) {
@@ -117,14 +126,27 @@ export function ExportModal() {
     setDestination(lastDestination);
     setFormat(lastFormat);
     setFilename(getExportBasename(label));
+    setFolderPath(ROOT_FOLDER_PATH);
+    setPickingFolder(false);
   }, [isOpen, label, lastDestination, lastFormat]);
 
   const trimmed = filename.trim();
   const canExport = trimmed.length > 0;
+  const isCloud = destination !== SyncDestination.LOCAL;
+
+  const chooseDestination = (next: SyncDestination) => {
+    setDestination(next);
+    setFolderPath(ROOT_FOLDER_PATH);
+  };
 
   const handleExport = () => {
     if (canExport) {
-      void exportRunbook(destination, format, trimmed);
+      void exportRunbook(
+        destination,
+        format,
+        trimmed,
+        folderPath.at(-1)?.id ?? null,
+      );
     }
   };
 
@@ -132,9 +154,21 @@ export function ExportModal() {
     <Modal open={isOpen} onClose={onClose}>
       <p className="modal-title">{t.exportModal.title}</p>
 
-      {isExporting ? (
-        <CloudExportStatusView onDone={onClose} />
-      ) : (
+      {isExporting && <CloudExportStatusView onDone={onClose} />}
+
+      {!isExporting && pickingFolder && isCloud && (
+        <CloudFolderPicker
+          provider={destination}
+          initialPath={folderPath}
+          onCancel={() => setPickingFolder(false)}
+          onSelect={(path) => {
+            setFolderPath(path);
+            setPickingFolder(false);
+          }}
+        />
+      )}
+
+      {!isExporting && !pickingFolder && (
         <>
           <div className="export-modal-field">
             <p className="export-modal-label">
@@ -146,7 +180,7 @@ export function ExportModal() {
                   "export-modal-option",
                   destination === SyncDestination.LOCAL && "is-selected",
                 )}
-                onClick={() => setDestination(SyncDestination.LOCAL)}
+                onClick={() => chooseDestination(SyncDestination.LOCAL)}
               >
                 <LaptopFill className="icon-md" />
                 {t.destinationModal.local}
@@ -161,7 +195,7 @@ export function ExportModal() {
                       "export-modal-option",
                       destination === provider && "is-selected",
                     )}
-                    onClick={() => setDestination(provider)}
+                    onClick={() => chooseDestination(provider)}
                   >
                     <ProviderIcon className="icon-md" />
                     {PROVIDER_NAME[provider]}
@@ -170,6 +204,26 @@ export function ExportModal() {
               })}
             </div>
           </div>
+
+          {isCloud && (
+            <div className="export-modal-field">
+              <p className="export-modal-label">{t.exportModal.folderLabel}</p>
+
+              <button
+                className="export-modal-folder"
+                onClick={() => setPickingFolder(true)}
+                title={t.exportModal.chooseFolder}
+              >
+                <FolderFill className="icon-md" />
+                <span className="export-modal-folder-path">
+                  {formatCloudPath(folderPath)}
+                </span>
+                <span className="export-modal-folder-change">
+                  {t.exportModal.changeFolder}
+                </span>
+              </button>
+            </div>
+          )}
 
           <div className="export-modal-field">
             <p className="export-modal-label">{t.exportModal.formatLabel}</p>

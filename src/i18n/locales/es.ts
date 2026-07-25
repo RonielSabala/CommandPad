@@ -115,6 +115,10 @@ export const es: Messages = {
     destinationLabel: "Destino",
     formatLabel: "Formato",
     filenameLabel: "Nombre del archivo",
+    folderLabel: "Carpeta",
+    changeFolder: "Cambiar",
+    chooseFolder: "Elige una carpeta donde guardar.",
+    selectFolder: "Guardar aquí",
     confirm: "Exportar",
     savingTo: (provider) => `Guardando en ${provider}…`,
     savedTo: (provider) => `Guardado en ${provider}`,
@@ -139,7 +143,15 @@ export const es: Messages = {
     signedInAs: (account) => `Sesión iniciada como ${account}`,
     refresh: "Actualizar",
     loading: "Cargando…",
-    emptyFiles: "Aún no hay libros guardados aquí.",
+    emptyFiles: "Aún no hay nada guardado en esta carpeta.",
+    emptyFolders: "Aún no hay carpetas aquí.",
+    navigateBack: "Atrás",
+    navigateForward: "Adelante",
+    openFolderAction: (name) => `Abrir ${name}`,
+    newFolder: "Nueva carpeta",
+    folderNamePlaceholder: "Nombre de la carpeta",
+    createFolder: "Crear carpeta",
+    cancelNewFolder: "Cancelar nueva carpeta",
     importAction: (filename) => `Importar ${filename}`,
     renameAction: (filename) => `Renombrar ${filename}`,
     deleteAction: (filename) => `Eliminar ${filename}`,
@@ -151,6 +163,7 @@ export const es: Messages = {
     invalidFileError: "Ese archivo no parece un JSON de libro válido.",
     renameError: "No se pudo renombrar el archivo. Inténtalo de nuevo.",
     deleteError: "No se pudo eliminar el archivo. Inténtalo de nuevo.",
+    createFolderError: "No se pudo crear la carpeta. Inténtalo de nuevo.",
     nameTakenError: (filename) => `${filename} ya existe en esta carpeta.`,
   },
   alert: {
@@ -687,6 +700,8 @@ export const es: Messages = {
         "**Exportar** e **Importar** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo.",
       howItWorks:
         "Haz clic en **Exportar** para abrir un único diálogo donde eliges un destino (este dispositivo, SharePoint o Google Drive), un formato (JSON, Markdown o texto plano) y un nombre de archivo, y luego exportas. Se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados, y una exportación a la nube muestra su progreso y confirma cuando el libro se ha guardado.",
+      folders:
+        "Los libros en la nube pueden vivir en carpetas. Al explorar aparecen primero las carpetas y después los archivos: haz clic en una carpeta para abrirla y en un archivo para importarlo. Los botones de **flecha** avanzan y retroceden por las carpetas que visitaste, y la ruta que aparece sobre la lista te lleva de vuelta a cualquier carpeta de la ruta. Al exportar a la nube, el campo **Carpeta** elige dónde se guarda el libro, y el botón de **nueva carpeta** crea una carpeta al momento.",
       manage:
         "Al explorar una carpeta en la nube, cada libro muestra la fecha en que se modificó por última vez y su tamaño. El botón del **lápiz** renombra un archivo y el botón de la **papelera** lo elimina de la nube después de confirmarlo.",
       storage:

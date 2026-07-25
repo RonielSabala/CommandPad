@@ -21,6 +21,7 @@ export function CloudSyncDocs() {
     <>
       <Prose text={t.docs.cloudSync.intro} />
       <Prose text={t.docs.cloudSync.howItWorks} />
+      <Prose text={t.docs.cloudSync.folders} />
       <Prose text={t.docs.cloudSync.manage} />
       <Prose text={t.docs.cloudSync.storage} />
     </>

@@ -1,6 +1,5 @@
 import {
   contentTypeHeaders,
-  JSON_EXTENSION,
   MimeType,
   SharePointConfig,
 } from "@/common/config";
@@ -9,14 +8,22 @@ import type {
   AccountInfo,
   PublicClientApplication as PublicClientApplicationClass,
 } from "@azure/msal-browser";
-import type { CloudClient, CloudFile } from "./types";
+import { isBrowsableEntry, sortCloudEntries } from "./entries";
+import type { CloudClient, CloudEntry } from "./types";
 import { CloudSyncError } from "./types";
 
 const DRIVE_PATH = "/me/drive";
 const APP_ROOT_PATH = `${DRIVE_PATH}/special/approot`;
 
+const CONFLICT_BEHAVIOR_PROPERTY = "@microsoft.graph.conflictBehavior";
+const CONFLICT_BEHAVIOR_FAIL = "fail";
+
 function driveItemPath(fileId: string): string {
   return `${DRIVE_PATH}/items/${encodeURIComponent(fileId)}`;
+}
+
+function folderPath(folderId: string | null): string {
+  return folderId === null ? APP_ROOT_PATH : driveItemPath(folderId);
 }
 
 interface DriveItem {
@@ -153,23 +160,36 @@ class SharePointClient implements CloudClient {
     instance.setActiveAccount(null);
   }
 
-  async listFiles(): Promise<CloudFile[]> {
+  async listEntries(folderId: string | null): Promise<CloudEntry[]> {
     const response = await graphFetch(
-      `${APP_ROOT_PATH}/children?$select=id,name,lastModifiedDateTime,size,folder&$orderby=lastModifiedDateTime desc`,
+      `${folderPath(folderId)}/children?$select=id,name,lastModifiedDateTime,size,folder&$orderby=lastModifiedDateTime desc`,
     );
 
     const data = (await response.json()) as { value: DriveItem[] };
-    return data.value
-      .filter((item) => !item.folder && item.name.endsWith(JSON_EXTENSION))
-      .map((item) => ({
-        id: item.id,
-        name: item.name,
-        modifiedAt: item.lastModifiedDateTime ?? null,
-        size: item.size ?? null,
-      }));
+    const entries = data.value.map((item) => ({
+      id: item.id,
+      name: item.name,
+      isFolder: item.folder !== undefined,
+      modifiedAt: item.lastModifiedDateTime ?? null,
+      size: item.size ?? null,
+    }));
+
+    return sortCloudEntries(entries.filter(isBrowsableEntry));
   }
 
-  async readFile(file: CloudFile): Promise<string> {
+  async createFolder(name: string, parentId: string | null): Promise<void> {
+    await graphFetch(`${folderPath(parentId)}/children`, {
+      method: HttpMethod.POST,
+      headers: contentTypeHeaders(MimeType.JSON),
+      body: JSON.stringify({
+        name,
+        folder: {},
+        [CONFLICT_BEHAVIOR_PROPERTY]: CONFLICT_BEHAVIOR_FAIL,
+      }),
+    });
+  }
+
+  async readFile(file: CloudEntry): Promise<string> {
     const response = await graphFetch(`${driveItemPath(file.id)}/content`);
     return response.text();
   }
@@ -178,9 +198,10 @@ class SharePointClient implements CloudClient {
     filename: string,
     content: string,
     mimeType: string,
+    folderId: string | null,
   ): Promise<void> {
     await graphFetch(
-      `${APP_ROOT_PATH}:/${encodeURIComponent(filename)}:/content`,
+      `${folderPath(folderId)}:/${encodeURIComponent(filename)}:/content`,
       {
         method: HttpMethod.PUT,
         headers: contentTypeHeaders(mimeType),
@@ -189,7 +210,7 @@ class SharePointClient implements CloudClient {
     );
   }
 
-  async renameFile(file: CloudFile, filename: string): Promise<void> {
+  async renameFile(file: CloudEntry, filename: string): Promise<void> {
     await graphFetch(driveItemPath(file.id), {
       method: HttpMethod.PATCH,
       headers: contentTypeHeaders(MimeType.JSON),
@@ -197,7 +218,7 @@ class SharePointClient implements CloudClient {
     });
   }
 
-  async deleteFile(file: CloudFile): Promise<void> {
+  async deleteFile(file: CloudEntry): Promise<void> {
     await graphFetch(driveItemPath(file.id), { method: HttpMethod.DELETE });
   }
 }
