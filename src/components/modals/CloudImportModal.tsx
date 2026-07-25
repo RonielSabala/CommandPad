@@ -1,5 +1,8 @@
-import { Key } from "@/common/constants/events";
 import { CloudProvider, ExportFormat } from "@/common/enums";
+import {
+  FilenameInput,
+  FilenameInputSize,
+} from "@/components/common/FilenameInput";
 import { CheckIcon, PencilIcon, TrashIcon, XIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import type { CloudFile } from "@/services/cloud";
@@ -59,30 +62,16 @@ function CloudFileRow({ file }: { file: CloudFile }) {
   if (draft !== null) {
     return (
       <div className="cloud-modal-file-row">
-        <div className="cloud-modal-file-rename">
-          <input
-            className="cloud-modal-file-input"
-            value={draft}
-            spellCheck={false}
-            autoComplete="off"
-            autoFocus
-            placeholder={t.cloudModal.namePlaceholder}
-            onChange={(event) => setDraft(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === Key.ENTER) {
-                event.preventDefault();
-                commitRename();
-              } else if (event.key === Key.ESCAPE) {
-                event.preventDefault();
-                setDraft(null);
-              }
-            }}
-          />
-
-          <span className="cloud-modal-file-extension">
-            .{ExportFormat.JSON}
-          </span>
-        </div>
+        <FilenameInput
+          value={draft}
+          extension={ExportFormat.JSON}
+          size={FilenameInputSize.COMPACT}
+          autoFocus
+          placeholder={t.cloudModal.namePlaceholder}
+          onChange={setDraft}
+          onSubmit={commitRename}
+          onCancel={() => setDraft(null)}
+        />
 
         <div className="cloud-modal-file-actions">
           <button

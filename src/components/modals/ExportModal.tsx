@@ -1,10 +1,10 @@
 import { EXPORT_SUCCESS_TIMEOUT_MS } from "@/common/config";
-import { Key } from "@/common/constants/events";
 import {
   CloudExportStatus,
   ExportFormat,
   SyncDestination,
 } from "@/common/enums";
+import { FilenameInput } from "@/components/common/FilenameInput";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { getExportBasename } from "@/utils/export";
@@ -194,24 +194,13 @@ export function ExportModal() {
               {t.exportModal.filenameLabel}
             </label>
 
-            <div className="export-modal-filename">
-              <input
-                id="export-filename"
-                className="export-modal-filename-input"
-                value={filename}
-                spellCheck={false}
-                autoComplete="off"
-                onChange={(event) => setFilename(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === Key.ENTER) {
-                    event.preventDefault();
-                    handleExport();
-                  }
-                }}
-              />
-
-              <span className="export-modal-extension">.{format}</span>
-            </div>
+            <FilenameInput
+              id="export-filename"
+              value={filename}
+              extension={format}
+              onChange={setFilename}
+              onSubmit={handleExport}
+            />
           </div>
 
           <div className="modal-actions">

@@ -63,47 +63,6 @@
   color: var(--accent);
 }
 
-.export-modal-filename {
-  display: flex;
-  align-items: stretch;
-  border-radius: var(--radius-md);
-  border: var(--border-standard);
-  background: var(--color-surface-alt);
-  overflow: hidden;
-  transition: border-color var(--transition-base);
-}
-
-.export-modal-filename:focus-within {
-  border-color: var(--color-border-focus);
-}
-
-.export-modal-filename-input {
-  flex: 1;
-  min-width: 0;
-  padding: var(--space-4) var(--space-5);
-  border: none;
-  background: transparent;
-  color: var(--color-text-primary);
-  font-family: var(--font-mono);
-  font-size: var(--text-md);
-}
-
-.export-modal-filename-input:focus {
-  outline: none;
-}
-
-.export-modal-extension {
-  display: flex;
-  align-items: center;
-  padding: 0 var(--space-5);
-  border-left: var(--border-standard);
-  background: var(--color-surface);
-  color: var(--color-text-muted);
-  font-family: var(--font-mono);
-  font-size: var(--text-md);
-  user-select: none;
-}
-
 /* Cloud export progress */
 
 .cloud-export-status {
