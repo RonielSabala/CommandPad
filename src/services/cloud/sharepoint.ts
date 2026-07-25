@@ -20,17 +20,12 @@ interface DriveItem {
 let msalInstance: PublicClientApplicationClass | null = null;
 let readyPromise: Promise<PublicClientApplicationClass> | null = null;
 
-/**
- * Lazily creates and initializes the shared MSAL app instance. `@azure/msal-browser`
- * is a sizable dependency, so it's only fetched (dynamic `import()`) the first
- * time a user actually touches SharePoint sync, not on every page load.
- */
 function ensureReady(): Promise<PublicClientApplicationClass> {
   if (!readyPromise) {
     readyPromise = (async () => {
-      const { PublicClientApplication, BrowserCacheLocation } = await import(
-        "@azure/msal-browser"
-      );
+      const { PublicClientApplication, BrowserCacheLocation } =
+        await import("@azure/msal-browser");
+
       const instance = new PublicClientApplication({
         auth: {
           clientId: SharePointConfig.CLIENT_ID,
@@ -39,11 +34,14 @@ function ensureReady(): Promise<PublicClientApplicationClass> {
         },
         cache: { cacheLocation: BrowserCacheLocation.LocalStorage },
       });
+
       await instance.initialize();
       msalInstance = instance;
+
       return instance;
     })();
   }
+
   return readyPromise;
 }
 
@@ -56,6 +54,7 @@ function getActiveAccount(
 async function getAccessToken(): Promise<string> {
   const instance = await ensureReady();
   const account = getActiveAccount(instance);
+
   if (!account) {
     throw new CloudSyncError("Not signed in to SharePoint");
   }
@@ -65,27 +64,26 @@ async function getAccessToken(): Promise<string> {
       scopes: [...SharePointConfig.SCOPES],
       account,
     });
+
     return result.accessToken;
   } catch (error) {
-    // Duck-typed instead of `instanceof InteractionRequiredAuthError` so this
-    // module doesn't need a second dynamic import of @azure/msal-browser.
     const needsInteraction =
       error instanceof Error && error.name === "InteractionRequiredAuthError";
+
     if (needsInteraction) {
       const result = await instance.acquireTokenPopup({
         scopes: [...SharePointConfig.SCOPES],
         account,
       });
+
       return result.accessToken;
     }
+
     throw error;
   }
 }
 
-async function graphFetch(
-  path: string,
-  init?: RequestInit,
-): Promise<Response> {
+async function graphFetch(path: string, init?: RequestInit): Promise<Response> {
   const token = await getAccessToken();
   const response = await fetch(`${SharePointConfig.GRAPH_BASE_URL}${path}`, {
     ...init,
@@ -112,6 +110,7 @@ class SharePointClient implements CloudClient {
     if (!this.isConfigured()) {
       return;
     }
+
     await ensureReady();
   }
 
@@ -123,6 +122,7 @@ class SharePointClient implements CloudClient {
     if (!msalInstance) {
       return null;
     }
+
     return getActiveAccount(msalInstance)?.username ?? null;
   }
 
@@ -131,6 +131,7 @@ class SharePointClient implements CloudClient {
     const result = await instance.loginPopup({
       scopes: [...SharePointConfig.SCOPES],
     });
+
     instance.setActiveAccount(result.account);
   }
 
@@ -138,6 +139,7 @@ class SharePointClient implements CloudClient {
     const instance = await ensureReady();
     const account = getActiveAccount(instance);
     await instance.clearCache(account ? { account } : undefined);
+
     instance.setActiveAccount(null);
   }
 
@@ -145,6 +147,7 @@ class SharePointClient implements CloudClient {
     const response = await graphFetch(
       "/me/drive/special/approot/children?$select=id,name,lastModifiedDateTime,folder&$orderby=lastModifiedDateTime desc",
     );
+
     const data = (await response.json()) as { value: DriveItem[] };
     return data.value
       .filter((item) => !item.folder && item.name.endsWith(JSON_EXTENSION))
@@ -159,6 +162,7 @@ class SharePointClient implements CloudClient {
     const response = await graphFetch(
       `/me/drive/items/${encodeURIComponent(file.id)}/content`,
     );
+
     return response.text();
   }
 

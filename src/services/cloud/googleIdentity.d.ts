@@ -1,6 +1,4 @@
-// Minimal ambient types for the parts of Google Identity Services (GIS) this
-// app uses. GIS is loaded at runtime via a <script> tag (see googleDrive.ts),
-// there is no official npm package for it.
+// Minimal ambient types for the parts of Google Identity Services
 
 interface GoogleTokenResponse {
   access_token: string;

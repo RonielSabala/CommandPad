@@ -112,16 +112,15 @@ export function getExportBasename(label: string): string {
   return DEFAULT_EXPORT_BASENAME;
 }
 
-/** The import/export JSON shape (variables/blocks with runtime-only ids stripped). */
 function buildRunbookExportJson(content: RunbookContent): string {
   const data = {
     variables: (content.variables ?? []).map(({ id, ...rest }) => rest),
     blocks: (content.blocks ?? []).map(({ id, ...rest }) => rest),
   };
+
   return JSON.stringify(data, null, 2);
 }
 
-/** Serialized file content for a given export format. */
 export function buildRunbookExportContent(
   format: ExportFormat,
   content: RunbookContent,

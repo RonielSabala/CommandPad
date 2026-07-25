@@ -84,6 +84,7 @@ function loadScript(): Promise<void> {
         resolve();
         return;
       }
+
       const script = document.createElement("script");
       script.src = GIS_SCRIPT_URL;
       script.async = true;
@@ -94,6 +95,7 @@ function loadScript(): Promise<void> {
       document.head.appendChild(script);
     });
   }
+
   return scriptPromise;
 }
 
@@ -121,6 +123,7 @@ function requestToken(prompt: string): Promise<GoogleTokenResponse> {
           reject(new CloudSyncError("Google sign-in was cancelled"));
         },
       });
+
       client.requestAccessToken({ prompt });
     });
   });
@@ -132,7 +135,6 @@ function applyToken(response: GoogleTokenResponse): void {
   persistSession();
 }
 
-/** Guarantees `accessToken` is usable before a Drive request */
 async function ensureToken(): Promise<void> {
   if (isTokenFresh()) {
     return;
@@ -216,6 +218,7 @@ async function findFileByName(
     `${GoogleDriveConfig.API_BASE_URL}/files?q=${query}&fields=files(id)&spaces=drive`,
   );
   const data = (await response.json()) as { files: { id: string }[] };
+
   return data.files[0]?.id ?? null;
 }
 
@@ -231,7 +234,6 @@ class GoogleDriveClient implements CloudClient {
       return;
     }
 
-    // Rehydrate a session cached by a previous page load before the SDK loads
     if (!accessToken) {
       restoreSession();
     }
@@ -257,6 +259,7 @@ class GoogleDriveClient implements CloudClient {
       const data = (await response.json()) as {
         user?: { displayName?: string; emailAddress?: string };
       };
+
       accountLabel = data.user?.emailAddress ?? data.user?.displayName ?? null;
     } catch {
       accountLabel = null;
@@ -281,6 +284,7 @@ class GoogleDriveClient implements CloudClient {
     const response = await driveFetch(
       `${GoogleDriveConfig.API_BASE_URL}/files?q=${query}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc&spaces=drive`,
     );
+
     const data = (await response.json()) as { files: DriveFileResource[] };
     return data.files
       .filter((item) => item.name.endsWith(JSON_EXTENSION))
@@ -295,6 +299,7 @@ class GoogleDriveClient implements CloudClient {
     const response = await driveFetch(
       `${GoogleDriveConfig.API_BASE_URL}/files/${encodeURIComponent(file.id)}?alt=media`,
     );
+
     return response.text();
   }
 
@@ -315,6 +320,7 @@ class GoogleDriveClient implements CloudClient {
           body: content,
         },
       );
+
       return;
     }
 

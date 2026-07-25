@@ -39,7 +39,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 - **Adjustable sidebar**: collapse the sidebar to maximize workspace, or move it to the right side of the screen.
 - **Persistent state**: tabs, workspace content, sidebar state, and app mode are all saved locally and restored on reload.
 - **Export**: save the active workspace as `.json`, `.md`, or `.txt` via a native OS save dialog.
-- **Cloud sync (optional)**: export/import runbooks directly to SharePoint or Google Drive. See [Cloud Sync](#cloud-sync-optional).
+- **Cloud sync (optional)**: export/import runbooks directly to SharePoint or Google Drive.
 
 ---
 
