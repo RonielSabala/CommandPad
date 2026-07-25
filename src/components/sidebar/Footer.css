@@ -1,12 +1,15 @@
 .footer {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: var(--space-8);
+  gap: var(--space-2) var(--space-8);
   border-top: var(--border-standard);
 }
 
 .footer-copyright {
+  flex: 1 1 auto;
+  min-width: 0;
   color: var(--color-text-muted);
   font-size: var(--text-xs);
   letter-spacing: 0.05em;
@@ -29,13 +32,15 @@
 .footer-right {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
-  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2) var(--space-6);
 }
 
 .footer-legal {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-3);
 }
 
