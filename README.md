@@ -89,7 +89,7 @@ Runbooks are stored as flat files inside a dedicated `CommandPad` folder in the 
 2. Set the **Redirect URI** platform to **Single-page application (SPA)** and its value to the URL CommandPad is served from (e.g. `http://localhost:5173`).
 3. Under **API permissions**, add the delegated permissions **User.Read** and **Files.ReadWrite.AppFolder** (no admin consent is normally required for these).
 4. Copy the **Application (client) ID** from the app's Overview page.
-5. Set `VITE_MSAL_CLIENT_ID` to that value in a `.env.local` file (copy `.env.example` as a starting point), then rebuild. `VITE_MSAL_TENANT_ID` is optional and restricts sign-in to a single organization; it defaults to allowing any Microsoft account.
+5. Set `VITE_MSAL_CLIENT_ID` to that value in a `.env.local` file (copy `.env.example` as a starting point), then rebuild.
 
 ---
 

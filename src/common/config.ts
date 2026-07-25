@@ -184,7 +184,7 @@ export const FileDateFormat: Intl.DateTimeFormatOptions = {
 
 export const SharePointConfig = {
   CLIENT_ID: import.meta.env.VITE_MSAL_CLIENT_ID ?? "",
-  AUTHORITY: `https://login.microsoftonline.com/${import.meta.env.VITE_MSAL_TENANT_ID ?? "common"}`,
+  AUTHORITY: "https://login.microsoftonline.com/common",
   REDIRECT_URI: window.location.origin,
   SCOPES: ["User.Read", "Files.ReadWrite.AppFolder"],
   GRAPH_BASE_URL: "https://graph.microsoft.com/v1.0",
