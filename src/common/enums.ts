@@ -95,6 +95,15 @@ export const DragGroup = {
 } as const;
 export type DragGroup = (typeof DragGroup)[keyof typeof DragGroup];
 
+export const HttpMethod = {
+  GET: "GET",
+  POST: "POST",
+  PUT: "PUT",
+  PATCH: "PATCH",
+  DELETE: "DELETE",
+} as const;
+export type HttpMethod = (typeof HttpMethod)[keyof typeof HttpMethod];
+
 export const CloudProvider = {
   SHAREPOINT: "sharepoint",
   GOOGLE_DRIVE: "google-drive",

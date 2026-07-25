@@ -1,6 +1,7 @@
 import {
   DEFAULT_TAB_LABEL,
   FilePickerConfig,
+  JSON_EXTENSION,
   MarkdownSyntax,
   RunbookConfig,
 } from "@/common/config";
@@ -108,7 +109,7 @@ export function stripJsonExtension(filename: string): string {
 }
 
 export function withJsonExtension(filename: string): string {
-  return `${stripJsonExtension(filename)}.${ExportFormat.JSON}`;
+  return `${stripJsonExtension(filename)}${JSON_EXTENSION}`;
 }
 
 export function getExportBasename(label: string): string {

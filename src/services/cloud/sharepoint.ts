@@ -1,14 +1,23 @@
+import {
+  contentTypeHeaders,
+  JSON_EXTENSION,
+  MimeType,
+  SharePointConfig,
+} from "@/common/config";
+import { CloudProvider, HttpMethod } from "@/common/enums";
 import type {
   AccountInfo,
   PublicClientApplication as PublicClientApplicationClass,
 } from "@azure/msal-browser";
-
-import { SharePointConfig } from "@/common/config";
-import { CloudProvider, ExportFormat } from "@/common/enums";
 import type { CloudClient, CloudFile } from "./types";
 import { CloudSyncError } from "./types";
 
-const JSON_EXTENSION = `.${ExportFormat.JSON}`;
+const DRIVE_PATH = "/me/drive";
+const APP_ROOT_PATH = `${DRIVE_PATH}/special/approot`;
+
+function driveItemPath(fileId: string): string {
+  return `${DRIVE_PATH}/items/${encodeURIComponent(fileId)}`;
+}
 
 interface DriveItem {
   id: string;
@@ -146,7 +155,7 @@ class SharePointClient implements CloudClient {
 
   async listFiles(): Promise<CloudFile[]> {
     const response = await graphFetch(
-      "/me/drive/special/approot/children?$select=id,name,lastModifiedDateTime,size,folder&$orderby=lastModifiedDateTime desc",
+      `${APP_ROOT_PATH}/children?$select=id,name,lastModifiedDateTime,size,folder&$orderby=lastModifiedDateTime desc`,
     );
 
     const data = (await response.json()) as { value: DriveItem[] };
@@ -161,10 +170,7 @@ class SharePointClient implements CloudClient {
   }
 
   async readFile(file: CloudFile): Promise<string> {
-    const response = await graphFetch(
-      `/me/drive/items/${encodeURIComponent(file.id)}/content`,
-    );
-
+    const response = await graphFetch(`${driveItemPath(file.id)}/content`);
     return response.text();
   }
 
@@ -174,27 +180,25 @@ class SharePointClient implements CloudClient {
     mimeType: string,
   ): Promise<void> {
     await graphFetch(
-      `/me/drive/special/approot:/${encodeURIComponent(filename)}:/content`,
+      `${APP_ROOT_PATH}:/${encodeURIComponent(filename)}:/content`,
       {
-        method: "PUT",
-        headers: { "Content-Type": mimeType },
+        method: HttpMethod.PUT,
+        headers: contentTypeHeaders(mimeType),
         body: content,
       },
     );
   }
 
   async renameFile(file: CloudFile, filename: string): Promise<void> {
-    await graphFetch(`/me/drive/items/${encodeURIComponent(file.id)}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+    await graphFetch(driveItemPath(file.id), {
+      method: HttpMethod.PATCH,
+      headers: contentTypeHeaders(MimeType.JSON),
       body: JSON.stringify({ name: filename }),
     });
   }
 
   async deleteFile(file: CloudFile): Promise<void> {
-    await graphFetch(`/me/drive/items/${encodeURIComponent(file.id)}`, {
-      method: "DELETE",
-    });
+    await graphFetch(driveItemPath(file.id), { method: HttpMethod.DELETE });
   }
 }
 

@@ -110,6 +110,21 @@ export const VariableSyntax = {
 
 // Supported file types
 
+export const JSON_EXTENSION = `.${ExportFormat.JSON}`;
+
+export const MimeType = {
+  JSON: "application/json",
+  MARKDOWN: "text/markdown",
+  PLAIN_TEXT: "text/plain",
+} as const;
+export type MimeType = (typeof MimeType)[keyof typeof MimeType];
+
+export const CONTENT_TYPE_HEADER = "Content-Type";
+
+export function contentTypeHeaders(mimeType: string): Record<string, string> {
+  return { [CONTENT_TYPE_HEADER]: mimeType };
+}
+
 interface FilePickerType {
   description: string;
   accept: Record<string, string[]>;
@@ -127,11 +142,14 @@ interface FilePickerInfo {
 
 const FILE_PICKER_INFO: Record<ExportFormat, FilePickerInfo> = {
   [ExportFormat.JSON]: {
-    mimeType: "application/json",
+    mimeType: MimeType.JSON,
     description: "CommandPad JSON",
   },
-  [ExportFormat.MD]: { mimeType: "text/markdown", description: "Markdown" },
-  [ExportFormat.TXT]: { mimeType: "text/plain", description: "Plain Text" },
+  [ExportFormat.MD]: { mimeType: MimeType.MARKDOWN, description: "Markdown" },
+  [ExportFormat.TXT]: {
+    mimeType: MimeType.PLAIN_TEXT,
+    description: "Plain Text",
+  },
 };
 
 export const FilePickerConfig: Record<ExportFormat, FilePickerFormat> =

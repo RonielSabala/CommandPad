@@ -1,17 +1,31 @@
 import {
   CloudSyncConfig,
+  CONTENT_TYPE_HEADER,
+  contentTypeHeaders,
   GoogleDriveConfig,
+  JSON_EXTENSION,
+  MimeType,
   StorageKey,
 } from "@/common/config";
-import { CloudProvider, ExportFormat } from "@/common/enums";
+import { CloudProvider, HttpMethod } from "@/common/enums";
 import type { CloudClient, CloudFile } from "./types";
 import { CloudSyncError } from "./types";
 
 const GIS_SCRIPT_URL = "https://accounts.google.com/gsi/client";
 const FOLDER_MIME_TYPE = "application/vnd.google-apps.folder";
-const JSON_EXTENSION = `.${ExportFormat.JSON}`;
+
+const FILES_URL = `${GoogleDriveConfig.API_BASE_URL}/files`;
+const UPLOAD_FILES_URL = `${GoogleDriveConfig.UPLOAD_BASE_URL}/files`;
 
 const TOKEN_EXPIRY_MARGIN_MS = 60_000;
+
+function fileUrl(fileId: string): string {
+  return `${FILES_URL}/${encodeURIComponent(fileId)}`;
+}
+
+function uploadFileUrl(fileId: string): string {
+  return `${UPLOAD_FILES_URL}/${encodeURIComponent(fileId)}`;
+}
 
 interface DriveFileResource {
   id: string;
@@ -181,7 +195,7 @@ async function findAppFolderId(): Promise<string> {
     `mimeType='${FOLDER_MIME_TYPE}' and name='${CloudSyncConfig.APP_FOLDER_NAME}' and 'root' in parents and trashed=false`,
   );
   const searchResponse = await driveFetch(
-    `${GoogleDriveConfig.API_BASE_URL}/files?q=${query}&fields=files(id,name)&spaces=drive`,
+    `${FILES_URL}?q=${query}&fields=files(id,name)&spaces=drive`,
   );
   const searchData = (await searchResponse.json()) as {
     files: { id: string }[];
@@ -192,17 +206,14 @@ async function findAppFolderId(): Promise<string> {
     return appFolderId;
   }
 
-  const createResponse = await driveFetch(
-    `${GoogleDriveConfig.API_BASE_URL}/files?fields=id`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: CloudSyncConfig.APP_FOLDER_NAME,
-        mimeType: FOLDER_MIME_TYPE,
-      }),
-    },
-  );
+  const createResponse = await driveFetch(`${FILES_URL}?fields=id`, {
+    method: HttpMethod.POST,
+    headers: contentTypeHeaders(MimeType.JSON),
+    body: JSON.stringify({
+      name: CloudSyncConfig.APP_FOLDER_NAME,
+      mimeType: FOLDER_MIME_TYPE,
+    }),
+  });
   const created = (await createResponse.json()) as { id: string };
   appFolderId = created.id;
   return appFolderId;
@@ -216,7 +227,7 @@ async function findFileByName(
     `'${folderId}' in parents and name='${filename}' and trashed=false`,
   );
   const response = await driveFetch(
-    `${GoogleDriveConfig.API_BASE_URL}/files?q=${query}&fields=files(id)&spaces=drive`,
+    `${FILES_URL}?q=${query}&fields=files(id)&spaces=drive`,
   );
   const data = (await response.json()) as { files: { id: string }[] };
 
@@ -283,7 +294,7 @@ class GoogleDriveClient implements CloudClient {
       `'${folderId}' in parents and trashed=false`,
     );
     const response = await driveFetch(
-      `${GoogleDriveConfig.API_BASE_URL}/files?q=${query}&fields=files(id,name,modifiedTime,size)&orderBy=modifiedTime desc&spaces=drive`,
+      `${FILES_URL}?q=${query}&fields=files(id,name,modifiedTime,size)&orderBy=modifiedTime desc&spaces=drive`,
     );
 
     const data = (await response.json()) as { files: DriveFileResource[] };
@@ -298,10 +309,7 @@ class GoogleDriveClient implements CloudClient {
   }
 
   async readFile(file: CloudFile): Promise<string> {
-    const response = await driveFetch(
-      `${GoogleDriveConfig.API_BASE_URL}/files/${encodeURIComponent(file.id)}?alt=media`,
-    );
-
+    const response = await driveFetch(`${fileUrl(file.id)}?alt=media`);
     return response.text();
   }
 
@@ -314,14 +322,11 @@ class GoogleDriveClient implements CloudClient {
     const existingId = await findFileByName(folderId, filename);
 
     if (existingId) {
-      await driveFetch(
-        `${GoogleDriveConfig.UPLOAD_BASE_URL}/files/${encodeURIComponent(existingId)}?uploadType=media`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": mimeType },
-          body: content,
-        },
-      );
+      await driveFetch(`${uploadFileUrl(existingId)}?uploadType=media`, {
+        method: HttpMethod.PATCH,
+        headers: contentTypeHeaders(mimeType),
+        body: content,
+      });
 
       return;
     }
@@ -330,37 +335,28 @@ class GoogleDriveClient implements CloudClient {
     const metadata = JSON.stringify({ name: filename, parents: [folderId] });
     const body =
       `--${boundary}\r\n` +
-      `Content-Type: application/json; charset=UTF-8\r\n\r\n${metadata}\r\n` +
+      `${CONTENT_TYPE_HEADER}: ${MimeType.JSON}; charset=UTF-8\r\n\r\n${metadata}\r\n` +
       `--${boundary}\r\n` +
-      `Content-Type: ${mimeType}\r\n\r\n${content}\r\n` +
+      `${CONTENT_TYPE_HEADER}: ${mimeType}\r\n\r\n${content}\r\n` +
       `--${boundary}--`;
 
-    await driveFetch(
-      `${GoogleDriveConfig.UPLOAD_BASE_URL}/files?uploadType=multipart&fields=id`,
-      {
-        method: "POST",
-        headers: { "Content-Type": `multipart/related; boundary=${boundary}` },
-        body,
-      },
-    );
+    await driveFetch(`${UPLOAD_FILES_URL}?uploadType=multipart&fields=id`, {
+      method: HttpMethod.POST,
+      headers: contentTypeHeaders(`multipart/related; boundary=${boundary}`),
+      body,
+    });
   }
 
   async renameFile(file: CloudFile, filename: string): Promise<void> {
-    await driveFetch(
-      `${GoogleDriveConfig.API_BASE_URL}/files/${encodeURIComponent(file.id)}`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: filename }),
-      },
-    );
+    await driveFetch(fileUrl(file.id), {
+      method: HttpMethod.PATCH,
+      headers: contentTypeHeaders(MimeType.JSON),
+      body: JSON.stringify({ name: filename }),
+    });
   }
 
   async deleteFile(file: CloudFile): Promise<void> {
-    await driveFetch(
-      `${GoogleDriveConfig.API_BASE_URL}/files/${encodeURIComponent(file.id)}`,
-      { method: "DELETE" },
-    );
+    await driveFetch(fileUrl(file.id), { method: HttpMethod.DELETE });
   }
 }
 
