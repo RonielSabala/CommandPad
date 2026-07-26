@@ -27,7 +27,7 @@
   gap: var(--space-4);
   min-width: var(--modal-min-width);
   max-width: var(--modal-max-width);
-  box-shadow: 0 var(--space-4) var(--space-12) var(--black-a50);
+  box-shadow: 0 var(--space-4) var(--space-12) var(--shadow-color-float);
   transform: translateY(calc(-1 * var(--space-3)));
   transition: transform var(--transition-base);
 }

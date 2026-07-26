@@ -99,7 +99,7 @@
   /* --- MISC & UTILITIES --- */
   --white-a10: rgba(255, 255, 255, 0.1);
   --black-a40: rgba(0, 0, 0, 0.4);
-  --black-a50: rgba(0, 0, 0, 0.5);
+  --shadow-color-float: var(--black-a40);
 
   /* --- COMPOUND TOKENS --- */
   --border-standard: 1px solid var(--color-border);
@@ -139,4 +139,7 @@
   /* Note text styles */
   --code-color: #b4490a;
   --code-bg: rgba(180, 73, 10, 0.08);
+
+  /* Shadows */
+  --shadow-color-float: rgba(22, 26, 34, 0.12);
 }

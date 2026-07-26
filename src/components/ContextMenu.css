@@ -9,7 +9,7 @@
   background: var(--color-surface);
   border: var(--border-standard);
   border-radius: var(--radius-md);
-  box-shadow: 0 var(--space-1) var(--space-3) var(--black-a40);
+  box-shadow: 0 var(--space-1) var(--space-3) var(--shadow-color-float);
 }
 
 .context-menu-item {
