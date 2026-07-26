@@ -163,6 +163,8 @@ export const es: Messages = {
     invalidFileError: "Ese archivo no parece un JSON de libro válido.",
     renameError: "No se pudo renombrar el archivo. Inténtalo de nuevo.",
     deleteError: "No se pudo eliminar el archivo. Inténtalo de nuevo.",
+    renameFolderError: "No se pudo renombrar la carpeta. Inténtalo de nuevo.",
+    deleteFolderError: "No se pudo eliminar la carpeta. Inténtalo de nuevo.",
     createFolderError: "No se pudo crear la carpeta. Inténtalo de nuevo.",
     nameTakenError: (filename) => `${filename} ya existe en esta carpeta.`,
   },
@@ -198,6 +200,10 @@ export const es: Messages = {
     deleteCloudFileConfirm: "Eliminar",
     deleteCloudFileMessage: (filename) =>
       `¿Eliminar "${filename}" de tu carpeta en la nube? Esta acción no se puede deshacer.`,
+    deleteCloudFolderTitle: "Eliminar Carpeta de la Nube",
+    deleteCloudFolderConfirm: "Eliminar",
+    deleteCloudFolderMessage: (name) =>
+      `¿Eliminar la carpeta "${name}"? Esta acción no se puede deshacer.`,
     signOutCloudTitle: "Cerrar Sesión",
     signOutCloudConfirm: "Cerrar Sesión",
     signOutCloudMessage: "¿Cerrar sesión de esta cuenta?",
@@ -703,7 +709,7 @@ export const es: Messages = {
       folders:
         "Los libros en la nube pueden vivir en carpetas. Al explorar aparecen primero las carpetas y después los archivos: haz clic en una carpeta para abrirla y en un archivo para importarlo. Los botones de **flecha** avanzan y retroceden por las carpetas que visitaste, y la ruta que aparece sobre la lista te lleva de vuelta a cualquier carpeta de la ruta. Al exportar a la nube, el campo **Carpeta** elige dónde se guarda el libro, y el botón de **nueva carpeta** crea una carpeta al momento.",
       manage:
-        "Al explorar una carpeta en la nube, cada libro muestra la fecha en que se modificó por última vez y su tamaño. El botón del **lápiz** renombra un archivo y el botón de la **papelera** lo elimina de la nube después de confirmarlo.",
+        "Al explorar una carpeta en la nube, cada libro muestra la fecha en que se modificó por última vez y su tamaño. El botón del **lápiz** renombra una fila y el botón de la **papelera** la elimina de la nube después de confirmarlo. Las carpetas funcionan igual, salvo que eliminar una también elimina todo su contenido.",
       storage:
         "Los libros en la nube se guardan en una carpeta dedicada llamada **CommandPad** en tu propia cuenta, nunca en ningún otro lugar.",
     },

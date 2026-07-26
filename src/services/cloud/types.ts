@@ -44,6 +44,6 @@ export interface CloudClient {
     mimeType: string,
     folderId: string | null,
   ): Promise<void>;
-  renameFile(file: CloudEntry, filename: string): Promise<void>;
-  deleteFile(file: CloudEntry): Promise<void>;
+  renameEntry(entry: CloudEntry, name: string): Promise<void>;
+  deleteEntry(entry: CloudEntry): Promise<void>;
 }

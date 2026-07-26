@@ -266,8 +266,8 @@ export interface StoreState {
   navigateCloudToPath: (path: CloudFolderRef[]) => void;
   createCloudFolder: (name: string) => Promise<void>;
   importRunbookFromCloud: (file: CloudEntry) => Promise<void>;
-  renameCloudFile: (file: CloudEntry, basename: string) => Promise<void>;
-  deleteCloudFile: (file: CloudEntry) => Promise<void>;
+  renameCloudEntry: (entry: CloudEntry, basename: string) => Promise<void>;
+  deleteCloudEntry: (entry: CloudEntry) => Promise<void>;
 
   confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
   resolveConfirm: (result: boolean) => void;
@@ -1926,36 +1926,42 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         persist.saveUiState(uiStateSnapshot(get()));
       },
 
-      renameCloudFile: async (file, basename) => {
+      renameCloudEntry: async (entry, basename) => {
         const trimmed = basename.trim();
         if (!trimmed) {
           return;
         }
 
-        const filename = withJsonExtension(trimmed);
-        if (filename === file.name) {
+        // Only files carry the .json extension
+        const name = entry.isFolder ? trimmed : withJsonExtension(trimmed);
+        if (name === entry.name) {
           return;
         }
 
         const t = getMessages(get().language);
         const taken = get().cloudEntries.some(
           (other) =>
-            other.id !== file.id &&
-            other.name.toLowerCase() === filename.toLowerCase(),
+            other.id !== entry.id &&
+            other.name.toLowerCase() === name.toLowerCase(),
         );
 
         if (taken) {
-          set({ cloudError: t.cloudModal.nameTakenError(filename) });
+          set({ cloudError: t.cloudModal.nameTakenError(name) });
           return;
         }
 
         const client = getCloudClient(get().cloudProvider);
         set({ cloudLoading: true, cloudError: null });
         try {
-          await client.renameFile(file, filename);
+          await client.renameEntry(entry, name);
         } catch (error) {
-          console.error("Cloud file rename failed", error);
-          set({ cloudLoading: false, cloudError: t.cloudModal.renameError });
+          console.error("Cloud entry rename failed", error);
+          set({
+            cloudLoading: false,
+            cloudError: entry.isFolder
+              ? t.cloudModal.renameFolderError
+              : t.cloudModal.renameError,
+          });
           return;
         }
 
@@ -1963,13 +1969,19 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         await get().refreshCloudEntries();
       },
 
-      deleteCloudFile: async (file) => {
+      deleteCloudEntry: async (entry) => {
         const t = getMessages(get().language);
         const confirmed = await get().confirm(
-          t.dialogs.deleteCloudFileMessage(file.name),
+          entry.isFolder
+            ? t.dialogs.deleteCloudFolderMessage(entry.name)
+            : t.dialogs.deleteCloudFileMessage(entry.name),
           {
-            title: t.dialogs.deleteCloudFileTitle,
-            confirmLabel: t.dialogs.deleteCloudFileConfirm,
+            title: entry.isFolder
+              ? t.dialogs.deleteCloudFolderTitle
+              : t.dialogs.deleteCloudFileTitle,
+            confirmLabel: entry.isFolder
+              ? t.dialogs.deleteCloudFolderConfirm
+              : t.dialogs.deleteCloudFileConfirm,
             danger: true,
           },
         );
@@ -1981,10 +1993,15 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const client = getCloudClient(get().cloudProvider);
         set({ cloudLoading: true, cloudError: null });
         try {
-          await client.deleteFile(file);
+          await client.deleteEntry(entry);
         } catch (error) {
-          console.error("Cloud file delete failed", error);
-          set({ cloudLoading: false, cloudError: t.cloudModal.deleteError });
+          console.error("Cloud entry delete failed", error);
+          set({
+            cloudLoading: false,
+            cloudError: entry.isFolder
+              ? t.cloudModal.deleteFolderError
+              : t.cloudModal.deleteError,
+          });
           return;
         }
 

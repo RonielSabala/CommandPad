@@ -49,6 +49,7 @@ export function FilenameInput({
             onSubmit();
           } else if (event.key === Key.ESCAPE && onCancel) {
             event.preventDefault();
+            event.stopPropagation();
             onCancel();
           }
         }}

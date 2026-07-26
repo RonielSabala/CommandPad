@@ -210,16 +210,16 @@ class SharePointClient implements CloudClient {
     );
   }
 
-  async renameFile(file: CloudEntry, filename: string): Promise<void> {
-    await graphFetch(driveItemPath(file.id), {
+  async renameEntry(entry: CloudEntry, name: string): Promise<void> {
+    await graphFetch(driveItemPath(entry.id), {
       method: HttpMethod.PATCH,
       headers: contentTypeHeaders(MimeType.JSON),
-      body: JSON.stringify({ name: filename }),
+      body: JSON.stringify({ name }),
     });
   }
 
-  async deleteFile(file: CloudEntry): Promise<void> {
-    await graphFetch(driveItemPath(file.id), { method: HttpMethod.DELETE });
+  async deleteEntry(entry: CloudEntry): Promise<void> {
+    await graphFetch(driveItemPath(entry.id), { method: HttpMethod.DELETE });
   }
 }
 

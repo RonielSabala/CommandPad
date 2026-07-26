@@ -161,6 +161,8 @@ export const en: Messages = {
     invalidFileError: "That file doesn't look like valid runbook JSON.",
     renameError: "Could not rename that file. Please try again.",
     deleteError: "Could not delete that file. Please try again.",
+    renameFolderError: "Could not rename that folder. Please try again.",
+    deleteFolderError: "Could not delete that folder. Please try again.",
     createFolderError: "Could not create that folder. Please try again.",
     nameTakenError: (filename) => `${filename} already exists in this folder.`,
   },
@@ -196,6 +198,10 @@ export const en: Messages = {
     deleteCloudFileConfirm: "Delete",
     deleteCloudFileMessage: (filename) =>
       `Delete "${filename}" from your cloud folder? This action cannot be undone.`,
+    deleteCloudFolderTitle: "Delete Cloud Folder",
+    deleteCloudFolderConfirm: "Delete",
+    deleteCloudFolderMessage: (name) =>
+      `Delete the folder "${name}"? This action cannot be undone.`,
     signOutCloudTitle: "Sign Out",
     signOutCloudConfirm: "Sign Out",
     signOutCloudMessage: "Sign out of this account?",
@@ -691,7 +697,7 @@ export const en: Messages = {
       folders:
         "Cloud runbooks can live in folders. Browsing shows folders first and files after them: click a folder to open it, click a file to import it. The **arrow** buttons move back and forward through the folders you visited, and the path above the list lets you jump straight back to any folder in it. When you export to the cloud, the **Folder** field picks where the runbook lands, and the **new folder** button creates a folder on the spot.",
       manage:
-        "When you browse a cloud folder, every runbook lists the date it was last modified and its file size. The **pencil** button renames a file and the **trash** button deletes it from the cloud after you confirm.",
+        "When you browse a cloud folder, every runbook lists the date it was last modified and its file size. The **pencil** button renames a row and the **trash** button deletes it from the cloud after you confirm. Folders work the same way, except deleting one also deletes everything inside it.",
       storage:
         "Cloud runbooks live in a dedicated **CommandPad** folder in your own account, never anywhere else.",
     },

@@ -180,6 +180,8 @@ export interface Messages {
     invalidFileError: string;
     renameError: string;
     deleteError: string;
+    renameFolderError: string;
+    deleteFolderError: string;
     createFolderError: string;
     nameTakenError: (filename: string) => string;
   };
@@ -207,6 +209,9 @@ export interface Messages {
     deleteCloudFileTitle: string;
     deleteCloudFileConfirm: string;
     deleteCloudFileMessage: (filename: string) => string;
+    deleteCloudFolderTitle: string;
+    deleteCloudFolderConfirm: string;
+    deleteCloudFolderMessage: (name: string) => string;
     signOutCloudTitle: string;
     signOutCloudConfirm: string;
     signOutCloudMessage: string;

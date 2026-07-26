@@ -371,16 +371,16 @@ class GoogleDriveClient implements CloudClient {
     });
   }
 
-  async renameFile(file: CloudEntry, filename: string): Promise<void> {
-    await driveFetch(fileUrl(file.id), {
+  async renameEntry(entry: CloudEntry, name: string): Promise<void> {
+    await driveFetch(fileUrl(entry.id), {
       method: HttpMethod.PATCH,
       headers: contentTypeHeaders(MimeType.JSON),
-      body: JSON.stringify({ name: filename }),
+      body: JSON.stringify({ name }),
     });
   }
 
-  async deleteFile(file: CloudEntry): Promise<void> {
-    await driveFetch(fileUrl(file.id), { method: HttpMethod.DELETE });
+  async deleteEntry(entry: CloudEntry): Promise<void> {
+    await driveFetch(fileUrl(entry.id), { method: HttpMethod.DELETE });
   }
 }
 
