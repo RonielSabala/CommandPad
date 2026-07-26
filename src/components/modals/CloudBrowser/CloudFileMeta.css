@@ -13,9 +13,3 @@
   color: var(--color-text-muted);
   white-space: nowrap;
 }
-
-.cloud-browser-file-size {
-  padding: 0 var(--space-2);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-}
