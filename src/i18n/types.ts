@@ -128,7 +128,8 @@ export interface Messages {
     followLinkTooltip: (binding?: string) => string;
   };
   exportModal: {
-    title: (provider: string | null) => string;
+    title: string;
+    cloudTitle: string;
     destinationLabel: string;
     formatLabel: string;
     filenameLabel: string;
@@ -153,7 +154,8 @@ export interface Messages {
     local: string;
   };
   cloudModal: {
-    importTitle: (provider: string) => string;
+    importTitle: string;
+    changeProvider: string;
     signInPrompt: (provider: string) => string;
     signInSharePoint: string;
     signInGoogleDrive: string;
@@ -394,6 +396,7 @@ export interface Messages {
     cloudSync: {
       intro: string;
       howItWorks: string;
+      switchProvider: string;
       folders: string;
       search: string;
       manage: string;

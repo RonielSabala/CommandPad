@@ -18,6 +18,7 @@ import {
   LaptopFill,
 } from "react-bootstrap-icons";
 import { CloudFolderPicker } from "./CloudFolderPicker";
+import { CloudModalTitle } from "./CloudModalTitle";
 import { PROVIDER_ICON, PROVIDER_NAME, PROVIDERS } from "./cloudProviders";
 import "./ExportModal.css";
 import { Modal } from "./Modal";
@@ -145,9 +146,15 @@ export function ExportModal() {
       onClose={onClose}
       className={classNames(isBrowsingCloud && "modal-cloud")}
     >
-      <p className="modal-title">
-        {t.exportModal.title(isCloud ? PROVIDER_NAME[destination] : null)}
-      </p>
+      {isBrowsingCloud ? (
+        <CloudModalTitle
+          message={t.exportModal.cloudTitle}
+          provider={destination}
+          onChange={setExportDestination}
+        />
+      ) : (
+        <p className="modal-title">{t.exportModal.title}</p>
+      )}
 
       {isExporting && <CloudExportStatusView onDone={onClose} />}
 

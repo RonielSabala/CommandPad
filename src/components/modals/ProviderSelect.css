@@ -1,0 +1,11 @@
+.provider-select {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.provider-select-trigger {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}

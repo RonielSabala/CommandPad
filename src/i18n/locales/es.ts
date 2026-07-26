@@ -1,6 +1,7 @@
 import { DocsSectionId } from "@/common/constants/docs";
 import { BlockType, NoteStyle } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
+import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
 
 export const es: Messages = {
@@ -111,7 +112,8 @@ export const es: Messages = {
       binding ? `Seguir enlace (${binding})` : "Seguir enlace",
   },
   exportModal: {
-    title: (provider) => (provider ? `Exportar a ${provider}` : "Exportar"),
+    title: "Exportar",
+    cloudTitle: `Exportar a ${MessageSlot.PROVIDER}`,
     destinationLabel: "Destino",
     formatLabel: "Formato",
     filenameLabel: "Nombre del archivo",
@@ -136,7 +138,8 @@ export const es: Messages = {
     local: "Este dispositivo",
   },
   cloudModal: {
-    importTitle: (provider) => `Importar desde ${provider}`,
+    importTitle: `Importar desde ${MessageSlot.PROVIDER}`,
+    changeProvider: "Cambiar de proveedor",
     signInPrompt: (provider) =>
       `Inicia sesión en ${provider} para explorar y administrar tus runbooks allí.`,
     signInSharePoint: "Iniciar sesión con Microsoft",
@@ -717,6 +720,8 @@ export const es: Messages = {
         "**Exportar** e **Importar** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo.",
       howItWorks:
         "Haz clic en **Exportar** para abrir un único diálogo donde eliges un destino (este dispositivo, SharePoint o Google Drive), un formato (JSON, Markdown o texto plano) y un nombre de archivo, y luego exportas. Se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados, y una exportación a la nube muestra su progreso y confirma cuando el libro se ha guardado.",
+      switchProvider:
+        "Mientras exploras la nube, el nombre del proveedor en el título del diálogo es un **selector**: haz clic en él para cambiar entre proveedores sin volver atrás.",
       folders:
         "Los libros en la nube pueden vivir en carpetas: haz clic en una carpeta para abrirla y en un archivo para importarlo. Los botones de **flecha** avanzan y retroceden por las carpetas que visitaste, y la ruta que aparece sobre la lista te lleva de vuelta a cualquier carpeta de la ruta. Al exportar a la nube, el campo **Carpeta** elige dónde se guarda el libro, y el botón de **nueva carpeta** crea una carpeta al momento.",
       search:

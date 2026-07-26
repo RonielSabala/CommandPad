@@ -2,13 +2,14 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { ArrowLeft } from "react-bootstrap-icons";
 import { CloudBrowser } from "./CloudBrowser";
-import { PROVIDER_NAME } from "./cloudProviders";
+import { CloudModalTitle } from "./CloudModalTitle";
 import { Modal } from "./Modal";
 
 export function CloudImportModal() {
   const t = useTranslation();
   const isOpen = useStore((state) => state.cloudImportModalOpen);
   const provider = useStore((state) => state.cloudProvider);
+  const chooseDestination = useStore((state) => state.chooseDestination);
   const closeCloudImportModal = useStore(
     (state) => state.closeCloudImportModal,
   );
@@ -22,9 +23,11 @@ export function CloudImportModal() {
       onClose={closeCloudImportModal}
       className="modal-cloud"
     >
-      <p className="modal-title">
-        {t.cloudModal.importTitle(PROVIDER_NAME[provider])}
-      </p>
+      <CloudModalTitle
+        message={t.cloudModal.importTitle}
+        provider={provider}
+        onChange={chooseDestination}
+      />
 
       <CloudBrowser showFiles />
 

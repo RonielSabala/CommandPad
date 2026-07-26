@@ -1,6 +1,7 @@
 import { DocsSectionId } from "@/common/constants/docs";
 import { BlockType, NoteStyle } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
+import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
 
 export const en: Messages = {
@@ -109,7 +110,8 @@ export const en: Messages = {
       binding ? `Follow link (${binding})` : "Follow link",
   },
   exportModal: {
-    title: (provider) => (provider ? `Export to ${provider}` : "Export"),
+    title: "Export",
+    cloudTitle: `Export to ${MessageSlot.PROVIDER}`,
     destinationLabel: "Destination",
     formatLabel: "Format",
     filenameLabel: "Filename",
@@ -134,7 +136,8 @@ export const en: Messages = {
     local: "This Device",
   },
   cloudModal: {
-    importTitle: (provider) => `Import from ${provider}`,
+    importTitle: `Import from ${MessageSlot.PROVIDER}`,
+    changeProvider: "Change provider",
     signInPrompt: (provider) =>
       `Sign in to ${provider} to browse and manage your runbooks there.`,
     signInSharePoint: "Sign in with Microsoft",
@@ -705,6 +708,8 @@ export const en: Messages = {
         "**Export** and **Import** can go straight to SharePoint or Google Drive, not just this device.",
       howItWorks:
         "Click **Export** to open one dialog where you choose a destination (this device, SharePoint, or Google Drive), a format (JSON, Markdown, or plain text), and a filename, then export. It reopens with the destination and format you used last time already selected, and a cloud export shows its progress and confirms once the runbook is saved.",
+      switchProvider:
+        "While you are browsing the cloud, the provider name in the dialog title is a **picker**: click it to switch between providers without going back a step.",
       folders:
         "Cloud runbooks can live in folders: click a folder to open it, click a file to import it. The **arrow** buttons move back and forward through the folders you visited, and the path above the list lets you jump straight back to any folder in it. When you export to the cloud, the **Folder** field picks where the runbook lands, and the **new folder** button creates a folder on the spot.",
       search:
