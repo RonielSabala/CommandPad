@@ -1,5 +1,6 @@
 import { JSON_EXTENSION } from "@/common/config";
 import { CloudSortColumn, SortDirection } from "@/common/enums";
+import { isString } from "@/utils/typeGuards";
 import type { CloudEntry } from "./types";
 
 export interface CloudSort {
@@ -31,7 +32,7 @@ function columnValue(
 }
 
 function compareValues(a: string | number, b: string | number): number {
-  return typeof a === "string" && typeof b === "string"
+  return isString(a) && isString(b)
     ? a.localeCompare(b)
     : Number(a) - Number(b);
 }

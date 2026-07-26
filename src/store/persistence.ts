@@ -12,6 +12,7 @@ import { detectLanguage, isLanguage } from "@/i18n/messages";
 import type { Language } from "@/i18n/types";
 import type { CloudFolderRef } from "@/services/cloud";
 import { clamp } from "@/utils/number";
+import { isNumber, isObject, isString } from "@/utils/typeGuards";
 
 function getSavedItemByKey(key: string) {
   return JSON.parse(localStorage.getItem(key) ?? "null");
@@ -26,11 +27,7 @@ const isExportFormat = (value: unknown): value is ExportFormat =>
 const isCloudFolderPath = (value: unknown): value is CloudFolderRef[] =>
   Array.isArray(value) &&
   value.every(
-    (step) =>
-      typeof step === "object" &&
-      step !== null &&
-      typeof (step as CloudFolderRef).id === "string" &&
-      typeof (step as CloudFolderRef).name === "string",
+    (step) => isObject(step) && isString(step.id) && isString(step.name),
   );
 
 // UI state
@@ -98,10 +95,10 @@ export function loadUiState(): Partial<PersistedUiState> | null {
         saved.sidebarPosition === SidebarPosition.RIGHT
           ? SidebarPosition.RIGHT
           : SidebarPosition.LEFT,
-      ...(typeof saved.sidebarWidth === "number"
+      ...(isNumber(saved.sidebarWidth)
         ? { sidebarWidth: saved.sidebarWidth }
         : {}),
-      ...(typeof saved.variableKeyRatio === "number"
+      ...(isNumber(saved.variableKeyRatio)
         ? {
             variableKeyRatio: clamp(
               saved.variableKeyRatio,
@@ -121,10 +118,10 @@ export function loadUiState(): Partial<PersistedUiState> | null {
       ...(isExportFormat(saved.lastExportFormat)
         ? { lastExportFormat: saved.lastExportFormat }
         : {}),
-      ...(typeof saved.lastExportFilename === "string"
+      ...(isString(saved.lastExportFilename)
         ? { lastExportFilename: saved.lastExportFilename }
         : {}),
-      ...(typeof saved.lastExportFilenameTabId === "string"
+      ...(isString(saved.lastExportFilenameTabId)
         ? { lastExportFilenameTabId: saved.lastExportFilenameTabId }
         : {}),
       ...(isCloudFolderPath(saved.lastExportFolderPath)
