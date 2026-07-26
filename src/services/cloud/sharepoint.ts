@@ -166,13 +166,16 @@ class SharePointClient implements CloudClient {
     );
 
     const data = (await response.json()) as { value: DriveItem[] };
-    const entries = data.value.map((item) => ({
-      id: item.id,
-      name: item.name,
-      isFolder: item.folder !== undefined,
-      modifiedAt: item.lastModifiedDateTime ?? null,
-      size: item.size ?? null,
-    }));
+    const entries = data.value.map((item) => {
+      const isFolder = item.folder !== undefined;
+      return {
+        id: item.id,
+        name: item.name,
+        isFolder,
+        modifiedAt: item.lastModifiedDateTime ?? null,
+        size: isFolder ? null : (item.size ?? null),
+      };
+    });
 
     return sortCloudEntries(entries.filter(isBrowsableEntry));
   }
