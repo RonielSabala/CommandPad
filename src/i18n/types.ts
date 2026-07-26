@@ -207,6 +207,9 @@ export interface Messages {
     overwriteTitle: string;
     overwriteConfirm: string;
     overwriteMessage: (filename: string, existingName: string) => string;
+    overwriteCloudFileTitle: string;
+    overwriteCloudFileConfirm: string;
+    overwriteCloudFileMessage: (filename: string) => string;
     importFailed: (count: number) => string;
     pastedRunbook: string;
     resetTitle: string;
@@ -397,6 +400,7 @@ export interface Messages {
       intro: string;
       howItWorks: string;
       switchProvider: string;
+      overwrite: string;
       folders: string;
       search: string;
       manage: string;

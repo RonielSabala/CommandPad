@@ -37,6 +37,8 @@ export interface CloudClient {
 
   listEntries(folderId: string | null): Promise<CloudEntry[]>;
   createFolder(name: string, parentId: string | null): Promise<void>;
+  fileExists(filename: string, folderId: string | null): Promise<boolean>;
+
   readFile(file: CloudEntry): Promise<string>;
   writeFile(
     filename: string,

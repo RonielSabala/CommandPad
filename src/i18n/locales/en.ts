@@ -191,6 +191,10 @@ export const en: Messages = {
     overwriteConfirm: "Overwrite",
     overwriteMessage: (filename, existingName) =>
       `"${filename}" matches an existing runbook. Importing it will overwrite "${existingName}".`,
+    overwriteCloudFileTitle: "Overwrite Cloud Runbook",
+    overwriteCloudFileConfirm: "Overwrite",
+    overwriteCloudFileMessage: (filename) =>
+      `"${filename}" already exists in the selected folder. Exporting will overwrite it, and this action cannot be undone.`,
     importFailed: (count) =>
       count === 1
         ? "1 file could not be imported because its format isn't recognized."
@@ -710,6 +714,8 @@ export const en: Messages = {
         "Click **Export** to open one dialog where you choose a destination (this device, SharePoint, or Google Drive), a format (JSON, Markdown, or plain text), and a filename, then export. It reopens with the destination and format you used last time already selected, and a cloud export shows its progress and confirms once the runbook is saved.",
       switchProvider:
         "While you are browsing the cloud, the provider name in the dialog title is a **picker**: click it to switch between providers without going back a step.",
+      overwrite:
+        "If the folder you export to already holds a file with the same name, the export stops and asks you to confirm before replacing it, so a reused filename never quietly overwrites a cloud runbook.",
       folders:
         "Cloud runbooks can live in folders: click a folder to open it, click a file to import it. The **arrow** buttons move back and forward through the folders you visited, and the path above the list lets you jump straight back to any folder in it. When you export to the cloud, the **Folder** field picks where the runbook lands, and the **new folder** button creates a folder on the spot.",
       search:

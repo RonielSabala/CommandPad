@@ -1759,6 +1759,27 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             await client.signIn();
           }
 
+          // A same-named file in the target folder is replaced, so ask first
+          if (await client.fileExists(fullName, folderId)) {
+            const t = getMessages(get().language);
+            set({ cloudExportStatus: CloudExportStatus.IDLE });
+
+            const confirmed = await get().confirm(
+              t.dialogs.overwriteCloudFileMessage(fullName),
+              {
+                title: t.dialogs.overwriteCloudFileTitle,
+                confirmLabel: t.dialogs.overwriteCloudFileConfirm,
+                danger: true,
+              },
+            );
+
+            if (!confirmed) {
+              return;
+            }
+
+            set({ cloudExportStatus: CloudExportStatus.UPLOADING });
+          }
+
           await client.writeFile(
             fullName,
             buildRunbookExportContent(format, content),

@@ -104,6 +104,11 @@ export const HttpMethod = {
 } as const;
 export type HttpMethod = (typeof HttpMethod)[keyof typeof HttpMethod];
 
+export const HttpStatus = {
+  NOT_FOUND: 404,
+} as const;
+export type HttpStatus = (typeof HttpStatus)[keyof typeof HttpStatus];
+
 export const CloudProvider = {
   SHAREPOINT: "sharepoint",
   GOOGLE_DRIVE: "google-drive",

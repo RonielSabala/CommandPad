@@ -193,6 +193,10 @@ export const es: Messages = {
     overwriteConfirm: "Sobrescribir",
     overwriteMessage: (filename, existingName) =>
       `"${filename}" coincide con un libro existente. Importarlo sobrescribirá "${existingName}".`,
+    overwriteCloudFileTitle: "Sobrescribir Libro de la Nube",
+    overwriteCloudFileConfirm: "Sobrescribir",
+    overwriteCloudFileMessage: (filename) =>
+      `"${filename}" ya existe en la carpeta seleccionada. Exportar lo sobrescribirá, y esta acción no se puede deshacer.`,
     importFailed: (count) =>
       count === 1
         ? "No se pudo importar 1 archivo porque su formato no se reconoce."
@@ -722,6 +726,8 @@ export const es: Messages = {
         "Haz clic en **Exportar** para abrir un único diálogo donde eliges un destino (este dispositivo, SharePoint o Google Drive), un formato (JSON, Markdown o texto plano) y un nombre de archivo, y luego exportas. Se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados, y una exportación a la nube muestra su progreso y confirma cuando el libro se ha guardado.",
       switchProvider:
         "Mientras exploras la nube, el nombre del proveedor en el título del diálogo es un **selector**: haz clic en él para cambiar entre proveedores sin volver atrás.",
+      overwrite:
+        "Si la carpeta a la que exportas ya tiene un archivo con el mismo nombre, la exportación se detiene y te pide confirmación antes de reemplazarlo, así que reutilizar un nombre nunca sobrescribe en silencio un libro de la nube.",
       folders:
         "Los libros en la nube pueden vivir en carpetas: haz clic en una carpeta para abrirla y en un archivo para importarlo. Los botones de **flecha** avanzan y retroceden por las carpetas que visitaste, y la ruta que aparece sobre la lista te lleva de vuelta a cualquier carpeta de la ruta. Al exportar a la nube, el campo **Carpeta** elige dónde se guarda el libro, y el botón de **nueva carpeta** crea una carpeta al momento.",
       search:

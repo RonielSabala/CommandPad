@@ -3,7 +3,7 @@ import {
   MimeType,
   SharePointConfig,
 } from "@/common/config";
-import { CloudProvider, HttpMethod } from "@/common/enums";
+import { CloudProvider, HttpMethod, HttpStatus } from "@/common/enums";
 import type {
   AccountInfo,
   PublicClientApplication as PublicClientApplicationClass,
@@ -116,6 +116,25 @@ async function graphFetch(path: string, init?: RequestInit): Promise<Response> {
   return response;
 }
 
+async function graphItemExists(path: string): Promise<boolean> {
+  const token = await getAccessToken();
+  const response = await fetch(`${SharePointConfig.GRAPH_BASE_URL}${path}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (response.status === HttpStatus.NOT_FOUND) {
+    return false;
+  }
+
+  if (!response.ok) {
+    throw new CloudSyncError(
+      `Microsoft Graph request failed (${response.status})`,
+    );
+  }
+
+  return true;
+}
+
 class SharePointClient implements CloudClient {
   readonly provider = CloudProvider.SHAREPOINT;
 
@@ -190,6 +209,15 @@ class SharePointClient implements CloudClient {
         [CONFLICT_BEHAVIOR_PROPERTY]: CONFLICT_BEHAVIOR_FAIL,
       }),
     });
+  }
+
+  async fileExists(
+    filename: string,
+    folderId: string | null,
+  ): Promise<boolean> {
+    return graphItemExists(
+      `${folderPath(folderId)}:/${encodeURIComponent(filename)}?$select=id`,
+    );
   }
 
   async readFile(file: CloudEntry): Promise<string> {

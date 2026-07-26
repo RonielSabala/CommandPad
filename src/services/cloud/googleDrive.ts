@@ -218,6 +218,7 @@ async function findAppFolderId(): Promise<string> {
       mimeType: FOLDER_MIME_TYPE,
     }),
   });
+
   const created = (await createResponse.json()) as { id: string };
   appFolderId = created.id;
   return appFolderId;
@@ -329,6 +330,14 @@ class GoogleDriveClient implements CloudClient {
         parents: [folderId],
       }),
     });
+  }
+
+  async fileExists(
+    filename: string,
+    folderId: string | null,
+  ): Promise<boolean> {
+    const parentId = await resolveFolderId(folderId);
+    return (await findFileByName(parentId, filename)) !== null;
   }
 
   async readFile(file: CloudEntry): Promise<string> {
