@@ -1,9 +1,13 @@
 import { CloudProvider } from "@/common/enums";
-import { Google, Windows, type Icon } from "react-bootstrap-icons";
+import { GoogleDriveIcon, SharePointIcon } from "@/components/icons/providers";
+import type { SVGProps } from "react";
 
-export const PROVIDER_ICON: Record<CloudProvider, Icon> = {
-  [CloudProvider.SHAREPOINT]: Windows,
-  [CloudProvider.GOOGLE_DRIVE]: Google,
+export const PROVIDER_ICON: Record<
+  CloudProvider,
+  (props: SVGProps<SVGSVGElement>) => React.ReactElement
+> = {
+  [CloudProvider.SHAREPOINT]: SharePointIcon,
+  [CloudProvider.GOOGLE_DRIVE]: GoogleDriveIcon,
 };
 
 export const PROVIDER_NAME: Record<CloudProvider, string> = {
