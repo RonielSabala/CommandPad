@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-5);
-  padding: var(--space-4) var(--space-8);
+  padding: var(--space-4) var(--space-5);
   border-radius: var(--radius-md);
   border: var(--border-standard);
   background: var(--color-surface-alt);
@@ -48,7 +48,17 @@
   gap: var(--space-3);
 }
 
+.cloud-browser-row-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: var(--space-2) var(--space-4);
+}
+
 .cloud-browser-row-name {
+  flex: 1 1 auto;
+  min-width: 6rem;
   max-width: 100%;
   font-family: var(--font-mono);
   font-size: var(--text-md);
@@ -62,6 +72,16 @@
 .cloud-browser-row-main:hover
   :is(.cloud-browser-row-icon, .cloud-browser-row-name) {
   color: var(--accent);
+}
+
+.cloud-browser-row-path {
+  max-width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cloud-browser-row-actions {

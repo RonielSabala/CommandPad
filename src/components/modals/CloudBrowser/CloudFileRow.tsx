@@ -1,11 +1,16 @@
 import { useTranslation } from "@/i18n";
-import type { CloudEntry } from "@/services/cloud";
+import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
 import { FiletypeJson } from "react-bootstrap-icons";
 import { CloudEntryRow } from "./CloudEntryRow";
 import { CloudFileMeta } from "./CloudFileMeta";
 
-export function CloudFileRow({ file }: { file: CloudEntry }) {
+interface CloudFileRowProps {
+  file: CloudEntry;
+  path?: CloudFolderRef[];
+}
+
+export function CloudFileRow({ file, path }: CloudFileRowProps) {
   const t = useTranslation();
   const importRunbookFromCloud = useStore(
     (state) => state.importRunbookFromCloud,
@@ -18,6 +23,7 @@ export function CloudFileRow({ file }: { file: CloudEntry }) {
       activateTitle={t.cloudModal.importAction(file.name)}
       onActivate={() => void importRunbookFromCloud(file)}
       meta={<CloudFileMeta file={file} />}
+      path={path}
     />
   );
 }

@@ -162,6 +162,10 @@ export interface Messages {
     loading: string;
     emptyFiles: string;
     emptyFolders: string;
+    searchFilesPlaceholder: string;
+    searchFoldersPlaceholder: string;
+    noResultsFiles: string;
+    noResultsFolders: string;
     navigateBack: string;
     navigateForward: string;
     openFolderAction: (name: string) => string;
@@ -385,6 +389,7 @@ export interface Messages {
       intro: string;
       howItWorks: string;
       folders: string;
+      search: string;
       manage: string;
       storage: string;
     };

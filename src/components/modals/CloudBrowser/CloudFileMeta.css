@@ -1,6 +1,8 @@
 .cloud-browser-file-meta {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
   gap: var(--space-3);
 }
 

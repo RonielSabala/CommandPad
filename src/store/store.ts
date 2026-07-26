@@ -38,8 +38,10 @@ import { detectLanguage, getMessages } from "@/i18n/messages";
 import { Language } from "@/i18n/types";
 import {
   getCloudClient,
+  walkCloudTree,
   type CloudEntry,
   type CloudFolderRef,
+  type CloudSearchEntry,
 } from "@/services/cloud";
 import { debounce } from "@/utils/debounce";
 import {
@@ -140,6 +142,11 @@ export interface StoreState {
   cloudPath: CloudFolderRef[];
   cloudHistory: CloudFolderRef[][];
   cloudHistoryIndex: number;
+
+  // Cloud search
+  cloudSearchQuery: string;
+  cloudSearchEntries: CloudSearchEntry[];
+  cloudSearchLoading: boolean;
 
   // Remembered cloud-sync choices
   lastExportDestination: SyncDestination;
@@ -264,6 +271,8 @@ export interface StoreState {
   navigateCloudHistory: (direction: HistoryDirection) => void;
   navigateCloudToDepth: (depth: number) => void;
   navigateCloudToPath: (path: CloudFolderRef[]) => void;
+  setCloudSearchQuery: (query: string) => void;
+  refreshCloudSearchEntries: () => Promise<void>;
   createCloudFolder: (name: string) => Promise<void>;
   importRunbookFromCloud: (file: CloudEntry) => Promise<void>;
   renameCloudEntry: (entry: CloudEntry, basename: string) => Promise<void>;
@@ -281,6 +290,21 @@ const ROOT_CLOUD_PATH: CloudFolderRef[] = [];
 
 function currentFolderId(path: CloudFolderRef[]): string | null {
   return path.at(-1)?.id ?? null;
+}
+
+function siblingEntries(state: StoreState, entry: CloudEntry): CloudEntry[] {
+  const match = state.cloudSearchEntries.find(
+    (result) => result.entry.id === entry.id,
+  );
+
+  if (!match) {
+    return state.cloudEntries;
+  }
+
+  const folderId = currentFolderId(match.path);
+  return state.cloudSearchEntries
+    .filter((result) => currentFolderId(result.path) === folderId)
+    .map((result) => result.entry);
 }
 
 /** Resolve the active tab, mirroring the original `activeTab()` fallback. */
@@ -467,6 +491,21 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
     const startCloudRequest = () => ++cloudRequestId;
     const isCurrentCloudRequest = (id: number) => cloudRequestId === id;
 
+    let cloudSearchRequestId = 0;
+    const startCloudSearchRequest = () => ++cloudSearchRequestId;
+    const isCurrentCloudSearchRequest = (id: number) =>
+      cloudSearchRequestId === id;
+
+    /** Drops any in-flight tree walk and yields the cleared search state. */
+    const cancelledCloudSearch = () => {
+      startCloudSearchRequest();
+      return {
+        cloudSearchQuery: "",
+        cloudSearchEntries: [],
+        cloudSearchLoading: false,
+      };
+    };
+
     return {
       tabs: [],
       activeTabId: null,
@@ -515,6 +554,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       cloudPath: ROOT_CLOUD_PATH,
       cloudHistory: [ROOT_CLOUD_PATH],
       cloudHistoryIndex: 0,
+
+      cloudSearchQuery: "",
+      cloudSearchEntries: [],
+      cloudSearchLoading: false,
 
       lastExportDestination: SyncDestination.LOCAL,
       lastExportFormat: ExportFormat.JSON,
@@ -1715,6 +1758,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       startCloudBrowse: async (provider, path = ROOT_CLOUD_PATH) => {
         startCloudRequest();
         set({
+          ...cancelledCloudSearch(),
           cloudProvider: provider,
           cloudError: null,
           cloudEntries: [],
@@ -1795,6 +1839,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         startCloudRequest();
         set({
+          ...cancelledCloudSearch(),
           cloudEntries: [],
           cloudError: null,
           cloudSignedIn: false,
@@ -1829,6 +1874,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             set({ cloudLoading: false });
           }
         }
+
+        if (get().cloudSearchQuery.trim()) {
+          await get().refreshCloudSearchEntries();
+        }
       },
 
       openCloudFolder: (folder) =>
@@ -1848,6 +1897,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         );
 
         set({
+          // Opening a folder from a search result lands you in that folder
+          ...cancelledCloudSearch(),
           cloudPath: path,
           cloudHistory: [...history, path],
           cloudHistoryIndex: history.length,
@@ -1868,12 +1919,54 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         set({
+          ...cancelledCloudSearch(),
           cloudPath: path,
           cloudHistoryIndex: index,
           cloudError: null,
           cloudEntries: [],
         });
         void get().refreshCloudEntries();
+      },
+
+      setCloudSearchQuery: (query) => {
+        const previous = get().cloudSearchQuery;
+
+        if (!query.trim()) {
+          set({ ...cancelledCloudSearch(), cloudSearchQuery: query });
+          return;
+        }
+
+        set({ cloudSearchQuery: query });
+
+        // The tree is walked once when a search starts, then filtered locally
+        if (!previous.trim()) {
+          void get().refreshCloudSearchEntries();
+        }
+      },
+
+      refreshCloudSearchEntries: async () => {
+        const client = getCloudClient(get().cloudProvider);
+        const requestId = startCloudSearchRequest();
+        set({ cloudSearchLoading: true });
+
+        try {
+          const found = await walkCloudTree(client);
+          if (isCurrentCloudSearchRequest(requestId)) {
+            set({ cloudSearchEntries: found });
+          }
+        } catch (error) {
+          console.error("Failed to search cloud entries", error);
+          if (isCurrentCloudSearchRequest(requestId)) {
+            set({
+              cloudSearchEntries: [],
+              cloudError: getMessages(get().language).cloudModal.genericError,
+            });
+          }
+        } finally {
+          if (isCurrentCloudSearchRequest(requestId)) {
+            set({ cloudSearchLoading: false });
+          }
+        }
       },
 
       createCloudFolder: async (name) => {
@@ -1959,7 +2052,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         const t = getMessages(get().language);
-        const taken = get().cloudEntries.some(
+        const taken = siblingEntries(get(), entry).some(
           (other) =>
             other.id !== entry.id &&
             other.name.toLowerCase() === name.toLowerCase(),

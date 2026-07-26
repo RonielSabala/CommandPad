@@ -1,11 +1,11 @@
 import type { Block, Variable } from "@/common/types";
+import { SearchInput } from "@/components/common/SearchInput";
 import { PlusIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { getUsedVariableKeys, isVariableUnused } from "@/utils/resolution";
 import { matchesQuery } from "@/utils/string";
 import { useMemo } from "react";
-import { SidebarSearch } from "../shared/SidebarSearch";
 import { SidebarSection } from "../shared/SidebarSection";
 import { SidebarSectionFooter } from "../shared/SidebarSectionFooter";
 import { SidebarSectionList } from "../shared/SidebarSectionList";
@@ -39,7 +39,7 @@ export function VariableSection() {
       collapsed={collapsed}
       onToggle={toggle}
     >
-      <SidebarSearch
+      <SearchInput
         value={query}
         placeholder={t.variables.searchPlaceholder}
         onChange={setQuery}

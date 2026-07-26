@@ -145,6 +145,10 @@ export const es: Messages = {
     loading: "Cargando…",
     emptyFiles: "Aún no hay nada guardado en esta carpeta.",
     emptyFolders: "Aún no hay carpetas aquí.",
+    searchFilesPlaceholder: "Buscar archivos y carpetas",
+    searchFoldersPlaceholder: "Buscar carpetas",
+    noResultsFiles: "Ningún archivo o carpeta coincide con tu búsqueda.",
+    noResultsFolders: "Ninguna carpeta coincide con tu búsqueda.",
     navigateBack: "Atrás",
     navigateForward: "Adelante",
     openFolderAction: (name) => `Abrir ${name}`,
@@ -708,6 +712,8 @@ export const es: Messages = {
         "Haz clic en **Exportar** para abrir un único diálogo donde eliges un destino (este dispositivo, SharePoint o Google Drive), un formato (JSON, Markdown o texto plano) y un nombre de archivo, y luego exportas. Se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados, y una exportación a la nube muestra su progreso y confirma cuando el libro se ha guardado.",
       folders:
         "Los libros en la nube pueden vivir en carpetas. Al explorar aparecen primero las carpetas y después los archivos: haz clic en una carpeta para abrirla y en un archivo para importarlo. Los botones de **flecha** avanzan y retroceden por las carpetas que visitaste, y la ruta que aparece sobre la lista te lleva de vuelta a cualquier carpeta de la ruta. Al exportar a la nube, el campo **Carpeta** elige dónde se guarda el libro, y el botón de **nueva carpeta** crea una carpeta al momento.",
+      search:
+        "El **buscador** que hay sobre la lista revisa la carpeta **CommandPad** entera, no solo la carpeta que tengas abierta, así que un libro enterrado varias carpetas más abajo está a una búsqueda de distancia. Cada resultado muestra la ruta de la carpeta en la que vive; al hacer clic en un resultado de carpeta se abre esa carpeta, y el botón **x** limpia la búsqueda y te devuelve a donde estabas explorando.",
       manage:
         "Al explorar una carpeta en la nube, cada libro muestra la fecha en que se modificó por última vez y su tamaño. El botón del **lápiz** renombra una fila y el botón de la **papelera** la elimina de la nube después de confirmarlo. Las carpetas funcionan igual, salvo que eliminar una también elimina todo su contenido.",
       storage:

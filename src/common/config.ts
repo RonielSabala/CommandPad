@@ -170,6 +170,7 @@ export const FilePickerConfig: Record<ExportFormat, FilePickerFormat> =
 export const CloudSyncConfig = {
   APP_FOLDER_NAME: "CommandPad",
   PATH_SEPARATOR: "/",
+  MAX_SEARCH_DEPTH: 10,
 } as const;
 
 export const FileSizeConfig = {

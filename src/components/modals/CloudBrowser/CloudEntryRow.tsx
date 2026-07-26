@@ -4,9 +4,10 @@ import {
   FilenameInputSize,
 } from "@/components/common/FilenameInput";
 import { useTranslation } from "@/i18n";
-import type { CloudEntry } from "@/services/cloud";
+import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
 import { stripJsonExtension } from "@/utils/export";
+import { formatCloudPath } from "@/utils/format";
 import { useState, type ReactNode } from "react";
 import type { Icon } from "react-bootstrap-icons";
 import { CloudRowConfirmActions } from "./CloudRowConfirmActions";
@@ -18,6 +19,7 @@ interface CloudEntryRowProps {
   activateTitle: string;
   onActivate: () => void;
   meta?: ReactNode;
+  path?: CloudFolderRef[];
 }
 
 export function CloudEntryRow({
@@ -26,6 +28,7 @@ export function CloudEntryRow({
   activateTitle,
   onActivate,
   meta,
+  path,
 }: CloudEntryRowProps) {
   const t = useTranslation();
   const renameCloudEntry = useStore((state) => state.renameCloudEntry);
@@ -83,8 +86,16 @@ export function CloudEntryRow({
         <EntryIcon className="icon-md cloud-browser-row-icon" />
 
         <span className="cloud-browser-row-text">
-          <span className="cloud-browser-row-name">{entry.name}</span>
-          {meta}
+          <span className="cloud-browser-row-heading">
+            <span className="cloud-browser-row-name">{entry.name}</span>
+            {meta}
+          </span>
+
+          {path !== undefined && (
+            <span className="cloud-browser-row-path">
+              {formatCloudPath(path)}
+            </span>
+          )}
         </span>
       </button>
 

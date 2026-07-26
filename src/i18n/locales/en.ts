@@ -143,6 +143,10 @@ export const en: Messages = {
     loading: "Loading…",
     emptyFiles: "Nothing saved in this folder yet.",
     emptyFolders: "No folders in here yet.",
+    searchFilesPlaceholder: "Search files and folders",
+    searchFoldersPlaceholder: "Search folders",
+    noResultsFiles: "No files or folders match your search.",
+    noResultsFolders: "No folders match your search.",
     navigateBack: "Back",
     navigateForward: "Forward",
     openFolderAction: (name) => `Open ${name}`,
@@ -696,6 +700,8 @@ export const en: Messages = {
         "Click **Export** to open one dialog where you choose a destination (this device, SharePoint, or Google Drive), a format (JSON, Markdown, or plain text), and a filename, then export. It reopens with the destination and format you used last time already selected, and a cloud export shows its progress and confirms once the runbook is saved.",
       folders:
         "Cloud runbooks can live in folders. Browsing shows folders first and files after them: click a folder to open it, click a file to import it. The **arrow** buttons move back and forward through the folders you visited, and the path above the list lets you jump straight back to any folder in it. When you export to the cloud, the **Folder** field picks where the runbook lands, and the **new folder** button creates a folder on the spot.",
+      search:
+        "The **search box** above the list looks through the entire **CommandPad** folder, not just the folder you have open, so a runbook buried a few folders deep is one search away. Every result shows the folder path it lives in; clicking a folder result opens that folder, and the **x** button clears the search and puts you back where you were browsing.",
       manage:
         "When you browse a cloud folder, every runbook lists the date it was last modified and its file size. The **pencil** button renames a row and the **trash** button deletes it from the cloud after you confirm. Folders work the same way, except deleting one also deletes everything inside it.",
       storage:

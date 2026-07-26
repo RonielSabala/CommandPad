@@ -1,15 +1,25 @@
 import { CloudProvider } from "@/common/enums";
+import { SearchInput } from "@/components/common/SearchInput";
 import { useTranslation } from "@/i18n";
+import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
+import { matchesQuery } from "@/utils/string";
+import { useState } from "react";
 import { PROVIDER_ICON } from "../cloudProviders";
 import "./CloudBrowser.css";
 import { CloudFileRow } from "./CloudFileRow";
 import { CloudFolderRow } from "./CloudFolderRow";
+import { CloudNewFolderRow } from "./CloudNewFolderRow";
 import { CloudPathBar } from "./CloudPathBar";
 
 interface CloudBrowserProps {
   showFiles?: boolean;
   allowCreateFolder?: boolean;
+}
+
+interface CloudRow {
+  entry: CloudEntry;
+  path?: CloudFolderRef[];
 }
 
 export function CloudBrowser({
@@ -24,8 +34,26 @@ export function CloudBrowser({
   const loading = useStore((state) => state.cloudLoading);
   const error = useStore((state) => state.cloudError);
 
+  const searchQuery = useStore((state) => state.cloudSearchQuery);
+  const searchEntries = useStore((state) => state.cloudSearchEntries);
+  const searchLoading = useStore((state) => state.cloudSearchLoading);
+  const setCloudSearchQuery = useStore((state) => state.setCloudSearchQuery);
+
   const signInToCloud = useStore((state) => state.signInToCloud);
   const signOutOfCloud = useStore((state) => state.signOutOfCloud);
+  const createCloudFolder = useStore((state) => state.createCloudFolder);
+
+  // A non-null draft means the new-folder form is open
+  const [newFolderDraft, setNewFolderDraft] = useState<string | null>(null);
+
+  const commitNewFolder = () => {
+    if (newFolderDraft === null || !newFolderDraft.trim()) {
+      return;
+    }
+
+    void createCloudFolder(newFolderDraft);
+    setNewFolderDraft(null);
+  };
 
   const ProviderIcon = PROVIDER_ICON[provider];
   const signInLabel =
@@ -33,12 +61,26 @@ export function CloudBrowser({
       ? t.cloudModal.signInSharePoint
       : t.cloudModal.signInGoogleDrive;
 
-  const visible = showFiles
-    ? entries
-    : entries.filter((entry) => entry.isFolder);
-  const emptyMessage = showFiles
-    ? t.cloudModal.emptyFiles
-    : t.cloudModal.emptyFolders;
+  const searching = searchQuery.trim().length > 0;
+  const showsEntry = (entry: CloudEntry) => showFiles || entry.isFolder;
+
+  // Searching swaps the open folder's listing for matches across the whole tree
+  const rows: CloudRow[] = searching
+    ? searchEntries.filter(
+        (result) =>
+          showsEntry(result.entry) &&
+          matchesQuery(searchQuery, result.entry.name),
+      )
+    : entries.filter(showsEntry).map((entry) => ({ entry }));
+
+  const busy = searching ? searchLoading : loading;
+  const emptyMessage = searching
+    ? showFiles
+      ? t.cloudModal.noResultsFiles
+      : t.cloudModal.noResultsFolders
+    : showFiles
+      ? t.cloudModal.emptyFiles
+      : t.cloudModal.emptyFolders;
 
   return (
     <>
@@ -65,20 +107,43 @@ export function CloudBrowser({
             </button>
           </div>
 
-          <CloudPathBar allowCreateFolder={allowCreateFolder} />
+          <CloudPathBar
+            allowCreateFolder={allowCreateFolder}
+            creatingFolder={newFolderDraft !== null}
+            onStartNewFolder={() => setNewFolderDraft("")}
+          />
+
+          <SearchInput
+            value={searchQuery}
+            placeholder={
+              showFiles
+                ? t.cloudModal.searchFilesPlaceholder
+                : t.cloudModal.searchFoldersPlaceholder
+            }
+            onChange={setCloudSearchQuery}
+          />
+
+          {newFolderDraft !== null && (
+            <CloudNewFolderRow
+              value={newFolderDraft}
+              onChange={setNewFolderDraft}
+              onSubmit={commitNewFolder}
+              onCancel={() => setNewFolderDraft(null)}
+            />
+          )}
 
           <div className="cloud-browser-entries modal-scrollable-body">
-            {visible.length === 0 && (
+            {rows.length === 0 && (
               <p className="cloud-browser-empty">
-                {loading ? t.cloudModal.loading : emptyMessage}
+                {busy ? t.cloudModal.loading : emptyMessage}
               </p>
             )}
 
-            {visible.map((entry) =>
+            {rows.map(({ entry, path }) =>
               entry.isFolder ? (
-                <CloudFolderRow key={entry.id} folder={entry} />
+                <CloudFolderRow key={entry.id} folder={entry} path={path} />
               ) : (
-                <CloudFileRow key={entry.id} file={entry} />
+                <CloudFileRow key={entry.id} file={entry} path={path} />
               ),
             )}
           </div>
