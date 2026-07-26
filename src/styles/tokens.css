@@ -86,6 +86,9 @@
   --modal-cloud-height: min(85vh, max(50vh, 32rem));
   --modal-cloud-padding-x: var(--space-12);
   --modal-cloud-padding-y: var(--space-10);
+  --cloud-col-date: 7.5rem;
+  --cloud-col-size: 3.5rem;
+  --cloud-col-actions: 3.5rem;
   --minimap-width: 7rem;
   --context-menu-min-width: 10rem;
   --context-menu-min-height: 3rem;

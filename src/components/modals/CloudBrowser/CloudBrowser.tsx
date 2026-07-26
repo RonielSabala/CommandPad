@@ -3,12 +3,13 @@ import { SearchInput } from "@/components/common/SearchInput";
 import { useTranslation } from "@/i18n";
 import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
-import { matchesQuery } from "@/utils/string";
+import { classNames, matchesQuery } from "@/utils/string";
 import { useState } from "react";
 import { PROVIDER_ICON } from "../cloudProviders";
 import "./CloudBrowser.css";
 import { CloudFileRow } from "./CloudFileRow";
 import { CloudFolderRow } from "./CloudFolderRow";
+import { CloudListHeader } from "./CloudListHeader";
 import { CloudNewFolderRow } from "./CloudNewFolderRow";
 import { CloudPathBar } from "./CloudPathBar";
 
@@ -132,7 +133,14 @@ export function CloudBrowser({
             />
           )}
 
-          <div className="cloud-browser-entries modal-scrollable-body">
+          <div
+            className={classNames(
+              "cloud-browser-entries modal-scrollable-body",
+              !showFiles && "is-folders-only",
+            )}
+          >
+            {rows.length > 0 && <CloudListHeader />}
+
             {rows.length === 0 && (
               <p className="cloud-browser-empty">
                 {busy ? t.cloudModal.loading : emptyMessage}

@@ -31,8 +31,6 @@ export function CloudFolderPicker({
 
   return (
     <>
-      <p className="cloud-folder-picker-hint">{t.exportModal.chooseFolder}</p>
-
       <CloudBrowser allowCreateFolder />
 
       <div className="modal-actions">

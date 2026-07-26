@@ -3,7 +3,6 @@ import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
 import { FiletypeJson } from "react-bootstrap-icons";
 import { CloudEntryRow } from "./CloudEntryRow";
-import { CloudFileMeta } from "./CloudFileMeta";
 
 interface CloudFileRowProps {
   file: CloudEntry;
@@ -22,7 +21,6 @@ export function CloudFileRow({ file, path }: CloudFileRowProps) {
       icon={FiletypeJson}
       activateTitle={t.cloudModal.importAction(file.name)}
       onActivate={() => void importRunbookFromCloud(file)}
-      meta={<CloudFileMeta file={file} />}
       path={path}
     />
   );

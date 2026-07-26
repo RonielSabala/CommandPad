@@ -143,6 +143,9 @@ export const en: Messages = {
     loading: "Loading…",
     emptyFiles: "Nothing saved in this folder yet.",
     emptyFolders: "No folders in here yet.",
+    columnName: "Name",
+    columnModified: "Modified",
+    columnSize: "Size",
     searchFilesPlaceholder: "Search files and folders",
     searchFoldersPlaceholder: "Search folders",
     noResultsFiles: "No files or folders match your search.",
@@ -703,7 +706,7 @@ export const en: Messages = {
       search:
         "The **search box** above the list looks through the entire **CommandPad** folder, not just the folder you have open, so a runbook buried a few folders deep is one search away. Every result shows the folder path it lives in; clicking a folder result opens that folder, and the **x** button clears the search and puts you back where you were browsing.",
       manage:
-        "When you browse a cloud folder, every runbook lists the date it was last modified and its file size. The **pencil** button renames a row and the **trash** button deletes it from the cloud after you confirm. Folders work the same way, except deleting one also deletes everything inside it.",
+        "The list is laid out in columns. Folders show a modified date but no size. The **pencil** button renames a row and the **trash** button deletes it from the cloud after you confirm. Folders work the same way, except deleting one also deletes everything inside it.",
       storage:
         "Cloud runbooks live in a dedicated **CommandPad** folder in your own account, never anywhere else.",
     },

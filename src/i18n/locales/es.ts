@@ -145,6 +145,9 @@ export const es: Messages = {
     loading: "Cargando…",
     emptyFiles: "Aún no hay nada guardado en esta carpeta.",
     emptyFolders: "Aún no hay carpetas aquí.",
+    columnName: "Nombre",
+    columnModified: "Modificado",
+    columnSize: "Tamaño",
     searchFilesPlaceholder: "Buscar archivos y carpetas",
     searchFoldersPlaceholder: "Buscar carpetas",
     noResultsFiles: "Ningún archivo o carpeta coincide con tu búsqueda.",
@@ -715,7 +718,7 @@ export const es: Messages = {
       search:
         "El **buscador** que hay sobre la lista revisa la carpeta **CommandPad** entera, no solo la carpeta que tengas abierta, así que un libro enterrado varias carpetas más abajo está a una búsqueda de distancia. Cada resultado muestra la ruta de la carpeta en la que vive; al hacer clic en un resultado de carpeta se abre esa carpeta, y el botón **x** limpia la búsqueda y te devuelve a donde estabas explorando.",
       manage:
-        "Al explorar una carpeta en la nube, cada libro muestra la fecha en que se modificó por última vez y su tamaño. El botón del **lápiz** renombra una fila y el botón de la **papelera** la elimina de la nube después de confirmarlo. Las carpetas funcionan igual, salvo que eliminar una también elimina todo su contenido.",
+        "La lista se organiza en columnas. Las carpetas muestran su fecha de modificación, pero no un tamaño. El botón del **lápiz** renombra una fila y el botón de la **papelera** la elimina de la nube después de confirmarlo. Las carpetas funcionan igual, salvo que eliminar una también elimina todo su contenido.",
       storage:
         "Los libros en la nube se guardan en una carpeta dedicada llamada **CommandPad** en tu propia cuenta, nunca en ningún otro lugar.",
     },

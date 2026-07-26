@@ -162,6 +162,9 @@ export interface Messages {
     loading: string;
     emptyFiles: string;
     emptyFolders: string;
+    columnName: string;
+    columnModified: string;
+    columnSize: string;
     searchFilesPlaceholder: string;
     searchFoldersPlaceholder: string;
     noResultsFiles: string;

@@ -7,8 +7,12 @@ import { useTranslation } from "@/i18n";
 import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
 import { stripJsonExtension } from "@/utils/export";
-import { formatCloudPath } from "@/utils/format";
-import { useState, type ReactNode } from "react";
+import {
+  formatCloudPath,
+  formatFileSize,
+  formatTimestamp,
+} from "@/utils/format";
+import { useState } from "react";
 import type { Icon } from "react-bootstrap-icons";
 import { CloudRowConfirmActions } from "./CloudRowConfirmActions";
 import { CloudRowEditActions } from "./CloudRowEditActions";
@@ -18,7 +22,6 @@ interface CloudEntryRowProps {
   icon: Icon;
   activateTitle: string;
   onActivate: () => void;
-  meta?: ReactNode;
   path?: CloudFolderRef[];
 }
 
@@ -27,10 +30,10 @@ export function CloudEntryRow({
   icon: EntryIcon,
   activateTitle,
   onActivate,
-  meta,
   path,
 }: CloudEntryRowProps) {
   const t = useTranslation();
+  const language = useStore((state) => state.language);
   const renameCloudEntry = useStore((state) => state.renameCloudEntry);
   const deleteCloudEntry = useStore((state) => state.deleteCloudEntry);
 
@@ -48,7 +51,7 @@ export function CloudEntryRow({
 
   if (draft !== null) {
     return (
-      <div className="cloud-browser-row">
+      <div className="cloud-browser-row cloud-browser-row-editing">
         <EntryIcon className="icon-md cloud-browser-row-icon" />
         <FilenameInput
           value={draft}
@@ -76,6 +79,14 @@ export function CloudEntryRow({
     );
   }
 
+  const modifiedAt =
+    entry.modifiedAt === null
+      ? null
+      : formatTimestamp(entry.modifiedAt, language);
+
+  const size =
+    entry.size === null ? null : formatFileSize(entry.size, language);
+
   return (
     <div className="cloud-browser-row">
       <button
@@ -83,20 +94,22 @@ export function CloudEntryRow({
         onClick={onActivate}
         title={activateTitle}
       >
-        <EntryIcon className="icon-md cloud-browser-row-icon" />
+        <span className="cloud-browser-row-name-cell">
+          <EntryIcon className="icon-md cloud-browser-row-icon" />
 
-        <span className="cloud-browser-row-text">
-          <span className="cloud-browser-row-heading">
+          <span className="cloud-browser-row-text">
             <span className="cloud-browser-row-name">{entry.name}</span>
-            {meta}
-          </span>
 
-          {path !== undefined && (
-            <span className="cloud-browser-row-path">
-              {formatCloudPath(path)}
-            </span>
-          )}
+            {path !== undefined && (
+              <span className="cloud-browser-row-path">
+                {formatCloudPath(path)}
+              </span>
+            )}
+          </span>
         </span>
+
+        <span className="cloud-browser-row-date">{modifiedAt}</span>
+        <span className="cloud-browser-row-size">{size}</span>
       </button>
 
       <CloudRowEditActions
