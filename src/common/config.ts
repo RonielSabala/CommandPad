@@ -188,6 +188,12 @@ export const FileDateFormat: Intl.DateTimeFormatOptions = {
   dateStyle: "medium",
 };
 
+export const AuthResponseParam = {
+  STATE: "state",
+  CODE: "code",
+  ERROR: "error",
+} as const;
+
 export const SharePointConfig = {
   CLIENT_ID: import.meta.env.VITE_MSAL_CLIENT_ID ?? "",
   AUTHORITY: "https://login.microsoftonline.com/common",
