@@ -994,11 +994,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           await readFile(file);
         }
 
-        if (failedCount < files.length) {
-          set({ lastImportSource: SyncDestination.LOCAL });
-          persist.saveUiState(uiStateSnapshot(get()));
-        }
-
         if (failedCount > 0) {
           await get().alert(
             getMessages(get().language).dialogs.importFailed(failedCount),
@@ -1546,6 +1541,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set((s) => ({
           theme: s.theme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT,
         }));
+
         persist.saveUiState(uiStateSnapshot(get()));
       },
 
@@ -1553,6 +1549,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         if (get().language === language) {
           return;
         }
+
         set({ language });
         persist.saveUiState(uiStateSnapshot(get()));
       },
@@ -1685,8 +1682,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           lastExportFormat: format,
         });
 
-        persist.saveUiState(uiStateSnapshot(get()));
-
         const active = getActiveTab(get());
         const content = {
           variables: active?.variables ?? [],
@@ -1755,7 +1750,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       closeDestinationModal: () => set({ destinationModalOpen: false }),
 
       chooseDestination: (destination) => {
-        set({ destinationModalOpen: false });
+        set({ destinationModalOpen: false, lastImportSource: destination });
 
         if (destination === SyncDestination.LOCAL) {
           openImportDialog();
@@ -2058,12 +2053,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const baseName = stripJsonExtension(file.name);
 
         await get().addRunbookToLibrary(content, baseName, file.name);
-        set({
-          cloudImportModalOpen: false,
-          lastImportSource: get().cloudProvider,
-        });
-
-        persist.saveUiState(uiStateSnapshot(get()));
+        set({ cloudImportModalOpen: false });
       },
 
       renameCloudEntry: async (entry, basename) => {
