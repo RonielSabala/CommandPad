@@ -177,6 +177,17 @@
   color: var(--color-text-secondary);
 }
 
+.modal-cloud .search-input-wrapper {
+  align-self: flex-start;
+  max-width: 100%;
+}
+
+.modal-cloud .search-input {
+  width: auto;
+  max-width: 100%;
+  field-sizing: content;
+}
+
 .cloud-browser-entries {
   display: flex;
   flex-direction: column;
