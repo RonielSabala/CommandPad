@@ -138,6 +138,7 @@ export function CloudBrowser({
                 : t.cloudModal.searchFoldersPlaceholder
             }
             onChange={setCloudSearchQuery}
+            className={classNames(!showFiles && "is-folders-only")}
           />
 
           {newFolderDraft !== null && (

@@ -1,17 +1,24 @@
 import { SearchIcon, XIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
+import { classNames } from "@/utils/string";
 import "./SearchInput.css";
 
 interface Props {
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
+  className?: string;
 }
 
-export function SearchInput({ value, placeholder, onChange }: Props) {
+export function SearchInput({
+  value,
+  placeholder,
+  onChange,
+  className,
+}: Props) {
   const t = useTranslation();
   return (
-    <div className="search-input-wrapper">
+    <div className={classNames("search-input-wrapper", className)}>
       <input
         className="search-input"
         type="text"

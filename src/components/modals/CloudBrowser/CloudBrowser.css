@@ -178,13 +178,29 @@
 }
 
 .modal-cloud .search-input-wrapper {
+  --cloud-content-width: calc(
+    var(--modal-cloud-width) - 2 * var(--modal-cloud-padding-x)
+  );
+  --cloud-search-trailing: calc(
+    var(--space-8) + 3 * var(--space-5) + var(--cloud-col-date) +
+      var(--cloud-col-size) + var(--cloud-col-actions)
+  );
+
   align-self: flex-start;
   max-width: 100%;
 }
 
+.modal-cloud .search-input-wrapper.is-folders-only {
+  --cloud-search-trailing: calc(
+    var(--space-8) + 2 * var(--space-5) + var(--cloud-col-date) +
+      var(--cloud-col-actions)
+  );
+}
+
 .modal-cloud .search-input {
   width: auto;
-  max-width: 100%;
+  min-width: calc(var(--cloud-content-width) - var(--cloud-search-trailing));
+  max-width: var(--cloud-content-width);
   field-sizing: content;
 }
 
