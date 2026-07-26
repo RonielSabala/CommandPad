@@ -145,7 +145,9 @@ export function ExportModal() {
       onClose={onClose}
       className={classNames(isBrowsingCloud && "modal-cloud")}
     >
-      <p className="modal-title">{t.exportModal.title}</p>
+      <p className="modal-title">
+        {t.exportModal.title(isCloud ? PROVIDER_NAME[destination] : null)}
+      </p>
 
       {isExporting && <CloudExportStatusView onDone={onClose} />}
 

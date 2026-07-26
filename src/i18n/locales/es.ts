@@ -111,7 +111,7 @@ export const es: Messages = {
       binding ? `Seguir enlace (${binding})` : "Seguir enlace",
   },
   exportModal: {
-    title: "Exportar",
+    title: (provider) => (provider ? `Exportar a ${provider}` : "Exportar"),
     destinationLabel: "Destino",
     formatLabel: "Formato",
     filenameLabel: "Nombre del archivo",

@@ -128,7 +128,7 @@ export interface Messages {
     followLinkTooltip: (binding?: string) => string;
   };
   exportModal: {
-    title: string;
+    title: (provider: string | null) => string;
     destinationLabel: string;
     formatLabel: string;
     filenameLabel: string;

@@ -109,7 +109,7 @@ export const en: Messages = {
       binding ? `Follow link (${binding})` : "Follow link",
   },
   exportModal: {
-    title: "Export",
+    title: (provider) => (provider ? `Export to ${provider}` : "Export"),
     destinationLabel: "Destination",
     formatLabel: "Format",
     filenameLabel: "Filename",
