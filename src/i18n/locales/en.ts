@@ -146,6 +146,8 @@ export const en: Messages = {
     columnName: "Name",
     columnModified: "Modified",
     columnSize: "Size",
+    sortAscending: (column) => `Sort by ${column}, ascending`,
+    sortDescending: (column) => `Sort by ${column}, descending`,
     searchFilesPlaceholder: "Search files and folders",
     searchFoldersPlaceholder: "Search folders",
     noResultsFiles: "No files or folders match your search.",
@@ -702,11 +704,11 @@ export const en: Messages = {
       howItWorks:
         "Click **Export** to open one dialog where you choose a destination (this device, SharePoint, or Google Drive), a format (JSON, Markdown, or plain text), and a filename, then export. It reopens with the destination and format you used last time already selected, and a cloud export shows its progress and confirms once the runbook is saved.",
       folders:
-        "Cloud runbooks can live in folders. Browsing shows folders first and files after them: click a folder to open it, click a file to import it. The **arrow** buttons move back and forward through the folders you visited, and the path above the list lets you jump straight back to any folder in it. When you export to the cloud, the **Folder** field picks where the runbook lands, and the **new folder** button creates a folder on the spot.",
+        "Cloud runbooks can live in folders: click a folder to open it, click a file to import it. The **arrow** buttons move back and forward through the folders you visited, and the path above the list lets you jump straight back to any folder in it. When you export to the cloud, the **Folder** field picks where the runbook lands, and the **new folder** button creates a folder on the spot.",
       search:
         "The **search box** above the list looks through the entire **CommandPad** folder, not just the folder you have open, so a runbook buried a few folders deep is one search away. Every result shows the folder path it lives in; clicking a folder result opens that folder, and the **x** button clears the search and puts you back where you were browsing.",
       manage:
-        "The list is laid out in columns. Folders show a modified date but no size. The **pencil** button renames a row and the **trash** button deletes it from the cloud after you confirm. Folders work the same way, except deleting one also deletes everything inside it.",
+        "The list is laid out in columns. Click a column heading to sort by it, and click it again to reverse the order; files and folders sort together, and rows with nothing to show in that column sink to the bottom. The **pencil** button renames a row and the **trash** button deletes it after you confirm.",
       storage:
         "Cloud runbooks live in a dedicated **CommandPad** folder in your own account, never anywhere else.",
     },

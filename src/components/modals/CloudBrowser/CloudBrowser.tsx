@@ -1,10 +1,14 @@
 import { CloudProvider } from "@/common/enums";
 import { SearchInput } from "@/components/common/SearchInput";
 import { useTranslation } from "@/i18n";
-import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
+import {
+  compareCloudEntries,
+  type CloudEntry,
+  type CloudFolderRef,
+} from "@/services/cloud";
 import { useStore } from "@/store/store";
 import { classNames, matchesQuery } from "@/utils/string";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { PROVIDER_ICON } from "../cloudProviders";
 import "./CloudBrowser.css";
 import { CloudFileRow } from "./CloudFileRow";
@@ -39,6 +43,7 @@ export function CloudBrowser({
   const searchEntries = useStore((state) => state.cloudSearchEntries);
   const searchLoading = useStore((state) => state.cloudSearchLoading);
   const setCloudSearchQuery = useStore((state) => state.setCloudSearchQuery);
+  const sort = useStore((state) => state.cloudSort);
 
   const signInToCloud = useStore((state) => state.signInToCloud);
   const signOutOfCloud = useStore((state) => state.signOutOfCloud);
@@ -63,16 +68,21 @@ export function CloudBrowser({
       : t.cloudModal.signInGoogleDrive;
 
   const searching = searchQuery.trim().length > 0;
-  const showsEntry = (entry: CloudEntry) => showFiles || entry.isFolder;
 
   // Searching swaps the open folder's listing for matches across the whole tree
-  const rows: CloudRow[] = searching
-    ? searchEntries.filter(
-        (result) =>
-          showsEntry(result.entry) &&
-          matchesQuery(searchQuery, result.entry.name),
-      )
-    : entries.filter(showsEntry).map((entry) => ({ entry }));
+  const rows: CloudRow[] = useMemo(() => {
+    const showsEntry = (entry: CloudEntry) => showFiles || entry.isFolder;
+
+    const matched: CloudRow[] = searching
+      ? searchEntries.filter(
+          (result) =>
+            showsEntry(result.entry) &&
+            matchesQuery(searchQuery, result.entry.name),
+        )
+      : entries.filter(showsEntry).map((entry) => ({ entry }));
+
+    return matched.sort((a, b) => compareCloudEntries(a.entry, b.entry, sort));
+  }, [searching, searchEntries, searchQuery, entries, showFiles, sort]);
 
   const busy = searching ? searchLoading : loading;
   const emptyMessage = searching

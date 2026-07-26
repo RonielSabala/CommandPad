@@ -165,6 +165,8 @@ export interface Messages {
     columnName: string;
     columnModified: string;
     columnSize: string;
+    sortAscending: (column: string) => string;
+    sortDescending: (column: string) => string;
     searchFilesPlaceholder: string;
     searchFoldersPlaceholder: string;
     noResultsFiles: string;

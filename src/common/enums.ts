@@ -118,6 +118,20 @@ export const SyncDestination = {
 export type SyncDestination =
   (typeof SyncDestination)[keyof typeof SyncDestination];
 
+export const CloudSortColumn = {
+  NAME: "name",
+  MODIFIED: "modified",
+  SIZE: "size",
+} as const;
+export type CloudSortColumn =
+  (typeof CloudSortColumn)[keyof typeof CloudSortColumn];
+
+export const SortDirection = {
+  ASC: "asc",
+  DESC: "desc",
+} as const;
+export type SortDirection = (typeof SortDirection)[keyof typeof SortDirection];
+
 export const HistoryDirection = {
   BACK: "back",
   FORWARD: "forward",

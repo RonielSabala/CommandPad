@@ -82,8 +82,8 @@
   --variable-split-width: 0.5rem;
   --modal-min-width: 15rem;
   --modal-max-width: 30rem;
-  --modal-cloud-width: min(90vw, max(50vw, 40rem));
-  --modal-cloud-height: min(85vh, max(50vh, 32rem));
+  --modal-cloud-width: 50vw;
+  --modal-cloud-height: 75vh;
   --modal-cloud-padding-x: var(--space-12);
   --modal-cloud-padding-y: var(--space-10);
   --cloud-col-date: 7.5rem;

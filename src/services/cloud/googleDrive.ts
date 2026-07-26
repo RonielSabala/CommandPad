@@ -7,7 +7,7 @@ import {
   StorageKey,
 } from "@/common/config";
 import { CloudProvider, HttpMethod } from "@/common/enums";
-import { isBrowsableEntry, sortCloudEntries } from "./entries";
+import { isBrowsableEntry } from "./entries";
 import type { CloudClient, CloudEntry } from "./types";
 import { CloudSyncError } from "./types";
 
@@ -314,7 +314,7 @@ class GoogleDriveClient implements CloudClient {
       size: item.size === undefined ? null : Number(item.size),
     }));
 
-    return sortCloudEntries(entries.filter(isBrowsableEntry));
+    return entries.filter(isBrowsableEntry);
   }
 
   async createFolder(name: string, parentId: string | null): Promise<void> {

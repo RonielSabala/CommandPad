@@ -1,0 +1,24 @@
+.cloud-browser-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  justify-self: start;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: color var(--transition-base);
+}
+
+.cloud-browser-sort:hover,
+.cloud-browser-sort.is-active {
+  color: var(--color-text-primary);
+}
+
+.cloud-browser-sort-caret {
+  width: 0.7em;
+  height: 0.7em;
+}

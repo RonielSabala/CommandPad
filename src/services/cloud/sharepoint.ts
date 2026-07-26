@@ -8,7 +8,7 @@ import type {
   AccountInfo,
   PublicClientApplication as PublicClientApplicationClass,
 } from "@azure/msal-browser";
-import { isBrowsableEntry, sortCloudEntries } from "./entries";
+import { isBrowsableEntry } from "./entries";
 import type { CloudClient, CloudEntry } from "./types";
 import { CloudSyncError } from "./types";
 
@@ -177,7 +177,7 @@ class SharePointClient implements CloudClient {
       };
     });
 
-    return sortCloudEntries(entries.filter(isBrowsableEntry));
+    return entries.filter(isBrowsableEntry);
   }
 
   async createFolder(name: string, parentId: string | null): Promise<void> {

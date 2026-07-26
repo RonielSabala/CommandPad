@@ -18,11 +18,13 @@ import {
   BlockType,
   CloudExportStatus,
   CloudProvider,
+  CloudSortColumn,
   ExportFormat,
   HistoryDirection,
   MoveDirection,
   NoteStyle,
   SidebarPosition,
+  SortDirection,
   SyncDestination,
   Theme,
   VariableField,
@@ -37,11 +39,13 @@ import type {
 import { detectLanguage, getMessages } from "@/i18n/messages";
 import { Language } from "@/i18n/types";
 import {
+  DEFAULT_CLOUD_SORT,
   getCloudClient,
   walkCloudTree,
   type CloudEntry,
   type CloudFolderRef,
   type CloudSearchEntry,
+  type CloudSort,
 } from "@/services/cloud";
 import { debounce } from "@/utils/debounce";
 import {
@@ -147,6 +151,9 @@ export interface StoreState {
   cloudSearchQuery: string;
   cloudSearchEntries: CloudSearchEntry[];
   cloudSearchLoading: boolean;
+
+  // Cloud list sorting
+  cloudSort: CloudSort;
 
   // Remembered cloud-sync choices
   lastExportDestination: SyncDestination;
@@ -272,6 +279,7 @@ export interface StoreState {
   navigateCloudToDepth: (depth: number) => void;
   navigateCloudToPath: (path: CloudFolderRef[]) => void;
   setCloudSearchQuery: (query: string) => void;
+  toggleCloudSort: (column: CloudSortColumn) => void;
   refreshCloudSearchEntries: () => Promise<void>;
   createCloudFolder: (name: string) => Promise<void>;
   importRunbookFromCloud: (file: CloudEntry) => Promise<void>;
@@ -558,6 +566,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       cloudSearchQuery: "",
       cloudSearchEntries: [],
       cloudSearchLoading: false,
+
+      cloudSort: DEFAULT_CLOUD_SORT,
 
       lastExportDestination: SyncDestination.LOCAL,
       lastExportFormat: ExportFormat.JSON,
@@ -1942,6 +1952,23 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         if (!previous.trim()) {
           void get().refreshCloudSearchEntries();
         }
+      },
+
+      toggleCloudSort: (column) => {
+        const current = get().cloudSort;
+        set({
+          cloudSort: {
+            column,
+            direction:
+              current.column === column
+                ? current.direction === SortDirection.ASC
+                  ? SortDirection.DESC
+                  : SortDirection.ASC
+                : column === CloudSortColumn.NAME
+                  ? SortDirection.ASC
+                  : SortDirection.DESC,
+          },
+        });
       },
 
       refreshCloudSearchEntries: async () => {
