@@ -153,7 +153,7 @@ export interface Messages {
     local: string;
   };
   cloudModal: {
-    importTitle: string;
+    importTitle: (provider: string) => string;
     signInSharePoint: string;
     signInGoogleDrive: string;
     signOut: string;

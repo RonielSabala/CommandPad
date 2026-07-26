@@ -136,7 +136,7 @@ export const es: Messages = {
     local: "Este dispositivo",
   },
   cloudModal: {
-    importTitle: "Importar desde la nube",
+    importTitle: (provider) => `Importar desde ${provider}`,
     signInSharePoint: "Iniciar sesión con Microsoft",
     signInGoogleDrive: "Iniciar sesión con Google",
     signOut: "Cerrar sesión",
