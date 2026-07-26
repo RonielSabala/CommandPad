@@ -2,6 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { InputSelector } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
 import { SidebarPosition } from "@/common/enums";
+import type { ContextMenuAnchor } from "@/components/common/ContextMenu";
 import { blockDrag } from "@/hooks/blockDrag";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
 import {
@@ -15,10 +16,10 @@ import { useRef, useState } from "react";
 import { AddBlockRow } from "./blocks/AddBlockRow";
 import { BlocksList } from "./blocks/BlocksList";
 import { EmptyState } from "./blocks/EmptyState";
-import { ContextMenu } from "./ContextMenu";
 import "./MainPanel.css";
 import { Minimap } from "./Minimap";
 import { TabsBar } from "./tabs/TabsBar";
+import { WorkspaceContextMenu } from "./WorkspaceContextMenu";
 
 function isCrossTabBlockDrag(store: AppStoreApi): boolean {
   const activeTabId = getActiveTab(store.getState())?.id ?? null;
@@ -43,10 +44,7 @@ export function MainPanel() {
   );
 
   const showMinimap = minimapEnabled && !isEmpty;
-  const [menuPosition, setMenuPosition] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
+  const [menuAnchor, setMenuAnchor] = useState<ContextMenuAnchor | null>(null);
 
   useScrollPersistence(tabsContentRef);
 
@@ -61,7 +59,6 @@ export function MainPanel() {
         )}
         onContextMenu={(event) => {
           const target = event.target as HTMLElement;
-
           if (
             target.closest(InputSelector.EDITABLE) ||
             target.closest(`.${CssClass.BLOCK_ITEM}`)
@@ -73,15 +70,11 @@ export function MainPanel() {
 
           // Right-clicking the open menu just closes it
           if (target.closest(`.${CssClass.CONTEXT_MENU}`)) {
-            setMenuPosition(null);
+            setMenuAnchor(null);
             return;
           }
 
-          const rect = event.currentTarget.getBoundingClientRect();
-          setMenuPosition({
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top,
-          });
+          setMenuAnchor({ x: event.clientX, y: event.clientY });
         }}
       >
         <div
@@ -117,11 +110,10 @@ export function MainPanel() {
           <AddBlockRow />
         </div>
         {showMinimap && <Minimap scrollRef={tabsContentRef} />}
-        {menuPosition && (
-          <ContextMenu
-            x={menuPosition.x}
-            y={menuPosition.y}
-            onClose={() => setMenuPosition(null)}
+        {menuAnchor && (
+          <WorkspaceContextMenu
+            anchor={menuAnchor}
+            onClose={() => setMenuAnchor(null)}
           />
         )}
       </div>

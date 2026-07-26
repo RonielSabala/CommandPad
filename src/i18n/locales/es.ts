@@ -167,8 +167,9 @@ export const es: Messages = {
     createFolder: "Crear carpeta",
     cancelNewFolder: "Cancelar nueva carpeta",
     importAction: (filename) => `Importar ${filename}`,
-    renameAction: (filename) => `Renombrar ${filename}`,
-    deleteAction: (filename) => `Eliminar ${filename}`,
+    entryActions: "Más acciones",
+    rename: "Renombrar",
+    delete: "Eliminar",
     saveName: "Guardar nombre",
     cancelRename: "Cancelar renombrado",
     namePlaceholder: "Nombre del archivo",
@@ -733,7 +734,7 @@ export const es: Messages = {
       search:
         "El **buscador** que hay sobre la lista revisa la carpeta **CommandPad** entera, no solo la carpeta que tengas abierta, así que un libro enterrado varias carpetas más abajo está a una búsqueda de distancia. Cada resultado muestra la ruta de la carpeta en la que vive; al hacer clic en un resultado de carpeta se abre esa carpeta, y el botón **x** limpia la búsqueda y te devuelve a donde estabas explorando.",
       manage:
-        "La lista se organiza en columnas. Haz clic en el título de una columna para ordenar por ella, y haz clic otra vez para invertir el orden; los archivos y las carpetas se ordenan juntos, y las filas sin nada que mostrar en esa columna quedan al final. El botón del **lápiz** renombra una fila y el botón de la **papelera** la elimina después de confirmarlo.",
+        "La lista se organiza en columnas. Haz clic en el título de una columna para ordenar por ella, y haz clic otra vez para invertir el orden; los archivos y las carpetas se ordenan juntos, y las filas sin nada que mostrar en esa columna quedan al final. El botón de **tres puntos** al final de una fila abre un menú con **Renombrar** y **Eliminar**, y eliminar te pide confirmación antes.",
       storage:
         "Los libros en la nube se guardan en una carpeta dedicada llamada **CommandPad** en tu propia cuenta, nunca en ningún otro lugar.",
     },

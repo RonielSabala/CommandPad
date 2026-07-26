@@ -16,7 +16,7 @@ import {
 import { useState } from "react";
 import type { Icon } from "react-bootstrap-icons";
 import { CloudRowConfirmActions } from "./CloudRowConfirmActions";
-import { CloudRowEditActions } from "./CloudRowEditActions";
+import { CloudRowMenu } from "./CloudRowMenu";
 
 interface CloudEntryRowProps {
   entry: CloudEntry;
@@ -115,13 +115,12 @@ export function CloudEntryRow({
         <span className="cloud-browser-row-size">{size}</span>
       </button>
 
-      <CloudRowEditActions
+      <CloudRowMenu
         onRename={() =>
           setDraft(entry.isFolder ? entry.name : stripJsonExtension(entry.name))
         }
         onDelete={() => void deleteCloudEntry(entry)}
-        renameTitle={t.cloudModal.renameAction(entry.name)}
-        deleteTitle={t.cloudModal.deleteAction(entry.name)}
+        menuTitle={t.cloudModal.entryActions}
       />
     </div>
   );

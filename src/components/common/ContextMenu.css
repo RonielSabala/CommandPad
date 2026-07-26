@@ -1,6 +1,6 @@
 .context-menu {
-  position: absolute;
-  z-index: 1;
+  position: fixed;
+  z-index: 1100;
   min-width: var(--context-menu-min-width);
   min-height: var(--context-menu-min-height);
   display: flex;
@@ -37,16 +37,24 @@
   background: none;
 }
 
+.context-menu-item.is-danger {
+  color: var(--danger);
+}
+
+.context-menu-item.is-danger:hover {
+  background: var(--danger-dim);
+}
+
+.context-menu-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  justify-content: center;
+  width: var(--icon-base);
+}
+
 .context-menu-separator {
   flex-shrink: 0;
   height: 1px;
   margin: var(--space-2) var(--space-2);
   background: var(--color-border);
-}
-
-.context-menu-check {
-  flex-shrink: 0;
-  display: inline-flex;
-  justify-content: center;
-  width: var(--icon-base);
 }

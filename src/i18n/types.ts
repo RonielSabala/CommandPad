@@ -182,8 +182,9 @@ export interface Messages {
     createFolder: string;
     cancelNewFolder: string;
     importAction: (filename: string) => string;
-    renameAction: (filename: string) => string;
-    deleteAction: (filename: string) => string;
+    entryActions: string;
+    rename: string;
+    delete: string;
     saveName: string;
     cancelRename: string;
     namePlaceholder: string;

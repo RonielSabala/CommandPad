@@ -165,8 +165,9 @@ export const en: Messages = {
     createFolder: "Create folder",
     cancelNewFolder: "Cancel new folder",
     importAction: (filename) => `Import ${filename}`,
-    renameAction: (filename) => `Rename ${filename}`,
-    deleteAction: (filename) => `Delete ${filename}`,
+    entryActions: "More actions",
+    rename: "Rename",
+    delete: "Delete",
     saveName: "Save name",
     cancelRename: "Cancel rename",
     namePlaceholder: "Filename",
@@ -721,7 +722,7 @@ export const en: Messages = {
       search:
         "The **search box** above the list looks through the entire **CommandPad** folder, not just the folder you have open, so a runbook buried a few folders deep is one search away. Every result shows the folder path it lives in; clicking a folder result opens that folder, and the **x** button clears the search and puts you back where you were browsing.",
       manage:
-        "The list is laid out in columns. Click a column heading to sort by it, and click it again to reverse the order; files and folders sort together, and rows with nothing to show in that column sink to the bottom. The **pencil** button renames a row and the **trash** button deletes it after you confirm.",
+        "The list is laid out in columns. Click a column heading to sort by it, and click it again to reverse the order; files and folders sort together, and rows with nothing to show in that column sink to the bottom. The **three dots** button at the end of a row opens a menu with **Rename** and **Delete**, and deleting asks you to confirm first.",
       storage:
         "Cloud runbooks live in a dedicated **CommandPad** folder in your own account, never anywhere else.",
     },
