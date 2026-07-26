@@ -9,7 +9,6 @@ export function GoogleDriveIcon(props: ProviderIconProps) {
 
   return (
     <svg aria-hidden="true" viewBox="0 0 512 512" {...props}>
-      <rect width="512" height="512" rx="15%" fill="#ffffff" />
       <g fill="#2684fc">
         <path id={bId} d="M337 301l53 96q-3 2-10 2h-247.6 q-6 0-10-2l55-95" />
       </g>

@@ -145,12 +145,24 @@
 
 /* Account */
 
-.signin-button {
+.signin-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
   margin-top: var(--space-3);
 }
 
-.modal-cloud .signin-button {
+.modal-cloud .signin-prompt {
   margin: auto;
+}
+
+.signin-prompt-text {
+  max-width: 26rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  text-align: center;
 }
 
 .cloud-browser-account {

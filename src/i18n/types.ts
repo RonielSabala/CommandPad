@@ -154,6 +154,7 @@ export interface Messages {
   };
   cloudModal: {
     importTitle: (provider: string) => string;
+    signInPrompt: (provider: string) => string;
     signInSharePoint: string;
     signInGoogleDrive: string;
     signOut: string;

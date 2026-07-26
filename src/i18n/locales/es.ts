@@ -137,6 +137,8 @@ export const es: Messages = {
   },
   cloudModal: {
     importTitle: (provider) => `Importar desde ${provider}`,
+    signInPrompt: (provider) =>
+      `Inicia sesión en ${provider} para explorar y administrar tus runbooks allí.`,
     signInSharePoint: "Iniciar sesión con Microsoft",
     signInGoogleDrive: "Iniciar sesión con Google",
     signOut: "Cerrar sesión",

@@ -9,7 +9,7 @@ import {
 import { useStore } from "@/store/store";
 import { classNames, matchesQuery } from "@/utils/string";
 import { useMemo, useState } from "react";
-import { PROVIDER_ICON } from "../cloudProviders";
+import { PROVIDER_ICON, PROVIDER_NAME } from "../cloudProviders";
 import "./CloudBrowser.css";
 import { CloudFileRow } from "./CloudFileRow";
 import { CloudFolderRow } from "./CloudFolderRow";
@@ -96,14 +96,20 @@ export function CloudBrowser({
   return (
     <>
       {!signedIn && (
-        <button
-          className="btn btn-lg btn-primary signin-button"
-          onClick={() => void signInToCloud()}
-          disabled={loading}
-        >
-          <ProviderIcon className="icon-md" />
-          {signInLabel}
-        </button>
+        <div className="signin-prompt">
+          <p className="signin-prompt-text">
+            {t.cloudModal.signInPrompt(PROVIDER_NAME[provider])}
+          </p>
+
+          <button
+            className="btn btn-lg btn-primary"
+            onClick={() => void signInToCloud()}
+            disabled={loading}
+          >
+            <ProviderIcon className="icon-md" />
+            {signInLabel}
+          </button>
+        </div>
       )}
 
       {signedIn && (
