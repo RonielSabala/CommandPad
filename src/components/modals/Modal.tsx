@@ -1,16 +1,18 @@
 import { CloseIcon } from "@/components/icons";
 import { useModalDismiss } from "@/hooks/useModalDismiss";
 import { useTranslation } from "@/i18n";
+import { classNames } from "@/utils/string";
 import type { ReactNode } from "react";
 import "./Modal.css";
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  className?: string;
   children: ReactNode;
 }
 
-export function Modal({ open, onClose, children }: Props) {
+export function Modal({ open, onClose, className, children }: Props) {
   const t = useTranslation();
   useModalDismiss(open, onClose);
 
@@ -27,7 +29,7 @@ export function Modal({ open, onClose, children }: Props) {
         }
       }}
     >
-      <div className="modal">
+      <div className={classNames("modal", className)}>
         <button
           className="modal-close btn btn-flat-icon"
           onClick={onClose}

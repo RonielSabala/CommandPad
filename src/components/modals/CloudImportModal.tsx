@@ -15,7 +15,11 @@ export function CloudImportModal() {
   );
 
   return (
-    <Modal open={isOpen} onClose={closeCloudImportModal}>
+    <Modal
+      open={isOpen}
+      onClose={closeCloudImportModal}
+      className="modal-cloud"
+    >
       <p className="modal-title">{t.cloudModal.importTitle}</p>
 
       <CloudBrowser showFiles />

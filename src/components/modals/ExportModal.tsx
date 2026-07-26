@@ -40,6 +40,7 @@ function CloudExportStatusView({ onDone }: { onDone: () => void }) {
   const resetCloudExportStatus = useStore(
     (state) => state.resetCloudExportStatus,
   );
+
   const providerName = provider ? PROVIDER_NAME[provider] : "";
 
   useEffect(() => {
@@ -133,6 +134,7 @@ export function ExportModal() {
   const trimmed = filename.trim();
   const canExport = trimmed.length > 0;
   const isCloud = destination !== SyncDestination.LOCAL;
+  const isBrowsingCloud = !isExporting && pickingFolder && isCloud;
 
   const chooseDestination = (next: SyncDestination) => {
     setDestination(next);
@@ -151,12 +153,16 @@ export function ExportModal() {
   };
 
   return (
-    <Modal open={isOpen} onClose={onClose}>
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+      className={classNames(isBrowsingCloud && "modal-cloud")}
+    >
       <p className="modal-title">{t.exportModal.title}</p>
 
       {isExporting && <CloudExportStatusView onDone={onClose} />}
 
-      {!isExporting && pickingFolder && isCloud && (
+      {isBrowsingCloud && (
         <CloudFolderPicker
           provider={destination}
           initialPath={folderPath}

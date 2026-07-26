@@ -75,3 +75,21 @@
   gap: var(--space-4);
   padding-top: var(--space-4);
 }
+
+/* Modal cloud */
+
+.modal.modal-cloud {
+  width: var(--modal-cloud-width);
+  height: var(--modal-cloud-height);
+  max-width: none;
+  padding: var(--modal-cloud-padding-y) var(--modal-cloud-padding-x);
+  gap: var(--space-6);
+}
+
+.modal-cloud .modal-scrollable-body {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  margin: 0 calc(var(--modal-cloud-padding-x) * -1);
+  padding: var(--space-2) var(--modal-cloud-padding-x);
+}
