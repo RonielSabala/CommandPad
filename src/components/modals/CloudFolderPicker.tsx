@@ -4,7 +4,6 @@ import type { CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
 import { useEffect } from "react";
 import { CloudBrowser } from "./CloudBrowser";
-import "./CloudFolderPicker.css";
 
 interface CloudFolderPickerProps {
   provider: CloudProvider;

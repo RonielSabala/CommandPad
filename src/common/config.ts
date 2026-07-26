@@ -171,6 +171,7 @@ export const CloudSyncConfig = {
   APP_FOLDER_NAME: "CommandPad",
   PATH_SEPARATOR: "/",
   MAX_SEARCH_DEPTH: 10,
+  NO_SIZE_PLACEHOLDER: "—",
 } as const;
 
 export const FileSizeConfig = {
@@ -179,9 +180,12 @@ export const FileSizeConfig = {
   DECIMALS: 1,
 } as const;
 
+export const FileTimeFormat: Intl.DateTimeFormatOptions = {
+  timeStyle: "short",
+};
+
 export const FileDateFormat: Intl.DateTimeFormatOptions = {
   dateStyle: "medium",
-  timeStyle: "short",
 };
 
 export const SharePointConfig = {

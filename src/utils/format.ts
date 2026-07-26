@@ -2,6 +2,7 @@ import {
   CloudSyncConfig,
   FileDateFormat,
   FileSizeConfig,
+  FileTimeFormat,
 } from "@/common/config";
 import type { Language } from "@/i18n";
 import type { CloudFolderRef } from "@/services/cloud";
@@ -39,10 +40,11 @@ export function formatTimestamp(
   language: Language,
 ): string | null {
   const date = new Date(isoDate);
-
   if (Number.isNaN(date.getTime())) {
     return null;
   }
 
-  return new Intl.DateTimeFormat(language, FileDateFormat).format(date);
+  const time = new Intl.DateTimeFormat(language, FileTimeFormat).format(date);
+  const day = new Intl.DateTimeFormat(language, FileDateFormat).format(date);
+  return `${time}, ${day}`;
 }

@@ -1,3 +1,4 @@
+import { CloudSyncConfig } from "@/common/config";
 import { ExportFormat } from "@/common/enums";
 import {
   FilenameInput,
@@ -85,7 +86,9 @@ export function CloudEntryRow({
       : formatTimestamp(entry.modifiedAt, language);
 
   const size =
-    entry.size === null ? null : formatFileSize(entry.size, language);
+    entry.size === null
+      ? CloudSyncConfig.NO_SIZE_PLACEHOLDER
+      : formatFileSize(entry.size, language);
 
   return (
     <div className="cloud-browser-row">
