@@ -6,9 +6,7 @@ import {
 } from "@/common/enums";
 import { FilenameInput } from "@/components/common/FilenameInput";
 import { useTranslation } from "@/i18n";
-import type { CloudFolderRef } from "@/services/cloud";
-import { getActiveTab, useStore } from "@/store/store";
-import { getExportBasename } from "@/utils/export";
+import { useStore } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
 import { classNames } from "@/utils/string";
 import { useEffect, useState } from "react";
@@ -29,8 +27,6 @@ const FORMATS: readonly ExportFormat[] = [
   ExportFormat.MD,
   ExportFormat.TXT,
 ];
-
-const ROOT_FOLDER_PATH: CloudFolderRef[] = [];
 
 function CloudExportStatusView({ onDone }: { onDone: () => void }) {
   const t = useTranslation();
@@ -104,42 +100,33 @@ export function ExportModal() {
   const isOpen = useStore((state) => state.exportModalOpen);
   const onClose = useStore((state) => state.closeExportModal);
   const exportRunbook = useStore((state) => state.exportRunbook);
-  const label = useStore((state) => getActiveTab(state)?.label ?? "");
-  const lastDestination = useStore((state) => state.lastExportDestination);
-  const lastFormat = useStore((state) => state.lastExportFormat);
+
+  const destination = useStore((state) => state.lastExportDestination);
+  const folderPath = useStore((state) => state.lastExportFolderPath);
+  const format = useStore((state) => state.lastExportFormat);
+  const filename = useStore((state) => state.lastExportFilename);
+
+  const setExportDestination = useStore((state) => state.setExportDestination);
+  const setExportFolderPath = useStore((state) => state.setExportFolderPath);
+  const setExportFormat = useStore((state) => state.setExportFormat);
+  const setExportFilename = useStore((state) => state.setExportFilename);
+
   const cloudExportStatus = useStore((state) => state.cloudExportStatus);
   const isExporting = cloudExportStatus !== CloudExportStatus.IDLE;
-  const [destination, setDestination] = useState<SyncDestination>(
-    SyncDestination.LOCAL,
-  );
-
-  const [format, setFormat] = useState<ExportFormat>(ExportFormat.JSON);
-  const [filename, setFilename] = useState("");
   const [pickingFolder, setPickingFolder] = useState(false);
-  const [folderPath, setFolderPath] =
-    useState<CloudFolderRef[]>(ROOT_FOLDER_PATH);
 
   useEffect(() => {
     if (!isOpen) {
       return;
     }
 
-    setDestination(lastDestination);
-    setFormat(lastFormat);
-    setFilename(getExportBasename(label));
-    setFolderPath(ROOT_FOLDER_PATH);
     setPickingFolder(false);
-  }, [isOpen, label, lastDestination, lastFormat]);
+  }, [isOpen]);
 
   const trimmed = filename.trim();
   const canExport = trimmed.length > 0;
   const isCloud = destination !== SyncDestination.LOCAL;
   const isBrowsingCloud = !isExporting && pickingFolder && isCloud;
-
-  const chooseDestination = (next: SyncDestination) => {
-    setDestination(next);
-    setFolderPath(ROOT_FOLDER_PATH);
-  };
 
   const handleExport = () => {
     if (canExport) {
@@ -168,7 +155,7 @@ export function ExportModal() {
           initialPath={folderPath}
           onCancel={() => setPickingFolder(false)}
           onSelect={(path) => {
-            setFolderPath(path);
+            setExportFolderPath(path);
             setPickingFolder(false);
           }}
         />
@@ -186,7 +173,7 @@ export function ExportModal() {
                   "export-modal-option",
                   destination === SyncDestination.LOCAL && "is-selected",
                 )}
-                onClick={() => chooseDestination(SyncDestination.LOCAL)}
+                onClick={() => setExportDestination(SyncDestination.LOCAL)}
               >
                 <LaptopFill className="icon-md" />
                 {t.destinationModal.local}
@@ -201,7 +188,7 @@ export function ExportModal() {
                       "export-modal-option",
                       destination === provider && "is-selected",
                     )}
-                    onClick={() => chooseDestination(provider)}
+                    onClick={() => setExportDestination(provider)}
                   >
                     <ProviderIcon className="icon-md" />
                     {PROVIDER_NAME[provider]}
@@ -241,7 +228,7 @@ export function ExportModal() {
                     "export-modal-option",
                     format === option && "is-selected",
                   )}
-                  onClick={() => setFormat(option)}
+                  onClick={() => setExportFormat(option)}
                 >
                   .{option}
                 </button>
@@ -258,7 +245,7 @@ export function ExportModal() {
               id="export-filename"
               value={filename}
               extension={format}
-              onChange={setFilename}
+              onChange={setExportFilename}
               onSubmit={handleExport}
             />
           </div>

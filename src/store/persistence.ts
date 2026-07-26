@@ -10,6 +10,7 @@ import {
 import type { RunbookEntry, Tab } from "@/common/types";
 import { detectLanguage, isLanguage } from "@/i18n/messages";
 import type { Language } from "@/i18n/types";
+import type { CloudFolderRef } from "@/services/cloud";
 import { clamp } from "@/utils/number";
 
 function getSavedItemByKey(key: string) {
@@ -21,6 +22,16 @@ const isSyncDestination = (value: unknown): value is SyncDestination =>
 
 const isExportFormat = (value: unknown): value is ExportFormat =>
   Object.values(ExportFormat).includes(value as ExportFormat);
+
+const isCloudFolderPath = (value: unknown): value is CloudFolderRef[] =>
+  Array.isArray(value) &&
+  value.every(
+    (step) =>
+      typeof step === "object" &&
+      step !== null &&
+      typeof (step as CloudFolderRef).id === "string" &&
+      typeof (step as CloudFolderRef).name === "string",
+  );
 
 // UI state
 
@@ -36,6 +47,9 @@ interface PersistedUiState {
   minimapPosition: SidebarPosition;
   lastExportDestination: SyncDestination;
   lastExportFormat: ExportFormat;
+  lastExportFilename: string;
+  lastExportFilenameTabId: string | null;
+  lastExportFolderPath: CloudFolderRef[];
   lastImportSource: SyncDestination;
 }
 
@@ -57,6 +71,9 @@ export function saveUiState(ui: PersistedUiState): void {
         minimapPosition: ui.minimapPosition,
         lastExportDestination: ui.lastExportDestination,
         lastExportFormat: ui.lastExportFormat,
+        lastExportFilename: ui.lastExportFilename,
+        lastExportFilenameTabId: ui.lastExportFilenameTabId,
+        lastExportFolderPath: ui.lastExportFolderPath,
         lastImportSource: ui.lastImportSource,
       }),
     );
@@ -103,6 +120,15 @@ export function loadUiState(): Partial<PersistedUiState> | null {
         : {}),
       ...(isExportFormat(saved.lastExportFormat)
         ? { lastExportFormat: saved.lastExportFormat }
+        : {}),
+      ...(typeof saved.lastExportFilename === "string"
+        ? { lastExportFilename: saved.lastExportFilename }
+        : {}),
+      ...(typeof saved.lastExportFilenameTabId === "string"
+        ? { lastExportFilenameTabId: saved.lastExportFilenameTabId }
+        : {}),
+      ...(isCloudFolderPath(saved.lastExportFolderPath)
+        ? { lastExportFolderPath: saved.lastExportFolderPath }
         : {}),
       ...(isSyncDestination(saved.lastImportSource)
         ? { lastImportSource: saved.lastImportSource }

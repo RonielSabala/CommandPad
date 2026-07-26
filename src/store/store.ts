@@ -51,6 +51,7 @@ import { debounce } from "@/utils/debounce";
 import {
   buildMarkdownExport,
   buildRunbookExportContent,
+  getExportBasename,
   runExport,
   stripJsonExtension,
   withJsonExtension,
@@ -158,6 +159,9 @@ export interface StoreState {
   // Remembered cloud-sync choices
   lastExportDestination: SyncDestination;
   lastExportFormat: ExportFormat;
+  lastExportFilename: string;
+  lastExportFilenameTabId: string | null;
+  lastExportFolderPath: CloudFolderRef[];
   lastImportSource: SyncDestination;
 
   // Bootstrap
@@ -250,6 +254,10 @@ export interface StoreState {
   openExportModal: () => void;
   closeExportModal: () => void;
   resetCloudExportStatus: () => void;
+  setExportDestination: (destination: SyncDestination) => void;
+  setExportFormat: (format: ExportFormat) => void;
+  setExportFilename: (filename: string) => void;
+  setExportFolderPath: (path: CloudFolderRef[]) => void;
   openPasteRunbookModal: () => void;
   closePasteRunbookModal: () => void;
   exportRunbook: (
@@ -335,6 +343,9 @@ function uiStateSnapshot(state: StoreState) {
     minimapPosition: state.minimapPosition,
     lastExportDestination: state.lastExportDestination,
     lastExportFormat: state.lastExportFormat,
+    lastExportFilename: state.lastExportFilename,
+    lastExportFilenameTabId: state.lastExportFilenameTabId,
+    lastExportFolderPath: state.lastExportFolderPath,
     lastImportSource: state.lastImportSource,
   };
 }
@@ -571,6 +582,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       lastExportDestination: SyncDestination.LOCAL,
       lastExportFormat: ExportFormat.JSON,
+      lastExportFilename: "",
+      lastExportFilenameTabId: null,
+      lastExportFolderPath: ROOT_CLOUD_PATH,
       lastImportSource: SyncDestination.LOCAL,
 
       initialized: false,
@@ -1665,14 +1679,49 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       // --- Modals / export ---
 
-      openExportModal: () =>
+      openExportModal: () => {
+        const state = get();
+        const activeTab = getActiveTab(state);
+        const activeTabId = activeTab?.id ?? null;
+
         set({
           exportModalOpen: true,
           cloudExportStatus: CloudExportStatus.IDLE,
-        }),
+          ...(state.lastExportFilenameTabId !== activeTabId
+            ? {
+                lastExportFilename: getExportBasename(activeTab?.label ?? ""),
+                lastExportFilenameTabId: activeTabId,
+              }
+            : {}),
+        });
+      },
       closeExportModal: () => set({ exportModalOpen: false }),
       resetCloudExportStatus: () =>
         set({ cloudExportStatus: CloudExportStatus.IDLE }),
+
+      setExportDestination: (destination) => {
+        set({
+          lastExportDestination: destination,
+          lastExportFolderPath: ROOT_CLOUD_PATH,
+        });
+        persist.saveUiState(uiStateSnapshot(get()));
+      },
+      setExportFormat: (format) => {
+        set({ lastExportFormat: format });
+        persist.saveUiState(uiStateSnapshot(get()));
+      },
+      setExportFilename: (filename) => {
+        set({
+          lastExportFilename: filename,
+          lastExportFilenameTabId: getActiveTab(get())?.id ?? null,
+        });
+        debouncedSaveState();
+      },
+      setExportFolderPath: (path) => {
+        set({ lastExportFolderPath: path });
+        persist.saveUiState(uiStateSnapshot(get()));
+      },
+
       openPasteRunbookModal: () => set({ pasteRunbookModalOpen: true }),
       closePasteRunbookModal: () => set({ pasteRunbookModalOpen: false }),
 
@@ -1751,6 +1800,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       chooseDestination: (destination) => {
         set({ destinationModalOpen: false, lastImportSource: destination });
+        persist.saveUiState(uiStateSnapshot(get()));
 
         if (destination === SyncDestination.LOCAL) {
           openImportDialog();
