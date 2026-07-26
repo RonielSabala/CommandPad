@@ -68,20 +68,19 @@ export function CloudBrowser({
           <CloudPathBar allowCreateFolder={allowCreateFolder} />
 
           <div className="cloud-browser-entries modal-scrollable-body">
-            {loading && (
-              <p className="cloud-browser-empty">{t.cloudModal.loading}</p>
+            {visible.length === 0 && (
+              <p className="cloud-browser-empty">
+                {loading ? t.cloudModal.loading : emptyMessage}
+              </p>
             )}
-            {!loading && visible.length === 0 && (
-              <p className="cloud-browser-empty">{emptyMessage}</p>
+
+            {visible.map((entry) =>
+              entry.isFolder ? (
+                <CloudFolderRow key={entry.id} folder={entry} />
+              ) : (
+                <CloudFileRow key={entry.id} file={entry} />
+              ),
             )}
-            {!loading &&
-              visible.map((entry) =>
-                entry.isFolder ? (
-                  <CloudFolderRow key={entry.id} folder={entry} />
-                ) : (
-                  <CloudFileRow key={entry.id} file={entry} />
-                ),
-              )}
           </div>
         </>
       )}

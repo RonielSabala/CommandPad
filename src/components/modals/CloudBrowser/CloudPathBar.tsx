@@ -6,6 +6,7 @@ import {
 } from "@/components/common/FilenameInput";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { Fragment, useState } from "react";
 import {
   ArrowClockwise,
@@ -113,7 +114,10 @@ export function CloudPathBar({
         >
           <ArrowClockwise
             id="refresh-cloud-files-icon"
-            className="icon-md icon-semibold"
+            className={classNames(
+              "icon-md icon-semibold",
+              loading && "is-refreshing",
+            )}
           />
         </button>
       </div>

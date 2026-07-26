@@ -54,6 +54,22 @@
   fill: currentColor;
 }
 
+#refresh-cloud-files-icon.is-refreshing {
+  animation: cloud-refresh-spin 0.8s linear infinite;
+}
+
+@keyframes cloud-refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #refresh-cloud-files-icon.is-refreshing {
+    animation-duration: 2s;
+  }
+}
+
 /* New folder */
 
 .cloud-path-bar-new-folder {

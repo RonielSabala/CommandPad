@@ -1838,6 +1838,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           cloudHistory: [...history, path],
           cloudHistoryIndex: history.length,
           cloudError: null,
+          cloudEntries: [],
         });
 
         void get().refreshCloudEntries();
@@ -1852,7 +1853,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
 
-        set({ cloudPath: path, cloudHistoryIndex: index, cloudError: null });
+        set({
+          cloudPath: path,
+          cloudHistoryIndex: index,
+          cloudError: null,
+          cloudEntries: [],
+        });
         void get().refreshCloudEntries();
       },
 
