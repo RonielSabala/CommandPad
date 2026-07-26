@@ -53,7 +53,7 @@ export function CloudPathBar({
         <button
           className="btn btn-flat-icon"
           onClick={() => navigateCloudHistory(HistoryDirection.BACK)}
-          disabled={loading || historyIndex === 0}
+          disabled={historyIndex === 0}
           title={t.cloudModal.navigateBack}
         >
           <ArrowLeft className="icon-md icon-semibold" />
@@ -62,7 +62,7 @@ export function CloudPathBar({
         <button
           className="btn btn-flat-icon"
           onClick={() => navigateCloudHistory(HistoryDirection.FORWARD)}
-          disabled={loading || historyIndex >= historyLength - 1}
+          disabled={historyIndex >= historyLength - 1}
           title={t.cloudModal.navigateForward}
         >
           <ArrowRight className="icon-md icon-semibold" />

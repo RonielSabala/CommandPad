@@ -463,6 +463,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       DEBOUNCE_SAVE_MS,
     );
 
+    let cloudRequestId = 0;
+    const startCloudRequest = () => ++cloudRequestId;
+    const isCurrentCloudRequest = (id: number) => cloudRequestId === id;
+
     return {
       tabs: [],
       activeTabId: null,
@@ -1709,6 +1713,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       startCloudBrowse: async (provider, path = ROOT_CLOUD_PATH) => {
+        startCloudRequest();
         set({
           cloudProvider: provider,
           cloudError: null,
@@ -1787,6 +1792,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         } catch (error) {
           console.error("Cloud sign-out failed", error);
         }
+
+        startCloudRequest();
         set({
           cloudEntries: [],
           cloudError: null,
@@ -1800,20 +1807,27 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       refreshCloudEntries: async () => {
         const client = getCloudClient(get().cloudProvider);
+        const requestId = startCloudRequest();
         set({ cloudLoading: true, cloudError: null });
         try {
           const entries = await client.listEntries(
             currentFolderId(get().cloudPath),
           );
-          set({ cloudEntries: entries });
+          if (isCurrentCloudRequest(requestId)) {
+            set({ cloudEntries: entries });
+          }
         } catch (error) {
           console.error("Failed to list cloud entries", error);
-          set({
-            cloudEntries: [],
-            cloudError: getMessages(get().language).cloudModal.genericError,
-          });
+          if (isCurrentCloudRequest(requestId)) {
+            set({
+              cloudEntries: [],
+              cloudError: getMessages(get().language).cloudModal.genericError,
+            });
+          }
         } finally {
-          set({ cloudLoading: false });
+          if (isCurrentCloudRequest(requestId)) {
+            set({ cloudLoading: false });
+          }
         }
       },
 
