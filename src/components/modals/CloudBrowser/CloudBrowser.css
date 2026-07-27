@@ -118,12 +118,19 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: color var(--transition-base);
+  border-bottom: 1px solid transparent;
+  transition:
+    color var(--transition-base),
+    border-color var(--transition-base);
 }
 
 .cloud-browser-row-main:hover
   :is(.cloud-browser-row-icon, .cloud-browser-row-name) {
   color: var(--accent);
+}
+
+.cloud-browser-row-name:hover {
+  border-bottom-color: var(--accent);
 }
 
 .cloud-browser-row-path {
