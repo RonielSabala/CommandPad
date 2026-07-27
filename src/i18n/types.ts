@@ -405,6 +405,7 @@ export interface Messages {
       folders: string;
       search: string;
       manage: string;
+      recycleBin: string;
       storage: string;
     };
     language: {
