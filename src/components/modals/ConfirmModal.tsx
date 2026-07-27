@@ -1,10 +1,10 @@
 import { DEFAULT_CONFIRM_LABEL } from "@/common/config";
 import { EventType, Key } from "@/common/constants/events";
+import { DialogTone } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { classNames } from "@/utils/string";
 import { useEffect, useRef, useState } from "react";
-import { Modal } from "./Modal";
+import { DialogModal } from "./DialogModal";
 
 export function ConfirmModal() {
   const t = useTranslation();
@@ -15,7 +15,7 @@ export function ConfirmModal() {
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState(DEFAULT_CONFIRM_LABEL);
   const [confirmLabel, setConfirmLabel] = useState(DEFAULT_CONFIRM_LABEL);
-  const [isDanger, setDanger] = useState(false);
+  const [tone, setTone] = useState<DialogTone>(DialogTone.INFO);
   const confirmRef = useRef<HTMLButtonElement>(null);
 
   // Keep the last message rendered while the modal fades out
@@ -24,7 +24,7 @@ export function ConfirmModal() {
       setMessage(dialog.message);
       setTitle(dialog.title);
       setConfirmLabel(dialog.confirmLabel);
-      setDanger(dialog.danger);
+      setTone(dialog.tone);
     }
   }, [dialog]);
 
@@ -46,26 +46,26 @@ export function ConfirmModal() {
   }, [isOpen, resolve]);
 
   return (
-    <Modal open={isOpen} onClose={() => resolve(false)}>
-      <p className="modal-title">{title}</p>
-      <p className="modal-message">{message}</p>
-      <div className="modal-actions">
-        <button className="btn btn-lg" onClick={() => resolve(false)}>
-          {t.common.cancel}
-        </button>
-        <div className="vertical-divider" />
-        <button
-          ref={confirmRef}
-          className={classNames(
-            "btn",
-            "btn-lg",
-            isDanger ? "btn-danger" : "btn-primary",
-          )}
-          onClick={() => resolve(true)}
-        >
-          {confirmLabel}
-        </button>
-      </div>
-    </Modal>
+    <DialogModal
+      open={isOpen}
+      onClose={() => resolve(false)}
+      tone={tone}
+      title={title}
+      message={message}
+    >
+      <button className="btn btn-lg" onClick={() => resolve(false)}>
+        {t.common.cancel}
+      </button>
+
+      <div className="vertical-divider" />
+
+      <button
+        ref={confirmRef}
+        className="btn btn-lg btn-tone"
+        onClick={() => resolve(true)}
+      >
+        {confirmLabel}
+      </button>
+    </DialogModal>
   );
 }

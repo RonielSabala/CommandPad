@@ -205,7 +205,7 @@ export interface Messages {
     nameTakenError: (filename: string) => string;
   };
   alert: {
-    invalidFormatTitle: string;
+    defaultTitle: string;
   };
   confirm: {
     defaultTitle: string;
@@ -217,6 +217,7 @@ export interface Messages {
     overwriteCloudFileTitle: string;
     overwriteCloudFileConfirm: string;
     overwriteCloudFileMessage: (filename: string) => string;
+    importFailedTitle: string;
     importFailed: (count: number) => string;
     pastedRunbook: string;
     resetTitle: string;

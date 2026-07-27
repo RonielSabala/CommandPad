@@ -1,7 +1,8 @@
+import { DialogTone } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
-import { Modal } from "./Modal";
+import { DialogModal } from "./DialogModal";
 
 export function AlertModal() {
   const t = useTranslation();
@@ -10,12 +11,16 @@ export function AlertModal() {
   const open = dialog !== null;
 
   const [message, setMessage] = useState("");
+  const [title, setTitle] = useState(t.alert.defaultTitle);
+  const [tone, setTone] = useState<DialogTone>(DialogTone.INFO);
   const okRef = useRef<HTMLButtonElement>(null);
 
   // Keep the last message rendered while the modal fades out
   useEffect(() => {
     if (dialog) {
       setMessage(dialog.message);
+      setTitle(dialog.title);
+      setTone(dialog.tone);
     }
   }, [dialog]);
 
@@ -26,18 +31,16 @@ export function AlertModal() {
   }, [open]);
 
   return (
-    <Modal open={open} onClose={resolve}>
-      <p className="modal-title">{t.alert.invalidFormatTitle}</p>
-      <p className="modal-message">{message}</p>
-      <div className="modal-actions">
-        <button
-          ref={okRef}
-          className="btn btn-lg btn-primary"
-          onClick={resolve}
-        >
-          {t.common.ok}
-        </button>
-      </div>
-    </Modal>
+    <DialogModal
+      open={open}
+      onClose={resolve}
+      tone={tone}
+      title={title}
+      message={message}
+    >
+      <button ref={okRef} className="btn btn-lg btn-tone" onClick={resolve}>
+        {t.common.ok}
+      </button>
+    </DialogModal>
   );
 }

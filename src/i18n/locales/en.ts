@@ -188,7 +188,7 @@ export const en: Messages = {
     nameTakenError: (filename) => `${filename} already exists in this folder.`,
   },
   alert: {
-    invalidFormatTitle: "Invalid Format",
+    defaultTitle: "Notice",
   },
   confirm: {
     defaultTitle: "Confirm",
@@ -197,39 +197,41 @@ export const en: Messages = {
     overwriteTitle: "Overwrite Runbook",
     overwriteConfirm: "Overwrite",
     overwriteMessage: (filename, existingName) =>
-      `"${filename}" matches an existing runbook. Importing it will overwrite "${existingName}".`,
+      `\`${filename}\` matches a runbook you already have. Importing it **overwrites** \`${existingName}\`.`,
     overwriteCloudFileTitle: "Overwrite Cloud Runbook",
     overwriteCloudFileConfirm: "Overwrite",
     overwriteCloudFileMessage: (filename) =>
-      `"${filename}" already exists in the selected folder. Exporting will overwrite it, and this action cannot be undone.`,
+      `\`${filename}\` already exists in the selected folder. Exporting replaces its contents, and **this cannot be undone**.`,
+    importFailedTitle: "Invalid Format",
     importFailed: (count) =>
       count === 1
-        ? "1 file could not be imported because its format isn't recognized."
-        : `${count} files could not be imported because their formats aren't recognized.`,
+        ? "**1 file** could not be imported because its format isn't recognized."
+        : `**${count} files** could not be imported because their formats aren't recognized.`,
     pastedRunbook: "Pasted runbook",
     resetTitle: "Reset Workspace",
     resetConfirm: "Reset",
     resetMessage:
-      "Delete all variables, blocks, runbooks, and preferences? This action cannot be undone.",
+      "Delete **every variable, block, runbook and preference**? This cannot be undone.",
     clearLibraryTitle: "Delete All Runbooks",
     clearLibraryConfirm: "Delete All",
     clearLibraryMessage:
-      "Delete every runbook in the library? This action cannot be undone.",
+      "Delete **every runbook** in the library? This cannot be undone.",
     deleteRunbookTitle: "Delete Runbook",
     deleteRunbookConfirm: "Delete",
     deleteRunbookMessage: (label) =>
-      `Delete "${label}"? This action cannot be undone.`,
+      `Delete \`${label}\`? **This cannot be undone.**`,
     deleteCloudFileTitle: "Delete Cloud Runbook",
     deleteCloudFileConfirm: "Delete",
     deleteCloudFileMessage: (filename) =>
-      `Delete "${filename}" from your cloud folder? This action cannot be undone.`,
+      `Delete \`${filename}\` from your cloud folder? Your provider keeps it in the _Recycle Bin_ for a while, so you can still restore it from there.`,
     deleteCloudFolderTitle: "Delete Cloud Folder",
     deleteCloudFolderConfirm: "Delete",
     deleteCloudFolderMessage: (name) =>
-      `Delete the folder "${name}"? This action cannot be undone.`,
+      `Delete the folder \`${name}\`? Your provider keeps deleted items in the _Recycle Bin_ for a while, so you can still restore them from there.`,
     signOutCloudTitle: "Sign Out",
     signOutCloudConfirm: "Sign Out",
-    signOutCloudMessage: "Sign out of this account?",
+    signOutCloudMessage:
+      "Sign out of this account? Your runbooks **stay in the cloud**, and you can sign back in at any time.",
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Toggle read / edit mode",

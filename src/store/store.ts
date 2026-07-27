@@ -21,6 +21,7 @@ import {
   CloudExportStatus,
   CloudProvider,
   CloudSortColumn,
+  DialogTone,
   ExportFormat,
   HistoryDirection,
   MoveDirection,
@@ -86,16 +87,24 @@ interface Dialog<T> {
   resolve: (value: T) => void;
 }
 
+interface AlertDialog extends Dialog<void> {
+  title: string;
+  tone: DialogTone;
+}
+
+interface AlertOptions {
+  title?: string;
+  tone?: DialogTone;
+}
+
 interface ConfirmDialog extends Dialog<boolean> {
   title: string;
   confirmLabel: string;
-  danger: boolean;
+  tone: DialogTone;
 }
 
-interface ConfirmOptions {
-  title?: string;
+interface ConfirmOptions extends AlertOptions {
   confirmLabel?: string;
-  danger?: boolean;
 }
 
 export interface StoreState {
@@ -137,7 +146,7 @@ export interface StoreState {
   cloudExportProvider: CloudProvider | null;
   pasteRunbookModalOpen: boolean;
   confirmDialog: ConfirmDialog | null;
-  alertDialog: Dialog<void> | null;
+  alertDialog: AlertDialog | null;
 
   // Cloud sync
   destinationModalOpen: boolean;
@@ -304,7 +313,7 @@ export interface StoreState {
 
   confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
   resolveConfirm: (result: boolean) => void;
-  alert: (message: string) => Promise<void>;
+  alert: (message: string, options?: AlertOptions) => Promise<void>;
   resolveAlert: () => void;
   clearRunbookLibrary: () => Promise<void>;
   clearAllData: () => Promise<void>;
@@ -868,7 +877,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             {
               title: t.dialogs.deleteRunbookTitle,
               confirmLabel: t.dialogs.deleteRunbookConfirm,
-              danger: true,
+              tone: DialogTone.DANGER,
             },
           );
 
@@ -944,7 +953,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             {
               title: t.dialogs.overwriteTitle,
               confirmLabel: t.dialogs.overwriteConfirm,
-              danger: true,
+              tone: DialogTone.WARNING,
             },
           );
 
@@ -1032,9 +1041,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         if (failedCount > 0) {
-          await get().alert(
-            getMessages(get().language).dialogs.importFailed(failedCount),
-          );
+          const t = getMessages(get().language);
+          await get().alert(t.dialogs.importFailed(failedCount), {
+            title: t.dialogs.importFailedTitle,
+            tone: DialogTone.WARNING,
+          });
         }
       },
 
@@ -1792,7 +1803,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
               {
                 title: t.dialogs.overwriteCloudFileTitle,
                 confirmLabel: t.dialogs.overwriteCloudFileConfirm,
-                danger: true,
+                tone: DialogTone.WARNING,
               },
             );
 
@@ -1922,7 +1933,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const confirmed = await get().confirm(t.dialogs.signOutCloudMessage, {
           title: t.dialogs.signOutCloudTitle,
           confirmLabel: t.dialogs.signOutCloudConfirm,
-          danger: true,
+          tone: DialogTone.INFO,
         });
 
         if (!confirmed) {
@@ -2258,7 +2269,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             confirmLabel: entry.isFolder
               ? t.dialogs.deleteCloudFolderConfirm
               : t.dialogs.deleteCloudFileConfirm,
-            danger: true,
+            tone: DialogTone.DANGER,
           },
         );
 
@@ -2311,7 +2322,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
               resolve,
               title: options?.title ?? defaultLabel,
               confirmLabel: options?.confirmLabel ?? defaultLabel,
-              danger: options?.danger ?? false,
+              tone: options?.tone ?? DialogTone.INFO,
             },
           });
         });
@@ -2320,14 +2331,22 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         get().confirmDialog?.resolve(result);
         set({ confirmDialog: null });
       },
-      alert: (message) => {
+      alert: (message, options) => {
         if (isDemo) {
           return Promise.resolve();
         }
 
-        return new Promise<void>((resolve) =>
-          set({ alertDialog: { message, resolve } }),
-        );
+        return new Promise<void>((resolve) => {
+          const defaultTitle = getMessages(get().language).alert.defaultTitle;
+          set({
+            alertDialog: {
+              message,
+              resolve,
+              title: options?.title ?? defaultTitle,
+              tone: options?.tone ?? DialogTone.INFO,
+            },
+          });
+        });
       },
       resolveAlert: () => {
         get().alertDialog?.resolve();
@@ -2344,7 +2363,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const confirmed = await get().confirm(t.dialogs.clearLibraryMessage, {
           title: t.dialogs.clearLibraryTitle,
           confirmLabel: t.dialogs.clearLibraryConfirm,
-          danger: true,
+          tone: DialogTone.DANGER,
         });
 
         if (!confirmed) {
@@ -2375,7 +2394,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const confirmed = await get().confirm(t.dialogs.resetMessage, {
           title: t.dialogs.resetTitle,
           confirmLabel: t.dialogs.resetConfirm,
-          danger: true,
+          tone: DialogTone.DANGER,
         });
         if (!confirmed) {
           return;

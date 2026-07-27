@@ -152,3 +152,10 @@ export const CloudExportStatus = {
 } as const;
 export type CloudExportStatus =
   (typeof CloudExportStatus)[keyof typeof CloudExportStatus];
+
+export const DialogTone = {
+  DANGER: "danger",
+  WARNING: "warning",
+  INFO: "info",
+} as const;
+export type DialogTone = (typeof DialogTone)[keyof typeof DialogTone];

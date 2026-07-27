@@ -190,7 +190,7 @@ export const es: Messages = {
     nameTakenError: (filename) => `${filename} ya existe en esta carpeta.`,
   },
   alert: {
-    invalidFormatTitle: "Formato Inválido",
+    defaultTitle: "Aviso",
   },
   confirm: {
     defaultTitle: "Confirmar",
@@ -199,39 +199,41 @@ export const es: Messages = {
     overwriteTitle: "Sobrescribir Libro",
     overwriteConfirm: "Sobrescribir",
     overwriteMessage: (filename, existingName) =>
-      `"${filename}" coincide con un libro existente. Importarlo sobrescribirá "${existingName}".`,
+      `\`${filename}\` coincide con un libro que ya tienes. Importarlo **sobrescribirá** \`${existingName}\`.`,
     overwriteCloudFileTitle: "Sobrescribir Libro de la Nube",
     overwriteCloudFileConfirm: "Sobrescribir",
     overwriteCloudFileMessage: (filename) =>
-      `"${filename}" ya existe en la carpeta seleccionada. Exportar lo sobrescribirá, y esta acción no se puede deshacer.`,
+      `\`${filename}\` ya existe en la carpeta seleccionada. Exportar reemplazará su contenido, y **esto no se puede deshacer**.`,
+    importFailedTitle: "Formato Inválido",
     importFailed: (count) =>
       count === 1
-        ? "No se pudo importar 1 archivo porque su formato no se reconoce."
-        : `No se pudieron importar ${count} archivos porque sus formatos no se reconocen.`,
+        ? "No se pudo importar **1 archivo** porque su formato no se reconoce."
+        : `No se pudieron importar **${count} archivos** porque sus formatos no se reconocen.`,
     pastedRunbook: "Libro pegado",
     resetTitle: "Resetear Espacio de Trabajo",
     resetConfirm: "Resetear",
     resetMessage:
-      "¿Eliminar todas las variables, bloques, libros y preferencias? Esta acción no se puede deshacer.",
+      "¿Eliminar **todas las variables, bloques, libros y preferencias**? Esto no se puede deshacer.",
     clearLibraryTitle: "Eliminar Todos los Libros",
     clearLibraryConfirm: "Eliminar todo",
     clearLibraryMessage:
-      "¿Eliminar todos los libros de la biblioteca? Esta acción no se puede deshacer.",
+      "¿Eliminar **todos los libros** de la biblioteca? Esto no se puede deshacer.",
     deleteRunbookTitle: "Eliminar Libro",
     deleteRunbookConfirm: "Eliminar",
     deleteRunbookMessage: (label) =>
-      `¿Eliminar "${label}"? Esta acción no se puede deshacer.`,
+      `¿Eliminar \`${label}\`? **Esto no se puede deshacer.**`,
     deleteCloudFileTitle: "Eliminar Libro de la Nube",
     deleteCloudFileConfirm: "Eliminar",
     deleteCloudFileMessage: (filename) =>
-      `¿Eliminar "${filename}" de tu carpeta en la nube? Esta acción no se puede deshacer.`,
+      `¿Eliminar \`${filename}\` de tu carpeta en la nube? Tu proveedor lo guarda un tiempo en la _Papelera de reciclaje_, así que todavía puedes restaurarlo desde ahí.`,
     deleteCloudFolderTitle: "Eliminar Carpeta de la Nube",
     deleteCloudFolderConfirm: "Eliminar",
     deleteCloudFolderMessage: (name) =>
-      `¿Eliminar la carpeta "${name}"? Esta acción no se puede deshacer.`,
+      `¿Eliminar la carpeta \`${name}\`? Tu proveedor guarda un tiempo los elementos eliminados en la _Papelera de reciclaje_, así que todavía puedes restaurarlos desde ahí.`,
     signOutCloudTitle: "Cerrar Sesión",
     signOutCloudConfirm: "Cerrar Sesión",
-    signOutCloudMessage: "¿Cerrar sesión de esta cuenta?",
+    signOutCloudMessage:
+      "¿Cerrar sesión de esta cuenta? Tus libros **seguirán en la nube**, y puedes volver a iniciar sesión cuando quieras.",
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Alternar modo lectura / edición",

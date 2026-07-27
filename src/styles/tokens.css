@@ -12,6 +12,8 @@
   --success: #15dd9e;
   --danger: #f87171;
   --danger-dim: rgba(248, 113, 113, 0.14);
+  --warning: #fbbf24;
+  --warning-dim: rgba(251, 191, 36, 0.14);
 
   /* Surfaces */
   --color-bg: #0b0d12;
@@ -117,6 +119,8 @@
   --success: #0f8a5f;
   --danger: #dc2626;
   --danger-dim: rgba(220, 38, 38, 0.09);
+  --warning: #b06200;
+  --warning-dim: rgba(176, 98, 0, 0.12);
 
   /* Surfaces */
   --color-bg: #eef0f4;
