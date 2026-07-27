@@ -11,6 +11,7 @@ export const es: Messages = {
     back: "Atrás",
     ok: "Aceptar",
     create: "Crear",
+    save: "Guardar",
     dragToReorder: "Arrastra para reordenar",
     clearSearch: "Limpiar búsqueda",
     noMatches: "Sin coincidencias.",
@@ -169,15 +170,23 @@ export const es: Messages = {
     importAction: (filename) => `Importar ${filename}`,
     entryActions: "Más acciones",
     rename: "Renombrar",
+    edit: "Editar",
     duplicate: "Duplicar",
     download: "Descargar",
     delete: "Eliminar",
     saveName: "Guardar nombre",
     cancelRename: "Cancelar renombrado",
     namePlaceholder: "Nombre del archivo",
+    editTitle: (filename) => `Editando ${filename}`,
+    editHint:
+      "Al guardar, los cambios se escriben directamente en el archivo de la nube.",
     signInError: "No se pudo iniciar sesión. Inténtalo de nuevo.",
     genericError: "Algo salió mal. Inténtalo de nuevo.",
     invalidFileError: "Ese archivo no parece un JSON de libro válido.",
+    invalidJsonError:
+      "Esto no es un JSON válido, así que todavía no se puede guardar.",
+    readError: "No se pudo abrir el archivo. Inténtalo de nuevo.",
+    saveError: "No se pudo guardar el archivo. Inténtalo de nuevo.",
     renameError: "No se pudo renombrar el archivo. Inténtalo de nuevo.",
     duplicateError: "No se pudo duplicar el archivo. Inténtalo de nuevo.",
     downloadError: "No se pudo descargar el archivo. Inténtalo de nuevo.",
@@ -234,6 +243,10 @@ export const es: Messages = {
     signOutCloudConfirm: "Cerrar Sesión",
     signOutCloudMessage:
       "¿Cerrar sesión de esta cuenta? Tus libros **seguirán en la nube**, y puedes volver a iniciar sesión cuando quieras.",
+    discardCloudEditTitle: "Descartar cambios",
+    discardCloudEditConfirm: "Descartar",
+    discardCloudEditMessage: (filename) =>
+      `¿Cerrar el editor sin guardar? Se perderán tus **cambios sin guardar** en \`${filename}\`.`,
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Alternar modo lectura / edición",
@@ -742,7 +755,9 @@ export const es: Messages = {
       search:
         "El **buscador** que hay sobre la lista revisa la carpeta **CommandPad** entera, no solo la carpeta que tengas abierta, así que un libro enterrado varias carpetas más abajo está a una búsqueda de distancia. Cada resultado muestra la ruta de la carpeta en la que vive; al hacer clic en un resultado de carpeta se abre esa carpeta, y el botón **x** limpia la búsqueda y te devuelve a donde estabas explorando.",
       manage:
-        "La lista se organiza en columnas. Haz clic en el título de una columna para ordenar por ella, y haz clic otra vez para invertir el orden; los archivos y las carpetas se ordenan juntos, y las filas sin nada que mostrar en esa columna quedan al final. El botón de **tres puntos** al final de una fila abre un menú con **Renombrar**, **Duplicar**, **Descargar** y **Eliminar**, y eliminar te pide confirmación antes.",
+        "La lista se organiza en columnas. Haz clic en el título de una columna para ordenar por ella, y haz clic otra vez para invertir el orden; los archivos y las carpetas se ordenan juntos, y las filas sin nada que mostrar en esa columna quedan al final. El botón de **tres puntos** al final de una fila abre un menú con **Renombrar**, **Editar**, **Duplicar**, **Descargar** y **Eliminar**, y eliminar te pide confirmación antes.",
+      editFile:
+        "**Editar** abre el propio archivo de la nube en un editor de código, así que un arreglo rápido ya no implica importar el libro, cambiarlo y volver a exportarlo. Para poder guardar, el contenido tiene que ser JSON válido, y si cierras el editor con cambios sin guardar se te pide confirmación antes.",
       recycleBin:
         "Si borras por accidente un archivo o una carpeta desde el explorador en la nube, no se pierde para siempre: los proveedores de nube mueven los elementos eliminados a una Papelera de reciclaje en lugar de borrarlos de inmediato, así que puedes restaurarlo desde ahí.",
       storage:

@@ -10,6 +10,7 @@ import type { CSSProperties } from "react";
 import { Header } from "../header/Header";
 import { MainPanel } from "../MainPanel";
 import { AlertModal } from "../modals/AlertModal";
+import { CloudFileEditorModal } from "../modals/CloudFileEditorModal";
 import { CloudImportModal } from "../modals/CloudImportModal";
 import { ConfirmModal } from "../modals/ConfirmModal";
 import { DestinationModal } from "../modals/DestinationModal";
@@ -52,6 +53,7 @@ export function WorkspacePage() {
       <PasteRunbookModal />
       <DestinationModal />
       <CloudImportModal />
+      <CloudFileEditorModal />
       <ConfirmModal />
       <AlertModal />
     </>

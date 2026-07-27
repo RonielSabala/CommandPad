@@ -107,6 +107,16 @@ interface ConfirmOptions extends AlertOptions {
   confirmLabel?: string;
 }
 
+export interface CloudFileEditor {
+  file: CloudEntry;
+  folderId: string | null;
+  original: string;
+  text: string;
+  loading: boolean;
+  saving: boolean;
+  error: string | null;
+}
+
 export interface StoreState {
   // Data
   tabs: Tab[];
@@ -157,6 +167,7 @@ export interface StoreState {
   cloudEntries: CloudEntry[];
   cloudLoading: boolean;
   cloudError: string | null;
+  cloudFileEditor: CloudFileEditor | null;
 
   // Cloud folder navigation
   cloudPath: CloudFolderRef[];
@@ -307,6 +318,10 @@ export interface StoreState {
   createCloudFolder: (name: string) => Promise<void>;
   importRunbookFromCloud: (file: CloudEntry) => Promise<void>;
   renameCloudEntry: (entry: CloudEntry, basename: string) => Promise<void>;
+  openCloudFileEditor: (file: CloudEntry) => Promise<void>;
+  setCloudFileEditorText: (text: string) => void;
+  saveCloudFileEditor: () => Promise<void>;
+  closeCloudFileEditor: () => Promise<void>;
   duplicateCloudEntry: (entry: CloudEntry) => Promise<void>;
   downloadCloudEntry: (entry: CloudEntry) => Promise<void>;
   deleteCloudEntry: (entry: CloudEntry) => Promise<void>;
@@ -601,6 +616,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       cloudEntries: [],
       cloudLoading: false,
       cloudError: null,
+
+      cloudFileEditor: null,
 
       cloudPath: ROOT_CLOUD_PATH,
       cloudHistory: [ROOT_CLOUD_PATH],
@@ -1874,6 +1891,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           cloudEntries: [],
           cloudSignedIn: false,
           cloudAccountLabel: null,
+          cloudFileEditor: null,
           cloudLoading: true,
           cloudPath: path,
           cloudHistory: [path],
@@ -1954,6 +1972,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           cloudError: null,
           cloudSignedIn: false,
           cloudAccountLabel: null,
+          cloudFileEditor: null,
           cloudPath: ROOT_CLOUD_PATH,
           cloudHistory: [ROOT_CLOUD_PATH],
           cloudHistoryIndex: 0,
@@ -2202,6 +2221,140 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         set({ cloudLoading: false });
         await get().refreshCloudEntries();
+      },
+
+      openCloudFileEditor: async (file) => {
+        const t = getMessages(get().language);
+        const client = getCloudClient(get().cloudProvider);
+
+        set({
+          cloudFileEditor: {
+            file,
+            folderId: parentFolderId(get(), file),
+            original: "",
+            text: "",
+            loading: true,
+            saving: false,
+            error: null,
+          },
+        });
+
+        const isCurrentEditor = () =>
+          get().cloudFileEditor?.file.id === file.id;
+
+        let text: string;
+        try {
+          text = await client.readFile(file);
+        } catch (error) {
+          console.error("Cloud file read failed", error);
+
+          if (isCurrentEditor()) {
+            set({
+              cloudFileEditor: {
+                ...get().cloudFileEditor!,
+                loading: false,
+                error: t.cloudModal.readError,
+              },
+            });
+          }
+
+          return;
+        }
+
+        if (isCurrentEditor()) {
+          set({
+            cloudFileEditor: {
+              ...get().cloudFileEditor!,
+              original: text,
+              text,
+              loading: false,
+            },
+          });
+        }
+      },
+
+      setCloudFileEditorText: (text) => {
+        const editor = get().cloudFileEditor;
+        if (!editor) {
+          return;
+        }
+
+        // Typing clears a stale "invalid JSON" / failed-save message
+        set({ cloudFileEditor: { ...editor, text, error: null } });
+      },
+
+      saveCloudFileEditor: async () => {
+        const editor = get().cloudFileEditor;
+        if (!editor || editor.loading || editor.saving) {
+          return;
+        }
+
+        const t = getMessages(get().language);
+        try {
+          JSON.parse(editor.text);
+        } catch {
+          set({
+            cloudFileEditor: {
+              ...editor,
+              error: t.cloudModal.invalidJsonError,
+            },
+          });
+
+          return;
+        }
+
+        const client = getCloudClient(get().cloudProvider);
+        set({ cloudFileEditor: { ...editor, saving: true, error: null } });
+
+        try {
+          await client.writeFile(
+            editor.file.name,
+            editor.text,
+            MimeType.JSON,
+            editor.folderId,
+          );
+        } catch (error) {
+          console.error("Cloud file save failed", error);
+          set({
+            cloudFileEditor: {
+              ...get().cloudFileEditor!,
+              saving: false,
+              error: t.cloudModal.saveError,
+            },
+          });
+
+          return;
+        }
+
+        set({ cloudFileEditor: null });
+        await get().refreshCloudEntries();
+      },
+
+      closeCloudFileEditor: async () => {
+        const editor = get().cloudFileEditor;
+        if (!editor) {
+          return;
+        }
+
+        const t = getMessages(get().language);
+        const dirty = !editor.loading && editor.text !== editor.original;
+
+        if (dirty) {
+          const discard = await get().confirm(
+            t.dialogs.discardCloudEditMessage(editor.file.name),
+            {
+              title: t.dialogs.discardCloudEditTitle,
+              confirmLabel: t.dialogs.discardCloudEditConfirm,
+              tone: DialogTone.WARNING,
+            },
+          );
+
+          if (!discard) {
+            return;
+          }
+        }
+
+        set({ cloudFileEditor: null });
       },
 
       duplicateCloudEntry: async (entry) => {

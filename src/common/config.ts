@@ -108,6 +108,11 @@ export const VariableSyntax = {
   COPY_SUFFIX: "_COPY",
 } as const;
 
+export const COMMAND_PROMPT_PREFIX = "$";
+
+export const RUNBOOK_JSON_PLACEHOLDER =
+  '{\n  "variables": [],\n  "blocks": []\n}';
+
 // Supported file types
 
 export const JSON_EXTENSION = `.${ExportFormat.JSON}`;

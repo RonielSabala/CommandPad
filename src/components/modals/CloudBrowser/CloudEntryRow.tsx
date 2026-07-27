@@ -23,6 +23,7 @@ interface CloudEntryRowProps {
   icon: Icon;
   activateTitle: string;
   onActivate: () => void;
+  onEdit?: () => void;
   path?: CloudFolderRef[];
 }
 
@@ -31,6 +32,7 @@ export function CloudEntryRow({
   icon: EntryIcon,
   activateTitle,
   onActivate,
+  onEdit,
   path,
 }: CloudEntryRowProps) {
   const t = useTranslation();
@@ -121,6 +123,7 @@ export function CloudEntryRow({
         onRename={() =>
           setDraft(entry.isFolder ? entry.name : stripJsonExtension(entry.name))
         }
+        onEdit={onEdit}
         onDuplicate={() => void duplicateCloudEntry(entry)}
         onDownload={() => void downloadCloudEntry(entry)}
         onDelete={() => void deleteCloudEntry(entry)}

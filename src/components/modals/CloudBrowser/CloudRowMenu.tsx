@@ -12,10 +12,12 @@ import {
   Download,
   PencilSquare,
   ThreeDotsVertical,
+  Vr,
 } from "react-bootstrap-icons";
 
 interface CloudRowMenuProps {
   onRename: () => void;
+  onEdit?: () => void;
   onDuplicate: () => void;
   onDownload: () => void;
   onDelete: () => void;
@@ -24,6 +26,7 @@ interface CloudRowMenuProps {
 
 export function CloudRowMenu({
   onRename,
+  onEdit,
   onDuplicate,
   onDownload,
   onDelete,
@@ -66,11 +69,20 @@ export function CloudRowMenu({
           onClose={() => setAnchor(null)}
         >
           <ContextMenuItem
-            icon={<PencilSquare className="icon-md" />}
+            icon={<Vr className="icon-md" />}
             onSelect={onRename}
           >
             {t.cloudModal.rename}
           </ContextMenuItem>
+
+          {onEdit && (
+            <ContextMenuItem
+              icon={<PencilSquare className="icon-md" />}
+              onSelect={onEdit}
+            >
+              {t.cloudModal.edit}
+            </ContextMenuItem>
+          )}
 
           <ContextMenuItem
             icon={<Copy className="icon-md" />}

@@ -11,6 +11,7 @@ export const en: Messages = {
     back: "Back",
     ok: "OK",
     create: "Create",
+    save: "Save",
     dragToReorder: "Drag to reorder",
     clearSearch: "Clear search",
     noMatches: "No matches.",
@@ -167,15 +168,22 @@ export const en: Messages = {
     importAction: (filename) => `Import ${filename}`,
     entryActions: "More actions",
     rename: "Rename",
+    edit: "Edit",
     duplicate: "Duplicate",
     download: "Download",
     delete: "Delete",
     saveName: "Save name",
     cancelRename: "Cancel rename",
     namePlaceholder: "Filename",
+    editTitle: (filename) => `Editing ${filename}`,
+    editHint:
+      "Changes are written straight back to the cloud file when you save.",
     signInError: "Sign-in failed. Please try again.",
     genericError: "Something went wrong. Please try again.",
     invalidFileError: "That file doesn't look like valid runbook JSON.",
+    invalidJsonError: "That isn't valid JSON, so it can't be saved yet.",
+    readError: "Could not open that file. Please try again.",
+    saveError: "Could not save that file. Please try again.",
     renameError: "Could not rename that file. Please try again.",
     duplicateError: "Could not duplicate that file. Please try again.",
     downloadError: "Could not download that file. Please try again.",
@@ -232,6 +240,10 @@ export const en: Messages = {
     signOutCloudConfirm: "Sign Out",
     signOutCloudMessage:
       "Sign out of this account? Your runbooks **stay in the cloud**, and you can sign back in at any time.",
+    discardCloudEditTitle: "Discard Changes",
+    discardCloudEditConfirm: "Discard",
+    discardCloudEditMessage: (filename) =>
+      `Close the editor without saving? Your **unsaved changes** to \`${filename}\` will be lost.`,
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Toggle read / edit mode",
@@ -730,7 +742,9 @@ export const en: Messages = {
       search:
         "The **search box** above the list looks through the entire **CommandPad** folder, not just the folder you have open, so a runbook buried a few folders deep is one search away. Every result shows the folder path it lives in; clicking a folder result opens that folder, and the **x** button clears the search and puts you back where you were browsing.",
       manage:
-        "The list is laid out in columns. Click a column heading to sort by it, and click it again to reverse the order; files and folders sort together, and rows with nothing to show in that column sink to the bottom. The **three dots** button at the end of a row opens a menu with **Rename**, **Duplicate**, **Download** and **Delete**, and deleting asks you to confirm first.",
+        "The list is laid out in columns. Click a column heading to sort by it, and click it again to reverse the order; files and folders sort together, and rows with nothing to show in that column sink to the bottom. The **three dots** button at the end of a row opens a menu with **Rename**, **Edit**, **Duplicate**, **Download** and **Delete**, and deleting asks you to confirm first.",
+      editFile:
+        "**Edit** opens the cloud file itself in a code editor, so a quick fix no longer means importing the runbook, changing it, and exporting it back. The file has to be valid JSON to save, and closing the editor with unsaved changes asks you to confirm first.",
       recycleBin:
         "If you accidentally delete a runbook file or folder from the cloud browser, it isn't gone for good: cloud providers move deleted items to a Recycle Bin instead of erasing them right away, so you can restore it from there.",
       storage:

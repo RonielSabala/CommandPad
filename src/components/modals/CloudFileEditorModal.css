@@ -1,0 +1,26 @@
+.modal.modal-cloud-editor {
+  width: var(--modal-cloud-width);
+  height: var(--modal-cloud-height);
+  max-width: none;
+  padding: var(--modal-cloud-padding-y) var(--modal-cloud-padding-x);
+}
+
+.cloud-file-editor-status {
+  flex: 1;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+}
+
+.cloud-file-editor-field {
+  --code-editor-max-height: none;
+
+  flex: 1;
+  min-height: 0;
+}
+
+.cloud-file-editor-error {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--danger);
+}

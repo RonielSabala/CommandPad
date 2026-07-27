@@ -42,6 +42,7 @@ export interface Messages {
     back: string;
     ok: string;
     create: string;
+    save: string;
     dragToReorder: string;
     clearSearch: string;
     noMatches: string;
@@ -184,15 +185,21 @@ export interface Messages {
     importAction: (filename: string) => string;
     entryActions: string;
     rename: string;
+    edit: string;
     duplicate: string;
     download: string;
     delete: string;
+    editTitle: (filename: string) => string;
+    editHint: string;
     saveName: string;
     cancelRename: string;
     namePlaceholder: string;
     signInError: string;
     genericError: string;
     invalidFileError: string;
+    invalidJsonError: string;
+    readError: string;
+    saveError: string;
     renameError: string;
     duplicateError: string;
     downloadError: string;
@@ -238,6 +245,9 @@ export interface Messages {
     signOutCloudTitle: string;
     signOutCloudConfirm: string;
     signOutCloudMessage: string;
+    discardCloudEditTitle: string;
+    discardCloudEditConfirm: string;
+    discardCloudEditMessage: (filename: string) => string;
   };
   keybindings: Record<KeyBinding, string>;
   footer: {
@@ -412,6 +422,7 @@ export interface Messages {
       folders: string;
       search: string;
       manage: string;
+      editFile: string;
       recycleBin: string;
       storage: string;
     };
