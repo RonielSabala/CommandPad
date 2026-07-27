@@ -169,6 +169,8 @@ export const es: Messages = {
     importAction: (filename) => `Importar ${filename}`,
     entryActions: "Más acciones",
     rename: "Renombrar",
+    duplicate: "Duplicar",
+    download: "Descargar",
     delete: "Eliminar",
     saveName: "Guardar nombre",
     cancelRename: "Cancelar renombrado",
@@ -177,8 +179,12 @@ export const es: Messages = {
     genericError: "Algo salió mal. Inténtalo de nuevo.",
     invalidFileError: "Ese archivo no parece un JSON de libro válido.",
     renameError: "No se pudo renombrar el archivo. Inténtalo de nuevo.",
+    duplicateError: "No se pudo duplicar el archivo. Inténtalo de nuevo.",
+    downloadError: "No se pudo descargar el archivo. Inténtalo de nuevo.",
     deleteError: "No se pudo eliminar el archivo. Inténtalo de nuevo.",
     renameFolderError: "No se pudo renombrar la carpeta. Inténtalo de nuevo.",
+    duplicateFolderError: "No se pudo duplicar la carpeta. Inténtalo de nuevo.",
+    downloadFolderError: "No se pudo descargar la carpeta. Inténtalo de nuevo.",
     deleteFolderError: "No se pudo eliminar la carpeta. Inténtalo de nuevo.",
     createFolderError: "No se pudo crear la carpeta. Inténtalo de nuevo.",
     nameTakenError: (filename) => `${filename} ya existe en esta carpeta.`,
@@ -734,7 +740,7 @@ export const es: Messages = {
       search:
         "El **buscador** que hay sobre la lista revisa la carpeta **CommandPad** entera, no solo la carpeta que tengas abierta, así que un libro enterrado varias carpetas más abajo está a una búsqueda de distancia. Cada resultado muestra la ruta de la carpeta en la que vive; al hacer clic en un resultado de carpeta se abre esa carpeta, y el botón **x** limpia la búsqueda y te devuelve a donde estabas explorando.",
       manage:
-        "La lista se organiza en columnas. Haz clic en el título de una columna para ordenar por ella, y haz clic otra vez para invertir el orden; los archivos y las carpetas se ordenan juntos, y las filas sin nada que mostrar en esa columna quedan al final. El botón de **tres puntos** al final de una fila abre un menú con **Renombrar** y **Eliminar**, y eliminar te pide confirmación antes.",
+        "La lista se organiza en columnas. Haz clic en el título de una columna para ordenar por ella, y haz clic otra vez para invertir el orden; los archivos y las carpetas se ordenan juntos, y las filas sin nada que mostrar en esa columna quedan al final. El botón de **tres puntos** al final de una fila abre un menú con **Renombrar**, **Duplicar**, **Descargar** y **Eliminar**, y eliminar te pide confirmación antes.",
       recycleBin:
         "Si borras por accidente un archivo o una carpeta desde el explorador en la nube, no se pierde para siempre: los proveedores de nube mueven los elementos eliminados a una Papelera de reciclaje en lugar de borrarlos de inmediato, así que puedes restaurarlo desde ahí.",
       storage:

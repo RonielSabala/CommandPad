@@ -36,6 +36,8 @@ export function CloudEntryRow({
   const t = useTranslation();
   const language = useStore((state) => state.language);
   const renameCloudEntry = useStore((state) => state.renameCloudEntry);
+  const duplicateCloudEntry = useStore((state) => state.duplicateCloudEntry);
+  const downloadCloudEntry = useStore((state) => state.downloadCloudEntry);
   const deleteCloudEntry = useStore((state) => state.deleteCloudEntry);
 
   // A non-null draft means this row is being renamed
@@ -119,6 +121,8 @@ export function CloudEntryRow({
         onRename={() =>
           setDraft(entry.isFolder ? entry.name : stripJsonExtension(entry.name))
         }
+        onDuplicate={() => void duplicateCloudEntry(entry)}
+        onDownload={() => void downloadCloudEntry(entry)}
         onDelete={() => void deleteCloudEntry(entry)}
         menuTitle={t.cloudModal.entryActions}
       />

@@ -34,6 +34,18 @@ interface DriveItem {
   folder?: unknown;
 }
 
+function toEntry(item: DriveItem): CloudEntry {
+  const isFolder = item.folder !== undefined;
+
+  return {
+    id: item.id,
+    name: item.name,
+    isFolder,
+    modifiedAt: item.lastModifiedDateTime ?? null,
+    size: isFolder ? null : (item.size ?? null),
+  };
+}
+
 let msalInstance: PublicClientApplicationClass | null = null;
 let readyPromise: Promise<PublicClientApplicationClass> | null = null;
 
@@ -185,22 +197,14 @@ class SharePointClient implements CloudClient {
     );
 
     const data = (await response.json()) as { value: DriveItem[] };
-    const entries = data.value.map((item) => {
-      const isFolder = item.folder !== undefined;
-      return {
-        id: item.id,
-        name: item.name,
-        isFolder,
-        modifiedAt: item.lastModifiedDateTime ?? null,
-        size: isFolder ? null : (item.size ?? null),
-      };
-    });
-
-    return entries.filter(isBrowsableEntry);
+    return data.value.map(toEntry).filter(isBrowsableEntry);
   }
 
-  async createFolder(name: string, parentId: string | null): Promise<void> {
-    await graphFetch(`${folderPath(parentId)}/children`, {
+  async createFolder(
+    name: string,
+    parentId: string | null,
+  ): Promise<CloudEntry> {
+    const response = await graphFetch(`${folderPath(parentId)}/children`, {
       method: HttpMethod.POST,
       headers: contentTypeHeaders(MimeType.JSON),
       body: JSON.stringify({
@@ -209,6 +213,8 @@ class SharePointClient implements CloudClient {
         [CONFLICT_BEHAVIOR_PROPERTY]: CONFLICT_BEHAVIOR_FAIL,
       }),
     });
+
+    return toEntry((await response.json()) as DriveItem);
   }
 
   async fileExists(

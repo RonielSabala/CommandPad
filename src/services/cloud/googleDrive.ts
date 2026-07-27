@@ -39,6 +39,16 @@ interface DriveFileResource {
   size?: string;
 }
 
+function toEntry(item: DriveFileResource): CloudEntry {
+  return {
+    id: item.id,
+    name: item.name,
+    isFolder: item.mimeType === FOLDER_MIME_TYPE,
+    modifiedAt: item.modifiedTime ?? null,
+    size: item.size === undefined ? null : Number(item.size),
+  };
+}
+
 interface StoredGoogleSession {
   accessToken: string;
   accountLabel: string | null;
@@ -307,29 +317,28 @@ class GoogleDriveClient implements CloudClient {
     );
 
     const data = (await response.json()) as { files: DriveFileResource[] };
-    const entries = data.files.map((item) => ({
-      id: item.id,
-      name: item.name,
-      isFolder: item.mimeType === FOLDER_MIME_TYPE,
-      modifiedAt: item.modifiedTime ?? null,
-      size: item.size === undefined ? null : Number(item.size),
-    }));
-
-    return entries.filter(isBrowsableEntry);
+    return data.files.map(toEntry).filter(isBrowsableEntry);
   }
 
-  async createFolder(name: string, parentId: string | null): Promise<void> {
+  async createFolder(
+    name: string,
+    parentId: string | null,
+  ): Promise<CloudEntry> {
     const folderId = await resolveFolderId(parentId);
+    const response = await driveFetch(
+      `${FILES_URL}?fields=id,name,mimeType,modifiedTime`,
+      {
+        method: HttpMethod.POST,
+        headers: contentTypeHeaders(MimeType.JSON),
+        body: JSON.stringify({
+          name,
+          mimeType: FOLDER_MIME_TYPE,
+          parents: [folderId],
+        }),
+      },
+    );
 
-    await driveFetch(`${FILES_URL}?fields=id`, {
-      method: HttpMethod.POST,
-      headers: contentTypeHeaders(MimeType.JSON),
-      body: JSON.stringify({
-        name,
-        mimeType: FOLDER_MIME_TYPE,
-        parents: [folderId],
-      }),
-    });
+    return toEntry((await response.json()) as DriveFileResource);
   }
 
   async fileExists(

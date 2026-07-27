@@ -7,6 +7,7 @@ import {
 } from "@/common/config";
 import { BlockType, ExportFormat, NoteStyle } from "@/common/enums";
 import type { RunbookContent } from "@/common/types";
+import { downloadBlob } from "./download";
 import { getVariableMap, resolveCommandToString } from "./resolution";
 import { slugifyLabel } from "./runbook";
 
@@ -61,13 +62,7 @@ async function saveFile(
     }
   }
 
-  const blob = new Blob([content], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = suggestedName;
-  anchor.click();
-  URL.revokeObjectURL(url);
+  downloadBlob(new Blob([content], { type: mimeType }), suggestedName);
 }
 
 export function buildMarkdownExport(content: RunbookContent): string {

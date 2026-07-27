@@ -116,6 +116,7 @@ export const MimeType = {
   JSON: "application/json",
   MARKDOWN: "text/markdown",
   PLAIN_TEXT: "text/plain",
+  ZIP: "application/zip",
 } as const;
 export type MimeType = (typeof MimeType)[keyof typeof MimeType];
 
@@ -172,6 +173,29 @@ export const CloudSyncConfig = {
   PATH_SEPARATOR: "/",
   MAX_SEARCH_DEPTH: 10,
   NO_SIZE_PLACEHOLDER: "—",
+  DUPLICATE_SUFFIX: (index: number) => ` (${index})`,
+  DUPLICATE_SUFFIX_REGEX: / \(\d+\)$/,
+  FIRST_DUPLICATE_INDEX: 1,
+} as const;
+
+// Zip archives
+
+export const ZIP_EXTENSION = ".zip";
+
+export const ZipConfig = {
+  LOCAL_HEADER_SIGNATURE: 0x04034b50,
+  CENTRAL_HEADER_SIGNATURE: 0x02014b50,
+  END_RECORD_SIGNATURE: 0x06054b50,
+  LOCAL_HEADER_SIZE: 30,
+  CENTRAL_HEADER_SIZE: 46,
+  END_RECORD_SIZE: 22,
+  VERSION: 20,
+  UTF8_FLAG: 0x0800,
+  STORED_METHOD: 0,
+  CRC_POLYNOMIAL: 0xedb88320,
+  CRC_SEED: 0xffffffff,
+  CRC_TABLE_SIZE: 256,
+  DOS_EPOCH_YEAR: 1980,
 } as const;
 
 export const FileSizeConfig = {

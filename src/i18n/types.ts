@@ -184,6 +184,8 @@ export interface Messages {
     importAction: (filename: string) => string;
     entryActions: string;
     rename: string;
+    duplicate: string;
+    download: string;
     delete: string;
     saveName: string;
     cancelRename: string;
@@ -192,8 +194,12 @@ export interface Messages {
     genericError: string;
     invalidFileError: string;
     renameError: string;
+    duplicateError: string;
+    downloadError: string;
     deleteError: string;
     renameFolderError: string;
+    duplicateFolderError: string;
+    downloadFolderError: string;
     deleteFolderError: string;
     createFolderError: string;
     nameTakenError: (filename: string) => string;

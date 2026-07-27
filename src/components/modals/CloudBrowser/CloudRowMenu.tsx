@@ -7,16 +7,25 @@ import {
 import { TrashIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useRef, useState } from "react";
-import { PencilSquare, ThreeDotsVertical } from "react-bootstrap-icons";
+import {
+  Copy,
+  Download,
+  PencilSquare,
+  ThreeDotsVertical,
+} from "react-bootstrap-icons";
 
 interface CloudRowMenuProps {
   onRename: () => void;
+  onDuplicate: () => void;
+  onDownload: () => void;
   onDelete: () => void;
   menuTitle: string;
 }
 
 export function CloudRowMenu({
   onRename,
+  onDuplicate,
+  onDownload,
   onDelete,
   menuTitle,
 }: CloudRowMenuProps) {
@@ -61,6 +70,20 @@ export function CloudRowMenu({
             onSelect={onRename}
           >
             {t.cloudModal.rename}
+          </ContextMenuItem>
+
+          <ContextMenuItem
+            icon={<Copy className="icon-md" />}
+            onSelect={onDuplicate}
+          >
+            {t.cloudModal.duplicate}
+          </ContextMenuItem>
+
+          <ContextMenuItem
+            icon={<Download className="icon-md" />}
+            onSelect={onDownload}
+          >
+            {t.cloudModal.download}
           </ContextMenuItem>
 
           <ContextMenuItem
