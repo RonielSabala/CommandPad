@@ -14,13 +14,11 @@ import {
 import "./CloudPathBar.css";
 
 interface CloudPathBarProps {
-  allowCreateFolder: boolean;
   creatingFolder: boolean;
   onStartNewFolder: () => void;
 }
 
 export function CloudPathBar({
-  allowCreateFolder,
   creatingFolder,
   onStartNewFolder,
 }: CloudPathBarProps) {
@@ -79,16 +77,14 @@ export function CloudPathBar({
         ))}
       </nav>
 
-      {allowCreateFolder && (
-        <button
-          className="btn btn-flat-icon"
-          onClick={onStartNewFolder}
-          disabled={loading || creatingFolder}
-          title={t.cloudModal.newFolder}
-        >
-          <FolderPlus className="icon-md icon-semibold" />
-        </button>
-      )}
+      <button
+        className="btn btn-flat-icon"
+        onClick={onStartNewFolder}
+        disabled={loading || creatingFolder}
+        title={t.cloudModal.newFolder}
+      >
+        <FolderPlus className="icon-md icon-semibold" />
+      </button>
 
       <button
         className="btn btn-flat-icon"

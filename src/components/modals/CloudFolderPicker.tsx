@@ -30,7 +30,7 @@ export function CloudFolderPicker({
 
   return (
     <>
-      <CloudBrowser allowCreateFolder />
+      <CloudBrowser />
 
       <div className="modal-actions">
         <button className="btn btn-lg" onClick={onCancel}>

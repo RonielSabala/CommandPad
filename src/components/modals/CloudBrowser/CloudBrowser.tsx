@@ -19,7 +19,6 @@ import { CloudPathBar } from "./CloudPathBar";
 
 interface CloudBrowserProps {
   showFiles?: boolean;
-  allowCreateFolder?: boolean;
 }
 
 interface CloudRow {
@@ -27,10 +26,7 @@ interface CloudRow {
   path?: CloudFolderRef[];
 }
 
-export function CloudBrowser({
-  showFiles = false,
-  allowCreateFolder = false,
-}: CloudBrowserProps) {
+export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
   const t = useTranslation();
   const provider = useStore((state) => state.cloudProvider);
   const signedIn = useStore((state) => state.cloudSignedIn);
@@ -125,7 +121,6 @@ export function CloudBrowser({
           </div>
 
           <CloudPathBar
-            allowCreateFolder={allowCreateFolder}
             creatingFolder={newFolderDraft !== null}
             onStartNewFolder={() => setNewFolderDraft("")}
           />
