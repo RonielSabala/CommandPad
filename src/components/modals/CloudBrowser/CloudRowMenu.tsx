@@ -1,19 +1,11 @@
+import { ActionsMenu } from "@/components/common/ActionsMenu";
 import {
-  ContextMenu,
   ContextMenuAlign,
   ContextMenuItem,
-  type ContextMenuAnchor,
 } from "@/components/common/ContextMenu";
 import { TrashIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useRef, useState } from "react";
-import {
-  Copy,
-  Download,
-  PencilSquare,
-  ThreeDotsVertical,
-  Vr,
-} from "react-bootstrap-icons";
+import { Copy, Download, PencilSquare, Vr } from "react-bootstrap-icons";
 
 interface CloudRowMenuProps {
   onRename: () => void;
@@ -33,80 +25,47 @@ export function CloudRowMenu({
   menuTitle,
 }: CloudRowMenuProps) {
   const t = useTranslation();
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const [anchor, setAnchor] = useState<ContextMenuAnchor | null>(null);
-
-  const toggle = () => {
-    const trigger = triggerRef.current;
-
-    if (anchor !== null || !trigger) {
-      setAnchor(null);
-      return;
-    }
-
-    const rect = trigger.getBoundingClientRect();
-    setAnchor({ x: rect.right, y: rect.bottom });
-  };
 
   return (
-    <div className="cloud-browser-row-actions">
-      <button
-        ref={triggerRef}
-        className="btn btn-flat-icon"
-        onClick={toggle}
-        title={menuTitle}
-        aria-haspopup="menu"
-        aria-expanded={anchor !== null}
-      >
-        <ThreeDotsVertical className="icon-md" />
-      </button>
+    <ActionsMenu
+      className="cloud-browser-row-actions"
+      title={menuTitle}
+      align={ContextMenuAlign.END}
+    >
+      <ContextMenuItem icon={<Vr className="icon-md" />} onSelect={onRename}>
+        {t.cloudModal.rename}
+      </ContextMenuItem>
 
-      {anchor && (
-        <ContextMenu
-          anchor={anchor}
-          align={ContextMenuAlign.END}
-          triggerRef={triggerRef}
-          onClose={() => setAnchor(null)}
+      {onEdit && (
+        <ContextMenuItem
+          icon={<PencilSquare className="icon-md" />}
+          onSelect={onEdit}
         >
-          <ContextMenuItem
-            icon={<Vr className="icon-md" />}
-            onSelect={onRename}
-          >
-            {t.cloudModal.rename}
-          </ContextMenuItem>
-
-          {onEdit && (
-            <ContextMenuItem
-              icon={<PencilSquare className="icon-md" />}
-              onSelect={onEdit}
-            >
-              {t.cloudModal.edit}
-            </ContextMenuItem>
-          )}
-
-          <ContextMenuItem
-            icon={<Copy className="icon-md" />}
-            onSelect={onDuplicate}
-          >
-            {t.cloudModal.duplicate}
-          </ContextMenuItem>
-
-          <ContextMenuItem
-            icon={<Download className="icon-md" />}
-            onSelect={onDownload}
-          >
-            {t.cloudModal.download}
-          </ContextMenuItem>
-
-          <ContextMenuItem
-            icon={<TrashIcon className="icon-md icon-bold" />}
-            onSelect={onDelete}
-            danger
-          >
-            {t.cloudModal.delete}
-          </ContextMenuItem>
-        </ContextMenu>
+          {t.cloudModal.edit}
+        </ContextMenuItem>
       )}
-    </div>
+
+      <ContextMenuItem
+        icon={<Copy className="icon-md" />}
+        onSelect={onDuplicate}
+      >
+        {t.cloudModal.duplicate}
+      </ContextMenuItem>
+
+      <ContextMenuItem
+        icon={<Download className="icon-md" />}
+        onSelect={onDownload}
+      >
+        {t.cloudModal.download}
+      </ContextMenuItem>
+
+      <ContextMenuItem
+        icon={<TrashIcon className="icon-md icon-bold" />}
+        onSelect={onDelete}
+        danger
+      >
+        {t.cloudModal.delete}
+      </ContextMenuItem>
+    </ActionsMenu>
   );
 }

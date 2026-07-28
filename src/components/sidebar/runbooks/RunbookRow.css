@@ -3,6 +3,14 @@
   justify-content: start;
 }
 
+.sidebar-right .runbook-row .drag-handle {
+  order: 1;
+}
+
+.sidebar-right .runbook-row .row-actions {
+  order: -1;
+}
+
 .runbook-item-btn {
   display: block;
   width: fit-content;

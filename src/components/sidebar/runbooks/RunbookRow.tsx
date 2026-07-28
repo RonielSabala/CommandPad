@@ -1,8 +1,13 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
-import { AppMode, DragGroup } from "@/common/enums";
+import { AppMode, DragGroup, SidebarPosition } from "@/common/enums";
 import type { RunbookEntry } from "@/common/types";
-import { DragIcon, XIcon } from "@/components/icons";
+import { ActionsMenu } from "@/components/common/ActionsMenu";
+import {
+  ContextMenuAlign,
+  ContextMenuItem,
+} from "@/components/common/ContextMenu";
+import { DragIcon, TrashIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -20,6 +25,9 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
   const runbookId = runbook.id;
   const runbookLabel = displayLabel(runbook.label, t);
 
+  const sidebarOnRight = useStore(
+    (state) => state.sidebarPosition === SidebarPosition.RIGHT,
+  );
   const isActive = useStore((state) => state.activeRunbookId === runbookId);
   const isFocused = useStore((state) => state.focusedRunbookId === runbookId);
   const readMode = useStore((state) => state.mode === AppMode.READ);
@@ -66,6 +74,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
       >
         <DragIcon className="icon-md" />
       </div>
+
       <button
         className={runbookBtnClass}
         onClick={() => {
@@ -76,13 +85,20 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
       >
         {runbookLabel}
       </button>
-      <button
-        className="btn btn-icon btn-danger"
-        onClick={() => void removeRunbookFromLibrary(runbookId)}
-        title={t.runbooks.removeFromLibrary}
+
+      <ActionsMenu
+        className={CssClass.ROW_ACTIONS}
+        title={t.runbooks.actions}
+        align={sidebarOnRight ? ContextMenuAlign.END : ContextMenuAlign.START}
       >
-        <XIcon className="icon-md icon-bold" />
-      </button>
+        <ContextMenuItem
+          icon={<TrashIcon className="icon-md icon-bold" />}
+          onSelect={() => void removeRunbookFromLibrary(runbookId)}
+          danger
+        >
+          {t.runbooks.removeFromLibrary}
+        </ContextMenuItem>
+      </ActionsMenu>
     </div>
   );
 });

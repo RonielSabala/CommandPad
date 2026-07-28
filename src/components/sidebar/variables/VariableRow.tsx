@@ -1,9 +1,19 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
-import { AppMode, DragGroup, VariableField } from "@/common/enums";
+import {
+  AppMode,
+  DragGroup,
+  SidebarPosition,
+  VariableField,
+} from "@/common/enums";
 import type { Variable } from "@/common/types";
-import { DragIcon, EyeIcon, XIcon } from "@/components/icons";
+import { ActionsMenu } from "@/components/common/ActionsMenu";
+import {
+  ContextMenuAlign,
+  ContextMenuItem,
+} from "@/components/common/ContextMenu";
+import { DragIcon, EyeIcon, TrashIcon } from "@/components/icons";
 import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useVariableSplitResize } from "@/hooks/useVariableSplitResize";
@@ -30,6 +40,9 @@ export const VariableRow = memo(function VariableRow({
   const isSecret = !!variable.secret;
 
   const readMode = useStore((state) => state.mode === AppMode.READ);
+  const sidebarOnRight = useStore(
+    (state) => state.sidebarPosition === SidebarPosition.RIGHT,
+  );
   const updateVariable = useStore((state) => state.updateVariable);
   const removeVariable = useStore((state) => state.removeVariable);
   const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
@@ -155,13 +168,19 @@ export const VariableRow = memo(function VariableRow({
       >
         <EyeIcon slashed={isSecret} className="icon-md icon-bold" />
       </button>
-      <button
-        className="btn btn-icon btn-danger"
-        onClick={() => removeVariable(variableId)}
-        title={t.variables.remove}
+      <ActionsMenu
+        className={CssClass.ROW_ACTIONS}
+        title={t.variables.actions}
+        align={sidebarOnRight ? ContextMenuAlign.END : ContextMenuAlign.START}
       >
-        <XIcon className="icon-md icon-bold" />
-      </button>
+        <ContextMenuItem
+          icon={<TrashIcon className="icon-md icon-bold" />}
+          onSelect={() => removeVariable(variableId)}
+          danger
+        >
+          {t.variables.remove}
+        </ContextMenuItem>
+      </ActionsMenu>
     </div>
   );
 });

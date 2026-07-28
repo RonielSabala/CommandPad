@@ -20,12 +20,12 @@ body.read-mode .sidebar-section-list-row {
   grid-template-columns: 1fr;
 }
 
-body.read-mode .sidebar-section-list-row .btn-danger {
+body.read-mode .sidebar-section-list-row .row-actions {
   display: none;
 }
 
 .sidebar-section-list-row .drag-handle,
-.sidebar-section-list-row .btn-danger {
+.sidebar-section-list-row .row-actions {
   opacity: 0;
   transition:
     opacity var(--transition-fast),
@@ -33,7 +33,8 @@ body.read-mode .sidebar-section-list-row .btn-danger {
 }
 
 .sidebar-section-list-row:hover .drag-handle,
-.sidebar-section-list-row:hover .btn-danger {
+.sidebar-section-list-row:hover .row-actions,
+.sidebar-section-list-row .row-actions.menu-open {
   opacity: 1;
 }
 
