@@ -1,36 +1,51 @@
-import type { CloudProvider } from "@/common/enums";
+import { SyncDestination } from "@/common/enums";
 import {
   Select,
   SelectAlign,
   type SelectOption,
 } from "@/components/common/Select";
 import { useTranslation } from "@/i18n";
+import { LaptopFill } from "react-bootstrap-icons";
 import { PROVIDER_ICON, PROVIDER_NAME, PROVIDERS } from "./cloudProviders";
 import "./ProviderSelect.css";
 
-const PROVIDER_OPTIONS: readonly SelectOption<CloudProvider>[] = PROVIDERS.map(
-  (provider) => {
-    const ProviderIcon = PROVIDER_ICON[provider];
-    return {
-      value: provider,
-      label: (
-        <>
-          <ProviderIcon className="icon-md" />
-          {PROVIDER_NAME[provider]}
-        </>
-      ),
-    };
-  },
-);
-
 interface ProviderSelectProps {
-  provider: CloudProvider;
-  onChange: (provider: CloudProvider) => void;
+  provider: SyncDestination;
+  onChange: (destination: SyncDestination) => void;
 }
 
 export function ProviderSelect({ provider, onChange }: ProviderSelectProps) {
   const t = useTranslation();
-  const ProviderIcon = PROVIDER_ICON[provider];
+  const options: readonly SelectOption<SyncDestination>[] = [
+    {
+      value: SyncDestination.LOCAL,
+      label: (
+        <>
+          <LaptopFill className="icon-md" />
+          {t.destinationModal.local}
+        </>
+      ),
+    },
+    ...PROVIDERS.map((provider) => {
+      const ProviderIcon = PROVIDER_ICON[provider];
+      return {
+        value: provider,
+        label: (
+          <>
+            <ProviderIcon className="icon-md" />
+            {PROVIDER_NAME[provider]}
+          </>
+        ),
+      };
+    }),
+  ];
+
+  const ProviderIcon =
+    provider === SyncDestination.LOCAL ? LaptopFill : PROVIDER_ICON[provider];
+  const label =
+    provider === SyncDestination.LOCAL
+      ? t.destinationModal.local
+      : PROVIDER_NAME[provider];
 
   return (
     <Select
@@ -39,11 +54,11 @@ export function ProviderSelect({ provider, onChange }: ProviderSelectProps) {
       title={t.cloudModal.changeProvider}
       align={SelectAlign.START}
       value={provider}
-      options={PROVIDER_OPTIONS}
+      options={options}
       onChange={onChange}
     >
       <ProviderIcon className="icon-md" />
-      {PROVIDER_NAME[provider]}
+      {label}
     </Select>
   );
 }

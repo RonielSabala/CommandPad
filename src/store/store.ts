@@ -1977,7 +1977,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       closeDestinationModal: () => set({ destinationModalOpen: false }),
 
       chooseDestination: (destination) => {
-        set({ destinationModalOpen: false, lastImportSource: destination });
+        set({
+          destinationModalOpen: false,
+          cloudImportModalOpen: false,
+          lastImportSource: destination,
+        });
         persist.saveUiState(uiStateSnapshot(get()));
 
         if (destination === SyncDestination.LOCAL) {

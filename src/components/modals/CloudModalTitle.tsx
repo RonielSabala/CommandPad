@@ -1,11 +1,11 @@
-import type { CloudProvider } from "@/common/enums";
+import type { SyncDestination } from "@/common/enums";
 import { MessageSlot, splitAtSlot } from "@/i18n";
 import { ProviderSelect } from "./ProviderSelect";
 
 interface CloudModalTitleProps {
   message: string;
-  provider: CloudProvider;
-  onChange: (provider: CloudProvider) => void;
+  provider: SyncDestination;
+  onChange: (destination: SyncDestination) => void;
 }
 
 export function CloudModalTitle({
