@@ -283,6 +283,7 @@ export const es: Messages = {
       "Envolver el texto seleccionado en comillas invertidas (bloque de nota)",
     [KeyBinding.WRAP_SELECTION]:
       "Envolver el texto seleccionado en el par escrito (cualquier campo de texto)",
+    [KeyBinding.SUBMIT_EDITOR]: "Guardar / crear desde un editor de código",
   },
   footer: {
     privacy: "Privacidad",

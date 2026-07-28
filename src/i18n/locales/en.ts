@@ -277,6 +277,7 @@ export const en: Messages = {
     [KeyBinding.NOTE_CODE]: "Wrap selected text in backticks (note block)",
     [KeyBinding.WRAP_SELECTION]:
       "Wrap selected text in the typed pair (any text field)",
+    [KeyBinding.SUBMIT_EDITOR]: "Save / create from a code editor",
   },
   footer: {
     privacy: "Privacy",

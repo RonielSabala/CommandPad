@@ -1,4 +1,5 @@
 import { RUNBOOK_JSON_PLACEHOLDER } from "@/common/config";
+import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import { CodeEditor } from "@/components/common/CodeEditor";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -37,6 +38,18 @@ export function CloudFileEditorModal() {
           bounded
           hasError={Boolean(editor?.error)}
           resizeDeps={[editor?.file.id]}
+          onKeyDown={(event) => {
+            if (
+              !matchesKeybinding(event.nativeEvent, KeyBinding.SUBMIT_EDITOR)
+            ) {
+              return;
+            }
+
+            event.preventDefault();
+            if (!busy && dirty) {
+              void save();
+            }
+          }}
         />
       )}
 

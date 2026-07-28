@@ -1,4 +1,5 @@
 import { RUNBOOK_JSON_PLACEHOLDER } from "@/common/config";
+import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import { CodeEditor } from "@/components/common/CodeEditor";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -56,6 +57,14 @@ export function PasteRunbookModal() {
         onChange={(value) => {
           setText(value);
           setHasError(false);
+        }}
+        onKeyDown={(event) => {
+          if (!matchesKeybinding(event.nativeEvent, KeyBinding.SUBMIT_EDITOR)) {
+            return;
+          }
+
+          event.preventDefault();
+          void handleCreate();
         }}
       />
 

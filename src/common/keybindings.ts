@@ -43,6 +43,7 @@ export const KeyBinding = {
   NOTE_ITALIC: "NOTE_ITALIC",
   NOTE_CODE: "NOTE_CODE",
   WRAP_SELECTION: "WRAP_SELECTION",
+  SUBMIT_EDITOR: "SUBMIT_EDITOR",
 } as const;
 export type KeyBinding = (typeof KeyBinding)[keyof typeof KeyBinding];
 
@@ -83,6 +84,7 @@ export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
     binding: `( [ { " '`,
     keyboard: false,
   },
+  [KeyBinding.SUBMIT_EDITOR]: { binding: "ctrl+enter" },
 };
 
 const BINDING_SEPARATOR = "+";
