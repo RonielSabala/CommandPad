@@ -61,7 +61,11 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
           ))}
         </div>
 
-        <div className="code-editor-scroll" data-value={value}>
+        <div
+          className="code-editor-scroll"
+          data-value={value}
+          onClick={() => textareaRef.current?.focus()}
+        >
           <textarea
             ref={textareaRef}
             className="code-editor-textarea"
