@@ -307,32 +307,31 @@ export const es: Messages = {
     },
     features: {
       title: "Por qué no vas a querer soltarlo",
-      subtitle:
-        "Una herramienta pequeña que resuelve, sin hacer ruido, una molestia de todos los días. Esto es lo que suele conquistar a la gente.",
+      subtitle: "Una herramienta pequeña para una molestia de todos los días.",
       items: [
         {
-          title: "Cambia una cosa, no veinte",
-          body: "Actualiza un host o un número de versión en un solo sitio y cada comando que lo menciona se pone al día al instante. Nada de buscar y reemplazar, ni de una copia vieja del valor escondida tres líneas más abajo.",
+          title: "Cámbialo una vez",
+          body: "Actualiza un host o una versión en un solo sitio. Cada comando que lo menciona se pone al día.",
         },
         {
-          title: "Copia comandos listos para ejecutar",
-          body: "Cada `{VARIABLE}` se resuelve mientras escribes, así que la vista previa es el comando de verdad. Un clic lo deja en tu portapapeles con los valores reales ya puestos: pega, ejecuta y listo.",
+          title: "Copia y ejecuta",
+          body: "Cada `{VARIABLE}` se resuelve mientras escribes: lo que copias es el comando real.",
         },
         {
-          title: "Libros que seguirás entendiendo con el tiempo",
-          body: "Entrelaza comandos con notas en Markdown y separadores para que un libro se lea como la explicación que le darías a un compañero, y no como una pila de líneas de terminal que tendrás que descifrar dentro de unos meses.",
+          title: "Se lee como una guía",
+          body: "Notas en Markdown y separadores entre comandos, para que un libro siga teniendo sentido meses después.",
         },
         {
-          title: "Tuyo, y de nadie más",
-          body: "Sin backend, sin cuenta, sin analíticas mandando datos a escondidas. Todo vive en tu navegador, y las variables secretas nunca salen del equipo donde las escribiste.",
+          title: "Todo en tu equipo",
+          body: "Sin backend, sin cuenta, sin analíticas. Todo vive en tu navegador.",
         },
         {
-          title: "Hecho para no estorbarte",
-          body: "Pestañas, reordenar arrastrando, selección de varios bloques, modo lectura, atajos de teclado, tema claro y oscuro, inglés y español. Esos pequeños detalles que dejas de notar porque sencillamente funcionan.",
+          title: "Sin estorbarte",
+          body: "Pestañas, reordenar arrastrando, modo lectura, atajos, tema claro y oscuro. Detalles que simplemente funcionan.",
         },
         {
-          title: "Tu trabajo va contigo",
-          body: "Exporta a JSON, Markdown o texto plano y vuelve a cargarlo sin problema en otro equipo. Tus libros son archivos normales que te pertenecen, nunca atrapados en un formato que solo esta app sepa leer.",
+          title: "Tuyo para llevar",
+          body: "Exporta a JSON, Markdown o texto plano y vuelve a cargarlo donde quieras.",
         },
       ],
     },

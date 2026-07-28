@@ -301,32 +301,31 @@ export const en: Messages = {
     },
     features: {
       title: "Why you'll keep it around",
-      subtitle:
-        "A small tool that quietly fixes an everyday annoyance. Here is what tends to win people over.",
+      subtitle: "A small tool for an everyday annoyance.",
       items: [
         {
-          title: "Change one thing, not twenty",
-          body: "Update a hostname or a version number in a single place and every command that mentions it catches up instantly. No find-and-replace, no stale copy of the old value hiding three lines down.",
+          title: "Change it once",
+          body: "Update a host or a version in one place. Every command that mentions it follows.",
         },
         {
-          title: "Copy commands that just run",
-          body: "Every `{VARIABLE}` resolves as you type, so the preview is the real thing. One click drops the command on your clipboard with the actual values already filled in: paste, run, done.",
+          title: "Copy and run",
+          body: "Every `{VARIABLE}` resolves as you type, so what you copy is the real command.",
         },
         {
-          title: "Runbooks that still make sense later",
-          body: "Weave commands together with Markdown notes and dividers, so a runbook reads like the walkthrough you'd give a teammate, not a bare stack of shell lines you'll be squinting at next quarter.",
+          title: "Reads like a guide",
+          body: "Markdown notes and dividers between commands, so a runbook still makes sense months later.",
         },
         {
-          title: "Yours, and only yours",
-          body: "No backend, no account, no analytics quietly phoning home. Everything lives in your browser, and secret variables never leave the machine you typed them on.",
+          title: "Stays on your machine",
+          body: "No backend, no account, no analytics. Everything lives in your browser.",
         },
         {
-          title: "It stays out of your way",
-          body: "Tabs, drag-to-reorder, multi-block select, read mode, keyboard shortcuts, light and dark, English and Spanish. The small comforts you stop noticing because they simply work.",
+          title: "Out of your way",
+          body: "Tabs, drag to reorder, read mode, shortcuts, light and dark. Small comforts that just work.",
         },
         {
-          title: "Your work comes with you",
-          body: "Export to JSON, Markdown, or plain text and load it right back on another machine. Your runbooks are plain files you own, never trapped in a format only this app can read.",
+          title: "Yours to take",
+          body: "Export to JSON, Markdown, or plain text, and load it back anywhere.",
         },
       ],
     },
