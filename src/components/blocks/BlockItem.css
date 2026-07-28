@@ -4,8 +4,8 @@
   max-width: 100%;
 }
 
-.block-controls,
-.block-drag-handle {
+.block-drag-handle,
+.block-actions {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -16,36 +16,32 @@
   transition: opacity var(--transition-base);
 }
 
-.block-controls {
-  left: calc(100% + var(--space-4));
-}
-
 .block-drag-handle {
   right: calc(100% + var(--space-4));
 }
 
-.block-controls-inner,
-.block-drag-handle .drag-handle {
+.block-actions {
+  left: calc(100% + var(--space-4));
+}
+
+.block-drag-handle .drag-handle,
+.block-actions .btn {
   position: sticky;
   top: var(--space-4);
   bottom: var(--space-4);
   pointer-events: auto;
 }
 
-.block-controls-inner {
-  display: flex;
-  gap: var(--space-2);
-}
-
-.block-item:hover :is(.block-controls, .block-drag-handle) {
+.block-item:hover :is(.block-drag-handle, .block-actions),
+.block-actions.menu-open {
   opacity: 1;
 }
 
-body.read-mode :is(.block-controls, .block-drag-handle) {
+body.read-mode :is(.block-drag-handle, .block-actions) {
   display: none;
 }
 
-body.select-key-held:not(.read-mode) :is(.block-controls, .block-drag-handle) {
+body.select-key-held:not(.read-mode) :is(.block-drag-handle, .block-actions) {
   opacity: 0;
   pointer-events: none;
 }

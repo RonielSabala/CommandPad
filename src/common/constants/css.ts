@@ -19,6 +19,6 @@ export const CssClass = {
   NOTE_LINK: "note-link",
   BLOCK_ITEM: "block-item",
   RUNBOOK_ITEM_BTN: "runbook-item-btn",
-  BLOCK_CONTROLS: "block-controls",
+  BLOCK_ACTIONS: "block-actions",
   BLOCK_DRAG_HANDLE: "block-drag-handle",
 } as const;

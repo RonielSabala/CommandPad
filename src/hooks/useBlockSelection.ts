@@ -99,7 +99,7 @@ export function useBlockSelection(root: Document | HTMLElement | null): void {
       if (
         state.selectedBlockIds.size > 0 &&
         !target.closest(
-          `.${CssClass.BLOCK_CONTROLS}, .${CssClass.BLOCK_DRAG_HANDLE}`,
+          `.${CssClass.BLOCK_ACTIONS}, .${CssClass.BLOCK_DRAG_HANDLE}`,
         )
       ) {
         state.clearBlockSelection();

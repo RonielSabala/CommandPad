@@ -84,8 +84,10 @@ export const en: Messages = {
       [BlockType.DIVIDER]: "Divider",
     },
     typeTitle: (label) => `${label} block`,
-    duplicate: "Duplicate block",
-    delete: "Delete block",
+    actions: "Block actions",
+    duplicate: (count) =>
+      count === 1 ? "Duplicate block" : "Duplicate blocks",
+    delete: (count) => (count === 1 ? "Delete block" : "Delete blocks"),
     emptyTitle: "No blocks yet.",
     emptyHint: "Add a command or note below.",
   },
@@ -649,7 +651,7 @@ export const en: Messages = {
     },
     blocks: {
       intro:
-        "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or use the **duplicate** and **delete** buttons on the right.",
+        "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or open the **block actions** menu on the right to duplicate or delete it.",
     },
     commandBlock: {
       intro:

@@ -86,8 +86,10 @@ export const es: Messages = {
       [BlockType.DIVIDER]: "Divisor",
     },
     typeTitle: (label) => `Bloque de ${label.toLowerCase()}`,
-    duplicate: "Duplicar bloque",
-    delete: "Eliminar bloque",
+    actions: "Acciones del bloque",
+    duplicate: (count) =>
+      count === 1 ? "Duplicar bloque" : "Duplicar bloques",
+    delete: (count) => (count === 1 ? "Eliminar bloque" : "Eliminar bloques"),
     emptyTitle: "Aún no hay bloques.",
     emptyHint: "Agrega un comando o una nota abajo.",
   },
@@ -661,7 +663,7 @@ export const es: Messages = {
     },
     blocks: {
       intro:
-        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o usa los botones de **duplicar** y **eliminar** de la derecha.",
+        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **acciones del bloque** de la derecha para duplicarlo o eliminarlo.",
     },
     commandBlock: {
       intro:
