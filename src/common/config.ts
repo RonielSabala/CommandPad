@@ -106,6 +106,7 @@ export const VariableSyntax = {
   PARAM_SEPARATOR: ";",
   PARAM_ASSIGNMENT: "=",
   COPY_SUFFIX: "_COPY",
+  COPY_SUFFIX_REGEX: /_COPY\d*$/,
 } as const;
 
 export const COMMAND_PROMPT_PREFIX = "$";
@@ -178,9 +179,14 @@ export const CloudSyncConfig = {
   PATH_SEPARATOR: "/",
   MAX_SEARCH_DEPTH: 10,
   NO_SIZE_PLACEHOLDER: "—",
-  DUPLICATE_SUFFIX: (index: number) => ` (${index})`,
-  DUPLICATE_SUFFIX_REGEX: / \(\d+\)$/,
-  FIRST_DUPLICATE_INDEX: 1,
+} as const;
+
+// Copies made by a "Duplicate" action
+
+export const DuplicateNameConfig = {
+  SUFFIX: (index: number) => ` (${index})`,
+  SUFFIX_REGEX: / \(\d+\)$/,
+  FIRST_INDEX: 1,
 } as const;
 
 // Zip archives

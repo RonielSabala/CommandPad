@@ -85,6 +85,7 @@ export interface Messages {
     paste: string;
     pasteTitle: string;
     actions: string;
+    duplicate: string;
     removeFromLibrary: string;
     dropToImport: string;
     clearLibrary: string;
@@ -101,6 +102,7 @@ export interface Messages {
     reveal: string;
     mask: string;
     actions: string;
+    duplicate: string;
     remove: string;
     dragResizeSplit: string;
     unusedTitle: (key: string) => string;

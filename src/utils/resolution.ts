@@ -234,8 +234,12 @@ export function renameAllVariableTokens(
   return renamed;
 }
 
-function uniqueCopyKey(key: string, takenKeys: ReadonlySet<string>): string {
-  const base = `${key}${VariableSyntax.COPY_SUFFIX}`;
+export function uniqueCopyKey(
+  key: string,
+  takenKeys: ReadonlySet<string>,
+): string {
+  const stem = key.replace(VariableSyntax.COPY_SUFFIX_REGEX, "");
+  const base = `${stem}${VariableSyntax.COPY_SUFFIX}`;
   let candidate = base;
   let counter = 1; // Copy numbering start
 

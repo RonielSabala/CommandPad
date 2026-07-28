@@ -71,8 +71,10 @@ import {
   getVariableKey,
   renameAllVariableTokens,
   renameVariableTokens,
+  uniqueCopyKey,
 } from "@/utils/resolution";
 import { displayLabel, getRunbookLabel } from "@/utils/runbook";
+import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
 
 import * as persistence from "./persistence";
 import {
@@ -211,6 +213,7 @@ export interface StoreState {
 
   loadRunbookFromLibrary: (runbookId: string) => Promise<void>;
   removeRunbookFromLibrary: (id: string) => Promise<void>;
+  duplicateRunbook: (id: string) => Promise<void>;
   addRunbookToLibrary: (
     content: RunbookContent,
     filename: string,
@@ -224,6 +227,7 @@ export interface StoreState {
 
   addVariable: () => Promise<void>;
   removeVariable: (variableId: string) => void;
+  duplicateVariable: (variableId: string) => void;
   updateVariable: (
     variableId: string,
     field: VariableField,
@@ -952,6 +956,71 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         persist.saveRunbookLibrary(runbookLibrary, activeRunbookId);
       },
 
+      duplicateRunbook: async (id) => {
+        const state = get();
+        if (state.mode === AppMode.READ) {
+          return;
+        }
+
+        const sourceIndex = state.runbookLibrary.findIndex(
+          (item) => item.id === id,
+        );
+
+        if (sourceIndex < 0) {
+          return;
+        }
+
+        const source = state.runbookLibrary[sourceIndex];
+        const openTab = state.tabs.find((t) => t.runbookId === id);
+        const content = openTab
+          ? { variables: openTab.variables, blocks: openTab.blocks }
+          : await contentDb.get(id);
+
+        if (!content) {
+          return;
+        }
+
+        const copy: RunbookContent = {
+          variables: content.variables.map((variable) => ({
+            ...variable,
+            id: generateId(),
+          })),
+          blocks: content.blocks.map((block) => ({
+            ...block,
+            id: generateId(),
+          })),
+        };
+
+        const library = get().runbookLibrary;
+        const takenLabels = new Set(library.map((item) => item.label));
+        const takenFilenames = new Set(library.map((item) => item.filename));
+
+        // Base the copy's name on what the row actually shows
+        const label = nextDuplicateName(
+          displayLabel(source.label, getMessages(get().language)),
+          (candidate) => takenLabels.has(candidate),
+        );
+        const filename = source.filename
+          ? nextDuplicateName(source.filename, (candidate) =>
+              takenFilenames.has(candidate),
+            )
+          : "";
+
+        const newId = generateId();
+        await contentDb.put(newId, copy);
+
+        set((s) => {
+          const runbookLibrary = [...s.runbookLibrary];
+          const insertAt =
+            runbookLibrary.findIndex((item) => item.id === id) + 1;
+          runbookLibrary.splice(insertAt, 0, { id: newId, label, filename });
+
+          return { runbookLibrary };
+        });
+
+        persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+      },
+
       addRunbookToLibrary: async (content, filename, rawFilename) => {
         const label = getRunbookLabel(
           content.blocks,
@@ -1157,6 +1226,43 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             variables: tab.variables.filter((v) => v.id !== variableId),
           })),
         );
+        get().saveState();
+      },
+
+      duplicateVariable: (variableId) => {
+        if (get().mode === AppMode.READ) {
+          return;
+        }
+
+        const copyId = generateId();
+        set((s) => ({
+          ...withActiveTab(s, (tab) => {
+            const index = tab.variables.findIndex((v) => v.id === variableId);
+            if (index < 0) {
+              return tab;
+            }
+
+            const source = tab.variables[index];
+            const key = getVariableKey(source);
+            const newKey = key
+              ? uniqueCopyKey(
+                  key,
+                  new Set(tab.variables.map((v) => getVariableKey(v))),
+                )
+              : key;
+
+            const variables = [...tab.variables];
+            variables.splice(index + 1, 0, {
+              ...source,
+              id: copyId,
+              key: newKey,
+            });
+
+            return { ...tab, variables };
+          }),
+          pendingFocusVariableId: copyId,
+        }));
+
         get().saveState();
       },
 

@@ -13,7 +13,12 @@ import {
   ContextMenuAlign,
   ContextMenuItem,
 } from "@/components/common/ContextMenu";
-import { DragIcon, EyeIcon, TrashIcon } from "@/components/icons";
+import {
+  DragIcon,
+  DuplicateIcon,
+  EyeIcon,
+  TrashIcon,
+} from "@/components/icons";
 import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useVariableSplitResize } from "@/hooks/useVariableSplitResize";
@@ -45,6 +50,7 @@ export const VariableRow = memo(function VariableRow({
   );
   const updateVariable = useStore((state) => state.updateVariable);
   const removeVariable = useStore((state) => state.removeVariable);
+  const duplicateVariable = useStore((state) => state.duplicateVariable);
   const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
   const reorderVariables = useStore((state) => state.reorderVariables);
   const pendingFocus = useStore(
@@ -173,6 +179,13 @@ export const VariableRow = memo(function VariableRow({
         title={t.variables.actions}
         align={sidebarOnRight ? ContextMenuAlign.END : ContextMenuAlign.START}
       >
+        <ContextMenuItem
+          icon={<DuplicateIcon className="icon-md icon-bold" />}
+          onSelect={() => duplicateVariable(variableId)}
+        >
+          {t.variables.duplicate}
+        </ContextMenuItem>
+
         <ContextMenuItem
           icon={<TrashIcon className="icon-md icon-bold" />}
           onSelect={() => removeVariable(variableId)}

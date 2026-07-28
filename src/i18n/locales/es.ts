@@ -55,6 +55,7 @@ export const es: Messages = {
     paste: "Pegar",
     pasteTitle: "Pegar JSON de libro",
     actions: "Acciones del libro",
+    duplicate: "Duplicar libro",
     removeFromLibrary: "Quitar de la biblioteca",
     dropToImport: "Suelta los libros para importarlos",
     clearLibrary: "Eliminar todo",
@@ -71,6 +72,7 @@ export const es: Messages = {
     reveal: "Mostrar valor",
     mask: "Ocultar valor",
     actions: "Acciones de la variable",
+    duplicate: "Duplicar variable",
     remove: "Eliminar variable",
     dragResizeSplit:
       "Arrastra para redimensionar clave y valor · doble clic para igualarlos",
@@ -599,7 +601,7 @@ export const es: Messages = {
         "Haz clic en **Importar** para cargar uno o varios archivos `.json` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.",
         "También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.",
         "Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.",
-        "Abre el menú de **acciones del libro** que aparece al pasar el cursor sobre la fila para quitar un libro de la biblioteca.",
+        "Abre el menú de **acciones del libro** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.",
         "Haz clic en **Eliminar todo** para vaciar la biblioteca completa de una vez.",
         "Arrastra el control a la izquierda de un libro para reordenarlo en la lista.",
         "Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.",
@@ -624,7 +626,7 @@ export const es: Messages = {
       split:
         "Las claves y los valores se reparten la fila en partes iguales, pero puedes cambiarlo: arrastra el divisor entre ambos para dar más espacio a uno de los lados, y haz doble clic para volver al reparto equitativo. El nuevo reparto se aplica a todas las variables y se recuerda entre sesiones.",
       demoHint:
-        "Compruébalo abajo: una sola variable alimenta dos comandos. Edita su valor y mira cómo las dos vistas previas cambian mientras escribes. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables y un menú de **acciones de la variable** a la derecha para eliminarla.",
+        "Compruébalo abajo: una sola variable alimenta dos comandos. Edita su valor y mira cómo las dos vistas previas cambian mientras escribes. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables y un menú de **acciones de la variable** a la derecha para duplicarla o eliminarla.",
       constants:
         "No todas las variables cambian por el mismo motivo. Unas son valores que cambias a cada rato y otras son **constantes**: se mantienen igual durante toda la vida del libro, y solo son variables porque ese mismo valor aparece en comando tras comando. CommandPad las distingue por convención de nombres: una clave escrita entera en **mayúsculas** se considera una constante y su clave se muestra en morado. Cualquier clave con alguna **minúscula** conserva el azul de siempre.",
       constantsDemoHint:

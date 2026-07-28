@@ -7,7 +7,7 @@ import {
   ContextMenuAlign,
   ContextMenuItem,
 } from "@/components/common/ContextMenu";
-import { DragIcon, TrashIcon } from "@/components/icons";
+import { DragIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -36,6 +36,8 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
   const loadRunbookFromLibrary = useStore(
     (state) => state.loadRunbookFromLibrary,
   );
+
+  const duplicateRunbook = useStore((state) => state.duplicateRunbook);
   const removeRunbookFromLibrary = useStore(
     (state) => state.removeRunbookFromLibrary,
   );
@@ -91,6 +93,13 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
         title={t.runbooks.actions}
         align={sidebarOnRight ? ContextMenuAlign.END : ContextMenuAlign.START}
       >
+        <ContextMenuItem
+          icon={<DuplicateIcon className="icon-md icon-bold" />}
+          onSelect={() => void duplicateRunbook(runbookId)}
+        >
+          {t.runbooks.duplicate}
+        </ContextMenuItem>
+
         <ContextMenuItem
           icon={<TrashIcon className="icon-md icon-bold" />}
           onSelect={() => void removeRunbookFromLibrary(runbookId)}

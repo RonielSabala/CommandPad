@@ -1,6 +1,7 @@
-import { CloudSyncConfig, JSON_EXTENSION } from "@/common/config";
+import { JSON_EXTENSION } from "@/common/config";
 import { CloudSortColumn, SortDirection } from "@/common/enums";
 import { stripJsonExtension } from "@/utils/export";
+import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
 import { isString } from "@/utils/typeGuards";
 import type { CloudEntry } from "./types";
 
@@ -23,20 +24,14 @@ export function buildDuplicateName(
   siblings: CloudEntry[],
 ): string {
   const base = entry.isFolder ? entry.name : stripJsonExtension(entry.name);
-  const stem = base.replace(CloudSyncConfig.DUPLICATE_SUFFIX_REGEX, "");
   const extension = entry.isFolder ? "" : JSON_EXTENSION;
-
   const taken = new Set(siblings.map((other) => other.name.toLowerCase()));
 
-  let index = CloudSyncConfig.FIRST_DUPLICATE_INDEX;
-  let name = "";
-
-  do {
-    name = `${stem}${CloudSyncConfig.DUPLICATE_SUFFIX(index)}${extension}`;
-    index++;
-  } while (taken.has(name.toLowerCase()));
-
-  return name;
+  return (
+    nextDuplicateName(base, (candidate) =>
+      taken.has(`${candidate}${extension}`.toLowerCase()),
+    ) + extension
+  );
 }
 
 function columnValue(

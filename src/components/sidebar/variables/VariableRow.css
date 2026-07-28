@@ -29,7 +29,7 @@
   content: "";
   position: absolute;
   top: 0;
-  bottom: calc(-1 * var(--space-2));
+  bottom: calc(-1 * var(--space-3));
   left: 50%;
   transform: translateX(-50%);
   width: var(--space-1);

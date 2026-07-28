@@ -54,6 +54,7 @@ export const en: Messages = {
     paste: "Paste",
     pasteTitle: "Paste runbook JSON",
     actions: "Runbook actions",
+    duplicate: "Duplicate runbook",
     removeFromLibrary: "Remove from library",
     dropToImport: "Drop runbooks to import",
     clearLibrary: "Delete All",
@@ -70,6 +71,7 @@ export const en: Messages = {
     reveal: "Reveal value",
     mask: "Mask value",
     actions: "Variable actions",
+    duplicate: "Duplicate variable",
     remove: "Remove variable",
     dragResizeSplit: "Drag to resize key and value · double-click to even out",
     unusedTitle: (key) => `${key} (unused)`,
@@ -587,7 +589,7 @@ export const en: Messages = {
         "Click **Import** to load one or more `.json` files at once, or **Paste** to create a runbook from raw JSON.",
         "You can also **drag files** from your file explorer and drop them onto the section to import them.",
         "Click any runbook to open it. If it's already open in a tab, that tab becomes active.",
-        "Open the **runbook actions** menu shown on row hover to remove a runbook from the library.",
+        "Open the **runbook actions** menu shown on row hover to duplicate a runbook or remove it from the library.",
         "Click **Delete All** to empty the whole library at once.",
         "Drag the handle on the left of a runbook to reorder it in the list.",
         "Use the **search bar** to filter runbooks by label or filename.",
@@ -612,7 +614,7 @@ export const en: Messages = {
       split:
         "Keys and values split the row evenly, but you can change that: drag the divider between them to give one side more room, and double-click it to go back to an even split. The new balance applies to every variable and is remembered between sessions.",
       demoHint:
-        "See it for yourself below: one variable feeds two commands. Edit its value and watch both previews follow along as you type. Hover over a row to reveal its controls: a drag handle on the left to reorder it among the others and a **variable actions** menu on the right to remove it.",
+        "See it for yourself below: one variable feeds two commands. Edit its value and watch both previews follow along as you type. Hover over a row to reveal its controls: a drag handle on the left to reorder it among the others and a **variable actions** menu on the right to duplicate or remove it.",
       constants:
         "Not every variable changes for the same reason. Some are values you swap all the time, and some are **constants**: they stay the same for the whole life of the runbook, and they are only variables because the same value shows up in command after command. CommandPad tells them apart by naming convention: a key written entirely in **capitals** is treated as a constant and its key is shown in purple. Anything with a **lowercase** letter in it keeps the usual blue.",
       constantsDemoHint:
