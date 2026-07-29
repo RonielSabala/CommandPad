@@ -3,8 +3,22 @@ import { EventType, Key } from "@/common/constants/events";
 import { DialogTone } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { DialogModal } from "./DialogModal";
+
+interface CachedDialog {
+  message: string;
+  title: string;
+  confirmLabel: string;
+  tone: DialogTone;
+}
+
+const EMPTY_DIALOG: CachedDialog = {
+  message: "",
+  title: DEFAULT_CONFIRM_LABEL,
+  confirmLabel: DEFAULT_CONFIRM_LABEL,
+  tone: DialogTone.INFO,
+};
 
 export function ConfirmModal() {
   const t = useTranslation();
@@ -12,21 +26,15 @@ export function ConfirmModal() {
   const resolve = useStore((state) => state.resolveConfirm);
 
   const isOpen = dialog !== null;
-  const [message, setMessage] = useState("");
-  const [title, setTitle] = useState(DEFAULT_CONFIRM_LABEL);
-  const [confirmLabel, setConfirmLabel] = useState(DEFAULT_CONFIRM_LABEL);
-  const [tone, setTone] = useState<DialogTone>(DialogTone.INFO);
   const confirmRef = useRef<HTMLButtonElement>(null);
 
-  // Keep the last message rendered while the modal fades out
-  useEffect(() => {
-    if (dialog) {
-      setMessage(dialog.message);
-      setTitle(dialog.title);
-      setConfirmLabel(dialog.confirmLabel);
-      setTone(dialog.tone);
-    }
-  }, [dialog]);
+  // Keep the last dialog rendered while the modal fades out
+  const lastDialogRef = useRef(EMPTY_DIALOG);
+  if (dialog) {
+    lastDialogRef.current = dialog;
+  }
+
+  const { message, title, confirmLabel, tone } = lastDialogRef.current;
 
   useEffect(() => {
     if (!isOpen) {
