@@ -44,9 +44,12 @@ import { Language } from "@/i18n/types";
 import {
   buildCloudFolderZip,
   buildDuplicateName,
+  clearCachedCloudEntries,
   copyCloudEntry,
   DEFAULT_CLOUD_SORT,
+  getCachedCloudEntries,
   getCloudClient,
+  setCachedCloudEntries,
   walkCloudTree,
   type CloudEntry,
   type CloudFolderRef,
@@ -574,6 +577,54 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         cloudSearchEntries: [],
         cloudSearchLoading: false,
       };
+    };
+
+    /** Lists the open folder from the provider and caches what came back. */
+    const fetchCloudEntries = async () => {
+      const provider = get().cloudProvider;
+      const folderId = currentFolderId(get().cloudPath);
+      const requestId = startCloudRequest();
+
+      set({ cloudLoading: true, cloudError: null });
+
+      try {
+        const entries = await getCloudClient(provider).listEntries(folderId);
+        setCachedCloudEntries(provider, folderId, entries);
+
+        if (isCurrentCloudRequest(requestId)) {
+          set({ cloudEntries: entries });
+        }
+      } catch (error) {
+        console.error("Failed to list cloud entries", error);
+        if (isCurrentCloudRequest(requestId)) {
+          set({
+            cloudEntries: [],
+            cloudError: getMessages(get().language).cloudModal.genericError,
+          });
+        }
+      } finally {
+        if (isCurrentCloudRequest(requestId)) {
+          set({ cloudLoading: false });
+        }
+      }
+    };
+
+    const loadCloudEntries = async () => {
+      const cached = getCachedCloudEntries(
+        get().cloudProvider,
+        currentFolderId(get().cloudPath),
+      );
+
+      if (cached) {
+        startCloudRequest();
+        set({ cloudEntries: cached, cloudLoading: false, cloudError: null });
+      } else {
+        await fetchCloudEntries();
+      }
+
+      if (get().cloudSearchQuery.trim()) {
+        await get().refreshCloudSearchEntries();
+      }
     };
 
     return {
@@ -1944,6 +1995,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             folderId,
           );
 
+          // The destination folder now holds a file no cached listing has
+          clearCachedCloudEntries(destination);
           set({ cloudExportStatus: CloudExportStatus.SUCCESS });
         } catch (error) {
           console.error("Cloud export failed", error);
@@ -2022,7 +2075,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         if (client.isSignedIn() && get().cloudProvider === provider) {
-          await get().refreshCloudEntries();
+          await loadCloudEntries();
         }
       },
 
@@ -2075,6 +2128,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           console.error("Cloud sign-out failed", error);
         }
 
+        // Nothing walked under this account survives into the next one
+        clearCachedCloudEntries(get().cloudProvider);
         startCloudRequest();
         set({
           ...cancelledCloudSearch(),
@@ -2090,33 +2145,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       refreshCloudEntries: async () => {
-        const client = getCloudClient(get().cloudProvider);
-        const requestId = startCloudRequest();
-        set({ cloudLoading: true, cloudError: null });
-        try {
-          const entries = await client.listEntries(
-            currentFolderId(get().cloudPath),
-          );
-          if (isCurrentCloudRequest(requestId)) {
-            set({ cloudEntries: entries });
-          }
-        } catch (error) {
-          console.error("Failed to list cloud entries", error);
-          if (isCurrentCloudRequest(requestId)) {
-            set({
-              cloudEntries: [],
-              cloudError: getMessages(get().language).cloudModal.genericError,
-            });
-          }
-        } finally {
-          if (isCurrentCloudRequest(requestId)) {
-            set({ cloudLoading: false });
-          }
-        }
-
-        if (get().cloudSearchQuery.trim()) {
-          await get().refreshCloudSearchEntries();
-        }
+        clearCachedCloudEntries(get().cloudProvider);
+        await loadCloudEntries();
       },
 
       openCloudFolder: (folder) =>
@@ -2145,7 +2175,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           cloudEntries: [],
         });
 
-        void get().refreshCloudEntries();
+        void loadCloudEntries();
       },
 
       navigateCloudHistory: (direction) => {
@@ -2164,7 +2194,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           cloudError: null,
           cloudEntries: [],
         });
-        void get().refreshCloudEntries();
+        void loadCloudEntries();
       },
 
       setCloudSearchQuery: (query) => {

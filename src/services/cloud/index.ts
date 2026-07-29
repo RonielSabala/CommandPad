@@ -3,6 +3,11 @@ import { googleDriveClient } from "./googleDrive";
 import { sharePointClient } from "./sharepoint";
 import type { CloudClient } from "./types";
 export {
+  clearCachedCloudEntries,
+  getCachedCloudEntries,
+  setCachedCloudEntries
+} from "./cache";
+export {
   buildDuplicateName,
   compareCloudEntries,
   DEFAULT_CLOUD_SORT
