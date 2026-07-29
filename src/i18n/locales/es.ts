@@ -352,7 +352,7 @@ export const es: Messages = {
   },
   privacy: {
     title: "Política de Privacidad",
-    updated: "Última actualización: 23 de julio de 2026",
+    updated: "Última actualización: 29 de julio de 2026",
     intro:
       "CommandPad es una aplicación del lado del cliente que funciona por completo en tu navegador. Esta política explica qué datos maneja la app y, más importante aún, cuáles no.",
     sections: [
@@ -424,7 +424,7 @@ export const es: Messages = {
   },
   terms: {
     title: "Términos del Servicio",
-    updated: "Última actualización: 23 de julio de 2026",
+    updated: "Última actualización: 29 de julio de 2026",
     intro:
       "Estos términos rigen tu uso de CommandPad. Al usar la app aceptas estos términos. Por favor, léelos, ya que son breves y están redactados para ser comprensibles.",
     sections: [
@@ -516,7 +516,9 @@ export const es: Messages = {
       [DocsSectionId.MULTI_SELECT]: "Selección múltiple",
       [DocsSectionId.READ_MODE]: "Modo lectura",
       [DocsSectionId.EXPORT]: "Exportar",
-      [DocsSectionId.CLOUD_SYNC]: "Sincronización en la nube",
+      [DocsSectionId.CLOUD_EXPORT]: "Exportar e importar en la nube",
+      [DocsSectionId.CLOUD_LINKED_SYNC]: "Mantener un libro sincronizado",
+      [DocsSectionId.CLOUD_FILE_MANAGEMENT]: "Gestionar archivos en la nube",
       [DocsSectionId.LANGUAGE]: "Idioma",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Atajos de teclado",
       [DocsSectionId.QA]: "Preguntas y respuestas",
@@ -756,31 +758,33 @@ export const es: Messages = {
       copyMarkdown:
         "Para saltarte los archivos por completo, haz clic derecho dentro del libro y elige **Copiar libro como Markdown**. Pone el mismo contenido Markdown en tu portapapeles, listo para pegarlo en un chat, un ticket o un documento.",
     },
-    cloudSync: {
+    cloudExport: {
       intro:
-        "**Exportar** e **Importar** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo.",
-      howItWorks:
-        "Haz clic en **Exportar** para abrir un único diálogo donde eliges un destino (este dispositivo, SharePoint o Google Drive), un formato (JSON, Markdown o texto plano) y un nombre de archivo, y luego exportas. Se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados, y una exportación a la nube muestra su progreso y confirma cuando el libro se ha guardado.",
+        "**Exportar** e **Importar** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo. El diálogo se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados.",
       switchProvider:
         "Mientras exploras la nube, el nombre del proveedor en el título del diálogo es un **selector**: haz clic en él para cambiar entre proveedores sin volver atrás.",
       overwrite:
-        "Si la carpeta a la que exportas ya tiene un archivo con el mismo nombre, la exportación se detiene y te pide confirmación antes de reemplazarlo, así que reutilizar un nombre nunca sobrescribe en silencio un libro de la nube.",
-      keptInSync:
-        "Un libro que importas desde la nube queda **sincronizado** con el archivo del que vino: cada edición se escribe de vuelta en ese archivo un instante después, así que nunca tienes que volver a exportarlo para guardarlo. Exportar un libro a la nube como **JSON** lo vincula igual.",
+        "Si la carpeta de destino ya tiene un archivo con el mismo nombre, la exportación se detiene y te pide confirmación antes de reemplazarlo.",
+    },
+    cloudLinkedSync: {
+      intro:
+        "Un libro que importas desde la nube queda **sincronizado** con el archivo del que vino: cada edición se escribe de vuelta en ese archivo, así que nunca tienes que volver a exportarlo para guardarlo. Exportar un libro como **JSON** lo vincula igual.",
       syncBadge:
-        "Un libro sincronizado muestra un **icono de sincronización** junto a su nombre en la lista de LIBROS. El icono gira mientras una edición va en camino, y se convierte en una nube tachada si tu sesión caducó o el guardado falló; haz clic en él para volver a iniciar sesión o reintentar. Como la nube siempre tiene una copia al día, quitar un libro sincronizado de la biblioteca nunca te pide confirmación.",
+        "Un libro sincronizado muestra un **icono de sincronización** junto a su nombre en la lista de LIBROS: gira mientras una edición va en camino, y se convierte en una nube tachada si el guardado falló. Haz clic en él para volver a iniciar sesión o reintentar.",
       stopSyncing:
-        "Para romper el vínculo, abre el menú de **tres puntos** del libro y elige **Dejar de sincronizar**. Tanto el libro como el archivo de la nube se quedan exactamente donde están, solo dejan de seguirse. La sincronización solo sube tus ediciones locales, así que cambiar el archivo en otro sitio no baja esos cambios.",
+        "**Dejar de sincronizar** (en el menú de tres puntos del libro) rompe el vínculo sin tocar ninguna de las dos copias. La sincronización solo sube tus ediciones locales, nunca baja los cambios remotos.",
+    },
+    cloudFileManagement: {
       folders:
-        "Los libros en la nube pueden vivir en carpetas: haz clic en una carpeta para abrirla y en un archivo para importarlo. Los botones de **flecha** avanzan y retroceden por las carpetas que visitaste, y la ruta que aparece sobre la lista te lleva de vuelta a cualquier carpeta de la ruta. Al exportar a la nube, el campo **Carpeta** elige dónde se guarda el libro, y el botón de **nueva carpeta** crea una carpeta al momento.",
+        "Los libros en la nube pueden vivir en carpetas: haz clic en una para abrirla y en un archivo para importarlo. Los botones de **flecha** y la ruta sobre la lista te mueven entre las carpetas que visitaste. Al exportar, el destino se elige igual, con un botón de **nueva carpeta**.",
       search:
-        "El **buscador** que hay sobre la lista revisa la carpeta **CommandPad** entera, no solo la carpeta que tengas abierta, así que un libro enterrado varias carpetas más abajo está a una búsqueda de distancia. Cada resultado muestra la ruta de la carpeta en la que vive; al hacer clic en un resultado de carpeta se abre esa carpeta, y el botón **x** limpia la búsqueda y te devuelve a donde estabas explorando.",
-      manage:
-        "La lista se organiza en columnas. Haz clic en el título de una columna para ordenar por ella, y haz clic otra vez para invertir el orden; los archivos y las carpetas se ordenan juntos, y las filas sin nada que mostrar en esa columna quedan al final. El botón de **tres puntos** al final de una fila abre un menú con **Renombrar**, **Editar**, **Duplicar**, **Descargar** y **Eliminar**, y eliminar te pide confirmación antes.",
+        "El **buscador** revisa la carpeta **CommandPad** entera, no solo la que tengas abierta, y muestra la ruta de cada resultado.",
+      actions:
+        "El menú de **tres puntos** de una fila tiene **Renombrar**, **Editar**, **Duplicar**, **Descargar** y **Eliminar**.",
       editFile:
-        "**Editar** abre el propio archivo de la nube en un editor de código, así que un arreglo rápido ya no implica importar el libro, cambiarlo y volver a exportarlo. Para poder guardar, el contenido tiene que ser JSON válido, y si cierras el editor con cambios sin guardar se te pide confirmación antes.",
+        "**Editar** abre el JSON del archivo en el sitio, así que un arreglo rápido ya no implica importar, cambiar y volver a exportar. Tiene que seguir siendo JSON válido para guardarse.",
       recycleBin:
-        "Si borras por accidente un archivo o una carpeta desde el explorador en la nube, no se pierde para siempre: los proveedores de nube mueven los elementos eliminados a una Papelera de reciclaje en lugar de borrarlos de inmediato, así que puedes restaurarlo desde ahí.",
+        "Un archivo o carpeta eliminado no se pierde para siempre: los proveedores de nube lo mueven primero a una _Papelera de reciclaje_.",
       storage:
         "Los libros en la nube se guardan en una carpeta dedicada llamada **CommandPad** en tu propia cuenta, nunca en ningún otro lugar.",
     },

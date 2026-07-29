@@ -346,7 +346,7 @@ export const en: Messages = {
   },
   privacy: {
     title: "Privacy Policy",
-    updated: "Last updated: July 23, 2026",
+    updated: "Last updated: July 29, 2026",
     intro:
       "CommandPad is a client-side application that runs entirely in your web browser. This policy explains what data the app handles and, more importantly, what it does not.",
     sections: [
@@ -418,7 +418,7 @@ export const en: Messages = {
   },
   terms: {
     title: "Terms of Service",
-    updated: "Last updated: July 23, 2026",
+    updated: "Last updated: July 29, 2026",
     intro:
       "These terms govern your use of CommandPad. By using the app you agree to them. Please read them, as they are short and written to be understandable.",
     sections: [
@@ -510,7 +510,9 @@ export const en: Messages = {
       [DocsSectionId.MULTI_SELECT]: "Multi-select",
       [DocsSectionId.READ_MODE]: "Read mode",
       [DocsSectionId.EXPORT]: "Export",
-      [DocsSectionId.CLOUD_SYNC]: "Cloud sync",
+      [DocsSectionId.CLOUD_EXPORT]: "Cloud export & import",
+      [DocsSectionId.CLOUD_LINKED_SYNC]: "Keeping a runbook in sync",
+      [DocsSectionId.CLOUD_FILE_MANAGEMENT]: "Managing cloud files",
       [DocsSectionId.LANGUAGE]: "Language",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Keyboard shortcuts",
       [DocsSectionId.QA]: "Q&A",
@@ -743,31 +745,33 @@ export const en: Messages = {
       copyMarkdown:
         "To skip files entirely, right-click anywhere inside the runbook and choose **Copy runbook as Markdown**. It puts the same Markdown content on your clipboard, ready to paste into a chat, a ticket, or a document.",
     },
-    cloudSync: {
+    cloudExport: {
       intro:
-        "**Export** and **Import** can go straight to SharePoint or Google Drive, not just this device.",
-      howItWorks:
-        "Click **Export** to open one dialog where you choose a destination (this device, SharePoint, or Google Drive), a format (JSON, Markdown, or plain text), and a filename, then export. It reopens with the destination and format you used last time already selected, and a cloud export shows its progress and confirms once the runbook is saved.",
+        "**Export** and **Import** can go straight to SharePoint or Google Drive, not just this device. The dialog reopens with the destination and format you used last time already selected.",
       switchProvider:
-        "While you are browsing the cloud, the provider name in the dialog title is a **picker**: click it to switch between providers without going back a step.",
+        "While you are browsing the cloud, the provider name in the dialog title is a **picker**: click it to switch providers without going back a step.",
       overwrite:
-        "If the folder you export to already holds a file with the same name, the export stops and asks you to confirm before replacing it, so a reused filename never quietly overwrites a cloud runbook.",
-      keptInSync:
-        "A runbook you import from the cloud stays **in sync** with the file it came from: every edit is written back to that file a moment later, so you never have to export it again to save it. Exporting a runbook to the cloud as **JSON** links it the same way.",
+        "If the destination folder already holds a file with the same name, the export stops and asks you to confirm before replacing it.",
+    },
+    cloudLinkedSync: {
+      intro:
+        "A runbook you import from the cloud stays **in sync** with the file it came from: every edit is written back to that file, so you never have to export it again to save it. Exporting a runbook as **JSON** links it the same way.",
       syncBadge:
-        "A synced runbook shows a **sync icon** next to its name in the RUNBOOKS list. The icon spins while an edit is on its way up, and turns into a crossed out cloud if your session expired or the save failed; click it to sign in again or retry. Because the cloud always holds a current copy, removing a synced runbook from the library never asks you to confirm.",
+        "A synced runbook shows a **sync icon** next to its name in the RUNBOOKS list: a spinner while an edit is on its way up, a crossed out cloud if the save failed. Click it to sign in again or retry.",
       stopSyncing:
-        "To break the link, open the runbook's **three dots** menu and choose **Stop syncing**. Both the runbook and the cloud file stay exactly where they are, they just stop tracking each other. Syncing only pushes your local edits up, so changing the file somewhere else does not pull those changes back down.",
+        "**Stop syncing** (in the runbook's three dots menu) breaks the link without touching either copy. Sync only pushes local edits up, it never pulls remote changes back down.",
+    },
+    cloudFileManagement: {
       folders:
-        "Cloud runbooks can live in folders: click a folder to open it, click a file to import it. The **arrow** buttons move back and forward through the folders you visited, and the path above the list lets you jump straight back to any folder in it. When you export to the cloud, the **Folder** field picks where the runbook lands, and the **new folder** button creates a folder on the spot.",
+        "Cloud runbooks can live in folders: click one to open it, click a file to import it. The **arrow** buttons and the path above the list move between folders you've visited. Exporting picks a destination the same way, with a **new folder** button.",
       search:
-        "The **search box** above the list looks through the entire **CommandPad** folder, not just the folder you have open, so a runbook buried a few folders deep is one search away. Every result shows the folder path it lives in; clicking a folder result opens that folder, and the **x** button clears the search and puts you back where you were browsing.",
-      manage:
-        "The list is laid out in columns. Click a column heading to sort by it, and click it again to reverse the order; files and folders sort together, and rows with nothing to show in that column sink to the bottom. The **three dots** button at the end of a row opens a menu with **Rename**, **Edit**, **Duplicate**, **Download** and **Delete**, and deleting asks you to confirm first.",
+        "The **search box** looks through the entire **CommandPad** folder, not just the one you have open, and shows each result's folder path.",
+      actions:
+        "A row's **three dots** menu holds **Rename**, **Edit**, **Duplicate**, **Download**, and **Delete**.",
       editFile:
-        "**Edit** opens the cloud file itself in a code editor, so a quick fix no longer means importing the runbook, changing it, and exporting it back. The file has to be valid JSON to save, and closing the editor with unsaved changes asks you to confirm first.",
+        "**Edit** opens the file's raw JSON in place, so a quick fix doesn't require importing, changing, and re-exporting it. It has to stay valid JSON to save.",
       recycleBin:
-        "If you accidentally delete a runbook file or folder from the cloud browser, it isn't gone for good: cloud providers move deleted items to a Recycle Bin instead of erasing them right away, so you can restore it from there.",
+        "A deleted file or folder isn't gone for good: cloud providers move it to a _Recycle Bin_ first.",
       storage:
         "Cloud runbooks live in a dedicated **CommandPad** folder in your own account, never anywhere else.",
     },

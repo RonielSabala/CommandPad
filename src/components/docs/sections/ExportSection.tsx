@@ -14,24 +14,41 @@ export function ExportDocs() {
   );
 }
 
-export function CloudSyncDocs() {
+export function CloudExportDocs() {
   const t = useTranslation();
 
   return (
     <>
-      <Prose text={t.docs.cloudSync.intro} />
-      <Prose text={t.docs.cloudSync.howItWorks} />
-      <Prose text={t.docs.cloudSync.switchProvider} />
-      <Prose text={t.docs.cloudSync.overwrite} />
-      <Prose text={t.docs.cloudSync.keptInSync} />
-      <Prose text={t.docs.cloudSync.syncBadge} />
-      <Prose text={t.docs.cloudSync.stopSyncing} />
-      <Prose text={t.docs.cloudSync.folders} />
-      <Prose text={t.docs.cloudSync.search} />
-      <Prose text={t.docs.cloudSync.manage} />
-      <Prose text={t.docs.cloudSync.editFile} />
-      <Prose text={t.docs.cloudSync.recycleBin} />
-      <Prose text={t.docs.cloudSync.storage} />
+      <Prose text={t.docs.cloudExport.intro} />
+      <Prose text={t.docs.cloudExport.switchProvider} />
+      <Prose text={t.docs.cloudExport.overwrite} />
+    </>
+  );
+}
+
+export function CloudLinkedSyncDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.cloudLinkedSync.intro} />
+      <Prose text={t.docs.cloudLinkedSync.syncBadge} />
+      <Prose text={t.docs.cloudLinkedSync.stopSyncing} />
+    </>
+  );
+}
+
+export function CloudFileManagementDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.cloudFileManagement.folders} />
+      <Prose text={t.docs.cloudFileManagement.search} />
+      <Prose text={t.docs.cloudFileManagement.actions} />
+      <Prose text={t.docs.cloudFileManagement.editFile} />
+      <Prose text={t.docs.cloudFileManagement.recycleBin} />
+      <Prose text={t.docs.cloudFileManagement.storage} />
     </>
   );
 }

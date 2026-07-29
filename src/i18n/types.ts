@@ -421,17 +421,20 @@ export interface Messages {
       saveDialog: string;
       copyMarkdown: string;
     };
-    cloudSync: {
+    cloudExport: {
       intro: string;
-      howItWorks: string;
       switchProvider: string;
       overwrite: string;
-      keptInSync: string;
+    };
+    cloudLinkedSync: {
+      intro: string;
       syncBadge: string;
       stopSyncing: string;
+    };
+    cloudFileManagement: {
       folders: string;
       search: string;
-      manage: string;
+      actions: string;
       editFile: string;
       recycleBin: string;
       storage: string;
