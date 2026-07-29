@@ -14,13 +14,13 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { hasVisitedHome, markHomeVisited } from "@/utils/session";
 import {
-  ArrowLeftRight,
+  Book,
   BoxArrowInRight,
-  ClipboardCheck,
+  Braces,
+  Clipboard,
+  Download,
   Lightning,
   Lock,
-  Rocket,
-  Stack,
   type Icon,
 } from "react-bootstrap-icons";
 import { Link, Navigate } from "react-router-dom";
@@ -28,12 +28,12 @@ import "./HomePage.css";
 import { SymbolField } from "./SymbolField";
 
 const FEATURE_ICONS: Icon[] = [
-  Lightning,
-  ClipboardCheck,
-  Stack,
+  Braces,
+  Clipboard,
+  Book,
   Lock,
-  Rocket,
-  ArrowLeftRight,
+  Lightning,
+  Download,
 ];
 
 export function HomePage() {
@@ -89,11 +89,11 @@ export function HomePage() {
                 tabs={[
                   {
                     variables: [
-                      demoVariable("USER", "admin"),
+                      demoVariable("user", "admin"),
                       demoVariable("HOST", "192.168.1.50"),
                     ],
                     blocks: [
-                      demoCommand("ssh {USER}@{HOST}"),
+                      demoCommand("ssh {user}@{HOST}"),
                       demoCommand("ping {HOST}"),
                     ],
                   },

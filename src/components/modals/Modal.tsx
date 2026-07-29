@@ -1,19 +1,35 @@
+import { CloseIcon } from "@/components/icons";
 import { useModalDismiss } from "@/hooks/useModalDismiss";
+import { useTranslation } from "@/i18n";
+import { classNames } from "@/utils/string";
 import type { ReactNode } from "react";
 import "./Modal.css";
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  className?: string;
   children: ReactNode;
+  animated?: boolean;
 }
 
-export function Modal({ open, onClose, children }: Props) {
+export function Modal({
+  open,
+  onClose,
+  className,
+  children,
+  animated = true,
+}: Props) {
+  const t = useTranslation();
   useModalDismiss(open, onClose);
 
   return (
     <div
-      className={`modal-backdrop${open ? " modal-visible" : ""}`}
+      className={classNames(
+        "modal-backdrop",
+        open && "modal-visible",
+        !animated && "modal-no-animation",
+      )}
       role="dialog"
       aria-modal="true"
       aria-hidden={!open}
@@ -24,7 +40,17 @@ export function Modal({ open, onClose, children }: Props) {
         }
       }}
     >
-      <div className="modal">{children}</div>
+      <div className={classNames("modal", className)}>
+        <button
+          className="modal-close btn btn-flat-icon"
+          onClick={onClose}
+          title={t.common.close}
+          aria-label={t.common.close}
+        >
+          <CloseIcon className="icon-semibold" />
+        </button>
+        {children}
+      </div>
     </div>
   );
 }

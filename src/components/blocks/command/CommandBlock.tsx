@@ -1,16 +1,17 @@
-import { COPY_FEEDBACK_TIMEOUT_MS } from "@/common/config";
+import {
+  COMMAND_PROMPT_PREFIX,
+  COPY_FEEDBACK_TIMEOUT_MS,
+} from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { Key } from "@/common/constants/events";
 import { CommandSegmentType } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
+import { CodeEditor } from "@/components/common/CodeEditor";
+import { StickyScrollbar } from "@/components/common/StickyScrollbar";
 import {
   CheckIcon,
   CopyIcon,
   EditorToggleChevronIcon,
 } from "@/components/icons";
-import { useAutoResize } from "@/hooks/useAutoResize";
-import { usePairWrapping } from "@/hooks/usePairWrapping";
-import { useTabInsertion } from "@/hooks/useTabInsertion";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import {
@@ -19,9 +20,9 @@ import {
   resolveCommandToString,
   type VariableMap,
 } from "@/utils/resolution";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { classNames } from "@/utils/string";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./CommandBlock.css";
-import { StickyScrollbar } from "./StickyScrollbar";
 
 interface Props {
   block: CommandBlockData;
@@ -48,7 +49,6 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const previewRef = useRef<HTMLSpanElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const lineCount = useMemo(() => blockText.split("\n").length, [blockText]);
   const segments = useMemo(
     () => resolveCommandText(blockText, variableMap),
     [blockText, variableMap],
@@ -58,17 +58,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     [blockText, variableMap],
   );
 
-  useAutoResize(textareaRef, [
-    blockText,
-    isEditorCollapsed,
-    mode,
-    isSidebarCollapsed,
-  ]);
-  const handleTabKey = useTabInsertion((value) =>
-    updateBlockText(blockId, value),
-  );
-  const handlePairWrap = usePairWrapping((value) =>
-    updateBlockText(blockId, value),
+  const handleChange = useCallback(
+    (value: string) => updateBlockText(blockId, value),
+    [updateBlockText, blockId],
   );
 
   useEffect(() => {
@@ -143,40 +135,18 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         </div>
       </div>
 
-      <div
-        className={`command-block-editor${isEditorCollapsed ? ` ${CssClass.COLLAPSED}` : ""}`}
-      >
-        <div className="command-gutter">
-          <span className="command-gutter-prefix">$</span>
-          {Array.from({ length: lineCount - 1 }, (_, i) => (
-            <span key={i} className="command-gutter-line">
-              {i + 2}
-            </span>
-          ))}
-        </div>
-        <div className="command-editor-scroll">
-          <textarea
-            ref={textareaRef}
-            className="command-textarea"
-            placeholder={t.command.placeholder}
-            spellCheck={false}
-            autoComplete="off"
-            rows={1}
-            value={blockText}
-            onChange={(event) => updateBlockText(blockId, event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === Key.ESCAPE) {
-                event.currentTarget.blur();
-                return;
-              }
-
-              handlePairWrap(event);
-              handleTabKey(event);
-            }}
-          />
-          <StickyScrollbar targetRef={textareaRef} deps={[blockText]} />
-        </div>
-      </div>
+      <CodeEditor
+        ref={textareaRef}
+        className={classNames(
+          "command-block-editor",
+          isEditorCollapsed && CssClass.COLLAPSED,
+        )}
+        value={blockText}
+        onChange={handleChange}
+        placeholder={t.command.placeholder}
+        promptPrefix={COMMAND_PROMPT_PREFIX}
+        resizeDeps={[isEditorCollapsed, mode, isSidebarCollapsed]}
+      />
     </div>
   );
 }

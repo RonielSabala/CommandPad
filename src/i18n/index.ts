@@ -1,4 +1,5 @@
 export { detectLanguage, getMessages, isLanguage, MESSAGES } from "./messages";
+export { MessageSlot, splitAtSlot } from "./slots";
 export {
   Language,
   LANGUAGE_LABELS,

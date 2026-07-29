@@ -1,5 +1,5 @@
 import type { DocsSectionId } from "@/common/constants/docs";
-import type { BlockType, NoteStyle } from "@/common/enums";
+import type { BlockType, NoteStyle, RunbookSyncStatus } from "@/common/enums";
 import type { KeyBinding } from "@/common/keybindings";
 
 // Supported UI languages
@@ -39,8 +39,10 @@ export interface Messages {
   common: {
     cancel: string;
     close: string;
+    back: string;
     ok: string;
     create: string;
+    save: string;
     dragToReorder: string;
     clearSearch: string;
     noMatches: string;
@@ -82,10 +84,14 @@ export interface Messages {
     importTitle: string;
     paste: string;
     pasteTitle: string;
+    actions: string;
+    duplicate: string;
     removeFromLibrary: string;
     dropToImport: string;
     clearLibrary: string;
     clearLibraryTitle: string;
+    stopSyncing: string;
+    syncStatus: Record<RunbookSyncStatus, (provider: string) => string>;
   };
   variables: {
     title: string;
@@ -97,6 +103,8 @@ export interface Messages {
     valuePlaceholder: string;
     reveal: string;
     mask: string;
+    actions: string;
+    duplicate: string;
     remove: string;
     dragResizeSplit: string;
     unusedTitle: (key: string) => string;
@@ -109,8 +117,9 @@ export interface Messages {
     newBlockLabel: string;
     typeLabel: Record<BlockType, string>;
     typeTitle: (label: string) => string;
-    duplicate: string;
-    delete: string;
+    actions: string;
+    duplicate: (count: number) => string;
+    delete: (count: number) => string;
     emptyTitle: string;
     emptyHint: string;
   };
@@ -128,15 +137,89 @@ export interface Messages {
   };
   exportModal: {
     title: string;
-    message: string;
+    cloudTitle: string;
+    destinationLabel: string;
+    formatLabel: string;
+    filenameLabel: string;
+    folderLabel: string;
+    changeFolder: string;
+    chooseFolder: string;
+    selectFolder: string;
+    confirm: string;
+    savingTo: (provider: string) => string;
+    savedTo: (provider: string) => string;
+    exportError: string;
+    tryAgain: string;
   };
   pasteModal: {
     title: string;
     message: string;
     error: string;
   };
+  destinationModal: {
+    title: string;
+    message: string;
+    local: string;
+  };
+  cloudModal: {
+    importTitle: string;
+    changeProvider: string;
+    signInPrompt: (provider: string) => string;
+    signInSharePoint: string;
+    signInGoogleDrive: string;
+    signOut: string;
+    signedInAs: (account: string) => string;
+    refresh: string;
+    loading: string;
+    emptyFiles: string;
+    emptyFolders: string;
+    columnName: string;
+    columnModified: string;
+    columnSize: string;
+    sortAscending: (column: string) => string;
+    sortDescending: (column: string) => string;
+    searchFilesPlaceholder: string;
+    searchFoldersPlaceholder: string;
+    noResultsFiles: string;
+    noResultsFolders: string;
+    navigateBack: string;
+    navigateForward: string;
+    openFolderAction: (name: string) => string;
+    newFolder: string;
+    folderNamePlaceholder: string;
+    createFolder: string;
+    cancelNewFolder: string;
+    importAction: (filename: string) => string;
+    entryActions: string;
+    rename: string;
+    edit: string;
+    duplicate: string;
+    download: string;
+    delete: string;
+    editTitle: (filename: string) => string;
+    editHint: string;
+    saveName: string;
+    cancelRename: string;
+    namePlaceholder: string;
+    signInError: string;
+    genericError: string;
+    invalidFileError: string;
+    invalidJsonError: string;
+    readError: string;
+    saveError: string;
+    renameError: string;
+    duplicateError: string;
+    downloadError: string;
+    deleteError: string;
+    renameFolderError: string;
+    duplicateFolderError: string;
+    downloadFolderError: string;
+    deleteFolderError: string;
+    createFolderError: string;
+    nameTakenError: (filename: string) => string;
+  };
   alert: {
-    invalidFormatTitle: string;
+    defaultTitle: string;
   };
   confirm: {
     defaultTitle: string;
@@ -145,6 +228,10 @@ export interface Messages {
     overwriteTitle: string;
     overwriteConfirm: string;
     overwriteMessage: (filename: string, existingName: string) => string;
+    overwriteCloudFileTitle: string;
+    overwriteCloudFileConfirm: string;
+    overwriteCloudFileMessage: (filename: string) => string;
+    importFailedTitle: string;
     importFailed: (count: number) => string;
     pastedRunbook: string;
     resetTitle: string;
@@ -153,6 +240,21 @@ export interface Messages {
     clearLibraryTitle: string;
     clearLibraryConfirm: string;
     clearLibraryMessage: string;
+    deleteRunbookTitle: string;
+    deleteRunbookConfirm: string;
+    deleteRunbookMessage: (label: string) => string;
+    deleteCloudFileTitle: string;
+    deleteCloudFileConfirm: string;
+    deleteCloudFileMessage: (filename: string) => string;
+    deleteCloudFolderTitle: string;
+    deleteCloudFolderConfirm: string;
+    deleteCloudFolderMessage: (name: string) => string;
+    signOutCloudTitle: string;
+    signOutCloudConfirm: string;
+    signOutCloudMessage: string;
+    discardCloudEditTitle: string;
+    discardCloudEditConfirm: string;
+    discardCloudEditMessage: (filename: string) => string;
   };
   keybindings: Record<KeyBinding, string>;
   footer: {
@@ -248,10 +350,11 @@ export interface Messages {
       intro: string;
       usage: string;
       unresolved: string;
-      duplicatesAndEmpty: string;
       tooltip: string;
       split: string;
       demoHint: string;
+      constants: string;
+      constantsDemoHint: string;
     };
     variableReferences: {
       intro: string;
@@ -317,6 +420,24 @@ export interface Messages {
       formats: string[];
       saveDialog: string;
       copyMarkdown: string;
+    };
+    cloudExport: {
+      intro: string;
+      switchProvider: string;
+      overwrite: string;
+    };
+    cloudLinkedSync: {
+      intro: string;
+      syncBadge: string;
+      stopSyncing: string;
+    };
+    cloudFileManagement: {
+      folders: string;
+      search: string;
+      actions: string;
+      editFile: string;
+      recycleBin: string;
+      storage: string;
     };
     language: {
       intro: string;

@@ -2,6 +2,14 @@
   grid-template-columns: auto 1fr auto auto;
 }
 
+.sidebar-right .variable-row .drag-handle {
+  order: 1;
+}
+
+.sidebar-right .variable-row .row-actions {
+  order: -1;
+}
+
 .variable-inputs {
   display: grid;
   grid-template-columns:
@@ -21,12 +29,14 @@
   content: "";
   position: absolute;
   top: 0;
-  bottom: calc(-1 * var(--space-2));
+  bottom: calc(-1 * var(--space-3));
   left: 50%;
   transform: translateX(-50%);
   width: var(--space-1);
   background: var(--color-border);
-  transition: background var(--transition-base);
+  transition:
+    width var(--transition-base),
+    background var(--transition-base);
 }
 
 .sidebar-section-list-row:last-child .variable-split-handle::before {
@@ -41,7 +51,7 @@ body.variable-split-resizing * {
 
 body.variable-split-resizing
   .variable-row
-  :is(.drag-handle, .btn-danger, .variable-secret-btn) {
+  :is(.drag-handle, .row-actions, .variable-secret-btn) {
   opacity: 0;
 }
 
@@ -51,6 +61,7 @@ body.variable-split-resizing
 body:not(.variable-split-resizing)
   :has(> .sidebar-section-list-row .variable-split-handle:hover)
   .variable-split-handle::before {
+  width: var(--space-2);
   background: var(--accent);
 }
 
@@ -59,6 +70,10 @@ body:not(.variable-split-resizing)
 .variable-key-input {
   font-weight: 500;
   color: var(--accent-text);
+}
+
+.variable-key-input.is-constant {
+  color: var(--constant-text);
 }
 
 .variable-value-input {
@@ -119,15 +134,36 @@ body.read-mode .variable-key-input {
   font-size: var(--text-sm);
   padding: var(--space-2) var(--space-4);
   white-space: pre;
-  z-index: 999;
+  z-index: var(--z-tooltip);
   pointer-events: none;
 }
 
-/* Secret btn */
+/* Secret value masking */
+
+.variable-value-wrap {
+  position: relative;
+  min-width: 0;
+}
 
 .variable-inputs.is-secret .variable-value-input {
-  -webkit-text-security: disc;
+  color: transparent;
+  caret-color: var(--color-text-primary);
 }
+
+.variable-value-mask {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  color: var(--color-text-primary);
+  overflow: hidden;
+}
+
+/* Secret btn */
 
 .variable-secret-btn.is-active {
   color: var(--accent);

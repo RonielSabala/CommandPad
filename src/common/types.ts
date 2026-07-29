@@ -1,5 +1,6 @@
 import type {
   BlockType,
+  CloudProvider,
   CommandSegmentType,
   NoteSegmentType,
   NoteStyle,
@@ -42,10 +43,17 @@ export interface Tab {
   scrollTop: number;
 }
 
+export interface RunbookSync {
+  provider: CloudProvider;
+  filename: string;
+  folderId: string | null;
+}
+
 export interface RunbookEntry {
   id: string;
   label: string;
   filename: string;
+  sync?: RunbookSync;
 }
 
 export interface RunbookContent {

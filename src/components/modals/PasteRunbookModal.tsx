@@ -1,3 +1,6 @@
+import { RUNBOOK_JSON_PLACEHOLDER } from "@/common/config";
+import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
+import { CodeEditor } from "@/components/common/CodeEditor";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { useEffect, useRef, useState } from "react";
@@ -43,18 +46,30 @@ export function PasteRunbookModal() {
     <Modal open={isOpen} onClose={onClose}>
       <p className="modal-title">{t.pasteModal.title}</p>
       <p className="modal-message">{t.pasteModal.message}</p>
-      <textarea
+
+      <CodeEditor
         ref={textareaRef}
-        className={`paste-runbook-input${hasError ? " has-error" : ""}`}
+        className="paste-runbook-editor"
         value={text}
-        spellCheck={false}
-        placeholder={'{\n  "variables": [],\n  "blocks": []\n}'}
-        onChange={(event) => {
-          setText(event.target.value);
+        placeholder={RUNBOOK_JSON_PLACEHOLDER}
+        bounded
+        hasError={hasError}
+        onChange={(value) => {
+          setText(value);
           setHasError(false);
         }}
+        onKeyDown={(event) => {
+          if (!matchesKeybinding(event.nativeEvent, KeyBinding.SUBMIT_EDITOR)) {
+            return;
+          }
+
+          event.preventDefault();
+          void handleCreate();
+        }}
       />
+
       {hasError && <p className="paste-runbook-error">{t.pasteModal.error}</p>}
+
       <div className="modal-actions">
         <button className="btn btn-lg" onClick={onClose}>
           {t.common.cancel}

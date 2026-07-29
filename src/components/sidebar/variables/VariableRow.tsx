@@ -1,14 +1,31 @@
+import { SecretMaskConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
-import { AppMode, DragGroup, VariableField } from "@/common/enums";
+import {
+  AppMode,
+  DragGroup,
+  SidebarPosition,
+  VariableField,
+} from "@/common/enums";
 import type { Variable } from "@/common/types";
-import { DragIcon, EyeIcon, XIcon } from "@/components/icons";
+import { ActionsMenu } from "@/components/common/ActionsMenu";
+import {
+  ContextMenuAlign,
+  ContextMenuItem,
+} from "@/components/common/ContextMenu";
+import {
+  DragIcon,
+  DuplicateIcon,
+  EyeIcon,
+  TrashIcon,
+} from "@/components/icons";
 import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useVariableSplitResize } from "@/hooks/useVariableSplitResize";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { isConstantVariableKey } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { memo, useEffect, useRef, type CSSProperties } from "react";
 import "./VariableRow.css";
@@ -29,8 +46,12 @@ export const VariableRow = memo(function VariableRow({
   const isSecret = !!variable.secret;
 
   const readMode = useStore((state) => state.mode === AppMode.READ);
+  const sidebarOnRight = useStore(
+    (state) => state.sidebarPosition === SidebarPosition.RIGHT,
+  );
   const updateVariable = useStore((state) => state.updateVariable);
   const removeVariable = useStore((state) => state.removeVariable);
+  const duplicateVariable = useStore((state) => state.duplicateVariable);
   const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
   const reorderVariables = useStore((state) => state.reorderVariables);
   const pendingFocus = useStore(
@@ -70,10 +91,19 @@ export const VariableRow = memo(function VariableRow({
     isDragging && CssClass.DRAGGING,
   );
 
+  const keyInputClass = classNames(
+    "variable-key-input",
+    isConstantVariableKey(variableKey) && "is-constant",
+  );
+
   const variableInputsClass = classNames(
     "variable-inputs",
     isSecret && "is-secret",
     isDragOver && CssClass.DRAG_OVER,
+  );
+
+  const secretMask = SecretMaskConfig.MASK_CHAR.repeat(
+    SecretMaskConfig.MASK_LENGTH,
   );
 
   const splitStyle = {
@@ -97,7 +127,7 @@ export const VariableRow = memo(function VariableRow({
       <div className={variableInputsClass} style={splitStyle}>
         <input
           ref={keyRef}
-          className="variable-key-input"
+          className={keyInputClass}
           type="text"
           placeholder={t.variables.keyPlaceholder}
           value={variableKey}
@@ -121,26 +151,38 @@ export const VariableRow = memo(function VariableRow({
           title={t.variables.dragResizeSplit}
           {...splitResize}
         />
-        <input
-          className="variable-value-input"
-          type="text"
-          placeholder={t.variables.valuePlaceholder}
-          value={variableValue}
-          spellCheck={false}
-          autoComplete="off"
-          onChange={(event) =>
-            updateVariable(variableId, VariableField.VALUE, event.target.value)
-          }
-          onKeyDown={(event) => {
-            if (event.key === Key.ENTER || event.key === Key.ESCAPE) {
-              event.currentTarget.blur();
-              return;
+        <div className="variable-value-wrap">
+          <input
+            className="variable-value-input"
+            type="text"
+            placeholder={t.variables.valuePlaceholder}
+            value={variableValue}
+            spellCheck={false}
+            autoComplete="off"
+            onChange={(event) =>
+              updateVariable(
+                variableId,
+                VariableField.VALUE,
+                event.target.value,
+              )
             }
+            onKeyDown={(event) => {
+              if (event.key === Key.ENTER || event.key === Key.ESCAPE) {
+                event.currentTarget.blur();
+                return;
+              }
 
-            handleValuePairWrap(event);
-          }}
-          title={isSecret ? "" : variableValue}
-        />
+              handleValuePairWrap(event);
+            }}
+            title={isSecret ? "" : variableValue}
+          />
+
+          {isSecret && variableValue && (
+            <div className="variable-value-mask" aria-hidden="true">
+              {secretMask}
+            </div>
+          )}
+        </div>
       </div>
       <button
         className={`btn btn-icon variable-secret-btn${isSecret ? " is-active" : ""}`}
@@ -149,13 +191,26 @@ export const VariableRow = memo(function VariableRow({
       >
         <EyeIcon slashed={isSecret} className="icon-md icon-bold" />
       </button>
-      <button
-        className="btn btn-icon btn-danger"
-        onClick={() => removeVariable(variableId)}
-        title={t.variables.remove}
+      <ActionsMenu
+        className={CssClass.ROW_ACTIONS}
+        title={t.variables.actions}
+        align={sidebarOnRight ? ContextMenuAlign.END : ContextMenuAlign.START}
       >
-        <XIcon className="icon-md icon-bold" />
-      </button>
+        <ContextMenuItem
+          icon={<DuplicateIcon className="icon-md icon-bold" />}
+          onSelect={() => duplicateVariable(variableId)}
+        >
+          {t.variables.duplicate}
+        </ContextMenuItem>
+
+        <ContextMenuItem
+          icon={<TrashIcon className="icon-md icon-bold" />}
+          onSelect={() => removeVariable(variableId)}
+          danger
+        >
+          {t.variables.remove}
+        </ContextMenuItem>
+      </ActionsMenu>
     </div>
   );
 });

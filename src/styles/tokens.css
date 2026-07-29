@@ -8,9 +8,12 @@
   --accent: #3b82f6;
   --accent-dim: rgba(77, 139, 245, 0.12);
   --accent-text: #a6c8ff;
+  --constant-text: #ae81ff;
   --success: #15dd9e;
   --danger: #f87171;
   --danger-dim: rgba(248, 113, 113, 0.14);
+  --warning: #fbbf24;
+  --warning-dim: rgba(251, 191, 36, 0.14);
 
   /* Surfaces */
   --color-bg: #0b0d12;
@@ -81,6 +84,13 @@
   --variable-split-width: 0.5rem;
   --modal-min-width: 15rem;
   --modal-max-width: 30rem;
+  --modal-cloud-width: 50vw;
+  --modal-cloud-height: 75vh;
+  --modal-cloud-padding-x: var(--space-12);
+  --modal-cloud-padding-y: var(--space-10);
+  --cloud-col-date: 7.5rem;
+  --cloud-col-size: 3.5rem;
+  --cloud-col-actions: 1.5rem;
   --minimap-width: 7rem;
   --context-menu-min-width: 10rem;
   --context-menu-min-height: 3rem;
@@ -88,10 +98,21 @@
   --docs-max-width: 52rem;
   --docs-heading-lg: 1.75rem;
 
+  /* Elevation scale */
+  --z-behind: -1;
+  --z-base: 0;
+  --z-raised: 1;
+  --z-sticky: 2;
+  --z-docked: 3;
+  --z-dropdown: 4;
+  --z-tooltip: 5;
+  --z-modal: 6;
+  --z-popover: 7;
+
   /* --- MISC & UTILITIES --- */
   --white-a10: rgba(255, 255, 255, 0.1);
   --black-a40: rgba(0, 0, 0, 0.4);
-  --black-a50: rgba(0, 0, 0, 0.5);
+  --shadow-color-float: var(--black-a40);
 
   /* --- COMPOUND TOKENS --- */
   --border-standard: 1px solid var(--color-border);
@@ -105,9 +126,12 @@
   --accent: #2f5de0;
   --accent-dim: rgba(47, 93, 224, 0.09);
   --accent-text: #1e46c7;
+  --constant-text: #6d28d9;
   --success: #0f8a5f;
   --danger: #dc2626;
   --danger-dim: rgba(220, 38, 38, 0.09);
+  --warning: #b06200;
+  --warning-dim: rgba(176, 98, 0, 0.12);
 
   /* Surfaces */
   --color-bg: #eef0f4;
@@ -130,4 +154,7 @@
   /* Note text styles */
   --code-color: #b4490a;
   --code-bg: rgba(180, 73, 10, 0.08);
+
+  /* Shadows */
+  --shadow-color-float: rgba(22, 26, 34, 0.12);
 }

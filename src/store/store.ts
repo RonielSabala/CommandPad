@@ -6,19 +6,31 @@ import {
 } from "zustand";
 
 import {
+  DEBOUNCE_CLOUD_SYNC_MS,
   DEBOUNCE_SAVE_MS,
   DEFAULT_TAB_LABEL,
+  FilePickerConfig,
+  MimeType,
   RunbookConfig,
   SidebarWidth,
   VariableSplit,
+  ZIP_EXTENSION,
 } from "@/common/config";
 import {
   AppMode,
   BlockType,
+  CloudExportStatus,
+  CloudProvider,
+  CloudSortColumn,
+  DialogTone,
   ExportFormat,
+  HistoryDirection,
   MoveDirection,
   NoteStyle,
+  RunbookSyncStatus,
   SidebarPosition,
+  SortDirection,
+  SyncDestination,
   Theme,
   VariableField,
 } from "@/common/enums";
@@ -26,22 +38,49 @@ import type {
   Block,
   RunbookContent,
   RunbookEntry,
+  RunbookSync,
   Tab,
   Variable,
 } from "@/common/types";
 import { detectLanguage, getMessages } from "@/i18n/messages";
 import { Language } from "@/i18n/types";
+import {
+  buildCloudFolderZip,
+  buildDuplicateName,
+  clearCachedCloudEntries,
+  copyCloudEntry,
+  DEFAULT_CLOUD_SORT,
+  getCachedCloudEntries,
+  getCloudClient,
+  setCachedCloudEntries,
+  walkCloudTree,
+  type CloudEntry,
+  type CloudFolderRef,
+  type CloudSearchEntry,
+  type CloudSort,
+} from "@/services/cloud";
 import { debounce } from "@/utils/debounce";
-import { buildMarkdownExport, runExport } from "@/utils/export";
+import { downloadBlob } from "@/utils/download";
+import {
+  buildMarkdownExport,
+  buildRunbookExportContent,
+  getExportBasename,
+  runExport,
+  stripJsonExtension,
+  withJsonExtension,
+} from "@/utils/export";
 import { generateId } from "@/utils/id";
+import { openImportDialog } from "@/utils/importTrigger";
 import { clamp } from "@/utils/number";
 import {
   carryVariables,
   getVariableKey,
   renameAllVariableTokens,
   renameVariableTokens,
+  uniqueCopyKey,
 } from "@/utils/resolution";
-import { getRunbookLabel } from "@/utils/runbook";
+import { displayLabel, getRunbookLabel } from "@/utils/runbook";
+import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
 
 import * as persistence from "./persistence";
 import {
@@ -56,16 +95,34 @@ interface Dialog<T> {
   resolve: (value: T) => void;
 }
 
+interface AlertDialog extends Dialog<void> {
+  title: string;
+  tone: DialogTone;
+}
+
+interface AlertOptions {
+  title?: string;
+  tone?: DialogTone;
+}
+
 interface ConfirmDialog extends Dialog<boolean> {
   title: string;
   confirmLabel: string;
-  danger: boolean;
+  tone: DialogTone;
 }
 
-interface ConfirmOptions {
-  title?: string;
+interface ConfirmOptions extends AlertOptions {
   confirmLabel?: string;
-  danger?: boolean;
+}
+
+export interface CloudFileEditor {
+  file: CloudEntry;
+  folderId: string | null;
+  original: string;
+  text: string;
+  loading: boolean;
+  saving: boolean;
+  error: string | null;
 }
 
 export interface StoreState {
@@ -74,6 +131,7 @@ export interface StoreState {
   activeTabId: string | null;
   runbookLibrary: RunbookEntry[];
   activeRunbookId: string | null;
+  runbookSyncStatus: Record<string, RunbookSyncStatus>;
 
   // UI
   mode: AppMode;
@@ -103,9 +161,43 @@ export interface StoreState {
 
   // Modals / dialogs
   exportModalOpen: boolean;
+  cloudExportStatus: CloudExportStatus;
+  cloudExportProvider: CloudProvider | null;
   pasteRunbookModalOpen: boolean;
   confirmDialog: ConfirmDialog | null;
-  alertDialog: Dialog<void> | null;
+  alertDialog: AlertDialog | null;
+
+  // Cloud sync
+  destinationModalOpen: boolean;
+  cloudImportModalOpen: boolean;
+  cloudProvider: CloudProvider;
+  cloudSignedIn: boolean;
+  cloudAccountLabel: string | null;
+  cloudEntries: CloudEntry[];
+  cloudLoading: boolean;
+  cloudError: string | null;
+  cloudFileEditor: CloudFileEditor | null;
+
+  // Cloud folder navigation
+  cloudPath: CloudFolderRef[];
+  cloudHistory: CloudFolderRef[][];
+  cloudHistoryIndex: number;
+
+  // Cloud search
+  cloudSearchQuery: string;
+  cloudSearchEntries: CloudSearchEntry[];
+  cloudSearchLoading: boolean;
+
+  // Cloud list sorting
+  cloudSort: CloudSort;
+
+  // Remembered cloud-sync choices
+  lastExportDestination: SyncDestination;
+  lastExportFormat: ExportFormat;
+  lastExportFilename: string;
+  lastExportFilenameTabId: string | null;
+  lastExportFolderPath: CloudFolderRef[];
+  lastImportSource: SyncDestination;
 
   // Bootstrap
   initialized: boolean;
@@ -128,11 +220,15 @@ export interface StoreState {
 
   loadRunbookFromLibrary: (runbookId: string) => Promise<void>;
   removeRunbookFromLibrary: (id: string) => Promise<void>;
+  duplicateRunbook: (id: string) => Promise<void>;
   addRunbookToLibrary: (
     content: RunbookContent,
     filename: string,
     rawFilename: string,
+    sync?: RunbookSync,
   ) => Promise<void>;
+  syncRunbookNow: (id: string) => Promise<void>;
+  unlinkRunbookSync: (id: string) => void;
   importRunbooks: (files: File[]) => Promise<void>;
   importRunbookFromText: (text: string) => Promise<boolean>;
   reorderRunbooks: (sourceId: string, targetId: string) => void;
@@ -141,6 +237,7 @@ export interface StoreState {
 
   addVariable: () => Promise<void>;
   removeVariable: (variableId: string) => void;
+  duplicateVariable: (variableId: string) => void;
   updateVariable: (
     variableId: string,
     field: VariableField,
@@ -196,17 +293,95 @@ export interface StoreState {
 
   openExportModal: () => void;
   closeExportModal: () => void;
+  resetCloudExportStatus: () => void;
+  setExportDestination: (destination: SyncDestination) => void;
+  setExportFormat: (format: ExportFormat) => void;
+  setExportFilename: (filename: string) => void;
+  setExportFolderPath: (path: CloudFolderRef[]) => void;
   openPasteRunbookModal: () => void;
   closePasteRunbookModal: () => void;
-  exportRunbook: (format: ExportFormat) => Promise<void>;
+  exportRunbook: (
+    destination: SyncDestination,
+    format: ExportFormat,
+    filename: string,
+    folderId: string | null,
+  ) => Promise<void>;
   copyRunbookMarkdown: () => Promise<void>;
+
+  beginImport: () => void;
+  openDestinationModal: () => void;
+  closeDestinationModal: () => void;
+  chooseDestination: (destination: SyncDestination) => void;
+  startCloudBrowse: (
+    provider: CloudProvider,
+    path?: CloudFolderRef[],
+  ) => Promise<void>;
+  startCloudImportBrowse: (provider: CloudProvider) => Promise<void>;
+  returnToDestinationModal: () => void;
+  closeCloudImportModal: () => void;
+  signInToCloud: () => Promise<void>;
+  signOutOfCloud: () => Promise<void>;
+  refreshCloudEntries: () => Promise<void>;
+  openCloudFolder: (folder: CloudEntry) => void;
+  navigateCloudHistory: (direction: HistoryDirection) => void;
+  navigateCloudToDepth: (depth: number) => void;
+  navigateCloudToPath: (path: CloudFolderRef[]) => void;
+  setCloudSearchQuery: (query: string) => void;
+  toggleCloudSort: (column: CloudSortColumn) => void;
+  refreshCloudSearchEntries: () => Promise<void>;
+  createCloudFolder: (name: string) => Promise<void>;
+  importRunbookFromCloud: (file: CloudEntry) => Promise<void>;
+  renameCloudEntry: (entry: CloudEntry, basename: string) => Promise<void>;
+  openCloudFileEditor: (file: CloudEntry) => Promise<void>;
+  setCloudFileEditorText: (text: string) => void;
+  saveCloudFileEditor: () => Promise<void>;
+  closeCloudFileEditor: () => Promise<void>;
+  duplicateCloudEntry: (entry: CloudEntry) => Promise<void>;
+  downloadCloudEntry: (entry: CloudEntry) => Promise<void>;
+  deleteCloudEntry: (entry: CloudEntry) => Promise<void>;
 
   confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
   resolveConfirm: (result: boolean) => void;
-  alert: (message: string) => Promise<void>;
+  alert: (message: string, options?: AlertOptions) => Promise<void>;
   resolveAlert: () => void;
   clearRunbookLibrary: () => Promise<void>;
   clearAllData: () => Promise<void>;
+}
+
+const ROOT_CLOUD_PATH: CloudFolderRef[] = [];
+
+function currentFolderId(path: CloudFolderRef[]): string | null {
+  return path.at(-1)?.id ?? null;
+}
+
+/** The search result an entry came from, or null when browsing a folder. */
+function cloudSearchMatch(
+  state: StoreState,
+  entry: CloudEntry,
+): CloudSearchEntry | null {
+  return (
+    state.cloudSearchEntries.find((result) => result.entry.id === entry.id) ??
+    null
+  );
+}
+
+/** The folder holding `entry`, whether it was listed or found by search. */
+function parentFolderId(state: StoreState, entry: CloudEntry): string | null {
+  return currentFolderId(
+    cloudSearchMatch(state, entry)?.path ?? state.cloudPath,
+  );
+}
+
+function siblingEntries(state: StoreState, entry: CloudEntry): CloudEntry[] {
+  const match = cloudSearchMatch(state, entry);
+  if (!match) {
+    return state.cloudEntries;
+  }
+
+  const folderId = currentFolderId(match.path);
+  return state.cloudSearchEntries
+    .filter((result) => currentFolderId(result.path) === folderId)
+    .map((result) => result.entry);
 }
 
 /** Resolve the active tab, mirroring the original `activeTab()` fallback. */
@@ -214,6 +389,26 @@ export function getActiveTab(state: StoreState): Tab | null {
   return (
     state.tabs.find((t) => t.id === state.activeTabId) ?? state.tabs[0] ?? null
   );
+}
+
+function uiStateSnapshot(state: StoreState) {
+  return {
+    mode: state.mode,
+    theme: state.theme,
+    language: state.language,
+    sidebarCollapsed: state.sidebarCollapsed,
+    sidebarPosition: state.sidebarPosition,
+    sidebarWidth: state.sidebarWidth,
+    variableKeyRatio: state.variableKeyRatio,
+    minimapEnabled: state.minimapEnabled,
+    minimapPosition: state.minimapPosition,
+    lastExportDestination: state.lastExportDestination,
+    lastExportFormat: state.lastExportFormat,
+    lastExportFilename: state.lastExportFilename,
+    lastExportFilenameTabId: state.lastExportFilenameTabId,
+    lastExportFolderPath: state.lastExportFolderPath,
+    lastImportSource: state.lastImportSource,
+  };
 }
 
 function createTabObject(
@@ -372,11 +567,219 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       DEBOUNCE_SAVE_MS,
     );
 
+    // --- Cloud sync ---
+
+    /** Runbook id -> the JSON waiting to go up */
+    const queuedSyncContent = new Map<string, string>();
+    /** Runbook id -> the JSON last written to the cloud, to skip no-op pushes */
+    const pushedSyncContent = new Map<string, string>();
+
+    const setSyncStatus = (runbookId: string, status: RunbookSyncStatus) =>
+      set((s) => ({
+        runbookSyncStatus: { ...s.runbookSyncStatus, [runbookId]: status },
+      }));
+
+    const forgetSyncState = (runbookId: string) => {
+      queuedSyncContent.delete(runbookId);
+      pushedSyncContent.delete(runbookId);
+      set((s) => {
+        if (!(runbookId in s.runbookSyncStatus)) {
+          return {};
+        }
+        const runbookSyncStatus = { ...s.runbookSyncStatus };
+        delete runbookSyncStatus[runbookId];
+        return { runbookSyncStatus };
+      });
+    };
+
+    const getSyncLink = (runbookId: string): RunbookSync | undefined =>
+      get().runbookLibrary.find((item) => item.id === runbookId)?.sync;
+
+    const runbookJson = (content: RunbookContent) =>
+      buildRunbookExportContent(ExportFormat.JSON, content);
+
+    /** Records content the cloud already holds, so nothing is pushed back. */
+    const markRunbookSynced = (runbookId: string, content: RunbookContent) => {
+      queuedSyncContent.delete(runbookId);
+      pushedSyncContent.set(runbookId, runbookJson(content));
+      setSyncStatus(runbookId, RunbookSyncStatus.SYNCED);
+    };
+
+    /**
+     * Writes everything queued, one file at a time. Two passes never overlap,
+     * so concurrent writes can't land on the same file out of order; whatever
+     * gets queued mid-pass is picked up before the pass ends. Never signs in on
+     * its own — see `syncRunbookNow`.
+     */
+    let syncPassRunning = false;
+    const flushQueuedSyncs = async () => {
+      if (syncPassRunning) {
+        return;
+      }
+      syncPassRunning = true;
+
+      try {
+        while (queuedSyncContent.size > 0) {
+          const [runbookId, json] = [...queuedSyncContent][0];
+          queuedSyncContent.delete(runbookId);
+
+          const link = getSyncLink(runbookId);
+          if (!link) {
+            continue;
+          }
+
+          const client = getCloudClient(link.provider);
+          try {
+            await client.init();
+            if (!client.isSignedIn()) {
+              setSyncStatus(runbookId, RunbookSyncStatus.SIGNED_OUT);
+              continue;
+            }
+
+            await client.writeFile(
+              link.filename,
+              json,
+              MimeType.JSON,
+              link.folderId,
+            );
+          } catch (error) {
+            console.error("Cloud sync failed", error);
+            setSyncStatus(runbookId, RunbookSyncStatus.ERROR);
+            continue;
+          }
+
+          pushedSyncContent.set(runbookId, json);
+          // The file's size and modified date just changed under any cached listing
+          clearCachedCloudEntries(link.provider);
+          setSyncStatus(runbookId, RunbookSyncStatus.SYNCED);
+        }
+      } finally {
+        syncPassRunning = false;
+      }
+    };
+
+    const debouncedFlushSyncs = debounce(
+      () => void flushQueuedSyncs(),
+      DEBOUNCE_CLOUD_SYNC_MS,
+    );
+
+    /**
+     * Schedules a push for a linked runbook whose content actually moved.
+     * Called from every path that persists content, so linked runbooks stay
+     * current without an explicit export.
+     */
+    const queueCloudSync = (runbookId: string, content: RunbookContent) => {
+      if (isDemo || !getSyncLink(runbookId)) {
+        return;
+      }
+
+      const json = runbookJson(content);
+      if (pushedSyncContent.get(runbookId) === json) {
+        return;
+      }
+
+      queuedSyncContent.set(runbookId, json);
+      setSyncStatus(runbookId, RunbookSyncStatus.SYNCING);
+      debouncedFlushSyncs();
+    };
+
+    /** Points a runbook at a cloud file it was just written to or read from. */
+    const linkRunbookToCloud = (
+      runbookId: string,
+      sync: RunbookSync,
+      content: RunbookContent,
+    ) => {
+      set((s) => ({
+        runbookLibrary: s.runbookLibrary.map((item) =>
+          item.id === runbookId ? { ...item, sync } : item,
+        ),
+      }));
+
+      markRunbookSynced(runbookId, content);
+      persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+    };
+
+    /** The runbook's content as the tab holds it, else as the DB holds it. */
+    const readRunbookContent = async (runbookId: string) => {
+      const openTab = get().tabs.find((t) => t.runbookId === runbookId);
+      return openTab
+        ? { variables: openTab.variables, blocks: openTab.blocks }
+        : await contentDb.get(runbookId);
+    };
+
+    let cloudRequestId = 0;
+    const startCloudRequest = () => ++cloudRequestId;
+    const isCurrentCloudRequest = (id: number) => cloudRequestId === id;
+
+    let cloudSearchRequestId = 0;
+    const startCloudSearchRequest = () => ++cloudSearchRequestId;
+    const isCurrentCloudSearchRequest = (id: number) =>
+      cloudSearchRequestId === id;
+
+    /** Drops any in-flight tree walk and yields the cleared search state. */
+    const cancelledCloudSearch = () => {
+      startCloudSearchRequest();
+      return {
+        cloudSearchQuery: "",
+        cloudSearchEntries: [],
+        cloudSearchLoading: false,
+      };
+    };
+
+    /** Lists the open folder from the provider and caches what came back. */
+    const fetchCloudEntries = async () => {
+      const provider = get().cloudProvider;
+      const folderId = currentFolderId(get().cloudPath);
+      const requestId = startCloudRequest();
+
+      set({ cloudLoading: true, cloudError: null });
+
+      try {
+        const entries = await getCloudClient(provider).listEntries(folderId);
+        setCachedCloudEntries(provider, folderId, entries);
+
+        if (isCurrentCloudRequest(requestId)) {
+          set({ cloudEntries: entries });
+        }
+      } catch (error) {
+        console.error("Failed to list cloud entries", error);
+        if (isCurrentCloudRequest(requestId)) {
+          set({
+            cloudEntries: [],
+            cloudError: getMessages(get().language).cloudModal.genericError,
+          });
+        }
+      } finally {
+        if (isCurrentCloudRequest(requestId)) {
+          set({ cloudLoading: false });
+        }
+      }
+    };
+
+    const loadCloudEntries = async () => {
+      const cached = getCachedCloudEntries(
+        get().cloudProvider,
+        currentFolderId(get().cloudPath),
+      );
+
+      if (cached) {
+        startCloudRequest();
+        set({ cloudEntries: cached, cloudLoading: false, cloudError: null });
+      } else {
+        await fetchCloudEntries();
+      }
+
+      if (get().cloudSearchQuery.trim()) {
+        await get().refreshCloudSearchEntries();
+      }
+    };
+
     return {
       tabs: [],
       activeTabId: null,
       runbookLibrary: [],
       activeRunbookId: null,
+      runbookSyncStatus: {},
 
       mode: AppMode.EDIT,
       theme: Theme.DARK,
@@ -402,9 +805,39 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       variableSearchQuery: "",
 
       exportModalOpen: false,
+      cloudExportStatus: CloudExportStatus.IDLE,
+      cloudExportProvider: null,
       pasteRunbookModalOpen: false,
       confirmDialog: null,
       alertDialog: null,
+
+      destinationModalOpen: false,
+      cloudImportModalOpen: false,
+      cloudProvider: CloudProvider.SHAREPOINT,
+      cloudSignedIn: false,
+      cloudAccountLabel: null,
+      cloudEntries: [],
+      cloudLoading: false,
+      cloudError: null,
+
+      cloudFileEditor: null,
+
+      cloudPath: ROOT_CLOUD_PATH,
+      cloudHistory: [ROOT_CLOUD_PATH],
+      cloudHistoryIndex: 0,
+
+      cloudSearchQuery: "",
+      cloudSearchEntries: [],
+      cloudSearchLoading: false,
+
+      cloudSort: DEFAULT_CLOUD_SORT,
+
+      lastExportDestination: SyncDestination.LOCAL,
+      lastExportFormat: ExportFormat.JSON,
+      lastExportFilename: "",
+      lastExportFilenameTabId: null,
+      lastExportFolderPath: ROOT_CLOUD_PATH,
+      lastImportSource: SyncDestination.LOCAL,
 
       initialized: false,
 
@@ -418,28 +851,21 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         persist.saveTabsMeta(state.tabs, state.activeTabId);
         persist.saveRunbookLibrary(state.runbookLibrary, state.activeRunbookId);
-        persist.saveUiState({
-          mode: state.mode,
-          sidebarCollapsed: state.sidebarCollapsed,
-          sidebarPosition: state.sidebarPosition,
-          sidebarWidth: state.sidebarWidth,
-          variableKeyRatio: state.variableKeyRatio,
-          minimapEnabled: state.minimapEnabled,
-          minimapPosition: state.minimapPosition,
-          theme: state.theme,
-          language: state.language,
-        });
+        persist.saveUiState(uiStateSnapshot(state));
 
         const active = getActiveTab(state);
         if (active?.runbookId) {
+          const content = {
+            variables: active.variables,
+            blocks: active.blocks,
+          };
+
           contentDb
-            .put(active.runbookId, {
-              variables: active.variables,
-              blocks: active.blocks,
-            })
+            .put(active.runbookId, content)
             .catch((error) =>
               console.warn("Failed to persist runbook content:", error),
             );
+          queueCloudSync(active.runbookId, content);
         }
       },
 
@@ -512,6 +938,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         set({ initialized: true });
+
+        // An edit made just before the last close may never have reached the
+        // cloud, so every linked tab gets one catch-up push on load
+        for (const tab of get().tabs) {
+          if (tab.runbookId) {
+            queueCloudSync(tab.runbookId, {
+              variables: tab.variables,
+              blocks: tab.blocks,
+            });
+          }
+        }
       },
 
       // --- Tabs ---
@@ -658,7 +1095,41 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
 
+        const openTab = state.tabs.find((t) => t.runbookId === id);
+        const content = openTab ?? (await contentDb.get(id));
+        const isEmpty =
+          (content?.blocks.length ?? 0) === 0 &&
+          (content?.variables.length ?? 0) === 0;
+
+        const runbook = state.runbookLibrary.find((item) => item.id === id);
+
+        // A synced runbook still exists in the cloud, so removing it loses nothing
+        if (!isEmpty && !runbook?.sync) {
+          const t = getMessages(get().language);
+          const confirmed = await get().confirm(
+            t.dialogs.deleteRunbookMessage(
+              displayLabel(runbook?.label ?? "", t),
+            ),
+            {
+              title: t.dialogs.deleteRunbookTitle,
+              confirmLabel: t.dialogs.deleteRunbookConfirm,
+              tone: DialogTone.DANGER,
+            },
+          );
+
+          if (!confirmed) {
+            return;
+          }
+        }
+
+        // Removing the entry leans on the cloud copy being current, so let any
+        // edit still waiting on the debounce land before the local copy goes
+        if (queuedSyncContent.has(id)) {
+          await flushQueuedSyncs();
+        }
+
         await contentDb.delete(id);
+        forgetSyncState(id);
 
         const runbookLibrary = state.runbookLibrary.filter(
           (item) => item.id !== id,
@@ -707,11 +1178,89 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         persist.saveRunbookLibrary(runbookLibrary, activeRunbookId);
       },
 
-      addRunbookToLibrary: async (content, filename, rawFilename) => {
+      duplicateRunbook: async (id) => {
+        const state = get();
+        if (state.mode === AppMode.READ) {
+          return;
+        }
+
+        const sourceIndex = state.runbookLibrary.findIndex(
+          (item) => item.id === id,
+        );
+
+        if (sourceIndex < 0) {
+          return;
+        }
+
+        const source = state.runbookLibrary[sourceIndex];
+        const openTab = state.tabs.find((t) => t.runbookId === id);
+        const content = openTab
+          ? { variables: openTab.variables, blocks: openTab.blocks }
+          : await contentDb.get(id);
+
+        if (!content) {
+          return;
+        }
+
+        const copy: RunbookContent = {
+          variables: content.variables.map((variable) => ({
+            ...variable,
+            id: generateId(),
+          })),
+          blocks: content.blocks.map((block) => ({
+            ...block,
+            id: generateId(),
+          })),
+        };
+
+        const library = get().runbookLibrary;
+        const takenLabels = new Set(library.map((item) => item.label));
+        const takenFilenames = new Set(library.map((item) => item.filename));
+
+        // Base the copy's name on what the row actually shows
+        const label = nextDuplicateName(
+          displayLabel(source.label, getMessages(get().language)),
+          (candidate) => takenLabels.has(candidate),
+        );
+        const filename = source.filename
+          ? nextDuplicateName(source.filename, (candidate) =>
+              takenFilenames.has(candidate),
+            )
+          : "";
+
+        const newId = generateId();
+        await contentDb.put(newId, copy);
+
+        set((s) => {
+          const runbookLibrary = [...s.runbookLibrary];
+          const insertAt =
+            runbookLibrary.findIndex((item) => item.id === id) + 1;
+          runbookLibrary.splice(insertAt, 0, { id: newId, label, filename });
+
+          return { runbookLibrary };
+        });
+
+        persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+      },
+
+      addRunbookToLibrary: async (content, filename, rawFilename, sync) => {
         const label = getRunbookLabel(
           content.blocks,
           filename || RunbookConfig.DEFAULT_LABEL,
         );
+
+        /**
+         * Content that just came down from the cloud is already in sync;
+         * anything else may have landed on top of an existing link.
+         */
+        const settleSync = (runbookId: string) => {
+          if (sync) {
+            markRunbookSynced(runbookId, content);
+          } else {
+            queueCloudSync(runbookId, content);
+          }
+        };
+
         const state = get();
         const existing = state.runbookLibrary.find(
           (item) => item.label === label || item.filename === filename,
@@ -725,7 +1274,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             {
               title: t.dialogs.overwriteTitle,
               confirmLabel: t.dialogs.overwriteConfirm,
-              danger: true,
+              tone: DialogTone.WARNING,
             },
           );
 
@@ -737,7 +1286,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           set((s) => ({
             runbookLibrary: s.runbookLibrary.map((item) =>
               item.id === existing.id
-                ? { ...item, label, filename: filename || "" }
+                ? {
+                    ...item,
+                    label,
+                    filename: filename || "",
+                    // An import keeps the entry's existing link unless it brings its own
+                    ...(sync ? { sync } : {}),
+                  }
                 : item,
             ),
             tabs: s.tabs.map((t) =>
@@ -757,6 +1312,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           if (existing.id === get().activeRunbookId) {
             persist.saveTabsMeta(get().tabs, get().activeTabId);
           }
+
+          settleSync(existing.id);
           return;
         }
 
@@ -765,9 +1322,15 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set((s) => ({
           runbookLibrary: [
             ...s.runbookLibrary,
-            { id: newId, label, filename: filename || "" },
+            {
+              id: newId,
+              label,
+              filename: filename || "",
+              ...(sync ? { sync } : {}),
+            },
           ],
         }));
+        settleSync(newId);
 
         if (get().activeRunbookId) {
           persist.saveRunbookLibrary(
@@ -778,6 +1341,51 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         await get().loadRunbookFromLibrary(newId);
+      },
+
+      syncRunbookNow: async (id) => {
+        const link = getSyncLink(id);
+        if (!link) {
+          return;
+        }
+
+        const content = await readRunbookContent(id);
+        if (!content) {
+          return;
+        }
+
+        const client = getCloudClient(link.provider);
+        setSyncStatus(id, RunbookSyncStatus.SYNCING);
+
+        // Retrying is a click, so a sign-in popup here is expected rather than ambushing
+        try {
+          await client.init();
+          if (!client.isSignedIn()) {
+            await client.signIn();
+          }
+        } catch (error) {
+          console.error("Cloud sync sign-in failed", error);
+          setSyncStatus(id, RunbookSyncStatus.SIGNED_OUT);
+          return;
+        }
+
+        queuedSyncContent.set(id, runbookJson(content));
+        await flushQueuedSyncs();
+      },
+
+      unlinkRunbookSync: (id) => {
+        if (get().mode === AppMode.READ) {
+          return;
+        }
+
+        set((s) => ({
+          runbookLibrary: s.runbookLibrary.map((item) =>
+            item.id === id ? { ...item, sync: undefined } : item,
+          ),
+        }));
+
+        forgetSyncState(id);
+        persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
       },
 
       importRunbooks: async (files) => {
@@ -813,9 +1421,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         if (failedCount > 0) {
-          await get().alert(
-            getMessages(get().language).dialogs.importFailed(failedCount),
-          );
+          const t = getMessages(get().language);
+          await get().alert(t.dialogs.importFailed(failedCount), {
+            title: t.dialogs.importFailedTitle,
+            tone: DialogTone.WARNING,
+          });
         }
       },
 
@@ -910,6 +1520,43 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             variables: tab.variables.filter((v) => v.id !== variableId),
           })),
         );
+        get().saveState();
+      },
+
+      duplicateVariable: (variableId) => {
+        if (get().mode === AppMode.READ) {
+          return;
+        }
+
+        const copyId = generateId();
+        set((s) => ({
+          ...withActiveTab(s, (tab) => {
+            const index = tab.variables.findIndex((v) => v.id === variableId);
+            if (index < 0) {
+              return tab;
+            }
+
+            const source = tab.variables[index];
+            const key = getVariableKey(source);
+            const newKey = key
+              ? uniqueCopyKey(
+                  key,
+                  new Set(tab.variables.map((v) => getVariableKey(v))),
+                )
+              : key;
+
+            const variables = [...tab.variables];
+            variables.splice(index + 1, 0, {
+              ...source,
+              id: copyId,
+              key: newKey,
+            });
+
+            return { ...tab, variables };
+          }),
+          pendingFocusVariableId: copyId,
+        }));
+
         get().saveState();
       },
 
@@ -1164,14 +1811,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         // The target may not be the active tab, so persist its content explicitly
         const updated = get().tabs.find((t) => t.id === targetTabId);
         if (updated?.runbookId) {
+          const content = {
+            variables: updated.variables,
+            blocks: updated.blocks,
+          };
+
           contentDb
-            .put(updated.runbookId, {
-              variables: updated.variables,
-              blocks: updated.blocks,
-            })
+            .put(updated.runbookId, content)
             .catch((error) =>
               console.warn("Failed to persist runbook content:", error),
             );
+          queueCloudSync(updated.runbookId, content);
         }
 
         get().saveState();
@@ -1359,37 +2009,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set((s) => ({
           theme: s.theme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT,
         }));
-        const state = get();
-        persist.saveUiState({
-          mode: state.mode,
-          sidebarCollapsed: state.sidebarCollapsed,
-          sidebarPosition: state.sidebarPosition,
-          sidebarWidth: state.sidebarWidth,
-          variableKeyRatio: state.variableKeyRatio,
-          minimapEnabled: state.minimapEnabled,
-          minimapPosition: state.minimapPosition,
-          theme: state.theme,
-          language: state.language,
-        });
+
+        persist.saveUiState(uiStateSnapshot(get()));
       },
 
       setLanguage: (language) => {
         if (get().language === language) {
           return;
         }
+
         set({ language });
-        const state = get();
-        persist.saveUiState({
-          mode: state.mode,
-          sidebarCollapsed: state.sidebarCollapsed,
-          sidebarPosition: state.sidebarPosition,
-          sidebarWidth: state.sidebarWidth,
-          variableKeyRatio: state.variableKeyRatio,
-          minimapEnabled: state.minimapEnabled,
-          minimapPosition: state.minimapPosition,
-          theme: state.theme,
-          language: state.language,
-        });
+        persist.saveUiState(uiStateSnapshot(get()));
       },
 
       toggleSidebar: () => {
@@ -1503,22 +2133,731 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       // --- Modals / export ---
 
-      openExportModal: () => set({ exportModalOpen: true }),
+      openExportModal: () => {
+        const state = get();
+        const activeTab = getActiveTab(state);
+        const activeTabId = activeTab?.id ?? null;
+
+        set({
+          exportModalOpen: true,
+          cloudExportStatus: CloudExportStatus.IDLE,
+          ...(state.lastExportFilenameTabId !== activeTabId
+            ? {
+                lastExportFilename: getExportBasename(activeTab?.label ?? ""),
+                lastExportFilenameTabId: activeTabId,
+              }
+            : {}),
+        });
+      },
       closeExportModal: () => set({ exportModalOpen: false }),
+      resetCloudExportStatus: () =>
+        set({ cloudExportStatus: CloudExportStatus.IDLE }),
+
+      setExportDestination: (destination) => {
+        set({
+          lastExportDestination: destination,
+          lastExportFolderPath: ROOT_CLOUD_PATH,
+        });
+        persist.saveUiState(uiStateSnapshot(get()));
+      },
+      setExportFormat: (format) => {
+        set({ lastExportFormat: format });
+        persist.saveUiState(uiStateSnapshot(get()));
+      },
+      setExportFilename: (filename) => {
+        set({
+          lastExportFilename: filename,
+          lastExportFilenameTabId: getActiveTab(get())?.id ?? null,
+        });
+        debouncedSaveState();
+      },
+      setExportFolderPath: (path) => {
+        set({ lastExportFolderPath: path });
+        persist.saveUiState(uiStateSnapshot(get()));
+      },
+
       openPasteRunbookModal: () => set({ pasteRunbookModalOpen: true }),
       closePasteRunbookModal: () => set({ pasteRunbookModalOpen: false }),
 
-      exportRunbook: async (format) => {
-        set({ exportModalOpen: false });
+      exportRunbook: async (destination, format, filename, folderId) => {
+        set({
+          lastExportDestination: destination,
+          lastExportFormat: format,
+        });
+
         const active = getActiveTab(get());
-        await runExport(
-          format,
-          {
-            variables: active?.variables ?? [],
-            blocks: active?.blocks ?? [],
+        const content = {
+          variables: active?.variables ?? [],
+          blocks: active?.blocks ?? [],
+        };
+
+        const fullName = `${filename}.${format}`;
+
+        // Local export
+        if (destination === SyncDestination.LOCAL) {
+          set({ exportModalOpen: false });
+          await runExport(format, content, fullName);
+          return;
+        }
+
+        // Cloud export
+        set({
+          cloudExportStatus: CloudExportStatus.UPLOADING,
+          cloudExportProvider: destination,
+        });
+
+        const client = getCloudClient(destination);
+        try {
+          await client.init();
+          if (!client.isSignedIn()) {
+            await client.signIn();
+          }
+
+          // A same-named file in the target folder is replaced, so ask first
+          if (await client.fileExists(fullName, folderId)) {
+            const t = getMessages(get().language);
+            set({ cloudExportStatus: CloudExportStatus.IDLE });
+
+            const confirmed = await get().confirm(
+              t.dialogs.overwriteCloudFileMessage(fullName),
+              {
+                title: t.dialogs.overwriteCloudFileTitle,
+                confirmLabel: t.dialogs.overwriteCloudFileConfirm,
+                tone: DialogTone.WARNING,
+              },
+            );
+
+            if (!confirmed) {
+              return;
+            }
+
+            set({ cloudExportStatus: CloudExportStatus.UPLOADING });
+          }
+
+          await client.writeFile(
+            fullName,
+            buildRunbookExportContent(format, content),
+            FilePickerConfig[format].mimeType,
+            folderId,
+          );
+
+          // JSON is the only round-trippable format, so it is the only one worth linking
+          if (format === ExportFormat.JSON && active?.runbookId) {
+            linkRunbookToCloud(
+              active.runbookId,
+              { provider: destination, filename: fullName, folderId },
+              content,
+            );
+          }
+
+          // The destination folder now holds a file no cached listing has
+          clearCachedCloudEntries(destination);
+          set({ cloudExportStatus: CloudExportStatus.SUCCESS });
+        } catch (error) {
+          console.error("Cloud export failed", error);
+          set({ cloudExportStatus: CloudExportStatus.ERROR });
+        }
+      },
+
+      // --- Cloud sync ---
+
+      beginImport: () => {
+        if (get().mode === AppMode.READ) {
+          return;
+        }
+
+        const source = get().lastImportSource;
+        if (source === SyncDestination.LOCAL) {
+          get().openDestinationModal();
+          return;
+        }
+
+        void get().startCloudImportBrowse(source);
+      },
+
+      openDestinationModal: () => {
+        if (get().mode === AppMode.READ) {
+          return;
+        }
+
+        set({ destinationModalOpen: true });
+      },
+      closeDestinationModal: () => set({ destinationModalOpen: false }),
+
+      chooseDestination: (destination) => {
+        set({
+          destinationModalOpen: false,
+          cloudImportModalOpen: false,
+          lastImportSource: destination,
+        });
+        persist.saveUiState(uiStateSnapshot(get()));
+
+        if (destination === SyncDestination.LOCAL) {
+          openImportDialog();
+          return;
+        }
+
+        void get().startCloudImportBrowse(destination);
+      },
+
+      startCloudBrowse: async (provider, path = ROOT_CLOUD_PATH) => {
+        startCloudRequest();
+        set({
+          ...cancelledCloudSearch(),
+          cloudProvider: provider,
+          cloudError: null,
+          cloudEntries: [],
+          cloudSignedIn: false,
+          cloudAccountLabel: null,
+          cloudFileEditor: null,
+          cloudLoading: true,
+          cloudPath: path,
+          cloudHistory: [path],
+          cloudHistoryIndex: 0,
+        });
+
+        const client = getCloudClient(provider);
+        try {
+          await client.init();
+        } finally {
+          if (get().cloudProvider === provider) {
+            set({
+              cloudLoading: false,
+              cloudSignedIn: client.isSignedIn(),
+              cloudAccountLabel: client.getAccountLabel(),
+            });
+          }
+        }
+
+        if (client.isSignedIn() && get().cloudProvider === provider) {
+          await loadCloudEntries();
+        }
+      },
+
+      startCloudImportBrowse: async (provider) => {
+        set({ cloudImportModalOpen: true });
+        await get().startCloudBrowse(provider);
+      },
+
+      returnToDestinationModal: () =>
+        set({ cloudImportModalOpen: false, destinationModalOpen: true }),
+
+      closeCloudImportModal: () => set({ cloudImportModalOpen: false }),
+
+      signInToCloud: async () => {
+        const client = getCloudClient(get().cloudProvider);
+        set({ cloudLoading: true, cloudError: null });
+        try {
+          await client.signIn();
+          set({
+            cloudSignedIn: client.isSignedIn(),
+            cloudAccountLabel: client.getAccountLabel(),
+          });
+          await get().refreshCloudEntries();
+        } catch (error) {
+          console.error("Cloud sign-in failed", error);
+          set({
+            cloudError: getMessages(get().language).cloudModal.signInError,
+          });
+        } finally {
+          set({ cloudLoading: false });
+        }
+      },
+
+      signOutOfCloud: async () => {
+        const t = getMessages(get().language);
+        const confirmed = await get().confirm(t.dialogs.signOutCloudMessage, {
+          title: t.dialogs.signOutCloudTitle,
+          confirmLabel: t.dialogs.signOutCloudConfirm,
+          tone: DialogTone.INFO,
+        });
+
+        if (!confirmed) {
+          return;
+        }
+
+        const client = getCloudClient(get().cloudProvider);
+        try {
+          await client.signOut();
+        } catch (error) {
+          console.error("Cloud sign-out failed", error);
+        }
+
+        // Nothing walked under this account survives into the next one
+        clearCachedCloudEntries(get().cloudProvider);
+        startCloudRequest();
+        set((s) => ({
+          ...cancelledCloudSearch(),
+          runbookSyncStatus: {
+            ...s.runbookSyncStatus,
+            // Linked runbooks can no longer reach this provider until a new sign-in
+            ...Object.fromEntries(
+              s.runbookLibrary
+                .filter((item) => item.sync?.provider === s.cloudProvider)
+                .map((item) => [item.id, RunbookSyncStatus.SIGNED_OUT]),
+            ),
           },
-          active?.label ?? "",
+          cloudEntries: [],
+          cloudError: null,
+          cloudSignedIn: false,
+          cloudAccountLabel: null,
+          cloudFileEditor: null,
+          cloudPath: ROOT_CLOUD_PATH,
+          cloudHistory: [ROOT_CLOUD_PATH],
+          cloudHistoryIndex: 0,
+        }));
+      },
+
+      refreshCloudEntries: async () => {
+        clearCachedCloudEntries(get().cloudProvider);
+        await loadCloudEntries();
+      },
+
+      openCloudFolder: (folder) =>
+        get().navigateCloudToPath([
+          ...get().cloudPath,
+          { id: folder.id, name: folder.name },
+        ]),
+
+      navigateCloudToDepth: (depth) =>
+        get().navigateCloudToPath(get().cloudPath.slice(0, depth)),
+
+      navigateCloudToPath: (path) => {
+        // Browsing away from a history entry drops everything ahead of it
+        const history = get().cloudHistory.slice(
+          0,
+          get().cloudHistoryIndex + 1,
         );
+
+        set({
+          // Opening a folder from a search result lands you in that folder
+          ...cancelledCloudSearch(),
+          cloudPath: path,
+          cloudHistory: [...history, path],
+          cloudHistoryIndex: history.length,
+          cloudError: null,
+          cloudEntries: [],
+        });
+
+        void loadCloudEntries();
+      },
+
+      navigateCloudHistory: (direction) => {
+        const step = direction === HistoryDirection.BACK ? -1 : 1;
+        const index = get().cloudHistoryIndex + step;
+        const path = get().cloudHistory[index];
+
+        if (!path) {
+          return;
+        }
+
+        set({
+          ...cancelledCloudSearch(),
+          cloudPath: path,
+          cloudHistoryIndex: index,
+          cloudError: null,
+          cloudEntries: [],
+        });
+        void loadCloudEntries();
+      },
+
+      setCloudSearchQuery: (query) => {
+        const previous = get().cloudSearchQuery;
+
+        if (!query.trim()) {
+          set({ ...cancelledCloudSearch(), cloudSearchQuery: query });
+          return;
+        }
+
+        set({ cloudSearchQuery: query });
+
+        // The tree is walked once when a search starts, then filtered locally
+        if (!previous.trim()) {
+          void get().refreshCloudSearchEntries();
+        }
+      },
+
+      toggleCloudSort: (column) => {
+        const current = get().cloudSort;
+        set({
+          cloudSort: {
+            column,
+            direction:
+              current.column === column
+                ? current.direction === SortDirection.ASC
+                  ? SortDirection.DESC
+                  : SortDirection.ASC
+                : column === CloudSortColumn.NAME
+                  ? SortDirection.ASC
+                  : SortDirection.DESC,
+          },
+        });
+      },
+
+      refreshCloudSearchEntries: async () => {
+        const client = getCloudClient(get().cloudProvider);
+        const requestId = startCloudSearchRequest();
+        set({ cloudSearchLoading: true });
+
+        try {
+          const found = await walkCloudTree(client);
+          if (isCurrentCloudSearchRequest(requestId)) {
+            set({ cloudSearchEntries: found });
+          }
+        } catch (error) {
+          console.error("Failed to search cloud entries", error);
+          if (isCurrentCloudSearchRequest(requestId)) {
+            set({
+              cloudSearchEntries: [],
+              cloudError: getMessages(get().language).cloudModal.genericError,
+            });
+          }
+        } finally {
+          if (isCurrentCloudSearchRequest(requestId)) {
+            set({ cloudSearchLoading: false });
+          }
+        }
+      },
+
+      createCloudFolder: async (name) => {
+        const trimmed = name.trim();
+        if (!trimmed) {
+          return;
+        }
+
+        const t = getMessages(get().language);
+        const taken = get().cloudEntries.some(
+          (entry) => entry.name.toLowerCase() === trimmed.toLowerCase(),
+        );
+
+        if (taken) {
+          set({ cloudError: t.cloudModal.nameTakenError(trimmed) });
+          return;
+        }
+
+        const client = getCloudClient(get().cloudProvider);
+        set({ cloudLoading: true, cloudError: null });
+        try {
+          await client.createFolder(trimmed, currentFolderId(get().cloudPath));
+        } catch (error) {
+          console.error("Cloud folder creation failed", error);
+          set({
+            cloudLoading: false,
+            cloudError: t.cloudModal.createFolderError,
+          });
+          return;
+        }
+
+        set({ cloudLoading: false });
+        await get().refreshCloudEntries();
+      },
+
+      importRunbookFromCloud: async (file) => {
+        const client = getCloudClient(get().cloudProvider);
+        const t = getMessages(get().language);
+
+        // Resolved up front: a search hit's folder can change out from under a slow read
+        const sync: RunbookSync = {
+          provider: get().cloudProvider,
+          filename: file.name,
+          folderId: parentFolderId(get(), file),
+        };
+
+        set({ cloudLoading: true, cloudError: null });
+        let text: string;
+        try {
+          text = await client.readFile(file);
+        } catch (error) {
+          console.error("Cloud file read failed", error);
+          set({ cloudLoading: false, cloudError: t.cloudModal.genericError });
+          return;
+        }
+
+        let content: RunbookContent;
+        try {
+          content = parseRunbookContent(text);
+        } catch {
+          set({
+            cloudLoading: false,
+            cloudError: t.cloudModal.invalidFileError,
+          });
+          return;
+        }
+
+        set({ cloudLoading: false });
+        const baseName = stripJsonExtension(file.name);
+
+        await get().addRunbookToLibrary(content, baseName, file.name, sync);
+        set({ cloudImportModalOpen: false });
+      },
+
+      renameCloudEntry: async (entry, basename) => {
+        const trimmed = basename.trim();
+        if (!trimmed) {
+          return;
+        }
+
+        // Only files carry the .json extension
+        const name = entry.isFolder ? trimmed : withJsonExtension(trimmed);
+        if (name === entry.name) {
+          return;
+        }
+
+        const t = getMessages(get().language);
+        const taken = siblingEntries(get(), entry).some(
+          (other) =>
+            other.id !== entry.id &&
+            other.name.toLowerCase() === name.toLowerCase(),
+        );
+
+        if (taken) {
+          set({ cloudError: t.cloudModal.nameTakenError(name) });
+          return;
+        }
+
+        const client = getCloudClient(get().cloudProvider);
+        set({ cloudLoading: true, cloudError: null });
+        try {
+          await client.renameEntry(entry, name);
+        } catch (error) {
+          console.error("Cloud entry rename failed", error);
+          set({
+            cloudLoading: false,
+            cloudError: entry.isFolder
+              ? t.cloudModal.renameFolderError
+              : t.cloudModal.renameError,
+          });
+          return;
+        }
+
+        set({ cloudLoading: false });
+        await get().refreshCloudEntries();
+      },
+
+      openCloudFileEditor: async (file) => {
+        const t = getMessages(get().language);
+        const client = getCloudClient(get().cloudProvider);
+
+        set({
+          cloudFileEditor: {
+            file,
+            folderId: parentFolderId(get(), file),
+            original: "",
+            text: "",
+            loading: true,
+            saving: false,
+            error: null,
+          },
+        });
+
+        const isCurrentEditor = () =>
+          get().cloudFileEditor?.file.id === file.id;
+
+        let text: string;
+        try {
+          text = await client.readFile(file);
+        } catch (error) {
+          console.error("Cloud file read failed", error);
+
+          if (isCurrentEditor()) {
+            set({
+              cloudFileEditor: {
+                ...get().cloudFileEditor!,
+                loading: false,
+                error: t.cloudModal.readError,
+              },
+            });
+          }
+
+          return;
+        }
+
+        if (isCurrentEditor()) {
+          set({
+            cloudFileEditor: {
+              ...get().cloudFileEditor!,
+              original: text,
+              text,
+              loading: false,
+            },
+          });
+        }
+      },
+
+      setCloudFileEditorText: (text) => {
+        const editor = get().cloudFileEditor;
+        if (!editor) {
+          return;
+        }
+
+        // Typing clears a stale "invalid JSON" / failed-save message
+        set({ cloudFileEditor: { ...editor, text, error: null } });
+      },
+
+      saveCloudFileEditor: async () => {
+        const editor = get().cloudFileEditor;
+        if (!editor || editor.loading || editor.saving) {
+          return;
+        }
+
+        const t = getMessages(get().language);
+        try {
+          JSON.parse(editor.text);
+        } catch {
+          set({
+            cloudFileEditor: {
+              ...editor,
+              error: t.cloudModal.invalidJsonError,
+            },
+          });
+
+          return;
+        }
+
+        const client = getCloudClient(get().cloudProvider);
+        set({ cloudFileEditor: { ...editor, saving: true, error: null } });
+
+        try {
+          await client.writeFile(
+            editor.file.name,
+            editor.text,
+            MimeType.JSON,
+            editor.folderId,
+          );
+        } catch (error) {
+          console.error("Cloud file save failed", error);
+          set({
+            cloudFileEditor: {
+              ...get().cloudFileEditor!,
+              saving: false,
+              error: t.cloudModal.saveError,
+            },
+          });
+
+          return;
+        }
+
+        set({ cloudFileEditor: null });
+        await get().refreshCloudEntries();
+      },
+
+      closeCloudFileEditor: async () => {
+        const editor = get().cloudFileEditor;
+        if (!editor) {
+          return;
+        }
+
+        const t = getMessages(get().language);
+        const dirty = !editor.loading && editor.text !== editor.original;
+
+        if (dirty) {
+          const discard = await get().confirm(
+            t.dialogs.discardCloudEditMessage(editor.file.name),
+            {
+              title: t.dialogs.discardCloudEditTitle,
+              confirmLabel: t.dialogs.discardCloudEditConfirm,
+              tone: DialogTone.WARNING,
+            },
+          );
+
+          if (!discard) {
+            return;
+          }
+        }
+
+        set({ cloudFileEditor: null });
+      },
+
+      duplicateCloudEntry: async (entry) => {
+        const t = getMessages(get().language);
+        const client = getCloudClient(get().cloudProvider);
+        const parentId = parentFolderId(get(), entry);
+        const name = buildDuplicateName(entry, siblingEntries(get(), entry));
+
+        set({ cloudLoading: true, cloudError: null });
+        try {
+          await copyCloudEntry(client, entry, parentId, name);
+        } catch (error) {
+          console.error("Cloud entry duplicate failed", error);
+          set({
+            cloudLoading: false,
+            cloudError: entry.isFolder
+              ? t.cloudModal.duplicateFolderError
+              : t.cloudModal.duplicateError,
+          });
+          return;
+        }
+
+        set({ cloudLoading: false });
+        await get().refreshCloudEntries();
+      },
+
+      downloadCloudEntry: async (entry) => {
+        const t = getMessages(get().language);
+        const client = getCloudClient(get().cloudProvider);
+
+        set({ cloudLoading: true, cloudError: null });
+        try {
+          if (entry.isFolder) {
+            const archive = await buildCloudFolderZip(client, entry);
+            downloadBlob(archive, `${entry.name}${ZIP_EXTENSION}`);
+          } else {
+            const content = await client.readFile(entry);
+            downloadBlob(
+              new Blob([content], { type: MimeType.JSON }),
+              entry.name,
+            );
+          }
+        } catch (error) {
+          console.error("Cloud entry download failed", error);
+          set({
+            cloudError: entry.isFolder
+              ? t.cloudModal.downloadFolderError
+              : t.cloudModal.downloadError,
+          });
+        } finally {
+          set({ cloudLoading: false });
+        }
+      },
+
+      deleteCloudEntry: async (entry) => {
+        const t = getMessages(get().language);
+        const confirmed = await get().confirm(
+          entry.isFolder
+            ? t.dialogs.deleteCloudFolderMessage(entry.name)
+            : t.dialogs.deleteCloudFileMessage(entry.name),
+          {
+            title: entry.isFolder
+              ? t.dialogs.deleteCloudFolderTitle
+              : t.dialogs.deleteCloudFileTitle,
+            confirmLabel: entry.isFolder
+              ? t.dialogs.deleteCloudFolderConfirm
+              : t.dialogs.deleteCloudFileConfirm,
+            tone: DialogTone.DANGER,
+          },
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
+        const client = getCloudClient(get().cloudProvider);
+        set({ cloudLoading: true, cloudError: null });
+        try {
+          await client.deleteEntry(entry);
+        } catch (error) {
+          console.error("Cloud entry delete failed", error);
+          set({
+            cloudLoading: false,
+            cloudError: entry.isFolder
+              ? t.cloudModal.deleteFolderError
+              : t.cloudModal.deleteError,
+          });
+          return;
+        }
+
+        set({ cloudLoading: false });
+        await get().refreshCloudEntries();
       },
 
       copyRunbookMarkdown: async () => {
@@ -1547,7 +2886,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
               resolve,
               title: options?.title ?? defaultLabel,
               confirmLabel: options?.confirmLabel ?? defaultLabel,
-              danger: options?.danger ?? false,
+              tone: options?.tone ?? DialogTone.INFO,
             },
           });
         });
@@ -1556,14 +2895,22 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         get().confirmDialog?.resolve(result);
         set({ confirmDialog: null });
       },
-      alert: (message) => {
+      alert: (message, options) => {
         if (isDemo) {
           return Promise.resolve();
         }
 
-        return new Promise<void>((resolve) =>
-          set({ alertDialog: { message, resolve } }),
-        );
+        return new Promise<void>((resolve) => {
+          const defaultTitle = getMessages(get().language).alert.defaultTitle;
+          set({
+            alertDialog: {
+              message,
+              resolve,
+              title: options?.title ?? defaultTitle,
+              tone: options?.tone ?? DialogTone.INFO,
+            },
+          });
+        });
       },
       resolveAlert: () => {
         get().alertDialog?.resolve();
@@ -1580,7 +2927,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const confirmed = await get().confirm(t.dialogs.clearLibraryMessage, {
           title: t.dialogs.clearLibraryTitle,
           confirmLabel: t.dialogs.clearLibraryConfirm,
-          danger: true,
+          tone: DialogTone.DANGER,
         });
 
         if (!confirmed) {
@@ -1593,11 +2940,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           persistence.clearStoredRunbooks();
         }
 
+        queuedSyncContent.clear();
+        pushedSyncContent.clear();
         set({
           tabs: [],
           activeTabId: null,
           activeRunbookId: null,
           runbookLibrary: [],
+          runbookSyncStatus: {},
           runbookSearchQuery: "",
           variableSearchQuery: "",
           selectedBlockIds: new Set(),
@@ -1611,7 +2961,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const confirmed = await get().confirm(t.dialogs.resetMessage, {
           title: t.dialogs.resetTitle,
           confirmLabel: t.dialogs.resetConfirm,
-          danger: true,
+          tone: DialogTone.DANGER,
         });
         if (!confirmed) {
           return;
@@ -1621,13 +2971,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         if (!isDemo) {
           await deleteRunbookDb();
           localStorage.clear();
+          sessionStorage.clear();
         }
 
+        queuedSyncContent.clear();
+        pushedSyncContent.clear();
         set({
           tabs: [],
           activeTabId: null,
           activeRunbookId: null,
           runbookLibrary: [],
+          runbookSyncStatus: {},
           runbookSearchQuery: "",
           variableSearchQuery: "",
           selectedBlockIds: new Set(),

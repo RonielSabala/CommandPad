@@ -1,11 +1,13 @@
 import {
   DEFAULT_TAB_LABEL,
   FilePickerConfig,
+  JSON_EXTENSION,
   MarkdownSyntax,
   RunbookConfig,
 } from "@/common/config";
 import { BlockType, ExportFormat, NoteStyle } from "@/common/enums";
 import type { RunbookContent } from "@/common/types";
+import { downloadBlob } from "./download";
 import { getVariableMap, resolveCommandToString } from "./resolution";
 import { slugifyLabel } from "./runbook";
 
@@ -13,6 +15,10 @@ const UNTITLED_LABELS: readonly string[] = [
   DEFAULT_TAB_LABEL,
   RunbookConfig.DEFAULT_LABEL,
 ];
+
+const DEFAULT_EXPORT_BASENAME = "runbook-commandpad-export";
+
+const JSON_EXTENSION_REGEX = new RegExp(`\\.${ExportFormat.JSON}$`, "i");
 
 interface SaveFilePickerOptions {
   suggestedName?: string;
@@ -56,13 +62,7 @@ async function saveFile(
     }
   }
 
-  const blob = new Blob([content], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = suggestedName;
-  anchor.click();
-  URL.revokeObjectURL(url);
+  downloadBlob(new Blob([content], { type: mimeType }), suggestedName);
 }
 
 export function buildMarkdownExport(content: RunbookContent): string {
@@ -99,46 +99,54 @@ export function buildMarkdownExport(content: RunbookContent): string {
   return lines.join("\n");
 }
 
-function getExportFilename(format: ExportFormat, label: string): string {
-  const config = FilePickerConfig[format];
+export function stripJsonExtension(filename: string): string {
+  return filename.replace(JSON_EXTENSION_REGEX, "");
+}
+
+export function withJsonExtension(filename: string): string {
+  return `${stripJsonExtension(filename)}${JSON_EXTENSION}`;
+}
+
+export function getExportBasename(label: string): string {
   if (label && !UNTITLED_LABELS.includes(label)) {
     const slug = slugifyLabel(label);
     if (slug) {
-      return `${slug}.${format}`;
+      return slug;
     }
   }
 
-  return config.defaultName;
+  return DEFAULT_EXPORT_BASENAME;
+}
+
+function buildRunbookExportJson(content: RunbookContent): string {
+  const data = {
+    variables: (content.variables ?? []).map(({ id, ...rest }) => rest),
+    blocks: (content.blocks ?? []).map(({ id, ...rest }) => rest),
+  };
+
+  return JSON.stringify(data, null, 2);
+}
+
+export function buildRunbookExportContent(
+  format: ExportFormat,
+  content: RunbookContent,
+): string {
+  return format === ExportFormat.JSON
+    ? buildRunbookExportJson(content)
+    : buildMarkdownExport(content);
 }
 
 export async function runExport(
   format: ExportFormat,
   content: RunbookContent,
-  label: string,
+  filename: string,
 ): Promise<void> {
-  const suggestedName = getExportFilename(format, label);
+  const config = FilePickerConfig[format];
 
-  if (format === ExportFormat.JSON) {
-    const data = {
-      variables: (content.variables ?? []).map(({ id, ...rest }) => rest),
-      blocks: (content.blocks ?? []).map(({ id, ...rest }) => rest),
-    };
-
-    const config = FilePickerConfig.json;
-    await saveFile(
-      JSON.stringify(data, null, 2),
-      config.mimeType,
-      suggestedName,
-      [...config.types],
-    );
-
-    return;
-  }
-
-  const config =
-    format === ExportFormat.MD ? FilePickerConfig.md : FilePickerConfig.txt;
-
-  await saveFile(buildMarkdownExport(content), config.mimeType, suggestedName, [
-    ...config.types,
-  ]);
+  await saveFile(
+    buildRunbookExportContent(format, content),
+    config.mimeType,
+    filename,
+    [...config.types],
+  );
 }

@@ -1,7 +1,7 @@
 .sticky-scrollbar {
   position: sticky;
   bottom: var(--sticky-scrollbar-inset, 0);
-  z-index: 2;
+  z-index: var(--z-sticky);
   flex: none;
   height: var(--scrollbar-size);
   overflow-x: auto;

@@ -8,7 +8,6 @@ import {
   ModifierAction,
 } from "@/common/keybindings";
 import { getActiveTab, useStoreApi } from "@/store/store";
-import { openImportDialog } from "@/utils/importTrigger";
 import { useEffect } from "react";
 
 export function useKeybindings(): void {
@@ -117,7 +116,7 @@ export function useKeybindings(): void {
         !inEditable &&
         matchesKeybinding(event, KeyBinding.IMPORT_RUNBOOK)
       ) {
-        openImportDialog();
+        state.beginImport();
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.TOGGLE_EDITORS)) {
         state.toggleAllCommandEditors();

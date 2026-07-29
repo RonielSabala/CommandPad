@@ -1,13 +1,35 @@
 import { StorageKey, VariableSplit } from "@/common/config";
-import { AppMode, SectionState, SidebarPosition, Theme } from "@/common/enums";
-import type { RunbookEntry, Tab } from "@/common/types";
+import {
+  AppMode,
+  CloudProvider,
+  ExportFormat,
+  SectionState,
+  SidebarPosition,
+  SyncDestination,
+  Theme,
+} from "@/common/enums";
+import type { RunbookEntry, RunbookSync, Tab } from "@/common/types";
 import { detectLanguage, isLanguage } from "@/i18n/messages";
 import type { Language } from "@/i18n/types";
+import type { CloudFolderRef } from "@/services/cloud";
 import { clamp } from "@/utils/number";
+import { isNumber, isObject, isString } from "@/utils/typeGuards";
 
 function getSavedItemByKey(key: string) {
   return JSON.parse(localStorage.getItem(key) ?? "null");
 }
+
+const isSyncDestination = (value: unknown): value is SyncDestination =>
+  Object.values(SyncDestination).includes(value as SyncDestination);
+
+const isExportFormat = (value: unknown): value is ExportFormat =>
+  Object.values(ExportFormat).includes(value as ExportFormat);
+
+const isCloudFolderPath = (value: unknown): value is CloudFolderRef[] =>
+  Array.isArray(value) &&
+  value.every(
+    (step) => isObject(step) && isString(step.id) && isString(step.name),
+  );
 
 // UI state
 
@@ -21,6 +43,12 @@ interface PersistedUiState {
   variableKeyRatio: number;
   minimapEnabled: boolean;
   minimapPosition: SidebarPosition;
+  lastExportDestination: SyncDestination;
+  lastExportFormat: ExportFormat;
+  lastExportFilename: string;
+  lastExportFilenameTabId: string | null;
+  lastExportFolderPath: CloudFolderRef[];
+  lastImportSource: SyncDestination;
 }
 
 export function saveUiState(ui: PersistedUiState): void {
@@ -39,6 +67,12 @@ export function saveUiState(ui: PersistedUiState): void {
         variableKeyRatio: ui.variableKeyRatio,
         minimapEnabled: ui.minimapEnabled,
         minimapPosition: ui.minimapPosition,
+        lastExportDestination: ui.lastExportDestination,
+        lastExportFormat: ui.lastExportFormat,
+        lastExportFilename: ui.lastExportFilename,
+        lastExportFilenameTabId: ui.lastExportFilenameTabId,
+        lastExportFolderPath: ui.lastExportFolderPath,
+        lastImportSource: ui.lastImportSource,
       }),
     );
   } catch (error) {
@@ -62,10 +96,10 @@ export function loadUiState(): Partial<PersistedUiState> | null {
         saved.sidebarPosition === SidebarPosition.RIGHT
           ? SidebarPosition.RIGHT
           : SidebarPosition.LEFT,
-      ...(typeof saved.sidebarWidth === "number"
+      ...(isNumber(saved.sidebarWidth)
         ? { sidebarWidth: saved.sidebarWidth }
         : {}),
-      ...(typeof saved.variableKeyRatio === "number"
+      ...(isNumber(saved.variableKeyRatio)
         ? {
             variableKeyRatio: clamp(
               saved.variableKeyRatio,
@@ -79,6 +113,24 @@ export function loadUiState(): Partial<PersistedUiState> | null {
         saved.minimapPosition === SidebarPosition.LEFT
           ? SidebarPosition.LEFT
           : SidebarPosition.RIGHT,
+      ...(isSyncDestination(saved.lastExportDestination)
+        ? { lastExportDestination: saved.lastExportDestination }
+        : {}),
+      ...(isExportFormat(saved.lastExportFormat)
+        ? { lastExportFormat: saved.lastExportFormat }
+        : {}),
+      ...(isString(saved.lastExportFilename)
+        ? { lastExportFilename: saved.lastExportFilename }
+        : {}),
+      ...(isString(saved.lastExportFilenameTabId)
+        ? { lastExportFilenameTabId: saved.lastExportFilenameTabId }
+        : {}),
+      ...(isCloudFolderPath(saved.lastExportFolderPath)
+        ? { lastExportFolderPath: saved.lastExportFolderPath }
+        : {}),
+      ...(isSyncDestination(saved.lastImportSource)
+        ? { lastImportSource: saved.lastImportSource }
+        : {}),
     };
   } catch (error) {
     console.warn("Failed to load UI state:", error);
@@ -132,6 +184,16 @@ interface PersistedRunbooks {
   activeId: string | null;
 }
 
+const isRunbookSync = (value: unknown): value is RunbookSync =>
+  isObject(value) &&
+  Object.values(CloudProvider).includes(value.provider as CloudProvider) &&
+  isString(value.filename) &&
+  (isString(value.folderId) || value.folderId === null);
+
+function restoreRunbookEntry(entry: RunbookEntry): RunbookEntry {
+  return isRunbookSync(entry.sync) ? entry : { ...entry, sync: undefined };
+}
+
 export function saveRunbookLibrary(
   items: RunbookEntry[],
   activeId: string | null,
@@ -153,7 +215,10 @@ export function loadRunbookLibrary(): PersistedRunbooks | null {
       return null;
     }
 
-    return { items: saved.items ?? [], activeId: saved.activeId ?? null };
+    return {
+      items: (saved.items ?? []).map(restoreRunbookEntry),
+      activeId: saved.activeId ?? null,
+    };
   } catch (error) {
     console.warn("Failed to load runbook library:", error);
     return null;

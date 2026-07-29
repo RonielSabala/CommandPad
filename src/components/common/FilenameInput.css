@@ -1,0 +1,60 @@
+.filename-input {
+  display: flex;
+  align-items: stretch;
+  border-radius: var(--radius-md);
+  border: var(--border-standard);
+  background: var(--color-surface-alt);
+  overflow: hidden;
+  transition: border-color var(--transition-base);
+}
+
+.filename-input.is-default:focus-within {
+  border-color: var(--color-border-focus);
+}
+
+.filename-input-field {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-4) var(--space-5);
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+}
+
+.filename-input-field:focus {
+  outline: none;
+}
+
+.filename-input-extension {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-5);
+  border-left: var(--border-standard);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  user-select: none;
+}
+
+/* Compact  */
+
+.filename-input.is-compact {
+  flex: 1;
+  min-width: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.is-compact .filename-input-field {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.is-compact .filename-input-extension {
+  padding: 0 var(--space-4);
+  background: var(--color-surface-alt);
+  font-size: var(--text-sm);
+}

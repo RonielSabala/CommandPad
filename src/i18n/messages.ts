@@ -1,3 +1,4 @@
+import { isString } from "@/utils/typeGuards";
 import { en } from "./locales/en";
 import { es } from "./locales/es";
 import { Language, LANGUAGE_ORDER, type Messages } from "./types";
@@ -8,9 +9,7 @@ export const MESSAGES: Record<Language, Messages> = {
 };
 
 export function isLanguage(value: unknown): value is Language {
-  return (
-    typeof value === "string" && LANGUAGE_ORDER.includes(value as Language)
-  );
+  return isString(value) && LANGUAGE_ORDER.includes(value as Language);
 }
 
 export function detectLanguage(): Language {

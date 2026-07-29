@@ -110,6 +110,10 @@
   gap: var(--space-3);
 }
 
+.sidebar-section-scroll > .search-input-wrapper {
+  margin-right: var(--sidebar-section-margin-right);
+}
+
 .sidebar-section-divider {
   height: 1px;
   flex-shrink: 0;

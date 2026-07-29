@@ -1,0 +1,96 @@
+.modal.modal-dialog {
+  padding-top: 0;
+  gap: var(--space-5);
+  border-color: var(--dialog-accent);
+}
+
+.modal-dialog.dialog-danger {
+  --dialog-accent: var(--danger);
+  --dialog-accent-dim: var(--danger-dim);
+  --dialog-accent-text: var(--danger);
+  --dialog-emphasis: var(--danger);
+  --dialog-header-bg: color-mix(in srgb, var(--danger) 80%, black);
+  --dialog-header-fg: white;
+}
+
+.modal-dialog.dialog-warning {
+  --dialog-accent: var(--warning);
+  --dialog-accent-dim: var(--warning-dim);
+  --dialog-accent-text: var(--warning);
+  --dialog-emphasis: var(--warning);
+  --dialog-header-bg: color-mix(in srgb, var(--warning) 55%, black);
+  --dialog-header-fg: white;
+}
+
+.modal-dialog.dialog-info {
+  --dialog-accent: var(--accent);
+  --dialog-accent-dim: var(--accent-dim);
+  --dialog-accent-text: var(--accent-text);
+  --dialog-emphasis: var(--color-text-primary);
+  --dialog-header-bg: color-mix(in srgb, var(--accent) 80%, black);
+  --dialog-header-fg: white;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  margin: 0 calc(var(--space-8) * -1);
+  padding: var(--space-6) var(--space-20) var(--space-6) var(--space-8);
+  background: var(--dialog-header-bg);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--dialog-header-bg) 70%, black);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.dialog-icon {
+  flex-shrink: 0;
+  width: var(--icon-base);
+  height: var(--icon-base);
+  color: var(--dialog-header-fg);
+}
+
+.dialog-title {
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--dialog-header-fg);
+}
+
+.dialog-message {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.dialog-message .note-bold {
+  color: var(--dialog-emphasis);
+}
+
+.dialog-message .note-code {
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+}
+
+.modal-dialog .btn-tone {
+  background: var(--dialog-accent-dim);
+  border-color: var(--dialog-accent);
+  color: var(--dialog-accent-text);
+}
+
+.modal-dialog .btn-tone:hover {
+  background: var(--dialog-accent);
+  border-color: var(--dialog-accent);
+  color: white;
+}
+
+.modal-dialog .modal-close {
+  color: var(--dialog-header-fg);
+}
+
+.modal-dialog .modal-close:hover {
+  background: color-mix(in srgb, var(--dialog-header-fg) 20%, transparent);
+  border-color: transparent;
+  color: var(--dialog-header-fg);
+}

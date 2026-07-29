@@ -1,14 +1,26 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
-import { AppMode, DragGroup } from "@/common/enums";
+import {
+  AppMode,
+  DragGroup,
+  RunbookSyncStatus,
+  SidebarPosition,
+} from "@/common/enums";
 import type { RunbookEntry } from "@/common/types";
-import { DragIcon, XIcon } from "@/components/icons";
+import { ActionsMenu } from "@/components/common/ActionsMenu";
+import {
+  ContextMenuAlign,
+  ContextMenuItem,
+} from "@/components/common/ContextMenu";
+import { DragIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
+import { PROVIDER_NAME } from "@/components/modals/cloudProviders";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { memo } from "react";
+import { ArrowRepeat, CloudSlash } from "react-bootstrap-icons";
 import "./RunbookRow.css";
 
 interface Props {
@@ -20,6 +32,9 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
   const runbookId = runbook.id;
   const runbookLabel = displayLabel(runbook.label, t);
 
+  const sidebarOnRight = useStore(
+    (state) => state.sidebarPosition === SidebarPosition.RIGHT,
+  );
   const isActive = useStore((state) => state.activeRunbookId === runbookId);
   const isFocused = useStore((state) => state.focusedRunbookId === runbookId);
   const readMode = useStore((state) => state.mode === AppMode.READ);
@@ -28,9 +43,18 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
   const loadRunbookFromLibrary = useStore(
     (state) => state.loadRunbookFromLibrary,
   );
+
+  const duplicateRunbook = useStore((state) => state.duplicateRunbook);
   const removeRunbookFromLibrary = useStore(
     (state) => state.removeRunbookFromLibrary,
   );
+
+  const sync = runbook.sync;
+  const syncStatus = useStore(
+    (state) => state.runbookSyncStatus[runbookId] ?? RunbookSyncStatus.SYNCED,
+  );
+  const syncRunbookNow = useStore((state) => state.syncRunbookNow);
+  const unlinkRunbookSync = useStore((state) => state.unlinkRunbookSync);
 
   const { isDragging, isDragOver, handleProps, rowProps } = useRowReorder(
     DragGroup.RUNBOOK,
@@ -66,23 +90,65 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
       >
         <DragIcon className="icon-md" />
       </div>
-      <button
-        className={runbookBtnClass}
-        onClick={() => {
-          setRunbookFocus(null);
-          void loadRunbookFromLibrary(runbookId);
-        }}
-        title={runbookLabel}
+
+      <div className="runbook-row-main">
+        <button
+          className={runbookBtnClass}
+          onClick={() => {
+            setRunbookFocus(null);
+            void loadRunbookFromLibrary(runbookId);
+          }}
+          title={runbookLabel}
+        >
+          {runbookLabel}
+        </button>
+
+        {sync && (
+          <button
+            className={classNames("runbook-sync", `sync-${syncStatus}`)}
+            onClick={() => void syncRunbookNow(runbookId)}
+            title={t.runbooks.syncStatus[syncStatus](
+              PROVIDER_NAME[sync.provider],
+            )}
+          >
+            {syncStatus === RunbookSyncStatus.SIGNED_OUT ? (
+              <CloudSlash className="icon-md" />
+            ) : (
+              <ArrowRepeat className="icon-md" />
+            )}
+          </button>
+        )}
+      </div>
+
+      <ActionsMenu
+        className={CssClass.ROW_ACTIONS}
+        title={t.runbooks.actions}
+        align={sidebarOnRight ? ContextMenuAlign.END : ContextMenuAlign.START}
       >
-        {runbookLabel}
-      </button>
-      <button
-        className="btn btn-icon btn-danger"
-        onClick={() => void removeRunbookFromLibrary(runbookId)}
-        title={t.runbooks.removeFromLibrary}
-      >
-        <XIcon className="icon-md icon-bold" />
-      </button>
+        {sync && (
+          <ContextMenuItem
+            icon={<CloudSlash className="icon-md" />}
+            onSelect={() => unlinkRunbookSync(runbookId)}
+          >
+            {t.runbooks.stopSyncing}
+          </ContextMenuItem>
+        )}
+
+        <ContextMenuItem
+          icon={<DuplicateIcon className="icon-md icon-bold" />}
+          onSelect={() => void duplicateRunbook(runbookId)}
+        >
+          {t.runbooks.duplicate}
+        </ContextMenuItem>
+
+        <ContextMenuItem
+          icon={<TrashIcon className="icon-md icon-bold" />}
+          onSelect={() => void removeRunbookFromLibrary(runbookId)}
+          danger
+        >
+          {t.runbooks.removeFromLibrary}
+        </ContextMenuItem>
+      </ActionsMenu>
     </div>
   );
 });

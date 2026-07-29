@@ -1,0 +1,71 @@
+.cloud-browser-path-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cloud-browser-path {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-1);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.cloud-browser-path::-webkit-scrollbar {
+  display: none;
+}
+
+.cloud-browser-crumb {
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background var(--transition-base),
+    color var(--transition-base);
+}
+
+.cloud-browser-crumb:disabled {
+  color: var(--color-text-primary);
+  cursor: default;
+}
+
+.cloud-browser-crumb:hover:not(:disabled) {
+  background: var(--color-surface);
+  color: var(--accent);
+}
+
+.cloud-browser-crumb-separator {
+  flex-shrink: 0;
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  color: var(--color-text-muted);
+}
+
+#refresh-cloud-files-icon {
+  fill: currentColor;
+}
+
+#refresh-cloud-files-icon.is-refreshing {
+  animation: cloud-refresh-spin 0.8s linear infinite;
+}
+
+@keyframes cloud-refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #refresh-cloud-files-icon.is-refreshing {
+    animation-duration: 2s;
+  }
+}

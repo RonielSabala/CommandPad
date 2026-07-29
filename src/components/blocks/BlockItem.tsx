@@ -4,7 +4,7 @@ import { DataAttr } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
 import { AppMode, BlockType, LassoMode } from "@/common/enums";
 import type { Block } from "@/common/types";
-import { DragIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
+import { DragIcon } from "@/components/icons";
 import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
 import { useTranslation } from "@/i18n";
@@ -12,6 +12,7 @@ import { getActiveTab, useStore, useStoreApi } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { memo, useRef, useState } from "react";
+import { BlockActionsMenu } from "./BlockActionsMenu";
 import "./BlockItem.css";
 import { CommandBlock } from "./command/CommandBlock";
 import { DividerBlock } from "./divider/DividerBlock";
@@ -33,8 +34,6 @@ export const BlockItem = memo(function BlockItem({
   const isSelected = useStore((state) => state.selectedBlockIds.has(block.id));
   const isFlashing = useStore((state) => state.flashBlockIds.has(block.id));
   const clearFlash = useStore((state) => state.clearFlash);
-  const duplicateBlock = useStore((state) => state.duplicateBlock);
-  const removeBlock = useStore((state) => state.removeBlock);
   const reorderBlocks = useStore((state) => state.reorderBlocks);
   const setBlockSelected = useStore((state) => state.setBlockSelected);
 
@@ -166,27 +165,7 @@ export const BlockItem = memo(function BlockItem({
         </div>
       </div>
 
-      <div
-        className={CssClass.BLOCK_CONTROLS}
-        onMouseDown={(event) => event.preventDefault()}
-      >
-        <div className="block-controls-inner">
-          <button
-            className="btn btn-icon"
-            onClick={() => duplicateBlock(block.id)}
-            title={t.blocks.duplicate}
-          >
-            <DuplicateIcon className="icon-md icon-bold" />
-          </button>
-          <button
-            className="btn btn-icon btn-danger"
-            onClick={() => removeBlock(block.id)}
-            title={t.blocks.delete}
-          >
-            <TrashIcon className="icon-md icon-bold" />
-          </button>
-        </div>
-      </div>
+      <BlockActionsMenu blockId={block.id} />
     </div>
   );
 });

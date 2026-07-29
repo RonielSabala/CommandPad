@@ -30,6 +30,7 @@ export function StickyScrollbar({ targetRef, deps }: Props) {
     };
 
     measure();
+
     const observer = new ResizeObserver(measure);
     observer.observe(target);
 
@@ -59,6 +60,7 @@ export function StickyScrollbar({ targetRef, deps }: Props) {
     target.addEventListener(EventType.SCROLL, onTargetScroll, {
       passive: true,
     });
+
     proxy.addEventListener(EventType.SCROLL, onProxyScroll, { passive: true });
 
     return () => {

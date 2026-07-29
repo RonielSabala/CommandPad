@@ -1,19 +1,26 @@
 import { SearchIcon, XIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import "./SidebarSearch.css";
+import { classNames } from "@/utils/string";
+import "./SearchInput.css";
 
 interface Props {
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
+  className?: string;
 }
 
-export function SidebarSearch({ value, placeholder, onChange }: Props) {
+export function SearchInput({
+  value,
+  placeholder,
+  onChange,
+  className,
+}: Props) {
   const t = useTranslation();
   return (
-    <div className="sidebar-search-wrapper">
+    <div className={classNames("search-input-wrapper", className)}>
       <input
-        className="sidebar-search-input"
+        className="search-input"
         type="text"
         placeholder={placeholder}
         spellCheck={false}
@@ -21,10 +28,10 @@ export function SidebarSearch({ value, placeholder, onChange }: Props) {
         value={value}
         onChange={(event) => onChange(event.target.value)}
       />
-      <SearchIcon className="sidebar-search-icon icon-md icon-bold" />
+      <SearchIcon className="search-input-icon icon-md icon-bold" />
       {value && (
         <button
-          className="sidebar-search-clear-btn"
+          className="search-input-clear-btn"
           title={t.common.clearSearch}
           onClick={() => onChange("")}
         >

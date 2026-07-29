@@ -1,14 +1,17 @@
 import { DocsSectionId } from "@/common/constants/docs";
-import { BlockType, NoteStyle } from "@/common/enums";
+import { BlockType, NoteStyle, RunbookSyncStatus } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
+import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
 
 export const en: Messages = {
   common: {
     cancel: "Cancel",
     close: "Close",
+    back: "Back",
     ok: "OK",
     create: "Create",
+    save: "Save",
     dragToReorder: "Drag to reorder",
     clearSearch: "Clear search",
     noMatches: "No matches.",
@@ -50,10 +53,21 @@ export const en: Messages = {
     importTitle: "Import runbook",
     paste: "Paste",
     pasteTitle: "Paste runbook JSON",
+    actions: "Runbook actions",
+    duplicate: "Duplicate runbook",
     removeFromLibrary: "Remove from library",
     dropToImport: "Drop runbooks to import",
     clearLibrary: "Delete All",
     clearLibraryTitle: "Delete all runbooks from the library",
+    stopSyncing: "Stop syncing",
+    syncStatus: {
+      [RunbookSyncStatus.SYNCED]: (provider) => `Synced with ${provider}`,
+      [RunbookSyncStatus.SYNCING]: (provider) => `Saving to ${provider}…`,
+      [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
+        `Sign in to ${provider} to keep syncing`,
+      [RunbookSyncStatus.ERROR]: (provider) =>
+        `Could not save to ${provider} · click to retry`,
+    },
   },
   variables: {
     title: "VARIABLES",
@@ -65,6 +79,8 @@ export const en: Messages = {
     valuePlaceholder: "value",
     reveal: "Reveal value",
     mask: "Mask value",
+    actions: "Variable actions",
+    duplicate: "Duplicate variable",
     remove: "Remove variable",
     dragResizeSplit: "Drag to resize key and value · double-click to even out",
     unusedTitle: (key) => `${key} (unused)`,
@@ -81,8 +97,10 @@ export const en: Messages = {
       [BlockType.DIVIDER]: "Divider",
     },
     typeTitle: (label) => `${label} block`,
-    duplicate: "Duplicate block",
-    delete: "Delete block",
+    actions: "Block actions",
+    duplicate: (count) =>
+      count === 1 ? "Duplicate block" : "Duplicate blocks",
+    delete: (count) => (count === 1 ? "Delete block" : "Delete blocks"),
     emptyTitle: "No blocks yet.",
     emptyHint: "Add a command or note below.",
   },
@@ -109,15 +127,91 @@ export const en: Messages = {
   },
   exportModal: {
     title: "Export",
-    message: "Choose an export format.",
+    cloudTitle: `Export to ${MessageSlot.PROVIDER}`,
+    destinationLabel: "Destination",
+    formatLabel: "Format",
+    filenameLabel: "Filename",
+    folderLabel: "Folder",
+    changeFolder: "Change",
+    chooseFolder: "Choose a folder to save into.",
+    selectFolder: "Save here",
+    confirm: "Export",
+    savingTo: (provider) => `Saving to ${provider}…`,
+    savedTo: (provider) => `Saved to ${provider}`,
+    exportError: "Export failed. Please try again.",
+    tryAgain: "Try again",
   },
   pasteModal: {
     title: "Paste Runbook",
     message: "Paste raw runbook JSON to create a new runbook.",
     error: "That doesn't look like valid runbook JSON.",
   },
+  destinationModal: {
+    title: "Import",
+    message: "Choose where to import a runbook from.",
+    local: "This Device",
+  },
+  cloudModal: {
+    importTitle: `Import from ${MessageSlot.PROVIDER}`,
+    changeProvider: "Change provider",
+    signInPrompt: (provider) =>
+      `Sign in to ${provider} to browse and manage your runbooks there.`,
+    signInSharePoint: "Sign in with Microsoft",
+    signInGoogleDrive: "Sign in with Google",
+    signOut: "Sign out",
+    signedInAs: (account) => `Signed in as ${account}`,
+    refresh: "Refresh",
+    loading: "Loading…",
+    emptyFiles: "Nothing saved in this folder yet.",
+    emptyFolders: "No folders in here yet.",
+    columnName: "Name",
+    columnModified: "Modified",
+    columnSize: "Size",
+    sortAscending: (column) => `Sort by ${column}, ascending`,
+    sortDescending: (column) => `Sort by ${column}, descending`,
+    searchFilesPlaceholder: "Search files and folders",
+    searchFoldersPlaceholder: "Search folders",
+    noResultsFiles: "No files or folders match your search.",
+    noResultsFolders: "No folders match your search.",
+    navigateBack: "Back",
+    navigateForward: "Forward",
+    openFolderAction: (name) => `Open ${name}`,
+    newFolder: "New folder",
+    folderNamePlaceholder: "Folder name",
+    createFolder: "Create folder",
+    cancelNewFolder: "Cancel new folder",
+    importAction: (filename) => `Import ${filename}`,
+    entryActions: "More actions",
+    rename: "Rename",
+    edit: "Edit",
+    duplicate: "Duplicate",
+    download: "Download",
+    delete: "Delete",
+    saveName: "Save name",
+    cancelRename: "Cancel rename",
+    namePlaceholder: "Filename",
+    editTitle: (filename) => `Editing ${filename}`,
+    editHint:
+      "Changes are written straight back to the cloud file when you save.",
+    signInError: "Sign-in failed. Please try again.",
+    genericError: "Something went wrong. Please try again.",
+    invalidFileError: "That file doesn't look like valid runbook JSON.",
+    invalidJsonError: "That isn't valid JSON, so it can't be saved yet.",
+    readError: "Could not open that file. Please try again.",
+    saveError: "Could not save that file. Please try again.",
+    renameError: "Could not rename that file. Please try again.",
+    duplicateError: "Could not duplicate that file. Please try again.",
+    downloadError: "Could not download that file. Please try again.",
+    deleteError: "Could not delete that file. Please try again.",
+    renameFolderError: "Could not rename that folder. Please try again.",
+    duplicateFolderError: "Could not duplicate that folder. Please try again.",
+    downloadFolderError: "Could not download that folder. Please try again.",
+    deleteFolderError: "Could not delete that folder. Please try again.",
+    createFolderError: "Could not create that folder. Please try again.",
+    nameTakenError: (filename) => `${filename} already exists in this folder.`,
+  },
   alert: {
-    invalidFormatTitle: "Invalid Format",
+    defaultTitle: "Notice",
   },
   confirm: {
     defaultTitle: "Confirm",
@@ -126,20 +220,45 @@ export const en: Messages = {
     overwriteTitle: "Overwrite Runbook",
     overwriteConfirm: "Overwrite",
     overwriteMessage: (filename, existingName) =>
-      `"${filename}" matches an existing runbook. Importing it will overwrite "${existingName}".`,
+      `\`${filename}\` matches a runbook you already have. Importing it **overwrites** \`${existingName}\`.`,
+    overwriteCloudFileTitle: "Overwrite Cloud Runbook",
+    overwriteCloudFileConfirm: "Overwrite",
+    overwriteCloudFileMessage: (filename) =>
+      `\`${filename}\` already exists in the selected folder. Exporting replaces its contents, and **this cannot be undone**.`,
+    importFailedTitle: "Invalid Format",
     importFailed: (count) =>
       count === 1
-        ? "1 file could not be imported because its format isn't recognized."
-        : `${count} files could not be imported because their formats aren't recognized.`,
+        ? "**1 file** could not be imported because its format isn't recognized."
+        : `**${count} files** could not be imported because their formats aren't recognized.`,
     pastedRunbook: "Pasted runbook",
     resetTitle: "Reset Workspace",
     resetConfirm: "Reset",
     resetMessage:
-      "Delete all variables, blocks, runbooks, and preferences? This action cannot be undone.",
+      "Delete **every variable, block, runbook and preference**? This cannot be undone.",
     clearLibraryTitle: "Delete All Runbooks",
     clearLibraryConfirm: "Delete All",
     clearLibraryMessage:
-      "Delete every runbook in the library, along with its variables and blocks? This action cannot be undone.",
+      "Delete **every runbook** in the library? This cannot be undone.",
+    deleteRunbookTitle: "Delete Runbook",
+    deleteRunbookConfirm: "Delete",
+    deleteRunbookMessage: (label) =>
+      `Delete \`${label}\`? **This cannot be undone.**`,
+    deleteCloudFileTitle: "Delete Cloud Runbook",
+    deleteCloudFileConfirm: "Delete",
+    deleteCloudFileMessage: (filename) =>
+      `Delete \`${filename}\` from your cloud folder? Your provider keeps it in the _Recycle Bin_ for a while, so you can still restore it from there.`,
+    deleteCloudFolderTitle: "Delete Cloud Folder",
+    deleteCloudFolderConfirm: "Delete",
+    deleteCloudFolderMessage: (name) =>
+      `Delete the folder \`${name}\`? Your provider keeps deleted items in the _Recycle Bin_ for a while, so you can still restore them from there.`,
+    signOutCloudTitle: "Sign Out",
+    signOutCloudConfirm: "Sign Out",
+    signOutCloudMessage:
+      "Sign out of this account? Your runbooks **stay in the cloud**, and you can sign back in at any time.",
+    discardCloudEditTitle: "Discard Changes",
+    discardCloudEditConfirm: "Discard",
+    discardCloudEditMessage: (filename) =>
+      `Close the editor without saving? Your **unsaved changes** to \`${filename}\` will be lost.`,
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Toggle read / edit mode",
@@ -167,6 +286,7 @@ export const en: Messages = {
     [KeyBinding.NOTE_CODE]: "Wrap selected text in backticks (note block)",
     [KeyBinding.WRAP_SELECTION]:
       "Wrap selected text in the typed pair (any text field)",
+    [KeyBinding.SUBMIT_EDITOR]: "Save / create from a code editor",
   },
   footer: {
     privacy: "Privacy",
@@ -190,32 +310,31 @@ export const en: Messages = {
     },
     features: {
       title: "Why you'll keep it around",
-      subtitle:
-        "A small tool that quietly fixes an everyday annoyance. Here is what tends to win people over.",
+      subtitle: "A small tool for an everyday annoyance.",
       items: [
         {
-          title: "Change one thing, not twenty",
-          body: "Update a hostname or a version number in a single place and every command that mentions it catches up instantly. No find-and-replace, no stale copy of the old value hiding three lines down.",
+          title: "Change it once",
+          body: "Update a host or a version in one place. Every command that mentions it follows.",
         },
         {
-          title: "Copy commands that just run",
-          body: "Every `{VARIABLE}` resolves as you type, so the preview is the real thing. One click drops the command on your clipboard with the actual values already filled in: paste, run, done.",
+          title: "Copy and run",
+          body: "Every `{VARIABLE}` resolves as you type, so what you copy is the real command.",
         },
         {
-          title: "Runbooks that still make sense later",
-          body: "Weave commands together with Markdown notes and dividers, so a runbook reads like the walkthrough you'd give a teammate, not a bare stack of shell lines you'll be squinting at next quarter.",
+          title: "Reads like a guide",
+          body: "Markdown notes and dividers between commands, so a runbook still makes sense months later.",
         },
         {
-          title: "Yours, and only yours",
-          body: "No backend, no account, no analytics quietly phoning home. Everything lives in your browser, and secret variables never leave the machine you typed them on.",
+          title: "Stays on your machine",
+          body: "No backend, no account, no analytics. Everything lives in your browser.",
         },
         {
-          title: "It stays out of your way",
-          body: "Tabs, drag-to-reorder, multi-block select, read mode, keyboard shortcuts, light and dark, English and Spanish. The small comforts you stop noticing because they simply work.",
+          title: "Out of your way",
+          body: "Tabs, drag to reorder, read mode, shortcuts, light and dark. Small comforts that just work.",
         },
         {
-          title: "Your work comes with you",
-          body: "Export to JSON, Markdown, or plain text and load it right back on another machine. Your runbooks are plain files you own, never trapped in a format only this app can read.",
+          title: "Yours to take",
+          body: "Export to JSON, Markdown, or plain text, and load it back anywhere.",
         },
       ],
     },
@@ -227,14 +346,14 @@ export const en: Messages = {
   },
   privacy: {
     title: "Privacy Policy",
-    updated: "Last updated: July 22, 2026",
+    updated: "Last updated: July 29, 2026",
     intro:
       "CommandPad is a client-side application that runs entirely in your web browser. This policy explains what data the app handles and, more importantly, what it does not.",
     sections: [
       {
         heading: "The short version",
         paragraphs: [
-          "CommandPad has no backend server, no user accounts, and no analytics or tracking. The app does not collect, transmit, or sell any of your data. Everything you create stays on your device.",
+          "CommandPad has no backend server, no user accounts, and no analytics or tracking. The app does not collect, transmit, or sell any of your data. Everything you create stays on your device, unless you choose to sync a runbook to your own SharePoint or Google Drive account.",
         ],
       },
       {
@@ -253,10 +372,22 @@ export const en: Messages = {
           "We want to be explicit about the things CommandPad deliberately avoids.",
         ],
         bullets: [
-          "We do not send your data to any server. There is no server to send it to.",
+          "We do not operate a backend server that receives your data. The only time your runbooks leave your device is when you explicitly export or sync them to your own cloud account.",
           "We do not use cookies, advertising identifiers, or third-party analytics.",
           "We do not track your behavior across sites or build a profile about you.",
-          "We do not require an account, an email address, or any sign-in.",
+          "We do not require a CommandPad account, an email address, or any sign-in to use the app.",
+        ],
+      },
+      {
+        heading: "Cloud sync (optional)",
+        paragraphs: [
+          "CommandPad can optionally export a runbook to, or import one from, your own SharePoint or Google Drive account. This feature is off until you choose to use it.",
+        ],
+        bullets: [
+          "You sign in through the provider's own sign-in flow (Microsoft or Google). CommandPad never sees your password, and it only requests access to the dedicated **CommandPad** folder it creates for your runbooks.",
+          "Synced runbooks are stored in that folder inside your own account. They are not sent to, or stored on, any server operated by us.",
+          "The data you sync travels between your browser and the provider you chose. Once it reaches that provider, their privacy policy and terms apply to it.",
+          "You can sign out at any time, and you can delete synced files directly from your cloud account.",
         ],
       },
       {
@@ -287,7 +418,7 @@ export const en: Messages = {
   },
   terms: {
     title: "Terms of Service",
-    updated: "Last updated: July 22, 2026",
+    updated: "Last updated: July 29, 2026",
     intro:
       "These terms govern your use of CommandPad. By using the app you agree to them. Please read them, as they are short and written to be understandable.",
     sections: [
@@ -300,7 +431,7 @@ export const en: Messages = {
       {
         heading: "The service",
         paragraphs: [
-          "CommandPad is a free, client-side tool for building variable-aware command runbooks. It runs in your browser and stores your work locally on your device. It is provided as-is, and features may change or be removed over time.",
+          "CommandPad is a free, client-side tool for building variable-aware command runbooks. It runs in your browser and stores your work locally on your device. It can optionally connect to your own SharePoint or Google Drive account to export and import runbooks, entirely at your discretion. It is provided as-is, and features may change or be removed over time.",
         ],
       },
       {
@@ -328,9 +459,20 @@ export const en: Messages = {
         ],
       },
       {
+        heading: "Third-party cloud services",
+        paragraphs: [
+          "If you choose to sync runbooks with SharePoint or Google Drive, you do so through your own account with Microsoft or Google. Your use of those services is governed by their terms and privacy policies, not ours.",
+        ],
+        bullets: [
+          "CommandPad only accesses the dedicated folder it creates for your runbooks; it does not read the rest of your cloud storage.",
+          "We are not responsible for the availability, behavior, or data handling of Microsoft, Google, or any other third-party provider.",
+          "You are responsible for keeping your cloud account secure and for any content you store there.",
+        ],
+      },
+      {
         heading: "Data and privacy",
         paragraphs: [
-          "CommandPad stores your data locally and does not transmit it. For details, see the Privacy Policy, which is incorporated into these terms by reference.",
+          "CommandPad stores your data locally and does not transmit it, except when you explicitly sync a runbook to your own cloud account. For details, see the Privacy Policy, which is incorporated into these terms by reference.",
         ],
       },
       {
@@ -368,6 +510,9 @@ export const en: Messages = {
       [DocsSectionId.MULTI_SELECT]: "Multi-select",
       [DocsSectionId.READ_MODE]: "Read mode",
       [DocsSectionId.EXPORT]: "Export",
+      [DocsSectionId.CLOUD_EXPORT]: "Cloud export & import",
+      [DocsSectionId.CLOUD_LINKED_SYNC]: "Keeping a runbook in sync",
+      [DocsSectionId.CLOUD_FILE_MANAGEMENT]: "Managing cloud files",
       [DocsSectionId.LANGUAGE]: "Language",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Keyboard shortcuts",
       [DocsSectionId.QA]: "Q&A",
@@ -455,7 +600,7 @@ export const en: Messages = {
         "Click **Import** to load one or more `.json` files at once, or **Paste** to create a runbook from raw JSON.",
         "You can also **drag files** from your file explorer and drop them onto the section to import them.",
         "Click any runbook to open it. If it's already open in a tab, that tab becomes active.",
-        "Delete a runbook from the library with the button shown on row hover.",
+        "Open the **runbook actions** menu shown on row hover to duplicate a runbook or remove it from the library.",
         "Click **Delete All** to empty the whole library at once.",
         "Drag the handle on the left of a runbook to reorder it in the list.",
         "Use the **search bar** to filter runbooks by label or filename.",
@@ -470,19 +615,21 @@ export const en: Messages = {
     variables: {
       why: "This is the feature everything else has been building toward. A server name, a file path, a version number: the same little values repeat across half the commands you keep, and the day one changes you get to hunt it down in every single command. With variables you write that value **once**, and every command that needs it stays current on its own.",
       intro:
-        "Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**. Keys are case-sensitive.",
+        "Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**. Keys are case-sensitive. If two variables share the same key, the one defined last wins.",
       usage:
-        "Use a variable in any command by wrapping its key in curly braces, e.g. `{SERVER}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
+        "Use a variable in any command by wrapping its key in curly braces, e.g. `{server}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
       unresolved:
         "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**.",
-      duplicatesAndEmpty:
-        "If two variables share the same key, the one defined last wins. Hover over a row to reveal its controls: a drag handle on the left to reorder it among the others and a delete button on the right. Try them out in the demos throughout this section.",
       tooltip:
         "If a key or value is too long to fit its box, hover over it to see the full text in a tooltip.",
       split:
         "Keys and values split the row evenly, but you can change that: drag the divider between them to give one side more room, and double-click it to go back to an even split. The new balance applies to every variable and is remembered between sessions.",
       demoHint:
-        "See it for yourself below: one `SERVER` variable feeds two commands. Edit its value and watch both previews follow along as you type. That's the whole idea in one gesture.",
+        "See it for yourself below: one variable feeds two commands. Edit its value and watch both previews follow along as you type. Hover over a row to reveal its controls: a drag handle on the left to reorder it among the others and a **variable actions** menu on the right to duplicate or remove it.",
+      constants:
+        "Not every variable changes for the same reason. Some are values you swap all the time, and some are **constants**: they stay the same for the whole life of the runbook, and they are only variables because the same value shows up in command after command. CommandPad tells them apart by naming convention: a key written entirely in **capitals** is treated as a constant and its key is shown in purple. Anything with a **lowercase** letter in it keeps the usual blue.",
+      constantsDemoHint:
+        "The convention is purely a naming one: constants resolve, get referenced and get renamed exactly like any other variable. Rename a key below from capitals to lowercase and back to see the color follow along.",
     },
     variableReferences: {
       intro:
@@ -519,7 +666,7 @@ export const en: Messages = {
     },
     blocks: {
       intro:
-        "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or use the **duplicate** and **delete** buttons on the right.",
+        "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or open the **block actions** menu on the right to duplicate or delete it.",
     },
     commandBlock: {
       intro:
@@ -597,6 +744,36 @@ export const en: Messages = {
         "A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.",
       copyMarkdown:
         "To skip files entirely, right-click anywhere inside the runbook and choose **Copy runbook as Markdown**. It puts the same Markdown content on your clipboard, ready to paste into a chat, a ticket, or a document.",
+    },
+    cloudExport: {
+      intro:
+        "**Export** and **Import** can go straight to SharePoint or Google Drive, not just this device. The dialog reopens with the destination and format you used last time already selected.",
+      switchProvider:
+        "While you are browsing the cloud, the provider name in the dialog title is a **picker**: click it to switch providers without going back a step.",
+      overwrite:
+        "If the destination folder already holds a file with the same name, the export stops and asks you to confirm before replacing it.",
+    },
+    cloudLinkedSync: {
+      intro:
+        "A runbook you import from the cloud stays **in sync** with the file it came from: every edit is written back to that file, so you never have to export it again to save it. Exporting a runbook as **JSON** links it the same way.",
+      syncBadge:
+        "A synced runbook shows a **sync icon** next to its name in the RUNBOOKS list: a spinner while an edit is on its way up, a crossed out cloud if the save failed. Click it to sign in again or retry.",
+      stopSyncing:
+        "**Stop syncing** (in the runbook's three dots menu) breaks the link without touching either copy. Sync only pushes local edits up, it never pulls remote changes back down.",
+    },
+    cloudFileManagement: {
+      folders:
+        "Cloud runbooks can live in folders: click one to open it, click a file to import it. The **arrow** buttons and the path above the list move between folders you've visited. Exporting picks a destination the same way, with a **new folder** button.",
+      search:
+        "The **search box** looks through the entire **CommandPad** folder, not just the one you have open, and shows each result's folder path.",
+      actions:
+        "A row's **three dots** menu holds **Rename**, **Edit**, **Duplicate**, **Download**, and **Delete**.",
+      editFile:
+        "**Edit** opens the file's raw JSON in place, so a quick fix doesn't require importing, changing, and re-exporting it. It has to stay valid JSON to save.",
+      recycleBin:
+        "A deleted file or folder isn't gone for good: cloud providers move it to a _Recycle Bin_ first.",
+      storage:
+        "Cloud runbooks live in a dedicated **CommandPad** folder in your own account, never anywhere else.",
     },
     language: {
       intro:

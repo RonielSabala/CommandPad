@@ -18,10 +18,10 @@ export function VariablesDocs() {
         className="docs-demo-hide-secret"
         tabs={[
           {
-            variables: [demoVariable("SERVER", "192.168.1.50")],
+            variables: [demoVariable("server", "192.168.1.50")],
             blocks: [
-              demoCommand("ping {SERVER}"),
-              demoCommand("ssh admin@{SERVER}"),
+              demoCommand("ping {server}"),
+              demoCommand("ssh admin@{server}"),
             ],
           },
         ]}
@@ -29,8 +29,24 @@ export function VariablesDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variables.constants} />
+      <Prose text={t.docs.variables.constantsDemoHint} />
+      <DemoWorkspace
+        className="docs-demo-hide-secret"
+        tabs={[
+          {
+            variables: [
+              demoVariable("endpoint", "health"),
+              demoVariable("API_URL", "https://api.example.com"),
+            ],
+            blocks: [demoCommand("curl {API_URL}/{endpoint}")],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
       <Prose text={t.docs.variables.unresolved} />
-      <Prose text={t.docs.variables.duplicatesAndEmpty} />
       <Prose text={t.docs.variables.tooltip} />
       <Prose text={t.docs.variables.split} />
     </>
@@ -101,12 +117,12 @@ export function ParameterizedPlaceholdersDocs() {
         tabs={[
           {
             variables: [
-              demoVariable("PROJECT", "commandpad"),
+              demoVariable("project", "commandpad"),
               demoVariable("FOLDER", "~/Projects/{;name}"),
             ],
             blocks: [
-              demoCommand("cd {FOLDER;name={PROJECT}}"),
-              demoCommand("git clone https://github.com/user/{PROJECT}"),
+              demoCommand("cd {FOLDER;name={project}}"),
+              demoCommand("git clone https://github.com/user/{project}"),
             ],
           },
         ]}
@@ -128,8 +144,8 @@ export function EscapingBracesDocs() {
       <DemoWorkspace
         tabs={[
           {
-            variables: [demoVariable("USER", "admin")],
-            blocks: [demoCommand('echo "\\{USER\\} = {USER}"')],
+            variables: [demoVariable("user", "admin")],
+            blocks: [demoCommand('echo "\\{user\\} = {user}"')],
           },
         ]}
       >
@@ -151,9 +167,9 @@ export function SecretVariablesDocs() {
       <DemoWorkspace
         tabs={[
           {
-            variables: [demoVariable("PASSWORD", "s3cr3t-value", true)],
+            variables: [demoVariable("password", "s3cr3t-value", true)],
             blocks: [
-              demoCommand("zip -r -P {PASSWORD} backup.zip ~/Documents"),
+              demoCommand("zip -r -P {password} backup.zip ~/Documents"),
             ],
           },
         ]}

@@ -94,3 +94,77 @@ export const DragGroup = {
   DOCS_DEMO: "docs-demo",
 } as const;
 export type DragGroup = (typeof DragGroup)[keyof typeof DragGroup];
+
+export const HttpMethod = {
+  GET: "GET",
+  POST: "POST",
+  PUT: "PUT",
+  PATCH: "PATCH",
+  DELETE: "DELETE",
+} as const;
+export type HttpMethod = (typeof HttpMethod)[keyof typeof HttpMethod];
+
+export const HttpStatus = {
+  NOT_FOUND: 404,
+} as const;
+export type HttpStatus = (typeof HttpStatus)[keyof typeof HttpStatus];
+
+export const CloudProvider = {
+  SHAREPOINT: "sharepoint",
+  GOOGLE_DRIVE: "google-drive",
+} as const;
+export type CloudProvider = (typeof CloudProvider)[keyof typeof CloudProvider];
+
+export const SyncDestination = {
+  LOCAL: "local",
+  SHAREPOINT: CloudProvider.SHAREPOINT,
+  GOOGLE_DRIVE: CloudProvider.GOOGLE_DRIVE,
+} as const;
+export type SyncDestination =
+  (typeof SyncDestination)[keyof typeof SyncDestination];
+
+export const CloudSortColumn = {
+  NAME: "name",
+  MODIFIED: "modified",
+  SIZE: "size",
+} as const;
+export type CloudSortColumn =
+  (typeof CloudSortColumn)[keyof typeof CloudSortColumn];
+
+export const SortDirection = {
+  ASC: "asc",
+  DESC: "desc",
+} as const;
+export type SortDirection = (typeof SortDirection)[keyof typeof SortDirection];
+
+export const HistoryDirection = {
+  BACK: "back",
+  FORWARD: "forward",
+} as const;
+export type HistoryDirection =
+  (typeof HistoryDirection)[keyof typeof HistoryDirection];
+
+export const CloudExportStatus = {
+  IDLE: "idle",
+  UPLOADING: "uploading",
+  SUCCESS: "success",
+  ERROR: "error",
+} as const;
+export type CloudExportStatus =
+  (typeof CloudExportStatus)[keyof typeof CloudExportStatus];
+
+export const RunbookSyncStatus = {
+  SYNCED: "synced",
+  SYNCING: "syncing",
+  SIGNED_OUT: "signed-out",
+  ERROR: "error",
+} as const;
+export type RunbookSyncStatus =
+  (typeof RunbookSyncStatus)[keyof typeof RunbookSyncStatus];
+
+export const DialogTone = {
+  DANGER: "danger",
+  WARNING: "warning",
+  INFO: "info",
+} as const;
+export type DialogTone = (typeof DialogTone)[keyof typeof DialogTone];

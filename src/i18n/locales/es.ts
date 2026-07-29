@@ -1,14 +1,17 @@
 import { DocsSectionId } from "@/common/constants/docs";
-import { BlockType, NoteStyle } from "@/common/enums";
+import { BlockType, NoteStyle, RunbookSyncStatus } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
+import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
 
 export const es: Messages = {
   common: {
     cancel: "Cancelar",
     close: "Cerrar",
+    back: "Atrás",
     ok: "Aceptar",
     create: "Crear",
+    save: "Guardar",
     dragToReorder: "Arrastra para reordenar",
     clearSearch: "Limpiar búsqueda",
     noMatches: "Sin coincidencias.",
@@ -51,10 +54,21 @@ export const es: Messages = {
     importTitle: "Importar libro",
     paste: "Pegar",
     pasteTitle: "Pegar JSON de libro",
+    actions: "Acciones del libro",
+    duplicate: "Duplicar libro",
     removeFromLibrary: "Quitar de la biblioteca",
     dropToImport: "Suelta los libros para importarlos",
     clearLibrary: "Eliminar todo",
     clearLibraryTitle: "Eliminar todos los libros de la biblioteca",
+    stopSyncing: "Dejar de sincronizar",
+    syncStatus: {
+      [RunbookSyncStatus.SYNCED]: (provider) => `Sincronizado con ${provider}`,
+      [RunbookSyncStatus.SYNCING]: (provider) => `Guardando en ${provider}…`,
+      [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
+        `Inicia sesión en ${provider} para seguir sincronizando`,
+      [RunbookSyncStatus.ERROR]: (provider) =>
+        `No se pudo guardar en ${provider} · haz clic para reintentar`,
+    },
   },
   variables: {
     title: "VARIABLES",
@@ -66,6 +80,8 @@ export const es: Messages = {
     valuePlaceholder: "valor",
     reveal: "Mostrar valor",
     mask: "Ocultar valor",
+    actions: "Acciones de la variable",
+    duplicate: "Duplicar variable",
     remove: "Eliminar variable",
     dragResizeSplit:
       "Arrastra para redimensionar clave y valor · doble clic para igualarlos",
@@ -83,8 +99,10 @@ export const es: Messages = {
       [BlockType.DIVIDER]: "Divisor",
     },
     typeTitle: (label) => `Bloque de ${label.toLowerCase()}`,
-    duplicate: "Duplicar bloque",
-    delete: "Eliminar bloque",
+    actions: "Acciones del bloque",
+    duplicate: (count) =>
+      count === 1 ? "Duplicar bloque" : "Duplicar bloques",
+    delete: (count) => (count === 1 ? "Eliminar bloque" : "Eliminar bloques"),
     emptyTitle: "Aún no hay bloques.",
     emptyHint: "Agrega un comando o una nota abajo.",
   },
@@ -111,15 +129,92 @@ export const es: Messages = {
   },
   exportModal: {
     title: "Exportar",
-    message: "Elige un formato de exportación.",
+    cloudTitle: `Exportar a ${MessageSlot.PROVIDER}`,
+    destinationLabel: "Destino",
+    formatLabel: "Formato",
+    filenameLabel: "Nombre del archivo",
+    folderLabel: "Carpeta",
+    changeFolder: "Cambiar",
+    chooseFolder: "Elige una carpeta donde guardar.",
+    selectFolder: "Guardar aquí",
+    confirm: "Exportar",
+    savingTo: (provider) => `Guardando en ${provider}…`,
+    savedTo: (provider) => `Guardado en ${provider}`,
+    exportError: "La exportación falló. Inténtalo de nuevo.",
+    tryAgain: "Intentar de nuevo",
   },
   pasteModal: {
     title: "Pegar Libro",
     message: "Pega el JSON del libro para crear uno nuevo.",
     error: "Eso no parece un JSON de libro válido.",
   },
+  destinationModal: {
+    title: "Importar",
+    message: "Elige desde dónde importar un libro.",
+    local: "Este dispositivo",
+  },
+  cloudModal: {
+    importTitle: `Importar desde ${MessageSlot.PROVIDER}`,
+    changeProvider: "Cambiar de proveedor",
+    signInPrompt: (provider) =>
+      `Inicia sesión en ${provider} para explorar y administrar tus runbooks allí.`,
+    signInSharePoint: "Iniciar sesión con Microsoft",
+    signInGoogleDrive: "Iniciar sesión con Google",
+    signOut: "Cerrar sesión",
+    signedInAs: (account) => `Sesión iniciada como ${account}`,
+    refresh: "Actualizar",
+    loading: "Cargando…",
+    emptyFiles: "Aún no hay nada guardado en esta carpeta.",
+    emptyFolders: "Aún no hay carpetas aquí.",
+    columnName: "Nombre",
+    columnModified: "Modificado",
+    columnSize: "Tamaño",
+    sortAscending: (column) => `Ordenar por ${column}, ascendente`,
+    sortDescending: (column) => `Ordenar por ${column}, descendente`,
+    searchFilesPlaceholder: "Buscar archivos y carpetas",
+    searchFoldersPlaceholder: "Buscar carpetas",
+    noResultsFiles: "Ningún archivo o carpeta coincide con tu búsqueda.",
+    noResultsFolders: "Ninguna carpeta coincide con tu búsqueda.",
+    navigateBack: "Atrás",
+    navigateForward: "Adelante",
+    openFolderAction: (name) => `Abrir ${name}`,
+    newFolder: "Nueva carpeta",
+    folderNamePlaceholder: "Nombre de la carpeta",
+    createFolder: "Crear carpeta",
+    cancelNewFolder: "Cancelar nueva carpeta",
+    importAction: (filename) => `Importar ${filename}`,
+    entryActions: "Más acciones",
+    rename: "Renombrar",
+    edit: "Editar",
+    duplicate: "Duplicar",
+    download: "Descargar",
+    delete: "Eliminar",
+    saveName: "Guardar nombre",
+    cancelRename: "Cancelar renombrado",
+    namePlaceholder: "Nombre del archivo",
+    editTitle: (filename) => `Editando ${filename}`,
+    editHint:
+      "Al guardar, los cambios se escriben directamente en el archivo de la nube.",
+    signInError: "No se pudo iniciar sesión. Inténtalo de nuevo.",
+    genericError: "Algo salió mal. Inténtalo de nuevo.",
+    invalidFileError: "Ese archivo no parece un JSON de libro válido.",
+    invalidJsonError:
+      "Esto no es un JSON válido, así que todavía no se puede guardar.",
+    readError: "No se pudo abrir el archivo. Inténtalo de nuevo.",
+    saveError: "No se pudo guardar el archivo. Inténtalo de nuevo.",
+    renameError: "No se pudo renombrar el archivo. Inténtalo de nuevo.",
+    duplicateError: "No se pudo duplicar el archivo. Inténtalo de nuevo.",
+    downloadError: "No se pudo descargar el archivo. Inténtalo de nuevo.",
+    deleteError: "No se pudo eliminar el archivo. Inténtalo de nuevo.",
+    renameFolderError: "No se pudo renombrar la carpeta. Inténtalo de nuevo.",
+    duplicateFolderError: "No se pudo duplicar la carpeta. Inténtalo de nuevo.",
+    downloadFolderError: "No se pudo descargar la carpeta. Inténtalo de nuevo.",
+    deleteFolderError: "No se pudo eliminar la carpeta. Inténtalo de nuevo.",
+    createFolderError: "No se pudo crear la carpeta. Inténtalo de nuevo.",
+    nameTakenError: (filename) => `${filename} ya existe en esta carpeta.`,
+  },
   alert: {
-    invalidFormatTitle: "Formato Inválido",
+    defaultTitle: "Aviso",
   },
   confirm: {
     defaultTitle: "Confirmar",
@@ -128,20 +223,45 @@ export const es: Messages = {
     overwriteTitle: "Sobrescribir Libro",
     overwriteConfirm: "Sobrescribir",
     overwriteMessage: (filename, existingName) =>
-      `"${filename}" coincide con un libro existente. Importarlo sobrescribirá "${existingName}".`,
+      `\`${filename}\` coincide con un libro que ya tienes. Importarlo **sobrescribirá** \`${existingName}\`.`,
+    overwriteCloudFileTitle: "Sobrescribir Libro de la Nube",
+    overwriteCloudFileConfirm: "Sobrescribir",
+    overwriteCloudFileMessage: (filename) =>
+      `\`${filename}\` ya existe en la carpeta seleccionada. Exportar reemplazará su contenido, y **esto no se puede deshacer**.`,
+    importFailedTitle: "Formato Inválido",
     importFailed: (count) =>
       count === 1
-        ? "No se pudo importar 1 archivo porque su formato no se reconoce."
-        : `No se pudieron importar ${count} archivos porque sus formatos no se reconocen.`,
+        ? "No se pudo importar **1 archivo** porque su formato no se reconoce."
+        : `No se pudieron importar **${count} archivos** porque sus formatos no se reconocen.`,
     pastedRunbook: "Libro pegado",
     resetTitle: "Resetear Espacio de Trabajo",
     resetConfirm: "Resetear",
     resetMessage:
-      "¿Eliminar todas las variables, bloques, libros y preferencias? Esta acción no se puede deshacer.",
+      "¿Eliminar **todas las variables, bloques, libros y preferencias**? Esto no se puede deshacer.",
     clearLibraryTitle: "Eliminar Todos los Libros",
     clearLibraryConfirm: "Eliminar todo",
     clearLibraryMessage:
-      "¿Eliminar todos los libros de la biblioteca, junto con sus variables y bloques? Esta acción no se puede deshacer.",
+      "¿Eliminar **todos los libros** de la biblioteca? Esto no se puede deshacer.",
+    deleteRunbookTitle: "Eliminar Libro",
+    deleteRunbookConfirm: "Eliminar",
+    deleteRunbookMessage: (label) =>
+      `¿Eliminar \`${label}\`? **Esto no se puede deshacer.**`,
+    deleteCloudFileTitle: "Eliminar Libro de la Nube",
+    deleteCloudFileConfirm: "Eliminar",
+    deleteCloudFileMessage: (filename) =>
+      `¿Eliminar \`${filename}\` de tu carpeta en la nube? Tu proveedor lo guarda un tiempo en la _Papelera de reciclaje_, así que todavía puedes restaurarlo desde ahí.`,
+    deleteCloudFolderTitle: "Eliminar Carpeta de la Nube",
+    deleteCloudFolderConfirm: "Eliminar",
+    deleteCloudFolderMessage: (name) =>
+      `¿Eliminar la carpeta \`${name}\`? Tu proveedor guarda un tiempo los elementos eliminados en la _Papelera de reciclaje_, así que todavía puedes restaurarlos desde ahí.`,
+    signOutCloudTitle: "Cerrar Sesión",
+    signOutCloudConfirm: "Cerrar Sesión",
+    signOutCloudMessage:
+      "¿Cerrar sesión de esta cuenta? Tus libros **seguirán en la nube**, y puedes volver a iniciar sesión cuando quieras.",
+    discardCloudEditTitle: "Descartar cambios",
+    discardCloudEditConfirm: "Descartar",
+    discardCloudEditMessage: (filename) =>
+      `¿Cerrar el editor sin guardar? Se perderán tus **cambios sin guardar** en \`${filename}\`.`,
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Alternar modo lectura / edición",
@@ -172,6 +292,7 @@ export const es: Messages = {
       "Envolver el texto seleccionado en comillas invertidas (bloque de nota)",
     [KeyBinding.WRAP_SELECTION]:
       "Envolver el texto seleccionado en el par escrito (cualquier campo de texto)",
+    [KeyBinding.SUBMIT_EDITOR]: "Guardar / crear desde un editor de código",
   },
   footer: {
     privacy: "Privacidad",
@@ -195,32 +316,31 @@ export const es: Messages = {
     },
     features: {
       title: "Por qué no vas a querer soltarlo",
-      subtitle:
-        "Una herramienta pequeña que resuelve, sin hacer ruido, una molestia de todos los días. Esto es lo que suele conquistar a la gente.",
+      subtitle: "Una herramienta pequeña para una molestia de todos los días.",
       items: [
         {
-          title: "Cambia una cosa, no veinte",
-          body: "Actualiza un host o un número de versión en un solo sitio y cada comando que lo menciona se pone al día al instante. Nada de buscar y reemplazar, ni de una copia vieja del valor escondida tres líneas más abajo.",
+          title: "Cámbialo una vez",
+          body: "Actualiza un host o una versión en un solo sitio. Cada comando que lo menciona se pone al día.",
         },
         {
-          title: "Copia comandos listos para ejecutar",
-          body: "Cada `{VARIABLE}` se resuelve mientras escribes, así que la vista previa es el comando de verdad. Un clic lo deja en tu portapapeles con los valores reales ya puestos: pega, ejecuta y listo.",
+          title: "Copia y ejecuta",
+          body: "Cada `{VARIABLE}` se resuelve mientras escribes: lo que copias es el comando real.",
         },
         {
-          title: "Libros que seguirás entendiendo con el tiempo",
-          body: "Entrelaza comandos con notas en Markdown y separadores para que un libro se lea como la explicación que le darías a un compañero, y no como una pila de líneas de terminal que tendrás que descifrar dentro de unos meses.",
+          title: "Se lee como una guía",
+          body: "Notas en Markdown y separadores entre comandos, para que un libro siga teniendo sentido meses después.",
         },
         {
-          title: "Tuyo, y de nadie más",
-          body: "Sin backend, sin cuenta, sin analíticas mandando datos a escondidas. Todo vive en tu navegador, y las variables secretas nunca salen del equipo donde las escribiste.",
+          title: "Todo en tu equipo",
+          body: "Sin backend, sin cuenta, sin analíticas. Todo vive en tu navegador.",
         },
         {
-          title: "Hecho para no estorbarte",
-          body: "Pestañas, reordenar arrastrando, selección de varios bloques, modo lectura, atajos de teclado, tema claro y oscuro, inglés y español. Esos pequeños detalles que dejas de notar porque sencillamente funcionan.",
+          title: "Sin estorbarte",
+          body: "Pestañas, reordenar arrastrando, modo lectura, atajos, tema claro y oscuro. Detalles que simplemente funcionan.",
         },
         {
-          title: "Tu trabajo va contigo",
-          body: "Exporta a JSON, Markdown o texto plano y vuelve a cargarlo sin problema en otro equipo. Tus libros son archivos normales que te pertenecen, nunca atrapados en un formato que solo esta app sepa leer.",
+          title: "Tuyo para llevar",
+          body: "Exporta a JSON, Markdown o texto plano y vuelve a cargarlo donde quieras.",
         },
       ],
     },
@@ -232,14 +352,14 @@ export const es: Messages = {
   },
   privacy: {
     title: "Política de Privacidad",
-    updated: "Última actualización: 22 de julio de 2026",
+    updated: "Última actualización: 29 de julio de 2026",
     intro:
       "CommandPad es una aplicación del lado del cliente que funciona por completo en tu navegador. Esta política explica qué datos maneja la app y, más importante aún, cuáles no.",
     sections: [
       {
         heading: "La versión corta",
         paragraphs: [
-          "CommandPad no tiene servidor backend, ni cuentas de usuario, ni analítica o seguimiento. La app no recopila, transmite ni vende ninguno de tus datos. Todo lo que creas se queda en tu dispositivo.",
+          "CommandPad no tiene servidor backend, ni cuentas de usuario, ni analítica o seguimiento. La app no recopila, transmite ni vende ninguno de tus datos. Todo lo que creas se queda en tu dispositivo, salvo que elijas sincronizar un libro con tu propia cuenta de SharePoint o Google Drive.",
         ],
       },
       {
@@ -258,10 +378,22 @@ export const es: Messages = {
           "Queremos ser explícitos sobre las cosas que CommandPad evita deliberadamente.",
         ],
         bullets: [
-          "No enviamos tus datos a ningún servidor. No hay servidor al que enviarlos.",
+          "No operamos un servidor backend que reciba tus datos. La única vez que tus libros salen de tu dispositivo es cuando los exportas o los sincronizas explícitamente con tu propia cuenta en la nube.",
           "No usamos cookies, identificadores publicitarios ni analítica de terceros.",
           "No seguimos tu comportamiento entre sitios ni construimos un perfil sobre ti.",
-          "No requerimos una cuenta, un correo electrónico ni ningún inicio de sesión.",
+          "No requerimos una cuenta de CommandPad, un correo electrónico ni ningún inicio de sesión para usar la app.",
+        ],
+      },
+      {
+        heading: "Sincronización en la nube (opcional)",
+        paragraphs: [
+          "CommandPad puede, de forma opcional, exportar un libro a tu propia cuenta de SharePoint o Google Drive, o importar uno desde ella. Esta función está desactivada hasta que elijas usarla.",
+        ],
+        bullets: [
+          "Inicias sesión mediante el propio flujo del proveedor (Microsoft o Google). CommandPad nunca ve tu contraseña y solo solicita acceso a la carpeta dedicada **CommandPad** que crea para tus libros.",
+          "Los libros sincronizados se guardan en esa carpeta dentro de tu propia cuenta. No se envían ni se almacenan en ningún servidor operado por nosotros.",
+          "Los datos que sincronizas viajan entre tu navegador y el proveedor que elijas. Una vez que llegan a ese proveedor, se aplican su política de privacidad y sus términos.",
+          "Puedes cerrar sesión en cualquier momento y puedes eliminar los archivos sincronizados directamente desde tu cuenta en la nube.",
         ],
       },
       {
@@ -292,7 +424,7 @@ export const es: Messages = {
   },
   terms: {
     title: "Términos del Servicio",
-    updated: "Última actualización: 22 de julio de 2026",
+    updated: "Última actualización: 29 de julio de 2026",
     intro:
       "Estos términos rigen tu uso de CommandPad. Al usar la app aceptas estos términos. Por favor, léelos, ya que son breves y están redactados para ser comprensibles.",
     sections: [
@@ -305,7 +437,7 @@ export const es: Messages = {
       {
         heading: "El servicio",
         paragraphs: [
-          "CommandPad es una herramienta gratuita del lado del cliente para crear libros de comandos con variables. Funciona en tu navegador y almacena tu trabajo localmente en tu dispositivo. Se ofrece tal cual, y las funciones pueden cambiar o eliminarse con el tiempo.",
+          "CommandPad es una herramienta gratuita del lado del cliente para crear libros de comandos con variables. Funciona en tu navegador y almacena tu trabajo localmente en tu dispositivo. De forma opcional, puede conectarse a tu propia cuenta de SharePoint o Google Drive para exportar e importar libros, totalmente a tu discreción. Se ofrece tal cual, y las funciones pueden cambiar o eliminarse con el tiempo.",
         ],
       },
       {
@@ -333,9 +465,20 @@ export const es: Messages = {
         ],
       },
       {
+        heading: "Servicios de terceros en la nube",
+        paragraphs: [
+          "Si eliges sincronizar libros con SharePoint o Google Drive, lo haces a través de tu propia cuenta con Microsoft o Google. Tu uso de esos servicios se rige por sus términos y políticas de privacidad, no por los nuestros.",
+        ],
+        bullets: [
+          "CommandPad solo accede a la carpeta dedicada que crea para tus libros; no lee el resto de tu almacenamiento en la nube.",
+          "No somos responsables de la disponibilidad, el comportamiento ni el manejo de datos de Microsoft, Google o cualquier otro proveedor externo.",
+          "Eres responsable de mantener segura tu cuenta en la nube y de cualquier contenido que almacenes en ella.",
+        ],
+      },
+      {
         heading: "Datos y privacidad",
         paragraphs: [
-          "CommandPad almacena tus datos localmente y no los transmite. Para más detalles, consulta la Política de Privacidad, que se incorpora a estos términos por referencia.",
+          "CommandPad almacena tus datos localmente y no los transmite, salvo cuando sincronizas explícitamente un libro con tu propia cuenta en la nube. Para más detalles, consulta la Política de Privacidad, que se incorpora a estos términos por referencia.",
         ],
       },
       {
@@ -373,6 +516,9 @@ export const es: Messages = {
       [DocsSectionId.MULTI_SELECT]: "Selección múltiple",
       [DocsSectionId.READ_MODE]: "Modo lectura",
       [DocsSectionId.EXPORT]: "Exportar",
+      [DocsSectionId.CLOUD_EXPORT]: "Exportar e importar en la nube",
+      [DocsSectionId.CLOUD_LINKED_SYNC]: "Mantener un libro sincronizado",
+      [DocsSectionId.CLOUD_FILE_MANAGEMENT]: "Gestionar archivos en la nube",
       [DocsSectionId.LANGUAGE]: "Idioma",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Atajos de teclado",
       [DocsSectionId.QA]: "Preguntas y respuestas",
@@ -466,7 +612,7 @@ export const es: Messages = {
         "Haz clic en **Importar** para cargar uno o varios archivos `.json` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.",
         "También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.",
         "Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.",
-        "Elimina un libro de la biblioteca con el botón que aparece al pasar el cursor sobre la fila.",
+        "Abre el menú de **acciones del libro** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.",
         "Haz clic en **Eliminar todo** para vaciar la biblioteca completa de una vez.",
         "Arrastra el control a la izquierda de un libro para reordenarlo en la lista.",
         "Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.",
@@ -481,19 +627,21 @@ export const es: Messages = {
     variables: {
       why: "Esta es la característica sobre la que gira todo lo demás. Un nombre de servidor, una ruta, un número de versión: los mismos valores se repiten en la mitad de los comandos que guardas, y el día que uno cambia toca buscarlo comando por comando. Con las variables defines ese valor **una vez**, y todos los comandos que lo usan se actualizan solos.",
       intro:
-        "Las variables se definen en la sección **VARIABLES** de la barra lateral. Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas.",
+        "Las variables se definen en la sección **VARIABLES** de la barra lateral. Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas. Si dos variables comparten la misma clave, gana la definida en último lugar.",
       usage:
-        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{SERVER}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
+        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{server}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
       unresolved:
         "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**.",
-      duplicatesAndEmpty:
-        "Si dos variables comparten la misma clave, gana la definida en último lugar. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables y un botón de eliminar a la derecha. Pruébalos en las demos de esta sección.",
       tooltip:
         "Si una clave o un valor no cabe en su casilla, pasa el cursor sobre ella para ver el texto completo en un tooltip.",
       split:
         "Las claves y los valores se reparten la fila en partes iguales, pero puedes cambiarlo: arrastra el divisor entre ambos para dar más espacio a uno de los lados, y haz doble clic para volver al reparto equitativo. El nuevo reparto se aplica a todas las variables y se recuerda entre sesiones.",
       demoHint:
-        "Compruébalo abajo: una sola variable `SERVER` alimenta dos comandos. Edita su valor y mira cómo las dos vistas previas cambian mientras escribes. Esa es toda la idea.",
+        "Compruébalo abajo: una sola variable alimenta dos comandos. Edita su valor y mira cómo las dos vistas previas cambian mientras escribes. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables y un menú de **acciones de la variable** a la derecha para duplicarla o eliminarla.",
+      constants:
+        "No todas las variables cambian por el mismo motivo. Unas son valores que cambias a cada rato y otras son **constantes**: se mantienen igual durante toda la vida del libro, y solo son variables porque ese mismo valor aparece en comando tras comando. CommandPad las distingue por convención de nombres: una clave escrita entera en **mayúsculas** se considera una constante y su clave se muestra en morado. Cualquier clave con alguna **minúscula** conserva el azul de siempre.",
+      constantsDemoHint:
+        "La convención es solo de nombres: las constantes se resuelven, se referencian y se renombran igual que cualquier otra variable. Renombra abajo una clave de mayúsculas a minúsculas y al revés para ver cómo el color la sigue.",
     },
     variableReferences: {
       intro:
@@ -530,7 +678,7 @@ export const es: Messages = {
     },
     blocks: {
       intro:
-        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o usa los botones de **duplicar** y **eliminar** de la derecha.",
+        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **acciones del bloque** de la derecha para duplicarlo o eliminarlo.",
     },
     commandBlock: {
       intro:
@@ -609,6 +757,36 @@ export const es: Messages = {
         "En navegadores compatibles se abre un diálogo nativo de guardado para elegir nombre y carpeta. En los demás, el archivo se descarga directamente.",
       copyMarkdown:
         "Para saltarte los archivos por completo, haz clic derecho dentro del libro y elige **Copiar libro como Markdown**. Pone el mismo contenido Markdown en tu portapapeles, listo para pegarlo en un chat, un ticket o un documento.",
+    },
+    cloudExport: {
+      intro:
+        "**Exportar** e **Importar** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo. El diálogo se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados.",
+      switchProvider:
+        "Mientras exploras la nube, el nombre del proveedor en el título del diálogo es un **selector**: haz clic en él para cambiar entre proveedores sin volver atrás.",
+      overwrite:
+        "Si la carpeta de destino ya tiene un archivo con el mismo nombre, la exportación se detiene y te pide confirmación antes de reemplazarlo.",
+    },
+    cloudLinkedSync: {
+      intro:
+        "Un libro que importas desde la nube queda **sincronizado** con el archivo del que vino: cada edición se escribe de vuelta en ese archivo, así que nunca tienes que volver a exportarlo para guardarlo. Exportar un libro como **JSON** lo vincula igual.",
+      syncBadge:
+        "Un libro sincronizado muestra un **icono de sincronización** junto a su nombre en la lista de LIBROS: gira mientras una edición va en camino, y se convierte en una nube tachada si el guardado falló. Haz clic en él para volver a iniciar sesión o reintentar.",
+      stopSyncing:
+        "**Dejar de sincronizar** (en el menú de tres puntos del libro) rompe el vínculo sin tocar ninguna de las dos copias. La sincronización solo sube tus ediciones locales, nunca baja los cambios remotos.",
+    },
+    cloudFileManagement: {
+      folders:
+        "Los libros en la nube pueden vivir en carpetas: haz clic en una para abrirla y en un archivo para importarlo. Los botones de **flecha** y la ruta sobre la lista te mueven entre las carpetas que visitaste. Al exportar, el destino se elige igual, con un botón de **nueva carpeta**.",
+      search:
+        "El **buscador** revisa la carpeta **CommandPad** entera, no solo la que tengas abierta, y muestra la ruta de cada resultado.",
+      actions:
+        "El menú de **tres puntos** de una fila tiene **Renombrar**, **Editar**, **Duplicar**, **Descargar** y **Eliminar**.",
+      editFile:
+        "**Editar** abre el JSON del archivo en el sitio, así que un arreglo rápido ya no implica importar, cambiar y volver a exportar. Tiene que seguir siendo JSON válido para guardarse.",
+      recycleBin:
+        "Un archivo o carpeta eliminado no se pierde para siempre: los proveedores de nube lo mueven primero a una _Papelera de reciclaje_.",
+      storage:
+        "Los libros en la nube se guardan en una carpeta dedicada llamada **CommandPad** en tu propia cuenta, nunca en ningún otro lugar.",
     },
     language: {
       intro:

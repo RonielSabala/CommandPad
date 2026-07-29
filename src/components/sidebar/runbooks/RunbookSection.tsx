@@ -1,13 +1,12 @@
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
 import { AppMode } from "@/common/enums";
+import { SearchInput } from "@/components/common/SearchInput";
 import { ClipIcon, ImportIcon, TrashIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { openImportDialog } from "@/utils/importTrigger";
 import { matchesQuery } from "@/utils/string";
 import { useEffect, useRef } from "react";
-import { SidebarSearch } from "../shared/SidebarSearch";
 import { SidebarSection } from "../shared/SidebarSection";
 import { SidebarSectionFooter } from "../shared/SidebarSectionFooter";
 import { SidebarSectionList } from "../shared/SidebarSectionList";
@@ -27,6 +26,7 @@ export function RunbookSection() {
 
   const importRunbooks = useStore((state) => state.importRunbooks);
   const clearRunbookLibrary = useStore((state) => state.clearRunbookLibrary);
+  const beginImport = useStore((state) => state.beginImport);
   const isReadMode = useStore((state) => state.mode === AppMode.READ);
   const fileDrop = useFileDrop(
     (files) => void importRunbooks(files),
@@ -62,7 +62,7 @@ export function RunbookSection() {
       onToggle={onToggle}
       dropZone={{ ...fileDrop, hint: t.runbooks.dropToImport }}
     >
-      <SidebarSearch
+      <SearchInput
         value={searchQuery}
         placeholder={t.runbooks.searchPlaceholder}
         onChange={setQuery}
@@ -80,7 +80,7 @@ export function RunbookSection() {
       />
 
       <SidebarSectionFooter
-        onClick={openImportDialog}
+        onClick={beginImport}
         title={t.runbooks.importTitle}
         label={t.runbooks.import}
         icon={ImportIcon}
