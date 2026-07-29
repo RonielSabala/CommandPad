@@ -109,6 +109,11 @@ export const VariableSyntax = {
   COPY_SUFFIX_REGEX: /_COPY\d*$/,
 } as const;
 
+export const SecretMaskConfig = {
+  MASK_LENGTH: 8,
+  MASK_CHAR: "•",
+} as const;
+
 export const COMMAND_PROMPT_PREFIX = "$";
 
 export const RUNBOOK_JSON_PLACEHOLDER =

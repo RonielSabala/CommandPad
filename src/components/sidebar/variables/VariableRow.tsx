@@ -1,3 +1,4 @@
+import { SecretMaskConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
@@ -101,6 +102,10 @@ export const VariableRow = memo(function VariableRow({
     isDragOver && CssClass.DRAG_OVER,
   );
 
+  const secretMask = SecretMaskConfig.MASK_CHAR.repeat(
+    SecretMaskConfig.MASK_LENGTH,
+  );
+
   const splitStyle = {
     "--variable-key-fr": `${keyRatio}fr`,
     "--variable-value-fr": `${1 - keyRatio}fr`,
@@ -146,26 +151,38 @@ export const VariableRow = memo(function VariableRow({
           title={t.variables.dragResizeSplit}
           {...splitResize}
         />
-        <input
-          className="variable-value-input"
-          type="text"
-          placeholder={t.variables.valuePlaceholder}
-          value={variableValue}
-          spellCheck={false}
-          autoComplete="off"
-          onChange={(event) =>
-            updateVariable(variableId, VariableField.VALUE, event.target.value)
-          }
-          onKeyDown={(event) => {
-            if (event.key === Key.ENTER || event.key === Key.ESCAPE) {
-              event.currentTarget.blur();
-              return;
+        <div className="variable-value-wrap">
+          <input
+            className="variable-value-input"
+            type="text"
+            placeholder={t.variables.valuePlaceholder}
+            value={variableValue}
+            spellCheck={false}
+            autoComplete="off"
+            onChange={(event) =>
+              updateVariable(
+                variableId,
+                VariableField.VALUE,
+                event.target.value,
+              )
             }
+            onKeyDown={(event) => {
+              if (event.key === Key.ENTER || event.key === Key.ESCAPE) {
+                event.currentTarget.blur();
+                return;
+              }
 
-            handleValuePairWrap(event);
-          }}
-          title={isSecret ? "" : variableValue}
-        />
+              handleValuePairWrap(event);
+            }}
+            title={isSecret ? "" : variableValue}
+          />
+
+          {isSecret && variableValue && (
+            <div className="variable-value-mask" aria-hidden="true">
+              {secretMask}
+            </div>
+          )}
+        </div>
       </div>
       <button
         className={`btn btn-icon variable-secret-btn${isSecret ? " is-active" : ""}`}

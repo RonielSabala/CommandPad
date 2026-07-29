@@ -138,11 +138,32 @@ body.read-mode .variable-key-input {
   pointer-events: none;
 }
 
-/* Secret btn */
+/* Secret value masking */
+
+.variable-value-wrap {
+  position: relative;
+  min-width: 0;
+}
 
 .variable-inputs.is-secret .variable-value-input {
-  -webkit-text-security: disc;
+  color: transparent;
+  caret-color: var(--color-text-primary);
 }
+
+.variable-value-mask {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  color: var(--color-text-primary);
+  overflow: hidden;
+}
+
+/* Secret btn */
 
 .variable-secret-btn.is-active {
   color: var(--accent);
