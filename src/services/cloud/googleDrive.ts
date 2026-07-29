@@ -281,13 +281,7 @@ class GoogleDriveClient implements CloudClient {
   }
 
   async signIn(): Promise<void> {
-    let response: GoogleTokenResponse;
-    try {
-      response = await requestToken("");
-    } catch {
-      response = await requestToken("consent");
-    }
-
+    const response = await requestToken("");
     applyToken(response);
 
     try {
