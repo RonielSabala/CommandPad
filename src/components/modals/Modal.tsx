@@ -10,15 +10,26 @@ interface Props {
   onClose: () => void;
   className?: string;
   children: ReactNode;
+  animated?: boolean;
 }
 
-export function Modal({ open, onClose, className, children }: Props) {
+export function Modal({
+  open,
+  onClose,
+  className,
+  children,
+  animated = true,
+}: Props) {
   const t = useTranslation();
   useModalDismiss(open, onClose);
 
   return (
     <div
-      className={`modal-backdrop${open ? " modal-visible" : ""}`}
+      className={classNames(
+        "modal-backdrop",
+        open && "modal-visible",
+        !animated && "modal-no-animation",
+      )}
       role="dialog"
       aria-modal="true"
       aria-hidden={!open}

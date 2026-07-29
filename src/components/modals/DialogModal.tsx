@@ -47,6 +47,7 @@ export function DialogModal({
       open={open}
       onClose={onClose}
       className={classNames("modal-dialog", TONE_CLASS[tone])}
+      animated={false}
     >
       <header className="dialog-header">
         <ToneIcon className="dialog-icon" aria-hidden="true" />

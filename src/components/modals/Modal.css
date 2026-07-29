@@ -16,6 +16,14 @@
   pointer-events: auto;
 }
 
+.modal-backdrop.modal-no-animation {
+  transition: none;
+}
+
+.modal-backdrop.modal-no-animation .modal {
+  transition: none;
+}
+
 .modal {
   position: relative;
   background: var(--color-surface);
