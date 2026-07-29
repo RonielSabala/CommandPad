@@ -43,7 +43,7 @@
   bottom: 0;
   right: 0;
   width: calc(var(--sidebar-rail-width) / 2);
-  z-index: 10;
+  z-index: var(--z-docked);
   cursor: col-resize;
   transform: translateX(100%);
 }
@@ -86,7 +86,7 @@ body.sidebar-resizing #sidebar-resize-handle::before {
 }
 
 #sidebar-resize-handle #sidebar-btn-group {
-  z-index: 1;
+  z-index: var(--z-raised);
   cursor: default;
 }
 

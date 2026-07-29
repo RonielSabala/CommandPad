@@ -1,7 +1,7 @@
 .home-symbol-field {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: var(--z-base);
   display: flex;
   justify-content: space-between;
   gap: var(--space-6);

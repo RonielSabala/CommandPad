@@ -134,7 +134,7 @@ body.read-mode .variable-key-input {
   font-size: var(--text-sm);
   padding: var(--space-2) var(--space-4);
   white-space: pre;
-  z-index: 999;
+  z-index: var(--z-tooltip);
   pointer-events: none;
 }
 

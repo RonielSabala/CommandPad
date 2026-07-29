@@ -74,6 +74,6 @@ body.select-key-held:not(.read-mode) .block-item:hover:not(.block-selected) {
 }
 
 .block-item.duplicate-flash {
-  z-index: 1;
+  z-index: var(--z-raised);
   animation: duplicate-flash 0.5s ease-out forwards;
 }

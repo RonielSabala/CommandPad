@@ -29,7 +29,7 @@
 .cloud-browser-list-header {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: var(--z-sticky);
   padding-block: var(--space-4);
   border-bottom: var(--border-standard);
   background: var(--color-surface);
