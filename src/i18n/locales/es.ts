@@ -1,5 +1,5 @@
 import { DocsSectionId } from "@/common/constants/docs";
-import { BlockType, NoteStyle } from "@/common/enums";
+import { BlockType, NoteStyle, RunbookSyncStatus } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
@@ -60,6 +60,15 @@ export const es: Messages = {
     dropToImport: "Suelta los libros para importarlos",
     clearLibrary: "Eliminar todo",
     clearLibraryTitle: "Eliminar todos los libros de la biblioteca",
+    stopSyncing: "Dejar de sincronizar",
+    syncStatus: {
+      [RunbookSyncStatus.SYNCED]: (provider) => `Sincronizado con ${provider}`,
+      [RunbookSyncStatus.SYNCING]: (provider) => `Guardando en ${provider}…`,
+      [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
+        `Inicia sesión en ${provider} para seguir sincronizando`,
+      [RunbookSyncStatus.ERROR]: (provider) =>
+        `No se pudo guardar en ${provider} · haz clic para reintentar`,
+    },
   },
   variables: {
     title: "VARIABLES",
@@ -756,6 +765,12 @@ export const es: Messages = {
         "Mientras exploras la nube, el nombre del proveedor en el título del diálogo es un **selector**: haz clic en él para cambiar entre proveedores sin volver atrás.",
       overwrite:
         "Si la carpeta a la que exportas ya tiene un archivo con el mismo nombre, la exportación se detiene y te pide confirmación antes de reemplazarlo, así que reutilizar un nombre nunca sobrescribe en silencio un libro de la nube.",
+      keptInSync:
+        "Un libro que importas desde la nube queda **sincronizado** con el archivo del que vino: cada edición se escribe de vuelta en ese archivo un instante después, así que nunca tienes que volver a exportarlo para guardarlo. Exportar un libro a la nube como **JSON** lo vincula igual.",
+      syncBadge:
+        "Un libro sincronizado muestra un **icono de sincronización** junto a su nombre en la lista de LIBROS. El icono gira mientras una edición va en camino, y se convierte en una nube tachada si tu sesión caducó o el guardado falló; haz clic en él para volver a iniciar sesión o reintentar. Como la nube siempre tiene una copia al día, quitar un libro sincronizado de la biblioteca nunca te pide confirmación.",
+      stopSyncing:
+        "Para romper el vínculo, abre el menú de **tres puntos** del libro y elige **Dejar de sincronizar**. Tanto el libro como el archivo de la nube se quedan exactamente donde están, solo dejan de seguirse. La sincronización solo sube tus ediciones locales, así que cambiar el archivo en otro sitio no baja esos cambios.",
       folders:
         "Los libros en la nube pueden vivir en carpetas: haz clic en una carpeta para abrirla y en un archivo para importarlo. Los botones de **flecha** avanzan y retroceden por las carpetas que visitaste, y la ruta que aparece sobre la lista te lleva de vuelta a cualquier carpeta de la ruta. Al exportar a la nube, el campo **Carpeta** elige dónde se guarda el libro, y el botón de **nueva carpeta** crea una carpeta al momento.",
       search:

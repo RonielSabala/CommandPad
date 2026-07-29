@@ -6,6 +6,7 @@ import {
 } from "zustand";
 
 import {
+  DEBOUNCE_CLOUD_SYNC_MS,
   DEBOUNCE_SAVE_MS,
   DEFAULT_TAB_LABEL,
   FilePickerConfig,
@@ -26,6 +27,7 @@ import {
   HistoryDirection,
   MoveDirection,
   NoteStyle,
+  RunbookSyncStatus,
   SidebarPosition,
   SortDirection,
   SyncDestination,
@@ -36,6 +38,7 @@ import type {
   Block,
   RunbookContent,
   RunbookEntry,
+  RunbookSync,
   Tab,
   Variable,
 } from "@/common/types";
@@ -128,6 +131,7 @@ export interface StoreState {
   activeTabId: string | null;
   runbookLibrary: RunbookEntry[];
   activeRunbookId: string | null;
+  runbookSyncStatus: Record<string, RunbookSyncStatus>;
 
   // UI
   mode: AppMode;
@@ -221,7 +225,10 @@ export interface StoreState {
     content: RunbookContent,
     filename: string,
     rawFilename: string,
+    sync?: RunbookSync,
   ) => Promise<void>;
+  syncRunbookNow: (id: string) => Promise<void>;
+  unlinkRunbookSync: (id: string) => void;
   importRunbooks: (files: File[]) => Promise<void>;
   importRunbookFromText: (text: string) => Promise<boolean>;
   reorderRunbooks: (sourceId: string, targetId: string) => void;
@@ -560,6 +567,146 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       DEBOUNCE_SAVE_MS,
     );
 
+    // --- Cloud sync ---
+
+    /** Runbook id -> the JSON waiting to go up */
+    const queuedSyncContent = new Map<string, string>();
+    /** Runbook id -> the JSON last written to the cloud, to skip no-op pushes */
+    const pushedSyncContent = new Map<string, string>();
+
+    const setSyncStatus = (runbookId: string, status: RunbookSyncStatus) =>
+      set((s) => ({
+        runbookSyncStatus: { ...s.runbookSyncStatus, [runbookId]: status },
+      }));
+
+    const forgetSyncState = (runbookId: string) => {
+      queuedSyncContent.delete(runbookId);
+      pushedSyncContent.delete(runbookId);
+      set((s) => {
+        if (!(runbookId in s.runbookSyncStatus)) {
+          return {};
+        }
+        const runbookSyncStatus = { ...s.runbookSyncStatus };
+        delete runbookSyncStatus[runbookId];
+        return { runbookSyncStatus };
+      });
+    };
+
+    const getSyncLink = (runbookId: string): RunbookSync | undefined =>
+      get().runbookLibrary.find((item) => item.id === runbookId)?.sync;
+
+    const runbookJson = (content: RunbookContent) =>
+      buildRunbookExportContent(ExportFormat.JSON, content);
+
+    /** Records content the cloud already holds, so nothing is pushed back. */
+    const markRunbookSynced = (runbookId: string, content: RunbookContent) => {
+      queuedSyncContent.delete(runbookId);
+      pushedSyncContent.set(runbookId, runbookJson(content));
+      setSyncStatus(runbookId, RunbookSyncStatus.SYNCED);
+    };
+
+    /**
+     * Writes everything queued, one file at a time. Two passes never overlap,
+     * so concurrent writes can't land on the same file out of order; whatever
+     * gets queued mid-pass is picked up before the pass ends. Never signs in on
+     * its own — see `syncRunbookNow`.
+     */
+    let syncPassRunning = false;
+    const flushQueuedSyncs = async () => {
+      if (syncPassRunning) {
+        return;
+      }
+      syncPassRunning = true;
+
+      try {
+        while (queuedSyncContent.size > 0) {
+          const [runbookId, json] = [...queuedSyncContent][0];
+          queuedSyncContent.delete(runbookId);
+
+          const link = getSyncLink(runbookId);
+          if (!link) {
+            continue;
+          }
+
+          const client = getCloudClient(link.provider);
+          try {
+            await client.init();
+            if (!client.isSignedIn()) {
+              setSyncStatus(runbookId, RunbookSyncStatus.SIGNED_OUT);
+              continue;
+            }
+
+            await client.writeFile(
+              link.filename,
+              json,
+              MimeType.JSON,
+              link.folderId,
+            );
+          } catch (error) {
+            console.error("Cloud sync failed", error);
+            setSyncStatus(runbookId, RunbookSyncStatus.ERROR);
+            continue;
+          }
+
+          pushedSyncContent.set(runbookId, json);
+          // The file's size and modified date just changed under any cached listing
+          clearCachedCloudEntries(link.provider);
+          setSyncStatus(runbookId, RunbookSyncStatus.SYNCED);
+        }
+      } finally {
+        syncPassRunning = false;
+      }
+    };
+
+    const debouncedFlushSyncs = debounce(
+      () => void flushQueuedSyncs(),
+      DEBOUNCE_CLOUD_SYNC_MS,
+    );
+
+    /**
+     * Schedules a push for a linked runbook whose content actually moved.
+     * Called from every path that persists content, so linked runbooks stay
+     * current without an explicit export.
+     */
+    const queueCloudSync = (runbookId: string, content: RunbookContent) => {
+      if (isDemo || !getSyncLink(runbookId)) {
+        return;
+      }
+
+      const json = runbookJson(content);
+      if (pushedSyncContent.get(runbookId) === json) {
+        return;
+      }
+
+      queuedSyncContent.set(runbookId, json);
+      setSyncStatus(runbookId, RunbookSyncStatus.SYNCING);
+      debouncedFlushSyncs();
+    };
+
+    /** Points a runbook at a cloud file it was just written to or read from. */
+    const linkRunbookToCloud = (
+      runbookId: string,
+      sync: RunbookSync,
+      content: RunbookContent,
+    ) => {
+      set((s) => ({
+        runbookLibrary: s.runbookLibrary.map((item) =>
+          item.id === runbookId ? { ...item, sync } : item,
+        ),
+      }));
+
+      markRunbookSynced(runbookId, content);
+      persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+    };
+
+    /** The runbook's content as the tab holds it, else as the DB holds it. */
+    const readRunbookContent = async (runbookId: string) => {
+      const openTab = get().tabs.find((t) => t.runbookId === runbookId);
+      return openTab
+        ? { variables: openTab.variables, blocks: openTab.blocks }
+        : await contentDb.get(runbookId);
+    };
+
     let cloudRequestId = 0;
     const startCloudRequest = () => ++cloudRequestId;
     const isCurrentCloudRequest = (id: number) => cloudRequestId === id;
@@ -632,6 +779,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       activeTabId: null,
       runbookLibrary: [],
       activeRunbookId: null,
+      runbookSyncStatus: {},
 
       mode: AppMode.EDIT,
       theme: Theme.DARK,
@@ -707,14 +855,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         const active = getActiveTab(state);
         if (active?.runbookId) {
+          const content = {
+            variables: active.variables,
+            blocks: active.blocks,
+          };
+
           contentDb
-            .put(active.runbookId, {
-              variables: active.variables,
-              blocks: active.blocks,
-            })
+            .put(active.runbookId, content)
             .catch((error) =>
               console.warn("Failed to persist runbook content:", error),
             );
+          queueCloudSync(active.runbookId, content);
         }
       },
 
@@ -787,6 +938,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         set({ initialized: true });
+
+        // An edit made just before the last close may never have reached the
+        // cloud, so every linked tab gets one catch-up push on load
+        for (const tab of get().tabs) {
+          if (tab.runbookId) {
+            queueCloudSync(tab.runbookId, {
+              variables: tab.variables,
+              blocks: tab.blocks,
+            });
+          }
+        }
       },
 
       // --- Tabs ---
@@ -939,8 +1101,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           (content?.blocks.length ?? 0) === 0 &&
           (content?.variables.length ?? 0) === 0;
 
-        if (!isEmpty) {
-          const runbook = state.runbookLibrary.find((item) => item.id === id);
+        const runbook = state.runbookLibrary.find((item) => item.id === id);
+
+        // A synced runbook still exists in the cloud, so removing it loses nothing
+        if (!isEmpty && !runbook?.sync) {
           const t = getMessages(get().language);
           const confirmed = await get().confirm(
             t.dialogs.deleteRunbookMessage(
@@ -958,7 +1122,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           }
         }
 
+        // Removing the entry leans on the cloud copy being current, so let any
+        // edit still waiting on the debounce land before the local copy goes
+        if (queuedSyncContent.has(id)) {
+          await flushQueuedSyncs();
+        }
+
         await contentDb.delete(id);
+        forgetSyncState(id);
 
         const runbookLibrary = state.runbookLibrary.filter(
           (item) => item.id !== id,
@@ -1072,11 +1243,24 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
       },
 
-      addRunbookToLibrary: async (content, filename, rawFilename) => {
+      addRunbookToLibrary: async (content, filename, rawFilename, sync) => {
         const label = getRunbookLabel(
           content.blocks,
           filename || RunbookConfig.DEFAULT_LABEL,
         );
+
+        /**
+         * Content that just came down from the cloud is already in sync;
+         * anything else may have landed on top of an existing link.
+         */
+        const settleSync = (runbookId: string) => {
+          if (sync) {
+            markRunbookSynced(runbookId, content);
+          } else {
+            queueCloudSync(runbookId, content);
+          }
+        };
+
         const state = get();
         const existing = state.runbookLibrary.find(
           (item) => item.label === label || item.filename === filename,
@@ -1102,7 +1286,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           set((s) => ({
             runbookLibrary: s.runbookLibrary.map((item) =>
               item.id === existing.id
-                ? { ...item, label, filename: filename || "" }
+                ? {
+                    ...item,
+                    label,
+                    filename: filename || "",
+                    // An import keeps the entry's existing link unless it brings its own
+                    ...(sync ? { sync } : {}),
+                  }
                 : item,
             ),
             tabs: s.tabs.map((t) =>
@@ -1122,6 +1312,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           if (existing.id === get().activeRunbookId) {
             persist.saveTabsMeta(get().tabs, get().activeTabId);
           }
+
+          settleSync(existing.id);
           return;
         }
 
@@ -1130,9 +1322,15 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set((s) => ({
           runbookLibrary: [
             ...s.runbookLibrary,
-            { id: newId, label, filename: filename || "" },
+            {
+              id: newId,
+              label,
+              filename: filename || "",
+              ...(sync ? { sync } : {}),
+            },
           ],
         }));
+        settleSync(newId);
 
         if (get().activeRunbookId) {
           persist.saveRunbookLibrary(
@@ -1143,6 +1341,51 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         await get().loadRunbookFromLibrary(newId);
+      },
+
+      syncRunbookNow: async (id) => {
+        const link = getSyncLink(id);
+        if (!link) {
+          return;
+        }
+
+        const content = await readRunbookContent(id);
+        if (!content) {
+          return;
+        }
+
+        const client = getCloudClient(link.provider);
+        setSyncStatus(id, RunbookSyncStatus.SYNCING);
+
+        // Retrying is a click, so a sign-in popup here is expected rather than ambushing
+        try {
+          await client.init();
+          if (!client.isSignedIn()) {
+            await client.signIn();
+          }
+        } catch (error) {
+          console.error("Cloud sync sign-in failed", error);
+          setSyncStatus(id, RunbookSyncStatus.SIGNED_OUT);
+          return;
+        }
+
+        queuedSyncContent.set(id, runbookJson(content));
+        await flushQueuedSyncs();
+      },
+
+      unlinkRunbookSync: (id) => {
+        if (get().mode === AppMode.READ) {
+          return;
+        }
+
+        set((s) => ({
+          runbookLibrary: s.runbookLibrary.map((item) =>
+            item.id === id ? { ...item, sync: undefined } : item,
+          ),
+        }));
+
+        forgetSyncState(id);
+        persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
       },
 
       importRunbooks: async (files) => {
@@ -1568,14 +1811,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         // The target may not be the active tab, so persist its content explicitly
         const updated = get().tabs.find((t) => t.id === targetTabId);
         if (updated?.runbookId) {
+          const content = {
+            variables: updated.variables,
+            blocks: updated.blocks,
+          };
+
           contentDb
-            .put(updated.runbookId, {
-              variables: updated.variables,
-              blocks: updated.blocks,
-            })
+            .put(updated.runbookId, content)
             .catch((error) =>
               console.warn("Failed to persist runbook content:", error),
             );
+          queueCloudSync(updated.runbookId, content);
         }
 
         get().saveState();
@@ -1995,6 +2241,15 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             folderId,
           );
 
+          // JSON is the only round-trippable format, so it is the only one worth linking
+          if (format === ExportFormat.JSON && active?.runbookId) {
+            linkRunbookToCloud(
+              active.runbookId,
+              { provider: destination, filename: fullName, folderId },
+              content,
+            );
+          }
+
           // The destination folder now holds a file no cached listing has
           clearCachedCloudEntries(destination);
           set({ cloudExportStatus: CloudExportStatus.SUCCESS });
@@ -2131,8 +2386,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         // Nothing walked under this account survives into the next one
         clearCachedCloudEntries(get().cloudProvider);
         startCloudRequest();
-        set({
+        set((s) => ({
           ...cancelledCloudSearch(),
+          runbookSyncStatus: {
+            ...s.runbookSyncStatus,
+            // Linked runbooks can no longer reach this provider until a new sign-in
+            ...Object.fromEntries(
+              s.runbookLibrary
+                .filter((item) => item.sync?.provider === s.cloudProvider)
+                .map((item) => [item.id, RunbookSyncStatus.SIGNED_OUT]),
+            ),
+          },
           cloudEntries: [],
           cloudError: null,
           cloudSignedIn: false,
@@ -2141,7 +2405,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           cloudPath: ROOT_CLOUD_PATH,
           cloudHistory: [ROOT_CLOUD_PATH],
           cloudHistoryIndex: 0,
-        });
+        }));
       },
 
       refreshCloudEntries: async () => {
@@ -2292,6 +2556,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const client = getCloudClient(get().cloudProvider);
         const t = getMessages(get().language);
 
+        // Resolved up front: a search hit's folder can change out from under a slow read
+        const sync: RunbookSync = {
+          provider: get().cloudProvider,
+          filename: file.name,
+          folderId: parentFolderId(get(), file),
+        };
+
         set({ cloudLoading: true, cloudError: null });
         let text: string;
         try {
@@ -2316,7 +2587,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set({ cloudLoading: false });
         const baseName = stripJsonExtension(file.name);
 
-        await get().addRunbookToLibrary(content, baseName, file.name);
+        await get().addRunbookToLibrary(content, baseName, file.name, sync);
         set({ cloudImportModalOpen: false });
       },
 
@@ -2669,11 +2940,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           persistence.clearStoredRunbooks();
         }
 
+        queuedSyncContent.clear();
+        pushedSyncContent.clear();
         set({
           tabs: [],
           activeTabId: null,
           activeRunbookId: null,
           runbookLibrary: [],
+          runbookSyncStatus: {},
           runbookSearchQuery: "",
           variableSearchQuery: "",
           selectedBlockIds: new Set(),
@@ -2700,11 +2974,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           sessionStorage.clear();
         }
 
+        queuedSyncContent.clear();
+        pushedSyncContent.clear();
         set({
           tabs: [],
           activeTabId: null,
           activeRunbookId: null,
           runbookLibrary: [],
+          runbookSyncStatus: {},
           runbookSearchQuery: "",
           variableSearchQuery: "",
           selectedBlockIds: new Set(),

@@ -153,6 +153,15 @@ export const CloudExportStatus = {
 export type CloudExportStatus =
   (typeof CloudExportStatus)[keyof typeof CloudExportStatus];
 
+export const RunbookSyncStatus = {
+  SYNCED: "synced",
+  SYNCING: "syncing",
+  SIGNED_OUT: "signed-out",
+  ERROR: "error",
+} as const;
+export type RunbookSyncStatus =
+  (typeof RunbookSyncStatus)[keyof typeof RunbookSyncStatus];
+
 export const DialogTone = {
   DANGER: "danger",
   WARNING: "warning",

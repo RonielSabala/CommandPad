@@ -1,5 +1,5 @@
 import { DocsSectionId } from "@/common/constants/docs";
-import { BlockType, NoteStyle } from "@/common/enums";
+import { BlockType, NoteStyle, RunbookSyncStatus } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
@@ -59,6 +59,15 @@ export const en: Messages = {
     dropToImport: "Drop runbooks to import",
     clearLibrary: "Delete All",
     clearLibraryTitle: "Delete all runbooks from the library",
+    stopSyncing: "Stop syncing",
+    syncStatus: {
+      [RunbookSyncStatus.SYNCED]: (provider) => `Synced with ${provider}`,
+      [RunbookSyncStatus.SYNCING]: (provider) => `Saving to ${provider}…`,
+      [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
+        `Sign in to ${provider} to keep syncing`,
+      [RunbookSyncStatus.ERROR]: (provider) =>
+        `Could not save to ${provider} · click to retry`,
+    },
   },
   variables: {
     title: "VARIABLES",
@@ -743,6 +752,12 @@ export const en: Messages = {
         "While you are browsing the cloud, the provider name in the dialog title is a **picker**: click it to switch between providers without going back a step.",
       overwrite:
         "If the folder you export to already holds a file with the same name, the export stops and asks you to confirm before replacing it, so a reused filename never quietly overwrites a cloud runbook.",
+      keptInSync:
+        "A runbook you import from the cloud stays **in sync** with the file it came from: every edit is written back to that file a moment later, so you never have to export it again to save it. Exporting a runbook to the cloud as **JSON** links it the same way.",
+      syncBadge:
+        "A synced runbook shows a **sync icon** next to its name in the RUNBOOKS list. The icon spins while an edit is on its way up, and turns into a crossed out cloud if your session expired or the save failed; click it to sign in again or retry. Because the cloud always holds a current copy, removing a synced runbook from the library never asks you to confirm.",
+      stopSyncing:
+        "To break the link, open the runbook's **three dots** menu and choose **Stop syncing**. Both the runbook and the cloud file stay exactly where they are, they just stop tracking each other. Syncing only pushes your local edits up, so changing the file somewhere else does not pull those changes back down.",
       folders:
         "Cloud runbooks can live in folders: click a folder to open it, click a file to import it. The **arrow** buttons move back and forward through the folders you visited, and the path above the list lets you jump straight back to any folder in it. When you export to the cloud, the **Folder** field picks where the runbook lands, and the **new folder** button creates a folder on the spot.",
       search:

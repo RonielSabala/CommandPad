@@ -1,13 +1,14 @@
 import { StorageKey, VariableSplit } from "@/common/config";
 import {
   AppMode,
+  CloudProvider,
   ExportFormat,
   SectionState,
   SidebarPosition,
   SyncDestination,
   Theme,
 } from "@/common/enums";
-import type { RunbookEntry, Tab } from "@/common/types";
+import type { RunbookEntry, RunbookSync, Tab } from "@/common/types";
 import { detectLanguage, isLanguage } from "@/i18n/messages";
 import type { Language } from "@/i18n/types";
 import type { CloudFolderRef } from "@/services/cloud";
@@ -183,6 +184,16 @@ interface PersistedRunbooks {
   activeId: string | null;
 }
 
+const isRunbookSync = (value: unknown): value is RunbookSync =>
+  isObject(value) &&
+  Object.values(CloudProvider).includes(value.provider as CloudProvider) &&
+  isString(value.filename) &&
+  (isString(value.folderId) || value.folderId === null);
+
+function restoreRunbookEntry(entry: RunbookEntry): RunbookEntry {
+  return isRunbookSync(entry.sync) ? entry : { ...entry, sync: undefined };
+}
+
 export function saveRunbookLibrary(
   items: RunbookEntry[],
   activeId: string | null,
@@ -204,7 +215,10 @@ export function loadRunbookLibrary(): PersistedRunbooks | null {
       return null;
     }
 
-    return { items: saved.items ?? [], activeId: saved.activeId ?? null };
+    return {
+      items: (saved.items ?? []).map(restoreRunbookEntry),
+      activeId: saved.activeId ?? null,
+    };
   } catch (error) {
     console.warn("Failed to load runbook library:", error);
     return null;

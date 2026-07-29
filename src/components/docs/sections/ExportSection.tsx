@@ -23,6 +23,9 @@ export function CloudSyncDocs() {
       <Prose text={t.docs.cloudSync.howItWorks} />
       <Prose text={t.docs.cloudSync.switchProvider} />
       <Prose text={t.docs.cloudSync.overwrite} />
+      <Prose text={t.docs.cloudSync.keptInSync} />
+      <Prose text={t.docs.cloudSync.syncBadge} />
+      <Prose text={t.docs.cloudSync.stopSyncing} />
       <Prose text={t.docs.cloudSync.folders} />
       <Prose text={t.docs.cloudSync.search} />
       <Prose text={t.docs.cloudSync.manage} />

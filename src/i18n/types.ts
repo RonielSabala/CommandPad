@@ -1,5 +1,5 @@
 import type { DocsSectionId } from "@/common/constants/docs";
-import type { BlockType, NoteStyle } from "@/common/enums";
+import type { BlockType, NoteStyle, RunbookSyncStatus } from "@/common/enums";
 import type { KeyBinding } from "@/common/keybindings";
 
 // Supported UI languages
@@ -90,6 +90,8 @@ export interface Messages {
     dropToImport: string;
     clearLibrary: string;
     clearLibraryTitle: string;
+    stopSyncing: string;
+    syncStatus: Record<RunbookSyncStatus, (provider: string) => string>;
   };
   variables: {
     title: string;
@@ -424,6 +426,9 @@ export interface Messages {
       howItWorks: string;
       switchProvider: string;
       overwrite: string;
+      keptInSync: string;
+      syncBadge: string;
+      stopSyncing: string;
       folders: string;
       search: string;
       manage: string;

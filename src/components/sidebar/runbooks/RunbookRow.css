@@ -11,9 +11,17 @@
   order: -1;
 }
 
+.runbook-row-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
 .runbook-item-btn {
   display: block;
   width: fit-content;
+  min-width: 0;
   max-width: 100%;
   text-align: left;
   background: transparent;
@@ -59,4 +67,47 @@
   outline: var(--space-1) solid var(--accent);
   outline-offset: var(--space-1);
   box-shadow: 0 0 0 var(--space-2) var(--accent-dim);
+}
+
+/* Cloud sync indicator */
+
+.runbook-sync {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.runbook-sync:hover {
+  color: var(--color-text-primary);
+}
+
+.runbook-sync.sync-syncing {
+  color: var(--accent);
+  animation: runbook-sync-spin 0.8s linear infinite;
+}
+
+.runbook-sync.sync-signed-out {
+  color: var(--warning);
+}
+
+.runbook-sync.sync-error {
+  color: var(--danger);
+}
+
+@keyframes runbook-sync-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .runbook-sync.sync-syncing {
+    animation: none;
+  }
 }
