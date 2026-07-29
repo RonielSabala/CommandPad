@@ -9,6 +9,8 @@
   --dialog-accent-dim: var(--danger-dim);
   --dialog-accent-text: var(--danger);
   --dialog-emphasis: var(--danger);
+  --dialog-header-bg: color-mix(in srgb, var(--danger) 80%, black);
+  --dialog-header-fg: white;
 }
 
 .modal-dialog.dialog-warning {
@@ -16,6 +18,8 @@
   --dialog-accent-dim: var(--warning-dim);
   --dialog-accent-text: var(--warning);
   --dialog-emphasis: var(--warning);
+  --dialog-header-bg: color-mix(in srgb, var(--warning) 55%, black);
+  --dialog-header-fg: white;
 }
 
 .modal-dialog.dialog-info {
@@ -23,6 +27,8 @@
   --dialog-accent-dim: var(--accent-dim);
   --dialog-accent-text: var(--accent-text);
   --dialog-emphasis: var(--color-text-primary);
+  --dialog-header-bg: color-mix(in srgb, var(--accent) 80%, black);
+  --dialog-header-fg: white;
 }
 
 .dialog-header {
@@ -31,9 +37,9 @@
   gap: var(--space-5);
   margin: 0 calc(var(--space-8) * -1);
   padding: var(--space-6) var(--space-20) var(--space-6) var(--space-8);
-  background: var(--dialog-accent-dim);
+  background: var(--dialog-header-bg);
   border-bottom: 1px solid
-    color-mix(in srgb, var(--dialog-accent) 35%, transparent);
+    color-mix(in srgb, var(--dialog-header-bg) 70%, black);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
@@ -41,14 +47,14 @@
   flex-shrink: 0;
   width: var(--icon-base);
   height: var(--icon-base);
-  color: var(--dialog-accent);
+  color: var(--dialog-header-fg);
 }
 
 .dialog-title {
   font-family: var(--font-mono);
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--dialog-accent);
+  color: var(--dialog-header-fg);
 }
 
 .dialog-message {
@@ -80,11 +86,11 @@
 }
 
 .modal-dialog .modal-close {
-  color: var(--dialog-accent);
+  color: var(--dialog-header-fg);
 }
 
 .modal-dialog .modal-close:hover {
-  background: var(--dialog-accent-dim);
+  background: color-mix(in srgb, var(--dialog-header-fg) 20%, transparent);
   border-color: transparent;
-  color: var(--dialog-accent);
+  color: var(--dialog-header-fg);
 }
