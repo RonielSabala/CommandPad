@@ -2667,6 +2667,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         if (!isDemo) {
           await deleteRunbookDb();
           localStorage.clear();
+          sessionStorage.clear();
         }
 
         set({
