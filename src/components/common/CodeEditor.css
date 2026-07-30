@@ -83,8 +83,33 @@
   padding: 0 var(--space-6);
 }
 
-.code-editor-textarea {
+.code-editor-field {
   flex: none;
+  min-width: 0;
+}
+
+.code-editor.clamped > .code-editor-gutter,
+.code-editor.clamped .code-editor-field {
+  max-height: var(--code-editor-clamp-height);
+  overflow: clip;
+  -webkit-mask-image: var(--code-editor-clamp-mask, none);
+  mask-image: var(--code-editor-clamp-mask, none);
+}
+
+.code-editor.clamped:focus-within > .code-editor-gutter,
+.code-editor.clamped:focus-within .code-editor-field {
+  max-height: none;
+  overflow: visible;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.code-editor-scroll:focus-within .command-clamp-toggle {
+  display: none;
+}
+
+.code-editor-textarea {
+  display: block;
   font-family: var(--font-mono);
   font-size: var(--code-editor-font-size, var(--text-base));
   font-variant-ligatures: none;

@@ -127,6 +127,8 @@ export interface Messages {
     emptyPreview: string;
     showEditor: string;
     hideEditor: string;
+    showMoreLines: string;
+    showFewerLines: string;
     copy: string;
     placeholder: string;
   };
@@ -385,6 +387,7 @@ export interface Messages {
       parts: string[];
       multiline: string;
       gutterNote: string;
+      longCommands: string;
       variablesTeaser: string;
     };
     noteBlock: {

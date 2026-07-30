@@ -8,6 +8,7 @@ import {
 import { BlockType, CommandSegmentType } from "@/common/enums";
 import type { Block, CommandSegment, Variable } from "@/common/types";
 import { generateId } from "@/utils/id";
+import { countLines } from "@/utils/string";
 
 export type VariableMap = Record<string, string>;
 
@@ -390,6 +391,30 @@ export function resolveCommandText(
   }
 
   return segments;
+}
+
+export function isMaskedSegment(
+  segment: CommandSegment,
+  secretKeys: ReadonlySet<string>,
+): boolean {
+  return (
+    segment.type === CommandSegmentType.RESOLVED &&
+    !!segment.key &&
+    secretKeys.has(segment.key)
+  );
+}
+
+export function countCommandLines(
+  segments: CommandSegment[],
+  secretKeys: ReadonlySet<string>,
+): number {
+  return segments.reduce(
+    (lines, segment) =>
+      isMaskedSegment(segment, secretKeys)
+        ? lines
+        : lines + countLines(segment.text) - 1,
+    1,
+  );
 }
 
 export function resolveCommandToString(

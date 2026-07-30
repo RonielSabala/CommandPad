@@ -1,10 +1,11 @@
+import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
 import { useAutoResize } from "@/hooks/useAutoResize";
 import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useTabInsertion } from "@/hooks/useTabInsertion";
-import { classNames } from "@/utils/string";
-import type { KeyboardEvent } from "react";
+import { classNames, countLines } from "@/utils/string";
+import type { KeyboardEvent, ReactNode } from "react";
 import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import "./CodeEditor.css";
 
@@ -16,6 +17,8 @@ interface Props {
   promptPrefix?: string;
   bounded?: boolean;
   hasError?: boolean;
+  clamped?: boolean;
+  footer?: ReactNode;
   resizeDeps?: unknown[];
   onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
 }
@@ -32,6 +35,8 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
       promptPrefix,
       bounded = false,
       hasError = false,
+      clamped = false,
+      footer,
       resizeDeps = NO_RESIZE_DEPS,
       onKeyDown,
     },
@@ -40,7 +45,7 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     useImperativeHandle(forwardedRef, () => textareaRef.current!, []);
 
-    const lineCount = useMemo(() => value.split("\n").length, [value]);
+    const lineCount = useMemo(() => countLines(value), [value]);
     const handleTabKey = useTabInsertion(onChange);
     const handlePairWrap = usePairWrapping(onChange);
     const firstNumberedLine = promptPrefix ? 2 : 1;
@@ -48,7 +53,13 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
     useAutoResize(textareaRef, [value, ...resizeDeps]);
 
     const row = (
-      <div className={classNames("code-editor", !bounded && className)}>
+      <div
+        className={classNames(
+          "code-editor",
+          !bounded && className,
+          clamped && CssClass.CLAMPED,
+        )}
+      >
         <div className="code-editor-gutter">
           {promptPrefix && (
             <span className="code-editor-gutter-prefix">{promptPrefix}</span>
@@ -61,31 +72,34 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
           ))}
         </div>
 
-        <div
-          className="code-editor-scroll"
-          data-value={value}
-          onClick={() => textareaRef.current?.focus()}
-        >
-          <textarea
-            ref={textareaRef}
-            className="code-editor-textarea"
-            placeholder={placeholder}
-            spellCheck={false}
-            autoComplete="off"
-            rows={1}
-            value={value}
-            onChange={(event) => onChange(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === Key.ESCAPE) {
-                event.currentTarget.blur();
-                return;
-              }
+        <div className="code-editor-scroll" data-value={value}>
+          <div
+            className="code-editor-field"
+            onClick={() => textareaRef.current?.focus()}
+          >
+            <textarea
+              ref={textareaRef}
+              className="code-editor-textarea"
+              placeholder={placeholder}
+              spellCheck={false}
+              autoComplete="off"
+              rows={1}
+              value={value}
+              onChange={(event) => onChange(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === Key.ESCAPE) {
+                  event.currentTarget.blur();
+                  return;
+                }
 
-              handlePairWrap(event);
-              handleTabKey(event);
-              onKeyDown?.(event);
-            }}
-          />
+                handlePairWrap(event);
+                handleTabKey(event);
+                onKeyDown?.(event);
+              }}
+            />
+          </div>
+
+          {footer}
 
           <StickyScrollbar targetRef={textareaRef} deps={[value]} />
         </div>

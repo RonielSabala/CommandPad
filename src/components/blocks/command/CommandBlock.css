@@ -1,4 +1,16 @@
 .command-block {
+  --command-clamp-line-height: calc(var(--text-base) * 1.6);
+  --command-clamp-lines-height: calc(
+    var(--command-clamp-line-height) * var(--command-clamp-max-lines)
+  );
+  --command-clamp-fade: var(--space-16);
+  --command-clamp-toggle-height: var(--space-16);
+  --command-clamp-mask: linear-gradient(
+    to bottom in oklab,
+    #000 calc(100% - var(--command-clamp-fade)),
+    transparent 100%
+  );
+
   background: var(--color-surface);
   border: var(--border-standard);
   border-radius: var(--radius-lg);
@@ -18,6 +30,8 @@
 }
 
 .command-preview-scroll {
+  --command-clamp-halo: var(--color-bg);
+
   flex: 1;
   min-width: 0;
   display: flex;
@@ -25,18 +39,29 @@
 }
 
 .command-preview-text {
+  --command-preview-scroll-space: var(--space-2);
+
   font-family: var(--font-mono);
   font-size: var(--text-base);
   font-variant-ligatures: none;
   font-feature-settings:
     "liga" 0,
     "calt" 0;
+  line-height: var(--command-clamp-line-height);
   color: var(--success);
   overflow-x: auto;
   overflow-y: hidden;
   white-space: pre;
   min-width: 0;
-  padding-bottom: var(--space-2);
+  padding-bottom: var(--command-preview-scroll-space);
+}
+
+.command-preview-text.clamped {
+  max-height: calc(
+    var(--command-clamp-lines-height) + var(--command-preview-scroll-space)
+  );
+  -webkit-mask-image: var(--command-clamp-mask);
+  mask-image: var(--command-clamp-mask);
 }
 
 .command-preview-actions {
@@ -128,6 +153,12 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
 /* Command editor */
 
 .command-block-editor {
+  --command-clamp-halo: var(--color-surface);
+  --code-editor-clamp-height: calc(
+    var(--command-clamp-lines-height) + var(--space-10)
+  );
+  --code-editor-clamp-mask: var(--command-clamp-mask);
+
   border-top: var(--border-standard);
 }
 

@@ -162,6 +162,13 @@ export const RunbookSyncStatus = {
 export type RunbookSyncStatus =
   (typeof RunbookSyncStatus)[keyof typeof RunbookSyncStatus];
 
+export const CommandSurface = {
+  PREVIEW: "preview",
+  EDITOR: "editor",
+} as const;
+export type CommandSurface =
+  (typeof CommandSurface)[keyof typeof CommandSurface];
+
 export const DialogTone = {
   DANGER: "danger",
   WARNING: "warning",

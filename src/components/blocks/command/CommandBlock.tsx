@@ -1,9 +1,10 @@
 import {
   COMMAND_PROMPT_PREFIX,
+  CommandClampConfig,
   COPY_FEEDBACK_TIMEOUT_MS,
 } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { CommandSegmentType } from "@/common/enums";
+import { CommandSurface } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
 import { CodeEditor } from "@/components/common/CodeEditor";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
@@ -15,14 +16,24 @@ import {
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import {
+  countCommandLines,
   hasUnresolvedTokens,
+  isMaskedSegment,
   resolveCommandText,
   resolveCommandToString,
   type VariableMap,
 } from "@/utils/resolution";
-import { classNames } from "@/utils/string";
+import { classNames, countLines } from "@/utils/string";
+import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./CommandBlock.css";
+import { CommandClampToggle } from "./CommandClampToggle";
+
+const CLAMP_STYLE = {
+  [CommandClampConfig.MAX_LINES_PROPERTY]: CommandClampConfig.MAX_LINES,
+} as CSSProperties;
+
+const SECRET_MASK = "******";
 
 interface Props {
   block: CommandBlockData;
@@ -45,6 +56,16 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     (state) => state.pendingFocusBlockId === blockId,
   );
 
+  const previewExpanded = useStore((state) =>
+    state.expandedCommandSurfaces[CommandSurface.PREVIEW].has(blockId),
+  );
+  const editorExpanded = useStore((state) =>
+    state.expandedCommandSurfaces[CommandSurface.EDITOR].has(blockId),
+  );
+  const toggleExpanded = useStore(
+    (state) => state.toggleCommandSurfaceExpanded,
+  );
+
   const [copied, setCopied] = useState(false);
   const previewRef = useRef<HTMLSpanElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -57,6 +78,19 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     () => hasUnresolvedTokens(blockText, variableMap),
     [blockText, variableMap],
   );
+
+  const previewOverflows = useMemo(
+    () =>
+      countCommandLines(segments, secretKeys) > CommandClampConfig.MAX_LINES,
+    [segments, secretKeys],
+  );
+  const editorOverflows = useMemo(
+    () => countLines(blockText) > CommandClampConfig.MAX_LINES,
+    [blockText],
+  );
+
+  const previewClamped = previewOverflows && !previewExpanded;
+  const editorClamped = editorOverflows && !editorExpanded;
 
   const handleChange = useCallback(
     (value: string) => updateBlockText(blockId, value),
@@ -79,20 +113,22 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   };
 
   return (
-    <div className="command-block">
+    <div className="command-block" style={CLAMP_STYLE}>
       <div className="command-preview">
         <div className="command-preview-scroll">
           <span
             ref={previewRef}
-            className={`command-preview-text${unresolved ? " has-unresolved" : ""}`}
+            className={classNames(
+              "command-preview-text",
+              unresolved && "has-unresolved",
+              previewClamped && CssClass.CLAMPED,
+            )}
           >
             {blockText ? (
               segments.map((seg, i) =>
-                seg.type === CommandSegmentType.RESOLVED &&
-                seg.key &&
-                secretKeys.has(seg.key) ? (
+                isMaskedSegment(seg, secretKeys) ? (
                   <span key={i} className="token-secret">
-                    ******
+                    {SECRET_MASK}
                   </span>
                 ) : (
                   <span key={i} className={`token-${seg.type}`}>
@@ -106,6 +142,14 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
               </span>
             )}
           </span>
+
+          {previewOverflows && (
+            <CommandClampToggle
+              expanded={previewExpanded}
+              onToggle={() => toggleExpanded(blockId, CommandSurface.PREVIEW)}
+            />
+          )}
+
           <StickyScrollbar targetRef={previewRef} deps={[segments]} />
         </div>
 
@@ -145,6 +189,15 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         onChange={handleChange}
         placeholder={t.command.placeholder}
         promptPrefix={COMMAND_PROMPT_PREFIX}
+        clamped={editorClamped}
+        footer={
+          editorOverflows && (
+            <CommandClampToggle
+              expanded={editorExpanded}
+              onToggle={() => toggleExpanded(blockId, CommandSurface.EDITOR)}
+            />
+          )
+        }
         resizeDeps={[isEditorCollapsed, mode, isSidebarCollapsed]}
       />
     </div>

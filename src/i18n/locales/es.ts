@@ -110,6 +110,8 @@ export const es: Messages = {
     emptyPreview: "comando vacío",
     showEditor: "Mostrar editor",
     hideEditor: "Ocultar editor",
+    showMoreLines: "Mostrar más líneas",
+    showFewerLines: "Mostrar menos",
     copy: "Copiar comando",
     placeholder: "ssh {USUARIO}@{HOST}",
   },
@@ -691,6 +693,8 @@ export const es: Messages = {
         "Los comandos pueden ocupar varias líneas, y el editor se puede scrollear hacia los lados cuando una línea se hace demasiado larga.",
       gutterNote:
         "El margen izquierdo marca la primera línea con `$` y numera cada línea extra. Prueba a agregar más líneas abajo para ver crecer la numeración.",
+      longCommands:
+        "Un comando muy largo no estira el bloque para siempre. Cuando una parte pasa su límite de altura se detiene ahí y se desvanece, con un control **Mostrar más líneas** debajo. Haz clic para revelar el resto, y haz clic otra vez para volver a plegarlo. La vista previa y el editor se limitan por separado, así que puedes abrir uno sin abrir el otro.",
       variablesTeaser:
         "Los bloques de comando se vuelven mucho más útiles con las **variables**, que rellenan las partes de un comando que cambian. Se explican un poco más adelante, en su propia sección.",
     },

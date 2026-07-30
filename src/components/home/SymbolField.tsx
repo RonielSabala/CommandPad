@@ -1,3 +1,4 @@
+import { joinLines } from "@/utils/string";
 import { useMemo } from "react";
 import "./SymbolField.css";
 
@@ -76,7 +77,7 @@ export function SymbolField() {
         const half = Array.from({ length: GLYPHS_PER_COLUMN }, randomGlyph);
 
         return {
-          text: [...half, ...half].join("\n"),
+          text: joinLines([...half, ...half]),
           duration: MIN_FALL_DURATION_S + Math.random() * FALL_DURATION_RANGE_S,
           delay: -Math.random() * MAX_START_DELAY_S,
         };

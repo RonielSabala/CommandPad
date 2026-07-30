@@ -1,5 +1,13 @@
 import { DuplicateNameConfig } from "@/common/config";
 
+export function countLines(text: string): number {
+  return text.split("\n").length;
+}
+
+export function joinLines(lines: string[]): string {
+  return lines.join("\n");
+}
+
 export function toTitleCase(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }

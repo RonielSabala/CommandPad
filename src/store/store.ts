@@ -22,6 +22,7 @@ import {
   CloudExportStatus,
   CloudProvider,
   CloudSortColumn,
+  CommandSurface,
   DialogTone,
   ExportFormat,
   HistoryDirection,
@@ -150,6 +151,7 @@ export interface StoreState {
   focusedRunbookId: string | null;
   selectedBlockIds: Set<string>;
   flashBlockIds: Set<string>;
+  expandedCommandSurfaces: Record<CommandSurface, Set<string>>;
   selectKeyHeld: boolean;
   linkKeyHeld: boolean;
   pendingFocusBlockId: string | null;
@@ -263,6 +265,10 @@ export interface StoreState {
   ) => void;
   clearFlash: (blockId: string) => void;
   consumeBlockFocus: () => void;
+  toggleCommandSurfaceExpanded: (
+    blockId: string,
+    surface: CommandSurface,
+  ) => void;
 
   setBlockSelected: (blockId: string, selected: boolean) => void;
   toggleBlockSelection: (blockId: string) => void;
@@ -796,6 +802,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       focusedRunbookId: null,
       selectedBlockIds: new Set(),
       flashBlockIds: new Set(),
+      expandedCommandSurfaces: {
+        [CommandSurface.PREVIEW]: new Set(),
+        [CommandSurface.EDITOR]: new Set(),
+      },
       selectKeyHeld: false,
       linkKeyHeld: false,
       pendingFocusBlockId: null,
@@ -1966,6 +1976,23 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }),
 
       consumeBlockFocus: () => set({ pendingFocusBlockId: null }),
+
+      toggleCommandSurfaceExpanded: (blockId, surface) =>
+        set((s) => {
+          const ids = new Set(s.expandedCommandSurfaces[surface]);
+          if (ids.has(blockId)) {
+            ids.delete(blockId);
+          } else {
+            ids.add(blockId);
+          }
+
+          return {
+            expandedCommandSurfaces: {
+              ...s.expandedCommandSurfaces,
+              [surface]: ids,
+            },
+          };
+        }),
 
       // --- Selection ---
 
