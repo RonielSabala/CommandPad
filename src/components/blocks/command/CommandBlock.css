@@ -89,7 +89,7 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
 }
 
 .token-secret {
-  color: var(--success);
+  color: var(--accent);
   letter-spacing: 0.1em;
 }
 
