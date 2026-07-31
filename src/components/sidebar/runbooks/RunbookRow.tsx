@@ -20,7 +20,7 @@ import { useStore } from "@/store/store";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { memo } from "react";
-import { ArrowRepeat, CloudSlash } from "react-bootstrap-icons";
+import { ArrowRepeat, CloudCheck, CloudSlash } from "react-bootstrap-icons";
 import "./RunbookRow.css";
 
 interface Props {
@@ -113,6 +113,8 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
           >
             {syncStatus === RunbookSyncStatus.SIGNED_OUT ? (
               <CloudSlash className="icon-md" />
+            ) : syncStatus === RunbookSyncStatus.SYNCED ? (
+              <CloudCheck className="icon-md" />
             ) : (
               <ArrowRepeat className="icon-md" />
             )}
