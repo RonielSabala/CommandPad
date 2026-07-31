@@ -96,18 +96,6 @@
   mask-image: var(--code-editor-clamp-mask, none);
 }
 
-.code-editor.clamped:focus-within > .code-editor-gutter,
-.code-editor.clamped:focus-within .code-editor-field {
-  max-height: none;
-  overflow: visible;
-  -webkit-mask-image: none;
-  mask-image: none;
-}
-
-.code-editor-scroll:focus-within .command-clamp-toggle {
-  display: none;
-}
-
 .code-editor-textarea {
   display: block;
   font-family: var(--font-mono);

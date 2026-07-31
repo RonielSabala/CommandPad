@@ -14,7 +14,7 @@ import {
   EditorToggleChevronIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreApi } from "@/store/store";
 import {
   countCommandLines,
   hasUnresolvedTokens,
@@ -43,6 +43,7 @@ interface Props {
 
 export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const t = useTranslation();
+  const storeApi = useStoreApi();
   const blockId = block.id;
   const blockText = block.text;
   const isEditorCollapsed = block.editorCollapsed === true;
@@ -64,6 +65,13 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   );
   const toggleExpanded = useStore(
     (state) => state.toggleCommandSurfaceExpanded,
+  );
+
+  const editorFocused = useStore(
+    (state) => state.focusedCommandEditorId === blockId,
+  );
+  const setFocusedCommandEditor = useStore(
+    (state) => state.setFocusedCommandEditor,
   );
 
   const [copied, setCopied] = useState(false);
@@ -90,7 +98,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   );
 
   const previewClamped = previewOverflows && !previewExpanded;
-  const editorClamped = editorOverflows && !editorExpanded;
+  const editorClamped = editorOverflows && !editorExpanded && !editorFocused;
 
   const handleChange = useCallback(
     (value: string) => updateBlockText(blockId, value),
@@ -103,6 +111,14 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
       consumeBlockFocus();
     }
   }, [pendingFocus, consumeBlockFocus]);
+
+  useEffect(() => {
+    return () => {
+      if (storeApi.getState().focusedCommandEditorId === blockId) {
+        storeApi.getState().setFocusedCommandEditor(null);
+      }
+    };
+  }, [blockId, storeApi]);
 
   const copy = () => {
     const resolved = resolveCommandToString(blockText, variableMap);
@@ -191,13 +207,16 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         promptPrefix={COMMAND_PROMPT_PREFIX}
         clamped={editorClamped}
         footer={
-          editorOverflows && (
+          editorOverflows &&
+          !editorFocused && (
             <CommandClampToggle
               expanded={editorExpanded}
               onToggle={() => toggleExpanded(blockId, CommandSurface.EDITOR)}
             />
           )
         }
+        onFocus={() => setFocusedCommandEditor(blockId)}
+        onBlur={() => setFocusedCommandEditor(null)}
         resizeDeps={[isEditorCollapsed, mode, isSidebarCollapsed]}
       />
     </div>

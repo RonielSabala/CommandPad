@@ -21,6 +21,8 @@ interface Props {
   footer?: ReactNode;
   resizeDeps?: unknown[];
   onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 const NO_RESIZE_DEPS: unknown[] = [];
@@ -39,6 +41,8 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
       footer,
       resizeDeps = NO_RESIZE_DEPS,
       onKeyDown,
+      onFocus,
+      onBlur,
     },
     forwardedRef,
   ) {
@@ -86,6 +90,8 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
               rows={1}
               value={value}
               onChange={(event) => onChange(event.target.value)}
+              onFocus={onFocus}
+              onBlur={onBlur}
               onKeyDown={(event) => {
                 if (event.key === Key.ESCAPE) {
                   event.currentTarget.blur();
