@@ -9,7 +9,7 @@
   --dialog-accent-dim: var(--danger-dim);
   --dialog-accent-text: var(--danger);
   --dialog-emphasis: var(--danger);
-  --dialog-header-bg: color-mix(in srgb, var(--danger) 80%, black);
+  --dialog-header-bg: var(--danger-solid);
   --dialog-header-fg: white;
 }
 
@@ -18,7 +18,7 @@
   --dialog-accent-dim: var(--warning-dim);
   --dialog-accent-text: var(--warning);
   --dialog-emphasis: var(--warning);
-  --dialog-header-bg: color-mix(in srgb, var(--warning) 55%, black);
+  --dialog-header-bg: var(--warning-solid);
   --dialog-header-fg: white;
 }
 
@@ -27,7 +27,7 @@
   --dialog-accent-dim: var(--accent-dim);
   --dialog-accent-text: var(--accent-text);
   --dialog-emphasis: var(--color-text-primary);
-  --dialog-header-bg: color-mix(in srgb, var(--accent) 80%, black);
+  --dialog-header-bg: var(--accent-solid);
   --dialog-header-fg: white;
 }
 

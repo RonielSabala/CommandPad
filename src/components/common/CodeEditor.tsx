@@ -1,10 +1,11 @@
+import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
 import { useAutoResize } from "@/hooks/useAutoResize";
 import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useTabInsertion } from "@/hooks/useTabInsertion";
-import { classNames } from "@/utils/string";
-import type { KeyboardEvent } from "react";
+import { classNames, countLines } from "@/utils/string";
+import type { KeyboardEvent, ReactNode } from "react";
 import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import "./CodeEditor.css";
 
@@ -16,8 +17,12 @@ interface Props {
   promptPrefix?: string;
   bounded?: boolean;
   hasError?: boolean;
+  clamped?: boolean;
+  footer?: ReactNode;
   resizeDeps?: unknown[];
   onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 const NO_RESIZE_DEPS: unknown[] = [];
@@ -32,23 +37,33 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
       promptPrefix,
       bounded = false,
       hasError = false,
+      clamped = false,
+      footer,
       resizeDeps = NO_RESIZE_DEPS,
       onKeyDown,
+      onFocus,
+      onBlur,
     },
     forwardedRef,
   ) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     useImperativeHandle(forwardedRef, () => textareaRef.current!, []);
 
-    const lineCount = useMemo(() => value.split("\n").length, [value]);
+    const lineCount = useMemo(() => countLines(value), [value]);
     const handleTabKey = useTabInsertion(onChange);
     const handlePairWrap = usePairWrapping(onChange);
     const firstNumberedLine = promptPrefix ? 2 : 1;
 
     useAutoResize(textareaRef, [value, ...resizeDeps]);
 
-    const row = (
-      <div className={classNames("code-editor", !bounded && className)}>
+    const editor = (
+      <div
+        className={classNames(
+          "code-editor",
+          !bounded && className,
+          clamped && CssClass.CLAMPED,
+        )}
+      >
         <div className="code-editor-gutter">
           {promptPrefix && (
             <span className="code-editor-gutter-prefix">{promptPrefix}</span>
@@ -62,7 +77,7 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
         </div>
 
         <div
-          className="code-editor-scroll"
+          className="code-editor-field"
           data-value={value}
           onClick={() => textareaRef.current?.focus()}
         >
@@ -75,6 +90,8 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
             rows={1}
             value={value}
             onChange={(event) => onChange(event.target.value)}
+            onFocus={onFocus}
+            onBlur={onBlur}
             onKeyDown={(event) => {
               if (event.key === Key.ESCAPE) {
                 event.currentTarget.blur();
@@ -86,14 +103,16 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
               onKeyDown?.(event);
             }}
           />
-
-          <StickyScrollbar targetRef={textareaRef} deps={[value]} />
         </div>
+
+        {footer}
+
+        <StickyScrollbar targetRef={textareaRef} deps={[value]} />
       </div>
     );
 
     if (!bounded) {
-      return row;
+      return editor;
     }
 
     return (
@@ -104,7 +123,7 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
           className,
         )}
       >
-        {row}
+        {editor}
       </div>
     );
   },

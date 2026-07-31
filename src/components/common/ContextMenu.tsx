@@ -14,6 +14,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import "./ContextMenu.css";
+import { SubmenuActivationContext } from "./contextMenuActivation";
 
 export const ContextMenuAlign = {
   START: "start",
@@ -46,6 +47,7 @@ export function ContextMenu({
 }: ContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState(anchor);
+  const [activeSubmenuId, setActiveSubmenuId] = useState<string | null>(null);
 
   // Keep the menu fully on screen
   useLayoutEffect(() => {
@@ -95,14 +97,18 @@ export function ContextMenu({
 
   return createPortal(
     <CloseContext.Provider value={onClose}>
-      <div
-        className={classNames(CssClass.CONTEXT_MENU, "no-user-select")}
-        ref={menuRef}
-        role="menu"
-        style={{ left: position.x, top: position.y }}
+      <SubmenuActivationContext.Provider
+        value={{ activeId: activeSubmenuId, setActiveId: setActiveSubmenuId }}
       >
-        {children}
-      </div>
+        <div
+          className={classNames(CssClass.CONTEXT_MENU, "no-user-select")}
+          ref={menuRef}
+          role="menu"
+          style={{ left: position.x, top: position.y }}
+        >
+          {children}
+        </div>
+      </SubmenuActivationContext.Provider>
     </CloseContext.Provider>,
     document.body,
   );

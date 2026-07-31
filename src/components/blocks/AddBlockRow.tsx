@@ -1,19 +1,18 @@
 import { BlockType } from "@/common/enums";
-import { CommandIcon, DividerIcon, NoteIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import type { ComponentType } from "react";
 import "./AddBlockRow.css";
+import { BLOCK_TYPE_ICONS, BLOCK_TYPE_ORDER } from "./blockTypes";
 
 interface AddBlockButtonProps {
   type: BlockType;
-  icon: ComponentType<{ className?: string }>;
 }
 
-export function AddBlockButton({ type, icon: Icon }: AddBlockButtonProps) {
+export function AddBlockButton({ type }: AddBlockButtonProps) {
   const t = useTranslation();
   const addBlock = useStore((state) => state.addBlock);
   const label = t.blocks.typeLabel[type];
+  const Icon = BLOCK_TYPE_ICONS[type];
 
   return (
     <button
@@ -34,9 +33,9 @@ export function AddBlockRow() {
       <p className="new-block-label section-title no-user-select">
         {t.blocks.newBlockLabel}
       </p>
-      <AddBlockButton type={BlockType.COMMAND} icon={CommandIcon} />
-      <AddBlockButton type={BlockType.NOTE} icon={NoteIcon} />
-      <AddBlockButton type={BlockType.DIVIDER} icon={DividerIcon} />
+      {BLOCK_TYPE_ORDER.map((type) => (
+        <AddBlockButton key={type} type={type} />
+      ))}
     </div>
   );
 }

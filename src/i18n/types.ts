@@ -118,6 +118,8 @@ export interface Messages {
     typeLabel: Record<BlockType, string>;
     typeTitle: (label: string) => string;
     actions: string;
+    insertAbove: string;
+    insertBelow: string;
     duplicate: (count: number) => string;
     delete: (count: number) => string;
     emptyTitle: string;
@@ -127,6 +129,8 @@ export interface Messages {
     emptyPreview: string;
     showEditor: string;
     hideEditor: string;
+    showMoreLines: string;
+    showFewerLines: string;
     copy: string;
     placeholder: string;
   };
@@ -384,7 +388,7 @@ export interface Messages {
       intro: string;
       parts: string[];
       multiline: string;
-      gutterNote: string;
+      longCommands: string;
       variablesTeaser: string;
     };
     noteBlock: {

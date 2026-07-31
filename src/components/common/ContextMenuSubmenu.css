@@ -1,0 +1,23 @@
+.context-menu-submenu {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.context-menu-submenu-panel {
+  position: absolute;
+  top: calc(var(--space-4) * -1);
+  left: 100%;
+  min-height: 0;
+}
+
+.context-menu-submenu-panel.is-flipped-x {
+  left: auto;
+  right: 100%;
+}
+
+.context-menu-submenu-panel.is-flipped-y {
+  top: auto;
+  bottom: calc(var(--space-4) * -1);
+}

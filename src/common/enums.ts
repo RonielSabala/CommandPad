@@ -49,6 +49,13 @@ export const BlockType = {
 } as const;
 export type BlockType = (typeof BlockType)[keyof typeof BlockType];
 
+export const InsertPosition = {
+  ABOVE: "above",
+  BELOW: "below",
+} as const;
+export type InsertPosition =
+  (typeof InsertPosition)[keyof typeof InsertPosition];
+
 export const NoteStyle = {
   BODY: "body",
   SUBHEADING: "subheading",
@@ -161,6 +168,13 @@ export const RunbookSyncStatus = {
 } as const;
 export type RunbookSyncStatus =
   (typeof RunbookSyncStatus)[keyof typeof RunbookSyncStatus];
+
+export const CommandSurface = {
+  PREVIEW: "preview",
+  EDITOR: "editor",
+} as const;
+export type CommandSurface =
+  (typeof CommandSurface)[keyof typeof CommandSurface];
 
 export const DialogTone = {
   DANGER: "danger",

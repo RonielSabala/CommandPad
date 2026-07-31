@@ -10,6 +10,7 @@ import type { RunbookContent } from "@/common/types";
 import { downloadBlob } from "./download";
 import { getVariableMap, resolveCommandToString } from "./resolution";
 import { slugifyLabel } from "./runbook";
+import { joinLines } from "./string";
 
 const UNTITLED_LABELS: readonly string[] = [
   DEFAULT_TAB_LABEL,
@@ -96,7 +97,7 @@ export function buildMarkdownExport(content: RunbookContent): string {
     lines.push("");
   }
 
-  return lines.join("\n");
+  return joinLines(lines);
 }
 
 export function stripJsonExtension(filename: string): string {

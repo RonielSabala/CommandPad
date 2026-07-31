@@ -1,6 +1,7 @@
 export const CssClass = {
   ACTIVE: "active",
   ANIMATING: "animating",
+  CLAMPED: "clamped",
   COLLAPSED: "collapsed",
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",

@@ -235,6 +235,24 @@ export function DuplicateIcon(props: IconProps) {
   );
 }
 
+export function InsertAboveIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+      <path d="M8 8V2M5 5l3-3 3 3" />
+      <line x1="2" y1="12" x2="14" y2="12" />
+    </svg>
+  );
+}
+
+export function InsertBelowIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+      <path d="M8 8v6M5 11l3 3 3-3" />
+      <line x1="2" y1="4" x2="14" y2="4" />
+    </svg>
+  );
+}
+
 export function BookIcon(props: IconProps) {
   return (
     <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>

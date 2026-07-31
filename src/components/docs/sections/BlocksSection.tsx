@@ -1,9 +1,32 @@
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { useTranslation } from "@/i18n";
+import { joinLines } from "@/utils/string";
 import { demoCommand, demoDivider, demoNote } from "../demos/demoSeeds";
 import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose, ProseList } from "../Prose";
+
+const LONG_COMMAND = joinLines([
+  "docker run \\",
+  "  --name commandpad \\",
+  "  --restart unless-stopped \\",
+  "  --env NODE_ENV=production \\",
+  "  --env PORT=8080 \\",
+  "  --env LOG_LEVEL=info \\",
+  "  --env DATABASE_URL=postgres://db:5432/app \\",
+  "  --env REDIS_URL=redis://cache:6379 \\",
+  "  --publish 8080:8080 \\",
+  "  --volume ./data:/var/lib/app/data \\",
+  "  --volume ./config:/etc/app \\",
+  "  --network runbook-net \\",
+  "  --memory 512m \\",
+  "  --cpus 1.5 \\",
+  "  --health-cmd 'curl -fsS localhost:8080/health' \\",
+  "  --health-interval 30s \\",
+  "  --label owner=platform \\",
+  "  --label tier=frontend \\",
+  "  ghcr.io/example/commandpad:latest",
+]);
 
 const MARKDOWN_EXAMPLES = [
   "**bold-text**",
@@ -35,18 +58,8 @@ export function CommandBlockDocs() {
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.commandBlock.multiline} />
-      <Prose text={t.docs.commandBlock.gutterNote} />
-      <DemoWorkspace
-        tabs={[
-          {
-            blocks: [
-              demoCommand(
-                "pnpm install \\\n  --save-dev \\\n  prettier eslint",
-              ),
-            ],
-          },
-        ]}
-      >
+      <Prose text={t.docs.commandBlock.longCommands} />
+      <DemoWorkspace tabs={[{ blocks: [demoCommand(LONG_COMMAND)] }]}>
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.commandBlock.variablesTeaser} />

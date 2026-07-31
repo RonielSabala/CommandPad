@@ -37,7 +37,6 @@ export const SidebarWidth = {
   COLLAPSE_SNAP: Math.round(DEFAULT_SIDEBAR_WIDTH / 3),
 } as const;
 
-// Share of the variable row given to the key input
 export const VariableSplit = {
   MIN: 0.15,
   MAX: 0.85,
@@ -116,6 +115,11 @@ export const SecretMaskConfig = {
 } as const;
 
 export const COMMAND_PROMPT_PREFIX = "$";
+
+export const CommandClampConfig = {
+  MAX_LINES: 12,
+  MAX_LINES_PROPERTY: "--command-clamp-max-lines",
+} as const;
 
 export const RUNBOOK_JSON_PLACEHOLDER =
   '{\n  "variables": [],\n  "blocks": []\n}';

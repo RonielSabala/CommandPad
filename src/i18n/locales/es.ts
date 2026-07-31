@@ -100,6 +100,8 @@ export const es: Messages = {
     },
     typeTitle: (label) => `Bloque de ${label.toLowerCase()}`,
     actions: "Acciones del bloque",
+    insertAbove: "Insertar bloque arriba",
+    insertBelow: "Insertar bloque abajo",
     duplicate: (count) =>
       count === 1 ? "Duplicar bloque" : "Duplicar bloques",
     delete: (count) => (count === 1 ? "Eliminar bloque" : "Eliminar bloques"),
@@ -110,6 +112,8 @@ export const es: Messages = {
     emptyPreview: "comando vacío",
     showEditor: "Mostrar editor",
     hideEditor: "Ocultar editor",
+    showMoreLines: "Mostrar más líneas",
+    showFewerLines: "Mostrar menos",
     copy: "Copiar comando",
     placeholder: "ssh {USUARIO}@{HOST}",
   },
@@ -678,7 +682,7 @@ export const es: Messages = {
     },
     blocks: {
       intro:
-        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **acciones del bloque** de la derecha para duplicarlo o eliminarlo.",
+        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **acciones del bloque** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo.",
     },
     commandBlock: {
       intro:
@@ -688,9 +692,9 @@ export const es: Messages = {
         "**Editor** (contraíble): donde escribes el comando. Usa el botón de flecha para ocultarlo cuando solo necesites la vista previa.",
       ],
       multiline:
-        "Los comandos pueden ocupar varias líneas, y el editor se puede scrollear hacia los lados cuando una línea se hace demasiado larga.",
-      gutterNote:
-        "El margen izquierdo marca la primera línea con `$` y numera cada línea extra. Prueba a agregar más líneas abajo para ver crecer la numeración.",
+        "Los comandos pueden ocupar varias líneas, y el editor se puede scrollear hacia los lados cuando una línea se hace demasiado larga. El margen izquierdo marca la primera línea con `$` y numera cada línea extra, como se ve en el ejemplo de abajo.",
+      longCommands:
+        "Un comando muy largo no estira el bloque para siempre. Cuando una parte pasa su límite de altura se detiene ahí y se desvanece, con un control **Mostrar más líneas** debajo. Haz clic para revelar el resto, y haz clic otra vez para volver a plegarlo. La vista previa y el editor se limitan por separado, así que puedes abrir uno sin abrir el otro.",
       variablesTeaser:
         "Los bloques de comando se vuelven mucho más útiles con las **variables**, que rellenan las partes de un comando que cambian. Se explican un poco más adelante, en su propia sección.",
     },
