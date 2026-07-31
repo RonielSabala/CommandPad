@@ -15,6 +15,11 @@
   --warning: #fbbf24;
   --warning-dim: rgba(251, 191, 36, 0.14);
 
+  /* Solid fills for a tone */
+  --accent-solid: #2f68c5;
+  --danger-solid: #99242f;
+  --warning-solid: #9a6c00;
+
   /* Surfaces */
   --color-bg: #0b0d12;
   --color-surface: #161920;
@@ -132,6 +137,11 @@
   --danger-dim: rgba(220, 38, 38, 0.09);
   --warning: #b06200;
   --warning-dim: rgba(176, 98, 0, 0.12);
+
+  /* Solid fills for a tone */
+  --accent-solid: #264ab3;
+  --danger-solid: #b01e1e;
+  --warning-solid: #855800;
 
   /* Surfaces */
   --color-bg: #eef0f4;
