@@ -131,32 +131,43 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   return (
     <div className="command-block" style={CLAMP_STYLE}>
       <div className="command-preview">
-        <span
-          ref={previewRef}
-          className={classNames(
-            "command-preview-text",
-            unresolved && "has-unresolved",
-            previewClamped && CssClass.CLAMPED,
+        <div className="command-preview-scroll">
+          <span
+            ref={previewRef}
+            className={classNames(
+              "command-preview-text",
+              unresolved && "has-unresolved",
+              previewClamped && CssClass.CLAMPED,
+            )}
+          >
+            {blockText ? (
+              segments.map((seg, i) =>
+                isMaskedSegment(seg, secretKeys) ? (
+                  <span key={i} className="token-secret">
+                    {SECRET_MASK}
+                  </span>
+                ) : (
+                  <span key={i} className={`token-${seg.type}`}>
+                    {seg.text}
+                  </span>
+                ),
+              )
+            ) : (
+              <span className="command-preview-placeholder">
+                {t.command.emptyPreview}
+              </span>
+            )}
+          </span>
+
+          {previewOverflows && (
+            <CommandClampToggle
+              expanded={previewExpanded}
+              onToggle={() => toggleExpanded(blockId, CommandSurface.PREVIEW)}
+            />
           )}
-        >
-          {blockText ? (
-            segments.map((seg, i) =>
-              isMaskedSegment(seg, secretKeys) ? (
-                <span key={i} className="token-secret">
-                  {SECRET_MASK}
-                </span>
-              ) : (
-                <span key={i} className={`token-${seg.type}`}>
-                  {seg.text}
-                </span>
-              ),
-            )
-          ) : (
-            <span className="command-preview-placeholder">
-              {t.command.emptyPreview}
-            </span>
-          )}
-        </span>
+
+          <StickyScrollbar targetRef={previewRef} deps={[segments]} />
+        </div>
 
         <div className="command-preview-actions">
           <button
@@ -182,15 +193,6 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
             )}
           </button>
         </div>
-
-        {previewOverflows && (
-          <CommandClampToggle
-            expanded={previewExpanded}
-            onToggle={() => toggleExpanded(blockId, CommandSurface.PREVIEW)}
-          />
-        )}
-
-        <StickyScrollbar targetRef={previewRef} deps={[segments]} />
       </div>
 
       <CodeEditor
