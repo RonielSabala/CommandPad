@@ -96,16 +96,18 @@ export function CloudEntryRow({
 
   return (
     <div className="cloud-browser-row">
-      <button
-        className="cloud-browser-row-main"
-        onClick={onActivate}
-        title={activateTitle}
-      >
+      <button className="cloud-browser-row-main">
         <span className="cloud-browser-row-name-cell">
           <EntryIcon className="icon-md cloud-browser-row-icon" />
 
           <span className="cloud-browser-row-text">
-            <span className="cloud-browser-row-name">{entry.name}</span>
+            <span
+              className="cloud-browser-row-name"
+              onClick={onActivate}
+              title={activateTitle}
+            >
+              {entry.name}
+            </span>
 
             {path !== undefined && (
               <span className="cloud-browser-row-path">
