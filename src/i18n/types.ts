@@ -118,6 +118,8 @@ export interface Messages {
     typeLabel: Record<BlockType, string>;
     typeTitle: (label: string) => string;
     actions: string;
+    insertAbove: string;
+    insertBelow: string;
     duplicate: (count: number) => string;
     delete: (count: number) => string;
     emptyTitle: string;

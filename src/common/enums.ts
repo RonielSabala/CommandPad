@@ -49,6 +49,13 @@ export const BlockType = {
 } as const;
 export type BlockType = (typeof BlockType)[keyof typeof BlockType];
 
+export const InsertPosition = {
+  ABOVE: "above",
+  BELOW: "below",
+} as const;
+export type InsertPosition =
+  (typeof InsertPosition)[keyof typeof InsertPosition];
+
 export const NoteStyle = {
   BODY: "body",
   SUBHEADING: "subheading",

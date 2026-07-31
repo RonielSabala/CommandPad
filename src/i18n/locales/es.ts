@@ -100,6 +100,8 @@ export const es: Messages = {
     },
     typeTitle: (label) => `Bloque de ${label.toLowerCase()}`,
     actions: "Acciones del bloque",
+    insertAbove: "Insertar bloque arriba",
+    insertBelow: "Insertar bloque abajo",
     duplicate: (count) =>
       count === 1 ? "Duplicar bloque" : "Duplicar bloques",
     delete: (count) => (count === 1 ? "Eliminar bloque" : "Eliminar bloques"),
@@ -680,7 +682,7 @@ export const es: Messages = {
     },
     blocks: {
       intro:
-        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **acciones del bloque** de la derecha para duplicarlo o eliminarlo.",
+        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **acciones del bloque** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo.",
     },
     commandBlock: {
       intro:

@@ -2,6 +2,7 @@ import type {
   BlockType,
   CloudProvider,
   CommandSegmentType,
+  InsertPosition,
   NoteSegmentType,
   NoteStyle,
 } from "./enums";
@@ -26,6 +27,11 @@ export interface DividerBlock {
 }
 
 export type Block = CommandBlock | NoteBlock | DividerBlock;
+
+export interface BlockInsertAnchor {
+  blockId: string;
+  position: InsertPosition;
+}
 
 export interface Variable {
   id: string;

@@ -98,6 +98,8 @@ export const en: Messages = {
     },
     typeTitle: (label) => `${label} block`,
     actions: "Block actions",
+    insertAbove: "Insert block above",
+    insertBelow: "Insert block below",
     duplicate: (count) =>
       count === 1 ? "Duplicate block" : "Duplicate blocks",
     delete: (count) => (count === 1 ? "Delete block" : "Delete blocks"),
@@ -668,7 +670,7 @@ export const en: Messages = {
     },
     blocks: {
       intro:
-        "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or open the **block actions** menu on the right to duplicate or delete it.",
+        "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or open the **block actions** menu on the right to insert a new block above or below it, duplicate it, or delete it.",
     },
     commandBlock: {
       intro:
