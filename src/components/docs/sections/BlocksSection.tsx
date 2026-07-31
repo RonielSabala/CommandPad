@@ -58,20 +58,6 @@ export function CommandBlockDocs() {
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.commandBlock.multiline} />
-      <Prose text={t.docs.commandBlock.gutterNote} />
-      <DemoWorkspace
-        tabs={[
-          {
-            blocks: [
-              demoCommand(
-                "pnpm install \\\n  --save-dev \\\n  prettier eslint",
-              ),
-            ],
-          },
-        ]}
-      >
-        <BlocksList />
-      </DemoWorkspace>
       <Prose text={t.docs.commandBlock.longCommands} />
       <DemoWorkspace tabs={[{ blocks: [demoCommand(LONG_COMMAND)] }]}>
         <BlocksList />

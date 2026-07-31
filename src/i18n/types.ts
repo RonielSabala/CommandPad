@@ -386,7 +386,6 @@ export interface Messages {
       intro: string;
       parts: string[];
       multiline: string;
-      gutterNote: string;
       longCommands: string;
       variablesTeaser: string;
     };
