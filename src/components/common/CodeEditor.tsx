@@ -56,7 +56,7 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
 
     useAutoResize(textareaRef, [value, ...resizeDeps]);
 
-    const row = (
+    const editor = (
       <div
         className={classNames(
           "code-editor",
@@ -76,44 +76,43 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
           ))}
         </div>
 
-        <div className="code-editor-scroll" data-value={value}>
-          <div
-            className="code-editor-field"
-            onClick={() => textareaRef.current?.focus()}
-          >
-            <textarea
-              ref={textareaRef}
-              className="code-editor-textarea"
-              placeholder={placeholder}
-              spellCheck={false}
-              autoComplete="off"
-              rows={1}
-              value={value}
-              onChange={(event) => onChange(event.target.value)}
-              onFocus={onFocus}
-              onBlur={onBlur}
-              onKeyDown={(event) => {
-                if (event.key === Key.ESCAPE) {
-                  event.currentTarget.blur();
-                  return;
-                }
+        <div
+          className="code-editor-field"
+          data-value={value}
+          onClick={() => textareaRef.current?.focus()}
+        >
+          <textarea
+            ref={textareaRef}
+            className="code-editor-textarea"
+            placeholder={placeholder}
+            spellCheck={false}
+            autoComplete="off"
+            rows={1}
+            value={value}
+            onChange={(event) => onChange(event.target.value)}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onKeyDown={(event) => {
+              if (event.key === Key.ESCAPE) {
+                event.currentTarget.blur();
+                return;
+              }
 
-                handlePairWrap(event);
-                handleTabKey(event);
-                onKeyDown?.(event);
-              }}
-            />
-          </div>
-
-          {footer}
-
-          <StickyScrollbar targetRef={textareaRef} deps={[value]} />
+              handlePairWrap(event);
+              handleTabKey(event);
+              onKeyDown?.(event);
+            }}
+          />
         </div>
+
+        {footer}
+
+        <StickyScrollbar targetRef={textareaRef} deps={[value]} />
       </div>
     );
 
     if (!bounded) {
-      return row;
+      return editor;
     }
 
     return (
@@ -124,7 +123,7 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
           className,
         )}
       >
-        {row}
+        {editor}
       </div>
     );
   },

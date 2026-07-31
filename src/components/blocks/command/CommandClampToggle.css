@@ -2,8 +2,7 @@
   position: sticky;
   bottom: 0;
   z-index: var(--z-raised);
-  align-self: center;
-  flex: none;
+  justify-self: center;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -1,8 +1,18 @@
 .code-editor {
-  display: flex;
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: 1fr auto auto;
   width: 100%;
   min-width: 0;
+}
+
+.code-editor
+  > :not(.code-editor-gutter, .code-editor-field, .sticky-scrollbar) {
+  grid-area: 2 / 1 / 3 / -1;
+}
+
+.code-editor > .sticky-scrollbar {
+  grid-area: 3 / 2 / 4 / 3;
 }
 
 .code-editor-bounded {
@@ -34,6 +44,7 @@
 /* Gutter */
 
 .code-editor-gutter {
+  grid-area: 1 / 1 / 2 / 2;
   padding: var(--space-5) var(--space-5) var(--space-5) var(--space-6);
   background: var(--color-surface-alt);
   color: var(--color-text-muted);
@@ -60,16 +71,9 @@
 
 /* Text */
 
-.code-editor-scroll {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.code-editor-scroll::after {
+.code-editor-field::after {
   content: attr(data-value) " ";
-  flex: none;
+  display: block;
   height: 0;
   overflow: hidden;
   visibility: hidden;
@@ -84,12 +88,12 @@
 }
 
 .code-editor-field {
-  flex: none;
+  grid-area: 1 / 2 / 2 / 3;
   min-width: 0;
 }
 
 .code-editor.clamped > .code-editor-gutter,
-.code-editor.clamped .code-editor-field {
+.code-editor.clamped > .code-editor-field {
   max-height: var(--code-editor-clamp-height);
   overflow: clip;
   -webkit-mask-image: var(--code-editor-clamp-mask, none);
