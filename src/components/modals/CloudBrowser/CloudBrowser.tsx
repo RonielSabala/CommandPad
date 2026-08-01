@@ -113,7 +113,7 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
           <div className="cloud-browser-account">
             <span>{t.cloudModal.signedInAs(accountLabel ?? "")}</span>
             <button
-              className="btn btn-danger"
+              className="btn btn-accent"
               onClick={() => void signOutOfCloud()}
             >
               {t.cloudModal.signOut}
