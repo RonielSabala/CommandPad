@@ -212,7 +212,7 @@ export function MultilineReferencesDocs() {
             ],
             blocks: [
               demoCommand(
-                "ping {\n  ENDPOINT\n  ; region = eu-west\n  | [8:]\n}",
+                "ping {\n\tENDPOINT\n\t; region = eu-west\n\t| [8:]\n}",
               ),
             ],
           },

@@ -54,6 +54,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   white-space: pre;
+  tab-size: var(--tab-size);
   min-width: 0;
   padding-bottom: var(--command-preview-scroll-space);
 }

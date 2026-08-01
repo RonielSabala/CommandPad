@@ -3,6 +3,7 @@
   --base-unit: 17px;
   --font-sans: "Inter", sans-serif;
   --font-mono: "Cascadia Code", monospace;
+  --tab-size: 4;
 
   /* Accents & semantic colors */
   --accent: #3b82f6;
