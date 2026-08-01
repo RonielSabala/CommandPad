@@ -154,7 +154,6 @@ export interface StoreState {
   selectedBlockIds: Set<string>;
   flashBlockIds: Set<string>;
   expandedCommandSurfaces: Record<CommandSurface, Set<string>>;
-  focusedCommandEditorId: string | null;
   selectKeyHeld: boolean;
   linkKeyHeld: boolean;
   pendingFocusBlockId: string | null;
@@ -272,7 +271,6 @@ export interface StoreState {
     blockId: string,
     surface: CommandSurface,
   ) => void;
-  setFocusedCommandEditor: (blockId: string | null) => void;
 
   setBlockSelected: (blockId: string, selected: boolean) => void;
   toggleBlockSelection: (blockId: string) => void;
@@ -810,7 +808,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         [CommandSurface.PREVIEW]: new Set(),
         [CommandSurface.EDITOR]: new Set(),
       },
-      focusedCommandEditorId: null,
       selectKeyHeld: false,
       linkKeyHeld: false,
       pendingFocusBlockId: null,
@@ -2010,9 +2007,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             },
           };
         }),
-
-      setFocusedCommandEditor: (blockId) =>
-        set({ focusedCommandEditorId: blockId }),
 
       // --- Selection ---
 

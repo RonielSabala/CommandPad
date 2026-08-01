@@ -171,3 +171,15 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
 body.read-mode :is(.toggle-editor-btn, .command-block-editor) {
   display: none;
 }
+
+.command-block-editor:focus-within .command-clamp-toggle {
+  display: none;
+}
+
+.command-block-editor:focus-within.clamped > .code-editor-gutter,
+.command-block-editor:focus-within.clamped > .code-editor-field {
+  max-height: none;
+  overflow: visible;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
