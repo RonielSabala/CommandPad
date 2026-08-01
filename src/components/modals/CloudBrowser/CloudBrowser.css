@@ -216,6 +216,21 @@
   color: var(--color-text-muted);
 }
 
+.cloud-browser-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding-block: var(--space-4);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.cloud-browser-entries.is-busy .cloud-browser-row {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .cloud-browser-error {
   font-family: var(--font-sans);
   font-size: var(--text-sm);

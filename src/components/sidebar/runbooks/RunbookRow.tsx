@@ -12,6 +12,7 @@ import {
   ContextMenuAlign,
   ContextMenuItem,
 } from "@/components/common/ContextMenu";
+import { Spinner } from "@/components/common/Spinner";
 import { DragIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
 import { PROVIDER_NAME } from "@/components/modals/cloudProviders";
 import { useRowReorder } from "@/hooks/useRowReorder";
@@ -115,6 +116,8 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
               <CloudSlash className="icon-md" />
             ) : syncStatus === RunbookSyncStatus.SYNCED ? (
               <CloudCheck className="icon-md" />
+            ) : syncStatus === RunbookSyncStatus.SYNCING ? (
+              <Spinner />
             ) : (
               <ArrowRepeat className="icon-md" />
             )}

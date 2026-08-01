@@ -136,7 +136,6 @@
   color: var(--color-text-primary);
 }
 
-.cloud-export-spinner,
 .cloud-export-icon-success,
 .cloud-export-icon-error {
   overflow: visible;
@@ -144,8 +143,9 @@
 }
 
 .cloud-export-spinner {
-  color: var(--accent);
-  animation: cloud-export-spin 0.8s linear infinite;
+  --spinner-size: var(--icon-lg);
+
+  margin: var(--space-2);
 }
 
 .cloud-export-icon-success {
@@ -158,16 +158,4 @@
 
 .cloud-export-status .modal-actions {
   align-self: stretch;
-}
-
-@keyframes cloud-export-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cloud-export-spinner {
-    animation-duration: 2s;
-  }
 }

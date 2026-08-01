@@ -1,5 +1,6 @@
 import { CloudProvider } from "@/common/enums";
 import { SearchInput } from "@/components/common/SearchInput";
+import { Spinner } from "@/components/common/Spinner";
 import { useTranslation } from "@/i18n";
 import {
   compareCloudEntries,
@@ -145,18 +146,24 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
             />
           )}
 
+          {busy && (
+            <p className="cloud-browser-status">
+              <Spinner />
+              {t.cloudModal.loading}
+            </p>
+          )}
+
           <div
             className={classNames(
               "cloud-browser-entries modal-scrollable-body",
               !showFiles && "is-folders-only",
+              busy && "is-busy",
             )}
           >
             {rows.length > 0 && <CloudListHeader />}
 
-            {rows.length === 0 && (
-              <p className="cloud-browser-empty">
-                {busy ? t.cloudModal.loading : emptyMessage}
-              </p>
+            {!busy && rows.length === 0 && (
+              <p className="cloud-browser-empty">{emptyMessage}</p>
             )}
 
             {rows.map(({ entry, path }) =>

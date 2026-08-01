@@ -5,13 +5,13 @@ import {
   SyncDestination,
 } from "@/common/enums";
 import { FilenameInput } from "@/components/common/FilenameInput";
+import { Spinner } from "@/components/common/Spinner";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
 import { classNames } from "@/utils/string";
 import { useEffect, useState } from "react";
 import {
-  ArrowRepeat,
   CheckCircleFill,
   ExclamationTriangleFill,
   FolderFill,
@@ -57,7 +57,7 @@ function CloudExportStatusView({ onDone }: { onDone: () => void }) {
     >
       {status === CloudExportStatus.UPLOADING && (
         <>
-          <ArrowRepeat className="icon-lg cloud-export-spinner" />
+          <Spinner className="cloud-export-spinner" />
           <p className="cloud-export-status-text">
             {t.exportModal.savingTo(providerName)}
           </p>

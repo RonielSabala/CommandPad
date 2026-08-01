@@ -1,6 +1,7 @@
 import { RUNBOOK_JSON_PLACEHOLDER } from "@/common/config";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import { CodeEditor } from "@/components/common/CodeEditor";
+import { Spinner } from "@/components/common/Spinner";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import "./CloudFileEditorModal.css";
@@ -30,7 +31,10 @@ export function CloudFileEditorModal() {
       <p className="modal-message">{t.cloudModal.editHint}</p>
 
       {editor?.loading ? (
-        <p className="cloud-file-editor-status">{t.cloudModal.loading}</p>
+        <p className="cloud-file-editor-status">
+          <Spinner />
+          {t.cloudModal.loading}
+        </p>
       ) : (
         <CodeEditor
           className="cloud-file-editor-field"
