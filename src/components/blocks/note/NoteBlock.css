@@ -82,10 +82,8 @@ body.select-key-held:not(.read-mode) .note-style-row {
   content: attr(data-value) " ";
   grid-area: 1 / 1 / 2 / 2;
   white-space: pre-wrap;
-  tab-size: var(--tab-size);
   word-break: break-word;
   visibility: hidden;
-  padding: var(--space-2) 0;
 }
 
 .note-block:not(.is-focused) .note-auto-width::after {
@@ -99,7 +97,7 @@ body.select-key-held:not(.read-mode) .note-auto-width {
 
 /* Note styles */
 
-.note-auto-width.style-heading,
+.note-auto-width.style-heading::after,
 .note-textarea.style-heading,
 .note-preview.style-heading {
   font-family: var(--font-sans);
@@ -109,7 +107,7 @@ body.select-key-held:not(.read-mode) .note-auto-width {
   letter-spacing: -0.02em;
 }
 
-.note-auto-width.style-subheading,
+.note-auto-width.style-subheading::after,
 .note-textarea.style-subheading,
 .note-preview.style-subheading {
   font-family: var(--font-sans);
@@ -122,13 +120,18 @@ body.select-key-held:not(.read-mode) .note-auto-width {
 /* Shared note block styles */
 
 .note-textarea,
-.note-preview {
-  grid-area: 1 / 1 / 2 / 2;
+.note-preview,
+.note-auto-width::after {
   font-family: var(--font-sans);
   font-size: var(--text-base);
   line-height: 1.65;
   tab-size: var(--tab-size);
   padding: var(--space-2) 0;
+}
+
+.note-textarea,
+.note-preview {
+  grid-area: 1 / 1 / 2 / 2;
 }
 
 /* Note textarea */
