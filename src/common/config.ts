@@ -129,7 +129,7 @@ export const SecretMaskConfig = {
 export const COMMAND_PROMPT_PREFIX = "$";
 
 export const CommandClampConfig = {
-  MAX_LINES: 12,
+  MAX_LINES: 8,
   MAX_LINES_PROPERTY: "--command-clamp-max-lines",
 } as const;
 
