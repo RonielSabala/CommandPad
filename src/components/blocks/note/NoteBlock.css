@@ -9,6 +9,7 @@
   top: var(--space-4);
   z-index: var(--z-sticky);
   display: flex;
+  justify-self: start;
   gap: var(--space-2);
   margin-bottom: var(--space-2);
   background: var(--block-backdrop);
