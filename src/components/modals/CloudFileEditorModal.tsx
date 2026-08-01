@@ -22,6 +22,7 @@ export function CloudFileEditorModal() {
       onClose={() => void close()}
       className="modal-cloud-editor"
       animated={false}
+      noBackdrop
     >
       <p className="modal-title">
         {t.cloudModal.editTitle(editor?.file.name ?? "")}
