@@ -7,25 +7,19 @@ import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose, ProseList } from "../Prose";
 
 const LONG_COMMAND = joinLines([
-  "docker run \\",
-  "\t--name commandpad \\",
-  "\t--restart unless-stopped \\",
-  "\t--env NODE_ENV=production \\",
-  "\t--env PORT=8080 \\",
-  "\t--env LOG_LEVEL=info \\",
-  "\t--env DATABASE_URL=postgres://db:5432/app \\",
-  "\t--env REDIS_URL=redis://cache:6379 \\",
-  "\t--publish 8080:8080 \\",
-  "\t--volume ./data:/var/lib/app/data \\",
-  "\t--volume ./config:/etc/app \\",
-  "\t--network runbook-net \\",
-  "\t--memory 512m \\",
-  "\t--cpus 1.5 \\",
-  "\t--health-cmd 'curl -fsS localhost:8080/health' \\",
-  "\t--health-interval 30s \\",
-  "\t--label owner=platform \\",
-  "\t--label tier=frontend \\",
-  "\tghcr.io/example/commandpad:latest",
+  "echo 'Starting backup...' \\",
+  "\t&& mkdir -p ./backup \\",
+  "\t&& cp -r ./documents ./backup \\",
+  "\t&& cp -r ./photos ./backup \\",
+  "\t&& cp -r ./videos ./backup \\",
+  "\t&& cp -r ./music ./backup \\",
+  "\t&& cp -r ./settings ./backup \\",
+  "\t&& zip -r backup.zip ./backup \\",
+  "\t&& echo 'Uploading to server...' \\",
+  "\t&& scp backup.zip user@server:/backups/ \\",
+  "\t&& echo 'Cleaning up...' \\",
+  "\t&& rm -rf ./backup \\",
+  "\t&& echo 'Backup complete!'",
 ]);
 
 const MARKDOWN_EXAMPLES = [
