@@ -1,11 +1,11 @@
 import { CssClass } from "@/common/constants/css";
 import { InsertPosition } from "@/common/enums";
-import { ActionsMenu } from "@/components/common/ActionsMenu";
+import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuItem,
   ContextMenuSeparator,
-} from "@/components/common/ContextMenu";
-import { ContextMenuSubmenu } from "@/components/common/ContextMenuSubmenu";
+} from "@/components/common/contextMenu/ContextMenu";
+import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
 import {
   DuplicateIcon,
   InsertAboveIcon,

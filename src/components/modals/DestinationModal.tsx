@@ -2,7 +2,11 @@ import { SyncDestination } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { LaptopFill } from "react-bootstrap-icons";
-import { PROVIDER_ICON, PROVIDER_NAME, PROVIDERS } from "./cloudProviders";
+import {
+  PROVIDER_ICON,
+  PROVIDER_NAME,
+  PROVIDERS,
+} from "./cloud/cloudProviders";
 import "./DestinationModal.css";
 import { Modal } from "./Modal";
 

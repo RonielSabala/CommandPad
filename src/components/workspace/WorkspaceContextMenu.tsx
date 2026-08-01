@@ -4,7 +4,7 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   type ContextMenuAnchor,
-} from "@/components/common/ContextMenu";
+} from "@/components/common/contextMenu/ContextMenu";
 import { CopyIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";

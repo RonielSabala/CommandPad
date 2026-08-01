@@ -17,9 +17,13 @@ import {
   FolderFill,
   LaptopFill,
 } from "react-bootstrap-icons";
-import { CloudFolderPicker } from "./CloudFolderPicker";
-import { CloudModalTitle } from "./CloudModalTitle";
-import { PROVIDER_ICON, PROVIDER_NAME, PROVIDERS } from "./cloudProviders";
+import { CloudFolderPicker } from "./cloud/CloudFolderPicker";
+import { CloudModalTitle } from "./cloud/CloudModalTitle";
+import {
+  PROVIDER_ICON,
+  PROVIDER_NAME,
+  PROVIDERS,
+} from "./cloud/cloudProviders";
 import "./ExportModal.css";
 import { Modal } from "./Modal";
 

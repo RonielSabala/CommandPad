@@ -4,8 +4,8 @@ import { CodeEditor } from "@/components/common/CodeEditor";
 import { Spinner } from "@/components/common/Spinner";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { Modal } from "../Modal";
 import "./CloudFileEditorModal.css";
-import { Modal } from "./Modal";
 
 export function CloudFileEditorModal() {
   const t = useTranslation();

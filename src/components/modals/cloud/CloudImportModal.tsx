@@ -1,9 +1,9 @@
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { ArrowLeft } from "react-bootstrap-icons";
+import { Modal } from "../Modal";
 import { CloudBrowser } from "./CloudBrowser";
 import { CloudModalTitle } from "./CloudModalTitle";
-import { Modal } from "./Modal";
 
 export function CloudImportModal() {
   const t = useTranslation();
