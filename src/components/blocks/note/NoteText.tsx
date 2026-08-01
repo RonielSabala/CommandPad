@@ -1,5 +1,5 @@
 import { CssClass } from "@/common/constants/css";
-import { Anchor } from "@/common/constants/dom";
+import { Anchor, DataAttr } from "@/common/constants/dom";
 import { AppMode, NoteSegmentType } from "@/common/enums";
 import { formatBinding, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
@@ -51,6 +51,7 @@ export function NoteText({ text }: Props) {
                 target={Anchor.TARGET_BLANK}
                 rel={Anchor.REL}
                 title={followLinkTooltip}
+                {...{ [DataAttr.NOTE_OFFSET]: segment.start }}
               >
                 {segment.text}
               </a>

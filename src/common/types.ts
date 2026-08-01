@@ -77,4 +77,5 @@ export interface NoteSegment {
   text: string;
   type: NoteSegmentType;
   href?: string;
+  start: number;
 }

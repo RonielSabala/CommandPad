@@ -22,11 +22,14 @@ export function parseNoteText(text: string): NoteSegment[] {
   NOTE_TOKEN_REGEX.lastIndex = 0;
 
   while ((match = NOTE_TOKEN_REGEX.exec(text)) !== null) {
+    const matched = match[0];
     const matchIdx = match.index;
+
     if (matchIdx > lastIndex) {
       segments.push({
         type: NoteSegmentType.TEXT,
         text: text.slice(lastIndex, matchIdx),
+        start: lastIndex,
       });
     }
 
@@ -41,30 +44,51 @@ export function parseNoteText(text: string): NoteSegment[] {
       url,
     ] = match;
 
+    const startOf = (rendered: string) => matchIdx + matched.indexOf(rendered);
+
     if (code !== undefined) {
-      segments.push({ type: NoteSegmentType.CODE, text: code });
+      segments.push({
+        type: NoteSegmentType.CODE,
+        text: code,
+        start: startOf(code),
+      });
     } else if (bold !== undefined) {
-      segments.push({ type: NoteSegmentType.BOLD, text: bold });
+      segments.push({
+        type: NoteSegmentType.BOLD,
+        text: bold,
+        start: startOf(bold),
+      });
     } else if (italicStar !== undefined || italicUnderscore !== undefined) {
+      const italic = italicStar ?? italicUnderscore;
       segments.push({
         type: NoteSegmentType.ITALIC,
-        text: italicStar ?? italicUnderscore,
+        text: italic,
+        start: startOf(italic),
       });
     } else if (linkLabel !== undefined && linkHref !== undefined) {
       segments.push({
         type: NoteSegmentType.LINK,
         text: linkLabel,
         href: linkHref,
+        start: startOf(linkLabel),
       });
     } else if (url !== undefined) {
-      segments.push({ type: NoteSegmentType.LINK, text: url });
+      segments.push({
+        type: NoteSegmentType.LINK,
+        text: url,
+        start: startOf(url),
+      });
     }
 
-    lastIndex = matchIdx + match[0].length;
+    lastIndex = matchIdx + matched.length;
   }
 
   if (lastIndex < text.length) {
-    segments.push({ type: NoteSegmentType.TEXT, text: text.slice(lastIndex) });
+    segments.push({
+      type: NoteSegmentType.TEXT,
+      text: text.slice(lastIndex),
+      start: lastIndex,
+    });
   }
 
   return segments;
