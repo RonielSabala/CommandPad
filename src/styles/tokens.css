@@ -136,13 +136,13 @@
   --success: #0f8a5f;
   --danger: #dc2626;
   --danger-dim: rgba(220, 38, 38, 0.09);
-  --warning: #b06200;
-  --warning-dim: rgba(176, 98, 0, 0.12);
+  --warning: #d97706;
+  --warning-dim: rgba(217, 119, 6, 0.12);
 
   /* Solid fills for a tone */
   --accent-solid: #264ab3;
   --danger-solid: #b01e1e;
-  --warning-solid: #855800;
+  --warning-solid: #b45309;
 
   /* Surfaces */
   --color-bg: #eef0f4;
