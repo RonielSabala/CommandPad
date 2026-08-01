@@ -226,6 +226,7 @@ body {
 .icon-bold {
   display: block;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 /* --- DRAG HANDLE --- */
