@@ -164,6 +164,10 @@ body:not(.select-key-held) .note-textarea::selection {
 
 /* Note preview */
 
+.note-preview::after {
+  content: " ";
+}
+
 .note-preview {
   color: var(--color-text-secondary);
   word-break: break-word;
