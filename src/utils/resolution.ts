@@ -1,14 +1,16 @@
 import {
   CommandVariableTokenRegex,
   EscapedBraceRegex,
+  SliceSyntax,
   VariableParamPlaceholderRegex,
+  VariableSliceRegex,
   VariableSyntax,
   VariableTokenRegex,
 } from "@/common/config";
 import { BlockType, CommandSegmentType } from "@/common/enums";
 import type { Block, CommandSegment, Variable } from "@/common/types";
 import { generateId } from "@/utils/id";
-import { countLines } from "@/utils/string";
+import { countLines, sliceString } from "@/utils/string";
 
 export type VariableMap = Record<string, string>;
 
@@ -45,6 +47,103 @@ function parseVariableToken(raw: string): ParsedVariableToken {
   }
 
   return { key: rawKey.trim(), params };
+}
+
+interface TokenOperations {
+  base: string;
+  operations: string[];
+}
+
+/** Splits `KEY;params|op|op` into its base and its operations. */
+function splitTokenOperations(raw: string): TokenOperations {
+  const parts: string[] = [];
+  let depth = 0;
+  let start = 0;
+
+  for (let i = 0; i < raw.length; i += 1) {
+    const char = raw[i];
+
+    if (char === VariableSyntax.BRACE_OPEN) {
+      depth += 1;
+    } else if (char === VariableSyntax.BRACE_CLOSE) {
+      depth -= 1;
+    } else if (char === VariableSyntax.OPERATION_SEPARATOR && depth === 0) {
+      parts.push(raw.slice(start, i));
+      start = i + 1;
+    }
+  }
+
+  parts.push(raw.slice(start));
+
+  return { base: parts[0], operations: parts.slice(1) };
+}
+
+function getTokenKey(raw: string): string {
+  return splitTokenOperations(raw)
+    .base.split(VariableSyntax.PARAM_SEPARATOR)[0]
+    .trim();
+}
+
+interface SliceSpec {
+  start: number | null;
+  stop: number | null;
+  step: number;
+}
+
+function parseSliceBound(raw: string): number | null {
+  return raw ? Number(raw) : null;
+}
+
+function parseSliceOperation(operation: string): SliceSpec | null {
+  const match = VariableSliceRegex.exec(operation.trim());
+  if (!match) {
+    return null;
+  }
+
+  const [, rawStart, rawStop, rawStep] = match;
+  const start = parseSliceBound(rawStart);
+
+  // No separator at all means a single index
+  if (rawStop === undefined) {
+    return start === null
+      ? null
+      : {
+          start,
+          stop: start === -1 ? null : start + 1,
+          step: SliceSyntax.DEFAULT_STEP,
+        };
+  }
+
+  const step = rawStep ? Number(rawStep) : SliceSyntax.DEFAULT_STEP;
+  if (step === 0) {
+    return null;
+  }
+
+  return { start, stop: parseSliceBound(rawStop), step };
+}
+
+interface AppliedOperations {
+  text: string;
+  ok: boolean;
+}
+
+/** Runs a token's operations left to right. */
+function applyOperations(
+  text: string,
+  operations: string[],
+): AppliedOperations {
+  let result = text;
+
+  for (const operation of operations) {
+    const slice = parseSliceOperation(operation);
+    if (!slice) {
+      return { text, ok: false };
+    }
+
+    result = sliceString(result, slice.start, slice.stop, slice.step);
+  }
+
+  return { text: result, ok: true };
 }
 
 function resolveParamRefs(
@@ -151,16 +250,14 @@ export function getUsedVariableKeys(
   function collectRefs(text: string, tokenRegex: RegExp): void {
     for (const match of text.matchAll(tokenRegex)) {
       const raw = match[1];
-      const key = raw.split(VariableSyntax.PARAM_SEPARATOR)[0].trim();
+      const key = getTokenKey(raw);
       if (key) {
         pending.push(key);
       }
 
       // Nested refs inside param values
       for (const inner of raw.matchAll(VariableTokenRegex)) {
-        const innerKey = inner[1]
-          .split(VariableSyntax.PARAM_SEPARATOR)[0]
-          .trim();
+        const innerKey = getTokenKey(inner[1]);
         if (innerKey) {
           pending.push(innerKey);
         }
@@ -215,12 +312,16 @@ export function renameVariableTokens(
   oldKey: string,
   newKey: string,
 ): string {
-  const separator = VariableSyntax.PARAM_SEPARATOR;
+  const params = VariableSyntax.PARAM_SEPARATOR;
+  const operations = VariableSyntax.OPERATION_SEPARATOR;
+
   return text
     .split(`{${oldKey}}`)
     .join(`{${newKey}}`)
-    .split(`{${oldKey}${separator}`)
-    .join(`{${newKey}${separator}`);
+    .split(`{${oldKey}${params}`)
+    .join(`{${newKey}${params}`)
+    .split(`{${oldKey}${operations}`)
+    .join(`{${newKey}${operations}`);
 }
 
 export function renameAllVariableTokens(
@@ -325,6 +426,74 @@ export function carryVariables(
   };
 }
 
+/**
+ * Applies a token's operations to an already-resolved value. An operation that does
+ * not parse leaves the whole token unresolved.
+ */
+function buildTokenSegment(
+  token: string,
+  key: string,
+  text: string,
+  resolved: boolean,
+  operations: string[],
+): CommandSegment {
+  if (!resolved) {
+    return { key, text, type: CommandSegmentType.UNRESOLVED };
+  }
+
+  const applied = applyOperations(text, operations);
+
+  return applied.ok
+    ? { key, text: applied.text, type: CommandSegmentType.RESOLVED }
+    : { key, text: token, type: CommandSegmentType.UNRESOLVED };
+}
+
+function resolveToken(
+  token: string,
+  raw: string,
+  variableMap: VariableMap,
+): CommandSegment {
+  const { base, operations } = splitTokenOperations(raw);
+
+  if (base.includes(VariableSyntax.PARAM_SEPARATOR)) {
+    const { key, params } = parseVariableToken(base);
+
+    if (!Object.prototype.hasOwnProperty.call(variableMap, key)) {
+      return { text: token, type: CommandSegmentType.UNRESOLVED };
+    }
+
+    const template = variableMap[key];
+    const paramRefs = resolveParamRefs(params, variableMap);
+    const { text, fullyResolved } = applyTemplateParams(
+      template,
+      paramRefs.params,
+    );
+
+    return buildTokenSegment(
+      token,
+      key,
+      template ? unescapeBraces(text) : token,
+      !!template && fullyResolved && paramRefs.fullyResolved,
+      operations,
+    );
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(variableMap, base)) {
+    return { text: token, type: CommandSegmentType.UNRESOLVED };
+  }
+
+  const value = variableMap[base];
+  const { text, fullyResolved } = applyTemplateParams(value, {});
+
+  return buildTokenSegment(
+    token,
+    base,
+    value ? text : token,
+    !!value && fullyResolved,
+    operations,
+  );
+}
+
 export function resolveCommandText(
   rawText: string,
   variableMap: VariableMap,
@@ -341,45 +510,7 @@ export function resolveCommandText(
       });
     }
 
-    const raw = match[1];
-    if (raw.includes(VariableSyntax.PARAM_SEPARATOR)) {
-      const { key, params } = parseVariableToken(raw);
-
-      if (Object.prototype.hasOwnProperty.call(variableMap, key)) {
-        const template = variableMap[key];
-        const paramRefs = resolveParamRefs(params, variableMap);
-        const { text, fullyResolved } = applyTemplateParams(
-          template,
-          paramRefs.params,
-        );
-
-        segments.push({
-          key,
-          text: template ? unescapeBraces(text) : match[0],
-          type:
-            template && fullyResolved && paramRefs.fullyResolved
-              ? CommandSegmentType.RESOLVED
-              : CommandSegmentType.UNRESOLVED,
-        });
-      } else {
-        segments.push({ text: match[0], type: CommandSegmentType.UNRESOLVED });
-      }
-    } else if (Object.prototype.hasOwnProperty.call(variableMap, raw)) {
-      const value = variableMap[raw];
-      const { text, fullyResolved } = applyTemplateParams(value, {});
-
-      segments.push({
-        key: raw,
-        text: value ? text : `{${raw}}`,
-        type:
-          value && fullyResolved
-            ? CommandSegmentType.RESOLVED
-            : CommandSegmentType.UNRESOLVED,
-      });
-    } else {
-      segments.push({ text: match[0], type: CommandSegmentType.UNRESOLVED });
-    }
-
+    segments.push(resolveToken(match[0], match[1], variableMap));
     lastIndex = matchIdx + match[0].length;
   }
 

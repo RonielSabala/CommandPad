@@ -26,6 +26,7 @@ import {
   SecretVariablesDocs,
   VariableReferencesDocs,
   VariablesDocs,
+  VariableSlicingDocs,
 } from "./sections/VariablesSection";
 import {
   HeaderDocs,
@@ -48,6 +49,7 @@ export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {
   [DocsSectionId.SECRET_VARIABLES]: SecretVariablesDocs,
   [DocsSectionId.VARIABLE_REFERENCES]: VariableReferencesDocs,
   [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: ParameterizedPlaceholdersDocs,
+  [DocsSectionId.VARIABLE_SLICING]: VariableSlicingDocs,
   [DocsSectionId.ESCAPING_BRACES]: EscapingBracesDocs,
   [DocsSectionId.TABS]: TabsDocs,
   [DocsSectionId.MULTI_SELECT]: MultiSelectDocs,

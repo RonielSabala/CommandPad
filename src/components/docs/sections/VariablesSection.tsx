@@ -134,6 +134,70 @@ export function ParameterizedPlaceholdersDocs() {
   );
 }
 
+export function VariableSlicingDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableSlicing.intro} />
+      <Prose text={t.docs.variableSlicing.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable(
+                "COMMIT",
+                "9f2c1ab4d5e6f7890abcdef1234567890abcdef1",
+              ),
+            ],
+            blocks: [
+              demoCommand("git checkout {COMMIT}"),
+              demoCommand("git tag release-{COMMIT|[:7]}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableSlicing.howItWorks} />
+      <Prose text={t.docs.variableSlicing.positionsHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("DATE", "2026-07-31")],
+            blocks: [
+              demoCommand("echo {DATE|[:4]}"),
+              demoCommand("echo {DATE|[5:7]}"),
+              demoCommand("echo {DATE|[-2:]}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableSlicing.step} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("VERSION", "1.2.3")],
+            blocks: [
+              demoCommand("echo {VERSION|[::2]}"),
+              demoCommand("echo {VERSION|[::-1]}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableSlicing.invalid} />
+      <Prose text={t.docs.variableSlicing.python} />
+    </>
+  );
+}
+
 export function EscapingBracesDocs() {
   const t = useTranslation();
 

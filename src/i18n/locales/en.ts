@@ -505,6 +505,7 @@ export const en: Messages = {
       [DocsSectionId.VARIABLES]: "Variables",
       [DocsSectionId.VARIABLE_REFERENCES]: "Variable references",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Parameterized placeholders",
+      [DocsSectionId.VARIABLE_SLICING]: "Slicing values",
       [DocsSectionId.ESCAPING_BRACES]: "Escaping braces",
       [DocsSectionId.SECRET_VARIABLES]: "Secret variables",
       [DocsSectionId.BLOCKS]: "Blocks",
@@ -653,6 +654,21 @@ export const en: Messages = {
         "A value can have several blanks. Give each one a different name, then fill them all in the same reference, separated by semicolons:",
       nested:
         "A blank can even be filled with another variable. That way the same value can fill a blank in one command and be used on its own in another:",
+    },
+    variableSlicing: {
+      intro:
+        "A variable holds one value, but a command does not always need all of it. A commit hash is forty characters long when you check it out and seven when it goes in a tag. Slicing lets you keep **one** variable and take just the part you need.",
+      demoHint:
+        "The first command below uses the whole hash. The second takes only its first seven characters. Edit the variable and both stay in step:",
+      howItWorks:
+        "Write a `|` after the key, then the piece you want in square brackets. Counting starts at zero, and the second number marks where to **stop without including it**: `[:7]` is the first seven characters, and `[2:5]` is characters two, three and four. Leave a number out to run all the way to that end.",
+      positionsHint:
+        "Negative numbers count back from the end, so `[-2:]` is the last two characters. A date shows the three forms side by side:",
+      step: "A third number is the **step**. In a version number the dots sit on the odd positions, so `[::2]` skips them and leaves just the digits. A negative step walks backwards, which is all it takes to reverse a value:",
+      invalid:
+        "If a slice does not make sense, such as a step of zero, the whole reference stays **unresolved** and shows up exactly as you typed it, so the mistake is easy to spot. Asking for more characters than there are is fine, though: you simply get the ones that exist.",
+      python:
+        "The notation comes from Python, if you are curious to read more about it: [string slicing in Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). You do not need to know Python to use it here.",
     },
     escapingBraces: {
       intro:

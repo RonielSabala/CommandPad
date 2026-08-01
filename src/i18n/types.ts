@@ -372,6 +372,15 @@ export interface Messages {
       multiple: string;
       nested: string;
     };
+    variableSlicing: {
+      intro: string;
+      demoHint: string;
+      howItWorks: string;
+      positionsHint: string;
+      step: string;
+      invalid: string;
+      python: string;
+    };
     escapingBraces: {
       intro: string;
       tryHint: string;

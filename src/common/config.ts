@@ -102,11 +102,22 @@ export const CommandVariableTokenRegex = /(?<!\\)\{((?:[^{}]|\{[^{}]*\})+)\}/g;
 export const EscapedBraceRegex = /\\([{}])/g;
 export const VariableParamPlaceholderRegex = /\{;([^};]+)\}/g;
 
+export const VariableSliceRegex = /^\[(-?\d*)(?::(-?\d*)(?::(-?\d*))?)?\]$/;
 export const VariableSyntax = {
   PARAM_SEPARATOR: ";",
   PARAM_ASSIGNMENT: "=",
+  OPERATION_SEPARATOR: "|",
+  BRACE_OPEN: "{",
+  BRACE_CLOSE: "}",
   COPY_SUFFIX: "_COPY",
   COPY_SUFFIX_REGEX: /_COPY\d*$/,
+} as const;
+
+export const SliceSyntax = {
+  OPEN: "[",
+  CLOSE: "]",
+  SEPARATOR: ":",
+  DEFAULT_STEP: 1,
 } as const;
 
 export const SecretMaskConfig = {
