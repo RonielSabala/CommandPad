@@ -146,13 +146,13 @@ export function VariableSlicingDocs() {
           {
             variables: [
               demoVariable(
-                "COMMIT",
+                "commit",
                 "9f2c1ab4d5e6f7890abcdef1234567890abcdef1",
               ),
             ],
             blocks: [
-              demoCommand("git checkout {COMMIT}"),
-              demoCommand("git tag release-{COMMIT|[:7]}"),
+              demoCommand("git checkout {commit}"),
+              demoCommand("git tag release-{commit|[:7]}"),
             ],
           },
         ]}
@@ -165,11 +165,11 @@ export function VariableSlicingDocs() {
       <DemoWorkspace
         tabs={[
           {
-            variables: [demoVariable("DATE", "2026-07-31")],
+            variables: [demoVariable("date", "2026-07-31")],
             blocks: [
-              demoCommand("echo {DATE|[:4]}"),
-              demoCommand("echo {DATE|[5:7]}"),
-              demoCommand("echo {DATE|[-2:]}"),
+              demoCommand("echo {date|[:4]}"),
+              demoCommand("echo {date|[5:7]}"),
+              demoCommand("echo {date|[-2:]}"),
             ],
           },
         ]}
