@@ -2,6 +2,7 @@ import {
   CommandVariableTokenRegex,
   EscapedBraceRegex,
   SliceSyntax,
+  TokenWhitespaceRegex,
   VariableParamPlaceholderRegex,
   VariableSliceRegex,
   VariableSyntax,
@@ -39,7 +40,7 @@ function parseVariableToken(raw: string): ParsedVariableToken {
     }
 
     const paramKey = part.slice(0, eqIndex).trim();
-    const paramValue = part.slice(eqIndex + 1);
+    const paramValue = part.slice(eqIndex + 1).trim();
 
     if (paramKey && paramValue) {
       params[paramKey] = paramValue;
@@ -95,7 +96,10 @@ function parseSliceBound(raw: string): number | null {
 }
 
 function parseSliceOperation(operation: string): SliceSpec | null {
-  const match = VariableSliceRegex.exec(operation.trim());
+  const match = VariableSliceRegex.exec(
+    operation.replace(TokenWhitespaceRegex, ""),
+  );
+
   if (!match) {
     return null;
   }
@@ -156,7 +160,8 @@ function resolveParamRefs(
   for (const [name, value] of Object.entries(params)) {
     resolved[name] = value.replace(
       CommandVariableTokenRegex,
-      (match, refKey: string) => {
+      (match, rawRef: string) => {
+        const refKey = rawRef.trim();
         if (
           Object.prototype.hasOwnProperty.call(variableMap, refKey) &&
           variableMap[refKey]
@@ -181,7 +186,8 @@ function applyTemplateParams(
 
   const text = template.replace(
     VariableParamPlaceholderRegex,
-    (match, paramName: string) => {
+    (match, rawName: string) => {
+      const paramName = rawName.trim();
       if (paramName in params) {
         return params[paramName];
       }
@@ -218,8 +224,14 @@ export function getVariableMap(variables: Variable[] = []): VariableMap {
 
     visitedKeys.add(key);
     const raw = rawMap[key] ?? "";
-    const resolved = raw.replace(VariableTokenRegex, (match, refKey: string) =>
-      refKey in rawMap ? resolveValue(refKey, new Set(visitedKeys)) : match,
+    const resolved = raw.replace(
+      VariableTokenRegex,
+      (match, rawRef: string) => {
+        const refKey = rawRef.trim();
+        return refKey in rawMap
+          ? resolveValue(refKey, new Set(visitedKeys))
+          : match;
+      },
     );
 
     resolvedMap[key] = resolved;
@@ -307,21 +319,45 @@ function unescapeBraces(text: string): string {
   return text.replace(EscapedBraceRegex, "$1");
 }
 
+function braceToken(raw: string): string {
+  return `${VariableSyntax.BRACE_OPEN}${raw}${VariableSyntax.BRACE_CLOSE}`;
+}
+
+function renameTokenKey(
+  token: string,
+  raw: string,
+  oldKey: string,
+  newKey: string,
+): string {
+  // A reference inside a param value is a token in its own right
+  const inner = raw.replace(VariableTokenRegex, (nested, nestedRaw: string) =>
+    renameTokenKey(nested, nestedRaw, oldKey, newKey),
+  );
+
+  if (getTokenKey(inner) !== oldKey) {
+    return inner === raw ? token : braceToken(inner);
+  }
+
+  // The key opens the token, so its first occurrence is the key itself
+  const at = inner.indexOf(oldKey);
+
+  return braceToken(
+    `${inner.slice(0, at)}${newKey}${inner.slice(at + oldKey.length)}`,
+  );
+}
+
 export function renameVariableTokens(
   text: string,
   oldKey: string,
   newKey: string,
 ): string {
-  const params = VariableSyntax.PARAM_SEPARATOR;
-  const operations = VariableSyntax.OPERATION_SEPARATOR;
+  if (!oldKey) {
+    return text;
+  }
 
-  return text
-    .split(`{${oldKey}}`)
-    .join(`{${newKey}}`)
-    .split(`{${oldKey}${params}`)
-    .join(`{${newKey}${params}`)
-    .split(`{${oldKey}${operations}`)
-    .join(`{${newKey}${operations}`);
+  return text.replace(VariableTokenRegex, (token, raw: string) =>
+    renameTokenKey(token, raw, oldKey, newKey),
+  );
 }
 
 export function renameAllVariableTokens(
@@ -478,16 +514,17 @@ function resolveToken(
     );
   }
 
-  if (!Object.prototype.hasOwnProperty.call(variableMap, base)) {
+  const key = base.trim();
+  if (!Object.prototype.hasOwnProperty.call(variableMap, key)) {
     return { text: token, type: CommandSegmentType.UNRESOLVED };
   }
 
-  const value = variableMap[base];
+  const value = variableMap[key];
   const { text, fullyResolved } = applyTemplateParams(value, {});
 
   return buildTokenSegment(
     token,
-    base,
+    key,
     value ? text : token,
     !!value && fullyResolved,
     operations,

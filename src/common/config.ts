@@ -101,6 +101,7 @@ export const VariableTokenRegex = /\{((?:[^{}]|\{[^{}]*\})+)\}/g;
 export const CommandVariableTokenRegex = /(?<!\\)\{((?:[^{}]|\{[^{}]*\})+)\}/g;
 export const EscapedBraceRegex = /\\([{}])/g;
 export const VariableParamPlaceholderRegex = /\{;([^};]+)\}/g;
+export const TokenWhitespaceRegex = /\s+/g;
 
 export const VariableSliceRegex = /^\[(-?\d*)(?::(-?\d*)(?::(-?\d*))?)?\]$/;
 export const VariableSyntax = {

@@ -22,6 +22,7 @@ import { KeyboardShortcutsDocs } from "./sections/ShortcutsSection";
 import { TabsDocs } from "./sections/TabsSection";
 import {
   EscapingBracesDocs,
+  MultilineReferencesDocs,
   ParameterizedPlaceholdersDocs,
   SecretVariablesDocs,
   VariableReferencesDocs,
@@ -50,6 +51,7 @@ export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {
   [DocsSectionId.VARIABLE_REFERENCES]: VariableReferencesDocs,
   [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: ParameterizedPlaceholdersDocs,
   [DocsSectionId.VARIABLE_SLICING]: VariableSlicingDocs,
+  [DocsSectionId.MULTILINE_REFERENCES]: MultilineReferencesDocs,
   [DocsSectionId.ESCAPING_BRACES]: EscapingBracesDocs,
   [DocsSectionId.TABS]: TabsDocs,
   [DocsSectionId.MULTI_SELECT]: MultiSelectDocs,

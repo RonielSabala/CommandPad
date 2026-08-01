@@ -198,6 +198,33 @@ export function VariableSlicingDocs() {
   );
 }
 
+export function MultilineReferencesDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.multilineReferences.intro} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("ENDPOINT", "https://{;region}.api.example.com"),
+            ],
+            blocks: [
+              demoCommand(
+                "ping {\n  ENDPOINT\n  ; region = eu-west\n  | [8:]\n}",
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
 export function EscapingBracesDocs() {
   const t = useTranslation();
 

@@ -381,6 +381,9 @@ export interface Messages {
       invalid: string;
       python: string;
     };
+    multilineReferences: {
+      intro: string;
+    };
     escapingBraces: {
       intro: string;
       tryHint: string;

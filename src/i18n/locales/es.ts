@@ -512,6 +512,7 @@ export const es: Messages = {
       [DocsSectionId.VARIABLE_REFERENCES]: "Referencias de variables",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
       [DocsSectionId.VARIABLE_SLICING]: "Recortar valores",
+      [DocsSectionId.MULTILINE_REFERENCES]: "Referencias largas",
       [DocsSectionId.ESCAPING_BRACES]: "Escapar llaves",
       [DocsSectionId.SECRET_VARIABLES]: "Variables secretas",
       [DocsSectionId.BLOCKS]: "Bloques",
@@ -681,6 +682,10 @@ export const es: Messages = {
         "Si un recorte no tiene sentido, por ejemplo con un paso de cero, la referencia entera se queda **sin resolver** y aparece tal cual la escribiste, así que el error se nota enseguida. En cambio, pedir más caracteres de los que hay no es problema: obtienes los que existan.",
       python:
         "La notación viene de Python, por si quieres leer más sobre ella: [recorte de cadenas en Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). No necesitas saber Python para usarla aquí.",
+    },
+    multilineReferences: {
+      intro:
+        "Cuando una referencia ya tiene huecos que rellenar y una parte que recortar, puede quedar tan larga que cueste leerla. Puedes repartirla en tantas líneas como quieras: los espacios y saltos de línea que rodean cada parte de una referencia se ignoran, así que la distribuyes como prefieras:",
     },
     escapingBraces: {
       intro:

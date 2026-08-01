@@ -506,6 +506,7 @@ export const en: Messages = {
       [DocsSectionId.VARIABLE_REFERENCES]: "Variable references",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Parameterized placeholders",
       [DocsSectionId.VARIABLE_SLICING]: "Slicing values",
+      [DocsSectionId.MULTILINE_REFERENCES]: "Long references",
       [DocsSectionId.ESCAPING_BRACES]: "Escaping braces",
       [DocsSectionId.SECRET_VARIABLES]: "Secret variables",
       [DocsSectionId.BLOCKS]: "Blocks",
@@ -669,6 +670,10 @@ export const en: Messages = {
         "If a slice does not make sense, such as a step of zero, the whole reference stays **unresolved** and shows up exactly as you typed it, so the mistake is easy to spot. Asking for more characters than there are is fine, though: you simply get the ones that exist.",
       python:
         "The notation comes from Python, if you are curious to read more about it: [string slicing in Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). You do not need to know Python to use it here.",
+    },
+    multilineReferences: {
+      intro:
+        "Once a reference has blanks to fill and a piece to slice out, it can grow long enough to be hard to read. You can spread it over as many lines as you want: the spaces and line breaks that sit around each part of a reference are ignored, so the layout is yours to choose:",
     },
     escapingBraces: {
       intro:
