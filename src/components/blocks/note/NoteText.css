@@ -1,3 +1,10 @@
+.note-bold,
+.note-italic,
+.note-code,
+.note-link {
+  line-height: 0;
+}
+
 .note-bold {
   font-weight: 800;
 }
