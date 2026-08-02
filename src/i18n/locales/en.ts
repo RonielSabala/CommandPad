@@ -677,9 +677,9 @@ export const en: Messages = {
     },
     escapingBraces: {
       intro:
-        "Prefix `{` or `}` with a backslash in a command block to output it literally instead of starting a variable reference. The backslash is left out of the resolved command.",
+        "Prefix a reference with a backslash in a command block to output it literally instead of resolving it. Only the opening `{` takes the backslash, the closing `}` needs nothing, and the backslash is left out of the resolved command.",
       tryHint:
-        "Try deleting the backslashes in the command below and watch the literal braces turn into an active reference:",
+        "Try deleting the backslash in the command below and watch the literal braces turn into an active reference:",
       scope:
         "Escaping only applies inside command blocks; backslashes in variable values are always shown as-is.",
     },

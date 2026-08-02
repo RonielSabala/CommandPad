@@ -689,9 +689,9 @@ export const es: Messages = {
     },
     escapingBraces: {
       intro:
-        "Antepón una barra invertida a `{` o `}` en un bloque de comando para mostrar la llave literalmente en vez de iniciar una referencia de variable. La barra invertida se excluye del comando resuelto.",
+        "Antepón una barra invertida a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla. Solo la llave `{` de apertura lleva la barra invertida, la llave `}` de cierre no necesita nada, y la barra invertida se excluye del comando resuelto.",
       tryHint:
-        "Prueba a borrar las barras invertidas del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
+        "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
       scope:
         "El escape solo aplica dentro de bloques de comando; las barras invertidas en valores de variables se muestran siempre tal cual.",
     },

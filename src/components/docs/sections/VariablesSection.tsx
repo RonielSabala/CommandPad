@@ -236,7 +236,7 @@ export function EscapingBracesDocs() {
         tabs={[
           {
             variables: [demoVariable("user", "admin")],
-            blocks: [demoCommand('echo "\\{user\\} = {user}"')],
+            blocks: [demoCommand('echo "\\{user} = {user}"')],
           },
         ]}
       >

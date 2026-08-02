@@ -1,7 +1,8 @@
-import { EscapedBraceRegex, VariableSyntax } from "@/common/config";
+import { EscapedBraceOpenRegex, VariableSyntax } from "@/common/config";
 
+/** Drops the backslash that escapes a reference. */
 export function unescapeBraces(text: string): string {
-  return text.replace(EscapedBraceRegex, "$1");
+  return text.replace(EscapedBraceOpenRegex, VariableSyntax.BRACE_OPEN);
 }
 
 export function braceToken(raw: string): string {
