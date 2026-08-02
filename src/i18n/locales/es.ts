@@ -372,7 +372,7 @@ export const es: Messages = {
   },
   privacy: {
     title: "Política de Privacidad",
-    updated: "Última actualización: 29 de julio de 2026",
+    updated: "Última actualización: 2 de agosto de 2026",
     intro:
       "CommandPad es una aplicación del lado del cliente que funciona por completo en tu navegador. Esta política explica qué datos maneja la app y, más importante aún, cuáles no.",
     sections: [
@@ -390,6 +390,17 @@ export const es: Messages = {
         bullets: [
           "**localStorage** guarda tus preferencias (tema, idioma, disposición) y metadatos ligeros de las pestañas.",
           "**IndexedDB** guarda el contenido real de los libros (tus variables y bloques de comandos).",
+        ],
+      },
+      {
+        heading: "Imágenes",
+        paragraphs: [
+          "Un bloque de imagen guarda una imagen de dos formas posibles, y ninguna de ellas sube nada. **No hay servidor de imágenes, ni punto de subida, ni alojamiento de imágenes operado por nosotros.**",
+        ],
+        bullets: [
+          "Una imagen **adjunta** (arrastrada, pegada o elegida con el selector de archivos) la lee tu navegador en tu propio dispositivo y se guarda como texto dentro del libro, junto al resto de su contenido. El archivo nunca se envía a ningún sitio.",
+          "Una imagen **enlazada** es solo una dirección que escribiste. No se guarda ni se sube nada, pero tu navegador descarga la imagen del sitio que la aloja, así que ese sitio ve la petición igual que la vería en cualquier página que muestre la imagen.",
+          "Si sincronizas un libro con tu propia cuenta en la nube, sus imágenes adjuntas viajan con él a esa cuenta, igual que cualquier otra parte del libro.",
         ],
       },
       {
@@ -444,7 +455,7 @@ export const es: Messages = {
   },
   terms: {
     title: "Términos del Servicio",
-    updated: "Última actualización: 29 de julio de 2026",
+    updated: "Última actualización: 2 de agosto de 2026",
     intro:
       "Estos términos rigen tu uso de CommandPad. Al usar la app aceptas estos términos. Por favor, léelos, ya que son breves y están redactados para ser comprensibles.",
     sections: [
@@ -468,6 +479,7 @@ export const es: Messages = {
         bullets: [
           "Revisa cada comando antes de ejecutarlo. CommandPad resuelve y copia texto; no ejecuta nada por ti.",
           "Mantén tus propias copias de seguridad de lo importante exportando tus libros.",
+          "Adjunta solo imágenes que tengas derecho a usar. Una imagen adjunta pasa a formar parte del libro, así que va allá donde exportes o sincronices ese libro.",
           "No confíes en las variables secretas como almacenamiento seguro de credenciales sensibles.",
           "Usa la app cumpliendo las leyes y políticas que se te apliquen.",
         ],
@@ -498,7 +510,7 @@ export const es: Messages = {
       {
         heading: "Datos y privacidad",
         paragraphs: [
-          "CommandPad almacena tus datos localmente y no los transmite, salvo cuando sincronizas explícitamente un libro con tu propia cuenta en la nube. Para más detalles, consulta la Política de Privacidad, que se incorpora a estos términos por referencia.",
+          "CommandPad almacena tus datos localmente y no los transmite, salvo cuando sincronizas explícitamente un libro con tu propia cuenta en la nube. Las imágenes que adjuntas no son una excepción: se leen en tu navegador y se guardan dentro del libro, y nunca se suben a ningún servidor operado por nosotros. Para más detalles, consulta la Política de Privacidad, que se incorpora a estos términos por referencia.",
         ],
       },
       {

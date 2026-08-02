@@ -28,8 +28,9 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 - **Tabs**: open multiple runbooks simultaneously in separate tabs.
 - **Variables**: define named variables and reference them in any command block or other variable value.
 - **Live resolved preview**: every command block shows the fully resolved command in real time as you type.
-- **Three block types**: commands, notes, and dividers can be freely mixed to build structured, annotated runbooks.
+- **Four block types**: commands, notes, images, and dividers can be freely mixed to build structured, annotated runbooks.
 - **Rich note blocks**: notes support three text styles (heading, subheading, body), auto-detect URLs, and inline markdown: `**bold**`, `_italic_`, `` `code` ``.
+- **Image blocks**: drop, paste, browse for, or link a picture. Attached images are read in the browser and stored inside the runbook itself, so they work offline and travel with every export.
 - **Secret variables**: mark any variable as secret to mask its value in the sidebar and in command previews.
 - **Drag-and-drop reordering**: blocks, variables, and runbook library entries can each be reordered via their drag handles.
 - **Multi-block selection**: hold <kbd>Shift</kbd> and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the group at once.

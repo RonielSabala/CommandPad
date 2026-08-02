@@ -366,7 +366,7 @@ export const en: Messages = {
   },
   privacy: {
     title: "Privacy Policy",
-    updated: "Last updated: July 29, 2026",
+    updated: "Last updated: August 2, 2026",
     intro:
       "CommandPad is a client-side application that runs entirely in your web browser. This policy explains what data the app handles and, more importantly, what it does not.",
     sections: [
@@ -384,6 +384,17 @@ export const en: Messages = {
         bullets: [
           "**localStorage** holds your preferences (theme, language, layout) and lightweight tab metadata.",
           "**IndexedDB** holds the actual runbook content (your variables and command blocks).",
+        ],
+      },
+      {
+        heading: "Images",
+        paragraphs: [
+          "An image block holds a picture in one of two ways, and neither one uploads anything. **There is no image server, no upload endpoint, and no image host operated by us.**",
+        ],
+        bullets: [
+          "An **attached** image (dropped, pasted, or chosen with the file picker) is read by your browser on your own device and stored as text inside the runbook, next to the rest of its content. The file is never sent anywhere.",
+          "A **linked** image is only an address you typed. Nothing is stored and nothing is uploaded, but your browser fetches the picture from whatever site hosts it, so that site sees the request just as it would for any page showing the image.",
+          "If you sync a runbook to your own cloud account, its attached images travel with it into that account, the same as any other part of the runbook.",
         ],
       },
       {
@@ -438,7 +449,7 @@ export const en: Messages = {
   },
   terms: {
     title: "Terms of Service",
-    updated: "Last updated: July 29, 2026",
+    updated: "Last updated: August 2, 2026",
     intro:
       "These terms govern your use of CommandPad. By using the app you agree to them. Please read them, as they are short and written to be understandable.",
     sections: [
@@ -462,6 +473,7 @@ export const en: Messages = {
         bullets: [
           "Review every command before you run it. CommandPad resolves and copies text; it does not execute anything for you.",
           "Keep your own backups of anything important by exporting your runbooks.",
+          "Only attach images you have the right to use. An attached image becomes part of the runbook itself, so it goes wherever you export or sync that runbook.",
           "Do not rely on secret variables as secure storage for sensitive credentials.",
           "Use the app in compliance with the laws and policies that apply to you.",
         ],
@@ -492,7 +504,7 @@ export const en: Messages = {
       {
         heading: "Data and privacy",
         paragraphs: [
-          "CommandPad stores your data locally and does not transmit it, except when you explicitly sync a runbook to your own cloud account. For details, see the Privacy Policy, which is incorporated into these terms by reference.",
+          "CommandPad stores your data locally and does not transmit it, except when you explicitly sync a runbook to your own cloud account. Images you attach are no exception: they are read in your browser and kept inside the runbook, and are never uploaded to any server operated by us. For details, see the Privacy Policy, which is incorporated into these terms by reference.",
         ],
       },
       {
