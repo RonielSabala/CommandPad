@@ -1,10 +1,9 @@
-import { createContext, useContext } from "react";
 import {
-  createStore,
-  useStore as useZustandStore,
-  type StoreApi,
-} from "zustand";
-
+  createBlock,
+  getBlockLabelText,
+  mapBlockCommandTexts,
+  normalizeBlock,
+} from "@/blocks";
 import {
   DEBOUNCE_CLOUD_SYNC_MS,
   DEBOUNCE_SAVE_MS,
@@ -28,7 +27,6 @@ import {
   HistoryDirection,
   InsertPosition,
   MoveDirection,
-  NoteStyle,
   RunbookSyncStatus,
   SidebarPosition,
   SortDirection,
@@ -39,6 +37,7 @@ import {
 import type {
   Block,
   BlockInsertAnchor,
+  BlockOfType,
   RunbookContent,
   RunbookEntry,
   RunbookSync,
@@ -85,7 +84,12 @@ import {
 } from "@/utils/resolution";
 import { displayLabel, getRunbookLabel } from "@/utils/runbook";
 import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
-
+import { createContext, useContext } from "react";
+import {
+  createStore,
+  useStore as useZustandStore,
+  type StoreApi,
+} from "zustand";
 import * as persistence from "./persistence";
 import {
   deleteRunbookContent,
@@ -255,9 +259,11 @@ export interface StoreState {
   addBlock: (blockType: BlockType, anchor?: BlockInsertAnchor) => Promise<void>;
   removeBlock: (blockId: string) => void;
   duplicateBlock: (blockId: string) => void;
-  updateBlockText: (blockId: string, text: string) => void;
-  updateBlockStyle: (blockId: string, style: NoteStyle) => void;
-  toggleCommandEditor: (blockId: string) => void;
+  updateBlock: <T extends BlockType>(
+    blockId: string,
+    type: T,
+    patch: Partial<Omit<BlockOfType<T>, "id" | "type">>,
+  ) => void;
   toggleAllCommandEditors: () => void;
   reorderBlocks: (sourceId: string, targetId: string) => void;
   copyBlocksToTab: (
@@ -449,10 +455,9 @@ function parseRunbookContent(raw: string): RunbookContent {
       ...variable,
       id: variable.id || generateId(),
     })),
-    blocks: (parsed.blocks as Block[]).map((block) => ({
-      ...block,
-      id: block.id || generateId(),
-    })),
+    blocks: (parsed.blocks as unknown[])
+      .map(normalizeBlock)
+      .filter((block): block is Block => block !== null),
   };
 }
 
@@ -1589,14 +1594,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
               const newKey = value.trim();
 
               if (oldKey && newKey && oldKey !== newKey) {
-                blocks = tab.blocks.map((b) => {
-                  if (b.type !== BlockType.COMMAND) {
-                    return b;
-                  }
-
-                  const text = renameCommandTokens(b.text, oldKey, newKey);
-                  return text === b.text ? b : { ...b, text };
-                });
+                blocks = tab.blocks.map((b) =>
+                  mapBlockCommandTexts(b, (text) =>
+                    renameCommandTokens(text, oldKey, newKey),
+                  ),
+                );
 
                 variables = tab.variables.map((v) => {
                   if (v.id === variableId) {
@@ -1661,19 +1663,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           await get().createNewTab();
         }
 
-        let newBlock: Block;
-        if (blockType === BlockType.COMMAND) {
-          newBlock = { id: generateId(), type: BlockType.COMMAND, text: "" };
-        } else if (blockType === BlockType.NOTE) {
-          newBlock = {
-            id: generateId(),
-            type: BlockType.NOTE,
-            text: "",
-            style: NoteStyle.BODY,
-          };
-        } else {
-          newBlock = { id: generateId(), type: BlockType.DIVIDER };
-        }
+        const newBlock = createBlock(blockType);
 
         set((s) => ({
           ...withActiveTab(s, (tab) => {
@@ -1788,15 +1778,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           target.variables,
         );
 
-        const copies = ordered.map((b) =>
-          b.type === BlockType.COMMAND
-            ? {
-                ...b,
-                id: generateId(),
-                text: renameAllCommandTokens(b.text, renames),
-              }
-            : { ...b, id: generateId() },
-        );
+        const copies = ordered.map((b) => ({
+          ...mapBlockCommandTexts(b, (text) =>
+            renameAllCommandTokens(text, renames),
+          ),
+          id: generateId(),
+        }));
 
         set((s) => {
           const tabs = s.tabs.map((t) => {
@@ -1849,7 +1836,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         get().saveState();
       },
 
-      updateBlockText: (blockId, text) => {
+      updateBlock: (blockId, type, patch) => {
         if (get().mode === AppMode.READ) {
           return;
         }
@@ -1858,48 +1845,24 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           const updated = withActiveTab(s, (tab) => ({
             ...tab,
             blocks: tab.blocks.map((b) =>
-              b.id === blockId ? { ...b, text } : b,
+              b.id === blockId && b.type === type
+                ? ({ ...b, ...patch } as Block)
+                : b,
             ),
           }));
-          return { ...updated, ...relabelActive({ ...s, ...updated }) };
+
+          // The label comes from the first block that can name a runbook
+          const next = { ...s, ...updated };
+          const first = getActiveTab(next)?.blocks[0];
+          const namesRunbook =
+            first?.id === blockId && getBlockLabelText(first) !== null;
+
+          return namesRunbook
+            ? { ...updated, ...relabelActive(next) }
+            : updated;
         });
 
         debouncedSaveState();
-      },
-
-      updateBlockStyle: (blockId, style) => {
-        if (get().mode === AppMode.READ) {
-          return;
-        }
-        set((s) =>
-          withActiveTab(s, (tab) => ({
-            ...tab,
-            blocks: tab.blocks.map((b) =>
-              b.id === blockId && b.type === BlockType.NOTE
-                ? { ...b, style }
-                : b,
-            ),
-          })),
-        );
-
-        get().saveState();
-      },
-
-      toggleCommandEditor: (blockId) => {
-        if (get().mode === AppMode.READ) {
-          return;
-        }
-        set((s) =>
-          withActiveTab(s, (tab) => ({
-            ...tab,
-            blocks: tab.blocks.map((b) =>
-              b.id === blockId && b.type === BlockType.COMMAND
-                ? { ...b, editorCollapsed: !b.editorCollapsed }
-                : b,
-            ),
-          })),
-        );
-        get().saveState();
       },
 
       toggleAllCommandEditors: () => {

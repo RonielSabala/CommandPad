@@ -1,0 +1,232 @@
+import { ImageBlockConfig, MimeType } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
+import { Key } from "@/common/constants/events";
+import { AppMode, BlockType } from "@/common/enums";
+import type { ImageBlock as ImageBlockData } from "@/common/types";
+import { ImageIcon, ImportIcon, TrashIcon } from "@/components/icons";
+import { useFileDrop } from "@/hooks/useFileDrop";
+import { useTranslation } from "@/i18n";
+import { useStore } from "@/store/store";
+import { formatFileSize } from "@/utils/format";
+import {
+  isAttachedImage,
+  isImageFile,
+  normalizeImageSrc,
+  readImageAsDataUrl,
+} from "@/utils/image";
+import { classNames } from "@/utils/string";
+import { useEffect, useRef, useState, type ClipboardEvent } from "react";
+import type { BlockViewProps } from "../blockViews";
+import "./ImageBlock.css";
+
+function PlaceholderIcon() {
+  return (
+    <span className="image-placeholder-badge">
+      <ImageIcon className="icon-lg icon-semibold" />
+    </span>
+  );
+}
+
+export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
+  const t = useTranslation();
+  const blockId = block.id;
+  const src = block.src;
+
+  const language = useStore((state) => state.language);
+  const isReadMode = useStore((state) => state.mode === AppMode.READ);
+  const updateBlock = useStore((state) => state.updateBlock);
+  const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
+  const pendingFocus = useStore(
+    (state) => state.pendingFocusBlockId === blockId,
+  );
+
+  const [urlDraft, setUrlDraft] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
+
+  const dropzoneRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // A new source gets its own chance to load
+  useEffect(() => setLoadFailed(false), [src]);
+
+  useEffect(() => {
+    if (pendingFocus) {
+      dropzoneRef.current?.focus({ preventScroll: true });
+      consumeBlockFocus();
+    }
+  }, [pendingFocus, consumeBlockFocus]);
+
+  const setSource = (nextSrc: string, alt?: string) => {
+    setError(null);
+    setUrlDraft("");
+    updateBlock(blockId, BlockType.IMAGE, { src: nextSrc, alt });
+  };
+
+  const attachFile = async (file: File | undefined) => {
+    if (!file) {
+      return;
+    }
+
+    if (!isImageFile(file)) {
+      setError(t.image.notAnImage);
+      return;
+    }
+
+    if (file.size > ImageBlockConfig.MAX_BYTES) {
+      const limit = formatFileSize(ImageBlockConfig.MAX_BYTES, language);
+      setError(t.image.tooLarge(limit));
+      return;
+    }
+
+    try {
+      setSource(await readImageAsDataUrl(file), file.name);
+    } catch {
+      setError(t.image.readFailed);
+    }
+  };
+
+  const applyUrl = (raw: string) => {
+    const nextSrc = normalizeImageSrc(raw);
+    if (!nextSrc) {
+      setError(t.image.invalidUrl);
+      return;
+    }
+
+    setSource(nextSrc);
+  };
+
+  const fileDrop = useFileDrop(
+    (files) => void attachFile(files[0]),
+    !isReadMode,
+  );
+
+  // Paste lands here whenever the block holds focus
+  const handlePaste = (event: ClipboardEvent) => {
+    if (isReadMode) {
+      return;
+    }
+
+    const file = event.clipboardData.files[0];
+    if (file) {
+      event.preventDefault();
+      void attachFile(file);
+      return;
+    }
+
+    const text = event.clipboardData.getData(MimeType.PLAIN_TEXT).trim();
+    if (text) {
+      event.preventDefault();
+      applyUrl(text);
+    }
+  };
+
+  const openFilePicker = () => fileInputRef.current?.click();
+
+  const clear = () =>
+    updateBlock(blockId, BlockType.IMAGE, { src: "", alt: undefined });
+
+  return (
+    <div
+      className={classNames(
+        "image-block",
+        CssClass.BLOCK_SURFACE,
+        fileDrop.isDropActive && CssClass.DROP_TARGET,
+      )}
+      {...fileDrop.dropProps}
+      onPaste={handlePaste}
+    >
+      <input
+        ref={fileInputRef}
+        className="image-file-input"
+        type="file"
+        accept={ImageBlockConfig.ACCEPT}
+        onChange={(event) => {
+          void attachFile(event.target.files?.[0]);
+          event.target.value = "";
+        }}
+      />
+
+      {src ? (
+        <div className="image-frame">
+          {loadFailed ? (
+            <div className="image-broken">
+              <PlaceholderIcon />
+              <p className="image-message">{t.image.loadFailed}</p>
+              {!isAttachedImage(src) && <p className="image-source">{src}</p>}
+            </div>
+          ) : (
+            <img
+              className="image-view"
+              src={src}
+              alt={block.alt ?? ""}
+              draggable={false}
+              onError={() => setLoadFailed(true)}
+            />
+          )}
+
+          <div className="image-actions">
+            <div className="image-actions-group">
+              <button
+                className="btn btn-icon btn-accent"
+                title={t.image.replace}
+                onClick={openFilePicker}
+              >
+                <ImportIcon className="icon-md icon-bold" />
+              </button>
+
+              <button
+                className="btn btn-icon btn-danger"
+                title={t.image.remove}
+                onClick={clear}
+              >
+                <TrashIcon className="icon-md icon-bold" />
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : isReadMode ? (
+        <div className="image-empty-readonly">
+          <PlaceholderIcon />
+          <p className="image-message">{t.image.emptyReadOnly}</p>
+        </div>
+      ) : (
+        <div className="image-dropzone" ref={dropzoneRef} tabIndex={0}>
+          <PlaceholderIcon />
+
+          <p className="image-message">{t.image.dropHint}</p>
+
+          <button className="btn btn-lg" onClick={openFilePicker}>
+            {t.image.choose}
+          </button>
+
+          <div className="image-url-row">
+            <input
+              className="image-url-input"
+              type="url"
+              spellCheck={false}
+              placeholder={t.image.urlPlaceholder}
+              value={urlDraft}
+              onChange={(event) => setUrlDraft(event.target.value)}
+              onPaste={(event) => event.stopPropagation()}
+              onKeyDown={(event) => {
+                if (event.key === Key.ENTER && urlDraft.trim()) {
+                  applyUrl(urlDraft);
+                }
+              }}
+            />
+            <button
+              className="btn"
+              disabled={!urlDraft.trim()}
+              onClick={() => applyUrl(urlDraft)}
+            >
+              {t.image.addUrl}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {error && <p className="image-error">{error}</p>}
+    </div>
+  );
+}

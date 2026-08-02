@@ -96,6 +96,7 @@ export const es: Messages = {
     typeLabel: {
       [BlockType.COMMAND]: "Comando",
       [BlockType.NOTE]: "Nota",
+      [BlockType.IMAGE]: "Imagen",
       [BlockType.DIVIDER]: "Divisor",
     },
     typeTitle: (label) => `Bloque de ${label.toLowerCase()}`,
@@ -130,6 +131,20 @@ export const es: Messages = {
     },
     followLinkTooltip: (binding?: string) =>
       binding ? `Seguir enlace (${binding})` : "Seguir enlace",
+  },
+  image: {
+    dropHint: "Suelta una imagen aquí, o pégala",
+    choose: "Elegir una imagen",
+    urlPlaceholder: "https://ejemplo.com/imagen.png",
+    addUrl: "Añadir",
+    replace: "Reemplazar imagen",
+    remove: "Eliminar imagen",
+    emptyReadOnly: "Sin imagen",
+    loadFailed: "No se pudo cargar esta imagen.",
+    notAnImage: "Ese archivo no es una imagen.",
+    invalidUrl: "Escribe una dirección de imagen http o https.",
+    readFailed: "No se pudo leer esa imagen.",
+    tooLarge: (limit) => `Las imágenes deben pesar menos de ${limit}.`,
   },
   exportModal: {
     title: "Exportar",
@@ -518,6 +533,7 @@ export const es: Messages = {
       [DocsSectionId.BLOCKS]: "Bloques",
       [DocsSectionId.COMMAND_BLOCK]: "Bloque de comando",
       [DocsSectionId.NOTE_BLOCK]: "Bloque de nota",
+      [DocsSectionId.IMAGE_BLOCK]: "Bloque de imagen",
       [DocsSectionId.DIVIDER_BLOCK]: "Bloque divisor",
       [DocsSectionId.MULTI_SELECT]: "Selección múltiple",
       [DocsSectionId.READ_MODE]: "Modo lectura",
@@ -735,6 +751,20 @@ export const es: Messages = {
       wrapKeys:
         "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y **Ctrl+´** en comillas invertidas; escribir **(**, **[**, **{**, **\"** o **'** lo envuelve en ese par. Envolver en pares no es exclusivo de las notas, funciona igual en el editor de comandos.",
     },
+    imageBlock: {
+      intro:
+        "Es un bloque que guarda una imagen: el diagrama de la arquitectura, una captura de la pantalla que deberías estar viendo, el panel del tablero que confirma que el despliegue salió bien, etc.",
+      ways: [
+        "**Suéltala**: arrastra un archivo de imagen desde tu escritorio directamente sobre el bloque.",
+        "**Pégala**: haz clic en el bloque y pulsa `Ctrl+V` con una imagen, o una dirección de imagen, en el portapapeles.",
+        "**Elígela**: pulsa **Elegir una imagen** para abrir el explorador de archivos.",
+        "**Enlázala**: escribe o pega una dirección `http` o `https` en la casilla de abajo del bloque.",
+      ],
+      attachedVsLinked: (limit) =>
+        `Las tres primeras formas **adjuntan** la imagen: se guarda una copia dentro del libro, así que funciona sin conexión y viaja con cada exportación y cada copia. Una imagen adjunta debe pesar menos de ${limit}. La última la **enlaza**: el libro solo recuerda la dirección, que no ocupa más que una línea de texto, pero la imagen solo está ahí mientras lo esté el sitio que la aloja.`,
+      demoHint:
+        "Pasa el cursor sobre una imagen para revelar sus controles: **Reemplazar imagen** cambia la foto sin tocar el bloque, y **Eliminar imagen** lo vacía y devuelve la zona para soltar.",
+    },
     dividerBlock: {
       intro:
         "No es más que un separador visual. Se estira hasta igualar el ancho del bloque más ancho, lo que lo hace perfecto para dividir un libro en secciones. Eso sí, tiene una anchura mínima que le impide encogerse hasta volverse ilegible.",
@@ -775,7 +805,7 @@ export const es: Messages = {
         "Haz clic en **Exportar** en la cabecera para abrir el selector de formato.",
       formats: [
         "**JSON**: el espacio de trabajo completo (variables + bloques). Puede reimportarse.",
-        "**Markdown**: un archivo `.md` legible con títulos, subtítulos, divisores y comandos resueltos.",
+        "**Markdown**: un archivo `.md` legible con títulos, subtítulos, divisores, comandos resueltos e imágenes.",
         "**Texto plano**: el mismo contenido que Markdown, guardado como `.txt`.",
       ],
       saveDialog:

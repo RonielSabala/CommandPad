@@ -1,8 +1,16 @@
+import { ImageBlockConfig } from "@/common/config";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { useTranslation } from "@/i18n";
+import { useStore } from "@/store/store";
+import { formatFileSize } from "@/utils/format";
 import { joinLines } from "@/utils/string";
-import { demoCommand, demoDivider, demoNote } from "../demos/demoSeeds";
+import {
+  demoCommand,
+  demoDivider,
+  demoImage,
+  demoNote,
+} from "../demos/demoSeeds";
 import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose, ProseList } from "../Prose";
 
@@ -21,6 +29,20 @@ const LONG_COMMAND = joinLines([
   "\t&& rm -rf ./backup \\",
   "\t&& echo 'Backup complete!'",
 ]);
+
+const DEMO_IMAGE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="440" height="180" viewBox="0 0 440 180">
+  <rect width="440" height="180" rx="12" fill="#1f2430"/>
+  <rect x="28" y="60" width="104" height="60" rx="8" fill="#2f68c5"/>
+  <rect x="168" y="60" width="104" height="60" rx="8" fill="#3b82f6"/>
+  <rect x="308" y="60" width="104" height="60" rx="8" fill="#15803d"/>
+  <path d="M136 90h28M276 90h28" stroke="#9aa3b2" stroke-width="3" stroke-linecap="round"/>
+  <g fill="#eef1f6" font-family="monospace" font-size="15" text-anchor="middle">
+    <text x="80" y="95">build</text>
+    <text x="220" y="95">stage</text>
+    <text x="360" y="95">prod</text>
+  </g>
+</svg>`;
+const DEMO_IMAGE_SRC = `data:image/svg+xml,${encodeURIComponent(DEMO_IMAGE_SVG)}`;
 
 const MARKDOWN_EXAMPLES = [
   "**bold-text**",
@@ -92,6 +114,30 @@ export function NoteBlockDocs() {
       <Prose text={t.docs.noteBlock.links} />
       <Prose text={t.docs.noteBlock.wrapKeys} />
       <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.noteSample)] }]}>
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
+export function ImageBlockDocs() {
+  const t = useTranslation();
+  const language = useStore((state) => state.language);
+  const limit = formatFileSize(ImageBlockConfig.MAX_BYTES, language);
+
+  return (
+    <>
+      <Prose text={t.docs.imageBlock.intro} />
+      <ProseList items={t.docs.imageBlock.ways} />
+      <Prose text={t.docs.imageBlock.attachedVsLinked(limit)} />
+      <Prose text={t.docs.imageBlock.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            blocks: [demoImage(DEMO_IMAGE_SRC, "pipeline.svg"), demoImage("")],
+          },
+        ]}
+      >
         <BlocksList />
       </DemoWorkspace>
     </>

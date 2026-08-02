@@ -1,11 +1,11 @@
+import { blockToMarkdown, type BlockMarkdownContext } from "@/blocks";
 import {
   DEFAULT_TAB_LABEL,
   FilePickerConfig,
   JSON_EXTENSION,
-  MarkdownSyntax,
   RunbookConfig,
 } from "@/common/config";
-import { BlockType, ExportFormat, NoteStyle } from "@/common/enums";
+import { ExportFormat } from "@/common/enums";
 import type { RunbookContent } from "@/common/types";
 import { downloadBlob } from "./download";
 import { getVariableMap, resolveCommandToString } from "./resolution";
@@ -69,32 +69,17 @@ async function saveFile(
 export function buildMarkdownExport(content: RunbookContent): string {
   const lines: string[] = [];
   const variableMap = getVariableMap(content.variables);
+  const context: BlockMarkdownContext = {
+    resolve: (text) => resolveCommandToString(text, variableMap),
+  };
 
   for (const block of content.blocks) {
-    if (block.type === BlockType.NOTE) {
-      const blockText = block.text || "";
-      const blockStyle = block.style || NoteStyle.BODY;
-
-      if (blockStyle === NoteStyle.HEADING) {
-        lines.push(`${MarkdownSyntax.HEADING} ${blockText}`);
-      } else if (blockStyle === NoteStyle.SUBHEADING) {
-        lines.push(`${MarkdownSyntax.SUBHEADING} ${blockText}`);
-      } else {
-        lines.push(blockText);
-      }
-    } else if (block.type === BlockType.COMMAND) {
-      if (!block.text) {
-        continue;
-      }
-
-      lines.push(MarkdownSyntax.CODE_FENCE);
-      lines.push(resolveCommandToString(block.text, variableMap));
-      lines.push(MarkdownSyntax.CODE_FENCE_END);
-    } else if (block.type === BlockType.DIVIDER) {
-      lines.push(MarkdownSyntax.DIVIDER);
+    const markdown = blockToMarkdown(block, context);
+    if (markdown === null) {
+      continue;
     }
 
-    lines.push("");
+    lines.push(markdown, "");
   }
 
   return joinLines(lines);

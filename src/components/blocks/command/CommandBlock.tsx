@@ -4,7 +4,7 @@ import {
   COPY_FEEDBACK_TIMEOUT_MS,
 } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { CommandSurface } from "@/common/enums";
+import { BlockType, CommandSurface } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
 import { CodeEditor } from "@/components/common/CodeEditor";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
@@ -49,8 +49,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
 
   const mode = useStore((state) => state.mode);
   const isSidebarCollapsed = useStore((state) => state.sidebarCollapsed);
-  const updateBlockText = useStore((state) => state.updateBlockText);
-  const toggleCommandEditor = useStore((state) => state.toggleCommandEditor);
+  const updateBlock = useStore((state) => state.updateBlock);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
@@ -93,8 +92,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const editorClamped = editorOverflows && !editorExpanded;
 
   const handleChange = useCallback(
-    (value: string) => updateBlockText(blockId, value),
-    [updateBlockText, blockId],
+    (value: string) => updateBlock(blockId, BlockType.COMMAND, { text: value }),
+    [updateBlock, blockId],
   );
 
   useEffect(() => {
@@ -113,7 +112,10 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   };
 
   return (
-    <div className="command-block" style={CLAMP_STYLE}>
+    <div
+      className={classNames("command-block", CssClass.BLOCK_SURFACE)}
+      style={CLAMP_STYLE}
+    >
       <div className="command-preview">
         <span
           ref={previewRef}
@@ -145,7 +147,11 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         <div className="command-preview-actions">
           <button
             className={`btn btn-icon toggle-editor-btn${isEditorCollapsed ? " editor-collapsed" : ""}`}
-            onClick={() => toggleCommandEditor(blockId)}
+            onClick={() =>
+              updateBlock(blockId, BlockType.COMMAND, {
+                editorCollapsed: !isEditorCollapsed,
+              })
+            }
             title={
               isEditorCollapsed ? t.command.showEditor : t.command.hideEditor
             }

@@ -1,12 +1,12 @@
+import { getBlockLabelText } from "@/blocks";
 import { DEFAULT_TAB_LABEL, RunbookConfig } from "@/common/config";
-import { BlockType } from "@/common/enums";
 import type { Block } from "@/common/types";
 import type { Messages } from "@/i18n/types";
 import { parseNoteText } from "@/utils/markdown";
 
 const LABEL_STRIP_REGEX = /[*`´]/g;
 
-function cleanNoteLabel(text: string): string {
+function cleanLabelText(text: string): string {
   const plain = parseNoteText(text)
     .map((segment) => segment.text)
     .join("");
@@ -19,8 +19,10 @@ export function getRunbookLabel(
   fallback: string,
 ): string {
   const firstBlock = blocks?.[0];
-  if (firstBlock?.type === BlockType.NOTE) {
-    const label = cleanNoteLabel(firstBlock.text);
+  const labelText = firstBlock ? getBlockLabelText(firstBlock) : null;
+
+  if (labelText !== null) {
+    const label = cleanLabelText(labelText);
     if (label) {
       return label.slice(0, RunbookConfig.LABEL_MAX_LENGTH);
     }

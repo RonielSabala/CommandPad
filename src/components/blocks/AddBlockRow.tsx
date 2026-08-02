@@ -1,8 +1,9 @@
+import { BLOCK_TYPE_ORDER } from "@/blocks";
 import { BlockType } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import "./AddBlockRow.css";
-import { BLOCK_TYPE_ICONS, BLOCK_TYPE_ORDER } from "./blockTypes";
+import { getBlockIcon } from "./blockViews";
 
 interface AddBlockButtonProps {
   type: BlockType;
@@ -12,7 +13,7 @@ export function AddBlockButton({ type }: AddBlockButtonProps) {
   const t = useTranslation();
   const addBlock = useStore((state) => state.addBlock);
   const label = t.blocks.typeLabel[type];
-  const Icon = BLOCK_TYPE_ICONS[type];
+  const Icon = getBlockIcon(type);
 
   return (
     <button

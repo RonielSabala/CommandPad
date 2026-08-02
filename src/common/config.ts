@@ -71,6 +71,7 @@ export const MarkdownSyntax = {
   DIVIDER: "---",
   CODE_FENCE: "```bash",
   CODE_FENCE_END: "```",
+  IMAGE: (alt: string, src: string) => `![${alt}](${src})`,
 } as const;
 
 export const MarkdownToken = {
@@ -131,6 +132,14 @@ export const COMMAND_PROMPT_PREFIX = "$";
 export const CommandClampConfig = {
   MAX_LINES: 8,
   MAX_LINES_PROPERTY: "--command-clamp-max-lines",
+} as const;
+
+export const ImageBlockConfig = {
+  ACCEPT: "image/*",
+  MIME_PREFIX: "image/",
+  MAX_BYTES: 5 * 1024 * 1024,
+  DATA_IMAGE_PREFIX: "data:image/",
+  HTTP_PROTOCOLS: ["http:", "https:"],
 } as const;
 
 export const RUNBOOK_JSON_PLACEHOLDER =

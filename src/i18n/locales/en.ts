@@ -94,6 +94,7 @@ export const en: Messages = {
     typeLabel: {
       [BlockType.COMMAND]: "Command",
       [BlockType.NOTE]: "Note",
+      [BlockType.IMAGE]: "Image",
       [BlockType.DIVIDER]: "Divider",
     },
     typeTitle: (label) => `${label} block`,
@@ -128,6 +129,20 @@ export const en: Messages = {
     },
     followLinkTooltip: (binding?: string) =>
       binding ? `Follow link (${binding})` : "Follow link",
+  },
+  image: {
+    dropHint: "Drop an image here, or paste one",
+    choose: "Choose an image",
+    urlPlaceholder: "https://example.com/image.png",
+    addUrl: "Add",
+    replace: "Replace image",
+    remove: "Remove image",
+    emptyReadOnly: "No image",
+    loadFailed: "This image could not be loaded.",
+    notAnImage: "That file is not an image.",
+    invalidUrl: "Enter an http or https image address.",
+    readFailed: "That image could not be read.",
+    tooLarge: (limit) => `Images have to be smaller than ${limit}.`,
   },
   exportModal: {
     title: "Export",
@@ -512,6 +527,7 @@ export const en: Messages = {
       [DocsSectionId.BLOCKS]: "Blocks",
       [DocsSectionId.COMMAND_BLOCK]: "Command block",
       [DocsSectionId.NOTE_BLOCK]: "Note block",
+      [DocsSectionId.IMAGE_BLOCK]: "Image block",
       [DocsSectionId.DIVIDER_BLOCK]: "Divider block",
       [DocsSectionId.MULTI_SELECT]: "Multi-select",
       [DocsSectionId.READ_MODE]: "Read mode",
@@ -723,6 +739,20 @@ export const en: Messages = {
       wrapKeys:
         "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and **Ctrl+´** in backticks; typing **(**, **[**, **{**, **\"** or **'** wraps it in that pair. Pair wrapping is not exclusive to notes, it works the same way in the command editor.",
     },
+    imageBlock: {
+      intro:
+        "It's a block that holds a picture: the architecture diagram, a screenshot of the screen you are supposed to be looking at, the dashboard panel that says the deploy worked, etc.",
+      ways: [
+        "**Drop it in**: drag an image file from your desktop straight onto the block.",
+        "**Paste it**: click the block and press `Ctrl+V` with an image, or an image address, on your clipboard.",
+        "**Pick it**: press **Choose an image** to open your file browser.",
+        "**Link it**: type or paste an `http` or `https` address into the box at the bottom of the block.",
+      ],
+      attachedVsLinked: (limit) =>
+        `The first three ways **attach** the image: a copy of it is kept inside the runbook, so it works with no connection and travels with every export and every copy. An attached image has to stay under ${limit}. The last way **links** it instead: the runbook only remembers the address, which costs no more than a line of text, but the picture is only there while the site hosting it is.`,
+      demoHint:
+        "Hover over an image to reveal its controls: **Replace image** swaps the picture without touching the block, and **Remove image** empties it back to the drop area.",
+    },
     dividerBlock: {
       intro:
         "Nothing more than a visual separator. It stretches to match the width of the widest block, which makes it perfect for splitting a runbook into sections. It does keep a minimum width, though, so it can never shrink into something unreadable.",
@@ -762,7 +792,7 @@ export const en: Messages = {
       intro: "Click **Export** in the header to open the format picker.",
       formats: [
         "**JSON**: the full workspace (variables + blocks). Can be re-imported.",
-        "**Markdown**: a human-readable `.md` file with headings, subheadings, dividers, and resolved commands.",
+        "**Markdown**: a human-readable `.md` file with headings, subheadings, dividers, resolved commands, and images.",
         "**Plain text**: the same content as Markdown, saved as `.txt`.",
       ],
       saveDialog:

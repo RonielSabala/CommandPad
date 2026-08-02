@@ -2,27 +2,19 @@ import { DRAG_TIMEOUT_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
-import { AppMode, BlockType, LassoMode } from "@/common/enums";
-import type { Block } from "@/common/types";
+import { AppMode, LassoMode } from "@/common/enums";
 import { DragIcon } from "@/components/icons";
 import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore, useStoreApi } from "@/store/store";
-import type { VariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { memo, useRef, useState } from "react";
 import { BlockActionsMenu } from "./BlockActionsMenu";
 import "./BlockItem.css";
-import { CommandBlock } from "./command/CommandBlock";
-import { DividerBlock } from "./divider/DividerBlock";
-import { NoteBlock } from "./note/NoteBlock";
+import { getBlockComponent, type BlockViewProps } from "./blockViews";
 
-interface Props {
-  block: Block;
-  variableMap: VariableMap;
-  secretKeys: Set<string>;
-}
+type Props = BlockViewProps;
 
 export const BlockItem = memo(function BlockItem({
   block,
@@ -45,6 +37,7 @@ export const BlockItem = memo(function BlockItem({
     undefined,
   );
 
+  const BlockView = getBlockComponent(block.type);
   const blockClass = classNames(
     CssClass.BLOCK_ITEM,
     isSelected && "block-selected",
@@ -84,17 +77,20 @@ export const BlockItem = memo(function BlockItem({
         setDragOver(false);
       }}
       onDragOver={(event) => {
+        if (!blockDrag.srcId) {
+          return;
+        }
+
         event.preventDefault();
 
         const activeTabId = getActiveTab(store.getState())?.id ?? null;
-        const isCrossTab =
-          !!blockDrag.srcId && blockDrag.sourceTabId !== activeTabId;
+        const isCrossTab = blockDrag.sourceTabId !== activeTabId;
 
         event.dataTransfer.dropEffect = isCrossTab
           ? DragEffect.COPY
           : DragEffect.MOVE;
 
-        if (blockDrag.srcId && blockDrag.srcId !== block.id) {
+        if (blockDrag.srcId !== block.id) {
           setDragOver(true);
         }
       }}
@@ -136,17 +132,11 @@ export const BlockItem = memo(function BlockItem({
         }
       }}
     >
-      {block.type === BlockType.COMMAND ? (
-        <CommandBlock
-          block={block}
-          variableMap={variableMap}
-          secretKeys={secretKeys}
-        />
-      ) : block.type === BlockType.NOTE ? (
-        <NoteBlock block={block} />
-      ) : (
-        <DividerBlock />
-      )}
+      <BlockView
+        block={block}
+        variableMap={variableMap}
+        secretKeys={secretKeys}
+      />
 
       <div className={CssClass.BLOCK_DRAG_HANDLE}>
         <div

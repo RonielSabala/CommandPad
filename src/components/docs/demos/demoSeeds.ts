@@ -31,6 +31,13 @@ export const demoNote = (
   style,
 });
 
+export const demoImage = (src: string, alt?: string): Block => ({
+  id: generateId(),
+  type: BlockType.IMAGE,
+  src,
+  ...(alt !== undefined ? { alt } : {}),
+});
+
 export const demoDivider = (): Block => ({
   id: generateId(),
   type: BlockType.DIVIDER,

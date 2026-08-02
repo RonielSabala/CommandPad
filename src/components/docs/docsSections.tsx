@@ -4,6 +4,7 @@ import {
   BlocksDocs,
   CommandBlockDocs,
   DividerBlockDocs,
+  ImageBlockDocs,
   NoteBlockDocs,
 } from "./sections/BlocksSection";
 import {
@@ -45,6 +46,7 @@ export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {
   [DocsSectionId.BLOCKS]: BlocksDocs,
   [DocsSectionId.COMMAND_BLOCK]: CommandBlockDocs,
   [DocsSectionId.NOTE_BLOCK]: NoteBlockDocs,
+  [DocsSectionId.IMAGE_BLOCK]: ImageBlockDocs,
   [DocsSectionId.DIVIDER_BLOCK]: DividerBlockDocs,
   [DocsSectionId.VARIABLES]: VariablesDocs,
   [DocsSectionId.SECRET_VARIABLES]: SecretVariablesDocs,

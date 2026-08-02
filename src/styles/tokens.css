@@ -87,6 +87,8 @@
   --tab-max-width: 12rem;
   --tab-min-width: 4rem;
   --block-min-width: 7.5rem;
+  --image-block-min-width: 22rem;
+  --image-block-max-height: 26rem;
   --variable-split-width: 0.5rem;
   --modal-min-width: 15rem;
   --modal-max-width: 30rem;

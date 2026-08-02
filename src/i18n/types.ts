@@ -139,6 +139,20 @@ export interface Messages {
     stylePlaceholder: Record<NoteStyle, string>;
     followLinkTooltip: (binding?: string) => string;
   };
+  image: {
+    dropHint: string;
+    choose: string;
+    urlPlaceholder: string;
+    addUrl: string;
+    replace: string;
+    remove: string;
+    emptyReadOnly: string;
+    loadFailed: string;
+    notAnImage: string;
+    invalidUrl: string;
+    readFailed: string;
+    tooLarge: (limit: string) => string;
+  };
   exportModal: {
     title: string;
     cloudTitle: string;
@@ -413,6 +427,12 @@ export interface Messages {
       noNesting: string;
       links: string;
       wrapKeys: string;
+    };
+    imageBlock: {
+      intro: string;
+      ways: string[];
+      attachedVsLinked: (limit: string) => string;
+      demoHint: string;
     };
     dividerBlock: {
       intro: string;
