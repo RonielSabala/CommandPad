@@ -4,6 +4,7 @@ import { Key } from "@/common/constants/events";
 import { AppMode, BlockType } from "@/common/enums";
 import type { ImageBlock as ImageBlockData } from "@/common/types";
 import { ImageIcon, ImportIcon, TrashIcon } from "@/components/icons";
+import { Modal } from "@/components/modals/Modal";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -16,6 +17,7 @@ import {
 } from "@/utils/image";
 import { classNames } from "@/utils/string";
 import { useEffect, useRef, useState, type ClipboardEvent } from "react";
+import { ArrowsFullscreen } from "react-bootstrap-icons";
 import type { BlockViewProps } from "../blockViews";
 import "./ImageBlock.css";
 
@@ -43,6 +45,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
   const [urlDraft, setUrlDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
 
   const dropzoneRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -167,21 +170,35 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
 
           <div className="image-actions">
             <div className="image-actions-group">
-              <button
-                className="btn btn-icon btn-accent"
-                title={t.image.replace}
-                onClick={openFilePicker}
-              >
-                <ImportIcon className="icon-md icon-bold" />
-              </button>
+              {!loadFailed && (
+                <button
+                  className="btn btn-icon btn-accent"
+                  title={t.image.viewFullscreen}
+                  onClick={() => setFullscreen(true)}
+                >
+                  <ArrowsFullscreen className="icon-md" />
+                </button>
+              )}
 
-              <button
-                className="btn btn-icon btn-danger"
-                title={t.image.remove}
-                onClick={clear}
-              >
-                <TrashIcon className="icon-md icon-bold" />
-              </button>
+              {!isReadMode && (
+                <>
+                  <button
+                    className="btn btn-icon btn-accent"
+                    title={t.image.replace}
+                    onClick={openFilePicker}
+                  >
+                    <ImportIcon className="icon-md icon-bold" />
+                  </button>
+
+                  <button
+                    className="btn btn-icon btn-danger"
+                    title={t.image.remove}
+                    onClick={clear}
+                  >
+                    <TrashIcon className="icon-md icon-bold" />
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -227,6 +244,21 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
       )}
 
       {error && <p className="image-error">{error}</p>}
+
+      {src && !loadFailed && (
+        <Modal
+          open={fullscreen}
+          onClose={() => setFullscreen(false)}
+          className="modal-lightbox"
+        >
+          <img
+            className="image-lightbox-view"
+            src={src}
+            alt={block.alt ?? ""}
+            draggable={false}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

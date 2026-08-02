@@ -144,6 +144,7 @@ export interface Messages {
     choose: string;
     urlPlaceholder: string;
     addUrl: string;
+    viewFullscreen: string;
     replace: string;
     remove: string;
     emptyReadOnly: string;
@@ -432,6 +433,7 @@ export interface Messages {
       intro: string;
       ways: string[];
       attachedVsLinked: (limit: string) => string;
+      sizing: string;
       demoHint: string;
     };
     dividerBlock: {

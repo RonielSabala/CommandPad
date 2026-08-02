@@ -137,6 +137,7 @@ export const es: Messages = {
     choose: "Elegir una imagen",
     urlPlaceholder: "https://ejemplo.com/imagen.png",
     addUrl: "Añadir",
+    viewFullscreen: "Ver a pantalla completa",
     replace: "Reemplazar imagen",
     remove: "Eliminar imagen",
     emptyReadOnly: "Sin imagen",
@@ -762,8 +763,10 @@ export const es: Messages = {
       ],
       attachedVsLinked: (limit) =>
         `Las tres primeras formas **adjuntan** la imagen: se guarda una copia dentro del libro, así que funciona sin conexión y viaja con cada exportación y cada copia. Una imagen adjunta debe pesar menos de ${limit}. La última la **enlaza**: el libro solo recuerda la dirección, que no ocupa más que una línea de texto, pero la imagen solo está ahí mientras lo esté el sitio que la aloja.`,
+      sizing:
+        "Una imagen se muestra a su propio tamaño, pero nunca por debajo de un mínimo legible ni más alta de lo que permite el bloque: una imagen diminuta se amplía, una enorme se reduce, y ninguna se deforma.",
       demoHint:
-        "Pasa el cursor sobre una imagen para revelar sus controles: **Reemplazar imagen** cambia la foto sin tocar el bloque, y **Eliminar imagen** lo vacía y devuelve la zona para soltar.",
+        "Pasa el cursor sobre una imagen para revelar sus controles: **Ver a pantalla completa** la abre sobre la página atenuada, **Reemplazar imagen** cambia la foto sin tocar el bloque, y **Eliminar imagen** lo vacía y devuelve la zona para soltar.",
     },
     dividerBlock: {
       intro:

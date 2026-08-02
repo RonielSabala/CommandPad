@@ -130,6 +130,7 @@ export function ImageBlockDocs() {
       <Prose text={t.docs.imageBlock.intro} />
       <ProseList items={t.docs.imageBlock.ways} />
       <Prose text={t.docs.imageBlock.attachedVsLinked(limit)} />
+      <Prose text={t.docs.imageBlock.sizing} />
       <Prose text={t.docs.imageBlock.demoHint} />
       <DemoWorkspace
         tabs={[

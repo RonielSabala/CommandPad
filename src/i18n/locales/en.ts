@@ -135,6 +135,7 @@ export const en: Messages = {
     choose: "Choose an image",
     urlPlaceholder: "https://example.com/image.png",
     addUrl: "Add",
+    viewFullscreen: "View full screen",
     replace: "Replace image",
     remove: "Remove image",
     emptyReadOnly: "No image",
@@ -750,8 +751,10 @@ export const en: Messages = {
       ],
       attachedVsLinked: (limit) =>
         `The first three ways **attach** the image: a copy of it is kept inside the runbook, so it works with no connection and travels with every export and every copy. An attached image has to stay under ${limit}. The last way **links** it instead: the runbook only remembers the address, which costs no more than a line of text, but the picture is only there while the site hosting it is.`,
+      sizing:
+        "A picture is shown at its own size, but never below a readable minimum and never taller than the block allows: a tiny image is scaled up, a huge one is scaled down, and neither is ever stretched out of shape.",
       demoHint:
-        "Hover over an image to reveal its controls: **Replace image** swaps the picture without touching the block, and **Remove image** empties it back to the drop area.",
+        "Hover over an image to reveal its controls: **View full screen** opens it over a dimmed page, **Replace image** swaps the picture without touching the block, and **Remove image** empties it back to the drop area.",
     },
     dividerBlock: {
       intro:
