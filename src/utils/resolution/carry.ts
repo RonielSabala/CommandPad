@@ -2,7 +2,7 @@ import { VariableSyntax } from "@/common/config";
 import type { Block, Variable } from "@/common/types";
 import { generateId } from "@/utils/id";
 
-import { renameAllVariableTokens } from "./rename";
+import { renameAllValueTokens } from "./rename";
 import { getUsedVariableKeys } from "./usage";
 import { getVariableKey } from "./variables";
 
@@ -89,7 +89,7 @@ export function carryVariables(
   // Carried values may themselves reference renamed keys
   return {
     variables: variables.map((variable) => {
-      const value = renameAllVariableTokens(variable.value, renames);
+      const value = renameAllValueTokens(variable.value, renames);
       return value === variable.value ? variable : { ...variable, value };
     }),
     renames,

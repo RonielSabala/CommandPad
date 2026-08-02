@@ -5,7 +5,12 @@ export {
   resolveCommandText,
   resolveCommandToString
 } from "./command";
-export { renameAllVariableTokens, renameVariableTokens } from "./rename";
+export {
+  renameAllCommandTokens,
+  renameAllValueTokens,
+  renameCommandTokens,
+  renameValueTokens
+} from "./rename";
 export { countCommandLines, isMaskedSegment } from "./segments";
 export type { VariableMap } from "./types";
 export { getUsedVariableKeys, isVariableUnused } from "./usage";

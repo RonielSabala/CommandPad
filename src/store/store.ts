@@ -78,8 +78,9 @@ import { clamp } from "@/utils/number";
 import {
   carryVariables,
   getVariableKey,
-  renameAllVariableTokens,
-  renameVariableTokens,
+  renameAllCommandTokens,
+  renameCommandTokens,
+  renameValueTokens,
   uniqueCopyKey,
 } from "@/utils/resolution";
 import { displayLabel, getRunbookLabel } from "@/utils/runbook";
@@ -1588,15 +1589,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
               const newKey = value.trim();
 
               if (oldKey && newKey && oldKey !== newKey) {
-                const renameTokens = (text: string) =>
-                  renameVariableTokens(text, oldKey, newKey);
-
                 blocks = tab.blocks.map((b) => {
                   if (b.type !== BlockType.COMMAND) {
                     return b;
                   }
 
-                  const text = renameTokens(b.text);
+                  const text = renameCommandTokens(b.text, oldKey, newKey);
                   return text === b.text ? b : { ...b, text };
                 });
 
@@ -1605,7 +1603,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
                     return v;
                   }
 
-                  const value = renameTokens(v.value);
+                  const value = renameValueTokens(v.value, oldKey, newKey);
                   return value === v.value ? v : { ...v, value };
                 });
               }
@@ -1795,7 +1793,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             ? {
                 ...b,
                 id: generateId(),
-                text: renameAllVariableTokens(b.text, renames),
+                text: renameAllCommandTokens(b.text, renames),
               }
             : { ...b, id: generateId() },
         );
