@@ -83,6 +83,7 @@
   overflow: hidden;
   visibility: hidden;
   white-space: pre;
+  tab-size: var(--tab-size);
   font-family: var(--font-mono);
   font-size: var(--code-editor-font-size, var(--text-base));
   font-variant-ligatures: none;
@@ -120,6 +121,7 @@
   resize: none;
   outline: none;
   white-space: pre;
+  tab-size: var(--tab-size);
   overflow-x: auto;
   overflow-y: hidden;
   line-height: 1.6;

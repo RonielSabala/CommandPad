@@ -99,14 +99,26 @@ export const WrapPairs = {
 
 export const VariableTokenRegex = /\{((?:[^{}]|\{[^{}]*\})+)\}/g;
 export const CommandVariableTokenRegex = /(?<!\\)\{((?:[^{}]|\{[^{}]*\})+)\}/g;
-export const EscapedBraceRegex = /\\([{}])/g;
+export const EscapedBraceOpenRegex = /\\\{/g;
 export const VariableParamPlaceholderRegex = /\{;([^};]+)\}/g;
+export const TokenWhitespaceRegex = /\s+/g;
 
+export const VariableSliceRegex = /^\[(-?\d*)(?::(-?\d*)(?::(-?\d*))?)?\]$/;
 export const VariableSyntax = {
   PARAM_SEPARATOR: ";",
   PARAM_ASSIGNMENT: "=",
+  OPERATION_SEPARATOR: "|",
+  BRACE_OPEN: "{",
+  BRACE_CLOSE: "}",
   COPY_SUFFIX: "_COPY",
   COPY_SUFFIX_REGEX: /_COPY\d*$/,
+} as const;
+
+export const SliceSyntax = {
+  OPEN: "[",
+  CLOSE: "]",
+  SEPARATOR: ":",
+  DEFAULT_STEP: 1,
 } as const;
 
 export const SecretMaskConfig = {
@@ -117,7 +129,7 @@ export const SecretMaskConfig = {
 export const COMMAND_PROMPT_PREFIX = "$";
 
 export const CommandClampConfig = {
-  MAX_LINES: 12,
+  MAX_LINES: 8,
   MAX_LINES_PROPERTY: "--command-clamp-max-lines",
 } as const;
 

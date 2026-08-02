@@ -11,6 +11,7 @@ interface Props {
   className?: string;
   children: ReactNode;
   animated?: boolean;
+  noBackdrop?: boolean;
 }
 
 export function Modal({
@@ -19,6 +20,7 @@ export function Modal({
   className,
   children,
   animated = true,
+  noBackdrop = false,
 }: Props) {
   const t = useTranslation();
   useModalDismiss(open, onClose);
@@ -29,6 +31,7 @@ export function Modal({
         "modal-backdrop",
         open && "modal-visible",
         !animated && "modal-no-animation",
+        noBackdrop && "modal-backdrop-transparent",
       )}
       role="dialog"
       aria-modal="true"

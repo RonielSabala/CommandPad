@@ -7,25 +7,19 @@ import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose, ProseList } from "../Prose";
 
 const LONG_COMMAND = joinLines([
-  "docker run \\",
-  "  --name commandpad \\",
-  "  --restart unless-stopped \\",
-  "  --env NODE_ENV=production \\",
-  "  --env PORT=8080 \\",
-  "  --env LOG_LEVEL=info \\",
-  "  --env DATABASE_URL=postgres://db:5432/app \\",
-  "  --env REDIS_URL=redis://cache:6379 \\",
-  "  --publish 8080:8080 \\",
-  "  --volume ./data:/var/lib/app/data \\",
-  "  --volume ./config:/etc/app \\",
-  "  --network runbook-net \\",
-  "  --memory 512m \\",
-  "  --cpus 1.5 \\",
-  "  --health-cmd 'curl -fsS localhost:8080/health' \\",
-  "  --health-interval 30s \\",
-  "  --label owner=platform \\",
-  "  --label tier=frontend \\",
-  "  ghcr.io/example/commandpad:latest",
+  "echo 'Starting backup...' \\",
+  "\t&& mkdir -p ./backup \\",
+  "\t&& cp -r ./documents ./backup \\",
+  "\t&& cp -r ./photos ./backup \\",
+  "\t&& cp -r ./videos ./backup \\",
+  "\t&& cp -r ./music ./backup \\",
+  "\t&& cp -r ./settings ./backup \\",
+  "\t&& zip -r backup.zip ./backup \\",
+  "\t&& echo 'Uploading to server...' \\",
+  "\t&& scp backup.zip user@server:/backups/ \\",
+  "\t&& echo 'Cleaning up...' \\",
+  "\t&& rm -rf ./backup \\",
+  "\t&& echo 'Backup complete!'",
 ]);
 
 const MARKDOWN_EXAMPLES = [

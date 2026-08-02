@@ -5,21 +5,25 @@ import {
   SyncDestination,
 } from "@/common/enums";
 import { FilenameInput } from "@/components/common/FilenameInput";
+import { Spinner } from "@/components/common/Spinner";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
 import { classNames } from "@/utils/string";
 import { useEffect, useState } from "react";
 import {
-  ArrowRepeat,
   CheckCircleFill,
   ExclamationTriangleFill,
   FolderFill,
   LaptopFill,
 } from "react-bootstrap-icons";
-import { CloudFolderPicker } from "./CloudFolderPicker";
-import { CloudModalTitle } from "./CloudModalTitle";
-import { PROVIDER_ICON, PROVIDER_NAME, PROVIDERS } from "./cloudProviders";
+import { CloudFolderPicker } from "./cloud/CloudFolderPicker";
+import { CloudModalTitle } from "./cloud/CloudModalTitle";
+import {
+  PROVIDER_ICON,
+  PROVIDER_NAME,
+  PROVIDERS,
+} from "./cloud/cloudProviders";
 import "./ExportModal.css";
 import { Modal } from "./Modal";
 
@@ -57,7 +61,7 @@ function CloudExportStatusView({ onDone }: { onDone: () => void }) {
     >
       {status === CloudExportStatus.UPLOADING && (
         <>
-          <ArrowRepeat className="icon-lg cloud-export-spinner" />
+          <Spinner className="cloud-export-spinner" />
           <p className="cloud-export-status-text">
             {t.exportModal.savingTo(providerName)}
           </p>

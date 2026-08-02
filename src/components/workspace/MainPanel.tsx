@@ -2,7 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { InputSelector } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
 import { SidebarPosition } from "@/common/enums";
-import type { ContextMenuAnchor } from "@/components/common/ContextMenu";
+import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
 import { blockDrag } from "@/hooks/blockDrag";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
 import {
@@ -13,12 +13,12 @@ import {
 } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useRef, useState } from "react";
-import { AddBlockRow } from "./blocks/AddBlockRow";
-import { BlocksList } from "./blocks/BlocksList";
-import { EmptyState } from "./blocks/EmptyState";
+import { AddBlockRow } from "../blocks/AddBlockRow";
+import { BlocksList } from "../blocks/BlocksList";
+import { EmptyState } from "../blocks/EmptyState";
+import { TabsBar } from "../tabs/TabsBar";
 import "./MainPanel.css";
 import { Minimap } from "./Minimap";
-import { TabsBar } from "./tabs/TabsBar";
 import { WorkspaceContextMenu } from "./WorkspaceContextMenu";
 
 function isCrossTabBlockDrag(store: AppStoreApi): boolean {

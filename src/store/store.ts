@@ -78,8 +78,9 @@ import { clamp } from "@/utils/number";
 import {
   carryVariables,
   getVariableKey,
-  renameAllVariableTokens,
-  renameVariableTokens,
+  renameAllCommandTokens,
+  renameCommandTokens,
+  renameValueTokens,
   uniqueCopyKey,
 } from "@/utils/resolution";
 import { displayLabel, getRunbookLabel } from "@/utils/runbook";
@@ -154,7 +155,6 @@ export interface StoreState {
   selectedBlockIds: Set<string>;
   flashBlockIds: Set<string>;
   expandedCommandSurfaces: Record<CommandSurface, Set<string>>;
-  focusedCommandEditorId: string | null;
   selectKeyHeld: boolean;
   linkKeyHeld: boolean;
   pendingFocusBlockId: string | null;
@@ -231,7 +231,7 @@ export interface StoreState {
     filename: string,
     rawFilename: string,
     sync?: RunbookSync,
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   syncRunbookNow: (id: string) => Promise<void>;
   unlinkRunbookSync: (id: string) => void;
   importRunbooks: (files: File[]) => Promise<void>;
@@ -272,7 +272,6 @@ export interface StoreState {
     blockId: string,
     surface: CommandSurface,
   ) => void;
-  setFocusedCommandEditor: (blockId: string | null) => void;
 
   setBlockSelected: (blockId: string, selected: boolean) => void;
   toggleBlockSelection: (blockId: string) => void;
@@ -810,7 +809,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         [CommandSurface.PREVIEW]: new Set(),
         [CommandSurface.EDITOR]: new Set(),
       },
-      focusedCommandEditorId: null,
       selectKeyHeld: false,
       linkKeyHeld: false,
       pendingFocusBlockId: null,
@@ -1294,7 +1292,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           );
 
           if (!confirmed) {
-            return;
+            return false;
           }
 
           await contentDb.put(existing.id, content);
@@ -1329,7 +1327,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           }
 
           settleSync(existing.id);
-          return;
+          return true;
         }
 
         const newId = generateId();
@@ -1352,10 +1350,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             get().runbookLibrary,
             get().activeRunbookId,
           );
-          return;
+          return true;
         }
 
         await get().loadRunbookFromLibrary(newId);
+        return true;
       },
 
       syncRunbookNow: async (id) => {
@@ -1452,12 +1451,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return false;
         }
 
-        await get().addRunbookToLibrary(
+        return await get().addRunbookToLibrary(
           content,
           generateId(),
           getMessages(get().language).dialogs.pastedRunbook,
         );
-        return true;
       },
 
       reorderRunbooks: (sourceId, targetId) => {
@@ -1591,15 +1589,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
               const newKey = value.trim();
 
               if (oldKey && newKey && oldKey !== newKey) {
-                const renameTokens = (text: string) =>
-                  renameVariableTokens(text, oldKey, newKey);
-
                 blocks = tab.blocks.map((b) => {
                   if (b.type !== BlockType.COMMAND) {
                     return b;
                   }
 
-                  const text = renameTokens(b.text);
+                  const text = renameCommandTokens(b.text, oldKey, newKey);
                   return text === b.text ? b : { ...b, text };
                 });
 
@@ -1608,7 +1603,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
                     return v;
                   }
 
-                  const value = renameTokens(v.value);
+                  const value = renameValueTokens(v.value, oldKey, newKey);
                   return value === v.value ? v : { ...v, value };
                 });
               }
@@ -1798,7 +1793,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             ? {
                 ...b,
                 id: generateId(),
-                text: renameAllVariableTokens(b.text, renames),
+                text: renameAllCommandTokens(b.text, renames),
               }
             : { ...b, id: generateId() },
         );
@@ -2010,9 +2005,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             },
           };
         }),
-
-      setFocusedCommandEditor: (blockId) =>
-        set({ focusedCommandEditorId: blockId }),
 
       // --- Selection ---
 
@@ -2633,9 +2625,16 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         set({ cloudLoading: false });
         const baseName = stripJsonExtension(file.name);
+        const added = await get().addRunbookToLibrary(
+          content,
+          baseName,
+          file.name,
+          sync,
+        );
 
-        await get().addRunbookToLibrary(content, baseName, file.name, sync);
-        set({ cloudImportModalOpen: false });
+        if (added) {
+          set({ cloudImportModalOpen: false });
+        }
       },
 
       renameCloudEntry: async (entry, basename) => {

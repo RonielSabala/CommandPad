@@ -94,10 +94,7 @@ export function CloudPathBar({
       >
         <ArrowClockwise
           id="refresh-cloud-files-icon"
-          className={classNames(
-            "icon-md icon-semibold",
-            loading && "is-refreshing",
-          )}
+          className={classNames("icon-md icon-semibold")}
         />
       </button>
     </div>

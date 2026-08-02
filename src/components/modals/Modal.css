@@ -24,6 +24,10 @@
   transition: none;
 }
 
+.modal-backdrop.modal-backdrop-transparent {
+  background: transparent;
+}
+
 .modal {
   position: relative;
   background: var(--color-surface);

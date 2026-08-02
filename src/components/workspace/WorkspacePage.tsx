@@ -8,16 +8,16 @@ import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import type { CSSProperties } from "react";
 import { Header } from "../header/Header";
-import { MainPanel } from "../MainPanel";
-import { AlertModal } from "../modals/AlertModal";
-import { CloudFileEditorModal } from "../modals/CloudFileEditorModal";
-import { CloudImportModal } from "../modals/CloudImportModal";
-import { ConfirmModal } from "../modals/ConfirmModal";
+import { CloudFileEditorModal } from "../modals/cloud/CloudFileEditorModal";
+import { CloudImportModal } from "../modals/cloud/CloudImportModal";
 import { DestinationModal } from "../modals/DestinationModal";
+import { AlertModal } from "../modals/dialogs/AlertModal";
+import { ConfirmModal } from "../modals/dialogs/ConfirmModal";
 import { ExportModal } from "../modals/ExportModal";
 import { PasteRunbookModal } from "../modals/PasteRunbookModal";
 import { RunbookImportInput } from "../sidebar/runbooks/RunbookImportInput";
 import { Sidebar } from "../sidebar/Sidebar";
+import { MainPanel } from "./MainPanel";
 
 export function WorkspacePage() {
   const sidebarPosition = useStore((state) => state.sidebarPosition);

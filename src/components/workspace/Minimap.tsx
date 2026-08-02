@@ -14,7 +14,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type RefObject,
 } from "react";
-import { BlockItem } from "./blocks/BlockItem";
+import { BlockItem } from "../blocks/BlockItem";
 import "./Minimap.css";
 
 const EMPTY_BLOCKS: Block[] = [];

@@ -7,13 +7,14 @@ import {
   SidebarPosition,
 } from "@/common/enums";
 import type { RunbookEntry } from "@/common/types";
-import { ActionsMenu } from "@/components/common/ActionsMenu";
+import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuAlign,
   ContextMenuItem,
-} from "@/components/common/ContextMenu";
+} from "@/components/common/contextMenu/ContextMenu";
+import { Spinner } from "@/components/common/Spinner";
 import { DragIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
-import { PROVIDER_NAME } from "@/components/modals/cloudProviders";
+import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -115,6 +116,8 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
               <CloudSlash className="icon-md" />
             ) : syncStatus === RunbookSyncStatus.SYNCED ? (
               <CloudCheck className="icon-md" />
+            ) : syncStatus === RunbookSyncStatus.SYNCING ? (
+              <Spinner />
             ) : (
               <ArrowRepeat className="icon-md" />
             )}

@@ -45,7 +45,6 @@
   border-top: var(--border-standard);
   border-bottom: var(--border-standard);
   color: var(--color-text-primary);
-  transition: background var(--transition-base);
 }
 
 .cloud-browser-row + .cloud-browser-row {
@@ -75,7 +74,6 @@
   border: none;
   background: transparent;
   color: inherit;
-  cursor: pointer;
   text-align: left;
 }
 
@@ -99,7 +97,6 @@
 .cloud-browser-row-icon {
   flex-shrink: 0;
   color: var(--color-text-muted);
-  transition: color var(--transition-base);
 }
 
 .cloud-browser-row-text {
@@ -119,18 +116,11 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   border-bottom: 1px solid transparent;
-  transition:
-    color var(--transition-base),
-    border-color var(--transition-base);
-}
-
-.cloud-browser-row-main:hover
-  :is(.cloud-browser-row-icon, .cloud-browser-row-name) {
-  color: var(--accent);
+  cursor: pointer;
 }
 
 .cloud-browser-row-name:hover {
-  border-bottom-color: var(--accent);
+  border-bottom-color: var(--color-text-primary);
 }
 
 .cloud-browser-row-path {
@@ -224,6 +214,21 @@
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   color: var(--color-text-muted);
+}
+
+.cloud-browser-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding-block: var(--space-4);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.cloud-browser-entries.is-busy .cloud-browser-row {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .cloud-browser-error {

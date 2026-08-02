@@ -511,6 +511,8 @@ export const es: Messages = {
       [DocsSectionId.VARIABLES]: "Variables",
       [DocsSectionId.VARIABLE_REFERENCES]: "Referencias de variables",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
+      [DocsSectionId.VARIABLE_SLICING]: "Recortar valores",
+      [DocsSectionId.MULTILINE_REFERENCES]: "Referencias largas",
       [DocsSectionId.ESCAPING_BRACES]: "Escapar llaves",
       [DocsSectionId.SECRET_VARIABLES]: "Variables secretas",
       [DocsSectionId.BLOCKS]: "Bloques",
@@ -666,11 +668,30 @@ export const es: Messages = {
       nested:
         "Un hueco también puede rellenarse con otra variable. Así, un mismo valor puede rellenar el hueco de un comando y usarse por su cuenta en otro:",
     },
+    variableSlicing: {
+      intro:
+        "Una variable guarda un valor, pero no siempre se necesita entero. Un hash de commit ocupa cuarenta caracteres al hacer checkout y solo siete en una etiqueta. Con el recorte mantienes **una única** variable y usas solo la parte que necesitas.",
+      demoHint:
+        "El primer comando usa el hash completo; el segundo, solo sus siete primeros caracteres. Edita la variable y verás cómo los dos se actualizan a la vez:",
+      howItWorks:
+        "Escribe un `|` después de la clave y, entre corchetes, la parte que quieres. Se cuenta desde cero, y el segundo número indica dónde **parar sin llegar a incluirlo**: `[:7]` son los siete primeros caracteres y `[2:5]` son el dos, el tres y el cuatro. Si omites un número, el recorte llega hasta ese extremo.",
+      positionsHint:
+        "Los números negativos cuentan desde el final, así que `[-2:]` son los dos últimos caracteres. Con una fecha se ven las tres formas de un vistazo:",
+      step: "Un tercer número es el **paso**. En un número de versión los puntos caen en las posiciones impares, así que `[::2]` los salta y deja solo los dígitos. Un paso negativo avanza hacia atrás, y con eso basta para invertir un valor:",
+      invalid:
+        "Si un recorte no tiene sentido, por ejemplo con un paso de cero, la referencia entera se queda **sin resolver** y aparece tal cual la escribiste, así que el error se nota enseguida. En cambio, pedir más caracteres de los que hay no es problema: obtienes los que existan.",
+      python:
+        "La notación viene de Python, por si quieres leer más sobre ella: [recorte de cadenas en Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). No necesitas saber Python para usarla aquí.",
+    },
+    multilineReferences: {
+      intro:
+        "Cuando una referencia ya tiene huecos que rellenar y una parte que recortar, puede quedar tan larga que cueste leerla. Puedes repartirla en tantas líneas como quieras: los espacios y saltos de línea que rodean cada parte de una referencia se ignoran, así que la distribuyes como prefieras:",
+    },
     escapingBraces: {
       intro:
-        "Antepón una barra invertida a `{` o `}` en un bloque de comando para mostrar la llave literalmente en vez de iniciar una referencia de variable. La barra invertida se excluye del comando resuelto.",
+        "Antepón una barra invertida a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla. Solo la llave `{` de apertura lleva la barra invertida, la llave `}` de cierre no necesita nada, y la barra invertida se excluye del comando resuelto.",
       tryHint:
-        "Prueba a borrar las barras invertidas del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
+        "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
       scope:
         "El escape solo aplica dentro de bloques de comando; las barras invertidas en valores de variables se muestran siempre tal cual.",
     },

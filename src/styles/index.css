@@ -163,6 +163,18 @@ body {
   color: var(--danger);
 }
 
+.btn-accent {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-text-muted);
+}
+
+.btn-accent:hover {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .btn-lg {
   padding: var(--space-4) var(--space-5);
   font-size: var(--text-md);
@@ -214,6 +226,7 @@ body {
 .icon-bold {
   display: block;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 /* --- DRAG HANDLE --- */

@@ -11,9 +11,11 @@ export function TabsBar() {
 
   return (
     <div id="tabs-bar">
-      {tabs.map((tab) => (
-        <TabItem key={tab.id} tab={tab} />
-      ))}
+      <div id="tabs-strip">
+        {tabs.map((tab) => (
+          <TabItem key={tab.id} tab={tab} />
+        ))}
+      </div>
       <button
         id="add-tab-btn"
         title={t.tabs.newTab}

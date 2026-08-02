@@ -14,6 +14,7 @@ export const DataAttr = {
   BLOCK_ID: "data-block-id",
   RUNBOOK_ID: "data-runbook-id",
   VARIABLE_ID: "data-variable-id",
+  NOTE_OFFSET: "data-note-offset",
 } as const;
 
 export const Cursor = {

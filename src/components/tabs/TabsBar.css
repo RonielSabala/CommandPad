@@ -1,18 +1,27 @@
 #tabs-bar {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   background: var(--color-surface);
   border-bottom: var(--border-standard);
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: hidden;
   flex-shrink: 0;
   height: var(--space-20);
-  padding: var(--space-2) var(--space-8);
+  padding: 0 var(--space-8);
+}
+
+#tabs-strip {
+  display: flex;
+  align-items: center;
+  flex: 0 1 auto;
+  min-width: 0;
+  padding: var(--space-2) 0;
+  overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
   gap: var(--space-1);
 }
 
-#tabs-bar::-webkit-scrollbar {
+#tabs-strip::-webkit-scrollbar {
   display: none;
 }
 

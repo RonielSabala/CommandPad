@@ -150,6 +150,11 @@ body.read-mode .variable-key-input {
   caret-color: var(--color-text-primary);
 }
 
+.variable-inputs.is-secret .variable-value-input::selection {
+  color: transparent;
+  background: var(--selection-color);
+}
+
 .variable-value-mask {
   position: absolute;
   inset: 0;

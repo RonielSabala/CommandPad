@@ -8,8 +8,8 @@ import {
   InfoCircleFill,
   type Icon,
 } from "react-bootstrap-icons";
+import { Modal } from "../Modal";
 import "./DialogModal.css";
-import { Modal } from "./Modal";
 
 const TONE_ICON: Record<DialogTone, Icon> = {
   [DialogTone.DANGER]: ExclamationOctagonFill,

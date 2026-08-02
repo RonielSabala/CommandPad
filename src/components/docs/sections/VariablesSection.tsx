@@ -134,6 +134,97 @@ export function ParameterizedPlaceholdersDocs() {
   );
 }
 
+export function VariableSlicingDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableSlicing.intro} />
+      <Prose text={t.docs.variableSlicing.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable(
+                "commit",
+                "9f2c1ab4d5e6f7890abcdef1234567890abcdef1",
+              ),
+            ],
+            blocks: [
+              demoCommand("git checkout {commit}"),
+              demoCommand("git tag release-{commit|[:7]}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableSlicing.howItWorks} />
+      <Prose text={t.docs.variableSlicing.positionsHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("date", "2026-07-31")],
+            blocks: [
+              demoCommand("echo {date|[:4]}"),
+              demoCommand("echo {date|[5:7]}"),
+              demoCommand("echo {date|[-2:]}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableSlicing.step} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("VERSION", "1.2.3")],
+            blocks: [
+              demoCommand("echo {VERSION|[::2]}"),
+              demoCommand("echo {VERSION|[::-1]}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableSlicing.invalid} />
+      <Prose text={t.docs.variableSlicing.python} />
+    </>
+  );
+}
+
+export function MultilineReferencesDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.multilineReferences.intro} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("ENDPOINT", "https://{;region}.api.example.com"),
+            ],
+            blocks: [
+              demoCommand(
+                "ping {\n\tENDPOINT\n\t; region = eu-west\n\t| [8:]\n}",
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
 export function EscapingBracesDocs() {
   const t = useTranslation();
 
@@ -145,7 +236,7 @@ export function EscapingBracesDocs() {
         tabs={[
           {
             variables: [demoVariable("user", "admin")],
-            blocks: [demoCommand('echo "\\{user\\} = {user}"')],
+            blocks: [demoCommand('echo "\\{user} = {user}"')],
           },
         ]}
       >

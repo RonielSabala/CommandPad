@@ -9,7 +9,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-6) var(--space-8);
+  padding: var(--space-8) var(--space-10);
   min-width: 8rem;
   border-radius: var(--radius-md);
   border: var(--border-standard);

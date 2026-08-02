@@ -9,11 +9,11 @@ import {
   VariableField,
 } from "@/common/enums";
 import type { Variable } from "@/common/types";
-import { ActionsMenu } from "@/components/common/ActionsMenu";
+import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuAlign,
   ContextMenuItem,
-} from "@/components/common/ContextMenu";
+} from "@/components/common/contextMenu/ContextMenu";
 import {
   DragIcon,
   DuplicateIcon,
