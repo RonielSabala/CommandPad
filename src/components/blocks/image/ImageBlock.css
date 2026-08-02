@@ -152,8 +152,12 @@ body.select-key-held:not(.read-mode) .image-actions {
   background: var(--accent-dim);
 }
 
-body.select-key-held:not(.read-mode) .image-dropzone,
-.block-selected .image-dropzone {
+:is(
+    .block-selected,
+    .block-item.drag-over,
+    body.select-key-held:not(.read-mode)
+  )
+  .image-dropzone {
   border-color: transparent;
 }
 
