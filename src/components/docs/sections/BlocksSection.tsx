@@ -31,11 +31,10 @@ const LONG_COMMAND = joinLines([
 ]);
 
 const DEMO_IMAGE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="440" height="180" viewBox="0 0 440 180">
-  <rect width="440" height="180" rx="12" fill="#1f2430"/>
   <rect x="28" y="60" width="104" height="60" rx="8" fill="#2f68c5"/>
   <rect x="168" y="60" width="104" height="60" rx="8" fill="#3b82f6"/>
   <rect x="308" y="60" width="104" height="60" rx="8" fill="#15803d"/>
-  <path d="M136 90h28M276 90h28" stroke="#9aa3b2" stroke-width="3" stroke-linecap="round"/>
+  <path d="M136 90h28M276 90h28" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/>
   <g fill="#eef1f6" font-family="monospace" font-size="15" text-anchor="middle">
     <text x="80" y="95">build</text>
     <text x="220" y="95">stage</text>
