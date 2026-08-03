@@ -51,8 +51,7 @@ body.select-key-held:not(.read-mode) .block-item:hover:not(.block-selected) {
   border-radius: var(--radius-lg);
 }
 
-.block-selected:not(.drag-over)
-  :is(.command-block, .note-block, .divider-block) {
+.block-selected:not(.drag-over) .block-surface {
   user-select: none;
   outline: var(--space-1) solid var(--accent);
 }

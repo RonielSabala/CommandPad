@@ -87,6 +87,17 @@
   --tab-max-width: 12rem;
   --tab-min-width: 4rem;
   --block-min-width: 7.5rem;
+  --image-block-min-width: 22rem;
+  --image-block-max-height: 26rem;
+  --image-view-min-width: 16rem;
+  --image-lightbox-min-width: 40rem;
+  --image-lightbox-max-width: 75vw;
+  --image-lightbox-max-height: 88vh;
+  --image-lightbox-nav-icon: 2.5rem;
+  --image-lightbox-nav-width: 4rem;
+  --image-lightbox-nav-padding-y: var(--space-14);
+  --image-lightbox-nav-gap: var(--space-4);
+  --image-lightbox-nav-edge-min: var(--space-4);
   --variable-split-width: 0.5rem;
   --modal-min-width: 15rem;
   --modal-max-width: 30rem;

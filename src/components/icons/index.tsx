@@ -193,6 +193,16 @@ export function CommandIcon(props: IconProps) {
   );
 }
 
+export function ImageIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+      <rect x="2" y="3" width="12" height="10" rx="2" />
+      <circle cx="10.5" cy="6.5" r="1" />
+      <path d="M2.5 12.5L6 8.5l4.5 4" />
+    </svg>
+  );
+}
+
 export function DividerIcon(props: IconProps) {
   return (
     <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>

@@ -25,6 +25,8 @@ export const Key = {
   TAB: "Tab",
   ARROW_UP: "ArrowUp",
   ARROW_DOWN: "ArrowDown",
+  ARROW_LEFT: "ArrowLeft",
+  ARROW_RIGHT: "ArrowRight",
 } as const;
 
 export const TAB_CHARACTER = "\t";

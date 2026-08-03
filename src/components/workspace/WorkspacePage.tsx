@@ -7,6 +7,7 @@ import { useLinkActivation } from "@/hooks/useLinkActivation";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import type { CSSProperties } from "react";
+import { ImageLightbox } from "../blocks/image/ImageLightbox";
 import { Header } from "../header/Header";
 import { CloudFileEditorModal } from "../modals/cloud/CloudFileEditorModal";
 import { CloudImportModal } from "../modals/cloud/CloudImportModal";
@@ -49,6 +50,7 @@ export function WorkspacePage() {
         <MainPanel />
       </div>
 
+      <ImageLightbox />
       <ExportModal />
       <PasteRunbookModal />
       <DestinationModal />

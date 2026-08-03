@@ -45,6 +45,7 @@ export type MoveDirection = (typeof MoveDirection)[keyof typeof MoveDirection];
 export const BlockType = {
   NOTE: "note",
   COMMAND: "command",
+  IMAGE: "image",
   DIVIDER: "divider",
 } as const;
 export type BlockType = (typeof BlockType)[keyof typeof BlockType];

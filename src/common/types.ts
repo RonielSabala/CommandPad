@@ -21,12 +21,21 @@ export interface CommandBlock {
   editorCollapsed?: boolean;
 }
 
+export interface ImageBlock {
+  id: string;
+  type: typeof BlockType.IMAGE;
+  src: string;
+  alt?: string;
+}
+
 export interface DividerBlock {
   id: string;
   type: typeof BlockType.DIVIDER;
 }
 
-export type Block = CommandBlock | NoteBlock | DividerBlock;
+export type Block = CommandBlock | NoteBlock | ImageBlock | DividerBlock;
+
+export type BlockOfType<T extends BlockType> = Extract<Block, { type: T }>;
 
 export interface BlockInsertAnchor {
   blockId: string;

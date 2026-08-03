@@ -94,6 +94,7 @@ export const en: Messages = {
     typeLabel: {
       [BlockType.COMMAND]: "Command",
       [BlockType.NOTE]: "Note",
+      [BlockType.IMAGE]: "Image",
       [BlockType.DIVIDER]: "Divider",
     },
     typeTitle: (label) => `${label} block`,
@@ -128,6 +129,25 @@ export const en: Messages = {
     },
     followLinkTooltip: (binding?: string) =>
       binding ? `Follow link (${binding})` : "Follow link",
+  },
+  image: {
+    dropHint: "Drop an image here, or paste one",
+    choose: "Choose an image",
+    urlPlaceholder: "https://example.com/image.png",
+    addUrl: "Add",
+    viewFullscreen: "View full screen",
+    previous: "Previous image",
+    next: "Next image",
+    position: (index, total) => `${index} / ${total}`,
+    actions: "Image actions",
+    replace: "Replace image",
+    remove: "Remove image",
+    emptyReadOnly: "No image",
+    loadFailed: "This image could not be loaded.",
+    notAnImage: "That file is not an image.",
+    invalidUrl: "Enter an http or https image address.",
+    readFailed: "That image could not be read.",
+    tooLarge: (limit) => `Images have to be smaller than ${limit}.`,
   },
   exportModal: {
     title: "Export",
@@ -263,6 +283,10 @@ export const en: Messages = {
     discardCloudEditConfirm: "Discard",
     discardCloudEditMessage: (filename) =>
       `Close the editor without saving? Your **unsaved changes** to \`${filename}\` will be lost.`,
+    replaceImageTitle: "Replace Image",
+    replaceImageConfirm: "Replace",
+    replaceImageMessage:
+      "This block already holds an image. Replacing it **discards the current one**.",
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Toggle read / edit mode",
@@ -350,7 +374,7 @@ export const en: Messages = {
   },
   privacy: {
     title: "Privacy Policy",
-    updated: "Last updated: July 29, 2026",
+    updated: "Last updated: August 2, 2026",
     intro:
       "CommandPad is a client-side application that runs entirely in your web browser. This policy explains what data the app handles and, more importantly, what it does not.",
     sections: [
@@ -368,6 +392,17 @@ export const en: Messages = {
         bullets: [
           "**localStorage** holds your preferences (theme, language, layout) and lightweight tab metadata.",
           "**IndexedDB** holds the actual runbook content (your variables and command blocks).",
+        ],
+      },
+      {
+        heading: "Images",
+        paragraphs: [
+          "An image block holds a picture in one of two ways, and neither one uploads anything. **There is no image server, no upload endpoint, and no image host operated by us.**",
+        ],
+        bullets: [
+          "An **attached** image (dropped, pasted, or chosen with the file picker) is read by your browser on your own device and stored as text inside the runbook, next to the rest of its content. The file is never sent anywhere.",
+          "A **linked** image is only an address you typed. Nothing is stored and nothing is uploaded, but your browser fetches the picture from whatever site hosts it, so that site sees the request just as it would for any page showing the image.",
+          "If you sync a runbook to your own cloud account, its attached images travel with it into that account, the same as any other part of the runbook.",
         ],
       },
       {
@@ -422,7 +457,7 @@ export const en: Messages = {
   },
   terms: {
     title: "Terms of Service",
-    updated: "Last updated: July 29, 2026",
+    updated: "Last updated: August 2, 2026",
     intro:
       "These terms govern your use of CommandPad. By using the app you agree to them. Please read them, as they are short and written to be understandable.",
     sections: [
@@ -446,6 +481,7 @@ export const en: Messages = {
         bullets: [
           "Review every command before you run it. CommandPad resolves and copies text; it does not execute anything for you.",
           "Keep your own backups of anything important by exporting your runbooks.",
+          "Only attach images you have the right to use. An attached image becomes part of the runbook itself, so it goes wherever you export or sync that runbook.",
           "Do not rely on secret variables as secure storage for sensitive credentials.",
           "Use the app in compliance with the laws and policies that apply to you.",
         ],
@@ -476,7 +512,7 @@ export const en: Messages = {
       {
         heading: "Data and privacy",
         paragraphs: [
-          "CommandPad stores your data locally and does not transmit it, except when you explicitly sync a runbook to your own cloud account. For details, see the Privacy Policy, which is incorporated into these terms by reference.",
+          "CommandPad stores your data locally and does not transmit it, except when you explicitly sync a runbook to your own cloud account. Images you attach are no exception: they are read in your browser and kept inside the runbook, and are never uploaded to any server operated by us. For details, see the Privacy Policy, which is incorporated into these terms by reference.",
         ],
       },
       {
@@ -512,6 +548,7 @@ export const en: Messages = {
       [DocsSectionId.BLOCKS]: "Blocks",
       [DocsSectionId.COMMAND_BLOCK]: "Command block",
       [DocsSectionId.NOTE_BLOCK]: "Note block",
+      [DocsSectionId.IMAGE_BLOCK]: "Image block",
       [DocsSectionId.DIVIDER_BLOCK]: "Divider block",
       [DocsSectionId.MULTI_SELECT]: "Multi-select",
       [DocsSectionId.READ_MODE]: "Read mode",
@@ -723,6 +760,24 @@ export const en: Messages = {
       wrapKeys:
         "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and **Ctrl+´** in backticks; typing **(**, **[**, **{**, **\"** or **'** wraps it in that pair. Pair wrapping is not exclusive to notes, it works the same way in the command editor.",
     },
+    imageBlock: {
+      intro:
+        "It's a block that holds a picture: the architecture diagram, a screenshot of the screen you are supposed to be looking at, the dashboard panel that says the deploy worked, etc.",
+      ways: [
+        "**Drop it in**: drag an image file from your desktop straight onto the block.",
+        "**Paste it**: click the block and press `Ctrl+V` with an image, or an image address, on your clipboard.",
+        "**Pick it**: press **Choose an image** to open your file browser.",
+        "**Link it**: type or paste an `http` or `https` address into the box at the bottom of the block.",
+      ],
+      attachedVsLinked: (limit) =>
+        `The first three ways **attach** the image: a copy of it is kept inside the runbook, so it works with no connection and travels with every export and every copy. An attached image has to stay under ${limit}. The last way **links** it instead: the runbook only remembers the address, which costs no more than a line of text, but the picture is only there while the site hosting it is.`,
+      sizing:
+        "A picture is shown at its own size, but never below a readable minimum and never taller than the block allows: a tiny image is scaled up, a huge one is scaled down, and neither is ever stretched out of shape.",
+      slideshow:
+        "When a runbook holds more than one image, full screen becomes a slideshow: the arrows parked at the left and right edges of the screen, or the `Left` and `Right` arrow keys, slide across every image in the runbook in the order they appear, and the counter tells you where you are. The page follows along, parking each image at the top of the screen as you reach it, so closing full screen leaves you looking at the image you stopped on.",
+      demoHint:
+        "Hover over an image to reveal its controls: **View full screen** opens it over a dimmed page, and its actions menu holds **Replace image**, which swaps the picture without touching the block, and **Remove image**, which empties it back to the drop area.",
+    },
     dividerBlock: {
       intro:
         "Nothing more than a visual separator. It stretches to match the width of the widest block, which makes it perfect for splitting a runbook into sections. It does keep a minimum width, though, so it can never shrink into something unreadable.",
@@ -762,7 +817,7 @@ export const en: Messages = {
       intro: "Click **Export** in the header to open the format picker.",
       formats: [
         "**JSON**: the full workspace (variables + blocks). Can be re-imported.",
-        "**Markdown**: a human-readable `.md` file with headings, subheadings, dividers, and resolved commands.",
+        "**Markdown**: a human-readable `.md` file with headings, subheadings, dividers, resolved commands, and images.",
         "**Plain text**: the same content as Markdown, saved as `.txt`.",
       ],
       saveDialog:

@@ -1,3 +1,4 @@
+import { BLOCK_TYPE_ORDER } from "@/blocks";
 import { CssClass } from "@/common/constants/css";
 import { InsertPosition } from "@/common/enums";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
@@ -15,7 +16,7 @@ import {
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import type { ReactNode } from "react";
-import { BLOCK_TYPE_ICONS, BLOCK_TYPE_ORDER } from "./blockTypes";
+import { getBlockIcon } from "./blockViews";
 
 interface Props {
   blockId: string;
@@ -35,7 +36,7 @@ function InsertSubmenu({ blockId, position, label, icon }: InsertSubmenuProps) {
   return (
     <ContextMenuSubmenu icon={icon} label={label}>
       {BLOCK_TYPE_ORDER.map((type) => {
-        const Icon = BLOCK_TYPE_ICONS[type];
+        const Icon = getBlockIcon(type);
         return (
           <ContextMenuItem
             key={type}

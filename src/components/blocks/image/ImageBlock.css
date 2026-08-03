@@ -1,0 +1,198 @@
+.image-block {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: var(--block-min-width);
+  max-width: 100%;
+  border-radius: var(--radius-lg);
+  vertical-align: top;
+}
+
+.image-file-input {
+  display: none;
+}
+
+/* --- FILLED STATE --- */
+
+.image-frame {
+  position: relative;
+  display: flex;
+  border-radius: var(--radius-lg);
+}
+
+.image-message {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.image-source {
+  max-width: var(--image-block-min-width);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.image-view {
+  display: block;
+  min-width: var(--image-view-min-width);
+  max-width: 100%;
+  max-height: var(--image-block-max-height);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: var(--radius-lg);
+  border: var(--border-standard);
+  background: var(--color-surface);
+}
+
+/* Image actions */
+
+.image-actions {
+  position: absolute;
+  inset: var(--space-4) var(--space-4) var(--space-4) auto;
+  display: flex;
+  align-items: flex-start;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-base);
+}
+
+.image-frame:hover .image-actions {
+  opacity: 1;
+}
+
+body.select-key-held:not(.read-mode) .image-actions {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.image-actions-group {
+  position: sticky;
+  top: var(--space-4);
+  z-index: var(--z-sticky);
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--block-backdrop);
+  box-shadow: 0 var(--space-2) var(--space-6) var(--shadow-color-float);
+  pointer-events: auto;
+}
+
+/* --- EMPTY STATE --- */
+
+.image-broken,
+.image-dropzone,
+.image-empty-readonly {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-14) var(--space-12);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  text-align: center;
+}
+
+.image-broken,
+.image-empty-readonly {
+  border: var(--border-standard);
+}
+
+/* --- DROP ZONE --- */
+
+.image-dropzone {
+  min-width: var(--image-block-min-width);
+  border: var(--space-1) dashed var(--color-border);
+  outline: none;
+  transition:
+    border-color var(--transition-base),
+    background var(--transition-base);
+}
+
+.image-dropzone:hover,
+.image-dropzone:focus-visible {
+  border-color: var(--color-text-muted);
+}
+
+.image-block.drop-target .image-dropzone {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+:is(
+    .block-selected,
+    .block-item.drag-over,
+    body.select-key-held:not(.read-mode)
+  )
+  .image-dropzone {
+  border-color: transparent;
+}
+
+body.select-key-held:not(.read-mode) .image-dropzone > * {
+  pointer-events: none;
+}
+
+/* Placeholder badge */
+
+.image-placeholder-badge {
+  display: flex;
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  transition:
+    background var(--transition-base),
+    color var(--transition-base);
+}
+
+.image-dropzone:hover .image-placeholder-badge,
+.image-dropzone:focus-visible .image-placeholder-badge {
+  color: var(--color-text-secondary);
+}
+
+.image-block.drop-target .image-placeholder-badge {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+/* URL input */
+
+.image-url-row {
+  display: flex;
+  gap: var(--space-3);
+  width: 100%;
+  padding-top: var(--space-8);
+  border-top: var(--border-standard);
+}
+
+.image-url-input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: var(--border-standard);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  outline: none;
+  transition: border-color var(--transition-base);
+}
+
+.image-url-input:focus {
+  border-color: var(--color-border-focus);
+}
+
+.image-url-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* --- IMAGE ERROR --- */
+
+.image-error {
+  font-size: var(--text-sm);
+  color: var(--danger);
+  overflow-wrap: anywhere;
+}

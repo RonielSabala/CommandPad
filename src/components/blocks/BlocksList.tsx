@@ -9,11 +9,27 @@ import "./BlocksList.css";
 const EMPTY_BLOCKS: Block[] = [];
 const EMPTY_VARIABLES: Variable[] = [];
 
+function scrollToBlock(
+  list: HTMLElement | null,
+  blockId: string | null,
+  align: ScrollLogicalPosition,
+): void {
+  if (!blockId) {
+    return;
+  }
+
+  list?.querySelector(`[${DataAttr.BLOCK_ID}="${blockId}"]`)?.scrollIntoView({
+    block: align,
+    behavior: ScrollIntoView.BEHAVIOR_SMOOTH,
+  });
+}
+
 export function BlocksList() {
   const activeTab = useStore(getActiveTab);
   const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
   const variables = activeTab?.variables ?? EMPTY_VARIABLES;
   const pendingFocusBlockId = useStore((state) => state.pendingFocusBlockId);
+  const imageViewerBlockId = useStore((state) => state.imageViewerBlockId);
 
   const variableMap = useMemo(() => getVariableMap(variables), [variables]);
   const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
@@ -21,19 +37,20 @@ export function BlocksList() {
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!pendingFocusBlockId) {
-      return;
-    }
-
-    const blockEl = listRef.current?.querySelector(
-      `[${DataAttr.BLOCK_ID}="${pendingFocusBlockId}"]`,
+    scrollToBlock(
+      listRef.current,
+      pendingFocusBlockId,
+      ScrollIntoView.BLOCK_CENTER,
     );
-
-    blockEl?.scrollIntoView({
-      block: ScrollIntoView.BLOCK_CENTER,
-      behavior: ScrollIntoView.BEHAVIOR_SMOOTH,
-    });
   }, [pendingFocusBlockId]);
+
+  useEffect(() => {
+    scrollToBlock(
+      listRef.current,
+      imageViewerBlockId,
+      ScrollIntoView.BLOCK_START,
+    );
+  }, [imageViewerBlockId]);
 
   return (
     <div id={ElementId.BLOCKS_LIST} ref={listRef}>

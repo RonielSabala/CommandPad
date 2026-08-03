@@ -1,5 +1,5 @@
+import { getBlockCommandTexts } from "@/blocks";
 import { CommandVariableTokenRegex, VariableTokenRegex } from "@/common/config";
-import { BlockType } from "@/common/enums";
 import type { Block, Variable } from "@/common/types";
 
 import { getTokenKey } from "./token";
@@ -38,8 +38,8 @@ export function getUsedVariableKeys(
   }
 
   for (const block of blocks) {
-    if (block.type === BlockType.COMMAND) {
-      collectRefs(block.text, CommandVariableTokenRegex);
+    for (const text of getBlockCommandTexts(block)) {
+      collectRefs(text, CommandVariableTokenRegex);
     }
   }
 
