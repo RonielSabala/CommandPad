@@ -235,6 +235,7 @@ export interface StoreState {
     filename: string,
     rawFilename: string,
     sync?: RunbookSync,
+    openInTab?: boolean,
   ) => Promise<boolean>;
   syncRunbookNow: (id: string) => Promise<void>;
   unlinkRunbookSync: (id: string) => void;
@@ -1261,7 +1262,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
       },
 
-      addRunbookToLibrary: async (content, filename, rawFilename, sync) => {
+      addRunbookToLibrary: async (
+        content,
+        filename,
+        rawFilename,
+        sync,
+        openInTab = true,
+      ) => {
         const label = getRunbookLabel(
           content.blocks,
           filename || RunbookConfig.DEFAULT_LABEL,
@@ -1350,7 +1357,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }));
         settleSync(newId);
 
-        if (get().activeRunbookId) {
+        if (!openInTab) {
           persist.saveRunbookLibrary(
             get().runbookLibrary,
             get().activeRunbookId,
@@ -1409,6 +1416,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       importRunbooks: async (files) => {
         let failedCount = 0;
+        const openInTab = files.length === 1;
 
         const readFile = (file: File) =>
           new Promise<void>((resolve) => {
@@ -1422,6 +1430,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
                   content,
                   file.name.replace(/\.json$/i, ""),
                   file.name,
+                  undefined,
+                  openInTab,
                 );
               } catch {
                 failedCount += 1;
