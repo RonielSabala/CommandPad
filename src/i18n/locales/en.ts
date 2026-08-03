@@ -136,6 +136,7 @@ export const en: Messages = {
     urlPlaceholder: "https://example.com/image.png",
     addUrl: "Add",
     viewFullscreen: "View full screen",
+    actions: "Image actions",
     replace: "Replace image",
     remove: "Remove image",
     emptyReadOnly: "No image",
@@ -766,7 +767,7 @@ export const en: Messages = {
       sizing:
         "A picture is shown at its own size, but never below a readable minimum and never taller than the block allows: a tiny image is scaled up, a huge one is scaled down, and neither is ever stretched out of shape.",
       demoHint:
-        "Hover over an image to reveal its controls: **View full screen** opens it over a dimmed page, **Replace image** swaps the picture without touching the block, and **Remove image** empties it back to the drop area.",
+        "Hover over an image to reveal its controls: **View full screen** opens it over a dimmed page, and its actions menu holds **Replace image**, which swaps the picture without touching the block, and **Remove image**, which empties it back to the drop area.",
     },
     dividerBlock: {
       intro:

@@ -145,6 +145,7 @@ export interface Messages {
     urlPlaceholder: string;
     addUrl: string;
     viewFullscreen: string;
+    actions: string;
     replace: string;
     remove: string;
     emptyReadOnly: string;

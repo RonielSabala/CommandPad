@@ -3,6 +3,8 @@ import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { AppMode, BlockType } from "@/common/enums";
 import type { ImageBlock as ImageBlockData } from "@/common/types";
+import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
+import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { ImageIcon, ImportIcon, TrashIcon } from "@/components/icons";
 import { Modal } from "@/components/modals/Modal";
 import { useFileDrop } from "@/hooks/useFileDrop";
@@ -181,23 +183,26 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
               )}
 
               {!isReadMode && (
-                <>
-                  <button
-                    className="btn btn-icon btn-accent"
-                    title={t.image.replace}
-                    onClick={openFilePicker}
+                <ActionsMenu
+                  className="image-actions-menu"
+                  title={t.image.actions}
+                  triggerClassName="btn btn-icon btn-accent"
+                >
+                  <ContextMenuItem
+                    icon={<ImportIcon className="icon-md icon-bold" />}
+                    onSelect={openFilePicker}
                   >
-                    <ImportIcon className="icon-md icon-bold" />
-                  </button>
+                    {t.image.replace}
+                  </ContextMenuItem>
 
-                  <button
-                    className="btn btn-icon btn-danger"
-                    title={t.image.remove}
-                    onClick={clear}
+                  <ContextMenuItem
+                    icon={<TrashIcon className="icon-md icon-bold" />}
+                    onSelect={clear}
+                    danger
                   >
-                    <TrashIcon className="icon-md icon-bold" />
-                  </button>
-                </>
+                    {t.image.remove}
+                  </ContextMenuItem>
+                </ActionsMenu>
               )}
             </div>
           </div>

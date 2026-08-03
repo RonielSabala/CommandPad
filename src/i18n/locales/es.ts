@@ -138,6 +138,7 @@ export const es: Messages = {
     urlPlaceholder: "https://ejemplo.com/imagen.png",
     addUrl: "Añadir",
     viewFullscreen: "Ver a pantalla completa",
+    actions: "Acciones de la imagen",
     replace: "Reemplazar imagen",
     remove: "Eliminar imagen",
     emptyReadOnly: "Sin imagen",
@@ -778,7 +779,7 @@ export const es: Messages = {
       sizing:
         "Una imagen se muestra a su propio tamaño, pero nunca por debajo de un mínimo legible ni más alta de lo que permite el bloque: una imagen diminuta se amplía, una enorme se reduce, y ninguna se deforma.",
       demoHint:
-        "Pasa el cursor sobre una imagen para revelar sus controles: **Ver a pantalla completa** la abre sobre la página atenuada, **Reemplazar imagen** cambia la foto sin tocar el bloque, y **Eliminar imagen** lo vacía y devuelve la zona para soltar.",
+        "Pasa el cursor sobre una imagen para revelar sus controles: **Ver a pantalla completa** la abre sobre la página atenuada, y su menú de acciones tiene **Reemplazar imagen**, que cambia la foto sin tocar el bloque, y **Eliminar imagen**, que lo vacía y devuelve la zona para soltar.",
     },
     dividerBlock: {
       intro:
