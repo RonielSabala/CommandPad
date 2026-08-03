@@ -30,7 +30,7 @@ const LONG_COMMAND = joinLines([
   "\t&& echo 'Backup complete!'",
 ]);
 
-const DEMO_IMAGE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="440" height="180" viewBox="0 0 440 180">
+const DEMO_PIPELINE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="440" height="180" viewBox="0 0 440 180">
   <rect x="28" y="60" width="104" height="60" rx="8" fill="#2f68c5"/>
   <rect x="168" y="60" width="104" height="60" rx="8" fill="#3b82f6"/>
   <rect x="308" y="60" width="104" height="60" rx="8" fill="#15803d"/>
@@ -41,7 +41,23 @@ const DEMO_IMAGE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="440" heig
     <text x="360" y="95">prod</text>
   </g>
 </svg>`;
-const DEMO_IMAGE_SRC = `data:image/svg+xml,${encodeURIComponent(DEMO_IMAGE_SVG)}`;
+
+const DEMO_TOPOLOGY_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="440" height="180" viewBox="0 0 440 180">
+  <rect x="168" y="24" width="104" height="48" rx="8" fill="#7c3aed"/>
+  <rect x="28" y="112" width="104" height="48" rx="8" fill="#0e7490"/>
+  <rect x="168" y="112" width="104" height="48" rx="8" fill="#0e7490"/>
+  <rect x="308" y="112" width="104" height="48" rx="8" fill="#0e7490"/>
+  <path d="M220 72v20M220 92H80v20M220 92h140v20M220 92v20" stroke="#6b7280" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <g fill="#eef1f6" font-family="monospace" font-size="15" text-anchor="middle">
+    <text x="220" y="54">proxy</text>
+    <text x="80" y="142">web-1</text>
+    <text x="220" y="142">web-2</text>
+    <text x="360" y="142">web-3</text>
+  </g>
+</svg>`;
+
+const DEMO_PIPELINE_SRC = `data:image/svg+xml,${encodeURIComponent(DEMO_PIPELINE_SVG)}`;
+const DEMO_TOPOLOGY_SRC = `data:image/svg+xml,${encodeURIComponent(DEMO_TOPOLOGY_SVG)}`;
 
 const MARKDOWN_EXAMPLES = [
   "**bold-text**",
@@ -90,6 +106,7 @@ export function NoteBlockDocs() {
       <Prose text={t.docs.noteBlock.intro} />
       <Prose text={t.docs.noteBlock.styles} />
       <Prose text={t.docs.noteBlock.markdown} />
+
       <table className="docs-table">
         <thead>
           <tr>
@@ -108,13 +125,16 @@ export function NoteBlockDocs() {
           ))}
         </tbody>
       </table>
-      <Prose text={t.docs.noteBlock.noNesting} />
-      <Prose text={t.docs.noteBlock.autoUrls} />
+
       <Prose text={t.docs.noteBlock.links} />
-      <Prose text={t.docs.noteBlock.wrapKeys} />
+
       <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.noteSample)] }]}>
         <BlocksList />
       </DemoWorkspace>
+
+      <Prose text={t.docs.noteBlock.noNesting} />
+      <Prose text={t.docs.noteBlock.autoUrls} />
+      <Prose text={t.docs.noteBlock.wrapKeys} />
     </>
   );
 }
@@ -128,18 +148,23 @@ export function ImageBlockDocs() {
     <>
       <Prose text={t.docs.imageBlock.intro} />
       <ProseList items={t.docs.imageBlock.ways} />
-      <Prose text={t.docs.imageBlock.attachedVsLinked(limit)} />
-      <Prose text={t.docs.imageBlock.sizing} />
       <Prose text={t.docs.imageBlock.demoHint} />
       <DemoWorkspace
         tabs={[
           {
-            blocks: [demoImage(DEMO_IMAGE_SRC, "pipeline.svg"), demoImage("")],
+            blocks: [
+              demoImage(DEMO_PIPELINE_SRC, "pipeline.svg"),
+              demoImage(DEMO_TOPOLOGY_SRC, "topology.svg"),
+              demoImage(""),
+            ],
           },
         ]}
       >
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.imageBlock.attachedVsLinked(limit)} />
+      <Prose text={t.docs.imageBlock.sizing} />
+      <Prose text={t.docs.imageBlock.slideshow} />
     </>
   );
 }

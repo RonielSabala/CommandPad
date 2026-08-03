@@ -29,6 +29,7 @@ export const Anchor = {
 } as const;
 
 export const ScrollIntoView = {
+  BLOCK_START: "start",
   BLOCK_CENTER: "center",
   BEHAVIOR_SMOOTH: "smooth",
 } as const;

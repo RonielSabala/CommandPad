@@ -80,42 +80,6 @@ body.select-key-held:not(.read-mode) .image-actions {
   pointer-events: auto;
 }
 
-/* --- FULL SCREEN --- */
-
-.modal.modal-lightbox {
-  min-width: 0;
-  max-width: none;
-  padding: 0;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-}
-
-.modal-lightbox .modal-close,
-.modal-lightbox .modal-close:hover {
-  background: var(--block-backdrop);
-  border-radius: var(--radius-md);
-  box-shadow: 0 var(--space-2) var(--space-6) var(--shadow-color-float);
-}
-
-.modal-lightbox .modal-close:hover {
-  color: var(--color-text-primary);
-}
-
-.image-lightbox-view {
-  display: block;
-  min-width: min(
-    var(--image-lightbox-min-width),
-    var(--image-lightbox-max-width)
-  );
-  max-width: var(--image-lightbox-max-width);
-  max-height: var(--image-lightbox-max-height);
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  border-radius: var(--radius-lg);
-}
-
 /* --- EMPTY STATE --- */
 
 .image-broken,

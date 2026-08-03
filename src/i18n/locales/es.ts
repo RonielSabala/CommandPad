@@ -138,6 +138,9 @@ export const es: Messages = {
     urlPlaceholder: "https://ejemplo.com/imagen.png",
     addUrl: "Añadir",
     viewFullscreen: "Ver a pantalla completa",
+    previous: "Imagen anterior",
+    next: "Imagen siguiente",
+    position: (index, total) => `${index} / ${total}`,
     actions: "Acciones de la imagen",
     replace: "Reemplazar imagen",
     remove: "Eliminar imagen",
@@ -782,6 +785,8 @@ export const es: Messages = {
         `Las tres primeras formas **adjuntan** la imagen: se guarda una copia dentro del libro, así que funciona sin conexión y viaja con cada exportación y cada copia. Una imagen adjunta debe pesar menos de ${limit}. La última la **enlaza**: el libro solo recuerda la dirección, que no ocupa más que una línea de texto, pero la imagen solo está ahí mientras lo esté el sitio que la aloja.`,
       sizing:
         "Una imagen se muestra a su propio tamaño, pero nunca por debajo de un mínimo legible ni más alta de lo que permite el bloque: una imagen diminuta se amplía, una enorme se reduce, y ninguna se deforma.",
+      slideshow:
+        "Cuando un libro tiene más de una imagen, la pantalla completa se convierte en un pase de diapositivas: las flechas fijas en los bordes izquierdo y derecho de la pantalla, o las teclas `Izquierda` y `Derecha`, recorren todas las imágenes del libro en el orden en que aparecen, y el contador indica en cuál estás. La página acompaña el recorrido y deja cada imagen en la parte superior de la pantalla al llegar a ella, así que al cerrar la pantalla completa te quedas mirando la imagen en la que lo dejaste.",
       demoHint:
         "Pasa el cursor sobre una imagen para revelar sus controles: **Ver a pantalla completa** la abre sobre la página atenuada, y su menú de acciones tiene **Reemplazar imagen**, que cambia la foto sin tocar el bloque, y **Eliminar imagen**, que lo vacía y devuelve la zona para soltar.",
     },

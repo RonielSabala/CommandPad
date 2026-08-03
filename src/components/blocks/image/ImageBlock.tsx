@@ -5,8 +5,7 @@ import { AppMode, BlockType, DialogTone } from "@/common/enums";
 import type { ImageBlock as ImageBlockData } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
-import { ImageIcon, ImportIcon, TrashIcon } from "@/components/icons";
-import { Modal } from "@/components/modals/Modal";
+import { ImportIcon, TrashIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -22,14 +21,7 @@ import { useEffect, useRef, useState, type ClipboardEvent } from "react";
 import { ArrowsFullscreen } from "react-bootstrap-icons";
 import type { BlockViewProps } from "../blockViews";
 import "./ImageBlock.css";
-
-function PlaceholderIcon() {
-  return (
-    <span className="image-placeholder-badge">
-      <ImageIcon className="icon-lg icon-semibold" />
-    </span>
-  );
-}
+import { ImagePlaceholderBadge } from "./ImagePlaceholderBadge";
 
 export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
   const t = useTranslation();
@@ -41,6 +33,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
   const updateBlock = useStore((state) => state.updateBlock);
   const confirm = useStore((state) => state.confirm);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
+  const openImageViewer = useStore((state) => state.openImageViewer);
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
   );
@@ -48,7 +41,6 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
   const [urlDraft, setUrlDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
-  const [fullscreen, setFullscreen] = useState(false);
 
   const dropzoneRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -177,7 +169,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
         <div className="image-frame">
           {loadFailed ? (
             <div className="image-broken">
-              <PlaceholderIcon />
+              <ImagePlaceholderBadge />
               <p className="image-message">{t.image.loadFailed}</p>
               {!isAttachedImage(src) && <p className="image-source">{src}</p>}
             </div>
@@ -197,7 +189,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
                 <button
                   className="btn btn-icon btn-accent"
                   title={t.image.viewFullscreen}
-                  onClick={() => setFullscreen(true)}
+                  onClick={() => openImageViewer(blockId)}
                 >
                   <ArrowsFullscreen className="icon-md" />
                 </button>
@@ -230,12 +222,12 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
         </div>
       ) : isReadMode ? (
         <div className="image-empty-readonly">
-          <PlaceholderIcon />
+          <ImagePlaceholderBadge />
           <p className="image-message">{t.image.emptyReadOnly}</p>
         </div>
       ) : (
         <div className="image-dropzone" ref={dropzoneRef} tabIndex={0}>
-          <PlaceholderIcon />
+          <ImagePlaceholderBadge />
 
           <p className="image-message">{t.image.dropHint}</p>
 
@@ -270,21 +262,6 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
       )}
 
       {error && <p className="image-error">{error}</p>}
-
-      {src && !loadFailed && (
-        <Modal
-          open={fullscreen}
-          onClose={() => setFullscreen(false)}
-          className="modal-lightbox"
-        >
-          <img
-            className="image-lightbox-view"
-            src={src}
-            alt={block.alt ?? ""}
-            draggable={false}
-          />
-        </Modal>
-      )}
     </div>
   );
 }

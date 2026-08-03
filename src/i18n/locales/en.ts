@@ -136,6 +136,9 @@ export const en: Messages = {
     urlPlaceholder: "https://example.com/image.png",
     addUrl: "Add",
     viewFullscreen: "View full screen",
+    previous: "Previous image",
+    next: "Next image",
+    position: (index, total) => `${index} / ${total}`,
     actions: "Image actions",
     replace: "Replace image",
     remove: "Remove image",
@@ -770,6 +773,8 @@ export const en: Messages = {
         `The first three ways **attach** the image: a copy of it is kept inside the runbook, so it works with no connection and travels with every export and every copy. An attached image has to stay under ${limit}. The last way **links** it instead: the runbook only remembers the address, which costs no more than a line of text, but the picture is only there while the site hosting it is.`,
       sizing:
         "A picture is shown at its own size, but never below a readable minimum and never taller than the block allows: a tiny image is scaled up, a huge one is scaled down, and neither is ever stretched out of shape.",
+      slideshow:
+        "When a runbook holds more than one image, full screen becomes a slideshow: the arrows parked at the left and right edges of the screen, or the `Left` and `Right` arrow keys, slide across every image in the runbook in the order they appear, and the counter tells you where you are. The page follows along, parking each image at the top of the screen as you reach it, so closing full screen leaves you looking at the image you stopped on.",
       demoHint:
         "Hover over an image to reveal its controls: **View full screen** opens it over a dimmed page, and its actions menu holds **Replace image**, which swaps the picture without touching the block, and **Remove image**, which empties it back to the drop area.",
     },

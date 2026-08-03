@@ -163,6 +163,7 @@ export interface StoreState {
   linkKeyHeld: boolean;
   pendingFocusBlockId: string | null;
   pendingFocusVariableId: string | null;
+  imageViewerBlockId: string | null;
 
   // Search
   runbookSearchQuery: string;
@@ -279,6 +280,8 @@ export interface StoreState {
     blockId: string,
     surface: CommandSurface,
   ) => void;
+  openImageViewer: (blockId: string) => void;
+  closeImageViewer: () => void;
 
   setBlockSelected: (blockId: string, selected: boolean) => void;
   toggleBlockSelection: (blockId: string) => void;
@@ -819,6 +822,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       linkKeyHeld: false,
       pendingFocusBlockId: null,
       pendingFocusVariableId: null,
+      imageViewerBlockId: null,
 
       runbookSearchQuery: "",
       variableSearchQuery: "",
@@ -1978,6 +1982,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             },
           };
         }),
+
+      openImageViewer: (blockId) => set({ imageViewerBlockId: blockId }),
+
+      closeImageViewer: () => set({ imageViewerBlockId: null }),
 
       // --- Selection ---
 

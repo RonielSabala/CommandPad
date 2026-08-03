@@ -145,6 +145,9 @@ export interface Messages {
     urlPlaceholder: string;
     addUrl: string;
     viewFullscreen: string;
+    previous: string;
+    next: string;
+    position: (index: number, total: number) => string;
     actions: string;
     replace: string;
     remove: string;
@@ -438,6 +441,7 @@ export interface Messages {
       ways: string[];
       attachedVsLinked: (limit: string) => string;
       sizing: string;
+      slideshow: string;
       demoHint: string;
     };
     dividerBlock: {

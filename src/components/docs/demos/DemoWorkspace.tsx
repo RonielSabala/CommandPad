@@ -1,6 +1,7 @@
 import { InputSelector } from "@/common/constants/dom";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import type { Block, Variable } from "@/common/types";
+import { ImageLightbox } from "@/components/blocks/image/ImageLightbox";
 import { RunbookRow } from "@/components/sidebar/runbooks/RunbookRow";
 import "@/components/sidebar/shared/SidebarSectionList.css";
 import { VariableRow } from "@/components/sidebar/variables/VariableRow";
@@ -61,6 +62,7 @@ export function DemoWorkspace({
           {children}
         </div>
       </DocsDemo>
+      <ImageLightbox />
     </StoreProvider>
   );
 }
