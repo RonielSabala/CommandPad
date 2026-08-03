@@ -1,6 +1,6 @@
 import { classNames } from "@/utils/string";
 import { useRef, useState, type ReactNode } from "react";
-import { ThreeDotsVertical } from "react-bootstrap-icons";
+import { ThreeDots, ThreeDotsVertical } from "react-bootstrap-icons";
 import {
   ContextMenu,
   ContextMenuAlign,
@@ -13,6 +13,7 @@ interface Props {
   className?: string;
   align?: ContextMenuAlign;
   triggerClassName?: string;
+  horizontal?: boolean;
 }
 
 export function ActionsMenu({
@@ -21,6 +22,7 @@ export function ActionsMenu({
   className,
   align = ContextMenuAlign.START,
   triggerClassName = "btn btn-flat-icon",
+  horizontal = false,
 }: Props) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [anchor, setAnchor] = useState<ContextMenuAnchor | null>(null);
@@ -53,7 +55,11 @@ export function ActionsMenu({
         aria-haspopup="menu"
         aria-expanded={anchor !== null}
       >
-        <ThreeDotsVertical className="icon-md" />
+        {horizontal ? (
+          <ThreeDots className="icon-md" />
+        ) : (
+          <ThreeDotsVertical className="icon-md" />
+        )}
       </button>
 
       {anchor && (

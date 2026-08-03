@@ -200,6 +200,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
                   className="image-actions-menu"
                   title={t.image.actions}
                   triggerClassName="btn btn-icon btn-accent"
+                  horizontal
                 >
                   <ContextMenuItem
                     icon={<ImportIcon className="icon-md icon-bold" />}
