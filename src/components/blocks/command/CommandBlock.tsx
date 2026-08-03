@@ -68,6 +68,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const [copied, setCopied] = useState(false);
   const previewRef = useRef<HTMLSpanElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const autoExpandedEditorRef = useRef(false);
 
   const segments = useMemo(
     () => resolveCommandText(blockText, variableMap),
@@ -95,6 +96,20 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     (value: string) => updateBlock(blockId, BlockType.COMMAND, { text: value }),
     [updateBlock, blockId],
   );
+
+  const handleEditorFocus = useCallback(() => {
+    if (editorOverflows && !editorExpanded) {
+      autoExpandedEditorRef.current = true;
+      toggleExpanded(blockId, CommandSurface.EDITOR);
+    }
+  }, [editorOverflows, editorExpanded, toggleExpanded, blockId]);
+
+  const handleEditorBlur = useCallback(() => {
+    if (autoExpandedEditorRef.current) {
+      autoExpandedEditorRef.current = false;
+      toggleExpanded(blockId, CommandSurface.EDITOR);
+    }
+  }, [toggleExpanded, blockId]);
 
   useEffect(() => {
     if (pendingFocus) {
@@ -191,6 +206,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         )}
         value={blockText}
         onChange={handleChange}
+        onFocus={handleEditorFocus}
+        onBlur={handleEditorBlur}
         placeholder={t.command.placeholder}
         promptPrefix={COMMAND_PROMPT_PREFIX}
         clamped={editorClamped}
