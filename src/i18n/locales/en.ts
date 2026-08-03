@@ -280,6 +280,10 @@ export const en: Messages = {
     discardCloudEditConfirm: "Discard",
     discardCloudEditMessage: (filename) =>
       `Close the editor without saving? Your **unsaved changes** to \`${filename}\` will be lost.`,
+    replaceImageTitle: "Replace Image",
+    replaceImageConfirm: "Replace",
+    replaceImageMessage:
+      "This block already holds an image. Replacing it **discards the current one**.",
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Toggle read / edit mode",

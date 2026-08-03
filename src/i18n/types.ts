@@ -275,6 +275,9 @@ export interface Messages {
     discardCloudEditTitle: string;
     discardCloudEditConfirm: string;
     discardCloudEditMessage: (filename: string) => string;
+    replaceImageTitle: string;
+    replaceImageConfirm: string;
+    replaceImageMessage: string;
   };
   keybindings: Record<KeyBinding, string>;
   footer: {

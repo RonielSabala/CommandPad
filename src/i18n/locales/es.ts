@@ -283,6 +283,10 @@ export const es: Messages = {
     discardCloudEditConfirm: "Descartar",
     discardCloudEditMessage: (filename) =>
       `¿Cerrar el editor sin guardar? Se perderán tus **cambios sin guardar** en \`${filename}\`.`,
+    replaceImageTitle: "Reemplazar imagen",
+    replaceImageConfirm: "Reemplazar",
+    replaceImageMessage:
+      "Este bloque ya contiene una imagen. Al reemplazarla **se descarta la actual**.",
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Alternar modo lectura / edición",

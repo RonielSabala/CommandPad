@@ -1,7 +1,7 @@
 import { ImageBlockConfig, MimeType } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
-import { AppMode, BlockType } from "@/common/enums";
+import { AppMode, BlockType, DialogTone } from "@/common/enums";
 import type { ImageBlock as ImageBlockData } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
@@ -39,6 +39,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
   const language = useStore((state) => state.language);
   const isReadMode = useStore((state) => state.mode === AppMode.READ);
   const updateBlock = useStore((state) => state.updateBlock);
+  const confirm = useStore((state) => state.confirm);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
@@ -68,7 +69,19 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
     updateBlock(blockId, BlockType.IMAGE, { src: nextSrc, alt });
   };
 
-  const attachFile = async (file: File | undefined) => {
+  const confirmReplace = async () => {
+    if (!src) {
+      return true;
+    }
+
+    return confirm(t.dialogs.replaceImageMessage, {
+      title: t.dialogs.replaceImageTitle,
+      confirmLabel: t.dialogs.replaceImageConfirm,
+      tone: DialogTone.WARNING,
+    });
+  };
+
+  const attachFile = async (file: File | undefined, replacing = false) => {
     if (!file) {
       return;
     }
@@ -84,6 +97,10 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
       return;
     }
 
+    if (replacing && !(await confirmReplace())) {
+      return;
+    }
+
     try {
       setSource(await readImageAsDataUrl(file), file.name);
     } catch {
@@ -91,10 +108,14 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
     }
   };
 
-  const applyUrl = (raw: string) => {
+  const applyUrl = async (raw: string, replacing = false) => {
     const nextSrc = normalizeImageSrc(raw);
     if (!nextSrc) {
       setError(t.image.invalidUrl);
+      return;
+    }
+
+    if (replacing && !(await confirmReplace())) {
       return;
     }
 
@@ -102,7 +123,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
   };
 
   const fileDrop = useFileDrop(
-    (files) => void attachFile(files[0]),
+    (files) => void attachFile(files[0], true),
     !isReadMode,
   );
 
@@ -115,14 +136,14 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
     const file = event.clipboardData.files[0];
     if (file) {
       event.preventDefault();
-      void attachFile(file);
+      void attachFile(file, true);
       return;
     }
 
     const text = event.clipboardData.getData(MimeType.PLAIN_TEXT).trim();
     if (text) {
       event.preventDefault();
-      applyUrl(text);
+      void applyUrl(text, true);
     }
   };
 
@@ -233,14 +254,14 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
               onPaste={(event) => event.stopPropagation()}
               onKeyDown={(event) => {
                 if (event.key === Key.ENTER && urlDraft.trim()) {
-                  applyUrl(urlDraft);
+                  void applyUrl(urlDraft);
                 }
               }}
             />
             <button
               className="btn"
               disabled={!urlDraft.trim()}
-              onClick={() => applyUrl(urlDraft)}
+              onClick={() => void applyUrl(urlDraft)}
             >
               {t.image.addUrl}
             </button>
