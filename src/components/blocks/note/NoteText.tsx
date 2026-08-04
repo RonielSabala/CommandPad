@@ -8,6 +8,14 @@ import { useStore } from "@/store/store";
 import { parseNoteNodes } from "@/utils/markdown";
 import "./NoteText.css";
 
+const SEGMENT_CLASS: Record<NoteSegmentType, string | undefined> = {
+  [NoteSegmentType.TEXT]: undefined,
+  [NoteSegmentType.BOLD]: "note-bold",
+  [NoteSegmentType.ITALIC]: "note-italic",
+  [NoteSegmentType.CODE]: "note-code",
+  [NoteSegmentType.LINK]: CssClass.NOTE_LINK,
+};
+
 interface SegmentsProps {
   segments: NoteSegment[];
   requiresLinkModifier?: boolean;
@@ -25,42 +33,29 @@ function NoteSegments({ segments, requiresLinkModifier }: SegmentsProps) {
   return (
     <>
       {segments.map((segment, i) => {
-        switch (segment.type) {
-          case NoteSegmentType.BOLD:
-            return (
-              <span key={i} className="note-bold">
-                {segment.text}
-              </span>
-            );
-          case NoteSegmentType.ITALIC:
-            return (
-              <span key={i} className="note-italic">
-                {segment.text}
-              </span>
-            );
-          case NoteSegmentType.CODE:
-            return (
-              <span key={i} className="note-code">
-                {segment.text}
-              </span>
-            );
-          case NoteSegmentType.LINK:
-            return (
-              <a
-                key={i}
-                href={segment.href ?? segment.text}
-                className={CssClass.NOTE_LINK}
-                target={Anchor.TARGET_BLANK}
-                rel={Anchor.REL}
-                title={followLinkTooltip}
-                {...{ [DataAttr.NOTE_OFFSET]: segment.start }}
-              >
-                {segment.text}
-              </a>
-            );
-          default:
-            return segment.text;
+        const offset = { [DataAttr.NOTE_OFFSET]: segment.start };
+
+        if (segment.type === NoteSegmentType.LINK) {
+          return (
+            <a
+              key={i}
+              href={segment.href ?? segment.text}
+              className={CssClass.NOTE_LINK}
+              target={Anchor.TARGET_BLANK}
+              rel={Anchor.REL}
+              title={followLinkTooltip}
+              {...offset}
+            >
+              {segment.text}
+            </a>
+          );
         }
+
+        return (
+          <span key={i} className={SEGMENT_CLASS[segment.type]} {...offset}>
+            {segment.text}
+          </span>
+        );
       })}
     </>
   );

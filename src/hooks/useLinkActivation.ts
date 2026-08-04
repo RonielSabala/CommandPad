@@ -1,27 +1,11 @@
 import { CssClass } from "@/common/constants/css";
-import { Anchor, Cursor, DataAttr } from "@/common/constants/dom";
+import { Anchor, Cursor } from "@/common/constants/dom";
 import { EventType } from "@/common/constants/events";
 import { AppMode } from "@/common/enums";
 import { isModifierPressed, ModifierAction } from "@/common/keybindings";
 import { useStoreApi } from "@/store/store";
-import { getTextOffsetAtPoint } from "@/utils/dom";
+import { getNoteCaretAtPoint } from "@/utils/dom";
 import { useEffect } from "react";
-
-/** Caret position in the note's raw text for a click on a rendered link. */
-function caretForLinkClick(
-  link: HTMLAnchorElement,
-  event: MouseEvent,
-): number | undefined {
-  const labelStart = link.getAttribute(DataAttr.NOTE_OFFSET);
-  if (labelStart === null) {
-    return undefined;
-  }
-
-  return (
-    Number(labelStart) +
-    getTextOffsetAtPoint(link, event.clientX, event.clientY)
-  );
-}
 
 export function useLinkActivation(root: Document | HTMLElement | null): void {
   const store = useStoreApi();
@@ -104,7 +88,7 @@ export function useLinkActivation(root: Document | HTMLElement | null): void {
       }
 
       // Focus the note, putting the caret on the character that was clicked
-      const caret = caretForLinkClick(link, event);
+      const caret = getNoteCaretAtPoint(link, event.clientX, event.clientY);
       const control = (link.closest("label") as HTMLLabelElement | null)
         ?.control;
       control?.focus();
