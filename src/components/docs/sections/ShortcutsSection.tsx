@@ -10,18 +10,20 @@ export function KeyboardShortcutsDocs() {
   return (
     <>
       <Prose text={t.docs.keyboardShortcuts.intro} />
-      <table className="docs-table">
-        <tbody>
-          {BINDING_IDS.map((id) => (
-            <tr key={id}>
-              <td>
-                <Kbd binding={id} />
-              </td>
-              <td>{t.keybindings[id]}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="docs-prose">
+        <table className="note-table">
+          <tbody>
+            {BINDING_IDS.map((id) => (
+              <tr key={id}>
+                <td>
+                  <Kbd binding={id} />
+                </td>
+                <td>{t.keybindings[id]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }

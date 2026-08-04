@@ -569,6 +569,10 @@ export const en: Messages = {
       greetingTemplate: "Hi {;name}, welcome to {;place}!",
       noteSample:
         "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link, e.g. https://example.com. Click away to see it rendered again.",
+      tableSample: `| Command | What it does | Risk |
+| --- | --- | :---: |
+| \`git status\` | Shows what changed | low |
+| \`git push --force\` | Overwrites the remote branch | **high** |`,
     },
     gettingStarted: {
       intro:
@@ -750,8 +754,16 @@ export const en: Messages = {
       styles:
         "Three text styles are selectable on hover: **heading** (large, bold), **subheading** (medium, accented), and **body** (the default prose).",
       markdown: "Notes support markdown formatting:",
-      tableSyntax: "Syntax",
-      tableResult: "Result",
+      markdownTable: `| Syntax | Result |
+| --- | --- |
+| \`**bold-text**\` | **bold-text** |
+| \`_italic-text_\` | _italic-text_ |
+| ´\`code-text\`´ | \`code-text\` |
+| \`[labelled-link](https://example.com)\` | [labelled-link](https://example.com) |`,
+      tables:
+        "Notes also support [GitHub-flavored markdown tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): cells separated by `|` bars, with a row of dashes under the header. Click the note below to see the raw syntax.",
+      tableRules:
+        "The one difference from that syntax: there's no escaping in notes, so a cell can't contain a `|`.",
       autoUrls:
         "Bare URLs are detected automatically and become clickable links, no markdown needed.",
       noNesting:

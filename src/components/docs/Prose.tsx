@@ -14,6 +14,14 @@ export function Prose({ text }: { text: string }) {
   );
 }
 
+export function ProseTable({ text }: { text: string }) {
+  return (
+    <div className="docs-prose">
+      <NoteText text={text} />
+    </div>
+  );
+}
+
 export function ProseList({ items }: { items: string[] }) {
   return (
     <ul className="docs-prose docs-list">

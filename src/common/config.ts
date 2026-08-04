@@ -75,11 +75,19 @@ export const MarkdownSyntax = {
 } as const;
 
 export const MarkdownToken = {
-  CODE_REGEX: /[`´](.+?)[`´]/g,
-  BOLD_REGEX: /\*\*(.+?)\*\*/g,
-  ITALIC_REGEX: /(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)|_(.+?)_/g,
-  LINK_REGEX: /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-  URL_REGEX: /(https?:\/\/[^\s<>"{}|\\^`[\]]*[^\s<>"{}|\\^`[\].,;:!?()-])/g,
+  CODE_REGEX: /(?<codeFence>[`´])(?<code>.+?)\k<codeFence>/g,
+  BOLD_REGEX: /\*\*(?<bold>.+?)\*\*/g,
+  ITALIC_REGEX:
+    /(?<!\*)\*(?!\*)(?<italicStar>.+?)(?<!\*)\*(?!\*)|_(?<italicUnderscore>.+?)_/g,
+  LINK_REGEX: /\[(?<linkLabel>[^\]]+)\]\((?<linkHref>https?:\/\/[^\s)]+)\)/g,
+  URL_REGEX:
+    /(?<url>https?:\/\/[^\s<>"{}|\\^`[\]]*[^\s<>"{}|\\^`[\].,;:!?()-])/g,
+} as const;
+
+export const MarkdownTable = {
+  CELL_SEPARATOR: "|",
+  ALIGN_MARKER: ":",
+  DELIMITER_CELL_REGEX: /^:?-+:?$/,
 } as const;
 
 export const MarkdownWrap = {

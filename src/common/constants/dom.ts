@@ -15,6 +15,7 @@ export const DataAttr = {
   RUNBOOK_ID: "data-runbook-id",
   VARIABLE_ID: "data-variable-id",
   NOTE_OFFSET: "data-note-offset",
+  NOTE_ALIGN: "data-note-align",
 } as const;
 
 export const Cursor = {

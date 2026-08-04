@@ -83,6 +83,20 @@ export const NoteSegmentType = {
 export type NoteSegmentType =
   (typeof NoteSegmentType)[keyof typeof NoteSegmentType];
 
+export const NoteNodeType = {
+  TEXT: "text",
+  TABLE: "table",
+} as const;
+export type NoteNodeType = (typeof NoteNodeType)[keyof typeof NoteNodeType];
+
+export const NoteTableAlign = {
+  LEFT: "left",
+  CENTER: "center",
+  RIGHT: "right",
+} as const;
+export type NoteTableAlign =
+  (typeof NoteTableAlign)[keyof typeof NoteTableAlign];
+
 export const VariableField = {
   KEY: "key",
   VALUE: "value",

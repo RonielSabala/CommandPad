@@ -579,6 +579,10 @@ export const es: Messages = {
       greetingTemplate: "¡Hola {;name}, bienvenido a {;place}!",
       noteSample:
         "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace, p. ej. https://example.com. Haz clic fuera para verla renderizada de nuevo.",
+      tableSample: `| Comando | Qué hace | Riesgo |
+| --- | --- | :---: |
+| \`git status\` | Muestra lo que cambió | bajo |
+| \`git push --force\` | Sobrescribe la rama remota | **alto** |`,
     },
     gettingStarted: {
       intro:
@@ -762,8 +766,16 @@ export const es: Messages = {
       styles:
         "Hay tres estilos de texto seleccionables al pasar el cursor: **título** (grande, en negrita), **subtítulo** (mediano, acentuado) y **cuerpo** (la prosa por defecto).",
       markdown: "Las notas soportan formato markdown:",
-      tableSyntax: "Sintaxis",
-      tableResult: "Resultado",
+      markdownTable: `| Sintaxis | Resultado |
+| --- | --- |
+| \`**texto-en-negrita**\` | **texto-en-negrita** |
+| \`_texto-en-cursiva_\` | _texto-en-cursiva_ |
+| ´\`texto-de-código\`´ | \`texto-de-código\` |
+| \`[enlace-con-etiqueta](https://example.com)\` | [enlace-con-etiqueta](https://example.com) |`,
+      tables:
+        "Las notas también soportan [tablas markdown al estilo GitHub](https://docs.github.com/es/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): celdas separadas por barras `|`, con una fila de guiones debajo del encabezado. Haz clic en la nota de abajo para ver la sintaxis en bruto.",
+      tableRules:
+        "La única diferencia con esa sintaxis: no hay escape en las notas, así que una celda no puede contener una `|`.",
       autoUrls:
         "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables, sin necesidad de markdown.",
       noNesting:
