@@ -45,6 +45,7 @@ export const es: Messages = {
     minimap: "Minimapa",
     moveMinimapLeft: "Mover minimapa a la izquierda",
     moveMinimapRight: "Mover minimapa a la derecha",
+    spellcheck: "Corregir ortografía en las notas",
   },
   runbooks: {
     title: "LIBROS",
@@ -775,6 +776,8 @@ export const es: Messages = {
 | \\[enlace-con-etiqueta](\\https://example.com) | [enlace-con-etiqueta](https://example.com) |`,
       escapes:
         "Una `\\` delante de una marca la vuelve literal: `\\**texto\\**` muestra los asteriscos en lugar de poner el texto en negrita. Escapa ambos extremos de un par, y ten en cuenta que dentro de `código` no se escapa nada, porque ahí la barra invertida es parte del contenido.",
+      spellcheck:
+        "Las notas se pueden corregir ortográficamente mientras las escribes. Haz **clic derecho** en cualquier parte del contenido del libro y activa **Corregir ortografía en las notas** en el menú. Usa el idioma de la interfaz como diccionario, así que cambiar de idioma cambia también el diccionario.",
       tables:
         "Las notas también soportan [tablas markdown al estilo GitHub](https://docs.github.com/es/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): celdas separadas por barras `|`, con una fila de guiones debajo del encabezado. Haz clic en la nota de abajo para ver la sintaxis en bruto.",
       autoUrls:

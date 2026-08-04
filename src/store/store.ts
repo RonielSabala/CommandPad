@@ -145,6 +145,7 @@ export interface StoreState {
   mode: AppMode;
   theme: Theme;
   language: Language;
+  spellcheckEnabled: boolean;
   sidebarCollapsed: boolean;
   sidebarPosition: SidebarPosition;
   sidebarWidth: number;
@@ -290,6 +291,7 @@ export interface StoreState {
   setAppMode: (mode: AppMode) => void;
   toggleAppMode: () => void;
   toggleTheme: () => void;
+  toggleSpellcheck: () => void;
   setLanguage: (language: Language) => void;
   toggleSidebar: () => void;
   toggleMinimap: () => void;
@@ -415,6 +417,7 @@ function uiStateSnapshot(state: StoreState) {
     mode: state.mode,
     theme: state.theme,
     language: state.language,
+    spellcheckEnabled: state.spellcheckEnabled,
     sidebarCollapsed: state.sidebarCollapsed,
     sidebarPosition: state.sidebarPosition,
     sidebarWidth: state.sidebarWidth,
@@ -802,6 +805,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       mode: AppMode.EDIT,
       theme: Theme.DARK,
       language: detectLanguage(),
+      spellcheckEnabled: false,
       sidebarCollapsed: false,
       sidebarPosition: SidebarPosition.LEFT,
       sidebarWidth: SidebarWidth.DEFAULT,
@@ -2030,6 +2034,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           theme: s.theme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT,
         }));
 
+        persist.saveUiState(uiStateSnapshot(get()));
+      },
+
+      toggleSpellcheck: () => {
+        set((s) => ({ spellcheckEnabled: !s.spellcheckEnabled }));
         persist.saveUiState(uiStateSnapshot(get()));
       },
 

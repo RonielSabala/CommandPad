@@ -30,6 +30,8 @@ export function NoteBlock({ block }: Props) {
   const updateBlock = useStore((state) => state.updateBlock);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
   const readMode = useStore((state) => state.mode === AppMode.READ);
+  const language = useStore((state) => state.language);
+  const spellcheck = useStore((state) => state.spellcheckEnabled);
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
   );
@@ -111,7 +113,8 @@ export function NoteBlock({ block }: Props) {
           ref={textareaRef}
           className={`note-textarea style-${blockStyle}`}
           placeholder={placeholder}
-          spellCheck={false}
+          spellCheck={spellcheck}
+          lang={language}
           rows={1}
           value={blockText}
           onChange={(event) => applyText(event.target.value)}

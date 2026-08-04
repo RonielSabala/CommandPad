@@ -109,6 +109,7 @@ export function NoteBlockDocs() {
       <Prose text={t.docs.noteBlock.noNesting} />
       <Prose text={t.docs.noteBlock.autoUrls} />
       <Prose text={t.docs.noteBlock.wrapKeys} />
+      <Prose text={t.docs.noteBlock.spellcheck} />
 
       <Prose text={t.docs.noteBlock.tables} />
 

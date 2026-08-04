@@ -44,6 +44,7 @@ export const en: Messages = {
     minimap: "Minimap",
     moveMinimapLeft: "Move minimap left",
     moveMinimapRight: "Move minimap right",
+    spellcheck: "Spell check notes",
   },
   runbooks: {
     title: "RUNBOOKS",
@@ -763,6 +764,8 @@ export const en: Messages = {
 | \\[labelled-link](\\https://example.com) | [labelled-link](https://example.com) |`,
       escapes:
         "A `\\` in front of a mark makes it literal: `\\**text\\**` shows the asterisks instead of turning the text bold. Escape both ends of a pair, and note that nothing is escaped inside `code`, where a backslash is part of the content.",
+      spellcheck:
+        "Notes can be spell checked as you write them. **Right-click** anywhere in the runbook content and toggle **Spell check notes** in the menu. It uses the interface language as its dictionary, so switching the language switches the dictionary too.",
       tables:
         "Notes also support [GitHub-flavored markdown tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): cells separated by `|` bars, with a row of dashes under the header. Click the note below to see the raw syntax.",
       autoUrls:
