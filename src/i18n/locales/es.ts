@@ -719,7 +719,7 @@ export const es: Messages = {
         "Escribe un `|` después de la clave y, entre corchetes, la parte que quieres. Se cuenta desde cero, y el segundo número indica dónde **parar sin llegar a incluirlo**: `[:7]` son los siete primeros caracteres y `[2:5]` son el dos, el tres y el cuatro. Si omites un número, el recorte llega hasta ese extremo.",
       positionsHint:
         "Los números negativos cuentan desde el final, así que `[-2:]` son los dos últimos caracteres. Con una fecha se ven las tres formas de un vistazo:",
-      step: "Un tercer número es el **paso**. En un número de versión los puntos caen en las posiciones impares, así que `[::2]` los salta y deja solo los dígitos. Un paso negativo avanza hacia atrás, y con eso basta para invertir un valor:",
+      step: "Un tercer número es el **paso**. En un número de versión los puntos caen en las posiciones impares, así que `[::2]` los salta y deja solo los dígitos, que es lo que quieres en un nombre de archivo, donde un punto se lee como otra extensión. Un paso negativo avanza hacia atrás, así que `[::-1]` por sí solo invierte un valor:",
       invalid:
         "Si un recorte no tiene sentido, por ejemplo con un paso de cero, la referencia entera se queda **sin resolver** y aparece tal cual la escribiste, así que el error se nota enseguida. En cambio, pedir más caracteres de los que hay no es problema: obtienes los que existan.",
       python:

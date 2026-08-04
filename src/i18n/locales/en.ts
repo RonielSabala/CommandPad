@@ -707,7 +707,7 @@ export const en: Messages = {
         "Write a `|` after the key, then the piece you want in square brackets. Counting starts at zero, and the second number marks where to **stop without including it**: `[:7]` is the first seven characters, and `[2:5]` is characters two, three and four. Leave a number out to run all the way to that end.",
       positionsHint:
         "Negative numbers count back from the end, so `[-2:]` is the last two characters. A date shows the three forms side by side:",
-      step: "A third number is the **step**. In a version number the dots sit on the odd positions, so `[::2]` skips them and leaves just the digits. A negative step walks backwards, which is all it takes to reverse a value:",
+      step: "A third number is the **step**. In a version number the dots sit on the odd positions, so `[::2]` skips them and leaves just the digits, which is what you want in a filename, where a dot reads as another extension. A negative step walks backwards, so `[::-1]` on its own reverses a value:",
       invalid:
         "If a slice does not make sense, such as a step of zero, the whole reference stays **unresolved** and shows up exactly as you typed it, so the mistake is easy to spot. Asking for more characters than there are is fine, though: you simply get the ones that exist.",
       python:
