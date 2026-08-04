@@ -1,5 +1,5 @@
 import { CssClass } from "@/common/constants/css";
-import { Anchor, DataAttr } from "@/common/constants/dom";
+import { Anchor, DataAttr, HtmlTag } from "@/common/constants/dom";
 import { AppMode, NoteNodeType, NoteSegmentType } from "@/common/enums";
 import { formatBinding, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
 import type { NoteSegment, NoteTable, NoteTableCell } from "@/common/types";
@@ -72,7 +72,7 @@ function NoteTableRow({
   cells: NoteTableCell[];
   header?: boolean;
 }) {
-  const Cell = header ? "th" : "td";
+  const Cell = header ? HtmlTag.TABLE_HEADER_CELL : HtmlTag.TABLE_CELL;
 
   return (
     <tr>

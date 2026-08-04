@@ -10,6 +10,11 @@ export const EditCommand = {
   INSERT_TEXT: "insertText",
 } as const;
 
+export const HtmlTag = {
+  TABLE_HEADER_CELL: "th",
+  TABLE_CELL: "td",
+} as const;
+
 export const DataAttr = {
   BLOCK_ID: "data-block-id",
   RUNBOOK_ID: "data-runbook-id",
