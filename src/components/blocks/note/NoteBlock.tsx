@@ -94,7 +94,7 @@ export function NoteBlock({ block }: Props) {
         />
         <div className={`note-preview style-${blockStyle}`}>
           {blockText ? (
-            <NoteText text={blockText} />
+            <NoteText text={blockText} requiresLinkModifier />
           ) : (
             <span className="note-preview-placeholder">{placeholder}</span>
           )}

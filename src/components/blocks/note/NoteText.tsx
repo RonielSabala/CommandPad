@@ -8,17 +8,18 @@ import { useStore } from "@/store/store";
 import { parseNoteNodes } from "@/utils/markdown";
 import "./NoteText.css";
 
-interface Props {
-  text: string;
+interface SegmentsProps {
+  segments: NoteSegment[];
+  requiresLinkModifier?: boolean;
 }
 
-function NoteSegments({ segments }: { segments: NoteSegment[] }) {
+function NoteSegments({ segments, requiresLinkModifier }: SegmentsProps) {
   const t = useTranslation();
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const followLinkTooltip = t.note.followLinkTooltip(
-    readMode
-      ? undefined
-      : formatBinding(KEYBINDINGS[KeyBinding.OPEN_LINK].binding),
+    requiresLinkModifier && !readMode
+      ? formatBinding(KEYBINDINGS[KeyBinding.OPEN_LINK].binding)
+      : undefined,
   );
 
   return (
@@ -68,9 +69,11 @@ function NoteSegments({ segments }: { segments: NoteSegment[] }) {
 function NoteTableRow({
   cells,
   header,
+  requiresLinkModifier,
 }: {
   cells: NoteTableCell[];
   header?: boolean;
+  requiresLinkModifier?: boolean;
 }) {
   const Cell = header ? HtmlTag.TABLE_HEADER_CELL : HtmlTag.TABLE_CELL;
 
@@ -78,36 +81,66 @@ function NoteTableRow({
     <tr>
       {cells.map((cell, i) => (
         <Cell key={i} {...{ [DataAttr.NOTE_ALIGN]: cell.align }}>
-          <NoteSegments segments={cell.segments} />
+          <NoteSegments
+            segments={cell.segments}
+            requiresLinkModifier={requiresLinkModifier}
+          />
         </Cell>
       ))}
     </tr>
   );
 }
 
-function NoteTableView({ table }: { table: NoteTable }) {
+function NoteTableView({
+  table,
+  requiresLinkModifier,
+}: {
+  table: NoteTable;
+  requiresLinkModifier?: boolean;
+}) {
   return (
     <table className="note-table">
       <thead>
-        <NoteTableRow cells={table.head} header />
+        <NoteTableRow
+          cells={table.head}
+          header
+          requiresLinkModifier={requiresLinkModifier}
+        />
       </thead>
       <tbody>
         {table.rows.map((row, i) => (
-          <NoteTableRow key={i} cells={row} />
+          <NoteTableRow
+            key={i}
+            cells={row}
+            requiresLinkModifier={requiresLinkModifier}
+          />
         ))}
       </tbody>
     </table>
   );
 }
 
-export function NoteText({ text }: Props) {
+interface NoteTextProps {
+  text: string;
+  requiresLinkModifier?: boolean;
+}
+
+export function NoteText({ text, requiresLinkModifier }: NoteTextProps) {
   return (
     <>
       {parseNoteNodes(text).map((node, i) =>
         node.type === NoteNodeType.TABLE ? (
-          <NoteTableView key={i} table={node.table} />
+          <NoteTableView
+            key={i}
+            table={node.table}
+            requiresLinkModifier={requiresLinkModifier}
+          />
         ) : (
-          <NoteSegments key={i} segments={node.segments} />
+          <NoteSegments
+            key={i}
+            segments={node.segments}
+            requiresLinkModifier={requiresLinkModifier}
+          />
         ),
       )}
     </>
