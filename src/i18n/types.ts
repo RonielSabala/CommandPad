@@ -327,6 +327,7 @@ export interface Messages {
       tryIt: string;
       reset: string;
       noteSample: string;
+      tableSample: string;
       tabSamples: string[];
       runbookSamples: string[];
       multiSelectNotes: string[];
@@ -429,8 +430,9 @@ export interface Messages {
       intro: string;
       styles: string;
       markdown: string;
-      tableSyntax: string;
-      tableResult: string;
+      markdownTable: string;
+      escapes: string;
+      tables: string;
       autoUrls: string;
       noNesting: string;
       links: string;

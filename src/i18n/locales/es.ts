@@ -579,6 +579,11 @@ export const es: Messages = {
       greetingTemplate: "¡Hola {;name}, bienvenido a {;place}!",
       noteSample:
         "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace, p. ej. https://example.com. Haz clic fuera para verla renderizada de nuevo.",
+      tableSample: `| Código de salida | Significado | Acción |
+| :---: | --- | --- |
+| 126 | Permiso denegado | Dale permisos con \`chmod +x\` |
+| 127 | Comando no encontrado | Revisa tu \`PATH\` |
+| 137 | Terminado (sin memoria) | **Aumenta el límite de memoria** |`,
     },
     gettingStarted: {
       intro:
@@ -714,7 +719,7 @@ export const es: Messages = {
         "Escribe un `|` después de la clave y, entre corchetes, la parte que quieres. Se cuenta desde cero, y el segundo número indica dónde **parar sin llegar a incluirlo**: `[:7]` son los siete primeros caracteres y `[2:5]` son el dos, el tres y el cuatro. Si omites un número, el recorte llega hasta ese extremo.",
       positionsHint:
         "Los números negativos cuentan desde el final, así que `[-2:]` son los dos últimos caracteres. Con una fecha se ven las tres formas de un vistazo:",
-      step: "Un tercer número es el **paso**. En un número de versión los puntos caen en las posiciones impares, así que `[::2]` los salta y deja solo los dígitos. Un paso negativo avanza hacia atrás, y con eso basta para invertir un valor:",
+      step: "Un tercer número es el **paso**. En un número de versión los puntos caen en las posiciones impares, así que `[::2]` los salta y deja solo los dígitos, que es lo que quieres en un nombre de archivo, donde un punto se lee como otra extensión. Un paso negativo avanza hacia atrás, así que `[::-1]` por sí solo invierte un valor:",
       invalid:
         "Si un recorte no tiene sentido, por ejemplo con un paso de cero, la referencia entera se queda **sin resolver** y aparece tal cual la escribiste, así que el error se nota enseguida. En cambio, pedir más caracteres de los que hay no es problema: obtienes los que existan.",
       python:
@@ -762,8 +767,16 @@ export const es: Messages = {
       styles:
         "Hay tres estilos de texto seleccionables al pasar el cursor: **título** (grande, en negrita), **subtítulo** (mediano, acentuado) y **cuerpo** (la prosa por defecto).",
       markdown: "Las notas soportan formato markdown:",
-      tableSyntax: "Sintaxis",
-      tableResult: "Resultado",
+      markdownTable: `| Sintaxis | Resultado |
+| --- | --- |
+| \\**texto-en-negrita\\** | **texto-en-negrita** |
+| \\_texto-en-cursiva\\_ | _texto-en-cursiva_ |
+| \\\`texto-de-código\\\` | \`texto-de-código\` |
+| \\[enlace-con-etiqueta](\\https://example.com) | [enlace-con-etiqueta](https://example.com) |`,
+      escapes:
+        "Una `\\` delante de una marca la vuelve literal: `\\**texto\\**` muestra los asteriscos en lugar de poner el texto en negrita. Escapa ambos extremos de un par, y ten en cuenta que dentro de `código` no se escapa nada, porque ahí la barra invertida es parte del contenido.",
+      tables:
+        "Las notas también soportan [tablas markdown al estilo GitHub](https://docs.github.com/es/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): celdas separadas por barras `|`, con una fila de guiones debajo del encabezado. Haz clic en la nota de abajo para ver la sintaxis en bruto.",
       autoUrls:
         "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables, sin necesidad de markdown.",
       noNesting:

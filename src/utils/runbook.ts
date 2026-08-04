@@ -2,16 +2,15 @@ import { getBlockLabelText } from "@/blocks";
 import { DEFAULT_TAB_LABEL, RunbookConfig } from "@/common/config";
 import type { Block } from "@/common/types";
 import type { Messages } from "@/i18n/types";
-import { parseNoteText } from "@/utils/markdown";
+import { noteToPlainText } from "@/utils/markdown";
 
 const LABEL_STRIP_REGEX = /[*`´]/g;
 
 function cleanLabelText(text: string): string {
-  const plain = parseNoteText(text)
-    .map((segment) => segment.text)
-    .join("");
-
-  return plain.replace(LABEL_STRIP_REGEX, "").replace(/\s+/g, " ").trim();
+  return noteToPlainText(text)
+    .replace(LABEL_STRIP_REGEX, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 export function getRunbookLabel(

@@ -1,26 +1,38 @@
+import { DataAttr } from "@/common/constants/dom";
+
 /** Distance from `value` to the nearest edge of `[min, max]` (0 when inside). */
 function distanceToRange(value: number, min: number, max: number): number {
   return Math.max(min - value, value - max, 0);
 }
 
+function segmentStart(node: Node): number | undefined {
+  const segment = node.parentElement?.closest(`[${DataAttr.NOTE_OFFSET}]`);
+  const start = segment?.getAttribute(DataAttr.NOTE_OFFSET);
+  return start === null || start === undefined ? undefined : Number(start);
+}
+
 /**
- * Character offset inside `element`'s text closest to a viewport point, with
- * the same half-character rounding a browser uses to place a caret.
+ * Caret position in a note's **raw** text for a viewport point over its
+ * rendered preview.
  */
-export function getTextOffsetAtPoint(
-  element: Element,
+export function getNoteCaretAtPoint(
+  root: Element,
   x: number,
   y: number,
-): number {
-  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+): number | undefined {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   const range = document.createRange();
 
-  let nodeStart = 0;
-  let best = 0;
+  let caret: number | undefined;
   let bestVertical = Infinity;
   let bestHorizontal = Infinity;
 
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const start = segmentStart(node);
+    if (start === undefined) {
+      continue;
+    }
+
     const length = node.textContent?.length ?? 0;
 
     for (let i = 0; i < length; i++) {
@@ -40,12 +52,10 @@ export function getTextOffsetAtPoint(
 
         bestVertical = vertical;
         bestHorizontal = horizontal;
-        best = nodeStart + i + (x < (rect.left + rect.right) / 2 ? 0 : 1);
+        caret = start + i + (x < (rect.left + rect.right) / 2 ? 0 : 1);
       }
     }
-
-    nodeStart += length;
   }
 
-  return best;
+  return caret;
 }

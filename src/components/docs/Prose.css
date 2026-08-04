@@ -12,11 +12,11 @@
   color: var(--color-text-primary);
 }
 
-:is(.docs-prose, .docs-table) .note-link {
+.docs-prose .note-link {
   cursor: pointer;
 }
 
-:is(.docs-prose, .docs-table) .note-link:hover {
+.docs-prose .note-link:hover {
   color: var(--accent-text);
 }
 

@@ -569,6 +569,11 @@ export const en: Messages = {
       greetingTemplate: "Hi {;name}, welcome to {;place}!",
       noteSample:
         "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link, e.g. https://example.com. Click away to see it rendered again.",
+      tableSample: `| Exit code | Meaning | Action |
+| :---: | --- | --- |
+| 126 | Permission denied | \`chmod +x\` the script |
+| 127 | Command not found | Check your \`PATH\` |
+| 137 | Killed (out of memory) | **Raise the memory limit** |`,
     },
     gettingStarted: {
       intro:
@@ -702,7 +707,7 @@ export const en: Messages = {
         "Write a `|` after the key, then the piece you want in square brackets. Counting starts at zero, and the second number marks where to **stop without including it**: `[:7]` is the first seven characters, and `[2:5]` is characters two, three and four. Leave a number out to run all the way to that end.",
       positionsHint:
         "Negative numbers count back from the end, so `[-2:]` is the last two characters. A date shows the three forms side by side:",
-      step: "A third number is the **step**. In a version number the dots sit on the odd positions, so `[::2]` skips them and leaves just the digits. A negative step walks backwards, which is all it takes to reverse a value:",
+      step: "A third number is the **step**. In a version number the dots sit on the odd positions, so `[::2]` skips them and leaves just the digits, which is what you want in a filename, where a dot reads as another extension. A negative step walks backwards, so `[::-1]` on its own reverses a value:",
       invalid:
         "If a slice does not make sense, such as a step of zero, the whole reference stays **unresolved** and shows up exactly as you typed it, so the mistake is easy to spot. Asking for more characters than there are is fine, though: you simply get the ones that exist.",
       python:
@@ -750,8 +755,16 @@ export const en: Messages = {
       styles:
         "Three text styles are selectable on hover: **heading** (large, bold), **subheading** (medium, accented), and **body** (the default prose).",
       markdown: "Notes support markdown formatting:",
-      tableSyntax: "Syntax",
-      tableResult: "Result",
+      markdownTable: `| Syntax | Result |
+| --- | --- |
+| \\**bold-text\\** | **bold-text** |
+| \\_italic-text\\_ | _italic-text_ |
+| \\\`code-text\\\` | \`code-text\` |
+| \\[labelled-link](\\https://example.com) | [labelled-link](https://example.com) |`,
+      escapes:
+        "A `\\` in front of a mark makes it literal: `\\**text\\**` shows the asterisks instead of turning the text bold. Escape both ends of a pair, and note that nothing is escaped inside `code`, where a backslash is part of the content.",
+      tables:
+        "Notes also support [GitHub-flavored markdown tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): cells separated by `|` bars, with a row of dashes under the header. Click the note below to see the raw syntax.",
       autoUrls:
         "Bare URLs are detected automatically and become clickable links, no markdown needed.",
       noNesting:

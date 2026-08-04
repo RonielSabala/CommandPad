@@ -181,9 +181,9 @@ export function VariableSlicingDocs() {
       <DemoWorkspace
         tabs={[
           {
-            variables: [demoVariable("VERSION", "1.2.3")],
+            variables: [demoVariable("VERSION", "1.4.2")],
             blocks: [
-              demoCommand("echo {VERSION|[::2]}"),
+              demoCommand("zip -r backup-v{VERSION|[::2]}.zip ~/Documents"),
               demoCommand("echo {VERSION|[::-1]}"),
             ],
           },

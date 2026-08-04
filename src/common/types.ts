@@ -3,8 +3,10 @@ import type {
   CloudProvider,
   CommandSegmentType,
   InsertPosition,
+  NoteNodeType,
   NoteSegmentType,
   NoteStyle,
+  NoteTableAlign,
 } from "./enums";
 
 export interface NoteBlock {
@@ -88,3 +90,17 @@ export interface NoteSegment {
   href?: string;
   start: number;
 }
+
+export interface NoteTableCell {
+  align: NoteTableAlign;
+  segments: NoteSegment[];
+}
+
+export interface NoteTable {
+  head: NoteTableCell[];
+  rows: NoteTableCell[][];
+}
+
+export type NoteNode =
+  | { type: typeof NoteNodeType.TEXT; segments: NoteSegment[] }
+  | { type: typeof NoteNodeType.TABLE; table: NoteTable };

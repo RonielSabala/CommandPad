@@ -1,6 +1,5 @@
 import { ImageBlockConfig } from "@/common/config";
 import { BlocksList } from "@/components/blocks/BlocksList";
-import { NoteText } from "@/components/blocks/note/NoteText";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { formatFileSize } from "@/utils/format";
@@ -12,7 +11,7 @@ import {
   demoNote,
 } from "../demos/demoSeeds";
 import { DemoWorkspace } from "../demos/DemoWorkspace";
-import { Prose, ProseList } from "../Prose";
+import { Prose, ProseList, ProseTable } from "../Prose";
 
 const LONG_COMMAND = joinLines([
   "echo 'Starting backup...' \\",
@@ -59,13 +58,6 @@ const DEMO_TOPOLOGY_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="440" h
 const DEMO_PIPELINE_SRC = `data:image/svg+xml,${encodeURIComponent(DEMO_PIPELINE_SVG)}`;
 const DEMO_TOPOLOGY_SRC = `data:image/svg+xml,${encodeURIComponent(DEMO_TOPOLOGY_SVG)}`;
 
-const MARKDOWN_EXAMPLES = [
-  "**bold-text**",
-  "_italic-text_",
-  "`code-text`",
-  "[labelled-link](https://example.com)",
-];
-
 export function BlocksDocs() {
   const t = useTranslation();
 
@@ -106,26 +98,8 @@ export function NoteBlockDocs() {
       <Prose text={t.docs.noteBlock.intro} />
       <Prose text={t.docs.noteBlock.styles} />
       <Prose text={t.docs.noteBlock.markdown} />
-
-      <table className="docs-table">
-        <thead>
-          <tr>
-            <th>{t.docs.noteBlock.tableSyntax}</th>
-            <th>{t.docs.noteBlock.tableResult}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {MARKDOWN_EXAMPLES.map((example) => (
-            <tr key={example}>
-              <td>{example}</td>
-              <td>
-                <NoteText text={example} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
+      <ProseTable text={t.docs.noteBlock.markdownTable} />
+      <Prose text={t.docs.noteBlock.escapes} />
       <Prose text={t.docs.noteBlock.links} />
 
       <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.noteSample)] }]}>
@@ -135,6 +109,12 @@ export function NoteBlockDocs() {
       <Prose text={t.docs.noteBlock.noNesting} />
       <Prose text={t.docs.noteBlock.autoUrls} />
       <Prose text={t.docs.noteBlock.wrapKeys} />
+
+      <Prose text={t.docs.noteBlock.tables} />
+
+      <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.tableSample)] }]}>
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }

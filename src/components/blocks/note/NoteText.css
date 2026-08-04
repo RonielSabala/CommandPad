@@ -1,3 +1,5 @@
+/* --- INLINE MARKDOWN --- */
+
 .note-bold,
 .note-italic,
 .note-code,
@@ -44,4 +46,42 @@
 
 body.select-key-held:not(.read-mode) .note-link {
   pointer-events: none;
+}
+
+/* --- TABLE --- */
+
+.note-table {
+  border-collapse: collapse;
+  margin: var(--space-4) 0;
+  white-space: normal;
+}
+
+.note-table :is(th, td) {
+  padding: var(--space-4) var(--space-12) var(--space-4) 0;
+  border-bottom: var(--border-standard);
+  vertical-align: top;
+}
+
+.note-table :is(th, td):last-child {
+  padding-right: 0;
+}
+
+.note-table th {
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.note-table [data-note-align="left"] {
+  text-align: left;
+}
+
+.note-table [data-note-align="center"] {
+  text-align: center;
+}
+
+.note-table [data-note-align="right"] {
+  text-align: right;
 }

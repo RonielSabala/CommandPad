@@ -1,7 +1,11 @@
 import { DuplicateNameConfig } from "@/common/config";
 
+export function splitLines(text: string): string[] {
+  return text.split("\n");
+}
+
 export function countLines(text: string): number {
-  return text.split("\n").length;
+  return splitLines(text).length;
 }
 
 export function joinLines(lines: string[]): string {
