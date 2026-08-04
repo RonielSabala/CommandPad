@@ -1,4 +1,8 @@
-import { MarkdownTable, MarkdownToken } from "@/common/config";
+import {
+  MarkdownEscapeRegex,
+  MarkdownTable,
+  MarkdownToken,
+} from "@/common/config";
 import { NoteNodeType, NoteSegmentType, NoteTableAlign } from "@/common/enums";
 import type {
   NoteNode,
@@ -21,6 +25,10 @@ const NOTE_TOKEN_REGEX = new RegExp(
 
 const SEPARATOR = MarkdownTable.CELL_SEPARATOR;
 
+function unescape(text: string): string {
+  return text.replace(MarkdownEscapeRegex, "$1");
+}
+
 function parseNoteText(text: string, offset = 0): NoteSegment[] {
   const segments: NoteSegment[] = [];
 
@@ -36,7 +44,7 @@ function parseNoteText(text: string, offset = 0): NoteSegment[] {
     if (matchIdx > lastIndex) {
       segments.push({
         type: NoteSegmentType.TEXT,
-        text: text.slice(lastIndex, matchIdx),
+        text: unescape(text.slice(lastIndex, matchIdx)),
         start: offset + lastIndex,
       });
     }
@@ -61,19 +69,19 @@ function parseNoteText(text: string, offset = 0): NoteSegment[] {
     } else if (bold !== undefined) {
       segments.push({
         type: NoteSegmentType.BOLD,
-        text: bold,
+        text: unescape(bold),
         start: startOf(bold),
       });
     } else if (italic !== undefined) {
       segments.push({
         type: NoteSegmentType.ITALIC,
-        text: italic,
+        text: unescape(italic),
         start: startOf(italic),
       });
     } else if (linkLabel !== undefined && linkHref !== undefined) {
       segments.push({
         type: NoteSegmentType.LINK,
-        text: linkLabel,
+        text: unescape(linkLabel),
         href: linkHref,
         start: startOf(linkLabel),
       });
@@ -91,7 +99,7 @@ function parseNoteText(text: string, offset = 0): NoteSegment[] {
   if (lastIndex < text.length) {
     segments.push({
       type: NoteSegmentType.TEXT,
-      text: text.slice(lastIndex),
+      text: unescape(text.slice(lastIndex)),
       start: offset + lastIndex,
     });
   }
@@ -104,14 +112,22 @@ interface RawCell {
   start: number;
 }
 
+function hasSeparator(line: string): boolean {
+  return MarkdownTable.SEPARATOR_REGEX.test(line);
+}
+
 /** The trimmed cells of one table row, each with its index in the raw note. */
 function splitRowCells(line: string, lineStart: number): RawCell[] {
   const cells: RawCell[] = [];
 
   let offset = lineStart;
-  for (const part of line.split(SEPARATOR)) {
+  for (const part of line.split(MarkdownTable.SEPARATOR_REGEX)) {
     const leading = part.length - part.trimStart().length;
-    cells.push({ text: part.trim(), start: offset + leading });
+    const text = part
+      .trim()
+      .replace(MarkdownTable.ESCAPED_SEPARATOR_REGEX, SEPARATOR);
+
+    cells.push({ text, start: offset + leading });
     offset += part.length + SEPARATOR.length;
   }
 
@@ -120,7 +136,10 @@ function splitRowCells(line: string, lineStart: number): RawCell[] {
   if (trimmed.startsWith(SEPARATOR)) {
     cells.shift();
   }
-  if (trimmed.length > SEPARATOR.length && trimmed.endsWith(SEPARATOR)) {
+  if (
+    trimmed.length > SEPARATOR.length &&
+    MarkdownTable.TRAILING_SEPARATOR_REGEX.test(trimmed)
+  ) {
     cells.pop();
   }
 
@@ -171,8 +190,8 @@ function readTable(
 
   if (
     delimiter === undefined ||
-    !header.includes(SEPARATOR) ||
-    !delimiter.includes(SEPARATOR)
+    !hasSeparator(header) ||
+    !hasSeparator(delimiter)
   ) {
     return null;
   }
@@ -191,7 +210,7 @@ function readTable(
   const rows: NoteTableCell[][] = [];
 
   let end = line + 2;
-  while (end < lines.length && lines[end].includes(SEPARATOR)) {
+  while (end < lines.length && hasSeparator(lines[end])) {
     rows.push(toRow(splitRowCells(lines[end], starts[end]), aligns));
     end++;
   }

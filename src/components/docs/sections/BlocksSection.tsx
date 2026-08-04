@@ -99,6 +99,7 @@ export function NoteBlockDocs() {
       <Prose text={t.docs.noteBlock.styles} />
       <Prose text={t.docs.noteBlock.markdown} />
       <ProseTable text={t.docs.noteBlock.markdownTable} />
+      <Prose text={t.docs.noteBlock.escapes} />
       <Prose text={t.docs.noteBlock.links} />
 
       <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.noteSample)] }]}>
@@ -110,7 +111,6 @@ export function NoteBlockDocs() {
       <Prose text={t.docs.noteBlock.wrapKeys} />
 
       <Prose text={t.docs.noteBlock.tables} />
-      <Prose text={t.docs.noteBlock.tableRules} />
 
       <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.tableSample)] }]}>
         <BlocksList />

@@ -431,8 +431,8 @@ export interface Messages {
       styles: string;
       markdown: string;
       markdownTable: string;
+      escapes: string;
       tables: string;
-      tableRules: string;
       autoUrls: string;
       noNesting: string;
       links: string;

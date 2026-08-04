@@ -74,20 +74,40 @@ export const MarkdownSyntax = {
   IMAGE: (alt: string, src: string) => `![${alt}](${src})`,
 } as const;
 
+const NOT_ESCAPED = /(?<!\\)/.source;
+const notEscaped = (source: string) => `${NOT_ESCAPED}${source}`;
+const globalRegex = (source: string) => new RegExp(source, "g");
+
 export const MarkdownToken = {
-  CODE_REGEX: /(?<codeFence>[`´])(?<code>.+?)\k<codeFence>/g,
-  BOLD_REGEX: /\*\*(?<bold>.+?)\*\*/g,
-  ITALIC_REGEX:
-    /(?<!\*)\*(?!\*)(?<italicStar>.+?)(?<!\*)\*(?!\*)|_(?<italicUnderscore>.+?)_/g,
-  LINK_REGEX: /\[(?<linkLabel>[^\]]+)\]\((?<linkHref>https?:\/\/[^\s)]+)\)/g,
-  URL_REGEX:
-    /(?<url>https?:\/\/[^\s<>"{}|\\^`[\]]*[^\s<>"{}|\\^`[\].,;:!?()-])/g,
+  CODE_REGEX: globalRegex(
+    notEscaped(/(?<codeFence>[`´])(?<code>.+?)\k<codeFence>/.source),
+  ),
+  BOLD_REGEX: globalRegex(notEscaped(/\*\*(?<bold>.+?)\*\*/.source)),
+  ITALIC_REGEX: globalRegex(
+    `${notEscaped(/(?<!\*)\*(?!\*)(?<italicStar>.+?)(?<!\*)\*(?!\*)/.source)}|${notEscaped(/_(?<italicUnderscore>.+?)_/.source)}`,
+  ),
+  LINK_REGEX: globalRegex(
+    notEscaped(
+      /\[(?<linkLabel>[^\]]+)\]\((?<linkHref>https?:\/\/[^\s)]+)\)/.source,
+    ),
+  ),
+  URL_REGEX: globalRegex(
+    notEscaped(
+      /(?<url>https?:\/\/[^\s<>"{}|\\^`[\]]*[^\s<>"{}|\\^`[\].,;:!?()-])/
+        .source,
+    ),
+  ),
 } as const;
+
+export const MarkdownEscapeRegex = /\\([*_`´[|])|\\(?=https?:\/\/)/g;
 
 export const MarkdownTable = {
   CELL_SEPARATOR: "|",
   ALIGN_MARKER: ":",
   DELIMITER_CELL_REGEX: /^:?-+:?$/,
+  SEPARATOR_REGEX: new RegExp(notEscaped(/\|/.source)),
+  TRAILING_SEPARATOR_REGEX: new RegExp(notEscaped(/\|$/.source)),
+  ESCAPED_SEPARATOR_REGEX: /\\\|/g,
 } as const;
 
 export const MarkdownWrap = {
@@ -107,7 +127,9 @@ export const WrapPairs = {
 // Variables
 
 export const VariableTokenRegex = /\{((?:[^{}]|\{[^{}]*\})+)\}/g;
-export const CommandVariableTokenRegex = /(?<!\\)\{((?:[^{}]|\{[^{}]*\})+)\}/g;
+export const CommandVariableTokenRegex = globalRegex(
+  notEscaped(VariableTokenRegex.source),
+);
 export const EscapedBraceOpenRegex = /\\\{/g;
 export const VariableParamPlaceholderRegex = /\{;([^};]+)\}/g;
 export const TokenWhitespaceRegex = /\s+/g;

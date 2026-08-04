@@ -579,10 +579,11 @@ export const es: Messages = {
       greetingTemplate: "¡Hola {;name}, bienvenido a {;place}!",
       noteSample:
         "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace, p. ej. https://example.com. Haz clic fuera para verla renderizada de nuevo.",
-      tableSample: `| Comando | Qué hace | Riesgo |
-| --- | --- | :---: |
-| \`git status\` | Muestra lo que cambió | bajo |
-| \`git push --force\` | Sobrescribe la rama remota | **alto** |`,
+      tableSample: `| Código de salida | Significado | Acción |
+| :---: | --- | --- |
+| 126 | Permiso denegado | Dale permisos con \`chmod +x\` |
+| 127 | Comando no encontrado | Revisa tu \`PATH\` |
+| 137 | Terminado (sin memoria) | **Aumenta el límite de memoria** |`,
     },
     gettingStarted: {
       intro:
@@ -768,14 +769,14 @@ export const es: Messages = {
       markdown: "Las notas soportan formato markdown:",
       markdownTable: `| Sintaxis | Resultado |
 | --- | --- |
-| \`**texto-en-negrita**\` | **texto-en-negrita** |
-| \`_texto-en-cursiva_\` | _texto-en-cursiva_ |
-| ´\`texto-de-código\`´ | \`texto-de-código\` |
-| \`[enlace-con-etiqueta](https://example.com)\` | [enlace-con-etiqueta](https://example.com) |`,
+| \\**texto-en-negrita\\** | **texto-en-negrita** |
+| \\_texto-en-cursiva\\_ | _texto-en-cursiva_ |
+| \\\`texto-de-código\\\` | \`texto-de-código\` |
+| \\[enlace-con-etiqueta](\\https://example.com) | [enlace-con-etiqueta](https://example.com) |`,
+      escapes:
+        "Una `\\` delante de una marca la vuelve literal: `\\**texto\\**` muestra los asteriscos en lugar de poner el texto en negrita. Escapa ambos extremos de un par, y ten en cuenta que dentro de `código` no se escapa nada, porque ahí la barra invertida es parte del contenido.",
       tables:
         "Las notas también soportan [tablas markdown al estilo GitHub](https://docs.github.com/es/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): celdas separadas por barras `|`, con una fila de guiones debajo del encabezado. Haz clic en la nota de abajo para ver la sintaxis en bruto.",
-      tableRules:
-        "La única diferencia con esa sintaxis: no hay escape en las notas, así que una celda no puede contener una `|`.",
       autoUrls:
         "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables, sin necesidad de markdown.",
       noNesting:

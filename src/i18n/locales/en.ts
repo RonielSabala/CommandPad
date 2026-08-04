@@ -569,10 +569,11 @@ export const en: Messages = {
       greetingTemplate: "Hi {;name}, welcome to {;place}!",
       noteSample:
         "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link, e.g. https://example.com. Click away to see it rendered again.",
-      tableSample: `| Command | What it does | Risk |
-| --- | --- | :---: |
-| \`git status\` | Shows what changed | low |
-| \`git push --force\` | Overwrites the remote branch | **high** |`,
+      tableSample: `| Exit code | Meaning | Action |
+| :---: | --- | --- |
+| 126 | Permission denied | \`chmod +x\` the script |
+| 127 | Command not found | Check your \`PATH\` |
+| 137 | Killed (out of memory) | **Raise the memory limit** |`,
     },
     gettingStarted: {
       intro:
@@ -756,14 +757,14 @@ export const en: Messages = {
       markdown: "Notes support markdown formatting:",
       markdownTable: `| Syntax | Result |
 | --- | --- |
-| \`**bold-text**\` | **bold-text** |
-| \`_italic-text_\` | _italic-text_ |
-| ´\`code-text\`´ | \`code-text\` |
-| \`[labelled-link](https://example.com)\` | [labelled-link](https://example.com) |`,
+| \\**bold-text\\** | **bold-text** |
+| \\_italic-text\\_ | _italic-text_ |
+| \\\`code-text\\\` | \`code-text\` |
+| \\[labelled-link](\\https://example.com) | [labelled-link](https://example.com) |`,
+      escapes:
+        "A `\\` in front of a mark makes it literal: `\\**text\\**` shows the asterisks instead of turning the text bold. Escape both ends of a pair, and note that nothing is escaped inside `code`, where a backslash is part of the content.",
       tables:
         "Notes also support [GitHub-flavored markdown tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): cells separated by `|` bars, with a row of dashes under the header. Click the note below to see the raw syntax.",
-      tableRules:
-        "The one difference from that syntax: there's no escaping in notes, so a cell can't contain a `|`.",
       autoUrls:
         "Bare URLs are detected automatically and become clickable links, no markdown needed.",
       noNesting:
