@@ -2,7 +2,7 @@ import {
   CommandVariableTokenRegex,
   VariableParamPlaceholderRegex,
   VariableSyntax,
-} from "@/common/config";
+} from "@/common/variableSyntax";
 
 import type { VariableMap } from "./types";
 

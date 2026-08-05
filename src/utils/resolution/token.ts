@@ -1,4 +1,4 @@
-import { EscapedBraceOpenRegex, VariableSyntax } from "@/common/config";
+import { EscapedBraceOpenRegex, VariableSyntax } from "@/common/variableSyntax";
 
 /** Drops the backslash that escapes a reference. */
 export function unescapeBraces(text: string): string {

@@ -1,5 +1,5 @@
-import { MarkdownSyntax } from "@/common/config";
 import { BlockType } from "@/common/enums";
+import { MarkdownSyntax } from "@/common/markdownSyntax";
 import type { BlockDefinition } from "./types";
 
 export const dividerBlockDefinition: BlockDefinition<typeof BlockType.DIVIDER> =

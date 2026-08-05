@@ -1,6 +1,9 @@
-import { CommandVariableTokenRegex, VariableSyntax } from "@/common/config";
 import { CommandSegmentType } from "@/common/enums";
 import type { CommandSegment } from "@/common/types";
+import {
+  CommandVariableTokenRegex,
+  VariableSyntax,
+} from "@/common/variableSyntax";
 
 import { applyOperations } from "./operations";
 import {

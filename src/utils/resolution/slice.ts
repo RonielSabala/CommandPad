@@ -2,7 +2,7 @@ import {
   SliceSyntax,
   TokenWhitespaceRegex,
   VariableSliceRegex,
-} from "@/common/config";
+} from "@/common/variableSyntax";
 
 export interface SliceSpec {
   start: number | null;

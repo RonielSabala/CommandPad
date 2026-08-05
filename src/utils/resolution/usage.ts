@@ -1,6 +1,9 @@
 import { getBlockCommandTexts } from "@/blocks";
-import { CommandVariableTokenRegex, VariableTokenRegex } from "@/common/config";
 import type { Block, Variable } from "@/common/types";
+import {
+  CommandVariableTokenRegex,
+  VariableTokenRegex,
+} from "@/common/variableSyntax";
 
 import { getTokenKey } from "./token";
 import { getVariableKey } from "./variables";

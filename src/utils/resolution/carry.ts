@@ -1,5 +1,5 @@
-import { VariableSyntax } from "@/common/config";
 import type { Block, Variable } from "@/common/types";
+import { CopySuffixRegex, VariableSyntax } from "@/common/variableSyntax";
 import { generateId } from "@/utils/id";
 
 import { renameAllValueTokens } from "./rename";
@@ -10,7 +10,7 @@ export function uniqueCopyKey(
   key: string,
   takenKeys: ReadonlySet<string>,
 ): string {
-  const stem = key.replace(VariableSyntax.COPY_SUFFIX_REGEX, "");
+  const stem = key.replace(CopySuffixRegex, "");
   const base = `${stem}${VariableSyntax.COPY_SUFFIX}`;
   let candidate = base;
   let counter = 1; // Copy numbering start

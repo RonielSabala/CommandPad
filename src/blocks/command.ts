@@ -1,5 +1,5 @@
-import { MarkdownSyntax } from "@/common/config";
 import { BlockType } from "@/common/enums";
+import { MarkdownSyntax } from "@/common/markdownSyntax";
 import { joinLines } from "@/utils/string";
 import { isBoolean, isString } from "@/utils/typeGuards";
 import type { BlockDefinition } from "./types";

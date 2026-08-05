@@ -1,5 +1,5 @@
-import { MarkdownSyntax } from "@/common/config";
 import { BlockType, NoteStyle } from "@/common/enums";
+import { MarkdownSyntax } from "@/common/markdownSyntax";
 import { isString } from "@/utils/typeGuards";
 import type { BlockDefinition } from "./types";
 

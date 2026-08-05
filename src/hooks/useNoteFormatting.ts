@@ -1,13 +1,13 @@
-import { MarkdownWrap } from "@/common/config";
+import { MarkdownDelimiter } from "@/common/markdownSyntax";
 import { usePairWrapping, wrapSelection } from "@/hooks/usePairWrapping";
 import { useCallback, type KeyboardEvent } from "react";
 
 const WRAP_BY_KEY: Record<string, string> = {
-  b: MarkdownWrap.BOLD,
-  i: MarkdownWrap.ITALIC,
-  dead: MarkdownWrap.CODE,
-  "`": MarkdownWrap.CODE,
-  "´": MarkdownWrap.CODE,
+  b: MarkdownDelimiter.BOLD,
+  i: MarkdownDelimiter.ITALIC,
+  dead: MarkdownDelimiter.CODE,
+  [MarkdownDelimiter.CODE]: MarkdownDelimiter.CODE,
+  [MarkdownDelimiter.CODE_ALT]: MarkdownDelimiter.CODE,
 };
 
 export function useNoteFormatting(

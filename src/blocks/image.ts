@@ -1,5 +1,5 @@
-import { MarkdownSyntax } from "@/common/config";
 import { BlockType } from "@/common/enums";
+import { MarkdownSyntax } from "@/common/markdownSyntax";
 import { normalizeImageSrc } from "@/utils/image";
 import { isString } from "@/utils/typeGuards";
 import type { BlockDefinition } from "./types";

@@ -1,4 +1,7 @@
-import { CommandVariableTokenRegex, VariableTokenRegex } from "@/common/config";
+import {
+  CommandVariableTokenRegex,
+  VariableTokenRegex,
+} from "@/common/variableSyntax";
 
 import { braceToken, getTokenKey } from "./token";
 
