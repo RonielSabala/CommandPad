@@ -805,7 +805,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       mode: AppMode.EDIT,
       theme: Theme.DARK,
       language: detectLanguage(),
-      spellcheckEnabled: false,
+      spellcheckEnabled: true,
       sidebarCollapsed: false,
       sidebarPosition: SidebarPosition.LEFT,
       sidebarWidth: SidebarWidth.DEFAULT,
