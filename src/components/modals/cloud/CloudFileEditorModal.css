@@ -5,6 +5,10 @@
   padding: var(--modal-cloud-padding-y) var(--modal-cloud-padding-x);
 }
 
+.modal-cloud-editor .modal-title .note-code {
+  word-break: break-all;
+}
+
 .cloud-file-editor-status {
   flex: 1;
   display: flex;

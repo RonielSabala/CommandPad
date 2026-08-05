@@ -75,6 +75,7 @@ export interface Messages {
     minimap: string;
     moveMinimapLeft: string;
     moveMinimapRight: string;
+    spellcheck: string;
   };
   runbooks: {
     title: string;
@@ -219,7 +220,7 @@ export interface Messages {
     duplicate: string;
     download: string;
     delete: string;
-    editTitle: (filename: string) => string;
+    editTitle: (path: string) => string;
     editHint: string;
     saveName: string;
     cancelRename: string;
@@ -432,6 +433,7 @@ export interface Messages {
       markdown: string;
       markdownTable: string;
       escapes: string;
+      spellcheck: string;
       tables: string;
       autoUrls: string;
       noNesting: string;

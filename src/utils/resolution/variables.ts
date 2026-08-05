@@ -1,5 +1,5 @@
-import { VariableTokenRegex } from "@/common/config";
 import type { Variable } from "@/common/types";
+import { VariableTokenRegex } from "@/common/variableSyntax";
 
 import type { VariableMap } from "./types";
 

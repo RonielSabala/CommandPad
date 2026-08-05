@@ -37,6 +37,7 @@ interface PersistedUiState {
   mode: AppMode;
   theme: Theme;
   language: Language;
+  spellcheckEnabled: boolean;
   sidebarCollapsed: boolean;
   sidebarPosition: SidebarPosition;
   sidebarWidth: number;
@@ -59,6 +60,7 @@ export function saveUiState(ui: PersistedUiState): void {
         mode: ui.mode,
         theme: ui.theme,
         language: ui.language,
+        spellcheckEnabled: ui.spellcheckEnabled,
         sidebarCollapsed: ui.sidebarCollapsed
           ? SectionState.COLLAPSED
           : SectionState.EXPANDED,
@@ -91,6 +93,7 @@ export function loadUiState(): Partial<PersistedUiState> | null {
       mode: saved.mode === AppMode.READ ? AppMode.READ : AppMode.EDIT,
       theme: saved.theme === Theme.LIGHT ? Theme.LIGHT : Theme.DARK,
       language: isLanguage(saved.language) ? saved.language : detectLanguage(),
+      spellcheckEnabled: saved.spellcheckEnabled === true,
       sidebarCollapsed: saved.sidebarCollapsed === SectionState.COLLAPSED,
       sidebarPosition:
         saved.sidebarPosition === SidebarPosition.RIGHT

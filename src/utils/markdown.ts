@@ -1,9 +1,10 @@
+import { NoteNodeType, NoteSegmentType, NoteTableAlign } from "@/common/enums";
 import {
+  MarkdownDelimiter,
   MarkdownEscapeRegex,
   MarkdownTable,
   MarkdownToken,
-} from "@/common/config";
-import { NoteNodeType, NoteSegmentType, NoteTableAlign } from "@/common/enums";
+} from "@/common/markdownSyntax";
 import type {
   NoteNode,
   NoteSegment,
@@ -23,7 +24,7 @@ const NOTE_TOKEN_REGEX = new RegExp(
   "g",
 );
 
-const SEPARATOR = MarkdownTable.CELL_SEPARATOR;
+const SEPARATOR = MarkdownDelimiter.TABLE_SEPARATOR;
 
 function unescape(text: string): string {
   return text.replace(MarkdownEscapeRegex, "$1");
@@ -52,7 +53,7 @@ function parseNoteText(text: string, offset = 0): NoteSegment[] {
     const groups = match.groups;
     const code = groups?.code;
     const bold = groups?.bold;
-    const italic = groups?.italicStar ?? groups?.italicUnderscore;
+    const italic = groups?.italicAlt ?? groups?.italic;
     const linkLabel = groups?.linkLabel;
     const linkHref = groups?.linkHref;
     const url = groups?.url;
@@ -154,8 +155,8 @@ function isDelimiterRow(cells: RawCell[]): boolean {
 }
 
 function readAlign(delimiter: string): NoteTableAlign {
-  const opens = delimiter.startsWith(MarkdownTable.ALIGN_MARKER);
-  const closes = delimiter.endsWith(MarkdownTable.ALIGN_MARKER);
+  const opens = delimiter.startsWith(MarkdownDelimiter.TABLE_ALIGN);
+  const closes = delimiter.endsWith(MarkdownDelimiter.TABLE_ALIGN);
 
   if (opens && closes) {
     return NoteTableAlign.CENTER;

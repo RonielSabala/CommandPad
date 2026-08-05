@@ -21,12 +21,14 @@ export function WorkspaceContextMenu({ anchor, onClose }: Props) {
   const minimapOnLeft = useStore(
     (state) => state.minimapPosition === SidebarPosition.LEFT,
   );
+  const spellcheckEnabled = useStore((state) => state.spellcheckEnabled);
 
   const copyRunbookMarkdown = useStore((state) => state.copyRunbookMarkdown);
   const toggleMinimap = useStore((state) => state.toggleMinimap);
   const toggleMinimapPosition = useStore(
     (state) => state.toggleMinimapPosition,
   );
+  const toggleSpellcheck = useStore((state) => state.toggleSpellcheck);
 
   return (
     <ContextMenu anchor={anchor} onClose={onClose}>
@@ -50,6 +52,12 @@ export function WorkspaceContextMenu({ anchor, onClose }: Props) {
             : t.contextMenu.moveMinimapLeft}
         </ContextMenuItem>
       )}
+
+      <ContextMenuSeparator />
+
+      <ContextMenuItem checked={spellcheckEnabled} onSelect={toggleSpellcheck}>
+        {t.contextMenu.spellcheck}
+      </ContextMenuItem>
     </ContextMenu>
   );
 }

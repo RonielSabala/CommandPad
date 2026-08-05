@@ -125,6 +125,7 @@ interface ConfirmOptions extends AlertOptions {
 
 export interface CloudFileEditor {
   file: CloudEntry;
+  folderPath: CloudFolderRef[];
   folderId: string | null;
   original: string;
   text: string;
@@ -145,6 +146,7 @@ export interface StoreState {
   mode: AppMode;
   theme: Theme;
   language: Language;
+  spellcheckEnabled: boolean;
   sidebarCollapsed: boolean;
   sidebarPosition: SidebarPosition;
   sidebarWidth: number;
@@ -290,6 +292,7 @@ export interface StoreState {
   setAppMode: (mode: AppMode) => void;
   toggleAppMode: () => void;
   toggleTheme: () => void;
+  toggleSpellcheck: () => void;
   setLanguage: (language: Language) => void;
   toggleSidebar: () => void;
   toggleMinimap: () => void;
@@ -384,11 +387,17 @@ function cloudSearchMatch(
   );
 }
 
+/** The path to the folder holding `entry`, listed or found by search. */
+function parentFolderPath(
+  state: StoreState,
+  entry: CloudEntry,
+): CloudFolderRef[] {
+  return cloudSearchMatch(state, entry)?.path ?? state.cloudPath;
+}
+
 /** The folder holding `entry`, whether it was listed or found by search. */
 function parentFolderId(state: StoreState, entry: CloudEntry): string | null {
-  return currentFolderId(
-    cloudSearchMatch(state, entry)?.path ?? state.cloudPath,
-  );
+  return currentFolderId(parentFolderPath(state, entry));
 }
 
 function siblingEntries(state: StoreState, entry: CloudEntry): CloudEntry[] {
@@ -415,6 +424,7 @@ function uiStateSnapshot(state: StoreState) {
     mode: state.mode,
     theme: state.theme,
     language: state.language,
+    spellcheckEnabled: state.spellcheckEnabled,
     sidebarCollapsed: state.sidebarCollapsed,
     sidebarPosition: state.sidebarPosition,
     sidebarWidth: state.sidebarWidth,
@@ -802,6 +812,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       mode: AppMode.EDIT,
       theme: Theme.DARK,
       language: detectLanguage(),
+      spellcheckEnabled: true,
       sidebarCollapsed: false,
       sidebarPosition: SidebarPosition.LEFT,
       sidebarWidth: SidebarWidth.DEFAULT,
@@ -2033,6 +2044,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         persist.saveUiState(uiStateSnapshot(get()));
       },
 
+      toggleSpellcheck: () => {
+        set((s) => ({ spellcheckEnabled: !s.spellcheckEnabled }));
+        persist.saveUiState(uiStateSnapshot(get()));
+      },
+
       setLanguage: (language) => {
         if (get().language === language) {
           return;
@@ -2668,6 +2684,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set({
           cloudFileEditor: {
             file,
+            folderPath: parentFolderPath(get(), file),
             folderId: parentFolderId(get(), file),
             original: "",
             text: "",

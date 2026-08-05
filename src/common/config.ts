@@ -63,93 +63,12 @@ export const DocsScrollSpy = {
   THRESHOLD: 0,
 } as const;
 
-// Markdown config
-
-export const MarkdownSyntax = {
-  HEADING: "#",
-  SUBHEADING: "##",
-  DIVIDER: "---",
-  CODE_FENCE: "```bash",
-  CODE_FENCE_END: "```",
-  IMAGE: (alt: string, src: string) => `![${alt}](${src})`,
-} as const;
-
-const NOT_ESCAPED = /(?<!\\)/.source;
-const notEscaped = (source: string) => `${NOT_ESCAPED}${source}`;
-const globalRegex = (source: string) => new RegExp(source, "g");
-
-export const MarkdownToken = {
-  CODE_REGEX: globalRegex(
-    notEscaped(/(?<codeFence>[`´])(?<code>.+?)\k<codeFence>/.source),
-  ),
-  BOLD_REGEX: globalRegex(notEscaped(/\*\*(?<bold>.+?)\*\*/.source)),
-  ITALIC_REGEX: globalRegex(
-    `${notEscaped(/(?<!\*)\*(?!\*)(?<italicStar>.+?)(?<!\*)\*(?!\*)/.source)}|${notEscaped(/_(?<italicUnderscore>.+?)_/.source)}`,
-  ),
-  LINK_REGEX: globalRegex(
-    notEscaped(
-      /\[(?<linkLabel>[^\]]+)\]\((?<linkHref>https?:\/\/[^\s)]+)\)/.source,
-    ),
-  ),
-  URL_REGEX: globalRegex(
-    notEscaped(
-      /(?<url>https?:\/\/[^\s<>"{}|\\^`[\]]*[^\s<>"{}|\\^`[\].,;:!?()-])/
-        .source,
-    ),
-  ),
-} as const;
-
-export const MarkdownEscapeRegex = /\\([*_`´[|])|\\(?=https?:\/\/)/g;
-
-export const MarkdownTable = {
-  CELL_SEPARATOR: "|",
-  ALIGN_MARKER: ":",
-  DELIMITER_CELL_REGEX: /^:?-+:?$/,
-  SEPARATOR_REGEX: new RegExp(notEscaped(/\|/.source)),
-  TRAILING_SEPARATOR_REGEX: new RegExp(notEscaped(/\|$/.source)),
-  ESCAPED_SEPARATOR_REGEX: /\\\|/g,
-} as const;
-
-export const MarkdownWrap = {
-  BOLD: "**",
-  ITALIC: "_",
-  CODE: "`",
-} as const;
-
 export const WrapPairs = {
   "(": ")",
   "[": "]",
   "{": "}",
   '"': '"',
   "'": "'",
-} as const;
-
-// Variables
-
-export const VariableTokenRegex = /\{((?:[^{}]|\{[^{}]*\})+)\}/g;
-export const CommandVariableTokenRegex = globalRegex(
-  notEscaped(VariableTokenRegex.source),
-);
-export const EscapedBraceOpenRegex = /\\\{/g;
-export const VariableParamPlaceholderRegex = /\{;([^};]+)\}/g;
-export const TokenWhitespaceRegex = /\s+/g;
-
-export const VariableSliceRegex = /^\[(-?\d*)(?::(-?\d*)(?::(-?\d*))?)?\]$/;
-export const VariableSyntax = {
-  PARAM_SEPARATOR: ";",
-  PARAM_ASSIGNMENT: "=",
-  OPERATION_SEPARATOR: "|",
-  BRACE_OPEN: "{",
-  BRACE_CLOSE: "}",
-  COPY_SUFFIX: "_COPY",
-  COPY_SUFFIX_REGEX: /_COPY\d*$/,
-} as const;
-
-export const SliceSyntax = {
-  OPEN: "[",
-  CLOSE: "]",
-  SEPARATOR: ":",
-  DEFAULT_STEP: 1,
 } as const;
 
 export const SecretMaskConfig = {

@@ -46,6 +46,11 @@
   background: var(--color-surface);
 }
 
+body.read-mode .image-view {
+  cursor: pointer;
+  outline: none;
+}
+
 /* Image actions */
 
 .image-actions {

@@ -7,7 +7,15 @@
         var(--image-lightbox-nav-width) - var(--image-lightbox-nav-gap)
     )
   );
+  --image-lightbox-safe-width: min(
+    100vw,
+    calc(
+      var(--image-lightbox-max-width) + 2 *
+        (var(--image-lightbox-nav-width) + var(--image-lightbox-nav-gap))
+    )
+  );
 
+  width: var(--image-lightbox-safe-width);
   min-width: 0;
   max-width: none;
   padding: 0;
@@ -35,6 +43,7 @@
 .image-lightbox {
   position: relative;
   display: flex;
+  justify-content: center;
 }
 
 .image-lightbox-broken {

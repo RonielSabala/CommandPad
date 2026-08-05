@@ -153,6 +153,19 @@ body.select-key-held:not(.read-mode) .note-auto-width {
   background: transparent;
 }
 
+.note-textarea::grammar-error,
+.note-textarea::spelling-error {
+  text-decoration: transparent;
+}
+
+.note-block.is-focused .note-textarea::grammar-error {
+  text-decoration: underline wavy var(--accent);
+}
+
+.note-block.is-focused .note-textarea::spelling-error {
+  text-decoration: underline wavy var(--danger);
+}
+
 body.read-mode .note-textarea:focus {
   caret-color: transparent;
   outline: none;

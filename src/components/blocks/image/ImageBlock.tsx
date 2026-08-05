@@ -141,6 +141,8 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
 
   const openFilePicker = () => fileInputRef.current?.click();
 
+  const expand = () => openImageViewer(blockId);
+
   const clear = () =>
     updateBlock(blockId, BlockType.IMAGE, { src: "", alt: undefined });
 
@@ -179,23 +181,27 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
               src={src}
               alt={block.alt ?? ""}
               draggable={false}
+              title={isReadMode ? t.image.viewFullscreen : undefined}
+              role={isReadMode ? "button" : undefined}
+              tabIndex={isReadMode ? 0 : undefined}
+              onClick={isReadMode ? expand : undefined}
               onError={() => setLoadFailed(true)}
             />
           )}
 
-          <div className="image-actions">
-            <div className="image-actions-group">
-              {!loadFailed && (
-                <button
-                  className="btn btn-icon btn-accent"
-                  title={t.image.viewFullscreen}
-                  onClick={() => openImageViewer(blockId)}
-                >
-                  <ArrowsFullscreen className="icon-md" />
-                </button>
-              )}
+          {!isReadMode && (
+            <div className="image-actions">
+              <div className="image-actions-group">
+                {!loadFailed && (
+                  <button
+                    className="btn btn-icon btn-accent"
+                    title={t.image.viewFullscreen}
+                    onClick={expand}
+                  >
+                    <ArrowsFullscreen className="icon-md" />
+                  </button>
+                )}
 
-              {!isReadMode && (
                 <ActionsMenu
                   className="image-actions-menu"
                   title={t.image.actions}
@@ -217,9 +223,9 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
                     {t.image.remove}
                   </ContextMenuItem>
                 </ActionsMenu>
-              )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       ) : isReadMode ? (
         <div className="image-empty-readonly">
