@@ -836,6 +836,7 @@ export const es: Messages = {
         "Los valores de las variables sí pueden cambiarse.",
         "Los libros sí pueden abrirse.",
         "Los enlaces se pueden abrir con un clic directo.",
+        "Las imágenes se abren a pantalla completa con un clic.",
       ],
       persisted:
         "Este modo forma parte de tus preferencias guardadas, así que recargar la app te mantiene en modo lectura.",

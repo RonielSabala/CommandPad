@@ -96,7 +96,7 @@ export function ImageLightbox() {
     <Modal
       open={!!current}
       onClose={closeImageViewer}
-      className="modal-lightbox"
+      className="modal-lightbox no-user-select"
     >
       <div className="image-lightbox">
         {loadFailed ? (

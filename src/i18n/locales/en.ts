@@ -824,6 +824,7 @@ export const en: Messages = {
         "Variable values can still be changed.",
         "Runbooks can still be opened.",
         "Links can be opened with a direct click.",
+        "Images open full screen with a click.",
       ],
       persisted:
         "This mode is part of your saved preferences, so reloading the app keeps you in read mode.",
