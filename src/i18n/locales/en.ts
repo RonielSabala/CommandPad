@@ -215,7 +215,7 @@ export const en: Messages = {
     saveName: "Save name",
     cancelRename: "Cancel rename",
     namePlaceholder: "Filename",
-    editTitle: (filename) => `Editing ${filename}`,
+    editTitle: (path) => `Editing \`${path}\``,
     editHint:
       "Changes are written straight back to the cloud file when you save.",
     signInError: "Sign-in failed. Please try again.",

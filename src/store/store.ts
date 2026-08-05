@@ -125,6 +125,7 @@ interface ConfirmOptions extends AlertOptions {
 
 export interface CloudFileEditor {
   file: CloudEntry;
+  folderPath: CloudFolderRef[];
   folderId: string | null;
   original: string;
   text: string;
@@ -386,11 +387,17 @@ function cloudSearchMatch(
   );
 }
 
+/** The path to the folder holding `entry`, listed or found by search. */
+function parentFolderPath(
+  state: StoreState,
+  entry: CloudEntry,
+): CloudFolderRef[] {
+  return cloudSearchMatch(state, entry)?.path ?? state.cloudPath;
+}
+
 /** The folder holding `entry`, whether it was listed or found by search. */
 function parentFolderId(state: StoreState, entry: CloudEntry): string | null {
-  return currentFolderId(
-    cloudSearchMatch(state, entry)?.path ?? state.cloudPath,
-  );
+  return currentFolderId(parentFolderPath(state, entry));
 }
 
 function siblingEntries(state: StoreState, entry: CloudEntry): CloudEntry[] {
@@ -2677,6 +2684,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set({
           cloudFileEditor: {
             file,
+            folderPath: parentFolderPath(get(), file),
             folderId: parentFolderId(get(), file),
             original: "",
             text: "",

@@ -217,7 +217,7 @@ export const es: Messages = {
     saveName: "Guardar nombre",
     cancelRename: "Cancelar renombrado",
     namePlaceholder: "Nombre del archivo",
-    editTitle: (filename) => `Editando ${filename}`,
+    editTitle: (path) => `Editando \`${path}\``,
     editHint:
       "Al guardar, los cambios se escriben directamente en el archivo de la nube.",
     signInError: "No se pudo iniciar sesión. Inténtalo de nuevo.",

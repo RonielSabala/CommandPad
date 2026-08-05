@@ -220,7 +220,7 @@ export interface Messages {
     duplicate: string;
     download: string;
     delete: string;
-    editTitle: (filename: string) => string;
+    editTitle: (path: string) => string;
     editHint: string;
     saveName: string;
     cancelRename: string;

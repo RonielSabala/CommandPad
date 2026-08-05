@@ -69,8 +69,8 @@
 }
 
 .dialog-message .note-code {
-  background: var(--color-surface-alt);
   color: var(--color-text-primary);
+  background: var(--color-surface-alt);
 }
 
 .modal-dialog .btn-tone {
