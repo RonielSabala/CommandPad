@@ -45,6 +45,10 @@ export function buildDuplicateName(
   return name;
 }
 
+export function countCharacters(text: string): number {
+  return Array.from(text).length;
+}
+
 export function sliceString(
   text: string,
   start: number | null,

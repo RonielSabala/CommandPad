@@ -198,6 +198,32 @@ export function VariableSlicingDocs() {
   );
 }
 
+export function VariableCountDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableCount.intro} />
+      <Prose text={t.docs.variableCount.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("message", t.docs.demo.commitSubject)],
+            blocks: [
+              demoCommand('git commit -m "{message}"'),
+              demoCommand(t.docs.demo.commitLengthCommand),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableCount.chaining} />
+    </>
+  );
+}
+
 export function MultilineReferencesDocs() {
   const t = useTranslation();
 

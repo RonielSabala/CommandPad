@@ -543,6 +543,7 @@ export const en: Messages = {
       [DocsSectionId.VARIABLE_REFERENCES]: "Variable references",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Parameterized placeholders",
       [DocsSectionId.VARIABLE_SLICING]: "Slicing values",
+      [DocsSectionId.VARIABLE_COUNT]: "Counting characters",
       [DocsSectionId.MULTILINE_REFERENCES]: "Long references",
       [DocsSectionId.ESCAPING_BRACES]: "Escaping braces",
       [DocsSectionId.SECRET_VARIABLES]: "Secret variables",
@@ -568,6 +569,8 @@ export const en: Messages = {
       runbookSamples: ["Release checklist", "Postgres backup", "K8s debugging"],
       multiSelectNotes: ["Create the backup", "Clean up"],
       greetingTemplate: "Hi {;name}, welcome to {;place}!",
+      commitSubject: "Fix retry backoff on failed uploads",
+      commitLengthCommand: 'echo "{message|count} of 50 characters used"',
       noteSample:
         "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link, e.g. https://example.com. Click away to see it rendered again.",
       tableSample: `| Exit code | Meaning | Action |
@@ -713,6 +716,14 @@ export const en: Messages = {
         "If a slice does not make sense, such as a step of zero, the whole reference stays **unresolved** and shows up exactly as you typed it, so the mistake is easy to spot. Asking for more characters than there are is fine, though: you simply get the ones that exist.",
       python:
         "The notation comes from Python, if you are curious to read more about it: [string slicing in Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). You do not need to know Python to use it here.",
+    },
+    variableCount: {
+      intro:
+        "Write `count` after the `|` and you get **how long the value is** instead of the value itself.",
+      demoHint:
+        "A commit subject is supposed to stay under 50 characters, and nobody counts them by hand. Type into the message below and watch the number keep up:",
+      chaining:
+        "Operations run left to right, so you can put `count` after a slice: `{commit|[:7]|count}` shortens the commit first, then counts what is left.",
     },
     multilineReferences: {
       intro:

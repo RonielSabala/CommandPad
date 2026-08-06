@@ -3,6 +3,9 @@ import {
   TokenWhitespaceRegex,
   VariableSliceRegex,
 } from "@/common/variableSyntax";
+import { sliceString } from "@/utils/string";
+
+import type { OperationDefinition } from "./types";
 
 interface SliceSpec {
   start: number | null;
@@ -14,7 +17,7 @@ function parseSliceBound(raw: string): number | null {
   return raw ? Number(raw) : null;
 }
 
-export function parseSliceOperation(operation: string): SliceSpec | null {
+function parseSlice(operation: string): SliceSpec | null {
   const match = VariableSliceRegex.exec(
     operation.replace(TokenWhitespaceRegex, ""),
   );
@@ -44,3 +47,13 @@ export function parseSliceOperation(operation: string): SliceSpec | null {
 
   return { start, stop: parseSliceBound(rawStop), step };
 }
+
+export const SLICE_OPERATION: OperationDefinition = {
+  parse: (operation) => {
+    const spec = parseSlice(operation);
+
+    return (
+      spec && ((text) => sliceString(text, spec.start, spec.stop, spec.step))
+    );
+  },
+};

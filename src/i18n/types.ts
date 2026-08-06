@@ -333,6 +333,8 @@ export interface Messages {
       runbookSamples: string[];
       multiSelectNotes: string[];
       greetingTemplate: string;
+      commitSubject: string;
+      commitLengthCommand: string;
     };
     gettingStarted: {
       intro: string;
@@ -404,6 +406,11 @@ export interface Messages {
       step: string;
       invalid: string;
       python: string;
+    };
+    variableCount: {
+      intro: string;
+      demoHint: string;
+      chaining: string;
     };
     multilineReferences: {
       intro: string;

@@ -32,8 +32,13 @@ export const SliceSyntax = {
   DEFAULT_STEP: 1,
 } as const;
 
+export const OperationSyntax = {
+  COUNT: "count",
+} as const;
+
 const Ref = escapeSyntax(VariableSyntax);
 const Slice = escapeSyntax(SliceSyntax);
+const Operation = escapeSyntax(OperationSyntax);
 
 const braced = (content: string) =>
   sequence(Ref.BRACE_OPEN, content, Ref.BRACE_CLOSE);
@@ -64,6 +69,8 @@ const SLICE_STOP = optional(
 export const VariableSliceRegex = new RegExp(
   anchored(sequence(Slice.OPEN, SLICE_BOUND, SLICE_STOP, Slice.CLOSE)),
 );
+
+export const CountOperationRegex = new RegExp(anchored(Operation.COUNT));
 
 export const CopySuffixRegex = new RegExp(
   atEnd(sequence(Ref.COPY_SUFFIX, zeroOrMore(DIGIT))),
