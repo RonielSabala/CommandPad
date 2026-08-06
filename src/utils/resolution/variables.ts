@@ -1,6 +1,9 @@
+import { ReferenceSurface } from "@/common/enums";
 import type { Variable } from "@/common/types";
-import { VariableTokenRegex } from "@/common/variableSyntax";
 
+import type { ReferenceContext } from "./reference";
+import { resolveReference } from "./reference";
+import { replaceReferences } from "./token";
 import type { VariableMap } from "./types";
 
 export function getVariableKey(variable: Variable): string {
@@ -25,33 +28,54 @@ export function getVariableMap(variables: Variable[] = []): VariableMap {
     rawMap[key] = variable.value;
   }
 
-  function resolveValue(key: string, visitedKeys = new Set<string>()): string {
-    if (key in resolvedMap) {
+  const loopedKeys = new Set<string>();
+
+  function resolveValue(key: string, visitedKeys: Set<string>): string {
+    if (Object.hasOwn(resolvedMap, key)) {
       return resolvedMap[key];
     }
 
-    if (visitedKeys.has(key)) {
-      return `{${key}}`;
+    let looped = false;
+
+    function lookup(refKey: string): string | undefined {
+      if (!Object.hasOwn(rawMap, refKey)) {
+        return undefined;
+      }
+
+      if (visitedKeys.has(refKey)) {
+        looped = true;
+        return undefined;
+      }
+
+      const text = resolveValue(refKey, new Set(visitedKeys).add(refKey));
+      if (loopedKeys.has(refKey)) {
+        looped = true;
+        return undefined;
+      }
+
+      return text;
     }
 
-    visitedKeys.add(key);
-    const raw = rawMap[key] ?? "";
-    const resolved = raw.replace(
-      VariableTokenRegex,
-      (match, rawRef: string) => {
-        const refKey = rawRef.trim();
-        return refKey in rawMap
-          ? resolveValue(refKey, new Set(visitedKeys))
-          : match;
-      },
+    const context: ReferenceContext = {
+      surface: ReferenceSurface.VALUE,
+      lookup,
+    };
+    const resolved = replaceReferences(
+      rawMap[key] ?? "",
+      ReferenceSurface.VALUE,
+      (match) => resolveReference(match.token, match.raw, context).text,
     );
+
+    if (looped) {
+      loopedKeys.add(key);
+    }
 
     resolvedMap[key] = resolved;
     return resolved;
   }
 
   for (const key of Object.keys(rawMap)) {
-    resolveValue(key);
+    resolveValue(key, new Set([key]));
   }
 
   return resolvedMap;

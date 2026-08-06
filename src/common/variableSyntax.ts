@@ -5,7 +5,6 @@ import {
   anchored,
   atEnd,
   capture,
-  either,
   escapeSyntax,
   globalRegex,
   group,
@@ -13,7 +12,6 @@ import {
   oneOrMore,
   optional,
   sequence,
-  unescaped,
   zeroOrMore,
 } from "./regex";
 
@@ -34,22 +32,16 @@ export const SliceSyntax = {
   DEFAULT_STEP: 1,
 } as const;
 
+export const OperationSyntax = {
+  COUNT: "count",
+} as const;
+
 const Ref = escapeSyntax(VariableSyntax);
 const Slice = escapeSyntax(SliceSyntax);
+const Operation = escapeSyntax(OperationSyntax);
 
-const NOT_BRACE = noneOf(Ref.BRACE_OPEN, Ref.BRACE_CLOSE);
 const braced = (content: string) =>
   sequence(Ref.BRACE_OPEN, content, Ref.BRACE_CLOSE);
-
-export const VariableTokenRegex = globalRegex(
-  braced(
-    capture(oneOrMore(group(either(NOT_BRACE, braced(zeroOrMore(NOT_BRACE)))))),
-  ),
-);
-
-export const CommandVariableTokenRegex = globalRegex(
-  unescaped(VariableTokenRegex.source),
-);
 
 export const EscapedBraceOpenRegex = globalRegex(
   sequence(ESCAPE, Ref.BRACE_OPEN),
@@ -77,6 +69,8 @@ const SLICE_STOP = optional(
 export const VariableSliceRegex = new RegExp(
   anchored(sequence(Slice.OPEN, SLICE_BOUND, SLICE_STOP, Slice.CLOSE)),
 );
+
+export const CountOperationRegex = new RegExp(anchored(Operation.COUNT));
 
 export const CopySuffixRegex = new RegExp(
   atEnd(sequence(Ref.COPY_SUFFIX, zeroOrMore(DIGIT))),

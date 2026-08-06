@@ -549,6 +549,7 @@ export const es: Messages = {
       [DocsSectionId.VARIABLE_REFERENCES]: "Referencias de variables",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
       [DocsSectionId.VARIABLE_SLICING]: "Recortar valores",
+      [DocsSectionId.VARIABLE_COUNT]: "Contar caracteres",
       [DocsSectionId.MULTILINE_REFERENCES]: "Referencias largas",
       [DocsSectionId.ESCAPING_BRACES]: "Escapar llaves",
       [DocsSectionId.SECRET_VARIABLES]: "Variables secretas",
@@ -578,6 +579,8 @@ export const es: Messages = {
       ],
       multiSelectNotes: ["Crear la copia de seguridad", "Limpiar"],
       greetingTemplate: "¡Hola {;name}, bienvenido a {;place}!",
+      commitSubject: "Corrige reintento en subidas fallidas",
+      commitLengthCommand: 'echo "{message|count} de 50 caracteres usados"',
       noteSample:
         "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace, p. ej. https://example.com. Haz clic fuera para verla renderizada de nuevo.",
       tableSample: `| Código de salida | Significado | Acción |
@@ -726,9 +729,17 @@ export const es: Messages = {
       python:
         "La notación viene de Python, por si quieres leer más sobre ella: [recorte de cadenas en Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). No necesitas saber Python para usarla aquí.",
     },
+    variableCount: {
+      intro:
+        "Escribe `count` después del `|` y obtienes **cuánto mide el valor** en lugar del valor.",
+      demoHint:
+        "El asunto de un commit debería quedarse por debajo de 50 caracteres, y nadie los cuenta a mano. Escribe en el mensaje de abajo y mira cómo el número te sigue:",
+      chaining:
+        "Las operaciones se aplican de izquierda a derecha, así que puedes poner `count` después de un recorte: `{commit|[:7]|count}` acorta el commit primero y luego cuenta lo que queda.",
+    },
     multilineReferences: {
       intro:
-        "Cuando una referencia ya tiene huecos que rellenar y una parte que recortar, puede quedar tan larga que cueste leerla. Puedes repartirla en tantas líneas como quieras: los espacios y saltos de línea que rodean cada parte de una referencia se ignoran, así que la distribuyes como prefieras:",
+        "Rellena varios huecos a la vez y una referencia se vuelve demasiado larga para leerla en una sola línea. Puedes repartirla en tantas líneas como quieras: los espacios y saltos de línea que rodean cada parte se ignoran, así que la distribuyes como prefieras.",
     },
     escapingBraces: {
       intro:

@@ -1,24 +1,142 @@
+import { ReferenceSurface } from "@/common/enums";
+import { ESCAPE_CHAR } from "@/common/regex";
 import { EscapedBraceOpenRegex, VariableSyntax } from "@/common/variableSyntax";
 
+/** Whether `\{` is a literal brace rather than the start of a reference. */
+const ESCAPES_REFERENCES: Record<ReferenceSurface, boolean> = {
+  [ReferenceSurface.COMMAND]: true,
+  [ReferenceSurface.VALUE]: false,
+};
+
+interface ReferenceMatch {
+  token: string;
+  raw: string;
+  start: number;
+  end: number;
+}
+
+interface ReferenceChunk {
+  separator: string;
+  text: string;
+}
+
 /** Drops the backslash that escapes a reference. */
-export function unescapeBraces(text: string): string {
-  return text.replace(EscapedBraceOpenRegex, VariableSyntax.BRACE_OPEN);
+export function unescapeBraces(
+  text: string,
+  surface: ReferenceSurface,
+): string {
+  return ESCAPES_REFERENCES[surface]
+    ? text.replace(EscapedBraceOpenRegex, VariableSyntax.BRACE_OPEN)
+    : text;
 }
 
 export function braceToken(raw: string): string {
   return `${VariableSyntax.BRACE_OPEN}${raw}${VariableSyntax.BRACE_CLOSE}`;
 }
 
-interface TokenOperations {
-  base: string;
-  operations: string[];
+function referenceAt(text: string, start: number, end: number): ReferenceMatch {
+  return {
+    token: text.slice(start, end),
+    raw: text.slice(start + 1, end - 1),
+    start,
+    end,
+  };
 }
 
-/** Splits `KEY;params|op|op` into its base and its operations. */
-export function splitTokenOperations(raw: string): TokenOperations {
-  const parts: string[] = [];
+/** Recovers the references from a text whose braces do not balance. */
+function scanUnbalanced(text: string, escapes: boolean): ReferenceMatch[] {
+  const openIndexes: number[] = [];
+  const openEscaped: boolean[] = [];
+  const pairs: ReferenceMatch[] = [];
+
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+
+    if (char === VariableSyntax.BRACE_OPEN) {
+      openIndexes.push(i);
+      openEscaped.push(escapes && text[i - 1] === ESCAPE_CHAR);
+    } else if (char === VariableSyntax.BRACE_CLOSE && openIndexes.length > 0) {
+      const start = openIndexes.pop() as number;
+      if (!openEscaped.pop()) {
+        pairs.push(referenceAt(text, start, i + 1));
+      }
+    }
+  }
+
+  pairs.sort((a, b) => a.start - b.start);
+
+  const matches: ReferenceMatch[] = [];
+  let lastEnd = 0;
+
+  for (const pair of pairs) {
+    if (pair.start >= lastEnd) {
+      matches.push(pair);
+      lastEnd = pair.end;
+    }
+  }
+
+  return matches;
+}
+
+/** Finds the references sitting at the top level of `text`. */
+export function scanReferences(
+  text: string,
+  surface: ReferenceSurface,
+): ReferenceMatch[] {
+  const escapes = ESCAPES_REFERENCES[surface];
+  const matches: ReferenceMatch[] = [];
+  let start = -1;
   let depth = 0;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+
+    if (char === VariableSyntax.BRACE_OPEN) {
+      if (depth > 0) {
+        depth += 1;
+      } else if (!escapes || text[i - 1] !== ESCAPE_CHAR) {
+        depth = 1;
+        start = i;
+      }
+    } else if (char === VariableSyntax.BRACE_CLOSE && depth > 0) {
+      depth -= 1;
+      if (depth === 0) {
+        matches.push(referenceAt(text, start, i + 1));
+      }
+    }
+  }
+
+  return depth === 0 ? matches : scanUnbalanced(text, escapes);
+}
+
+/** Rewrites every top-level reference in `text`. */
+export function replaceReferences(
+  text: string,
+  surface: ReferenceSurface,
+  replace: (match: ReferenceMatch) => string,
+): string {
+  const matches = scanReferences(text, surface);
+  if (matches.length === 0) {
+    return text;
+  }
+
+  let result = "";
+  let lastEnd = 0;
+
+  for (const match of matches) {
+    result += text.slice(lastEnd, match.start) + replace(match);
+    lastEnd = match.end;
+  }
+
+  return result + text.slice(lastEnd);
+}
+
+/** Splits a reference body into its key, its params and its operations. */
+export function splitReferenceBody(raw: string): ReferenceChunk[] {
+  const chunks: ReferenceChunk[] = [];
+  let separator = "";
   let start = 0;
+  let depth = 0;
 
   for (let i = 0; i < raw.length; i += 1) {
     const char = raw[i];
@@ -27,19 +145,21 @@ export function splitTokenOperations(raw: string): TokenOperations {
       depth += 1;
     } else if (char === VariableSyntax.BRACE_CLOSE) {
       depth -= 1;
-    } else if (char === VariableSyntax.OPERATION_SEPARATOR && depth === 0) {
-      parts.push(raw.slice(start, i));
+    } else if (
+      depth === 0 &&
+      (char === VariableSyntax.PARAM_SEPARATOR ||
+        char === VariableSyntax.OPERATION_SEPARATOR)
+    ) {
+      chunks.push({ separator, text: raw.slice(start, i) });
+      separator = char;
       start = i + 1;
     }
   }
 
-  parts.push(raw.slice(start));
-
-  return { base: parts[0], operations: parts.slice(1) };
+  chunks.push({ separator, text: raw.slice(start) });
+  return chunks;
 }
 
 export function getTokenKey(raw: string): string {
-  return splitTokenOperations(raw)
-    .base.split(VariableSyntax.PARAM_SEPARATOR)[0]
-    .trim();
+  return splitReferenceBody(raw)[0].text.trim();
 }

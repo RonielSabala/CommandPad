@@ -64,6 +64,13 @@ export const NoteStyle = {
 } as const;
 export type NoteStyle = (typeof NoteStyle)[keyof typeof NoteStyle];
 
+export const ReferenceSurface = {
+  COMMAND: "command",
+  VALUE: "value",
+} as const;
+export type ReferenceSurface =
+  (typeof ReferenceSurface)[keyof typeof ReferenceSurface];
+
 export const CommandSegmentType = {
   LITERAL: "literal",
   RESOLVED: "resolved",

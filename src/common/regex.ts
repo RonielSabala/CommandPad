@@ -67,5 +67,6 @@ export const globalRegex = (source: string) => new RegExp(source, "g");
 
 // Escaping
 
-export const ESCAPE = escapeLiteral("\\");
+export const ESCAPE_CHAR = "\\";
+export const ESCAPE = escapeLiteral(ESCAPE_CHAR);
 export const unescaped = (source: string) => `${notAfter(ESCAPE)}${source}`;

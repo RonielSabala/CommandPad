@@ -1,69 +1,34 @@
 import {
-  CommandVariableTokenRegex,
   VariableParamPlaceholderRegex,
   VariableSyntax,
 } from "@/common/variableSyntax";
 
-import type { VariableMap } from "./types";
-
-interface ParsedVariableToken {
-  key: string;
-  params: Record<string, string>;
+interface ReferenceParam {
+  name: string;
+  value: string;
 }
 
-export function parseVariableToken(raw: string): ParsedVariableToken {
-  const [rawKey, ...rawParams] = raw.split(VariableSyntax.PARAM_SEPARATOR);
-  const params: Record<string, string> = {};
-
-  for (const part of rawParams) {
-    const eqIndex = part.indexOf(VariableSyntax.PARAM_ASSIGNMENT);
-    if (eqIndex === -1) {
-      continue;
-    }
-
-    const paramKey = part.slice(0, eqIndex).trim();
-    const paramValue = part.slice(eqIndex + 1).trim();
-
-    if (paramKey && paramValue) {
-      params[paramKey] = paramValue;
-    }
-  }
-
-  return { key: rawKey.trim(), params };
+interface ResolvedTemplate {
+  text: string;
+  fullyResolved: boolean;
 }
 
-export function resolveParamRefs(
-  params: Record<string, string>,
-  variableMap: VariableMap,
-): { params: Record<string, string>; fullyResolved: boolean } {
-  let fullyResolved = true;
-  const resolved: Record<string, string> = {};
-
-  for (const [name, value] of Object.entries(params)) {
-    resolved[name] = value.replace(
-      CommandVariableTokenRegex,
-      (match, rawRef: string) => {
-        const refKey = rawRef.trim();
-        if (
-          Object.prototype.hasOwnProperty.call(variableMap, refKey) &&
-          variableMap[refKey]
-        ) {
-          return variableMap[refKey];
-        }
-
-        fullyResolved = false;
-        return match;
-      },
-    );
+export function parseParam(chunk: string): ReferenceParam | null {
+  const at = chunk.indexOf(VariableSyntax.PARAM_ASSIGNMENT);
+  if (at === -1) {
+    return null;
   }
 
-  return { params: resolved, fullyResolved };
+  const name = chunk.slice(0, at).trim();
+  const value = chunk.slice(at + 1).trim();
+
+  return name && value ? { name, value } : null;
 }
 
 export function applyTemplateParams(
   template: string,
   params: Record<string, string>,
-): { text: string; fullyResolved: boolean } {
+): ResolvedTemplate {
   let fullyResolved = true;
 
   const text = template.replace(

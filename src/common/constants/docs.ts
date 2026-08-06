@@ -14,6 +14,7 @@ export const DocsSectionId = {
   VARIABLE_REFERENCES: "variable-references",
   PARAMETERIZED_PLACEHOLDERS: "parameterized-placeholders",
   VARIABLE_SLICING: "variable-slicing",
+  VARIABLE_COUNT: "variable-count",
   MULTILINE_REFERENCES: "multiline-references",
   ESCAPING_BRACES: "escaping-braces",
   TABS: "tabs",
@@ -62,6 +63,7 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
     level: DocsSectionLevel.SUBSECTION,
   },
   { id: DocsSectionId.VARIABLE_SLICING, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.VARIABLE_COUNT, level: DocsSectionLevel.SUBSECTION },
   {
     id: DocsSectionId.MULTILINE_REFERENCES,
     level: DocsSectionLevel.SUBSECTION,

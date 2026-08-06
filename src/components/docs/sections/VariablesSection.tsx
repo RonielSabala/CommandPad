@@ -198,6 +198,32 @@ export function VariableSlicingDocs() {
   );
 }
 
+export function VariableCountDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableCount.intro} />
+      <Prose text={t.docs.variableCount.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("message", t.docs.demo.commitSubject)],
+            blocks: [
+              demoCommand('git commit -m "{message}"'),
+              demoCommand(t.docs.demo.commitLengthCommand),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableCount.chaining} />
+    </>
+  );
+}
+
 export function MultilineReferencesDocs() {
   const t = useTranslation();
 
@@ -208,11 +234,14 @@ export function MultilineReferencesDocs() {
         tabs={[
           {
             variables: [
-              demoVariable("ENDPOINT", "https://{;region}.api.example.com"),
+              demoVariable("date", "2026-07-31"),
+              demoVariable("project", "commandpad"),
+              demoVariable("ARCHIVE", "{;name}_{;year}_{;month}.zip"),
             ],
             blocks: [
+              demoCommand('echo "Archiving {project} on {date}"'),
               demoCommand(
-                "ping {\n\tENDPOINT\n\t; region = eu-west\n\t| [8:]\n}",
+                "zip -r {\n\tARCHIVE\n\t; name = {project}\n\t; year = {date|[:4]}\n\t; month = {date|[5:7]}\n} ~/Documents",
               ),
             ],
           },
