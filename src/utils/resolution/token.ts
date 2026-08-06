@@ -34,6 +34,50 @@ export function braceToken(raw: string): string {
   return `${VariableSyntax.BRACE_OPEN}${raw}${VariableSyntax.BRACE_CLOSE}`;
 }
 
+function referenceAt(text: string, start: number, end: number): ReferenceMatch {
+  return {
+    token: text.slice(start, end),
+    raw: text.slice(start + 1, end - 1),
+    start,
+    end,
+  };
+}
+
+/** Recovers the references from a text whose braces do not balance. */
+function scanUnbalanced(text: string, escapes: boolean): ReferenceMatch[] {
+  const openIndexes: number[] = [];
+  const openEscaped: boolean[] = [];
+  const pairs: ReferenceMatch[] = [];
+
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+
+    if (char === VariableSyntax.BRACE_OPEN) {
+      openIndexes.push(i);
+      openEscaped.push(escapes && text[i - 1] === ESCAPE_CHAR);
+    } else if (char === VariableSyntax.BRACE_CLOSE && openIndexes.length > 0) {
+      const start = openIndexes.pop() as number;
+      if (!openEscaped.pop()) {
+        pairs.push(referenceAt(text, start, i + 1));
+      }
+    }
+  }
+
+  pairs.sort((a, b) => a.start - b.start);
+
+  const matches: ReferenceMatch[] = [];
+  let lastEnd = 0;
+
+  for (const pair of pairs) {
+    if (pair.start >= lastEnd) {
+      matches.push(pair);
+      lastEnd = pair.end;
+    }
+  }
+
+  return matches;
+}
+
 /** Finds the references sitting at the top level of `text`. */
 export function scanReferences(
   text: string,
@@ -41,44 +85,28 @@ export function scanReferences(
 ): ReferenceMatch[] {
   const escapes = ESCAPES_REFERENCES[surface];
   const matches: ReferenceMatch[] = [];
-  let from = 0;
-  const to = text.length;
+  let start = -1;
+  let depth = 0;
 
-  while (from < to) {
-    let start = -1;
-    let depth = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
 
-    for (let i = from; i < to; i += 1) {
-      const char = text[i];
-
-      if (char === VariableSyntax.BRACE_OPEN) {
-        if (depth > 0) {
-          depth += 1;
-        } else if (!escapes || text[i - 1] !== ESCAPE_CHAR) {
-          depth = 1;
-          start = i;
-        }
-      } else if (char === VariableSyntax.BRACE_CLOSE && depth > 0) {
-        depth -= 1;
-        if (depth === 0) {
-          matches.push({
-            token: text.slice(start, i + 1),
-            raw: text.slice(start + 1, i),
-            start,
-            end: i + 1,
-          });
-        }
+    if (char === VariableSyntax.BRACE_OPEN) {
+      if (depth > 0) {
+        depth += 1;
+      } else if (!escapes || text[i - 1] !== ESCAPE_CHAR) {
+        depth = 1;
+        start = i;
+      }
+    } else if (char === VariableSyntax.BRACE_CLOSE && depth > 0) {
+      depth -= 1;
+      if (depth === 0) {
+        matches.push(referenceAt(text, start, i + 1));
       }
     }
-
-    if (depth === 0) {
-      break;
-    }
-
-    from = start + 1;
   }
 
-  return matches;
+  return depth === 0 ? matches : scanUnbalanced(text, escapes);
 }
 
 /** Rewrites every top-level reference in `text`. */
