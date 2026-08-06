@@ -5,7 +5,6 @@ import {
   anchored,
   atEnd,
   capture,
-  either,
   escapeSyntax,
   globalRegex,
   group,
@@ -13,7 +12,6 @@ import {
   oneOrMore,
   optional,
   sequence,
-  unescaped,
   zeroOrMore,
 } from "./regex";
 
@@ -37,19 +35,8 @@ export const SliceSyntax = {
 const Ref = escapeSyntax(VariableSyntax);
 const Slice = escapeSyntax(SliceSyntax);
 
-const NOT_BRACE = noneOf(Ref.BRACE_OPEN, Ref.BRACE_CLOSE);
 const braced = (content: string) =>
   sequence(Ref.BRACE_OPEN, content, Ref.BRACE_CLOSE);
-
-export const VariableTokenRegex = globalRegex(
-  braced(
-    capture(oneOrMore(group(either(NOT_BRACE, braced(zeroOrMore(NOT_BRACE)))))),
-  ),
-);
-
-export const CommandVariableTokenRegex = globalRegex(
-  unescaped(VariableTokenRegex.source),
-);
 
 export const EscapedBraceOpenRegex = globalRegex(
   sequence(ESCAPE, Ref.BRACE_OPEN),

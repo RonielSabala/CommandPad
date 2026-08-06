@@ -716,7 +716,7 @@ export const en: Messages = {
     },
     multilineReferences: {
       intro:
-        "Once a reference has blanks to fill and a piece to slice out, it can grow long enough to be hard to read. You can spread it over as many lines as you want: the spaces and line breaks that sit around each part of a reference are ignored, so the layout is yours to choose:",
+        "Fill in a few blanks at once and a reference gets too long to read on a single line. You can spread it over as many lines as you like instead: the spaces and line breaks around each part are ignored, so the layout is yours to choose.",
     },
     escapingBraces: {
       intro:

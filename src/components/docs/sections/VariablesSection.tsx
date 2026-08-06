@@ -208,11 +208,14 @@ export function MultilineReferencesDocs() {
         tabs={[
           {
             variables: [
-              demoVariable("ENDPOINT", "https://{;region}.api.example.com"),
+              demoVariable("date", "2026-07-31"),
+              demoVariable("project", "commandpad"),
+              demoVariable("ARCHIVE", "{;name}_{;year}_{;month}.zip"),
             ],
             blocks: [
+              demoCommand('echo "Archiving {project} on {date}"'),
               demoCommand(
-                "ping {\n\tENDPOINT\n\t; region = eu-west\n\t| [8:]\n}",
+                "zip -r {\n\tARCHIVE\n\t; name = {project}\n\t; year = {date|[:4]}\n\t; month = {date|[5:7]}\n} ~/Documents",
               ),
             ],
           },

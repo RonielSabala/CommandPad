@@ -4,7 +4,7 @@ import {
   VariableSliceRegex,
 } from "@/common/variableSyntax";
 
-export interface SliceSpec {
+interface SliceSpec {
   start: number | null;
   stop: number | null;
   step: number;

@@ -728,7 +728,7 @@ export const es: Messages = {
     },
     multilineReferences: {
       intro:
-        "Cuando una referencia ya tiene huecos que rellenar y una parte que recortar, puede quedar tan larga que cueste leerla. Puedes repartirla en tantas líneas como quieras: los espacios y saltos de línea que rodean cada parte de una referencia se ignoran, así que la distribuyes como prefieras:",
+        "Rellena varios huecos a la vez y una referencia se vuelve demasiado larga para leerla en una sola línea. Puedes repartirla en tantas líneas como quieras: los espacios y saltos de línea que rodean cada parte se ignoran, así que la distribuyes como prefieras.",
     },
     escapingBraces: {
       intro:

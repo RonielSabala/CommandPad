@@ -1,11 +1,8 @@
 import { getBlockCommandTexts } from "@/blocks";
+import { ReferenceSurface } from "@/common/enums";
 import type { Block, Variable } from "@/common/types";
-import {
-  CommandVariableTokenRegex,
-  VariableTokenRegex,
-} from "@/common/variableSyntax";
 
-import { getTokenKey } from "./token";
+import { getTokenKey, scanReferences } from "./token";
 import { getVariableKey } from "./variables";
 
 export function getUsedVariableKeys(
@@ -22,27 +19,20 @@ export function getUsedVariableKeys(
 
   const pending: string[] = [];
 
-  function collectRefs(text: string, tokenRegex: RegExp): void {
-    for (const match of text.matchAll(tokenRegex)) {
-      const raw = match[1];
+  function collectRefs(text: string, surface: ReferenceSurface): void {
+    for (const { raw } of scanReferences(text, surface)) {
       const key = getTokenKey(raw);
       if (key) {
         pending.push(key);
       }
 
-      // Nested refs inside param values
-      for (const inner of raw.matchAll(VariableTokenRegex)) {
-        const innerKey = getTokenKey(inner[1]);
-        if (innerKey) {
-          pending.push(innerKey);
-        }
-      }
+      collectRefs(raw, surface);
     }
   }
 
   for (const block of blocks) {
     for (const text of getBlockCommandTexts(block)) {
-      collectRefs(text, CommandVariableTokenRegex);
+      collectRefs(text, ReferenceSurface.COMMAND);
     }
   }
 
@@ -55,7 +45,7 @@ export function getUsedVariableKeys(
 
     used.add(key);
     if (key in rawValues) {
-      collectRefs(rawValues[key], VariableTokenRegex);
+      collectRefs(rawValues[key], ReferenceSurface.VALUE);
     }
   }
 
