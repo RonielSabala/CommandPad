@@ -303,8 +303,6 @@ export const en: Messages = {
     [KeyBinding.ESCAPE]: "Clear block selection / close modals",
     [KeyBinding.EXPORT]: "Open export dialog",
     [KeyBinding.CLEAR_LIBRARY]: "Open delete all runbooks dialog",
-    [KeyBinding.TOGGLE_MINIMAP]:
-      "Open the minimap menu (in the runbook content)",
     [KeyBinding.FOCUS_RUNBOOK]: "Select active runbook",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navigate runbooks with the active runbook selected",

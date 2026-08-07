@@ -37,7 +37,6 @@ export const KeyBinding = {
   FOCUS_RUNBOOK: "FOCUS_RUNBOOK",
   NAVIGATE_RUNBOOKS: "NAVIGATE_RUNBOOKS",
   OPEN_LINK: "OPEN_LINK",
-  TOGGLE_MINIMAP: "TOGGLE_MINIMAP",
   MULTISELECT_BLOCKS: "MULTISELECT_BLOCKS",
   NOTE_BOLD: "NOTE_BOLD",
   NOTE_ITALIC: "NOTE_ITALIC",
@@ -72,7 +71,6 @@ export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
     binding: `${ModifierAction.OPEN_LINK}+click`,
     keyboard: false,
   },
-  [KeyBinding.TOGGLE_MINIMAP]: { binding: "right-click", keyboard: false },
   [KeyBinding.MULTISELECT_BLOCKS]: {
     binding: `${ModifierAction.SELECT_BLOCKS}+click / drag`,
     keyboard: false,
