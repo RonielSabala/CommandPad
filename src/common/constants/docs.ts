@@ -85,6 +85,25 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.QA, level: DocsSectionLevel.SECTION },
 ];
 
+export function getDocsSectionParents(): Record<
+  DocsSectionId,
+  DocsSectionId | null
+> {
+  let section: DocsSectionId | null = null;
+  const parents = {} as Record<DocsSectionId, DocsSectionId | null>;
+
+  for (const entry of DOCS_SECTION_ORDER) {
+    if (entry.level === DocsSectionLevel.SECTION) {
+      section = entry.id;
+      parents[entry.id] = null;
+    } else {
+      parents[entry.id] = section;
+    }
+  }
+
+  return parents;
+}
+
 export function getDocsSectionNumbers(): Record<DocsSectionId, string> {
   let section = 0;
   let subsection = 0;

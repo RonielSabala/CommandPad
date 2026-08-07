@@ -528,6 +528,8 @@ export const en: Messages = {
       openDocs: "Open documentation",
       backToApp: "Back to app",
       tocTitle: "Contents",
+      expandAll: "Expand all sections",
+      collapseAll: "Collapse all sections",
     },
     toc: {
       [DocsSectionId.GETTING_STARTED]: "Getting started",
@@ -584,7 +586,7 @@ export const en: Messages = {
       journey:
         "This guide walks you through how the app works, one piece at a time, so you can get the most out of it. You'll start with the block types your runbooks are built from, then variables, the feature that makes command blocks truly powerful, and finally the workspace itself: the sidebar, tabs and everything around your runbooks.",
       navigate:
-        "Read it start to finish, or jump straight to whatever interests you from the contents on the left: you set the pace.",
+        "Read it start to finish, or jump straight to whatever interests you from the contents on the left: you set the pace. Clicking an entry there takes you to its section and folds it away, and its heading in the article does the same, so you can collapse what you have already read and keep the rest in view.",
       tryIt:
         "Most sections come with a real, working example marked **Try it**, a piece of the app you're free to mess with, nothing you do there touches your actual workspace. Go ahead and poke at it, that's the fastest way to get a feel for how something works. If you ever get lost, the arrow button in its corner brings it back to where it started.",
     },

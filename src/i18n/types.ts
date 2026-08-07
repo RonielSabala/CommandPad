@@ -322,6 +322,8 @@ export interface Messages {
       openDocs: string;
       backToApp: string;
       tocTitle: string;
+      expandAll: string;
+      collapseAll: string;
     };
     toc: Record<DocsSectionId, string>;
     demo: {
