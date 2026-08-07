@@ -21,6 +21,7 @@ export interface DocsCollapse {
   isNavVisible: (id: DocsSectionId) => boolean;
   hasChildren: (id: DocsSectionId) => boolean;
   activateFromToc: (id: DocsSectionId) => void;
+  toggleNav: (id: DocsSectionId) => void;
   allCollapsed: boolean;
   toggleAll: () => void;
   visibleIds: readonly DocsSectionId[];
@@ -77,18 +78,18 @@ export function useDocsCollapse(): DocsCollapse {
     [],
   );
 
+  const toggleNav = useCallback((id: DocsSectionId) => {
+    setNavCollapsed((current) => {
+      const next = new Set(current);
+      if (!next.delete(id)) {
+        next.add(id);
+      }
+
+      return next;
+    });
+  }, []);
+
   const activateFromToc = useCallback((id: DocsSectionId) => {
-    if (PARENT_IDS.has(id)) {
-      setNavCollapsed((current) => {
-        const next = new Set(current);
-        if (!next.delete(id)) {
-          next.add(id);
-        }
-
-        return next;
-      });
-    }
-
     setArticleCollapsed((current) => {
       const parent = SECTION_PARENTS[id];
       if (!current.has(id) && (parent === null || !current.has(parent))) {
@@ -129,6 +130,7 @@ export function useDocsCollapse(): DocsCollapse {
     isNavVisible,
     hasChildren,
     activateFromToc,
+    toggleNav,
     allCollapsed,
     toggleAll,
     visibleIds,

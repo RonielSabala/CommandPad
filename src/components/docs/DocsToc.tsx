@@ -59,19 +59,30 @@ export function DocsToc({ activeId, collapse, onNavigate }: Props) {
                 level === DocsSectionLevel.SUBSECTION && "docs-toc-sub",
                 id === activeId && "docs-toc-active",
               )}
-              aria-expanded={!collapse.isNavCollapsed(id)}
               onClick={(event) => {
                 event.preventDefault();
                 onNavigate(id);
               }}
             >
               {collapse.hasChildren(id) ? (
-                <SidebarSectionChevronIcon
-                  className={classNames(
-                    "docs-toc-chevron icon-md icon-bold",
-                    collapse.isNavCollapsed(id) && "is-collapsed",
-                  )}
-                />
+                <span
+                  className="docs-toc-chevron-hit"
+                  role="button"
+                  tabIndex={0}
+                  aria-expanded={!collapse.isNavCollapsed(id)}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    collapse.toggleNav(id);
+                  }}
+                >
+                  <SidebarSectionChevronIcon
+                    className={classNames(
+                      "docs-toc-chevron icon-md icon-bold",
+                      collapse.isNavCollapsed(id) && "is-collapsed",
+                    )}
+                  />
+                </span>
               ) : (
                 <span className="docs-toc-chevron-spacer" />
               )}
