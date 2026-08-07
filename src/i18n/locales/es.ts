@@ -306,8 +306,6 @@ export const es: Messages = {
     [KeyBinding.ESCAPE]: "Limpiar selección de bloques / cerrar diálogos",
     [KeyBinding.EXPORT]: "Abrir el diálogo de exportación",
     [KeyBinding.CLEAR_LIBRARY]: "Abrir el diálogo de eliminar todos los libros",
-    [KeyBinding.TOGGLE_MINIMAP]:
-      "Abrir el menú del minimapa (en el contenido del libro)",
     [KeyBinding.FOCUS_RUNBOOK]: "Seleccionar libro activo",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navegar libros con el libro activo seleccionado",
@@ -536,6 +534,8 @@ export const es: Messages = {
       openDocs: "Abrir documentación",
       backToApp: "Volver a la app",
       tocTitle: "Contenido",
+      expandAll: "Expandir todas las secciones",
+      collapseAll: "Contraer todas las secciones",
     },
     toc: {
       [DocsSectionId.GETTING_STARTED]: "Primeros pasos",
@@ -550,6 +550,8 @@ export const es: Messages = {
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
       [DocsSectionId.VARIABLE_SLICING]: "Recortar valores",
       [DocsSectionId.VARIABLE_COUNT]: "Contar caracteres",
+      [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
+      [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
       [DocsSectionId.MULTILINE_REFERENCES]: "Referencias largas",
       [DocsSectionId.ESCAPING_BRACES]: "Escapar llaves",
       [DocsSectionId.SECRET_VARIABLES]: "Variables secretas",
@@ -581,6 +583,9 @@ export const es: Messages = {
       greetingTemplate: "¡Hola {;name}, bienvenido a {;place}!",
       commitSubject: "Corrige reintento en subidas fallidas",
       commitLengthCommand: 'echo "{message|count} de 50 caracteres usados"',
+      projectName: "informe MENSUAL de ventas",
+      reportFile: "ventas-mensuales.pdf",
+      folderName: "   Informes de ventas   ",
       noteSample:
         "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace, p. ej. https://example.com. Haz clic fuera para verla renderizada de nuevo.",
       tableSample: `| Código de salida | Significado | Acción |
@@ -594,9 +599,9 @@ export const es: Messages = {
         "¡Bienvenido a CommandPad! Aquí vas a construir **libros de comandos**: documentos que mezclan los comandos que ejecutas a menudo con las notas que ayudan a explicarlos.",
       why: "Ya conoces el ritual: rebuscar en el historial de la terminal, escarbar en mensajes de chat antiguos o mantener un `comandos.txt` en alguna parte de tu computadora. Un libro de comandos acaba con eso. Cada comando vive junto a la nota que lo explica, con las partes que cambian ya rellenadas, listo para copiar.",
       journey:
-        "Esta guía te acompaña paso a paso por cómo funciona la aplicación, para que le saques todo el provecho. Empezarás por el espacio de trabajo y su barra lateral, luego conocerás los tres tipos de bloques con los que se construyen tus libros de comandos y, para cerrar, las variables: la característica que hace que los bloques de comando sean realmente potentes.",
+        "Esta guía te acompaña paso a paso por cómo funciona la aplicación, para que le saques todo el provecho. Empezarás por los tipos de bloques con los que se construyen tus libros de comandos, luego las variables, la característica que hace que los bloques de comando sean realmente potentes, y para cerrar, el espacio de trabajo en sí: la barra lateral, las pestañas y todo lo que rodea a tus libros.",
       navigate:
-        "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el índice de la izquierda: tú eliges el ritmo.",
+        "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el índice de la izquierda: tú eliges el ritmo. Al hacer clic en una entrada del índice te lleva a su sección y la pliega, y su título en el artículo hace lo mismo, así que puedes contraer lo que ya leíste y dejar el resto a la vista.",
       tryIt:
         "La mayoría de las secciones trae un ejemplo real y funcional marcado **Pruébalo**, una pieza de la app con la que puedes jugar, nada de lo que hagas ahí toca tu espacio de trabajo real. Anímate a toquetear un poco, es la forma más rápida de entender cómo funciona algo. Si te pierdes, el botón de flecha en su esquina te devuelve al punto de partida.",
     },
@@ -631,7 +636,7 @@ export const es: Messages = {
       minimap:
         "En el borde derecho vive el **minimapa**: una miniatura de los bloques reales del libro que reemplaza a la barra de desplazamiento. Haz clic o arrastra sobre él para saltar a cualquier punto de un libro. Haz **clic derecho** en cualquier parte del contenido del libro para abrir un pequeño menú donde puedes activarlo o desactivarlo, o moverlo al otro lado.",
       teaser:
-        "¿Bloques? ¿Pestañas? No te preocupes: son justo lo que vas a aprender a continuación.",
+        "Aquí es donde viven los bloques y las pestañas que ya conoces de antes.",
     },
     tabs: {
       intro: "Cada pestaña contiene un libro abierto.",
@@ -736,6 +741,39 @@ export const es: Messages = {
         "El asunto de un commit debería quedarse por debajo de 50 caracteres, y nadie los cuenta a mano. Escribe en el mensaje de abajo y mira cómo el número te sigue:",
       chaining:
         "Las operaciones se aplican de izquierda a derecha, así que puedes poner `count` después de un recorte: `{commit|[:7]|count}` acorta el commit primero y luego cuenta lo que queda.",
+    },
+    variableCase: {
+      intro:
+        "Escribe una palabra clave después del `|` y el valor se reescribe antes de llegar al comando. Cada resultado de la tabla está escrito con el estilo que nombra:",
+      table: `| Operación | Resultado |
+| --- | --- |
+| \`snakecase\` | palabras\\_unidas\\_por\\_guiones\\_bajos |
+| \`kebabcase\` | palabras-unidas-por-guiones |
+| \`camelcase\` | palabrasUnidasPorMayúsculas |
+| \`pascalcase\` | LoMismoEmpezandoPorMayúscula |
+| \`capitalize\` | Solo la primera letra del valor |
+| \`title\` | La Primera Letra De Cada Palabra |
+| \`uppercase\` | TODAS LAS LETRAS EN MAYÚSCULA |
+| \`lowercase\` | sin ninguna mayúscula |
+| \`swapcase\` | tODAS LAS LETRAS AL REVÉS |`,
+      rebuild:
+        "Las cuatro primeras **reconstruyen** el valor a partir de sus palabras, así que los espacios desaparecen. Las demás solo cambian letras.",
+      demoHint:
+        "El nombre de una carpeta va mejor sin espacios; un título, con ellos. El mismo valor, de las dos formas:",
+    },
+    variableStrip: {
+      intro:
+        "`strip` quita el texto entre paréntesis por los dos extremos del valor, `lstrip` solo por delante y `rstrip` solo por detrás. Abajo, cada una sobre un valor rodeado de guiones:",
+      table: `| Operación | Resultado |
+| --- | --- |
+| \`lstrip(-)\` | recortado por delante--- |
+| \`rstrip(-)\` | ---recortado por detrás |
+| \`strip(-)\` | recortado por los dos lados |`,
+      demoHint:
+        "Una dirección copiada del navegador, un archivo que ya trae su extensión. Cambia cualquiera de los dos y los comandos se ajustan solos:",
+      repeats:
+        "El texto se quita tantas veces como aparezca, y se compara **entero**: `rstrip(ando)` nunca se lleva una `o` suelta.",
+      whitespace: "Sin paréntesis, lo que se quita son los espacios:",
     },
     multilineReferences: {
       intro:

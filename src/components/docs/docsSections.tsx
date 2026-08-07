@@ -26,10 +26,12 @@ import {
   MultilineReferencesDocs,
   ParameterizedPlaceholdersDocs,
   SecretVariablesDocs,
+  VariableCaseDocs,
   VariableCountDocs,
   VariableReferencesDocs,
   VariablesDocs,
   VariableSlicingDocs,
+  VariableStripDocs,
 } from "./sections/VariablesSection";
 import {
   HeaderDocs,
@@ -55,6 +57,8 @@ export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {
   [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: ParameterizedPlaceholdersDocs,
   [DocsSectionId.VARIABLE_SLICING]: VariableSlicingDocs,
   [DocsSectionId.VARIABLE_COUNT]: VariableCountDocs,
+  [DocsSectionId.VARIABLE_CASE]: VariableCaseDocs,
+  [DocsSectionId.VARIABLE_STRIP]: VariableStripDocs,
   [DocsSectionId.MULTILINE_REFERENCES]: MultilineReferencesDocs,
   [DocsSectionId.ESCAPING_BRACES]: EscapingBracesDocs,
   [DocsSectionId.TABS]: TabsDocs,

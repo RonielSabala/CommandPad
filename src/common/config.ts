@@ -57,10 +57,9 @@ export const MinimapConfig = {
   OVERSCROLL_PROPERTY: "--minimap-overscroll",
 } as const;
 
-// A docs section counts as current while its top edge sits in the upper quarter of the scroll container
+// A docs section becomes current once its top edge crosses this far down the scroll container
 export const DocsScrollSpy = {
-  ROOT_MARGIN: "0px 0px -75% 0px",
-  THRESHOLD: 0,
+  TRIGGER_RATIO: 0.05,
 } as const;
 
 export const WrapPairs = {
@@ -74,6 +73,13 @@ export const WrapPairs = {
 export const SecretMaskConfig = {
   MASK_LENGTH: 8,
   MASK_CHAR: "•",
+} as const;
+
+export const StringCaseConfig = {
+  SNAKE_SEPARATOR: "_",
+  KEBAB_SEPARATOR: "-",
+  // Kept inside a word so `don't` titles as `Don't` rather than `Don'T`
+  APOSTROPHE: "'",
 } as const;
 
 export const COMMAND_PROMPT_PREFIX = "$";

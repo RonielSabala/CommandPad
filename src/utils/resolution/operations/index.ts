@@ -1,10 +1,14 @@
+import { CASE_OPERATION } from "./case";
 import { COUNT_OPERATION } from "./count";
 import { SLICE_OPERATION } from "./slice";
+import { STRIP_OPERATION } from "./strip";
 import type { OperationDefinition, OperationTransform } from "./types";
 
 const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   SLICE_OPERATION,
   COUNT_OPERATION,
+  CASE_OPERATION,
+  STRIP_OPERATION,
 ];
 
 interface AppliedOperations {

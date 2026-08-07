@@ -15,6 +15,8 @@ export const DocsSectionId = {
   PARAMETERIZED_PLACEHOLDERS: "parameterized-placeholders",
   VARIABLE_SLICING: "variable-slicing",
   VARIABLE_COUNT: "variable-count",
+  VARIABLE_CASE: "variable-case",
+  VARIABLE_STRIP: "variable-strip",
   MULTILINE_REFERENCES: "multiline-references",
   ESCAPING_BRACES: "escaping-braces",
   TABS: "tabs",
@@ -46,10 +48,6 @@ interface DocsSectionEntry {
 // Display order
 export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.GETTING_STARTED, level: DocsSectionLevel.SECTION },
-  { id: DocsSectionId.WORKSPACE, level: DocsSectionLevel.SECTION },
-  { id: DocsSectionId.HEADER, level: DocsSectionLevel.SUBSECTION },
-  { id: DocsSectionId.SIDEBAR, level: DocsSectionLevel.SUBSECTION },
-  { id: DocsSectionId.MAIN_PANEL, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.BLOCKS, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.COMMAND_BLOCK, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.NOTE_BLOCK, level: DocsSectionLevel.SUBSECTION },
@@ -64,6 +62,8 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   },
   { id: DocsSectionId.VARIABLE_SLICING, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.VARIABLE_COUNT, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.VARIABLE_CASE, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.VARIABLE_STRIP, level: DocsSectionLevel.SUBSECTION },
   {
     id: DocsSectionId.MULTILINE_REFERENCES,
     level: DocsSectionLevel.SUBSECTION,
@@ -71,6 +71,10 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.ESCAPING_BRACES, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.TABS, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.MULTI_SELECT, level: DocsSectionLevel.SECTION },
+  { id: DocsSectionId.WORKSPACE, level: DocsSectionLevel.SECTION },
+  { id: DocsSectionId.HEADER, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.SIDEBAR, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.MAIN_PANEL, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.RUNBOOK_LIBRARY, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.READ_MODE, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.EXPORT, level: DocsSectionLevel.SECTION },
@@ -84,6 +88,25 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.KEYBOARD_SHORTCUTS, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.QA, level: DocsSectionLevel.SECTION },
 ];
+
+export function getDocsSectionParents(): Record<
+  DocsSectionId,
+  DocsSectionId | null
+> {
+  let section: DocsSectionId | null = null;
+  const parents = {} as Record<DocsSectionId, DocsSectionId | null>;
+
+  for (const entry of DOCS_SECTION_ORDER) {
+    if (entry.level === DocsSectionLevel.SECTION) {
+      section = entry.id;
+      parents[entry.id] = null;
+    } else {
+      parents[entry.id] = section;
+    }
+  }
+
+  return parents;
+}
 
 export function getDocsSectionNumbers(): Record<DocsSectionId, string> {
   let section = 0;

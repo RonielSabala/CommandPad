@@ -3,6 +3,10 @@
   margin-bottom: var(--space-20);
 }
 
+.docs-section.is-collapsed {
+  margin-bottom: var(--space-12);
+}
+
 .docs-section-number {
   font-family: var(--font-mono);
   color: var(--accent-text);
@@ -11,9 +15,6 @@
 
 .docs-h2,
 .docs-h3 {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-6);
   color: var(--color-text-primary);
   font-weight: 600;
 }
@@ -28,4 +29,48 @@
 .docs-h3 {
   font-size: var(--text-xl);
   margin-bottom: var(--space-8);
+}
+
+.docs-section.is-collapsed .docs-h2,
+.docs-section.is-collapsed .docs-h3 {
+  margin-bottom: 0;
+}
+
+.docs-section-toggle {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-6);
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.docs-section-toggle:hover {
+  color: var(--accent-text);
+}
+
+.docs-h2 .docs-section-chevron,
+.docs-h3 .docs-section-chevron {
+  width: 0.75em;
+  height: 0.75em;
+}
+
+.docs-section-chevron {
+  flex-shrink: 0;
+  align-self: center;
+  color: var(--color-text-muted);
+  transition: transform var(--transition-fast);
+}
+
+.docs-section-chevron.is-collapsed {
+  transform: rotate(-90deg);
+}
+
+.docs-section-toggle:hover .docs-section-chevron {
+  color: var(--accent-text);
 }

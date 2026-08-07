@@ -1,4 +1,5 @@
 import { DocsScrollSpy } from "@/common/config";
+import { EventType } from "@/common/constants/events";
 import { useEffect, useState, type RefObject } from "react";
 
 export function useScrollSpy(
@@ -13,59 +14,57 @@ export function useScrollSpy(
       return;
     }
 
-    const above = new Set<string>();
-    const intersecting = new Set<string>();
+    const elements = ids
+      .map((id) => root.querySelector(`#${CSS.escape(id)}`))
+      .filter((element): element is Element => element !== null);
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const id = entry.target.id;
+    const resolveActive = () => {
+      let current = ids[0] ?? null;
 
-          if (entry.isIntersecting) {
-            intersecting.add(id);
-            above.delete(id);
-          } else {
-            intersecting.delete(id);
+      if (root.scrollTop > 0) {
+        const line =
+          root.getBoundingClientRect().top +
+          root.clientHeight * DocsScrollSpy.TRIGGER_RATIO;
 
-            const rootTop = entry.rootBounds?.top ?? 0;
-            if (entry.boundingClientRect.top < rootTop) {
-              above.add(id);
-            } else {
-              above.delete(id);
-            }
+        for (const element of elements) {
+          if (element.getBoundingClientRect().top >= line) {
+            break;
           }
+
+          current = element.id;
         }
-
-        const firstVisible = ids.find((id) => intersecting.has(id));
-        if (firstVisible) {
-          setActiveId(firstVisible);
-          return;
-        }
-
-        for (let i = ids.length - 1; i >= 0; i--) {
-          if (above.has(ids[i])) {
-            setActiveId(ids[i]);
-            return;
-          }
-        }
-
-        setActiveId(ids[0] ?? null);
-      },
-      {
-        root,
-        rootMargin: DocsScrollSpy.ROOT_MARGIN,
-        threshold: DocsScrollSpy.THRESHOLD,
-      },
-    );
-
-    for (const id of ids) {
-      const element = root.querySelector(`#${CSS.escape(id)}`);
-      if (element) {
-        observer.observe(element);
       }
+
+      setActiveId(current);
+    };
+
+    let frame = 0;
+    const schedule = () => {
+      if (frame) {
+        return;
+      }
+
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        resolveActive();
+      });
+    };
+
+    resolveActive();
+    root.addEventListener(EventType.SCROLL, schedule, { passive: true });
+
+    const observer = new ResizeObserver(schedule);
+    observer.observe(root);
+
+    for (const element of elements) {
+      observer.observe(element);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      root.removeEventListener(EventType.SCROLL, schedule);
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
   }, [ids, rootRef]);
 
   return activeId;

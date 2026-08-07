@@ -1,13 +1,17 @@
 import {
+  ANY,
   DIGIT,
   ESCAPE,
   WHITESPACE,
   anchored,
   atEnd,
   capture,
+  dotAllRegex,
+  either,
   escapeSyntax,
   globalRegex,
   group,
+  named,
   noneOf,
   oneOrMore,
   optional,
@@ -36,9 +40,35 @@ export const OperationSyntax = {
   COUNT: "count",
 } as const;
 
+export const CaseSyntax = {
+  SNAKE: "snakecase",
+  KEBAB: "kebabcase",
+  CAMEL: "camelcase",
+  PASCAL: "pascalcase",
+  CAPITALIZE: "capitalize",
+  TITLE: "title",
+  LOWER: "lowercase",
+  UPPER: "uppercase",
+  SWAP: "swapcase",
+} as const;
+
+export const StripSyntax = {
+  BOTH: "strip",
+  LEFT: "lstrip",
+  RIGHT: "rstrip",
+  ARGUMENT_OPEN: "(",
+  ARGUMENT_CLOSE: ")",
+} as const;
+
+export const StripGroup = {
+  KEYWORD: "keyword",
+  ARGUMENT: "argument",
+} as const;
+
 const Ref = escapeSyntax(VariableSyntax);
 const Slice = escapeSyntax(SliceSyntax);
 const Operation = escapeSyntax(OperationSyntax);
+const Strip = escapeSyntax(StripSyntax);
 
 const braced = (content: string) =>
   sequence(Ref.BRACE_OPEN, content, Ref.BRACE_CLOSE);
@@ -71,6 +101,27 @@ export const VariableSliceRegex = new RegExp(
 );
 
 export const CountOperationRegex = new RegExp(anchored(Operation.COUNT));
+
+export const StripOperationRegex = dotAllRegex(
+  anchored(
+    sequence(
+      named(
+        StripGroup.KEYWORD,
+        group(either(Strip.LEFT, Strip.RIGHT, Strip.BOTH)),
+      ),
+      zeroOrMore(WHITESPACE),
+      optional(
+        group(
+          sequence(
+            Strip.ARGUMENT_OPEN,
+            named(StripGroup.ARGUMENT, zeroOrMore(ANY)),
+            Strip.ARGUMENT_CLOSE,
+          ),
+        ),
+      ),
+    ),
+  ),
+);
 
 export const CopySuffixRegex = new RegExp(
   atEnd(sequence(Ref.COPY_SUFFIX, zeroOrMore(DIGIT))),

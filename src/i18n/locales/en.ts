@@ -303,8 +303,6 @@ export const en: Messages = {
     [KeyBinding.ESCAPE]: "Clear block selection / close modals",
     [KeyBinding.EXPORT]: "Open export dialog",
     [KeyBinding.CLEAR_LIBRARY]: "Open delete all runbooks dialog",
-    [KeyBinding.TOGGLE_MINIMAP]:
-      "Open the minimap menu (in the runbook content)",
     [KeyBinding.FOCUS_RUNBOOK]: "Select active runbook",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navigate runbooks with the active runbook selected",
@@ -530,6 +528,8 @@ export const en: Messages = {
       openDocs: "Open documentation",
       backToApp: "Back to app",
       tocTitle: "Contents",
+      expandAll: "Expand all sections",
+      collapseAll: "Collapse all sections",
     },
     toc: {
       [DocsSectionId.GETTING_STARTED]: "Getting started",
@@ -544,6 +544,8 @@ export const en: Messages = {
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Parameterized placeholders",
       [DocsSectionId.VARIABLE_SLICING]: "Slicing values",
       [DocsSectionId.VARIABLE_COUNT]: "Counting characters",
+      [DocsSectionId.VARIABLE_CASE]: "Changing case",
+      [DocsSectionId.VARIABLE_STRIP]: "Trimming ends",
       [DocsSectionId.MULTILINE_REFERENCES]: "Long references",
       [DocsSectionId.ESCAPING_BRACES]: "Escaping braces",
       [DocsSectionId.SECRET_VARIABLES]: "Secret variables",
@@ -571,6 +573,9 @@ export const en: Messages = {
       greetingTemplate: "Hi {;name}, welcome to {;place}!",
       commitSubject: "Fix retry backoff on failed uploads",
       commitLengthCommand: 'echo "{message|count} of 50 characters used"',
+      projectName: "monthly SALES report",
+      reportFile: "monthly-sales.pdf",
+      folderName: "   Sales Reports   ",
       noteSample:
         "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link, e.g. https://example.com. Click away to see it rendered again.",
       tableSample: `| Exit code | Meaning | Action |
@@ -584,9 +589,9 @@ export const en: Messages = {
         "Welcome to CommandPad! Here you'll build **runbooks**: documents that mix the commands you run often with the notes that help explain them.",
       why: "You know the ritual: scrolling through shell history, digging through old chat messages, or keeping a `commands.txt` somewhere on your computer. A runbook ends that. Each command lives next to the note that explains it, with the changing parts filled in for you, ready to copy.",
       journey:
-        "This guide walks you through how the app works, one piece at a time, so you can get the most out of it. You'll start with the workspace and its sidebar, meet the three block types your runbooks are built from and, to wrap up, variables: the feature that makes command blocks truly powerful.",
+        "This guide walks you through how the app works, one piece at a time, so you can get the most out of it. You'll start with the block types your runbooks are built from, then variables, the feature that makes command blocks truly powerful, and finally the workspace itself: the sidebar, tabs and everything around your runbooks.",
       navigate:
-        "Read it start to finish, or jump straight to whatever interests you from the contents on the left: you set the pace.",
+        "Read it start to finish, or jump straight to whatever interests you from the contents on the left: you set the pace. Clicking an entry there takes you to its section and folds it away, and its heading in the article does the same, so you can collapse what you have already read and keep the rest in view.",
       tryIt:
         "Most sections come with a real, working example marked **Try it**, a piece of the app you're free to mess with, nothing you do there touches your actual workspace. Go ahead and poke at it, that's the fastest way to get a feel for how something works. If you ever get lost, the arrow button in its corner brings it back to where it started.",
     },
@@ -621,7 +626,7 @@ export const en: Messages = {
       minimap:
         "On the right edge lives the **minimap**: a miniature of the real runbook blocks that replaces the scrollbar. Click or drag on it to jump anywhere in a runbook. **Right-click** anywhere in the runbook content to open a small menu where you can turn it on or off or move it to the other side.",
       teaser:
-        "Blocks? Tabs? Don't worry: they are exactly what you will learn next.",
+        "This is where the blocks and tabs you already know from earlier live.",
     },
     tabs: {
       intro: "Each tab holds one open runbook.",
@@ -724,6 +729,39 @@ export const en: Messages = {
         "A commit subject is supposed to stay under 50 characters, and nobody counts them by hand. Type into the message below and watch the number keep up:",
       chaining:
         "Operations run left to right, so you can put `count` after a slice: `{commit|[:7]|count}` shortens the commit first, then counts what is left.",
+    },
+    variableCase: {
+      intro:
+        "Write a case keyword after the `|` and the value is respelled on its way into the command. Each result below is written in the case it names:",
+      table: `| Operation | Result |
+| --- | --- |
+| \`snakecase\` | words\\_joined\\_by\\_underscores |
+| \`kebabcase\` | words-joined-by-dashes |
+| \`camelcase\` | wordsJoinedByCapitals |
+| \`pascalcase\` | TheSameStartingWithACapital |
+| \`capitalize\` | Only the first letter of the value |
+| \`title\` | The First Letter Of Every Word |
+| \`uppercase\` | EVERY LETTER IN CAPITALS |
+| \`lowercase\` | no capital letters at all |
+| \`swapcase\` | eVERY LETTER THE OTHER WAY ROUND |`,
+      rebuild:
+        "The first four **rebuild** the value out of its words, so spaces disappear. The rest only change letters.",
+      demoHint:
+        "A folder name is better off without spaces, a title reads better with them. One value, both ways:",
+    },
+    variableStrip: {
+      intro:
+        "`strip` removes the text in parentheses from both ends of a value, `lstrip` from the front only, `rstrip` from the back only. Below, each one against a value padded with dashes:",
+      table: `| Operation | Result |
+| --- | --- |
+| \`lstrip(-)\` | trimmed at the front--- |
+| \`rstrip(-)\` | ---trimmed at the back |
+| \`strip(-)\` | trimmed at both ends |`,
+      demoHint:
+        "An address copied from the browser bar, a file that already has its extension. Edit either and the commands keep up:",
+      repeats:
+        "The text comes off as many times as it is there, and it is matched **whole**: `rstrip(ing)` never takes a stray `g`.",
+      whitespace: "Leave the parentheses off and spaces come off instead:",
     },
     multilineReferences: {
       intro:

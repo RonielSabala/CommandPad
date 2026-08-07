@@ -367,7 +367,7 @@ export interface StoreState {
   alert: (message: string, options?: AlertOptions) => Promise<void>;
   resolveAlert: () => void;
   clearRunbookLibrary: () => Promise<void>;
-  clearAllData: () => Promise<void>;
+  clearAllData: () => Promise<boolean>;
 }
 
 const ROOT_CLOUD_PATH: CloudFolderRef[] = [];
@@ -3007,8 +3007,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           confirmLabel: t.dialogs.resetConfirm,
           tone: DialogTone.DANGER,
         });
+
         if (!confirmed) {
-          return;
+          return false;
         }
 
         // Never let a demo store wipe the user's real data
@@ -3031,6 +3032,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           selectedBlockIds: new Set(),
           focusedRunbookId: null,
         });
+
+        return true;
       },
     };
   });
