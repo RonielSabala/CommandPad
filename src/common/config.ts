@@ -75,6 +75,13 @@ export const SecretMaskConfig = {
   MASK_CHAR: "•",
 } as const;
 
+export const StringCaseConfig = {
+  SNAKE_SEPARATOR: "_",
+  KEBAB_SEPARATOR: "-",
+  // Kept inside a word so `don't` titles as `Don't` rather than `Don'T`
+  APOSTROPHE: "'",
+} as const;
+
 export const COMMAND_PROMPT_PREFIX = "$";
 
 export const CommandClampConfig = {

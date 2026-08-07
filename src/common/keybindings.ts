@@ -1,4 +1,4 @@
-import { toTitleCase } from "../utils/string";
+import { upperFirst } from "../utils/stringCase";
 import { Modifier } from "./constants/events";
 
 export const ModifierAction = {
@@ -94,7 +94,7 @@ const KEY_LABELS: Record<string, string> = { delete: "Del" };
 function titleCaseChord(chord: string): string {
   return chord
     .split(BINDING_SEPARATOR)
-    .map((token) => KEY_LABELS[token] ?? toTitleCase(token))
+    .map((token) => KEY_LABELS[token] ?? upperFirst(token))
     .join(BINDING_SEPARATOR);
 }
 

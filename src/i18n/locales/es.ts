@@ -550,6 +550,8 @@ export const es: Messages = {
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
       [DocsSectionId.VARIABLE_SLICING]: "Recortar valores",
       [DocsSectionId.VARIABLE_COUNT]: "Contar caracteres",
+      [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
+      [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
       [DocsSectionId.MULTILINE_REFERENCES]: "Referencias largas",
       [DocsSectionId.ESCAPING_BRACES]: "Escapar llaves",
       [DocsSectionId.SECRET_VARIABLES]: "Variables secretas",
@@ -581,6 +583,9 @@ export const es: Messages = {
       greetingTemplate: "¡Hola {;name}, bienvenido a {;place}!",
       commitSubject: "Corrige reintento en subidas fallidas",
       commitLengthCommand: 'echo "{message|count} de 50 caracteres usados"',
+      projectName: "informe MENSUAL de ventas",
+      reportFile: "ventas-mensuales.pdf",
+      folderName: "   Informes de ventas   ",
       noteSample:
         "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace, p. ej. https://example.com. Haz clic fuera para verla renderizada de nuevo.",
       tableSample: `| Código de salida | Significado | Acción |
@@ -736,6 +741,39 @@ export const es: Messages = {
         "El asunto de un commit debería quedarse por debajo de 50 caracteres, y nadie los cuenta a mano. Escribe en el mensaje de abajo y mira cómo el número te sigue:",
       chaining:
         "Las operaciones se aplican de izquierda a derecha, así que puedes poner `count` después de un recorte: `{commit|[:7]|count}` acorta el commit primero y luego cuenta lo que queda.",
+    },
+    variableCase: {
+      intro:
+        "Escribe una palabra clave después del `|` y el valor se reescribe antes de llegar al comando. Cada resultado de la tabla está escrito con el estilo que nombra:",
+      table: `| Operación | Resultado |
+| --- | --- |
+| \`snakecase\` | palabras\\_unidas\\_por\\_guiones\\_bajos |
+| \`kebabcase\` | palabras-unidas-por-guiones |
+| \`camelcase\` | palabrasUnidasPorMayúsculas |
+| \`pascalcase\` | LoMismoEmpezandoPorMayúscula |
+| \`capitalize\` | Solo la primera letra del valor |
+| \`title\` | La Primera Letra De Cada Palabra |
+| \`uppercase\` | TODAS LAS LETRAS EN MAYÚSCULA |
+| \`lowercase\` | sin ninguna mayúscula |
+| \`swapcase\` | tODAS LAS LETRAS AL REVÉS |`,
+      rebuild:
+        "Las cuatro primeras **reconstruyen** el valor a partir de sus palabras, así que los espacios desaparecen. Las demás solo cambian letras.",
+      demoHint:
+        "El nombre de una carpeta va mejor sin espacios; un título, con ellos. El mismo valor, de las dos formas:",
+    },
+    variableStrip: {
+      intro:
+        "`strip` quita el texto entre paréntesis por los dos extremos del valor, `lstrip` solo por delante y `rstrip` solo por detrás. Abajo, cada una sobre un valor rodeado de guiones:",
+      table: `| Operación | Resultado |
+| --- | --- |
+| \`lstrip(-)\` | recortado por delante--- |
+| \`rstrip(-)\` | ---recortado por detrás |
+| \`strip(-)\` | recortado por los dos lados |`,
+      demoHint:
+        "Una dirección copiada del navegador, un archivo que ya trae su extensión. Cambia cualquiera de los dos y los comandos se ajustan solos:",
+      repeats:
+        "El texto se quita tantas veces como aparezca, y se compara **entero**: `rstrip(ando)` nunca se lleva una `o` suelta.",
+      whitespace: "Sin paréntesis, lo que se quita son los espacios:",
     },
     multilineReferences: {
       intro:

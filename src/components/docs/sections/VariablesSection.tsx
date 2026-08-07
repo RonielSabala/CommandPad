@@ -2,7 +2,7 @@ import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
 import { demoCommand, demoVariable } from "../demos/demoSeeds";
 import { DemoVariableRows, DemoWorkspace } from "../demos/DemoWorkspace";
-import { Prose } from "../Prose";
+import { Prose, ProseTable } from "../Prose";
 import "./VariablesSection.css";
 
 export function VariablesDocs() {
@@ -220,6 +220,78 @@ export function VariableCountDocs() {
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.variableCount.chaining} />
+    </>
+  );
+}
+
+export function VariableCaseDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableCase.intro} />
+      <ProseTable text={t.docs.variableCase.table} />
+      <Prose text={t.docs.variableCase.rebuild} />
+      <Prose text={t.docs.variableCase.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("PROJECT", t.docs.demo.projectName)],
+            blocks: [
+              demoCommand("mkdir {PROJECT|snakecase}"),
+              demoCommand('echo "{PROJECT|title}"'),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
+export function VariableStripDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableStrip.intro} />
+      <ProseTable text={t.docs.variableStrip.table} />
+      <Prose text={t.docs.variableStrip.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("SITE", "https://example.com/"),
+              demoVariable("FILE", t.docs.demo.reportFile),
+            ],
+            blocks: [
+              demoCommand("ping {SITE|lstrip(https://)|rstrip(/)}"),
+              demoCommand("zip {FILE|rstrip(.pdf)}.zip {FILE}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableStrip.repeats} />
+      <Prose text={t.docs.variableStrip.whitespace} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("NAME", t.docs.demo.folderName)],
+            blocks: [
+              demoCommand('mkdir "{NAME}"'),
+              demoCommand('mkdir "{NAME|strip}"'),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }

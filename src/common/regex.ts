@@ -32,6 +32,12 @@ export const ANY = ".";
 export const WHITESPACE = String.raw`\s`;
 export const DIGIT = String.raw`\d`;
 
+// Unicode categories
+export const LETTER = String.raw`\p{L}`;
+export const UPPERCASE_LETTER = String.raw`\p{Lu}`;
+export const LOWERCASE_LETTER = String.raw`\p{Ll}`;
+export const NUMBER = String.raw`\p{N}`;
+
 // Character classes
 
 export const anyOf = (...sources: string[]) => `[${sources.join("")}]`;
@@ -54,6 +60,7 @@ export const oneOrMoreLazy = (source: string) => `${source}+?`;
 // Lookaround
 
 export const before = (source: string) => `(?=${source})`;
+export const after = (source: string) => `(?<=${source})`;
 export const notBefore = (source: string) => `(?!${source})`;
 export const notAfter = (source: string) => `(?<!${source})`;
 
@@ -64,6 +71,8 @@ export const either = (...sources: string[]) => sources.join("|");
 export const anchored = (source: string) => `^${source}$`;
 export const atEnd = (source: string) => `${source}$`;
 export const globalRegex = (source: string) => new RegExp(source, "g");
+export const globalUnicodeRegex = (source: string) => new RegExp(source, "gu");
+export const dotAllRegex = (source: string) => new RegExp(source, "s");
 
 // Escaping
 

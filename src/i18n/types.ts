@@ -337,6 +337,9 @@ export interface Messages {
       greetingTemplate: string;
       commitSubject: string;
       commitLengthCommand: string;
+      projectName: string;
+      reportFile: string;
+      folderName: string;
     };
     gettingStarted: {
       intro: string;
@@ -413,6 +416,19 @@ export interface Messages {
       intro: string;
       demoHint: string;
       chaining: string;
+    };
+    variableCase: {
+      intro: string;
+      table: string;
+      rebuild: string;
+      demoHint: string;
+    };
+    variableStrip: {
+      intro: string;
+      table: string;
+      demoHint: string;
+      repeats: string;
+      whitespace: string;
     };
     multilineReferences: {
       intro: string;

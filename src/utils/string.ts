@@ -12,10 +12,6 @@ export function joinLines(lines: string[]): string {
   return lines.join("\n");
 }
 
-export function toTitleCase(text: string): string {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
 export function matchesQuery(
   query: string,
   ...fields: (string | undefined)[]
@@ -76,6 +72,28 @@ export function sliceString(
   }
 
   return sliced.join("");
+}
+
+export function stripStart(text: string, cut: string): string {
+  let result = text;
+  while (cut && result.startsWith(cut)) {
+    result = result.slice(cut.length);
+  }
+
+  return result;
+}
+
+export function stripEnd(text: string, cut: string): string {
+  let result = text;
+  while (cut && result.endsWith(cut)) {
+    result = result.slice(0, -cut.length);
+  }
+
+  return result;
+}
+
+export function stripBoth(text: string, cut: string): string {
+  return stripEnd(stripStart(text, cut), cut);
 }
 
 export function classNames(
