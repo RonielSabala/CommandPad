@@ -582,7 +582,7 @@ export const en: Messages = {
         "Welcome to CommandPad! Here you'll build **runbooks**: documents that mix the commands you run often with the notes that help explain them.",
       why: "You know the ritual: scrolling through shell history, digging through old chat messages, or keeping a `commands.txt` somewhere on your computer. A runbook ends that. Each command lives next to the note that explains it, with the changing parts filled in for you, ready to copy.",
       journey:
-        "This guide walks you through how the app works, one piece at a time, so you can get the most out of it. You'll start with the workspace and its sidebar, meet the three block types your runbooks are built from and, to wrap up, variables: the feature that makes command blocks truly powerful.",
+        "This guide walks you through how the app works, one piece at a time, so you can get the most out of it. You'll start with the block types your runbooks are built from, then variables, the feature that makes command blocks truly powerful, and finally the workspace itself: the sidebar, tabs and everything around your runbooks.",
       navigate:
         "Read it start to finish, or jump straight to whatever interests you from the contents on the left: you set the pace.",
       tryIt:
@@ -619,7 +619,7 @@ export const en: Messages = {
       minimap:
         "On the right edge lives the **minimap**: a miniature of the real runbook blocks that replaces the scrollbar. Click or drag on it to jump anywhere in a runbook. **Right-click** anywhere in the runbook content to open a small menu where you can turn it on or off or move it to the other side.",
       teaser:
-        "Blocks? Tabs? Don't worry: they are exactly what you will learn next.",
+        "This is where the blocks and tabs you already know from earlier live.",
     },
     tabs: {
       intro: "Each tab holds one open runbook.",

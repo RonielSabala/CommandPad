@@ -592,7 +592,7 @@ export const es: Messages = {
         "¡Bienvenido a CommandPad! Aquí vas a construir **libros de comandos**: documentos que mezclan los comandos que ejecutas a menudo con las notas que ayudan a explicarlos.",
       why: "Ya conoces el ritual: rebuscar en el historial de la terminal, escarbar en mensajes de chat antiguos o mantener un `comandos.txt` en alguna parte de tu computadora. Un libro de comandos acaba con eso. Cada comando vive junto a la nota que lo explica, con las partes que cambian ya rellenadas, listo para copiar.",
       journey:
-        "Esta guía te acompaña paso a paso por cómo funciona la aplicación, para que le saques todo el provecho. Empezarás por el espacio de trabajo y su barra lateral, luego conocerás los tres tipos de bloques con los que se construyen tus libros de comandos y, para cerrar, las variables: la característica que hace que los bloques de comando sean realmente potentes.",
+        "Esta guía te acompaña paso a paso por cómo funciona la aplicación, para que le saques todo el provecho. Empezarás por los tipos de bloques con los que se construyen tus libros de comandos, luego las variables, la característica que hace que los bloques de comando sean realmente potentes, y para cerrar, el espacio de trabajo en sí: la barra lateral, las pestañas y todo lo que rodea a tus libros.",
       navigate:
         "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el índice de la izquierda: tú eliges el ritmo.",
       tryIt:
@@ -629,7 +629,7 @@ export const es: Messages = {
       minimap:
         "En el borde derecho vive el **minimapa**: una miniatura de los bloques reales del libro que reemplaza a la barra de desplazamiento. Haz clic o arrastra sobre él para saltar a cualquier punto de un libro. Haz **clic derecho** en cualquier parte del contenido del libro para abrir un pequeño menú donde puedes activarlo o desactivarlo, o moverlo al otro lado.",
       teaser:
-        "¿Bloques? ¿Pestañas? No te preocupes: son justo lo que vas a aprender a continuación.",
+        "Aquí es donde viven los bloques y las pestañas que ya conoces de antes.",
     },
     tabs: {
       intro: "Cada pestaña contiene un libro abierto.",

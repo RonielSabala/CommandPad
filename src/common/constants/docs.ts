@@ -46,10 +46,6 @@ interface DocsSectionEntry {
 // Display order
 export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.GETTING_STARTED, level: DocsSectionLevel.SECTION },
-  { id: DocsSectionId.WORKSPACE, level: DocsSectionLevel.SECTION },
-  { id: DocsSectionId.HEADER, level: DocsSectionLevel.SUBSECTION },
-  { id: DocsSectionId.SIDEBAR, level: DocsSectionLevel.SUBSECTION },
-  { id: DocsSectionId.MAIN_PANEL, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.BLOCKS, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.COMMAND_BLOCK, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.NOTE_BLOCK, level: DocsSectionLevel.SUBSECTION },
@@ -71,6 +67,10 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.ESCAPING_BRACES, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.TABS, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.MULTI_SELECT, level: DocsSectionLevel.SECTION },
+  { id: DocsSectionId.WORKSPACE, level: DocsSectionLevel.SECTION },
+  { id: DocsSectionId.HEADER, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.SIDEBAR, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.MAIN_PANEL, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.RUNBOOK_LIBRARY, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.READ_MODE, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.EXPORT, level: DocsSectionLevel.SECTION },
