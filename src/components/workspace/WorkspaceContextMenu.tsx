@@ -42,9 +42,16 @@ export function WorkspaceContextMenu({ anchor, onClose }: Props) {
 
       <ContextMenuSeparator />
 
+      <ContextMenuItem checked={spellcheckEnabled} onSelect={toggleSpellcheck}>
+        {t.contextMenu.spellcheck}
+      </ContextMenuItem>
+
+      <ContextMenuSeparator />
+
       <ContextMenuItem checked={minimapEnabled} onSelect={toggleMinimap}>
         {t.contextMenu.minimap}
       </ContextMenuItem>
+
       {minimapEnabled && (
         <ContextMenuItem onSelect={toggleMinimapPosition}>
           {minimapOnLeft
@@ -52,12 +59,6 @@ export function WorkspaceContextMenu({ anchor, onClose }: Props) {
             : t.contextMenu.moveMinimapLeft}
         </ContextMenuItem>
       )}
-
-      <ContextMenuSeparator />
-
-      <ContextMenuItem checked={spellcheckEnabled} onSelect={toggleSpellcheck}>
-        {t.contextMenu.spellcheck}
-      </ContextMenuItem>
     </ContextMenu>
   );
 }
