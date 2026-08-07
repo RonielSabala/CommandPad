@@ -13,12 +13,13 @@ import {
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Header.css";
 import { LanguageSelect } from "./LanguageSelect";
 
 export function Header() {
   const t = useTranslation();
+  const navigate = useNavigate();
   const isRead = useStore((state) => state.mode === AppMode.READ);
   const isLight = useStore((state) => state.theme === Theme.LIGHT);
   const toggleTheme = useStore((state) => state.toggleTheme);
@@ -109,7 +110,11 @@ export function Header() {
 
         <button
           className="btn btn-lg btn-danger"
-          onClick={clearAllData}
+          onClick={async () => {
+            if (await clearAllData()) {
+              navigate(AppRoute.HOME);
+            }
+          }}
           title={t.header.resetWorkspaceTitle}
         >
           <ArrowCounterclockwise
