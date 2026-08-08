@@ -63,7 +63,8 @@ body.read-mode .image-view {
   transition: opacity var(--transition-base);
 }
 
-.image-frame:hover .image-actions {
+.image-frame:hover .image-actions,
+.image-frame:has(.image-actions-menu.menu-open) .image-actions {
   opacity: 1;
 }
 
