@@ -48,7 +48,6 @@ export function CloudFileManagementDocs() {
       <Prose text={t.docs.cloudFileManagement.actions} />
       <Prose text={t.docs.cloudFileManagement.editFile} />
       <Prose text={t.docs.cloudFileManagement.recycleBin} />
-      <Prose text={t.docs.cloudFileManagement.storage} />
     </>
   );
 }

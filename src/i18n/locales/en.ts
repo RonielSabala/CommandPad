@@ -600,7 +600,7 @@ export const en: Messages = {
       journey:
         "This guide walks you through how the app works, one piece at a time, so you can get the most out of it. You'll start with the block types your runbooks are built from, then variables, the feature that makes command blocks truly powerful, and finally the workspace itself: the sidebar, tabs and everything around your runbooks.",
       navigate:
-        "Read it start to finish, or jump straight to whatever interests you from the contents panel beside the article: you set the pace. Clicking an entry there takes you to its section and folds it away, and its heading in the article does the same, so you can collapse what you have already read and keep the rest in view. That panel is resizable, collapsible and can be moved to either side, exactly like the workspace sidebar.",
+        "Read it start to finish, or jump straight to whatever interests you from the contents panel beside the article: you set the pace. Clicking an entry there takes you to its section and folds it away, and its heading in the article does the same, so you can collapse what you have already read and keep the rest in view.",
       tryIt:
         "Most sections come with a real, working example marked **Try it**, a piece of the app you're free to mess with, nothing you do there touches your actual workspace. Go ahead and poke at it, that's the fastest way to get a feel for how something works. If you ever get lost, the arrow button in its corner brings it back to where it started.",
     },
@@ -634,8 +634,6 @@ export const en: Messages = {
         "The main panel is your workbench. At the top sits the **tabs bar** with your open runbooks; below it, the blocks of the active runbook; and at the end, the **NEW BLOCK** row to keep adding content.",
       minimap:
         "On the right edge lives the **minimap**: a miniature of the real runbook blocks that replaces the scrollbar. Click or drag on it to jump anywhere in a runbook. **Right-click** anywhere in the runbook content to open a small menu where you can turn it on or off or move it to the other side.",
-      teaser:
-        "This is where the blocks and tabs you already know from earlier live.",
     },
     tabs: {
       intro: "Each tab holds one open runbook.",
@@ -672,7 +670,7 @@ export const en: Messages = {
         "Use the **search bar** to filter runbooks by label or filename.",
       ],
       autoLabel:
-        "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label, so runbooks are self-describing. Otherwise the imported filename is used as the fallback.",
+        "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label. Otherwise the imported filename is used as the fallback.",
       labelDetails:
         "Labels are normalized: markdown formatting is stripped and they are trimmed to 60 characters.",
       autoSave:
@@ -681,7 +679,7 @@ export const en: Messages = {
     variables: {
       why: "This is the feature everything else has been building toward. A server name, a file path, a version number: the same little values repeat across half the commands you keep, and the day one changes you get to hunt it down in every single command. With variables you write that value **once**, and every command that needs it stays current on its own.",
       intro:
-        "Variables are defined in the **VARIABLES** section of the sidebar. Each variable has a **key** and a **value**. Keys are case-sensitive. If two variables share the same key, the one defined last wins.",
+        "Each variable has a **key** and a **value**. Keys are case-sensitive. If two variables share the same key, the one defined last wins.",
       usage:
         "Use a variable in any command by wrapping its key in curly braces, e.g. `{server}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
       unresolved:
@@ -778,21 +776,20 @@ export const en: Messages = {
     },
     escapingBraces: {
       intro:
-        "Prefix a reference with a backslash in a command block to output it literally instead of resolving it. Only the opening `{` takes the backslash, the closing `}` needs nothing, and the backslash is left out of the resolved command.",
+        "Prefix a reference with a backslash in a command block to output it literally instead of resolving it.",
       tryHint:
         "Try deleting the backslash in the command below and watch the literal braces turn into an active reference:",
-      scope:
-        "Escaping only applies inside command blocks; backslashes in variable values are always shown as-is.",
+      scope: "Escaping only applies inside command blocks.",
     },
     secretVariables: {
       intro:
-        "Click the **eye icon** on a variable row to mark it as **secret**. Secret values are masked in the sidebar and are substituted with asterisks in command previews.",
+        "Click the **eye icon** on a variable row to mark it as **secret**.",
       copyNote:
         "The mask is purely visual: the **Copy** button always puts the **real** value on your clipboard, so your commands keep working. Try it below, and click the eye icon to reveal or hide the value.",
     },
     blocks: {
       intro:
-        "Blocks are the main content of a runbook. Add them using the **NEW BLOCK** row at the bottom of the main panel. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or open the **block actions** menu on the right to insert a new block above or below it, duplicate it, or delete it.",
+        "Blocks are the main content of a runbook. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or open the **block actions** menu on the right to insert a new block above or below it, duplicate it, or delete it.",
     },
     commandBlock: {
       intro:
@@ -823,11 +820,9 @@ export const en: Messages = {
       escapes:
         "A `\\` in front of a mark makes it literal: `\\**text\\**` shows the asterisks instead of turning the text bold. Escape both ends of a pair, and note that nothing is escaped inside `code`, where a backslash is part of the content.",
       spellcheck:
-        "Notes can be spell checked as you write them. **Right-click** anywhere in the runbook content and toggle **Spell check notes** in the menu. It uses the interface language as its dictionary, so switching the language switches the dictionary too.",
+        "Notes can be spell checked as you write them. **Right-click** anywhere in the runbook content and toggle **Spell check notes** in the menu.",
       tables:
         "Notes also support [GitHub-flavored markdown tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): cells separated by `|` bars, with a row of dashes under the header. Click the note below to see the raw syntax.",
-      autoUrls:
-        "Bare URLs are detected automatically and become clickable links, no markdown needed.",
       noNesting:
         "Styles do not combine: bold and italics cannot be mixed on the same words, for example. Whichever style starts first wins.",
       links: "To open a link, hold `Ctrl` and click it.",
@@ -854,7 +849,7 @@ export const en: Messages = {
     },
     dividerBlock: {
       intro:
-        "Nothing more than a visual separator. It stretches to match the width of the widest block, which makes it perfect for splitting a runbook into sections. It does keep a minimum width, though, so it can never shrink into something unreadable.",
+        "Nothing more than a visual separator. It stretches to match the width of the widest block, which makes it perfect for splitting a runbook into sections.",
       demoNote: "Type here and watch how the divisor grows or shrinks.",
     },
     multiSelect: {
@@ -870,7 +865,6 @@ export const en: Messages = {
         "Press `Escape` or click outside block controls to clear the selection.",
       dragToTabDelay:
         "While dragging blocks over the tabs bar, hover a tab for a moment to switch to it, then drop.",
-      demoHint: "Try it on the blocks below:",
     },
     readMode: {
       intro:
@@ -927,8 +921,6 @@ export const en: Messages = {
         "**Edit** opens the file's raw JSON in place, so a quick fix doesn't require importing, changing, and re-exporting it. It has to stay valid JSON to save.",
       recycleBin:
         "A deleted file or folder isn't gone for good: cloud providers move it to a _Recycle Bin_ first.",
-      storage:
-        "Cloud runbooks live in a dedicated **CommandPad** folder in your own account, never anywhere else.",
     },
     language: {
       intro:

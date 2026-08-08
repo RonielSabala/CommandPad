@@ -366,7 +366,6 @@ export interface Messages {
     mainPanel: {
       intro: string;
       minimap: string;
-      teaser: string;
     };
     tabs: {
       intro: string;
@@ -466,7 +465,6 @@ export interface Messages {
       escapes: string;
       spellcheck: string;
       tables: string;
-      autoUrls: string;
       noNesting: string;
       links: string;
       wrapKeys: string;
@@ -488,7 +486,6 @@ export interface Messages {
       actions: string[];
       clear: string;
       dragToTabDelay: string;
-      demoHint: string;
     };
     readMode: {
       intro: string;
@@ -518,7 +515,6 @@ export interface Messages {
       actions: string;
       editFile: string;
       recycleBin: string;
-      storage: string;
     };
     language: {
       intro: string;

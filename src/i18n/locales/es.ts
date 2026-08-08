@@ -610,7 +610,7 @@ export const es: Messages = {
       journey:
         "Esta guía te acompaña paso a paso por cómo funciona la aplicación, para que le saques todo el provecho. Empezarás por los tipos de bloques con los que se construyen tus libros de comandos, luego las variables, la característica que hace que los bloques de comando sean realmente potentes, y para cerrar, el espacio de trabajo en sí: la barra lateral, las pestañas y todo lo que rodea a tus libros.",
       navigate:
-        "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el panel de contenidos que acompaña al artículo: tú eliges el ritmo. Al hacer clic en una entrada del índice te lleva a su sección y la pliega, y su título en el artículo hace lo mismo, así que puedes contraer lo que ya leíste y dejar el resto a la vista. Ese panel se puede redimensionar, contraer y mover a cualquiera de los dos lados, igual que la barra lateral del espacio de trabajo.",
+        "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el panel de contenidos que acompaña al artículo: tú eliges el ritmo. Al hacer clic en una entrada del índice te lleva a su sección y la pliega, y su título en el artículo hace lo mismo, así que puedes contraer lo que ya leíste y dejar el resto a la vista.",
       tryIt:
         "La mayoría de las secciones trae un ejemplo real y funcional marcado **Pruébalo**, una pieza de la app con la que puedes jugar, nada de lo que hagas ahí toca tu espacio de trabajo real. Anímate a toquetear un poco, es la forma más rápida de entender cómo funciona algo. Si te pierdes, el botón de flecha en su esquina te devuelve al punto de partida.",
     },
@@ -644,8 +644,6 @@ export const es: Messages = {
         "El panel principal es tu mesa de trabajo. Arriba está la **barra de pestañas** con tus libros abiertos; debajo, los bloques del libro activo; y al final, la fila **NUEVO BLOQUE** para seguir agregando contenido.",
       minimap:
         "En el borde derecho vive el **minimapa**: una miniatura de los bloques reales del libro que reemplaza a la barra de desplazamiento. Haz clic o arrastra sobre él para saltar a cualquier punto de un libro. Haz **clic derecho** en cualquier parte del contenido del libro para abrir un pequeño menú donde puedes activarlo o desactivarlo, o moverlo al otro lado.",
-      teaser:
-        "Aquí es donde viven los bloques y las pestañas que ya conoces de antes.",
     },
     tabs: {
       intro: "Cada pestaña contiene un libro abierto.",
@@ -684,7 +682,7 @@ export const es: Messages = {
         "Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.",
       ],
       autoLabel:
-        "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca, de modo que los libros se describen solos. En caso contrario se usa el nombre del archivo importado.",
+        "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca. En caso contrario se usa el nombre del archivo importado.",
       labelDetails:
         "Las etiquetas se normalizan: se limpia el formato markdown y se recorta hasta 60 caracteres.",
       autoSave:
@@ -693,7 +691,7 @@ export const es: Messages = {
     variables: {
       why: "Esta es la característica sobre la que gira todo lo demás. Un nombre de servidor, una ruta, un número de versión: los mismos valores se repiten en la mitad de los comandos que guardas, y el día que uno cambia toca buscarlo comando por comando. Con las variables defines ese valor **una vez**, y todos los comandos que lo usan se actualizan solos.",
       intro:
-        "Las variables se definen en la sección **VARIABLES** de la barra lateral. Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas. Si dos variables comparten la misma clave, gana la definida en último lugar.",
+        "Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas. Si dos variables comparten la misma clave, gana la definida en último lugar.",
       usage:
         "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{server}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
       unresolved:
@@ -790,21 +788,20 @@ export const es: Messages = {
     },
     escapingBraces: {
       intro:
-        "Antepón una barra invertida a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla. Solo la llave `{` de apertura lleva la barra invertida, la llave `}` de cierre no necesita nada, y la barra invertida se excluye del comando resuelto.",
+        "Antepón una barra invertida a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla.",
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
-      scope:
-        "El escape solo aplica dentro de bloques de comando; las barras invertidas en valores de variables se muestran siempre tal cual.",
+      scope: "El escape solo aplica dentro de bloques de comando.",
     },
     secretVariables: {
       intro:
-        "Haz clic en el **icono de ojo** de una fila de variable para marcarla como **secreta**. Los valores secretos se ocultan en la barra lateral y se sustituyen por asteriscos en las vistas previas de comandos.",
+        "Haz clic en el **icono de ojo** de una fila de variable para marcarla como **secreta**.",
       copyNote:
         "El enmascarado es puramente visual: el botón **Copiar** siempre pone el valor **real** en tu portapapeles, así que tus comandos siguen funcionando. Pruébalo abajo, y haz clic en el icono de ojo para mostrar u ocultar el valor.",
     },
     blocks: {
       intro:
-        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **acciones del bloque** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo.",
+        "Los bloques son el contenido principal de un libro. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **acciones del bloque** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo.",
     },
     commandBlock: {
       intro:
@@ -835,11 +832,9 @@ export const es: Messages = {
       escapes:
         "Una `\\` delante de una marca la vuelve literal: `\\**texto\\**` muestra los asteriscos en lugar de poner el texto en negrita. Escapa ambos extremos de un par, y ten en cuenta que dentro de `código` no se escapa nada, porque ahí la barra invertida es parte del contenido.",
       spellcheck:
-        "Las notas se pueden corregir ortográficamente mientras las escribes. Haz **clic derecho** en cualquier parte del contenido del libro y activa **Corregir ortografía en las notas** en el menú. Usa el idioma de la interfaz como diccionario, así que cambiar de idioma cambia también el diccionario.",
+        "Las notas se pueden corregir ortográficamente mientras las escribes. Haz **clic derecho** en cualquier parte del contenido del libro y activa **Corregir ortografía en las notas** en el menú.",
       tables:
         "Las notas también soportan [tablas markdown al estilo GitHub](https://docs.github.com/es/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): celdas separadas por barras `|`, con una fila de guiones debajo del encabezado. Haz clic en la nota de abajo para ver la sintaxis en bruto.",
-      autoUrls:
-        "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables, sin necesidad de markdown.",
       noNesting:
         "Los estilos no se combinan: negrita y cursiva no pueden mezclarse en las mismas palabras, por ejemplo. Gana el estilo que empieza primero.",
       links: "Para abrir un enlace, mantén `Ctrl` y haz clic en él.",
@@ -866,7 +861,7 @@ export const es: Messages = {
     },
     dividerBlock: {
       intro:
-        "No es más que un separador visual. Se estira hasta igualar el ancho del bloque más ancho, lo que lo hace perfecto para dividir un libro en secciones. Eso sí, tiene una anchura mínima que le impide encogerse hasta volverse ilegible.",
+        "No es más que un separador visual. Se estira hasta igualar el ancho del bloque más ancho, lo que lo hace perfecto para dividir un libro en secciones.",
       demoNote: "Escribe aquí y observa cómo el divisor crece o se encoge.",
     },
     multiSelect: {
@@ -882,7 +877,6 @@ export const es: Messages = {
         "Pulsa `Escape` o haz clic fuera de los controles de bloque para limpiar la selección.",
       dragToTabDelay:
         "Mientras arrastras bloques sobre la barra de pestañas, mantén el cursor un momento sobre una pestaña para cambiar a ella, y luego suelta.",
-      demoHint: "Pruébalo con los bloques de abajo:",
     },
     readMode: {
       intro:
@@ -940,8 +934,6 @@ export const es: Messages = {
         "**Editar** abre el JSON del archivo en el sitio, así que un arreglo rápido ya no implica importar, cambiar y volver a exportar. Tiene que seguir siendo JSON válido para guardarse.",
       recycleBin:
         "Un archivo o carpeta eliminado no se pierde para siempre: los proveedores de nube lo mueven primero a una _Papelera de reciclaje_.",
-      storage:
-        "Los libros en la nube se guardan en una carpeta dedicada llamada **CommandPad** en tu propia cuenta, nunca en ningún otro lugar.",
     },
     language: {
       intro:

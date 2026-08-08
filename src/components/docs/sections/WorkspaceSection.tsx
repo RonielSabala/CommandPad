@@ -31,7 +31,6 @@ export function MainPanelDocs() {
     <>
       <Prose text={t.docs.mainPanel.intro} />
       <Prose text={t.docs.mainPanel.minimap} />
-      <Prose text={t.docs.mainPanel.teaser} />
     </>
   );
 }
