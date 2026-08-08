@@ -19,7 +19,7 @@
 .resizable-panel[data-panel-side="right"][data-panel-collapsed="true"]
   .panel-actions {
   left: auto;
-  right: var(--space-4);
+  right: var(--space-2);
 }
 
 /* Buttons */

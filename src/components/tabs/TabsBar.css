@@ -34,7 +34,7 @@
 }
 
 [data-panel-side="right"][data-panel-collapsed="true"] #tabs-bar {
-  padding-right: var(--space-20);
+  padding-right: calc(var(--space-2) + var(--space-20));
 }
 
 #add-tab-btn {
