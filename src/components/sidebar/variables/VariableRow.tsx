@@ -2,18 +2,10 @@ import { SecretMaskConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
-import {
-  AppMode,
-  DragGroup,
-  SidebarPosition,
-  VariableField,
-} from "@/common/enums";
+import { AppMode, DragGroup, VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
-import {
-  ContextMenuAlign,
-  ContextMenuItem,
-} from "@/components/common/contextMenu/ContextMenu";
+import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import {
   DragIcon,
   DuplicateIcon,
@@ -46,9 +38,6 @@ export const VariableRow = memo(function VariableRow({
   const isSecret = !!variable.secret;
 
   const readMode = useStore((state) => state.mode === AppMode.READ);
-  const sidebarOnRight = useStore(
-    (state) => state.sidebarPosition === SidebarPosition.RIGHT,
-  );
   const updateVariable = useStore((state) => state.updateVariable);
   const removeVariable = useStore((state) => state.removeVariable);
   const duplicateVariable = useStore((state) => state.duplicateVariable);
@@ -124,6 +113,7 @@ export const VariableRow = memo(function VariableRow({
       >
         <DragIcon className="icon-md" />
       </div>
+
       <div className={variableInputsClass} style={splitStyle}>
         <input
           ref={keyRef}
@@ -146,11 +136,13 @@ export const VariableRow = memo(function VariableRow({
           }}
           title={unused ? t.variables.unusedTitle(variableKey) : variableKey}
         />
+
         <div
           className="variable-split-handle no-user-select"
           title={t.variables.dragResizeSplit}
           {...splitResize}
         />
+
         <div className="variable-value-wrap">
           <input
             className="variable-value-input"
@@ -184,6 +176,7 @@ export const VariableRow = memo(function VariableRow({
           )}
         </div>
       </div>
+
       <button
         className={`btn btn-icon variable-secret-btn${isSecret ? " is-active" : ""}`}
         onClick={() => toggleVariableSecret(variableId)}
@@ -191,11 +184,8 @@ export const VariableRow = memo(function VariableRow({
       >
         <EyeIcon slashed={isSecret} className="icon-md icon-bold" />
       </button>
-      <ActionsMenu
-        className={CssClass.ROW_ACTIONS}
-        title={t.variables.actions}
-        align={sidebarOnRight ? ContextMenuAlign.END : ContextMenuAlign.START}
-      >
+
+      <ActionsMenu className={CssClass.ROW_ACTIONS} title={t.variables.actions}>
         <ContextMenuItem
           icon={<DuplicateIcon className="icon-md icon-bold" />}
           onSelect={() => duplicateVariable(variableId)}

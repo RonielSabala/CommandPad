@@ -1,5 +1,10 @@
 import { DocsSectionId } from "@/common/constants/docs";
-import { BlockType, NoteStyle, RunbookSyncStatus } from "@/common/enums";
+import {
+  BlockType,
+  NoteStyle,
+  PanelId,
+  RunbookSyncStatus,
+} from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
@@ -31,11 +36,15 @@ export const es: Messages = {
     export: "Exportar",
     changeLanguage: "Cambiar idioma",
   },
-  sidebar: {
-    expand: "Expandir barra lateral",
-    collapse: "Contraer barra lateral",
-    moveLeft: "Mover barra lateral a la izquierda",
-    moveRight: "Mover barra lateral a la derecha",
+  panel: {
+    names: {
+      [PanelId.SIDEBAR]: "barra lateral",
+      [PanelId.DOCS_TOC]: "navegación",
+    },
+    expand: (name) => `Expandir ${name}`,
+    collapse: (name) => `Contraer ${name}`,
+    moveLeft: (name) => `Mover ${name} a la izquierda`,
+    moveRight: (name) => `Mover ${name} a la derecha`,
     doubleClickExpand: "Doble clic para expandir",
     dragResizeCollapse:
       "Arrastra para redimensionar · doble clic para contraer",
@@ -299,8 +308,8 @@ export const es: Messages = {
     [KeyBinding.TOGGLE_EDITORS]: "Alternar todos los editores de comandos",
     [KeyBinding.DELETE_RUNBOOK]: "Eliminar el libro enfocado de la biblioteca",
     [KeyBinding.IMPORT_RUNBOOK]: "Abrir el diálogo de importación de libro",
-    [KeyBinding.TOGGLE_SIDEBAR]: "Contraer / expandir barra lateral",
-    [KeyBinding.MOVE_SIDEBAR]: "Mover barra lateral a izquierda / derecha",
+    [KeyBinding.TOGGLE_SIDEBAR]: "Contraer / expandir el panel lateral",
+    [KeyBinding.MOVE_SIDEBAR]: "Mover el panel lateral a izquierda / derecha",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicar bloques seleccionados",
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
     [KeyBinding.ESCAPE]: "Limpiar selección de bloques / cerrar diálogos",
@@ -601,7 +610,7 @@ export const es: Messages = {
       journey:
         "Esta guía te acompaña paso a paso por cómo funciona la aplicación, para que le saques todo el provecho. Empezarás por los tipos de bloques con los que se construyen tus libros de comandos, luego las variables, la característica que hace que los bloques de comando sean realmente potentes, y para cerrar, el espacio de trabajo en sí: la barra lateral, las pestañas y todo lo que rodea a tus libros.",
       navigate:
-        "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el índice de la izquierda: tú eliges el ritmo. Al hacer clic en una entrada del índice te lleva a su sección y la pliega, y su título en el artículo hace lo mismo, así que puedes contraer lo que ya leíste y dejar el resto a la vista.",
+        "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el panel de contenidos que acompaña al artículo: tú eliges el ritmo. Al hacer clic en una entrada del índice te lleva a su sección y la pliega, y su título en el artículo hace lo mismo, así que puedes contraer lo que ya leíste y dejar el resto a la vista. Ese panel se puede redimensionar, contraer y mover a cualquiera de los dos lados, igual que la barra lateral del espacio de trabajo.",
       tryIt:
         "La mayoría de las secciones trae un ejemplo real y funcional marcado **Pruébalo**, una pieza de la app con la que puedes jugar, nada de lo que hagas ahí toca tu espacio de trabajo real. Anímate a toquetear un poco, es la forma más rápida de entender cómo funciona algo. Si te pierdes, el botón de flecha en su esquina te devuelve al punto de partida.",
     },
@@ -660,7 +669,7 @@ export const es: Messages = {
         "**Redimensionar**: arrastra el borde interior de la barra lateral; doble clic para contraerla.",
       ],
       resizeDetails:
-        "Arrastrar la barra lateral hasta dejarla muy estrecha la contrae por completo, y nunca puede crecer más allá de la mitad de la pantalla. Al expandirla de nuevo vuelve a su ancho normal.",
+        "Arrastrar la barra lateral hasta dejarla muy estrecha la contrae por completo, y nunca puede crecer más allá de la mitad de la pantalla. Si la habías ensanchado, el doble clic en su borde la devuelve a su ancho normal. Al expandir una barra contraída también vuelve a ese ancho normal.",
     },
     runbookLibrary: {
       intro:

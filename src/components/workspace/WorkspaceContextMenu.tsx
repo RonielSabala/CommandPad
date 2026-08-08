@@ -1,4 +1,4 @@
-import { SidebarPosition } from "@/common/enums";
+import { PanelSide } from "@/common/enums";
 import {
   ContextMenu,
   ContextMenuItem,
@@ -19,7 +19,7 @@ export function WorkspaceContextMenu({ anchor, onClose }: Props) {
   const isEmpty = useStore((state) => !getActiveTab(state)?.blocks.length);
   const minimapEnabled = useStore((state) => state.minimapEnabled);
   const minimapOnLeft = useStore(
-    (state) => state.minimapPosition === SidebarPosition.LEFT,
+    (state) => state.minimapPosition === PanelSide.LEFT,
   );
   const spellcheckEnabled = useStore((state) => state.spellcheckEnabled);
 

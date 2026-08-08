@@ -1,4 +1,5 @@
-import { ExportFormat } from "./enums";
+import { ExportFormat, PanelId, PanelSide } from "./enums";
+import type { PanelState } from "./types";
 
 export const StorageKey = {
   TABS: "commandpad_tabs",
@@ -28,14 +29,46 @@ export const IndexedDbTransactionMode = {
 export const DEFAULT_TAB_LABEL = "Untitled";
 export const DEFAULT_CONFIRM_LABEL = "Confirm";
 
-const DEFAULT_SIDEBAR_WIDTH = 320;
+export interface PanelDefinition {
+  defaultWidth: number;
+  defaultSide: PanelSide;
+  maxScreenFraction: number;
+  collapseSnap: number;
+}
 
-export const SidebarWidth = {
-  MIN: 0,
-  MAX_SCREEN_FRACTION: 0.5,
-  DEFAULT: DEFAULT_SIDEBAR_WIDTH,
-  COLLAPSE_SNAP: Math.round(DEFAULT_SIDEBAR_WIDTH / 3),
-} as const;
+const COLLAPSE_SNAP_RATIO = 1 / 3;
+
+function panelDefinition(
+  defaultWidth: number,
+  defaultSide: PanelSide,
+): PanelDefinition {
+  return {
+    defaultWidth,
+    defaultSide,
+    maxScreenFraction: 0.5,
+    collapseSnap: Math.round(defaultWidth * COLLAPSE_SNAP_RATIO),
+  };
+}
+
+export const PANEL_DEFINITIONS: Record<PanelId, PanelDefinition> = {
+  [PanelId.SIDEBAR]: panelDefinition(320, PanelSide.LEFT),
+  [PanelId.DOCS_TOC]: panelDefinition(320, PanelSide.LEFT),
+};
+
+export function createDefaultPanels(): Record<PanelId, PanelState> {
+  const panels = {} as Record<PanelId, PanelState>;
+
+  for (const panelId of Object.keys(PANEL_DEFINITIONS) as PanelId[]) {
+    const definition = PANEL_DEFINITIONS[panelId];
+    panels[panelId] = {
+      collapsed: false,
+      side: definition.defaultSide,
+      width: definition.defaultWidth,
+    };
+  }
+
+  return panels;
+}
 
 export const VariableSplit = {
   MIN: 0.15,

@@ -7,7 +7,14 @@ import type {
   NoteSegmentType,
   NoteStyle,
   NoteTableAlign,
+  PanelSide,
 } from "./enums";
+
+export interface PanelState {
+  collapsed: boolean;
+  side: PanelSide;
+  width: number;
+}
 
 export interface NoteBlock {
   id: string;

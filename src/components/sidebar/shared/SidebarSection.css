@@ -34,17 +34,13 @@
   gap: var(--space-3);
   height: var(--space-20);
   padding: var(--space-6);
-  padding-right: var(--sidebar-rail-width);
+  padding-right: max(var(--space-6), var(--panel-rail-end));
+  padding-left: max(var(--space-6), var(--panel-rail-start));
   border-bottom: var(--border-standard);
   outline: none;
   cursor: pointer;
   user-select: none;
   transition: background var(--transition-fast);
-}
-
-.sidebar-right .sidebar-section-header {
-  padding-right: var(--space-6);
-  padding-left: var(--sidebar-rail-width);
 }
 
 .sidebar-section-header:hover {
@@ -103,7 +99,7 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: var(--space-4) var(--sidebar-section-margin-right) var(--space-2)
+  padding: var(--space-4) var(--panel-scrollbar-inset) var(--space-2)
     var(--space-4);
   display: flex;
   flex-direction: column;
@@ -111,7 +107,7 @@
 }
 
 .sidebar-section-scroll > .search-input-wrapper {
-  margin-right: var(--sidebar-section-margin-right);
+  margin-right: var(--panel-scroll-gutter);
 }
 
 .sidebar-section-divider {

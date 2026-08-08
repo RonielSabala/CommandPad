@@ -12,7 +12,7 @@ export const CssClass = {
   // Modifier-key states
   SELECT_KEY_HELD: "select-key-held",
   LINK_KEY_HELD: "link-key-held",
-  SIDEBAR_RESIZING: "sidebar-resizing",
+  PANEL_RESIZING: "panel-resizing",
   VARIABLE_SPLIT_RESIZING: "variable-split-resizing",
 
   // Specific classes

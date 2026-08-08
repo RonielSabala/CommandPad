@@ -1,0 +1,20 @@
+.panel-shell {
+  --panel-content-width: min(var(--panel-width), var(--panel-max-width));
+  --panel-column: var(--panel-content-width);
+
+  grid-template-columns: var(--panel-column) 1fr;
+  grid-template-areas:
+    "header header"
+    "panel main";
+}
+
+.panel-shell[data-panel-collapsed="true"] {
+  --panel-column: 0px;
+}
+
+.panel-shell[data-panel-side="right"] {
+  grid-template-columns: 1fr var(--panel-column);
+  grid-template-areas:
+    "header header"
+    "main panel";
+}

@@ -1,17 +1,9 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
-import {
-  AppMode,
-  DragGroup,
-  RunbookSyncStatus,
-  SidebarPosition,
-} from "@/common/enums";
+import { AppMode, DragGroup, RunbookSyncStatus } from "@/common/enums";
 import type { RunbookEntry } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
-import {
-  ContextMenuAlign,
-  ContextMenuItem,
-} from "@/components/common/contextMenu/ContextMenu";
+import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { Spinner } from "@/components/common/Spinner";
 import { DragIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
 import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
@@ -33,9 +25,6 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
   const runbookId = runbook.id;
   const runbookLabel = displayLabel(runbook.label, t);
 
-  const sidebarOnRight = useStore(
-    (state) => state.sidebarPosition === SidebarPosition.RIGHT,
-  );
   const isActive = useStore((state) => state.activeRunbookId === runbookId);
   const isFocused = useStore((state) => state.focusedRunbookId === runbookId);
   const readMode = useStore((state) => state.mode === AppMode.READ);
@@ -125,11 +114,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
         )}
       </div>
 
-      <ActionsMenu
-        className={CssClass.ROW_ACTIONS}
-        title={t.runbooks.actions}
-        align={sidebarOnRight ? ContextMenuAlign.END : ContextMenuAlign.START}
-      >
+      <ActionsMenu className={CssClass.ROW_ACTIONS} title={t.runbooks.actions}>
         {sync && (
           <ContextMenuItem
             icon={<CloudSlash className="icon-md" />}

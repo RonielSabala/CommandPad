@@ -21,6 +21,8 @@ export const DataAttr = {
   VARIABLE_ID: "data-variable-id",
   NOTE_OFFSET: "data-note-offset",
   NOTE_ALIGN: "data-note-align",
+  PANEL_SIDE: "data-panel-side",
+  PANEL_COLLAPSED: "data-panel-collapsed",
 } as const;
 
 export const Cursor = {

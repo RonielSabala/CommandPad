@@ -1,5 +1,10 @@
 import type { DocsSectionId } from "@/common/constants/docs";
-import type { BlockType, NoteStyle, RunbookSyncStatus } from "@/common/enums";
+import type {
+  BlockType,
+  NoteStyle,
+  PanelId,
+  RunbookSyncStatus,
+} from "@/common/enums";
 import type { KeyBinding } from "@/common/keybindings";
 
 // Supported UI languages
@@ -62,11 +67,12 @@ export interface Messages {
     export: string;
     changeLanguage: string;
   };
-  sidebar: {
-    expand: string;
-    collapse: string;
-    moveLeft: string;
-    moveRight: string;
+  panel: {
+    names: Record<PanelId, string>;
+    expand: (name: string) => string;
+    collapse: (name: string) => string;
+    moveLeft: (name: string) => string;
+    moveRight: (name: string) => string;
     doubleClickExpand: string;
     dragResizeCollapse: string;
   };

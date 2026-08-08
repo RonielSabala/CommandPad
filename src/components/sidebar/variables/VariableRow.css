@@ -2,14 +2,6 @@
   grid-template-columns: auto 1fr auto auto;
 }
 
-.sidebar-right .variable-row .drag-handle {
-  order: 1;
-}
-
-.sidebar-right .variable-row .row-actions {
-  order: -1;
-}
-
 .variable-inputs {
   display: grid;
   grid-template-columns:

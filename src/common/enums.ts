@@ -23,12 +23,17 @@ export const SectionState = {
 } as const;
 export type SectionState = (typeof SectionState)[keyof typeof SectionState];
 
-export const SidebarPosition = {
+export const PanelSide = {
   LEFT: "left",
   RIGHT: "right",
 } as const;
-export type SidebarPosition =
-  (typeof SidebarPosition)[keyof typeof SidebarPosition];
+export type PanelSide = (typeof PanelSide)[keyof typeof PanelSide];
+
+export const PanelId = {
+  SIDEBAR: "sidebar",
+  DOCS_TOC: "docsToc",
+} as const;
+export type PanelId = (typeof PanelId)[keyof typeof PanelId];
 
 export const TabDropSide = {
   LEFT: "left",

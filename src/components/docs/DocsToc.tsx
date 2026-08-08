@@ -4,10 +4,11 @@ import {
   getDocsSectionNumbers,
   type DocsSectionId,
 } from "@/common/constants/docs";
+import { PanelId } from "@/common/enums";
+import { ResizablePanel } from "@/components/common/panel/ResizablePanel";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
-import { useRef } from "react";
 import "./DocsToc.css";
 import type { DocsCollapse } from "./useDocsCollapse";
 
@@ -21,14 +22,13 @@ interface Props {
 
 export function DocsToc({ activeId, collapse, onNavigate }: Props) {
   const t = useTranslation();
-  const navRef = useRef<HTMLElement>(null);
 
   const toggleAllLabel = collapse.allCollapsed
     ? t.docs.meta.expandAll
     : t.docs.meta.collapseAll;
 
   return (
-    <aside id="docs-toc">
+    <ResizablePanel panelId={PanelId.DOCS_TOC} id="docs-toc">
       <button
         id="docs-toc-header"
         className="no-user-select"
@@ -40,6 +40,7 @@ export function DocsToc({ activeId, collapse, onNavigate }: Props) {
         <span id="docs-toc-title" className="section-title">
           {t.docs.meta.tocTitle}
         </span>
+
         <SidebarSectionChevronIcon
           className={classNames(
             "docs-toc-chevron icon-md icon-bold",
@@ -47,7 +48,8 @@ export function DocsToc({ activeId, collapse, onNavigate }: Props) {
           )}
         />
       </button>
-      <nav ref={navRef}>
+
+      <nav id="docs-toc-nav">
         {DOCS_SECTION_ORDER.filter(({ id }) => collapse.isNavVisible(id)).map(
           ({ id, level }) => (
             <a
@@ -86,12 +88,14 @@ export function DocsToc({ activeId, collapse, onNavigate }: Props) {
               ) : (
                 <span className="docs-toc-chevron-spacer" />
               )}
+
               <span className="docs-toc-number">{SECTION_NUMBERS[id]}</span>
+
               {t.docs.toc[id]}
             </a>
           ),
         )}
       </nav>
-    </aside>
+    </ResizablePanel>
   );
 }

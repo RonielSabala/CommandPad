@@ -5,13 +5,14 @@ import {
   normalizeBlock,
 } from "@/blocks";
 import {
+  createDefaultPanels,
   DEBOUNCE_CLOUD_SYNC_MS,
   DEBOUNCE_SAVE_MS,
   DEFAULT_TAB_LABEL,
   FilePickerConfig,
   MimeType,
+  PANEL_DEFINITIONS,
   RunbookConfig,
-  SidebarWidth,
   VariableSplit,
   ZIP_EXTENSION,
 } from "@/common/config";
@@ -27,8 +28,9 @@ import {
   HistoryDirection,
   InsertPosition,
   MoveDirection,
+  PanelId,
+  PanelSide,
   RunbookSyncStatus,
-  SidebarPosition,
   SortDirection,
   SyncDestination,
   Theme,
@@ -38,6 +40,7 @@ import type {
   Block,
   BlockInsertAnchor,
   BlockOfType,
+  PanelState,
   RunbookContent,
   RunbookEntry,
   RunbookSync,
@@ -147,12 +150,10 @@ export interface StoreState {
   theme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
-  sidebarCollapsed: boolean;
-  sidebarPosition: SidebarPosition;
-  sidebarWidth: number;
+  panels: Record<PanelId, PanelState>;
   variableKeyRatio: number;
   minimapEnabled: boolean;
-  minimapPosition: SidebarPosition;
+  minimapPosition: PanelSide;
   runbookSectionCollapsed: boolean;
   variablesSectionCollapsed: boolean;
 
@@ -294,12 +295,12 @@ export interface StoreState {
   toggleTheme: () => void;
   toggleSpellcheck: () => void;
   setLanguage: (language: Language) => void;
-  toggleSidebar: () => void;
   toggleMinimap: () => void;
   toggleMinimapPosition: () => void;
-  toggleSidebarPosition: () => void;
-  setSidebarSize: (width: number) => void;
-  resetSidebarSize: () => void;
+  togglePanel: (panelId: PanelId) => void;
+  togglePanelSide: (panelId: PanelId) => void;
+  setPanelWidth: (panelId: PanelId, width: number) => void;
+  resetPanelWidth: (panelId: PanelId) => void;
   setVariableKeyRatio: (ratio: number) => void;
   resetVariableKeyRatio: () => void;
   toggleRunbookSection: () => void;
@@ -419,15 +420,27 @@ export function getActiveTab(state: StoreState): Tab | null {
   );
 }
 
+/** Replace one panel's state. */
+function withPanel(
+  state: StoreState,
+  panelId: PanelId,
+  patch: Partial<PanelState>,
+): Pick<StoreState, "panels"> {
+  return {
+    panels: {
+      ...state.panels,
+      [panelId]: { ...state.panels[panelId], ...patch },
+    },
+  };
+}
+
 function uiStateSnapshot(state: StoreState) {
   return {
     mode: state.mode,
     theme: state.theme,
     language: state.language,
     spellcheckEnabled: state.spellcheckEnabled,
-    sidebarCollapsed: state.sidebarCollapsed,
-    sidebarPosition: state.sidebarPosition,
-    sidebarWidth: state.sidebarWidth,
+    panels: state.panels,
     variableKeyRatio: state.variableKeyRatio,
     minimapEnabled: state.minimapEnabled,
     minimapPosition: state.minimapPosition,
@@ -813,12 +826,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       theme: Theme.DARK,
       language: detectLanguage(),
       spellcheckEnabled: true,
-      sidebarCollapsed: false,
-      sidebarPosition: SidebarPosition.LEFT,
-      sidebarWidth: SidebarWidth.DEFAULT,
+      panels: createDefaultPanels(),
       variableKeyRatio: VariableSplit.DEFAULT,
       minimapEnabled: true,
-      minimapPosition: SidebarPosition.RIGHT,
+      minimapPosition: PanelSide.RIGHT,
       runbookSectionCollapsed: false,
       variablesSectionCollapsed: false,
 
@@ -2058,16 +2069,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         persist.saveUiState(uiStateSnapshot(get()));
       },
 
-      toggleSidebar: () => {
-        set((s) => ({
-          sidebarCollapsed: !s.sidebarCollapsed,
-          sidebarWidth: s.sidebarCollapsed
-            ? SidebarWidth.DEFAULT
-            : s.sidebarWidth,
-        }));
-        get().saveState();
-      },
-
       toggleMinimap: () => {
         set((s) => ({ minimapEnabled: !s.minimapEnabled }));
         get().saveState();
@@ -2076,40 +2077,66 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       toggleMinimapPosition: () => {
         set((s) => ({
           minimapPosition:
-            s.minimapPosition === SidebarPosition.RIGHT
-              ? SidebarPosition.LEFT
-              : SidebarPosition.RIGHT,
+            s.minimapPosition === PanelSide.RIGHT
+              ? PanelSide.LEFT
+              : PanelSide.RIGHT,
         }));
         get().saveState();
       },
 
-      toggleSidebarPosition: () => {
-        set((s) => ({
-          sidebarPosition:
-            s.sidebarPosition === SidebarPosition.RIGHT
-              ? SidebarPosition.LEFT
-              : SidebarPosition.RIGHT,
-        }));
+      togglePanel: (panelId) => {
+        set((s) => {
+          const panel = s.panels[panelId];
+          return withPanel(s, panelId, {
+            collapsed: !panel.collapsed,
+            width: panel.collapsed
+              ? PANEL_DEFINITIONS[panelId].defaultWidth
+              : panel.width,
+          });
+        });
+
         get().saveState();
       },
 
-      setSidebarSize: (width: number) => {
-        const shouldCollapse = width < SidebarWidth.COLLAPSE_SNAP;
-        const max = Math.floor(
-          window.innerWidth * SidebarWidth.MAX_SCREEN_FRACTION,
+      togglePanelSide: (panelId) => {
+        set((s) =>
+          withPanel(s, panelId, {
+            side:
+              s.panels[panelId].side === PanelSide.RIGHT
+                ? PanelSide.LEFT
+                : PanelSide.RIGHT,
+          }),
         );
 
-        set({
-          sidebarCollapsed: shouldCollapse,
-          sidebarWidth: shouldCollapse
-            ? SidebarWidth.DEFAULT
-            : Math.min(max, Math.round(width)),
-        });
+        get().saveState();
+      },
+
+      setPanelWidth: (panelId, width) => {
+        const definition = PANEL_DEFINITIONS[panelId];
+        const shouldCollapse = width < definition.collapseSnap;
+        const max = Math.floor(
+          window.innerWidth * definition.maxScreenFraction,
+        );
+
+        set((s) =>
+          withPanel(s, panelId, {
+            collapsed: shouldCollapse,
+            width: shouldCollapse
+              ? definition.defaultWidth
+              : Math.min(max, Math.round(width)),
+          }),
+        );
+
         debouncedSaveState();
       },
 
-      resetSidebarSize: () => {
-        set({ sidebarWidth: SidebarWidth.DEFAULT });
+      resetPanelWidth: (panelId) => {
+        set((s) =>
+          withPanel(s, panelId, {
+            width: PANEL_DEFINITIONS[panelId].defaultWidth,
+          }),
+        );
+
         get().saveState();
       },
 

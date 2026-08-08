@@ -1,5 +1,10 @@
 import { DocsSectionId } from "@/common/constants/docs";
-import { BlockType, NoteStyle, RunbookSyncStatus } from "@/common/enums";
+import {
+  BlockType,
+  NoteStyle,
+  PanelId,
+  RunbookSyncStatus,
+} from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
@@ -31,11 +36,15 @@ export const en: Messages = {
     export: "Export",
     changeLanguage: "Change language",
   },
-  sidebar: {
-    expand: "Expand sidebar",
-    collapse: "Collapse sidebar",
-    moveLeft: "Move sidebar to left",
-    moveRight: "Move sidebar to right",
+  panel: {
+    names: {
+      [PanelId.SIDEBAR]: "sidebar",
+      [PanelId.DOCS_TOC]: "navigation",
+    },
+    expand: (name) => `Expand ${name}`,
+    collapse: (name) => `Collapse ${name}`,
+    moveLeft: (name) => `Move ${name} to left`,
+    moveRight: (name) => `Move ${name} to right`,
     doubleClickExpand: "Double-click to expand",
     dragResizeCollapse: "Drag to resize · double-click to collapse",
   },
@@ -296,8 +305,8 @@ export const en: Messages = {
     [KeyBinding.TOGGLE_EDITORS]: "Toggle all command editors",
     [KeyBinding.DELETE_RUNBOOK]: "Delete the focused runbook from the library",
     [KeyBinding.IMPORT_RUNBOOK]: "Open runbook import dialog",
-    [KeyBinding.TOGGLE_SIDEBAR]: "Collapse / expand sidebar",
-    [KeyBinding.MOVE_SIDEBAR]: "Move sidebar to left / right",
+    [KeyBinding.TOGGLE_SIDEBAR]: "Collapse / expand the side panel",
+    [KeyBinding.MOVE_SIDEBAR]: "Move the side panel to left / right",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicate selected blocks",
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
     [KeyBinding.ESCAPE]: "Clear block selection / close modals",
@@ -591,7 +600,7 @@ export const en: Messages = {
       journey:
         "This guide walks you through how the app works, one piece at a time, so you can get the most out of it. You'll start with the block types your runbooks are built from, then variables, the feature that makes command blocks truly powerful, and finally the workspace itself: the sidebar, tabs and everything around your runbooks.",
       navigate:
-        "Read it start to finish, or jump straight to whatever interests you from the contents on the left: you set the pace. Clicking an entry there takes you to its section and folds it away, and its heading in the article does the same, so you can collapse what you have already read and keep the rest in view.",
+        "Read it start to finish, or jump straight to whatever interests you from the contents panel beside the article: you set the pace. Clicking an entry there takes you to its section and folds it away, and its heading in the article does the same, so you can collapse what you have already read and keep the rest in view. That panel is resizable, collapsible and can be moved to either side, exactly like the workspace sidebar.",
       tryIt:
         "Most sections come with a real, working example marked **Try it**, a piece of the app you're free to mess with, nothing you do there touches your actual workspace. Go ahead and poke at it, that's the fastest way to get a feel for how something works. If you ever get lost, the arrow button in its corner brings it back to where it started.",
     },
@@ -649,7 +658,7 @@ export const en: Messages = {
         "**Resize**: drag the sidebar's inner edge; double-click it to collapse.",
       ],
       resizeDetails:
-        "Dragging the sidebar very narrow collapses it completely, and it can never grow wider than half of the screen. Expanding it again restores its normal width.",
+        "Dragging the sidebar very narrow collapses it completely, and it can never grow wider than half of the screen. Double-clicking the edge of a sidebar you have widened snaps it back to its normal width. Expanding a collapsed sidebar also restores that normal width.",
     },
     runbookLibrary: {
       intro: "The sidebar's **RUNBOOKS** section holds your imported runbooks.",

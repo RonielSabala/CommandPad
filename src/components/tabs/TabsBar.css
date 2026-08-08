@@ -25,15 +25,15 @@
   display: none;
 }
 
-.sidebar-collapsed:not(.sidebar-right) #tabs-bar {
+[data-panel-collapsed="true"]:not([data-panel-side="right"]) #tabs-bar {
   padding-left: var(--space-20);
 }
 
-.sidebar-right #tabs-bar {
+[data-panel-side="right"] #tabs-bar {
   padding-right: var(--space-10);
 }
 
-.sidebar-right.sidebar-collapsed #tabs-bar {
+[data-panel-side="right"][data-panel-collapsed="true"] #tabs-bar {
   padding-right: var(--space-20);
 }
 

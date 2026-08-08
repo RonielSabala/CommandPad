@@ -1,24 +1,28 @@
-import { SidebarWidth } from "@/common/config";
+import { PANEL_DEFINITIONS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { Cursor } from "@/common/constants/dom";
 import { EventType, MouseButton } from "@/common/constants/events";
-import { SidebarPosition } from "@/common/enums";
+import { PanelId, PanelSide } from "@/common/enums";
 import { useStore, useStoreApi } from "@/store/store";
 import {
   useCallback,
   type MouseEvent as ReactMouseEvent,
   type PointerEvent as ReactPointerEvent,
+  type RefObject,
 } from "react";
 
-export function useSidebarResize() {
+export function usePanelResize(
+  panelId: PanelId,
+  panelRef: RefObject<HTMLElement | null>,
+) {
   const store = useStoreApi();
-  const setSidebarSize = useStore((state) => state.setSidebarSize);
-  const toggleSidebar = useStore((state) => state.toggleSidebar);
-  const resetSidebarSize = useStore((state) => state.resetSidebarSize);
+  const setPanelWidth = useStore((state) => state.setPanelWidth);
+  const togglePanel = useStore((state) => state.togglePanel);
+  const resetPanelWidth = useStore((state) => state.resetPanelWidth);
 
   const onPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
-      // Ignore secondary buttons
+      // Ignore action buttons riding on the handle
       if (
         event.button !== MouseButton.LEFT ||
         (event.target as HTMLElement).closest("button")
@@ -28,16 +32,15 @@ export function useSidebarResize() {
 
       event.preventDefault();
 
-      const sidebar = event.currentTarget.closest("aside");
-      if (!sidebar) {
+      const panel = panelRef.current;
+      if (!panel) {
         return;
       }
 
-      const rect = sidebar.getBoundingClientRect();
-      const isRight =
-        store.getState().sidebarPosition === SidebarPosition.RIGHT;
+      const rect = panel.getBoundingClientRect();
+      const isRight = store.getState().panels[panelId].side === PanelSide.RIGHT;
 
-      document.body.classList.add(CssClass.SIDEBAR_RESIZING);
+      document.body.classList.add(CssClass.PANEL_RESIZING);
       document.body.style.cursor = Cursor.COL_RESIZE;
 
       const onMove = (moveEvent: PointerEvent) => {
@@ -45,11 +48,11 @@ export function useSidebarResize() {
           ? rect.right - moveEvent.clientX
           : moveEvent.clientX - rect.left;
 
-        setSidebarSize(width);
+        setPanelWidth(panelId, width);
       };
 
       const onUp = () => {
-        document.body.classList.remove(CssClass.SIDEBAR_RESIZING);
+        document.body.classList.remove(CssClass.PANEL_RESIZING);
         document.body.style.cursor = Cursor.DEFAULT;
         window.removeEventListener(EventType.POINTER_MOVE, onMove);
         window.removeEventListener(EventType.POINTER_UP, onUp);
@@ -58,7 +61,7 @@ export function useSidebarResize() {
       window.addEventListener(EventType.POINTER_MOVE, onMove);
       window.addEventListener(EventType.POINTER_UP, onUp);
     },
-    [setSidebarSize, store],
+    [panelId, panelRef, setPanelWidth, store],
   );
 
   const onDoubleClick = useCallback(
@@ -69,15 +72,16 @@ export function useSidebarResize() {
 
       event.preventDefault();
 
-      const { sidebarCollapsed, sidebarWidth } = store.getState();
-      if (!sidebarCollapsed && sidebarWidth > SidebarWidth.DEFAULT) {
-        resetSidebarSize();
+      // A panel dragged wider snaps back to its default before it collapses
+      const { collapsed, width } = store.getState().panels[panelId];
+      if (!collapsed && width > PANEL_DEFINITIONS[panelId].defaultWidth) {
+        resetPanelWidth(panelId);
         return;
       }
 
-      toggleSidebar();
+      togglePanel(panelId);
     },
-    [toggleSidebar, resetSidebarSize, store],
+    [panelId, resetPanelWidth, store, togglePanel],
   );
 
   return { onPointerDown, onDoubleClick };

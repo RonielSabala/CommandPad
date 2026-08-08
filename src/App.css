@@ -8,25 +8,3 @@ body.app-ready {
   height: 100vh;
   overflow: hidden;
 }
-
-#app-shell {
-  grid-template-columns: min(var(--sidebar-width), 50vw) 1fr;
-  grid-template-areas:
-    "header header"
-    "sidebar main";
-}
-
-#app-shell.sidebar-collapsed {
-  grid-template-columns: 0 1fr;
-}
-
-#app-shell.sidebar-right {
-  grid-template-columns: 1fr min(var(--sidebar-width), 50vw);
-  grid-template-areas:
-    "header header"
-    "main sidebar";
-}
-
-#app-shell.sidebar-right.sidebar-collapsed {
-  grid-template-columns: 1fr 0;
-}

@@ -1,39 +1,18 @@
-import { useSidebarResize } from "@/hooks/useSidebarResize";
-import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { PanelId } from "@/common/enums";
+import { ResizablePanel } from "@/components/common/panel/ResizablePanel";
 import { Footer } from "./Footer";
 import { RunbookSection } from "./runbooks/RunbookSection";
 import "./Sidebar.css";
-import { SidebarActions } from "./SidebarActions";
 import { VariableSection } from "./variables/VariableSection";
 
 export function Sidebar() {
-  const t = useTranslation();
-  const { onPointerDown, onDoubleClick } = useSidebarResize();
-  const isSidebarCollapsed = useStore((state) => state.sidebarCollapsed);
-
   return (
-    <aside id="app-sidebar">
-      <div id="sidebar-content">
-        <RunbookSection />
-        <div className="sidebar-section-divider" />
-        <VariableSection />
-        <Footer />
-      </div>
+    <ResizablePanel panelId={PanelId.SIDEBAR} id="app-sidebar">
+      <RunbookSection />
+      <div className="sidebar-section-divider" />
+      <VariableSection />
 
-      <div
-        id="sidebar-resize-handle"
-        className="no-user-select"
-        onPointerDown={onPointerDown}
-        onDoubleClick={onDoubleClick}
-        title={
-          isSidebarCollapsed
-            ? t.sidebar.doubleClickExpand
-            : t.sidebar.dragResizeCollapse
-        }
-      >
-        <SidebarActions />
-      </div>
-    </aside>
+      <Footer />
+    </ResizablePanel>
   );
 }
