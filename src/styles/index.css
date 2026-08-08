@@ -248,6 +248,10 @@ body {
   transition: color var(--transition-fast);
 }
 
+.drag-handle:active {
+  cursor: grabbing;
+}
+
 .drag-handle:hover {
   color: var(--color-text-primary);
 }
