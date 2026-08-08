@@ -596,7 +596,7 @@ export const es: Messages = {
       reportFile: "ventas-mensuales.pdf",
       folderName: "   Informes de ventas   ",
       noteSample:
-        "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace, p. ej. https://example.com. Haz clic fuera para verla renderizada de nuevo.",
+        "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace: https://example.com. Haz clic fuera para verla renderizada de nuevo.",
       tableSample: `| Código de salida | Significado | Acción |
 | :---: | --- | --- |
 | 126 | Permiso denegado | Dale permisos con \`chmod +x\` |
@@ -632,7 +632,7 @@ export const es: Messages = {
         "El **logo de CommandPad**: haz clic en él para recargar la app.",
         "El **candado / lápiz**: alterna entre el modo lectura y el modo edición. Tiene su propia sección más adelante.",
         "**Colapsar todo**: contrae o expande de golpe todos los editores de comandos del libro activo.",
-        "El **sol / la luna**: cambia entre el tema oscuro y el claro.",
+        "El **sol / la luna**: cambia entre el tema claro y oscuro.",
         "El **selector de idioma**: cambia el idioma de la interfaz.",
         "El **libro**: abre esta documentación.",
         "La **flecha roja**: resetea el espacio de trabajo. Lo borra todo, así que la app siempre te pide confirmación antes.",
@@ -656,7 +656,7 @@ export const es: Messages = {
       autoCreate:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:
-        "Una pestaña toma su nombre del primer bloque de nota de su libro, así tus pestañas se describen solas. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas y cierra alguna.",
+        "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas y cierra alguna.",
     },
     sidebar: {
       intro:
@@ -689,11 +689,11 @@ export const es: Messages = {
         "Los cambios hechos al libro activo se guardan automáticamente en la biblioteca.",
     },
     variables: {
-      why: "Esta es la característica sobre la que gira todo lo demás. Un nombre de servidor, una ruta, un número de versión: los mismos valores se repiten en la mitad de los comandos que guardas, y el día que uno cambia toca buscarlo comando por comando. Con las variables defines ese valor **una vez**, y todos los comandos que lo usan se actualizan solos.",
+      why: "Esta es la característica sobre la que gira todo lo demás. Un nombre de servidor, una ruta, un número de versión: los mismos valores se repiten una y otra vez en los comandos que usas, y el día que uno cambia toca corregirlo comando por comando. Con las variables defines ese valor **una vez**, y todos los comandos se actualizan solos.",
       intro:
         "Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas. Si dos variables comparten la misma clave, gana la definida en último lugar.",
       usage:
-        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{server}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
+        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{CLAVE}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
       unresolved:
         "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**.",
       tooltip:
@@ -703,7 +703,7 @@ export const es: Messages = {
       demoHint:
         "Compruébalo abajo: una sola variable alimenta dos comandos. Edita su valor y mira cómo las dos vistas previas cambian mientras escribes. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables y un menú de **acciones de la variable** a la derecha para duplicarla o eliminarla.",
       constants:
-        "No todas las variables cambian por el mismo motivo. Unas son valores que cambias a cada rato y otras son **constantes**: se mantienen igual durante toda la vida del libro, y solo son variables porque ese mismo valor aparece en comando tras comando. CommandPad las distingue por convención de nombres: una clave escrita entera en **mayúsculas** se considera una constante y su clave se muestra en morado. Cualquier clave con alguna **minúscula** conserva el azul de siempre.",
+        "No todas las variables cambian por el mismo motivo. Unas son valores que cambias a cada rato y otras son **constantes**: se mantienen igual durante toda la vida del libro, y solo son variables porque ese mismo valor aparece en comando tras comando. CommandPad las distingue por convención de nombres: una clave escrita entera en **mayúsculas** se considera una _constante_ y cualquier clave con alguna **minúscula** se considera _variable_.",
       constantsDemoHint:
         "La convención es solo de nombres: las constantes se resuelven, se referencian y se renombran igual que cualquier otra variable. Renombra abajo una clave de mayúsculas a minúsculas y al revés para ver cómo el color la sigue.",
     },
@@ -722,20 +722,20 @@ export const es: Messages = {
       seeExample:
         "Si suena abstracto, no te preocupes: se entiende al instante en cuanto lo ves. Échale un vistazo al ejemplo de abajo antes de seguir leyendo.",
       multiple:
-        "Un valor puede tener varios huecos. Dale a cada uno un nombre distinto y rellénalos todos en la misma referencia, separados por punto y coma:",
+        "Un valor puede tener varios huecos. Dale a cada uno un nombre distinto y rellénalos todos en el mismo comando, separados por punto y coma:",
       nested:
         "Un hueco también puede rellenarse con otra variable. Así, un mismo valor puede rellenar el hueco de un comando y usarse por su cuenta en otro:",
     },
     variableSlicing: {
       intro:
-        "Una variable guarda un valor, pero no siempre se necesita entero. Un hash de commit ocupa cuarenta caracteres al hacer checkout y solo siete en una etiqueta. Con el recorte mantienes **una única** variable y usas solo la parte que necesitas.",
+        "Una variable guarda un valor, pero no siempre se necesita entero. Por ejemplo, un hash de commit ocupa cuarenta caracteres al hacer checkout y solo siete en una etiqueta. Con el recorte mantienes **una única** variable y usas solo la parte que necesitas.",
       demoHint:
         "El primer comando usa el hash completo; el segundo, solo sus siete primeros caracteres. Edita la variable y verás cómo los dos se actualizan a la vez:",
       howItWorks:
         "Escribe un `|` después de la clave y, entre corchetes, la parte que quieres. Se cuenta desde cero, y el segundo número indica dónde **parar sin llegar a incluirlo**: `[:7]` son los siete primeros caracteres y `[2:5]` son el dos, el tres y el cuatro. Si omites un número, el recorte llega hasta ese extremo.",
       positionsHint:
         "Los números negativos cuentan desde el final, así que `[-2:]` son los dos últimos caracteres. Con una fecha se ven las tres formas de un vistazo:",
-      step: "Un tercer número es el **paso**. En un número de versión los puntos caen en las posiciones impares, así que `[::2]` los salta y deja solo los dígitos, que es lo que quieres en un nombre de archivo, donde un punto se lee como otra extensión. Un paso negativo avanza hacia atrás, así que `[::-1]` por sí solo invierte un valor:",
+      step: "Un tercer número es el **paso**: cuántas posiciones salta el recorte entre un carácter y el siguiente. `[::2]` toma un carácter de cada dos y se salta el resto, y un paso negativo avanza hacia atrás, así que `[::-1]` por sí solo invierte un valor:",
       invalid:
         "Si un recorte no tiene sentido, por ejemplo con un paso de cero, la referencia entera se queda **sin resolver** y aparece tal cual la escribiste, así que el error se nota enseguida. En cambio, pedir más caracteres de los que hay no es problema: obtienes los que existan.",
       python:
@@ -743,9 +743,9 @@ export const es: Messages = {
     },
     variableCount: {
       intro:
-        "Escribe `count` después del `|` y obtienes **cuánto mide el valor** en lugar del valor.",
+        "Escribe `count` después del `|` y obtienes **cuántos caracteres ocupa el valor**.",
       demoHint:
-        "El asunto de un commit debería quedarse por debajo de 50 caracteres, y nadie los cuenta a mano. Escribe en el mensaje de abajo y mira cómo el número te sigue:",
+        "Por ejemplo, el asunto de un commit debería quedarse por debajo de 50 caracteres, pero nadie los cuenta a mano. Escribe en el mensaje de abajo y mira cómo el número te sigue:",
       chaining:
         "Las operaciones se aplican de izquierda a derecha, así que puedes poner `count` después de un recorte: `{commit|[:7]|count}` acorta el commit primero y luego cuenta lo que queda.",
     },
@@ -766,29 +766,30 @@ export const es: Messages = {
       rebuild:
         "Las cuatro primeras **reconstruyen** el valor a partir de sus palabras, así que los espacios desaparecen. Las demás solo cambian letras.",
       demoHint:
-        "El nombre de una carpeta va mejor sin espacios; un título, con ellos. El mismo valor, de las dos formas:",
+        "Por ejemplo, el nombre de una carpeta va mejor sin espacios; un título, con ellos. Observa abajo el mismo valor, de las dos formas:",
     },
     variableStrip: {
       intro:
-        "`strip` quita el texto entre paréntesis por los dos extremos del valor, `lstrip` solo por delante y `rstrip` solo por detrás. Abajo, cada una sobre un valor rodeado de guiones:",
+        "La operación `strip(valor)` quita el texto pasado entre paréntesis por los dos extremos del valor, `lstrip` solo por delante y `rstrip` solo por detrás. Abajo, cada una sobre un valor rodeado de guiones:",
       table: `| Operación | Resultado |
 | --- | --- |
-| \`lstrip(-)\` | recortado por delante--- |
-| \`rstrip(-)\` | ---recortado por detrás |
-| \`strip(-)\` | recortado por los dos lados |`,
+| \`lstrip(-)\` | sin guiones por delante--- |
+| \`rstrip(-)\` | ---sin guiones por detrás |
+| \`strip(-)\` | sin guiones por los dos lados |`,
       demoHint:
-        "Una dirección copiada del navegador, un archivo que ya trae su extensión. Cambia cualquiera de los dos y los comandos se ajustan solos:",
+        "Abajo se muestra una dirección copiada del navegador y un archivo que ya trae su extensión. Cambia cualquiera de los dos y los comandos se ajustan solos:",
       repeats:
-        "El texto se quita tantas veces como aparezca, y se compara **entero**: `rstrip(ando)` nunca se lleva una `o` suelta.",
-      whitespace: "Sin paréntesis, lo que se quita son los espacios:",
+        "El texto se quita tantas veces como aparezca, y se compara **entero**: `rstrip(valor)` nunca se lleva una `r` suelta.",
+      whitespace:
+        "Por defecto, las operaciones `strip` escritas sin paréntesis quitan los espacios en blanco:",
     },
     multilineReferences: {
       intro:
-        "Rellena varios huecos a la vez y una referencia se vuelve demasiado larga para leerla en una sola línea. Puedes repartirla en tantas líneas como quieras: los espacios y saltos de línea que rodean cada parte se ignoran, así que la distribuyes como prefieras.",
+        "Muchas veces las referencias se vuelven demasiado largas para leerlas en una sola línea. Puedes repartirlas en tantas líneas como quieras: los espacios y saltos de línea que rodean cada parte se ignoran, así que la distribuyes como prefieras.",
     },
     escapingBraces: {
       intro:
-        "Antepón una barra invertida a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla.",
+        "Antepón una barra invertida (`\\`) a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla.",
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
       scope: "El escape solo aplica dentro de bloques de comando.",
@@ -801,17 +802,17 @@ export const es: Messages = {
     },
     blocks: {
       intro:
-        "Los bloques son el contenido principal de un libro. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **acciones del bloque** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo.",
+        "Los bloques son el contenido principal de un libro. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **acciones del bloque** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo. Cada bloque tiene una anchura mínima que le impide encogerse hasta volverse ilegible.",
     },
     commandBlock: {
       intro:
         "Es un bloque que guarda un comando que quieras tener a mano. Tiene dos partes:",
       parts: [
-        "**Vista previa** (siempre visible): el comando exactamente como se copiará. Haz clic en el botón **Copiar** para enviarlo a tu portapapeles. Este botón se deshabilita si el comando está vacío.",
+        "**Vista previa** (siempre visible): el comando exactamente como se copiará. Haz clic en su botón de **Copiar** para enviarlo a tu portapapeles. Este botón se deshabilita si el comando está vacío.",
         "**Editor** (contraíble): donde escribes el comando. Usa el botón de flecha para ocultarlo cuando solo necesites la vista previa.",
       ],
       multiline:
-        "Los comandos pueden ocupar varias líneas, y el editor se puede scrollear hacia los lados cuando una línea se hace demasiado larga. El margen izquierdo marca la primera línea con `$` y numera cada línea extra, como se ve en el ejemplo de abajo.",
+        "Los comandos pueden ocupar varias líneas, y el editor se puede scrollear hacia los lados cuando una línea es muy larga. El margen izquierdo marca la primera línea con `$` y numera las siguientes.",
       longCommands:
         "Un comando muy largo no estira el bloque para siempre. Cuando una parte pasa su límite de altura se detiene ahí y se desvanece, con un control **Mostrar más líneas** debajo. Haz clic para revelar el resto, y haz clic otra vez para volver a plegarlo. La vista previa y el editor se limitan por separado, así que puedes abrir uno sin abrir el otro.",
       variablesTeaser:
@@ -830,16 +831,17 @@ export const es: Messages = {
 | \\\`texto-de-código\\\` | \`texto-de-código\` |
 | \\[enlace-con-etiqueta](\\https://example.com) | [enlace-con-etiqueta](https://example.com) |`,
       escapes:
-        "Una `\\` delante de una marca la vuelve literal: `\\**texto\\**` muestra los asteriscos en lugar de poner el texto en negrita. Escapa ambos extremos de un par, y ten en cuenta que dentro de `código` no se escapa nada, porque ahí la barra invertida es parte del contenido.",
+        "Antepón una barra invertida (`\\`) a una marca de markdown para que se muestre literal en vez de aplicarse: escribir `\\**texto\\**` deja los asteriscos a la vista en lugar de poner el texto en negrita. Escapa los dos extremos de la marca, uno por uno, y ten en cuenta que dentro de un `código` no se escapa nada, porque ahí la barra invertida ya forma parte del contenido.",
       spellcheck:
         "Las notas se pueden corregir ortográficamente mientras las escribes. Haz **clic derecho** en cualquier parte del contenido del libro y activa **Corregir ortografía en las notas** en el menú.",
       tables:
         "Las notas también soportan [tablas markdown al estilo GitHub](https://docs.github.com/es/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): celdas separadas por barras `|`, con una fila de guiones debajo del encabezado. Haz clic en la nota de abajo para ver la sintaxis en bruto.",
       noNesting:
-        "Los estilos no se combinan: negrita y cursiva no pueden mezclarse en las mismas palabras, por ejemplo. Gana el estilo que empieza primero.",
-      links: "Para abrir un enlace, mantén `Ctrl` y haz clic en él.",
+        "Los estilos no se combinan: por ejemplo, negrita y cursiva no pueden mezclarse en las mismas palabras. Gana el estilo que empiece primero.",
+      links:
+        "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables. Para abrir un enlace, mantén `Ctrl` y haz clic en él.",
       wrapKeys:
-        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y **Ctrl+´** en comillas invertidas; escribir **(**, **[**, **{**, **\"** o **'** lo envuelve en ese par. Envolver en pares no es exclusivo de las notas, funciona igual en el editor de comandos.",
+        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y **Ctrl+´** en comillas invertidas; escribir cualquier carácter de paréntesis (**(**, **[** o **{**) o comillas (**\"** o **'**) lo envuelve en ese par. Envolver en pares no es exclusivo de las notas, funciona igual en el editor de comandos.",
     },
     imageBlock: {
       intro:
@@ -851,11 +853,11 @@ export const es: Messages = {
         "**Enlázala**: escribe o pega una dirección `http` o `https` en la casilla de abajo del bloque.",
       ],
       attachedVsLinked: (limit) =>
-        `Las tres primeras formas **adjuntan** la imagen: se guarda una copia dentro del libro, así que funciona sin conexión y viaja con cada exportación y cada copia. Una imagen adjunta debe pesar menos de ${limit}. La última la **enlaza**: el libro solo recuerda la dirección, que no ocupa más que una línea de texto, pero la imagen solo está ahí mientras lo esté el sitio que la aloja.`,
+        `Una imagen adjunta debe pesar menos de **${limit}**. Una imagen puesta a través de un enlace solo la mostrará mientras esta siga alojada en internet.`,
       sizing:
-        "Una imagen se muestra a su propio tamaño, pero nunca por debajo de un mínimo legible ni más alta de lo que permite el bloque: una imagen diminuta se amplía, una enorme se reduce, y ninguna se deforma.",
+        "Una imagen se muestra con su mismo tamaño, pero nunca por debajo de un mínimo legible ni más allá de lo que permite el bloque: una imagen diminuta se amplía, una enorme se reduce, y ninguna se deforma.",
       slideshow:
-        "Cuando un libro tiene más de una imagen, la pantalla completa se convierte en un pase de diapositivas: las flechas fijas en los bordes izquierdo y derecho de la pantalla, o las teclas `Izquierda` y `Derecha`, recorren todas las imágenes del libro en el orden en que aparecen, y el contador indica en cuál estás. La página acompaña el recorrido y deja cada imagen en la parte superior de la pantalla al llegar a ella, así que al cerrar la pantalla completa te quedas mirando la imagen en la que lo dejaste.",
+        "Cuando un libro tiene más de una imagen, la pantalla completa se convierte en un pase de diapositivas: las flechas fijas en los bordes izquierdo y derecho de la pantalla, o las teclas `Izquierda` y `Derecha`, recorren todas las imágenes del libro en el orden en que aparecen, y el contador indica en cuál estás. La página acompaña el recorrido y deja cada imagen en la parte superior de la pantalla, para que así al cerrar la pantalla completa te quedes justo en la última que miraste.",
       demoHint:
         "Pasa el cursor sobre una imagen para revelar sus controles: **Ver a pantalla completa** la abre sobre la página atenuada, y su menú de acciones tiene **Reemplazar imagen**, que cambia la foto sin tocar el bloque, y **Eliminar imagen**, que lo vacía y devuelve la zona para soltar.",
     },
@@ -871,7 +873,7 @@ export const es: Messages = {
         "**Arrastra** el control de cualquier bloque seleccionado para mover todos los bloques seleccionados juntos, conservando el orden relativo.",
         "**Duplicar**: `Ctrl+D` duplica el grupo completo, insertado después del último bloque seleccionado.",
         "**Eliminar**: `Del` elimina el grupo completo.",
-        "**Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella. Las variables referenciadas viajan con los bloques; si la pestaña de destino ya define alguna con un valor distinto, la copia se añade con un nuevo nombre `CLAVE_COPY` y los bloques copiados se reescriben para referenciarla, de modo que no se tocan los valores de ninguna pestaña.",
+        "**Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella. Las variables referenciadas viajan con los bloques; si la pestaña de destino ya define alguna con un valor distinto, la copia se añade con un nuevo nombre y los bloques copiados se reescriben para referenciarla, de modo que no se tocan los valores de ninguna pestaña.",
       ],
       clear:
         "Pulsa `Escape` o haz clic fuera de los controles de bloque para limpiar la selección.",
@@ -905,13 +907,13 @@ export const es: Messages = {
       saveDialog:
         "En navegadores compatibles se abre un diálogo nativo de guardado para elegir nombre y carpeta. En los demás, el archivo se descarga directamente.",
       copyMarkdown:
-        "Para saltarte los archivos por completo, haz clic derecho dentro del libro y elige **Copiar libro como Markdown**. Pone el mismo contenido Markdown en tu portapapeles, listo para pegarlo en un chat, un ticket o un documento.",
+        "También puedes hacer clic derecho dentro de un libro y elegir **Copiar libro como Markdown** para evitar pasar por el proceso de exportación. Esta opción te permite copiar el contenido de un libro listo para pegarlo en un chat, un ticket o un documento.",
     },
     cloudExport: {
       intro:
         "**Exportar** e **Importar** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo. El diálogo se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados.",
       switchProvider:
-        "Mientras exploras la nube, el nombre del proveedor en el título del diálogo es un **selector**: haz clic en él para cambiar entre proveedores sin volver atrás.",
+        "Mientras exploras la nube, el nombre del proveedor en el título del diálogo es un **selector**: haz clic en él para cambiar entre proveedores.",
       overwrite:
         "Si la carpeta de destino ya tiene un archivo con el mismo nombre, la exportación se detiene y te pide confirmación antes de reemplazarlo.",
     },
@@ -956,7 +958,7 @@ export const es: Messages = {
         {
           question: "¿Cómo respaldo un libro o lo llevo a otra máquina?",
           answer:
-            "Expórtalo como **JSON** e importa el archivo en la otra máquina. La exportación JSON contiene el espacio de trabajo completo (variables y bloques) y siempre puede reimportarse.",
+            "Expórtalo como **JSON** e importa el archivo en la otra máquina, o hazlo directamente a SharePoint o Google Drive y luego impórtalo desde ahí en la otra máquina. La exportación JSON contiene el espacio de trabajo completo (variables y bloques) y siempre puede reimportarse.",
         },
         {
           question: "¿Qué elimina exactamente Resetear el Espacio de Trabajo?",

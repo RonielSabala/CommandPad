@@ -586,7 +586,7 @@ export const en: Messages = {
       reportFile: "monthly-sales.pdf",
       folderName: "   Sales Reports   ",
       noteSample:
-        "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link, e.g. https://example.com. Click away to see it rendered again.",
+        "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link: https://example.com. Click away to see it rendered again.",
       tableSample: `| Exit code | Meaning | Action |
 | :---: | --- | --- |
 | 126 | Permission denied | \`chmod +x\` the script |
@@ -622,7 +622,7 @@ export const en: Messages = {
         "The **CommandPad logo**: click it to reload the app.",
         "The **padlock / pencil**: switches between read mode and edit mode. It has its own section later in this guide.",
         "**Collapse all**: collapses or expands every command editor in the active runbook at once.",
-        "The **sun / moon**: switches between the dark and light themes.",
+        "The **sun / moon**: switches between the light and dark themes.",
         "The **language selector**: changes the interface language.",
         "The **book**: opens this documentation.",
         "The **red arrow**: resets the workspace. It wipes everything, so the app always asks you to confirm first.",
@@ -646,7 +646,7 @@ export const en: Messages = {
       autoCreate:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
-        "A tab is named by the first note block of its runbook, so your tabs describe themselves. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, and close one.",
+        "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, and close one.",
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",
@@ -677,11 +677,11 @@ export const en: Messages = {
         "Edits made to the active runbook are automatically saved back to the library.",
     },
     variables: {
-      why: "This is the feature everything else has been building toward. A server name, a file path, a version number: the same little values repeat across half the commands you keep, and the day one changes you get to hunt it down in every single command. With variables you write that value **once**, and every command that needs it stays current on its own.",
+      why: "This is the feature everything else has been building toward. A server name, a file path, a version number: the same little values repeat over and over in the commands you use, and the day one changes you get to fix it in every single command. With variables you write that value **once**, and every command updates on its own.",
       intro:
         "Each variable has a **key** and a **value**. Keys are case-sensitive. If two variables share the same key, the one defined last wins.",
       usage:
-        "Use a variable in any command by wrapping its key in curly braces, e.g. `{server}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
+        "Use a variable in any command by wrapping its key in curly braces, e.g. `{KEY}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
       unresolved:
         "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**.",
       tooltip:
@@ -691,7 +691,7 @@ export const en: Messages = {
       demoHint:
         "See it for yourself below: one variable feeds two commands. Edit its value and watch both previews follow along as you type. Hover over a row to reveal its controls: a drag handle on the left to reorder it among the others and a **variable actions** menu on the right to duplicate or remove it.",
       constants:
-        "Not every variable changes for the same reason. Some are values you swap all the time, and some are **constants**: they stay the same for the whole life of the runbook, and they are only variables because the same value shows up in command after command. CommandPad tells them apart by naming convention: a key written entirely in **capitals** is treated as a constant and its key is shown in purple. Anything with a **lowercase** letter in it keeps the usual blue.",
+        "Not every variable changes for the same reason. Some are values you swap all the time, and some are **constants**: they stay the same for the whole life of the runbook, and they are only variables because the same value shows up in command after command. CommandPad tells them apart by naming convention: a key written entirely in **capitals** is treated as a _constant_, and any key with a **lowercase** letter in it is treated as a _variable_.",
       constantsDemoHint:
         "The convention is purely a naming one: constants resolve, get referenced and get renamed exactly like any other variable. Rename a key below from capitals to lowercase and back to see the color follow along.",
     },
@@ -710,20 +710,20 @@ export const en: Messages = {
       seeExample:
         "If that sounds abstract, don't worry: it clicks the moment you see it. Take a look at the example below before reading on.",
       multiple:
-        "A value can have several blanks. Give each one a different name, then fill them all in the same reference, separated by semicolons:",
+        "A value can have several blanks. Give each one a different name, then fill them all in the same command, separated by semicolons:",
       nested:
         "A blank can even be filled with another variable. That way the same value can fill a blank in one command and be used on its own in another:",
     },
     variableSlicing: {
       intro:
-        "A variable holds one value, but a command does not always need all of it. A commit hash is forty characters long when you check it out and seven when it goes in a tag. Slicing lets you keep **one** variable and take just the part you need.",
+        "A variable holds one value, but a command does not always need all of it. For example, a commit hash is forty characters long when you check it out and seven when it goes in a tag. Slicing lets you keep **one** variable and take just the part you need.",
       demoHint:
         "The first command below uses the whole hash. The second takes only its first seven characters. Edit the variable and both stay in step:",
       howItWorks:
         "Write a `|` after the key, then the piece you want in square brackets. Counting starts at zero, and the second number marks where to **stop without including it**: `[:7]` is the first seven characters, and `[2:5]` is characters two, three and four. Leave a number out to run all the way to that end.",
       positionsHint:
         "Negative numbers count back from the end, so `[-2:]` is the last two characters. A date shows the three forms side by side:",
-      step: "A third number is the **step**. In a version number the dots sit on the odd positions, so `[::2]` skips them and leaves just the digits, which is what you want in a filename, where a dot reads as another extension. A negative step walks backwards, so `[::-1]` on its own reverses a value:",
+      step: "A third number is the **step**: how many positions the slice skips between one character and the next. `[::2]` takes one character out of every two and skips the rest, and a negative step walks backwards, so `[::-1]` on its own reverses a value:",
       invalid:
         "If a slice does not make sense, such as a step of zero, the whole reference stays **unresolved** and shows up exactly as you typed it, so the mistake is easy to spot. Asking for more characters than there are is fine, though: you simply get the ones that exist.",
       python:
@@ -731,9 +731,9 @@ export const en: Messages = {
     },
     variableCount: {
       intro:
-        "Write `count` after the `|` and you get **how long the value is** instead of the value itself.",
+        "Write `count` after the `|` and you get **how many characters the value takes up**.",
       demoHint:
-        "A commit subject is supposed to stay under 50 characters, and nobody counts them by hand. Type into the message below and watch the number keep up:",
+        "For example, a commit subject is supposed to stay under 50 characters, but nobody counts them by hand. Type into the message below and watch the number keep up:",
       chaining:
         "Operations run left to right, so you can put `count` after a slice: `{commit|[:7]|count}` shortens the commit first, then counts what is left.",
     },
@@ -754,29 +754,30 @@ export const en: Messages = {
       rebuild:
         "The first four **rebuild** the value out of its words, so spaces disappear. The rest only change letters.",
       demoHint:
-        "A folder name is better off without spaces, a title reads better with them. One value, both ways:",
+        "For example, a folder name is better off without spaces; a title reads better with them. See the same value below, both ways:",
     },
     variableStrip: {
       intro:
-        "`strip` removes the text in parentheses from both ends of a value, `lstrip` from the front only, `rstrip` from the back only. Below, each one against a value padded with dashes:",
+        "The `strip(value)` operation removes the text passed in parentheses from both ends of a value, `lstrip` from the front only, `rstrip` from the back only. Below, each one against a value padded with dashes:",
       table: `| Operation | Result |
 | --- | --- |
-| \`lstrip(-)\` | trimmed at the front--- |
-| \`rstrip(-)\` | ---trimmed at the back |
-| \`strip(-)\` | trimmed at both ends |`,
+| \`lstrip(-)\` | no dashes at the front--- |
+| \`rstrip(-)\` | ---no dashes at the back |
+| \`strip(-)\` | no dashes at either end |`,
       demoHint:
-        "An address copied from the browser bar, a file that already has its extension. Edit either and the commands keep up:",
+        "Below is an address copied from the browser bar and a file that already has its extension. Edit either and the commands keep up:",
       repeats:
         "The text comes off as many times as it is there, and it is matched **whole**: `rstrip(ing)` never takes a stray `g`.",
-      whitespace: "Leave the parentheses off and spaces come off instead:",
+      whitespace:
+        "By default, `strip` operations written without parentheses remove whitespace:",
     },
     multilineReferences: {
       intro:
-        "Fill in a few blanks at once and a reference gets too long to read on a single line. You can spread it over as many lines as you like instead: the spaces and line breaks around each part are ignored, so the layout is yours to choose.",
+        "References often get too long to read on a single line. You can spread them over as many lines as you like instead: the spaces and line breaks around each part are ignored, so the layout is yours to choose.",
     },
     escapingBraces: {
       intro:
-        "Prefix a reference with a backslash in a command block to output it literally instead of resolving it.",
+        "Prefix a reference with a backslash (`\\`) in a command block to output it literally instead of resolving it.",
       tryHint:
         "Try deleting the backslash in the command below and watch the literal braces turn into an active reference:",
       scope: "Escaping only applies inside command blocks.",
@@ -789,17 +790,17 @@ export const en: Messages = {
     },
     blocks: {
       intro:
-        "Blocks are the main content of a runbook. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or open the **block actions** menu on the right to insert a new block above or below it, duplicate it, or delete it.",
+        "Blocks are the main content of a runbook. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or open the **block actions** menu on the right to insert a new block above or below it, duplicate it, or delete it. Every block has a minimum width that keeps it from shrinking into something unreadable.",
     },
     commandBlock: {
       intro:
         "It's a block that holds a command you want to keep at hand. It has two parts:",
       parts: [
-        "**Preview** (always visible): the command exactly as it will be copied. Click the **Copy** button to send it to your clipboard. This button is disabled if the command is empty.",
+        "**Preview** (always visible): the command exactly as it will be copied. Click its **Copy** button to send it to your clipboard. This button is disabled if the command is empty.",
         "**Editor** (collapsible): where you write the command. Use the chevron button to hide it when you only need the preview.",
       ],
       multiline:
-        "Commands can span several lines, and the editor can scroll sideways when a line gets too long. The left margin marks the first line with `$` and numbers every extra line, as the example below shows.",
+        "Commands can span several lines, and the editor can scroll sideways when a line gets very long. The left margin marks the first line with `$` and numbers the rest.",
       longCommands:
         "A very long command does not stretch the block forever. Once a part passes its height limit it stops there and fades out, with a **Show more lines** control underneath. Click it to reveal the rest, and click it again to fold it back. The preview and the editor are capped separately, so you can open one without opening the other.",
       variablesTeaser:
@@ -818,16 +819,17 @@ export const en: Messages = {
 | \\\`code-text\\\` | \`code-text\` |
 | \\[labelled-link](\\https://example.com) | [labelled-link](https://example.com) |`,
       escapes:
-        "A `\\` in front of a mark makes it literal: `\\**text\\**` shows the asterisks instead of turning the text bold. Escape both ends of a pair, and note that nothing is escaped inside `code`, where a backslash is part of the content.",
+        "Put a backslash (`\\`) in front of a markdown mark to show it literally instead of applying it: typing `\\**text\\**` leaves the asterisks visible instead of making the text bold. Escape both ends of the mark, one at a time, and note that nothing is escaped inside `code`, where the backslash is already part of the content.",
       spellcheck:
         "Notes can be spell checked as you write them. **Right-click** anywhere in the runbook content and toggle **Spell check notes** in the menu.",
       tables:
         "Notes also support [GitHub-flavored markdown tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): cells separated by `|` bars, with a row of dashes under the header. Click the note below to see the raw syntax.",
       noNesting:
-        "Styles do not combine: bold and italics cannot be mixed on the same words, for example. Whichever style starts first wins.",
-      links: "To open a link, hold `Ctrl` and click it.",
+        "Styles do not combine: for example, bold and italics cannot be mixed on the same words. Whichever style starts first wins.",
+      links:
+        "Bare URLs are detected automatically and become clickable links. To open a link, hold `Ctrl` and click it.",
       wrapKeys:
-        "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and **Ctrl+´** in backticks; typing **(**, **[**, **{**, **\"** or **'** wraps it in that pair. Pair wrapping is not exclusive to notes, it works the same way in the command editor.",
+        "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and **Ctrl+´** in backticks; typing any parenthesis character (**(**, **[**, or **{**) or quote (**\"** or **'**) wraps it in that pair. Pair wrapping is not exclusive to notes, it works the same way in the command editor.",
     },
     imageBlock: {
       intro:
@@ -839,11 +841,11 @@ export const en: Messages = {
         "**Link it**: type or paste an `http` or `https` address into the box at the bottom of the block.",
       ],
       attachedVsLinked: (limit) =>
-        `The first three ways **attach** the image: a copy of it is kept inside the runbook, so it works with no connection and travels with every export and every copy. An attached image has to stay under ${limit}. The last way **links** it instead: the runbook only remembers the address, which costs no more than a line of text, but the picture is only there while the site hosting it is.`,
+        `An attached image has to stay under **${limit}**. A linked image will only show while it stays hosted online.`,
       sizing:
-        "A picture is shown at its own size, but never below a readable minimum and never taller than the block allows: a tiny image is scaled up, a huge one is scaled down, and neither is ever stretched out of shape.",
+        "A picture is shown at its own size, but never below a readable minimum and never beyond what the block allows: a tiny image is scaled up, a huge one is scaled down, and neither is ever stretched out of shape.",
       slideshow:
-        "When a runbook holds more than one image, full screen becomes a slideshow: the arrows parked at the left and right edges of the screen, or the `Left` and `Right` arrow keys, slide across every image in the runbook in the order they appear, and the counter tells you where you are. The page follows along, parking each image at the top of the screen as you reach it, so closing full screen leaves you looking at the image you stopped on.",
+        "When a runbook holds more than one image, full screen becomes a slideshow: the arrows parked at the left and right edges of the screen, or the `Left` and `Right` arrow keys, slide across every image in the runbook in the order they appear, and the counter tells you where you are. The page follows along, parking each image at the top of the screen, so closing full screen leaves you right on the last one you looked at.",
       demoHint:
         "Hover over an image to reveal its controls: **View full screen** opens it over a dimmed page, and its actions menu holds **Replace image**, which swaps the picture without touching the block, and **Remove image**, which empties it back to the drop area.",
     },
@@ -859,7 +861,7 @@ export const en: Messages = {
         "**Drag** any selected block's handle to move all selected blocks together, preserving relative order.",
         "**Duplicate**: `Ctrl+D` duplicates the entire group, inserted after the last selected block.",
         "**Delete**: `Del` deletes the entire group.",
-        "**Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab. Referenced variables travel with the blocks; if the target tab already defines one of them with a different value, the copy is added under a new `KEY_COPY` name and the copied blocks are rewritten to reference it, so neither tab's values are touched.",
+        "**Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab. Referenced variables travel with the blocks; if the target tab already defines one of them with a different value, the copy is added under a new name and the copied blocks are rewritten to reference it, so neither tab's values are touched.",
       ],
       clear:
         "Press `Escape` or click outside block controls to clear the selection.",
@@ -892,13 +894,13 @@ export const en: Messages = {
       saveDialog:
         "A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.",
       copyMarkdown:
-        "To skip files entirely, right-click anywhere inside the runbook and choose **Copy runbook as Markdown**. It puts the same Markdown content on your clipboard, ready to paste into a chat, a ticket, or a document.",
+        "You can also right-click anywhere inside a runbook and choose **Copy runbook as Markdown** to skip the export process entirely. This option lets you copy a runbook's content ready to paste into a chat, a ticket, or a document.",
     },
     cloudExport: {
       intro:
         "**Export** and **Import** can go straight to SharePoint or Google Drive, not just this device. The dialog reopens with the destination and format you used last time already selected.",
       switchProvider:
-        "While you are browsing the cloud, the provider name in the dialog title is a **picker**: click it to switch providers without going back a step.",
+        "While you are browsing the cloud, the provider name in the dialog title is a **picker**: click it to switch providers.",
       overwrite:
         "If the destination folder already holds a file with the same name, the export stops and asks you to confirm before replacing it.",
     },
@@ -942,7 +944,7 @@ export const en: Messages = {
         {
           question: "How do I back up a runbook or move it to another machine?",
           answer:
-            "Export it as **JSON** and import the file on the other machine. The JSON export contains the full workspace (variables and blocks) and can always be re-imported.",
+            "Export it as **JSON** and import the file on the other machine, or export it straight to SharePoint or Google Drive and import it from there on the other machine. The JSON export contains the full workspace (variables and blocks) and can always be re-imported.",
         },
         {
           question: "What exactly does Reset Workspace delete?",
