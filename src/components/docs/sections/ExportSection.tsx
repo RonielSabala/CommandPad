@@ -34,7 +34,7 @@ export function CloudLinkedSyncDocs() {
   return (
     <>
       <Prose text={t.docs.cloudLinkedSync.intro} />
-      <Prose text={t.docs.cloudLinkedSync.syncBadge} />
+      <Prose text={t.docs.cloudLinkedSync.syncBadge(t.runbooks.title)} />
       <Prose
         text={t.docs.cloudLinkedSync.stopSyncing(t.runbooks.stopSyncing)}
       />

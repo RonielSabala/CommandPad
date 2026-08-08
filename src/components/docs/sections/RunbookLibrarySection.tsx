@@ -14,6 +14,7 @@ export function RunbookLibraryDocs() {
         items={t.docs.runbookLibrary.items(
           t.runbooks.import,
           t.runbooks.clearLibrary,
+          t.runbooks.actions,
         )}
       />
       <DemoWorkspace

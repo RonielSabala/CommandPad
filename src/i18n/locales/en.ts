@@ -598,19 +598,19 @@ export const en: Messages = {
         "Welcome to CommandPad! Here you'll build **runbooks**: documents that mix the commands you run often with the notes that help explain them.",
       why: "You know the ritual: scrolling through shell history, digging through old chat messages, or keeping a `commands.txt` somewhere on your computer. A runbook ends that. Each command lives next to the note that explains it, with the changing parts filled in for you, ready to copy.",
       journey:
-        "This guide walks you through how the app works, one piece at a time, so you can get the most out of it. You'll start with the block types your runbooks are built from, then variables, the feature that makes command blocks truly powerful, and finally the workspace itself: the sidebar, tabs and everything around your runbooks.",
+        "This guide walks you through how the app works, one piece at a time, so you can get the most out of it. You'll start with the block types your runbooks are built from, then variables, the feature that makes command blocks truly powerful, and finally the workspace itself: the sidebar, tabs, and everything around your runbooks.",
       navigate:
         "Read it start to finish, or jump straight to whatever interests you from the contents panel beside the article: you set the pace. Clicking an entry there takes you to its section and folds it away, and its heading in the article does the same, so you can collapse what you have already read and keep the rest in view.",
       tryIt:
-        "Most sections come with a real, working example marked **Try it**, a piece of the app you're free to mess with, nothing you do there touches your actual workspace. Go ahead and poke at it, that's the fastest way to get a feel for how something works. If you ever get lost, the arrow button in its corner brings it back to where it started.",
+        "Most sections come with a real, working example marked **Try it**: a piece of the app you're free to mess with, since nothing you do there touches your actual workspace. Go ahead and poke at it, that's the fastest way to get a feel for how something works. If you ever get lost, the arrow button in its corner brings it back to where it started.",
     },
     workspace: {
       intro:
-        "The workspace is the app's main screen. It is where you will spend most of your time building and polishing your runbooks. It is made of three areas:",
+        "The workspace is the app's main screen, where you'll spend most of your time building and polishing your runbooks. It's made of three areas:",
       items: [
         "The **header**: gathers the buttons with the app's global actions.",
         "The **sidebar**: holds the runbook library and the variables panel.",
-        "The **main panel**: where every runbook you have open lives and, inside them, their blocks.",
+        "The **main panel**: where every runbook you have open lives, its blocks included.",
       ],
       persistence:
         "Everything you do is saved automatically in your browser and restored when you reload the page. Your data is never sent to a server.",
@@ -618,10 +618,10 @@ export const en: Messages = {
     header: {
       intro:
         "The header gathers the actions that affect the whole app. From left to right:",
-      items: (exportLabel) => [
+      items: (exportLabel, collapseAllLabel) => [
         "The **CommandPad logo**: click it to reload the app.",
         "The **padlock / pencil**: switches between read mode and edit mode. It has its own section later in this guide.",
-        "**Collapse all**: collapses or expands every command editor in the active runbook at once.",
+        `**${collapseAllLabel}**: collapses or expands every command editor in the active runbook at once.`,
         "The **sun / moon**: switches between the light and dark themes.",
         "The **language selector**: changes the interface language.",
         "The **book**: opens this documentation.",
@@ -633,7 +633,7 @@ export const en: Messages = {
       intro: (newBlockLabel) =>
         `The main panel is your workbench. At the top sits the **tabs bar** with your open runbooks; below it, the blocks of the active runbook; and at the end, the **${newBlockLabel}** row to keep adding content.`,
       minimap:
-        "On the right edge lives the **minimap**: a miniature of the real runbook blocks that replaces the scrollbar. Click or drag on it to jump anywhere in a runbook. **Right-click** anywhere in the runbook content to open a small menu where you can turn it on or off or move it to the other side.",
+        "On the right edge lives the **minimap**: a miniature of the real runbook blocks that replaces the scrollbar. Click or drag on it to jump anywhere in a runbook. **Right-click** anywhere in the runbook content to open a small menu where you can turn it on or off, or move it to the other side.",
     },
     tabs: {
       intro: "Each tab holds one open runbook.",
@@ -661,11 +661,11 @@ export const en: Messages = {
     runbookLibrary: {
       intro: (runbooksTitle) =>
         `The sidebar's **${runbooksTitle}** section holds your imported runbooks.`,
-      items: (importLabel, clearLibraryLabel) => [
+      items: (importLabel, clearLibraryLabel, runbookActionsLabel) => [
         `Click **${importLabel}** to load one or more \`.json\` files at once, or **Paste** to create a runbook from raw JSON.`,
         "You can also **drag files** from your file explorer and drop them onto the section to import them.",
         "Click any runbook to open it. If it's already open in a tab, that tab becomes active.",
-        "Open the **runbook actions** menu shown on row hover to duplicate a runbook or remove it from the library.",
+        `Open the **${runbookActionsLabel}** menu shown on row hover to duplicate a runbook or remove it from the library.`,
         `Click **${clearLibraryLabel}** to empty the whole library at once.`,
         "Drag the handle on the left of a runbook to reorder it in the list.",
         "Use the **search bar** to filter runbooks by label or filename.",
@@ -678,7 +678,7 @@ export const en: Messages = {
         "Edits made to the active runbook are automatically saved back to the library.",
     },
     variables: {
-      why: "This is the feature everything else has been building toward. A server name, a file path, a version number: the same little values repeat over and over in the commands you use, and the day one changes you get to fix it in every single command. With variables you write that value **once**, and every command updates on its own.",
+      why: "This is the feature everything else has been building toward. A server name, a file path, a version number: the same little values repeat over and over in the commands you use, and the day one changes, you get to fix it in every single command. With variables you write that value **once**, and every command updates on its own.",
       intro:
         "Each variable has a **key** and a **value**. Keys are case-sensitive. If two variables share the same key, the one defined last wins.",
       usage:
@@ -689,8 +689,8 @@ export const en: Messages = {
         "If a key or value is too long to fit its box, hover over it to see the full text in a tooltip.",
       split:
         "Keys and values split the row evenly, but you can change that: drag the divider between them to give one side more room, and double-click it to go back to an even split. The new balance applies to every variable and is remembered between sessions.",
-      demoHint:
-        "See it for yourself below: one variable feeds two commands. Edit its value and watch both previews follow along as you type. Hover over a row to reveal its controls: a drag handle on the left to reorder it among the others and a **variable actions** menu on the right to duplicate or remove it.",
+      demoHint: (variableActionsLabel) =>
+        `See it for yourself below: one variable feeds two commands. Edit its value and watch both previews follow along as you type. Hover over a row to reveal its controls: a drag handle on the left to reorder it among the others, and a **${variableActionsLabel}** menu on the right to duplicate or remove it.`,
       constants:
         "Not every variable changes for the same reason. Some are values you swap all the time, and some are **constants**: they stay the same for the whole life of the runbook, and they are only variables because the same value shows up in command after command. CommandPad tells them apart by naming convention: a key written entirely in **capitals** is treated as a _constant_, and any key with a **lowercase** letter in it is treated as a _variable_.",
       constantsDemoHint:
@@ -721,7 +721,7 @@ export const en: Messages = {
       demoHint:
         "The first command below uses the whole hash. The second takes only its first seven characters. Edit the variable and both stay in step:",
       howItWorks:
-        "Write a `|` after the key, then the piece you want in square brackets. Counting starts at zero, and the second number marks where to **stop without including it**: `[:7]` is the first seven characters, and `[2:5]` is characters two, three and four. Leave a number out to run all the way to that end.",
+        "Write a `|` after the key, then the piece you want in square brackets. Counting starts at zero, and the second number marks where to **stop without including it**: `[:7]` is the first seven characters, and `[2:5]` is characters two, three, and four. Leave either number out to run from the very start, or all the way to the end.",
       positionsHint:
         "Negative numbers count back from the end, so `[-2:]` is the last two characters. A date shows the three forms side by side:",
       step: "A third number is the **step**: how many positions the slice skips between one character and the next. `[::2]` takes one character out of every two and skips the rest, and a negative step walks backwards, so `[::-1]` on its own reverses a value:",
@@ -759,7 +759,7 @@ export const en: Messages = {
     },
     variableStrip: {
       intro:
-        "The `strip(value)` operation removes the text passed in parentheses from both ends of a value, `lstrip` from the front only, `rstrip` from the back only. Below, each one against a value padded with dashes:",
+        "The `strip(value)` operation removes the text passed in parentheses from both ends of a value; `lstrip` removes it from the front only, and `rstrip` from the back only. Below, each one against a value padded with dashes:",
       table: `| Operation | Result |
 | --- | --- |
 | \`lstrip(-)\` | no dashes at the front--- |
@@ -768,7 +768,7 @@ export const en: Messages = {
       demoHint:
         "Below is an address copied from the browser bar and a file that already has its extension. Edit either and the commands keep up:",
       repeats:
-        "The text comes off as many times as it is there, and it is matched **whole**: `rstrip(ing)` never takes a stray `g`.",
+        "The text is removed as many times as it appears, and it is matched **whole**: `rstrip(ing)` never takes a stray `g`.",
       whitespace:
         "By default, `strip` operations written without parentheses remove whitespace:",
     },
@@ -790,8 +790,8 @@ export const en: Messages = {
         "The mask is purely visual: the **Copy** button always puts the **real** value on your clipboard, so your commands keep working. Try it below, and click the eye icon to reveal or hide the value.",
     },
     blocks: {
-      intro:
-        "Blocks are the main content of a runbook. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or open the **block actions** menu on the right to insert a new block above or below it, duplicate it, or delete it. Every block has a minimum width that keeps it from shrinking into something unreadable.",
+      intro: (blockActionsLabel) =>
+        `Blocks are the main content of a runbook. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or open the **${blockActionsLabel}** menu on the right to insert a new block above or below it, duplicate it, or delete it. Every block has a minimum width that keeps it from shrinking into something unreadable.`,
     },
     commandBlock: {
       intro:
@@ -830,7 +830,7 @@ export const en: Messages = {
       links:
         "Bare URLs are detected automatically and become clickable links. To open a link, hold `Ctrl` and click it.",
       wrapKeys:
-        "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and **Ctrl+´** in backticks; typing any parenthesis character (**(**, **[**, or **{**) or quote (**\"** or **'**) wraps it in that pair. Pair wrapping is not exclusive to notes, it works the same way in the command editor.",
+        "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and `Ctrl+´` in backticks; typing any parenthesis character (**(**, **[**, or **{**) or quote (**\"** or **'**) wraps it in that pair. Pair wrapping is not exclusive to notes: it works the same way in the command editor.",
     },
     imageBlock: {
       intro:
@@ -846,14 +846,14 @@ export const en: Messages = {
       sizing:
         "A picture is shown at its own size, but never below a readable minimum and never beyond what the block allows: a tiny image is scaled up, a huge one is scaled down, and neither is ever stretched out of shape.",
       slideshow:
-        "When a runbook holds more than one image, full screen becomes a slideshow: the arrows parked at the left and right edges of the screen, or the `Left` and `Right` arrow keys, slide across every image in the runbook in the order they appear, and the counter tells you where you are. The page follows along, parking each image at the top of the screen, so closing full screen leaves you right on the last one you looked at.",
+        "When a runbook holds more than one image, full screen becomes a slideshow: the arrows parked at the left and right edges of the screen, or the `Left` and `Right` arrow keys, move you through every image in the runbook in the order they appear, and the counter tells you where you are. The page follows along, parking each image at the top of the screen, so closing full screen leaves you right on the last one you looked at.",
       demoHint: (viewFullscreen, replace, remove) =>
         `Hover over an image to reveal its controls: **${viewFullscreen}** opens it over a dimmed page, and its actions menu holds **${replace}**, which swaps the picture without touching the block, and **${remove}**, which empties it back to the drop area.`,
     },
     dividerBlock: {
       intro:
         "Nothing more than a visual separator. It stretches to match the width of the widest block, which makes it perfect for splitting a runbook into sections.",
-      demoNote: "Type here and watch how the divisor grows or shrinks.",
+      demoNote: "Type here and watch how the divider grows or shrinks.",
     },
     multiSelect: {
       intro:
@@ -889,7 +889,7 @@ export const en: Messages = {
       intro: (exportLabel) =>
         `Click **${exportLabel}** in the header to open the format picker.`,
       formats: [
-        "**JSON**: the full workspace (variables + blocks). Can be re-imported.",
+        "**JSON**: the full workspace (variables and blocks). Can be re-imported.",
         "**Markdown**: a human-readable `.md` file with headings, subheadings, dividers, resolved commands, and images.",
         "**Plain text**: the same content as Markdown, saved as `.txt`.",
       ],
@@ -909,8 +909,8 @@ export const en: Messages = {
     cloudLinkedSync: {
       intro:
         "A runbook you import from the cloud stays **in sync** with the file it came from: every edit is written back to that file, so you never have to export it again to save it. Exporting a runbook as **JSON** links it the same way.",
-      syncBadge:
-        "A synced runbook shows a **sync icon** next to its name in the RUNBOOKS list: a spinner while an edit is on its way up, a crossed out cloud if the save failed. Click it to sign in again or retry.",
+      syncBadge: (runbooksTitle) =>
+        `A synced runbook shows a **sync icon** next to its name in the **${runbooksTitle}** list: a spinner while an edit is on its way up, a crossed out cloud if the save failed. Click it to sign in again or retry.`,
       stopSyncing: (stopSyncingLabel) =>
         `**${stopSyncingLabel}** (in the runbook's three dots menu) breaks the link without touching either copy. Sync only pushes local edits up, it never pulls remote changes back down.`,
     },
@@ -918,7 +918,7 @@ export const en: Messages = {
       folders:
         "Cloud runbooks can live in folders: click one to open it, click a file to import it. The **arrow** buttons and the path above the list move between folders you've visited. Exporting picks a destination the same way, with a **new folder** button.",
       search:
-        "The **search box** looks through the entire **CommandPad** folder, not just the one you have open, and shows each result's folder path.",
+        "The **search bar** looks through the entire **CommandPad** folder, not just the one you have open, and shows each result's folder path.",
       actions: (rename, edit, duplicate, download, deleteLabel) =>
         `A row's **three dots** menu holds **${rename}**, **${edit}**, **${duplicate}**, **${download}**, and **${deleteLabel}**.`,
       editFile:

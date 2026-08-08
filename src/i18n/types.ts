@@ -361,7 +361,7 @@ export interface Messages {
     };
     header: {
       intro: string;
-      items: (exportLabel: string) => string[];
+      items: (exportLabel: string, collapseAllLabel: string) => string[];
     };
     mainPanel: {
       intro: (newBlockLabel: string) => string;
@@ -380,7 +380,11 @@ export interface Messages {
     };
     runbookLibrary: {
       intro: (runbooksTitle: string) => string;
-      items: (importLabel: string, clearLibraryLabel: string) => string[];
+      items: (
+        importLabel: string,
+        clearLibraryLabel: string,
+        runbookActionsLabel: string,
+      ) => string[];
       autoLabel: string;
       labelDetails: string;
       autoSave: string;
@@ -392,7 +396,7 @@ export interface Messages {
       unresolved: string;
       tooltip: string;
       split: string;
-      demoHint: string;
+      demoHint: (variableActionsLabel: string) => string;
       constants: string;
       constantsDemoHint: string;
     };
@@ -448,7 +452,7 @@ export interface Messages {
       copyNote: string;
     };
     blocks: {
-      intro: string;
+      intro: (blockActionsLabel: string) => string;
     };
     commandBlock: {
       intro: string;
@@ -510,7 +514,7 @@ export interface Messages {
     };
     cloudLinkedSync: {
       intro: string;
-      syncBadge: string;
+      syncBadge: (runbooksTitle: string) => string;
       stopSyncing: (stopSyncingLabel: string) => string;
     };
     cloudFileManagement: {

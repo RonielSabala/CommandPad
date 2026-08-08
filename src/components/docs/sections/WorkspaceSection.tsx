@@ -19,7 +19,9 @@ export function HeaderDocs() {
   return (
     <>
       <Prose text={t.docs.header.intro} />
-      <ProseList items={t.docs.header.items(t.header.export)} />
+      <ProseList
+        items={t.docs.header.items(t.header.export, t.header.collapseAll)}
+      />
     </>
   );
 }

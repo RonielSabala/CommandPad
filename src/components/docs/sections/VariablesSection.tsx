@@ -13,7 +13,7 @@ export function VariablesDocs() {
       <Prose text={t.docs.variables.why} />
       <Prose text={t.docs.variables.intro} />
       <Prose text={t.docs.variables.usage} />
-      <Prose text={t.docs.variables.demoHint} />
+      <Prose text={t.docs.variables.demoHint(t.variables.actions)} />
       <DemoWorkspace
         className="docs-demo-hide-secret"
         tabs={[

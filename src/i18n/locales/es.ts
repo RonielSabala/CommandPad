@@ -612,15 +612,15 @@ export const es: Messages = {
       navigate:
         "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el panel de contenidos que acompaña al artículo: tú eliges el ritmo. Al hacer clic en una entrada del índice te lleva a su sección y la pliega, y su título en el artículo hace lo mismo, así que puedes contraer lo que ya leíste y dejar el resto a la vista.",
       tryIt:
-        "La mayoría de las secciones trae un ejemplo real y funcional marcado **Pruébalo**, una pieza de la app con la que puedes jugar, nada de lo que hagas ahí toca tu espacio de trabajo real. Anímate a toquetear un poco, es la forma más rápida de entender cómo funciona algo. Si te pierdes, el botón de flecha en su esquina te devuelve al punto de partida.",
+        "La mayoría de las secciones trae un ejemplo real y funcional marcado **Pruébalo**: una pieza de la app con la que puedes jugar, ya que nada de lo que hagas ahí toca tu espacio de trabajo real. Anímate a toquetear un poco, es la forma más rápida de entender cómo funciona algo. Si te pierdes, el botón de flecha en su esquina te devuelve al punto de partida.",
     },
     workspace: {
       intro:
-        "El espacio de trabajo es la pantalla principal de la app. Aquí es donde pasarás la mayor parte del tiempo armando y puliendo tus libros. Está formado por tres zonas:",
+        "El espacio de trabajo es la pantalla principal de la app, donde pasarás la mayor parte del tiempo armando y puliendo tus libros. Está formado por tres zonas:",
       items: [
         "La **cabecera**: reúne los botones con las acciones globales de la app.",
         "La **barra lateral**: contiene la biblioteca de libros y el panel de variables.",
-        "El **panel principal**: aquí viven todos los libros que tengas abiertos y, dentro de ellos, sus bloques.",
+        "El **panel principal**: aquí viven todos los libros que tengas abiertos, junto con sus bloques.",
       ],
       persistence:
         "Todo lo que haces se guarda automáticamente en tu navegador y se restaura al recargar la página. Tus datos nunca se envían a un servidor.",
@@ -628,10 +628,10 @@ export const es: Messages = {
     header: {
       intro:
         "La cabecera reúne las acciones que afectan a toda la app. De izquierda a derecha:",
-      items: (exportLabel) => [
+      items: (exportLabel, collapseAllLabel) => [
         "El **logo de CommandPad**: haz clic en él para recargar la app.",
         "El **candado / lápiz**: alterna entre el modo lectura y el modo edición. Tiene su propia sección más adelante.",
-        "**Colapsar todo**: contrae o expande de golpe todos los editores de comandos del libro activo.",
+        `**${collapseAllLabel}**: contrae o expande de golpe todos los editores de comandos del libro activo.`,
         "El **sol / la luna**: cambia entre el tema claro y oscuro.",
         "El **selector de idioma**: cambia el idioma de la interfaz.",
         "El **libro**: abre esta documentación.",
@@ -672,11 +672,11 @@ export const es: Messages = {
     runbookLibrary: {
       intro: (runbooksTitle) =>
         `La sección **${runbooksTitle}** de la barra lateral contiene tus libros importados.`,
-      items: (importLabel, clearLibraryLabel) => [
+      items: (importLabel, clearLibraryLabel, runbookActionsLabel) => [
         `Haz clic en **${importLabel}** para cargar uno o varios archivos \`.json\` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.`,
         "También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.",
         "Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.",
-        "Abre el menú de **acciones del libro** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.",
+        `Abre el menú de **${runbookActionsLabel}** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.`,
         `Haz clic en **${clearLibraryLabel}** para vaciar la biblioteca completa de una vez.`,
         "Arrastra el control a la izquierda de un libro para reordenarlo en la lista.",
         "Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.",
@@ -689,7 +689,7 @@ export const es: Messages = {
         "Los cambios hechos al libro activo se guardan automáticamente en la biblioteca.",
     },
     variables: {
-      why: "Esta es la característica sobre la que gira todo lo demás. Un nombre de servidor, una ruta, un número de versión: los mismos valores se repiten una y otra vez en los comandos que usas, y el día que uno cambia toca corregirlo comando por comando. Con las variables defines ese valor **una vez**, y todos los comandos se actualizan solos.",
+      why: "Esta es la característica sobre la que gira todo lo demás. Un nombre de servidor, una ruta, un número de versión: los mismos valores se repiten una y otra vez en los comandos que usas, y el día que uno cambia, toca corregirlo comando por comando. Con las variables defines ese valor **una vez**, y todos los comandos se actualizan solos.",
       intro:
         "Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas. Si dos variables comparten la misma clave, gana la definida en último lugar.",
       usage:
@@ -700,8 +700,8 @@ export const es: Messages = {
         "Si una clave o un valor no cabe en su casilla, pasa el cursor sobre ella para ver el texto completo en un tooltip.",
       split:
         "Las claves y los valores se reparten la fila en partes iguales, pero puedes cambiarlo: arrastra el divisor entre ambos para dar más espacio a uno de los lados, y haz doble clic para volver al reparto equitativo. El nuevo reparto se aplica a todas las variables y se recuerda entre sesiones.",
-      demoHint:
-        "Compruébalo abajo: una sola variable alimenta dos comandos. Edita su valor y mira cómo las dos vistas previas cambian mientras escribes. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables y un menú de **acciones de la variable** a la derecha para duplicarla o eliminarla.",
+      demoHint: (variableActionsLabel) =>
+        `Compruébalo abajo: una sola variable alimenta dos comandos. Edita su valor y mira cómo las dos vistas previas cambian mientras escribes. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables, y un menú de **${variableActionsLabel}** a la derecha para duplicarla o eliminarla.`,
       constants:
         "No todas las variables cambian por el mismo motivo. Unas son valores que cambias a cada rato y otras son **constantes**: se mantienen igual durante toda la vida del libro, y solo son variables porque ese mismo valor aparece en comando tras comando. CommandPad las distingue por convención de nombres: una clave escrita entera en **mayúsculas** se considera una _constante_ y cualquier clave con alguna **minúscula** se considera _variable_.",
       constantsDemoHint:
@@ -732,7 +732,7 @@ export const es: Messages = {
       demoHint:
         "El primer comando usa el hash completo; el segundo, solo sus siete primeros caracteres. Edita la variable y verás cómo los dos se actualizan a la vez:",
       howItWorks:
-        "Escribe un `|` después de la clave y, entre corchetes, la parte que quieres. Se cuenta desde cero, y el segundo número indica dónde **parar sin llegar a incluirlo**: `[:7]` son los siete primeros caracteres y `[2:5]` son el dos, el tres y el cuatro. Si omites un número, el recorte llega hasta ese extremo.",
+        "Escribe un `|` después de la clave y, entre corchetes, la parte que quieres. Se cuenta desde cero, y el segundo número indica dónde **parar sin llegar a incluirlo**: `[:7]` son los siete primeros caracteres y `[2:5]` son el dos, el tres y el cuatro. Omite cualquiera de los dos números para llegar desde el mismísimo principio, o hasta el final.",
       positionsHint:
         "Los números negativos cuentan desde el final, así que `[-2:]` son los dos últimos caracteres. Con una fecha se ven las tres formas de un vistazo:",
       step: "Un tercer número es el **paso**: cuántas posiciones salta el recorte entre un carácter y el siguiente. `[::2]` toma un carácter de cada dos y se salta el resto, y un paso negativo avanza hacia atrás, así que `[::-1]` por sí solo invierte un valor:",
@@ -770,7 +770,7 @@ export const es: Messages = {
     },
     variableStrip: {
       intro:
-        "La operación `strip(valor)` quita el texto pasado entre paréntesis por los dos extremos del valor, `lstrip` solo por delante y `rstrip` solo por detrás. Abajo, cada una sobre un valor rodeado de guiones:",
+        "La operación `strip(valor)` quita el texto pasado entre paréntesis por los dos extremos del valor; `lstrip` lo quita solo por delante, y `rstrip` solo por detrás. Abajo, cada una sobre un valor rodeado de guiones:",
       table: `| Operación | Resultado |
 | --- | --- |
 | \`lstrip(-)\` | sin guiones por delante--- |
@@ -801,8 +801,8 @@ export const es: Messages = {
         "El enmascarado es puramente visual: el botón **Copiar** siempre pone el valor **real** en tu portapapeles, así que tus comandos siguen funcionando. Pruébalo abajo, y haz clic en el icono de ojo para mostrar u ocultar el valor.",
     },
     blocks: {
-      intro:
-        "Los bloques son el contenido principal de un libro. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **acciones del bloque** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo. Cada bloque tiene una anchura mínima que le impide encogerse hasta volverse ilegible.",
+      intro: (blockActionsLabel) =>
+        `Los bloques son el contenido principal de un libro. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **${blockActionsLabel}** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo. Cada bloque tiene una anchura mínima que le impide encogerse hasta volverse ilegible.`,
     },
     commandBlock: {
       intro:
@@ -841,7 +841,7 @@ export const es: Messages = {
       links:
         "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables. Para abrir un enlace, mantén `Ctrl` y haz clic en él.",
       wrapKeys:
-        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y **Ctrl+´** en comillas invertidas; escribir cualquier carácter de paréntesis (**(**, **[** o **{**) o comillas (**\"** o **'**) lo envuelve en ese par. Envolver en pares no es exclusivo de las notas, funciona igual en el editor de comandos.",
+        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y `Ctrl+´` en comillas invertidas; escribir cualquier carácter de paréntesis (**(**, **[** o **{**) o comillas (**\"** o **'**) lo envuelve en ese par. Envolver en pares no es exclusivo de las notas: funciona igual en el editor de comandos.",
     },
     imageBlock: {
       intro:
@@ -900,7 +900,7 @@ export const es: Messages = {
       intro: (exportLabel) =>
         `Haz clic en **${exportLabel}** en la cabecera para abrir el selector de formato.`,
       formats: [
-        "**JSON**: el espacio de trabajo completo (variables + bloques). Puede reimportarse.",
+        "**JSON**: el espacio de trabajo completo (variables y bloques). Puede reimportarse.",
         "**Markdown**: un archivo `.md` legible con títulos, subtítulos, divisores, comandos resueltos e imágenes.",
         "**Texto plano**: el mismo contenido que Markdown, guardado como `.txt`.",
       ],
@@ -920,8 +920,8 @@ export const es: Messages = {
     cloudLinkedSync: {
       intro:
         "Un libro que importas desde la nube queda **sincronizado** con el archivo del que vino: cada edición se escribe de vuelta en ese archivo, así que nunca tienes que volver a exportarlo para guardarlo. Exportar un libro como **JSON** lo vincula igual.",
-      syncBadge:
-        "Un libro sincronizado muestra un **icono de sincronización** junto a su nombre en la lista de LIBROS: gira mientras una edición va en camino, y se convierte en una nube tachada si el guardado falló. Haz clic en él para volver a iniciar sesión o reintentar.",
+      syncBadge: (runbooksTitle) =>
+        `Un libro sincronizado muestra un **icono de sincronización** junto a su nombre en la lista de **${runbooksTitle}**: gira mientras una edición va en camino, y se convierte en una nube tachada si el guardado falló. Haz clic en él para volver a iniciar sesión o reintentar.`,
       stopSyncing: (stopSyncingLabel) =>
         `**${stopSyncingLabel}** (en el menú de tres puntos del libro) rompe el vínculo sin tocar ninguna de las dos copias. La sincronización solo sube tus ediciones locales, nunca baja los cambios remotos.`,
     },
@@ -929,7 +929,7 @@ export const es: Messages = {
       folders:
         "Los libros en la nube pueden vivir en carpetas: haz clic en una para abrirla y en un archivo para importarlo. Los botones de **flecha** y la ruta sobre la lista te mueven entre las carpetas que visitaste. Al exportar, el destino se elige igual, con un botón de **nueva carpeta**.",
       search:
-        "El **buscador** revisa la carpeta **CommandPad** entera, no solo la que tengas abierta, y muestra la ruta de cada resultado.",
+        "La **barra de búsqueda** revisa la carpeta **CommandPad** entera, no solo la que tengas abierta, y muestra la ruta de cada resultado.",
       actions: (rename, edit, duplicate, download, deleteLabel) =>
         `El menú de **tres puntos** de una fila tiene **${rename}**, **${edit}**, **${duplicate}**, **${download}** y **${deleteLabel}**.`,
       editFile:
@@ -966,7 +966,7 @@ export const es: Messages = {
             "Todo: cada pestaña, cada libro de la biblioteca, cada variable y cada preferencia. Es un borrado completo del almacenamiento local de la app y no se puede deshacer, así que exporta antes lo que quieras salvar.",
         },
         {
-          question: "¿Por qué parte de mi comando aparece resaltado en rojo?",
+          question: "¿Por qué parte de mi comando aparece resaltada en rojo?",
           answer:
             "Esa parte es una referencia sin resolver: no existe ninguna variable con esa clave (las claves distinguen mayúsculas de minúsculas), o a un marcador `{;nombre}` no se le dio valor.",
         },
