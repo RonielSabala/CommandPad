@@ -361,10 +361,10 @@ export interface Messages {
     };
     header: {
       intro: string;
-      items: string[];
+      items: (exportLabel: string) => string[];
     };
     mainPanel: {
-      intro: string;
+      intro: (newBlockLabel: string) => string;
       minimap: string;
     };
     tabs: {
@@ -379,8 +379,8 @@ export interface Messages {
       resizeDetails: string;
     };
     runbookLibrary: {
-      intro: string;
-      items: string[];
+      intro: (runbooksTitle: string) => string;
+      items: (importLabel: string, clearLibraryLabel: string) => string[];
       autoLabel: string;
       labelDetails: string;
       autoSave: string;
@@ -454,16 +454,16 @@ export interface Messages {
       intro: string;
       parts: string[];
       multiline: string;
-      longCommands: string;
+      longCommands: (showMoreLines: string) => string;
       variablesTeaser: string;
     };
     noteBlock: {
       intro: string;
-      styles: string;
+      styles: (heading: string, subheading: string, body: string) => string;
       markdown: string;
       markdownTable: string;
       escapes: string;
-      spellcheck: string;
+      spellcheck: (spellcheckLabel: string) => string;
       tables: string;
       noNesting: string;
       links: string;
@@ -471,11 +471,15 @@ export interface Messages {
     };
     imageBlock: {
       intro: string;
-      ways: string[];
+      ways: (chooseLabel: string) => string[];
       attachedVsLinked: (limit: string) => string;
       sizing: string;
       slideshow: string;
-      demoHint: string;
+      demoHint: (
+        viewFullscreen: string,
+        replace: string,
+        remove: string,
+      ) => string;
     };
     dividerBlock: {
       intro: string;
@@ -494,25 +498,31 @@ export interface Messages {
       exit: string;
     };
     export: {
-      intro: string;
+      intro: (exportLabel: string) => string;
       formats: string[];
       saveDialog: string;
-      copyMarkdown: string;
+      copyMarkdown: (copyMarkdownLabel: string) => string;
     };
     cloudExport: {
-      intro: string;
+      intro: (exportLabel: string, importLabel: string) => string;
       switchProvider: string;
       overwrite: string;
     };
     cloudLinkedSync: {
       intro: string;
       syncBadge: string;
-      stopSyncing: string;
+      stopSyncing: (stopSyncingLabel: string) => string;
     };
     cloudFileManagement: {
       folders: string;
       search: string;
-      actions: string;
+      actions: (
+        rename: string,
+        edit: string,
+        duplicate: string,
+        download: string,
+        deleteLabel: string,
+      ) => string;
       editFile: string;
       recycleBin: string;
     };

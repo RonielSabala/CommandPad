@@ -618,7 +618,7 @@ export const en: Messages = {
     header: {
       intro:
         "The header gathers the actions that affect the whole app. From left to right:",
-      items: [
+      items: (exportLabel) => [
         "The **CommandPad logo**: click it to reload the app.",
         "The **padlock / pencil**: switches between read mode and edit mode. It has its own section later in this guide.",
         "**Collapse all**: collapses or expands every command editor in the active runbook at once.",
@@ -626,12 +626,12 @@ export const en: Messages = {
         "The **language selector**: changes the interface language.",
         "The **book**: opens this documentation.",
         "The **red arrow**: resets the workspace. It wipes everything, so the app always asks you to confirm first.",
-        "**Export**: saves the active runbook to a file. It also has its own section later.",
+        `**${exportLabel}**: saves the active runbook to a file. It also has its own section later.`,
       ],
     },
     mainPanel: {
-      intro:
-        "The main panel is your workbench. At the top sits the **tabs bar** with your open runbooks; below it, the blocks of the active runbook; and at the end, the **NEW BLOCK** row to keep adding content.",
+      intro: (newBlockLabel) =>
+        `The main panel is your workbench. At the top sits the **tabs bar** with your open runbooks; below it, the blocks of the active runbook; and at the end, the **${newBlockLabel}** row to keep adding content.`,
       minimap:
         "On the right edge lives the **minimap**: a miniature of the real runbook blocks that replaces the scrollbar. Click or drag on it to jump anywhere in a runbook. **Right-click** anywhere in the runbook content to open a small menu where you can turn it on or off or move it to the other side.",
     },
@@ -659,13 +659,14 @@ export const en: Messages = {
         "Dragging the sidebar very narrow collapses it completely, and it can never grow wider than half of the screen. Double-clicking the edge of a sidebar you have widened snaps it back to its normal width. Expanding a collapsed sidebar also restores that normal width.",
     },
     runbookLibrary: {
-      intro: "The sidebar's **RUNBOOKS** section holds your imported runbooks.",
-      items: [
-        "Click **Import** to load one or more `.json` files at once, or **Paste** to create a runbook from raw JSON.",
+      intro: (runbooksTitle) =>
+        `The sidebar's **${runbooksTitle}** section holds your imported runbooks.`,
+      items: (importLabel, clearLibraryLabel) => [
+        `Click **${importLabel}** to load one or more \`.json\` files at once, or **Paste** to create a runbook from raw JSON.`,
         "You can also **drag files** from your file explorer and drop them onto the section to import them.",
         "Click any runbook to open it. If it's already open in a tab, that tab becomes active.",
         "Open the **runbook actions** menu shown on row hover to duplicate a runbook or remove it from the library.",
-        "Click **Delete All** to empty the whole library at once.",
+        `Click **${clearLibraryLabel}** to empty the whole library at once.`,
         "Drag the handle on the left of a runbook to reorder it in the list.",
         "Use the **search bar** to filter runbooks by label or filename.",
       ],
@@ -801,16 +802,16 @@ export const en: Messages = {
       ],
       multiline:
         "Commands can span several lines, and the editor can scroll sideways when a line gets very long. The left margin marks the first line with `$` and numbers the rest.",
-      longCommands:
-        "A very long command does not stretch the block forever. Once a part passes its height limit it stops there and fades out, with a **Show more lines** control underneath. Click it to reveal the rest, and click it again to fold it back. The preview and the editor are capped separately, so you can open one without opening the other.",
+      longCommands: (showMoreLines) =>
+        `A very long command does not stretch the block forever. Once a part passes its height limit it stops there and fades out, with a **${showMoreLines}** control underneath. Click it to reveal the rest, and click it again to fold it back. The preview and the editor are capped separately, so you can open one without opening the other.`,
       variablesTeaser:
         "Command blocks become far more useful with **variables**, which fill in the parts of a command that change. They are explained a little further ahead, in their own section.",
     },
     noteBlock: {
       intro:
         "It's a free-form text block. Notes grow wider and taller as you type.",
-      styles:
-        "Three text styles are selectable on hover: **heading** (large, bold), **subheading** (medium, accented), and **body** (the default prose).",
+      styles: (heading, subheading, body) =>
+        `Three text styles are selectable on hover: **${heading}** (large, bold), **${subheading}** (medium, accented), and **${body}** (the default prose).`,
       markdown: "Notes support markdown formatting:",
       markdownTable: `| Syntax | Result |
 | --- | --- |
@@ -820,8 +821,8 @@ export const en: Messages = {
 | \\[labelled-link](\\https://example.com) | [labelled-link](https://example.com) |`,
       escapes:
         "Put a backslash (`\\`) in front of a markdown mark to show it literally instead of applying it: typing `\\**text\\**` leaves the asterisks visible instead of making the text bold. Escape both ends of the mark, one at a time, and note that nothing is escaped inside `code`, where the backslash is already part of the content.",
-      spellcheck:
-        "Notes can be spell checked as you write them. **Right-click** anywhere in the runbook content and toggle **Spell check notes** in the menu.",
+      spellcheck: (spellcheckLabel) =>
+        `Notes can be spell checked as you write them. **Right-click** anywhere in the runbook content and toggle **${spellcheckLabel}** in the menu.`,
       tables:
         "Notes also support [GitHub-flavored markdown tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): cells separated by `|` bars, with a row of dashes under the header. Click the note below to see the raw syntax.",
       noNesting:
@@ -834,10 +835,10 @@ export const en: Messages = {
     imageBlock: {
       intro:
         "It's a block that holds a picture: the architecture diagram, a screenshot of the screen you are supposed to be looking at, the dashboard panel that says the deploy worked, etc.",
-      ways: [
+      ways: (chooseLabel) => [
         "**Drop it in**: drag an image file from your desktop straight onto the block.",
         "**Paste it**: click the block and press `Ctrl+V` with an image, or an image address, on your clipboard.",
-        "**Pick it**: press **Choose an image** to open your file browser.",
+        `**Pick it**: press **${chooseLabel}** to open your file browser.`,
         "**Link it**: type or paste an `http` or `https` address into the box at the bottom of the block.",
       ],
       attachedVsLinked: (limit) =>
@@ -846,8 +847,8 @@ export const en: Messages = {
         "A picture is shown at its own size, but never below a readable minimum and never beyond what the block allows: a tiny image is scaled up, a huge one is scaled down, and neither is ever stretched out of shape.",
       slideshow:
         "When a runbook holds more than one image, full screen becomes a slideshow: the arrows parked at the left and right edges of the screen, or the `Left` and `Right` arrow keys, slide across every image in the runbook in the order they appear, and the counter tells you where you are. The page follows along, parking each image at the top of the screen, so closing full screen leaves you right on the last one you looked at.",
-      demoHint:
-        "Hover over an image to reveal its controls: **View full screen** opens it over a dimmed page, and its actions menu holds **Replace image**, which swaps the picture without touching the block, and **Remove image**, which empties it back to the drop area.",
+      demoHint: (viewFullscreen, replace, remove) =>
+        `Hover over an image to reveal its controls: **${viewFullscreen}** opens it over a dimmed page, and its actions menu holds **${replace}**, which swaps the picture without touching the block, and **${remove}**, which empties it back to the drop area.`,
     },
     dividerBlock: {
       intro:
@@ -885,7 +886,8 @@ export const en: Messages = {
       exit: "Click the **pencil icon** to return to edit mode.",
     },
     export: {
-      intro: "Click **Export** in the header to open the format picker.",
+      intro: (exportLabel) =>
+        `Click **${exportLabel}** in the header to open the format picker.`,
       formats: [
         "**JSON**: the full workspace (variables + blocks). Can be re-imported.",
         "**Markdown**: a human-readable `.md` file with headings, subheadings, dividers, resolved commands, and images.",
@@ -893,12 +895,12 @@ export const en: Messages = {
       ],
       saveDialog:
         "A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.",
-      copyMarkdown:
-        "You can also right-click anywhere inside a runbook and choose **Copy runbook as Markdown** to skip the export process entirely. This option lets you copy a runbook's content ready to paste into a chat, a ticket, or a document.",
+      copyMarkdown: (copyMarkdownLabel) =>
+        `You can also right-click anywhere inside a runbook and choose **${copyMarkdownLabel}** to skip the export process entirely. This option lets you copy a runbook's content ready to paste into a chat, a ticket, or a document.`,
     },
     cloudExport: {
-      intro:
-        "**Export** and **Import** can go straight to SharePoint or Google Drive, not just this device. The dialog reopens with the destination and format you used last time already selected.",
+      intro: (exportLabel, importLabel) =>
+        `**${exportLabel}** and **${importLabel}** can go straight to SharePoint or Google Drive, not just this device. The dialog reopens with the destination and format you used last time already selected.`,
       switchProvider:
         "While you are browsing the cloud, the provider name in the dialog title is a **picker**: click it to switch providers.",
       overwrite:
@@ -909,16 +911,16 @@ export const en: Messages = {
         "A runbook you import from the cloud stays **in sync** with the file it came from: every edit is written back to that file, so you never have to export it again to save it. Exporting a runbook as **JSON** links it the same way.",
       syncBadge:
         "A synced runbook shows a **sync icon** next to its name in the RUNBOOKS list: a spinner while an edit is on its way up, a crossed out cloud if the save failed. Click it to sign in again or retry.",
-      stopSyncing:
-        "**Stop syncing** (in the runbook's three dots menu) breaks the link without touching either copy. Sync only pushes local edits up, it never pulls remote changes back down.",
+      stopSyncing: (stopSyncingLabel) =>
+        `**${stopSyncingLabel}** (in the runbook's three dots menu) breaks the link without touching either copy. Sync only pushes local edits up, it never pulls remote changes back down.`,
     },
     cloudFileManagement: {
       folders:
         "Cloud runbooks can live in folders: click one to open it, click a file to import it. The **arrow** buttons and the path above the list move between folders you've visited. Exporting picks a destination the same way, with a **new folder** button.",
       search:
         "The **search box** looks through the entire **CommandPad** folder, not just the one you have open, and shows each result's folder path.",
-      actions:
-        "A row's **three dots** menu holds **Rename**, **Edit**, **Duplicate**, **Download**, and **Delete**.",
+      actions: (rename, edit, duplicate, download, deleteLabel) =>
+        `A row's **three dots** menu holds **${rename}**, **${edit}**, **${duplicate}**, **${download}**, and **${deleteLabel}**.`,
       editFile:
         "**Edit** opens the file's raw JSON in place, so a quick fix doesn't require importing, changing, and re-exporting it. It has to stay valid JSON to save.",
       recycleBin:

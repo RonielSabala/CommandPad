@@ -628,7 +628,7 @@ export const es: Messages = {
     header: {
       intro:
         "La cabecera reúne las acciones que afectan a toda la app. De izquierda a derecha:",
-      items: [
+      items: (exportLabel) => [
         "El **logo de CommandPad**: haz clic en él para recargar la app.",
         "El **candado / lápiz**: alterna entre el modo lectura y el modo edición. Tiene su propia sección más adelante.",
         "**Colapsar todo**: contrae o expande de golpe todos los editores de comandos del libro activo.",
@@ -636,12 +636,12 @@ export const es: Messages = {
         "El **selector de idioma**: cambia el idioma de la interfaz.",
         "El **libro**: abre esta documentación.",
         "La **flecha roja**: resetea el espacio de trabajo. Lo borra todo, así que la app siempre te pide confirmación antes.",
-        "**Exportar**: guarda el libro activo en un archivo. También tiene su propia sección más adelante.",
+        `**${exportLabel}**: guarda el libro activo en un archivo. También tiene su propia sección más adelante.`,
       ],
     },
     mainPanel: {
-      intro:
-        "El panel principal es tu mesa de trabajo. Arriba está la **barra de pestañas** con tus libros abiertos; debajo, los bloques del libro activo; y al final, la fila **NUEVO BLOQUE** para seguir agregando contenido.",
+      intro: (newBlockLabel) =>
+        `El panel principal es tu mesa de trabajo. Arriba está la **barra de pestañas** con tus libros abiertos; debajo, los bloques del libro activo; y al final, la fila **${newBlockLabel}** para seguir agregando contenido.`,
       minimap:
         "En el borde derecho vive el **minimapa**: una miniatura de los bloques reales del libro que reemplaza a la barra de desplazamiento. Haz clic o arrastra sobre él para saltar a cualquier punto de un libro. Haz **clic derecho** en cualquier parte del contenido del libro para abrir un pequeño menú donde puedes activarlo o desactivarlo, o moverlo al otro lado.",
     },
@@ -670,14 +670,14 @@ export const es: Messages = {
         "Arrastrar la barra lateral hasta dejarla muy estrecha la contrae por completo, y nunca puede crecer más allá de la mitad de la pantalla. Si la habías ensanchado, el doble clic en su borde la devuelve a su ancho normal. Al expandir una barra contraída también vuelve a ese ancho normal.",
     },
     runbookLibrary: {
-      intro:
-        "La sección **LIBROS** de la barra lateral contiene tus libros importados.",
-      items: [
-        "Haz clic en **Importar** para cargar uno o varios archivos `.json` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.",
+      intro: (runbooksTitle) =>
+        `La sección **${runbooksTitle}** de la barra lateral contiene tus libros importados.`,
+      items: (importLabel, clearLibraryLabel) => [
+        `Haz clic en **${importLabel}** para cargar uno o varios archivos \`.json\` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.`,
         "También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.",
         "Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.",
         "Abre el menú de **acciones del libro** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.",
-        "Haz clic en **Eliminar todo** para vaciar la biblioteca completa de una vez.",
+        `Haz clic en **${clearLibraryLabel}** para vaciar la biblioteca completa de una vez.`,
         "Arrastra el control a la izquierda de un libro para reordenarlo en la lista.",
         "Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.",
       ],
@@ -813,16 +813,16 @@ export const es: Messages = {
       ],
       multiline:
         "Los comandos pueden ocupar varias líneas, y el editor se puede scrollear hacia los lados cuando una línea es muy larga. El margen izquierdo marca la primera línea con `$` y numera las siguientes.",
-      longCommands:
-        "Un comando muy largo no estira el bloque para siempre. Cuando una parte pasa su límite de altura se detiene ahí y se desvanece, con un control **Mostrar más líneas** debajo. Haz clic para revelar el resto, y haz clic otra vez para volver a plegarlo. La vista previa y el editor se limitan por separado, así que puedes abrir uno sin abrir el otro.",
+      longCommands: (showMoreLines) =>
+        `Un comando muy largo no estira el bloque para siempre. Cuando una parte pasa su límite de altura se detiene ahí y se desvanece, con un control **${showMoreLines}** debajo. Haz clic para revelar el resto, y haz clic otra vez para volver a plegarlo. La vista previa y el editor se limitan por separado, así que puedes abrir uno sin abrir el otro.`,
       variablesTeaser:
         "Los bloques de comando se vuelven mucho más útiles con las **variables**, que rellenan las partes de un comando que cambian. Se explican un poco más adelante, en su propia sección.",
     },
     noteBlock: {
       intro:
         "Es un bloque de texto libre. Las notas se expanden a lo alto y a lo ancho mientras escribes.",
-      styles:
-        "Hay tres estilos de texto seleccionables al pasar el cursor: **título** (grande, en negrita), **subtítulo** (mediano, acentuado) y **cuerpo** (la prosa por defecto).",
+      styles: (heading, subheading, body) =>
+        `Hay tres estilos de texto seleccionables al pasar el cursor: **${heading}** (grande, en negrita), **${subheading}** (mediano, acentuado) y **${body}** (la prosa por defecto).`,
       markdown: "Las notas soportan formato markdown:",
       markdownTable: `| Sintaxis | Resultado |
 | --- | --- |
@@ -832,8 +832,8 @@ export const es: Messages = {
 | \\[enlace-con-etiqueta](\\https://example.com) | [enlace-con-etiqueta](https://example.com) |`,
       escapes:
         "Antepón una barra invertida (`\\`) a una marca de markdown para que se muestre literal en vez de aplicarse: escribir `\\**texto\\**` deja los asteriscos a la vista en lugar de poner el texto en negrita. Escapa los dos extremos de la marca, uno por uno, y ten en cuenta que dentro de un `código` no se escapa nada, porque ahí la barra invertida ya forma parte del contenido.",
-      spellcheck:
-        "Las notas se pueden corregir ortográficamente mientras las escribes. Haz **clic derecho** en cualquier parte del contenido del libro y activa **Corregir ortografía en las notas** en el menú.",
+      spellcheck: (spellcheckLabel) =>
+        `Las notas se pueden corregir ortográficamente mientras las escribes. Haz **clic derecho** en cualquier parte del contenido del libro y activa **${spellcheckLabel}** en el menú.`,
       tables:
         "Las notas también soportan [tablas markdown al estilo GitHub](https://docs.github.com/es/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): celdas separadas por barras `|`, con una fila de guiones debajo del encabezado. Haz clic en la nota de abajo para ver la sintaxis en bruto.",
       noNesting:
@@ -846,10 +846,10 @@ export const es: Messages = {
     imageBlock: {
       intro:
         "Es un bloque que guarda una imagen: el diagrama de la arquitectura, una captura de la pantalla que deberías estar viendo, el panel del tablero que confirma que el despliegue salió bien, etc.",
-      ways: [
+      ways: (chooseLabel) => [
         "**Suéltala**: arrastra un archivo de imagen desde tu escritorio directamente sobre el bloque.",
         "**Pégala**: haz clic en el bloque y pulsa `Ctrl+V` con una imagen, o una dirección de imagen, en el portapapeles.",
-        "**Elígela**: pulsa **Elegir una imagen** para abrir el explorador de archivos.",
+        `**Elígela**: pulsa **${chooseLabel}** para abrir el explorador de archivos.`,
         "**Enlázala**: escribe o pega una dirección `http` o `https` en la casilla de abajo del bloque.",
       ],
       attachedVsLinked: (limit) =>
@@ -858,8 +858,8 @@ export const es: Messages = {
         "Una imagen se muestra con su mismo tamaño, pero nunca por debajo de un mínimo legible ni más allá de lo que permite el bloque: una imagen diminuta se amplía, una enorme se reduce, y ninguna se deforma.",
       slideshow:
         "Cuando un libro tiene más de una imagen, la pantalla completa se convierte en un pase de diapositivas: las flechas fijas en los bordes izquierdo y derecho de la pantalla, o las teclas `Izquierda` y `Derecha`, recorren todas las imágenes del libro en el orden en que aparecen, y el contador indica en cuál estás. La página acompaña el recorrido y deja cada imagen en la parte superior de la pantalla, para que así al cerrar la pantalla completa te quedes justo en la última que miraste.",
-      demoHint:
-        "Pasa el cursor sobre una imagen para revelar sus controles: **Ver a pantalla completa** la abre sobre la página atenuada, y su menú de acciones tiene **Reemplazar imagen**, que cambia la foto sin tocar el bloque, y **Eliminar imagen**, que lo vacía y devuelve la zona para soltar.",
+      demoHint: (viewFullscreen, replace, remove) =>
+        `Pasa el cursor sobre una imagen para revelar sus controles: **${viewFullscreen}** la abre sobre la página atenuada, y su menú de acciones tiene **${replace}**, que cambia la foto sin tocar el bloque, y **${remove}**, que lo vacía y devuelve la zona para soltar.`,
     },
     dividerBlock: {
       intro:
@@ -897,8 +897,8 @@ export const es: Messages = {
       exit: "Haz clic en el **icono de lápiz** para volver al modo edición.",
     },
     export: {
-      intro:
-        "Haz clic en **Exportar** en la cabecera para abrir el selector de formato.",
+      intro: (exportLabel) =>
+        `Haz clic en **${exportLabel}** en la cabecera para abrir el selector de formato.`,
       formats: [
         "**JSON**: el espacio de trabajo completo (variables + bloques). Puede reimportarse.",
         "**Markdown**: un archivo `.md` legible con títulos, subtítulos, divisores, comandos resueltos e imágenes.",
@@ -906,12 +906,12 @@ export const es: Messages = {
       ],
       saveDialog:
         "En navegadores compatibles se abre un diálogo nativo de guardado para elegir nombre y carpeta. En los demás, el archivo se descarga directamente.",
-      copyMarkdown:
-        "También puedes hacer clic derecho dentro de un libro y elegir **Copiar libro como Markdown** para evitar pasar por el proceso de exportación. Esta opción te permite copiar el contenido de un libro listo para pegarlo en un chat, un ticket o un documento.",
+      copyMarkdown: (copyMarkdownLabel) =>
+        `También puedes hacer clic derecho dentro de un libro y elegir **${copyMarkdownLabel}** para evitar pasar por el proceso de exportación. Esta opción te permite copiar el contenido de un libro listo para pegarlo en un chat, un ticket o un documento.`,
     },
     cloudExport: {
-      intro:
-        "**Exportar** e **Importar** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo. El diálogo se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados.",
+      intro: (exportLabel, importLabel) =>
+        `**${exportLabel}** e **${importLabel}** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo. El diálogo se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados.`,
       switchProvider:
         "Mientras exploras la nube, el nombre del proveedor en el título del diálogo es un **selector**: haz clic en él para cambiar entre proveedores.",
       overwrite:
@@ -922,16 +922,16 @@ export const es: Messages = {
         "Un libro que importas desde la nube queda **sincronizado** con el archivo del que vino: cada edición se escribe de vuelta en ese archivo, así que nunca tienes que volver a exportarlo para guardarlo. Exportar un libro como **JSON** lo vincula igual.",
       syncBadge:
         "Un libro sincronizado muestra un **icono de sincronización** junto a su nombre en la lista de LIBROS: gira mientras una edición va en camino, y se convierte en una nube tachada si el guardado falló. Haz clic en él para volver a iniciar sesión o reintentar.",
-      stopSyncing:
-        "**Dejar de sincronizar** (en el menú de tres puntos del libro) rompe el vínculo sin tocar ninguna de las dos copias. La sincronización solo sube tus ediciones locales, nunca baja los cambios remotos.",
+      stopSyncing: (stopSyncingLabel) =>
+        `**${stopSyncingLabel}** (en el menú de tres puntos del libro) rompe el vínculo sin tocar ninguna de las dos copias. La sincronización solo sube tus ediciones locales, nunca baja los cambios remotos.`,
     },
     cloudFileManagement: {
       folders:
         "Los libros en la nube pueden vivir en carpetas: haz clic en una para abrirla y en un archivo para importarlo. Los botones de **flecha** y la ruta sobre la lista te mueven entre las carpetas que visitaste. Al exportar, el destino se elige igual, con un botón de **nueva carpeta**.",
       search:
         "El **buscador** revisa la carpeta **CommandPad** entera, no solo la que tengas abierta, y muestra la ruta de cada resultado.",
-      actions:
-        "El menú de **tres puntos** de una fila tiene **Renombrar**, **Editar**, **Duplicar**, **Descargar** y **Eliminar**.",
+      actions: (rename, edit, duplicate, download, deleteLabel) =>
+        `El menú de **tres puntos** de una fila tiene **${rename}**, **${edit}**, **${duplicate}**, **${download}** y **${deleteLabel}**.`,
       editFile:
         "**Editar** abre el JSON del archivo en el sitio, así que un arreglo rápido ya no implica importar, cambiar y volver a exportar. Tiene que seguir siendo JSON válido para guardarse.",
       recycleBin:

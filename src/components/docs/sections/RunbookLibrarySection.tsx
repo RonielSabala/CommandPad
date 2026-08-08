@@ -9,8 +9,13 @@ export function RunbookLibraryDocs() {
 
   return (
     <>
-      <Prose text={t.docs.runbookLibrary.intro} />
-      <ProseList items={t.docs.runbookLibrary.items} />
+      <Prose text={t.docs.runbookLibrary.intro(t.runbooks.title)} />
+      <ProseList
+        items={t.docs.runbookLibrary.items(
+          t.runbooks.import,
+          t.runbooks.clearLibrary,
+        )}
+      />
       <DemoWorkspace
         library={t.docs.demo.runbookSamples.map((label) => ({
           blocks: [demoNote(label, NoteStyle.HEADING)],

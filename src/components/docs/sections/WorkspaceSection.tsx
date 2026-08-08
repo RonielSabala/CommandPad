@@ -19,7 +19,7 @@ export function HeaderDocs() {
   return (
     <>
       <Prose text={t.docs.header.intro} />
-      <ProseList items={t.docs.header.items} />
+      <ProseList items={t.docs.header.items(t.header.export)} />
     </>
   );
 }
@@ -29,7 +29,7 @@ export function MainPanelDocs() {
 
   return (
     <>
-      <Prose text={t.docs.mainPanel.intro} />
+      <Prose text={t.docs.mainPanel.intro(t.blocks.newBlockLabel)} />
       <Prose text={t.docs.mainPanel.minimap} />
     </>
   );
