@@ -6,6 +6,7 @@ import {
   RunbookSyncStatus,
 } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
+import { codeBulletList } from "../lists";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
 
@@ -216,11 +217,17 @@ export const en: Messages = {
     cancelNewFolder: "Cancel new folder",
     importAction: (filename) => `Import ${filename}`,
     entryActions: "More actions",
+    selectRow: (name) => `Select ${name}`,
+    deselectRow: (name) => `Deselect ${name}`,
+    selectAll: "Select all",
+    deselectAll: "Clear selection",
+    importFiles: "Import files",
     rename: "Rename",
     edit: "Edit",
-    duplicate: "Duplicate",
-    download: "Download",
-    delete: "Delete",
+    duplicate: (count) =>
+      count === 1 ? "Duplicate" : `Duplicate ${count} items`,
+    download: (count) => (count === 1 ? "Download" : `Download ${count} items`),
+    delete: (count) => (count === 1 ? "Delete" : `Delete ${count} items`),
     saveName: "Save name",
     cancelRename: "Cancel rename",
     namePlaceholder: "Filename",
@@ -241,6 +248,8 @@ export const en: Messages = {
     duplicateFolderError: "Could not duplicate that folder. Please try again.",
     downloadFolderError: "Could not download that folder. Please try again.",
     deleteFolderError: "Could not delete that folder. Please try again.",
+    downloadEntriesError:
+      "Could not download the selected items. Please try again.",
     createFolderError: "Could not create that folder. Please try again.",
     nameTakenError: (filename) => `${filename} already exists in this folder.`,
   },
@@ -285,6 +294,18 @@ export const en: Messages = {
     deleteCloudFolderConfirm: "Delete",
     deleteCloudFolderMessage: (name) =>
       `Delete the folder \`${name}\`? Your provider keeps deleted items in the _Recycle Bin_ for a while, so you can still restore them from there.`,
+    deleteCloudEntriesTitle: "Delete Cloud Items",
+    deleteCloudEntriesConfirm: "Delete",
+    deleteCloudEntriesMessage: (names) =>
+      `Delete these ${names.length} items from your cloud folder?\n${codeBulletList(
+        names,
+      )}\nYour provider keeps deleted items in the _Recycle Bin_ for a while, so you can still restore them from there.`,
+    duplicateCloudEntriesTitle: "Duplicate Cloud Items",
+    duplicateCloudEntriesConfirm: "Duplicate",
+    duplicateCloudEntriesMessage: (names) =>
+      `Make a copy of these ${names.length} items in your cloud folder?\n${codeBulletList(
+        names,
+      )}\nEach copy is added next to the original, and a folder is copied with everything inside it.`,
     signOutCloudTitle: "Sign Out",
     signOutCloudConfirm: "Sign Out",
     signOutCloudMessage:
@@ -910,6 +931,8 @@ If something goes wrong, undo it in this order:
         "The **search bar** looks through the entire **CommandPad** folder, not just the one you have open, and shows each result's folder path.",
       actions: (rename, edit, duplicate, download, deleteLabel) =>
         `A row's **three dots** menu holds **${rename}**, **${edit}**, **${duplicate}**, **${download}**, and **${deleteLabel}**.`,
+      multiSelect:
+        "Rows select like files in a file explorer. Click a row to select it, click the **circle** on its left to add or drop it from the selection, `Ctrl`+click to do the same anywhere on the row, and `Shift`+click to take everything between the last row you clicked and this one. The circle in the header selects or clears the whole list, and clicking the empty space below the rows clears it too.",
       editFile:
         "**Edit** opens the file's raw JSON in place, so a quick fix doesn't require importing, changing, and re-exporting it. It has to stay valid JSON to save.",
       recycleBin:

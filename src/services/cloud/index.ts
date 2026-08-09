@@ -15,7 +15,11 @@ export {
 export type { CloudSort } from "./entries";
 export { walkCloudTree } from "./search";
 export type { CloudSearchEntry } from "./search";
-export { buildCloudFolderZip, copyCloudEntry } from "./transfer";
+export {
+  buildCloudEntriesZip,
+  buildCloudFolderZip,
+  copyCloudEntry
+} from "./transfer";
 export { CloudSyncError } from "./types";
 export type { CloudClient, CloudEntry, CloudFolderRef } from "./types";
 

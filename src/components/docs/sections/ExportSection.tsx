@@ -53,11 +53,12 @@ export function CloudFileManagementDocs() {
         text={t.docs.cloudFileManagement.actions(
           t.cloudModal.rename,
           t.cloudModal.edit,
-          t.cloudModal.duplicate,
-          t.cloudModal.download,
-          t.cloudModal.delete,
+          t.cloudModal.duplicate(1),
+          t.cloudModal.download(1),
+          t.cloudModal.delete(1),
         )}
       />
+      <Prose text={t.docs.cloudFileManagement.multiSelect} />
       <Prose text={t.docs.cloudFileManagement.editFile} />
       <Prose text={t.docs.cloudFileManagement.recycleBin} />
     </>

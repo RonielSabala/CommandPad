@@ -21,11 +21,11 @@ export function isBrowsableEntry(entry: CloudEntry): boolean {
 
 export function buildDuplicateName(
   entry: CloudEntry,
-  siblings: CloudEntry[],
+  siblingNames: string[],
 ): string {
   const base = entry.isFolder ? entry.name : stripJsonExtension(entry.name);
   const extension = entry.isFolder ? "" : JSON_EXTENSION;
-  const taken = new Set(siblings.map((other) => other.name.toLowerCase()));
+  const taken = new Set(siblingNames.map((name) => name.toLowerCase()));
 
   return (
     nextDuplicateName(base, (candidate) =>

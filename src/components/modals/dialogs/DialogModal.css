@@ -62,6 +62,8 @@
   font-size: var(--text-base);
   color: var(--color-text-secondary);
   line-height: 1.6;
+  max-height: 30vh;
+  overflow-y: auto;
 }
 
 .dialog-message .note-bold {

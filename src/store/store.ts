@@ -5,6 +5,7 @@ import {
   normalizeBlock,
 } from "@/blocks";
 import {
+  CloudSyncConfig,
   createDefaultPanels,
   DEBOUNCE_CLOUD_SYNC_MS,
   DEBOUNCE_SAVE_MS,
@@ -50,6 +51,7 @@ import type {
 import { detectLanguage, getMessages } from "@/i18n/messages";
 import { Language } from "@/i18n/types";
 import {
+  buildCloudEntriesZip,
   buildCloudFolderZip,
   buildDuplicateName,
   clearCachedCloudEntries,
@@ -190,6 +192,7 @@ export interface StoreState {
   cloudLoading: boolean;
   cloudError: string | null;
   cloudFileEditor: CloudFileEditor | null;
+  cloudSelectedIds: Set<string>;
 
   // Cloud folder navigation
   cloudPath: CloudFolderRef[];
@@ -353,15 +356,18 @@ export interface StoreState {
   toggleCloudSort: (column: CloudSortColumn) => void;
   refreshCloudSearchEntries: () => Promise<void>;
   createCloudFolder: (name: string) => Promise<void>;
-  importRunbookFromCloud: (file: CloudEntry) => Promise<void>;
+  setCloudSelection: (ids: string[]) => void;
+  toggleCloudSelected: (id: string) => void;
+  clearCloudSelection: () => void;
+  importRunbooksFromCloud: (files: CloudEntry[]) => Promise<void>;
   renameCloudEntry: (entry: CloudEntry, basename: string) => Promise<void>;
   openCloudFileEditor: (file: CloudEntry) => Promise<void>;
   setCloudFileEditorText: (text: string) => void;
   saveCloudFileEditor: () => Promise<void>;
   closeCloudFileEditor: () => Promise<void>;
-  duplicateCloudEntry: (entry: CloudEntry) => Promise<void>;
-  downloadCloudEntry: (entry: CloudEntry) => Promise<void>;
-  deleteCloudEntry: (entry: CloudEntry) => Promise<void>;
+  duplicateCloudEntries: (entries: CloudEntry[]) => Promise<void>;
+  downloadCloudEntries: (entries: CloudEntry[]) => Promise<void>;
+  deleteCloudEntries: (entries: CloudEntry[]) => Promise<void>;
 
   confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
   resolveConfirm: (result: boolean) => void;
@@ -760,13 +766,18 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
     const isCurrentCloudSearchRequest = (id: number) =>
       cloudSearchRequestId === id;
 
-    /** Drops any in-flight tree walk and yields the cleared search state. */
-    const cancelledCloudSearch = () => {
+    const emptyCloudSelection = () => {
+      const current = get().cloudSelectedIds;
+      return current.size === 0 ? current : new Set<string>();
+    };
+
+    const clearedCloudListing = () => {
       startCloudSearchRequest();
       return {
         cloudSearchQuery: "",
         cloudSearchEntries: [],
         cloudSearchLoading: false,
+        cloudSelectedIds: emptyCloudSelection(),
       };
     };
 
@@ -867,8 +878,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       cloudEntries: [],
       cloudLoading: false,
       cloudError: null,
-
       cloudFileEditor: null,
+      cloudSelectedIds: new Set(),
 
       cloudPath: ROOT_CLOUD_PATH,
       cloudHistory: [ROOT_CLOUD_PATH],
@@ -2371,7 +2382,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         startCloudRequest();
         set({
-          ...cancelledCloudSearch(),
+          ...clearedCloudListing(),
           cloudProvider: provider,
           cloudError: null,
           cloudEntries: [],
@@ -2456,7 +2467,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         lastBrowsedCloudPath.delete(get().cloudProvider);
         startCloudRequest();
         set((s) => ({
-          ...cancelledCloudSearch(),
+          ...clearedCloudListing(),
           runbookSyncStatus: {
             ...s.runbookSyncStatus,
             // Linked runbooks can no longer reach this provider until a new sign-in
@@ -2502,7 +2513,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         set({
           // Opening a folder from a search result lands you in that folder
-          ...cancelledCloudSearch(),
+          ...clearedCloudListing(),
           cloudPath: path,
           cloudHistory: [...history, path],
           cloudHistoryIndex: history.length,
@@ -2525,7 +2536,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         lastBrowsedCloudPath.set(get().cloudProvider, path);
 
         set({
-          ...cancelledCloudSearch(),
+          ...clearedCloudListing(),
           cloudPath: path,
           cloudHistoryIndex: index,
           cloudError: null,
@@ -2538,11 +2549,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const previous = get().cloudSearchQuery;
 
         if (!query.trim()) {
-          set({ ...cancelledCloudSearch(), cloudSearchQuery: query });
+          set({ ...clearedCloudListing(), cloudSearchQuery: query });
           return;
         }
 
-        set({ cloudSearchQuery: query });
+        set({
+          cloudSearchQuery: query,
+          cloudSelectedIds: emptyCloudSelection(),
+        });
 
         // The tree is walked once when a search starts, then filtered locally
         if (!previous.trim()) {
@@ -2625,48 +2639,79 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         await get().refreshCloudEntries();
       },
 
-      importRunbookFromCloud: async (file) => {
+      setCloudSelection: (ids) => set({ cloudSelectedIds: new Set(ids) }),
+
+      toggleCloudSelected: (id) =>
+        set((s) => {
+          const cloudSelectedIds = new Set(s.cloudSelectedIds);
+          if (!cloudSelectedIds.delete(id)) {
+            cloudSelectedIds.add(id);
+          }
+
+          return { cloudSelectedIds };
+        }),
+
+      clearCloudSelection: () =>
+        set({ cloudSelectedIds: emptyCloudSelection() }),
+
+      importRunbooksFromCloud: async (files) => {
+        if (files.length === 0) {
+          return;
+        }
+
         const client = getCloudClient(get().cloudProvider);
         const t = getMessages(get().language);
 
-        // Resolved up front: a search hit's folder can change out from under a slow read
-        const sync: RunbookSync = {
-          provider: get().cloudProvider,
-          filename: file.name,
-          folderId: parentFolderId(get(), file),
-        };
-
-        set({ cloudLoading: true, cloudError: null });
-        let text: string;
-        try {
-          text = await client.readFile(file);
-        } catch (error) {
-          console.error("Cloud file read failed", error);
-          set({ cloudLoading: false, cloudError: t.cloudModal.genericError });
-          return;
-        }
-
-        let content: RunbookContent;
-        try {
-          content = parseRunbookContent(text);
-        } catch {
-          set({
-            cloudLoading: false,
-            cloudError: t.cloudModal.invalidFileError,
-          });
-          return;
-        }
-
-        set({ cloudLoading: false });
-        const baseName = stripJsonExtension(file.name);
-        const added = await get().addRunbookToLibrary(
-          content,
-          baseName,
-          file.name,
-          sync,
+        // Every file is read before the first one is added
+        const pending: { file: CloudEntry; content: RunbookContent }[] = [];
+        const syncs = new Map<string, RunbookSync>(
+          files.map((file) => [
+            file.id,
+            {
+              provider: get().cloudProvider,
+              filename: file.name,
+              folderId: parentFolderId(get(), file),
+            },
+          ]),
         );
 
-        if (added) {
+        set({ cloudLoading: true, cloudError: null });
+        let failure: string | null = null;
+
+        for (const file of files) {
+          let text: string;
+          try {
+            text = await client.readFile(file);
+          } catch (error) {
+            console.error("Cloud file read failed", error);
+            failure = t.cloudModal.genericError;
+            continue;
+          }
+
+          try {
+            pending.push({ file, content: parseRunbookContent(text) });
+          } catch {
+            failure = t.cloudModal.invalidFileError;
+          }
+        }
+
+        set({ cloudLoading: false, cloudError: failure });
+
+        let added = 0;
+        for (const { file, content } of pending) {
+          const accepted = await get().addRunbookToLibrary(
+            content,
+            stripJsonExtension(file.name),
+            file.name,
+            syncs.get(file.id),
+          );
+
+          if (accepted) {
+            added++;
+          }
+        }
+
+        if (added > 0) {
           set({ cloudImportModalOpen: false });
         }
       },
@@ -2849,71 +2894,130 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set({ cloudFileEditor: null });
       },
 
-      duplicateCloudEntry: async (entry) => {
-        const t = getMessages(get().language);
-        const client = getCloudClient(get().cloudProvider);
-        const parentId = parentFolderId(get(), entry);
-        const name = buildDuplicateName(entry, siblingEntries(get(), entry));
-
-        set({ cloudLoading: true, cloudError: null });
-        try {
-          await copyCloudEntry(client, entry, parentId, name);
-        } catch (error) {
-          console.error("Cloud entry duplicate failed", error);
-          set({
-            cloudLoading: false,
-            cloudError: entry.isFolder
-              ? t.cloudModal.duplicateFolderError
-              : t.cloudModal.duplicateError,
-          });
+      duplicateCloudEntries: async (entries) => {
+        if (entries.length === 0) {
           return;
         }
 
-        set({ cloudLoading: false });
+        const t = getMessages(get().language);
+
+        if (entries.length > 1) {
+          const confirmed = await get().confirm(
+            t.dialogs.duplicateCloudEntriesMessage(
+              entries.map((entry) => entry.name),
+            ),
+            {
+              title: t.dialogs.duplicateCloudEntriesTitle,
+              confirmLabel: t.dialogs.duplicateCloudEntriesConfirm,
+              tone: DialogTone.INFO,
+            },
+          );
+
+          if (!confirmed) {
+            return;
+          }
+        }
+
+        const client = getCloudClient(get().cloudProvider);
+        set({ cloudLoading: true, cloudError: null });
+
+        for (const entry of entries) {
+          const parentId = parentFolderId(get(), entry);
+          const taken = siblingEntries(get(), entry).map((other) => other.name);
+
+          try {
+            await copyCloudEntry(
+              client,
+              entry,
+              parentId,
+              buildDuplicateName(entry, taken),
+            );
+          } catch (error) {
+            console.error("Cloud entry duplicate failed", error);
+            set({
+              cloudError: entry.isFolder
+                ? t.cloudModal.duplicateFolderError
+                : t.cloudModal.duplicateError,
+            });
+
+            break;
+          }
+        }
+
+        set({ cloudLoading: false, cloudSelectedIds: emptyCloudSelection() });
         await get().refreshCloudEntries();
       },
 
-      downloadCloudEntry: async (entry) => {
+      downloadCloudEntries: async (entries) => {
+        if (entries.length === 0) {
+          return;
+        }
+
         const t = getMessages(get().language);
         const client = getCloudClient(get().cloudProvider);
+        const single = entries.length === 1 ? entries[0] : null;
 
         set({ cloudLoading: true, cloudError: null });
         try {
-          if (entry.isFolder) {
-            const archive = await buildCloudFolderZip(client, entry);
-            downloadBlob(archive, `${entry.name}${ZIP_EXTENSION}`);
+          if (!single) {
+            const folder = get().cloudPath.at(-1)?.name;
+            downloadBlob(
+              await buildCloudEntriesZip(client, entries),
+              `${folder ?? CloudSyncConfig.APP_FOLDER_NAME}${ZIP_EXTENSION}`,
+            );
+          } else if (single.isFolder) {
+            downloadBlob(
+              await buildCloudFolderZip(client, single),
+              `${single.name}${ZIP_EXTENSION}`,
+            );
           } else {
-            const content = await client.readFile(entry);
+            const content = await client.readFile(single);
             downloadBlob(
               new Blob([content], { type: MimeType.JSON }),
-              entry.name,
+              single.name,
             );
           }
         } catch (error) {
           console.error("Cloud entry download failed", error);
           set({
-            cloudError: entry.isFolder
-              ? t.cloudModal.downloadFolderError
-              : t.cloudModal.downloadError,
+            cloudError: !single
+              ? t.cloudModal.downloadEntriesError
+              : single.isFolder
+                ? t.cloudModal.downloadFolderError
+                : t.cloudModal.downloadError,
           });
         } finally {
           set({ cloudLoading: false });
         }
       },
 
-      deleteCloudEntry: async (entry) => {
+      deleteCloudEntries: async (entries) => {
+        if (entries.length === 0) {
+          return;
+        }
+
         const t = getMessages(get().language);
+        const [single] = entries.length === 1 ? entries : [];
+
         const confirmed = await get().confirm(
-          entry.isFolder
-            ? t.dialogs.deleteCloudFolderMessage(entry.name)
-            : t.dialogs.deleteCloudFileMessage(entry.name),
+          !single
+            ? t.dialogs.deleteCloudEntriesMessage(
+                entries.map((entry) => entry.name),
+              )
+            : single.isFolder
+              ? t.dialogs.deleteCloudFolderMessage(single.name)
+              : t.dialogs.deleteCloudFileMessage(single.name),
           {
-            title: entry.isFolder
-              ? t.dialogs.deleteCloudFolderTitle
-              : t.dialogs.deleteCloudFileTitle,
-            confirmLabel: entry.isFolder
-              ? t.dialogs.deleteCloudFolderConfirm
-              : t.dialogs.deleteCloudFileConfirm,
+            title: !single
+              ? t.dialogs.deleteCloudEntriesTitle
+              : single.isFolder
+                ? t.dialogs.deleteCloudFolderTitle
+                : t.dialogs.deleteCloudFileTitle,
+            confirmLabel: !single
+              ? t.dialogs.deleteCloudEntriesConfirm
+              : single.isFolder
+                ? t.dialogs.deleteCloudFolderConfirm
+                : t.dialogs.deleteCloudFileConfirm,
             tone: DialogTone.DANGER,
           },
         );
@@ -2924,20 +3028,23 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         const client = getCloudClient(get().cloudProvider);
         set({ cloudLoading: true, cloudError: null });
-        try {
-          await client.deleteEntry(entry);
-        } catch (error) {
-          console.error("Cloud entry delete failed", error);
-          set({
-            cloudLoading: false,
-            cloudError: entry.isFolder
-              ? t.cloudModal.deleteFolderError
-              : t.cloudModal.deleteError,
-          });
-          return;
+
+        for (const entry of entries) {
+          try {
+            await client.deleteEntry(entry);
+          } catch (error) {
+            console.error("Cloud entry delete failed", error);
+            set({
+              cloudError: entry.isFolder
+                ? t.cloudModal.deleteFolderError
+                : t.cloudModal.deleteError,
+            });
+
+            break;
+          }
         }
 
-        set({ cloudLoading: false });
+        set({ cloudLoading: false, cloudSelectedIds: emptyCloudSelection() });
         await get().refreshCloudEntries();
       },
 

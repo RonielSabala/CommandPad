@@ -13,10 +13,18 @@ import {
   formatFileSize,
   formatTimestamp,
 } from "@/utils/format";
-import { useState } from "react";
+import { classNames } from "@/utils/string";
+import { useState, type MouseEvent } from "react";
 import type { Icon } from "react-bootstrap-icons";
+
 import { CloudRowConfirmActions } from "./CloudRowConfirmActions";
 import { CloudRowMenu } from "./CloudRowMenu";
+import { CloudSelectCircle } from "./CloudSelectCircle";
+import { useCloudSelection } from "./cloudSelection";
+
+const NAME_CLASS = "cloud-browser-row-name";
+const OWN_CLICK_SELECTOR =
+  ".cloud-browser-row-select, .cloud-browser-row-actions";
 
 interface CloudEntryRowProps {
   entry: CloudEntry;
@@ -38,9 +46,45 @@ export function CloudEntryRow({
   const t = useTranslation();
   const language = useStore((state) => state.language);
   const renameCloudEntry = useStore((state) => state.renameCloudEntry);
-  const duplicateCloudEntry = useStore((state) => state.duplicateCloudEntry);
-  const downloadCloudEntry = useStore((state) => state.downloadCloudEntry);
-  const deleteCloudEntry = useStore((state) => state.deleteCloudEntry);
+  const importRunbooksFromCloud = useStore(
+    (state) => state.importRunbooksFromCloud,
+  );
+  const duplicateCloudEntries = useStore(
+    (state) => state.duplicateCloudEntries,
+  );
+  const downloadCloudEntries = useStore((state) => state.downloadCloudEntries);
+  const deleteCloudEntries = useStore((state) => state.deleteCloudEntries);
+
+  const selectedIds = useStore((state) => state.cloudSelectedIds);
+  const selection = useCloudSelection();
+  const selected = selectedIds.has(entry.id);
+
+  const targets =
+    selected && selectedIds.size > 1
+      ? selection.rows.filter((row) => selectedIds.has(row.id))
+      : [entry];
+
+  const files = targets.filter((target) => !target.isFolder);
+  const multiple = targets.length > 1;
+
+  const handleRowClick = (event: MouseEvent) => {
+    const target = event.target as Element;
+    if (!event.currentTarget.contains(target)) {
+      return;
+    }
+
+    if (target.closest(OWN_CLICK_SELECTOR)) {
+      return;
+    }
+
+    const plain = !event.shiftKey && !event.ctrlKey && !event.metaKey;
+    if (plain && target.closest(`.${NAME_CLASS}`)) {
+      onActivate();
+      return;
+    }
+
+    selection.select(entry.id, event);
+  };
 
   // A non-null draft means this row is being renamed
   const [draft, setDraft] = useState<string | null>(null);
@@ -95,17 +139,26 @@ export function CloudEntryRow({
       : formatFileSize(entry.size, language);
 
   return (
-    <div className="cloud-browser-row">
+    <div
+      className={classNames("cloud-browser-row", selected && "is-selected")}
+      onClick={handleRowClick}
+    >
+      <CloudSelectCircle
+        selected={selected}
+        title={
+          selected
+            ? t.cloudModal.deselectRow(entry.name)
+            : t.cloudModal.selectRow(entry.name)
+        }
+        onToggle={() => selection.toggle(entry.id)}
+      />
+
       <button className="cloud-browser-row-main">
         <span className="cloud-browser-row-name-cell">
           <EntryIcon className="icon-md cloud-browser-row-icon" />
 
           <span className="cloud-browser-row-text">
-            <span
-              className="cloud-browser-row-name"
-              onClick={onActivate}
-              title={activateTitle}
-            >
+            <span className={NAME_CLASS} title={activateTitle}>
               {entry.name}
             </span>
 
@@ -122,13 +175,24 @@ export function CloudEntryRow({
       </button>
 
       <CloudRowMenu
-        onRename={() =>
-          setDraft(entry.isFolder ? entry.name : stripJsonExtension(entry.name))
+        count={targets.length}
+        onRename={
+          multiple
+            ? undefined
+            : () =>
+                setDraft(
+                  entry.isFolder ? entry.name : stripJsonExtension(entry.name),
+                )
         }
-        onEdit={onEdit}
-        onDuplicate={() => void duplicateCloudEntry(entry)}
-        onDownload={() => void downloadCloudEntry(entry)}
-        onDelete={() => void deleteCloudEntry(entry)}
+        onEdit={multiple ? undefined : onEdit}
+        onImport={
+          multiple && files.length > 0
+            ? () => void importRunbooksFromCloud(files)
+            : undefined
+        }
+        onDuplicate={() => void duplicateCloudEntries(targets)}
+        onDownload={() => void downloadCloudEntries(targets)}
+        onDelete={() => void deleteCloudEntries(targets)}
         menuTitle={t.cloudModal.entryActions}
       />
     </div>

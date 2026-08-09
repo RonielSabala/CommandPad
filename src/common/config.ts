@@ -200,6 +200,11 @@ export const CloudSyncConfig = {
   NO_SIZE_PLACEHOLDER: "—",
 } as const;
 
+export const MessageListConfig = {
+  MAX_ITEMS: 8,
+  OVERFLOW: "...",
+} as const;
+
 // Copies made by a "Duplicate" action
 
 export const DuplicateNameConfig = {
