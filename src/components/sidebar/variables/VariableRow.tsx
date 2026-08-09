@@ -82,6 +82,7 @@ export const VariableRow = memo(function VariableRow({
 
   const keyInputClass = classNames(
     "variable-key-input",
+    "no-ligatures",
     isConstantVariableKey(variableKey) && "is-constant",
   );
 
@@ -145,7 +146,7 @@ export const VariableRow = memo(function VariableRow({
 
         <div className="variable-value-wrap">
           <input
-            className="variable-value-input"
+            className="variable-value-input no-ligatures"
             type="text"
             placeholder={t.variables.valuePlaceholder}
             value={variableValue}

@@ -36,7 +36,7 @@ export function FilenameInput({
     <div className={classNames("filename-input", `is-${size}`)}>
       <input
         id={id}
-        className="filename-input-field"
+        className="filename-input-field no-ligatures"
         value={value}
         spellCheck={false}
         autoComplete="off"

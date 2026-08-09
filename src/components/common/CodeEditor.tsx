@@ -77,13 +77,13 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
         </div>
 
         <div
-          className="code-editor-field"
+          className="code-editor-field no-ligatures"
           data-value={value}
           onClick={() => textareaRef.current?.focus()}
         >
           <textarea
             ref={textareaRef}
-            className="code-editor-textarea"
+            className="code-editor-textarea no-ligatures"
             placeholder={placeholder}
             spellCheck={false}
             autoComplete="off"

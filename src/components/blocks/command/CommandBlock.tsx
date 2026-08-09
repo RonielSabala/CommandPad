@@ -138,6 +138,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           ref={previewRef}
           className={classNames(
             "command-preview-text",
+            "no-ligatures",
             unresolved && "has-unresolved",
             previewClamped && CssClass.CLAMPED,
           )}

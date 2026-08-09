@@ -20,7 +20,7 @@ export function SearchInput({
   return (
     <div className={classNames("search-input-wrapper", className)}>
       <input
-        className="search-input"
+        className="search-input no-ligatures"
         type="text"
         placeholder={placeholder}
         spellCheck={false}

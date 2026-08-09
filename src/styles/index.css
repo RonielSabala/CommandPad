@@ -40,6 +40,15 @@ body {
   user-select: none;
 }
 
+/* --- DISABLE LIGATURES --- */
+
+.no-ligatures {
+  font-variant-ligatures: none;
+  font-feature-settings:
+    "liga" 0,
+    "calt" 0;
+}
+
 /* --- SCROLLBAR --- */
 
 ::-webkit-scrollbar {

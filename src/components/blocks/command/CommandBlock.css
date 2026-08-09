@@ -45,10 +45,6 @@
   grid-area: 1 / 1 / 2 / 2;
   font-family: var(--font-mono);
   font-size: var(--text-base);
-  font-variant-ligatures: none;
-  font-feature-settings:
-    "liga" 0,
-    "calt" 0;
   line-height: var(--command-clamp-line-height);
   color: var(--success);
   overflow-x: auto;
