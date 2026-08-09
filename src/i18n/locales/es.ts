@@ -294,23 +294,23 @@ export const es: Messages = {
     deleteCloudFileTitle: "Eliminar Libro de la Nube",
     deleteCloudFileConfirm: "Eliminar",
     deleteCloudFileMessage: (filename) =>
-      `¿Eliminar \`${filename}\` de tu carpeta en la nube? Tu proveedor lo guarda un tiempo en la _Papelera de reciclaje_, así que todavía puedes restaurarlo desde ahí.`,
+      `¿Eliminar \`${filename}\` de tu carpeta en la nube?\n\nTu proveedor lo guarda un tiempo en la _Papelera de reciclaje_, así que todavía puedes restaurarlo desde ahí.`,
     deleteCloudFolderTitle: "Eliminar Carpeta de la Nube",
     deleteCloudFolderConfirm: "Eliminar",
     deleteCloudFolderMessage: (name) =>
-      `¿Eliminar la carpeta \`${name}\`? Tu proveedor guarda un tiempo los elementos eliminados en la _Papelera de reciclaje_, así que todavía puedes restaurarlos desde ahí.`,
+      `¿Eliminar la carpeta \`${name}\`?\n\nTu proveedor guarda un tiempo los elementos eliminados en la _Papelera de reciclaje_, así que todavía puedes restaurarlos desde ahí.`,
     deleteCloudEntriesTitle: "Eliminar Elementos de la Nube",
     deleteCloudEntriesConfirm: "Eliminar",
     deleteCloudEntriesMessage: (names) =>
       `¿Eliminar estos ${names.length} elementos de tu carpeta en la nube?\n${codeBulletList(
         names,
-      )}\nTu proveedor guarda un tiempo los elementos eliminados en la _Papelera de reciclaje_, así que todavía puedes restaurarlos desde ahí.`,
+      )}\n\nTu proveedor guarda un tiempo los elementos eliminados en la _Papelera de reciclaje_, así que todavía puedes restaurarlos desde ahí.`,
     duplicateCloudEntriesTitle: "Duplicar Elementos de la Nube",
     duplicateCloudEntriesConfirm: "Duplicar",
     duplicateCloudEntriesMessage: (names) =>
       `¿Hacer una copia de estos ${names.length} elementos en tu carpeta en la nube?\n${codeBulletList(
         names,
-      )}\nCada copia se añade junto al original, y una carpeta se copia con todo lo que contiene.`,
+      )}\n\nCada copia se añade junto al original, y una carpeta se copia con todo lo que contiene.`,
     signOutCloudTitle: "Cerrar Sesión",
     signOutCloudConfirm: "Cerrar Sesión",
     signOutCloudMessage:

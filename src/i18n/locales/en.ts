@@ -289,23 +289,23 @@ export const en: Messages = {
     deleteCloudFileTitle: "Delete Cloud Runbook",
     deleteCloudFileConfirm: "Delete",
     deleteCloudFileMessage: (filename) =>
-      `Delete \`${filename}\` from your cloud folder? Your provider keeps it in the _Recycle Bin_ for a while, so you can still restore it from there.`,
+      `Delete \`${filename}\` from your cloud folder?\n\nYour provider keeps it in the _Recycle Bin_ for a while, so you can still restore it from there.`,
     deleteCloudFolderTitle: "Delete Cloud Folder",
     deleteCloudFolderConfirm: "Delete",
     deleteCloudFolderMessage: (name) =>
-      `Delete the folder \`${name}\`? Your provider keeps deleted items in the _Recycle Bin_ for a while, so you can still restore them from there.`,
+      `Delete the folder \`${name}\`?\n\nYour provider keeps deleted items in the _Recycle Bin_ for a while, so you can still restore them from there.`,
     deleteCloudEntriesTitle: "Delete Cloud Items",
     deleteCloudEntriesConfirm: "Delete",
     deleteCloudEntriesMessage: (names) =>
       `Delete these ${names.length} items from your cloud folder?\n${codeBulletList(
         names,
-      )}\nYour provider keeps deleted items in the _Recycle Bin_ for a while, so you can still restore them from there.`,
+      )}\n\nYour provider keeps deleted items in the _Recycle Bin_ for a while, so you can still restore them from there.`,
     duplicateCloudEntriesTitle: "Duplicate Cloud Items",
     duplicateCloudEntriesConfirm: "Duplicate",
     duplicateCloudEntriesMessage: (names) =>
       `Make a copy of these ${names.length} items in your cloud folder?\n${codeBulletList(
         names,
-      )}\nEach copy is added next to the original, and a folder is copied with everything inside it.`,
+      )}\n\nEach copy is added next to the original, and a folder is copied with everything inside it.`,
     signOutCloudTitle: "Sign Out",
     signOutCloudConfirm: "Sign Out",
     signOutCloudMessage:
