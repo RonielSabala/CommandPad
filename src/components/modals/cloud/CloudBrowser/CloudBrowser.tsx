@@ -207,28 +207,30 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
           )}
 
           <CloudSelectionContext.Provider value={selection}>
-            <div
-              className={classNames(
-                "cloud-browser-entries modal-scrollable-body",
-                !showFiles && "is-folders-only",
-                busy && "is-busy",
-                selectedIds.size > 0 && "has-selection",
-              )}
-              onClick={clearOnBackdrop}
-            >
-              {rows.length > 0 && <CloudListHeader />}
+            <div className="cloud-browser-list">
+              <div
+                className={classNames(
+                  "cloud-browser-entries modal-scrollable-body",
+                  !showFiles && "is-folders-only",
+                  busy && "is-busy",
+                  selectedIds.size > 0 && "has-selection",
+                )}
+                onClick={clearOnBackdrop}
+              >
+                {rows.length > 0 && <CloudListHeader />}
 
-              {!busy && rows.length === 0 && (
-                <p className="cloud-browser-empty">{emptyMessage}</p>
-              )}
+                {!busy && rows.length === 0 && (
+                  <p className="cloud-browser-empty">{emptyMessage}</p>
+                )}
 
-              {rows.map(({ entry, path }) =>
-                entry.isFolder ? (
-                  <CloudFolderRow key={entry.id} folder={entry} path={path} />
-                ) : (
-                  <CloudFileRow key={entry.id} file={entry} path={path} />
-                ),
-              )}
+                {rows.map(({ entry, path }) =>
+                  entry.isFolder ? (
+                    <CloudFolderRow key={entry.id} folder={entry} path={path} />
+                  ) : (
+                    <CloudFileRow key={entry.id} file={entry} path={path} />
+                  ),
+                )}
+              </div>
 
               {busy && (
                 <p className="cloud-browser-status no-user-select">

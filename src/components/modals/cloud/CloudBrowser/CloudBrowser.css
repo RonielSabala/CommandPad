@@ -247,8 +247,19 @@
   field-sizing: content;
 }
 
-.cloud-browser-entries {
+.cloud-browser-list {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.modal-cloud .cloud-browser-list {
+  flex: 1;
+  min-height: 0;
+}
+
+.cloud-browser-entries {
   display: flex;
   flex-direction: column;
 }
