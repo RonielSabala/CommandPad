@@ -69,6 +69,7 @@ export const notAfter = (source: string) => `(?<!${source})`;
 export const sequence = (...sources: string[]) => sources.join("");
 export const either = (...sources: string[]) => sources.join("|");
 export const anchored = (source: string) => `^${source}$`;
+export const atStart = (source: string) => `^${source}`;
 export const atEnd = (source: string) => `${source}$`;
 export const globalRegex = (source: string) => new RegExp(source, "g");
 export const globalUnicodeRegex = (source: string) => new RegExp(source, "gu");

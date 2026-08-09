@@ -4,7 +4,7 @@ import { TabsBar } from "@/components/tabs/TabsBar";
 import { useTranslation } from "@/i18n";
 import { demoNote } from "../demos/demoSeeds";
 import { DemoWorkspace } from "../demos/DemoWorkspace";
-import { Prose, ProseList } from "../Prose";
+import { Prose } from "../Prose";
 import "./TabsSection.css";
 
 export function TabsDocs() {
@@ -13,7 +13,7 @@ export function TabsDocs() {
   return (
     <>
       <Prose text={t.docs.tabs.intro} />
-      <ProseList items={t.docs.tabs.items} />
+      <Prose text={t.docs.tabs.items} />
       <Prose text={t.docs.tabs.autoCreate} />
       <Prose text={t.docs.tabs.labelDemo} />
       <DemoWorkspace

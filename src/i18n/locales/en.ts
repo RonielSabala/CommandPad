@@ -397,45 +397,37 @@ export const en: Messages = {
         paragraphs: [
           "All data you enter, such as variables, commands, notes, and runbooks, is saved locally in your browser so your work is still there when you return.",
         ],
-        bullets: [
-          "**localStorage** holds your preferences (theme, language, layout) and lightweight tab metadata.",
-          "**IndexedDB** holds the actual runbook content (your variables and command blocks).",
-        ],
+        bullets: `* **localStorage** holds your preferences (theme, language, layout) and lightweight tab metadata.
+* **IndexedDB** holds the actual runbook content (your variables and command blocks).`,
       },
       {
         heading: "Images",
         paragraphs: [
           "An image block holds a picture in one of two ways, and neither one uploads anything. **There is no image server, no upload endpoint, and no image host operated by us.**",
         ],
-        bullets: [
-          "An **attached** image (dropped, pasted, or chosen with the file picker) is read by your browser on your own device and stored as text inside the runbook, next to the rest of its content. The file is never sent anywhere.",
-          "A **linked** image is only an address you typed. Nothing is stored and nothing is uploaded, but your browser fetches the picture from whatever site hosts it, so that site sees the request just as it would for any page showing the image.",
-          "If you sync a runbook to your own cloud account, its attached images travel with it into that account, the same as any other part of the runbook.",
-        ],
+        bullets: `* An **attached** image (dropped, pasted, or chosen with the file picker) is read by your browser on your own device and stored as text inside the runbook, next to the rest of its content. The file is never sent anywhere.
+* A **linked** image is only an address you typed. Nothing is stored and nothing is uploaded, but your browser fetches the picture from whatever site hosts it, so that site sees the request just as it would for any page showing the image.
+* If you sync a runbook to your own cloud account, its attached images travel with it into that account, the same as any other part of the runbook.`,
       },
       {
         heading: "What we do not do",
         paragraphs: [
           "We want to be explicit about the things CommandPad deliberately avoids.",
         ],
-        bullets: [
-          "We do not operate a backend server that receives your data. The only time your runbooks leave your device is when you explicitly export or sync them to your own cloud account.",
-          "We do not use cookies, advertising identifiers, or third-party analytics.",
-          "We do not track your behavior across sites or build a profile about you.",
-          "We do not require a CommandPad account, an email address, or any sign-in to use the app.",
-        ],
+        bullets: `* We do not operate a backend server that receives your data. The only time your runbooks leave your device is when you explicitly export or sync them to your own cloud account.
+* We do not use cookies, advertising identifiers, or third-party analytics.
+* We do not track your behavior across sites or build a profile about you.
+* We do not require a CommandPad account, an email address, or any sign-in to use the app.`,
       },
       {
         heading: "Cloud sync (optional)",
         paragraphs: [
           "CommandPad can optionally export a runbook to, or import one from, your own SharePoint or Google Drive account. This feature is off until you choose to use it.",
         ],
-        bullets: [
-          "You sign in through the provider's own sign-in flow (Microsoft or Google). CommandPad never sees your password, and it only requests access to the dedicated **CommandPad** folder it creates for your runbooks.",
-          "Synced runbooks are stored in that folder inside your own account. They are not sent to, or stored on, any server operated by us.",
-          "The data you sync travels between your browser and the provider you chose. Once it reaches that provider, their privacy policy and terms apply to it.",
-          "You can sign out at any time, and you can delete synced files directly from your cloud account.",
-        ],
+        bullets: `* You sign in through the provider's own sign-in flow (Microsoft or Google). CommandPad never sees your password, and it only requests access to the dedicated **CommandPad** folder it creates for your runbooks.
+* Synced runbooks are stored in that folder inside your own account. They are not sent to, or stored on, any server operated by us.
+* The data you sync travels between your browser and the provider you chose. Once it reaches that provider, their privacy policy and terms apply to it.
+* You can sign out at any time, and you can delete synced files directly from your cloud account.`,
       },
       {
         heading: "Secret variables",
@@ -486,13 +478,11 @@ export const en: Messages = {
         paragraphs: [
           "You are responsible for the commands and content you create and for how you use them.",
         ],
-        bullets: [
-          "Review every command before you run it. CommandPad resolves and copies text; it does not execute anything for you.",
-          "Keep your own backups of anything important by exporting your runbooks.",
-          "Only attach images you have the right to use. An attached image becomes part of the runbook itself, so it goes wherever you export or sync that runbook.",
-          "Do not rely on secret variables as secure storage for sensitive credentials.",
-          "Use the app in compliance with the laws and policies that apply to you.",
-        ],
+        bullets: `* Review every command before you run it. CommandPad resolves and copies text; it does not execute anything for you.
+* Keep your own backups of anything important by exporting your runbooks.
+* Only attach images you have the right to use. An attached image becomes part of the runbook itself, so it goes wherever you export or sync that runbook.
+* Do not rely on secret variables as secure storage for sensitive credentials.
+* Use the app in compliance with the laws and policies that apply to you.`,
       },
       {
         heading: "No warranty",
@@ -511,11 +501,9 @@ export const en: Messages = {
         paragraphs: [
           "If you choose to sync runbooks with SharePoint or Google Drive, you do so through your own account with Microsoft or Google. Your use of those services is governed by their terms and privacy policies, not ours.",
         ],
-        bullets: [
-          "CommandPad only accesses the dedicated folder it creates for your runbooks; it does not read the rest of your cloud storage.",
-          "We are not responsible for the availability, behavior, or data handling of Microsoft, Google, or any other third-party provider.",
-          "You are responsible for keeping your cloud account secure and for any content you store there.",
-        ],
+        bullets: `* CommandPad only accesses the dedicated folder it creates for your runbooks; it does not read the rest of your cloud storage.
+* We are not responsible for the availability, behavior, or data handling of Microsoft, Google, or any other third-party provider.
+* You are responsible for keeping your cloud account secure and for any content you store there.`,
       },
       {
         heading: "Data and privacy",
@@ -592,6 +580,16 @@ export const en: Messages = {
 | 126 | Permission denied | \`chmod +x\` the script |
 | 127 | Command not found | Check your \`PATH\` |
 | 137 | Killed (out of memory) | **Raise the memory limit** |`,
+      listSample: `Before you start:
+* Close any other copies of the file
+* Save a backup, just in case
+
+If something goes wrong, undo it in this order:
+1. Stop what you're doing
+2. Put the backup back
+    1. Copy it over the original
+    2. Open it to make sure it looks right
+3. Let your team know what happened`,
     },
     gettingStarted: {
       intro:
@@ -607,27 +605,26 @@ export const en: Messages = {
     workspace: {
       intro:
         "The workspace is the app's main screen, where you'll spend most of your time building and polishing your runbooks. It's made of three areas:",
-      items: [
-        "The **header**: gathers the buttons with the app's global actions.",
-        "The **sidebar**: holds the runbook library and the variables panel.",
-        "The **main panel**: where every runbook you have open lives, its blocks included.",
-      ],
+      items: `* The **header**: gathers the buttons with the app's global actions.
+* The **sidebar**: holds the runbook library and the variables panel.
+* The **main panel**: where every runbook you have open lives, its blocks included.`,
       persistence:
         "Everything you do is saved automatically in your browser and restored when you reload the page. Your data is never sent to a server.",
     },
     header: {
       intro:
         "The header gathers the actions that affect the whole app. From left to right:",
-      items: (exportLabel, collapseAllLabel) => [
-        "The **CommandPad logo**: click it to reload the app.",
-        "The **padlock / pencil**: switches between read mode and edit mode. It has its own section later in this guide.",
-        `**${collapseAllLabel}**: collapses or expands every command editor in the active runbook at once.`,
-        "The **sun / moon**: switches between the light and dark themes.",
-        "The **language selector**: changes the interface language.",
-        "The **book**: opens this documentation.",
-        "The **red arrow**: resets the workspace. It wipes everything, so the app always asks you to confirm first.",
-        `**${exportLabel}**: saves the active runbook to a file. It also has its own section later.`,
-      ],
+      items: (
+        exportLabel,
+        collapseAllLabel,
+      ) => `* The **CommandPad logo**: click it to reload the app.
+* The **padlock / pencil**: switches between read mode and edit mode. It has its own section later in this guide.
+* **${collapseAllLabel}**: collapses or expands every command editor in the active runbook at once.
+* The **sun / moon**: switches between the light and dark themes.
+* The **language selector**: changes the interface language.
+* The **book**: opens this documentation.
+* The **red arrow**: resets the workspace. It wipes everything, so the app always asks you to confirm first.
+* **${exportLabel}**: saves the active runbook to a file. It also has its own section later.`,
     },
     mainPanel: {
       intro: (newBlockLabel) =>
@@ -637,12 +634,10 @@ export const en: Messages = {
     },
     tabs: {
       intro: "Each tab holds one open runbook.",
-      items: [
-        "**Click** a tab to switch to it.",
-        "**Drag** a tab to reorder it.",
-        "**Middle-click** a tab to close it.",
-        "**Click** the **+** at the end of the tabs bar to open a new tab.",
-      ],
+      items: `* **Click** a tab to switch to it.
+* **Drag** a tab to reorder it.
+* **Middle-click** a tab to close it.
+* **Click** the **+** at the end of the tabs bar to open a new tab.`,
       autoCreate:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
@@ -650,26 +645,26 @@ export const en: Messages = {
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",
-      items: [
-        "**Collapse / expand**: click the chevron button or use its keyboard shortcut.",
-        "**Move left / right**: click the layout button to move the sidebar to the other side of the screen.",
-        "**Resize**: drag the sidebar's inner edge; double-click it to collapse.",
-      ],
+      items: `* **Collapse / expand**: click the chevron button or use its keyboard shortcut.
+* **Move left / right**: click the layout button to move the sidebar to the other side of the screen.
+* **Resize**: drag the sidebar's inner edge; double-click it to collapse.`,
       resizeDetails:
         "Dragging the sidebar very narrow collapses it completely, and it can never grow wider than half of the screen. Double-clicking the edge of a sidebar you have widened snaps it back to its normal width. Expanding a collapsed sidebar also restores that normal width.",
     },
     runbookLibrary: {
       intro: (runbooksTitle) =>
         `The sidebar's **${runbooksTitle}** section holds your imported runbooks.`,
-      items: (importLabel, clearLibraryLabel, runbookActionsLabel) => [
-        `Click **${importLabel}** to load one or more \`.json\` files at once, or **Paste** to create a runbook from raw JSON.`,
-        "You can also **drag files** from your file explorer and drop them onto the section to import them.",
-        "Click any runbook to open it. If it's already open in a tab, that tab becomes active.",
-        `Open the **${runbookActionsLabel}** menu shown on row hover to duplicate a runbook or remove it from the library.`,
-        `Click **${clearLibraryLabel}** to empty the whole library at once.`,
-        "Drag the handle on the left of a runbook to reorder it in the list.",
-        "Use the **search bar** to filter runbooks by label or filename.",
-      ],
+      items: (
+        importLabel,
+        clearLibraryLabel,
+        runbookActionsLabel,
+      ) => `* Click **${importLabel}** to load one or more \`.json\` files at once, or **Paste** to create a runbook from raw JSON.
+* You can also **drag files** from your file explorer and drop them onto the section to import them.
+* Click any runbook to open it. If it's already open in a tab, that tab becomes active.
+* Open the **${runbookActionsLabel}** menu shown on row hover to duplicate a runbook or remove it from the library.
+* Click **${clearLibraryLabel}** to empty the whole library at once.
+* Drag the handle on the left of a runbook to reorder it in the list.
+* Use the **search bar** to filter runbooks by label or filename.`,
       autoLabel:
         "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label. Otherwise the imported filename is used as the fallback.",
       labelDetails:
@@ -796,10 +791,8 @@ export const en: Messages = {
     commandBlock: {
       intro:
         "It's a block that holds a command you want to keep at hand. It has two parts:",
-      parts: [
-        "**Preview** (always visible): the command exactly as it will be copied. Click its **Copy** button to send it to your clipboard. This button is disabled if the command is empty.",
-        "**Editor** (collapsible): where you write the command. Use the chevron button to hide it when you only need the preview.",
-      ],
+      parts: `* **Preview** (always visible): the command exactly as it will be copied. Click its **Copy** button to send it to your clipboard. This button is disabled if the command is empty.
+* **Editor** (collapsible): where you write the command. Use the chevron button to hide it when you only need the preview.`,
       multiline:
         "Commands can span several lines, and the editor can scroll sideways when a line gets very long. The left margin marks the first line with `$` and numbers the rest.",
       longCommands: (showMoreLines) =>
@@ -825,6 +818,8 @@ export const en: Messages = {
         `Notes can be spell checked as you write them. **Right-click** anywhere in the runbook content and toggle **${spellcheckLabel}** in the menu.`,
       tables:
         "Notes also support [GitHub-flavored markdown tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): cells separated by `|` bars, with a row of dashes under the header. Click the note below to see the raw syntax.",
+      lists:
+        "Lists work the same way: start a line with `*` or `-` for a bullet, or with a number and a dot for a numbered step. Indent a line to nest it under the item above it. Every item is one line long, so the list ends at the first line that does not start with a marker.",
       noNesting:
         "Styles do not combine: for example, bold and italics cannot be mixed on the same words. Whichever style starts first wins.",
       links:
@@ -835,12 +830,12 @@ export const en: Messages = {
     imageBlock: {
       intro:
         "It's a block that holds a picture: the architecture diagram, a screenshot of the screen you are supposed to be looking at, the dashboard panel that says the deploy worked, etc.",
-      ways: (chooseLabel) => [
-        "**Drop it in**: drag an image file from your desktop straight onto the block.",
-        "**Paste it**: click the block and press `Ctrl+V` with an image, or an image address, on your clipboard.",
-        `**Pick it**: press **${chooseLabel}** to open your file browser.`,
-        "**Link it**: type or paste an `http` or `https` address into the box at the bottom of the block.",
-      ],
+      ways: (
+        chooseLabel,
+      ) => `* **Drop it in**: drag an image file from your desktop straight onto the block.
+* **Paste it**: click the block and press \`Ctrl+V\` with an image, or an image address, on your clipboard.
+* **Pick it**: press **${chooseLabel}** to open your file browser.
+* **Link it**: type or paste an \`http\` or \`https\` address into the box at the bottom of the block.`,
       attachedVsLinked: (limit) =>
         `An attached image has to stay under **${limit}**. A linked image will only show while it stays hosted online.`,
       sizing:
@@ -858,12 +853,10 @@ export const en: Messages = {
     multiSelect: {
       intro:
         "Hold `Shift` and click blocks to build a selection. You can also hold `Shift` and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.",
-      actions: [
-        "**Drag** any selected block's handle to move all selected blocks together, preserving relative order.",
-        "**Duplicate**: `Ctrl+D` duplicates the entire group, inserted after the last selected block.",
-        "**Delete**: `Del` deletes the entire group.",
-        "**Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab. Referenced variables travel with the blocks; if the target tab already defines one of them with a different value, the copy is added under a new name and the copied blocks are rewritten to reference it, so neither tab's values are touched.",
-      ],
+      actions: `* **Drag** any selected block's handle to move all selected blocks together, preserving relative order.
+* **Duplicate**: \`Ctrl+D\` duplicates the entire group, inserted after the last selected block.
+* **Delete**: \`Del\` deletes the entire group.
+* **Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab. Referenced variables travel with the blocks; if the target tab already defines one of them with a different value, the copy is added under a new name and the copied blocks are rewritten to reference it, so neither tab's values are touched.`,
       clear:
         "Press `Escape` or click outside block controls to clear the selection.",
       dragToTabDelay:
@@ -872,15 +865,13 @@ export const en: Messages = {
     readMode: {
       intro:
         "Read mode locks editing, not navigation. Click the **padlock icon** in the header to enter it:",
-      rules: [
-        "All command editors collapse and cannot be expanded.",
-        "Block and note text cannot be edited.",
-        "Block structure cannot be changed (no adding, deleting, or reordering).",
-        "Variable values can still be changed.",
-        "Runbooks can still be opened.",
-        "Links can be opened with a direct click.",
-        "Images open full screen with a click.",
-      ],
+      rules: `* All command editors collapse and cannot be expanded.
+* Block and note text cannot be edited.
+* Block structure cannot be changed (no adding, deleting, or reordering).
+* Variable values can still be changed.
+* Runbooks can still be opened.
+* Links can be opened with a direct click.
+* Images open full screen with a click.`,
       persisted:
         "This mode is part of your saved preferences, so reloading the app keeps you in read mode.",
       exit: "Click the **pencil icon** to return to edit mode.",
@@ -888,11 +879,9 @@ export const en: Messages = {
     export: {
       intro: (exportLabel) =>
         `Click **${exportLabel}** in the header to open the format picker.`,
-      formats: [
-        "**JSON**: the full workspace (variables and blocks). Can be re-imported.",
-        "**Markdown**: a human-readable `.md` file with headings, subheadings, dividers, resolved commands, and images.",
-        "**Plain text**: the same content as Markdown, saved as `.txt`.",
-      ],
+      formats: `* **JSON**: the full workspace (variables and blocks). Can be re-imported.
+* **Markdown**: a human-readable \`.md\` file with headings, subheadings, dividers, resolved commands, and images.
+* **Plain text**: the same content as Markdown, saved as \`.txt\`.`,
       saveDialog:
         "A native OS save dialog opens on supported browsers so you can choose the filename and folder. On other browsers the file downloads directly.",
       copyMarkdown: (copyMarkdownLabel) =>

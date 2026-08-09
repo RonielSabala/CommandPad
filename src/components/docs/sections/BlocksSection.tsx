@@ -12,7 +12,7 @@ import {
   demoNote,
 } from "../demos/demoSeeds";
 import { DemoWorkspace } from "../demos/DemoWorkspace";
-import { Prose, ProseList, ProseTable } from "../Prose";
+import { Prose } from "../Prose";
 
 const LONG_COMMAND = joinLines([
   "echo 'Starting backup...' \\",
@@ -75,7 +75,7 @@ export function CommandBlockDocs() {
   return (
     <>
       <Prose text={t.docs.commandBlock.intro} />
-      <ProseList items={t.docs.commandBlock.parts} />
+      <Prose text={t.docs.commandBlock.parts} />
       <DemoWorkspace
         tabs={[{ blocks: [demoCommand("ls -ltr ~/Documents/reports")] }]}
       >
@@ -105,7 +105,7 @@ export function NoteBlockDocs() {
         )}
       />
       <Prose text={t.docs.noteBlock.markdown} />
-      <ProseTable text={t.docs.noteBlock.markdownTable} />
+      <Prose text={t.docs.noteBlock.markdownTable} />
       <Prose text={t.docs.noteBlock.escapes} />
       <Prose text={t.docs.noteBlock.links} />
 
@@ -122,6 +122,12 @@ export function NoteBlockDocs() {
       <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.tableSample)] }]}>
         <BlocksList />
       </DemoWorkspace>
+
+      <Prose text={t.docs.noteBlock.lists} />
+
+      <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.listSample)] }]}>
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }
@@ -134,7 +140,7 @@ export function ImageBlockDocs() {
   return (
     <>
       <Prose text={t.docs.imageBlock.intro} />
-      <ProseList items={t.docs.imageBlock.ways(t.image.choose)} />
+      <Prose text={t.docs.imageBlock.ways(t.image.choose)} />
       <Prose
         text={t.docs.imageBlock.demoHint(
           t.image.viewFullscreen,

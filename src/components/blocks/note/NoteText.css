@@ -48,6 +48,26 @@ body.select-key-held:not(.read-mode) .note-link {
   pointer-events: none;
 }
 
+/* --- LIST --- */
+
+.note-list {
+  margin: var(--space-4) 0;
+  padding-left: var(--space-12);
+  white-space: normal;
+}
+
+.note-list .note-list {
+  margin: var(--space-2) 0 0;
+}
+
+.note-list li::marker {
+  color: var(--color-text-primary);
+}
+
+.note-list:not(ol) li::marker {
+  font-size: 1.3em;
+}
+
 /* --- TABLE --- */
 
 .note-table {

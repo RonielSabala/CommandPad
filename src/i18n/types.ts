@@ -29,7 +29,7 @@ export const LANGUAGE_NAMES: Record<Language, string> = {
 interface LegalSectionMessage {
   heading: string;
   paragraphs: string[];
-  bullets?: string[];
+  bullets?: string;
 }
 
 export interface LegalPageMessages {
@@ -337,6 +337,7 @@ export interface Messages {
       reset: string;
       noteSample: string;
       tableSample: string;
+      listSample: string;
       tabSamples: string[];
       runbookSamples: string[];
       multiSelectNotes: string[];
@@ -356,12 +357,12 @@ export interface Messages {
     };
     workspace: {
       intro: string;
-      items: string[];
+      items: string;
       persistence: string;
     };
     header: {
       intro: string;
-      items: (exportLabel: string, collapseAllLabel: string) => string[];
+      items: (exportLabel: string, collapseAllLabel: string) => string;
     };
     mainPanel: {
       intro: (newBlockLabel: string) => string;
@@ -369,13 +370,13 @@ export interface Messages {
     };
     tabs: {
       intro: string;
-      items: string[];
+      items: string;
       autoCreate: string;
       labelDemo: string;
     };
     sidebar: {
       intro: string;
-      items: string[];
+      items: string;
       resizeDetails: string;
     };
     runbookLibrary: {
@@ -384,7 +385,7 @@ export interface Messages {
         importLabel: string,
         clearLibraryLabel: string,
         runbookActionsLabel: string,
-      ) => string[];
+      ) => string;
       autoLabel: string;
       labelDetails: string;
       autoSave: string;
@@ -456,7 +457,7 @@ export interface Messages {
     };
     commandBlock: {
       intro: string;
-      parts: string[];
+      parts: string;
       multiline: string;
       longCommands: (showMoreLines: string) => string;
       variablesTeaser: string;
@@ -469,13 +470,14 @@ export interface Messages {
       escapes: string;
       spellcheck: (spellcheckLabel: string) => string;
       tables: string;
+      lists: string;
       noNesting: string;
       links: string;
       wrapKeys: string;
     };
     imageBlock: {
       intro: string;
-      ways: (chooseLabel: string) => string[];
+      ways: (chooseLabel: string) => string;
       attachedVsLinked: (limit: string) => string;
       sizing: string;
       slideshow: string;
@@ -491,19 +493,19 @@ export interface Messages {
     };
     multiSelect: {
       intro: string;
-      actions: string[];
+      actions: string;
       clear: string;
       dragToTabDelay: string;
     };
     readMode: {
       intro: string;
-      rules: string[];
+      rules: string;
       persisted: string;
       exit: string;
     };
     export: {
       intro: (exportLabel: string) => string;
-      formats: string[];
+      formats: string;
       saveDialog: string;
       copyMarkdown: (copyMarkdownLabel: string) => string;
     };

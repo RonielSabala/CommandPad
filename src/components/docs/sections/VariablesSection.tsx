@@ -2,7 +2,7 @@ import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
 import { demoCommand, demoVariable } from "../demos/demoSeeds";
 import { DemoVariableRows, DemoWorkspace } from "../demos/DemoWorkspace";
-import { Prose, ProseTable } from "../Prose";
+import { Prose } from "../Prose";
 import "./VariablesSection.css";
 
 export function VariablesDocs() {
@@ -230,7 +230,7 @@ export function VariableCaseDocs() {
   return (
     <>
       <Prose text={t.docs.variableCase.intro} />
-      <ProseTable text={t.docs.variableCase.table} />
+      <Prose text={t.docs.variableCase.table} />
       <Prose text={t.docs.variableCase.rebuild} />
       <Prose text={t.docs.variableCase.demoHint} />
       <DemoWorkspace
@@ -257,7 +257,7 @@ export function VariableStripDocs() {
   return (
     <>
       <Prose text={t.docs.variableStrip.intro} />
-      <ProseTable text={t.docs.variableStrip.table} />
+      <Prose text={t.docs.variableStrip.table} />
       <Prose text={t.docs.variableStrip.demoHint} />
       <DemoWorkspace
         tabs={[

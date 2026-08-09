@@ -98,6 +98,7 @@ export type NoteSegmentType =
 export const NoteNodeType = {
   TEXT: "text",
   TABLE: "table",
+  LIST: "list",
 } as const;
 export type NoteNodeType = (typeof NoteNodeType)[keyof typeof NoteNodeType];
 

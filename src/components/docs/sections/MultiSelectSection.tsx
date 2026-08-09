@@ -2,7 +2,7 @@ import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
 import { demoCommand, demoNote } from "../demos/demoSeeds";
 import { DemoSelectionArea, DemoWorkspace } from "../demos/DemoWorkspace";
-import { Prose, ProseList } from "../Prose";
+import { Prose } from "../Prose";
 
 export function MultiSelectDocs() {
   const t = useTranslation();
@@ -10,7 +10,7 @@ export function MultiSelectDocs() {
   return (
     <>
       <Prose text={t.docs.multiSelect.intro} />
-      <ProseList items={t.docs.multiSelect.actions} />
+      <Prose text={t.docs.multiSelect.actions} />
       <Prose text={t.docs.multiSelect.dragToTabDelay} />
       <Prose text={t.docs.multiSelect.clear} />
       <DemoWorkspace

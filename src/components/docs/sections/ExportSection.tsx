@@ -1,5 +1,5 @@
 import { useTranslation } from "@/i18n";
-import { Prose, ProseList } from "../Prose";
+import { Prose } from "../Prose";
 
 export function ExportDocs() {
   const t = useTranslation();
@@ -7,7 +7,7 @@ export function ExportDocs() {
   return (
     <>
       <Prose text={t.docs.export.intro(t.header.export)} />
-      <ProseList items={t.docs.export.formats} />
+      <Prose text={t.docs.export.formats} />
       <Prose text={t.docs.export.saveDialog} />
       <Prose text={t.docs.export.copyMarkdown(t.contextMenu.copyMarkdown)} />
     </>

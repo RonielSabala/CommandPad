@@ -13,6 +13,8 @@ export const EditCommand = {
 export const HtmlTag = {
   TABLE_HEADER_CELL: "th",
   TABLE_CELL: "td",
+  PARAGRAPH: "p",
+  DIV: "div",
 } as const;
 
 export const DataAttr = {

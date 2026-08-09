@@ -1,36 +1,25 @@
+import { HtmlTag } from "@/common/constants/dom";
+import { NoteNodeType } from "@/common/enums";
 import {
   formatBinding,
   KEYBINDINGS,
   type KeyBinding,
 } from "@/common/keybindings";
-import { NoteText } from "@/components/blocks/note/NoteText";
+import { NoteNodes } from "@/components/blocks/note/NoteText";
+import { parseNoteNodes } from "@/utils/markdown";
+import { useMemo } from "react";
 import "./Prose.css";
 
 export function Prose({ text }: { text: string }) {
-  return (
-    <p className="docs-prose">
-      <NoteText text={text} />
-    </p>
-  );
-}
+  const nodes = useMemo(() => parseNoteNodes(text), [text]);
+  const Tag = nodes.every((node) => node.type === NoteNodeType.TEXT)
+    ? HtmlTag.PARAGRAPH
+    : HtmlTag.DIV;
 
-export function ProseTable({ text }: { text: string }) {
   return (
-    <div className="docs-prose">
-      <NoteText text={text} />
-    </div>
-  );
-}
-
-export function ProseList({ items }: { items: string[] }) {
-  return (
-    <ul className="docs-prose docs-list">
-      {items.map((item, i) => (
-        <li key={i}>
-          <NoteText text={item} />
-        </li>
-      ))}
-    </ul>
+    <Tag className="docs-prose">
+      <NoteNodes nodes={nodes} />
+    </Tag>
   );
 }
 

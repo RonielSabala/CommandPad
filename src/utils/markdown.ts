@@ -1,11 +1,14 @@
+import { TAB_CHARACTER } from "@/common/constants/events";
 import { NoteNodeType, NoteSegmentType, NoteTableAlign } from "@/common/enums";
 import {
   MarkdownDelimiter,
   MarkdownEscapeRegex,
+  MarkdownList,
   MarkdownTable,
   MarkdownToken,
 } from "@/common/markdownSyntax";
 import type {
+  NoteList,
   NoteNode,
   NoteSegment,
   NoteTable,
@@ -219,6 +222,113 @@ function readTable(
   return { table: { head: toRow(headerCells, aligns), rows }, endLine: end };
 }
 
+interface RawListItem {
+  indent: number;
+  ordered: boolean;
+  start: number;
+  text: string;
+  textStart: number;
+}
+
+function measureIndent(indent: string): number {
+  let width = 0;
+  for (const char of indent) {
+    width += char === TAB_CHARACTER ? MarkdownList.TAB_WIDTH : 1;
+  }
+
+  return width;
+}
+
+function readListItem(line: string, lineStart: number): RawListItem | null {
+  const match = MarkdownList.ITEM_REGEX.exec(line);
+  const groups = match?.groups;
+
+  if (!match || !groups) {
+    return null;
+  }
+
+  const { indent = "", ordinal } = groups;
+  const marker = match[0].length;
+
+  return {
+    indent: measureIndent(indent),
+    ordered: ordinal !== undefined,
+    start: ordinal === undefined ? MarkdownList.FIRST_ORDINAL : Number(ordinal),
+    text: line.slice(marker),
+    textStart: lineStart + marker,
+  };
+}
+
+interface ListMatch {
+  list: NoteList;
+  /** How many of `items` the list took, i.e. where the next one starts. */
+  next: number;
+}
+
+function buildList(items: RawListItem[], index: number): ListMatch {
+  const first = items[index];
+  const list: NoteList = {
+    ordered: first.ordered,
+    start: first.start,
+    items: [],
+  };
+
+  let i = index;
+  while (i < items.length) {
+    const item = items[i];
+
+    if (item.indent > first.indent) {
+      const nested = buildList(items, i);
+      list.items[list.items.length - 1].lists.push(nested.list);
+      i = nested.next;
+      continue;
+    }
+
+    if (item.indent < first.indent || item.ordered !== first.ordered) {
+      break;
+    }
+
+    list.items.push({
+      segments: parseNoteText(item.text, item.textStart),
+      lists: [],
+    });
+    i++;
+  }
+
+  return { list, next: i };
+}
+
+interface ListNodeMatch {
+  list: NoteList;
+  endLine: number;
+}
+
+function readList(
+  lines: string[],
+  starts: number[],
+  line: number,
+): ListNodeMatch | null {
+  const items: RawListItem[] = [];
+
+  let end = line;
+  while (end < lines.length) {
+    const item = readListItem(lines[end], starts[end]);
+    if (!item) {
+      break;
+    }
+
+    items.push(item);
+    end++;
+  }
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  const { list, next } = buildList(items, 0);
+  return { list, endLine: line + next };
+}
+
 export function parseNoteNodes(text: string): NoteNode[] {
   const lines = splitLines(text);
   const nodes: NoteNode[] = [];
@@ -251,16 +361,25 @@ export function parseNoteNodes(text: string): NoteNode[] {
   let line = 0;
 
   while (line < lines.length) {
-    const match = readTable(lines, starts, line);
-    if (!match) {
-      line++;
+    const table = readTable(lines, starts, line);
+    if (table) {
+      flushText(runStart, line);
+      nodes.push({ type: NoteNodeType.TABLE, table: table.table });
+      line = table.endLine;
+      runStart = line;
       continue;
     }
 
-    flushText(runStart, line);
-    nodes.push({ type: NoteNodeType.TABLE, table: match.table });
-    line = match.endLine;
-    runStart = line;
+    const list = readList(lines, starts, line);
+    if (list) {
+      flushText(runStart, line);
+      nodes.push({ type: NoteNodeType.LIST, list: list.list });
+      line = list.endLine;
+      runStart = line;
+      continue;
+    }
+
+    line++;
   }
 
   flushText(runStart, lines.length);
@@ -269,16 +388,31 @@ export function parseNoteNodes(text: string): NoteNode[] {
 }
 
 export function noteToPlainText(text: string): string {
-  const cellText = (cell: NoteTableCell) =>
-    cell.segments.map((segment) => segment.text).join("");
+  const segmentsText = (segments: NoteSegment[]) =>
+    segments.map((segment) => segment.text).join("");
+
+  const cellText = (cell: NoteTableCell) => segmentsText(cell.segments);
+
+  const listText = (list: NoteList): string =>
+    list.items
+      .map((item) =>
+        [segmentsText(item.segments), ...item.lists.map(listText)]
+          .filter(Boolean)
+          .join(" "),
+      )
+      .join(" ");
 
   return parseNoteNodes(text)
-    .map((node) =>
-      node.type === NoteNodeType.TABLE
-        ? [node.table.head, ...node.table.rows]
-            .flatMap((row) => row.map(cellText))
-            .join(" ")
-        : node.segments.map((segment) => segment.text).join(""),
-    )
+    .map((node) => {
+      if (node.type === NoteNodeType.TABLE) {
+        return [node.table.head, ...node.table.rows]
+          .flatMap((row) => row.map(cellText))
+          .join(" ");
+      }
+
+      return node.type === NoteNodeType.LIST
+        ? listText(node.list)
+        : segmentsText(node.segments);
+    })
     .join(" ");
 }

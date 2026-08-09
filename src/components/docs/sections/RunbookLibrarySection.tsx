@@ -2,7 +2,7 @@ import { NoteStyle } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import { demoNote } from "../demos/demoSeeds";
 import { DemoRunbookList, DemoWorkspace } from "../demos/DemoWorkspace";
-import { Prose, ProseList } from "../Prose";
+import { Prose } from "../Prose";
 
 export function RunbookLibraryDocs() {
   const t = useTranslation();
@@ -10,8 +10,8 @@ export function RunbookLibraryDocs() {
   return (
     <>
       <Prose text={t.docs.runbookLibrary.intro(t.runbooks.title)} />
-      <ProseList
-        items={t.docs.runbookLibrary.items(
+      <Prose
+        text={t.docs.runbookLibrary.items(
           t.runbooks.import,
           t.runbooks.clearLibrary,
           t.runbooks.actions,

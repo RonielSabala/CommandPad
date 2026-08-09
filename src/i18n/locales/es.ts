@@ -403,45 +403,37 @@ export const es: Messages = {
         paragraphs: [
           "Todos los datos que introduces, como variables, comandos, notas y libros, se guardan localmente en tu navegador para que tu trabajo siga ahí cuando vuelvas.",
         ],
-        bullets: [
-          "**localStorage** guarda tus preferencias (tema, idioma, disposición) y metadatos ligeros de las pestañas.",
-          "**IndexedDB** guarda el contenido real de los libros (tus variables y bloques de comandos).",
-        ],
+        bullets: `* **localStorage** guarda tus preferencias (tema, idioma, disposición) y metadatos ligeros de las pestañas.
+* **IndexedDB** guarda el contenido real de los libros (tus variables y bloques de comandos).`,
       },
       {
         heading: "Imágenes",
         paragraphs: [
           "Un bloque de imagen guarda una imagen de dos formas posibles, y ninguna de ellas sube nada. **No hay servidor de imágenes, ni punto de subida, ni alojamiento de imágenes operado por nosotros.**",
         ],
-        bullets: [
-          "Una imagen **adjunta** (arrastrada, pegada o elegida con el selector de archivos) la lee tu navegador en tu propio dispositivo y se guarda como texto dentro del libro, junto al resto de su contenido. El archivo nunca se envía a ningún sitio.",
-          "Una imagen **enlazada** es solo una dirección que escribiste. No se guarda ni se sube nada, pero tu navegador descarga la imagen del sitio que la aloja, así que ese sitio ve la petición igual que la vería en cualquier página que muestre la imagen.",
-          "Si sincronizas un libro con tu propia cuenta en la nube, sus imágenes adjuntas viajan con él a esa cuenta, igual que cualquier otra parte del libro.",
-        ],
+        bullets: `* Una imagen **adjunta** (arrastrada, pegada o elegida con el selector de archivos) la lee tu navegador en tu propio dispositivo y se guarda como texto dentro del libro, junto al resto de su contenido. El archivo nunca se envía a ningún sitio.
+* Una imagen **enlazada** es solo una dirección que escribiste. No se guarda ni se sube nada, pero tu navegador descarga la imagen del sitio que la aloja, así que ese sitio ve la petición igual que la vería en cualquier página que muestre la imagen.
+* Si sincronizas un libro con tu propia cuenta en la nube, sus imágenes adjuntas viajan con él a esa cuenta, igual que cualquier otra parte del libro.`,
       },
       {
         heading: "Qué no hacemos",
         paragraphs: [
           "Queremos ser explícitos sobre las cosas que CommandPad evita deliberadamente.",
         ],
-        bullets: [
-          "No operamos un servidor backend que reciba tus datos. La única vez que tus libros salen de tu dispositivo es cuando los exportas o los sincronizas explícitamente con tu propia cuenta en la nube.",
-          "No usamos cookies, identificadores publicitarios ni analítica de terceros.",
-          "No seguimos tu comportamiento entre sitios ni construimos un perfil sobre ti.",
-          "No requerimos una cuenta de CommandPad, un correo electrónico ni ningún inicio de sesión para usar la app.",
-        ],
+        bullets: `* No operamos un servidor backend que reciba tus datos. La única vez que tus libros salen de tu dispositivo es cuando los exportas o los sincronizas explícitamente con tu propia cuenta en la nube.
+* No usamos cookies, identificadores publicitarios ni analítica de terceros.
+* No seguimos tu comportamiento entre sitios ni construimos un perfil sobre ti.
+* No requerimos una cuenta de CommandPad, un correo electrónico ni ningún inicio de sesión para usar la app.`,
       },
       {
         heading: "Sincronización en la nube (opcional)",
         paragraphs: [
           "CommandPad puede, de forma opcional, exportar un libro a tu propia cuenta de SharePoint o Google Drive, o importar uno desde ella. Esta función está desactivada hasta que elijas usarla.",
         ],
-        bullets: [
-          "Inicias sesión mediante el propio flujo del proveedor (Microsoft o Google). CommandPad nunca ve tu contraseña y solo solicita acceso a la carpeta dedicada **CommandPad** que crea para tus libros.",
-          "Los libros sincronizados se guardan en esa carpeta dentro de tu propia cuenta. No se envían ni se almacenan en ningún servidor operado por nosotros.",
-          "Los datos que sincronizas viajan entre tu navegador y el proveedor que elijas. Una vez que llegan a ese proveedor, se aplican su política de privacidad y sus términos.",
-          "Puedes cerrar sesión en cualquier momento y puedes eliminar los archivos sincronizados directamente desde tu cuenta en la nube.",
-        ],
+        bullets: `* Inicias sesión mediante el propio flujo del proveedor (Microsoft o Google). CommandPad nunca ve tu contraseña y solo solicita acceso a la carpeta dedicada **CommandPad** que crea para tus libros.
+* Los libros sincronizados se guardan en esa carpeta dentro de tu propia cuenta. No se envían ni se almacenan en ningún servidor operado por nosotros.
+* Los datos que sincronizas viajan entre tu navegador y el proveedor que elijas. Una vez que llegan a ese proveedor, se aplican su política de privacidad y sus términos.
+* Puedes cerrar sesión en cualquier momento y puedes eliminar los archivos sincronizados directamente desde tu cuenta en la nube.`,
       },
       {
         heading: "Variables secretas",
@@ -492,13 +484,11 @@ export const es: Messages = {
         paragraphs: [
           "Eres responsable de los comandos y del contenido que creas y de cómo los usas.",
         ],
-        bullets: [
-          "Revisa cada comando antes de ejecutarlo. CommandPad resuelve y copia texto; no ejecuta nada por ti.",
-          "Mantén tus propias copias de seguridad de lo importante exportando tus libros.",
-          "Adjunta solo imágenes que tengas derecho a usar. Una imagen adjunta pasa a formar parte del libro, así que va allá donde exportes o sincronices ese libro.",
-          "No confíes en las variables secretas como almacenamiento seguro de credenciales sensibles.",
-          "Usa la app cumpliendo las leyes y políticas que se te apliquen.",
-        ],
+        bullets: `* Revisa cada comando antes de ejecutarlo. CommandPad resuelve y copia texto; no ejecuta nada por ti.
+* Mantén tus propias copias de seguridad de lo importante exportando tus libros.
+* Adjunta solo imágenes que tengas derecho a usar. Una imagen adjunta pasa a formar parte del libro, así que va allá donde exportes o sincronices ese libro.
+* No confíes en las variables secretas como almacenamiento seguro de credenciales sensibles.
+* Usa la app cumpliendo las leyes y políticas que se te apliquen.`,
       },
       {
         heading: "Sin garantía",
@@ -517,11 +507,9 @@ export const es: Messages = {
         paragraphs: [
           "Si eliges sincronizar libros con SharePoint o Google Drive, lo haces a través de tu propia cuenta con Microsoft o Google. Tu uso de esos servicios se rige por sus términos y políticas de privacidad, no por los nuestros.",
         ],
-        bullets: [
-          "CommandPad solo accede a la carpeta dedicada que crea para tus libros; no lee el resto de tu almacenamiento en la nube.",
-          "No somos responsables de la disponibilidad, el comportamiento ni el manejo de datos de Microsoft, Google o cualquier otro proveedor externo.",
-          "Eres responsable de mantener segura tu cuenta en la nube y de cualquier contenido que almacenes en ella.",
-        ],
+        bullets: `* CommandPad solo accede a la carpeta dedicada que crea para tus libros; no lee el resto de tu almacenamiento en la nube.
+* No somos responsables de la disponibilidad, el comportamiento ni el manejo de datos de Microsoft, Google o cualquier otro proveedor externo.
+* Eres responsable de mantener segura tu cuenta en la nube y de cualquier contenido que almacenes en ella.`,
       },
       {
         heading: "Datos y privacidad",
@@ -602,6 +590,16 @@ export const es: Messages = {
 | 126 | Permiso denegado | Dale permisos con \`chmod +x\` |
 | 127 | Comando no encontrado | Revisa tu \`PATH\` |
 | 137 | Terminado (sin memoria) | **Aumenta el límite de memoria** |`,
+      listSample: `Antes de empezar:
+* Cierra cualquier otra copia del archivo
+* Guarda una copia de seguridad, por si acaso
+
+Si algo sale mal, deshazlo en este orden:
+1. Detén lo que estabas haciendo
+2. Restaura la copia de seguridad
+    1. Cópiala encima del original
+    2. Ábrela para comprobar que está bien
+3. Avisa a tu equipo de lo ocurrido`,
     },
     gettingStarted: {
       intro:
@@ -617,27 +615,26 @@ export const es: Messages = {
     workspace: {
       intro:
         "El espacio de trabajo es la pantalla principal de la app, donde pasarás la mayor parte del tiempo armando y puliendo tus libros. Está formado por tres zonas:",
-      items: [
-        "La **cabecera**: reúne los botones con las acciones globales de la app.",
-        "La **barra lateral**: contiene la biblioteca de libros y el panel de variables.",
-        "El **panel principal**: aquí viven todos los libros que tengas abiertos, junto con sus bloques.",
-      ],
+      items: `* La **cabecera**: reúne los botones con las acciones globales de la app.
+* La **barra lateral**: contiene la biblioteca de libros y el panel de variables.
+* El **panel principal**: aquí viven todos los libros que tengas abiertos, junto con sus bloques.`,
       persistence:
         "Todo lo que haces se guarda automáticamente en tu navegador y se restaura al recargar la página. Tus datos nunca se envían a un servidor.",
     },
     header: {
       intro:
         "La cabecera reúne las acciones que afectan a toda la app. De izquierda a derecha:",
-      items: (exportLabel, collapseAllLabel) => [
-        "El **logo de CommandPad**: haz clic en él para recargar la app.",
-        "El **candado / lápiz**: alterna entre el modo lectura y el modo edición. Tiene su propia sección más adelante.",
-        `**${collapseAllLabel}**: contrae o expande de golpe todos los editores de comandos del libro activo.`,
-        "El **sol / la luna**: cambia entre el tema claro y oscuro.",
-        "El **selector de idioma**: cambia el idioma de la interfaz.",
-        "El **libro**: abre esta documentación.",
-        "La **flecha roja**: resetea el espacio de trabajo. Lo borra todo, así que la app siempre te pide confirmación antes.",
-        `**${exportLabel}**: guarda el libro activo en un archivo. También tiene su propia sección más adelante.`,
-      ],
+      items: (
+        exportLabel,
+        collapseAllLabel,
+      ) => `* El **logo de CommandPad**: haz clic en él para recargar la app.
+* El **candado / lápiz**: alterna entre el modo lectura y el modo edición. Tiene su propia sección más adelante.
+* **${collapseAllLabel}**: contrae o expande de golpe todos los editores de comandos del libro activo.
+* El **sol / la luna**: cambia entre el tema claro y oscuro.
+* El **selector de idioma**: cambia el idioma de la interfaz.
+* El **libro**: abre esta documentación.
+* La **flecha roja**: resetea el espacio de trabajo. Lo borra todo, así que la app siempre te pide confirmación antes.
+* **${exportLabel}**: guarda el libro activo en un archivo. También tiene su propia sección más adelante.`,
     },
     mainPanel: {
       intro: (newBlockLabel) =>
@@ -647,12 +644,10 @@ export const es: Messages = {
     },
     tabs: {
       intro: "Cada pestaña contiene un libro abierto.",
-      items: [
-        "**Haz clic** en una pestaña para cambiar a ella.",
-        "**Arrastra** una pestaña para reordenarla.",
-        "**Clic con la rueda** del ratón en una pestaña para cerrarla.",
-        "**Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.",
-      ],
+      items: `* **Haz clic** en una pestaña para cambiar a ella.
+* **Arrastra** una pestaña para reordenarla.
+* **Clic con la rueda** del ratón en una pestaña para cerrarla.
+* **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.`,
       autoCreate:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:
@@ -661,26 +656,26 @@ export const es: Messages = {
     sidebar: {
       intro:
         "La barra lateral contiene la biblioteca de libros y el panel de variables.",
-      items: [
-        "**Contraer / expandir**: haz clic en el botón de flecha o usa su atajo de teclado.",
-        "**Mover a izquierda / derecha**: haz clic en el botón de disposición para mover la barra lateral al otro lado de la pantalla.",
-        "**Redimensionar**: arrastra el borde interior de la barra lateral; doble clic para contraerla.",
-      ],
+      items: `* **Contraer / expandir**: haz clic en el botón de flecha o usa su atajo de teclado.
+* **Mover a izquierda / derecha**: haz clic en el botón de disposición para mover la barra lateral al otro lado de la pantalla.
+* **Redimensionar**: arrastra el borde interior de la barra lateral; doble clic para contraerla.`,
       resizeDetails:
         "Arrastrar la barra lateral hasta dejarla muy estrecha la contrae por completo, y nunca puede crecer más allá de la mitad de la pantalla. Si la habías ensanchado, el doble clic en su borde la devuelve a su ancho normal. Al expandir una barra contraída también vuelve a ese ancho normal.",
     },
     runbookLibrary: {
       intro: (runbooksTitle) =>
         `La sección **${runbooksTitle}** de la barra lateral contiene tus libros importados.`,
-      items: (importLabel, clearLibraryLabel, runbookActionsLabel) => [
-        `Haz clic en **${importLabel}** para cargar uno o varios archivos \`.json\` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.`,
-        "También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.",
-        "Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.",
-        `Abre el menú de **${runbookActionsLabel}** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.`,
-        `Haz clic en **${clearLibraryLabel}** para vaciar la biblioteca completa de una vez.`,
-        "Arrastra el control a la izquierda de un libro para reordenarlo en la lista.",
-        "Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.",
-      ],
+      items: (
+        importLabel,
+        clearLibraryLabel,
+        runbookActionsLabel,
+      ) => `* Haz clic en **${importLabel}** para cargar uno o varios archivos \`.json\` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.
+* También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.
+* Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.
+* Abre el menú de **${runbookActionsLabel}** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.
+* Haz clic en **${clearLibraryLabel}** para vaciar la biblioteca completa de una vez.
+* Arrastra el control a la izquierda de un libro para reordenarlo en la lista.
+* Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.`,
       autoLabel:
         "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca. En caso contrario se usa el nombre del archivo importado.",
       labelDetails:
@@ -807,10 +802,8 @@ export const es: Messages = {
     commandBlock: {
       intro:
         "Es un bloque que guarda un comando que quieras tener a mano. Tiene dos partes:",
-      parts: [
-        "**Vista previa** (siempre visible): el comando exactamente como se copiará. Haz clic en su botón de **Copiar** para enviarlo a tu portapapeles. Este botón se deshabilita si el comando está vacío.",
-        "**Editor** (contraíble): donde escribes el comando. Usa el botón de flecha para ocultarlo cuando solo necesites la vista previa.",
-      ],
+      parts: `* **Vista previa** (siempre visible): el comando exactamente como se copiará. Haz clic en su botón de **Copiar** para enviarlo a tu portapapeles. Este botón se deshabilita si el comando está vacío.
+* **Editor** (contraíble): donde escribes el comando. Usa el botón de flecha para ocultarlo cuando solo necesites la vista previa.`,
       multiline:
         "Los comandos pueden ocupar varias líneas, y el editor se puede scrollear hacia los lados cuando una línea es muy larga. El margen izquierdo marca la primera línea con `$` y numera las siguientes.",
       longCommands: (showMoreLines) =>
@@ -836,6 +829,8 @@ export const es: Messages = {
         `Las notas se pueden corregir ortográficamente mientras las escribes. Haz **clic derecho** en cualquier parte del contenido del libro y activa **${spellcheckLabel}** en el menú.`,
       tables:
         "Las notas también soportan [tablas markdown al estilo GitHub](https://docs.github.com/es/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): celdas separadas por barras `|`, con una fila de guiones debajo del encabezado. Haz clic en la nota de abajo para ver la sintaxis en bruto.",
+      lists:
+        "Las listas funcionan igual: empieza una línea con `*` o `-` para una viñeta, o con un número y un punto para un paso numerado. Sangra una línea para anidarla bajo el elemento anterior. Cada elemento ocupa una sola línea, así que la lista termina en la primera línea que no empiece por un marcador.",
       noNesting:
         "Los estilos no se combinan: por ejemplo, negrita y cursiva no pueden mezclarse en las mismas palabras. Gana el estilo que empiece primero.",
       links:
@@ -846,12 +841,12 @@ export const es: Messages = {
     imageBlock: {
       intro:
         "Es un bloque que guarda una imagen: el diagrama de la arquitectura, una captura de la pantalla que deberías estar viendo, el panel del tablero que confirma que el despliegue salió bien, etc.",
-      ways: (chooseLabel) => [
-        "**Suéltala**: arrastra un archivo de imagen desde tu escritorio directamente sobre el bloque.",
-        "**Pégala**: haz clic en el bloque y pulsa `Ctrl+V` con una imagen, o una dirección de imagen, en el portapapeles.",
-        `**Elígela**: pulsa **${chooseLabel}** para abrir el explorador de archivos.`,
-        "**Enlázala**: escribe o pega una dirección `http` o `https` en la casilla de abajo del bloque.",
-      ],
+      ways: (
+        chooseLabel,
+      ) => `* **Suéltala**: arrastra un archivo de imagen desde tu escritorio directamente sobre el bloque.
+* **Pégala**: haz clic en el bloque y pulsa \`Ctrl+V\` con una imagen, o una dirección de imagen, en el portapapeles.
+* **Elígela**: pulsa **${chooseLabel}** para abrir el explorador de archivos.
+* **Enlázala**: escribe o pega una dirección \`http\` o \`https\` en la casilla de abajo del bloque.`,
       attachedVsLinked: (limit) =>
         `Una imagen adjunta debe pesar menos de **${limit}**. Una imagen puesta a través de un enlace solo la mostrará mientras esta siga alojada en internet.`,
       sizing:
@@ -869,12 +864,10 @@ export const es: Messages = {
     multiSelect: {
       intro:
         "Mantén `Shift` y haz clic en bloques para construir una selección. También puedes mantener `Shift` y arrastrar el ratón sobre los bloques para seleccionarlos con un lazo. Lazar bloques ya seleccionados los deselecciona.",
-      actions: [
-        "**Arrastra** el control de cualquier bloque seleccionado para mover todos los bloques seleccionados juntos, conservando el orden relativo.",
-        "**Duplicar**: `Ctrl+D` duplica el grupo completo, insertado después del último bloque seleccionado.",
-        "**Eliminar**: `Del` elimina el grupo completo.",
-        "**Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella. Las variables referenciadas viajan con los bloques; si la pestaña de destino ya define alguna con un valor distinto, la copia se añade con un nuevo nombre y los bloques copiados se reescriben para referenciarla, de modo que no se tocan los valores de ninguna pestaña.",
-      ],
+      actions: `* **Arrastra** el control de cualquier bloque seleccionado para mover todos los bloques seleccionados juntos, conservando el orden relativo.
+* **Duplicar**: \`Ctrl+D\` duplica el grupo completo, insertado después del último bloque seleccionado.
+* **Eliminar**: \`Del\` elimina el grupo completo.
+* **Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella. Las variables referenciadas viajan con los bloques; si la pestaña de destino ya define alguna con un valor distinto, la copia se añade con un nuevo nombre y los bloques copiados se reescriben para referenciarla, de modo que no se tocan los valores de ninguna pestaña.`,
       clear:
         "Pulsa `Escape` o haz clic fuera de los controles de bloque para limpiar la selección.",
       dragToTabDelay:
@@ -883,15 +876,13 @@ export const es: Messages = {
     readMode: {
       intro:
         "El modo lectura bloquea la edición, no la navegación. Haz clic en el **icono de candado** de la cabecera para activarlo:",
-      rules: [
-        "Todos los editores de comandos se contraen y no pueden expandirse.",
-        "El texto de bloques y notas no puede editarse.",
-        "La estructura de bloques no puede cambiarse (sin agregar, eliminar ni reordenar).",
-        "Los valores de las variables sí pueden cambiarse.",
-        "Los libros sí pueden abrirse.",
-        "Los enlaces se pueden abrir con un clic directo.",
-        "Las imágenes se abren a pantalla completa con un clic.",
-      ],
+      rules: `* Todos los editores de comandos se contraen y no pueden expandirse.
+* El texto de bloques y notas no puede editarse.
+* La estructura de bloques no puede cambiarse (sin agregar, eliminar ni reordenar).
+* Los valores de las variables sí pueden cambiarse.
+* Los libros sí pueden abrirse.
+* Los enlaces se pueden abrir con un clic directo.
+* Las imágenes se abren a pantalla completa con un clic.`,
       persisted:
         "Este modo forma parte de tus preferencias guardadas, así que recargar la app te mantiene en modo lectura.",
       exit: "Haz clic en el **icono de lápiz** para volver al modo edición.",
@@ -899,11 +890,9 @@ export const es: Messages = {
     export: {
       intro: (exportLabel) =>
         `Haz clic en **${exportLabel}** en la cabecera para abrir el selector de formato.`,
-      formats: [
-        "**JSON**: el espacio de trabajo completo (variables y bloques). Puede reimportarse.",
-        "**Markdown**: un archivo `.md` legible con títulos, subtítulos, divisores, comandos resueltos e imágenes.",
-        "**Texto plano**: el mismo contenido que Markdown, guardado como `.txt`.",
-      ],
+      formats: `* **JSON**: el espacio de trabajo completo (variables y bloques). Puede reimportarse.
+* **Markdown**: un archivo \`.md\` legible con títulos, subtítulos, divisores, comandos resueltos e imágenes.
+* **Texto plano**: el mismo contenido que Markdown, guardado como \`.txt\`.`,
       saveDialog:
         "En navegadores compatibles se abre un diálogo nativo de guardado para elegir nombre y carpeta. En los demás, el archivo se descarga directamente.",
       copyMarkdown: (copyMarkdownLabel) =>

@@ -1,5 +1,5 @@
 import { useTranslation } from "@/i18n";
-import { Prose, ProseList } from "../Prose";
+import { Prose } from "../Prose";
 
 export function WorkspaceDocs() {
   const t = useTranslation();
@@ -7,7 +7,7 @@ export function WorkspaceDocs() {
   return (
     <>
       <Prose text={t.docs.workspace.intro} />
-      <ProseList items={t.docs.workspace.items} />
+      <Prose text={t.docs.workspace.items} />
       <Prose text={t.docs.workspace.persistence} />
     </>
   );
@@ -19,8 +19,8 @@ export function HeaderDocs() {
   return (
     <>
       <Prose text={t.docs.header.intro} />
-      <ProseList
-        items={t.docs.header.items(t.header.export, t.header.collapseAll)}
+      <Prose
+        text={t.docs.header.items(t.header.export, t.header.collapseAll)}
       />
     </>
   );
@@ -43,7 +43,7 @@ export function SidebarDocs() {
   return (
     <>
       <Prose text={t.docs.sidebar.intro} />
-      <ProseList items={t.docs.sidebar.items} />
+      <Prose text={t.docs.sidebar.items} />
       <Prose text={t.docs.sidebar.resizeDetails} />
     </>
   );
