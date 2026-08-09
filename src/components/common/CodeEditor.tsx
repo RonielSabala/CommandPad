@@ -79,7 +79,20 @@ export const CodeEditor = forwardRef<HTMLTextAreaElement, Props>(
         <div
           className="code-editor-field no-ligatures"
           data-value={value}
-          onClick={() => textareaRef.current?.focus()}
+          onClick={(event) => {
+            if (event.target !== event.currentTarget) {
+              return;
+            }
+
+            const textarea = textareaRef.current;
+            if (!textarea) {
+              return;
+            }
+
+            textarea.focus();
+            const end = textarea.value.length;
+            textarea.setSelectionRange(end, end);
+          }}
         >
           <textarea
             ref={textareaRef}
