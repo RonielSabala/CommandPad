@@ -752,6 +752,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
     const startCloudRequest = () => ++cloudRequestId;
     const isCurrentCloudRequest = (id: number) => cloudRequestId === id;
 
+    // Where the browser was left off per provider
+    const lastBrowsedCloudPath = new Map<CloudProvider, CloudFolderRef[]>();
+
     let cloudSearchRequestId = 0;
     const startCloudSearchRequest = () => ++cloudSearchRequestId;
     const isCurrentCloudSearchRequest = (id: number) =>
@@ -2364,6 +2367,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       startCloudBrowse: async (provider, path = ROOT_CLOUD_PATH) => {
+        const startPath = lastBrowsedCloudPath.get(provider) ?? path;
+
         startCloudRequest();
         set({
           ...cancelledCloudSearch(),
@@ -2374,8 +2379,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           cloudAccountLabel: null,
           cloudFileEditor: null,
           cloudLoading: true,
-          cloudPath: path,
-          cloudHistory: [path],
+          cloudPath: startPath,
+          cloudHistory: [startPath],
           cloudHistoryIndex: 0,
         });
 
@@ -2448,6 +2453,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         // Nothing walked under this account survives into the next one
         clearCachedCloudEntries(get().cloudProvider);
+        lastBrowsedCloudPath.delete(get().cloudProvider);
         startCloudRequest();
         set((s) => ({
           ...cancelledCloudSearch(),
@@ -2492,6 +2498,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           get().cloudHistoryIndex + 1,
         );
 
+        lastBrowsedCloudPath.set(get().cloudProvider, path);
+
         set({
           // Opening a folder from a search result lands you in that folder
           ...cancelledCloudSearch(),
@@ -2513,6 +2521,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         if (!path) {
           return;
         }
+
+        lastBrowsedCloudPath.set(get().cloudProvider, path);
 
         set({
           ...cancelledCloudSearch(),
