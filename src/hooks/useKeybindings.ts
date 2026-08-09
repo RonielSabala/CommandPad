@@ -106,12 +106,6 @@ export function useKeybindings(): void {
         }
 
         hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.MOVE_SIDEBAR)) {
-        state.toggleSidebarPosition();
-        hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.TOGGLE_SIDEBAR)) {
-        state.toggleSidebar();
-        hit = true;
       } else if (
         !inEditable &&
         matchesKeybinding(event, KeyBinding.IMPORT_RUNBOOK)

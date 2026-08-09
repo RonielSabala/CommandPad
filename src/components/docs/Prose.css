@@ -20,27 +20,12 @@
   color: var(--accent-text);
 }
 
-/* List */
-
-.docs-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+.docs-prose .note-list :is(li + li, .note-list) {
+  margin-top: var(--space-4);
 }
 
-.docs-list li {
-  padding-left: var(--space-10);
-  position: relative;
-}
-
-.docs-list li::before {
-  content: "•";
-  position: absolute;
-  left: var(--space-2);
-  color: var(--color-text-primary);
-  font-size: 1.5em;
-  line-height: 1.1;
+.docs-prose:has(+ .docs-prose > .note-list) {
+  margin: 0;
 }
 
 /* Keybinding */

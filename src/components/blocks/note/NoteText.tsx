@@ -2,7 +2,13 @@ import { CssClass } from "@/common/constants/css";
 import { Anchor, DataAttr, HtmlTag } from "@/common/constants/dom";
 import { AppMode, NoteNodeType, NoteSegmentType } from "@/common/enums";
 import { formatBinding, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
-import type { NoteSegment, NoteTable, NoteTableCell } from "@/common/types";
+import type {
+  NoteList,
+  NoteNode,
+  NoteSegment,
+  NoteTable,
+  NoteTableCell,
+} from "@/common/types";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { parseNoteNodes } from "@/utils/markdown";
@@ -115,6 +121,79 @@ function NoteTableView({
   );
 }
 
+function NoteListView({
+  list,
+  requiresLinkModifier,
+}: {
+  list: NoteList;
+  requiresLinkModifier?: boolean;
+}) {
+  const items = list.items.map((item, i) => (
+    <li key={i}>
+      <NoteSegments
+        segments={item.segments}
+        requiresLinkModifier={requiresLinkModifier}
+      />
+      {item.lists.map((nested, j) => (
+        <NoteListView
+          key={j}
+          list={nested}
+          requiresLinkModifier={requiresLinkModifier}
+        />
+      ))}
+    </li>
+  ));
+
+  return list.ordered ? (
+    <ol className="note-list" start={list.start}>
+      {items}
+    </ol>
+  ) : (
+    <ul className="note-list">{items}</ul>
+  );
+}
+
+interface NoteNodesProps {
+  nodes: NoteNode[];
+  requiresLinkModifier?: boolean;
+}
+
+export function NoteNodes({ nodes, requiresLinkModifier }: NoteNodesProps) {
+  return (
+    <>
+      {nodes.map((node, i) => {
+        if (node.type === NoteNodeType.TABLE) {
+          return (
+            <NoteTableView
+              key={i}
+              table={node.table}
+              requiresLinkModifier={requiresLinkModifier}
+            />
+          );
+        }
+
+        if (node.type === NoteNodeType.LIST) {
+          return (
+            <NoteListView
+              key={i}
+              list={node.list}
+              requiresLinkModifier={requiresLinkModifier}
+            />
+          );
+        }
+
+        return (
+          <NoteSegments
+            key={i}
+            segments={node.segments}
+            requiresLinkModifier={requiresLinkModifier}
+          />
+        );
+      })}
+    </>
+  );
+}
+
 interface NoteTextProps {
   text: string;
   requiresLinkModifier?: boolean;
@@ -122,22 +201,9 @@ interface NoteTextProps {
 
 export function NoteText({ text, requiresLinkModifier }: NoteTextProps) {
   return (
-    <>
-      {parseNoteNodes(text).map((node, i) =>
-        node.type === NoteNodeType.TABLE ? (
-          <NoteTableView
-            key={i}
-            table={node.table}
-            requiresLinkModifier={requiresLinkModifier}
-          />
-        ) : (
-          <NoteSegments
-            key={i}
-            segments={node.segments}
-            requiresLinkModifier={requiresLinkModifier}
-          />
-        ),
-      )}
-    </>
+    <NoteNodes
+      nodes={parseNoteNodes(text)}
+      requiresLinkModifier={requiresLinkModifier}
+    />
   );
 }

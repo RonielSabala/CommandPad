@@ -2,15 +2,21 @@ import { NoteStyle } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import { demoNote } from "../demos/demoSeeds";
 import { DemoRunbookList, DemoWorkspace } from "../demos/DemoWorkspace";
-import { Prose, ProseList } from "../Prose";
+import { Prose } from "../Prose";
 
 export function RunbookLibraryDocs() {
   const t = useTranslation();
 
   return (
     <>
-      <Prose text={t.docs.runbookLibrary.intro} />
-      <ProseList items={t.docs.runbookLibrary.items} />
+      <Prose text={t.docs.runbookLibrary.intro(t.runbooks.title)} />
+      <Prose
+        text={t.docs.runbookLibrary.items(
+          t.runbooks.import,
+          t.runbooks.clearLibrary,
+          t.runbooks.actions,
+        )}
+      />
       <DemoWorkspace
         library={t.docs.demo.runbookSamples.map((label) => ({
           blocks: [demoNote(label, NoteStyle.HEADING)],

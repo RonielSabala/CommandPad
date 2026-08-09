@@ -1,5 +1,5 @@
 import { Collapsible } from "@/components/common/Collapsible";
-import { Prose, ProseList } from "@/components/docs/Prose";
+import { Prose } from "@/components/docs/Prose";
 import { PageFooter } from "@/components/sidebar/Footer";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import "@/components/site/SitePage.css";
@@ -25,7 +25,7 @@ export function LegalPage({ content }: { content: LegalPageMessages }) {
                   <Prose key={i} text={paragraph} />
                 ))}
 
-                {section.bullets && <ProseList items={section.bullets} />}
+                {section.bullets && <Prose text={section.bullets} />}
               </Collapsible>
             ))}
           </div>

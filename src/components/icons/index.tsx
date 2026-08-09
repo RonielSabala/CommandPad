@@ -39,7 +39,7 @@ export function PlusIcon(props: IconProps) {
   );
 }
 
-export function SidebarCollapseIcon(props: IconProps) {
+export function PanelCollapseIcon(props: IconProps) {
   return (
     <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
       <polyline points="10,4 4,8 10,12" />
@@ -47,7 +47,7 @@ export function SidebarCollapseIcon(props: IconProps) {
   );
 }
 
-export function SidebarPositionIcon({
+export function PanelSideIcon({
   mirrored,
   ...props
 }: IconProps & { mirrored?: boolean }) {

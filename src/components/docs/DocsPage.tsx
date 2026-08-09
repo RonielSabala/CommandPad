@@ -4,6 +4,9 @@ import {
   type DocsSectionId,
 } from "@/common/constants/docs";
 import { ScrollIntoView } from "@/common/constants/dom";
+import { PanelId } from "@/common/enums";
+import { PanelShell } from "@/components/common/panel/PanelShell";
+import { usePanelKeybindings } from "@/hooks/usePanelKeybindings";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -36,6 +39,8 @@ export function DocsPage() {
     [],
   );
 
+  usePanelKeybindings(PanelId.DOCS_TOC);
+
   useEffect(() => {
     if (initialHash) {
       document.getElementById(initialHash)?.scrollIntoView();
@@ -62,9 +67,10 @@ export function DocsPage() {
   };
 
   return (
-    <div id="docs-shell" className="grid-shell">
+    <PanelShell panelId={PanelId.DOCS_TOC} id="docs-shell">
       <DocsHeader />
       <DocsToc activeId={activeId} collapse={collapse} onNavigate={navigate} />
+
       <main ref={mainRef} id="docs-main">
         <article id="docs-article">
           {DOCS_SECTION_ORDER.filter(({ id }) =>
@@ -88,6 +94,6 @@ export function DocsPage() {
           <DocsFooter />
         </article>
       </main>
-    </div>
+    </PanelShell>
   );
 }

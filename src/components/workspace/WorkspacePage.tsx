@@ -1,12 +1,11 @@
-import { SidebarPosition } from "@/common/enums";
+import { PanelId } from "@/common/enums";
+import { PanelShell } from "@/components/common/panel/PanelShell";
 import { useBlockSelection } from "@/hooks/useBlockSelection";
 import { useWorkspaceBodyClasses } from "@/hooks/useBodyClasses";
 import { useDocumentInteractions } from "@/hooks/useDocumentInteractions";
 import { useKeybindings } from "@/hooks/useKeybindings";
 import { useLinkActivation } from "@/hooks/useLinkActivation";
-import { useStore } from "@/store/store";
-import { classNames } from "@/utils/string";
-import type { CSSProperties } from "react";
+import { usePanelKeybindings } from "@/hooks/usePanelKeybindings";
 import { ImageLightbox } from "../blocks/image/ImageLightbox";
 import { Header } from "../header/Header";
 import { CloudFileEditorModal } from "../modals/cloud/CloudFileEditorModal";
@@ -21,34 +20,21 @@ import { Sidebar } from "../sidebar/Sidebar";
 import { MainPanel } from "./MainPanel";
 
 export function WorkspacePage() {
-  const sidebarPosition = useStore((state) => state.sidebarPosition);
-  const isSidebarCollapsed = useStore((state) => state.sidebarCollapsed);
-  const sidebarWidth = useStore((state) => state.sidebarWidth);
-
   useWorkspaceBodyClasses();
   useKeybindings();
+  usePanelKeybindings(PanelId.SIDEBAR);
   useDocumentInteractions();
   useBlockSelection(document);
   useLinkActivation(document);
 
-  const shellClass = classNames(
-    "grid-shell",
-    isSidebarCollapsed && "sidebar-collapsed",
-    sidebarPosition === SidebarPosition.RIGHT && "sidebar-right",
-  );
-
   return (
     <>
-      <div
-        id="app-shell"
-        className={shellClass}
-        style={{ "--sidebar-width": `${sidebarWidth}px` } as CSSProperties}
-      >
+      <PanelShell panelId={PanelId.SIDEBAR} id="app-shell">
         <Header />
         <Sidebar />
         <RunbookImportInput />
         <MainPanel />
-      </div>
+      </PanelShell>
 
       <ImageLightbox />
       <ExportModal />

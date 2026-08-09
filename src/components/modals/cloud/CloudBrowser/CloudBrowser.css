@@ -202,6 +202,7 @@
 }
 
 .cloud-browser-entries {
+  position: relative;
   display: flex;
   flex-direction: column;
 }
@@ -217,10 +218,13 @@
 }
 
 .cloud-browser-status {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-docked);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-4);
-  padding-block: var(--space-4);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   color: var(--color-text-muted);

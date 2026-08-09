@@ -1,16 +1,19 @@
 import {
   ANY,
+  DIGIT,
   ESCAPE,
   WHITESPACE,
   anchored,
   anyOf,
   atEnd,
+  atStart,
   backreference,
   before,
   capture,
   either,
   escapeSyntax,
   globalRegex,
+  group,
   named,
   noneOf,
   notAfter,
@@ -36,6 +39,9 @@ export const MarkdownDelimiter = {
   TABLE_SEPARATOR: "|",
   TABLE_ALIGN: ":",
   TABLE_FILL: "-",
+  LIST_BULLET: "*",
+  LIST_BULLET_ALT: "-",
+  LIST_ORDINAL: ".",
 } as const;
 
 const Mark = escapeSyntax(MarkdownDelimiter);
@@ -139,6 +145,7 @@ const ESCAPABLE_MARKS = [
   Mark.CODE_ALT,
   Mark.LINK_LABEL_OPEN,
   Mark.TABLE_SEPARATOR,
+  Mark.LIST_BULLET_ALT,
 ];
 
 export const MarkdownEscapeRegex = globalRegex(
@@ -161,4 +168,23 @@ export const MarkdownTable = {
   SEPARATOR_REGEX: new RegExp(unescaped(Mark.TABLE_SEPARATOR)),
   TRAILING_SEPARATOR_REGEX: new RegExp(unescaped(atEnd(Mark.TABLE_SEPARATOR))),
   ESCAPED_SEPARATOR_REGEX: globalRegex(sequence(ESCAPE, Mark.TABLE_SEPARATOR)),
+} as const;
+
+export const MarkdownList = {
+  FIRST_ORDINAL: 1,
+  TAB_WIDTH: 4,
+  ITEM_REGEX: new RegExp(
+    atStart(
+      sequence(
+        named("indent", zeroOrMore(WHITESPACE)),
+        group(
+          either(
+            named("bullet", either(Mark.LIST_BULLET, Mark.LIST_BULLET_ALT)),
+            sequence(named("ordinal", oneOrMore(DIGIT)), Mark.LIST_ORDINAL),
+          ),
+        ),
+        oneOrMore(WHITESPACE),
+      ),
+    ),
+  ),
 } as const;

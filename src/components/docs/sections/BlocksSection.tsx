@@ -1,4 +1,5 @@
 import { ImageBlockConfig } from "@/common/config";
+import { NoteStyle } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -11,7 +12,7 @@ import {
   demoNote,
 } from "../demos/demoSeeds";
 import { DemoWorkspace } from "../demos/DemoWorkspace";
-import { Prose, ProseList, ProseTable } from "../Prose";
+import { Prose } from "../Prose";
 
 const LONG_COMMAND = joinLines([
   "echo 'Starting backup...' \\",
@@ -63,7 +64,7 @@ export function BlocksDocs() {
 
   return (
     <>
-      <Prose text={t.docs.blocks.intro} />
+      <Prose text={t.docs.blocks.intro(t.blocks.actions)} />
     </>
   );
 }
@@ -74,14 +75,14 @@ export function CommandBlockDocs() {
   return (
     <>
       <Prose text={t.docs.commandBlock.intro} />
-      <ProseList items={t.docs.commandBlock.parts} />
+      <Prose text={t.docs.commandBlock.parts} />
       <DemoWorkspace
         tabs={[{ blocks: [demoCommand("ls -ltr ~/Documents/reports")] }]}
       >
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.commandBlock.multiline} />
-      <Prose text={t.docs.commandBlock.longCommands} />
+      <Prose text={t.docs.commandBlock.longCommands(t.command.showMoreLines)} />
       <DemoWorkspace tabs={[{ blocks: [demoCommand(LONG_COMMAND)] }]}>
         <BlocksList />
       </DemoWorkspace>
@@ -96,9 +97,15 @@ export function NoteBlockDocs() {
   return (
     <>
       <Prose text={t.docs.noteBlock.intro} />
-      <Prose text={t.docs.noteBlock.styles} />
+      <Prose
+        text={t.docs.noteBlock.styles(
+          t.note.styleLabel[NoteStyle.HEADING],
+          t.note.styleLabel[NoteStyle.SUBHEADING],
+          t.note.styleLabel[NoteStyle.BODY],
+        )}
+      />
       <Prose text={t.docs.noteBlock.markdown} />
-      <ProseTable text={t.docs.noteBlock.markdownTable} />
+      <Prose text={t.docs.noteBlock.markdownTable} />
       <Prose text={t.docs.noteBlock.escapes} />
       <Prose text={t.docs.noteBlock.links} />
 
@@ -107,13 +114,18 @@ export function NoteBlockDocs() {
       </DemoWorkspace>
 
       <Prose text={t.docs.noteBlock.noNesting} />
-      <Prose text={t.docs.noteBlock.autoUrls} />
       <Prose text={t.docs.noteBlock.wrapKeys} />
-      <Prose text={t.docs.noteBlock.spellcheck} />
+      <Prose text={t.docs.noteBlock.spellcheck(t.contextMenu.spellcheck)} />
 
       <Prose text={t.docs.noteBlock.tables} />
 
       <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.tableSample)] }]}>
+        <BlocksList />
+      </DemoWorkspace>
+
+      <Prose text={t.docs.noteBlock.lists} />
+
+      <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.listSample)] }]}>
         <BlocksList />
       </DemoWorkspace>
     </>
@@ -128,8 +140,14 @@ export function ImageBlockDocs() {
   return (
     <>
       <Prose text={t.docs.imageBlock.intro} />
-      <ProseList items={t.docs.imageBlock.ways} />
-      <Prose text={t.docs.imageBlock.demoHint} />
+      <Prose text={t.docs.imageBlock.ways(t.image.choose)} />
+      <Prose
+        text={t.docs.imageBlock.demoHint(
+          t.image.viewFullscreen,
+          t.image.replace,
+          t.image.remove,
+        )}
+      />
       <DemoWorkspace
         tabs={[
           {

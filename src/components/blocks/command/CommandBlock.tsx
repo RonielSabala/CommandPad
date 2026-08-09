@@ -4,7 +4,7 @@ import {
   COPY_FEEDBACK_TIMEOUT_MS,
 } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { BlockType, CommandSurface } from "@/common/enums";
+import { BlockType, CommandSurface, PanelId } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
 import { CodeEditor } from "@/components/common/CodeEditor";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
@@ -48,7 +48,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const isEditorCollapsed = block.editorCollapsed === true;
 
   const mode = useStore((state) => state.mode);
-  const isSidebarCollapsed = useStore((state) => state.sidebarCollapsed);
+  const isSidebarCollapsed = useStore(
+    (state) => state.panels[PanelId.SIDEBAR].collapsed,
+  );
   const updateBlock = useStore((state) => state.updateBlock);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
   const pendingFocus = useStore(
@@ -136,6 +138,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           ref={previewRef}
           className={classNames(
             "command-preview-text",
+            "no-ligatures",
             unresolved && "has-unresolved",
             previewClamped && CssClass.CLAMPED,
           )}

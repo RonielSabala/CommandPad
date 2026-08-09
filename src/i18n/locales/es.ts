@@ -1,5 +1,10 @@
 import { DocsSectionId } from "@/common/constants/docs";
-import { BlockType, NoteStyle, RunbookSyncStatus } from "@/common/enums";
+import {
+  BlockType,
+  NoteStyle,
+  PanelId,
+  RunbookSyncStatus,
+} from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
@@ -31,11 +36,15 @@ export const es: Messages = {
     export: "Exportar",
     changeLanguage: "Cambiar idioma",
   },
-  sidebar: {
-    expand: "Expandir barra lateral",
-    collapse: "Contraer barra lateral",
-    moveLeft: "Mover barra lateral a la izquierda",
-    moveRight: "Mover barra lateral a la derecha",
+  panel: {
+    names: {
+      [PanelId.SIDEBAR]: "barra lateral",
+      [PanelId.DOCS_TOC]: "navegación",
+    },
+    expand: (name) => `Expandir ${name}`,
+    collapse: (name) => `Contraer ${name}`,
+    moveLeft: (name) => `Mover ${name} a la izquierda`,
+    moveRight: (name) => `Mover ${name} a la derecha`,
     doubleClickExpand: "Doble clic para expandir",
     dragResizeCollapse:
       "Arrastra para redimensionar · doble clic para contraer",
@@ -294,23 +303,23 @@ export const es: Messages = {
   },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Alternar modo lectura / edición",
+    [KeyBinding.ESCAPE]: "Limpiar selección de bloques / cerrar diálogos",
+    [KeyBinding.TOGGLE_SIDEBAR]: "Contraer / expandir el panel lateral",
+    [KeyBinding.MOVE_SIDEBAR]: "Mover el panel lateral a izquierda / derecha",
     [KeyBinding.NEW_TAB]: "Abrir una nueva pestaña",
     [KeyBinding.CLOSE_TAB]: "Cerrar la pestaña activa",
-    [KeyBinding.TOGGLE_EDITORS]: "Alternar todos los editores de comandos",
-    [KeyBinding.DELETE_RUNBOOK]: "Eliminar el libro enfocado de la biblioteca",
-    [KeyBinding.IMPORT_RUNBOOK]: "Abrir el diálogo de importación de libro",
-    [KeyBinding.TOGGLE_SIDEBAR]: "Contraer / expandir barra lateral",
-    [KeyBinding.MOVE_SIDEBAR]: "Mover barra lateral a izquierda / derecha",
-    [KeyBinding.DUPLICATE_BLOCK]: "Duplicar bloques seleccionados",
-    [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
-    [KeyBinding.ESCAPE]: "Limpiar selección de bloques / cerrar diálogos",
-    [KeyBinding.EXPORT]: "Abrir el diálogo de exportación",
-    [KeyBinding.CLEAR_LIBRARY]: "Abrir el diálogo de eliminar todos los libros",
     [KeyBinding.FOCUS_RUNBOOK]: "Seleccionar libro activo",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navegar libros con el libro activo seleccionado",
-    [KeyBinding.OPEN_LINK]: "Abrir enlace de nota en una pestaña nueva",
+    [KeyBinding.IMPORT_RUNBOOK]: "Abrir el diálogo de importación de libro",
+    [KeyBinding.EXPORT]: "Abrir el diálogo de exportación",
+    [KeyBinding.DELETE_RUNBOOK]: "Eliminar el libro enfocado de la biblioteca",
+    [KeyBinding.CLEAR_LIBRARY]: "Abrir el diálogo de eliminar todos los libros",
+    [KeyBinding.TOGGLE_EDITORS]: "Alternar todos los editores de comandos",
     [KeyBinding.MULTISELECT_BLOCKS]: "Selección múltiple de bloques",
+    [KeyBinding.DUPLICATE_BLOCK]: "Duplicar bloques seleccionados",
+    [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
+    [KeyBinding.OPEN_LINK]: "Abrir enlace de nota en una pestaña nueva",
     [KeyBinding.NOTE_BOLD]:
       "Poner en negrita el texto seleccionado (bloque de nota)",
     [KeyBinding.NOTE_ITALIC]:
@@ -394,45 +403,37 @@ export const es: Messages = {
         paragraphs: [
           "Todos los datos que introduces, como variables, comandos, notas y libros, se guardan localmente en tu navegador para que tu trabajo siga ahí cuando vuelvas.",
         ],
-        bullets: [
-          "**localStorage** guarda tus preferencias (tema, idioma, disposición) y metadatos ligeros de las pestañas.",
-          "**IndexedDB** guarda el contenido real de los libros (tus variables y bloques de comandos).",
-        ],
+        bullets: `* **localStorage** guarda tus preferencias (tema, idioma, disposición) y metadatos ligeros de las pestañas.
+* **IndexedDB** guarda el contenido real de los libros (tus variables y bloques de comandos).`,
       },
       {
         heading: "Imágenes",
         paragraphs: [
           "Un bloque de imagen guarda una imagen de dos formas posibles, y ninguna de ellas sube nada. **No hay servidor de imágenes, ni punto de subida, ni alojamiento de imágenes operado por nosotros.**",
         ],
-        bullets: [
-          "Una imagen **adjunta** (arrastrada, pegada o elegida con el selector de archivos) la lee tu navegador en tu propio dispositivo y se guarda como texto dentro del libro, junto al resto de su contenido. El archivo nunca se envía a ningún sitio.",
-          "Una imagen **enlazada** es solo una dirección que escribiste. No se guarda ni se sube nada, pero tu navegador descarga la imagen del sitio que la aloja, así que ese sitio ve la petición igual que la vería en cualquier página que muestre la imagen.",
-          "Si sincronizas un libro con tu propia cuenta en la nube, sus imágenes adjuntas viajan con él a esa cuenta, igual que cualquier otra parte del libro.",
-        ],
+        bullets: `* Una imagen **adjunta** (arrastrada, pegada o elegida con el selector de archivos) la lee tu navegador en tu propio dispositivo y se guarda como texto dentro del libro, junto al resto de su contenido. El archivo nunca se envía a ningún sitio.
+* Una imagen **enlazada** es solo una dirección que escribiste. No se guarda ni se sube nada, pero tu navegador descarga la imagen del sitio que la aloja, así que ese sitio ve la petición igual que la vería en cualquier página que muestre la imagen.
+* Si sincronizas un libro con tu propia cuenta en la nube, sus imágenes adjuntas viajan con él a esa cuenta, igual que cualquier otra parte del libro.`,
       },
       {
         heading: "Qué no hacemos",
         paragraphs: [
           "Queremos ser explícitos sobre las cosas que CommandPad evita deliberadamente.",
         ],
-        bullets: [
-          "No operamos un servidor backend que reciba tus datos. La única vez que tus libros salen de tu dispositivo es cuando los exportas o los sincronizas explícitamente con tu propia cuenta en la nube.",
-          "No usamos cookies, identificadores publicitarios ni analítica de terceros.",
-          "No seguimos tu comportamiento entre sitios ni construimos un perfil sobre ti.",
-          "No requerimos una cuenta de CommandPad, un correo electrónico ni ningún inicio de sesión para usar la app.",
-        ],
+        bullets: `* No operamos un servidor backend que reciba tus datos. La única vez que tus libros salen de tu dispositivo es cuando los exportas o los sincronizas explícitamente con tu propia cuenta en la nube.
+* No usamos cookies, identificadores publicitarios ni analítica de terceros.
+* No seguimos tu comportamiento entre sitios ni construimos un perfil sobre ti.
+* No requerimos una cuenta de CommandPad, un correo electrónico ni ningún inicio de sesión para usar la app.`,
       },
       {
         heading: "Sincronización en la nube (opcional)",
         paragraphs: [
           "CommandPad puede, de forma opcional, exportar un libro a tu propia cuenta de SharePoint o Google Drive, o importar uno desde ella. Esta función está desactivada hasta que elijas usarla.",
         ],
-        bullets: [
-          "Inicias sesión mediante el propio flujo del proveedor (Microsoft o Google). CommandPad nunca ve tu contraseña y solo solicita acceso a la carpeta dedicada **CommandPad** que crea para tus libros.",
-          "Los libros sincronizados se guardan en esa carpeta dentro de tu propia cuenta. No se envían ni se almacenan en ningún servidor operado por nosotros.",
-          "Los datos que sincronizas viajan entre tu navegador y el proveedor que elijas. Una vez que llegan a ese proveedor, se aplican su política de privacidad y sus términos.",
-          "Puedes cerrar sesión en cualquier momento y puedes eliminar los archivos sincronizados directamente desde tu cuenta en la nube.",
-        ],
+        bullets: `* Inicias sesión mediante el propio flujo del proveedor (Microsoft o Google). CommandPad nunca ve tu contraseña y solo solicita acceso a la carpeta dedicada **CommandPad** que crea para tus libros.
+* Los libros sincronizados se guardan en esa carpeta dentro de tu propia cuenta. No se envían ni se almacenan en ningún servidor operado por nosotros.
+* Los datos que sincronizas viajan entre tu navegador y el proveedor que elijas. Una vez que llegan a ese proveedor, se aplican su política de privacidad y sus términos.
+* Puedes cerrar sesión en cualquier momento y puedes eliminar los archivos sincronizados directamente desde tu cuenta en la nube.`,
       },
       {
         heading: "Variables secretas",
@@ -483,13 +484,11 @@ export const es: Messages = {
         paragraphs: [
           "Eres responsable de los comandos y del contenido que creas y de cómo los usas.",
         ],
-        bullets: [
-          "Revisa cada comando antes de ejecutarlo. CommandPad resuelve y copia texto; no ejecuta nada por ti.",
-          "Mantén tus propias copias de seguridad de lo importante exportando tus libros.",
-          "Adjunta solo imágenes que tengas derecho a usar. Una imagen adjunta pasa a formar parte del libro, así que va allá donde exportes o sincronices ese libro.",
-          "No confíes en las variables secretas como almacenamiento seguro de credenciales sensibles.",
-          "Usa la app cumpliendo las leyes y políticas que se te apliquen.",
-        ],
+        bullets: `* Revisa cada comando antes de ejecutarlo. CommandPad resuelve y copia texto; no ejecuta nada por ti.
+* Mantén tus propias copias de seguridad de lo importante exportando tus libros.
+* Adjunta solo imágenes que tengas derecho a usar. Una imagen adjunta pasa a formar parte del libro, así que va allá donde exportes o sincronices ese libro.
+* No confíes en las variables secretas como almacenamiento seguro de credenciales sensibles.
+* Usa la app cumpliendo las leyes y políticas que se te apliquen.`,
       },
       {
         heading: "Sin garantía",
@@ -508,11 +507,9 @@ export const es: Messages = {
         paragraphs: [
           "Si eliges sincronizar libros con SharePoint o Google Drive, lo haces a través de tu propia cuenta con Microsoft o Google. Tu uso de esos servicios se rige por sus términos y políticas de privacidad, no por los nuestros.",
         ],
-        bullets: [
-          "CommandPad solo accede a la carpeta dedicada que crea para tus libros; no lee el resto de tu almacenamiento en la nube.",
-          "No somos responsables de la disponibilidad, el comportamiento ni el manejo de datos de Microsoft, Google o cualquier otro proveedor externo.",
-          "Eres responsable de mantener segura tu cuenta en la nube y de cualquier contenido que almacenes en ella.",
-        ],
+        bullets: `* CommandPad solo accede a la carpeta dedicada que crea para tus libros; no lee el resto de tu almacenamiento en la nube.
+* No somos responsables de la disponibilidad, el comportamiento ni el manejo de datos de Microsoft, Google o cualquier otro proveedor externo.
+* Eres responsable de mantener segura tu cuenta en la nube y de cualquier contenido que almacenes en ella.`,
       },
       {
         heading: "Datos y privacidad",
@@ -587,12 +584,22 @@ export const es: Messages = {
       reportFile: "ventas-mensuales.pdf",
       folderName: "   Informes de ventas   ",
       noteSample:
-        "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace, p. ej. https://example.com. Haz clic fuera para verla renderizada de nuevo.",
+        "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace: https://example.com. Haz clic fuera para verla renderizada de nuevo.",
       tableSample: `| Código de salida | Significado | Acción |
 | :---: | --- | --- |
 | 126 | Permiso denegado | Dale permisos con \`chmod +x\` |
 | 127 | Comando no encontrado | Revisa tu \`PATH\` |
 | 137 | Terminado (sin memoria) | **Aumenta el límite de memoria** |`,
+      listSample: `Antes de empezar:
+* Cierra cualquier otra copia del archivo
+* Guarda una copia de seguridad, por si acaso
+
+Si algo sale mal, deshazlo en este orden:
+1. Detén lo que estabas haciendo
+2. Restaura la copia de seguridad
+    1. Cópiala encima del original
+    2. Ábrela para comprobar que está bien
+3. Avisa a tu equipo de lo ocurrido`,
     },
     gettingStarted: {
       intro:
@@ -601,102 +608,97 @@ export const es: Messages = {
       journey:
         "Esta guía te acompaña paso a paso por cómo funciona la aplicación, para que le saques todo el provecho. Empezarás por los tipos de bloques con los que se construyen tus libros de comandos, luego las variables, la característica que hace que los bloques de comando sean realmente potentes, y para cerrar, el espacio de trabajo en sí: la barra lateral, las pestañas y todo lo que rodea a tus libros.",
       navigate:
-        "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el índice de la izquierda: tú eliges el ritmo. Al hacer clic en una entrada del índice te lleva a su sección y la pliega, y su título en el artículo hace lo mismo, así que puedes contraer lo que ya leíste y dejar el resto a la vista.",
+        "Puedes leerla de principio a fin o saltar directo a lo que te interese desde el panel de contenidos que acompaña al artículo: tú eliges el ritmo. Al hacer clic en una entrada del índice te lleva a su sección y la pliega, y su título en el artículo hace lo mismo, así que puedes contraer lo que ya leíste y dejar el resto a la vista.",
       tryIt:
-        "La mayoría de las secciones trae un ejemplo real y funcional marcado **Pruébalo**, una pieza de la app con la que puedes jugar, nada de lo que hagas ahí toca tu espacio de trabajo real. Anímate a toquetear un poco, es la forma más rápida de entender cómo funciona algo. Si te pierdes, el botón de flecha en su esquina te devuelve al punto de partida.",
+        "La mayoría de las secciones trae un ejemplo real y funcional marcado **Pruébalo**: una pieza de la app con la que puedes jugar, ya que nada de lo que hagas ahí toca tu espacio de trabajo real. Anímate a toquetear un poco, es la forma más rápida de entender cómo funciona algo. Si te pierdes, el botón de flecha en su esquina te devuelve al punto de partida.",
     },
     workspace: {
       intro:
-        "El espacio de trabajo es la pantalla principal de la app. Aquí es donde pasarás la mayor parte del tiempo armando y puliendo tus libros. Está formado por tres zonas:",
-      items: [
-        "La **cabecera**: reúne los botones con las acciones globales de la app.",
-        "La **barra lateral**: contiene la biblioteca de libros y el panel de variables.",
-        "El **panel principal**: aquí viven todos los libros que tengas abiertos y, dentro de ellos, sus bloques.",
-      ],
+        "El espacio de trabajo es la pantalla principal de la app, donde pasarás la mayor parte del tiempo armando y puliendo tus libros. Está formado por tres zonas:",
+      items: `* La **cabecera**: reúne los botones con las acciones globales de la app.
+* La **barra lateral**: contiene la biblioteca de libros y el panel de variables.
+* El **panel principal**: aquí viven todos los libros que tengas abiertos, junto con sus bloques.`,
       persistence:
         "Todo lo que haces se guarda automáticamente en tu navegador y se restaura al recargar la página. Tus datos nunca se envían a un servidor.",
     },
     header: {
       intro:
         "La cabecera reúne las acciones que afectan a toda la app. De izquierda a derecha:",
-      items: [
-        "El **logo de CommandPad**: haz clic en él para recargar la app.",
-        "El **candado / lápiz**: alterna entre el modo lectura y el modo edición. Tiene su propia sección más adelante.",
-        "**Colapsar todo**: contrae o expande de golpe todos los editores de comandos del libro activo.",
-        "El **sol / la luna**: cambia entre el tema oscuro y el claro.",
-        "El **selector de idioma**: cambia el idioma de la interfaz.",
-        "El **libro**: abre esta documentación.",
-        "La **flecha roja**: resetea el espacio de trabajo. Lo borra todo, así que la app siempre te pide confirmación antes.",
-        "**Exportar**: guarda el libro activo en un archivo. También tiene su propia sección más adelante.",
-      ],
+      items: (
+        exportLabel,
+        collapseAllLabel,
+      ) => `* El **logo de CommandPad**: haz clic en él para recargar la app.
+* El **candado / lápiz**: alterna entre el modo lectura y el modo edición. Tiene su propia sección más adelante.
+* **${collapseAllLabel}**: contrae o expande de golpe todos los editores de comandos del libro activo.
+* El **sol / la luna**: cambia entre el tema claro y oscuro.
+* El **selector de idioma**: cambia el idioma de la interfaz.
+* El **libro**: abre esta documentación.
+* La **flecha roja**: resetea el espacio de trabajo. Lo borra todo, así que la app siempre te pide confirmación antes.
+* **${exportLabel}**: guarda el libro activo en un archivo. También tiene su propia sección más adelante.`,
     },
     mainPanel: {
-      intro:
-        "El panel principal es tu mesa de trabajo. Arriba está la **barra de pestañas** con tus libros abiertos; debajo, los bloques del libro activo; y al final, la fila **NUEVO BLOQUE** para seguir agregando contenido.",
+      intro: (newBlockLabel) =>
+        `El panel principal es tu mesa de trabajo. Arriba está la **barra de pestañas** con tus libros abiertos; debajo, los bloques del libro activo; y al final, la fila **${newBlockLabel}** para seguir agregando contenido.`,
       minimap:
         "En el borde derecho vive el **minimapa**: una miniatura de los bloques reales del libro que reemplaza a la barra de desplazamiento. Haz clic o arrastra sobre él para saltar a cualquier punto de un libro. Haz **clic derecho** en cualquier parte del contenido del libro para abrir un pequeño menú donde puedes activarlo o desactivarlo, o moverlo al otro lado.",
-      teaser:
-        "Aquí es donde viven los bloques y las pestañas que ya conoces de antes.",
     },
     tabs: {
       intro: "Cada pestaña contiene un libro abierto.",
-      items: [
-        "**Haz clic** en una pestaña para cambiar a ella.",
-        "**Arrastra** una pestaña para reordenarla.",
-        "**Clic con la rueda** del ratón en una pestaña para cerrarla.",
-        "**Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.",
-      ],
+      items: `* **Haz clic** en una pestaña para cambiar a ella.
+* **Arrastra** una pestaña para reordenarla.
+* **Clic con la rueda** del ratón en una pestaña para cerrarla.
+* **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.`,
       autoCreate:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:
-        "Una pestaña toma su nombre del primer bloque de nota de su libro, así tus pestañas se describen solas. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas y cierra alguna.",
+        "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas y cierra alguna.",
     },
     sidebar: {
       intro:
         "La barra lateral contiene la biblioteca de libros y el panel de variables.",
-      items: [
-        "**Contraer / expandir**: haz clic en el botón de flecha o usa su atajo de teclado.",
-        "**Mover a izquierda / derecha**: haz clic en el botón de disposición para mover la barra lateral al otro lado de la pantalla.",
-        "**Redimensionar**: arrastra el borde interior de la barra lateral; doble clic para contraerla.",
-      ],
+      items: `* **Contraer / expandir**: haz clic en el botón de flecha o usa su atajo de teclado.
+* **Mover a izquierda / derecha**: haz clic en el botón de disposición para mover la barra lateral al otro lado de la pantalla.
+* **Redimensionar**: arrastra el borde interior de la barra lateral; doble clic para contraerla.`,
       resizeDetails:
-        "Arrastrar la barra lateral hasta dejarla muy estrecha la contrae por completo, y nunca puede crecer más allá de la mitad de la pantalla. Al expandirla de nuevo vuelve a su ancho normal.",
+        "Arrastrar la barra lateral hasta dejarla muy estrecha la contrae por completo, y nunca puede crecer más allá de la mitad de la pantalla. Si la habías ensanchado, el doble clic en su borde la devuelve a su ancho normal. Al expandir una barra contraída también vuelve a ese ancho normal.",
     },
     runbookLibrary: {
-      intro:
-        "La sección **LIBROS** de la barra lateral contiene tus libros importados.",
-      items: [
-        "Haz clic en **Importar** para cargar uno o varios archivos `.json` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.",
-        "También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.",
-        "Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.",
-        "Abre el menú de **acciones del libro** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.",
-        "Haz clic en **Eliminar todo** para vaciar la biblioteca completa de una vez.",
-        "Arrastra el control a la izquierda de un libro para reordenarlo en la lista.",
-        "Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.",
-      ],
+      intro: (runbooksTitle) =>
+        `La sección **${runbooksTitle}** de la barra lateral contiene tus libros importados.`,
+      items: (
+        importLabel,
+        clearLibraryLabel,
+        runbookActionsLabel,
+      ) => `* Haz clic en **${importLabel}** para cargar uno o varios archivos \`.json\` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.
+* También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.
+* Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.
+* Abre el menú de **${runbookActionsLabel}** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.
+* Haz clic en **${clearLibraryLabel}** para vaciar la biblioteca completa de una vez.
+* Arrastra el control a la izquierda de un libro para reordenarlo en la lista.
+* Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.`,
       autoLabel:
-        "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca, de modo que los libros se describen solos. En caso contrario se usa el nombre del archivo importado.",
+        "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca. En caso contrario se usa el nombre del archivo importado.",
       labelDetails:
         "Las etiquetas se normalizan: se limpia el formato markdown y se recorta hasta 60 caracteres.",
       autoSave:
         "Los cambios hechos al libro activo se guardan automáticamente en la biblioteca.",
     },
     variables: {
-      why: "Esta es la característica sobre la que gira todo lo demás. Un nombre de servidor, una ruta, un número de versión: los mismos valores se repiten en la mitad de los comandos que guardas, y el día que uno cambia toca buscarlo comando por comando. Con las variables defines ese valor **una vez**, y todos los comandos que lo usan se actualizan solos.",
+      why: "Esta es la característica sobre la que gira todo lo demás. Un nombre de servidor, una ruta, un número de versión: los mismos valores se repiten una y otra vez en los comandos que usas, y el día que uno cambia, toca corregirlo comando por comando. Con las variables defines ese valor **una vez**, y todos los comandos se actualizan solos.",
       intro:
-        "Las variables se definen en la sección **VARIABLES** de la barra lateral. Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas. Si dos variables comparten la misma clave, gana la definida en último lugar.",
+        "Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas. Si dos variables comparten la misma clave, gana la definida en último lugar.",
       usage:
-        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{server}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
+        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{CLAVE}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
       unresolved:
         "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**.",
       tooltip:
         "Si una clave o un valor no cabe en su casilla, pasa el cursor sobre ella para ver el texto completo en un tooltip.",
       split:
         "Las claves y los valores se reparten la fila en partes iguales, pero puedes cambiarlo: arrastra el divisor entre ambos para dar más espacio a uno de los lados, y haz doble clic para volver al reparto equitativo. El nuevo reparto se aplica a todas las variables y se recuerda entre sesiones.",
-      demoHint:
-        "Compruébalo abajo: una sola variable alimenta dos comandos. Edita su valor y mira cómo las dos vistas previas cambian mientras escribes. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables y un menú de **acciones de la variable** a la derecha para duplicarla o eliminarla.",
+      demoHint: (variableActionsLabel) =>
+        `Compruébalo abajo: una sola variable alimenta dos comandos. Edita su valor y mira cómo las dos vistas previas cambian mientras escribes. Pasa el cursor sobre una fila para revelar sus controles: un control de arrastre a la izquierda para reordenarla con otras variables, y un menú de **${variableActionsLabel}** a la derecha para duplicarla o eliminarla.`,
       constants:
-        "No todas las variables cambian por el mismo motivo. Unas son valores que cambias a cada rato y otras son **constantes**: se mantienen igual durante toda la vida del libro, y solo son variables porque ese mismo valor aparece en comando tras comando. CommandPad las distingue por convención de nombres: una clave escrita entera en **mayúsculas** se considera una constante y su clave se muestra en morado. Cualquier clave con alguna **minúscula** conserva el azul de siempre.",
+        "No todas las variables cambian por el mismo motivo. Unas son valores que cambias a cada rato y otras son **constantes**: se mantienen igual durante toda la vida del libro, y solo son variables porque ese mismo valor aparece en comando tras comando. CommandPad las distingue por convención de nombres: una clave escrita entera en **mayúsculas** se considera una _constante_ y cualquier clave con alguna **minúscula** se considera _variable_.",
       constantsDemoHint:
         "La convención es solo de nombres: las constantes se resuelven, se referencian y se renombran igual que cualquier otra variable. Renombra abajo una clave de mayúsculas a minúsculas y al revés para ver cómo el color la sigue.",
     },
@@ -715,20 +717,20 @@ export const es: Messages = {
       seeExample:
         "Si suena abstracto, no te preocupes: se entiende al instante en cuanto lo ves. Échale un vistazo al ejemplo de abajo antes de seguir leyendo.",
       multiple:
-        "Un valor puede tener varios huecos. Dale a cada uno un nombre distinto y rellénalos todos en la misma referencia, separados por punto y coma:",
+        "Un valor puede tener varios huecos. Dale a cada uno un nombre distinto y rellénalos todos en el mismo comando, separados por punto y coma:",
       nested:
         "Un hueco también puede rellenarse con otra variable. Así, un mismo valor puede rellenar el hueco de un comando y usarse por su cuenta en otro:",
     },
     variableSlicing: {
       intro:
-        "Una variable guarda un valor, pero no siempre se necesita entero. Un hash de commit ocupa cuarenta caracteres al hacer checkout y solo siete en una etiqueta. Con el recorte mantienes **una única** variable y usas solo la parte que necesitas.",
+        "Una variable guarda un valor, pero no siempre se necesita entero. Por ejemplo, un hash de commit ocupa cuarenta caracteres al hacer checkout y solo siete en una etiqueta. Con el recorte mantienes **una única** variable y usas solo la parte que necesitas.",
       demoHint:
         "El primer comando usa el hash completo; el segundo, solo sus siete primeros caracteres. Edita la variable y verás cómo los dos se actualizan a la vez:",
       howItWorks:
-        "Escribe un `|` después de la clave y, entre corchetes, la parte que quieres. Se cuenta desde cero, y el segundo número indica dónde **parar sin llegar a incluirlo**: `[:7]` son los siete primeros caracteres y `[2:5]` son el dos, el tres y el cuatro. Si omites un número, el recorte llega hasta ese extremo.",
+        "Escribe un `|` después de la clave y, entre corchetes, la parte que quieres. Se cuenta desde cero, y el segundo número indica dónde **parar sin llegar a incluirlo**: `[:7]` son los siete primeros caracteres y `[2:5]` son el dos, el tres y el cuatro. Omite cualquiera de los dos números para llegar desde el mismísimo principio, o hasta el final.",
       positionsHint:
         "Los números negativos cuentan desde el final, así que `[-2:]` son los dos últimos caracteres. Con una fecha se ven las tres formas de un vistazo:",
-      step: "Un tercer número es el **paso**. En un número de versión los puntos caen en las posiciones impares, así que `[::2]` los salta y deja solo los dígitos, que es lo que quieres en un nombre de archivo, donde un punto se lee como otra extensión. Un paso negativo avanza hacia atrás, así que `[::-1]` por sí solo invierte un valor:",
+      step: "Un tercer número es el **paso**: cuántas posiciones salta el recorte entre un carácter y el siguiente. `[::2]` toma un carácter de cada dos y se salta el resto, y un paso negativo avanza hacia atrás, así que `[::-1]` por sí solo invierte un valor:",
       invalid:
         "Si un recorte no tiene sentido, por ejemplo con un paso de cero, la referencia entera se queda **sin resolver** y aparece tal cual la escribiste, así que el error se nota enseguida. En cambio, pedir más caracteres de los que hay no es problema: obtienes los que existan.",
       python:
@@ -736,9 +738,9 @@ export const es: Messages = {
     },
     variableCount: {
       intro:
-        "Escribe `count` después del `|` y obtienes **cuánto mide el valor** en lugar del valor.",
+        "Escribe `count` después del `|` y obtienes **cuántos caracteres ocupa el valor**.",
       demoHint:
-        "El asunto de un commit debería quedarse por debajo de 50 caracteres, y nadie los cuenta a mano. Escribe en el mensaje de abajo y mira cómo el número te sigue:",
+        "Por ejemplo, el asunto de un commit debería quedarse por debajo de 50 caracteres, pero nadie los cuenta a mano. Escribe en el mensaje de abajo y mira cómo el número te sigue:",
       chaining:
         "Las operaciones se aplican de izquierda a derecha, así que puedes poner `count` después de un recorte: `{commit|[:7]|count}` acorta el commit primero y luego cuenta lo que queda.",
     },
@@ -759,63 +761,61 @@ export const es: Messages = {
       rebuild:
         "Las cuatro primeras **reconstruyen** el valor a partir de sus palabras, así que los espacios desaparecen. Las demás solo cambian letras.",
       demoHint:
-        "El nombre de una carpeta va mejor sin espacios; un título, con ellos. El mismo valor, de las dos formas:",
+        "Por ejemplo, el nombre de una carpeta va mejor sin espacios; un título, con ellos. Observa abajo el mismo valor, de las dos formas:",
     },
     variableStrip: {
       intro:
-        "`strip` quita el texto entre paréntesis por los dos extremos del valor, `lstrip` solo por delante y `rstrip` solo por detrás. Abajo, cada una sobre un valor rodeado de guiones:",
+        "La operación `strip(valor)` quita el texto pasado entre paréntesis por los dos extremos del valor; `lstrip` lo quita solo por delante, y `rstrip` solo por detrás. Abajo, cada una sobre un valor rodeado de guiones:",
       table: `| Operación | Resultado |
 | --- | --- |
-| \`lstrip(-)\` | recortado por delante--- |
-| \`rstrip(-)\` | ---recortado por detrás |
-| \`strip(-)\` | recortado por los dos lados |`,
+| \`lstrip(-)\` | sin guiones por delante--- |
+| \`rstrip(-)\` | ---sin guiones por detrás |
+| \`strip(-)\` | sin guiones por los dos lados |`,
       demoHint:
-        "Una dirección copiada del navegador, un archivo que ya trae su extensión. Cambia cualquiera de los dos y los comandos se ajustan solos:",
+        "Abajo se muestra una dirección copiada del navegador y un archivo que ya trae su extensión. Cambia cualquiera de los dos y los comandos se ajustan solos:",
       repeats:
-        "El texto se quita tantas veces como aparezca, y se compara **entero**: `rstrip(ando)` nunca se lleva una `o` suelta.",
-      whitespace: "Sin paréntesis, lo que se quita son los espacios:",
+        "El texto se quita tantas veces como aparezca, y se compara **entero**: `rstrip(valor)` nunca se lleva una `r` suelta.",
+      whitespace:
+        "Por defecto, las operaciones `strip` escritas sin paréntesis quitan los espacios en blanco:",
     },
     multilineReferences: {
       intro:
-        "Rellena varios huecos a la vez y una referencia se vuelve demasiado larga para leerla en una sola línea. Puedes repartirla en tantas líneas como quieras: los espacios y saltos de línea que rodean cada parte se ignoran, así que la distribuyes como prefieras.",
+        "Muchas veces las referencias se vuelven demasiado largas para leerlas en una sola línea. Puedes repartirlas en tantas líneas como quieras: los espacios y saltos de línea que rodean cada parte se ignoran, así que la distribuyes como prefieras.",
     },
     escapingBraces: {
       intro:
-        "Antepón una barra invertida a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla. Solo la llave `{` de apertura lleva la barra invertida, la llave `}` de cierre no necesita nada, y la barra invertida se excluye del comando resuelto.",
+        "Antepón una barra invertida (`\\`) a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla.",
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
-      scope:
-        "El escape solo aplica dentro de bloques de comando; las barras invertidas en valores de variables se muestran siempre tal cual.",
+      scope: "El escape solo aplica dentro de bloques de comando.",
     },
     secretVariables: {
       intro:
-        "Haz clic en el **icono de ojo** de una fila de variable para marcarla como **secreta**. Los valores secretos se ocultan en la barra lateral y se sustituyen por asteriscos en las vistas previas de comandos.",
+        "Haz clic en el **icono de ojo** de una fila de variable para marcarla como **secreta**.",
       copyNote:
         "El enmascarado es puramente visual: el botón **Copiar** siempre pone el valor **real** en tu portapapeles, así que tus comandos siguen funcionando. Pruébalo abajo, y haz clic en el icono de ojo para mostrar u ocultar el valor.",
     },
     blocks: {
-      intro:
-        "Los bloques son el contenido principal de un libro. Agrégalos con la fila **NUEVO BLOQUE** al final del panel principal. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **acciones del bloque** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo.",
+      intro: (blockActionsLabel) =>
+        `Los bloques son el contenido principal de un libro. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **${blockActionsLabel}** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo. Cada bloque tiene una anchura mínima que le impide encogerse hasta volverse ilegible.`,
     },
     commandBlock: {
       intro:
         "Es un bloque que guarda un comando que quieras tener a mano. Tiene dos partes:",
-      parts: [
-        "**Vista previa** (siempre visible): el comando exactamente como se copiará. Haz clic en el botón **Copiar** para enviarlo a tu portapapeles. Este botón se deshabilita si el comando está vacío.",
-        "**Editor** (contraíble): donde escribes el comando. Usa el botón de flecha para ocultarlo cuando solo necesites la vista previa.",
-      ],
+      parts: `* **Vista previa** (siempre visible): el comando exactamente como se copiará. Haz clic en su botón de **Copiar** para enviarlo a tu portapapeles. Este botón se deshabilita si el comando está vacío.
+* **Editor** (contraíble): donde escribes el comando. Usa el botón de flecha para ocultarlo cuando solo necesites la vista previa.`,
       multiline:
-        "Los comandos pueden ocupar varias líneas, y el editor se puede scrollear hacia los lados cuando una línea se hace demasiado larga. El margen izquierdo marca la primera línea con `$` y numera cada línea extra, como se ve en el ejemplo de abajo.",
-      longCommands:
-        "Un comando muy largo no estira el bloque para siempre. Cuando una parte pasa su límite de altura se detiene ahí y se desvanece, con un control **Mostrar más líneas** debajo. Haz clic para revelar el resto, y haz clic otra vez para volver a plegarlo. La vista previa y el editor se limitan por separado, así que puedes abrir uno sin abrir el otro.",
+        "Los comandos pueden ocupar varias líneas, y el editor se puede scrollear hacia los lados cuando una línea es muy larga. El margen izquierdo marca la primera línea con `$` y numera las siguientes.",
+      longCommands: (showMoreLines) =>
+        `Un comando muy largo no estira el bloque para siempre. Cuando una parte pasa su límite de altura se detiene ahí y se desvanece, con un control **${showMoreLines}** debajo. Haz clic para revelar el resto, y haz clic otra vez para volver a plegarlo. La vista previa y el editor se limitan por separado, así que puedes abrir uno sin abrir el otro.`,
       variablesTeaser:
         "Los bloques de comando se vuelven mucho más útiles con las **variables**, que rellenan las partes de un comando que cambian. Se explican un poco más adelante, en su propia sección.",
     },
     noteBlock: {
       intro:
         "Es un bloque de texto libre. Las notas se expanden a lo alto y a lo ancho mientras escribes.",
-      styles:
-        "Hay tres estilos de texto seleccionables al pasar el cursor: **título** (grande, en negrita), **subtítulo** (mediano, acentuado) y **cuerpo** (la prosa por defecto).",
+      styles: (heading, subheading, body) =>
+        `Hay tres estilos de texto seleccionables al pasar el cursor: **${heading}** (grande, en negrita), **${subheading}** (mediano, acentuado) y **${body}** (la prosa por defecto).`,
       markdown: "Las notas soportan formato markdown:",
       markdownTable: `| Sintaxis | Resultado |
 | --- | --- |
@@ -824,115 +824,107 @@ export const es: Messages = {
 | \\\`texto-de-código\\\` | \`texto-de-código\` |
 | \\[enlace-con-etiqueta](\\https://example.com) | [enlace-con-etiqueta](https://example.com) |`,
       escapes:
-        "Una `\\` delante de una marca la vuelve literal: `\\**texto\\**` muestra los asteriscos en lugar de poner el texto en negrita. Escapa ambos extremos de un par, y ten en cuenta que dentro de `código` no se escapa nada, porque ahí la barra invertida es parte del contenido.",
-      spellcheck:
-        "Las notas se pueden corregir ortográficamente mientras las escribes. Haz **clic derecho** en cualquier parte del contenido del libro y activa **Corregir ortografía en las notas** en el menú. Usa el idioma de la interfaz como diccionario, así que cambiar de idioma cambia también el diccionario.",
+        "Antepón una barra invertida (`\\`) a una marca de markdown para que se muestre literal en vez de aplicarse: escribir `\\**texto\\**` deja los asteriscos a la vista en lugar de poner el texto en negrita. Escapa los dos extremos de la marca, uno por uno, y ten en cuenta que dentro de un `código` no se escapa nada, porque ahí la barra invertida ya forma parte del contenido.",
+      spellcheck: (spellcheckLabel) =>
+        `Las notas se pueden corregir ortográficamente mientras las escribes. Haz **clic derecho** en cualquier parte del contenido del libro y activa **${spellcheckLabel}** en el menú.`,
       tables:
         "Las notas también soportan [tablas markdown al estilo GitHub](https://docs.github.com/es/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): celdas separadas por barras `|`, con una fila de guiones debajo del encabezado. Haz clic en la nota de abajo para ver la sintaxis en bruto.",
-      autoUrls:
-        "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables, sin necesidad de markdown.",
+      lists:
+        "Las listas funcionan igual: empieza una línea con `*` o `-` para una viñeta, o con un número y un punto para un paso numerado. Sangra una línea para anidarla bajo el elemento anterior. Cada elemento ocupa una sola línea, así que la lista termina en la primera línea que no empiece por un marcador.",
       noNesting:
-        "Los estilos no se combinan: negrita y cursiva no pueden mezclarse en las mismas palabras, por ejemplo. Gana el estilo que empieza primero.",
-      links: "Para abrir un enlace, mantén `Ctrl` y haz clic en él.",
+        "Los estilos no se combinan: por ejemplo, negrita y cursiva no pueden mezclarse en las mismas palabras. Gana el estilo que empiece primero.",
+      links:
+        "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables. Para abrir un enlace, mantén `Ctrl` y haz clic en él.",
       wrapKeys:
-        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y **Ctrl+´** en comillas invertidas; escribir **(**, **[**, **{**, **\"** o **'** lo envuelve en ese par. Envolver en pares no es exclusivo de las notas, funciona igual en el editor de comandos.",
+        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y `Ctrl+´` en comillas invertidas; escribir cualquier carácter de paréntesis (**(**, **[** o **{**) o comillas (**\"** o **'**) lo envuelve en ese par. Envolver en pares no es exclusivo de las notas: funciona igual en el editor de comandos.",
     },
     imageBlock: {
       intro:
         "Es un bloque que guarda una imagen: el diagrama de la arquitectura, una captura de la pantalla que deberías estar viendo, el panel del tablero que confirma que el despliegue salió bien, etc.",
-      ways: [
-        "**Suéltala**: arrastra un archivo de imagen desde tu escritorio directamente sobre el bloque.",
-        "**Pégala**: haz clic en el bloque y pulsa `Ctrl+V` con una imagen, o una dirección de imagen, en el portapapeles.",
-        "**Elígela**: pulsa **Elegir una imagen** para abrir el explorador de archivos.",
-        "**Enlázala**: escribe o pega una dirección `http` o `https` en la casilla de abajo del bloque.",
-      ],
+      ways: (
+        chooseLabel,
+      ) => `* **Suéltala**: arrastra un archivo de imagen desde tu escritorio directamente sobre el bloque.
+* **Pégala**: haz clic en el bloque y pulsa \`Ctrl+V\` con una imagen, o una dirección de imagen, en el portapapeles.
+* **Elígela**: pulsa **${chooseLabel}** para abrir el explorador de archivos.
+* **Enlázala**: escribe o pega una dirección \`http\` o \`https\` en la casilla de abajo del bloque.`,
       attachedVsLinked: (limit) =>
-        `Las tres primeras formas **adjuntan** la imagen: se guarda una copia dentro del libro, así que funciona sin conexión y viaja con cada exportación y cada copia. Una imagen adjunta debe pesar menos de ${limit}. La última la **enlaza**: el libro solo recuerda la dirección, que no ocupa más que una línea de texto, pero la imagen solo está ahí mientras lo esté el sitio que la aloja.`,
+        `Una imagen adjunta debe pesar menos de **${limit}**. Una imagen puesta a través de un enlace solo la mostrará mientras esta siga alojada en internet.`,
       sizing:
-        "Una imagen se muestra a su propio tamaño, pero nunca por debajo de un mínimo legible ni más alta de lo que permite el bloque: una imagen diminuta se amplía, una enorme se reduce, y ninguna se deforma.",
+        "Una imagen se muestra con su mismo tamaño, pero nunca por debajo de un mínimo legible ni más allá de lo que permite el bloque: una imagen diminuta se amplía, una enorme se reduce, y ninguna se deforma.",
       slideshow:
-        "Cuando un libro tiene más de una imagen, la pantalla completa se convierte en un pase de diapositivas: las flechas fijas en los bordes izquierdo y derecho de la pantalla, o las teclas `Izquierda` y `Derecha`, recorren todas las imágenes del libro en el orden en que aparecen, y el contador indica en cuál estás. La página acompaña el recorrido y deja cada imagen en la parte superior de la pantalla al llegar a ella, así que al cerrar la pantalla completa te quedas mirando la imagen en la que lo dejaste.",
-      demoHint:
-        "Pasa el cursor sobre una imagen para revelar sus controles: **Ver a pantalla completa** la abre sobre la página atenuada, y su menú de acciones tiene **Reemplazar imagen**, que cambia la foto sin tocar el bloque, y **Eliminar imagen**, que lo vacía y devuelve la zona para soltar.",
+        "Cuando un libro tiene más de una imagen, la pantalla completa se convierte en un pase de diapositivas: las flechas fijas en los bordes izquierdo y derecho de la pantalla, o las teclas `Izquierda` y `Derecha`, recorren todas las imágenes del libro en el orden en que aparecen, y el contador indica en cuál estás. La página acompaña el recorrido y deja cada imagen en la parte superior de la pantalla, para que así al cerrar la pantalla completa te quedes justo en la última que miraste.",
+      demoHint: (viewFullscreen, replace, remove) =>
+        `Pasa el cursor sobre una imagen para revelar sus controles: **${viewFullscreen}** la abre sobre la página atenuada, y su menú de acciones tiene **${replace}**, que cambia la foto sin tocar el bloque, y **${remove}**, que lo vacía y devuelve la zona para soltar.`,
     },
     dividerBlock: {
       intro:
-        "No es más que un separador visual. Se estira hasta igualar el ancho del bloque más ancho, lo que lo hace perfecto para dividir un libro en secciones. Eso sí, tiene una anchura mínima que le impide encogerse hasta volverse ilegible.",
+        "No es más que un separador visual. Se estira hasta igualar el ancho del bloque más ancho, lo que lo hace perfecto para dividir un libro en secciones.",
       demoNote: "Escribe aquí y observa cómo el divisor crece o se encoge.",
     },
     multiSelect: {
       intro:
         "Mantén `Shift` y haz clic en bloques para construir una selección. También puedes mantener `Shift` y arrastrar el ratón sobre los bloques para seleccionarlos con un lazo. Lazar bloques ya seleccionados los deselecciona.",
-      actions: [
-        "**Arrastra** el control de cualquier bloque seleccionado para mover todos los bloques seleccionados juntos, conservando el orden relativo.",
-        "**Duplicar**: `Ctrl+D` duplica el grupo completo, insertado después del último bloque seleccionado.",
-        "**Eliminar**: `Del` elimina el grupo completo.",
-        "**Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella. Las variables referenciadas viajan con los bloques; si la pestaña de destino ya define alguna con un valor distinto, la copia se añade con un nuevo nombre `CLAVE_COPY` y los bloques copiados se reescriben para referenciarla, de modo que no se tocan los valores de ninguna pestaña.",
-      ],
+      actions: `* **Arrastra** el control de cualquier bloque seleccionado para mover todos los bloques seleccionados juntos, conservando el orden relativo.
+* **Duplicar**: \`Ctrl+D\` duplica el grupo completo, insertado después del último bloque seleccionado.
+* **Eliminar**: \`Del\` elimina el grupo completo.
+* **Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella. Las variables referenciadas viajan con los bloques; si la pestaña de destino ya define alguna con un valor distinto, la copia se añade con un nuevo nombre y los bloques copiados se reescriben para referenciarla, de modo que no se tocan los valores de ninguna pestaña.`,
       clear:
         "Pulsa `Escape` o haz clic fuera de los controles de bloque para limpiar la selección.",
       dragToTabDelay:
         "Mientras arrastras bloques sobre la barra de pestañas, mantén el cursor un momento sobre una pestaña para cambiar a ella, y luego suelta.",
-      demoHint: "Pruébalo con los bloques de abajo:",
     },
     readMode: {
       intro:
         "El modo lectura bloquea la edición, no la navegación. Haz clic en el **icono de candado** de la cabecera para activarlo:",
-      rules: [
-        "Todos los editores de comandos se contraen y no pueden expandirse.",
-        "El texto de bloques y notas no puede editarse.",
-        "La estructura de bloques no puede cambiarse (sin agregar, eliminar ni reordenar).",
-        "Los valores de las variables sí pueden cambiarse.",
-        "Los libros sí pueden abrirse.",
-        "Los enlaces se pueden abrir con un clic directo.",
-        "Las imágenes se abren a pantalla completa con un clic.",
-      ],
+      rules: `* Todos los editores de comandos se contraen y no pueden expandirse.
+* El texto de bloques y notas no puede editarse.
+* La estructura de bloques no puede cambiarse (sin agregar, eliminar ni reordenar).
+* Los valores de las variables sí pueden cambiarse.
+* Los libros sí pueden abrirse.
+* Los enlaces se pueden abrir con un clic directo.
+* Las imágenes se abren a pantalla completa con un clic.`,
       persisted:
         "Este modo forma parte de tus preferencias guardadas, así que recargar la app te mantiene en modo lectura.",
       exit: "Haz clic en el **icono de lápiz** para volver al modo edición.",
     },
     export: {
-      intro:
-        "Haz clic en **Exportar** en la cabecera para abrir el selector de formato.",
-      formats: [
-        "**JSON**: el espacio de trabajo completo (variables + bloques). Puede reimportarse.",
-        "**Markdown**: un archivo `.md` legible con títulos, subtítulos, divisores, comandos resueltos e imágenes.",
-        "**Texto plano**: el mismo contenido que Markdown, guardado como `.txt`.",
-      ],
+      intro: (exportLabel) =>
+        `Haz clic en **${exportLabel}** en la cabecera para abrir el selector de formato.`,
+      formats: `* **JSON**: el espacio de trabajo completo (variables y bloques). Puede reimportarse.
+* **Markdown**: un archivo \`.md\` legible con títulos, subtítulos, divisores, comandos resueltos e imágenes.
+* **Texto plano**: el mismo contenido que Markdown, guardado como \`.txt\`.`,
       saveDialog:
         "En navegadores compatibles se abre un diálogo nativo de guardado para elegir nombre y carpeta. En los demás, el archivo se descarga directamente.",
-      copyMarkdown:
-        "Para saltarte los archivos por completo, haz clic derecho dentro del libro y elige **Copiar libro como Markdown**. Pone el mismo contenido Markdown en tu portapapeles, listo para pegarlo en un chat, un ticket o un documento.",
+      copyMarkdown: (copyMarkdownLabel) =>
+        `También puedes hacer clic derecho dentro de un libro y elegir **${copyMarkdownLabel}** para evitar pasar por el proceso de exportación. Esta opción te permite copiar el contenido de un libro listo para pegarlo en un chat, un ticket o un documento.`,
     },
     cloudExport: {
-      intro:
-        "**Exportar** e **Importar** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo. El diálogo se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados.",
+      intro: (exportLabel, importLabel) =>
+        `**${exportLabel}** e **${importLabel}** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo. El diálogo se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados.`,
       switchProvider:
-        "Mientras exploras la nube, el nombre del proveedor en el título del diálogo es un **selector**: haz clic en él para cambiar entre proveedores sin volver atrás.",
+        "Mientras exploras la nube, el nombre del proveedor en el título del diálogo es un **selector**: haz clic en él para cambiar entre proveedores.",
       overwrite:
         "Si la carpeta de destino ya tiene un archivo con el mismo nombre, la exportación se detiene y te pide confirmación antes de reemplazarlo.",
     },
     cloudLinkedSync: {
       intro:
         "Un libro que importas desde la nube queda **sincronizado** con el archivo del que vino: cada edición se escribe de vuelta en ese archivo, así que nunca tienes que volver a exportarlo para guardarlo. Exportar un libro como **JSON** lo vincula igual.",
-      syncBadge:
-        "Un libro sincronizado muestra un **icono de sincronización** junto a su nombre en la lista de LIBROS: gira mientras una edición va en camino, y se convierte en una nube tachada si el guardado falló. Haz clic en él para volver a iniciar sesión o reintentar.",
-      stopSyncing:
-        "**Dejar de sincronizar** (en el menú de tres puntos del libro) rompe el vínculo sin tocar ninguna de las dos copias. La sincronización solo sube tus ediciones locales, nunca baja los cambios remotos.",
+      syncBadge: (runbooksTitle) =>
+        `Un libro sincronizado muestra un **icono de sincronización** junto a su nombre en la lista de **${runbooksTitle}**: gira mientras una edición va en camino, y se convierte en una nube tachada si el guardado falló. Haz clic en él para volver a iniciar sesión o reintentar.`,
+      stopSyncing: (stopSyncingLabel) =>
+        `**${stopSyncingLabel}** (en el menú de tres puntos del libro) rompe el vínculo sin tocar ninguna de las dos copias. La sincronización solo sube tus ediciones locales, nunca baja los cambios remotos.`,
     },
     cloudFileManagement: {
       folders:
         "Los libros en la nube pueden vivir en carpetas: haz clic en una para abrirla y en un archivo para importarlo. Los botones de **flecha** y la ruta sobre la lista te mueven entre las carpetas que visitaste. Al exportar, el destino se elige igual, con un botón de **nueva carpeta**.",
       search:
-        "El **buscador** revisa la carpeta **CommandPad** entera, no solo la que tengas abierta, y muestra la ruta de cada resultado.",
-      actions:
-        "El menú de **tres puntos** de una fila tiene **Renombrar**, **Editar**, **Duplicar**, **Descargar** y **Eliminar**.",
+        "La **barra de búsqueda** revisa la carpeta **CommandPad** entera, no solo la que tengas abierta, y muestra la ruta de cada resultado.",
+      actions: (rename, edit, duplicate, download, deleteLabel) =>
+        `El menú de **tres puntos** de una fila tiene **${rename}**, **${edit}**, **${duplicate}**, **${download}** y **${deleteLabel}**.`,
       editFile:
         "**Editar** abre el JSON del archivo en el sitio, así que un arreglo rápido ya no implica importar, cambiar y volver a exportar. Tiene que seguir siendo JSON válido para guardarse.",
       recycleBin:
         "Un archivo o carpeta eliminado no se pierde para siempre: los proveedores de nube lo mueven primero a una _Papelera de reciclaje_.",
-      storage:
-        "Los libros en la nube se guardan en una carpeta dedicada llamada **CommandPad** en tu propia cuenta, nunca en ningún otro lugar.",
     },
     language: {
       intro:
@@ -955,7 +947,7 @@ export const es: Messages = {
         {
           question: "¿Cómo respaldo un libro o lo llevo a otra máquina?",
           answer:
-            "Expórtalo como **JSON** e importa el archivo en la otra máquina. La exportación JSON contiene el espacio de trabajo completo (variables y bloques) y siempre puede reimportarse.",
+            "Expórtalo como **JSON** e importa el archivo en la otra máquina, o hazlo directamente a SharePoint o Google Drive y luego impórtalo desde ahí en la otra máquina. La exportación JSON contiene el espacio de trabajo completo (variables y bloques) y siempre puede reimportarse.",
         },
         {
           question: "¿Qué elimina exactamente Resetear el Espacio de Trabajo?",
@@ -963,7 +955,7 @@ export const es: Messages = {
             "Todo: cada pestaña, cada libro de la biblioteca, cada variable y cada preferencia. Es un borrado completo del almacenamiento local de la app y no se puede deshacer, así que exporta antes lo que quieras salvar.",
         },
         {
-          question: "¿Por qué parte de mi comando aparece resaltado en rojo?",
+          question: "¿Por qué parte de mi comando aparece resaltada en rojo?",
           answer:
             "Esa parte es una referencia sin resolver: no existe ninguna variable con esa clave (las claves distinguen mayúsculas de minúsculas), o a un marcador `{;nombre}` no se le dio valor.",
         },

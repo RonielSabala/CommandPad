@@ -244,7 +244,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
 
           <div className="image-url-row">
             <input
-              className="image-url-input"
+              className="image-url-input no-ligatures"
               type="url"
               spellCheck={false}
               placeholder={t.image.urlPlaceholder}

@@ -1,24 +1,27 @@
-#docs-toc {
-  grid-area: toc;
-  overflow-y: auto;
-  padding: var(--space-12) var(--space-6) var(--space-6);
-  border-right: var(--border-standard);
-  background: var(--color-surface);
-}
-
 #docs-toc-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
   gap: var(--space-4);
   width: 100%;
-  padding: var(--space-4) var(--space-6);
-  margin-bottom: var(--space-2);
+  height: var(--space-20);
+  padding: var(--space-6);
+  padding-right: max(var(--space-6), var(--panel-rail-end));
+  padding-left: max(var(--space-6), var(--panel-rail-start));
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-bottom: var(--border-standard);
   color: var(--color-text-muted);
   cursor: pointer;
+}
+
+#docs-toc-nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  border-right: var(--panel-scrollbar-inset) solid transparent;
+  padding: var(--space-4) var(--panel-scroll-gutter) var(--space-6) 0;
 }
 
 #docs-toc-header:hover {

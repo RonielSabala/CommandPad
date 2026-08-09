@@ -2,19 +2,16 @@
   display: contents;
 }
 
-/* Variable rows */
-
 .docs-demo-variables {
   max-width: 34rem;
   margin-bottom: var(--space-8);
 }
 
-/* Multi-select playground */
 .docs-demo-multiselect {
   outline: none;
 }
 
 /* Sidebar rows */
 .docs-demo-sidebar-frame {
-  max-width: var(--sidebar-width);
+  max-width: var(--docs-demo-sidebar-width);
 }

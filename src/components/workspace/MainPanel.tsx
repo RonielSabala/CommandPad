@@ -1,7 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { InputSelector } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
-import { SidebarPosition } from "@/common/enums";
+import { PanelSide } from "@/common/enums";
 import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
 import { blockDrag } from "@/hooks/blockDrag";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
@@ -40,7 +40,7 @@ export function MainPanel() {
 
   const minimapEnabled = useStore((state) => state.minimapEnabled);
   const minimapOnLeft = useStore(
-    (state) => state.minimapPosition === SidebarPosition.LEFT,
+    (state) => state.minimapPosition === PanelSide.LEFT,
   );
 
   const showMinimap = minimapEnabled && !isEmpty;

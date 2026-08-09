@@ -1,0 +1,98 @@
+.resizable-panel {
+  --panel-rail-start: 0px;
+  --panel-rail-end: var(--panel-rail-width);
+  --panel-scrollbar-inset: var(--panel-scroll-gutter);
+
+  grid-area: panel;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  background: var(--color-surface);
+  border-right: var(--border-standard);
+}
+
+.resizable-panel[data-panel-collapsed="true"] {
+  border-left: none;
+  border-right: none;
+}
+
+.resizable-panel[data-panel-side="right"] {
+  --panel-rail-start: var(--panel-rail-width);
+  --panel-rail-end: 0px;
+  --panel-scrollbar-inset: 0px;
+
+  border-right: none;
+  border-left: var(--border-standard);
+}
+
+.panel-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-content > * {
+  min-width: var(--panel-content-width);
+}
+
+/* --- RESIZE HANDLE --- */
+
+.panel-resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: calc(var(--panel-rail-width) / 2);
+  z-index: var(--z-docked);
+  cursor: col-resize;
+  transform: translateX(100%);
+}
+
+.resizable-panel[data-panel-side="right"] .panel-resize-handle {
+  right: auto;
+  left: 0;
+  transform: none;
+}
+
+.resizable-panel[data-panel-side="right"][data-panel-collapsed="true"]
+  .panel-resize-handle {
+  transform: translateX(calc(-100% - var(--scrollbar-size)));
+}
+
+/* The visible line */
+
+.panel-resize-handle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-50%);
+  width: var(--space-2);
+  background: transparent;
+  transition: background var(--transition-base);
+  pointer-events: none;
+}
+
+.resizable-panel[data-panel-collapsed="true"] .panel-resize-handle::before {
+  transform: none;
+  background: var(--color-border);
+}
+
+.resizable-panel[data-panel-side="right"][data-panel-collapsed="true"]
+  .panel-resize-handle::before {
+  left: auto;
+  right: calc(var(--scrollbar-size) * -1);
+}
+
+.resizable-panel .panel-resize-handle:hover::before,
+body.panel-resizing .resizable-panel .panel-resize-handle::before {
+  background: var(--accent);
+}
+
+body.panel-resizing,
+body.panel-resizing * {
+  user-select: none;
+  cursor: col-resize !important;
+}

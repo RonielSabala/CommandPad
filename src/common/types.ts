@@ -7,7 +7,14 @@ import type {
   NoteSegmentType,
   NoteStyle,
   NoteTableAlign,
+  PanelSide,
 } from "./enums";
+
+export interface PanelState {
+  collapsed: boolean;
+  side: PanelSide;
+  width: number;
+}
 
 export interface NoteBlock {
   id: string;
@@ -101,6 +108,18 @@ export interface NoteTable {
   rows: NoteTableCell[][];
 }
 
+export interface NoteListItem {
+  segments: NoteSegment[];
+  lists: NoteList[];
+}
+
+export interface NoteList {
+  ordered: boolean;
+  start: number;
+  items: NoteListItem[];
+}
+
 export type NoteNode =
   | { type: typeof NoteNodeType.TEXT; segments: NoteSegment[] }
-  | { type: typeof NoteNodeType.TABLE; table: NoteTable };
+  | { type: typeof NoteNodeType.TABLE; table: NoteTable }
+  | { type: typeof NoteNodeType.LIST; list: NoteList };

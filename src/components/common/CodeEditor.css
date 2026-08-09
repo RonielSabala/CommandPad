@@ -86,10 +86,6 @@
   tab-size: var(--tab-size);
   font-family: var(--font-mono);
   font-size: var(--code-editor-font-size, var(--text-base));
-  font-variant-ligatures: none;
-  font-feature-settings:
-    "liga" 0,
-    "calt" 0;
   padding: 0 var(--space-6);
 }
 
@@ -110,10 +106,6 @@
   display: block;
   font-family: var(--font-mono);
   font-size: var(--code-editor-font-size, var(--text-base));
-  font-variant-ligatures: none;
-  font-feature-settings:
-    "liga" 0,
-    "calt" 0;
   background: transparent;
   border: none;
   color: var(--color-text-primary);

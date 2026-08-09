@@ -1,18 +1,22 @@
 :root {
   /* --- CORE CONFIG --- */
+  --tab-size: 4;
   --base-unit: 17px;
   --font-sans: "Inter", sans-serif;
   --font-mono: "Cascadia Code", monospace;
-  --tab-size: 4;
+
+  /* --- COLORS --- */
 
   /* Accents & semantic colors */
+
+  --success: #15dd9e;
+
   --accent: #3b82f6;
   --accent-dim: rgba(77, 139, 245, 0.12);
-  --accent-text: #a6c8ff;
-  --constant-text: #ae81ff;
-  --success: #15dd9e;
+
   --danger: #f87171;
   --danger-dim: rgba(248, 113, 113, 0.14);
+
   --warning: #fbbf24;
   --warning-dim: rgba(251, 191, 36, 0.14);
 
@@ -30,6 +34,8 @@
   --block-backdrop: var(--color-bg);
 
   /* Text */
+  --accent-text: #a6c8ff;
+  --constant-text: #ae81ff;
   --color-text-primary: #eef1f6;
   --color-text-secondary: #9aa3b2;
   --color-text-muted: #656d7d;
@@ -43,6 +49,13 @@
   /* Note text styles */
   --code-color: #ffab3d;
   --code-bg: rgba(255, 171, 61, 0.09);
+
+  /* Misc & utilities */
+  --white-a10: rgba(255, 255, 255, 0.1);
+  --black-a40: rgba(0, 0, 0, 0.4);
+  --shadow-color-float: var(--black-a40);
+
+  /* --- SCALES --- */
 
   /* Space scale */
   --space-1: 0.125rem;
@@ -78,43 +91,6 @@
   --icon-base: 1rem;
   --icon-lg: 2.875rem;
 
-  /* Layout dimensions */
-  --sidebar-width: 18.75rem;
-  --sidebar-rail-width: 1.75rem;
-  --sidebar-section-margin-right: 0.25rem;
-  --header-height: 3.5rem;
-  --scrollbar-size: 0.625rem;
-  --tab-max-width: 12rem;
-  --tab-min-width: 4rem;
-  --block-min-width: 7.5rem;
-  --image-block-min-width: 22rem;
-  --image-block-max-height: 26rem;
-  --image-view-min-width: 16rem;
-  --image-lightbox-min-width: 40rem;
-  --image-lightbox-max-width: 75vw;
-  --image-lightbox-max-height: 88vh;
-  --image-lightbox-nav-icon: 2.5rem;
-  --image-lightbox-nav-width: 4rem;
-  --image-lightbox-nav-padding-y: var(--space-14);
-  --image-lightbox-nav-gap: var(--space-4);
-  --image-lightbox-nav-edge-min: var(--space-4);
-  --variable-split-width: 0.5rem;
-  --modal-min-width: 15rem;
-  --modal-max-width: 30rem;
-  --modal-cloud-width: 50vw;
-  --modal-cloud-height: 75vh;
-  --modal-cloud-padding-x: var(--space-12);
-  --modal-cloud-padding-y: var(--space-10);
-  --cloud-col-date: 7.5rem;
-  --cloud-col-size: 3.5rem;
-  --cloud-col-actions: 1.5rem;
-  --minimap-width: 7rem;
-  --context-menu-min-width: 10rem;
-  --context-menu-min-height: 3rem;
-  --docs-sidebar-width: 16rem;
-  --docs-max-width: 52rem;
-  --docs-heading-lg: 1.75rem;
-
   /* Elevation scale */
   --z-behind: -1;
   --z-base: 0;
@@ -126,10 +102,53 @@
   --z-modal: 6;
   --z-popover: 7;
 
-  /* --- MISC & UTILITIES --- */
-  --white-a10: rgba(255, 255, 255, 0.1);
-  --black-a40: rgba(0, 0, 0, 0.4);
-  --shadow-color-float: var(--black-a40);
+  /* --- LAYOUT DIMENSIONS --- */
+
+  --panel-rail-width: 1.75rem;
+  --panel-scroll-gutter: 0.25rem;
+  --panel-rail-start: 0px;
+  --panel-rail-end: 0px;
+  --panel-scrollbar-inset: 0px;
+
+  --header-height: 3.5rem;
+  --scrollbar-size: 0.625rem;
+  --tab-max-width: 12rem;
+  --tab-min-width: 4rem;
+  --block-min-width: 7.5rem;
+
+  --image-block-min-width: 22rem;
+  --image-block-max-height: 26rem;
+  --image-view-min-width: 16rem;
+  --image-lightbox-min-width: 40rem;
+  --image-lightbox-max-width: 75vw;
+  --image-lightbox-max-height: 88vh;
+  --image-lightbox-nav-icon: 2.5rem;
+  --image-lightbox-nav-width: 4rem;
+  --image-lightbox-nav-padding-y: var(--space-14);
+  --image-lightbox-nav-gap: var(--space-4);
+  --image-lightbox-nav-edge-min: var(--space-4);
+
+  --variable-split-width: 0.5rem;
+
+  --modal-min-width: 15rem;
+  --modal-max-width: 30rem;
+  --modal-cloud-width: 50vw;
+  --modal-cloud-height: 75vh;
+  --modal-cloud-padding-x: var(--space-12);
+  --modal-cloud-padding-y: var(--space-10);
+
+  --cloud-col-date: 7.5rem;
+  --cloud-col-size: 3.5rem;
+  --cloud-col-actions: 1.5rem;
+
+  --minimap-width: 7rem;
+
+  --context-menu-min-width: 10rem;
+  --context-menu-min-height: 3rem;
+
+  --docs-max-width: 52rem;
+  --docs-heading-lg: 1.75rem;
+  --docs-demo-sidebar-width: 18.75rem;
 
   /* --- COMPOUND TOKENS --- */
   --border-standard: 1px solid var(--color-border);
@@ -140,13 +159,15 @@
 
 :root.theme-light {
   /* Accents & semantic colors */
+
+  --success: #0f8a5f;
+
   --accent: #2f5de0;
   --accent-dim: rgba(47, 93, 224, 0.09);
-  --accent-text: #1e46c7;
-  --constant-text: #6d28d9;
-  --success: #0f8a5f;
+
   --danger: #dc2626;
   --danger-dim: rgba(220, 38, 38, 0.09);
+
   --warning: #d97706;
   --warning-dim: rgba(217, 119, 6, 0.12);
 
@@ -163,6 +184,8 @@
   --color-border-focus: #2f5de0;
 
   /* Text */
+  --accent-text: #1e46c7;
+  --constant-text: #6d28d9;
   --color-text-primary: #161a22;
   --color-text-secondary: #4d5666;
   --color-text-muted: #838c9c;
@@ -177,6 +200,6 @@
   --code-color: #b4490a;
   --code-bg: rgba(180, 73, 10, 0.08);
 
-  /* Shadows */
+  /* Misc & utilities */
   --shadow-color-float: rgba(22, 26, 34, 0.12);
 }

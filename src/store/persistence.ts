@@ -1,19 +1,32 @@
-import { StorageKey, VariableSplit } from "@/common/config";
+import {
+  createDefaultPanels,
+  PANEL_DEFINITIONS,
+  StorageKey,
+  VariableSplit,
+} from "@/common/config";
 import {
   AppMode,
   CloudProvider,
   ExportFormat,
+  PanelId,
+  PanelSide,
   SectionState,
-  SidebarPosition,
   SyncDestination,
   Theme,
 } from "@/common/enums";
-import type { RunbookEntry, RunbookSync, Tab } from "@/common/types";
+import type {
+  PanelState,
+  RunbookEntry,
+  RunbookSync,
+  Tab,
+} from "@/common/types";
 import { detectLanguage, isLanguage } from "@/i18n/messages";
 import type { Language } from "@/i18n/types";
 import type { CloudFolderRef } from "@/services/cloud";
 import { clamp } from "@/utils/number";
 import { isNumber, isObject, isString } from "@/utils/typeGuards";
+
+const PANEL_IDS = Object.keys(PANEL_DEFINITIONS) as PanelId[];
 
 function getSavedItemByKey(key: string) {
   return JSON.parse(localStorage.getItem(key) ?? "null");
@@ -24,6 +37,54 @@ const isSyncDestination = (value: unknown): value is SyncDestination =>
 
 const isExportFormat = (value: unknown): value is ExportFormat =>
   Object.values(ExportFormat).includes(value as ExportFormat);
+
+const toPanelSide = (value: unknown, fallback: PanelSide): PanelSide => {
+  if (value === PanelSide.LEFT || value === PanelSide.RIGHT) {
+    return value;
+  }
+
+  return fallback;
+};
+
+function serializePanels(panels: Record<PanelId, PanelState>) {
+  const saved: Record<string, unknown> = {};
+
+  for (const panelId of PANEL_IDS) {
+    const panel = panels[panelId];
+    saved[panelId] = {
+      state: panel.collapsed ? SectionState.COLLAPSED : SectionState.EXPANDED,
+      side: panel.side,
+      width: panel.width,
+    };
+  }
+
+  return saved;
+}
+
+function restorePanels(saved: unknown): Record<PanelId, PanelState> {
+  const panels = createDefaultPanels();
+  if (!isObject(saved)) {
+    return panels;
+  }
+
+  for (const panelId of PANEL_IDS) {
+    const entry = saved[panelId];
+    if (!isObject(entry)) {
+      continue;
+    }
+
+    const fallback = panels[panelId];
+    panels[panelId] = {
+      collapsed: entry.state === SectionState.COLLAPSED,
+      side: toPanelSide(entry.side, fallback.side),
+      width: isNumber(entry.width)
+        ? Math.max(PANEL_DEFINITIONS[panelId].collapseSnap, entry.width)
+        : fallback.width,
+    };
+  }
+
+  return panels;
+}
 
 const isCloudFolderPath = (value: unknown): value is CloudFolderRef[] =>
   Array.isArray(value) &&
@@ -38,12 +99,10 @@ interface PersistedUiState {
   theme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
-  sidebarCollapsed: boolean;
-  sidebarPosition: SidebarPosition;
-  sidebarWidth: number;
+  panels: Record<PanelId, PanelState>;
   variableKeyRatio: number;
   minimapEnabled: boolean;
-  minimapPosition: SidebarPosition;
+  minimapPosition: PanelSide;
   lastExportDestination: SyncDestination;
   lastExportFormat: ExportFormat;
   lastExportFilename: string;
@@ -61,11 +120,7 @@ export function saveUiState(ui: PersistedUiState): void {
         theme: ui.theme,
         language: ui.language,
         spellcheckEnabled: ui.spellcheckEnabled,
-        sidebarCollapsed: ui.sidebarCollapsed
-          ? SectionState.COLLAPSED
-          : SectionState.EXPANDED,
-        sidebarPosition: ui.sidebarPosition,
-        sidebarWidth: ui.sidebarWidth,
+        panels: serializePanels(ui.panels),
         variableKeyRatio: ui.variableKeyRatio,
         minimapEnabled: ui.minimapEnabled,
         minimapPosition: ui.minimapPosition,
@@ -94,14 +149,7 @@ export function loadUiState(): Partial<PersistedUiState> | null {
       theme: saved.theme === Theme.LIGHT ? Theme.LIGHT : Theme.DARK,
       language: isLanguage(saved.language) ? saved.language : detectLanguage(),
       spellcheckEnabled: saved.spellcheckEnabled === true,
-      sidebarCollapsed: saved.sidebarCollapsed === SectionState.COLLAPSED,
-      sidebarPosition:
-        saved.sidebarPosition === SidebarPosition.RIGHT
-          ? SidebarPosition.RIGHT
-          : SidebarPosition.LEFT,
-      ...(isNumber(saved.sidebarWidth)
-        ? { sidebarWidth: saved.sidebarWidth }
-        : {}),
+      panels: restorePanels(saved.panels),
       ...(isNumber(saved.variableKeyRatio)
         ? {
             variableKeyRatio: clamp(
@@ -112,10 +160,7 @@ export function loadUiState(): Partial<PersistedUiState> | null {
           }
         : {}),
       minimapEnabled: saved.minimapEnabled !== false,
-      minimapPosition:
-        saved.minimapPosition === SidebarPosition.LEFT
-          ? SidebarPosition.LEFT
-          : SidebarPosition.RIGHT,
+      minimapPosition: toPanelSide(saved.minimapPosition, PanelSide.RIGHT),
       ...(isSyncDestination(saved.lastExportDestination)
         ? { lastExportDestination: saved.lastExportDestination }
         : {}),

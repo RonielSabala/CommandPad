@@ -1,5 +1,10 @@
 import type { DocsSectionId } from "@/common/constants/docs";
-import type { BlockType, NoteStyle, RunbookSyncStatus } from "@/common/enums";
+import type {
+  BlockType,
+  NoteStyle,
+  PanelId,
+  RunbookSyncStatus,
+} from "@/common/enums";
 import type { KeyBinding } from "@/common/keybindings";
 
 // Supported UI languages
@@ -24,7 +29,7 @@ export const LANGUAGE_NAMES: Record<Language, string> = {
 interface LegalSectionMessage {
   heading: string;
   paragraphs: string[];
-  bullets?: string[];
+  bullets?: string;
 }
 
 export interface LegalPageMessages {
@@ -62,11 +67,12 @@ export interface Messages {
     export: string;
     changeLanguage: string;
   };
-  sidebar: {
-    expand: string;
-    collapse: string;
-    moveLeft: string;
-    moveRight: string;
+  panel: {
+    names: Record<PanelId, string>;
+    expand: (name: string) => string;
+    collapse: (name: string) => string;
+    moveLeft: (name: string) => string;
+    moveRight: (name: string) => string;
     doubleClickExpand: string;
     dragResizeCollapse: string;
   };
@@ -331,6 +337,7 @@ export interface Messages {
       reset: string;
       noteSample: string;
       tableSample: string;
+      listSample: string;
       tabSamples: string[];
       runbookSamples: string[];
       multiSelectNotes: string[];
@@ -350,32 +357,35 @@ export interface Messages {
     };
     workspace: {
       intro: string;
-      items: string[];
+      items: string;
       persistence: string;
     };
     header: {
       intro: string;
-      items: string[];
+      items: (exportLabel: string, collapseAllLabel: string) => string;
     };
     mainPanel: {
-      intro: string;
+      intro: (newBlockLabel: string) => string;
       minimap: string;
-      teaser: string;
     };
     tabs: {
       intro: string;
-      items: string[];
+      items: string;
       autoCreate: string;
       labelDemo: string;
     };
     sidebar: {
       intro: string;
-      items: string[];
+      items: string;
       resizeDetails: string;
     };
     runbookLibrary: {
-      intro: string;
-      items: string[];
+      intro: (runbooksTitle: string) => string;
+      items: (
+        importLabel: string,
+        clearLibraryLabel: string,
+        runbookActionsLabel: string,
+      ) => string;
       autoLabel: string;
       labelDetails: string;
       autoSave: string;
@@ -387,7 +397,7 @@ export interface Messages {
       unresolved: string;
       tooltip: string;
       split: string;
-      demoHint: string;
+      demoHint: (variableActionsLabel: string) => string;
       constants: string;
       constantsDemoHint: string;
     };
@@ -443,35 +453,39 @@ export interface Messages {
       copyNote: string;
     };
     blocks: {
-      intro: string;
+      intro: (blockActionsLabel: string) => string;
     };
     commandBlock: {
       intro: string;
-      parts: string[];
+      parts: string;
       multiline: string;
-      longCommands: string;
+      longCommands: (showMoreLines: string) => string;
       variablesTeaser: string;
     };
     noteBlock: {
       intro: string;
-      styles: string;
+      styles: (heading: string, subheading: string, body: string) => string;
       markdown: string;
       markdownTable: string;
       escapes: string;
-      spellcheck: string;
+      spellcheck: (spellcheckLabel: string) => string;
       tables: string;
-      autoUrls: string;
+      lists: string;
       noNesting: string;
       links: string;
       wrapKeys: string;
     };
     imageBlock: {
       intro: string;
-      ways: string[];
+      ways: (chooseLabel: string) => string;
       attachedVsLinked: (limit: string) => string;
       sizing: string;
       slideshow: string;
-      demoHint: string;
+      demoHint: (
+        viewFullscreen: string,
+        replace: string,
+        remove: string,
+      ) => string;
     };
     dividerBlock: {
       intro: string;
@@ -479,40 +493,44 @@ export interface Messages {
     };
     multiSelect: {
       intro: string;
-      actions: string[];
+      actions: string;
       clear: string;
       dragToTabDelay: string;
-      demoHint: string;
     };
     readMode: {
       intro: string;
-      rules: string[];
+      rules: string;
       persisted: string;
       exit: string;
     };
     export: {
-      intro: string;
-      formats: string[];
+      intro: (exportLabel: string) => string;
+      formats: string;
       saveDialog: string;
-      copyMarkdown: string;
+      copyMarkdown: (copyMarkdownLabel: string) => string;
     };
     cloudExport: {
-      intro: string;
+      intro: (exportLabel: string, importLabel: string) => string;
       switchProvider: string;
       overwrite: string;
     };
     cloudLinkedSync: {
       intro: string;
-      syncBadge: string;
-      stopSyncing: string;
+      syncBadge: (runbooksTitle: string) => string;
+      stopSyncing: (stopSyncingLabel: string) => string;
     };
     cloudFileManagement: {
       folders: string;
       search: string;
-      actions: string;
+      actions: (
+        rename: string,
+        edit: string,
+        duplicate: string,
+        download: string,
+        deleteLabel: string,
+      ) => string;
       editFile: string;
       recycleBin: string;
-      storage: string;
     };
     language: {
       intro: string;
