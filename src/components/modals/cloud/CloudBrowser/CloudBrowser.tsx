@@ -146,13 +146,6 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
             />
           )}
 
-          {busy && (
-            <p className="cloud-browser-status">
-              <Spinner />
-              {t.cloudModal.loading}
-            </p>
-          )}
-
           <div
             className={classNames(
               "cloud-browser-entries modal-scrollable-body",
@@ -172,6 +165,13 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
               ) : (
                 <CloudFileRow key={entry.id} file={entry} path={path} />
               ),
+            )}
+
+            {busy && (
+              <p className="cloud-browser-status no-user-select">
+                <Spinner />
+                {t.cloudModal.loading}
+              </p>
             )}
           </div>
         </>
