@@ -97,6 +97,10 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
   const anchorRef = useRef<string | null>(null);
 
   const entryRows = useMemo(() => rows.map((row) => row.entry), [rows]);
+  const listedIds = useMemo(
+    () => new Set(entryRows.map((entry) => entry.id)),
+    [entryRows],
+  );
 
   const select = useCallback(
     (entry: CloudEntry, modifiers: CloudSelectionModifiers) => {
@@ -198,7 +202,7 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
             className={classNames(!showFiles && "is-folders-only")}
           />
 
-          <CloudSelectionPills />
+          <CloudSelectionPills listedIds={listedIds} />
 
           {newFolderDraft !== null && (
             <CloudNewFolderRow

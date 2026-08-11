@@ -7,13 +7,21 @@ import { FileEarmark, FolderFill } from "react-bootstrap-icons";
 
 import "./CloudSelectionPills.css";
 
-export function CloudSelectionPills() {
+interface Props {
+  listedIds: Set<string>;
+}
+
+export function CloudSelectionPills({ listedIds }: Props) {
   const t = useTranslation();
   const selectedEntries = useStore((state) => state.cloudSelectedEntries);
   const toggleCloudSelected = useStore((state) => state.toggleCloudSelected);
   const clearCloudSelection = useStore((state) => state.clearCloudSelection);
 
-  if (selectedEntries.size === 0) {
+  const allListed = [...selectedEntries.values()].every(({ entry }) =>
+    listedIds.has(entry.id),
+  );
+
+  if (selectedEntries.size === 0 || allListed) {
     return null;
   }
 
