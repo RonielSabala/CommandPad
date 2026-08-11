@@ -53,9 +53,9 @@ export function DialogModal({
         <ToneIcon className="dialog-icon" aria-hidden="true" />
         <p className="dialog-title">{title}</p>
       </header>
-      <p className="dialog-message">
+      <div className="dialog-message">
         <NoteText text={message} />
-      </p>
+      </div>
       <div className="modal-actions">{children}</div>
     </Modal>
   );

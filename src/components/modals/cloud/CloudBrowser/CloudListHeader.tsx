@@ -3,7 +3,10 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { CaretDownFill, CaretUpFill } from "react-bootstrap-icons";
+
 import "./CloudListHeader.css";
+import { CloudSelectCircle } from "./CloudSelectCircle";
+import { useCloudSelection } from "./cloudSelection";
 
 interface SortButtonProps {
   column: CloudSortColumn;
@@ -44,16 +47,39 @@ function SortButton({ column, label, className }: SortButtonProps) {
 
 export function CloudListHeader() {
   const t = useTranslation();
+  const { rows } = useCloudSelection();
+  const selectedEntries = useStore((state) => state.cloudSelectedEntries);
+  const setCloudSelection = useStore((state) => state.setCloudSelection);
+
+  const allSelected =
+    rows.length > 0 && rows.every((entry) => selectedEntries.has(entry.id));
+
+  const toggleAll = () => {
+    const listed = new Set(rows.map((entry) => entry.id));
+    const rest = [...selectedEntries.values()]
+      .map((picked) => picked.entry)
+      .filter((entry) => !listed.has(entry.id));
+
+    setCloudSelection(allSelected ? rest : [...rest, ...rows]);
+  };
 
   return (
     <div className="cloud-browser-list-header">
+      <CloudSelectCircle
+        selected={allSelected}
+        title={allSelected ? t.cloudModal.deselectAll : t.cloudModal.selectAll}
+        onToggle={toggleAll}
+      />
+
       <SortButton
         column={CloudSortColumn.NAME}
         label={t.cloudModal.columnName}
+        className="cloud-browser-col-name"
       />
       <SortButton
         column={CloudSortColumn.MODIFIED}
         label={t.cloudModal.columnModified}
+        className="cloud-browser-col-date"
       />
       <SortButton
         column={CloudSortColumn.SIZE}

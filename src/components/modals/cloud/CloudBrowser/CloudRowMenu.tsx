@@ -5,11 +5,19 @@ import {
 } from "@/components/common/contextMenu/ContextMenu";
 import { TrashIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { Copy, Download, PencilSquare, Vr } from "react-bootstrap-icons";
+import {
+  BoxArrowInDown,
+  Copy,
+  Download,
+  PencilSquare,
+  Vr,
+} from "react-bootstrap-icons";
 
 interface CloudRowMenuProps {
-  onRename: () => void;
+  count: number;
+  onRename?: () => void;
   onEdit?: () => void;
+  onImport?: () => void;
   onDuplicate: () => void;
   onDownload: () => void;
   onDelete: () => void;
@@ -17,8 +25,10 @@ interface CloudRowMenuProps {
 }
 
 export function CloudRowMenu({
+  count,
   onRename,
   onEdit,
+  onImport,
   onDuplicate,
   onDownload,
   onDelete,
@@ -28,13 +38,16 @@ export function CloudRowMenu({
 
   return (
     <ActionsMenu
-      className="cloud-browser-row-actions"
+      className="cloud-browser-row-actions cloud-browser-row-menu"
       title={menuTitle}
       align={ContextMenuAlign.END}
+      horizontal={true}
     >
-      <ContextMenuItem icon={<Vr className="icon-md" />} onSelect={onRename}>
-        {t.cloudModal.rename}
-      </ContextMenuItem>
+      {onRename && (
+        <ContextMenuItem icon={<Vr className="icon-md" />} onSelect={onRename}>
+          {t.cloudModal.rename}
+        </ContextMenuItem>
+      )}
 
       {onEdit && (
         <ContextMenuItem
@@ -45,18 +58,27 @@ export function CloudRowMenu({
         </ContextMenuItem>
       )}
 
+      {onImport && (
+        <ContextMenuItem
+          icon={<BoxArrowInDown className="icon-md" />}
+          onSelect={onImport}
+        >
+          {t.cloudModal.importFiles}
+        </ContextMenuItem>
+      )}
+
       <ContextMenuItem
         icon={<Copy className="icon-md" />}
         onSelect={onDuplicate}
       >
-        {t.cloudModal.duplicate}
+        {t.cloudModal.duplicate(count)}
       </ContextMenuItem>
 
       <ContextMenuItem
         icon={<Download className="icon-md" />}
         onSelect={onDownload}
       >
-        {t.cloudModal.download}
+        {t.cloudModal.download(count)}
       </ContextMenuItem>
 
       <ContextMenuItem
@@ -64,7 +86,7 @@ export function CloudRowMenu({
         onSelect={onDelete}
         danger
       >
-        {t.cloudModal.delete}
+        {t.cloudModal.delete(count)}
       </ContextMenuItem>
     </ActionsMenu>
   );

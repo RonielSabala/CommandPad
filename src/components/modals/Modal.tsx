@@ -45,7 +45,7 @@ export function Modal({
     >
       <div className={classNames("modal", className)}>
         <button
-          className="modal-close btn btn-flat-icon"
+          className="modal-close btn btn-soft-icon"
           onClick={onClose}
           title={t.common.close}
           aria-label={t.common.close}

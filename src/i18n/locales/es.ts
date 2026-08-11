@@ -6,6 +6,7 @@ import {
   RunbookSyncStatus,
 } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
+import { codeBulletList } from "../lists";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
 
@@ -218,11 +219,20 @@ export const es: Messages = {
     cancelNewFolder: "Cancelar nueva carpeta",
     importAction: (filename) => `Importar ${filename}`,
     entryActions: "Más acciones",
+    selectRow: (name) => `Seleccionar ${name}`,
+    deselectRow: (name) => `Deseleccionar ${name}`,
+    selectAll: "Seleccionar todo",
+    deselectAll: "Deseleccionar todo",
+    clearSelection: "Quitar la selección",
+    importFiles: "Importar archivos",
     rename: "Renombrar",
     edit: "Editar",
-    duplicate: "Duplicar",
-    download: "Descargar",
-    delete: "Eliminar",
+    duplicate: (count) =>
+      count === 1 ? "Duplicar" : `Duplicar ${count} elementos`,
+    download: (count) =>
+      count === 1 ? "Descargar" : `Descargar ${count} elementos`,
+    delete: (count) =>
+      count === 1 ? "Eliminar" : `Eliminar ${count} elementos`,
     saveName: "Guardar nombre",
     cancelRename: "Cancelar renombrado",
     namePlaceholder: "Nombre del archivo",
@@ -244,6 +254,8 @@ export const es: Messages = {
     duplicateFolderError: "No se pudo duplicar la carpeta. Inténtalo de nuevo.",
     downloadFolderError: "No se pudo descargar la carpeta. Inténtalo de nuevo.",
     deleteFolderError: "No se pudo eliminar la carpeta. Inténtalo de nuevo.",
+    downloadEntriesError:
+      "No se pudieron descargar los elementos seleccionados. Inténtalo de nuevo.",
     createFolderError: "No se pudo crear la carpeta. Inténtalo de nuevo.",
     nameTakenError: (filename) => `${filename} ya existe en esta carpeta.`,
   },
@@ -257,11 +269,11 @@ export const es: Messages = {
     overwriteTitle: "Sobrescribir Libro",
     overwriteConfirm: "Sobrescribir",
     overwriteMessage: (filename, existingName) =>
-      `\`${filename}\` coincide con un libro que ya tienes. Importarlo **sobrescribirá** \`${existingName}\`.`,
+      `\`${filename}\` coincide con un libro que ya tienes.\n\nImportarlo **sobrescribirá** \`${existingName}\`.`,
     overwriteCloudFileTitle: "Sobrescribir Libro de la Nube",
     overwriteCloudFileConfirm: "Sobrescribir",
     overwriteCloudFileMessage: (filename) =>
-      `\`${filename}\` ya existe en la carpeta seleccionada. Exportar reemplazará su contenido, y **esto no se puede deshacer**.`,
+      `\`${filename}\` ya existe en la carpeta seleccionada.\n\nExportar reemplazará su contenido, y **esto no se puede deshacer**.`,
     importFailedTitle: "Formato Inválido",
     importFailed: (count) =>
       count === 1
@@ -283,11 +295,23 @@ export const es: Messages = {
     deleteCloudFileTitle: "Eliminar Libro de la Nube",
     deleteCloudFileConfirm: "Eliminar",
     deleteCloudFileMessage: (filename) =>
-      `¿Eliminar \`${filename}\` de tu carpeta en la nube? Tu proveedor lo guarda un tiempo en la _Papelera de reciclaje_, así que todavía puedes restaurarlo desde ahí.`,
+      `¿Eliminar \`${filename}\` de tu carpeta en la nube?\n\nTu proveedor lo guarda un tiempo en la _Papelera de reciclaje_, así que todavía puedes restaurarlo desde ahí.`,
     deleteCloudFolderTitle: "Eliminar Carpeta de la Nube",
     deleteCloudFolderConfirm: "Eliminar",
     deleteCloudFolderMessage: (name) =>
-      `¿Eliminar la carpeta \`${name}\`? Tu proveedor guarda un tiempo los elementos eliminados en la _Papelera de reciclaje_, así que todavía puedes restaurarlos desde ahí.`,
+      `¿Eliminar la carpeta \`${name}\`?\n\nTu proveedor guarda un tiempo los elementos eliminados en la _Papelera de reciclaje_, así que todavía puedes restaurarlos desde ahí.`,
+    deleteCloudEntriesTitle: "Eliminar Elementos de la Nube",
+    deleteCloudEntriesConfirm: "Eliminar",
+    deleteCloudEntriesMessage: (names) =>
+      `¿Eliminar estos ${names.length} elementos de tu carpeta en la nube?\n${codeBulletList(
+        names,
+      )}\n\nTu proveedor guarda un tiempo los elementos eliminados en la _Papelera de reciclaje_, así que todavía puedes restaurarlos desde ahí.`,
+    duplicateCloudEntriesTitle: "Duplicar Elementos de la Nube",
+    duplicateCloudEntriesConfirm: "Duplicar",
+    duplicateCloudEntriesMessage: (names) =>
+      `¿Hacer una copia de estos ${names.length} elementos en tu carpeta en la nube?\n${codeBulletList(
+        names,
+      )}\n\nCada copia se añade junto al original, y una carpeta se copia con todo lo que contiene.`,
     signOutCloudTitle: "Cerrar Sesión",
     signOutCloudConfirm: "Cerrar Sesión",
     signOutCloudMessage:
@@ -921,6 +945,8 @@ Si algo sale mal, deshazlo en este orden:
         "La **barra de búsqueda** revisa la carpeta **CommandPad** entera, no solo la que tengas abierta, y muestra la ruta de cada resultado.",
       actions: (rename, edit, duplicate, download, deleteLabel) =>
         `El menú de **tres puntos** de una fila tiene **${rename}**, **${edit}**, **${duplicate}**, **${download}** y **${deleteLabel}**.`,
+      multiSelect:
+        "Las filas se seleccionan como los archivos de un explorador. Haz clic en una fila para seleccionarla, en el **círculo** de su izquierda para sumarla o quitarla de la selección, `Ctrl`+clic para lo mismo en cualquier punto de la fila y `Shift`+clic para tomar todo lo que hay entre la última fila que tocaste y esta. El círculo de la cabecera suma o quita las filas que estén listadas, y hacer clic en el espacio vacío bajo las filas vacía la selección.",
       editFile:
         "**Editar** abre el JSON del archivo en el sitio, así que un arreglo rápido ya no implica importar, cambiar y volver a exportar. Tiene que seguir siendo JSON válido para guardarse.",
       recycleBin:

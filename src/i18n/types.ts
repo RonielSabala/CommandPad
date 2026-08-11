@@ -221,11 +221,17 @@ export interface Messages {
     cancelNewFolder: string;
     importAction: (filename: string) => string;
     entryActions: string;
+    selectRow: (name: string) => string;
+    deselectRow: (name: string) => string;
+    selectAll: string;
+    deselectAll: string;
+    clearSelection: string;
+    importFiles: string;
     rename: string;
     edit: string;
-    duplicate: string;
-    download: string;
-    delete: string;
+    duplicate: (count: number) => string;
+    download: (count: number) => string;
+    delete: (count: number) => string;
     editTitle: (path: string) => string;
     editHint: string;
     saveName: string;
@@ -245,6 +251,7 @@ export interface Messages {
     duplicateFolderError: string;
     downloadFolderError: string;
     deleteFolderError: string;
+    downloadEntriesError: string;
     createFolderError: string;
     nameTakenError: (filename: string) => string;
   };
@@ -279,6 +286,12 @@ export interface Messages {
     deleteCloudFolderTitle: string;
     deleteCloudFolderConfirm: string;
     deleteCloudFolderMessage: (name: string) => string;
+    deleteCloudEntriesTitle: string;
+    deleteCloudEntriesConfirm: string;
+    deleteCloudEntriesMessage: (names: string[]) => string;
+    duplicateCloudEntriesTitle: string;
+    duplicateCloudEntriesConfirm: string;
+    duplicateCloudEntriesMessage: (names: string[]) => string;
     signOutCloudTitle: string;
     signOutCloudConfirm: string;
     signOutCloudMessage: string;
@@ -529,6 +542,7 @@ export interface Messages {
         download: string,
         deleteLabel: string,
       ) => string;
+      multiSelect: string;
       editFile: string;
       recycleBin: string;
     };

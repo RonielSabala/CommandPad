@@ -9,7 +9,8 @@ import {
 } from "@/services/cloud";
 import { useStore } from "@/store/store";
 import { classNames, matchesQuery } from "@/utils/string";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState, type MouseEvent } from "react";
+
 import { PROVIDER_ICON, PROVIDER_NAME } from "../cloudProviders";
 import "./CloudBrowser.css";
 import { CloudFileRow } from "./CloudFileRow";
@@ -17,6 +18,12 @@ import { CloudFolderRow } from "./CloudFolderRow";
 import { CloudListHeader } from "./CloudListHeader";
 import { CloudNewFolderRow } from "./CloudNewFolderRow";
 import { CloudPathBar } from "./CloudPathBar";
+import { CloudSelectionPills } from "./CloudSelectionPills";
+import {
+  CloudSelectionContext,
+  type CloudSelectionApi,
+  type CloudSelectionModifiers,
+} from "./cloudSelection";
 
 interface CloudBrowserProps {
   showFiles?: boolean;
@@ -45,6 +52,11 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
   const signInToCloud = useStore((state) => state.signInToCloud);
   const signOutOfCloud = useStore((state) => state.signOutOfCloud);
   const createCloudFolder = useStore((state) => state.createCloudFolder);
+
+  const selectedEntries = useStore((state) => state.cloudSelectedEntries);
+  const setCloudSelection = useStore((state) => state.setCloudSelection);
+  const toggleCloudSelected = useStore((state) => state.toggleCloudSelected);
+  const clearCloudSelection = useStore((state) => state.clearCloudSelection);
 
   // A non-null draft means the new-folder form is open
   const [newFolderDraft, setNewFolderDraft] = useState<string | null>(null);
@@ -80,6 +92,59 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
 
     return matched.sort((a, b) => compareCloudEntries(a.entry, b.entry, sort));
   }, [searching, searchEntries, searchQuery, entries, showFiles, sort]);
+
+  // The row where a range starts
+  const anchorRef = useRef<string | null>(null);
+
+  const entryRows = useMemo(() => rows.map((row) => row.entry), [rows]);
+  const listedIds = useMemo(
+    () => new Set(entryRows.map((entry) => entry.id)),
+    [entryRows],
+  );
+
+  const select = useCallback(
+    (entry: CloudEntry, modifiers: CloudSelectionModifiers) => {
+      const ids = entryRows.map((row) => row.id);
+      const from = ids.indexOf(anchorRef.current ?? entry.id);
+      const to = ids.indexOf(entry.id);
+
+      // Set range
+      if (modifiers.shiftKey && from !== -1 && to !== -1) {
+        anchorRef.current = ids[from];
+
+        const [start, end] = from <= to ? [from, to] : [to, from];
+        setCloudSelection(entryRows.slice(start, end + 1));
+        return;
+      }
+
+      anchorRef.current = entry.id;
+      if (modifiers.ctrlKey || modifiers.metaKey) {
+        toggleCloudSelected(entry);
+      } else {
+        setCloudSelection([entry]);
+      }
+    },
+    [entryRows, setCloudSelection, toggleCloudSelected],
+  );
+
+  const toggle = useCallback(
+    (entry: CloudEntry) => {
+      anchorRef.current = entry.id;
+      toggleCloudSelected(entry);
+    },
+    [toggleCloudSelected],
+  );
+
+  const selection: CloudSelectionApi = useMemo(
+    () => ({ rows: entryRows, select, toggle }),
+    [entryRows, select, toggle],
+  );
+
+  const clearOnBackdrop = (event: MouseEvent) => {
+    if (event.target === event.currentTarget) {
+      clearCloudSelection();
+    }
+  };
 
   const busy = searching ? searchLoading : loading;
   const emptyMessage = searching
@@ -137,6 +202,8 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
             className={classNames(!showFiles && "is-folders-only")}
           />
 
+          <CloudSelectionPills listedIds={listedIds} />
+
           {newFolderDraft !== null && (
             <CloudNewFolderRow
               value={newFolderDraft}
@@ -146,34 +213,42 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
             />
           )}
 
-          <div
-            className={classNames(
-              "cloud-browser-entries modal-scrollable-body",
-              !showFiles && "is-folders-only",
-              busy && "is-busy",
-            )}
-          >
-            {rows.length > 0 && <CloudListHeader />}
+          <CloudSelectionContext.Provider value={selection}>
+            <div className="cloud-browser-list">
+              <div
+                className={classNames(
+                  "cloud-browser-entries modal-scrollable-body",
+                  !showFiles && "is-folders-only",
+                  busy && "is-busy",
+                  selectedEntries.size > 0 && "has-selection",
+                )}
+                onClick={clearOnBackdrop}
+              >
+                {rows.length > 0 && <CloudListHeader />}
 
-            {!busy && rows.length === 0 && (
-              <p className="cloud-browser-empty">{emptyMessage}</p>
-            )}
+                {!busy && rows.length === 0 && (
+                  <p className="cloud-browser-empty">{emptyMessage}</p>
+                )}
 
-            {rows.map(({ entry, path }) =>
-              entry.isFolder ? (
-                <CloudFolderRow key={entry.id} folder={entry} path={path} />
-              ) : (
-                <CloudFileRow key={entry.id} file={entry} path={path} />
-              ),
-            )}
+                {rows.map(({ entry, path }) =>
+                  entry.isFolder ? (
+                    <CloudFolderRow key={entry.id} folder={entry} path={path} />
+                  ) : (
+                    <CloudFileRow key={entry.id} file={entry} path={path} />
+                  ),
+                )}
+              </div>
 
-            {busy && (
-              <p className="cloud-browser-status no-user-select">
-                <Spinner />
-                {t.cloudModal.loading}
-              </p>
-            )}
-          </div>
+              {busy && (
+                <p className="cloud-browser-status no-user-select">
+                  <span className="cloud-browser-status-label">
+                    <Spinner />
+                    {t.cloudModal.loading}
+                  </span>
+                </p>
+              )}
+            </div>
+          </CloudSelectionContext.Provider>
         </>
       )}
 

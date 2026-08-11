@@ -1,7 +1,8 @@
 import { useTranslation } from "@/i18n";
 import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
-import { Braces } from "react-bootstrap-icons";
+import { FileEarmark } from "react-bootstrap-icons";
+
 import { CloudEntryRow } from "./CloudEntryRow";
 
 interface CloudFileRowProps {
@@ -11,17 +12,17 @@ interface CloudFileRowProps {
 
 export function CloudFileRow({ file, path }: CloudFileRowProps) {
   const t = useTranslation();
-  const importRunbookFromCloud = useStore(
-    (state) => state.importRunbookFromCloud,
-  );
   const openCloudFileEditor = useStore((state) => state.openCloudFileEditor);
+  const importRunbooksFromCloud = useStore(
+    (state) => state.importRunbooksFromCloud,
+  );
 
   return (
     <CloudEntryRow
       entry={file}
-      icon={Braces}
+      icon={FileEarmark}
       activateTitle={t.cloudModal.importAction(file.name)}
-      onActivate={() => void importRunbookFromCloud(file)}
+      onActivate={() => void importRunbooksFromCloud([file])}
       onEdit={() => void openCloudFileEditor(file)}
       path={path}
     />

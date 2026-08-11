@@ -1,5 +1,6 @@
 import { CloudSyncConfig, MimeType } from "@/common/config";
 import { createZip, type ZipFile } from "@/utils/zip";
+import { buildDuplicateName } from "./entries";
 import type { CloudClient, CloudEntry } from "./types";
 
 const encoder = new TextEncoder();
@@ -72,4 +73,24 @@ export async function buildCloudFolderZip(
   folder: CloudEntry,
 ): Promise<Blob> {
   return createZip(await collectZipFiles(client, folder.id, folder.name, 0));
+}
+
+export async function buildCloudEntriesZip(
+  client: CloudClient,
+  entries: CloudEntry[],
+): Promise<Blob> {
+  const taken: string[] = [];
+  const nested: ZipFile[][] = [];
+
+  for (const entry of entries) {
+    const root = buildDuplicateName(entry, taken);
+    taken.push(root);
+    nested.push(
+      entry.isFolder
+        ? await collectZipFiles(client, entry.id, root, 0)
+        : [{ path: root, data: encoder.encode(await client.readFile(entry)) }],
+    );
+  }
+
+  return createZip(nested.flat());
 }
