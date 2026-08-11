@@ -218,12 +218,15 @@
   align-items: center;
   gap: var(--space-2);
   flex-shrink: 0;
+}
+
+.cloud-browser-row-menu {
   visibility: hidden;
 }
 
 .cloud-browser-row:is(.is-selected, :hover, :has(:focus-visible))
-  .cloud-browser-row-actions,
-.cloud-browser-row-actions.menu-open {
+  .cloud-browser-row-menu,
+.cloud-browser-row-menu.menu-open {
   visibility: visible;
 }
 

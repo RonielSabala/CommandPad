@@ -38,7 +38,7 @@ export function CloudRowMenu({
 
   return (
     <ActionsMenu
-      className="cloud-browser-row-actions"
+      className="cloud-browser-row-actions cloud-browser-row-menu"
       title={menuTitle}
       align={ContextMenuAlign.END}
       horizontal={true}
