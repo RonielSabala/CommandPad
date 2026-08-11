@@ -15,6 +15,12 @@ export interface CloudFolderRef {
   name: string;
 }
 
+/** An entry together with the folder holding it. */
+export interface PlacedCloudEntry {
+  entry: CloudEntry;
+  path: CloudFolderRef[];
+}
+
 export class CloudSyncError extends Error {}
 
 export interface CloudClient {

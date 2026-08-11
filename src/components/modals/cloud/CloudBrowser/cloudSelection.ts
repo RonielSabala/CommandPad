@@ -9,8 +9,8 @@ export interface CloudSelectionModifiers {
 
 export interface CloudSelectionApi {
   rows: CloudEntry[];
-  select: (id: string, modifiers: CloudSelectionModifiers) => void;
-  toggle: (id: string) => void;
+  select: (entry: CloudEntry, modifiers: CloudSelectionModifiers) => void;
+  toggle: (entry: CloudEntry) => void;
 }
 
 const FALLBACK: CloudSelectionApi = {

@@ -47,21 +47,28 @@ function SortButton({ column, label, className }: SortButtonProps) {
 
 export function CloudListHeader() {
   const t = useTranslation();
-  const selectedIds = useStore((state) => state.cloudSelectedIds);
-  const setCloudSelection = useStore((state) => state.setCloudSelection);
   const { rows } = useCloudSelection();
+  const selectedEntries = useStore((state) => state.cloudSelectedEntries);
+  const setCloudSelection = useStore((state) => state.setCloudSelection);
 
   const allSelected =
-    rows.length > 0 && rows.every((entry) => selectedIds.has(entry.id));
+    rows.length > 0 && rows.every((entry) => selectedEntries.has(entry.id));
+
+  const toggleAll = () => {
+    const listed = new Set(rows.map((entry) => entry.id));
+    const rest = [...selectedEntries.values()]
+      .map((picked) => picked.entry)
+      .filter((entry) => !listed.has(entry.id));
+
+    setCloudSelection(allSelected ? rest : [...rest, ...rows]);
+  };
 
   return (
     <div className="cloud-browser-list-header">
       <CloudSelectCircle
         selected={allSelected}
         title={allSelected ? t.cloudModal.deselectAll : t.cloudModal.selectAll}
-        onToggle={() =>
-          setCloudSelection(allSelected ? [] : rows.map((entry) => entry.id))
-        }
+        onToggle={toggleAll}
       />
 
       <SortButton

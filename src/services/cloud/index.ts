@@ -14,14 +14,18 @@ export {
 } from "./entries";
 export type { CloudSort } from "./entries";
 export { walkCloudTree } from "./search";
-export type { CloudSearchEntry } from "./search";
 export {
   buildCloudEntriesZip,
   buildCloudFolderZip,
   copyCloudEntry
 } from "./transfer";
 export { CloudSyncError } from "./types";
-export type { CloudClient, CloudEntry, CloudFolderRef } from "./types";
+export type {
+  CloudClient,
+  CloudEntry,
+  CloudFolderRef,
+  PlacedCloudEntry
+} from "./types";
 
 const CLOUD_CLIENTS: Record<CloudProvider, CloudClient> = {
   [CloudProvider.SHAREPOINT]: sharePointClient,

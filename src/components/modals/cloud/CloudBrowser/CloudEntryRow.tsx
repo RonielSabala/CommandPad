@@ -55,13 +55,13 @@ export function CloudEntryRow({
   const downloadCloudEntries = useStore((state) => state.downloadCloudEntries);
   const deleteCloudEntries = useStore((state) => state.deleteCloudEntries);
 
-  const selectedIds = useStore((state) => state.cloudSelectedIds);
   const selection = useCloudSelection();
-  const selected = selectedIds.has(entry.id);
+  const selectedEntries = useStore((state) => state.cloudSelectedEntries);
+  const selected = selectedEntries.has(entry.id);
 
   const targets =
-    selected && selectedIds.size > 1
-      ? selection.rows.filter((row) => selectedIds.has(row.id))
+    selected && selectedEntries.size > 1
+      ? [...selectedEntries.values()].map((picked) => picked.entry)
       : [entry];
 
   const files = targets.filter((target) => !target.isFolder);
@@ -83,7 +83,7 @@ export function CloudEntryRow({
       return;
     }
 
-    selection.select(entry.id, event);
+    selection.select(entry, event);
   };
 
   // A non-null draft means this row is being renamed
@@ -150,7 +150,7 @@ export function CloudEntryRow({
             ? t.cloudModal.deselectRow(entry.name)
             : t.cloudModal.selectRow(entry.name)
         }
-        onToggle={() => selection.toggle(entry.id)}
+        onToggle={() => selection.toggle(entry)}
       />
 
       <button className="cloud-browser-row-main">

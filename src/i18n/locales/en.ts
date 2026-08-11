@@ -220,7 +220,8 @@ export const en: Messages = {
     selectRow: (name) => `Select ${name}`,
     deselectRow: (name) => `Deselect ${name}`,
     selectAll: "Select all",
-    deselectAll: "Clear selection",
+    deselectAll: "Deselect all",
+    clearSelection: "Clear selection",
     importFiles: "Import files",
     rename: "Rename",
     edit: "Edit",
@@ -932,7 +933,7 @@ If something goes wrong, undo it in this order:
       actions: (rename, edit, duplicate, download, deleteLabel) =>
         `A row's **three dots** menu holds **${rename}**, **${edit}**, **${duplicate}**, **${download}**, and **${deleteLabel}**.`,
       multiSelect:
-        "Rows select like files in a file explorer. Click a row to select it, click the **circle** on its left to add or drop it from the selection, `Ctrl`+click to do the same anywhere on the row, and `Shift`+click to take everything between the last row you clicked and this one. The circle in the header selects or clears the whole list, and clicking the empty space below the rows clears it too.",
+        "Rows select like files in a file explorer. Click a row to select it, click the **circle** on its left to add or drop it from the selection, `Ctrl`+click to do the same anywhere on the row, and `Shift`+click to take everything between the last row you clicked and this one. The circle in the header adds or drops the rows currently listed, and clicking the empty space below the rows clears the selection.",
       editFile:
         "**Edit** opens the file's raw JSON in place, so a quick fix doesn't require importing, changing, and re-exporting it. It has to stay valid JSON to save.",
       recycleBin:

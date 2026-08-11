@@ -18,6 +18,7 @@ import { CloudFolderRow } from "./CloudFolderRow";
 import { CloudListHeader } from "./CloudListHeader";
 import { CloudNewFolderRow } from "./CloudNewFolderRow";
 import { CloudPathBar } from "./CloudPathBar";
+import { CloudSelectionPills } from "./CloudSelectionPills";
 import {
   CloudSelectionContext,
   type CloudSelectionApi,
@@ -52,7 +53,7 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
   const signOutOfCloud = useStore((state) => state.signOutOfCloud);
   const createCloudFolder = useStore((state) => state.createCloudFolder);
 
-  const selectedIds = useStore((state) => state.cloudSelectedIds);
+  const selectedEntries = useStore((state) => state.cloudSelectedEntries);
   const setCloudSelection = useStore((state) => state.setCloudSelection);
   const toggleCloudSelected = useStore((state) => state.toggleCloudSelected);
   const clearCloudSelection = useStore((state) => state.clearCloudSelection);
@@ -98,34 +99,34 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
   const entryRows = useMemo(() => rows.map((row) => row.entry), [rows]);
 
   const select = useCallback(
-    (id: string, modifiers: CloudSelectionModifiers) => {
-      const ids = entryRows.map((entry) => entry.id);
-      const from = ids.indexOf(anchorRef.current ?? id);
-      const to = ids.indexOf(id);
+    (entry: CloudEntry, modifiers: CloudSelectionModifiers) => {
+      const ids = entryRows.map((row) => row.id);
+      const from = ids.indexOf(anchorRef.current ?? entry.id);
+      const to = ids.indexOf(entry.id);
 
       // Set range
       if (modifiers.shiftKey && from !== -1 && to !== -1) {
         anchorRef.current = ids[from];
 
         const [start, end] = from <= to ? [from, to] : [to, from];
-        setCloudSelection(ids.slice(start, end + 1));
+        setCloudSelection(entryRows.slice(start, end + 1));
         return;
       }
 
-      anchorRef.current = id;
+      anchorRef.current = entry.id;
       if (modifiers.ctrlKey || modifiers.metaKey) {
-        toggleCloudSelected(id);
+        toggleCloudSelected(entry);
       } else {
-        setCloudSelection([id]);
+        setCloudSelection([entry]);
       }
     },
     [entryRows, setCloudSelection, toggleCloudSelected],
   );
 
   const toggle = useCallback(
-    (id: string) => {
-      anchorRef.current = id;
-      toggleCloudSelected(id);
+    (entry: CloudEntry) => {
+      anchorRef.current = entry.id;
+      toggleCloudSelected(entry);
     },
     [toggleCloudSelected],
   );
@@ -197,6 +198,8 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
             className={classNames(!showFiles && "is-folders-only")}
           />
 
+          <CloudSelectionPills />
+
           {newFolderDraft !== null && (
             <CloudNewFolderRow
               value={newFolderDraft}
@@ -213,7 +216,7 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
                   "cloud-browser-entries modal-scrollable-body",
                   !showFiles && "is-folders-only",
                   busy && "is-busy",
-                  selectedIds.size > 0 && "has-selection",
+                  selectedEntries.size > 0 && "has-selection",
                 )}
                 onClick={clearOnBackdrop}
               >

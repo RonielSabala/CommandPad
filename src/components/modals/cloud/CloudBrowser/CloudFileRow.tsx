@@ -1,7 +1,7 @@
 import { useTranslation } from "@/i18n";
 import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
-import { Braces } from "react-bootstrap-icons";
+import { FileEarmark } from "react-bootstrap-icons";
 
 import { CloudEntryRow } from "./CloudEntryRow";
 
@@ -20,7 +20,7 @@ export function CloudFileRow({ file, path }: CloudFileRowProps) {
   return (
     <CloudEntryRow
       entry={file}
-      icon={Braces}
+      icon={FileEarmark}
       activateTitle={t.cloudModal.importAction(file.name)}
       onActivate={() => void importRunbooksFromCloud([file])}
       onEdit={() => void openCloudFileEditor(file)}

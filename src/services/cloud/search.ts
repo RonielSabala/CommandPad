@@ -1,17 +1,12 @@
 import { CloudSyncConfig } from "@/common/config";
-import type { CloudClient, CloudEntry, CloudFolderRef } from "./types";
-
-export interface CloudSearchEntry {
-  entry: CloudEntry;
-  path: CloudFolderRef[];
-}
+import type { CloudClient, CloudFolderRef, PlacedCloudEntry } from "./types";
 
 const ROOT_PATH: CloudFolderRef[] = [];
 
 export async function walkCloudTree(
   client: CloudClient,
-): Promise<CloudSearchEntry[]> {
-  const found: CloudSearchEntry[] = [];
+): Promise<PlacedCloudEntry[]> {
+  const found: PlacedCloudEntry[] = [];
   let level: CloudFolderRef[][] = [ROOT_PATH];
 
   for (

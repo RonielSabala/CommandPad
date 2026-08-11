@@ -63,8 +63,8 @@ import {
   walkCloudTree,
   type CloudEntry,
   type CloudFolderRef,
-  type CloudSearchEntry,
   type CloudSort,
+  type PlacedCloudEntry,
 } from "@/services/cloud";
 import { debounce } from "@/utils/debounce";
 import { downloadBlob } from "@/utils/download";
@@ -192,7 +192,7 @@ export interface StoreState {
   cloudLoading: boolean;
   cloudError: string | null;
   cloudFileEditor: CloudFileEditor | null;
-  cloudSelectedIds: Set<string>;
+  cloudSelectedEntries: Map<string, PlacedCloudEntry>;
 
   // Cloud folder navigation
   cloudPath: CloudFolderRef[];
@@ -201,7 +201,7 @@ export interface StoreState {
 
   // Cloud search
   cloudSearchQuery: string;
-  cloudSearchEntries: CloudSearchEntry[];
+  cloudSearchEntries: PlacedCloudEntry[];
   cloudSearchLoading: boolean;
 
   // Cloud list sorting
@@ -356,8 +356,8 @@ export interface StoreState {
   toggleCloudSort: (column: CloudSortColumn) => void;
   refreshCloudSearchEntries: () => Promise<void>;
   createCloudFolder: (name: string) => Promise<void>;
-  setCloudSelection: (ids: string[]) => void;
-  toggleCloudSelected: (id: string) => void;
+  setCloudSelection: (entries: CloudEntry[]) => void;
+  toggleCloudSelected: (entry: CloudEntry) => void;
   clearCloudSelection: () => void;
   importRunbooksFromCloud: (files: CloudEntry[]) => Promise<void>;
   renameCloudEntry: (entry: CloudEntry, basename: string) => Promise<void>;
@@ -387,19 +387,23 @@ function currentFolderId(path: CloudFolderRef[]): string | null {
 function cloudSearchMatch(
   state: StoreState,
   entry: CloudEntry,
-): CloudSearchEntry | null {
+): PlacedCloudEntry | null {
   return (
     state.cloudSearchEntries.find((result) => result.entry.id === entry.id) ??
     null
   );
 }
 
-/** The path to the folder holding `entry`, listed or found by search. */
+/** The path to the folder holding `entry`. */
 function parentFolderPath(
   state: StoreState,
   entry: CloudEntry,
 ): CloudFolderRef[] {
-  return cloudSearchMatch(state, entry)?.path ?? state.cloudPath;
+  return (
+    state.cloudSelectedEntries.get(entry.id)?.path ??
+    cloudSearchMatch(state, entry)?.path ??
+    state.cloudPath
+  );
 }
 
 /** The folder holding `entry`, whether it was listed or found by search. */
@@ -407,16 +411,21 @@ function parentFolderId(state: StoreState, entry: CloudEntry): string | null {
   return currentFolderId(parentFolderPath(state, entry));
 }
 
+/** The listing of the folder holding `entry`. */
 function siblingEntries(state: StoreState, entry: CloudEntry): CloudEntry[] {
-  const match = cloudSearchMatch(state, entry);
-  if (!match) {
+  const folderId = currentFolderId(parentFolderPath(state, entry));
+  if (folderId === currentFolderId(state.cloudPath)) {
     return state.cloudEntries;
   }
 
-  const folderId = currentFolderId(match.path);
-  return state.cloudSearchEntries
-    .filter((result) => currentFolderId(result.path) === folderId)
-    .map((result) => result.entry);
+  const walked = state.cloudSearchEntries.filter(
+    (result) => currentFolderId(result.path) === folderId,
+  );
+
+  // A folder a search walked, else whatever browsing it last cached
+  return walked.length > 0
+    ? walked.map((result) => result.entry)
+    : (getCachedCloudEntries(state.cloudProvider, folderId) ?? []);
 }
 
 /** Resolve the active tab, mirroring the original `activeTab()` fallback. */
@@ -767,19 +776,24 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       cloudSearchRequestId === id;
 
     const emptyCloudSelection = () => {
-      const current = get().cloudSelectedIds;
-      return current.size === 0 ? current : new Set<string>();
+      const current = get().cloudSelectedEntries;
+      return current.size === 0 ? current : new Map<string, PlacedCloudEntry>();
     };
 
-    const clearedCloudListing = () => {
+    /** Drops the search and its results. */
+    const clearedCloudSearch = () => {
       startCloudSearchRequest();
       return {
         cloudSearchQuery: "",
         cloudSearchEntries: [],
         cloudSearchLoading: false,
-        cloudSelectedIds: emptyCloudSelection(),
       };
     };
+
+    const clearedCloudListing = () => ({
+      ...clearedCloudSearch(),
+      cloudSelectedEntries: emptyCloudSelection(),
+    });
 
     /** Lists the open folder from the provider and caches what came back. */
     const fetchCloudEntries = async () => {
@@ -879,7 +893,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       cloudLoading: false,
       cloudError: null,
       cloudFileEditor: null,
-      cloudSelectedIds: new Set(),
+      cloudSelectedEntries: new Map(),
 
       cloudPath: ROOT_CLOUD_PATH,
       cloudHistory: [ROOT_CLOUD_PATH],
@@ -2513,7 +2527,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         set({
           // Opening a folder from a search result lands you in that folder
-          ...clearedCloudListing(),
+          ...clearedCloudSearch(),
           cloudPath: path,
           cloudHistory: [...history, path],
           cloudHistoryIndex: history.length,
@@ -2536,7 +2550,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         lastBrowsedCloudPath.set(get().cloudProvider, path);
 
         set({
-          ...clearedCloudListing(),
+          ...clearedCloudSearch(),
           cloudPath: path,
           cloudHistoryIndex: index,
           cloudError: null,
@@ -2549,14 +2563,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const previous = get().cloudSearchQuery;
 
         if (!query.trim()) {
-          set({ ...clearedCloudListing(), cloudSearchQuery: query });
+          set({ ...clearedCloudSearch(), cloudSearchQuery: query });
           return;
         }
 
-        set({
-          cloudSearchQuery: query,
-          cloudSelectedIds: emptyCloudSelection(),
-        });
+        set({ cloudSearchQuery: query });
 
         // The tree is walked once when a search starts, then filtered locally
         if (!previous.trim()) {
@@ -2639,20 +2650,31 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         await get().refreshCloudEntries();
       },
 
-      setCloudSelection: (ids) => set({ cloudSelectedIds: new Set(ids) }),
+      setCloudSelection: (entries) =>
+        set({
+          cloudSelectedEntries: new Map(
+            entries.map((entry) => [
+              entry.id,
+              { entry, path: parentFolderPath(get(), entry) },
+            ]),
+          ),
+        }),
 
-      toggleCloudSelected: (id) =>
+      toggleCloudSelected: (entry) =>
         set((s) => {
-          const cloudSelectedIds = new Set(s.cloudSelectedIds);
-          if (!cloudSelectedIds.delete(id)) {
-            cloudSelectedIds.add(id);
+          const cloudSelectedEntries = new Map(s.cloudSelectedEntries);
+          if (!cloudSelectedEntries.delete(entry.id)) {
+            cloudSelectedEntries.set(entry.id, {
+              entry,
+              path: parentFolderPath(s, entry),
+            });
           }
 
-          return { cloudSelectedIds };
+          return { cloudSelectedEntries };
         }),
 
       clearCloudSelection: () =>
-        set({ cloudSelectedIds: emptyCloudSelection() }),
+        set({ cloudSelectedEntries: emptyCloudSelection() }),
 
       importRunbooksFromCloud: async (files) => {
         if (files.length === 0) {
@@ -2944,7 +2966,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           }
         }
 
-        set({ cloudLoading: false, cloudSelectedIds: emptyCloudSelection() });
+        set({
+          cloudLoading: false,
+          cloudSelectedEntries: emptyCloudSelection(),
+        });
         await get().refreshCloudEntries();
       },
 
@@ -3044,7 +3069,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           }
         }
 
-        set({ cloudLoading: false, cloudSelectedIds: emptyCloudSelection() });
+        set({
+          cloudLoading: false,
+          cloudSelectedEntries: emptyCloudSelection(),
+        });
         await get().refreshCloudEntries();
       },
 

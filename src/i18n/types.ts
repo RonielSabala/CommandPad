@@ -225,6 +225,7 @@ export interface Messages {
     deselectRow: (name: string) => string;
     selectAll: string;
     deselectAll: string;
+    clearSelection: string;
     importFiles: string;
     rename: string;
     edit: string;

@@ -222,7 +222,8 @@ export const es: Messages = {
     selectRow: (name) => `Seleccionar ${name}`,
     deselectRow: (name) => `Deseleccionar ${name}`,
     selectAll: "Seleccionar todo",
-    deselectAll: "Quitar la selección",
+    deselectAll: "Deseleccionar todo",
+    clearSelection: "Quitar la selección",
     importFiles: "Importar archivos",
     rename: "Renombrar",
     edit: "Editar",
@@ -945,7 +946,7 @@ Si algo sale mal, deshazlo en este orden:
       actions: (rename, edit, duplicate, download, deleteLabel) =>
         `El menú de **tres puntos** de una fila tiene **${rename}**, **${edit}**, **${duplicate}**, **${download}** y **${deleteLabel}**.`,
       multiSelect:
-        "Las filas se seleccionan como los archivos de un explorador. Haz clic en una fila para seleccionarla, en el **círculo** de su izquierda para sumarla o quitarla de la selección, `Ctrl`+clic para lo mismo en cualquier punto de la fila y `Shift`+clic para tomar todo lo que hay entre la última fila que tocaste y esta. El círculo de la cabecera selecciona o vacía la lista entera, y hacer clic en el espacio vacío bajo las filas también la vacía.",
+        "Las filas se seleccionan como los archivos de un explorador. Haz clic en una fila para seleccionarla, en el **círculo** de su izquierda para sumarla o quitarla de la selección, `Ctrl`+clic para lo mismo en cualquier punto de la fila y `Shift`+clic para tomar todo lo que hay entre la última fila que tocaste y esta. El círculo de la cabecera suma o quita las filas que estén listadas, y hacer clic en el espacio vacío bajo las filas vacía la selección.",
       editFile:
         "**Editar** abre el JSON del archivo en el sitio, así que un arreglo rápido ya no implica importar, cambiar y volver a exportar. Tiene que seguir siendo JSON válido para guardarse.",
       recycleBin:
