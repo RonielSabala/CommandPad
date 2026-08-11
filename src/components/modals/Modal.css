@@ -50,6 +50,7 @@
   height: var(--space-16);
   top: var(--space-4);
   right: var(--space-4);
+  justify-content: center;
 }
 
 .modal-backdrop.modal-visible .modal {

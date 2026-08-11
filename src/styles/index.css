@@ -149,6 +149,20 @@ body {
   color: var(--color-text-primary);
 }
 
+.btn-soft-icon {
+  background: transparent;
+  border-color: transparent;
+  border-radius: var(--radius-lg);
+  color: var(--color-text-muted);
+  padding: var(--space-2);
+}
+
+.btn-soft-icon:hover {
+  background: var(--color-surface-alt);
+  border-color: transparent;
+  color: var(--color-text-primary);
+}
+
 .btn-primary {
   background: var(--accent-dim);
   border-color: var(--accent);
