@@ -74,10 +74,12 @@ export function CloudListHeader() {
       <SortButton
         column={CloudSortColumn.NAME}
         label={t.cloudModal.columnName}
+        className="cloud-browser-col-name"
       />
       <SortButton
         column={CloudSortColumn.MODIFIED}
         label={t.cloudModal.columnModified}
+        className="cloud-browser-col-date"
       />
       <SortButton
         column={CloudSortColumn.SIZE}

@@ -153,26 +153,21 @@ export function CloudEntryRow({
         onToggle={() => selection.toggle(entry)}
       />
 
-      <div className="cloud-browser-row-main">
-        <span className="cloud-browser-row-name-cell">
-          <EntryIcon className="icon-md cloud-browser-row-icon" />
+      <span className="cloud-browser-row-name-cell">
+        <EntryIcon className="icon-md cloud-browser-row-icon" />
 
-          <span className="cloud-browser-row-text">
-            <span className={NAME_CLASS} title={activateTitle}>
-              {entry.name}
-            </span>
-
-            {path !== undefined && (
-              <span className="cloud-browser-row-path">
-                {formatCloudPath(path)}
-              </span>
-            )}
+        <span className="cloud-browser-row-text">
+          <span className={NAME_CLASS} title={activateTitle}>
+            {entry.name}
           </span>
-        </span>
 
-        <span className="cloud-browser-row-date">{modifiedAt}</span>
-        <span className="cloud-browser-row-size">{size}</span>
-      </div>
+          {path !== undefined && (
+            <span className="cloud-browser-row-path">
+              {formatCloudPath(path)}
+            </span>
+          )}
+        </span>
+      </span>
 
       <CloudRowMenu
         count={targets.length}
@@ -195,6 +190,9 @@ export function CloudEntryRow({
         onDelete={() => void deleteCloudEntries(targets)}
         menuTitle={t.cloudModal.entryActions}
       />
+
+      <span className="cloud-browser-row-date">{modifiedAt}</span>
+      <span className="cloud-browser-row-size">{size}</span>
     </div>
   );
 }

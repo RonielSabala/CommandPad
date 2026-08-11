@@ -1,20 +1,31 @@
 /* Entry row primitives */
 
 .cloud-browser-entries {
-  --cloud-row-tracks: var(--cloud-col-select) minmax(0, 1fr)
-    var(--cloud-col-date) var(--cloud-col-size) var(--cloud-col-actions);
-  --cloud-row-main-span: 2 / 5;
+  --cloud-row-tracks: [select] var(--cloud-col-select) [name] minmax(0, 1fr)
+    [actions] var(--cloud-col-actions) [date] var(--cloud-col-date) [size]
+    var(--cloud-col-size) [end];
 }
 
 .cloud-browser-entries.is-folders-only {
-  --cloud-row-tracks: var(--cloud-col-select) minmax(0, 1fr)
-    var(--cloud-col-date) var(--cloud-col-actions);
-  --cloud-row-main-span: 2 / 4;
+  --cloud-row-tracks: [select] var(--cloud-col-select) [name] minmax(0, 1fr)
+    [actions] var(--cloud-col-actions) [date] var(--cloud-col-date) [end];
 }
 
 .cloud-browser-entries.is-folders-only
   :is(.cloud-browser-col-size, .cloud-browser-row-size) {
   display: none;
+}
+
+.cloud-browser-col-name {
+  grid-column: name;
+}
+
+.cloud-browser-col-date {
+  grid-column: date;
+}
+
+.cloud-browser-col-size {
+  grid-column: size;
 }
 
 .cloud-browser-row,
@@ -31,6 +42,7 @@
   align-items: center;
   gap: var(--space-5);
   padding-inline: var(--cloud-row-padding-inline);
+  user-select: none;
 }
 
 .cloud-browser-row::after,
@@ -98,6 +110,7 @@
 /* Selection tick */
 
 .cloud-browser-row-select {
+  grid-column: select;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -134,16 +147,8 @@
   display: flex;
 }
 
-.cloud-browser-row-main {
-  grid-column: var(--cloud-row-main-span);
-  display: grid;
-  grid-template-columns: subgrid;
-  align-items: center;
-  gap: var(--space-5);
-  user-select: none;
-}
-
 .cloud-browser-row-name-cell {
+  grid-column: name;
   display: flex;
   min-width: 0;
   align-items: center;
@@ -158,6 +163,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.cloud-browser-row-date {
+  grid-column: date;
+}
+
+.cloud-browser-row-size {
+  grid-column: size;
 }
 
 .cloud-browser-row-icon {
@@ -200,10 +213,18 @@
 }
 
 .cloud-browser-row-actions {
+  grid-column: actions;
   display: flex;
   align-items: center;
   gap: var(--space-2);
   flex-shrink: 0;
+  visibility: hidden;
+}
+
+.cloud-browser-row:is(.is-selected, :hover, :has(:focus-visible))
+  .cloud-browser-row-actions,
+.cloud-browser-row-actions.menu-open {
+  visibility: visible;
 }
 
 /* Account */
