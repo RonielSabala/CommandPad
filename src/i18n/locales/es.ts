@@ -269,11 +269,11 @@ export const es: Messages = {
     overwriteTitle: "Sobrescribir Libro",
     overwriteConfirm: "Sobrescribir",
     overwriteMessage: (filename, existingName) =>
-      `\`${filename}\` coincide con un libro que ya tienes. Importarlo **sobrescribirá** \`${existingName}\`.`,
+      `\`${filename}\` coincide con un libro que ya tienes.\n\nImportarlo **sobrescribirá** \`${existingName}\`.`,
     overwriteCloudFileTitle: "Sobrescribir Libro de la Nube",
     overwriteCloudFileConfirm: "Sobrescribir",
     overwriteCloudFileMessage: (filename) =>
-      `\`${filename}\` ya existe en la carpeta seleccionada. Exportar reemplazará su contenido, y **esto no se puede deshacer**.`,
+      `\`${filename}\` ya existe en la carpeta seleccionada.\n\nExportar reemplazará su contenido, y **esto no se puede deshacer**.`,
     importFailedTitle: "Formato Inválido",
     importFailed: (count) =>
       count === 1

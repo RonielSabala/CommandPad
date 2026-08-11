@@ -264,11 +264,11 @@ export const en: Messages = {
     overwriteTitle: "Overwrite Runbook",
     overwriteConfirm: "Overwrite",
     overwriteMessage: (filename, existingName) =>
-      `\`${filename}\` matches a runbook you already have. Importing it **overwrites** \`${existingName}\`.`,
+      `\`${filename}\` matches a runbook you already have.\n\nImporting it **overwrites** \`${existingName}\`.`,
     overwriteCloudFileTitle: "Overwrite Cloud Runbook",
     overwriteCloudFileConfirm: "Overwrite",
     overwriteCloudFileMessage: (filename) =>
-      `\`${filename}\` already exists in the selected folder. Exporting replaces its contents, and **this cannot be undone**.`,
+      `\`${filename}\` already exists in the selected folder.\n\nExporting replaces its contents, and **this cannot be undone**.`,
     importFailedTitle: "Invalid Format",
     importFailed: (count) =>
       count === 1
