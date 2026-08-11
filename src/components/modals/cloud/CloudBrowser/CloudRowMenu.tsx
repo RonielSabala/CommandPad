@@ -41,6 +41,7 @@ export function CloudRowMenu({
       className="cloud-browser-row-actions"
       title={menuTitle}
       align={ContextMenuAlign.END}
+      horizontal={true}
     >
       {onRename && (
         <ContextMenuItem icon={<Vr className="icon-md" />} onSelect={onRename}>

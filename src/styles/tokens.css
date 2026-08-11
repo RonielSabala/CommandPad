@@ -32,11 +32,13 @@
   --color-border: #323844;
   --color-border-focus: #4d8bf5;
   --block-backdrop: var(--color-bg);
+  --cloud-row-selected-bg: color-mix(in srgb, var(--accent) 13%, transparent);
   --cloud-row-selected-hover-bg: color-mix(
     in srgb,
-    var(--accent) 22%,
+    var(--accent) 19%,
     transparent
   );
+  --cloud-row-border: color-mix(in srgb, var(--color-border) 55%, transparent);
 
   /* Text */
   --accent-text: #a6c8ff;
@@ -142,7 +144,7 @@
   --modal-cloud-padding-x: var(--space-12);
   --modal-cloud-padding-y: var(--space-10);
 
-  --cloud-col-select: 1.25rem;
+  --cloud-col-select: 1.5rem;
   --cloud-col-date: 7.5rem;
   --cloud-col-size: 3.5rem;
   --cloud-col-actions: 1.5rem;

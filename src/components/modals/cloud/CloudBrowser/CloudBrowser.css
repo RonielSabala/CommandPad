@@ -19,11 +19,28 @@
 
 .cloud-browser-row,
 .cloud-browser-list-header {
+  --cloud-row-padding-inline: var(--space-8);
+  --cloud-rule-inset-start: calc(
+    var(--cloud-row-padding-inline) + var(--cloud-col-select) + var(--space-5)
+  );
+  --cloud-rule-inset-end: var(--cloud-row-padding-inline);
+
+  position: relative;
   display: grid;
   grid-template-columns: var(--cloud-row-tracks);
   align-items: center;
   gap: var(--space-5);
-  padding-inline: var(--space-8);
+  padding-inline: var(--cloud-row-padding-inline);
+}
+
+.cloud-browser-row::after,
+.cloud-browser-list-header::after {
+  content: "";
+  position: absolute;
+  inset-inline: var(--cloud-rule-inset-start) var(--cloud-rule-inset-end);
+  bottom: 0;
+  border-bottom: 1px solid var(--cloud-row-border);
+  pointer-events: none;
 }
 
 .cloud-browser-list-header {
@@ -31,7 +48,6 @@
   top: 0;
   z-index: var(--z-sticky);
   padding-block: var(--space-4);
-  border-bottom: var(--border-standard);
   background: var(--color-surface);
   font-family: var(--font-sans);
   font-size: var(--text-xs);
@@ -42,30 +58,40 @@
 
 .cloud-browser-row {
   padding-block: var(--space-5);
-  border-top: var(--border-standard);
-  border-bottom: var(--border-standard);
   color: var(--color-text-primary);
 }
 
-.cloud-browser-row + .cloud-browser-row {
-  margin-top: -1px;
+.cloud-browser-row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-behind);
+  border-radius: var(--radius-lg);
+  pointer-events: none;
 }
 
-.cloud-browser-list-header + .cloud-browser-row {
-  border-top: none;
-}
-
-.cloud-browser-row:hover,
-.cloud-browser-row:has(:focus-visible) {
+.cloud-browser-row:hover::before,
+.cloud-browser-row:has(:focus-visible)::before {
   background: var(--color-surface-alt);
 }
 
-.cloud-browser-row.is-selected {
-  background: var(--accent-dim);
+.cloud-browser-row.is-selected::before {
+  background: var(--cloud-row-selected-bg);
 }
 
-.cloud-browser-row.is-selected:hover,
-.cloud-browser-row.is-selected:has(:focus-visible) {
+:is(
+  .cloud-browser-row.is-selected,
+  .cloud-browser-row:hover,
+  .cloud-browser-row:has(:focus-visible),
+  .cloud-browser-row:has(+ .cloud-browser-row:hover),
+  .cloud-browser-row:has(+ .cloud-browser-row :focus-visible),
+  .cloud-browser-row:has(+ .cloud-browser-row.is-selected)
+)::after {
+  border-bottom-color: transparent;
+}
+
+.cloud-browser-row.is-selected:hover::before,
+.cloud-browser-row.is-selected:has(:focus-visible)::before {
   background: var(--cloud-row-selected-hover-bg);
 }
 
@@ -256,6 +282,7 @@
 .cloud-browser-entries {
   display: flex;
   flex-direction: column;
+  gap: 1px;
 }
 
 .modal-cloud .cloud-browser-entries {
