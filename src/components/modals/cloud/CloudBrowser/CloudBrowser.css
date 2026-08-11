@@ -56,7 +56,7 @@
 }
 
 .cloud-browser-row:hover,
-.cloud-browser-row:focus-within {
+.cloud-browser-row:has(:focus-visible) {
   background: var(--color-surface-alt);
 }
 
@@ -65,7 +65,7 @@
 }
 
 .cloud-browser-row.is-selected:hover,
-.cloud-browser-row.is-selected:focus-within {
+.cloud-browser-row.is-selected:has(:focus-visible) {
   background: var(--cloud-row-selected-hover-bg);
 }
 
@@ -114,12 +114,6 @@
   grid-template-columns: subgrid;
   align-items: center;
   gap: var(--space-5);
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: inherit;
-  text-align: left;
-  outline: none;
   user-select: none;
 }
 

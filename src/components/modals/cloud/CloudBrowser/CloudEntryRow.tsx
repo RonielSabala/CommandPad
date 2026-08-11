@@ -153,7 +153,7 @@ export function CloudEntryRow({
         onToggle={() => selection.toggle(entry)}
       />
 
-      <button className="cloud-browser-row-main">
+      <div className="cloud-browser-row-main">
         <span className="cloud-browser-row-name-cell">
           <EntryIcon className="icon-md cloud-browser-row-icon" />
 
@@ -172,7 +172,7 @@ export function CloudEntryRow({
 
         <span className="cloud-browser-row-date">{modifiedAt}</span>
         <span className="cloud-browser-row-size">{size}</span>
-      </button>
+      </div>
 
       <CloudRowMenu
         count={targets.length}
