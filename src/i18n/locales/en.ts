@@ -738,14 +738,14 @@ If something goes wrong, undo it in this order:
       demoHint:
         "The first command below uses the whole hash. The second takes only its first seven characters. Edit the variable and both stay in step:",
       howItWorks:
-        "Write a `|` after the key, then the piece you want in square brackets. Counting starts at zero, and the second number marks where to **stop without including it**: `[:7]` is the first seven characters, and `[2:5]` is characters two, three, and four. Leave either number out to run from the very start, or all the way to the end.",
+        "Write a `|` after the key, then `slice(...)` with the piece you want, its numbers separated by semicolons. Counting starts at zero, and the second number marks where to **stop without including it**: `slice(;7)` is the first seven characters, and `slice(2;5)` is characters two, three, and four. Leave either number out to run from the very start, or all the way to the end.",
       positionsHint:
-        "Negative numbers count back from the end, so `[-2:]` is the last two characters. A date shows the three forms side by side:",
-      step: "A third number is the **step**: how many positions the slice skips between one character and the next. `[::2]` takes one character out of every two and skips the rest, and a negative step walks backwards, so `[::-1]` on its own reverses a value:",
+        "Negative numbers count back from the end, so `slice(-2;)` is the last two characters. A date shows the three forms side by side:",
+      step: "A third number is the **step**: how many positions the slice skips between one character and the next. `slice(;;2)` takes one character out of every two and skips the rest, and a negative step walks backwards, so `slice(;;-1)` on its own reverses a value:",
       invalid:
         "If a slice does not make sense, such as a step of zero, the whole reference stays **unresolved** and shows up exactly as you typed it, so the mistake is easy to spot. Asking for more characters than there are is fine, though: you simply get the ones that exist.",
       python:
-        "The notation comes from Python, if you are curious to read more about it: [string slicing in Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). You do not need to know Python to use it here.",
+        "The way the numbers work comes from Python, if you are curious to read more about it: [string slicing in Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). You do not need to know Python to use it here.",
     },
     variableCount: {
       intro:
@@ -753,7 +753,7 @@ If something goes wrong, undo it in this order:
       demoHint:
         "For example, a commit subject is supposed to stay under 50 characters, but nobody counts them by hand. Type into the message below and watch the number keep up:",
       chaining:
-        "Operations run left to right, so you can put `count` after a slice: `{commit|[:7]|count}` shortens the commit first, then counts what is left.",
+        "Operations run left to right, so you can put `count` after a slice: `{commit|slice(;7)|count}` shortens the commit first, then counts what is left.",
     },
     variableCase: {
       intro:

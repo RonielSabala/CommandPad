@@ -1,6 +1,10 @@
 import { ReferenceSurface } from "@/common/enums";
 import { ESCAPE_CHAR } from "@/common/regex";
-import { EscapedBraceOpenRegex, VariableSyntax } from "@/common/variableSyntax";
+import {
+  CallSyntax,
+  EscapedBraceOpenRegex,
+  VariableSyntax,
+} from "@/common/variableSyntax";
 
 /** Whether `\{` is a literal brace rather than the start of a reference. */
 const ESCAPES_REFERENCES: Record<ReferenceSurface, boolean> = {
@@ -137,16 +141,24 @@ export function splitReferenceBody(raw: string): ReferenceChunk[] {
   let separator = "";
   let start = 0;
   let depth = 0;
+  let call = 0;
 
   for (let i = 0; i < raw.length; i += 1) {
     const char = raw[i];
+    const inCall =
+      separator === VariableSyntax.OPERATION_SEPARATOR && depth === 0;
 
     if (char === VariableSyntax.BRACE_OPEN) {
       depth += 1;
     } else if (char === VariableSyntax.BRACE_CLOSE) {
       depth -= 1;
+    } else if (inCall && char === CallSyntax.ARGUMENT_OPEN) {
+      call += 1;
+    } else if (inCall && char === CallSyntax.ARGUMENT_CLOSE) {
+      call = Math.max(0, call - 1);
     } else if (
       depth === 0 &&
+      call === 0 &&
       (char === VariableSyntax.PARAM_SEPARATOR ||
         char === VariableSyntax.OPERATION_SEPARATOR)
     ) {

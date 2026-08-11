@@ -751,14 +751,14 @@ Si algo sale mal, deshazlo en este orden:
       demoHint:
         "El primer comando usa el hash completo; el segundo, solo sus siete primeros caracteres. Edita la variable y verás cómo los dos se actualizan a la vez:",
       howItWorks:
-        "Escribe un `|` después de la clave y, entre corchetes, la parte que quieres. Se cuenta desde cero, y el segundo número indica dónde **parar sin llegar a incluirlo**: `[:7]` son los siete primeros caracteres y `[2:5]` son el dos, el tres y el cuatro. Omite cualquiera de los dos números para llegar desde el mismísimo principio, o hasta el final.",
+        "Escribe un `|` después de la clave y luego `slice(...)` con la parte que quieres, con sus números separados por punto y coma. Se cuenta desde cero, y el segundo número indica dónde **parar sin llegar a incluirlo**: `slice(;7)` son los siete primeros caracteres y `slice(2;5)` son el dos, el tres y el cuatro. Omite cualquiera de los dos números para llegar desde el mismísimo principio, o hasta el final.",
       positionsHint:
-        "Los números negativos cuentan desde el final, así que `[-2:]` son los dos últimos caracteres. Con una fecha se ven las tres formas de un vistazo:",
-      step: "Un tercer número es el **paso**: cuántas posiciones salta el recorte entre un carácter y el siguiente. `[::2]` toma un carácter de cada dos y se salta el resto, y un paso negativo avanza hacia atrás, así que `[::-1]` por sí solo invierte un valor:",
+        "Los números negativos cuentan desde el final, así que `slice(-2;)` son los dos últimos caracteres. Con una fecha se ven las tres formas de un vistazo:",
+      step: "Un tercer número es el **paso**: cuántas posiciones salta el recorte entre un carácter y el siguiente. `slice(;;2)` toma un carácter de cada dos y se salta el resto, y un paso negativo avanza hacia atrás, así que `slice(;;-1)` por sí solo invierte un valor:",
       invalid:
         "Si un recorte no tiene sentido, por ejemplo con un paso de cero, la referencia entera se queda **sin resolver** y aparece tal cual la escribiste, así que el error se nota enseguida. En cambio, pedir más caracteres de los que hay no es problema: obtienes los que existan.",
       python:
-        "La notación viene de Python, por si quieres leer más sobre ella: [recorte de cadenas en Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). No necesitas saber Python para usarla aquí.",
+        "La forma de contar viene de Python, por si quieres leer más sobre ella: [recorte de cadenas en Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). No necesitas saber Python para usarla aquí.",
     },
     variableCount: {
       intro:
@@ -766,7 +766,7 @@ Si algo sale mal, deshazlo en este orden:
       demoHint:
         "Por ejemplo, el asunto de un commit debería quedarse por debajo de 50 caracteres, pero nadie los cuenta a mano. Escribe en el mensaje de abajo y mira cómo el número te sigue:",
       chaining:
-        "Las operaciones se aplican de izquierda a derecha, así que puedes poner `count` después de un recorte: `{commit|[:7]|count}` acorta el commit primero y luego cuenta lo que queda.",
+        "Las operaciones se aplican de izquierda a derecha, así que puedes poner `count` después de un recorte: `{commit|slice(;7)|count}` acorta el commit primero y luego cuenta lo que queda.",
     },
     variableCase: {
       intro:

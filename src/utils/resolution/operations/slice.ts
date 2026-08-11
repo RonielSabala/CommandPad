@@ -1,10 +1,11 @@
 import {
+  SliceBoundRegex,
   SliceSyntax,
   TokenWhitespaceRegex,
-  VariableSliceRegex,
 } from "@/common/variableSyntax";
 import { sliceString } from "@/utils/string";
 
+import { defineCallOperation } from "./call";
 import type { OperationDefinition } from "./types";
 
 interface SliceSpec {
@@ -17,20 +18,20 @@ function parseSliceBound(raw: string): number | null {
   return raw ? Number(raw) : null;
 }
 
-function parseSlice(operation: string): SliceSpec | null {
-  const match = VariableSliceRegex.exec(
-    operation.replace(TokenWhitespaceRegex, ""),
-  );
-
-  if (!match) {
+function parseSlice(args: readonly string[]): SliceSpec | null {
+  const bounds = args.map((arg) => arg.replace(TokenWhitespaceRegex, ""));
+  if (
+    bounds.length === 0 ||
+    !bounds.every((bound) => SliceBoundRegex.test(bound))
+  ) {
     return null;
   }
 
-  const [, rawStart, rawStop, rawStep] = match;
+  const [rawStart, rawStop, rawStep] = bounds;
   const start = parseSliceBound(rawStart);
 
-  // No separator at all means a single index
-  if (rawStop === undefined) {
+  // A lone argument is a single index, not a range
+  if (bounds.length === 1) {
     return start === null
       ? null
       : {
@@ -48,12 +49,15 @@ function parseSlice(operation: string): SliceSpec | null {
   return { start, stop: parseSliceBound(rawStop), step };
 }
 
-export const SLICE_OPERATION: OperationDefinition = {
-  parse: (operation) => {
-    const spec = parseSlice(operation);
+export const SLICE_OPERATION: OperationDefinition = defineCallOperation({
+  arity: SliceSyntax.ARITY,
+  builders: {
+    [SliceSyntax.KEYWORD]: (args) => {
+      const spec = parseSlice(args);
 
-    return (
-      spec && ((text) => sliceString(text, spec.start, spec.stop, spec.step))
-    );
+      return (
+        spec && ((text) => sliceString(text, spec.start, spec.stop, spec.step))
+      );
+    },
   },
-};
+});

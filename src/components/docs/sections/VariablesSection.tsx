@@ -152,7 +152,7 @@ export function VariableSlicingDocs() {
             ],
             blocks: [
               demoCommand("git checkout {commit}"),
-              demoCommand("git tag release-{commit|[:7]}"),
+              demoCommand("git tag release-{commit|slice(;7)}"),
             ],
           },
         ]}
@@ -167,9 +167,9 @@ export function VariableSlicingDocs() {
           {
             variables: [demoVariable("date", "2026-07-31")],
             blocks: [
-              demoCommand("echo {date|[:4]}"),
-              demoCommand("echo {date|[5:7]}"),
-              demoCommand("echo {date|[-2:]}"),
+              demoCommand("echo {date|slice(;4)}"),
+              demoCommand("echo {date|slice(5;7)}"),
+              demoCommand("echo {date|slice(-2;)}"),
             ],
           },
         ]}
@@ -183,8 +183,10 @@ export function VariableSlicingDocs() {
           {
             variables: [demoVariable("VERSION", "1.4.2")],
             blocks: [
-              demoCommand("zip -r backup-v{VERSION|[::2]}.zip ~/Documents"),
-              demoCommand("echo {VERSION|[::-1]}"),
+              demoCommand(
+                "zip -r backup-v{VERSION|slice(;;2)}.zip ~/Documents",
+              ),
+              demoCommand("echo {VERSION|slice(;;-1)}"),
             ],
           },
         ]}
@@ -313,7 +315,7 @@ export function MultilineReferencesDocs() {
             blocks: [
               demoCommand('echo "Archiving {project} on {date}"'),
               demoCommand(
-                "zip -r {\n\tARCHIVE\n\t; name = {project}\n\t; year = {date|[:4]}\n\t; month = {date|[5:7]}\n} ~/Documents",
+                "zip -r {\n\tARCHIVE\n\t; name = {project}\n\t; year = {date|slice(;4)}\n\t; month = {date|slice(5;7)}\n} ~/Documents",
               ),
             ],
           },
