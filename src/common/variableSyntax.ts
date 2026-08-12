@@ -4,6 +4,7 @@ import {
   ESCAPE,
   WHITESPACE,
   anchored,
+  anyOf,
   atEnd,
   capture,
   dotAllRegex,
@@ -38,10 +39,14 @@ export const CallGroup = {
   ARGUMENTS: "args",
 } as const;
 
+export const NumberSyntax = {
+  PLUS: "+",
+  MINUS: "-",
+} as const;
+
 export const SliceSyntax = {
   KEYWORD: "slice",
   ARITY: 3,
-  NEGATIVE: "-",
   DEFAULT_STEP: 1,
 } as const;
 
@@ -70,7 +75,7 @@ export const StripSyntax = {
 
 const Ref = escapeSyntax(VariableSyntax);
 const Call = escapeSyntax(CallSyntax);
-const Slice = escapeSyntax(SliceSyntax);
+const Num = escapeSyntax(NumberSyntax);
 const Operation = escapeSyntax(OperationSyntax);
 
 const braced = (content: string) =>
@@ -115,9 +120,29 @@ export const CallOperationRegex = dotAllRegex(
   ),
 );
 
-export const SliceBoundRegex = new RegExp(
-  anchored(sequence(optional(Slice.NEGATIVE), zeroOrMore(DIGIT))),
+const NUMBER_SIGN = anyOf(Num.PLUS, Num.MINUS);
+const NUMBER_TERM = sequence(optional(NUMBER_SIGN), oneOrMore(DIGIT));
+const NUMBER_GAP = zeroOrMore(WHITESPACE);
+const NUMBER_FIRST = sequence(
+  optional(NUMBER_SIGN),
+  NUMBER_GAP,
+  oneOrMore(DIGIT),
 );
+const NUMBER_NEXT = group(
+  sequence(NUMBER_GAP, NUMBER_SIGN, NUMBER_GAP, oneOrMore(DIGIT)),
+);
+
+export const NumberArgumentRegex = new RegExp(
+  anchored(
+    sequence(
+      NUMBER_GAP,
+      optional(group(sequence(NUMBER_FIRST, zeroOrMore(NUMBER_NEXT)))),
+      NUMBER_GAP,
+    ),
+  ),
+);
+
+export const NumberTermRegex = globalRegex(NUMBER_TERM);
 
 export const CountOperationRegex = new RegExp(anchored(Operation.COUNT));
 

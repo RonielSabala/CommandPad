@@ -742,6 +742,7 @@ If something goes wrong, undo it in this order:
       positionsHint:
         "Negative numbers count back from the end, so `slice(-2;)` is the last two characters. A date shows the three forms side by side:",
       step: "A third number is the **step**: how many positions the slice skips between one character and the next. `slice(;;2)` takes one character out of every two and skips the rest, and a negative step walks backwards, so `slice(;;-1)` on its own reverses a value:",
+      math: "Each number can also be a small sum: write `+` or `-` between whole numbers and they are worked out left to right.",
       invalid:
         "If a slice does not make sense, such as a step of zero, the whole reference stays **unresolved** and shows up exactly as you typed it, so the mistake is easy to spot. Asking for more characters than there are is fine, though: you simply get the ones that exist.",
       python:

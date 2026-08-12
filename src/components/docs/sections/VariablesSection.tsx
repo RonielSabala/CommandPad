@@ -194,6 +194,7 @@ export function VariableSlicingDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variableSlicing.math} />
       <Prose text={t.docs.variableSlicing.invalid} />
       <Prose text={t.docs.variableSlicing.python} />
     </>

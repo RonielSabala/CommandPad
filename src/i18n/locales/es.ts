@@ -755,6 +755,7 @@ Si algo sale mal, deshazlo en este orden:
       positionsHint:
         "Los números negativos cuentan desde el final, así que `slice(-2;)` son los dos últimos caracteres. Con una fecha se ven las tres formas de un vistazo:",
       step: "Un tercer número es el **paso**: cuántas posiciones salta el recorte entre un carácter y el siguiente. `slice(;;2)` toma un carácter de cada dos y se salta el resto, y un paso negativo avanza hacia atrás, así que `slice(;;-1)` por sí solo invierte un valor:",
+      math: "Cada número también puede ser una cuenta sencilla: escribe `+` o `-` entre números enteros y se resuelven de izquierda a derecha.",
       invalid:
         "Si un recorte no tiene sentido, por ejemplo con un paso de cero, la referencia entera se queda **sin resolver** y aparece tal cual la escribiste, así que el error se nota enseguida. En cambio, pedir más caracteres de los que hay no es problema: obtienes los que existan.",
       python:
