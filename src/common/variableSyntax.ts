@@ -4,10 +4,10 @@ import {
   ESCAPE,
   WHITESPACE,
   anchored,
+  anyOf,
   atEnd,
   capture,
   dotAllRegex,
-  either,
   escapeSyntax,
   globalRegex,
   group,
@@ -28,11 +28,25 @@ export const VariableSyntax = {
   COPY_SUFFIX: "_COPY",
 } as const;
 
+export const CallSyntax = {
+  ARGUMENT_OPEN: "(",
+  ARGUMENT_CLOSE: ")",
+  ARGUMENT_SEPARATOR: ";",
+} as const;
+
+export const CallGroup = {
+  KEYWORD: "keyword",
+  ARGUMENTS: "args",
+} as const;
+
+export const NumberSyntax = {
+  PLUS: "+",
+  MINUS: "-",
+} as const;
+
 export const SliceSyntax = {
-  OPEN: "[",
-  CLOSE: "]",
-  SEPARATOR: ":",
-  NEGATIVE: "-",
+  KEYWORD: "slice",
+  ARITY: 3,
   DEFAULT_STEP: 1,
 } as const;
 
@@ -56,19 +70,13 @@ export const StripSyntax = {
   BOTH: "strip",
   LEFT: "lstrip",
   RIGHT: "rstrip",
-  ARGUMENT_OPEN: "(",
-  ARGUMENT_CLOSE: ")",
-} as const;
-
-export const StripGroup = {
-  KEYWORD: "keyword",
-  ARGUMENT: "argument",
+  ARITY: 1,
 } as const;
 
 const Ref = escapeSyntax(VariableSyntax);
-const Slice = escapeSyntax(SliceSyntax);
+const Call = escapeSyntax(CallSyntax);
+const Num = escapeSyntax(NumberSyntax);
 const Operation = escapeSyntax(OperationSyntax);
-const Strip = escapeSyntax(StripSyntax);
 
 const braced = (content: string) =>
   sequence(Ref.BRACE_OPEN, content, Ref.BRACE_CLOSE);
@@ -88,40 +96,55 @@ export const VariableParamPlaceholderRegex = globalRegex(
 
 export const TokenWhitespaceRegex = globalRegex(oneOrMore(WHITESPACE));
 
-const SLICE_BOUND = capture(
-  sequence(optional(Slice.NEGATIVE), zeroOrMore(DIGIT)),
-);
-const SLICE_STEP = optional(group(sequence(Slice.SEPARATOR, SLICE_BOUND)));
-const SLICE_STOP = optional(
-  group(sequence(Slice.SEPARATOR, SLICE_BOUND, SLICE_STEP)),
-);
-
-export const VariableSliceRegex = new RegExp(
-  anchored(sequence(Slice.OPEN, SLICE_BOUND, SLICE_STOP, Slice.CLOSE)),
-);
-
-export const CountOperationRegex = new RegExp(anchored(Operation.COUNT));
-
-export const StripOperationRegex = dotAllRegex(
+/** One `keyword(a;b;c)` call. */
+export const CallOperationRegex = dotAllRegex(
   anchored(
     sequence(
+      zeroOrMore(WHITESPACE),
       named(
-        StripGroup.KEYWORD,
-        group(either(Strip.LEFT, Strip.RIGHT, Strip.BOTH)),
+        CallGroup.KEYWORD,
+        oneOrMore(noneOf(Call.ARGUMENT_OPEN, Call.ARGUMENT_CLOSE, WHITESPACE)),
       ),
       zeroOrMore(WHITESPACE),
       optional(
         group(
           sequence(
-            Strip.ARGUMENT_OPEN,
-            named(StripGroup.ARGUMENT, zeroOrMore(ANY)),
-            Strip.ARGUMENT_CLOSE,
+            Call.ARGUMENT_OPEN,
+            named(CallGroup.ARGUMENTS, zeroOrMore(ANY)),
+            Call.ARGUMENT_CLOSE,
           ),
         ),
       ),
+      zeroOrMore(WHITESPACE),
     ),
   ),
 );
+
+const NUMBER_SIGN = anyOf(Num.PLUS, Num.MINUS);
+const NUMBER_TERM = sequence(optional(NUMBER_SIGN), oneOrMore(DIGIT));
+const NUMBER_GAP = zeroOrMore(WHITESPACE);
+const NUMBER_FIRST = sequence(
+  optional(NUMBER_SIGN),
+  NUMBER_GAP,
+  oneOrMore(DIGIT),
+);
+const NUMBER_NEXT = group(
+  sequence(NUMBER_GAP, NUMBER_SIGN, NUMBER_GAP, oneOrMore(DIGIT)),
+);
+
+export const NumberArgumentRegex = new RegExp(
+  anchored(
+    sequence(
+      NUMBER_GAP,
+      optional(group(sequence(NUMBER_FIRST, zeroOrMore(NUMBER_NEXT)))),
+      NUMBER_GAP,
+    ),
+  ),
+);
+
+export const NumberTermRegex = globalRegex(NUMBER_TERM);
+
+export const CountOperationRegex = new RegExp(anchored(Operation.COUNT));
 
 export const CopySuffixRegex = new RegExp(
   atEnd(sequence(Ref.COPY_SUFFIX, zeroOrMore(DIGIT))),

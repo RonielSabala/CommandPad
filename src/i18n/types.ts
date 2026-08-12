@@ -432,6 +432,7 @@ export interface Messages {
       howItWorks: string;
       positionsHint: string;
       step: string;
+      math: string;
       invalid: string;
       python: string;
     };

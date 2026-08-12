@@ -1,10 +1,8 @@
-import {
-  SliceSyntax,
-  TokenWhitespaceRegex,
-  VariableSliceRegex,
-} from "@/common/variableSyntax";
+import { SliceSyntax } from "@/common/variableSyntax";
 import { sliceString } from "@/utils/string";
 
+import { defineCallOperation } from "./call";
+import { readNumberArguments } from "./number";
 import type { OperationDefinition } from "./types";
 
 interface SliceSpec {
@@ -13,24 +11,16 @@ interface SliceSpec {
   step: number;
 }
 
-function parseSliceBound(raw: string): number | null {
-  return raw ? Number(raw) : null;
-}
-
-function parseSlice(operation: string): SliceSpec | null {
-  const match = VariableSliceRegex.exec(
-    operation.replace(TokenWhitespaceRegex, ""),
-  );
-
-  if (!match) {
+function parseSlice(args: readonly string[]): SliceSpec | null {
+  const bounds = readNumberArguments(args);
+  if (!bounds || bounds.length === 0) {
     return null;
   }
 
-  const [, rawStart, rawStop, rawStep] = match;
-  const start = parseSliceBound(rawStart);
+  const [start, stop, step = null] = bounds;
 
-  // No separator at all means a single index
-  if (rawStop === undefined) {
+  // A lone argument is a single index, not a range
+  if (bounds.length === 1) {
     return start === null
       ? null
       : {
@@ -40,20 +30,19 @@ function parseSlice(operation: string): SliceSpec | null {
         };
   }
 
-  const step = rawStep ? Number(rawStep) : SliceSyntax.DEFAULT_STEP;
-  if (step === 0) {
-    return null;
-  }
-
-  return { start, stop: parseSliceBound(rawStop), step };
+  const stepValue = step ?? SliceSyntax.DEFAULT_STEP;
+  return stepValue === 0 ? null : { start, stop, step: stepValue };
 }
 
-export const SLICE_OPERATION: OperationDefinition = {
-  parse: (operation) => {
-    const spec = parseSlice(operation);
+export const SLICE_OPERATION: OperationDefinition = defineCallOperation({
+  arity: SliceSyntax.ARITY,
+  builders: {
+    [SliceSyntax.KEYWORD]: (args) => {
+      const spec = parseSlice(args);
 
-    return (
-      spec && ((text) => sliceString(text, spec.start, spec.stop, spec.step))
-    );
+      return (
+        spec && ((text) => sliceString(text, spec.start, spec.stop, spec.step))
+      );
+    },
   },
-};
+});
