@@ -44,7 +44,7 @@ export function PasteRunbookModal() {
   };
 
   return (
-    <Modal open={isOpen} onClose={onClose}>
+    <Modal open={isOpen} onClose={onClose} className="modal-paste-runbook">
       <p className="modal-title">{t.pasteModal.title}</p>
       <p className="modal-message">{t.pasteModal.message}</p>
 

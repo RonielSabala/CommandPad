@@ -1,6 +1,11 @@
+.modal.modal-paste-runbook {
+  width: var(--modal-cloud-width);
+  max-width: none;
+}
+
 .paste-runbook-editor {
-  --code-editor-max-height: 24rem;
-  --code-editor-min-height: 12rem;
+  --code-editor-max-height: 42rem;
+  --code-editor-min-height: 24rem;
 
   min-width: 24rem;
 }
