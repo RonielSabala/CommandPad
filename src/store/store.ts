@@ -1786,14 +1786,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
 
-        const idsToDuplicate =
-          state.selectedBlockIds.size > 0 && state.selectedBlockIds.has(blockId)
-            ? [...state.selectedBlockIds].sort(
-                (a, b) =>
-                  active.blocks.findIndex((bl) => bl.id === a) -
-                  active.blocks.findIndex((bl) => bl.id === b),
-              )
-            : [blockId];
+        const isFromSelection =
+          state.selectedBlockIds.size > 0 &&
+          state.selectedBlockIds.has(blockId);
+
+        const idsToDuplicate = isFromSelection
+          ? [...state.selectedBlockIds].sort(
+              (a, b) =>
+                active.blocks.findIndex((bl) => bl.id === a) -
+                active.blocks.findIndex((bl) => bl.id === b),
+            )
+          : [blockId];
 
         const lastId = idsToDuplicate[idsToDuplicate.length - 1];
         const lastIndex = active.blocks.findIndex((b) => b.id === lastId);
@@ -1812,7 +1815,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             return { ...tab, blocks };
           }),
           flashBlockIds: new Set(duplicated.map((b) => b.id)),
-          pendingFocusBlockId: duplicated[duplicated.length - 1]?.id ?? null,
+          pendingFocusBlockId: isFromSelection
+            ? null
+            : (duplicated[duplicated.length - 1]?.id ?? null),
         }));
         get().saveState();
       },
