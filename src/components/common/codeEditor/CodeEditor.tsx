@@ -237,6 +237,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
             }}
             onMount={handleMount}
             loading={null}
+            wrapperProps={{ className: "code-editor-monaco" }}
           />
         </div>
 

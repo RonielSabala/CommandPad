@@ -7,6 +7,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
+  contain: inline-size;
 }
 
 .sticky-scrollbar-track {
