@@ -1,10 +1,10 @@
+import { COPY_FEEDBACK_TIMEOUT_MS } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import {
   CodeModelScope,
   COMMAND_PROMPT_PREFIX,
   CommandClampConfig,
-  COPY_FEEDBACK_TIMEOUT_MS,
-} from "@/common/config";
-import { CssClass } from "@/common/constants/css";
+} from "@/common/editorConfig";
 import { BlockType, CommandSurface } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
 import {

@@ -1,11 +1,11 @@
+import { CssClass } from "@/common/constants/css";
+import { MonacoSelector } from "@/common/constants/dom";
+import { Key } from "@/common/constants/events";
 import {
   CodeEditorProperty,
   CodeModelConfig,
   MonacoLayout,
-} from "@/common/config";
-import { CssClass } from "@/common/constants/css";
-import { MonacoSelector } from "@/common/constants/dom";
-import { Key } from "@/common/constants/events";
+} from "@/common/editorConfig";
 import { CodeLanguage, CodeRendering } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import type { ScrollTarget } from "@/components/common/scrollTarget";

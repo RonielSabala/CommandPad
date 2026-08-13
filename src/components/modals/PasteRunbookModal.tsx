@@ -1,4 +1,7 @@
-import { CodeModelScope, RUNBOOK_JSON_PLACEHOLDER } from "@/common/config";
+import {
+  CodeModelScope,
+  RUNBOOK_JSON_PLACEHOLDER,
+} from "@/common/editorConfig";
 import { CodeLanguage } from "@/common/enums";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { useTranslation } from "@/i18n";

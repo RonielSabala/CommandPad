@@ -1,4 +1,4 @@
-import { BlockField, JsonSchemaType } from "@/common/config";
+import { BlockField, JsonSchemaType } from "@/common/editorConfig";
 import { BlockType } from "@/common/enums";
 import type { Block } from "@/common/types";
 import { generateId } from "@/utils/id";

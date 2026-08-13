@@ -1,4 +1,8 @@
-import { ColorToken, MonacoTheme, MonacoTokenScope } from "@/common/config";
+import {
+  ColorToken,
+  MonacoTheme,
+  MonacoTokenScope,
+} from "@/common/editorConfig";
 import { Theme } from "@/common/enums";
 import { monaco } from "./setup";
 

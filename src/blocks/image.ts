@@ -1,4 +1,4 @@
-import { BlockField, JsonSchemaType } from "@/common/config";
+import { BlockField, JsonSchemaType } from "@/common/editorConfig";
 import { BlockType } from "@/common/enums";
 import { MarkdownSyntax } from "@/common/markdownSyntax";
 import { normalizeImageSrc } from "@/utils/image";

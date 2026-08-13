@@ -1,5 +1,5 @@
-import { MonacoLayout } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
+import { MonacoLayout } from "@/common/editorConfig";
 import { useDomScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
 import { classNames, countLines } from "@/utils/string";

@@ -1,4 +1,4 @@
-import { MonacoWorkerLabel } from "@/common/config";
+import { MonacoWorkerLabel } from "@/common/editorConfig";
 import { loader } from "@monaco-editor/react";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker.js?worker";

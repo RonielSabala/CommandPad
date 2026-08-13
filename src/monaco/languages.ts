@@ -1,4 +1,5 @@
-import { RunbookSchemaConfig, WrapPairs } from "@/common/config";
+import { WrapPairs } from "@/common/config";
+import { RunbookSchemaConfig } from "@/common/editorConfig";
 import { CodeLanguage } from "@/common/enums";
 import { jsonDefaults } from "monaco-editor/esm/vs/language/json/monaco.contribution.js";
 import { RUNBOOK_JSON_SCHEMA } from "./runbookSchema";

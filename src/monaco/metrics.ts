@@ -1,4 +1,8 @@
-import { CodeMetricProperty, CodeToken, MonacoLayout } from "@/common/config";
+import {
+  CodeMetricProperty,
+  CodeToken,
+  MonacoLayout,
+} from "@/common/editorConfig";
 
 export interface CodeMetrics {
   fontFamily: string;

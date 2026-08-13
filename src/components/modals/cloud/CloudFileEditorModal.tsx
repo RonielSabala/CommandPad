@@ -1,8 +1,8 @@
+import { CloudSyncConfig } from "@/common/config";
 import {
-  CloudSyncConfig,
   CodeModelScope,
   RUNBOOK_JSON_PLACEHOLDER,
-} from "@/common/config";
+} from "@/common/editorConfig";
 import { CodeLanguage } from "@/common/enums";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";

@@ -1,5 +1,9 @@
 import { getBlockJsonSchemas } from "@/blocks";
-import { JsonSchemaType, RunbookField, VariableField } from "@/common/config";
+import {
+  JsonSchemaType,
+  RunbookField,
+  VariableField,
+} from "@/common/editorConfig";
 
 /** The import/export shape for validation inside the JSON editors. */
 export const RUNBOOK_JSON_SCHEMA = {

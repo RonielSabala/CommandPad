@@ -1,4 +1,4 @@
-import { MonacoLayout } from "@/common/config";
+import { MonacoLayout } from "@/common/editorConfig";
 import type { editor } from "monaco-editor";
 import { getCodeMetrics } from "./metrics";
 
