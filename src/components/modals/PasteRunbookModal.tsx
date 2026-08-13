@@ -1,9 +1,9 @@
-import { RUNBOOK_JSON_PLACEHOLDER } from "@/common/config";
-import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
-import { CodeEditor } from "@/components/common/CodeEditor";
+import { CodeModelScope, RUNBOOK_JSON_PLACEHOLDER } from "@/common/config";
+import { CodeLanguage } from "@/common/enums";
+import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "./Modal";
 import "./PasteRunbookModal.css";
 
@@ -17,14 +17,12 @@ export function PasteRunbookModal() {
 
   const [text, setText] = useState("");
   const [hasError, setHasError] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Reset the field each time the modal opens
   useEffect(() => {
     if (isOpen) {
       setText("");
       setHasError(false);
-      textareaRef.current?.focus();
     }
   }, [isOpen]);
 
@@ -47,26 +45,23 @@ export function PasteRunbookModal() {
       <p className="modal-title">{t.pasteModal.title}</p>
       <p className="modal-message">{t.pasteModal.message}</p>
 
-      <CodeEditor
-        ref={textareaRef}
-        className="paste-runbook-editor"
-        value={text}
-        placeholder={RUNBOOK_JSON_PLACEHOLDER}
-        bounded
-        hasError={hasError}
-        onChange={(value) => {
-          setText(value);
-          setHasError(false);
-        }}
-        onKeyDown={(event) => {
-          if (!matchesKeybinding(event.nativeEvent, KeyBinding.SUBMIT_EDITOR)) {
-            return;
-          }
-
-          event.preventDefault();
-          void handleCreate();
-        }}
-      />
+      {isOpen && (
+        <CodeEditor
+          modelId={CodeModelScope.PASTE_RUNBOOK}
+          language={CodeLanguage.JSON}
+          className="paste-runbook-editor"
+          value={text}
+          placeholder={RUNBOOK_JSON_PLACEHOLDER}
+          bounded
+          autoFocus
+          hasError={hasError}
+          onChange={(value) => {
+            setText(value);
+            setHasError(false);
+          }}
+          onSubmit={() => void handleCreate()}
+        />
+      )}
 
       {hasError && <p className="paste-runbook-error">{t.pasteModal.error}</p>}
 

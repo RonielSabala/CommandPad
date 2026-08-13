@@ -10,6 +10,12 @@ importers:
       "@azure/msal-browser":
         specifier: ^5.17.1
         version: 5.17.1
+      "@monaco-editor/react":
+        specifier: ^4.7.0
+        version: 4.7.0(monaco-editor@0.55.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      monaco-editor:
+        specifier: 0.55.0
+        version: 0.55.0
       react:
         specifier: ^19.1.0
         version: 19.2.7
@@ -583,6 +589,22 @@ packages:
         integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==,
       }
 
+  "@monaco-editor/loader@1.7.0":
+    resolution:
+      {
+        integrity: sha512-gIwR1HrJrrx+vfyOhYmCZ0/JcWqG5kbfG7+d3f/C1LXk2EvzAbHSg3MQ5lO2sMlo9izoAZ04shohfKLVT6crVA==,
+      }
+
+  "@monaco-editor/react@4.7.0":
+    resolution:
+      {
+        integrity: sha512-cyzXQCtO47ydzxpQtCGSQGOC8Gk3ZUeBXFAxD+CWXYFo5OqZyZUonFl0DwUlTyAfRHntBfw2p3w4s9R6oe1eCA==,
+      }
+    peerDependencies:
+      monaco-editor: ">= 0.25.0 < 1"
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   "@rolldown/pluginutils@1.0.0-beta.27":
     resolution:
       {
@@ -858,6 +880,12 @@ packages:
         integrity: sha512-MXfmqaVPEVgkBT/aY0aGCkRWWtByiYQXo3xdQ8r5RzuFrPiRn8Gar2tQdXSUQ2GKV3bkXckek89V8wQBY2Q/Aw==,
       }
 
+  "@types/trusted-types@2.0.7":
+    resolution:
+      {
+        integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==,
+      }
+
   "@typescript-eslint/eslint-plugin@8.62.1":
     resolution:
       {
@@ -1114,6 +1142,12 @@ packages:
     resolution:
       {
         integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==,
+      }
+
+  dompurify@3.2.7:
+    resolution:
+      {
+        integrity: sha512-WhL/YuveyGXJaerVlMYGWhvQswa7myDG17P7Vu65EWC05o8vfeNbvNf4d/BOvH99+ZW+LlQsc1GDKMa1vNK6dw==,
       }
 
   electron-to-chromium@1.5.381:
@@ -1471,6 +1505,14 @@ packages:
         integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==,
       }
 
+  marked@14.0.0:
+    resolution:
+      {
+        integrity: sha512-uIj4+faQ+MgHgwUW1l2PsPglZLOLOT1uErt06dAPtx2kjteLAkbsd/0FiYg/MGS+i7ZKLb7w2WClxHkzOOuryQ==,
+      }
+    engines: { node: ">= 18" }
+    hasBin: true
+
   minimatch@10.2.5:
     resolution:
       {
@@ -1482,6 +1524,12 @@ packages:
     resolution:
       {
         integrity: sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w==,
+      }
+
+  monaco-editor@0.55.0:
+    resolution:
+      {
+        integrity: sha512-z0wxERYJs9181lmruSC42pD2AEllobxBrDWnOMbKBKWmQnhKn7p3BGvpk+Usahooa0ueCShJkWXE8vXgYvKCIg==,
       }
 
   ms@2.1.3:
@@ -1721,6 +1769,12 @@ packages:
         integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==,
       }
     engines: { node: ">=0.10.0" }
+
+  state-local@1.0.7:
+    resolution:
+      {
+        integrity: sha512-HTEHMNieakEnoe33shBYcZ7NX83ACUjCu8c40iOGEZsngj9zRnkqS9j1pqQPXwobB0ZcVTk27REb7COQ0UR59w==,
+      }
 
   strip-json-comments@3.1.1:
     resolution:
@@ -2168,6 +2222,17 @@ snapshots:
       "@jridgewell/resolve-uri": 3.1.2
       "@jridgewell/sourcemap-codec": 1.5.5
 
+  "@monaco-editor/loader@1.7.0":
+    dependencies:
+      state-local: 1.0.7
+
+  "@monaco-editor/react@4.7.0(monaco-editor@0.55.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)":
+    dependencies:
+      "@monaco-editor/loader": 1.7.0
+      monaco-editor: 0.55.0
+      react: 19.2.7
+      react-dom: 19.2.7(react@19.2.7)
+
   "@rolldown/pluginutils@1.0.0-beta.27": {}
 
   "@rollup/rollup-android-arm-eabi@4.62.2":
@@ -2281,6 +2346,9 @@ snapshots:
   "@types/react@19.2.17":
     dependencies:
       csstype: 3.2.3
+
+  "@types/trusted-types@2.0.7":
+    optional: true
 
   "@typescript-eslint/eslint-plugin@8.62.1(@typescript-eslint/parser@8.62.1(eslint@9.39.4(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3))(eslint@9.39.4(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)":
     dependencies:
@@ -2463,6 +2531,10 @@ snapshots:
       supports-color: 7.2.0
 
   deep-is@0.1.4: {}
+
+  dompurify@3.2.7:
+    optionalDependencies:
+      "@types/trusted-types": 2.0.7
 
   electron-to-chromium@1.5.381: {}
 
@@ -2674,6 +2746,8 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
+  marked@14.0.0: {}
+
   minimatch@10.2.5:
     dependencies:
       brace-expansion: 5.0.7
@@ -2681,6 +2755,11 @@ snapshots:
   minimatch@3.1.5:
     dependencies:
       brace-expansion: 1.1.15
+
+  monaco-editor@0.55.0:
+    dependencies:
+      dompurify: 3.2.7
+      marked: 14.0.0
 
   ms@2.1.3: {}
 
@@ -2815,6 +2894,8 @@ snapshots:
   shebang-regex@3.0.0: {}
 
   source-map-js@1.2.1: {}
+
+  state-local@1.0.7: {}
 
   strip-json-comments@3.1.1: {}
 

@@ -1,7 +1,11 @@
-import { CloudSyncConfig, RUNBOOK_JSON_PLACEHOLDER } from "@/common/config";
-import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
+import {
+  CloudSyncConfig,
+  CodeModelScope,
+  RUNBOOK_JSON_PLACEHOLDER,
+} from "@/common/config";
+import { CodeLanguage } from "@/common/enums";
 import { NoteText } from "@/components/blocks/note/NoteText";
-import { CodeEditor } from "@/components/common/CodeEditor";
+import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { Spinner } from "@/components/common/Spinner";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -43,27 +47,23 @@ export function CloudFileEditorModal() {
           {t.cloudModal.loading}
         </p>
       ) : (
-        <CodeEditor
-          className="cloud-file-editor-field"
-          value={editor?.text ?? ""}
-          onChange={setText}
-          placeholder={RUNBOOK_JSON_PLACEHOLDER}
-          bounded
-          hasError={Boolean(editor?.error)}
-          resizeDeps={[editor?.file.id]}
-          onKeyDown={(event) => {
-            if (
-              !matchesKeybinding(event.nativeEvent, KeyBinding.SUBMIT_EDITOR)
-            ) {
-              return;
-            }
-
-            event.preventDefault();
-            if (!busy && dirty) {
-              void save();
-            }
-          }}
-        />
+        editor && (
+          <CodeEditor
+            modelId={`${CodeModelScope.CLOUD_FILE}/${editor.file.id}`}
+            language={CodeLanguage.JSON}
+            className="cloud-file-editor-field"
+            value={editor.text}
+            onChange={setText}
+            placeholder={RUNBOOK_JSON_PLACEHOLDER}
+            bounded
+            hasError={Boolean(editor.error)}
+            onSubmit={() => {
+              if (!busy && dirty) {
+                void save();
+              }
+            }}
+          />
+        )
       )}
 
       {editor?.error && (

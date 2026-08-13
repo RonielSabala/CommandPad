@@ -1,3 +1,4 @@
+import { BlockField, JsonSchemaType } from "@/common/config";
 import { BlockType } from "@/common/enums";
 import type { Block } from "@/common/types";
 import { generateId } from "@/utils/id";
@@ -74,4 +75,19 @@ export function mapBlockCommandTexts(
 
 export function getBlockLabelText(block: Block): string | null {
   return definitionFor(block).getLabelText?.(block) ?? null;
+}
+
+export function getBlockJsonSchemas(): unknown[] {
+  return BLOCK_TYPE_ORDER.map((type) => {
+    const { properties, required = [] } = BLOCK_DEFINITIONS[type].jsonSchema;
+
+    return {
+      type: JsonSchemaType.OBJECT,
+      properties: {
+        [BlockField.TYPE]: { const: type },
+        ...properties,
+      },
+      required: [BlockField.TYPE, ...required],
+    };
+  });
 }

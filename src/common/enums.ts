@@ -204,6 +204,18 @@ export const CommandSurface = {
 export type CommandSurface =
   (typeof CommandSurface)[keyof typeof CommandSurface];
 
+export const CodeLanguage = {
+  PLAIN: "plaintext",
+  JSON: "json",
+} as const;
+export type CodeLanguage = (typeof CodeLanguage)[keyof typeof CodeLanguage];
+
+export const CodeRendering = {
+  LIVE: "live",
+  STATIC: "static",
+} as const;
+export type CodeRendering = (typeof CodeRendering)[keyof typeof CodeRendering];
+
 export const DialogTone = {
   DANGER: "danger",
   WARNING: "warning",

@@ -831,6 +831,8 @@ Si algo sale mal, deshazlo en este orden:
 * **Editor** (contraíble): donde escribes el comando. Usa el botón de flecha para ocultarlo cuando solo necesites la vista previa.`,
       multiline:
         "Los comandos pueden ocupar varias líneas, y el editor se puede scrollear hacia los lados cuando una línea es muy larga. El margen izquierdo marca la primera línea con `$` y numera las siguientes.",
+      editorFeatures:
+        "El editor es un editor de código completo. `Ctrl+F` busca texto, `Alt+Arriba` y `Alt+Abajo` mueven una línea, `Ctrl+Shift+K` la elimina, `Alt+Clic` añade otro cursor, etc.",
       longCommands: (showMoreLines) =>
         `Un comando muy largo no estira el bloque para siempre. Cuando una parte pasa su límite de altura se detiene ahí y se desvanece, con un control **${showMoreLines}** debajo. Haz clic para revelar el resto, y haz clic otra vez para volver a plegarlo. La vista previa y el editor se limitan por separado, así que puedes abrir uno sin abrir el otro.`,
       variablesTeaser:

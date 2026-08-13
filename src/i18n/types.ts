@@ -473,6 +473,7 @@ export interface Messages {
       intro: string;
       parts: string;
       multiline: string;
+      editorFeatures: string;
       longCommands: (showMoreLines: string) => string;
       variablesTeaser: string;
     };

@@ -1,12 +1,17 @@
 import {
+  CodeModelScope,
   COMMAND_PROMPT_PREFIX,
   CommandClampConfig,
   COPY_FEEDBACK_TIMEOUT_MS,
 } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { BlockType, CommandSurface, PanelId } from "@/common/enums";
+import { BlockType, CommandSurface } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
-import { CodeEditor } from "@/components/common/CodeEditor";
+import {
+  CodeEditor,
+  type CodeEditorHandle,
+} from "@/components/common/codeEditor/CodeEditor";
+import { useDomScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
 import {
   CheckIcon,
@@ -47,10 +52,6 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const blockText = block.text;
   const isEditorCollapsed = block.editorCollapsed === true;
 
-  const mode = useStore((state) => state.mode);
-  const isSidebarCollapsed = useStore(
-    (state) => state.panels[PanelId.SIDEBAR].collapsed,
-  );
   const updateBlock = useStore((state) => state.updateBlock);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
   const pendingFocus = useStore(
@@ -69,7 +70,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
 
   const [copied, setCopied] = useState(false);
   const previewRef = useRef<HTMLSpanElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const previewScrollTarget = useDomScrollTarget(previewRef);
+  const editorRef = useRef<CodeEditorHandle>(null);
   const autoExpandedEditorRef = useRef(false);
 
   const segments = useMemo(
@@ -115,7 +117,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
 
   useEffect(() => {
     if (pendingFocus) {
-      textareaRef.current?.focus({ preventScroll: true });
+      editorRef.current?.focus();
       consumeBlockFocus();
     }
   }, [pendingFocus, consumeBlockFocus]);
@@ -198,11 +200,12 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           />
         )}
 
-        <StickyScrollbar targetRef={previewRef} deps={[segments]} />
+        <StickyScrollbar target={previewScrollTarget} deps={[segments]} />
       </div>
 
       <CodeEditor
-        ref={textareaRef}
+        ref={editorRef}
+        modelId={`${CodeModelScope.COMMAND}/${blockId}`}
         className={classNames(
           "command-block-editor",
           isEditorCollapsed && CssClass.COLLAPSED,
@@ -222,7 +225,6 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
             />
           )
         }
-        resizeDeps={[isEditorCollapsed, mode, isSidebarCollapsed]}
       />
     </div>
   );

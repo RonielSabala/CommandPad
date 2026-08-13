@@ -1,3 +1,4 @@
+import { BlockField, JsonSchemaType } from "@/common/config";
 import { BlockType } from "@/common/enums";
 import { MarkdownSyntax } from "@/common/markdownSyntax";
 import { normalizeImageSrc } from "@/utils/image";
@@ -6,6 +7,13 @@ import type { BlockDefinition } from "./types";
 
 export const imageBlockDefinition: BlockDefinition<typeof BlockType.IMAGE> = {
   type: BlockType.IMAGE,
+  jsonSchema: {
+    properties: {
+      [BlockField.SRC]: { type: JsonSchemaType.STRING },
+      [BlockField.ALT]: { type: JsonSchemaType.STRING },
+    },
+    required: [BlockField.SRC],
+  },
 
   create: (id) => ({ id, type: BlockType.IMAGE, src: "" }),
 

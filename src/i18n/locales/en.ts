@@ -818,6 +818,8 @@ If something goes wrong, undo it in this order:
 * **Editor** (collapsible): where you write the command. Use the chevron button to hide it when you only need the preview.`,
       multiline:
         "Commands can span several lines, and the editor can scroll sideways when a line gets very long. The left margin marks the first line with `$` and numbers the rest.",
+      editorFeatures:
+        "The editor is a full code editor. `Ctrl+F` finds text, `Alt+Up` and `Alt+Down` move a line, `Ctrl+Shift+K` deletes one, `Alt+Click` adds another cursor, etc.",
       longCommands: (showMoreLines) =>
         `A very long command does not stretch the block forever. Once a part passes its height limit it stops there and fades out, with a **${showMoreLines}** control underneath. Click it to reveal the rest, and click it again to fold it back. The preview and the editor are capped separately, so you can open one without opening the other.`,
       variablesTeaser:

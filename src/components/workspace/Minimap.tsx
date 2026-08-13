@@ -1,7 +1,9 @@
 import { MinimapConfig } from "@/common/config";
 import { ElementId } from "@/common/constants/dom";
 import { EventType, MouseButton } from "@/common/constants/events";
+import { CodeRendering } from "@/common/enums";
 import type { Block, Variable } from "@/common/types";
+import { CodeRenderingProvider } from "@/components/common/codeEditor/codeRendering";
 import { getActiveTab, useStore } from "@/store/store";
 import { getSecretKeys, getVariableMap } from "@/utils/resolution";
 import {
@@ -59,16 +61,18 @@ const MinimapMirror = memo(function MinimapMirror({
   const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
 
   return (
-    <div className="minimap-mirror" inert style={{ width }}>
-      {blocks.map((block) => (
-        <BlockItem
-          key={block.id}
-          block={block}
-          variableMap={variableMap}
-          secretKeys={secretKeys}
-        />
-      ))}
-    </div>
+    <CodeRenderingProvider value={CodeRendering.STATIC}>
+      <div className="minimap-mirror" inert style={{ width }}>
+        {blocks.map((block) => (
+          <BlockItem
+            key={block.id}
+            block={block}
+            variableMap={variableMap}
+            secretKeys={secretKeys}
+          />
+        ))}
+      </div>
+    </CodeRenderingProvider>
   );
 });
 
