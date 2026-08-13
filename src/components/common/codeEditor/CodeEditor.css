@@ -30,7 +30,7 @@
   grid-area: 1 / 1 / 2 / -1;
   min-width: 0;
   min-height: 0;
-  padding: var(--space-5) 0;
+  padding: var(--space-5) 0 var(--space-5) var(--code-gutter-pad-start, 0px);
 }
 
 .code-editor-live .code-editor-surface::after {
@@ -41,7 +41,10 @@
   visibility: hidden;
   white-space: pre;
   tab-size: var(--tab-size);
-  padding-inline: calc(var(--code-editor-gutter-width, 0px) + var(--space-6))
+  padding-inline: calc(
+      var(--code-editor-gutter-width, 0px) - var(--code-gutter-pad-start, 0px) +
+        var(--space-6)
+    )
     var(--space-6);
 }
 
@@ -61,6 +64,13 @@
   mask-image: var(--code-editor-clamp-mask, none);
 }
 
+.monaco-overflow-widgets {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: var(--z-popover);
+}
+
 /* --- Editor overrides --- */
 
 .code-editor
@@ -71,6 +81,11 @@
     .monaco-editor .margin
   ) {
   background: transparent;
+}
+
+.code-editor .monaco-editor .line-numbers {
+  font-size: var(--code-editor-gutter-font-size, var(--text-md));
+  line-height: var(--code-editor-line-height);
 }
 
 .code-editor .monaco-editor .line-numbers.code-editor-prompt {
@@ -85,6 +100,7 @@
 
 .code-editor-bounded {
   --code-editor-font-size: var(--text-sm);
+  --code-editor-gutter-font-size: var(--text-xs);
   --code-editor-line-height: var(--code-line-height-small);
 
   display: flex;
@@ -112,9 +128,11 @@
 
 /* --- Static rendering --- */
 
+/* Mirrors the live gutter */
 .code-editor-static {
   --code-editor-gutter-width: calc(
-    var(--code-line-number-chars, 3) * 1ch + var(--space-5)
+    var(--code-gutter-pad-start, 0px) + var(--code-line-number-chars, 1) * 1ch +
+      var(--space-5)
   );
 }
 
@@ -128,10 +146,15 @@
   flex-direction: column;
   align-items: flex-end;
   flex-shrink: 0;
-  width: var(--code-editor-gutter-width);
+  width: calc(var(--code-line-number-chars, 1) * 1ch + var(--space-5));
   padding-right: var(--space-5);
   color: var(--color-text-secondary);
   user-select: none;
+}
+
+.code-editor-static-gutter > * {
+  font-size: var(--code-editor-gutter-font-size, var(--text-md));
+  line-height: var(--code-editor-line-height);
 }
 
 .code-editor-static-text {

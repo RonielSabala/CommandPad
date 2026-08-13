@@ -102,6 +102,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
 
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
     const rootRef = useRef<HTMLDivElement>(null);
+    const pendingFocusRef = useRef(false);
     const [scrollTarget, setScrollTarget] = useState<ScrollTarget | null>(null);
     const [contentHeight, setContentHeight] = useState<number>(0);
 
@@ -116,15 +117,16 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       [],
     );
 
-    useImperativeHandle(
-      forwardedRef,
-      () => ({
-        focus() {
-          inputElement()?.focus({ preventScroll: true });
-        },
-      }),
-      [inputElement],
-    );
+    const focus = useCallback(() => {
+      const input = inputElement();
+      if (input) {
+        input.focus({ preventScroll: true });
+      } else {
+        pendingFocusRef.current = true;
+      }
+    }, [inputElement]);
+
+    useImperativeHandle(forwardedRef, () => ({ focus }), [focus]);
 
     const handleMount: OnMount = (instance, api) => {
       editorRef.current = instance;
@@ -152,10 +154,11 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
 
       const publishGutterWidth = () => {
         const { contentLeft } = instance.getLayoutInfo();
+        const { gutterPadStart, gutterGapAfter } = getCodeMetrics();
 
         rootRef.current?.style.setProperty(
           CodeEditorProperty.GUTTER_WIDTH,
-          `${contentLeft - getCodeMetrics().gutterGapAfter}px`,
+          `${gutterPadStart + contentLeft - gutterGapAfter}px`,
         );
       };
 
@@ -187,7 +190,8 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       instance.onDidFocusEditorText(() => callbacks.current.onFocus?.());
       instance.onDidBlurEditorText(() => callbacks.current.onBlur?.());
 
-      if (autoFocus) {
+      if (autoFocus || pendingFocusRef.current) {
+        pendingFocusRef.current = false;
         inputElement()?.focus({ preventScroll: true });
       }
     };

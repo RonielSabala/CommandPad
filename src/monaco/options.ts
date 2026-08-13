@@ -1,6 +1,7 @@
 import { MonacoLayout } from "@/common/editorConfig";
 import type { editor } from "monaco-editor";
 import { getCodeMetrics } from "./metrics";
+import { getOverflowWidgetsRoot } from "./overflowWidgets";
 
 type Options = editor.IStandaloneEditorConstructionOptions;
 
@@ -22,6 +23,7 @@ export function baseEditorOptions(): Options {
     // --- chrome off ---
     glyphMargin: false,
     minimap: { enabled: false },
+    folding: false,
     lineDecorationsWidth: metrics.gutterGapBefore + metrics.gutterGapAfter,
     lineNumbersMinChars: MonacoLayout.LINE_NUMBER_MIN_CHARS,
     overviewRulerLanes: 0,
@@ -54,10 +56,13 @@ export function baseEditorOptions(): Options {
     smoothScrolling: true,
     padding: { top: 0, bottom: 0 },
     fixedOverflowWidgets: true,
+    overflowWidgetsDomNode: getOverflowWidgetsRoot(),
 
     autoSurround: "languageDefined",
-    autoClosingBrackets: "never",
-    autoClosingQuotes: "never",
+    autoClosingBrackets: "languageDefined",
+    autoClosingQuotes: "languageDefined",
+    autoClosingDelete: "auto",
+    autoClosingOvertype: "auto",
   };
 }
 

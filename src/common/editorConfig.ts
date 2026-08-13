@@ -11,6 +11,7 @@ export const CodeToken = {
   TEXT_BASE: "--text-base",
   TEXT_SM: "--text-sm",
   LINE_HEIGHT_RATIO: "--code-line-height-ratio",
+  GUTTER_PAD_START: "--space-5",
   GUTTER_GAP_BEFORE: "--space-5",
   GUTTER_GAP_AFTER: "--space-6",
 } as const;
@@ -39,6 +40,7 @@ export const CodeMetricProperty = {
   LINE_HEIGHT_BASE: "--code-line-height-base",
   LINE_HEIGHT_SMALL: "--code-line-height-small",
   LINE_NUMBER_CHARS: "--code-line-number-chars",
+  GUTTER_PAD_START: "--code-gutter-pad-start",
 } as const;
 
 export const CodeEditorProperty = {
@@ -82,7 +84,12 @@ export const MonacoTokenScope = {
 export const MonacoLayout = {
   FIRST_LINE: 1,
   FIRST_COLUMN: 1,
-  LINE_NUMBER_MIN_CHARS: 3,
+  LINE_NUMBER_MIN_CHARS: 1,
+} as const;
+
+export const MonacoOverflowWidgets = {
+  EDITOR_CLASS: "monaco-editor",
+  ROOT_CLASS: "monaco-overflow-widgets",
 } as const;
 
 // --- Runbook JSON schema ---

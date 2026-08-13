@@ -11,6 +11,7 @@ export interface CodeMetrics {
   lineHeightBase: number;
   lineHeightSmall: number;
   tabSize: number;
+  gutterPadStart: number;
   gutterGapBefore: number;
   gutterGapAfter: number;
 }
@@ -38,6 +39,8 @@ export function publishCodeMetrics(): CodeMetrics {
     lineHeightBase: Math.round(fontSizeBase * ratio),
     lineHeightSmall: Math.round(fontSizeSmall * ratio),
     tabSize: readNumber(style, CodeToken.TAB_SIZE),
+    gutterPadStart:
+      readNumber(style, CodeToken.GUTTER_PAD_START) * rootFontSize,
     gutterGapBefore:
       readNumber(style, CodeToken.GUTTER_GAP_BEFORE) * rootFontSize,
     gutterGapAfter:
@@ -48,15 +51,17 @@ export function publishCodeMetrics(): CodeMetrics {
     CodeMetricProperty.LINE_HEIGHT_BASE,
     `${metrics.lineHeightBase}px`,
   );
-
   root.style.setProperty(
     CodeMetricProperty.LINE_HEIGHT_SMALL,
     `${metrics.lineHeightSmall}px`,
   );
-
   root.style.setProperty(
     CodeMetricProperty.LINE_NUMBER_CHARS,
     `${MonacoLayout.LINE_NUMBER_MIN_CHARS}`,
+  );
+  root.style.setProperty(
+    CodeMetricProperty.GUTTER_PAD_START,
+    `${metrics.gutterPadStart}px`,
   );
 
   return metrics;

@@ -5,7 +5,7 @@ import { jsonDefaults } from "monaco-editor/esm/vs/language/json/monaco.contribu
 import { RUNBOOK_JSON_SCHEMA } from "./runbookSchema";
 import { monaco } from "./setup";
 
-const SURROUNDING_PAIRS = Object.entries(WrapPairs).map(([open, close]) => ({
+const PAIRS = Object.entries(WrapPairs).map(([open, close]) => ({
   open,
   close,
 }));
@@ -20,12 +20,12 @@ export function configureLanguages(): void {
   configured = true;
 
   monaco.languages.setLanguageConfiguration(CodeLanguage.PLAIN, {
-    surroundingPairs: SURROUNDING_PAIRS,
-    autoClosingPairs: [],
+    surroundingPairs: PAIRS,
+    autoClosingPairs: PAIRS,
   });
 
   monaco.languages.setLanguageConfiguration(CodeLanguage.JSON, {
-    surroundingPairs: SURROUNDING_PAIRS,
+    surroundingPairs: PAIRS,
   });
 
   jsonDefaults.setDiagnosticsOptions({
