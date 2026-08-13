@@ -19,9 +19,14 @@ export function StickyScrollbar({ target, deps }: Props) {
     }
 
     const measure = () => {
+      const clientWidth = target.getClientWidth();
+      if (clientWidth <= 0) {
+        return;
+      }
+
       const scrollWidth = target.getScrollWidth();
       setContentWidth(scrollWidth);
-      setOverflowing(scrollWidth > target.getClientWidth());
+      setOverflowing(scrollWidth > clientWidth);
     };
 
     measure();
