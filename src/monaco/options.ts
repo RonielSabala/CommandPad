@@ -6,7 +6,7 @@ import { getOverflowWidgetsRoot } from "./overflowWidgets";
 type Options = editor.IStandaloneEditorConstructionOptions;
 
 /** Everything every code surface in the app shares. */
-export function baseEditorOptions(): Options {
+export function baseEditorOptions(folding: boolean): Options {
   const metrics = getCodeMetrics();
 
   return {
@@ -23,7 +23,7 @@ export function baseEditorOptions(): Options {
     // --- chrome off ---
     glyphMargin: false,
     minimap: { enabled: false },
-    folding: false,
+    folding,
     lineDecorationsWidth: metrics.gutterGapBefore + metrics.gutterGapAfter,
     lineNumbersMinChars: MonacoLayout.LINE_NUMBER_MIN_CHARS,
     overviewRulerLanes: 0,
@@ -66,11 +66,11 @@ export function baseEditorOptions(): Options {
   };
 }
 
-export function flowingEditorOptions(): Options {
+export function flowingEditorOptions(folding: boolean): Options {
   const metrics = getCodeMetrics();
 
   return {
-    ...baseEditorOptions(),
+    ...baseEditorOptions(folding),
     fontSize: metrics.fontSizeBase,
     lineHeight: metrics.lineHeightBase,
     scrollbar: {
@@ -86,11 +86,11 @@ export function flowingEditorOptions(): Options {
   };
 }
 
-export function boundedEditorOptions(): Options {
+export function boundedEditorOptions(folding: boolean): Options {
   const metrics = getCodeMetrics();
 
   return {
-    ...baseEditorOptions(),
+    ...baseEditorOptions(folding),
     fontSize: metrics.fontSizeSmall,
     lineHeight: metrics.lineHeightSmall,
     scrollbar: { vertical: "auto", horizontal: "auto", useShadows: false },

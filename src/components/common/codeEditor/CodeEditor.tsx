@@ -47,6 +47,7 @@ interface Props {
   bounded?: boolean;
   hasError?: boolean;
   clamped?: boolean;
+  folding?: boolean;
   footer?: ReactNode;
   autoFocus?: boolean;
   onSubmit?: () => void;
@@ -89,6 +90,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       bounded = false,
       hasError = false,
       clamped = false,
+      folding = false,
       footer,
       autoFocus = false,
       onSubmit,
@@ -222,7 +224,9 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
             onChange={(next) => onChange(next ?? "")}
             height={bounded ? FULL_HEIGHT : contentHeight}
             options={{
-              ...(bounded ? boundedEditorOptions() : flowingEditorOptions()),
+              ...(bounded
+                ? boundedEditorOptions(folding)
+                : flowingEditorOptions(folding)),
               placeholder,
               lineNumbers: promptPrefix
                 ? (line) =>

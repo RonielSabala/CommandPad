@@ -56,6 +56,7 @@ export function PasteRunbookModal() {
           value={text}
           placeholder={RUNBOOK_JSON_PLACEHOLDER}
           bounded
+          folding
           autoFocus
           hasError={hasError}
           onChange={(value) => {

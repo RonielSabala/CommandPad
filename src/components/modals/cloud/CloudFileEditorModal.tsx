@@ -56,6 +56,7 @@ export function CloudFileEditorModal() {
             onChange={setText}
             placeholder={RUNBOOK_JSON_PLACEHOLDER}
             bounded
+            folding
             hasError={Boolean(editor.error)}
             onSubmit={() => {
               if (!busy && dirty) {
