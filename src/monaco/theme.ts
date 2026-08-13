@@ -14,8 +14,8 @@ const NUMBER_PATTERN = /[\d.]+/g;
 
 let probe: HTMLElement | null = null;
 
-/** Resolve a color token to literal hex. */
-function resolveColor(token: string): string {
+/** Resolve a color token to literal hex, scaling alpha by `opacity`. */
+function resolveColor(token: string, opacity: number = OPAQUE): string {
   if (!probe) {
     probe = document.createElement("span");
     probe.style.display = "none";
@@ -27,7 +27,7 @@ function resolveColor(token: string): string {
   const parts = getComputedStyle(probe).color.match(NUMBER_PATTERN) ?? [];
   const [red = 0, green = 0, blue = 0, alpha = OPAQUE] = parts.map(Number);
 
-  return `#${[red, green, blue, alpha * CHANNEL_MAX]
+  return `#${[red, green, blue, alpha * opacity * CHANNEL_MAX]
     .map((channel) =>
       Math.round(channel).toString(HEX_RADIX).padStart(HEX_DIGITS, "0"),
     )
@@ -37,6 +37,12 @@ function resolveColor(token: string): string {
 function buildTheme(
   base: monaco.editor.BuiltinTheme,
 ): monaco.editor.IStandaloneThemeData {
+  const guideActive = resolveColor(ColorToken.TEXT_MUTED);
+  const guideDim = resolveColor(
+    ColorToken.TEXT_MUTED,
+    MonacoTheme.GUIDE_DIM_OPACITY,
+  );
+
   return {
     base,
     inherit: true,
@@ -82,7 +88,22 @@ function buildTheme(
       "editor.selectionBackground": resolveColor(ColorToken.SELECTION),
       "editor.inactiveSelectionBackground": resolveColor(ColorToken.SELECTION),
       "editor.selectionHighlightBackground": MonacoTheme.TRANSPARENT,
-      "editorIndentGuide.background1": MonacoTheme.TRANSPARENT,
+
+      "editorIndentGuide.background1": guideDim,
+      "editorIndentGuide.activeBackground1": guideActive,
+      "editorBracketPairGuide.background1": guideDim,
+      "editorBracketPairGuide.background2": guideDim,
+      "editorBracketPairGuide.background3": guideDim,
+      "editorBracketPairGuide.background4": guideDim,
+      "editorBracketPairGuide.background5": guideDim,
+      "editorBracketPairGuide.background6": guideDim,
+      "editorBracketPairGuide.activeBackground1": guideActive,
+      "editorBracketPairGuide.activeBackground2": guideActive,
+      "editorBracketPairGuide.activeBackground3": guideActive,
+      "editorBracketPairGuide.activeBackground4": guideActive,
+      "editorBracketPairGuide.activeBackground5": guideActive,
+      "editorBracketPairGuide.activeBackground6": guideActive,
+
       "editorBracketMatch.background": MonacoTheme.TRANSPARENT,
       "editorBracketMatch.border": resolveColor(ColorToken.TEXT_MUTED),
       "editorWhitespace.foreground": resolveColor(ColorToken.TEXT_MUTED),

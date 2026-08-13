@@ -70,6 +70,7 @@ export const MonacoTheme = {
   BASE_LIGHT: "vs",
   ITALIC: "italic",
   TRANSPARENT: "#00000000",
+  GUIDE_DIM_OPACITY: 0.35,
 } as const;
 
 export const MonacoTokenScope = {
