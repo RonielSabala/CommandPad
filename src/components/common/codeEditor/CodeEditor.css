@@ -28,9 +28,12 @@
 
 .code-editor-surface {
   grid-area: 1 / 1 / 2 / -1;
-  min-width: 0;
   min-height: 0;
   padding: var(--space-5) 0 var(--space-5) var(--code-gutter-pad-start, 0px);
+  min-width: calc(
+    var(--code-editor-gutter-width, 0px) + var(--space-6) * 2 +
+      var(--code-editor-min-columns, 20ch)
+  );
 }
 
 .code-editor-live .code-editor-surface::after {
@@ -109,6 +112,7 @@
   --code-editor-font-size: var(--text-sm);
   --code-editor-gutter-font-size: var(--text-xs);
   --code-editor-line-height: var(--code-line-height-small);
+  --code-editor-min-columns: 0ch;
 
   display: flex;
   flex-direction: column;
