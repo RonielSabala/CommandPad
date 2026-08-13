@@ -90,9 +90,11 @@
 
 .code-editor .monaco-editor .line-numbers.code-editor-prompt {
   color: var(--success);
+  font-family: var(--font-mono);
 }
 
-.code-editor .monaco-editor .placeholder-text {
+.code-editor .monaco-editor .editorPlaceholder {
+  font-weight: 400;
   color: var(--color-text-muted);
 }
 

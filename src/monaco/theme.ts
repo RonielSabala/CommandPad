@@ -73,6 +73,7 @@ function buildTheme(
       "minimap.background": MonacoTheme.TRANSPARENT,
 
       "editor.foreground": resolveColor(ColorToken.TEXT_PRIMARY),
+      "editor.placeholder.foreground": resolveColor(ColorToken.TEXT_MUTED),
       "editorCursor.foreground": resolveColor(ColorToken.TEXT_PRIMARY),
       "editorLineNumber.foreground": resolveColor(ColorToken.TEXT_SECONDARY),
       "editorLineNumber.activeForeground": resolveColor(
