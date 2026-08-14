@@ -241,23 +241,18 @@ function provideCompletionItems(
   );
 
   return {
-    suggestions: readSuggestions(context, completions).map(
-      (suggestion, index) => ({
-        label: suggestion.label,
-        detail: suggestion.detail,
-        kind: suggestion.kind,
-        insertText: suggestion.insertText,
-        insertTextRules: suggestion.snippet
-          ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
-          : undefined,
-        filterText: suggestion.label,
-        sortText: String(index).padStart(
-          VariableCompletionConfig.SORT_DIGITS,
-          "0",
-        ),
-        range,
-      }),
-    ),
+    suggestions: readSuggestions(context, completions).map((suggestion) => ({
+      label: suggestion.label,
+      detail: suggestion.detail,
+      kind: suggestion.kind,
+      insertText: suggestion.insertText,
+      insertTextRules: suggestion.snippet
+        ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+        : undefined,
+      filterText: suggestion.label,
+      sortText: suggestion.label,
+      range,
+    })),
   };
 }
 

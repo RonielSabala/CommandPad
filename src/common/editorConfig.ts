@@ -89,8 +89,6 @@ export const MonacoLayout = {
 } as const;
 
 export const VariableCompletionConfig = {
-  /** Zero-padding for the sort key, so a list keeps the order it was built in. */
-  SORT_DIGITS: 4,
   /** The snippet parks the caret inside a call's parentheses. */
   SNIPPET_CARET: "$0",
 } as const;
