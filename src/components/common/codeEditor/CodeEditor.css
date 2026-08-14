@@ -1,5 +1,9 @@
 .code-editor {
   --code-editor-line-height: var(--code-line-height-base);
+  --code-editor-gutter-width: calc(
+    var(--code-gutter-pad-start, 0px) + var(--code-line-number-chars, 1) * 1ch +
+      var(--space-5)
+  );
 
   position: relative;
   isolation: isolate;
@@ -139,14 +143,6 @@
 }
 
 /* --- Static rendering --- */
-
-/* Mirrors the live gutter */
-.code-editor-static {
-  --code-editor-gutter-width: calc(
-    var(--code-gutter-pad-start, 0px) + var(--code-line-number-chars, 1) * 1ch +
-      var(--space-5)
-  );
-}
 
 .code-editor-static .code-editor-surface {
   display: flex;

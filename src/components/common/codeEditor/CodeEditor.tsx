@@ -14,7 +14,7 @@ import { getCodeMetrics } from "@/monaco/metrics";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { useStore } from "@/store/store";
-import { classNames } from "@/utils/string";
+import { classNames, countLines } from "@/utils/string";
 import Editor, { type OnMount } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import {
@@ -56,6 +56,10 @@ interface Props {
 }
 
 const FULL_HEIGHT = "100%";
+
+function estimateContentHeight(value: string): number {
+  return countLines(value) * getCodeMetrics().lineHeightBase;
+}
 
 function modelPath(modelId: string, language: CodeLanguage): string {
   const suffix =
@@ -106,7 +110,9 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     const rootRef = useRef<HTMLDivElement>(null);
     const pendingFocusRef = useRef(false);
     const [scrollTarget, setScrollTarget] = useState<ScrollTarget | null>(null);
-    const [contentHeight, setContentHeight] = useState<number>(0);
+    const [contentHeight, setContentHeight] = useState<number>(() =>
+      estimateContentHeight(value),
+    );
 
     const callbacks = useRef({ onSubmit, onFocus, onBlur });
     callbacks.current = { onSubmit, onFocus, onBlur };
