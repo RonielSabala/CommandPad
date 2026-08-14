@@ -28,6 +28,7 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useRef,
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
@@ -144,6 +145,8 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     }, [inputElement]);
 
     useImperativeHandle(forwardedRef, () => ({ focus }), [focus]);
+
+    useLayoutEffect(() => editorRef.current?.layout(), [contentHeight]);
 
     useEffect(() => {
       if (!completions) {

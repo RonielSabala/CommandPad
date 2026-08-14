@@ -53,7 +53,7 @@ export function baseEditorOptions(folding: boolean): Options {
     wordWrap: "off",
     scrollBeyondLastLine: false,
     scrollBeyondLastColumn: 0,
-    smoothScrolling: true,
+    smoothScrolling: false,
     padding: { top: 0, bottom: 0 },
     fixedOverflowWidgets: true,
     overflowWidgetsDomNode: getOverflowWidgetsRoot(),
