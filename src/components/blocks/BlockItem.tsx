@@ -8,6 +8,7 @@ import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore, useStoreApi } from "@/store/store";
+import { clamp } from "@/utils/number";
 import { classNames } from "@/utils/string";
 import { memo, useRef, useState } from "react";
 import { BlockActionsMenu } from "./BlockActionsMenu";
@@ -69,6 +70,19 @@ export const BlockItem = memo(function BlockItem({
 
         // Move within the list, copy when dropped onto another tab
         event.dataTransfer.effectAllowed = DragEffect.COPY_MOVE;
+
+        const dragImage = event.currentTarget.querySelector<HTMLElement>(
+          `[${DataAttr.DRAG_IMAGE}]`,
+        );
+
+        if (dragImage) {
+          const rect = dragImage.getBoundingClientRect();
+          event.dataTransfer.setDragImage(
+            dragImage,
+            clamp(event.clientX - rect.left, 0, rect.width),
+            clamp(event.clientY - rect.top, 0, rect.height),
+          );
+        }
       }}
       onDragEnd={() => {
         clearBlockDrag();

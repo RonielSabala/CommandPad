@@ -1,5 +1,6 @@
 import { COPY_FEEDBACK_TIMEOUT_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
+import { DataAttr } from "@/common/constants/dom";
 import {
   CodeModelScope,
   COMMAND_PROMPT_PREFIX,
@@ -135,7 +136,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
       className={classNames("command-block", CssClass.BLOCK_SURFACE)}
       style={CLAMP_STYLE}
     >
-      <div className="command-preview">
+      <div className="command-preview" {...{ [DataAttr.DRAG_IMAGE]: "" }}>
         <span
           ref={previewRef}
           className={classNames(
