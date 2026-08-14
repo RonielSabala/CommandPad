@@ -41,6 +41,7 @@ export const CodeMetricProperty = {
   LINE_HEIGHT_SMALL: "--code-line-height-small",
   LINE_NUMBER_CHARS: "--code-line-number-chars",
   GUTTER_PAD_START: "--code-gutter-pad-start",
+  GUTTER_GAP_BEFORE: "--code-gutter-gap-before",
 } as const;
 
 export const CodeEditorProperty = {

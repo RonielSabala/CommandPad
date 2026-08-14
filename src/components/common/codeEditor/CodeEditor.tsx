@@ -21,7 +21,11 @@ import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { useStore } from "@/store/store";
 import { classNames, countLines } from "@/utils/string";
-import Editor, { type OnMount } from "@monaco-editor/react";
+import Editor, {
+  type BeforeMount,
+  type Monaco,
+  type OnMount,
+} from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import {
   forwardRef,
@@ -159,42 +163,53 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       return () => clearModelCompletions(key);
     }, [completions, modelId, language]);
 
-    const handleMount: OnMount = (instance, api) => {
-      editorRef.current = instance;
-      ensureMonacoTheme(theme);
+    const publishGutterWidth = (instance: editor.ICodeEditor) => {
+      const { contentLeft } = instance.getLayoutInfo();
+      const { gutterPadStart, gutterGapAfter } = getCodeMetrics();
 
-      if (promptPrefix) {
-        const promptDecoration = () => ({
-          range: new api.Range(
-            MonacoLayout.FIRST_LINE,
-            MonacoLayout.FIRST_COLUMN,
-            MonacoLayout.FIRST_LINE,
-            MonacoLayout.FIRST_COLUMN,
-          ),
-          options: { lineNumberClassName: CssClass.CODE_EDITOR_PROMPT },
-        });
+      rootRef.current?.style.setProperty(
+        CodeEditorProperty.GUTTER_WIDTH,
+        `${gutterPadStart + contentLeft - gutterGapAfter}px`,
+      );
+    };
 
-        const prompt = instance.createDecorationsCollection([
-          promptDecoration(),
+    const pinPrompt = (instance: editor.ICodeEditor, api: Monaco) => {
+      const prompt = instance.createDecorationsCollection();
+      const mark = () =>
+        prompt.set([
+          {
+            range: new api.Range(
+              MonacoLayout.FIRST_LINE,
+              MonacoLayout.FIRST_COLUMN,
+              MonacoLayout.FIRST_LINE,
+              MonacoLayout.FIRST_COLUMN,
+            ),
+            options: { lineNumberClassName: CssClass.CODE_EDITOR_PROMPT },
+          },
         ]);
 
-        instance.onDidChangeModelContent(() =>
-          prompt.set([promptDecoration()]),
-        );
-      }
+      instance.onDidChangeModel(mark);
+      instance.onDidChangeModelContent(mark);
+    };
 
-      const publishGutterWidth = () => {
-        const { contentLeft } = instance.getLayoutInfo();
-        const { gutterPadStart, gutterGapAfter } = getCodeMetrics();
+    const handleBeforeMount: BeforeMount = (api) => {
+      const created = api.editor.onDidCreateEditor(
+        (instance: editor.ICodeEditor) => {
+          created.dispose();
 
-        rootRef.current?.style.setProperty(
-          CodeEditorProperty.GUTTER_WIDTH,
-          `${gutterPadStart + contentLeft - gutterGapAfter}px`,
-        );
-      };
+          publishGutterWidth(instance);
+          instance.onDidLayoutChange(() => publishGutterWidth(instance));
 
-      publishGutterWidth();
-      instance.onDidLayoutChange(publishGutterWidth);
+          if (promptPrefix) {
+            pinPrompt(instance, api);
+          }
+        },
+      );
+    };
+
+    const handleMount: OnMount = (instance) => {
+      editorRef.current = instance;
+      ensureMonacoTheme(theme);
 
       if (!bounded) {
         const applyHeight = () => setContentHeight(instance.getContentHeight());
@@ -270,6 +285,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
                       : String(line)
                 : "on",
             }}
+            beforeMount={handleBeforeMount}
             onMount={handleMount}
             loading={null}
             wrapperProps={{ className: "code-editor-monaco" }}

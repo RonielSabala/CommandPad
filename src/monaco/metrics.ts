@@ -22,7 +22,7 @@ function readNumber(style: CSSStyleDeclaration, token: string): number {
   return parseFloat(style.getPropertyValue(token));
 }
 
-/** Resolve the code tokens once and publish the *rounded* line heights back to :root. */
+/** Resolve the code tokens once and publish the *rounded* metrics back to :root. */
 export function publishCodeMetrics(): CodeMetrics {
   const root = document.documentElement;
   const style = getComputedStyle(root);
@@ -31,6 +31,8 @@ export function publishCodeMetrics(): CodeMetrics {
   const ratio = readNumber(style, CodeToken.LINE_HEIGHT_RATIO);
   const fontSizeBase = readNumber(style, CodeToken.TEXT_BASE) * rootFontSize;
   const fontSizeSmall = readNumber(style, CodeToken.TEXT_SM) * rootFontSize;
+  const pixels = (token: string) =>
+    Math.round(readNumber(style, token) * rootFontSize);
 
   metrics = {
     fontFamily: style.getPropertyValue(CodeToken.FONT_MONO).trim(),
@@ -39,12 +41,9 @@ export function publishCodeMetrics(): CodeMetrics {
     lineHeightBase: Math.round(fontSizeBase * ratio),
     lineHeightSmall: Math.round(fontSizeSmall * ratio),
     tabSize: readNumber(style, CodeToken.TAB_SIZE),
-    gutterPadStart:
-      readNumber(style, CodeToken.GUTTER_PAD_START) * rootFontSize,
-    gutterGapBefore:
-      readNumber(style, CodeToken.GUTTER_GAP_BEFORE) * rootFontSize,
-    gutterGapAfter:
-      readNumber(style, CodeToken.GUTTER_GAP_AFTER) * rootFontSize,
+    gutterPadStart: pixels(CodeToken.GUTTER_PAD_START),
+    gutterGapBefore: pixels(CodeToken.GUTTER_GAP_BEFORE),
+    gutterGapAfter: pixels(CodeToken.GUTTER_GAP_AFTER),
   };
 
   root.style.setProperty(
@@ -62,6 +61,10 @@ export function publishCodeMetrics(): CodeMetrics {
   root.style.setProperty(
     CodeMetricProperty.GUTTER_PAD_START,
     `${metrics.gutterPadStart}px`,
+  );
+  root.style.setProperty(
+    CodeMetricProperty.GUTTER_GAP_BEFORE,
+    `${metrics.gutterGapBefore}px`,
   );
 
   return metrics;

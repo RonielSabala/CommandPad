@@ -2,7 +2,7 @@
   --code-editor-line-height: var(--code-line-height-base);
   --code-editor-gutter-width: calc(
     var(--code-gutter-pad-start, 0px) + var(--code-line-number-chars, 1) * 1ch +
-      var(--space-5)
+      var(--code-gutter-gap-before, 0px)
   );
 
   position: relative;
@@ -154,8 +154,10 @@
   flex-direction: column;
   align-items: flex-end;
   flex-shrink: 0;
-  width: calc(var(--code-line-number-chars, 1) * 1ch + var(--space-5));
-  padding-right: var(--space-5);
+  width: calc(
+    var(--code-line-number-chars, 1) * 1ch + var(--code-gutter-gap-before, 0px)
+  );
+  padding-right: var(--code-gutter-gap-before, 0px);
   color: var(--color-text-secondary);
   user-select: none;
 }
