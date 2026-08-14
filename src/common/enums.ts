@@ -76,6 +76,14 @@ export const ReferenceSurface = {
 export type ReferenceSurface =
   (typeof ReferenceSurface)[keyof typeof ReferenceSurface];
 
+export const ReferenceChunk = {
+  KEY: "key",
+  PARAM: "param",
+  OPERATION: "operation",
+} as const;
+export type ReferenceChunk =
+  (typeof ReferenceChunk)[keyof typeof ReferenceChunk];
+
 export const CommandSegmentType = {
   LITERAL: "literal",
   RESOLVED: "resolved",

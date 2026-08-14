@@ -5,6 +5,8 @@ export {
   resolveCommandText,
   resolveCommandToString
 } from "./command";
+export { getOperationKeywords } from "./operations";
+export type { OperationKeyword } from "./operations/types";
 export {
   renameAllCommandTokens,
   renameAllValueTokens,

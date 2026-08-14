@@ -40,6 +40,10 @@ export function defineCallOperation(
   spec: CallOperationSpec,
 ): OperationDefinition {
   return {
+    keywords: Object.keys(spec.builders).map((keyword) => ({
+      keyword,
+      arity: spec.arity,
+    })),
     parse: (operation) => {
       const groups = CallOperationRegex.exec(operation)?.groups;
       const build = groups && spec.builders[groups[CallGroup.KEYWORD]];
