@@ -2,8 +2,13 @@ export const ElementId = {
   BLOCKS_LIST: "blocks-list",
 } as const;
 
+export const MonacoSelector = {
+  INPUT: "textarea.inputarea",
+  EDIT_CONTEXT: ".native-edit-context",
+} as const;
+
 export const InputSelector = {
-  EDITABLE: "textarea, input",
+  EDITABLE: `textarea, input, ${MonacoSelector.EDIT_CONTEXT}`,
 } as const;
 
 export const EditCommand = {
@@ -23,6 +28,7 @@ export const DataAttr = {
   VARIABLE_ID: "data-variable-id",
   NOTE_OFFSET: "data-note-offset",
   NOTE_ALIGN: "data-note-align",
+  DRAG_IMAGE: "data-drag-image",
   PANEL_SIDE: "data-panel-side",
   PANEL_COLLAPSED: "data-panel-collapsed",
 } as const;

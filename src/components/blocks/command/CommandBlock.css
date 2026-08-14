@@ -1,5 +1,5 @@
 .command-block {
-  --command-clamp-line-height: calc(var(--text-base) * 1.6);
+  --command-clamp-line-height: var(--code-line-height-base);
   --command-clamp-lines-height: calc(
     var(--command-clamp-line-height) * var(--command-clamp-max-lines)
   );
@@ -16,7 +16,7 @@
   border-radius: var(--radius-lg);
   overflow: clip;
   max-width: 100%;
-  min-width: 0;
+  min-width: var(--block-min-width);
 }
 
 /* Command preview */
@@ -172,8 +172,7 @@ body.read-mode :is(.toggle-editor-btn, .command-block-editor) {
   display: none;
 }
 
-.command-block-editor:focus-within.clamped > .code-editor-gutter,
-.command-block-editor:focus-within.clamped > .code-editor-field {
+.command-block-editor:focus-within.clamped > .code-editor-surface {
   max-height: none;
   overflow: visible;
   -webkit-mask-image: none;

@@ -15,7 +15,13 @@ import {
   useStoreApi,
 } from "@/store/store";
 import { getUsedVariableKeys, isVariableUnused } from "@/utils/resolution";
-import { useMemo, useState, type KeyboardEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+} from "react";
 import { buildDemoSeed, type DemoContent } from "./demoSeeds";
 import "./DemoWorkspace.css";
 import { DocsDemo } from "./DocsDemo";
@@ -39,16 +45,21 @@ export function DemoWorkspace({
   children,
 }: DemoWorkspaceProps) {
   const language = useStore((state) => state.language);
+  const theme = useStore((state) => state.theme);
 
   const buildStore = () => {
     const { state, contentSeed } = buildDemoSeed(tabs, library, language);
     const store = createAppStore({ isDemo: true, contentSeed });
-    store.setState(state);
+    store.setState({ ...state, theme });
     return store;
   };
 
   const [store, setStore] = useState(buildStore);
   const [version, setVersion] = useState(0);
+
+  useEffect(() => {
+    store.setState({ theme });
+  }, [store, theme]);
 
   const reset = () => {
     setStore(buildStore());

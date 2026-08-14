@@ -24,4 +24,5 @@ export const CssClass = {
   BLOCK_ACTIONS: "block-actions",
   BLOCK_DRAG_HANDLE: "block-drag-handle",
   ROW_ACTIONS: "row-actions",
+  CODE_EDITOR_PROMPT: "code-editor-prompt",
 } as const;

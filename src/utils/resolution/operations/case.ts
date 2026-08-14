@@ -9,7 +9,11 @@ import {
   toTitleCase,
 } from "@/utils/stringCase";
 
-import type { OperationDefinition, OperationTransform } from "./types";
+import {
+  bareKeywords,
+  type OperationDefinition,
+  type OperationTransform,
+} from "./types";
 
 const CASE_TRANSFORMS: Record<string, OperationTransform | undefined> = {
   [CaseSyntax.SNAKE]: toSnakeCase,
@@ -24,5 +28,6 @@ const CASE_TRANSFORMS: Record<string, OperationTransform | undefined> = {
 };
 
 export const CASE_OPERATION: OperationDefinition = {
+  keywords: bareKeywords(Object.keys(CASE_TRANSFORMS)),
   parse: (operation) => CASE_TRANSFORMS[operation.trim()] ?? null,
 };

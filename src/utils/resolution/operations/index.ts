@@ -2,7 +2,11 @@ import { CASE_OPERATION } from "./case";
 import { COUNT_OPERATION } from "./count";
 import { SLICE_OPERATION } from "./slice";
 import { STRIP_OPERATION } from "./strip";
-import type { OperationDefinition, OperationTransform } from "./types";
+import type {
+  OperationDefinition,
+  OperationKeyword,
+  OperationTransform,
+} from "./types";
 
 const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   SLICE_OPERATION,
@@ -10,6 +14,10 @@ const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   CASE_OPERATION,
   STRIP_OPERATION,
 ];
+
+export function getOperationKeywords(): readonly OperationKeyword[] {
+  return OPERATION_DEFINITIONS.flatMap((definition) => definition.keywords);
+}
 
 interface AppliedOperations {
   text: string;

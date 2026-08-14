@@ -82,6 +82,7 @@ export function CommandBlockDocs() {
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.commandBlock.multiline} />
+      <Prose text={t.docs.commandBlock.editorFeatures} />
       <Prose text={t.docs.commandBlock.longCommands(t.command.showMoreLines)} />
       <DemoWorkspace tabs={[{ blocks: [demoCommand(LONG_COMMAND)] }]}>
         <BlocksList />

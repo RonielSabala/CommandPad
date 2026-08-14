@@ -103,23 +103,15 @@ export const WrapPairs = {
   "'": "'",
 } as const;
 
-export const SecretMaskConfig = {
-  MASK_LENGTH: 8,
-  MASK_CHAR: "•",
-} as const;
+export const LINE_BREAK = "\n";
+
+export const SECRET_MASK = "•".repeat(8);
 
 export const StringCaseConfig = {
   SNAKE_SEPARATOR: "_",
   KEBAB_SEPARATOR: "-",
   // Kept inside a word so `don't` titles as `Don't` rather than `Don'T`
   APOSTROPHE: "'",
-} as const;
-
-export const COMMAND_PROMPT_PREFIX = "$";
-
-export const CommandClampConfig = {
-  MAX_LINES: 8,
-  MAX_LINES_PROPERTY: "--command-clamp-max-lines",
 } as const;
 
 export const ImageBlockConfig = {
@@ -129,9 +121,6 @@ export const ImageBlockConfig = {
   DATA_IMAGE_PREFIX: "data:image/",
   HTTP_PROTOCOLS: ["http:", "https:"],
 } as const;
-
-export const RUNBOOK_JSON_PLACEHOLDER =
-  '{\n  "variables": [],\n  "blocks": []\n}';
 
 // Supported file types
 

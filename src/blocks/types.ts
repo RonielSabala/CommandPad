@@ -1,8 +1,14 @@
 import type { BlockType } from "@/common/enums";
 import type { Block, BlockOfType } from "@/common/types";
 
+export interface BlockJsonSchema {
+  properties: Record<string, unknown>;
+  required?: string[];
+}
+
 export interface BlockDefinition<T extends BlockType = BlockType> {
   type: T;
+  jsonSchema: BlockJsonSchema;
 
   create(id: string): BlockOfType<T>;
 

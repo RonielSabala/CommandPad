@@ -1,5 +1,7 @@
 import { AppRoute } from "@/common/constants/routes";
 import { useDocumentLanguage, useThemeClass } from "@/hooks/useBodyClasses";
+import { useMonacoBootstrap } from "@/monaco/useMonacoBootstrap";
+import { useMonacoTheme } from "@/monaco/useMonacoTheme";
 import { useStore } from "@/store/store";
 import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
@@ -16,6 +18,9 @@ export default function App() {
 
   useThemeClass();
   useDocumentLanguage();
+
+  useMonacoBootstrap();
+  useMonacoTheme();
 
   useEffect(() => {
     void bootstrap();

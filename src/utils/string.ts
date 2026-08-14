@@ -1,7 +1,7 @@
-import { DuplicateNameConfig } from "@/common/config";
+import { DuplicateNameConfig, LINE_BREAK } from "@/common/config";
 
 export function splitLines(text: string): string[] {
-  return text.split("\n");
+  return text.split(LINE_BREAK);
 }
 
 export function countLines(text: string): number {
@@ -9,7 +9,7 @@ export function countLines(text: string): number {
 }
 
 export function joinLines(lines: string[]): string {
-  return lines.join("\n");
+  return lines.join(LINE_BREAK);
 }
 
 export function matchesQuery(

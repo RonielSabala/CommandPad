@@ -4,6 +4,7 @@
   --base-unit: 17px;
   --font-sans: "Inter", sans-serif;
   --font-mono: "Cascadia Code", monospace;
+  --code-line-height-ratio: 1.6;
 
   /* --- COLORS --- */
 
@@ -164,6 +165,12 @@
   --border-dashed: var(--space-1) dashed var(--accent);
   --transition-fast: 0.15s;
   --transition-base: 0.2s;
+  --code-line-height-base: calc(
+    var(--text-base) * var(--code-line-height-ratio)
+  );
+  --code-line-height-small: calc(
+    var(--text-sm) * var(--code-line-height-ratio)
+  );
 }
 
 :root.theme-light {

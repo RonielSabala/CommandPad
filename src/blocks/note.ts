@@ -1,3 +1,4 @@
+import { BlockField, JsonSchemaType } from "@/common/editorConfig";
 import { BlockType, NoteStyle } from "@/common/enums";
 import { MarkdownSyntax } from "@/common/markdownSyntax";
 import { isString } from "@/utils/typeGuards";
@@ -14,6 +15,13 @@ const isNoteStyle = (value: unknown): value is NoteStyle =>
 
 export const noteBlockDefinition: BlockDefinition<typeof BlockType.NOTE> = {
   type: BlockType.NOTE,
+  jsonSchema: {
+    properties: {
+      [BlockField.TEXT]: { type: JsonSchemaType.STRING },
+      [BlockField.STYLE]: { enum: Object.values(NoteStyle) },
+    },
+    required: [BlockField.TEXT],
+  },
 
   create: (id) => ({
     id,

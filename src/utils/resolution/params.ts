@@ -25,6 +25,16 @@ export function parseParam(chunk: string): ReferenceParam | null {
   return name && value ? { name, value } : null;
 }
 
+export function getTemplateParamNames(template: string): string[] {
+  const names = new Set<string>();
+
+  for (const [, rawName] of template.matchAll(VariableParamPlaceholderRegex)) {
+    names.add(rawName.trim());
+  }
+
+  return [...names];
+}
+
 export function applyTemplateParams(
   template: string,
   params: Record<string, string>,

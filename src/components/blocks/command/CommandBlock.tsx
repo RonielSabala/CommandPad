@@ -1,12 +1,18 @@
+import { COPY_FEEDBACK_TIMEOUT_MS } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
+import { DataAttr } from "@/common/constants/dom";
 import {
+  CodeModelScope,
   COMMAND_PROMPT_PREFIX,
   CommandClampConfig,
-  COPY_FEEDBACK_TIMEOUT_MS,
-} from "@/common/config";
-import { CssClass } from "@/common/constants/css";
-import { BlockType, CommandSurface, PanelId } from "@/common/enums";
+} from "@/common/editorConfig";
+import { BlockType, CommandSurface } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
-import { CodeEditor } from "@/components/common/CodeEditor";
+import {
+  CodeEditor,
+  type CodeEditorHandle,
+} from "@/components/common/codeEditor/CodeEditor";
+import { useDomScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
 import {
   CheckIcon,
@@ -14,6 +20,7 @@ import {
   EditorToggleChevronIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
+import { buildVariableCompletions } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import {
   countCommandLines,
@@ -26,6 +33,7 @@ import {
 import { classNames, countLines } from "@/utils/string";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
 import "./CommandBlock.css";
 import { CommandClampToggle } from "./CommandClampToggle";
 
@@ -47,10 +55,6 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const blockText = block.text;
   const isEditorCollapsed = block.editorCollapsed === true;
 
-  const mode = useStore((state) => state.mode);
-  const isSidebarCollapsed = useStore(
-    (state) => state.panels[PanelId.SIDEBAR].collapsed,
-  );
   const updateBlock = useStore((state) => state.updateBlock);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
   const pendingFocus = useStore(
@@ -69,7 +73,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
 
   const [copied, setCopied] = useState(false);
   const previewRef = useRef<HTMLSpanElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const previewScrollTarget = useDomScrollTarget(previewRef);
+  const editorRef = useRef<CodeEditorHandle>(null);
   const autoExpandedEditorRef = useRef(false);
 
   const segments = useMemo(
@@ -79,6 +84,11 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const unresolved = useMemo(
     () => hasUnresolvedTokens(blockText, variableMap),
     [blockText, variableMap],
+  );
+
+  const completions = useMemo(
+    () => buildVariableCompletions(variableMap, secretKeys),
+    [variableMap, secretKeys],
   );
 
   const previewOverflows = useMemo(
@@ -115,7 +125,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
 
   useEffect(() => {
     if (pendingFocus) {
-      textareaRef.current?.focus({ preventScroll: true });
+      editorRef.current?.focus();
       consumeBlockFocus();
     }
   }, [pendingFocus, consumeBlockFocus]);
@@ -133,7 +143,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
       className={classNames("command-block", CssClass.BLOCK_SURFACE)}
       style={CLAMP_STYLE}
     >
-      <div className="command-preview">
+      <div className="command-preview" {...{ [DataAttr.DRAG_IMAGE]: "" }}>
         <span
           ref={previewRef}
           className={classNames(
@@ -198,11 +208,12 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           />
         )}
 
-        <StickyScrollbar targetRef={previewRef} deps={[segments]} />
+        <StickyScrollbar target={previewScrollTarget} deps={[segments]} />
       </div>
 
       <CodeEditor
-        ref={textareaRef}
+        ref={editorRef}
+        modelId={`${CodeModelScope.COMMAND}/${blockId}`}
         className={classNames(
           "command-block-editor",
           isEditorCollapsed && CssClass.COLLAPSED,
@@ -212,6 +223,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         onFocus={handleEditorFocus}
         onBlur={handleEditorBlur}
         placeholder={t.command.placeholder}
+        completions={completions}
         promptPrefix={COMMAND_PROMPT_PREFIX}
         clamped={editorClamped}
         footer={
@@ -222,7 +234,6 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
             />
           )
         }
-        resizeDeps={[isEditorCollapsed, mode, isSidebarCollapsed]}
       />
     </div>
   );

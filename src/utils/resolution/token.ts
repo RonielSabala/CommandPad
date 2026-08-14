@@ -24,6 +24,11 @@ interface ReferenceChunk {
   text: string;
 }
 
+export interface OpenReference {
+  start: number;
+  raw: string;
+}
+
 /** Drops the backslash that escapes a reference. */
 export function unescapeBraces(
   text: string,
@@ -111,6 +116,34 @@ export function scanReferences(
   }
 
   return depth === 0 ? matches : scanUnbalanced(text, escapes);
+}
+
+/** The innermost reference still open at `index`, `null` when there is none. */
+export function openReferenceAt(
+  text: string,
+  index: number,
+  surface: ReferenceSurface,
+): OpenReference | null {
+  const escapes = ESCAPES_REFERENCES[surface];
+  const openIndexes: number[] = [];
+  const openEscaped: boolean[] = [];
+
+  for (let i = 0; i < index; i += 1) {
+    const char = text[i];
+
+    if (char === VariableSyntax.BRACE_OPEN) {
+      openIndexes.push(i);
+      openEscaped.push(escapes && text[i - 1] === ESCAPE_CHAR);
+    } else if (char === VariableSyntax.BRACE_CLOSE && openIndexes.length > 0) {
+      openIndexes.pop();
+      openEscaped.pop();
+    }
+  }
+
+  const start = openIndexes.pop();
+  return start === undefined || openEscaped.pop()
+    ? null
+    : { start, raw: text.slice(start + 1, index) };
 }
 
 /** Rewrites every top-level reference in `text`. */

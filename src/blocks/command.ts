@@ -1,3 +1,4 @@
+import { BlockField, JsonSchemaType } from "@/common/editorConfig";
 import { BlockType } from "@/common/enums";
 import { MarkdownSyntax } from "@/common/markdownSyntax";
 import { joinLines } from "@/utils/string";
@@ -7,6 +8,13 @@ import type { BlockDefinition } from "./types";
 export const commandBlockDefinition: BlockDefinition<typeof BlockType.COMMAND> =
   {
     type: BlockType.COMMAND,
+    jsonSchema: {
+      properties: {
+        [BlockField.TEXT]: { type: JsonSchemaType.STRING },
+        [BlockField.EDITOR_COLLAPSED]: { type: JsonSchemaType.BOOLEAN },
+      },
+      required: [BlockField.TEXT],
+    },
 
     create: (id) => ({ id, type: BlockType.COMMAND, text: "" }),
 
