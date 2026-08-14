@@ -20,7 +20,7 @@ import {
   EditorToggleChevronIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { buildVariableCompletions } from "@/monaco/variableCompletions";
+import { buildVariableCompletions } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import {
   countCommandLines,
@@ -33,6 +33,7 @@ import {
 import { classNames, countLines } from "@/utils/string";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
 import "./CommandBlock.css";
 import { CommandClampToggle } from "./CommandClampToggle";
 

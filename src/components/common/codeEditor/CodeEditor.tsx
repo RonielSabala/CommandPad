@@ -10,15 +10,15 @@ import { CodeLanguage, CodeRendering } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import type { ScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
-import { getCodeMetrics } from "@/monaco/metrics";
-import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
-import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import {
   clearModelCompletions,
   completionModelKey,
   setModelCompletions,
   type VariableCompletion,
-} from "@/monaco/variableCompletions";
+} from "@/monaco/completions";
+import { getCodeMetrics } from "@/monaco/metrics";
+import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
+import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { useStore } from "@/store/store";
 import { classNames, countLines } from "@/utils/string";
 import Editor, { type OnMount } from "@monaco-editor/react";
