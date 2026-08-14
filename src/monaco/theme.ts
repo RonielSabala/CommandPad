@@ -124,7 +124,16 @@ function buildTheme(
       "editorSuggestWidget.selectedBackground": resolveColor(
         ColorToken.ACCENT_DIM,
       ),
+      "editorSuggestWidget.selectedForeground": resolveColor(
+        ColorToken.TEXT_PRIMARY,
+      ),
+      "editorSuggestWidget.selectedIconForeground": resolveColor(
+        ColorToken.ACCENT,
+      ),
       "editorSuggestWidget.highlightForeground": resolveColor(
+        ColorToken.ACCENT,
+      ),
+      "editorSuggestWidget.focusHighlightForeground": resolveColor(
         ColorToken.ACCENT,
       ),
       "input.background": resolveColor(ColorToken.SURFACE_ALT),
