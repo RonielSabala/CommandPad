@@ -91,6 +91,8 @@ export const MonacoLayout = {
 export const VariableCompletionConfig = {
   /** The snippet parks the caret inside a call's parentheses. */
   SNIPPET_CARET: "$0",
+  /** How far back a reference laid out over several lines is read. */
+  MAX_REFERENCE_LINES: 20,
 } as const;
 
 export const MonacoOverflowWidgets = {

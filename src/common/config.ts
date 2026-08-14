@@ -103,6 +103,8 @@ export const WrapPairs = {
   "'": "'",
 } as const;
 
+export const LINE_BREAK = "\n";
+
 export const SECRET_MASK = "•".repeat(8);
 
 export const StringCaseConfig = {

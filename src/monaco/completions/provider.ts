@@ -1,3 +1,4 @@
+import { MonacoLayout, VariableCompletionConfig } from "@/common/editorConfig";
 import { CodeLanguage } from "@/common/enums";
 import { VariableSyntax } from "@/common/variableSyntax";
 import type { editor, languages, Position } from "monaco-editor";
@@ -15,16 +16,29 @@ function provideCompletionItems(
     return { suggestions: [] };
   }
 
-  // A shell brace block spanning several lines never opens one
-  const line = model.getLineContent(position.lineNumber);
-  const context = readCompletionContext(line, position.column - 1);
+  // A reference may be laid out over several lines
+  const firstLine = Math.max(
+    MonacoLayout.FIRST_LINE,
+    position.lineNumber - VariableCompletionConfig.MAX_REFERENCE_LINES,
+  );
+  const text = model.getValueInRange(
+    new monaco.Range(
+      firstLine,
+      MonacoLayout.FIRST_COLUMN,
+      position.lineNumber,
+      position.column,
+    ),
+  );
+
+  const lineStart = text.length - (position.column - 1);
+  const context = readCompletionContext(text, text.length, lineStart);
   if (!context) {
     return { suggestions: [] };
   }
 
   const range = new monaco.Range(
     position.lineNumber,
-    context.start + 1,
+    context.start - lineStart + 1,
     position.lineNumber,
     position.column,
   );

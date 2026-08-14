@@ -1,3 +1,4 @@
+import { LINE_BREAK } from "@/common/config";
 import { ReferenceChunk, ReferenceSurface } from "@/common/enums";
 import { CallSyntax, VariableSyntax } from "@/common/variableSyntax";
 import {
@@ -22,6 +23,19 @@ const COMPLETABLE: Record<ReferenceChunk, (typed: string) => boolean> = {
     !typed.includes(CallSyntax.ARGUMENT_OPEN),
 };
 
+/** Which chunks a reference opened on an earlier line still completes. */
+const SPANS_LINES: Record<ReferenceChunk, boolean> = {
+  [ReferenceChunk.KEY]: false,
+  [ReferenceChunk.PARAM]: true,
+  [ReferenceChunk.OPERATION]: true,
+};
+
+/** Whether the separator at `index` is the first thing written on its line. */
+function opensItsLine(text: string, index: number): boolean {
+  const lineStart = text.lastIndexOf(LINE_BREAK, index) + 1;
+  return text.slice(lineStart, index).trim() === "";
+}
+
 export interface CompletionContext {
   chunk: ReferenceChunk;
   key: string;
@@ -35,6 +49,7 @@ export interface CompletionContext {
 export function readCompletionContext(
   text: string,
   index: number,
+  lineStart: number,
 ): CompletionContext | null {
   const reference = openReferenceAt(text, index, ReferenceSurface.COMMAND);
   if (!reference) {
@@ -47,6 +62,15 @@ export function readCompletionContext(
   const typedText = typed.text;
 
   if (!chunk || !COMPLETABLE[chunk](typedText)) {
+    return null;
+  }
+
+  // The separator sits right before the text typed after it
+  const separator = index - typedText.length - 1;
+  if (
+    reference.start < lineStart &&
+    !(SPANS_LINES[chunk] && opensItsLine(text, separator))
+  ) {
     return null;
   }
 
