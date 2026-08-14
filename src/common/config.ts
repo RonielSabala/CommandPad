@@ -103,10 +103,7 @@ export const WrapPairs = {
   "'": "'",
 } as const;
 
-export const SecretMaskConfig = {
-  MASK_LENGTH: 8,
-  MASK_CHAR: "•",
-} as const;
+export const SECRET_MASK = "•".repeat(8);
 
 export const StringCaseConfig = {
   SNAKE_SEPARATOR: "_",

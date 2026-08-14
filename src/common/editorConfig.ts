@@ -88,6 +88,10 @@ export const MonacoLayout = {
   LINE_NUMBER_MIN_CHARS: 1,
 } as const;
 
+export const VariableCompletionConfig = {
+  SORT_DIGITS: 4,
+} as const;
+
 export const MonacoOverflowWidgets = {
   EDITOR_CLASS: "monaco-editor",
   ROOT_CLASS: "monaco-overflow-widgets",

@@ -20,6 +20,7 @@ import {
   EditorToggleChevronIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
+import { buildVariableCompletions } from "@/monaco/variableCompletions";
 import { useStore } from "@/store/store";
 import {
   countCommandLines,
@@ -82,6 +83,11 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const unresolved = useMemo(
     () => hasUnresolvedTokens(blockText, variableMap),
     [blockText, variableMap],
+  );
+
+  const completions = useMemo(
+    () => buildVariableCompletions(variableMap, secretKeys),
+    [variableMap, secretKeys],
   );
 
   const previewOverflows = useMemo(
@@ -216,6 +222,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         onFocus={handleEditorFocus}
         onBlur={handleEditorBlur}
         placeholder={t.command.placeholder}
+        completions={completions}
         promptPrefix={COMMAND_PROMPT_PREFIX}
         clamped={editorClamped}
         footer={

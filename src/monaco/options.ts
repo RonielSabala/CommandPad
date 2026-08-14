@@ -80,7 +80,7 @@ export function flowingEditorOptions(folding: boolean): Options {
       alwaysConsumeMouseWheel: false,
     },
     quickSuggestions: true,
-    suggestOnTriggerCharacters: false,
+    suggestOnTriggerCharacters: true,
     wordBasedSuggestions: "off",
     renderValidationDecorations: "off",
   };

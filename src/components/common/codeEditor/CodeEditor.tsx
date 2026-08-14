@@ -13,6 +13,12 @@ import { StickyScrollbar } from "@/components/common/StickyScrollbar";
 import { getCodeMetrics } from "@/monaco/metrics";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
+import {
+  clearModelCompletions,
+  completionModelKey,
+  setModelCompletions,
+  type VariableCompletion,
+} from "@/monaco/variableCompletions";
 import { useStore } from "@/store/store";
 import { classNames, countLines } from "@/utils/string";
 import Editor, { type OnMount } from "@monaco-editor/react";
@@ -20,6 +26,7 @@ import type { editor } from "monaco-editor";
 import {
   forwardRef,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -49,6 +56,7 @@ interface Props {
   clamped?: boolean;
   folding?: boolean;
   footer?: ReactNode;
+  completions?: VariableCompletion[];
   autoFocus?: boolean;
   onSubmit?: () => void;
   onFocus?: () => void;
@@ -96,6 +104,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       clamped = false,
       folding = false,
       footer,
+      completions,
       autoFocus = false,
       onSubmit,
       onFocus,
@@ -135,6 +144,17 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     }, [inputElement]);
 
     useImperativeHandle(forwardedRef, () => ({ focus }), [focus]);
+
+    useEffect(() => {
+      if (!completions) {
+        return;
+      }
+
+      const key = completionModelKey(modelPath(modelId, language));
+      setModelCompletions(key, completions);
+
+      return () => clearModelCompletions(key);
+    }, [completions, modelId, language]);
 
     const handleMount: OnMount = (instance, api) => {
       editorRef.current = instance;
