@@ -99,6 +99,7 @@
 .code-editor .monaco-editor .line-numbers.code-editor-prompt {
   color: var(--success);
   font-family: var(--font-mono);
+  font-weight: 600;
 }
 
 .code-editor .monaco-editor .editorPlaceholder {
@@ -191,4 +192,5 @@
 
 .code-editor-prompt {
   color: var(--success);
+  font-weight: 600;
 }
