@@ -196,7 +196,13 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       });
 
       instance.onDidFocusEditorText(() => callbacks.current.onFocus?.());
-      instance.onDidBlurEditorText(() => callbacks.current.onBlur?.());
+      instance.onDidBlurEditorText(() => {
+        instance.setPosition({
+          lineNumber: MonacoLayout.FIRST_LINE,
+          column: MonacoLayout.FIRST_COLUMN,
+        });
+        callbacks.current.onBlur?.();
+      });
 
       if (autoFocus || pendingFocusRef.current) {
         pendingFocusRef.current = false;
