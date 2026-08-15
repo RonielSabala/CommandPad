@@ -201,6 +201,7 @@ export const VariableRow = memo(function VariableRow({
         <ContextMenuSubmenu
           icon={<AlphabetUppercase className="icon-md" />}
           label={t.variables.renameCase}
+          iconlessItems
         >
           {CASE_KEYWORDS.map((keyword) => (
             <ContextMenuItem
