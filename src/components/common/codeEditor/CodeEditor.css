@@ -109,6 +109,7 @@
 .code-editor .monaco-editor .editorPlaceholder {
   font-weight: 400;
   color: var(--color-text-muted);
+  z-index: var(--z-behind);
 }
 
 /* --- Bounded --- */
