@@ -112,6 +112,10 @@
   z-index: var(--z-behind);
 }
 
+.code-editor .context-view {
+  pointer-events: none;
+}
+
 /* --- Bounded --- */
 
 .code-editor-bounded {
