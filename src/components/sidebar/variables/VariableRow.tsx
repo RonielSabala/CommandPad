@@ -78,6 +78,7 @@ export const VariableRow = memo(function VariableRow({
   useEffect(() => {
     if (pendingFocus) {
       keyRef.current?.focus();
+      keyRef.current?.select();
       consumeVariableFocus();
     }
   }, [pendingFocus, consumeVariableFocus]);

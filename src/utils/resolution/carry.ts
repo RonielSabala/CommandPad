@@ -2,6 +2,7 @@ import type { Block, Variable } from "@/common/types";
 import { CopySuffixRegex, VariableSyntax } from "@/common/variableSyntax";
 import { generateId } from "@/utils/id";
 
+import { uniqueVariableKey } from "./keys";
 import { renameAllValueTokens } from "./rename";
 import { getUsedVariableKeys } from "./usage";
 import { getVariableKey } from "./variables";
@@ -11,16 +12,7 @@ export function uniqueCopyKey(
   takenKeys: ReadonlySet<string>,
 ): string {
   const stem = key.replace(CopySuffixRegex, "");
-  const base = `${stem}${VariableSyntax.COPY_SUFFIX}`;
-  let candidate = base;
-  let counter = 1; // Copy numbering start
-
-  while (takenKeys.has(candidate)) {
-    candidate = `${base}${counter}`;
-    counter += 1;
-  }
-
-  return candidate;
+  return uniqueVariableKey(`${stem}${VariableSyntax.COPY_SUFFIX}`, takenKeys);
 }
 
 export interface CarriedVariables {

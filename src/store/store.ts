@@ -81,6 +81,7 @@ import { openImportDialog } from "@/utils/importTrigger";
 import { clamp } from "@/utils/number";
 import {
   carryVariables,
+  extractedVariableKey,
   getVariableKey,
   renameAllCommandTokens,
   renameCommandTokens,
@@ -253,6 +254,7 @@ export interface StoreState {
   navigateRunbookList: (direction: MoveDirection) => void;
 
   addVariable: () => Promise<void>;
+  extractVariable: (value: string) => string | null;
   removeVariable: (variableId: string) => void;
   duplicateVariable: (variableId: string) => void;
   updateVariable: (
@@ -1590,6 +1592,40 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           pendingFocusVariableId: newVariable.id,
         }));
         get().saveState();
+      },
+
+      extractVariable: (value) => {
+        const state = get();
+        const tab = getActiveTab(state);
+
+        if (state.mode === AppMode.READ || !tab || !value) {
+          return null;
+        }
+
+        const key = extractedVariableKey(
+          value,
+          new Set(tab.variables.map((v) => getVariableKey(v))),
+        );
+        const newVariable: Variable = { id: generateId(), key, value };
+
+        set((s) => ({
+          ...withActiveTab(s, (t) => ({
+            ...t,
+            variables: [...t.variables, newVariable],
+          })),
+          variableSearchQuery: "",
+          pendingFocusVariableId: newVariable.id,
+        }));
+
+        if (get().variablesSectionCollapsed) {
+          get().toggleVariablesSection();
+        }
+        if (get().panels[PanelId.SIDEBAR].collapsed) {
+          get().togglePanel(PanelId.SIDEBAR);
+        }
+
+        get().saveState();
+        return key;
       },
 
       removeVariable: (variableId) => {

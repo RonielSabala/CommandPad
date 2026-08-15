@@ -5,6 +5,8 @@ import {
   CodeModelScope,
   COMMAND_PROMPT_PREFIX,
   CommandClampConfig,
+  EditorActionId,
+  EditorActionOrder,
 } from "@/common/editorConfig";
 import { BlockType, CommandSurface } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
@@ -20,9 +22,11 @@ import {
   EditorToggleChevronIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
+import type { EditorAction } from "@/monaco/actions";
 import { buildVariableCompletions } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import {
+  braceToken,
   countCommandLines,
   hasUnresolvedTokens,
   isMaskedSegment,
@@ -56,6 +60,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const isEditorCollapsed = block.editorCollapsed === true;
 
   const updateBlock = useStore((state) => state.updateBlock);
+  const extractVariable = useStore((state) => state.extractVariable);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
@@ -89,6 +94,24 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const completions = useMemo(
     () => buildVariableCompletions(variableMap, secretKeys),
     [variableMap, secretKeys],
+  );
+
+  const actions = useMemo<EditorAction[]>(
+    () => [
+      {
+        id: EditorActionId.EXTRACT_VARIABLE,
+        label: t.command.extractVariable,
+        order: EditorActionOrder.EXTRACT_VARIABLE,
+        requiresSelection: true,
+        run: ({ text, replace }) => {
+          const key = extractVariable(text);
+          if (key) {
+            replace(braceToken(key));
+          }
+        },
+      },
+    ],
+    [t, extractVariable],
   );
 
   const previewOverflows = useMemo(
@@ -224,6 +247,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         onBlur={handleEditorBlur}
         placeholder={t.command.placeholder}
         completions={completions}
+        actions={actions}
         promptPrefix={COMMAND_PROMPT_PREFIX}
         clamped={editorClamped}
         footer={

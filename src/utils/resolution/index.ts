@@ -5,6 +5,7 @@ export {
   resolveCommandText,
   resolveCommandToString
 } from "./command";
+export { extractedVariableKey, uniqueVariableKey } from "./keys";
 export {
   applyOperations,
   getCaseOperationKeywords,
@@ -19,7 +20,12 @@ export {
   renameValueTokens
 } from "./rename";
 export { countCommandLines, isMaskedSegment } from "./segments";
-export { getTokenKey, openReferenceAt, splitReferenceBody } from "./token";
+export {
+  braceToken,
+  getTokenKey,
+  openReferenceAt,
+  splitReferenceBody
+} from "./token";
 export type { OpenReference } from "./token";
 export type { VariableMap } from "./types";
 export { getUsedVariableKeys, isVariableUnused } from "./usage";

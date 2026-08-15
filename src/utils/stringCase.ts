@@ -42,7 +42,7 @@ const TitleWordRegex = globalUnicodeRegex(
   sequence(LETTER, zeroOrMore(group(either(LETTER, NUMBER, Case.APOSTROPHE)))),
 );
 
-function splitWords(text: string): string[] {
+export function splitWords(text: string): string[] {
   return text.split(WordBoundaryRegex).filter(Boolean);
 }
 

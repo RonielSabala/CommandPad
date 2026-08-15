@@ -114,6 +114,12 @@ export const StringCaseConfig = {
   APOSTROPHE: "'",
 } as const;
 
+export const ExtractedVariableConfig = {
+  DEFAULT_KEY: "VARIABLE",
+  MAX_KEY_WORDS: 3,
+  MAX_KEY_LENGTH: 24,
+} as const;
+
 export const ImageBlockConfig = {
   ACCEPT: "image/*",
   MIME_PREFIX: "image/",

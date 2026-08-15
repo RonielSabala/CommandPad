@@ -10,12 +10,18 @@ import { CodeLanguage, CodeRendering } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import type { ScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
+import { registerEditorActions, type EditorAction } from "@/monaco/actions";
 import {
   clearModelCompletions,
   completionModelKey,
   setModelCompletions,
   type VariableCompletion,
 } from "@/monaco/completions";
+import {
+  bindContextMenuChord,
+  isContextMenuOpen,
+  whenContextMenuCloses,
+} from "@/monaco/contextMenu";
 import { getCodeMetrics } from "@/monaco/metrics";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
@@ -26,7 +32,7 @@ import Editor, {
   type Monaco,
   type OnMount,
 } from "@monaco-editor/react";
-import type { editor } from "monaco-editor";
+import type { Selection, editor } from "monaco-editor";
 import {
   forwardRef,
   useCallback,
@@ -62,6 +68,7 @@ interface Props {
   folding?: boolean;
   footer?: ReactNode;
   completions?: VariableCompletion[];
+  actions?: EditorAction[];
   autoFocus?: boolean;
   onSubmit?: () => void;
   onFocus?: () => void;
@@ -72,6 +79,11 @@ const FULL_HEIGHT = "100%";
 
 function estimateContentHeight(value: string): number {
   return countLines(value) * getCodeMetrics().lineHeightBase;
+}
+
+/** Nothing else claimed focus while the menu was up. */
+function focusIsAdrift(): boolean {
+  return !document.activeElement || document.activeElement === document.body;
 }
 
 function modelPath(modelId: string, language: CodeLanguage): string {
@@ -110,6 +122,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       folding = false,
       footer,
       completions,
+      actions,
       autoFocus = false,
       onSubmit,
       onFocus,
@@ -121,8 +134,16 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     const themeName = monacoThemeName(theme);
 
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+    const [mounted, setMounted] = useState<editor.IStandaloneCodeEditor | null>(
+      null,
+    );
     const rootRef = useRef<HTMLDivElement>(null);
     const pendingFocusRef = useRef(false);
+    const openingContextMenuRef = useRef(false);
+    const menuSelectionRef = useRef<{
+      selection: Selection;
+      version: number;
+    } | null>(null);
     const [scrollTarget, setScrollTarget] = useState<ScrollTarget | null>(null);
     const [contentHeight, setContentHeight] = useState<number>(() =>
       estimateContentHeight(value),
@@ -162,6 +183,16 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
 
       return () => clearModelCompletions(key);
     }, [completions, modelId, language]);
+
+    // A label is fixed at registration and has to follow the UI language
+    useEffect(() => {
+      if (!mounted || !actions) {
+        return;
+      }
+
+      const registered = registerEditorActions(mounted, actions);
+      return () => registered.forEach((action) => action.dispose());
+    }, [mounted, actions]);
 
     const publishGutterWidth = (instance: editor.ICodeEditor) => {
       const { contentLeft } = instance.getLayoutInfo();
@@ -209,6 +240,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
 
     const handleMount: OnMount = (instance) => {
       editorRef.current = instance;
+      setMounted(instance);
       ensureMonacoTheme(theme);
 
       if (!bounded) {
@@ -233,14 +265,63 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         callbacks.current.onSubmit();
       });
 
-      instance.onDidFocusEditorText(() => callbacks.current.onFocus?.());
-      instance.onDidBlurEditorText(() => {
-        instance.setPosition({
-          lineNumber: MonacoLayout.FIRST_LINE,
-          column: MonacoLayout.FIRST_COLUMN,
-        });
-        callbacks.current.onBlur?.();
+      bindContextMenuChord(instance);
+
+      instance.onMouseDown((event) => {
+        openingContextMenuRef.current = event.event.rightButton;
       });
+
+      const restoreAfterContextMenu = () => {
+        const before = menuSelectionRef.current;
+        const model = instance.getModel();
+        menuSelectionRef.current = null;
+
+        if (!before || !model || !focusIsAdrift()) {
+          return;
+        }
+
+        focus();
+        if (model.getVersionId() === before.version) {
+          instance.setSelection(before.selection);
+        }
+      };
+
+      instance.onDidFocusEditorText(() => callbacks.current.onFocus?.());
+      instance.onDidBlurEditorText(() =>
+        requestAnimationFrame(() => {
+          const model = instance.getModel();
+          if (!model || instance.hasTextFocus()) {
+            return;
+          }
+
+          const selection = instance.getSelection();
+          if (
+            selection &&
+            (openingContextMenuRef.current || isContextMenuOpen())
+          ) {
+            openingContextMenuRef.current = false;
+
+            // Closing fires a blur of its own
+            if (!menuSelectionRef.current) {
+              menuSelectionRef.current = {
+                selection,
+                version: model.getVersionId(),
+              };
+              whenContextMenuCloses(() =>
+                requestAnimationFrame(restoreAfterContextMenu),
+              );
+            }
+
+            return;
+          }
+
+          instance.setPosition({
+            lineNumber: MonacoLayout.FIRST_LINE,
+            column: MonacoLayout.FIRST_COLUMN,
+          });
+          callbacks.current.onBlur?.();
+        }),
+      );
 
       if (autoFocus || pendingFocusRef.current) {
         pendingFocusRef.current = false;

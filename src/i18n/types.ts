@@ -141,6 +141,7 @@ export interface Messages {
     showFewerLines: string;
     copy: string;
     placeholder: string;
+    extractVariable: string;
   };
   note: {
     styleLabel: Record<NoteStyle, string>;
@@ -408,6 +409,7 @@ export interface Messages {
       why: string;
       intro: string;
       usage: string;
+      extract: (extractLabel: string) => string;
       unresolved: string;
       tooltip: string;
       split: string;

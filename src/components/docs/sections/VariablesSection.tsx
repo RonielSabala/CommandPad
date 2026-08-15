@@ -27,6 +27,7 @@ export function VariablesDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variables.extract(t.command.extractVariable)} />
       <Prose text={t.docs.variables.constants} />
       <Prose text={t.docs.variables.constantsDemoHint} />
       <DemoWorkspace

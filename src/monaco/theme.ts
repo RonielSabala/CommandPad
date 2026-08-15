@@ -136,6 +136,15 @@ function buildTheme(
       "editorSuggestWidget.focusHighlightForeground": resolveColor(
         ColorToken.ACCENT,
       ),
+
+      "menu.background": resolveColor(ColorToken.SURFACE),
+      "menu.foreground": resolveColor(ColorToken.TEXT_PRIMARY),
+      "menu.border": resolveColor(ColorToken.BORDER),
+      "menu.selectionBackground": resolveColor(ColorToken.ACCENT_DIM),
+      "menu.selectionForeground": resolveColor(ColorToken.TEXT_PRIMARY),
+      "menu.selectionBorder": MonacoTheme.TRANSPARENT,
+      "menu.separatorBackground": resolveColor(ColorToken.BORDER),
+
       "input.background": resolveColor(ColorToken.SURFACE_ALT),
       "input.foreground": resolveColor(ColorToken.TEXT_PRIMARY),
       "input.border": resolveColor(ColorToken.BORDER),

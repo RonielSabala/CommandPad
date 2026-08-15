@@ -5,6 +5,7 @@ export const ElementId = {
 export const MonacoSelector = {
   INPUT: "textarea.inputarea",
   EDIT_CONTEXT: ".native-edit-context",
+  CONTEXT_MENU: ".monaco-menu",
 } as const;
 
 export const InputSelector = {

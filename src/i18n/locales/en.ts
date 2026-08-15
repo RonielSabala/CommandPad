@@ -127,6 +127,7 @@ export const en: Messages = {
     showFewerLines: "Show less",
     copy: "Copy command",
     placeholder: "ssh {USER}@{HOST}",
+    extractVariable: "Extract into a variable",
   },
   note: {
     styleLabel: {
@@ -701,6 +702,8 @@ If something goes wrong, undo it in this order:
         "Each variable has a **key** and a **value**. Keys are case-sensitive. If two variables share the same key, the one defined last wins.",
       usage:
         "Use a variable in any command by wrapping its key in curly braces, e.g. `{KEY}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
+      extract: (extractLabel) =>
+        `You do not have to write a variable out by hand. Select any piece of a command in its editor, then right-click it (or press \`Ctrl+.\`) and pick **${extractLabel}**: the selected text becomes a new variable, and the command keeps a reference to it in its place. Try it on the demo above.`,
       unresolved:
         "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**.",
       tooltip:
