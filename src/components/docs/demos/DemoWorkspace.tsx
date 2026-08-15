@@ -94,6 +94,8 @@ export function DemoVariableRows() {
     return null;
   }
 
+  const showSecretColumn = variables.some((variable) => variable.secret);
+
   return (
     <div className="docs-demo-variables">
       {variables.map((variable) => (
@@ -101,6 +103,7 @@ export function DemoVariableRows() {
           key={variable.id}
           variable={variable}
           unused={isVariableUnused(variable, usedKeys)}
+          showSecretColumn={showSecretColumn}
         />
       ))}
     </div>

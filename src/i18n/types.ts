@@ -465,7 +465,7 @@ export interface Messages {
       scope: string;
     };
     secretVariables: {
-      intro: string;
+      intro: (actionsLabel: string, maskLabel: string) => string;
       copyNote: string;
     };
     blocks: {

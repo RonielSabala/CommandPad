@@ -3,7 +3,6 @@ import { useTranslation } from "@/i18n";
 import { demoCommand, demoVariable } from "../demos/demoSeeds";
 import { DemoVariableRows, DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
-import "./VariablesSection.css";
 
 export function VariablesDocs() {
   const t = useTranslation();
@@ -15,7 +14,6 @@ export function VariablesDocs() {
       <Prose text={t.docs.variables.usage} />
       <Prose text={t.docs.variables.demoHint(t.variables.actions)} />
       <DemoWorkspace
-        className="docs-demo-hide-secret"
         tabs={[
           {
             variables: [demoVariable("server", "192.168.1.50")],
@@ -32,7 +30,6 @@ export function VariablesDocs() {
       <Prose text={t.docs.variables.constants} />
       <Prose text={t.docs.variables.constantsDemoHint} />
       <DemoWorkspace
-        className="docs-demo-hide-secret"
         tabs={[
           {
             variables: [
@@ -358,7 +355,12 @@ export function SecretVariablesDocs() {
 
   return (
     <>
-      <Prose text={t.docs.secretVariables.intro} />
+      <Prose
+        text={t.docs.secretVariables.intro(
+          t.variables.actions,
+          t.variables.mask,
+        )}
+      />
       <Prose text={t.docs.secretVariables.copyNote} />
       <DemoWorkspace
         tabs={[

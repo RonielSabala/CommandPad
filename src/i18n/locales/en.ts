@@ -805,10 +805,10 @@ If something goes wrong, undo it in this order:
       scope: "Escaping only applies inside command blocks.",
     },
     secretVariables: {
-      intro:
-        "Click the **eye icon** on a variable row to mark it as **secret**.",
+      intro: (actionsLabel, maskLabel) =>
+        `Open a variable's **${actionsLabel}** menu and choose **${maskLabel}** to mark it as **secret**. An **eye icon** then appears on the row you can click to reveal it again.`,
       copyNote:
-        "The mask is purely visual: the **Copy** button always puts the **real** value on your clipboard, so your commands keep working. Try it below, and click the eye icon to reveal or hide the value.",
+        "The mask is purely visual: the **Copy** button always puts the **real** value on your clipboard, so your commands keep working. Try it below, and click the eye icon to reveal the value.",
     },
     blocks: {
       intro: (blockActionsLabel) =>

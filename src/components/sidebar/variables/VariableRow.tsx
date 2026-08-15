@@ -33,11 +33,13 @@ const CASE_KEYWORDS = getCaseOperationKeywords();
 interface Props {
   variable: Variable;
   unused?: boolean;
+  showSecretColumn?: boolean;
 }
 
 export const VariableRow = memo(function VariableRow({
   variable,
   unused,
+  showSecretColumn,
 }: Props) {
   const t = useTranslation();
   const variableId = variable.id;
@@ -182,15 +184,24 @@ export const VariableRow = memo(function VariableRow({
         </div>
       </div>
 
-      <button
-        className={`btn btn-icon variable-secret-btn${isSecret ? " is-active" : ""}`}
-        onClick={() => toggleVariableSecret(variableId)}
-        title={isSecret ? t.variables.reveal : t.variables.mask}
-      >
-        <EyeIcon slashed={isSecret} className="icon-md icon-bold" />
-      </button>
+      {isSecret && (
+        <button
+          className="btn btn-icon variable-secret-btn"
+          onClick={() => toggleVariableSecret(variableId)}
+          title={t.variables.reveal}
+        >
+          <EyeIcon slashed className="icon-md icon-bold" />
+        </button>
+      )}
 
       <ActionsMenu className={CssClass.ROW_ACTIONS} title={t.variables.actions}>
+        <ContextMenuItem
+          icon={<EyeIcon slashed={!isSecret} className="icon-md icon-bold" />}
+          onSelect={() => toggleVariableSecret(variableId)}
+        >
+          {isSecret ? t.variables.reveal : t.variables.mask}
+        </ContextMenuItem>
+
         <ContextMenuItem
           icon={<DuplicateIcon className="icon-md icon-bold" />}
           onSelect={() => duplicateVariable(variableId)}
@@ -227,6 +238,15 @@ export const VariableRow = memo(function VariableRow({
           {t.variables.remove}
         </ContextMenuItem>
       </ActionsMenu>
+
+      {!isSecret && showSecretColumn && (
+        <div
+          className="btn btn-icon variable-secret-btn is-placeholder"
+          aria-hidden="true"
+        >
+          <EyeIcon slashed className="icon-md icon-bold" />
+        </div>
+      )}
     </div>
   );
 });

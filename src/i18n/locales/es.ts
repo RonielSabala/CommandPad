@@ -818,10 +818,10 @@ Si algo sale mal, deshazlo en este orden:
       scope: "El escape solo aplica dentro de bloques de comando.",
     },
     secretVariables: {
-      intro:
-        "Haz clic en el **icono de ojo** de una fila de variable para marcarla como **secreta**.",
+      intro: (actionsLabel, maskLabel) =>
+        `Abre el menú **${actionsLabel}** de una variable y elige **${maskLabel}** para marcarla como **secreta**. Aparecerá entonces un **icono de ojo** en la fila que puedes pulsar para volver a mostrarla.`,
       copyNote:
-        "El enmascarado es puramente visual: el botón **Copiar** siempre pone el valor **real** en tu portapapeles, así que tus comandos siguen funcionando. Pruébalo abajo, y haz clic en el icono de ojo para mostrar u ocultar el valor.",
+        "El enmascarado es puramente visual: el botón **Copiar** siempre pone el valor **real** en tu portapapeles, así que tus comandos siguen funcionando. Pruébalo abajo, y haz clic en el icono de ojo para mostrar el valor.",
     },
     blocks: {
       intro: (blockActionsLabel) =>

@@ -162,21 +162,19 @@ body.read-mode .variable-key-input {
 
 /* Secret btn */
 
-.variable-secret-btn.is-active {
+.sidebar-section-list-row .variable-secret-btn,
+.sidebar-section-list-row .variable-secret-btn:hover {
   color: var(--accent);
 }
 
-.sidebar-section-list-row:hover .variable-secret-btn,
-.sidebar-section-list-row.is-secret .variable-secret-btn {
-  opacity: 1;
+.variable-secret-btn {
+  flex-shrink: 0;
+  transition: opacity var(--transition-fast);
 }
 
-.sidebar-section-list-row .variable-secret-btn {
-  opacity: 0;
-  transition:
-    opacity var(--transition-fast),
-    color var(--transition-fast);
-  flex-shrink: 0;
+.variable-secret-btn.is-placeholder {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 body.read-mode .variable-secret-btn {
