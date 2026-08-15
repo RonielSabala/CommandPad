@@ -112,6 +112,7 @@ export interface Messages {
     mask: string;
     actions: string;
     duplicate: string;
+    renameCase: string;
     remove: string;
     dragResizeSplit: string;
     unusedTitle: (key: string) => string;
@@ -446,6 +447,7 @@ export interface Messages {
       table: string;
       rebuild: string;
       demoHint: string;
+      renameHint: (renameCaseLabel: string) => string;
     };
     variableStrip: {
       intro: string;

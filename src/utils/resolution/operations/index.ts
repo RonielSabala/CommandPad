@@ -19,6 +19,10 @@ export function getOperationKeywords(): readonly OperationKeyword[] {
   return OPERATION_DEFINITIONS.flatMap((definition) => definition.keywords);
 }
 
+export function getCaseOperationKeywords(): readonly string[] {
+  return CASE_OPERATION.keywords.map((keyword) => keyword.keyword).sort();
+}
+
 interface AppliedOperations {
   text: string;
   ok: boolean;

@@ -93,6 +93,7 @@ export const es: Messages = {
     mask: "Ocultar valor",
     actions: "Acciones de la variable",
     duplicate: "Duplicar variable",
+    renameCase: "Cambiar mayúsculas y minúsculas",
     remove: "Eliminar variable",
     dragResizeSplit:
       "Arrastra para redimensionar clave y valor · doble clic para igualarlos",
@@ -787,6 +788,8 @@ Si algo sale mal, deshazlo en este orden:
         "Las cuatro primeras **reconstruyen** el valor a partir de sus palabras, así que los espacios desaparecen. Las demás solo cambian letras.",
       demoHint:
         "Por ejemplo, el nombre de una carpeta va mejor sin espacios; un título, con ellos. Observa abajo el mismo valor, de las dos formas:",
+      renameHint: (renameCaseLabel) =>
+        `Estas mismas conversiones también renombran la clave de una variable: abre el menú de acciones de una variable y elige **${renameCaseLabel}** para reescribir la clave; cada comando que la referencia se actualiza junto con ella.`,
     },
     variableStrip: {
       intro:

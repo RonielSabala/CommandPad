@@ -92,6 +92,7 @@ export const en: Messages = {
     mask: "Mask value",
     actions: "Variable actions",
     duplicate: "Duplicate variable",
+    renameCase: "Change case",
     remove: "Remove variable",
     dragResizeSplit: "Drag to resize key and value · double-click to even out",
     unusedTitle: (key) => `${key} (unused)`,
@@ -774,6 +775,8 @@ If something goes wrong, undo it in this order:
         "The first four **rebuild** the value out of its words, so spaces disappear. The rest only change letters.",
       demoHint:
         "For example, a folder name is better off without spaces; a title reads better with them. See the same value below, both ways:",
+      renameHint: (renameCaseLabel) =>
+        `These same conversions rename a variable's key, too: open a variable's actions menu and pick **${renameCaseLabel}** to rewrite the key; every command referencing it updates along with it.`,
     },
     variableStrip: {
       intro:

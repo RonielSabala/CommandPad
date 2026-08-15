@@ -250,6 +250,7 @@ export function VariableCaseDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variableCase.renameHint(t.variables.renameCase)} />
     </>
   );
 }

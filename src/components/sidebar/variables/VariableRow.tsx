@@ -6,6 +6,7 @@ import { AppMode, DragGroup, VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
+import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
 import {
   DragIcon,
   DuplicateIcon,
@@ -17,10 +18,17 @@ import { useRowReorder } from "@/hooks/useRowReorder";
 import { useVariableSplitResize } from "@/hooks/useVariableSplitResize";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { isConstantVariableKey } from "@/utils/resolution";
+import {
+  applyOperations,
+  getCaseOperationKeywords,
+  isConstantVariableKey,
+} from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { memo, useEffect, useRef, type CSSProperties } from "react";
+import { AlphabetUppercase } from "react-bootstrap-icons";
 import "./VariableRow.css";
+
+const CASE_KEYWORDS = getCaseOperationKeywords();
 
 interface Props {
   variable: Variable;
@@ -189,6 +197,26 @@ export const VariableRow = memo(function VariableRow({
         >
           {t.variables.duplicate}
         </ContextMenuItem>
+
+        <ContextMenuSubmenu
+          icon={<AlphabetUppercase className="icon-md" />}
+          label={t.variables.renameCase}
+        >
+          {CASE_KEYWORDS.map((keyword) => (
+            <ContextMenuItem
+              key={keyword}
+              onSelect={() =>
+                updateVariable(
+                  variableId,
+                  VariableField.KEY,
+                  applyOperations(variableKey, [keyword]).text,
+                )
+              }
+            >
+              {keyword}
+            </ContextMenuItem>
+          ))}
+        </ContextMenuSubmenu>
 
         <ContextMenuItem
           icon={<TrashIcon className="icon-md icon-bold" />}
