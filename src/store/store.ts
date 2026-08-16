@@ -85,6 +85,7 @@ import {
   isVaultSupported,
   isVaultUnlocked,
   lockVault,
+  recordFromCiphertext,
   resolveVaultStatus,
   unlockVault,
 } from "@/services/vault";
@@ -283,6 +284,7 @@ export interface StoreState {
     rawFilename: string,
     sync?: RunbookSync,
     openInTab?: boolean,
+    vault?: { record: VaultRecord; passphrase: string | null },
   ) => Promise<boolean>;
   syncRunbookNow: (id: string) => Promise<void>;
   unlinkRunbookSync: (id: string) => void;
@@ -1057,26 +1059,36 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       return await promptVault(VaultPrompt.CREATE, createVaultWith(runbookId));
     };
 
+    interface ImportedVaultResult {
+      content: RunbookContent;
+      vault: VaultRecord | null;
+      passphrase: string | null;
+    }
+
     const decryptImportedContent = async (
       content: RunbookContent,
       filename: string | null = null,
-    ): Promise<RunbookContent> => {
+    ): Promise<ImportedVaultResult> => {
       if (countEncryptedSecrets(content) === 0) {
-        return content;
+        return { content, vault: null, passphrase: null };
       }
 
+      const vault = recordFromCiphertext(content);
       const attempt = await decryptContentWithOpenVaults(content);
+
       if (attempt.failed === 0) {
-        return attempt.content;
+        return { content: attempt.content, vault, passphrase: null };
       }
 
       let opened = attempt.content;
+      let passphrase: string | null = null;
       await promptVault(
         VaultPrompt.UNLOCK,
         async (passphrases) => {
+          const candidate = passphrases[VaultField.CURRENT];
           const result = await decryptContentWithPassphrase(
             attempt.content,
-            passphrases[VaultField.CURRENT],
+            candidate,
           );
 
           if (result.failed > 0) {
@@ -1084,12 +1096,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           }
 
           opened = result.content;
+          passphrase = candidate;
           return true;
         },
         filename,
       );
 
-      return opened;
+      return { content: opened, vault, passphrase };
     };
 
     /** The runbook's content as the tab holds it, else as the DB holds it. */
@@ -1670,6 +1683,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         rawFilename,
         sync,
         openInTab = true,
+        vault,
       ) => {
         const label = getRunbookLabel(
           content.blocks,
@@ -1685,6 +1699,20 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             markRunbookSynced(runbookId, content);
           } else {
             queueCloudSync(runbookId, content);
+          }
+        };
+
+        const applyImportedVault = async (runbookId: string) => {
+          if (!vault) {
+            return;
+          }
+
+          setVaultRecord(runbookId, vault.record);
+          if (
+            vault.passphrase &&
+            (await unlockVault(runbookId, vault.passphrase, vault.record))
+          ) {
+            refreshVaultStatus();
           }
         };
 
@@ -1741,6 +1769,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             persist.saveTabsMeta(get().tabs, get().activeTabId);
           }
 
+          if (!existing.vault) {
+            await applyImportedVault(existing.id);
+          }
+
           settleSync(existing.id);
           return true;
         }
@@ -1759,6 +1791,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             },
           ],
         }));
+        await applyImportedVault(newId);
         settleSync(newId);
 
         if (!openInTab) {
@@ -1827,16 +1860,22 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             const reader = new FileReader();
             reader.onload = async (loadEvent) => {
               try {
-                const content = await decryptImportedContent(
+                const decrypted = await decryptImportedContent(
                   parseRunbookContent(String(loadEvent.target?.result)),
                   file.name,
                 );
                 await get().addRunbookToLibrary(
-                  content,
+                  decrypted.content,
                   file.name.replace(/\.json$/i, ""),
                   file.name,
                   undefined,
                   openInTab,
+                  decrypted.vault
+                    ? {
+                        record: decrypted.vault,
+                        passphrase: decrypted.passphrase,
+                      }
+                    : undefined,
                 );
               } catch {
                 failedCount += 1;
@@ -1864,17 +1903,22 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       importRunbookFromText: async (text) => {
-        let content: RunbookContent;
+        let decrypted: ImportedVaultResult;
         try {
-          content = await decryptImportedContent(parseRunbookContent(text));
+          decrypted = await decryptImportedContent(parseRunbookContent(text));
         } catch {
           return false;
         }
 
         return await get().addRunbookToLibrary(
-          content,
+          decrypted.content,
           generateId(),
           getMessages(get().language).dialogs.pastedRunbook,
+          undefined,
+          undefined,
+          decrypted.vault
+            ? { record: decrypted.vault, passphrase: decrypted.passphrase }
+            : undefined,
         );
       },
 
@@ -3121,11 +3165,16 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         let added = 0;
         for (const { file, content } of pending) {
+          const decrypted = await decryptImportedContent(content, file.name);
           const accepted = await get().addRunbookToLibrary(
-            await decryptImportedContent(content, file.name),
+            decrypted.content,
             stripJsonExtension(file.name),
             file.name,
             syncs.get(file.id),
+            undefined,
+            decrypted.vault
+              ? { record: decrypted.vault, passphrase: decrypted.passphrase }
+              : undefined,
           );
 
           if (accepted) {

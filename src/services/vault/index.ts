@@ -10,6 +10,7 @@ export {
   holdsSecrets,
   isVaultUnlocked,
   lockVault,
+  recordFromCiphertext,
   resolveVaultStatus,
   unlockVault,
   type DecryptResult

@@ -71,16 +71,28 @@ export async function unlockVault(
   const key = await deriveVaultKey(passphrase, salt);
 
   try {
-    const verified = await decryptValue(key, record.verifier);
-    if (verified !== VaultConfig.VERIFIER_PLAINTEXT) {
-      return false;
-    }
+    await decryptValue(key, record.verifier);
   } catch {
     return false;
   }
 
   sessions.set(scope, { key, salt });
   return true;
+}
+
+export function recordFromCiphertext(
+  content: RunbookContent,
+): VaultRecord | null {
+  const payload = (content.variables ?? []).find((variable) =>
+    isEncryptedValue(variable.value),
+  )?.value;
+
+  if (!payload) {
+    return null;
+  }
+
+  const salt = readPayloadSalt(payload);
+  return salt ? { salt, verifier: payload } : null;
 }
 
 // --- Content transforms ---
