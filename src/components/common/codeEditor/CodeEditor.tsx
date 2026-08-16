@@ -173,6 +173,16 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
 
     useLayoutEffect(() => editorRef.current?.layout(), [contentHeight]);
 
+    const measuredLength = useRef(value.length);
+    useLayoutEffect(() => {
+      const grew = value.length > measuredLength.current;
+      measuredLength.current = value.length;
+
+      if (grew && !bounded) {
+        editorRef.current?.layout();
+      }
+    }, [bounded, value]);
+
     useEffect(() => {
       if (!completions) {
         return;
