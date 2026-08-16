@@ -34,42 +34,51 @@ function resolveColor(token: string, opacity: number = OPAQUE): string {
     .join("")}`;
 }
 
+function resolveThemeColors() {
+  return {
+    accent: resolveColor(ColorToken.ACCENT),
+    accentDim: resolveColor(ColorToken.ACCENT_DIM),
+    accentText: resolveColor(ColorToken.ACCENT_TEXT),
+    border: resolveColor(ColorToken.BORDER),
+    borderFocus: resolveColor(ColorToken.BORDER_FOCUS),
+    constantText: resolveColor(ColorToken.CONSTANT_TEXT),
+    danger: resolveColor(ColorToken.DANGER),
+    scrollbarThumb: resolveColor(ColorToken.SCROLLBAR_THUMB),
+    scrollbarThumbHover: resolveColor(ColorToken.SCROLLBAR_THUMB_HOVER),
+    selection: resolveColor(ColorToken.SELECTION),
+    success: resolveColor(ColorToken.SUCCESS),
+    surface: resolveColor(ColorToken.SURFACE),
+    surfaceAlt: resolveColor(ColorToken.SURFACE_ALT),
+    textMuted: resolveColor(ColorToken.TEXT_MUTED),
+    textMutedDim: resolveColor(
+      ColorToken.TEXT_MUTED,
+      MonacoTheme.GUIDE_DIM_OPACITY,
+    ),
+    textPrimary: resolveColor(ColorToken.TEXT_PRIMARY),
+    textSecondary: resolveColor(ColorToken.TEXT_SECONDARY),
+    warning: resolveColor(ColorToken.WARNING),
+  };
+}
+
 function buildTheme(
   base: monaco.editor.BuiltinTheme,
 ): monaco.editor.IStandaloneThemeData {
-  const guideActive = resolveColor(ColorToken.TEXT_MUTED);
-  const guideDim = resolveColor(
-    ColorToken.TEXT_MUTED,
-    MonacoTheme.GUIDE_DIM_OPACITY,
-  );
+  const c = resolveThemeColors();
+  const guideActive = c.textMuted;
+  const guideDim = c.textMutedDim;
 
   return {
     base,
     inherit: true,
     rules: [
-      {
-        token: MonacoTokenScope.JSON_KEY,
-        foreground: resolveColor(ColorToken.ACCENT_TEXT),
-      },
-      {
-        token: MonacoTokenScope.JSON_STRING,
-        foreground: resolveColor(ColorToken.SUCCESS),
-      },
-      {
-        token: MonacoTokenScope.JSON_NUMBER,
-        foreground: resolveColor(ColorToken.CONSTANT_TEXT),
-      },
-      {
-        token: MonacoTokenScope.JSON_KEYWORD,
-        foreground: resolveColor(ColorToken.CONSTANT_TEXT),
-      },
-      {
-        token: MonacoTokenScope.JSON_DELIMITER,
-        foreground: resolveColor(ColorToken.TEXT_SECONDARY),
-      },
+      { token: MonacoTokenScope.JSON_KEY, foreground: c.accentText },
+      { token: MonacoTokenScope.JSON_STRING, foreground: c.success },
+      { token: MonacoTokenScope.JSON_NUMBER, foreground: c.constantText },
+      { token: MonacoTokenScope.JSON_KEYWORD, foreground: c.constantText },
+      { token: MonacoTokenScope.JSON_DELIMITER, foreground: c.textSecondary },
       {
         token: MonacoTokenScope.JSON_COMMENT,
-        foreground: resolveColor(ColorToken.TEXT_MUTED),
+        foreground: c.textMuted,
         fontStyle: MonacoTheme.ITALIC,
       },
     ],
@@ -78,15 +87,13 @@ function buildTheme(
       "editorGutter.background": MonacoTheme.TRANSPARENT,
       "minimap.background": MonacoTheme.TRANSPARENT,
 
-      "editor.foreground": resolveColor(ColorToken.TEXT_PRIMARY),
-      "editor.placeholder.foreground": resolveColor(ColorToken.TEXT_MUTED),
-      "editorCursor.foreground": resolveColor(ColorToken.TEXT_PRIMARY),
-      "editorLineNumber.foreground": resolveColor(ColorToken.TEXT_SECONDARY),
-      "editorLineNumber.activeForeground": resolveColor(
-        ColorToken.TEXT_PRIMARY,
-      ),
-      "editor.selectionBackground": resolveColor(ColorToken.SELECTION),
-      "editor.inactiveSelectionBackground": resolveColor(ColorToken.SELECTION),
+      "editor.foreground": c.textPrimary,
+      "editor.placeholder.foreground": c.textMuted,
+      "editorCursor.foreground": c.textPrimary,
+      "editorLineNumber.foreground": c.textSecondary,
+      "editorLineNumber.activeForeground": c.textPrimary,
+      "editor.selectionBackground": c.selection,
+      "editor.inactiveSelectionBackground": c.selection,
       "editor.selectionHighlightBackground": MonacoTheme.TRANSPARENT,
 
       "editorIndentGuide.background1": guideDim,
@@ -105,56 +112,42 @@ function buildTheme(
       "editorBracketPairGuide.activeBackground6": guideActive,
 
       "editorBracketMatch.background": MonacoTheme.TRANSPARENT,
-      "editorBracketMatch.border": resolveColor(ColorToken.TEXT_MUTED),
-      "editorWhitespace.foreground": resolveColor(ColorToken.TEXT_MUTED),
+      "editorBracketMatch.border": c.textMuted,
+      "editorWhitespace.foreground": c.textMuted,
       "editorOverviewRuler.border": MonacoTheme.TRANSPARENT,
 
-      "editorError.foreground": resolveColor(ColorToken.DANGER),
-      "editorWarning.foreground": resolveColor(ColorToken.WARNING),
+      "editorError.foreground": c.danger,
+      "editorWarning.foreground": c.warning,
 
-      focusBorder: resolveColor(ColorToken.BORDER_FOCUS),
-      "editorWidget.background": resolveColor(ColorToken.SURFACE),
-      "editorWidget.foreground": resolveColor(ColorToken.TEXT_PRIMARY),
-      "editorWidget.border": resolveColor(ColorToken.BORDER),
-      "editorHoverWidget.background": resolveColor(ColorToken.SURFACE),
-      "editorHoverWidget.border": resolveColor(ColorToken.BORDER),
-      "editorSuggestWidget.background": resolveColor(ColorToken.SURFACE),
-      "editorSuggestWidget.border": resolveColor(ColorToken.BORDER),
-      "editorSuggestWidget.foreground": resolveColor(ColorToken.TEXT_PRIMARY),
-      "editorSuggestWidget.selectedBackground": resolveColor(
-        ColorToken.ACCENT_DIM,
-      ),
-      "editorSuggestWidget.selectedForeground": resolveColor(
-        ColorToken.TEXT_PRIMARY,
-      ),
-      "editorSuggestWidget.selectedIconForeground": resolveColor(
-        ColorToken.ACCENT,
-      ),
-      "editorSuggestWidget.highlightForeground": resolveColor(
-        ColorToken.ACCENT,
-      ),
-      "editorSuggestWidget.focusHighlightForeground": resolveColor(
-        ColorToken.ACCENT,
-      ),
+      focusBorder: c.borderFocus,
+      "editorWidget.background": c.surface,
+      "editorWidget.foreground": c.textPrimary,
+      "editorWidget.border": c.border,
+      "editorHoverWidget.background": c.surface,
+      "editorHoverWidget.border": c.border,
+      "editorSuggestWidget.background": c.surface,
+      "editorSuggestWidget.border": c.border,
+      "editorSuggestWidget.foreground": c.textPrimary,
+      "editorSuggestWidget.selectedBackground": c.accentDim,
+      "editorSuggestWidget.selectedForeground": c.textPrimary,
+      "editorSuggestWidget.selectedIconForeground": c.accent,
+      "editorSuggestWidget.highlightForeground": c.accent,
+      "editorSuggestWidget.focusHighlightForeground": c.accent,
 
-      "menu.background": resolveColor(ColorToken.SURFACE),
-      "menu.foreground": resolveColor(ColorToken.TEXT_PRIMARY),
-      "menu.border": resolveColor(ColorToken.BORDER),
-      "menu.selectionBackground": resolveColor(ColorToken.ACCENT_DIM),
-      "menu.selectionForeground": resolveColor(ColorToken.TEXT_PRIMARY),
+      "menu.background": c.surface,
+      "menu.foreground": c.textPrimary,
+      "menu.border": c.border,
+      "menu.selectionBackground": c.accentDim,
+      "menu.selectionForeground": c.textPrimary,
       "menu.selectionBorder": MonacoTheme.TRANSPARENT,
-      "menu.separatorBackground": resolveColor(ColorToken.BORDER),
+      "menu.separatorBackground": c.border,
 
-      "input.background": resolveColor(ColorToken.SURFACE_ALT),
-      "input.foreground": resolveColor(ColorToken.TEXT_PRIMARY),
-      "input.border": resolveColor(ColorToken.BORDER),
-      "scrollbarSlider.background": resolveColor(ColorToken.SCROLLBAR_THUMB),
-      "scrollbarSlider.hoverBackground": resolveColor(
-        ColorToken.SCROLLBAR_THUMB_HOVER,
-      ),
-      "scrollbarSlider.activeBackground": resolveColor(
-        ColorToken.SCROLLBAR_THUMB_HOVER,
-      ),
+      "input.background": c.surfaceAlt,
+      "input.foreground": c.textPrimary,
+      "input.border": c.border,
+      "scrollbarSlider.background": c.scrollbarThumb,
+      "scrollbarSlider.hoverBackground": c.scrollbarThumbHover,
+      "scrollbarSlider.activeBackground": c.scrollbarThumbHover,
     },
   };
 }
