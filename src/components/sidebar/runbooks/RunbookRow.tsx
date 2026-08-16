@@ -1,22 +1,21 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
-import { AppMode, DragGroup, RunbookSyncStatus } from "@/common/enums";
+import { AppMode, DragGroup } from "@/common/enums";
 import type { RunbookEntry } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
-import { Spinner } from "@/components/common/Spinner";
 import { DragIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
-import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { memo } from "react";
-import { ArrowRepeat, CloudCheck, CloudSlash } from "react-bootstrap-icons";
+import { CloudSlash } from "react-bootstrap-icons";
 
 import "./RunbookRow.css";
 import { RunbookSecretBadge } from "./RunbookSecretBadge";
+import { RunbookSyncBadge } from "./RunbookSyncBadge";
 
 interface Props {
   runbook: RunbookEntry;
@@ -42,10 +41,6 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
   );
 
   const sync = runbook.sync;
-  const syncStatus = useStore(
-    (state) => state.runbookSyncStatus[runbookId] ?? RunbookSyncStatus.SYNCED,
-  );
-  const syncRunbookNow = useStore((state) => state.syncRunbookNow);
   const unlinkRunbookSync = useStore((state) => state.unlinkRunbookSync);
 
   const { isDragging, isDragOver, handleProps, rowProps } = useRowReorder(
@@ -97,25 +92,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
 
         {runbook.secured && <RunbookSecretBadge runbookId={runbookId} />}
 
-        {sync && (
-          <button
-            className={classNames("runbook-sync", `sync-${syncStatus}`)}
-            onClick={() => void syncRunbookNow(runbookId)}
-            title={t.runbooks.syncStatus[syncStatus](
-              PROVIDER_NAME[sync.provider],
-            )}
-          >
-            {syncStatus === RunbookSyncStatus.SIGNED_OUT ? (
-              <CloudSlash className="icon-md" />
-            ) : syncStatus === RunbookSyncStatus.SYNCED ? (
-              <CloudCheck className="icon-md" />
-            ) : syncStatus === RunbookSyncStatus.SYNCING ? (
-              <Spinner />
-            ) : (
-              <ArrowRepeat className="icon-md" />
-            )}
-          </button>
-        )}
+        {sync && <RunbookSyncBadge runbookId={runbookId} sync={sync} />}
       </div>
 
       <ActionsMenu className={CssClass.ROW_ACTIONS} title={t.runbooks.actions}>

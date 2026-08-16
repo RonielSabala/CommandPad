@@ -63,8 +63,7 @@
 
 /* Status badges */
 
-.runbook-secret,
-.runbook-sync {
+.runbook-badge {
   display: flex;
   flex-shrink: 0;
   align-items: center;
@@ -76,32 +75,10 @@
   transition: color var(--transition-fast);
 }
 
-.runbook-secret:hover:not(:disabled),
-.runbook-sync:hover {
+.runbook-badge:hover:not(:disabled) {
   color: var(--color-text-primary);
 }
 
-.runbook-secret:disabled {
+.runbook-badge:disabled {
   cursor: default;
-}
-
-.runbook-secret.secret-unlocked {
-  color: var(--success);
-}
-
-.runbook-secret.secret-absent,
-.runbook-secret.secret-unsupported {
-  color: var(--warning);
-}
-
-.runbook-sync.sync-synced {
-  color: var(--success);
-}
-
-.runbook-sync.sync-signed-out {
-  color: var(--warning);
-}
-
-.runbook-sync.sync-error {
-  color: var(--danger);
 }

@@ -4,6 +4,8 @@ import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { ShieldCheck, ShieldSlash } from "react-bootstrap-icons";
 
+import "./RunbookSecretBadge.css";
+
 interface Props {
   runbookId: string;
 }
@@ -23,7 +25,11 @@ export function RunbookSecretBadge({ runbookId }: Props) {
 
   return (
     <button
-      className={classNames("runbook-secret", `secret-${status}`)}
+      className={classNames(
+        "runbook-badge",
+        "runbook-secret",
+        `secret-${status}`,
+      )}
       title={t.runbooks.secretStatus[status]}
       aria-label={t.runbooks.secretStatus[status]}
       disabled={status === VaultStatus.UNSUPPORTED}

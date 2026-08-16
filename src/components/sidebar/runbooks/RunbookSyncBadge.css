@@ -1,0 +1,11 @@
+.runbook-sync.sync-synced {
+  color: var(--success);
+}
+
+.runbook-sync.sync-signed-out {
+  color: var(--warning);
+}
+
+.runbook-sync.sync-error {
+  color: var(--danger);
+}
