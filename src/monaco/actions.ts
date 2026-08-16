@@ -1,10 +1,16 @@
 import { MonacoContextMenu } from "@/common/editorConfig";
 import type { IDisposable, IRange, editor } from "monaco-editor";
+import { trackInlineRename } from "./inlineRename";
 import { monaco } from "./setup";
 
 interface EditorActionContext {
   text: string;
   replace: (value: string) => void;
+  rename: (
+    value: string,
+    inner: { start: number; length: number },
+    onRename: (text: string) => void,
+  ) => void;
 }
 
 /** One entry a surface adds to the editor's context menu. */
@@ -52,6 +58,19 @@ function runAction(action: EditorAction, instance: editor.ICodeEditor): void {
     text: model.getValueInRange(range),
     replace: (value) =>
       instance.executeEdits(action.id, [{ range, text: value }]),
+    rename: (value, inner, onRename) => {
+      instance.executeEdits(action.id, [{ range, text: value }]);
+      trackInlineRename(
+        instance,
+        new monaco.Range(
+          range.startLineNumber,
+          range.startColumn + inner.start,
+          range.startLineNumber,
+          range.startColumn + inner.start + inner.length,
+        ),
+        onRename,
+      );
+    },
   });
 }
 

@@ -703,7 +703,7 @@ If something goes wrong, undo it in this order:
       usage:
         "Use a variable in any command by wrapping its key in curly braces, e.g. `{KEY}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
       extract: (extractLabel) =>
-        `You do not have to write a variable out by hand. Select any piece of a command in its editor, then right-click it (or press \`Ctrl+.\`) and pick **${extractLabel}**: the selected text becomes a new variable, and the command keeps a reference to it in its place. Try it on the demo above.`,
+        `You do not have to write a variable out by hand. Select any piece of a command in its editor, then right-click it (or press \`Ctrl+.\`) and pick **${extractLabel}**: the selected text becomes a new variable, and the command keeps a reference to it in its place. Its guessed name is selected right there in the editor, so just type over it to rename it. Try it on the demo above.`,
       unresolved:
         "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**.",
       tooltip:

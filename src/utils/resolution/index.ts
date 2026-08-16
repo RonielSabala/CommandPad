@@ -22,6 +22,7 @@ export {
 export { countCommandLines, isMaskedSegment } from "./segments";
 export {
   braceToken,
+  braceTokenKeyRange,
   getTokenKey,
   openReferenceAt,
   splitReferenceBody

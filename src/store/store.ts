@@ -254,7 +254,7 @@ export interface StoreState {
   navigateRunbookList: (direction: MoveDirection) => void;
 
   addVariable: () => Promise<void>;
-  extractVariable: (value: string) => string | null;
+  extractVariable: (value: string) => { id: string; key: string } | null;
   removeVariable: (variableId: string) => void;
   duplicateVariable: (variableId: string) => void;
   updateVariable: (
@@ -1614,7 +1614,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             variables: [...t.variables, newVariable],
           })),
           variableSearchQuery: "",
-          pendingFocusVariableId: newVariable.id,
         }));
 
         if (get().variablesSectionCollapsed) {
@@ -1625,7 +1624,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         get().saveState();
-        return key;
+        return { id: newVariable.id, key };
       },
 
       removeVariable: (variableId) => {
