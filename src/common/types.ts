@@ -73,11 +73,20 @@ export interface RunbookSync {
   folderId: string | null;
 }
 
+export interface VaultRecord {
+  salt: string;
+  verifier: string;
+}
+
 export interface RunbookEntry {
   id: string;
   label: string;
   filename: string;
   sync?: RunbookSync;
+  /** Whether the runbook holds secret variables */
+  secured?: boolean;
+  /**  This runbook's passphrase. */
+  vault?: VaultRecord;
 }
 
 export interface RunbookContent {

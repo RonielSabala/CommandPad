@@ -1,9 +1,14 @@
+import { VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  VaultError,
+  VaultField,
+  VaultPrompt,
+  VaultStatus,
 } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
 import { codeBulletList } from "../lists";
@@ -79,6 +84,16 @@ export const es: Messages = {
         `Inicia sesión en ${provider} para seguir sincronizando`,
       [RunbookSyncStatus.ERROR]: (provider) =>
         `No se pudo guardar en ${provider} · haz clic para reintentar`,
+    },
+    secretStatus: {
+      [VaultStatus.UNLOCKED]:
+        "Los secretos están cifrados · haz clic para cambiar la frase de contraseña",
+      [VaultStatus.LOCKED]:
+        "Los secretos están bloqueados · haz clic para desbloquearlos",
+      [VaultStatus.ABSENT]:
+        "Los secretos se guardan sin cifrar · haz clic para poner una frase de contraseña",
+      [VaultStatus.UNSUPPORTED]:
+        "Este navegador no puede cifrar secretos, así que se guardan tal cual",
     },
   },
   variables: {
@@ -189,6 +204,54 @@ export const es: Messages = {
     title: "Importar",
     message: "Elige desde dónde importar un libro.",
     local: "Este dispositivo",
+  },
+  vaultModal: {
+    title: {
+      [VaultPrompt.CREATE]: "Protege tus secretos",
+      [VaultPrompt.UNLOCK]: "Desbloquea tus secretos",
+      [VaultPrompt.CHANGE]: "Cambia tu frase de contraseña",
+    },
+    message: {
+      [VaultPrompt.CREATE]: "Elige una frase de contraseña para este libro.",
+      [VaultPrompt.UNLOCK]:
+        "Introduce la frase de contraseña de este libro para descifrar sus valores secretos.",
+      [VaultPrompt.CHANGE]:
+        "Todos los secretos de este libro se vuelven a cifrar con la nueva frase de contraseña.",
+    },
+    unlockFileMessage: (filename) =>
+      `\`${filename}\` contiene secretos cifrados con otra frase de contraseña. Introdúcela para abrirlos.`,
+    submit: {
+      [VaultPrompt.CREATE]: "Cifrar secretos",
+      [VaultPrompt.UNLOCK]: "Desbloquear",
+      [VaultPrompt.CHANGE]: "Cambiar frase de contraseña",
+    },
+    fieldLabel: {
+      [VaultPrompt.CREATE]: {
+        [VaultField.CURRENT]: "Frase de contraseña",
+        [VaultField.NEXT]: "Frase de contraseña",
+        [VaultField.CONFIRM]: "Repite la frase de contraseña",
+      },
+      [VaultPrompt.UNLOCK]: {
+        [VaultField.CURRENT]: "Frase de contraseña",
+        [VaultField.NEXT]: "Frase de contraseña",
+        [VaultField.CONFIRM]: "Repite la frase de contraseña",
+      },
+      [VaultPrompt.CHANGE]: {
+        [VaultField.CURRENT]: "Frase de contraseña actual",
+        [VaultField.NEXT]: "Nueva frase de contraseña",
+        [VaultField.CONFIRM]: "Repite la nueva frase de contraseña",
+      },
+    },
+    reveal: "Mostrar frase de contraseña",
+    hide: "Ocultar frase de contraseña",
+    skip: "Ahora no",
+    working: "Derivando clave…",
+    errors: {
+      [VaultError.TOO_SHORT]: `Usa al menos ${VaultConfig.MIN_PASSPHRASE_LENGTH} caracteres.`,
+      [VaultError.MISMATCH]: "Las dos frases de contraseña no coinciden.",
+      [VaultError.UNCHANGED]: "La nueva frase de contraseña es la que ya usas.",
+      [VaultError.WRONG_PASSPHRASE]: "Esa frase de contraseña no funcionó.",
+    },
   },
   cloudModal: {
     importTitle: `Importar desde ${MessageSlot.PROVIDER}`,
@@ -464,7 +527,7 @@ export const es: Messages = {
       {
         heading: "Variables secretas",
         paragraphs: [
-          "Las variables marcadas como secretas solo se **enmascaran** en la interfaz. No están cifradas y se almacenan en texto plano en el almacenamiento local de tu navegador, igual que cualquier otra variable. No trates las variables secretas como una bóveda segura.",
+          "Marcar una variable como secreta siempre la enmascara en la interfaz. Cifrar el valor en el almacenamiento es un paso aparte y opcional: pon una frase de contraseña a un libro y sus valores secretos se cifran en el almacenamiento local, en las exportaciones JSON y en las copias sincronizadas en la nube. Sin una frase de contraseña, un valor secreto se sigue guardando en texto plano, y la frase nunca se guarda, así que una perdida no se puede recuperar.",
         ],
       },
       {
@@ -513,7 +576,7 @@ export const es: Messages = {
         bullets: `* Revisa cada comando antes de ejecutarlo. CommandPad resuelve y copia texto; no ejecuta nada por ti.
 * Mantén tus propias copias de seguridad de lo importante exportando tus libros.
 * Adjunta solo imágenes que tengas derecho a usar. Una imagen adjunta pasa a formar parte del libro, así que va allá donde exportes o sincronices ese libro.
-* No confíes en las variables secretas como almacenamiento seguro de credenciales sensibles.
+* Las variables secretas enmascaran su valor en pantalla y se pueden cifrar en el almacenamiento con una frase de contraseña; no sustituyen a un gestor de secretos dedicado.
 * Usa la app cumpliendo las leyes y políticas que se te apliquen.`,
       },
       {
@@ -578,6 +641,7 @@ export const es: Messages = {
       [DocsSectionId.MULTILINE_REFERENCES]: "Referencias largas",
       [DocsSectionId.ESCAPING_BRACES]: "Escapar llaves",
       [DocsSectionId.SECRET_VARIABLES]: "Variables secretas",
+      [DocsSectionId.SECRET_ENCRYPTION]: "Cifrar secretos",
       [DocsSectionId.BLOCKS]: "Bloques",
       [DocsSectionId.COMMAND_BLOCK]: "Bloque de comando",
       [DocsSectionId.NOTE_BLOCK]: "Bloque de nota",
@@ -826,6 +890,20 @@ Si algo sale mal, deshazlo en este orden:
       copyNote:
         "El enmascarado es puramente visual: el botón **Copiar** siempre pone el valor **real** en tu portapapeles, así que tus comandos siguen funcionando. Pruébalo abajo, y haz clic en el icono de ojo para mostrar el valor.",
     },
+    secretEncryption: {
+      intro:
+        "Enmascarar solo oculta un valor en pantalla. Cifrar lo protege donde se guarda: en el disco, en un `.json` exportado, en un archivo enlazado en la nube. Cada libro tiene su propia frase de contraseña; desbloquear uno no dice nada de otro.",
+      passphrase: (createLabel) =>
+        `Marca tu primer secreto y CommandPad te pide una frase de contraseña mediante **${createLabel}**. Nunca sale de tu dispositivo ni se guarda: CommandPad la convierte en una clave, la usa durante la sesión y olvida ambas al cerrar la pestaña. Si la pierdes no hay forma de recuperarla, así que rechazar el aviso solo deja el valor en claro, como antes.`,
+      covered:
+        "Solo se cifran los valores secretos; el resto sigue en texto plano, así que un libro exportado se puede seguir leyendo y comparando. En el disco, un secreto se ve como `cpv1.<sal>.<iv>.<cifrado>`: una etiqueta más todo lo necesario para descifrarlo salvo tu frase de contraseña, por eso el archivo se abre en cualquier máquina que la tenga.",
+      unlocking:
+        "Volver a abrir la pestaña bloquea todos los libros de nuevo, pero solo el que tienes delante te pide desbloquearlo; los demás esperan a que los abras. Un escudo junto al nombre del libro muestra su estado: verde y cerrado si está desbloqueado, neutro si está bloqueado, tachado si nada lo protege. Haz clic para desbloquearlo o para ponerle una frase de contraseña.",
+      changing: (changeLabel) =>
+        `Haz clic en un escudo desbloqueado para abrir **${changeLabel}**: escribe la frase de contraseña actual y luego la nueva dos veces. Todos los secretos de ese libro, incluida su copia en un archivo enlazado de la nube, se cifran de nuevo al momento. Los demás libros y los archivos ya exportados conservan la anterior.`,
+      markdownWarning:
+        "Las exportaciones a Markdown y texto plano se saltan el cifrado: su razón de ser es el comando ya resuelto, secretos incluidos. Exporta JSON para lo que vaya a salir de tus manos.",
+    },
     blocks: {
       intro: (blockActionsLabel) =>
         `Los bloques son el contenido principal de un libro. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **${blockActionsLabel}** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo. Cada bloque tiene una anchura mínima que le impide encogerse hasta volverse ilegible.`,
@@ -997,7 +1075,7 @@ Si algo sale mal, deshazlo en este orden:
         {
           question: "¿Las variables secretas están cifradas?",
           answer:
-            "No. Marcar una variable como secreta solo oculta su valor en la barra lateral y en las vistas previas de comandos. El valor sigue guardado en texto plano en el almacenamiento local de tu navegador.",
+            "Solo si pones una frase de contraseña a ese libro, desde su icono de escudo en la biblioteca. Marcar una variable como secreta siempre la oculta en pantalla; sin una frase de contraseña, el valor se sigue guardando en texto plano.",
         },
         {
           question:

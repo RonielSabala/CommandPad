@@ -1,9 +1,14 @@
+import { VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  VaultError,
+  VaultField,
+  VaultPrompt,
+  VaultStatus,
 } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
 import { codeBulletList } from "../lists";
@@ -78,6 +83,15 @@ export const en: Messages = {
         `Sign in to ${provider} to keep syncing`,
       [RunbookSyncStatus.ERROR]: (provider) =>
         `Could not save to ${provider} · click to retry`,
+    },
+    secretStatus: {
+      [VaultStatus.UNLOCKED]:
+        "Secrets are encrypted · click to change the passphrase",
+      [VaultStatus.LOCKED]: "Secrets are locked · click to unlock them",
+      [VaultStatus.ABSENT]:
+        "Secrets are stored unencrypted · click to set a passphrase",
+      [VaultStatus.UNSUPPORTED]:
+        "This browser cannot encrypt secrets, so they are stored as written",
     },
   },
   variables: {
@@ -187,6 +201,54 @@ export const en: Messages = {
     title: "Import",
     message: "Choose where to import a runbook from.",
     local: "This Device",
+  },
+  vaultModal: {
+    title: {
+      [VaultPrompt.CREATE]: "Protect your secrets",
+      [VaultPrompt.UNLOCK]: "Unlock your secrets",
+      [VaultPrompt.CHANGE]: "Change your passphrase",
+    },
+    message: {
+      [VaultPrompt.CREATE]: "Choose a passphrase for this runbook.",
+      [VaultPrompt.UNLOCK]:
+        "Enter this runbook's passphrase to decrypt its secret values.",
+      [VaultPrompt.CHANGE]:
+        "Every secret in this runbook is re-encrypted with the new passphrase.",
+    },
+    unlockFileMessage: (filename) =>
+      `\`${filename}\` holds secrets encrypted with a different passphrase. Enter it to open them.`,
+    submit: {
+      [VaultPrompt.CREATE]: "Encrypt secrets",
+      [VaultPrompt.UNLOCK]: "Unlock",
+      [VaultPrompt.CHANGE]: "Change passphrase",
+    },
+    fieldLabel: {
+      [VaultPrompt.CREATE]: {
+        [VaultField.CURRENT]: "Passphrase",
+        [VaultField.NEXT]: "Passphrase",
+        [VaultField.CONFIRM]: "Repeat passphrase",
+      },
+      [VaultPrompt.UNLOCK]: {
+        [VaultField.CURRENT]: "Passphrase",
+        [VaultField.NEXT]: "Passphrase",
+        [VaultField.CONFIRM]: "Repeat passphrase",
+      },
+      [VaultPrompt.CHANGE]: {
+        [VaultField.CURRENT]: "Current passphrase",
+        [VaultField.NEXT]: "New passphrase",
+        [VaultField.CONFIRM]: "Repeat new passphrase",
+      },
+    },
+    reveal: "Show passphrase",
+    hide: "Hide passphrase",
+    skip: "Not now",
+    working: "Deriving key…",
+    errors: {
+      [VaultError.TOO_SHORT]: `Use at least ${VaultConfig.MIN_PASSPHRASE_LENGTH} characters.`,
+      [VaultError.MISMATCH]: "The two passphrases do not match.",
+      [VaultError.UNCHANGED]: "The new passphrase is the one you already use.",
+      [VaultError.WRONG_PASSPHRASE]: "That passphrase did not work.",
+    },
   },
   cloudModal: {
     importTitle: `Import from ${MessageSlot.PROVIDER}`,
@@ -456,7 +518,7 @@ export const en: Messages = {
       {
         heading: "Secret variables",
         paragraphs: [
-          "Variables marked as secret are only **masked** in the interface. They are not encrypted, and are stored in plain text in your browser's local storage just like any other variable. Do not treat secret variables as a secure vault.",
+          "Marking a variable secret always masks it in the interface. Encrypting the value at rest is a separate, optional step: set a passphrase for a runbook and its secret values are encrypted in local storage, in JSON exports, and in synced cloud copies. Without a passphrase, a secret value is still stored in plain text, and the passphrase itself is never stored, so a lost one cannot be recovered.",
         ],
       },
       {
@@ -505,7 +567,7 @@ export const en: Messages = {
         bullets: `* Review every command before you run it. CommandPad resolves and copies text; it does not execute anything for you.
 * Keep your own backups of anything important by exporting your runbooks.
 * Only attach images you have the right to use. An attached image becomes part of the runbook itself, so it goes wherever you export or sync that runbook.
-* Do not rely on secret variables as secure storage for sensitive credentials.
+* Secret variables mask values on screen and can be encrypted at rest with a passphrase; they are not a substitute for a dedicated secrets manager.
 * Use the app in compliance with the laws and policies that apply to you.`,
       },
       {
@@ -570,6 +632,7 @@ export const en: Messages = {
       [DocsSectionId.MULTILINE_REFERENCES]: "Long references",
       [DocsSectionId.ESCAPING_BRACES]: "Escaping braces",
       [DocsSectionId.SECRET_VARIABLES]: "Secret variables",
+      [DocsSectionId.SECRET_ENCRYPTION]: "Encrypting secrets",
       [DocsSectionId.BLOCKS]: "Blocks",
       [DocsSectionId.COMMAND_BLOCK]: "Command block",
       [DocsSectionId.NOTE_BLOCK]: "Note block",
@@ -813,6 +876,20 @@ If something goes wrong, undo it in this order:
       copyNote:
         "The mask is purely visual: the **Copy** button always puts the **real** value on your clipboard, so your commands keep working. Try it below, and click the eye icon to reveal the value.",
     },
+    secretEncryption: {
+      intro:
+        "Masking hides a value on screen. Encryption protects it wherever it's stored: on disk, in an exported `.json`, in a linked cloud file. Each runbook has its own passphrase; unlocking one says nothing about another.",
+      passphrase: (createLabel) =>
+        `Mark your first secret and CommandPad asks for a passphrase via **${createLabel}**. It never leaves your device or gets stored: CommandPad turns it into a key, uses that key for the session, then forgets both when you close the tab. Lose it and there's no recovering it, so declining just leaves the value plaintext, like before.`,
+      covered:
+        "Only secret values are encrypted; everything else stays plain text, so an exported runbook is still readable and diffable. On disk a secret looks like `cpv1.<salt>.<iv>.<ciphertext>`: a label plus everything needed to decrypt it except your passphrase, which is why the file opens on any machine that has it.",
+      unlocking:
+        "Reopening the tab locks every runbook again, but only the one in front of you asks to unlock; the rest wait until you open them. A shield by a runbook's name shows its state: green and closed when unlocked, plain when locked, crossed out when nothing protects it. Click it to unlock, or to set a passphrase.",
+      changing: (changeLabel) =>
+        `Click an unlocked shield to open **${changeLabel}**: enter the current passphrase, then the new one twice. Every secret in that runbook, including its copy in a linked cloud file, is re-encrypted on the spot. Other runbooks and past exports keep the old passphrase.`,
+      markdownWarning:
+        "Markdown and plain-text exports skip encryption: their whole point is the resolved command, secrets included. Export JSON for anything leaving your hands.",
+    },
     blocks: {
       intro: (blockActionsLabel) =>
         `Blocks are the main content of a runbook. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or open the **${blockActionsLabel}** menu on the right to insert a new block above or below it, duplicate it, or delete it. Every block has a minimum width that keeps it from shrinking into something unreadable.`,
@@ -983,7 +1060,7 @@ If something goes wrong, undo it in this order:
         {
           question: "Are secret variables encrypted?",
           answer:
-            "No. Marking a variable as secret only masks its value in the sidebar and in command previews. The value is still stored in plain text in your browser's local storage.",
+            "Only if you set a passphrase for that runbook, from its shield icon in the library. Marking a variable secret always masks it on screen; without a passphrase the value is still stored in plain text.",
         },
         {
           question:

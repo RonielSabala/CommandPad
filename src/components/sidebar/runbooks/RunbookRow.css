@@ -61,8 +61,9 @@
   box-shadow: 0 0 0 var(--space-2) var(--accent-dim);
 }
 
-/* Cloud sync indicator */
+/* Status badges */
 
+.runbook-secret,
 .runbook-sync {
   display: flex;
   flex-shrink: 0;
@@ -75,8 +76,22 @@
   transition: color var(--transition-fast);
 }
 
+.runbook-secret:hover:not(:disabled),
 .runbook-sync:hover {
   color: var(--color-text-primary);
+}
+
+.runbook-secret:disabled {
+  cursor: default;
+}
+
+.runbook-secret.secret-unlocked {
+  color: var(--success);
+}
+
+.runbook-secret.secret-absent,
+.runbook-secret.secret-unsupported {
+  color: var(--warning);
 }
 
 .runbook-sync.sync-synced {

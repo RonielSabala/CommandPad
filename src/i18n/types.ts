@@ -4,6 +4,10 @@ import type {
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  VaultError,
+  VaultField,
+  VaultPrompt,
+  VaultStatus,
 } from "@/common/enums";
 import type { KeyBinding } from "@/common/keybindings";
 
@@ -99,6 +103,7 @@ export interface Messages {
     clearLibraryTitle: string;
     stopSyncing: string;
     syncStatus: Record<RunbookSyncStatus, (provider: string) => string>;
+    secretStatus: Record<VaultStatus, string>;
   };
   variables: {
     title: string;
@@ -192,6 +197,18 @@ export interface Messages {
     title: string;
     message: string;
     local: string;
+  };
+  vaultModal: {
+    title: Record<VaultPrompt, string>;
+    message: Record<VaultPrompt, string>;
+    unlockFileMessage: (filename: string) => string;
+    submit: Record<VaultPrompt, string>;
+    fieldLabel: Record<VaultPrompt, Record<VaultField, string>>;
+    reveal: string;
+    hide: string;
+    skip: string;
+    working: string;
+    errors: Record<VaultError, string>;
   };
   cloudModal: {
     importTitle: string;
@@ -469,6 +486,14 @@ export interface Messages {
     secretVariables: {
       intro: (actionsLabel: string, maskLabel: string) => string;
       copyNote: string;
+    };
+    secretEncryption: {
+      intro: string;
+      passphrase: (createLabel: string) => string;
+      covered: string;
+      unlocking: string;
+      changing: (changeLabel: string) => string;
+      markdownWarning: string;
     };
     blocks: {
       intro: (blockActionsLabel: string) => string;

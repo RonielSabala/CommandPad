@@ -14,7 +14,9 @@ import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { memo } from "react";
 import { ArrowRepeat, CloudCheck, CloudSlash } from "react-bootstrap-icons";
+
 import "./RunbookRow.css";
+import { RunbookSecretBadge } from "./RunbookSecretBadge";
 
 interface Props {
   runbook: RunbookEntry;
@@ -92,6 +94,8 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
         >
           {runbookLabel}
         </button>
+
+        {runbook.secured && <RunbookSecretBadge runbookId={runbookId} />}
 
         {sync && (
           <button

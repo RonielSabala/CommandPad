@@ -1,5 +1,6 @@
 import { DocsSectionId } from "@/common/constants/docs";
 import type { ComponentType } from "react";
+
 import {
   BlocksDocs,
   CommandBlockDocs,
@@ -25,6 +26,7 @@ import {
   EscapingBracesDocs,
   MultilineReferencesDocs,
   ParameterizedPlaceholdersDocs,
+  SecretEncryptionDocs,
   SecretVariablesDocs,
   VariableCaseDocs,
   VariableCountDocs,
@@ -53,6 +55,7 @@ export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {
   [DocsSectionId.DIVIDER_BLOCK]: DividerBlockDocs,
   [DocsSectionId.VARIABLES]: VariablesDocs,
   [DocsSectionId.SECRET_VARIABLES]: SecretVariablesDocs,
+  [DocsSectionId.SECRET_ENCRYPTION]: SecretEncryptionDocs,
   [DocsSectionId.VARIABLE_REFERENCES]: VariableReferencesDocs,
   [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: ParameterizedPlaceholdersDocs,
   [DocsSectionId.VARIABLE_SLICING]: VariableSlicingDocs,

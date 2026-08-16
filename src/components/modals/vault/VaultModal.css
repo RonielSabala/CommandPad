@@ -1,0 +1,59 @@
+.modal.modal-vault {
+  width: var(--vault-modal-width);
+  gap: var(--space-8);
+}
+
+/* Header */
+
+.vault-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
+  padding-right: var(--space-16);
+}
+
+.vault-badge {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--vault-badge-size);
+  height: var(--vault-badge-size);
+  color: var(--accent-text);
+}
+
+.vault-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.vault-title {
+  padding: 0;
+}
+
+.vault-message {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* Fields */
+
+.vault-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* Feedback */
+
+.vault-error {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--danger);
+}

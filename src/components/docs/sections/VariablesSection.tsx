@@ -1,3 +1,4 @@
+import { VaultPrompt } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
 import { demoCommand, demoVariable } from "../demos/demoSeeds";
@@ -47,6 +48,58 @@ export function VariablesDocs() {
       <Prose text={t.docs.variables.unresolved} />
       <Prose text={t.docs.variables.tooltip} />
       <Prose text={t.docs.variables.split} />
+    </>
+  );
+}
+
+export function SecretVariablesDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose
+        text={t.docs.secretVariables.intro(
+          t.variables.actions,
+          t.variables.mask,
+        )}
+      />
+      <Prose text={t.docs.secretVariables.copyNote} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("password", "s3cr3t-value", true)],
+            blocks: [
+              demoCommand("zip -r -P {password} backup.zip ~/Documents"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
+export function SecretEncryptionDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.secretEncryption.intro} />
+      <Prose
+        text={t.docs.secretEncryption.passphrase(
+          t.vaultModal.submit[VaultPrompt.CREATE],
+        )}
+      />
+      <Prose text={t.docs.secretEncryption.covered} />
+      <Prose text={t.docs.secretEncryption.unlocking} />
+      <Prose
+        text={t.docs.secretEncryption.changing(
+          t.vaultModal.title[VaultPrompt.CHANGE],
+        )}
+      />
+      <Prose text={t.docs.secretEncryption.markdownWarning} />
     </>
   );
 }
@@ -347,35 +400,6 @@ export function EscapingBracesDocs() {
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.escapingBraces.scope} />
-    </>
-  );
-}
-
-export function SecretVariablesDocs() {
-  const t = useTranslation();
-
-  return (
-    <>
-      <Prose
-        text={t.docs.secretVariables.intro(
-          t.variables.actions,
-          t.variables.mask,
-        )}
-      />
-      <Prose text={t.docs.secretVariables.copyNote} />
-      <DemoWorkspace
-        tabs={[
-          {
-            variables: [demoVariable("password", "s3cr3t-value", true)],
-            blocks: [
-              demoCommand("zip -r -P {password} backup.zip ~/Documents"),
-            ],
-          },
-        ]}
-      >
-        <DemoVariableRows />
-        <BlocksList />
-      </DemoWorkspace>
     </>
   );
 }
