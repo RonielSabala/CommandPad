@@ -74,6 +74,7 @@ import {
   type PlacedCloudEntry,
 } from "@/services/cloud";
 import {
+  adoptOpenVault,
   countEncryptedSecrets,
   createVault,
   decryptContent,
@@ -1708,10 +1709,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           }
 
           setVaultRecord(runbookId, vault.record);
-          if (
-            vault.passphrase &&
-            (await unlockVault(runbookId, vault.passphrase, vault.record))
-          ) {
+
+          const opened = vault.passphrase
+            ? await unlockVault(runbookId, vault.passphrase, vault.record)
+            : adoptOpenVault(runbookId, vault.record);
+
+          if (opened) {
             refreshVaultStatus();
           }
         };

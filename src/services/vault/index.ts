@@ -1,5 +1,6 @@
 export { isEncryptedValue, isVaultSupported } from "./crypto";
 export {
+  adoptOpenVault,
   countEncryptedSecrets,
   createVault,
   decryptContent,

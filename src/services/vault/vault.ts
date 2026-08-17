@@ -80,6 +80,18 @@ export async function unlockVault(
   return true;
 }
 
+/**  Opens `scope` with a session that is already holding this record's salt. */
+export function adoptOpenVault(scope: string, record: VaultRecord): boolean {
+  for (const session of sessions.values()) {
+    if (encodeSalt(session.salt) === record.salt) {
+      sessions.set(scope, session);
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export function recordFromCiphertext(
   content: RunbookContent,
 ): VaultRecord | null {
