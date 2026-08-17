@@ -260,7 +260,7 @@ export const es: Messages = {
     changeProvider: "Cambiar de proveedor",
     signInPrompt: (provider) =>
       `Inicia sesión en ${provider} para explorar y administrar tus runbooks allí.`,
-    signInSharePoint: "Iniciar sesión con Microsoft",
+    signInOneDrive: "Iniciar sesión con Microsoft",
     signInGoogleDrive: "Iniciar sesión con Google",
     signOut: "Cerrar sesión",
     signedInAs: (account) => `Sesión iniciada como ${account}`,
@@ -490,7 +490,7 @@ export const es: Messages = {
       {
         heading: "La versión corta",
         paragraphs: [
-          "CommandPad no tiene servidor backend, ni cuentas de usuario, ni analítica o seguimiento. La app no recopila, transmite ni vende ninguno de tus datos. Todo lo que creas se queda en tu dispositivo, salvo que elijas sincronizar un libro con tu propia cuenta de SharePoint o Google Drive.",
+          "CommandPad no tiene servidor backend, ni cuentas de usuario, ni analítica o seguimiento. La app no recopila, transmite ni vende ninguno de tus datos. Todo lo que creas se queda en tu dispositivo, salvo que elijas sincronizar un libro con tu propia cuenta de OneDrive o Google Drive.",
         ],
       },
       {
@@ -523,7 +523,7 @@ export const es: Messages = {
       {
         heading: "Sincronización en la nube (opcional)",
         paragraphs: [
-          "CommandPad puede, de forma opcional, exportar un libro a tu propia cuenta de SharePoint o Google Drive, o importar uno desde ella. Esta función está desactivada hasta que elijas usarla.",
+          "CommandPad puede, de forma opcional, exportar un libro a tu propia cuenta de OneDrive o Google Drive, o importar uno desde ella. Esta función está desactivada hasta que elijas usarla.",
         ],
         bullets: `* Inicias sesión mediante el propio flujo del proveedor (Microsoft o Google). CommandPad nunca ve tu contraseña y solo solicita acceso a la carpeta dedicada **CommandPad** que crea para tus libros.
 * Los libros sincronizados se guardan en esa carpeta dentro de tu propia cuenta. No se envían ni se almacenan en ningún servidor operado por nosotros.
@@ -571,7 +571,7 @@ export const es: Messages = {
       {
         heading: "El servicio",
         paragraphs: [
-          "CommandPad es una herramienta gratuita del lado del cliente para crear libros de comandos con variables. Funciona en tu navegador y almacena tu trabajo localmente en tu dispositivo. De forma opcional, puede conectarse a tu propia cuenta de SharePoint o Google Drive para exportar e importar libros, totalmente a tu discreción. Se ofrece tal cual, y las funciones pueden cambiar o eliminarse con el tiempo.",
+          "CommandPad es una herramienta gratuita del lado del cliente para crear libros de comandos con variables. Funciona en tu navegador y almacena tu trabajo localmente en tu dispositivo. De forma opcional, puede conectarse a tu propia cuenta de OneDrive o Google Drive para exportar e importar libros, totalmente a tu discreción. Se ofrece tal cual, y las funciones pueden cambiar o eliminarse con el tiempo.",
         ],
       },
       {
@@ -600,7 +600,7 @@ export const es: Messages = {
       {
         heading: "Servicios de terceros en la nube",
         paragraphs: [
-          "Si eliges sincronizar libros con SharePoint o Google Drive, lo haces a través de tu propia cuenta con Microsoft o Google. Tu uso de esos servicios se rige por sus términos y políticas de privacidad, no por los nuestros.",
+          "Si eliges sincronizar libros con OneDrive o Google Drive, lo haces a través de tu propia cuenta con Microsoft o Google. Tu uso de esos servicios se rige por sus términos y políticas de privacidad, no por los nuestros.",
         ],
         bullets: `* CommandPad solo accede a la carpeta dedicada que crea para tus libros; no lee el resto de tu almacenamiento en la nube.
 * No somos responsables de la disponibilidad, el comportamiento ni el manejo de datos de Microsoft, Google o cualquier otro proveedor externo.
@@ -1017,7 +1017,7 @@ Si algo sale mal, deshazlo en este orden:
     },
     cloudExport: {
       intro: (exportLabel, importLabel) =>
-        `**${exportLabel}** e **${importLabel}** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo. El diálogo se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados.`,
+        `**${exportLabel}** e **${importLabel}** pueden ir directamente a OneDrive o Google Drive, no solo a este dispositivo. El diálogo se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados.`,
       switchProvider:
         "Mientras exploras la nube, el nombre del proveedor en el título del diálogo es un **selector**: haz clic en él para cambiar entre proveedores.",
       overwrite:
@@ -1068,7 +1068,7 @@ Si algo sale mal, deshazlo en este orden:
         {
           question: "¿Cómo respaldo un libro o lo llevo a otra máquina?",
           answer:
-            "Expórtalo como **JSON** e importa el archivo en la otra máquina, o hazlo directamente a SharePoint o Google Drive y luego impórtalo desde ahí en la otra máquina. La exportación JSON contiene el espacio de trabajo completo (variables y bloques) y siempre puede reimportarse.",
+            "Expórtalo como **JSON** e importa el archivo en la otra máquina, o hazlo directamente a OneDrive o Google Drive y luego impórtalo desde ahí en la otra máquina. La exportación JSON contiene el espacio de trabajo completo (variables y bloques) y siempre puede reimportarse.",
         },
         {
           question: "¿Qué elimina exactamente Resetear el Espacio de Trabajo?",

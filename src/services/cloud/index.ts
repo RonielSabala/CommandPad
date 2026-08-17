@@ -1,6 +1,6 @@
 import { CloudProvider } from "@/common/enums";
 import { googleDriveClient } from "./googleDrive";
-import { sharePointClient } from "./sharepoint";
+import { oneDriveClient } from "./oneDrive";
 import type { CloudClient } from "./types";
 export {
   clearCachedCloudEntries,
@@ -28,7 +28,7 @@ export type {
 } from "./types";
 
 const CLOUD_CLIENTS: Record<CloudProvider, CloudClient> = {
-  [CloudProvider.SHAREPOINT]: sharePointClient,
+  [CloudProvider.ONEDRIVE]: oneDriveClient,
   [CloudProvider.GOOGLE_DRIVE]: googleDriveClient,
 };
 

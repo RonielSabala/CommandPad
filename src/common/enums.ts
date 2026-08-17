@@ -153,14 +153,14 @@ export const HttpStatus = {
 export type HttpStatus = (typeof HttpStatus)[keyof typeof HttpStatus];
 
 export const CloudProvider = {
-  SHAREPOINT: "sharepoint",
+  ONEDRIVE: "onedrive",
   GOOGLE_DRIVE: "google-drive",
 } as const;
 export type CloudProvider = (typeof CloudProvider)[keyof typeof CloudProvider];
 
 export const SyncDestination = {
   LOCAL: "local",
-  SHAREPOINT: CloudProvider.SHAREPOINT,
+  ONEDRIVE: CloudProvider.ONEDRIVE,
   GOOGLE_DRIVE: CloudProvider.GOOGLE_DRIVE,
 } as const;
 export type SyncDestination =

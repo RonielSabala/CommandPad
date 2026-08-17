@@ -257,7 +257,7 @@ export const en: Messages = {
     changeProvider: "Change provider",
     signInPrompt: (provider) =>
       `Sign in to ${provider} to browse and manage your runbooks there.`,
-    signInSharePoint: "Sign in with Microsoft",
+    signInOneDrive: "Sign in with Microsoft",
     signInGoogleDrive: "Sign in with Google",
     signOut: "Sign out",
     signedInAs: (account) => `Signed in as ${account}`,
@@ -481,7 +481,7 @@ export const en: Messages = {
       {
         heading: "The short version",
         paragraphs: [
-          "CommandPad has no backend server, no user accounts, and no analytics or tracking. The app does not collect, transmit, or sell any of your data. Everything you create stays on your device, unless you choose to sync a runbook to your own SharePoint or Google Drive account.",
+          "CommandPad has no backend server, no user accounts, and no analytics or tracking. The app does not collect, transmit, or sell any of your data. Everything you create stays on your device, unless you choose to sync a runbook to your own OneDrive or Google Drive account.",
         ],
       },
       {
@@ -514,7 +514,7 @@ export const en: Messages = {
       {
         heading: "Cloud sync (optional)",
         paragraphs: [
-          "CommandPad can optionally export a runbook to, or import one from, your own SharePoint or Google Drive account. This feature is off until you choose to use it.",
+          "CommandPad can optionally export a runbook to, or import one from, your own OneDrive or Google Drive account. This feature is off until you choose to use it.",
         ],
         bullets: `* You sign in through the provider's own sign-in flow (Microsoft or Google). CommandPad never sees your password, and it only requests access to the dedicated **CommandPad** folder it creates for your runbooks.
 * Synced runbooks are stored in that folder inside your own account. They are not sent to, or stored on, any server operated by us.
@@ -562,7 +562,7 @@ export const en: Messages = {
       {
         heading: "The service",
         paragraphs: [
-          "CommandPad is a free, client-side tool for building variable-aware command runbooks. It runs in your browser and stores your work locally on your device. It can optionally connect to your own SharePoint or Google Drive account to export and import runbooks, entirely at your discretion. It is provided as-is, and features may change or be removed over time.",
+          "CommandPad is a free, client-side tool for building variable-aware command runbooks. It runs in your browser and stores your work locally on your device. It can optionally connect to your own OneDrive or Google Drive account to export and import runbooks, entirely at your discretion. It is provided as-is, and features may change or be removed over time.",
         ],
       },
       {
@@ -591,7 +591,7 @@ export const en: Messages = {
       {
         heading: "Third-party cloud services",
         paragraphs: [
-          "If you choose to sync runbooks with SharePoint or Google Drive, you do so through your own account with Microsoft or Google. Your use of those services is governed by their terms and privacy policies, not ours.",
+          "If you choose to sync runbooks with OneDrive or Google Drive, you do so through your own account with Microsoft or Google. Your use of those services is governed by their terms and privacy policies, not ours.",
         ],
         bullets: `* CommandPad only accesses the dedicated folder it creates for your runbooks; it does not read the rest of your cloud storage.
 * We are not responsible for the availability, behavior, or data handling of Microsoft, Google, or any other third-party provider.
@@ -1003,7 +1003,7 @@ If something goes wrong, undo it in this order:
     },
     cloudExport: {
       intro: (exportLabel, importLabel) =>
-        `**${exportLabel}** and **${importLabel}** can go straight to SharePoint or Google Drive, not just this device. The dialog reopens with the destination and format you used last time already selected.`,
+        `**${exportLabel}** and **${importLabel}** can go straight to OneDrive or Google Drive, not just this device. The dialog reopens with the destination and format you used last time already selected.`,
       switchProvider:
         "While you are browsing the cloud, the provider name in the dialog title is a **picker**: click it to switch providers.",
       overwrite:
@@ -1053,7 +1053,7 @@ If something goes wrong, undo it in this order:
         {
           question: "How do I back up a runbook or move it to another machine?",
           answer:
-            "Export it as **JSON** and import the file on the other machine, or export it straight to SharePoint or Google Drive and import it from there on the other machine. The JSON export contains the full workspace (variables and blocks) and can always be re-imported.",
+            "Export it as **JSON** and import the file on the other machine, or export it straight to OneDrive or Google Drive and import it from there on the other machine. The JSON export contains the full workspace (variables and blocks) and can always be re-imported.",
         },
         {
           question: "What exactly does Reset Workspace delete?",

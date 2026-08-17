@@ -72,8 +72,8 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
 
   const ProviderIcon = PROVIDER_ICON[provider];
   const signInLabel =
-    provider === CloudProvider.SHAREPOINT
-      ? t.cloudModal.signInSharePoint
+    provider === CloudProvider.ONEDRIVE
+      ? t.cloudModal.signInOneDrive
       : t.cloudModal.signInGoogleDrive;
 
   const searching = searchQuery.trim().length > 0;

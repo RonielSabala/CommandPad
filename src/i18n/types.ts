@@ -214,7 +214,7 @@ export interface Messages {
     importTitle: string;
     changeProvider: string;
     signInPrompt: (provider: string) => string;
-    signInSharePoint: string;
+    signInOneDrive: string;
     signInGoogleDrive: string;
     signOut: string;
     signedInAs: (account: string) => string;

@@ -15,7 +15,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
   - [Installation](#installation)
   - [Run Locally](#run-locally)
 - [Cloud Sync (Optional)](#cloud-sync-optional)
-  - [SharePoint / OneDrive](#sharepoint--onedrive)
+  - [OneDrive](#onedrive)
   - [Google Drive](#google-drive)
 - [Examples](#examples)
 - [Contributing](#contributing)
@@ -40,7 +40,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 - **Adjustable sidebar**: collapse the sidebar to maximize workspace, or move it to the right side of the screen.
 - **Persistent state**: tabs, workspace content, sidebar state, and app mode are all saved locally and restored on reload.
 - **Export**: save the active workspace as `.json`, `.md`, or `.txt` via a native OS save dialog.
-- **Cloud sync (optional)**: export/import runbooks directly to SharePoint or Google Drive.
+- **Cloud sync (optional)**: export/import runbooks directly to OneDrive or Google Drive.
 
 ---
 
@@ -80,11 +80,11 @@ Access at `http://localhost:5173`. Use <kbd>Ctrl</kbd>+<kbd>C</kbd> to stop.
 
 ## Cloud Sync (Optional)
 
-CommandPad can export/import runbooks straight to SharePoint or Google Drive, in addition to the local device. Both are entirely optional: the app works normally with neither configured, and a provider only appears as a destination option once it's set up below.
+CommandPad can export/import runbooks straight to OneDrive or Google Drive, in addition to the local device. Both are entirely optional: the app works normally with neither configured, and a provider only appears as a destination option once it's set up below.
 
 Runbooks are stored as flat files inside a dedicated `CommandPad` folder in the signed-in account's own storage.
 
-### SharePoint / OneDrive
+### OneDrive
 
 1. In the [Azure Portal](https://portal.azure.com), go to **Microsoft Entra ID > App registrations > New registration**.
 2. Set the **Redirect URI** platform to **Single-page application (SPA)** and its value to the URL CommandPad is served from (e.g. `http://localhost:5173`).

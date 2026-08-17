@@ -1240,7 +1240,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       destinationModalOpen: false,
       cloudImportModalOpen: false,
-      cloudProvider: CloudProvider.SHAREPOINT,
+      cloudProvider: CloudProvider.ONEDRIVE,
       cloudSignedIn: false,
       cloudAccountLabel: null,
       cloudEntries: [],

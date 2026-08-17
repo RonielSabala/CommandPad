@@ -278,7 +278,7 @@ export const AuthResponseParam = {
   ERROR: "error",
 } as const;
 
-export const SharePointConfig = {
+export const OneDriveConfig = {
   CLIENT_ID: import.meta.env.VITE_MSAL_CLIENT_ID ?? "",
   AUTHORITY: "https://login.microsoftonline.com/common",
   REDIRECT_URI: window.location.origin,
