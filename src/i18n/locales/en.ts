@@ -106,7 +106,7 @@ export const en: Messages = {
     mask: "Mask value",
     actions: "Variable actions",
     duplicate: "Duplicate variable",
-    renameCase: "Change case",
+    renameCase: "Change key case",
     remove: "Remove variable",
     dragResizeSplit: "Drag to resize key and value · double-click to even out",
     unusedTitle: (key) => `${key} (unused)`,

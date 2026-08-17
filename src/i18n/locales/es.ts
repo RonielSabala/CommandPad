@@ -108,7 +108,7 @@ export const es: Messages = {
     mask: "Ocultar valor",
     actions: "Acciones de la variable",
     duplicate: "Duplicar variable",
-    renameCase: "Cambiar mayúsculas y minúsculas",
+    renameCase: "Cambiar capitalización de la clave",
     remove: "Eliminar variable",
     dragResizeSplit:
       "Arrastra para redimensionar clave y valor · doble clic para igualarlos",
