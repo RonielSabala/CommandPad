@@ -32,6 +32,8 @@ export function VariableSection() {
     matchesQuery(query, variable.key, variable.value),
   );
 
+  const showSecretColumn = visibleItems.some((variable) => variable.secret);
+
   return (
     <SidebarSection
       id="variables-section"
@@ -55,6 +57,7 @@ export function VariableSection() {
             key={variable.id}
             variable={variable}
             unused={isVariableUnused(variable, usedKeys)}
+            showSecretColumn={showSecretColumn}
           />
         )}
       />

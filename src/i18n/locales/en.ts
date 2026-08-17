@@ -1,17 +1,25 @@
+import { VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  VaultError,
+  VaultField,
+  VaultPrompt,
+  VaultStatus,
 } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
 import { codeBulletList } from "../lists";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
 
+const andMore = (count: number) => `_and ${count} more..._`;
+
 export const en: Messages = {
   common: {
+    loading: "Loading…",
     cancel: "Cancel",
     close: "Close",
     back: "Back",
@@ -79,6 +87,15 @@ export const en: Messages = {
       [RunbookSyncStatus.ERROR]: (provider) =>
         `Could not save to ${provider} · click to retry`,
     },
+    secretStatus: {
+      [VaultStatus.UNLOCKED]:
+        "Secrets are encrypted · click to change the passphrase",
+      [VaultStatus.LOCKED]: "Secrets are locked · click to unlock them",
+      [VaultStatus.ABSENT]:
+        "Secrets are stored unencrypted · click to set a passphrase",
+      [VaultStatus.UNSUPPORTED]:
+        "This browser cannot encrypt secrets, so they are stored as written",
+    },
   },
   variables: {
     title: "VARIABLES",
@@ -92,6 +109,7 @@ export const en: Messages = {
     mask: "Mask value",
     actions: "Variable actions",
     duplicate: "Duplicate variable",
+    renameCase: "Change key case",
     remove: "Remove variable",
     dragResizeSplit: "Drag to resize key and value · double-click to even out",
     unusedTitle: (key) => `${key} (unused)`,
@@ -126,6 +144,7 @@ export const en: Messages = {
     showFewerLines: "Show less",
     copy: "Copy command",
     placeholder: "ssh {USER}@{HOST}",
+    extractVariable: "Extract into a variable",
   },
   note: {
     styleLabel: {
@@ -186,17 +205,64 @@ export const en: Messages = {
     message: "Choose where to import a runbook from.",
     local: "This Device",
   },
+  vaultModal: {
+    title: {
+      [VaultPrompt.CREATE]: "Protect your secrets",
+      [VaultPrompt.UNLOCK]: "Unlock your secrets",
+      [VaultPrompt.CHANGE]: "Change your passphrase",
+    },
+    message: {
+      [VaultPrompt.CREATE]: "Choose a passphrase for this runbook.",
+      [VaultPrompt.UNLOCK]:
+        "Enter this runbook's passphrase to decrypt its secret values.",
+      [VaultPrompt.CHANGE]:
+        "Every secret in this runbook is re-encrypted with the new passphrase.",
+    },
+    unlockFileMessage: (filename) =>
+      `\`${filename}\` holds secrets encrypted with a different passphrase. Enter it to open them.`,
+    submit: {
+      [VaultPrompt.CREATE]: "Encrypt secrets",
+      [VaultPrompt.UNLOCK]: "Unlock",
+      [VaultPrompt.CHANGE]: "Change passphrase",
+    },
+    fieldLabel: {
+      [VaultPrompt.CREATE]: {
+        [VaultField.CURRENT]: "Passphrase",
+        [VaultField.NEXT]: "Passphrase",
+        [VaultField.CONFIRM]: "Repeat passphrase",
+      },
+      [VaultPrompt.UNLOCK]: {
+        [VaultField.CURRENT]: "Passphrase",
+        [VaultField.NEXT]: "Passphrase",
+        [VaultField.CONFIRM]: "Repeat passphrase",
+      },
+      [VaultPrompt.CHANGE]: {
+        [VaultField.CURRENT]: "Current passphrase",
+        [VaultField.NEXT]: "New passphrase",
+        [VaultField.CONFIRM]: "Repeat new passphrase",
+      },
+    },
+    reveal: "Show passphrase",
+    hide: "Hide passphrase",
+    skip: "Not now",
+    working: "Deriving key…",
+    errors: {
+      [VaultError.TOO_SHORT]: `Use at least ${VaultConfig.MIN_PASSPHRASE_LENGTH} characters.`,
+      [VaultError.MISMATCH]: "The two passphrases do not match.",
+      [VaultError.UNCHANGED]: "The new passphrase is the one you already use.",
+      [VaultError.WRONG_PASSPHRASE]: "That passphrase did not work.",
+    },
+  },
   cloudModal: {
     importTitle: `Import from ${MessageSlot.PROVIDER}`,
     changeProvider: "Change provider",
     signInPrompt: (provider) =>
       `Sign in to ${provider} to browse and manage your runbooks there.`,
-    signInSharePoint: "Sign in with Microsoft",
+    signInOneDrive: "Sign in with Microsoft",
     signInGoogleDrive: "Sign in with Google",
     signOut: "Sign out",
     signedInAs: (account) => `Signed in as ${account}`,
     refresh: "Refresh",
-    loading: "Loading…",
     emptyFiles: "Nothing saved in this folder yet.",
     emptyFolders: "No folders in here yet.",
     columnName: "Name",
@@ -298,15 +364,19 @@ export const en: Messages = {
     deleteCloudEntriesTitle: "Delete Cloud Items",
     deleteCloudEntriesConfirm: "Delete",
     deleteCloudEntriesMessage: (names) =>
-      `Delete these ${names.length} items from your cloud folder?\n${codeBulletList(
-        names,
-      )}\n\nYour provider keeps deleted items in the _Recycle Bin_ for a while, so you can still restore them from there.`,
+      `Delete these ${names.length} items from your cloud folder?\n${codeBulletList(names, andMore)}\n\nYour provider keeps deleted items in the _Recycle Bin_ for a while, so you can still restore them from there.`,
     duplicateCloudEntriesTitle: "Duplicate Cloud Items",
     duplicateCloudEntriesConfirm: "Duplicate",
     duplicateCloudEntriesMessage: (names) =>
-      `Make a copy of these ${names.length} items in your cloud folder?\n${codeBulletList(
-        names,
-      )}\n\nEach copy is added next to the original, and a folder is copied with everything inside it.`,
+      `Make a copy of these ${names.length} items in your cloud folder?\n${codeBulletList(names, andMore)}\n\nEach copy is added next to the original, and a folder is copied with everything inside it.`,
+    importCloudFilesTitle: "Import Cloud Files",
+    importCloudFilesConfirm: "Import",
+    importCloudFilesMessage: (names) =>
+      `Import these ${names.length} files into your library?\n${codeBulletList(names, andMore)}\n\nEach one is added as its own runbook and stays linked to its cloud file, so later edits are pushed back to it.`,
+    downloadCloudEntriesTitle: "Download Cloud Items",
+    downloadCloudEntriesConfirm: "Download",
+    downloadCloudEntriesMessage: (names) =>
+      `Download these ${names.length} items from your cloud folder?\n${codeBulletList(names, andMore)}\n\nThey are saved together as a single _.zip_ archive, and a folder is downloaded with everything inside it.`,
     signOutCloudTitle: "Sign Out",
     signOutCloudConfirm: "Sign Out",
     signOutCloudMessage:
@@ -411,7 +481,7 @@ export const en: Messages = {
       {
         heading: "The short version",
         paragraphs: [
-          "CommandPad has no backend server, no user accounts, and no analytics or tracking. The app does not collect, transmit, or sell any of your data. Everything you create stays on your device, unless you choose to sync a runbook to your own SharePoint or Google Drive account.",
+          "CommandPad has no backend server, no user accounts, and no analytics or tracking. The app does not collect, transmit, or sell any of your data. Everything you create stays on your device, unless you choose to sync a runbook to your own OneDrive or Google Drive account.",
         ],
       },
       {
@@ -444,7 +514,7 @@ export const en: Messages = {
       {
         heading: "Cloud sync (optional)",
         paragraphs: [
-          "CommandPad can optionally export a runbook to, or import one from, your own SharePoint or Google Drive account. This feature is off until you choose to use it.",
+          "CommandPad can optionally export a runbook to, or import one from, your own OneDrive or Google Drive account. This feature is off until you choose to use it.",
         ],
         bullets: `* You sign in through the provider's own sign-in flow (Microsoft or Google). CommandPad never sees your password, and it only requests access to the dedicated **CommandPad** folder it creates for your runbooks.
 * Synced runbooks are stored in that folder inside your own account. They are not sent to, or stored on, any server operated by us.
@@ -454,7 +524,7 @@ export const en: Messages = {
       {
         heading: "Secret variables",
         paragraphs: [
-          "Variables marked as secret are only **masked** in the interface. They are not encrypted, and are stored in plain text in your browser's local storage just like any other variable. Do not treat secret variables as a secure vault.",
+          "Marking a variable secret always masks it in the interface. Encrypting the value at rest is a separate, optional step: set a passphrase for a runbook and its secret values are encrypted in local storage, in JSON exports, and in synced cloud copies. Without a passphrase, a secret value is still stored in plain text, and the passphrase itself is never stored, so a lost one cannot be recovered.",
         ],
       },
       {
@@ -492,7 +562,7 @@ export const en: Messages = {
       {
         heading: "The service",
         paragraphs: [
-          "CommandPad is a free, client-side tool for building variable-aware command runbooks. It runs in your browser and stores your work locally on your device. It can optionally connect to your own SharePoint or Google Drive account to export and import runbooks, entirely at your discretion. It is provided as-is, and features may change or be removed over time.",
+          "CommandPad is a free, client-side tool for building variable-aware command runbooks. It runs in your browser and stores your work locally on your device. It can optionally connect to your own OneDrive or Google Drive account to export and import runbooks, entirely at your discretion. It is provided as-is, and features may change or be removed over time.",
         ],
       },
       {
@@ -503,7 +573,7 @@ export const en: Messages = {
         bullets: `* Review every command before you run it. CommandPad resolves and copies text; it does not execute anything for you.
 * Keep your own backups of anything important by exporting your runbooks.
 * Only attach images you have the right to use. An attached image becomes part of the runbook itself, so it goes wherever you export or sync that runbook.
-* Do not rely on secret variables as secure storage for sensitive credentials.
+* Secret variables mask values on screen and can be encrypted at rest with a passphrase; they are not a substitute for a dedicated secrets manager.
 * Use the app in compliance with the laws and policies that apply to you.`,
       },
       {
@@ -521,7 +591,7 @@ export const en: Messages = {
       {
         heading: "Third-party cloud services",
         paragraphs: [
-          "If you choose to sync runbooks with SharePoint or Google Drive, you do so through your own account with Microsoft or Google. Your use of those services is governed by their terms and privacy policies, not ours.",
+          "If you choose to sync runbooks with OneDrive or Google Drive, you do so through your own account with Microsoft or Google. Your use of those services is governed by their terms and privacy policies, not ours.",
         ],
         bullets: `* CommandPad only accesses the dedicated folder it creates for your runbooks; it does not read the rest of your cloud storage.
 * We are not responsible for the availability, behavior, or data handling of Microsoft, Google, or any other third-party provider.
@@ -568,6 +638,7 @@ export const en: Messages = {
       [DocsSectionId.MULTILINE_REFERENCES]: "Long references",
       [DocsSectionId.ESCAPING_BRACES]: "Escaping braces",
       [DocsSectionId.SECRET_VARIABLES]: "Secret variables",
+      [DocsSectionId.SECRET_ENCRYPTION]: "Encrypting secrets",
       [DocsSectionId.BLOCKS]: "Blocks",
       [DocsSectionId.COMMAND_BLOCK]: "Command block",
       [DocsSectionId.NOTE_BLOCK]: "Note block",
@@ -700,6 +771,8 @@ If something goes wrong, undo it in this order:
         "Each variable has a **key** and a **value**. Keys are case-sensitive. If two variables share the same key, the one defined last wins.",
       usage:
         "Use a variable in any command by wrapping its key in curly braces, e.g. `{KEY}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
+      extract: (extractLabel) =>
+        `You do not have to write a variable out by hand. Select any piece of a command in its editor, then right-click it (or press \`Ctrl+.\`) and pick **${extractLabel}**: the selected text becomes a new variable, and the command keeps a reference to it in its place. Its guessed name is selected right there in the editor, so just type over it to rename it. Try it on the demo above.`,
       unresolved:
         "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**.",
       tooltip:
@@ -774,6 +847,8 @@ If something goes wrong, undo it in this order:
         "The first four **rebuild** the value out of its words, so spaces disappear. The rest only change letters.",
       demoHint:
         "For example, a folder name is better off without spaces; a title reads better with them. See the same value below, both ways:",
+      renameHint: (renameCaseLabel) =>
+        `These same conversions rename a variable's key, too: open a variable's actions menu and pick **${renameCaseLabel}** to rewrite the key; every command referencing it updates along with it.`,
     },
     variableStrip: {
       intro:
@@ -802,10 +877,24 @@ If something goes wrong, undo it in this order:
       scope: "Escaping only applies inside command blocks.",
     },
     secretVariables: {
-      intro:
-        "Click the **eye icon** on a variable row to mark it as **secret**.",
+      intro: (actionsLabel, maskLabel) =>
+        `Open a variable's **${actionsLabel}** menu and choose **${maskLabel}** to mark it as **secret**. An **eye icon** then appears on the row you can click to reveal it again.`,
       copyNote:
-        "The mask is purely visual: the **Copy** button always puts the **real** value on your clipboard, so your commands keep working. Try it below, and click the eye icon to reveal or hide the value.",
+        "The mask is purely visual: the **Copy** button always puts the **real** value on your clipboard, so your commands keep working. Try it below, and click the eye icon to reveal the value.",
+    },
+    secretEncryption: {
+      intro:
+        "Masking hides a value on screen. Encryption protects it wherever it's stored: on disk, in an exported `.json`, in a linked cloud file. Each runbook has its own passphrase; unlocking one says nothing about another.",
+      passphrase: (createLabel) =>
+        `Mark your first secret and CommandPad asks for a passphrase via **${createLabel}**. It never leaves your device or gets stored: CommandPad turns it into a key, uses that key for the session, then forgets both when you close the tab. Lose it and there's no recovering it, so declining just leaves the value plaintext, like before.`,
+      covered:
+        "Only secret values are encrypted; everything else stays plain text, so an exported runbook is still readable and diffable. On disk a secret looks like `cpv1.<salt>.<iv>.<ciphertext>`: a label plus everything needed to decrypt it except your passphrase, which is why the file opens on any machine that has it.",
+      unlocking:
+        "Reopening the tab locks every runbook again, but only the one in front of you asks to unlock; the rest wait until you open them. A shield by a runbook's name shows its state: green and closed when unlocked, plain when locked, crossed out when nothing protects it. Click it to unlock, or to set a passphrase.",
+      changing: (changeLabel) =>
+        `Click an unlocked shield to open **${changeLabel}**: enter the current passphrase, then the new one twice. Every secret in that runbook, including its copy in a linked cloud file, is re-encrypted on the spot. Other runbooks and past exports keep the old passphrase.`,
+      markdownWarning:
+        "Markdown and plain-text exports skip encryption: their whole point is the resolved command, secrets included. Export JSON for anything leaving your hands.",
     },
     blocks: {
       intro: (blockActionsLabel) =>
@@ -914,7 +1003,7 @@ If something goes wrong, undo it in this order:
     },
     cloudExport: {
       intro: (exportLabel, importLabel) =>
-        `**${exportLabel}** and **${importLabel}** can go straight to SharePoint or Google Drive, not just this device. The dialog reopens with the destination and format you used last time already selected.`,
+        `**${exportLabel}** and **${importLabel}** can go straight to OneDrive or Google Drive, not just this device. The dialog reopens with the destination and format you used last time already selected.`,
       switchProvider:
         "While you are browsing the cloud, the provider name in the dialog title is a **picker**: click it to switch providers.",
       overwrite:
@@ -937,6 +1026,8 @@ If something goes wrong, undo it in this order:
         `A row's **three dots** menu holds **${rename}**, **${edit}**, **${duplicate}**, **${download}**, and **${deleteLabel}**.`,
       multiSelect:
         "Rows select like files in a file explorer. Click a row to select it, click the **circle** on its left to add or drop it from the selection, `Ctrl`+click to do the same anywhere on the row, and `Shift`+click to take everything between the last row you clicked and this one. The circle in the header adds or drops the rows currently listed, and clicking the empty space below the rows clears the selection.",
+      bulkActions:
+        "With two or more rows selected, a menu action applies to the whole selection, and importing, duplicating, downloading or deleting that many items asks you to confirm first, listing exactly what it is about to touch. A single row still acts on one click.",
       editFile:
         "**Edit** opens the file's raw JSON in place, so a quick fix doesn't require importing, changing, and re-exporting it. It has to stay valid JSON to save.",
       recycleBin:
@@ -962,7 +1053,7 @@ If something goes wrong, undo it in this order:
         {
           question: "How do I back up a runbook or move it to another machine?",
           answer:
-            "Export it as **JSON** and import the file on the other machine, or export it straight to SharePoint or Google Drive and import it from there on the other machine. The JSON export contains the full workspace (variables and blocks) and can always be re-imported.",
+            "Export it as **JSON** and import the file on the other machine, or export it straight to OneDrive or Google Drive and import it from there on the other machine. The JSON export contains the full workspace (variables and blocks) and can always be re-imported.",
         },
         {
           question: "What exactly does Reset Workspace delete?",
@@ -977,7 +1068,7 @@ If something goes wrong, undo it in this order:
         {
           question: "Are secret variables encrypted?",
           answer:
-            "No. Marking a variable as secret only masks its value in the sidebar and in command previews. The value is still stored in plain text in your browser's local storage.",
+            "Only if you set a passphrase for that runbook, from its shield icon in the library. Marking a variable secret always masks it on screen; without a passphrase the value is still stored in plain text.",
         },
         {
           question:

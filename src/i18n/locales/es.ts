@@ -1,17 +1,25 @@
+import { VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  VaultError,
+  VaultField,
+  VaultPrompt,
+  VaultStatus,
 } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
 import { codeBulletList } from "../lists";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
 
+const andMore = (count: number) => `_y ${count} más..._`;
+
 export const es: Messages = {
   common: {
+    loading: "Cargando…",
     cancel: "Cancelar",
     close: "Cerrar",
     back: "Atrás",
@@ -80,6 +88,16 @@ export const es: Messages = {
       [RunbookSyncStatus.ERROR]: (provider) =>
         `No se pudo guardar en ${provider} · haz clic para reintentar`,
     },
+    secretStatus: {
+      [VaultStatus.UNLOCKED]:
+        "Los secretos están cifrados · haz clic para cambiar la frase de contraseña",
+      [VaultStatus.LOCKED]:
+        "Los secretos están bloqueados · haz clic para desbloquearlos",
+      [VaultStatus.ABSENT]:
+        "Los secretos se guardan sin cifrar · haz clic para poner una frase de contraseña",
+      [VaultStatus.UNSUPPORTED]:
+        "Este navegador no puede cifrar secretos, así que se guardan tal cual",
+    },
   },
   variables: {
     title: "VARIABLES",
@@ -93,6 +111,7 @@ export const es: Messages = {
     mask: "Ocultar valor",
     actions: "Acciones de la variable",
     duplicate: "Duplicar variable",
+    renameCase: "Cambiar capitalización de la clave",
     remove: "Eliminar variable",
     dragResizeSplit:
       "Arrastra para redimensionar clave y valor · doble clic para igualarlos",
@@ -128,6 +147,7 @@ export const es: Messages = {
     showFewerLines: "Mostrar menos",
     copy: "Copiar comando",
     placeholder: "ssh {USUARIO}@{HOST}",
+    extractVariable: "Extraer en una variable",
   },
   note: {
     styleLabel: {
@@ -188,17 +208,64 @@ export const es: Messages = {
     message: "Elige desde dónde importar un libro.",
     local: "Este dispositivo",
   },
+  vaultModal: {
+    title: {
+      [VaultPrompt.CREATE]: "Protege tus secretos",
+      [VaultPrompt.UNLOCK]: "Desbloquea tus secretos",
+      [VaultPrompt.CHANGE]: "Cambia tu frase de contraseña",
+    },
+    message: {
+      [VaultPrompt.CREATE]: "Elige una frase de contraseña para este libro.",
+      [VaultPrompt.UNLOCK]:
+        "Introduce la frase de contraseña de este libro para descifrar sus valores secretos.",
+      [VaultPrompt.CHANGE]:
+        "Todos los secretos de este libro se vuelven a cifrar con la nueva frase de contraseña.",
+    },
+    unlockFileMessage: (filename) =>
+      `\`${filename}\` contiene secretos cifrados con otra frase de contraseña. Introdúcela para abrirlos.`,
+    submit: {
+      [VaultPrompt.CREATE]: "Cifrar secretos",
+      [VaultPrompt.UNLOCK]: "Desbloquear",
+      [VaultPrompt.CHANGE]: "Cambiar frase de contraseña",
+    },
+    fieldLabel: {
+      [VaultPrompt.CREATE]: {
+        [VaultField.CURRENT]: "Frase de contraseña",
+        [VaultField.NEXT]: "Frase de contraseña",
+        [VaultField.CONFIRM]: "Repite la frase de contraseña",
+      },
+      [VaultPrompt.UNLOCK]: {
+        [VaultField.CURRENT]: "Frase de contraseña",
+        [VaultField.NEXT]: "Frase de contraseña",
+        [VaultField.CONFIRM]: "Repite la frase de contraseña",
+      },
+      [VaultPrompt.CHANGE]: {
+        [VaultField.CURRENT]: "Frase de contraseña actual",
+        [VaultField.NEXT]: "Nueva frase de contraseña",
+        [VaultField.CONFIRM]: "Repite la nueva frase de contraseña",
+      },
+    },
+    reveal: "Mostrar frase de contraseña",
+    hide: "Ocultar frase de contraseña",
+    skip: "Ahora no",
+    working: "Derivando clave…",
+    errors: {
+      [VaultError.TOO_SHORT]: `Usa al menos ${VaultConfig.MIN_PASSPHRASE_LENGTH} caracteres.`,
+      [VaultError.MISMATCH]: "Las dos frases de contraseña no coinciden.",
+      [VaultError.UNCHANGED]: "La nueva frase de contraseña es la que ya usas.",
+      [VaultError.WRONG_PASSPHRASE]: "Esa frase de contraseña no funcionó.",
+    },
+  },
   cloudModal: {
     importTitle: `Importar desde ${MessageSlot.PROVIDER}`,
     changeProvider: "Cambiar de proveedor",
     signInPrompt: (provider) =>
       `Inicia sesión en ${provider} para explorar y administrar tus runbooks allí.`,
-    signInSharePoint: "Iniciar sesión con Microsoft",
+    signInOneDrive: "Iniciar sesión con Microsoft",
     signInGoogleDrive: "Iniciar sesión con Google",
     signOut: "Cerrar sesión",
     signedInAs: (account) => `Sesión iniciada como ${account}`,
     refresh: "Actualizar",
-    loading: "Cargando…",
     emptyFiles: "Aún no hay nada guardado en esta carpeta.",
     emptyFolders: "Aún no hay carpetas aquí.",
     columnName: "Nombre",
@@ -303,15 +370,19 @@ export const es: Messages = {
     deleteCloudEntriesTitle: "Eliminar Elementos de la Nube",
     deleteCloudEntriesConfirm: "Eliminar",
     deleteCloudEntriesMessage: (names) =>
-      `¿Eliminar estos ${names.length} elementos de tu carpeta en la nube?\n${codeBulletList(
-        names,
-      )}\n\nTu proveedor guarda un tiempo los elementos eliminados en la _Papelera de reciclaje_, así que todavía puedes restaurarlos desde ahí.`,
+      `¿Eliminar estos ${names.length} elementos de tu carpeta en la nube?\n${codeBulletList(names, andMore)}\n\nTu proveedor guarda un tiempo los elementos eliminados en la _Papelera de reciclaje_, así que todavía puedes restaurarlos desde ahí.`,
     duplicateCloudEntriesTitle: "Duplicar Elementos de la Nube",
     duplicateCloudEntriesConfirm: "Duplicar",
     duplicateCloudEntriesMessage: (names) =>
-      `¿Hacer una copia de estos ${names.length} elementos en tu carpeta en la nube?\n${codeBulletList(
-        names,
-      )}\n\nCada copia se añade junto al original, y una carpeta se copia con todo lo que contiene.`,
+      `¿Hacer una copia de estos ${names.length} elementos en tu carpeta en la nube?\n${codeBulletList(names, andMore)}\n\nCada copia se añade junto al original, y una carpeta se copia con todo lo que contiene.`,
+    importCloudFilesTitle: "Importar Archivos de la Nube",
+    importCloudFilesConfirm: "Importar",
+    importCloudFilesMessage: (names) =>
+      `¿Importar estos ${names.length} archivos a tu biblioteca?\n${codeBulletList(names, andMore)}\n\nCada uno se añade como su propio runbook y queda vinculado a su archivo en la nube, así que los cambios posteriores se envían de vuelta a él.`,
+    downloadCloudEntriesTitle: "Descargar Elementos de la Nube",
+    downloadCloudEntriesConfirm: "Descargar",
+    downloadCloudEntriesMessage: (names) =>
+      `¿Descargar estos ${names.length} elementos de tu carpeta en la nube?\n${codeBulletList(names, andMore)}\n\nSe guardan juntos en un único archivo _.zip_, y una carpeta se descarga con todo lo que contiene.`,
     signOutCloudTitle: "Cerrar Sesión",
     signOutCloudConfirm: "Cerrar Sesión",
     signOutCloudMessage:
@@ -419,7 +490,7 @@ export const es: Messages = {
       {
         heading: "La versión corta",
         paragraphs: [
-          "CommandPad no tiene servidor backend, ni cuentas de usuario, ni analítica o seguimiento. La app no recopila, transmite ni vende ninguno de tus datos. Todo lo que creas se queda en tu dispositivo, salvo que elijas sincronizar un libro con tu propia cuenta de SharePoint o Google Drive.",
+          "CommandPad no tiene servidor backend, ni cuentas de usuario, ni analítica o seguimiento. La app no recopila, transmite ni vende ninguno de tus datos. Todo lo que creas se queda en tu dispositivo, salvo que elijas sincronizar un libro con tu propia cuenta de OneDrive o Google Drive.",
         ],
       },
       {
@@ -452,7 +523,7 @@ export const es: Messages = {
       {
         heading: "Sincronización en la nube (opcional)",
         paragraphs: [
-          "CommandPad puede, de forma opcional, exportar un libro a tu propia cuenta de SharePoint o Google Drive, o importar uno desde ella. Esta función está desactivada hasta que elijas usarla.",
+          "CommandPad puede, de forma opcional, exportar un libro a tu propia cuenta de OneDrive o Google Drive, o importar uno desde ella. Esta función está desactivada hasta que elijas usarla.",
         ],
         bullets: `* Inicias sesión mediante el propio flujo del proveedor (Microsoft o Google). CommandPad nunca ve tu contraseña y solo solicita acceso a la carpeta dedicada **CommandPad** que crea para tus libros.
 * Los libros sincronizados se guardan en esa carpeta dentro de tu propia cuenta. No se envían ni se almacenan en ningún servidor operado por nosotros.
@@ -462,7 +533,7 @@ export const es: Messages = {
       {
         heading: "Variables secretas",
         paragraphs: [
-          "Las variables marcadas como secretas solo se **enmascaran** en la interfaz. No están cifradas y se almacenan en texto plano en el almacenamiento local de tu navegador, igual que cualquier otra variable. No trates las variables secretas como una bóveda segura.",
+          "Marcar una variable como secreta siempre la enmascara en la interfaz. Cifrar el valor en el almacenamiento es un paso aparte y opcional: pon una frase de contraseña a un libro y sus valores secretos se cifran en el almacenamiento local, en las exportaciones JSON y en las copias sincronizadas en la nube. Sin una frase de contraseña, un valor secreto se sigue guardando en texto plano, y la frase nunca se guarda, así que una perdida no se puede recuperar.",
         ],
       },
       {
@@ -500,7 +571,7 @@ export const es: Messages = {
       {
         heading: "El servicio",
         paragraphs: [
-          "CommandPad es una herramienta gratuita del lado del cliente para crear libros de comandos con variables. Funciona en tu navegador y almacena tu trabajo localmente en tu dispositivo. De forma opcional, puede conectarse a tu propia cuenta de SharePoint o Google Drive para exportar e importar libros, totalmente a tu discreción. Se ofrece tal cual, y las funciones pueden cambiar o eliminarse con el tiempo.",
+          "CommandPad es una herramienta gratuita del lado del cliente para crear libros de comandos con variables. Funciona en tu navegador y almacena tu trabajo localmente en tu dispositivo. De forma opcional, puede conectarse a tu propia cuenta de OneDrive o Google Drive para exportar e importar libros, totalmente a tu discreción. Se ofrece tal cual, y las funciones pueden cambiar o eliminarse con el tiempo.",
         ],
       },
       {
@@ -511,7 +582,7 @@ export const es: Messages = {
         bullets: `* Revisa cada comando antes de ejecutarlo. CommandPad resuelve y copia texto; no ejecuta nada por ti.
 * Mantén tus propias copias de seguridad de lo importante exportando tus libros.
 * Adjunta solo imágenes que tengas derecho a usar. Una imagen adjunta pasa a formar parte del libro, así que va allá donde exportes o sincronices ese libro.
-* No confíes en las variables secretas como almacenamiento seguro de credenciales sensibles.
+* Las variables secretas enmascaran su valor en pantalla y se pueden cifrar en el almacenamiento con una frase de contraseña; no sustituyen a un gestor de secretos dedicado.
 * Usa la app cumpliendo las leyes y políticas que se te apliquen.`,
       },
       {
@@ -529,7 +600,7 @@ export const es: Messages = {
       {
         heading: "Servicios de terceros en la nube",
         paragraphs: [
-          "Si eliges sincronizar libros con SharePoint o Google Drive, lo haces a través de tu propia cuenta con Microsoft o Google. Tu uso de esos servicios se rige por sus términos y políticas de privacidad, no por los nuestros.",
+          "Si eliges sincronizar libros con OneDrive o Google Drive, lo haces a través de tu propia cuenta con Microsoft o Google. Tu uso de esos servicios se rige por sus términos y políticas de privacidad, no por los nuestros.",
         ],
         bullets: `* CommandPad solo accede a la carpeta dedicada que crea para tus libros; no lee el resto de tu almacenamiento en la nube.
 * No somos responsables de la disponibilidad, el comportamiento ni el manejo de datos de Microsoft, Google o cualquier otro proveedor externo.
@@ -576,6 +647,7 @@ export const es: Messages = {
       [DocsSectionId.MULTILINE_REFERENCES]: "Referencias largas",
       [DocsSectionId.ESCAPING_BRACES]: "Escapar llaves",
       [DocsSectionId.SECRET_VARIABLES]: "Variables secretas",
+      [DocsSectionId.SECRET_ENCRYPTION]: "Cifrar secretos",
       [DocsSectionId.BLOCKS]: "Bloques",
       [DocsSectionId.COMMAND_BLOCK]: "Bloque de comando",
       [DocsSectionId.NOTE_BLOCK]: "Bloque de nota",
@@ -713,6 +785,8 @@ Si algo sale mal, deshazlo en este orden:
         "Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas. Si dos variables comparten la misma clave, gana la definida en último lugar.",
       usage:
         "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{CLAVE}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
+      extract: (extractLabel) =>
+        `No hace falta escribir una variable a mano. Selecciona cualquier parte de un comando en su editor, haz clic derecho (o pulsa \`Ctrl+.\`) y elige **${extractLabel}**: el texto seleccionado se convierte en una variable nueva, y el comando conserva en su lugar una referencia a ella. Su nombre propuesto queda seleccionado ahí mismo en el editor, así que basta con escribir encima para renombrarla. Pruébalo en la demo de arriba.`,
       unresolved:
         "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**.",
       tooltip:
@@ -787,6 +861,8 @@ Si algo sale mal, deshazlo en este orden:
         "Las cuatro primeras **reconstruyen** el valor a partir de sus palabras, así que los espacios desaparecen. Las demás solo cambian letras.",
       demoHint:
         "Por ejemplo, el nombre de una carpeta va mejor sin espacios; un título, con ellos. Observa abajo el mismo valor, de las dos formas:",
+      renameHint: (renameCaseLabel) =>
+        `Estas mismas conversiones también renombran la clave de una variable: abre el menú de acciones de una variable y elige **${renameCaseLabel}** para reescribir la clave; cada comando que la referencia se actualiza junto con ella.`,
     },
     variableStrip: {
       intro:
@@ -815,10 +891,24 @@ Si algo sale mal, deshazlo en este orden:
       scope: "El escape solo aplica dentro de bloques de comando.",
     },
     secretVariables: {
-      intro:
-        "Haz clic en el **icono de ojo** de una fila de variable para marcarla como **secreta**.",
+      intro: (actionsLabel, maskLabel) =>
+        `Abre el menú **${actionsLabel}** de una variable y elige **${maskLabel}** para marcarla como **secreta**. Aparecerá entonces un **icono de ojo** en la fila que puedes pulsar para volver a mostrarla.`,
       copyNote:
-        "El enmascarado es puramente visual: el botón **Copiar** siempre pone el valor **real** en tu portapapeles, así que tus comandos siguen funcionando. Pruébalo abajo, y haz clic en el icono de ojo para mostrar u ocultar el valor.",
+        "El enmascarado es puramente visual: el botón **Copiar** siempre pone el valor **real** en tu portapapeles, así que tus comandos siguen funcionando. Pruébalo abajo, y haz clic en el icono de ojo para mostrar el valor.",
+    },
+    secretEncryption: {
+      intro:
+        "Enmascarar solo oculta un valor en pantalla. Cifrar lo protege donde se guarda: en el disco, en un `.json` exportado, en un archivo enlazado en la nube. Cada libro tiene su propia frase de contraseña; desbloquear uno no dice nada de otro.",
+      passphrase: (createLabel) =>
+        `Marca tu primer secreto y CommandPad te pide una frase de contraseña mediante **${createLabel}**. Nunca sale de tu dispositivo ni se guarda: CommandPad la convierte en una clave, la usa durante la sesión y olvida ambas al cerrar la pestaña. Si la pierdes no hay forma de recuperarla, así que rechazar el aviso solo deja el valor en claro, como antes.`,
+      covered:
+        "Solo se cifran los valores secretos; el resto sigue en texto plano, así que un libro exportado se puede seguir leyendo y comparando. En el disco, un secreto se ve como `cpv1.<sal>.<iv>.<cifrado>`: una etiqueta más todo lo necesario para descifrarlo salvo tu frase de contraseña, por eso el archivo se abre en cualquier máquina que la tenga.",
+      unlocking:
+        "Volver a abrir la pestaña bloquea todos los libros de nuevo, pero solo el que tienes delante te pide desbloquearlo; los demás esperan a que los abras. Un escudo junto al nombre del libro muestra su estado: verde y cerrado si está desbloqueado, neutro si está bloqueado, tachado si nada lo protege. Haz clic para desbloquearlo o para ponerle una frase de contraseña.",
+      changing: (changeLabel) =>
+        `Haz clic en un escudo desbloqueado para abrir **${changeLabel}**: escribe la frase de contraseña actual y luego la nueva dos veces. Todos los secretos de ese libro, incluida su copia en un archivo enlazado de la nube, se cifran de nuevo al momento. Los demás libros y los archivos ya exportados conservan la anterior.`,
+      markdownWarning:
+        "Las exportaciones a Markdown y texto plano se saltan el cifrado: su razón de ser es el comando ya resuelto, secretos incluidos. Exporta JSON para lo que vaya a salir de tus manos.",
     },
     blocks: {
       intro: (blockActionsLabel) =>
@@ -927,7 +1017,7 @@ Si algo sale mal, deshazlo en este orden:
     },
     cloudExport: {
       intro: (exportLabel, importLabel) =>
-        `**${exportLabel}** e **${importLabel}** pueden ir directamente a SharePoint o Google Drive, no solo a este dispositivo. El diálogo se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados.`,
+        `**${exportLabel}** e **${importLabel}** pueden ir directamente a OneDrive o Google Drive, no solo a este dispositivo. El diálogo se vuelve a abrir con el destino y el formato que usaste la última vez ya seleccionados.`,
       switchProvider:
         "Mientras exploras la nube, el nombre del proveedor en el título del diálogo es un **selector**: haz clic en él para cambiar entre proveedores.",
       overwrite:
@@ -950,6 +1040,8 @@ Si algo sale mal, deshazlo en este orden:
         `El menú de **tres puntos** de una fila tiene **${rename}**, **${edit}**, **${duplicate}**, **${download}** y **${deleteLabel}**.`,
       multiSelect:
         "Las filas se seleccionan como los archivos de un explorador. Haz clic en una fila para seleccionarla, en el **círculo** de su izquierda para sumarla o quitarla de la selección, `Ctrl`+clic para lo mismo en cualquier punto de la fila y `Shift`+clic para tomar todo lo que hay entre la última fila que tocaste y esta. El círculo de la cabecera suma o quita las filas que estén listadas, y hacer clic en el espacio vacío bajo las filas vacía la selección.",
+      bulkActions:
+        "Con dos o más filas seleccionadas, una acción del menú se aplica a toda la selección, e importar, duplicar, descargar o eliminar esa cantidad de elementos te pide confirmación primero, enumerando exactamente lo que va a tocar. Una sola fila sigue actuando con un clic.",
       editFile:
         "**Editar** abre el JSON del archivo en el sitio, así que un arreglo rápido ya no implica importar, cambiar y volver a exportar. Tiene que seguir siendo JSON válido para guardarse.",
       recycleBin:
@@ -976,7 +1068,7 @@ Si algo sale mal, deshazlo en este orden:
         {
           question: "¿Cómo respaldo un libro o lo llevo a otra máquina?",
           answer:
-            "Expórtalo como **JSON** e importa el archivo en la otra máquina, o hazlo directamente a SharePoint o Google Drive y luego impórtalo desde ahí en la otra máquina. La exportación JSON contiene el espacio de trabajo completo (variables y bloques) y siempre puede reimportarse.",
+            "Expórtalo como **JSON** e importa el archivo en la otra máquina, o hazlo directamente a OneDrive o Google Drive y luego impórtalo desde ahí en la otra máquina. La exportación JSON contiene el espacio de trabajo completo (variables y bloques) y siempre puede reimportarse.",
         },
         {
           question: "¿Qué elimina exactamente Resetear el Espacio de Trabajo?",
@@ -991,7 +1083,7 @@ Si algo sale mal, deshazlo en este orden:
         {
           question: "¿Las variables secretas están cifradas?",
           answer:
-            "No. Marcar una variable como secreta solo oculta su valor en la barra lateral y en las vistas previas de comandos. El valor sigue guardado en texto plano en el almacenamiento local de tu navegador.",
+            "Solo si pones una frase de contraseña a ese libro, desde su icono de escudo en la biblioteca. Marcar una variable como secreta siempre la oculta en pantalla; sin una frase de contraseña, el valor se sigue guardando en texto plano.",
         },
         {
           question:

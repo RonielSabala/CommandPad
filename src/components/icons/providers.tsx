@@ -27,97 +27,25 @@ export function GoogleDriveIcon(props: ProviderIconProps) {
   );
 }
 
-export function SharePointIcon(props: ProviderIconProps) {
-  const uid = useId();
-  const maskId = `${uid}-mask`;
-  const gradientTop = `${uid}-top`;
-  const gradientRight = `${uid}-right`;
-  const gradientBottom = `${uid}-bottom`;
-  const gradientTile = `${uid}-tile`;
-
+export function OneDriveIcon(props: ProviderIconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 32 32" fill="none" {...props}>
-      <circle cx="15.5" cy="11.5" r="9.5" fill={`url(#${gradientTop})`} />
-      <circle cx="24" cy="17" r="8" fill={`url(#${gradientRight})`} />
-      <mask
-        id={maskId}
-        style={{ maskType: "alpha" }}
-        maskUnits="userSpaceOnUse"
-        x="10"
-        y="6"
-        width="13"
-        height="24"
-      >
-        <path
-          d="M23 23.5C23 27.0899 20.0899 30 16.5 30C12.9101 30 10 27.0899 10 23.5C10 19.9102 10 6 10 6H23C23 6 23 21.1988 23 23.5Z"
-          fill="#C4C4C4"
-        />
-      </mask>
-      <g mask={`url(#${maskId})`}>
-        <circle cx="16.5" cy="23.5" r="6.5" fill={`url(#${gradientBottom})`} />
-        <path
-          d="M7 12C7 10.3431 8.34315 9 10 9H17C18.6569 9 20 10.3431 20 12V24C20 25.6569 18.6569 27 17 27H7V12Z"
-          fill="#000000"
-          fillOpacity="0.3"
-        />
-      </g>
-      <rect
-        y="7"
-        width="18"
-        height="18"
-        rx="2"
-        fill={`url(#${gradientTile})`}
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" {...props}>
+      <path
+        fill="#0364b8"
+        d="m14.4475 14.6323 4.8507 -4.63885c-1.007575 -3.92885 -5.00935 -6.297 -8.938225 -5.289425 -1.769275 0.45375 -3.305975 1.55055 -4.310175 3.076275 0.0751 -0.0019 8.3977 6.852 8.3977 6.852Z"
       />
       <path
-        d="M13 18.1229C13 16.5726 11.9602 15.8883 9.79665 15.0922C8.10273 14.4637 7.70021 14.2821 7.70021 13.6816C7.70021 13.1648 8.20335 12.8156 9.0587 12.8156C9.93082 12.8156 10.7526 13.1089 11.6751 13.6117L12.6143 11.9497C11.6247 11.3352 10.4507 11 9.02516 11C6.84486 11 5.28512 12.1173 5.28512 13.8212C5.28512 15.567 6.52621 16.1257 8.60587 16.8659C10.2662 17.4525 10.5849 17.7458 10.5849 18.2626C10.5849 18.8771 9.9979 19.1844 9.07547 19.1844C7.98532 19.1844 7.02935 18.8073 6.07338 18.1927L5 19.7849C6.174 20.595 7.63312 21 9.12579 21C11.3732 21 13 19.9385 13 18.1229Z"
-        fill="white"
+        fill="#0078d4"
+        d="m9.211075 8.6536 -0.00025 0.0008c-0.92685 -0.57405 -1.9958 -0.8775 -3.086075 -0.876025 -0.025175 0 -0.049925 0.001625 -0.075075 0.0019C2.8067 7.82045 0.21030575 10.481975 0.25046 13.72495c0.014555 1.176375 0.3821225 2.321225 1.0550425 3.286225L8.572625 16.101l5.57155 -4.49255 -4.9331 -2.95485Z"
       />
-      <defs>
-        <linearGradient
-          id={gradientTop}
-          x1="6"
-          y1="11.5"
-          x2="26.5833"
-          y2="11.5"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#103A3B" />
-          <stop offset="1" stopColor="#116B6E" />
-        </linearGradient>
-        <linearGradient
-          id={gradientRight}
-          x1="18"
-          y1="13"
-          x2="32"
-          y2="21"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#1D9097" />
-          <stop offset="1" stopColor="#29BBC2" />
-        </linearGradient>
-        <linearGradient
-          id={gradientBottom}
-          x1="12"
-          y1="21.5"
-          x2="23"
-          y2="26.5"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#28A6B5" />
-          <stop offset="1" stopColor="#31D6EC" />
-        </linearGradient>
-        <linearGradient
-          id={gradientTile}
-          x1="0"
-          y1="16"
-          x2="19.5"
-          y2="16"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#105557" />
-          <stop offset="1" stopColor="#116B6E" />
-        </linearGradient>
-      </defs>
+      <path
+        fill="#1490df"
+        d="M19.29795 9.9935c-0.106625 -0.007125 -0.2138 -0.01205 -0.322225 -0.01205 -0.650725 -0.00065 -1.2947 0.132275 -1.892 0.390525l-0.00015 -0.0005 -2.939525 1.237 3.240625 4.002975 5.793425 1.4083c1.2502 -2.320975 0.382175 -5.216 -1.9388 -6.466225 -0.599725 -0.32305 -1.2617 -0.514 -1.94135 -0.560025Z"
+      />
+      <path
+        fill="#28a8ea"
+        d="M1.30542 17.011175C2.4026925 18.5888 4.203025 19.529 6.1247 19.527975h12.851075c1.7555 0.0005 3.369525 -0.962825 4.20235 -2.508175L14.1441 11.60845 1.30542 17.011175Z"
+      />
     </svg>
   );
 }

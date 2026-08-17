@@ -16,12 +16,14 @@ interface ContextMenuSubmenuProps {
   children: ReactNode;
   label: ReactNode;
   icon?: ReactNode;
+  iconlessItems?: boolean;
 }
 
 export function ContextMenuSubmenu({
   children,
   label,
   icon,
+  iconlessItems,
 }: ContextMenuSubmenuProps) {
   const id = useId();
   const submenuActivation = useContext(SubmenuActivationContext);
@@ -84,6 +86,7 @@ export function ContextMenuSubmenu({
           className={classNames(
             CssClass.CONTEXT_MENU,
             "context-menu-submenu-panel",
+            iconlessItems && "context-menu-panel-iconless",
             flipped.x && "is-flipped-x",
             flipped.y && "is-flipped-y",
           )}

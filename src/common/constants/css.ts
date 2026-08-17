@@ -1,4 +1,5 @@
 export const CssClass = {
+  THEME_LIGHT: "theme-light",
   ACTIVE: "active",
   ANIMATING: "animating",
   CLAMPED: "clamped",

@@ -19,6 +19,7 @@ import type {
   RunbookEntry,
   RunbookSync,
   Tab,
+  VaultRecord,
 } from "@/common/types";
 import { detectLanguage, isLanguage } from "@/i18n/messages";
 import type { Language } from "@/i18n/types";
@@ -238,8 +239,16 @@ const isRunbookSync = (value: unknown): value is RunbookSync =>
   isString(value.filename) &&
   (isString(value.folderId) || value.folderId === null);
 
+const isVaultRecord = (value: unknown): value is VaultRecord =>
+  isObject(value) && isString(value.salt) && isString(value.verifier);
+
 function restoreRunbookEntry(entry: RunbookEntry): RunbookEntry {
-  return isRunbookSync(entry.sync) ? entry : { ...entry, sync: undefined };
+  return {
+    ...entry,
+    sync: isRunbookSync(entry.sync) ? entry.sync : undefined,
+    secured: entry.secured === true,
+    vault: isVaultRecord(entry.vault) ? entry.vault : undefined,
+  };
 }
 
 export function saveRunbookLibrary(

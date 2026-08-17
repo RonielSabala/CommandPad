@@ -59,6 +59,7 @@ export function CloudFileManagementDocs() {
         )}
       />
       <Prose text={t.docs.cloudFileManagement.multiSelect} />
+      <Prose text={t.docs.cloudFileManagement.bulkActions} />
       <Prose text={t.docs.cloudFileManagement.editFile} />
       <Prose text={t.docs.cloudFileManagement.recycleBin} />
     </>

@@ -4,6 +4,10 @@ import type {
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  VaultError,
+  VaultField,
+  VaultPrompt,
+  VaultStatus,
 } from "@/common/enums";
 import type { KeyBinding } from "@/common/keybindings";
 
@@ -42,6 +46,7 @@ export interface LegalPageMessages {
 // The full translation catalog
 export interface Messages {
   common: {
+    loading: string;
     cancel: string;
     close: string;
     back: string;
@@ -99,6 +104,7 @@ export interface Messages {
     clearLibraryTitle: string;
     stopSyncing: string;
     syncStatus: Record<RunbookSyncStatus, (provider: string) => string>;
+    secretStatus: Record<VaultStatus, string>;
   };
   variables: {
     title: string;
@@ -112,6 +118,7 @@ export interface Messages {
     mask: string;
     actions: string;
     duplicate: string;
+    renameCase: string;
     remove: string;
     dragResizeSplit: string;
     unusedTitle: (key: string) => string;
@@ -140,6 +147,7 @@ export interface Messages {
     showFewerLines: string;
     copy: string;
     placeholder: string;
+    extractVariable: string;
   };
   note: {
     styleLabel: Record<NoteStyle, string>;
@@ -191,16 +199,27 @@ export interface Messages {
     message: string;
     local: string;
   };
+  vaultModal: {
+    title: Record<VaultPrompt, string>;
+    message: Record<VaultPrompt, string>;
+    unlockFileMessage: (filename: string) => string;
+    submit: Record<VaultPrompt, string>;
+    fieldLabel: Record<VaultPrompt, Record<VaultField, string>>;
+    reveal: string;
+    hide: string;
+    skip: string;
+    working: string;
+    errors: Record<VaultError, string>;
+  };
   cloudModal: {
     importTitle: string;
     changeProvider: string;
     signInPrompt: (provider: string) => string;
-    signInSharePoint: string;
+    signInOneDrive: string;
     signInGoogleDrive: string;
     signOut: string;
     signedInAs: (account: string) => string;
     refresh: string;
-    loading: string;
     emptyFiles: string;
     emptyFolders: string;
     columnName: string;
@@ -292,6 +311,12 @@ export interface Messages {
     duplicateCloudEntriesTitle: string;
     duplicateCloudEntriesConfirm: string;
     duplicateCloudEntriesMessage: (names: string[]) => string;
+    importCloudFilesTitle: string;
+    importCloudFilesConfirm: string;
+    importCloudFilesMessage: (names: string[]) => string;
+    downloadCloudEntriesTitle: string;
+    downloadCloudEntriesConfirm: string;
+    downloadCloudEntriesMessage: (names: string[]) => string;
     signOutCloudTitle: string;
     signOutCloudConfirm: string;
     signOutCloudMessage: string;
@@ -407,6 +432,7 @@ export interface Messages {
       why: string;
       intro: string;
       usage: string;
+      extract: (extractLabel: string) => string;
       unresolved: string;
       tooltip: string;
       split: string;
@@ -446,6 +472,7 @@ export interface Messages {
       table: string;
       rebuild: string;
       demoHint: string;
+      renameHint: (renameCaseLabel: string) => string;
     };
     variableStrip: {
       intro: string;
@@ -463,8 +490,16 @@ export interface Messages {
       scope: string;
     };
     secretVariables: {
-      intro: string;
+      intro: (actionsLabel: string, maskLabel: string) => string;
       copyNote: string;
+    };
+    secretEncryption: {
+      intro: string;
+      passphrase: (createLabel: string) => string;
+      covered: string;
+      unlocking: string;
+      changing: (changeLabel: string) => string;
+      markdownWarning: string;
     };
     blocks: {
       intro: (blockActionsLabel: string) => string;
@@ -545,6 +580,7 @@ export interface Messages {
         deleteLabel: string,
       ) => string;
       multiSelect: string;
+      bulkActions: string;
       editFile: string;
       recycleBin: string;
     };

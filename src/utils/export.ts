@@ -7,6 +7,7 @@ import {
 } from "@/common/config";
 import { ExportFormat } from "@/common/enums";
 import type { RunbookContent } from "@/common/types";
+import { encryptContent } from "@/services/vault";
 import { downloadBlob } from "./download";
 import { getVariableMap, resolveCommandToString } from "./resolution";
 import { slugifyLabel } from "./runbook";
@@ -104,7 +105,7 @@ export function getExportBasename(label: string): string {
   return DEFAULT_EXPORT_BASENAME;
 }
 
-function buildRunbookExportJson(content: RunbookContent): string {
+export function buildRunbookExportJson(content: RunbookContent): string {
   const data = {
     variables: (content.variables ?? []).map(({ id, ...rest }) => rest),
     blocks: (content.blocks ?? []).map(({ id, ...rest }) => rest),
@@ -113,24 +114,26 @@ function buildRunbookExportJson(content: RunbookContent): string {
   return JSON.stringify(data, null, 2);
 }
 
-export function buildRunbookExportContent(
+export async function buildSecuredRunbookExportContent(
   format: ExportFormat,
+  runbookId: string,
   content: RunbookContent,
-): string {
+): Promise<string> {
   return format === ExportFormat.JSON
-    ? buildRunbookExportJson(content)
+    ? buildRunbookExportJson(await encryptContent(runbookId, content))
     : buildMarkdownExport(content);
 }
 
 export async function runExport(
   format: ExportFormat,
+  runbookId: string,
   content: RunbookContent,
   filename: string,
 ): Promise<void> {
   const config = FilePickerConfig[format];
 
   await saveFile(
-    buildRunbookExportContent(format, content),
+    await buildSecuredRunbookExportContent(format, runbookId, content),
     config.mimeType,
     filename,
     [...config.types],

@@ -43,6 +43,14 @@ export function braceToken(raw: string): string {
   return `${VariableSyntax.BRACE_OPEN}${raw}${VariableSyntax.BRACE_CLOSE}`;
 }
 
+/** Where `key` sits inside `braceToken(key)`, as an offset into the token. */
+export function braceTokenKeyRange(key: string): {
+  start: number;
+  length: number;
+} {
+  return { start: VariableSyntax.BRACE_OPEN.length, length: key.length };
+}
+
 function referenceAt(text: string, start: number, end: number): ReferenceMatch {
   return {
     token: text.slice(start, end),

@@ -9,7 +9,7 @@ export function useThemeClass(): void {
 
   useEffect(() => {
     document.documentElement.classList.toggle(
-      "theme-light",
+      CssClass.THEME_LIGHT,
       theme === Theme.LIGHT,
     );
   }, [theme]);

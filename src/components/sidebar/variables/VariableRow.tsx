@@ -6,6 +6,7 @@ import { AppMode, DragGroup, VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
+import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
 import {
   DragIcon,
   DuplicateIcon,
@@ -17,19 +18,28 @@ import { useRowReorder } from "@/hooks/useRowReorder";
 import { useVariableSplitResize } from "@/hooks/useVariableSplitResize";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { isConstantVariableKey } from "@/utils/resolution";
+import {
+  applyOperations,
+  getCaseOperationKeywords,
+  isConstantVariableKey,
+} from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { memo, useEffect, useRef, type CSSProperties } from "react";
+import { AlphabetUppercase } from "react-bootstrap-icons";
 import "./VariableRow.css";
+
+const CASE_KEYWORDS = getCaseOperationKeywords();
 
 interface Props {
   variable: Variable;
   unused?: boolean;
+  showSecretColumn?: boolean;
 }
 
 export const VariableRow = memo(function VariableRow({
   variable,
   unused,
+  showSecretColumn,
 }: Props) {
   const t = useTranslation();
   const variableId = variable.id;
@@ -68,6 +78,7 @@ export const VariableRow = memo(function VariableRow({
   useEffect(() => {
     if (pendingFocus) {
       keyRef.current?.focus();
+      keyRef.current?.select();
       consumeVariableFocus();
     }
   }, [pendingFocus, consumeVariableFocus]);
@@ -174,21 +185,51 @@ export const VariableRow = memo(function VariableRow({
         </div>
       </div>
 
-      <button
-        className={`btn btn-icon variable-secret-btn${isSecret ? " is-active" : ""}`}
-        onClick={() => toggleVariableSecret(variableId)}
-        title={isSecret ? t.variables.reveal : t.variables.mask}
-      >
-        <EyeIcon slashed={isSecret} className="icon-md icon-bold" />
-      </button>
+      {isSecret && (
+        <button
+          className="btn btn-icon variable-secret-btn"
+          onClick={() => toggleVariableSecret(variableId)}
+          title={t.variables.reveal}
+        >
+          <EyeIcon slashed className="icon-md icon-bold" />
+        </button>
+      )}
 
       <ActionsMenu className={CssClass.ROW_ACTIONS} title={t.variables.actions}>
+        <ContextMenuItem
+          icon={<EyeIcon slashed={!isSecret} className="icon-md icon-bold" />}
+          onSelect={() => toggleVariableSecret(variableId)}
+        >
+          {isSecret ? t.variables.reveal : t.variables.mask}
+        </ContextMenuItem>
+
         <ContextMenuItem
           icon={<DuplicateIcon className="icon-md icon-bold" />}
           onSelect={() => duplicateVariable(variableId)}
         >
           {t.variables.duplicate}
         </ContextMenuItem>
+
+        <ContextMenuSubmenu
+          icon={<AlphabetUppercase className="icon-md" />}
+          label={t.variables.renameCase}
+          iconlessItems
+        >
+          {CASE_KEYWORDS.map((keyword) => (
+            <ContextMenuItem
+              key={keyword}
+              onSelect={() =>
+                updateVariable(
+                  variableId,
+                  VariableField.KEY,
+                  applyOperations(variableKey, [keyword]).text,
+                )
+              }
+            >
+              {keyword}
+            </ContextMenuItem>
+          ))}
+        </ContextMenuSubmenu>
 
         <ContextMenuItem
           icon={<TrashIcon className="icon-md icon-bold" />}
@@ -198,6 +239,15 @@ export const VariableRow = memo(function VariableRow({
           {t.variables.remove}
         </ContextMenuItem>
       </ActionsMenu>
+
+      {!isSecret && showSecretColumn && (
+        <div
+          className="btn btn-icon variable-secret-btn is-placeholder"
+          aria-hidden="true"
+        >
+          <EyeIcon slashed className="icon-md icon-bold" />
+        </div>
+      )}
     </div>
   );
 });

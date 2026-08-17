@@ -1,8 +1,4 @@
-import {
-  contentTypeHeaders,
-  MimeType,
-  SharePointConfig,
-} from "@/common/config";
+import { contentTypeHeaders, MimeType, OneDriveConfig } from "@/common/config";
 import { CloudProvider, HttpMethod, HttpStatus } from "@/common/enums";
 import type {
   AccountInfo,
@@ -57,9 +53,9 @@ function ensureReady(): Promise<PublicClientApplicationClass> {
 
       const instance = new PublicClientApplication({
         auth: {
-          clientId: SharePointConfig.CLIENT_ID,
-          authority: SharePointConfig.AUTHORITY,
-          redirectUri: SharePointConfig.REDIRECT_URI,
+          clientId: OneDriveConfig.CLIENT_ID,
+          authority: OneDriveConfig.AUTHORITY,
+          redirectUri: OneDriveConfig.REDIRECT_URI,
         },
         cache: { cacheLocation: BrowserCacheLocation.LocalStorage },
       });
@@ -85,12 +81,12 @@ async function getAccessToken(): Promise<string> {
   const account = getActiveAccount(instance);
 
   if (!account) {
-    throw new CloudSyncError("Not signed in to SharePoint");
+    throw new CloudSyncError("Not signed in to OneDrive");
   }
 
   try {
     const result = await instance.acquireTokenSilent({
-      scopes: [...SharePointConfig.SCOPES],
+      scopes: [...OneDriveConfig.SCOPES],
       account,
     });
 
@@ -101,7 +97,7 @@ async function getAccessToken(): Promise<string> {
 
     if (needsInteraction) {
       const result = await instance.acquireTokenPopup({
-        scopes: [...SharePointConfig.SCOPES],
+        scopes: [...OneDriveConfig.SCOPES],
         account,
       });
 
@@ -114,7 +110,7 @@ async function getAccessToken(): Promise<string> {
 
 async function graphFetch(path: string, init?: RequestInit): Promise<Response> {
   const token = await getAccessToken();
-  const response = await fetch(`${SharePointConfig.GRAPH_BASE_URL}${path}`, {
+  const response = await fetch(`${OneDriveConfig.GRAPH_BASE_URL}${path}`, {
     ...init,
     headers: { ...init?.headers, Authorization: `Bearer ${token}` },
   });
@@ -130,7 +126,7 @@ async function graphFetch(path: string, init?: RequestInit): Promise<Response> {
 
 async function graphItemExists(path: string): Promise<boolean> {
   const token = await getAccessToken();
-  const response = await fetch(`${SharePointConfig.GRAPH_BASE_URL}${path}`, {
+  const response = await fetch(`${OneDriveConfig.GRAPH_BASE_URL}${path}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -147,11 +143,11 @@ async function graphItemExists(path: string): Promise<boolean> {
   return true;
 }
 
-class SharePointClient implements CloudClient {
-  readonly provider = CloudProvider.SHAREPOINT;
+class OneDriveClient implements CloudClient {
+  readonly provider = CloudProvider.ONEDRIVE;
 
   isConfigured(): boolean {
-    return SharePointConfig.CLIENT_ID.length > 0;
+    return OneDriveConfig.CLIENT_ID.length > 0;
   }
 
   async init(): Promise<void> {
@@ -177,7 +173,7 @@ class SharePointClient implements CloudClient {
   async signIn(): Promise<void> {
     const instance = await ensureReady();
     const result = await instance.loginPopup({
-      scopes: [...SharePointConfig.SCOPES],
+      scopes: [...OneDriveConfig.SCOPES],
     });
 
     instance.setActiveAccount(result.account);
@@ -260,4 +256,4 @@ class SharePointClient implements CloudClient {
   }
 }
 
-export const sharePointClient: CloudClient = new SharePointClient();
+export const oneDriveClient: CloudClient = new OneDriveClient();

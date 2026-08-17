@@ -5,10 +5,13 @@ export const ElementId = {
 export const MonacoSelector = {
   INPUT: "textarea.inputarea",
   EDIT_CONTEXT: ".native-edit-context",
+  CONTEXT_MENU: ".monaco-menu",
+  MENU_ITEM: ".action-item:not(.disabled):not(.separator)",
 } as const;
 
 export const InputSelector = {
   EDITABLE: `textarea, input, ${MonacoSelector.EDIT_CONTEXT}`,
+  CODE: `${MonacoSelector.INPUT}, ${MonacoSelector.EDIT_CONTEXT}`,
 } as const;
 
 export const EditCommand = {

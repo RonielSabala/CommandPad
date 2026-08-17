@@ -1,4 +1,10 @@
-import { ExportFormat, PanelId, PanelSide } from "./enums";
+import {
+  ExportFormat,
+  PanelId,
+  PanelSide,
+  VaultField,
+  VaultPrompt,
+} from "./enums";
 import type { PanelState } from "./types";
 
 export const StorageKey = {
@@ -84,6 +90,7 @@ export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
 export const EXPORT_SUCCESS_TIMEOUT_MS = 1000;
 export const TAB_HOVER_SWITCH_MS = 300;
 export const SECTION_ANIMATION_FALLBACK_MS = 250;
+export const ROUTE_PREFETCH_TIMEOUT_MS = 2000;
 
 export const MinimapConfig = {
   SCALE: 0.12,
@@ -107,11 +114,42 @@ export const LINE_BREAK = "\n";
 
 export const SECRET_MASK = "•".repeat(8);
 
+export const VaultConfig = {
+  PREFIX: "cpv1",
+  SEPARATOR: ".",
+  SEGMENT_COUNT: 4,
+  DERIVE_ALGORITHM: "PBKDF2",
+  HASH_ALGORITHM: "SHA-256",
+  CIPHER_ALGORITHM: "AES-GCM",
+  ITERATIONS: 310_000,
+  KEY_LENGTH_BITS: 256,
+  SALT_BYTES: 16,
+  IV_BYTES: 12,
+  VERIFIER_PLAINTEXT: "commandpad-vault",
+  MIN_PASSPHRASE_LENGTH: 8,
+} as const;
+
+export const VAULT_PROMPT_FIELDS: Record<VaultPrompt, readonly VaultField[]> = {
+  [VaultPrompt.CREATE]: [VaultField.NEXT, VaultField.CONFIRM],
+  [VaultPrompt.UNLOCK]: [VaultField.CURRENT],
+  [VaultPrompt.CHANGE]: [
+    VaultField.CURRENT,
+    VaultField.NEXT,
+    VaultField.CONFIRM,
+  ],
+};
+
 export const StringCaseConfig = {
   SNAKE_SEPARATOR: "_",
   KEBAB_SEPARATOR: "-",
   // Kept inside a word so `don't` titles as `Don't` rather than `Don'T`
   APOSTROPHE: "'",
+} as const;
+
+export const ExtractedVariableConfig = {
+  DEFAULT_KEY: "VARIABLE",
+  MAX_KEY_WORDS: 3,
+  MAX_KEY_LENGTH: 24,
 } as const;
 
 export const ImageBlockConfig = {
@@ -191,7 +229,6 @@ export const CloudSyncConfig = {
 
 export const MessageListConfig = {
   MAX_ITEMS: 8,
-  OVERFLOW: "...",
 } as const;
 
 // Copies made by a "Duplicate" action
@@ -242,7 +279,7 @@ export const AuthResponseParam = {
   ERROR: "error",
 } as const;
 
-export const SharePointConfig = {
+export const OneDriveConfig = {
   CLIENT_ID: import.meta.env.VITE_MSAL_CLIENT_ID ?? "",
   AUTHORITY: "https://login.microsoftonline.com/common",
   REDIRECT_URI: window.location.origin,

@@ -127,7 +127,11 @@ export function useKeybindings(): void {
       const state = store.getState();
 
       if (key === Key.ESCAPE) {
-        (document.activeElement as HTMLElement | null)?.blur?.();
+        const active = document.activeElement as HTMLElement | null;
+        if (!active?.matches(InputSelector.CODE)) {
+          active?.blur?.();
+        }
+
         state.clearUserInteraction();
       }
     };

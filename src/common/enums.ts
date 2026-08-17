@@ -153,14 +153,14 @@ export const HttpStatus = {
 export type HttpStatus = (typeof HttpStatus)[keyof typeof HttpStatus];
 
 export const CloudProvider = {
-  SHAREPOINT: "sharepoint",
+  ONEDRIVE: "onedrive",
   GOOGLE_DRIVE: "google-drive",
 } as const;
 export type CloudProvider = (typeof CloudProvider)[keyof typeof CloudProvider];
 
 export const SyncDestination = {
   LOCAL: "local",
-  SHAREPOINT: CloudProvider.SHAREPOINT,
+  ONEDRIVE: CloudProvider.ONEDRIVE,
   GOOGLE_DRIVE: CloudProvider.GOOGLE_DRIVE,
 } as const;
 export type SyncDestination =
@@ -223,6 +223,36 @@ export const CodeRendering = {
   STATIC: "static",
 } as const;
 export type CodeRendering = (typeof CodeRendering)[keyof typeof CodeRendering];
+
+export const VaultStatus = {
+  ABSENT: "absent",
+  LOCKED: "locked",
+  UNLOCKED: "unlocked",
+  UNSUPPORTED: "unsupported",
+} as const;
+export type VaultStatus = (typeof VaultStatus)[keyof typeof VaultStatus];
+
+export const VaultPrompt = {
+  CREATE: "create",
+  UNLOCK: "unlock",
+  CHANGE: "change",
+} as const;
+export type VaultPrompt = (typeof VaultPrompt)[keyof typeof VaultPrompt];
+
+export const VaultField = {
+  CURRENT: "current",
+  NEXT: "next",
+  CONFIRM: "confirm",
+} as const;
+export type VaultField = (typeof VaultField)[keyof typeof VaultField];
+
+export const VaultError = {
+  TOO_SHORT: "too-short",
+  MISMATCH: "mismatch",
+  UNCHANGED: "unchanged",
+  WRONG_PASSPHRASE: "wrong-passphrase",
+} as const;
+export type VaultError = (typeof VaultError)[keyof typeof VaultError];
 
 export const DialogTone = {
   DANGER: "danger",

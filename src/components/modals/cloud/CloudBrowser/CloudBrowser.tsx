@@ -72,8 +72,8 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
 
   const ProviderIcon = PROVIDER_ICON[provider];
   const signInLabel =
-    provider === CloudProvider.SHAREPOINT
-      ? t.cloudModal.signInSharePoint
+    provider === CloudProvider.ONEDRIVE
+      ? t.cloudModal.signInOneDrive
       : t.cloudModal.signInGoogleDrive;
 
   const searching = searchQuery.trim().length > 0;
@@ -243,7 +243,7 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
                 <p className="cloud-browser-status no-user-select">
                   <span className="cloud-browser-status-label">
                     <Spinner />
-                    {t.cloudModal.loading}
+                    {t.common.loading}
                   </span>
                 </p>
               )}

@@ -6,6 +6,7 @@ import { useDocumentInteractions } from "@/hooks/useDocumentInteractions";
 import { useKeybindings } from "@/hooks/useKeybindings";
 import { useLinkActivation } from "@/hooks/useLinkActivation";
 import { usePanelKeybindings } from "@/hooks/usePanelKeybindings";
+import { useMonacoRuntime } from "@/monaco/useMonacoRuntime";
 import { ImageLightbox } from "../blocks/image/ImageLightbox";
 import { Header } from "../header/Header";
 import { CloudFileEditorModal } from "../modals/cloud/CloudFileEditorModal";
@@ -15,11 +16,13 @@ import { AlertModal } from "../modals/dialogs/AlertModal";
 import { ConfirmModal } from "../modals/dialogs/ConfirmModal";
 import { ExportModal } from "../modals/ExportModal";
 import { PasteRunbookModal } from "../modals/PasteRunbookModal";
+import { VaultModal } from "../modals/vault/VaultModal";
 import { RunbookImportInput } from "../sidebar/runbooks/RunbookImportInput";
 import { Sidebar } from "../sidebar/Sidebar";
 import { MainPanel } from "./MainPanel";
 
 export function WorkspacePage() {
+  useMonacoRuntime();
   useWorkspaceBodyClasses();
   useKeybindings();
   usePanelKeybindings(PanelId.SIDEBAR);
@@ -42,6 +45,7 @@ export function WorkspacePage() {
       <DestinationModal />
       <CloudImportModal />
       <CloudFileEditorModal />
+      <VaultModal />
       <ConfirmModal />
       <AlertModal />
     </>

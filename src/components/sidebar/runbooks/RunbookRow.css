@@ -61,9 +61,9 @@
   box-shadow: 0 0 0 var(--space-2) var(--accent-dim);
 }
 
-/* Cloud sync indicator */
+/* Status badges */
 
-.runbook-sync {
+.runbook-badge {
   display: flex;
   flex-shrink: 0;
   align-items: center;
@@ -75,18 +75,10 @@
   transition: color var(--transition-fast);
 }
 
-.runbook-sync:hover {
+.runbook-badge:hover:not(:disabled) {
   color: var(--color-text-primary);
 }
 
-.runbook-sync.sync-synced {
-  color: var(--success);
-}
-
-.runbook-sync.sync-signed-out {
-  color: var(--warning);
-}
-
-.runbook-sync.sync-error {
-  color: var(--danger);
+.runbook-badge:disabled {
+  cursor: default;
 }

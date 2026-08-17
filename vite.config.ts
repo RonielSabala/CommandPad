@@ -5,6 +5,16 @@ import { defineConfig } from "vite";
 const MONACO_CHUNK = "monaco";
 const MONACO_PACKAGE = "monaco-editor";
 
+const VENDOR_CHUNK = "vendor";
+const VENDOR_PACKAGES = [
+  "react",
+  "react-dom",
+  "react-router",
+  "react-router-dom",
+  "scheduler",
+];
+const VITE_PRELOAD_HELPER = "vite/preload-helper";
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
@@ -25,6 +35,13 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes(MONACO_PACKAGE)) {
             return MONACO_CHUNK;
+          }
+
+          if (
+            id.includes(VITE_PRELOAD_HELPER) ||
+            VENDOR_PACKAGES.some((pkg) => id.includes(`node_modules/${pkg}/`))
+          ) {
+            return VENDOR_CHUNK;
           }
         },
       },

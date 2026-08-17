@@ -11,6 +11,7 @@ export const DocsSectionId = {
   DIVIDER_BLOCK: "divider-block",
   VARIABLES: "variables",
   SECRET_VARIABLES: "secret-variables",
+  SECRET_ENCRYPTION: "secret-encryption",
   VARIABLE_REFERENCES: "variable-references",
   PARAMETERIZED_PLACEHOLDERS: "parameterized-placeholders",
   VARIABLE_SLICING: "variable-slicing",
@@ -55,6 +56,7 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.DIVIDER_BLOCK, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.VARIABLES, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.SECRET_VARIABLES, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.SECRET_ENCRYPTION, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.VARIABLE_REFERENCES, level: DocsSectionLevel.SUBSECTION },
   {
     id: DocsSectionId.PARAMETERIZED_PLACEHOLDERS,

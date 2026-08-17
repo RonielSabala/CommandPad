@@ -1,9 +1,9 @@
+import { VaultPrompt } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
 import { demoCommand, demoVariable } from "../demos/demoSeeds";
 import { DemoVariableRows, DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
-import "./VariablesSection.css";
 
 export function VariablesDocs() {
   const t = useTranslation();
@@ -15,7 +15,6 @@ export function VariablesDocs() {
       <Prose text={t.docs.variables.usage} />
       <Prose text={t.docs.variables.demoHint(t.variables.actions)} />
       <DemoWorkspace
-        className="docs-demo-hide-secret"
         tabs={[
           {
             variables: [demoVariable("server", "192.168.1.50")],
@@ -29,10 +28,10 @@ export function VariablesDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variables.extract(t.command.extractVariable)} />
       <Prose text={t.docs.variables.constants} />
       <Prose text={t.docs.variables.constantsDemoHint} />
       <DemoWorkspace
-        className="docs-demo-hide-secret"
         tabs={[
           {
             variables: [
@@ -49,6 +48,58 @@ export function VariablesDocs() {
       <Prose text={t.docs.variables.unresolved} />
       <Prose text={t.docs.variables.tooltip} />
       <Prose text={t.docs.variables.split} />
+    </>
+  );
+}
+
+export function SecretVariablesDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose
+        text={t.docs.secretVariables.intro(
+          t.variables.actions,
+          t.variables.mask,
+        )}
+      />
+      <Prose text={t.docs.secretVariables.copyNote} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("password", "s3cr3t-value", true)],
+            blocks: [
+              demoCommand("zip -r -P {password} backup.zip ~/Documents"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
+export function SecretEncryptionDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.secretEncryption.intro} />
+      <Prose
+        text={t.docs.secretEncryption.passphrase(
+          t.vaultModal.submit[VaultPrompt.CREATE],
+        )}
+      />
+      <Prose text={t.docs.secretEncryption.covered} />
+      <Prose text={t.docs.secretEncryption.unlocking} />
+      <Prose
+        text={t.docs.secretEncryption.changing(
+          t.vaultModal.title[VaultPrompt.CHANGE],
+        )}
+      />
+      <Prose text={t.docs.secretEncryption.markdownWarning} />
     </>
   );
 }
@@ -250,6 +301,7 @@ export function VariableCaseDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variableCase.renameHint(t.variables.renameCase)} />
     </>
   );
 }
@@ -348,30 +400,6 @@ export function EscapingBracesDocs() {
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.escapingBraces.scope} />
-    </>
-  );
-}
-
-export function SecretVariablesDocs() {
-  const t = useTranslation();
-
-  return (
-    <>
-      <Prose text={t.docs.secretVariables.intro} />
-      <Prose text={t.docs.secretVariables.copyNote} />
-      <DemoWorkspace
-        tabs={[
-          {
-            variables: [demoVariable("password", "s3cr3t-value", true)],
-            blocks: [
-              demoCommand("zip -r -P {password} backup.zip ~/Documents"),
-            ],
-          },
-        ]}
-      >
-        <DemoVariableRows />
-        <BlocksList />
-      </DemoWorkspace>
     </>
   );
 }

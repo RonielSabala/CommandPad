@@ -15,6 +15,8 @@ import {
   PANEL_DEFINITIONS,
   RunbookConfig,
   VariableSplit,
+  VAULT_PROMPT_FIELDS,
+  VaultConfig,
   ZIP_EXTENSION,
 } from "@/common/config";
 import {
@@ -36,6 +38,10 @@ import {
   SyncDestination,
   Theme,
   VariableField,
+  VaultError,
+  VaultField,
+  VaultPrompt,
+  VaultStatus,
 } from "@/common/enums";
 import type {
   Block,
@@ -47,6 +53,7 @@ import type {
   RunbookSync,
   Tab,
   Variable,
+  VaultRecord,
 } from "@/common/types";
 import { detectLanguage, getMessages } from "@/i18n/messages";
 import { Language } from "@/i18n/types";
@@ -66,11 +73,29 @@ import {
   type CloudSort,
   type PlacedCloudEntry,
 } from "@/services/cloud";
+import {
+  adoptOpenVault,
+  countEncryptedSecrets,
+  createVault,
+  decryptContent,
+  decryptContentWithOpenVaults,
+  decryptContentWithPassphrase,
+  encryptContent,
+  hasPlainSecrets,
+  holdsSecrets,
+  isVaultSupported,
+  isVaultUnlocked,
+  lockVault,
+  recordFromCiphertext,
+  resolveVaultStatus,
+  unlockVault,
+} from "@/services/vault";
 import { debounce } from "@/utils/debounce";
 import { downloadBlob } from "@/utils/download";
 import {
   buildMarkdownExport,
-  buildRunbookExportContent,
+  buildRunbookExportJson,
+  buildSecuredRunbookExportContent,
   getExportBasename,
   runExport,
   stripJsonExtension,
@@ -81,6 +106,7 @@ import { openImportDialog } from "@/utils/importTrigger";
 import { clamp } from "@/utils/number";
 import {
   carryVariables,
+  extractedVariableKey,
   getVariableKey,
   renameAllCommandTokens,
   renameCommandTokens,
@@ -95,6 +121,7 @@ import {
   useStore as useZustandStore,
   type StoreApi,
 } from "zustand";
+
 import * as persistence from "./persistence";
 import {
   deleteRunbookContent,
@@ -126,6 +153,17 @@ interface ConfirmDialog extends Dialog<boolean> {
 
 interface ConfirmOptions extends AlertOptions {
   confirmLabel?: string;
+}
+
+export type VaultPassphrases = Record<VaultField, string>;
+
+export interface VaultDialog {
+  prompt: VaultPrompt;
+  filename: string | null;
+  error: VaultError | null;
+  busy: boolean;
+  verify: (passphrases: VaultPassphrases) => Promise<boolean>;
+  resolve: (unlocked: boolean) => void;
 }
 
 export interface CloudFileEditor {
@@ -181,6 +219,10 @@ export interface StoreState {
   pasteRunbookModalOpen: boolean;
   confirmDialog: ConfirmDialog | null;
   alertDialog: AlertDialog | null;
+
+  // Secret encryption
+  vaultStatus: Record<string, VaultStatus>;
+  vaultDialog: VaultDialog | null;
 
   // Cloud sync
   destinationModalOpen: boolean;
@@ -243,6 +285,7 @@ export interface StoreState {
     rawFilename: string,
     sync?: RunbookSync,
     openInTab?: boolean,
+    vault?: { record: VaultRecord; passphrase: string | null },
   ) => Promise<boolean>;
   syncRunbookNow: (id: string) => Promise<void>;
   unlinkRunbookSync: (id: string) => void;
@@ -253,6 +296,7 @@ export interface StoreState {
   navigateRunbookList: (direction: MoveDirection) => void;
 
   addVariable: () => Promise<void>;
+  extractVariable: (value: string) => { id: string; key: string } | null;
   removeVariable: (variableId: string) => void;
   duplicateVariable: (variableId: string) => void;
   updateVariable: (
@@ -368,6 +412,11 @@ export interface StoreState {
   duplicateCloudEntries: (entries: CloudEntry[]) => Promise<void>;
   downloadCloudEntries: (entries: CloudEntry[]) => Promise<void>;
   deleteCloudEntries: (entries: CloudEntry[]) => Promise<void>;
+
+  requestVaultUnlock: (runbookId: string) => Promise<boolean>;
+  changeVaultPassphrase: (runbookId: string) => Promise<boolean>;
+  submitVaultPassphrase: (passphrases: VaultPassphrases) => Promise<void>;
+  dismissVaultDialog: () => void;
 
   confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
   resolveConfirm: (result: boolean) => void;
@@ -588,8 +637,12 @@ interface ContentDb {
 }
 
 const REAL_CONTENT_DB: ContentDb = {
-  get: getRunbookContent,
-  put: putRunbookContent,
+  get: async (id) => {
+    const stored = await getRunbookContent(id);
+    return stored ? (await decryptContent(id, stored)).content : null;
+  },
+  put: async (id, content) =>
+    putRunbookContent(id, await encryptContent(id, content)),
   delete: deleteRunbookContent,
 };
 
@@ -625,9 +678,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
     // --- Cloud sync ---
 
-    /** Runbook id -> the JSON waiting to go up */
-    const queuedSyncContent = new Map<string, string>();
-    /** Runbook id -> the JSON last written to the cloud, to skip no-op pushes */
+    const queuedSyncContent = new Map<
+      string,
+      { json: string; content: RunbookContent }
+    >();
     const pushedSyncContent = new Map<string, string>();
 
     const setSyncStatus = (runbookId: string, status: RunbookSyncStatus) =>
@@ -652,7 +706,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       get().runbookLibrary.find((item) => item.id === runbookId)?.sync;
 
     const runbookJson = (content: RunbookContent) =>
-      buildRunbookExportContent(ExportFormat.JSON, content);
+      buildRunbookExportJson(content);
 
     /** Records content the cloud already holds, so nothing is pushed back. */
     const markRunbookSynced = (runbookId: string, content: RunbookContent) => {
@@ -676,7 +730,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       try {
         while (queuedSyncContent.size > 0) {
-          const [runbookId, json] = [...queuedSyncContent][0];
+          const [runbookId, { json, content }] = [...queuedSyncContent][0];
           queuedSyncContent.delete(runbookId);
 
           const link = getSyncLink(runbookId);
@@ -692,9 +746,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
               continue;
             }
 
+            // Encrypted here, not when queued, so the queue stays comparable
             await client.writeFile(
               link.filename,
-              json,
+              await buildSecuredRunbookExportContent(
+                ExportFormat.JSON,
+                runbookId,
+                content,
+              ),
               MimeType.JSON,
               link.folderId,
             );
@@ -734,7 +793,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         return;
       }
 
-      queuedSyncContent.set(runbookId, json);
+      queuedSyncContent.set(runbookId, { json, content });
       setSyncStatus(runbookId, RunbookSyncStatus.SYNCING);
       debouncedFlushSyncs();
     };
@@ -753,6 +812,298 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       markRunbookSynced(runbookId, content);
       persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+    };
+
+    // --- Secret encryption ---
+
+    const getVaultRecord = (runbookId: string) =>
+      (isDemo
+        ? null
+        : get().runbookLibrary.find((entry) => entry.id === runbookId)
+            ?.vault) ?? null;
+
+    const refreshVaultStatus = () =>
+      set((s) => ({
+        vaultStatus: Object.fromEntries(
+          s.runbookLibrary.map((entry) => [
+            entry.id,
+            resolveVaultStatus(entry.id, entry.vault),
+          ]),
+        ),
+      }));
+
+    const setVaultRecord = (runbookId: string, record: VaultRecord | null) => {
+      set((s) => ({
+        runbookLibrary: s.runbookLibrary.map((entry) =>
+          entry.id === runbookId
+            ? { ...entry, vault: record ?? undefined }
+            : entry,
+        ),
+      }));
+
+      persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+      refreshVaultStatus();
+    };
+
+    /** The runbook a vault prompt acts on: whichever one is in front of you. */
+    const activeVaultScope = () => getActiveTab(get())?.runbookId ?? null;
+
+    const promptVault = (
+      prompt: VaultPrompt,
+      verify: (passphrases: VaultPassphrases) => Promise<boolean>,
+      filename: string | null = null,
+    ) =>
+      new Promise<boolean>((resolve) => {
+        if (isDemo || !isVaultSupported()) {
+          resolve(false);
+          return;
+        }
+
+        set({
+          vaultDialog: {
+            prompt,
+            filename,
+            error: null,
+            busy: false,
+            verify,
+            resolve,
+          },
+        });
+      });
+
+    const markRunbookSecured = (runbookId: string, secured: boolean) => {
+      const entry = get().runbookLibrary.find((item) => item.id === runbookId);
+      if (!entry) {
+        return;
+      }
+
+      if (!secured && (entry.vault || isVaultUnlocked(runbookId))) {
+        lockVault(runbookId);
+        setVaultRecord(runbookId, null);
+      }
+
+      if (!!entry.secured === secured) {
+        return;
+      }
+
+      set((s) => ({
+        runbookLibrary: s.runbookLibrary.map((item) =>
+          item.id === runbookId ? { ...item, secured } : item,
+        ),
+      }));
+
+      persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+    };
+
+    const writeRunbookContent = async (
+      runbookId: string,
+      content: RunbookContent,
+    ) => {
+      await contentDb.put(runbookId, content);
+      markRunbookSecured(runbookId, holdsSecrets(content));
+    };
+
+    const encryptStoredRunbook = async (runbookId: string) => {
+      try {
+        const stored = await contentDb.get(runbookId);
+        if (stored && hasPlainSecrets(stored)) {
+          await writeRunbookContent(runbookId, stored);
+        }
+      } catch (error) {
+        console.warn("Failed to encrypt stored runbook:", runbookId, error);
+      }
+    };
+
+    const requeueLinkedRunbook = async (runbookId: string) => {
+      const entry = get().runbookLibrary.find((item) => item.id === runbookId);
+      if (!entry?.sync) {
+        return;
+      }
+
+      pushedSyncContent.delete(runbookId);
+      const content = await readRunbookContent(runbookId);
+      if (content) {
+        queueCloudSync(runbookId, content);
+      }
+    };
+
+    const createVaultWith =
+      (runbookId: string) => async (passphrases: VaultPassphrases) => {
+        setVaultRecord(
+          runbookId,
+          await createVault(runbookId, passphrases[VaultField.NEXT]),
+        );
+
+        await encryptStoredRunbook(runbookId);
+        await requeueLinkedRunbook(runbookId);
+        return true;
+      };
+
+    const unlockVaultWith =
+      (runbookId: string) => async (passphrases: VaultPassphrases) => {
+        const record = getVaultRecord(runbookId);
+        if (
+          !record ||
+          !(await unlockVault(
+            runbookId,
+            passphrases[VaultField.CURRENT],
+            record,
+          ))
+        ) {
+          return false;
+        }
+
+        refreshVaultStatus();
+        await decryptOpenTabs(runbookId);
+        return true;
+      };
+
+    const changeVaultPassphraseTo =
+      (runbookId: string) => async (passphrases: VaultPassphrases) => {
+        const record = getVaultRecord(runbookId);
+        if (
+          !record ||
+          !(await unlockVault(
+            runbookId,
+            passphrases[VaultField.CURRENT],
+            record,
+          ))
+        ) {
+          return false;
+        }
+
+        let plain: RunbookContent | null = null;
+        try {
+          plain = await contentDb.get(runbookId);
+        } catch (error) {
+          console.warn(
+            "Failed to read runbook for re-keying:",
+            runbookId,
+            error,
+          );
+        }
+
+        // An open tab may hold ciphertext it was loaded with while locked
+        await decryptOpenTabs(runbookId);
+
+        setVaultRecord(
+          runbookId,
+          await createVault(runbookId, passphrases[VaultField.NEXT]),
+        );
+
+        if (plain) {
+          try {
+            await writeRunbookContent(runbookId, plain);
+          } catch (error) {
+            console.warn("Failed to re-key stored runbook:", runbookId, error);
+          }
+        }
+
+        await requeueLinkedRunbook(runbookId);
+        return true;
+      };
+
+    const closeVaultDialog = (unlocked: boolean) => {
+      const dialog = get().vaultDialog;
+      set({ vaultDialog: null });
+      dialog?.resolve(unlocked);
+    };
+
+    const decryptOpenTabs = async (runbookId: string) => {
+      const decrypted = await Promise.all(
+        get().tabs.map(async (tab) => {
+          const content = { variables: tab.variables, blocks: tab.blocks };
+          if (tab.runbookId !== runbookId || !countEncryptedSecrets(content)) {
+            return tab;
+          }
+
+          const result = await decryptContent(runbookId, content);
+          return { ...tab, variables: result.content.variables };
+        }),
+      );
+
+      set((s) => ({
+        tabs: s.tabs.map(
+          (tab) => decrypted.find((next) => next.id === tab.id) ?? tab,
+        ),
+      }));
+    };
+
+    const promptUnlockForActiveTab = async () => {
+      const tab = getActiveTab(get());
+      const runbookId = tab?.runbookId;
+
+      if (!tab || !runbookId || !getVaultRecord(runbookId)) {
+        return false;
+      }
+
+      const locked = countEncryptedSecrets({
+        variables: tab.variables,
+        blocks: tab.blocks,
+      });
+
+      return locked > 0
+        ? await promptVault(VaultPrompt.UNLOCK, unlockVaultWith(runbookId))
+        : false;
+    };
+
+    const ensureVaultForSecrets = async () => {
+      const runbookId = activeVaultScope();
+      if (
+        !runbookId ||
+        isVaultUnlocked(runbookId) ||
+        getVaultRecord(runbookId)
+      ) {
+        return true;
+      }
+
+      return await promptVault(VaultPrompt.CREATE, createVaultWith(runbookId));
+    };
+
+    interface ImportedVaultResult {
+      content: RunbookContent;
+      vault: VaultRecord | null;
+      passphrase: string | null;
+    }
+
+    const decryptImportedContent = async (
+      content: RunbookContent,
+      filename: string | null = null,
+    ): Promise<ImportedVaultResult> => {
+      if (countEncryptedSecrets(content) === 0) {
+        return { content, vault: null, passphrase: null };
+      }
+
+      const vault = recordFromCiphertext(content);
+      const attempt = await decryptContentWithOpenVaults(content);
+
+      if (attempt.failed === 0) {
+        return { content: attempt.content, vault, passphrase: null };
+      }
+
+      let opened = attempt.content;
+      let passphrase: string | null = null;
+      await promptVault(
+        VaultPrompt.UNLOCK,
+        async (passphrases) => {
+          const candidate = passphrases[VaultField.CURRENT];
+          const result = await decryptContentWithPassphrase(
+            attempt.content,
+            candidate,
+          );
+
+          if (result.failed > 0) {
+            return false;
+          }
+
+          opened = result.content;
+          passphrase = candidate;
+          return true;
+        },
+        filename,
+      );
+
+      return { content: opened, vault, passphrase };
     };
 
     /** The runbook's content as the tab holds it, else as the DB holds it. */
@@ -884,9 +1235,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       confirmDialog: null,
       alertDialog: null,
 
+      vaultStatus: {},
+      vaultDialog: null,
+
       destinationModalOpen: false,
       cloudImportModalOpen: false,
-      cloudProvider: CloudProvider.SHAREPOINT,
+      cloudProvider: CloudProvider.ONEDRIVE,
       cloudSignedIn: false,
       cloudAccountLabel: null,
       cloudEntries: [],
@@ -933,11 +1287,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             blocks: active.blocks,
           };
 
-          contentDb
-            .put(active.runbookId, content)
-            .catch((error) =>
-              console.warn("Failed to persist runbook content:", error),
-            );
+          writeRunbookContent(active.runbookId, content).catch((error) =>
+            console.warn("Failed to persist runbook content:", error),
+          );
           queueCloudSync(active.runbookId, content);
         }
       },
@@ -1011,6 +1363,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         set({ initialized: true });
+        refreshVaultStatus();
+        await promptUnlockForActiveTab();
 
         // An edit made just before the last close may never have reached the
         // cloud, so every linked tab gets one catch-up push on load
@@ -1060,7 +1414,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             focusedRunbookId: null,
           }));
 
-          await contentDb.put(newRunbookId, { variables: [], blocks: [] });
+          await writeRunbookContent(newRunbookId, {
+            variables: [],
+            blocks: [],
+          });
           persist.saveRunbookLibrary(
             get().runbookLibrary,
             get().activeRunbookId,
@@ -1302,13 +1659,18 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           : "";
 
         const newId = generateId();
-        await contentDb.put(newId, copy);
+        await writeRunbookContent(newId, copy);
 
         set((s) => {
           const runbookLibrary = [...s.runbookLibrary];
           const insertAt =
             runbookLibrary.findIndex((item) => item.id === id) + 1;
-          runbookLibrary.splice(insertAt, 0, { id: newId, label, filename });
+          runbookLibrary.splice(insertAt, 0, {
+            id: newId,
+            label,
+            filename,
+            secured: holdsSecrets(copy),
+          });
 
           return { runbookLibrary };
         });
@@ -1322,6 +1684,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         rawFilename,
         sync,
         openInTab = true,
+        vault,
       ) => {
         const label = getRunbookLabel(
           content.blocks,
@@ -1338,6 +1701,25 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           } else {
             queueCloudSync(runbookId, content);
           }
+        };
+
+        const applyImportedVault = async (runbookId: string) => {
+          if (!vault) {
+            return;
+          }
+
+          setVaultRecord(runbookId, vault.record);
+
+          const opened = vault.passphrase
+            ? await unlockVault(runbookId, vault.passphrase, vault.record)
+            : adoptOpenVault(runbookId, vault.record);
+
+          if (!opened) {
+            return;
+          }
+
+          refreshVaultStatus();
+          await encryptStoredRunbook(runbookId);
         };
 
         const state = get();
@@ -1361,7 +1743,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             return false;
           }
 
-          await contentDb.put(existing.id, content);
+          await writeRunbookContent(existing.id, content);
           set((s) => ({
             runbookLibrary: s.runbookLibrary.map((item) =>
               item.id === existing.id
@@ -1369,6 +1751,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
                     ...item,
                     label,
                     filename: filename || "",
+                    secured: holdsSecrets(content),
                     // An import keeps the entry's existing link unless it brings its own
                     ...(sync ? { sync } : {}),
                   }
@@ -1392,12 +1775,16 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             persist.saveTabsMeta(get().tabs, get().activeTabId);
           }
 
+          if (!existing.vault) {
+            await applyImportedVault(existing.id);
+          }
+
           settleSync(existing.id);
           return true;
         }
 
         const newId = generateId();
-        await contentDb.put(newId, content);
+        await writeRunbookContent(newId, content);
         set((s) => ({
           runbookLibrary: [
             ...s.runbookLibrary,
@@ -1405,10 +1792,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
               id: newId,
               label,
               filename: filename || "",
+              secured: holdsSecrets(content),
               ...(sync ? { sync } : {}),
             },
           ],
         }));
+        await applyImportedVault(newId);
         settleSync(newId);
 
         if (!openInTab) {
@@ -1449,7 +1838,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
 
-        queuedSyncContent.set(id, runbookJson(content));
+        queuedSyncContent.set(id, { json: runbookJson(content), content });
         await flushQueuedSyncs();
       },
 
@@ -1477,15 +1866,22 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             const reader = new FileReader();
             reader.onload = async (loadEvent) => {
               try {
-                const content = parseRunbookContent(
-                  String(loadEvent.target?.result),
+                const decrypted = await decryptImportedContent(
+                  parseRunbookContent(String(loadEvent.target?.result)),
+                  file.name,
                 );
                 await get().addRunbookToLibrary(
-                  content,
+                  decrypted.content,
                   file.name.replace(/\.json$/i, ""),
                   file.name,
                   undefined,
                   openInTab,
+                  decrypted.vault
+                    ? {
+                        record: decrypted.vault,
+                        passphrase: decrypted.passphrase,
+                      }
+                    : undefined,
                 );
               } catch {
                 failedCount += 1;
@@ -1513,17 +1909,22 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       importRunbookFromText: async (text) => {
-        let content: RunbookContent;
+        let decrypted: ImportedVaultResult;
         try {
-          content = parseRunbookContent(text);
+          decrypted = await decryptImportedContent(parseRunbookContent(text));
         } catch {
           return false;
         }
 
         return await get().addRunbookToLibrary(
-          content,
+          decrypted.content,
           generateId(),
           getMessages(get().language).dialogs.pastedRunbook,
+          undefined,
+          undefined,
+          decrypted.vault
+            ? { record: decrypted.vault, passphrase: decrypted.passphrase }
+            : undefined,
         );
       },
 
@@ -1590,6 +1991,39 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           pendingFocusVariableId: newVariable.id,
         }));
         get().saveState();
+      },
+
+      extractVariable: (value) => {
+        const state = get();
+        const tab = getActiveTab(state);
+
+        if (state.mode === AppMode.READ || !tab || !value) {
+          return null;
+        }
+
+        const key = extractedVariableKey(
+          value,
+          new Set(tab.variables.map((v) => getVariableKey(v))),
+        );
+        const newVariable: Variable = { id: generateId(), key, value };
+
+        set((s) => ({
+          ...withActiveTab(s, (t) => ({
+            ...t,
+            variables: [...t.variables, newVariable],
+          })),
+          variableSearchQuery: "",
+        }));
+
+        if (get().variablesSectionCollapsed) {
+          get().toggleVariablesSection();
+        }
+        if (get().panels[PanelId.SIDEBAR].collapsed) {
+          get().togglePanel(PanelId.SIDEBAR);
+        }
+
+        get().saveState();
+        return { id: newVariable.id, key };
       },
 
       removeVariable: (variableId) => {
@@ -1686,6 +2120,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       toggleVariableSecret: (variableId) => {
+        const active = getActiveTab(get());
+        const marking = !active?.variables.find((v) => v.id === variableId)
+          ?.secret;
+
         set((s) =>
           withActiveTab(s, (tab) => ({
             ...tab,
@@ -1694,7 +2132,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             ),
           })),
         );
-        get().saveState();
+
+        if (!marking) {
+          get().saveState();
+          return;
+        }
+
+        void ensureVaultForSecrets().then(() => get().saveState());
       },
 
       reorderVariables: (sourceId, targetId) => {
@@ -2287,12 +2731,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           blocks: active?.blocks ?? [],
         };
 
+        const scope = active?.runbookId ?? "";
         const fullName = `${filename}.${format}`;
 
         // Local export
         if (destination === SyncDestination.LOCAL) {
           set({ exportModalOpen: false });
-          await runExport(format, content, fullName);
+          await runExport(format, scope, content, fullName);
           return;
         }
 
@@ -2332,7 +2777,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
           await client.writeFile(
             fullName,
-            buildRunbookExportContent(format, content),
+            await buildSecuredRunbookExportContent(format, scope, content),
             FilePickerConfig[format].mimeType,
             folderId,
           );
@@ -2682,12 +3127,28 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set({ cloudSelectedEntries: emptyCloudSelection() }),
 
       importRunbooksFromCloud: async (files) => {
-        if (files.length === 0) {
+        const filesCount = files.length;
+        if (filesCount === 0) {
           return;
         }
 
         const client = getCloudClient(get().cloudProvider);
         const t = getMessages(get().language);
+
+        if (filesCount > 1) {
+          const confirmed = await get().confirm(
+            t.dialogs.importCloudFilesMessage(files.map((file) => file.name)),
+            {
+              title: t.dialogs.importCloudFilesTitle,
+              confirmLabel: t.dialogs.importCloudFilesConfirm,
+              tone: DialogTone.INFO,
+            },
+          );
+
+          if (!confirmed) {
+            return;
+          }
+        }
 
         // Every file is read before the first one is added
         const pending: { file: CloudEntry; content: RunbookContent }[] = [];
@@ -2726,11 +3187,16 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         let added = 0;
         for (const { file, content } of pending) {
+          const decrypted = await decryptImportedContent(content, file.name);
           const accepted = await get().addRunbookToLibrary(
-            content,
+            decrypted.content,
             stripJsonExtension(file.name),
             file.name,
             syncs.get(file.id),
+            undefined,
+            decrypted.vault
+              ? { record: decrypted.vault, passphrase: decrypted.passphrase }
+              : undefined,
           );
 
           if (accepted) {
@@ -2984,8 +3450,26 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         const t = getMessages(get().language);
-        const client = getCloudClient(get().cloudProvider);
         const single = entries.length === 1 ? entries[0] : null;
+
+        if (!single) {
+          const confirmed = await get().confirm(
+            t.dialogs.downloadCloudEntriesMessage(
+              entries.map((entry) => entry.name),
+            ),
+            {
+              title: t.dialogs.downloadCloudEntriesTitle,
+              confirmLabel: t.dialogs.downloadCloudEntriesConfirm,
+              tone: DialogTone.INFO,
+            },
+          );
+
+          if (!confirmed) {
+            return;
+          }
+        }
+
+        const client = getCloudClient(get().cloudProvider);
 
         set({ cloudLoading: true, cloudError: null });
         try {
@@ -3091,6 +3575,85 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         await navigator.clipboard.writeText(text);
       },
 
+      // --- Secret encryption ---
+
+      requestVaultUnlock: async (runbookId) =>
+        getVaultRecord(runbookId)
+          ? await promptVault(VaultPrompt.UNLOCK, unlockVaultWith(runbookId))
+          : await promptVault(VaultPrompt.CREATE, createVaultWith(runbookId)),
+
+      changeVaultPassphrase: async (runbookId) =>
+        getVaultRecord(runbookId)
+          ? await promptVault(
+              VaultPrompt.CHANGE,
+              changeVaultPassphraseTo(runbookId),
+            )
+          : await promptVault(VaultPrompt.CREATE, createVaultWith(runbookId)),
+
+      submitVaultPassphrase: async (passphrases) => {
+        const dialog = get().vaultDialog;
+        if (!dialog || dialog.busy) {
+          return;
+        }
+
+        const failWith = (error: VaultError) =>
+          set((s) =>
+            s.vaultDialog
+              ? { vaultDialog: { ...s.vaultDialog, error, busy: false } }
+              : {},
+          );
+
+        // Only the boxes this prompt shows are validated
+        const fields = VAULT_PROMPT_FIELDS[dialog.prompt];
+        const next = passphrases[VaultField.NEXT];
+
+        if (
+          fields.includes(VaultField.NEXT) &&
+          next.length < VaultConfig.MIN_PASSPHRASE_LENGTH
+        ) {
+          failWith(VaultError.TOO_SHORT);
+          return;
+        }
+
+        if (
+          fields.includes(VaultField.CONFIRM) &&
+          next !== passphrases[VaultField.CONFIRM]
+        ) {
+          failWith(VaultError.MISMATCH);
+          return;
+        }
+
+        if (
+          fields.includes(VaultField.CURRENT) &&
+          fields.includes(VaultField.NEXT) &&
+          next === passphrases[VaultField.CURRENT]
+        ) {
+          failWith(VaultError.UNCHANGED);
+          return;
+        }
+
+        set({ vaultDialog: { ...dialog, error: null, busy: true } });
+
+        let accepted = false;
+        try {
+          accepted = await dialog.verify(passphrases);
+        } catch (error) {
+          console.error("Vault passphrase check failed", error);
+        }
+
+        if (!accepted) {
+          failWith(VaultError.WRONG_PASSPHRASE);
+          return;
+        }
+
+        set({ vaultDialog: null });
+        dialog.resolve(true);
+
+        get().saveState();
+      },
+
+      dismissVaultDialog: () => closeVaultDialog(false),
+
       // --- Dialogs ---
 
       confirm: (message, options) => {
@@ -3194,6 +3757,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           await deleteRunbookDb();
           localStorage.clear();
           sessionStorage.clear();
+          lockVault();
+          set({ vaultStatus: {} });
         }
 
         queuedSyncContent.clear();

@@ -96,6 +96,21 @@ export const VariableCompletionConfig = {
   MAX_REFERENCE_LINES: 20,
 } as const;
 
+export const MonacoContextMenu = {
+  GROUP: "1_commandpad",
+  OPEN_WAIT_FRAMES: 10,
+  SHOW_ACTION: "editor.action.showContextMenu",
+  TRIGGER_SOURCE: "commandpad",
+} as const;
+
+export const EditorActionId = {
+  EXTRACT_VARIABLE: "commandpad.extractVariable",
+} as const;
+
+export const EditorActionOrder = {
+  EXTRACT_VARIABLE: 1,
+} as const;
+
 export const MonacoOverflowWidgets = {
   EDITOR_CLASS: "monaco-editor",
   ROOT_CLASS: "monaco-overflow-widgets",
