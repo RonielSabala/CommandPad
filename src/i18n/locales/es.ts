@@ -377,6 +377,18 @@ export const es: Messages = {
       `¿Hacer una copia de estos ${names.length} elementos en tu carpeta en la nube?\n${codeBulletList(
         names,
       )}\n\nCada copia se añade junto al original, y una carpeta se copia con todo lo que contiene.`,
+    importCloudFilesTitle: "Importar Archivos de la Nube",
+    importCloudFilesConfirm: "Importar",
+    importCloudFilesMessage: (names) =>
+      `¿Importar estos ${names.length} archivos a tu biblioteca?\n${codeBulletList(
+        names,
+      )}\n\nCada uno se añade como su propio runbook y queda vinculado a su archivo en la nube, así que los cambios posteriores se envían de vuelta a él.`,
+    downloadCloudEntriesTitle: "Descargar Elementos de la Nube",
+    downloadCloudEntriesConfirm: "Descargar",
+    downloadCloudEntriesMessage: (names) =>
+      `¿Descargar estos ${names.length} elementos de tu carpeta en la nube?\n${codeBulletList(
+        names,
+      )}\n\nSe guardan juntos en un único archivo _.zip_, y una carpeta se descarga con todo lo que contiene.`,
     signOutCloudTitle: "Cerrar Sesión",
     signOutCloudConfirm: "Cerrar Sesión",
     signOutCloudMessage:
@@ -1034,6 +1046,8 @@ Si algo sale mal, deshazlo en este orden:
         `El menú de **tres puntos** de una fila tiene **${rename}**, **${edit}**, **${duplicate}**, **${download}** y **${deleteLabel}**.`,
       multiSelect:
         "Las filas se seleccionan como los archivos de un explorador. Haz clic en una fila para seleccionarla, en el **círculo** de su izquierda para sumarla o quitarla de la selección, `Ctrl`+clic para lo mismo en cualquier punto de la fila y `Shift`+clic para tomar todo lo que hay entre la última fila que tocaste y esta. El círculo de la cabecera suma o quita las filas que estén listadas, y hacer clic en el espacio vacío bajo las filas vacía la selección.",
+      bulkActions:
+        "Con dos o más filas seleccionadas, una acción del menú se aplica a toda la selección, e importar, duplicar, descargar o eliminar esa cantidad de elementos te pide confirmación primero, enumerando exactamente lo que va a tocar. Una sola fila sigue actuando con un clic.",
       editFile:
         "**Editar** abre el JSON del archivo en el sitio, así que un arreglo rápido ya no implica importar, cambiar y volver a exportar. Tiene que seguir siendo JSON válido para guardarse.",
       recycleBin:

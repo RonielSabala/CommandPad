@@ -311,6 +311,12 @@ export interface Messages {
     duplicateCloudEntriesTitle: string;
     duplicateCloudEntriesConfirm: string;
     duplicateCloudEntriesMessage: (names: string[]) => string;
+    importCloudFilesTitle: string;
+    importCloudFilesConfirm: string;
+    importCloudFilesMessage: (names: string[]) => string;
+    downloadCloudEntriesTitle: string;
+    downloadCloudEntriesConfirm: string;
+    downloadCloudEntriesMessage: (names: string[]) => string;
     signOutCloudTitle: string;
     signOutCloudConfirm: string;
     signOutCloudMessage: string;
@@ -574,6 +580,7 @@ export interface Messages {
         deleteLabel: string,
       ) => string;
       multiSelect: string;
+      bulkActions: string;
       editFile: string;
       recycleBin: string;
     };

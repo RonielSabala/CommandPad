@@ -3127,12 +3127,28 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set({ cloudSelectedEntries: emptyCloudSelection() }),
 
       importRunbooksFromCloud: async (files) => {
-        if (files.length === 0) {
+        const filesCount = files.length;
+        if (filesCount === 0) {
           return;
         }
 
         const client = getCloudClient(get().cloudProvider);
         const t = getMessages(get().language);
+
+        if (filesCount > 1) {
+          const confirmed = await get().confirm(
+            t.dialogs.importCloudFilesMessage(files.map((file) => file.name)),
+            {
+              title: t.dialogs.importCloudFilesTitle,
+              confirmLabel: t.dialogs.importCloudFilesConfirm,
+              tone: DialogTone.INFO,
+            },
+          );
+
+          if (!confirmed) {
+            return;
+          }
+        }
 
         // Every file is read before the first one is added
         const pending: { file: CloudEntry; content: RunbookContent }[] = [];
@@ -3434,8 +3450,26 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         const t = getMessages(get().language);
-        const client = getCloudClient(get().cloudProvider);
         const single = entries.length === 1 ? entries[0] : null;
+
+        if (!single) {
+          const confirmed = await get().confirm(
+            t.dialogs.downloadCloudEntriesMessage(
+              entries.map((entry) => entry.name),
+            ),
+            {
+              title: t.dialogs.downloadCloudEntriesTitle,
+              confirmLabel: t.dialogs.downloadCloudEntriesConfirm,
+              tone: DialogTone.INFO,
+            },
+          );
+
+          if (!confirmed) {
+            return;
+          }
+        }
+
+        const client = getCloudClient(get().cloudProvider);
 
         set({ cloudLoading: true, cloudError: null });
         try {

@@ -371,6 +371,18 @@ export const en: Messages = {
       `Make a copy of these ${names.length} items in your cloud folder?\n${codeBulletList(
         names,
       )}\n\nEach copy is added next to the original, and a folder is copied with everything inside it.`,
+    importCloudFilesTitle: "Import Cloud Files",
+    importCloudFilesConfirm: "Import",
+    importCloudFilesMessage: (names) =>
+      `Import these ${names.length} files into your library?\n${codeBulletList(
+        names,
+      )}\n\nEach one is added as its own runbook and stays linked to its cloud file, so later edits are pushed back to it.`,
+    downloadCloudEntriesTitle: "Download Cloud Items",
+    downloadCloudEntriesConfirm: "Download",
+    downloadCloudEntriesMessage: (names) =>
+      `Download these ${names.length} items from your cloud folder?\n${codeBulletList(
+        names,
+      )}\n\nThey are saved together as a single _.zip_ archive, and a folder is downloaded with everything inside it.`,
     signOutCloudTitle: "Sign Out",
     signOutCloudConfirm: "Sign Out",
     signOutCloudMessage:
@@ -1020,6 +1032,8 @@ If something goes wrong, undo it in this order:
         `A row's **three dots** menu holds **${rename}**, **${edit}**, **${duplicate}**, **${download}**, and **${deleteLabel}**.`,
       multiSelect:
         "Rows select like files in a file explorer. Click a row to select it, click the **circle** on its left to add or drop it from the selection, `Ctrl`+click to do the same anywhere on the row, and `Shift`+click to take everything between the last row you clicked and this one. The circle in the header adds or drops the rows currently listed, and clicking the empty space below the rows clears the selection.",
+      bulkActions:
+        "With two or more rows selected, a menu action applies to the whole selection, and importing, duplicating, downloading or deleting that many items asks you to confirm first, listing exactly what it is about to touch. A single row still acts on one click.",
       editFile:
         "**Edit** opens the file's raw JSON in place, so a quick fix doesn't require importing, changing, and re-exporting it. It has to stay valid JSON to save.",
       recycleBin:
