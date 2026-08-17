@@ -1714,9 +1714,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             ? await unlockVault(runbookId, vault.passphrase, vault.record)
             : adoptOpenVault(runbookId, vault.record);
 
-          if (opened) {
-            refreshVaultStatus();
+          if (!opened) {
+            return;
           }
+
+          refreshVaultStatus();
+          await encryptStoredRunbook(runbookId);
         };
 
         const state = get();
