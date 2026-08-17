@@ -15,6 +15,8 @@ import { codeBulletList } from "../lists";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
 
+const andMore = (count: number) => `_y ${count} más..._`;
+
 export const es: Messages = {
   common: {
     cancel: "Cancelar",
@@ -368,27 +370,19 @@ export const es: Messages = {
     deleteCloudEntriesTitle: "Eliminar Elementos de la Nube",
     deleteCloudEntriesConfirm: "Eliminar",
     deleteCloudEntriesMessage: (names) =>
-      `¿Eliminar estos ${names.length} elementos de tu carpeta en la nube?\n${codeBulletList(
-        names,
-      )}\n\nTu proveedor guarda un tiempo los elementos eliminados en la _Papelera de reciclaje_, así que todavía puedes restaurarlos desde ahí.`,
+      `¿Eliminar estos ${names.length} elementos de tu carpeta en la nube?\n${codeBulletList(names, andMore)}\n\nTu proveedor guarda un tiempo los elementos eliminados en la _Papelera de reciclaje_, así que todavía puedes restaurarlos desde ahí.`,
     duplicateCloudEntriesTitle: "Duplicar Elementos de la Nube",
     duplicateCloudEntriesConfirm: "Duplicar",
     duplicateCloudEntriesMessage: (names) =>
-      `¿Hacer una copia de estos ${names.length} elementos en tu carpeta en la nube?\n${codeBulletList(
-        names,
-      )}\n\nCada copia se añade junto al original, y una carpeta se copia con todo lo que contiene.`,
+      `¿Hacer una copia de estos ${names.length} elementos en tu carpeta en la nube?\n${codeBulletList(names, andMore)}\n\nCada copia se añade junto al original, y una carpeta se copia con todo lo que contiene.`,
     importCloudFilesTitle: "Importar Archivos de la Nube",
     importCloudFilesConfirm: "Importar",
     importCloudFilesMessage: (names) =>
-      `¿Importar estos ${names.length} archivos a tu biblioteca?\n${codeBulletList(
-        names,
-      )}\n\nCada uno se añade como su propio runbook y queda vinculado a su archivo en la nube, así que los cambios posteriores se envían de vuelta a él.`,
+      `¿Importar estos ${names.length} archivos a tu biblioteca?\n${codeBulletList(names, andMore)}\n\nCada uno se añade como su propio runbook y queda vinculado a su archivo en la nube, así que los cambios posteriores se envían de vuelta a él.`,
     downloadCloudEntriesTitle: "Descargar Elementos de la Nube",
     downloadCloudEntriesConfirm: "Descargar",
     downloadCloudEntriesMessage: (names) =>
-      `¿Descargar estos ${names.length} elementos de tu carpeta en la nube?\n${codeBulletList(
-        names,
-      )}\n\nSe guardan juntos en un único archivo _.zip_, y una carpeta se descarga con todo lo que contiene.`,
+      `¿Descargar estos ${names.length} elementos de tu carpeta en la nube?\n${codeBulletList(names, andMore)}\n\nSe guardan juntos en un único archivo _.zip_, y una carpeta se descarga con todo lo que contiene.`,
     signOutCloudTitle: "Cerrar Sesión",
     signOutCloudConfirm: "Cerrar Sesión",
     signOutCloudMessage:

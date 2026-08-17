@@ -228,7 +228,6 @@ export const CloudSyncConfig = {
 
 export const MessageListConfig = {
   MAX_ITEMS: 8,
-  OVERFLOW: "...",
 } as const;
 
 // Copies made by a "Duplicate" action

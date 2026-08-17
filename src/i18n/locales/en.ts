@@ -15,6 +15,8 @@ import { codeBulletList } from "../lists";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
 
+const andMore = (count: number) => `_and ${count} more..._`;
+
 export const en: Messages = {
   common: {
     cancel: "Cancel",
@@ -362,27 +364,19 @@ export const en: Messages = {
     deleteCloudEntriesTitle: "Delete Cloud Items",
     deleteCloudEntriesConfirm: "Delete",
     deleteCloudEntriesMessage: (names) =>
-      `Delete these ${names.length} items from your cloud folder?\n${codeBulletList(
-        names,
-      )}\n\nYour provider keeps deleted items in the _Recycle Bin_ for a while, so you can still restore them from there.`,
+      `Delete these ${names.length} items from your cloud folder?\n${codeBulletList(names, andMore)}\n\nYour provider keeps deleted items in the _Recycle Bin_ for a while, so you can still restore them from there.`,
     duplicateCloudEntriesTitle: "Duplicate Cloud Items",
     duplicateCloudEntriesConfirm: "Duplicate",
     duplicateCloudEntriesMessage: (names) =>
-      `Make a copy of these ${names.length} items in your cloud folder?\n${codeBulletList(
-        names,
-      )}\n\nEach copy is added next to the original, and a folder is copied with everything inside it.`,
+      `Make a copy of these ${names.length} items in your cloud folder?\n${codeBulletList(names, andMore)}\n\nEach copy is added next to the original, and a folder is copied with everything inside it.`,
     importCloudFilesTitle: "Import Cloud Files",
     importCloudFilesConfirm: "Import",
     importCloudFilesMessage: (names) =>
-      `Import these ${names.length} files into your library?\n${codeBulletList(
-        names,
-      )}\n\nEach one is added as its own runbook and stays linked to its cloud file, so later edits are pushed back to it.`,
+      `Import these ${names.length} files into your library?\n${codeBulletList(names, andMore)}\n\nEach one is added as its own runbook and stays linked to its cloud file, so later edits are pushed back to it.`,
     downloadCloudEntriesTitle: "Download Cloud Items",
     downloadCloudEntriesConfirm: "Download",
     downloadCloudEntriesMessage: (names) =>
-      `Download these ${names.length} items from your cloud folder?\n${codeBulletList(
-        names,
-      )}\n\nThey are saved together as a single _.zip_ archive, and a folder is downloaded with everything inside it.`,
+      `Download these ${names.length} items from your cloud folder?\n${codeBulletList(names, andMore)}\n\nThey are saved together as a single _.zip_ archive, and a folder is downloaded with everything inside it.`,
     signOutCloudTitle: "Sign Out",
     signOutCloudConfirm: "Sign Out",
     signOutCloudMessage:
