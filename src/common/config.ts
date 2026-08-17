@@ -90,6 +90,7 @@ export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
 export const EXPORT_SUCCESS_TIMEOUT_MS = 1000;
 export const TAB_HOVER_SWITCH_MS = 300;
 export const SECTION_ANIMATION_FALLBACK_MS = 250;
+export const ROUTE_PREFETCH_TIMEOUT_MS = 2000;
 
 export const MinimapConfig = {
   SCALE: 0.12,

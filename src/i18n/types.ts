@@ -46,6 +46,7 @@ export interface LegalPageMessages {
 // The full translation catalog
 export interface Messages {
   common: {
+    loading: string;
     cancel: string;
     close: string;
     back: string;
@@ -219,7 +220,6 @@ export interface Messages {
     signOut: string;
     signedInAs: (account: string) => string;
     refresh: string;
-    loading: string;
     emptyFiles: string;
     emptyFolders: string;
     columnName: string;

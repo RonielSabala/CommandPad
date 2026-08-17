@@ -19,6 +19,7 @@ const andMore = (count: number) => `_y ${count} más..._`;
 
 export const es: Messages = {
   common: {
+    loading: "Cargando…",
     cancel: "Cancelar",
     close: "Cerrar",
     back: "Atrás",
@@ -265,7 +266,6 @@ export const es: Messages = {
     signOut: "Cerrar sesión",
     signedInAs: (account) => `Sesión iniciada como ${account}`,
     refresh: "Actualizar",
-    loading: "Cargando…",
     emptyFiles: "Aún no hay nada guardado en esta carpeta.",
     emptyFolders: "Aún no hay carpetas aquí.",
     columnName: "Nombre",

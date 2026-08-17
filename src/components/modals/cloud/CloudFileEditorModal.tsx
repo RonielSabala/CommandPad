@@ -44,7 +44,7 @@ export function CloudFileEditorModal() {
       {editor?.loading ? (
         <p className="cloud-file-editor-status">
           <Spinner />
-          {t.cloudModal.loading}
+          {t.common.loading}
         </p>
       ) : (
         editor && (

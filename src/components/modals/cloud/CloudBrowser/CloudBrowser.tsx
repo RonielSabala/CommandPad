@@ -243,7 +243,7 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
                 <p className="cloud-browser-status no-user-select">
                   <span className="cloud-browser-status-label">
                     <Spinner />
-                    {t.cloudModal.loading}
+                    {t.common.loading}
                   </span>
                 </p>
               )}
