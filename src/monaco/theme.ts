@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import {
   ColorToken,
   MonacoTheme,
@@ -34,6 +35,23 @@ function resolveColor(token: string, opacity: number = OPAQUE): string {
     .join("")}`;
 }
 
+function withTheme<T>(theme: Theme, read: () => T): T {
+  const root = document.documentElement;
+  const wasLight = root.classList.contains(CssClass.THEME_LIGHT);
+  const wantLight = theme === Theme.LIGHT;
+
+  if (wasLight === wantLight) {
+    return read();
+  }
+
+  root.classList.toggle(CssClass.THEME_LIGHT, wantLight);
+  try {
+    return read();
+  } finally {
+    root.classList.toggle(CssClass.THEME_LIGHT, wasLight);
+  }
+}
+
 function resolveThemeColors() {
   return {
     accent: resolveColor(ColorToken.ACCENT),
@@ -60,15 +78,14 @@ function resolveThemeColors() {
   };
 }
 
-function buildTheme(
-  base: monaco.editor.BuiltinTheme,
-): monaco.editor.IStandaloneThemeData {
-  const c = resolveThemeColors();
+function buildTheme(theme: Theme): monaco.editor.IStandaloneThemeData {
+  const c = withTheme(theme, resolveThemeColors);
   const guideActive = c.textMuted;
   const guideDim = c.textMutedDim;
 
   return {
-    base,
+    base:
+      theme === Theme.LIGHT ? MonacoTheme.BASE_LIGHT : MonacoTheme.BASE_DARK,
     inherit: true,
     rules: [
       { token: MonacoTokenScope.JSON_KEY, foreground: c.accentText },
@@ -160,13 +177,7 @@ const defined = new Set<string>();
 
 function defineTheme(theme: Theme): string {
   const name = monacoThemeName(theme);
-
-  monaco.editor.defineTheme(
-    name,
-    buildTheme(
-      theme === Theme.LIGHT ? MonacoTheme.BASE_LIGHT : MonacoTheme.BASE_DARK,
-    ),
-  );
+  monaco.editor.defineTheme(name, buildTheme(theme));
 
   defined.add(name);
   return name;

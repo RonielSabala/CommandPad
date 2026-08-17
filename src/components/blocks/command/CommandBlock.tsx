@@ -218,7 +218,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           </button>
 
           <button
-            className="btn"
+            className="btn btn-icon"
             onClick={copy}
             disabled={!blockText}
             title={t.command.copy}
