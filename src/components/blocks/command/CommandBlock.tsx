@@ -204,7 +204,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
 
         <div className="command-preview-actions">
           <button
-            className={`btn btn-icon toggle-editor-btn${isEditorCollapsed ? " editor-collapsed" : ""}`}
+            className={`btn toggle-editor-btn${isEditorCollapsed ? " editor-collapsed" : ""}`}
             onClick={() =>
               updateBlock(blockId, BlockType.COMMAND, {
                 editorCollapsed: !isEditorCollapsed,
@@ -218,7 +218,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           </button>
 
           <button
-            className="btn btn-icon"
+            className="btn"
             onClick={copy}
             disabled={!blockText}
             title={t.command.copy}
