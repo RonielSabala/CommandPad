@@ -848,6 +848,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
     /** The runbook a vault prompt acts on: whichever one is in front of you. */
     const activeVaultScope = () => getActiveTab(get())?.runbookId ?? null;
 
+    /** Runbooks whose vault setup was declined this session. */
+    const declinedVaultSetup = new Set<string>();
+
     const promptVault = (
       prompt: VaultPrompt,
       verify: (passphrases: VaultPassphrases) => Promise<boolean>,
@@ -1057,7 +1060,20 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         return true;
       }
 
-      return await promptVault(VaultPrompt.CREATE, createVaultWith(runbookId));
+      if (declinedVaultSetup.has(runbookId)) {
+        return false;
+      }
+
+      const created = await promptVault(
+        VaultPrompt.CREATE,
+        createVaultWith(runbookId),
+      );
+
+      if (!created) {
+        declinedVaultSetup.add(runbookId);
+      }
+
+      return created;
     };
 
     interface ImportedVaultResult {
@@ -1462,6 +1478,16 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         } else if (state.activeTabId === tabId) {
           idx = Math.min(idx, tabs.length - 1);
           activeTabId = tabs[idx].id;
+        }
+
+        const closedRunbookId = state.tabs.find(
+          (t) => t.id === tabId,
+        )?.runbookId;
+        if (
+          closedRunbookId &&
+          !tabs.some((t) => t.runbookId === closedRunbookId)
+        ) {
+          declinedVaultSetup.delete(closedRunbookId);
         }
 
         const activeRunbookId =
@@ -3726,6 +3752,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         queuedSyncContent.clear();
         pushedSyncContent.clear();
+        declinedVaultSetup.clear();
         set({
           tabs: [],
           activeTabId: null,
@@ -3763,6 +3790,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         queuedSyncContent.clear();
         pushedSyncContent.clear();
+        declinedVaultSetup.clear();
         set({
           tabs: [],
           activeTabId: null,
