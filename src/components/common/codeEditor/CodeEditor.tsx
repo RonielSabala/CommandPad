@@ -327,10 +327,10 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
             return;
           }
 
-          instance.setPosition({
-            lineNumber: MonacoLayout.FIRST_LINE,
-            column: MonacoLayout.FIRST_COLUMN,
-          });
+          if (selection && !selection.isEmpty()) {
+            instance.setPosition(selection.getStartPosition());
+          }
+
           callbacks.current.onBlur?.();
         }),
       );
