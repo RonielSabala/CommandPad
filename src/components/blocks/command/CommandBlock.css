@@ -71,7 +71,7 @@
   bottom: var(--space-4);
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-4);
 }
 
 .command-preview-text::after {
@@ -126,16 +126,10 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
 }
 
 .toggle-editor-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
   background: transparent;
   border: none;
   color: var(--color-text-muted);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
+  padding: var(--space-3);
   transition: color var(--transition-fast);
 }
 
