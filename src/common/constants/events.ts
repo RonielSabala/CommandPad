@@ -50,6 +50,11 @@ export const MouseButton = {
   MIDDLE: 1,
 } as const;
 
+/** The `buttons` bitmask. */
+export const MouseButtons = {
+  LEFT: 1,
+} as const;
+
 export const DragEffect = {
   MOVE: "move",
   COPY: "copy",

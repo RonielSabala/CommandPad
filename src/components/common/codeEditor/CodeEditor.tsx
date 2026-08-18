@@ -22,6 +22,7 @@ import {
   isContextMenuOpen,
   whenContextMenuCloses,
 } from "@/monaco/contextMenu";
+import { bindDragScrolling } from "@/monaco/dragScroll";
 import { getCodeMetrics } from "@/monaco/metrics";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
@@ -260,6 +261,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         instance.onDidContentSizeChange(applyHeight);
         instance.onDidLayoutChange(applyHeight);
         setScrollTarget(monacoScrollTarget(instance));
+        bindDragScrolling(instance);
       }
 
       instance.onKeyDown((event) => {

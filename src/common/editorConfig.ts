@@ -89,6 +89,13 @@ export const MonacoLayout = {
   LINE_NUMBER_MIN_CHARS: 1,
 } as const;
 
+export const DragScrollConfig = {
+  EDGE_PX: 56,
+  RAMP_PX: 56,
+  MIN_SPEED: 4,
+  MAX_SPEED: 16,
+} as const;
+
 export const VariableCompletionConfig = {
   /** The snippet parks the caret inside a call's parentheses. */
   SNIPPET_CARET: "$0",
