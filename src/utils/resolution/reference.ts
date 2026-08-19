@@ -3,6 +3,7 @@ import { VariableSyntax } from "@/common/variableSyntax";
 
 import { applyOperations } from "./operations";
 import { applyTemplateParams, parseParam } from "./params";
+import type { ReferenceBodyChunk } from "./token";
 import { replaceReferences, splitReferenceBody } from "./token";
 import type { VariableLookup } from "./types";
 
@@ -26,6 +27,18 @@ interface ResolvedReference {
 interface ResolvedChunk {
   text: string;
   fullyResolved: boolean;
+}
+
+/**
+ * An unnamed reference names no variable. It has to carry at least
+ * one operation.
+ */
+function unnamedValue(chunks: ReferenceBodyChunk[]): string | undefined {
+  return chunks.some(
+    (chunk) => chunk.separator === VariableSyntax.OPERATION_SEPARATOR,
+  )
+    ? ""
+    : undefined;
 }
 
 /**
@@ -62,7 +75,7 @@ export function resolveReference(
     resolved: false,
   });
 
-  const value = context.lookup(key);
+  const value = key ? context.lookup(key) : unnamedValue(rest);
   if (value === undefined) {
     return unresolvedReference();
   }
@@ -92,7 +105,7 @@ export function resolveReference(
     return unresolvedReference();
   }
 
-  const applied = applyOperations(template.text, operations);
+  const applied = applyOperations(template.text, operations, { key });
   return applied.ok
     ? { key, text: applied.text, resolved: true }
     : unresolvedReference();

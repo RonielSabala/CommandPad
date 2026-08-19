@@ -11,7 +11,6 @@ import { PageFooter } from "@/components/sidebar/Footer";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import "@/components/site/SitePage.css";
 import { useTranslation } from "@/i18n";
-import { useMonacoRuntime } from "@/monaco/useMonacoRuntime";
 import { useStore } from "@/store/store";
 import { hasVisitedHome, markHomeVisited } from "@/utils/session";
 import {
@@ -38,8 +37,6 @@ const FEATURE_ICONS: Icon[] = [
 ];
 
 export function HomePage() {
-  useMonacoRuntime();
-
   const t = useTranslation();
   const language = useStore((state) => state.language);
 

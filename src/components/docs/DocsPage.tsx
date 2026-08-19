@@ -8,7 +8,6 @@ import { PanelId } from "@/common/enums";
 import { PanelShell } from "@/components/common/panel/PanelShell";
 import { usePanelKeybindings } from "@/hooks/usePanelKeybindings";
 import { useTranslation } from "@/i18n";
-import { useMonacoRuntime } from "@/monaco/useMonacoRuntime";
 import { useStore } from "@/store/store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -24,8 +23,6 @@ import { useScrollSpy } from "./useScrollSpy";
 const SECTION_NUMBERS = getDocsSectionNumbers();
 
 export function DocsPage() {
-  useMonacoRuntime();
-
   const t = useTranslation();
   const language = useStore((state) => state.language);
   const location = useLocation();

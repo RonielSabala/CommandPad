@@ -116,6 +116,18 @@
   pointer-events: none;
 }
 
+/* Blur suppressions */
+
+.monaco-editor:not(.focused)
+  :is(.core-guide.horizontal-top, .core-guide.horizontal-bottom) {
+  display: none;
+}
+
+.monaco-editor:not(.focused)
+  :is([class*="wordHighlight"], [class*="selectionHighlight"]) {
+  background: transparent;
+}
+
 /* --- Bounded --- */
 
 .code-editor-bounded {

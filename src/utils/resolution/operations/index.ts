@@ -1,8 +1,11 @@
 import { CASE_OPERATION } from "./case";
 import { COUNT_OPERATION } from "./count";
+import { DATE_OPERATION } from "./date";
+import { KEY_OPERATION } from "./key";
 import { SLICE_OPERATION } from "./slice";
 import { STRIP_OPERATION } from "./strip";
 import type {
+  OperationContext,
   OperationDefinition,
   OperationKeyword,
   OperationTransform,
@@ -11,6 +14,8 @@ import type {
 const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   SLICE_OPERATION,
   COUNT_OPERATION,
+  KEY_OPERATION,
+  DATE_OPERATION,
   CASE_OPERATION,
   STRIP_OPERATION,
 ];
@@ -43,6 +48,7 @@ function parseOperation(operation: string): OperationTransform | null {
 export function applyOperations(
   text: string,
   operations: string[],
+  context: OperationContext,
 ): AppliedOperations {
   let result = text;
 
@@ -52,7 +58,7 @@ export function applyOperations(
       return { text, ok: false };
     }
 
-    result = transform(result);
+    result = transform(result, context);
   }
 
   return { text: result, ok: true };

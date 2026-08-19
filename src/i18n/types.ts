@@ -467,6 +467,11 @@ export interface Messages {
       demoHint: string;
       chaining: string;
     };
+    variableKey: {
+      intro: string;
+      demoHint: string;
+      chaining: string;
+    };
     variableCase: {
       intro: string;
       table: string;
@@ -480,6 +485,20 @@ export interface Messages {
       demoHint: string;
       repeats: string;
       whitespace: string;
+    };
+    unnamedReferences: {
+      intro: string;
+      demoHint: string;
+      rule: string;
+      anywhere: string;
+    };
+    variableDate: {
+      intro: string;
+      demoHint: string;
+      format: string;
+      table: string;
+      formatDemoHint: (resetDemoLabel: string) => string;
+      clock: string;
     };
     multilineReferences: {
       intro: string;

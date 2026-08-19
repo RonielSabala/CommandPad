@@ -8,6 +8,7 @@ import {
   atEnd,
   capture,
   dotAllRegex,
+  either,
   escapeSyntax,
   globalRegex,
   group,
@@ -52,6 +53,7 @@ export const SliceSyntax = {
 
 export const OperationSyntax = {
   COUNT: "count",
+  KEY: "key",
 } as const;
 
 export const CaseSyntax = {
@@ -73,10 +75,29 @@ export const StripSyntax = {
   ARITY: 1,
 } as const;
 
+export const DateSyntax = {
+  KEYWORD: "date",
+  ARITY: 1,
+  DEFAULT_FORMAT: "YYYY-MM-DD",
+  PAD_LENGTH: 2,
+  PAD_CHAR: "0",
+} as const;
+
+export const DateToken = {
+  YEAR: "YYYY",
+  YEAR_SHORT: "YY",
+  MONTH: "MM",
+  DAY: "DD",
+  HOUR: "HH",
+  MINUTE: "mm",
+  SECOND: "ss",
+} as const;
+
 const Ref = escapeSyntax(VariableSyntax);
 const Call = escapeSyntax(CallSyntax);
 const Num = escapeSyntax(NumberSyntax);
 const Operation = escapeSyntax(OperationSyntax);
+const DateTok = escapeSyntax(DateToken);
 
 const braced = (content: string) =>
   sequence(Ref.BRACE_OPEN, content, Ref.BRACE_CLOSE);
@@ -145,6 +166,20 @@ export const NumberArgumentRegex = new RegExp(
 export const NumberTermRegex = globalRegex(NUMBER_TERM);
 
 export const CountOperationRegex = new RegExp(anchored(Operation.COUNT));
+
+export const KeyOperationRegex = new RegExp(anchored(Operation.KEY));
+
+export const DateTokenRegex = globalRegex(
+  either(
+    DateTok.YEAR,
+    DateTok.YEAR_SHORT,
+    DateTok.MONTH,
+    DateTok.DAY,
+    DateTok.HOUR,
+    DateTok.MINUTE,
+    DateTok.SECOND,
+  ),
+);
 
 export const CopySuffixRegex = new RegExp(
   atEnd(sequence(Ref.COPY_SUFFIX, zeroOrMore(DIGIT))),

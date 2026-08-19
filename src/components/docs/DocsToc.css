@@ -37,7 +37,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  padding: var(--space-4) var(--space-6) var(--space-4) var(--space-4);
+  padding: var(--space-4) var(--space-10);
   border-left: var(--space-2) solid transparent;
   font-size: var(--text-md);
   line-height: 1.4;
@@ -52,7 +52,7 @@
 }
 
 .docs-toc-sub {
-  padding-left: var(--space-8);
+  padding-left: var(--space-16);
 }
 
 .docs-toc-active,
@@ -68,13 +68,14 @@
 .docs-toc-chevron-hit {
   flex-shrink: 0;
   width: var(--icon-md);
+  margin-left: auto;
 }
 
 .docs-toc-chevron-hit {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
 }
 
 .docs-toc-chevron-hit:hover {

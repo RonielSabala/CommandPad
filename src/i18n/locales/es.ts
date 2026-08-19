@@ -642,8 +642,11 @@ export const es: Messages = {
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
       [DocsSectionId.VARIABLE_SLICING]: "Recortar valores",
       [DocsSectionId.VARIABLE_COUNT]: "Contar caracteres",
+      [DocsSectionId.VARIABLE_KEY]: "Usar el nombre de la variable",
       [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
       [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
+      [DocsSectionId.UNNAMED_REFERENCES]: "Referencias sin variable",
+      [DocsSectionId.VARIABLE_DATE]: "Fecha actual",
       [DocsSectionId.MULTILINE_REFERENCES]: "Referencias largas",
       [DocsSectionId.ESCAPING_BRACES]: "Escapar llaves",
       [DocsSectionId.SECRET_VARIABLES]: "Variables secretas",
@@ -843,6 +846,14 @@ Si algo sale mal, deshazlo en este orden:
       chaining:
         "Las operaciones se aplican de izquierda a derecha, así que puedes poner `count` después de un recorte: `{commit|slice(;7)|count}` acorta el commit primero y luego cuenta lo que queda.",
     },
+    variableKey: {
+      intro:
+        "A veces un comando necesita decir el nombre de una variable además de usar su valor. Escribe `key` después del `|` y obtienes **el nombre que le pusiste a la variable**, en vez de lo que guarda.",
+      demoHint:
+        "Cambia el nombre de la variable de abajo y mira cómo el comando se actualiza solo, el nombre y el valor nunca se desincronizan:",
+      chaining:
+        "Ignora el valor por completo, así que nada de lo que guarde la variable puede cambiar lo que obtienes.",
+    },
     variableCase: {
       intro:
         "Escribe una palabra clave después del `|` y el valor se reescribe antes de llegar al comando. Cada resultado de la tabla está escrito con el estilo que nombra:",
@@ -878,6 +889,35 @@ Si algo sale mal, deshazlo en este orden:
         "El texto se quita tantas veces como aparezca, y se compara **entero**: `rstrip(valor)` nunca se lleva una `r` suelta.",
       whitespace:
         "Por defecto, las operaciones `strip` escritas sin paréntesis quitan los espacios en blanco:",
+    },
+    unnamedReferences: {
+      intro:
+        "Una referencia no necesita nombrar ninguna variable. Omite el nombre, escribe solo operaciones después de `|`, y la referencia partirá de un valor vacío: el resultado será lo que esas operaciones produzcan.",
+      demoHint:
+        "El `{|count}` de abajo no tiene ninguna variable detrás, así que no hay nada que contar y siempre da `0`:",
+      rule: "Las llaves deben incluir al menos una operación. Unas llaves vacías se dejan tal cual, así que un comando que ya usa `{}` por su cuenta no se ve afectado.",
+      anywhere:
+        "Por sí solo no sirve de mucho, pero la siguiente operación le saca todo el partido a este mismo truco.",
+    },
+    variableDate: {
+      intro:
+        "Escribe `date` después de `|` y obtienes **la fecha actual**, con el formato `YYYY-MM-DD`. Sustituye lo que reciba, así que casi siempre se escribe sola, sin nada delante.",
+      demoHint: "Con eso ya tienes la fecha de hoy interpolada en un nombre:",
+      format:
+        "Escribe un formato entre paréntesis para dar la fecha de otra forma. Cada marcador de abajo se rellena con su valor y todo lo demás se deja tal cual lo escribas, así que los separadores los eliges tú:",
+      table: `| Marcador | Significado |
+| --- | --- |
+| \`YYYY\` | Año con cuatro cifras |
+| \`YY\` | Las dos últimas cifras del año |
+| \`MM\` | Mes, de 01 a 12 |
+| \`DD\` | Día del mes, de 01 a 31 |
+| \`HH\` | Hora, de 00 a 23 |
+| \`mm\` | Minutos, de 00 a 59 |
+| \`ss\` | Segundos, de 00 a 59 |`,
+      formatDemoHint: (resetDemoLabel) =>
+        `La fecha se calcula justo cuando se muestra el comando, no cuando se escribió. Pulsa **${resetDemoLabel}** un par de veces y verás cómo cambian los segundos:`,
+      clock:
+        "Usa tu propio reloj y tu propia zona horaria, así que un runbook que se queda abierto toda la noche mostrará mañana la fecha de mañana.",
     },
     multilineReferences: {
       intro:

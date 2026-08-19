@@ -6,7 +6,6 @@ import { useDocumentInteractions } from "@/hooks/useDocumentInteractions";
 import { useKeybindings } from "@/hooks/useKeybindings";
 import { useLinkActivation } from "@/hooks/useLinkActivation";
 import { usePanelKeybindings } from "@/hooks/usePanelKeybindings";
-import { useMonacoRuntime } from "@/monaco/useMonacoRuntime";
 import { ImageLightbox } from "../blocks/image/ImageLightbox";
 import { Header } from "../header/Header";
 import { CloudFileEditorModal } from "../modals/cloud/CloudFileEditorModal";
@@ -22,7 +21,6 @@ import { Sidebar } from "../sidebar/Sidebar";
 import { MainPanel } from "./MainPanel";
 
 export function WorkspacePage() {
-  useMonacoRuntime();
   useWorkspaceBodyClasses();
   useKeybindings();
   usePanelKeybindings(PanelId.SIDEBAR);

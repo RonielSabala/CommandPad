@@ -278,6 +278,29 @@ export function VariableCountDocs() {
   );
 }
 
+export function VariableKeyDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableKey.intro} />
+      <Prose text={t.docs.variableKey.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("PORT", "8080")],
+            blocks: [demoCommand('echo "{PORT|key}={PORT}"')],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableKey.chaining} />
+    </>
+  );
+}
+
 export function VariableCaseDocs() {
   const t = useTranslation();
 
@@ -347,6 +370,49 @@ export function VariableStripDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+    </>
+  );
+}
+
+export function UnnamedReferencesDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.unnamedReferences.intro} />
+      <Prose text={t.docs.unnamedReferences.demoHint} />
+      <DemoWorkspace
+        tabs={[{ blocks: [demoCommand('echo "Length: {|count}"')] }]}
+      >
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.unnamedReferences.rule} />
+      <Prose text={t.docs.unnamedReferences.anywhere} />
+    </>
+  );
+}
+
+export function VariableDateDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableDate.intro} />
+      <Prose text={t.docs.variableDate.demoHint} />
+      <DemoWorkspace
+        tabs={[{ blocks: [demoCommand("mkdir backup-{|date()}")] }]}
+      >
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableDate.format} />
+      <Prose text={t.docs.variableDate.table} />
+      <Prose text={t.docs.variableDate.formatDemoHint(t.docs.demo.reset)} />
+      <DemoWorkspace
+        tabs={[{ blocks: [demoCommand('echo "Saved at {|date(HH:mm:ss)}"')] }]}
+      >
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableDate.clock} />
     </>
   );
 }
