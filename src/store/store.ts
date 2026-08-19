@@ -719,7 +719,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
      * Writes everything queued, one file at a time. Two passes never overlap,
      * so concurrent writes can't land on the same file out of order; whatever
      * gets queued mid-pass is picked up before the pass ends. Never signs in on
-     * its own — see `syncRunbookNow`.
+     * its own.
      */
     let syncPassRunning = false;
     const flushQueuedSyncs = async () => {

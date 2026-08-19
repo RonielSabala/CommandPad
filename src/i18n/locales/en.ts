@@ -880,7 +880,7 @@ If something goes wrong, undo it in this order:
       intro:
         "A reference does not have to name a variable. Leave the name out, write only operations after the `|`, and the reference starts from an empty value: what you get back is whatever the operations make of it.",
       demoHint:
-        "`{|count}` below has no variable behind it, so there is nothing to count — it always resolves to `0`:",
+        "`{|count}` below has no variable behind it, so there is nothing to count; it always resolves to `0`:",
       rule: "The braces have to hold at least one operation. Empty braces are left exactly as they are, so a command that writes `{}` itself keeps them.",
       anywhere:
         "On its own that is not much use, but the next operation turns this exact trick into something worth reaching for.",
