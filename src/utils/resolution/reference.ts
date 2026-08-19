@@ -92,7 +92,7 @@ export function resolveReference(
     return unresolvedReference();
   }
 
-  const applied = applyOperations(template.text, operations);
+  const applied = applyOperations(template.text, operations, { key });
   return applied.ok
     ? { key, text: applied.text, resolved: true }
     : unresolvedReference();

@@ -633,6 +633,7 @@ export const en: Messages = {
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Parameterized placeholders",
       [DocsSectionId.VARIABLE_SLICING]: "Slicing values",
       [DocsSectionId.VARIABLE_COUNT]: "Counting characters",
+      [DocsSectionId.VARIABLE_KEY]: "Using the variable name",
       [DocsSectionId.VARIABLE_CASE]: "Changing case",
       [DocsSectionId.VARIABLE_STRIP]: "Trimming ends",
       [DocsSectionId.MULTILINE_REFERENCES]: "Long references",
@@ -828,6 +829,14 @@ If something goes wrong, undo it in this order:
         "For example, a commit subject is supposed to stay under 50 characters, but nobody counts them by hand. Type into the message below and watch the number keep up:",
       chaining:
         "Operations run left to right, so you can put `count` after a slice: `{commit|slice(;7)|count}` shortens the commit first, then counts what is left.",
+    },
+    variableKey: {
+      intro:
+        "Sometimes a command needs to say a variable's name as well as use its value. Write `key` after the `|` and you get **the name you gave the variable**, instead of what it holds.",
+      demoHint:
+        "Try renaming the variable below and watch the command update itself, the name and the value never fall out of sync:",
+      chaining:
+        "It ignores the value entirely, so nothing the variable holds can change what you get back.",
     },
     variableCase: {
       intro:

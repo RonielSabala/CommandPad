@@ -642,6 +642,7 @@ export const es: Messages = {
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
       [DocsSectionId.VARIABLE_SLICING]: "Recortar valores",
       [DocsSectionId.VARIABLE_COUNT]: "Contar caracteres",
+      [DocsSectionId.VARIABLE_KEY]: "Usar el nombre de la variable",
       [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
       [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
       [DocsSectionId.MULTILINE_REFERENCES]: "Referencias largas",
@@ -842,6 +843,14 @@ Si algo sale mal, deshazlo en este orden:
         "Por ejemplo, el asunto de un commit debería quedarse por debajo de 50 caracteres, pero nadie los cuenta a mano. Escribe en el mensaje de abajo y mira cómo el número te sigue:",
       chaining:
         "Las operaciones se aplican de izquierda a derecha, así que puedes poner `count` después de un recorte: `{commit|slice(;7)|count}` acorta el commit primero y luego cuenta lo que queda.",
+    },
+    variableKey: {
+      intro:
+        "A veces un comando necesita decir el nombre de una variable además de usar su valor. Escribe `key` después del `|` y obtienes **el nombre que le pusiste a la variable**, en vez de lo que guarda.",
+      demoHint:
+        "Cambia el nombre de la variable de abajo y mira cómo el comando se actualiza solo, el nombre y el valor nunca se desincronizan:",
+      chaining:
+        "Ignora el valor por completo, así que nada de lo que guarde la variable puede cambiar lo que obtienes.",
     },
     variableCase: {
       intro:

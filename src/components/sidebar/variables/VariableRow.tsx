@@ -222,7 +222,8 @@ export const VariableRow = memo(function VariableRow({
                 updateVariable(
                   variableId,
                   VariableField.KEY,
-                  applyOperations(variableKey, [keyword]).text,
+                  applyOperations(variableKey, [keyword], { key: variableKey })
+                    .text,
                 )
               }
             >

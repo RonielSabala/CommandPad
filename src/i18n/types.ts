@@ -467,6 +467,11 @@ export interface Messages {
       demoHint: string;
       chaining: string;
     };
+    variableKey: {
+      intro: string;
+      demoHint: string;
+      chaining: string;
+    };
     variableCase: {
       intro: string;
       table: string;

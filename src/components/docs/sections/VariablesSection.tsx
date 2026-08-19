@@ -278,6 +278,29 @@ export function VariableCountDocs() {
   );
 }
 
+export function VariableKeyDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableKey.intro} />
+      <Prose text={t.docs.variableKey.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("PORT", "8080")],
+            blocks: [demoCommand('echo "{PORT|key}={PORT}"')],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableKey.chaining} />
+    </>
+  );
+}
+
 export function VariableCaseDocs() {
   const t = useTranslation();
 

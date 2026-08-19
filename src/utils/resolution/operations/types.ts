@@ -1,4 +1,13 @@
-export type OperationTransform = (text: string) => string;
+/** What an operation knows about the reference it is running inside. */
+export interface OperationContext {
+  /** The key of the variable being resolved. */
+  key: string;
+}
+
+export type OperationTransform = (
+  text: string,
+  context: OperationContext,
+) => string;
 
 export interface OperationKeyword {
   keyword: string;
