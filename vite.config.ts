@@ -26,6 +26,15 @@ export default defineConfig({
   worker: {
     format: "es",
   },
+  server: {
+    warmup: {
+      clientFiles: [
+        "./src/App.tsx",
+        "./src/components/workspace/WorkspacePage.tsx",
+        "./src/store/store.ts",
+      ],
+    },
+  },
   optimizeDeps: {
     include: ["monaco-editor/esm/vs/editor/editor.api", "@monaco-editor/react"],
   },
