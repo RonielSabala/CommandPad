@@ -112,18 +112,20 @@
   z-index: var(--z-behind);
 }
 
-.code-editor
-  .monaco-editor:not(.focused)
+.code-editor .context-view {
+  pointer-events: none;
+}
+
+/* Blur suppressions */
+
+.monaco-editor:not(.focused)
   :is(.core-guide.horizontal-top, .core-guide.horizontal-bottom) {
   display: none;
 }
 
-.code-editor .monaco-editor:not(.focused) .bracket-match {
-  border-color: transparent;
-}
-
-.code-editor .context-view {
-  pointer-events: none;
+.monaco-editor:not(.focused)
+  :is([class*="wordHighlight"], [class*="selectionHighlight"]) {
+  background: transparent;
 }
 
 /* --- Bounded --- */
