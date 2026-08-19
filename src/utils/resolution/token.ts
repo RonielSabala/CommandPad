@@ -19,7 +19,7 @@ interface ReferenceMatch {
   end: number;
 }
 
-interface ReferenceChunk {
+export interface ReferenceBodyChunk {
   separator: string;
   text: string;
 }
@@ -177,8 +177,8 @@ export function replaceReferences(
 }
 
 /** Splits a reference body into its key, its params and its operations. */
-export function splitReferenceBody(raw: string): ReferenceChunk[] {
-  const chunks: ReferenceChunk[] = [];
+export function splitReferenceBody(raw: string): ReferenceBodyChunk[] {
+  const chunks: ReferenceBodyChunk[] = [];
   let separator = "";
   let start = 0;
   let depth = 0;

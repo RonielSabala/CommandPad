@@ -486,6 +486,20 @@ export interface Messages {
       repeats: string;
       whitespace: string;
     };
+    unnamedReferences: {
+      intro: string;
+      demoHint: string;
+      rule: string;
+      anywhere: string;
+    };
+    variableDate: {
+      intro: string;
+      demoHint: string;
+      format: string;
+      table: string;
+      formatDemoHint: (resetDemoLabel: string) => string;
+      clock: string;
+    };
     multilineReferences: {
       intro: string;
     };

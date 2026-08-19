@@ -1,5 +1,6 @@
 import { CASE_OPERATION } from "./case";
 import { COUNT_OPERATION } from "./count";
+import { DATE_OPERATION } from "./date";
 import { KEY_OPERATION } from "./key";
 import { SLICE_OPERATION } from "./slice";
 import { STRIP_OPERATION } from "./strip";
@@ -14,6 +15,7 @@ const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   SLICE_OPERATION,
   COUNT_OPERATION,
   KEY_OPERATION,
+  DATE_OPERATION,
   CASE_OPERATION,
   STRIP_OPERATION,
 ];

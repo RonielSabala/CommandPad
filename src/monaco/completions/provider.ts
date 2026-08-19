@@ -12,7 +12,7 @@ function provideCompletionItems(
   position: Position,
 ): languages.CompletionList {
   const completions = getModelCompletions(model.uri.toString());
-  if (!completions?.length) {
+  if (!completions) {
     return { suggestions: [] };
   }
 

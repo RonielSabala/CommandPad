@@ -19,6 +19,8 @@ export const DocsSectionId = {
   VARIABLE_KEY: "variable-key",
   VARIABLE_CASE: "variable-case",
   VARIABLE_STRIP: "variable-strip",
+  UNNAMED_REFERENCES: "unnamed-references",
+  VARIABLE_DATE: "variable-date",
   MULTILINE_REFERENCES: "multiline-references",
   ESCAPING_BRACES: "escaping-braces",
   TABS: "tabs",
@@ -68,6 +70,11 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.VARIABLE_KEY, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.VARIABLE_CASE, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.VARIABLE_STRIP, level: DocsSectionLevel.SUBSECTION },
+  {
+    id: DocsSectionId.UNNAMED_REFERENCES,
+    level: DocsSectionLevel.SUBSECTION,
+  },
+  { id: DocsSectionId.VARIABLE_DATE, level: DocsSectionLevel.SUBSECTION },
   {
     id: DocsSectionId.MULTILINE_REFERENCES,
     level: DocsSectionLevel.SUBSECTION,

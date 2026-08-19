@@ -374,6 +374,49 @@ export function VariableStripDocs() {
   );
 }
 
+export function UnnamedReferencesDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.unnamedReferences.intro} />
+      <Prose text={t.docs.unnamedReferences.demoHint} />
+      <DemoWorkspace
+        tabs={[{ blocks: [demoCommand('echo "Length: {|count}"')] }]}
+      >
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.unnamedReferences.rule} />
+      <Prose text={t.docs.unnamedReferences.anywhere} />
+    </>
+  );
+}
+
+export function VariableDateDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableDate.intro} />
+      <Prose text={t.docs.variableDate.demoHint} />
+      <DemoWorkspace
+        tabs={[{ blocks: [demoCommand("mkdir backup-{|date()}")] }]}
+      >
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableDate.format} />
+      <Prose text={t.docs.variableDate.table} />
+      <Prose text={t.docs.variableDate.formatDemoHint(t.docs.demo.reset)} />
+      <DemoWorkspace
+        tabs={[{ blocks: [demoCommand('echo "Saved at {|date(HH:mm:ss)}"')] }]}
+      >
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableDate.clock} />
+    </>
+  );
+}
+
 export function MultilineReferencesDocs() {
   const t = useTranslation();
 

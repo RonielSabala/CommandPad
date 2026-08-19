@@ -636,6 +636,8 @@ export const en: Messages = {
       [DocsSectionId.VARIABLE_KEY]: "Using the variable name",
       [DocsSectionId.VARIABLE_CASE]: "Changing case",
       [DocsSectionId.VARIABLE_STRIP]: "Trimming ends",
+      [DocsSectionId.UNNAMED_REFERENCES]: "References with no variable",
+      [DocsSectionId.VARIABLE_DATE]: "Current date",
       [DocsSectionId.MULTILINE_REFERENCES]: "Long references",
       [DocsSectionId.ESCAPING_BRACES]: "Escaping braces",
       [DocsSectionId.SECRET_VARIABLES]: "Secret variables",
@@ -873,6 +875,35 @@ If something goes wrong, undo it in this order:
         "The text is removed as many times as it appears, and it is matched **whole**: `rstrip(ing)` never takes a stray `g`.",
       whitespace:
         "By default, `strip` operations written without parentheses remove whitespace:",
+    },
+    unnamedReferences: {
+      intro:
+        "A reference does not have to name a variable. Leave the name out, write only operations after the `|`, and the reference starts from an empty value: what you get back is whatever the operations make of it.",
+      demoHint:
+        "`{|count}` below has no variable behind it, so there is nothing to count — it always resolves to `0`:",
+      rule: "The braces have to hold at least one operation. Empty braces are left exactly as they are, so a command that writes `{}` itself keeps them.",
+      anywhere:
+        "On its own that is not much use, but the next operation turns this exact trick into something worth reaching for.",
+    },
+    variableDate: {
+      intro:
+        "Write `date` after the `|` and you get **the current date**, spelled `YYYY-MM-DD`. It replaces whatever it is handed, so it is normally written on its own.",
+      demoHint: "That is all it takes to put today's date in a name:",
+      format:
+        "Put a format in the parentheses to write the date some other way. Each placeholder below is filled in, and everything else is kept exactly as you typed it, so the separators are yours:",
+      table: `| Placeholder | Meaning |
+| --- | --- |
+| \`YYYY\` | Four-digit year |
+| \`YY\` | Last two digits of the year |
+| \`MM\` | Month, 01 to 12 |
+| \`DD\` | Day of the month, 01 to 31 |
+| \`HH\` | Hour, 00 to 23 |
+| \`mm\` | Minutes, 00 to 59 |
+| \`ss\` | Seconds, 00 to 59 |`,
+      formatDemoHint: (resetDemoLabel) =>
+        `The date is read the moment the command is shown, not when it was written. Press **${resetDemoLabel}** below a couple of times and watch the seconds move:`,
+      clock:
+        "It reads your own clock, in your own time zone, so a runbook left open overnight copies tomorrow's date tomorrow.",
     },
     multilineReferences: {
       intro:
