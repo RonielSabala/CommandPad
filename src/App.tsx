@@ -2,6 +2,8 @@ import { AppRoute } from "@/common/constants/routes";
 import { PageSpinner } from "@/components/common/PageSpinner";
 import { useDocumentLanguage, useThemeClass } from "@/hooks/useBodyClasses";
 import { useRoutePrefetch, type RouteLoader } from "@/hooks/useRoutePrefetch";
+import { useMonacoBootstrap } from "@/monaco/useMonacoBootstrap";
+import { useMonacoTheme } from "@/monaco/useMonacoTheme";
 import { useStore } from "@/store/store";
 import { lazy, Suspense, useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
@@ -40,6 +42,8 @@ export default function App() {
   useThemeClass();
   useDocumentLanguage();
   useRoutePrefetch(ROUTE_LOADERS);
+  useMonacoBootstrap();
+  useMonacoTheme();
 
   useEffect(() => {
     void bootstrap();
