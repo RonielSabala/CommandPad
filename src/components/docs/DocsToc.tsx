@@ -66,6 +66,10 @@ export function DocsToc({ activeId, collapse, onNavigate }: Props) {
                 onNavigate(id);
               }}
             >
+              <span className="docs-toc-number">{SECTION_NUMBERS[id]}</span>
+
+              {t.docs.toc[id]}
+
               {collapse.hasChildren(id) ? (
                 <span
                   className="docs-toc-chevron-hit"
@@ -88,10 +92,6 @@ export function DocsToc({ activeId, collapse, onNavigate }: Props) {
               ) : (
                 <span className="docs-toc-chevron-spacer" />
               )}
-
-              <span className="docs-toc-number">{SECTION_NUMBERS[id]}</span>
-
-              {t.docs.toc[id]}
             </a>
           ),
         )}
