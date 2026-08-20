@@ -11,6 +11,7 @@ import { encryptContent } from "@/services/vault";
 import { downloadBlob } from "./download";
 import { getVariableMap, resolveCommandToString } from "./resolution";
 import { slugifyLabel } from "./runbook";
+import { buildRunbookSource } from "./runbookSource";
 import { joinLines } from "./string";
 
 const UNTITLED_LABELS: readonly string[] = [
@@ -105,22 +106,13 @@ export function getExportBasename(label: string): string {
   return DEFAULT_EXPORT_BASENAME;
 }
 
-export function buildRunbookExportJson(content: RunbookContent): string {
-  const data = {
-    variables: (content.variables ?? []).map(({ id, ...rest }) => rest),
-    blocks: (content.blocks ?? []).map(({ id, ...rest }) => rest),
-  };
-
-  return JSON.stringify(data, null, 2);
-}
-
 export async function buildSecuredRunbookExportContent(
   format: ExportFormat,
   runbookId: string,
   content: RunbookContent,
 ): Promise<string> {
   return format === ExportFormat.JSON
-    ? buildRunbookExportJson(await encryptContent(runbookId, content))
+    ? buildRunbookSource(await encryptContent(runbookId, content))
     : buildMarkdownExport(content);
 }
 

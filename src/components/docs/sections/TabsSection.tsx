@@ -1,14 +1,29 @@
-import { NoteStyle } from "@/common/enums";
+import { NoteStyle, RunbookView } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { TabsBar } from "@/components/tabs/TabsBar";
+import { RunbookSource } from "@/components/workspace/RunbookSource";
 import { useTranslation } from "@/i18n";
-import { demoNote } from "../demos/demoSeeds";
+import { useStore } from "@/store/store";
+import { demoCommand, demoNote, demoVariable } from "../demos/demoSeeds";
 import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
 import "./TabsSection.css";
 
+function DemoRunbookPanel() {
+  const showingSource = useStore(
+    (state) => state.runbookView === RunbookView.SOURCE,
+  );
+
+  return (
+    <div id="docs-demo-tab-panel">
+      {showingSource ? <RunbookSource /> : <BlocksList />}
+    </div>
+  );
+}
+
 export function TabsDocs() {
   const t = useTranslation();
+  const { backup, siteCheck } = t.docs.demo.tabSamples;
 
   return (
     <>
@@ -16,16 +31,37 @@ export function TabsDocs() {
       <Prose text={t.docs.tabs.items} />
       <Prose text={t.docs.tabs.autoCreate} />
       <Prose text={t.docs.tabs.labelDemo} />
+      <Prose
+        text={t.docs.tabs.sourceView(t.source.openSource, t.source.openPreview)}
+      />
+
       <DemoWorkspace
-        tabs={t.docs.demo.tabSamples.map((note) => ({
-          blocks: [demoNote(note, NoteStyle.HEADING)],
-        }))}
+        tabs={[
+          {
+            blocks: [
+              demoNote(backup.title, NoteStyle.HEADING),
+              demoNote(backup.note),
+              demoCommand("zip -r backup.zip ~/Documents"),
+              demoCommand("cp backup.zip ~/Backups"),
+            ],
+          },
+          {
+            blocks: [
+              demoNote(siteCheck.title, NoteStyle.HEADING),
+              demoNote(siteCheck.note),
+              demoCommand("ping {SITE}"),
+              demoCommand("curl {SITE}/health"),
+            ],
+            variables: [demoVariable("SITE", "example.com")],
+          },
+          { blocks: [demoNote("", NoteStyle.HEADING)] },
+        ]}
       >
         <TabsBar />
-        <div id="docs-demo-tab-panel">
-          <BlocksList />
-        </div>
+        <DemoRunbookPanel />
       </DemoWorkspace>
+
+      <Prose text={t.docs.tabs.sourceEdits} />
     </>
   );
 }

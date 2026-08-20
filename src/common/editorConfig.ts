@@ -58,6 +58,12 @@ export const CodeModelScope = {
   COMMAND: "command",
   PASTE_RUNBOOK: "runbook/paste",
   CLOUD_FILE: "runbook/cloud",
+  RUNBOOK_SOURCE: "runbook/source",
+} as const;
+
+export const MonacoMinimap = {
+  showSlider: "mouseover",
+  renderCharacters: true,
 } as const;
 
 export const MonacoWorkerLabel = {

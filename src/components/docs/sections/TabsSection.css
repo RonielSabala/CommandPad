@@ -1,9 +1,16 @@
 #docs-demo-tab-panel {
   --block-backdrop: var(--color-bg);
 
+  display: flex;
+  flex-direction: column;
+  min-height: 24rem;
   padding: var(--space-8) var(--space-10);
   background: var(--color-bg);
   border: var(--border-standard);
   border-top: none;
   border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+#docs-demo-tab-panel > #runbook-source {
+  padding: 0;
 }

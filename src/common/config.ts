@@ -21,6 +21,10 @@ export const RunbookConfig = {
   DEFAULT_LABEL: "Untitled runbook",
 } as const;
 
+export const RunbookSourceConfig = {
+  INDENT: 2,
+} as const;
+
 export const RunbookDbConfig = {
   DB_VERSION: 1,
   DB_NAME: "commandpad_runbooks_db",

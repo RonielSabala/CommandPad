@@ -102,7 +102,7 @@ function buildTheme(theme: Theme): monaco.editor.IStandaloneThemeData {
     colors: {
       "editor.background": MonacoTheme.TRANSPARENT,
       "editorGutter.background": MonacoTheme.TRANSPARENT,
-      "minimap.background": MonacoTheme.TRANSPARENT,
+      "minimap.background": c.surfaceAlt,
 
       "editor.foreground": c.textPrimary,
       "editor.placeholder.foreground": c.textMuted,

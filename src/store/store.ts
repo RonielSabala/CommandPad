@@ -1,9 +1,4 @@
-import {
-  createBlock,
-  getBlockLabelText,
-  mapBlockCommandTexts,
-  normalizeBlock,
-} from "@/blocks";
+import { createBlock, getBlockLabelText, mapBlockCommandTexts } from "@/blocks";
 import {
   CloudSyncConfig,
   createDefaultPanels,
@@ -34,6 +29,7 @@ import {
   PanelId,
   PanelSide,
   RunbookSyncStatus,
+  RunbookView,
   SortDirection,
   SyncDestination,
   Theme,
@@ -94,7 +90,6 @@ import { debounce } from "@/utils/debounce";
 import { downloadBlob } from "@/utils/download";
 import {
   buildMarkdownExport,
-  buildRunbookExportJson,
   buildSecuredRunbookExportContent,
   getExportBasename,
   runExport,
@@ -114,6 +109,7 @@ import {
   uniqueCopyKey,
 } from "@/utils/resolution";
 import { displayLabel, getRunbookLabel } from "@/utils/runbook";
+import { buildRunbookSource, parseRunbookSource } from "@/utils/runbookSource";
 import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
 import { createContext, useContext } from "react";
 import {
@@ -187,6 +183,7 @@ export interface StoreState {
 
   // UI
   mode: AppMode;
+  runbookView: RunbookView;
   theme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
@@ -339,6 +336,8 @@ export interface StoreState {
 
   setAppMode: (mode: AppMode) => void;
   toggleAppMode: () => void;
+  toggleRunbookView: () => void;
+  applyRunbookSource: (text: string) => string | null;
   toggleTheme: () => void;
   toggleSpellcheck: () => void;
   setLanguage: (language: Language) => void;
@@ -531,27 +530,6 @@ function createTabObject(
   };
 }
 
-/**
- * Parse raw JSON text into a `RunbookContent`, filling missing ids.
- * Throws when the JSON is malformed or lacks `variables`/`blocks`.
- */
-function parseRunbookContent(raw: string): RunbookContent {
-  const parsed = JSON.parse(raw);
-  if (!parsed.variables || !parsed.blocks) {
-    throw new Error("Invalid format");
-  }
-
-  return {
-    variables: (parsed.variables as Variable[]).map((variable) => ({
-      ...variable,
-      id: variable.id || generateId(),
-    })),
-    blocks: (parsed.blocks as unknown[])
-      .map(normalizeBlock)
-      .filter((block): block is Block => block !== null),
-  };
-}
-
 /** Immutably replace the active tab via `mutate`. */
 function withActiveTab(
   state: StoreState,
@@ -706,7 +684,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       get().runbookLibrary.find((item) => item.id === runbookId)?.sync;
 
     const runbookJson = (content: RunbookContent) =>
-      buildRunbookExportJson(content);
+      buildRunbookSource(content);
 
     /** Records content the cloud already holds, so nothing is pushed back. */
     const markRunbookSynced = (runbookId: string, content: RunbookContent) => {
@@ -1218,6 +1196,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       runbookSyncStatus: {},
 
       mode: AppMode.EDIT,
+      runbookView: RunbookView.PREVIEW,
       theme: Theme.DARK,
       language: detectLanguage(),
       spellcheckEnabled: true,
@@ -1893,7 +1872,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             reader.onload = async (loadEvent) => {
               try {
                 const decrypted = await decryptImportedContent(
-                  parseRunbookContent(String(loadEvent.target?.result)),
+                  parseRunbookSource(String(loadEvent.target?.result)),
                   file.name,
                 );
                 await get().addRunbookToLibrary(
@@ -1937,7 +1916,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       importRunbookFromText: async (text) => {
         let decrypted: ImportedVaultResult;
         try {
-          decrypted = await decryptImportedContent(parseRunbookContent(text));
+          decrypted = await decryptImportedContent(parseRunbookSource(text));
         } catch {
           return false;
         }
@@ -2548,6 +2527,47 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           get().clearUserInteraction();
         }
         get().setAppMode(wasRead ? AppMode.EDIT : AppMode.READ);
+      },
+
+      toggleRunbookView: () => {
+        get().clearUserInteraction();
+        set((s) => ({
+          runbookView:
+            s.runbookView === RunbookView.SOURCE
+              ? RunbookView.PREVIEW
+              : RunbookView.SOURCE,
+        }));
+      },
+
+      applyRunbookSource: (text) => {
+        const state = get();
+        const active = getActiveTab(state);
+        if (state.mode === AppMode.READ || !active) {
+          return null;
+        }
+
+        let content: RunbookContent;
+        try {
+          content = parseRunbookSource(text, {
+            variables: active.variables,
+            blocks: active.blocks,
+          });
+        } catch {
+          return null;
+        }
+
+        set((s) => {
+          const updated = withActiveTab(s, (tab) => ({
+            ...tab,
+            variables: content.variables,
+            blocks: content.blocks,
+          }));
+
+          return { ...updated, ...relabelActive({ ...s, ...updated }) };
+        });
+
+        debouncedSaveState();
+        return buildRunbookSource(content);
       },
 
       toggleTheme: () => {
@@ -3203,7 +3223,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           }
 
           try {
-            pending.push({ file, content: parseRunbookContent(text) });
+            pending.push({ file, content: parseRunbookSource(text) });
           } catch {
             failure = t.cloudModal.invalidFileError;
           }

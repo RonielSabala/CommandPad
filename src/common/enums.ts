@@ -205,6 +205,12 @@ export const RunbookSyncStatus = {
 export type RunbookSyncStatus =
   (typeof RunbookSyncStatus)[keyof typeof RunbookSyncStatus];
 
+export const RunbookView = {
+  PREVIEW: "preview",
+  SOURCE: "source",
+} as const;
+export type RunbookView = (typeof RunbookView)[keyof typeof RunbookView];
+
 export const CommandSurface = {
   PREVIEW: "preview",
   EDITOR: "editor",

@@ -2,7 +2,7 @@ import {
   CodeModelScope,
   RUNBOOK_JSON_PLACEHOLDER,
 } from "@/common/editorConfig";
-import { CodeLanguage } from "@/common/enums";
+import { CodeLanguage, PanelSide } from "@/common/enums";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -57,6 +57,7 @@ export function PasteRunbookModal() {
           placeholder={RUNBOOK_JSON_PLACEHOLDER}
           bounded
           folding
+          minimapSide={PanelSide.RIGHT}
           autoFocus
           hasError={hasError}
           onChange={(value) => {

@@ -1,6 +1,7 @@
 #tabs-bar {
   display: flex;
   align-items: stretch;
+  gap: var(--space-6);
   background: var(--color-surface);
   border-bottom: var(--border-standard);
   overflow: hidden;
@@ -38,6 +39,7 @@
 }
 
 #add-tab-btn {
+  outline: none;
   position: relative;
   z-index: var(--z-base);
   display: inline-flex;
@@ -51,7 +53,6 @@
   cursor: pointer;
   flex-shrink: 0;
   align-self: center;
-  margin-left: var(--space-3);
   transition: color var(--transition-fast);
 }
 
@@ -80,4 +81,11 @@
 
 body.read-mode #add-tab-btn {
   display: none;
+}
+
+#runbook-view-btn {
+  margin-left: auto;
+  align-self: center;
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
 }

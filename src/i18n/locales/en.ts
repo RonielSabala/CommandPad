@@ -118,6 +118,12 @@ export const en: Messages = {
     newTab: "New tab",
     closeTab: "Close tab",
   },
+  source: {
+    openSource: "Open source file",
+    openPreview: "Open preview",
+    invalid:
+      "This is not valid runbook JSON, so the runbook is still on its last good version.",
+  },
   blocks: {
     newBlockLabel: "NEW BLOCK",
     typeLabel: {
@@ -660,7 +666,16 @@ export const en: Messages = {
     demo: {
       tryIt: "Try it",
       reset: "Reset demo",
-      tabSamples: ["Deploy checklist", "Database backup", ""],
+      tabSamples: {
+        backup: {
+          title: "Backup checklist",
+          note: "Run this before you shut down for the day.",
+        },
+        siteCheck: {
+          title: "Website check",
+          note: "Run this whenever the site feels slow.",
+        },
+      },
       runbookSamples: ["Release checklist", "Postgres backup", "K8s debugging"],
       multiSelectNotes: ["Create the backup", "Clean up"],
       greetingTemplate: "Hi {;name}, welcome to {;place}!",
@@ -738,6 +753,10 @@ If something goes wrong, undo it in this order:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
         "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, and close one.",
+      sourceView: (openSourceLabel, openPreviewLabel) =>
+        `A runbook is JSON underneath, and the button at the far end of the tabs bar shows you that JSON instead of the blocks: **${openSourceLabel}** swaps the panel for an editor holding the whole runbook, and **${openPreviewLabel}** brings the blocks back. Each tab below carries its own commands and variables, so open the source on one and then on another to see what a runbook really is.`,
+      sourceEdits:
+        "Edits land as you type: every keystroke that leaves valid JSON behind is applied to the runbook straight away, so the blocks are already up to date by the time you switch back. Text that does not parse yet is never thrown away, it simply is not applied, and the runbook stays on its last good version until the JSON is whole again.",
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",

@@ -45,7 +45,7 @@ export function createBlock(type: BlockType): Block {
   return BLOCK_DEFINITIONS[type].create(generateId());
 }
 
-/** Coerce an untrusted block into a valid one */
+/** Coerce an untrusted block into a valid one. */
 export function normalizeBlock(raw: unknown): Block | null {
   if (!isObject(raw) || !isBlockType(raw.type)) {
     return null;

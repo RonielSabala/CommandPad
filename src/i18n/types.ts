@@ -127,6 +127,11 @@ export interface Messages {
     newTab: string;
     closeTab: string;
   };
+  source: {
+    openSource: string;
+    openPreview: string;
+    invalid: string;
+  };
   blocks: {
     newBlockLabel: string;
     typeLabel: Record<BlockType, string>;
@@ -376,7 +381,10 @@ export interface Messages {
       noteSample: string;
       tableSample: string;
       listSample: string;
-      tabSamples: string[];
+      tabSamples: {
+        backup: { title: string; note: string };
+        siteCheck: { title: string; note: string };
+      };
       runbookSamples: string[];
       multiSelectNotes: string[];
       greetingTemplate: string;
@@ -411,6 +419,8 @@ export interface Messages {
       items: string;
       autoCreate: string;
       labelDemo: string;
+      sourceView: (openSourceLabel: string, openPreviewLabel: string) => string;
+      sourceEdits: string;
     };
     sidebar: {
       intro: string;
