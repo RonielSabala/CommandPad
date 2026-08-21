@@ -33,6 +33,7 @@ export const ColorToken = {
   BORDER_FOCUS: "--color-border-focus",
   SELECTION: "--selection-color",
   SCROLLBAR_THUMB: "--scrollbar-thumb",
+  MINIMAP_SLIDER: "--minimap-slider",
   SCROLLBAR_THUMB_HOVER: "--scrollbar-thumb-hover",
 } as const;
 
@@ -78,6 +79,9 @@ export const MonacoTheme = {
   ITALIC: "italic",
   TRANSPARENT: "#00000000",
   GUIDE_DIM_OPACITY: 0.35,
+  SLIDER_OPACITY: 0.07,
+  SLIDER_HOVER_OPACITY: 0.1,
+  SLIDER_ACTIVE_OPACITY: 0.15,
 } as const;
 
 export const MonacoTokenScope = {

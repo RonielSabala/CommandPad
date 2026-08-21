@@ -63,6 +63,18 @@ function resolveThemeColors() {
     danger: resolveColor(ColorToken.DANGER),
     scrollbarThumb: resolveColor(ColorToken.SCROLLBAR_THUMB),
     scrollbarThumbHover: resolveColor(ColorToken.SCROLLBAR_THUMB_HOVER),
+    sliderIdle: resolveColor(
+      ColorToken.MINIMAP_SLIDER,
+      MonacoTheme.SLIDER_OPACITY,
+    ),
+    sliderHover: resolveColor(
+      ColorToken.MINIMAP_SLIDER,
+      MonacoTheme.SLIDER_HOVER_OPACITY,
+    ),
+    sliderActive: resolveColor(
+      ColorToken.MINIMAP_SLIDER,
+      MonacoTheme.SLIDER_ACTIVE_OPACITY,
+    ),
     selection: resolveColor(ColorToken.SELECTION),
     success: resolveColor(ColorToken.SUCCESS),
     surface: resolveColor(ColorToken.SURFACE),
@@ -103,6 +115,10 @@ function buildTheme(theme: Theme): monaco.editor.IStandaloneThemeData {
       "editor.background": MonacoTheme.TRANSPARENT,
       "editorGutter.background": MonacoTheme.TRANSPARENT,
       "minimap.background": c.surfaceAlt,
+
+      "minimapSlider.background": c.sliderIdle,
+      "minimapSlider.hoverBackground": c.sliderHover,
+      "minimapSlider.activeBackground": c.sliderActive,
 
       "editor.foreground": c.textPrimary,
       "editor.placeholder.foreground": c.textMuted,

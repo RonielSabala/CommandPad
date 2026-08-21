@@ -97,6 +97,7 @@ export function boundedEditorOptions(
     ...baseEditorOptions(folding),
     fontSize: metrics.fontSizeSmall,
     lineHeight: metrics.lineHeightSmall,
+    scrollBeyondLastLine: true,
     minimap: minimapSide
       ? { ...MonacoMinimap, enabled: true, side: minimapSide }
       : { enabled: false },
