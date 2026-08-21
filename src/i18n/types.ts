@@ -416,11 +416,9 @@ export interface Messages {
     };
     tabs: {
       intro: string;
-      items: string;
+      items: (openSourceLabel: string, openPreviewLabel: string) => string;
       autoCreate: string;
       labelDemo: string;
-      sourceView: (openSourceLabel: string, openPreviewLabel: string) => string;
-      sourceEdits: string;
     };
     sidebar: {
       intro: string;

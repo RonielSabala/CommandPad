@@ -745,18 +745,19 @@ If something goes wrong, undo it in this order:
     },
     tabs: {
       intro: "Each tab holds one open runbook.",
-      items: `* **Click** a tab to switch to it.
+      items: (
+        openSourceLabel,
+        openPreviewLabel,
+      ) => `* **Click** a tab to switch to it.
 * **Drag** a tab to reorder it.
 * **Middle-click** a tab to close it.
-* **Click** the **+** at the end of the tabs bar to open a new tab.`,
+* **Click** the **+** at the end of the tabs bar to open a new tab.
+* **${openSourceLabel}**, at the far end of the tabs bar, swaps the blocks below for the runbook's raw JSON.
+* **${openPreviewLabel}** brings the blocks back.`,
       autoCreate:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
-        "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, and close one.",
-      sourceView: (openSourceLabel, openPreviewLabel) =>
-        `A runbook is JSON underneath, and the button at the far end of the tabs bar shows you that JSON instead of the blocks: **${openSourceLabel}** swaps the panel for an editor holding the whole runbook, and **${openPreviewLabel}** brings the blocks back. Each tab below carries its own commands and variables, so open the source on one and then on another to see what a runbook really is.`,
-      sourceEdits:
-        "Edits land as you type: every keystroke that leaves valid JSON behind is applied to the runbook straight away, so the blocks are already up to date by the time you switch back. Text that does not parse yet is never thrown away, it simply is not applied, and the runbook stays on its last good version until the JSON is whole again.",
+        "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, close one, and open the source file to see a tab's runbook as JSON.",
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",

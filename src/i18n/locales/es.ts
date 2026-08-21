@@ -758,18 +758,19 @@ Si algo sale mal, deshazlo en este orden:
     },
     tabs: {
       intro: "Cada pestaña contiene un libro abierto.",
-      items: `* **Haz clic** en una pestaña para cambiar a ella.
+      items: (
+        openSourceLabel,
+        openPreviewLabel,
+      ) => `* **Haz clic** en una pestaña para cambiar a ella.
 * **Arrastra** una pestaña para reordenarla.
 * **Clic con la rueda** del ratón en una pestaña para cerrarla.
-* **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.`,
+* **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.
+* **${openSourceLabel}**, al final de la barra de pestañas, cambia los bloques de abajo por el JSON del libro.
+* **${openPreviewLabel}** devuelve los bloques.`,
       autoCreate:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:
-        "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas y cierra alguna.",
-      sourceView: (openSourceLabel, openPreviewLabel) =>
-        `Por debajo, un libro es JSON, y el botón del extremo de la barra de pestañas te muestra ese JSON en lugar de los bloques: **${openSourceLabel}** cambia el panel por un editor con el libro entero, y **${openPreviewLabel}** devuelve los bloques. Cada pestaña de abajo trae sus propios comandos y variables, así que abre la fuente en una y luego en otra para ver lo que un libro es en realidad.`,
-      sourceEdits:
-        "Los cambios se aplican mientras escribes: cada pulsación que deja un JSON válido se aplica al libro de inmediato, así que los bloques ya están al día cuando vuelves. El texto que todavía no se puede leer nunca se descarta, simplemente no se aplica, y el libro se queda en su última versión correcta hasta que el JSON vuelve a estar completo.",
+        "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas, cierra alguna, y abre la fuente para ver el libro de una pestaña como JSON.",
     },
     sidebar: {
       intro:

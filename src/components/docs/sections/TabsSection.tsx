@@ -28,12 +28,11 @@ export function TabsDocs() {
   return (
     <>
       <Prose text={t.docs.tabs.intro} />
-      <Prose text={t.docs.tabs.items} />
+      <Prose
+        text={t.docs.tabs.items(t.source.openSource, t.source.openPreview)}
+      />
       <Prose text={t.docs.tabs.autoCreate} />
       <Prose text={t.docs.tabs.labelDemo} />
-      <Prose
-        text={t.docs.tabs.sourceView(t.source.openSource, t.source.openPreview)}
-      />
 
       <DemoWorkspace
         tabs={[
@@ -60,8 +59,6 @@ export function TabsDocs() {
         <TabsBar />
         <DemoRunbookPanel />
       </DemoWorkspace>
-
-      <Prose text={t.docs.tabs.sourceEdits} />
     </>
   );
 }
