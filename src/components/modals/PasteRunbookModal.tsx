@@ -20,12 +20,14 @@ export function PasteRunbookModal() {
 
   const [text, setText] = useState("");
   const [hasError, setHasError] = useState(false);
+  const [hasOpened, setHasOpened] = useState(isOpen);
 
   // Reset the field each time the modal opens
   useEffect(() => {
     if (isOpen) {
       setText("");
       setHasError(false);
+      setHasOpened(true);
     }
   }, [isOpen]);
 
@@ -48,7 +50,7 @@ export function PasteRunbookModal() {
       <p className="modal-title">{t.pasteModal.title}</p>
       <p className="modal-message">{t.pasteModal.message}</p>
 
-      {isOpen && (
+      {hasOpened && (
         <CodeEditor
           modelId={CodeModelScope.PASTE_RUNBOOK}
           language={CodeLanguage.JSON}
