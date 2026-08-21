@@ -3,7 +3,7 @@ import {
   CodeModelScope,
   RUNBOOK_JSON_PLACEHOLDER,
 } from "@/common/editorConfig";
-import { CodeLanguage } from "@/common/enums";
+import { CodeLanguage, PanelSide } from "@/common/enums";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { Spinner } from "@/components/common/Spinner";
@@ -57,6 +57,7 @@ export function CloudFileEditorModal() {
             placeholder={RUNBOOK_JSON_PLACEHOLDER}
             bounded
             folding
+            minimapSide={PanelSide.RIGHT}
             hasError={Boolean(editor.error)}
             onSubmit={() => {
               if (!busy && dirty) {

@@ -118,6 +118,12 @@ export const en: Messages = {
     newTab: "New tab",
     closeTab: "Close tab",
   },
+  source: {
+    openSource: "Open source file",
+    openPreview: "Open preview",
+    invalid:
+      "This is not valid runbook JSON, so the runbook is still on its last good version.",
+  },
   blocks: {
     newBlockLabel: "NEW BLOCK",
     typeLabel: {
@@ -660,7 +666,16 @@ export const en: Messages = {
     demo: {
       tryIt: "Try it",
       reset: "Reset demo",
-      tabSamples: ["Deploy checklist", "Database backup", ""],
+      tabSamples: {
+        backup: {
+          title: "Backup checklist",
+          note: "Run this before you shut down for the day.",
+        },
+        siteCheck: {
+          title: "Website check",
+          note: "Run this whenever the site feels slow.",
+        },
+      },
       runbookSamples: ["Release checklist", "Postgres backup", "K8s debugging"],
       multiSelectNotes: ["Create the backup", "Clean up"],
       greetingTemplate: "Hi {;name}, welcome to {;place}!",
@@ -730,14 +745,19 @@ If something goes wrong, undo it in this order:
     },
     tabs: {
       intro: "Each tab holds one open runbook.",
-      items: `* **Click** a tab to switch to it.
+      items: (
+        openSourceLabel,
+        openPreviewLabel,
+      ) => `* **Click** a tab to switch to it.
 * **Drag** a tab to reorder it.
 * **Middle-click** a tab to close it.
-* **Click** the **+** at the end of the tabs bar to open a new tab.`,
+* **Click** the **+** at the end of the tabs bar to open a new tab.
+* **${openSourceLabel}**, at the far end of the tabs bar, swaps the blocks below for the runbook's raw JSON.
+* **${openPreviewLabel}** brings the blocks back.`,
       autoCreate:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
-        "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, and close one.",
+        "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, close one, and open the source file to see a tab's runbook as JSON.",
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",

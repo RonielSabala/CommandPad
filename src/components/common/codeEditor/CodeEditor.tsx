@@ -6,7 +6,7 @@ import {
   CodeModelConfig,
   MonacoLayout,
 } from "@/common/editorConfig";
-import { CodeLanguage, CodeRendering } from "@/common/enums";
+import { CodeLanguage, CodeRendering, PanelSide } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import type { ScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
@@ -67,6 +67,8 @@ interface Props {
   hasError?: boolean;
   clamped?: boolean;
   folding?: boolean;
+  readOnly?: boolean;
+  minimapSide?: PanelSide | null;
   footer?: ReactNode;
   completions?: VariableCompletion[];
   actions?: EditorAction[];
@@ -121,6 +123,8 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       hasError = false,
       clamped = false,
       folding = false,
+      readOnly = false,
+      minimapSide = null,
       footer,
       completions,
       actions,
@@ -368,9 +372,10 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
             height={bounded ? FULL_HEIGHT : contentHeight}
             options={{
               ...(bounded
-                ? boundedEditorOptions(folding)
+                ? boundedEditorOptions(folding, minimapSide)
                 : flowingEditorOptions(folding)),
               placeholder,
+              readOnly,
               lineNumbers: promptPrefix
                 ? (line) =>
                     line === MonacoLayout.FIRST_LINE

@@ -121,6 +121,12 @@ export const es: Messages = {
     newTab: "Nueva pestaña",
     closeTab: "Cerrar pestaña",
   },
+  source: {
+    openSource: "Abrir archivo fuente",
+    openPreview: "Abrir vista previa",
+    invalid:
+      "Este JSON de libro no es válido, así que el libro sigue en su última versión correcta.",
+  },
   blocks: {
     newBlockLabel: "NUEVO BLOQUE",
     typeLabel: {
@@ -669,7 +675,16 @@ export const es: Messages = {
     demo: {
       tryIt: "Pruébalo",
       reset: "Reiniciar demo",
-      tabSamples: ["Checklist de despliegue", "Respaldo de base de datos", ""],
+      tabSamples: {
+        backup: {
+          title: "Checklist de respaldo",
+          note: "Ejecuta esto antes de apagar el equipo al terminar el día.",
+        },
+        siteCheck: {
+          title: "Comprobación del sitio",
+          note: "Ejecuta esto cuando el sitio se sienta lento.",
+        },
+      },
       runbookSamples: [
         "Checklist de release",
         "Respaldo de Postgres",
@@ -743,14 +758,19 @@ Si algo sale mal, deshazlo en este orden:
     },
     tabs: {
       intro: "Cada pestaña contiene un libro abierto.",
-      items: `* **Haz clic** en una pestaña para cambiar a ella.
+      items: (
+        openSourceLabel,
+        openPreviewLabel,
+      ) => `* **Haz clic** en una pestaña para cambiar a ella.
 * **Arrastra** una pestaña para reordenarla.
 * **Clic con la rueda** del ratón en una pestaña para cerrarla.
-* **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.`,
+* **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.
+* **${openSourceLabel}**, al final de la barra de pestañas, cambia los bloques de abajo por el JSON del libro.
+* **${openPreviewLabel}** devuelve los bloques.`,
       autoCreate:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:
-        "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas y cierra alguna.",
+        "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas, cierra alguna, y abre la fuente para ver el libro de una pestaña como JSON.",
     },
     sidebar: {
       intro:

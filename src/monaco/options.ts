@@ -1,4 +1,5 @@
-import { MonacoLayout } from "@/common/editorConfig";
+import { MonacoLayout, MonacoMinimap } from "@/common/editorConfig";
+import type { PanelSide } from "@/common/enums";
 import type { editor } from "monaco-editor";
 import { getCodeMetrics } from "./metrics";
 import { getOverflowWidgetsRoot } from "./overflowWidgets";
@@ -86,14 +87,26 @@ export function flowingEditorOptions(folding: boolean): Options {
   };
 }
 
-export function boundedEditorOptions(folding: boolean): Options {
+export function boundedEditorOptions(
+  folding: boolean,
+  minimapSide: PanelSide | null,
+): Options {
   const metrics = getCodeMetrics();
 
   return {
     ...baseEditorOptions(folding),
     fontSize: metrics.fontSizeSmall,
     lineHeight: metrics.lineHeightSmall,
-    scrollbar: { vertical: "auto", horizontal: "auto", useShadows: false },
+    scrollBeyondLastLine: true,
+    minimap: minimapSide
+      ? { ...MonacoMinimap, enabled: true, side: minimapSide }
+      : { enabled: false },
+    scrollbar: {
+      vertical: minimapSide ? "hidden" : "auto",
+      ...(minimapSide ? { verticalScrollbarSize: 0 } : {}),
+      horizontal: "auto",
+      useShadows: false,
+    },
     quickSuggestions: true,
     wordBasedSuggestions: "off",
   };
