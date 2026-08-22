@@ -968,7 +968,7 @@ Si algo sale mal, deshazlo en este orden:
       changing: (changeLabel) =>
         `Haz clic en un escudo desbloqueado para abrir **${changeLabel}**: escribe la frase de contraseña actual y luego la nueva dos veces. Todos los secretos de ese libro, incluida su copia en un archivo enlazado de la nube, se cifran de nuevo al momento. Los demás libros y los archivos ya exportados conservan la anterior.`,
       markdownWarning:
-        "Las exportaciones a Markdown y texto plano se saltan el cifrado: su razón de ser es el comando ya resuelto, secretos incluidos. Exporta JSON para lo que vaya a salir de tus manos.",
+        "Las exportaciones a Markdown y texto plano también cifran el valor de un secreto, así que un comando que lo referencia incluye el texto cifrado en vez del valor real y no se puede ejecutar tal cual se exportó.",
     },
     blocks: {
       intro: (blockActionsLabel) =>

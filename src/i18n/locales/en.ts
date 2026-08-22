@@ -954,7 +954,7 @@ If something goes wrong, undo it in this order:
       changing: (changeLabel) =>
         `Click an unlocked shield to open **${changeLabel}**: enter the current passphrase, then the new one twice. Every secret in that runbook, including its copy in a linked cloud file, is re-encrypted on the spot. Other runbooks and past exports keep the old passphrase.`,
       markdownWarning:
-        "Markdown and plain-text exports skip encryption: their whole point is the resolved command, secrets included. Export JSON for anything leaving your hands.",
+        "Markdown and plain-text exports encrypt a secret's value too, so a command that references one bakes in ciphertext instead of the real value and isn't directly runnable as exported.",
     },
     blocks: {
       intro: (blockActionsLabel) =>

@@ -3613,7 +3613,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       copyRunbookMarkdown: async () => {
         const active = getActiveTab(get());
-        const text = buildMarkdownExport({
+        const text = await buildMarkdownExport(active?.runbookId ?? "", {
           variables: active?.variables ?? [],
           blocks: active?.blocks ?? [],
         });
