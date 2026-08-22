@@ -2023,9 +2023,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         if (get().variablesSectionCollapsed) {
           get().toggleVariablesSection();
         }
-        if (get().panels[PanelId.SIDEBAR].collapsed) {
-          get().togglePanel(PanelId.SIDEBAR);
-        }
 
         get().saveState();
         return { id: newVariable.id, key };
