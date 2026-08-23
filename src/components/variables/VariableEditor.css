@@ -1,0 +1,70 @@
+.variable-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-radius: var(--radius-lg);
+}
+
+/* Key */
+
+.variable-editor-key-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.variable-editor-key {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  font-weight: 500;
+  color: var(--accent-text);
+  background: var(--color-surface-alt);
+  border: var(--border-standard);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  outline: none;
+  transition:
+    border-color var(--transition-base),
+    opacity var(--transition-base);
+}
+
+.variable-editor-key.is-constant {
+  color: var(--constant-text);
+}
+
+.variable-editor-key:focus {
+  border-color: var(--color-border-focus);
+}
+
+.variable-editor-key::placeholder {
+  color: var(--color-text-muted);
+}
+
+.variable-editor-secret-btn,
+.variable-editor-secret-btn:hover {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+body.read-mode .variable-editor-key {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+body.read-mode .variable-editor-secret-btn {
+  display: none;
+}
+
+/* Value */
+
+.variable-editor-value {
+  min-width: var(--block-min-width);
+}
+
+body:not(.read-mode)
+  .variable-editor.is-unused:not(:focus-within)
+  :is(.variable-editor-key, .variable-editor-value) {
+  opacity: 0.5;
+}

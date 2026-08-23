@@ -112,14 +112,15 @@ export interface Messages {
     empty: string;
     new: string;
     newTitle: string;
+    openEditorTitle: string;
     keyPlaceholder: string;
     valuePlaceholder: string;
-    reveal: string;
-    mask: string;
+    reveal: (count: number) => string;
+    mask: (count: number) => string;
     actions: string;
-    duplicate: string;
+    duplicate: (count: number) => string;
     renameCase: string;
-    remove: string;
+    remove: (count: number) => string;
     dragResizeSplit: string;
     unusedTitle: (key: string) => string;
   };
@@ -416,7 +417,11 @@ export interface Messages {
     };
     tabs: {
       intro: string;
-      items: (openSourceLabel: string, openPreviewLabel: string) => string;
+      items: (
+        openSourceLabel: string,
+        openPreviewLabel: string,
+        openEditorLabel: string,
+      ) => string;
       autoCreate: string;
       labelDemo: string;
     };
@@ -447,6 +452,14 @@ export interface Messages {
       demoHint: (variableActionsLabel: string) => string;
       constants: string;
       constantsDemoHint: string;
+    };
+    variablesEditor: {
+      intro: (openEditorLabel: string) => string;
+      whyEditor: (extractLabel: string) => string;
+      demoHint: string;
+      selection: (variableActionsLabel: string) => string;
+      sameVariables: string;
+      secrets: string;
     };
     variableReferences: {
       intro: string;

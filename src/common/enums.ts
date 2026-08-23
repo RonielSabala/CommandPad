@@ -125,6 +125,13 @@ export const VariableField = {
 } as const;
 export type VariableField = (typeof VariableField)[keyof typeof VariableField];
 
+export const SelectionGroup = {
+  BLOCK: "block",
+  VARIABLE: "variable",
+} as const;
+export type SelectionGroup =
+  (typeof SelectionGroup)[keyof typeof SelectionGroup];
+
 export const LassoMode = {
   SELECT: "select",
   DESELECT: "deselect",
@@ -206,8 +213,9 @@ export type RunbookSyncStatus =
   (typeof RunbookSyncStatus)[keyof typeof RunbookSyncStatus];
 
 export const RunbookView = {
-  PREVIEW: "preview",
   SOURCE: "source",
+  PREVIEW: "preview",
+  VARIABLES: "variables",
 } as const;
 export type RunbookView = (typeof RunbookView)[keyof typeof RunbookView];
 

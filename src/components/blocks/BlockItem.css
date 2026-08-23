@@ -60,18 +60,6 @@ body.select-key-held:not(.read-mode) .block-item:hover:not(.block-selected) {
   border-radius: var(--radius-lg);
 }
 
-@keyframes duplicate-flash {
-  0% {
-    outline: var(--space-1) solid var(--accent);
-    outline-offset: var(--space-2);
-  }
-
-  100% {
-    outline: var(--space-3) solid transparent;
-    outline-offset: var(--space-2);
-  }
-}
-
 .block-item.duplicate-flash {
   z-index: var(--z-raised);
   animation: duplicate-flash 0.5s ease-out forwards;

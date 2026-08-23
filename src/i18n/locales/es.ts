@@ -105,14 +105,17 @@ export const es: Messages = {
     empty: "No hay variables definidas.",
     new: "Nueva",
     newTitle: "Nueva variable",
+    openEditorTitle: "Abrir editor de variables",
     keyPlaceholder: "clave",
     valuePlaceholder: "valor",
-    reveal: "Mostrar valor",
-    mask: "Ocultar valor",
+    reveal: (count) => (count === 1 ? "Mostrar valor" : "Mostrar valores"),
+    mask: (count) => (count === 1 ? "Ocultar valor" : "Ocultar valores"),
     actions: "Acciones de la variable",
-    duplicate: "Duplicar variable",
+    duplicate: (count) =>
+      count === 1 ? "Duplicar variable" : "Duplicar variables",
     renameCase: "Cambiar capitalización de la clave",
-    remove: "Eliminar variable",
+    remove: (count) =>
+      count === 1 ? "Eliminar variable" : "Eliminar variables",
     dragResizeSplit:
       "Arrastra para redimensionar clave y valor · doble clic para igualarlos",
     unusedTitle: (key) => `${key} (sin usar)`,
@@ -644,6 +647,7 @@ export const es: Messages = {
       [DocsSectionId.MAIN_PANEL]: "Panel principal",
       [DocsSectionId.RUNBOOK_LIBRARY]: "Biblioteca de libros",
       [DocsSectionId.VARIABLES]: "Variables",
+      [DocsSectionId.VARIABLES_EDITOR]: "Editor de variables",
       [DocsSectionId.VARIABLE_REFERENCES]: "Referencias de variables",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
       [DocsSectionId.VARIABLE_SLICING]: "Recortar valores",
@@ -761,11 +765,13 @@ Si algo sale mal, deshazlo en este orden:
       items: (
         openSourceLabel,
         openPreviewLabel,
+        openEditorLabel,
       ) => `* **Haz clic** en una pestaña para cambiar a ella.
 * **Arrastra** una pestaña para reordenarla.
 * **Clic con la rueda** del ratón en una pestaña para cerrarla.
 * **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.
 * **${openSourceLabel}**, al final de la barra de pestañas, cambia los bloques de abajo por el JSON del libro.
+* **${openEditorLabel}**, a su lado, los cambia por las variables del libro.
 * **${openPreviewLabel}** devuelve los bloques.`,
       autoCreate:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
@@ -822,6 +828,20 @@ Si algo sale mal, deshazlo en este orden:
         "No todas las variables cambian por el mismo motivo. Unas son valores que cambias a cada rato y otras son **constantes**: se mantienen igual durante toda la vida del libro, y solo son variables porque ese mismo valor aparece en comando tras comando. CommandPad las distingue por convención de nombres: una clave escrita entera en **mayúsculas** se considera una _constante_ y cualquier clave con alguna **minúscula** se considera _variable_.",
       constantsDemoHint:
         "La convención es solo de nombres: las constantes se resuelven, se referencian y se renombran igual que cualquier otra variable. Renombra abajo una clave de mayúsculas a minúsculas y al revés para ver cómo el color la sigue.",
+    },
+    variablesEditor: {
+      intro: (openEditorLabel) =>
+        `El panel de variables de la barra lateral está pensado para un vistazo rápido y un arreglo rápido: una línea para la clave y otra para el valor. Cuando un valor se sale de esa línea, **${openEditorLabel}**, en la barra de pestañas, cambia los bloques por las variables del libro abierto, dispuestas como un bloque de comando dispone un comando: la clave arriba y el valor debajo, en un editor de código de verdad.`,
+      whyEditor: (extractLabel) =>
+        `Ese editor es el mismo que usa el bloque de comando, así que un valor recibe todo lo que recibe un comando: crece tantas líneas como el valor necesite, escribir \`{\` sugiere las demás variables del libro, y al hacer clic derecho sobre un trozo del valor aparece **${extractLabel}**, que lo saca a una variable propia y deja seleccionada la nueva clave para que la renombres ahí mismo.`,
+      demoHint:
+        "Pruébalo abajo. Agrégale otra opción a `SSH_OPTS` y observa cómo el valor ocupa una segunda línea en vez de desaparecer hacia la derecha; luego escribe `{` en cualquier valor para referenciar otra variable. `REMOTE` ya se construye a partir de `HOST`, y el comando del final del libro se resuelve con lo que dejes escrito.",
+      selection: (variableActionsLabel) =>
+        `Las variables se seleccionan como los bloques: mantén **Shift** y haz clic en una, o mantén **Shift** y arrastra sobre varias. Cada entrada de **${variableActionsLabel}** actúa entonces sobre toda la selección a la vez, y **Ctrl+D** la duplica mientras que **Supr** la elimina.`,
+      sameVariables:
+        "Solo hay un conjunto de variables. El editor y el panel de la barra lateral son dos vistas del mismo, así que una clave renombrada en cualquiera de los dos reescribe todos los comandos que la usaban, y el valor que escribes aquí es el que muestra la barra lateral.",
+      secrets:
+        "Una diferencia con la barra lateral: aquí el valor de un secreto **no se oculta**, igual que no se oculta en el archivo fuente del libro. Ambas vistas muestran el libro tal como está en memoria, que es lo que hace que **Copiar** produzca un comando ejecutable. Ocultar sigue siendo cosa de la barra lateral, y el cifrado en reposo no se ve afectado.",
     },
     variableReferences: {
       intro:

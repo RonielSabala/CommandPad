@@ -29,7 +29,11 @@ export function TabsDocs() {
     <>
       <Prose text={t.docs.tabs.intro} />
       <Prose
-        text={t.docs.tabs.items(t.source.openSource, t.source.openPreview)}
+        text={t.docs.tabs.items(
+          t.source.openSource,
+          t.source.openPreview,
+          t.variables.openEditorTitle,
+        )}
       />
       <Prose text={t.docs.tabs.autoCreate} />
       <Prose text={t.docs.tabs.labelDemo} />

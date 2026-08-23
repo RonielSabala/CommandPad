@@ -46,6 +46,12 @@ export function useKeybindings(): void {
       if (!ctrlPressed && !linkKeyPressed && !selectKeyPressed && !inEditable) {
         if (
           matchesKeybinding(event, KeyBinding.DELETE_BLOCK) &&
+          state.selectedVariableIds.size > 0
+        ) {
+          event.preventDefault();
+          state.removeVariable([...state.selectedVariableIds][0]);
+        } else if (
+          matchesKeybinding(event, KeyBinding.DELETE_BLOCK) &&
           state.selectedBlockIds.size > 0
         ) {
           event.preventDefault();
@@ -94,7 +100,9 @@ export function useKeybindings(): void {
         void state.clearRunbookLibrary();
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.DUPLICATE_BLOCK)) {
-        if (state.selectedBlockIds.size > 0) {
+        if (state.selectedVariableIds.size > 0) {
+          state.duplicateVariable([...state.selectedVariableIds][0]);
+        } else if (state.selectedBlockIds.size > 0) {
           state.duplicateBlock([...state.selectedBlockIds][0]);
         }
 

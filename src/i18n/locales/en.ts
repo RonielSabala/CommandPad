@@ -103,14 +103,16 @@ export const en: Messages = {
     empty: "No variables defined.",
     new: "New",
     newTitle: "New variable",
+    openEditorTitle: "Open variables editor",
     keyPlaceholder: "key",
     valuePlaceholder: "value",
-    reveal: "Reveal value",
-    mask: "Mask value",
+    reveal: (count) => (count === 1 ? "Reveal value" : "Reveal values"),
+    mask: (count) => (count === 1 ? "Mask value" : "Mask values"),
     actions: "Variable actions",
-    duplicate: "Duplicate variable",
+    duplicate: (count) =>
+      count === 1 ? "Duplicate variable" : "Duplicate variables",
     renameCase: "Change key case",
-    remove: "Remove variable",
+    remove: (count) => (count === 1 ? "Remove variable" : "Remove variables"),
     dragResizeSplit: "Drag to resize key and value · double-click to even out",
     unusedTitle: (key) => `${key} (unused)`,
   },
@@ -635,6 +637,7 @@ export const en: Messages = {
       [DocsSectionId.MAIN_PANEL]: "Main panel",
       [DocsSectionId.RUNBOOK_LIBRARY]: "Runbook library",
       [DocsSectionId.VARIABLES]: "Variables",
+      [DocsSectionId.VARIABLES_EDITOR]: "Variables editor",
       [DocsSectionId.VARIABLE_REFERENCES]: "Variable references",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Parameterized placeholders",
       [DocsSectionId.VARIABLE_SLICING]: "Slicing values",
@@ -748,11 +751,13 @@ If something goes wrong, undo it in this order:
       items: (
         openSourceLabel,
         openPreviewLabel,
+        openEditorLabel,
       ) => `* **Click** a tab to switch to it.
 * **Drag** a tab to reorder it.
 * **Middle-click** a tab to close it.
 * **Click** the **+** at the end of the tabs bar to open a new tab.
 * **${openSourceLabel}**, at the far end of the tabs bar, swaps the blocks below for the runbook's raw JSON.
+* **${openEditorLabel}**, beside it, swaps them for the runbook's variables instead.
 * **${openPreviewLabel}** brings the blocks back.`,
       autoCreate:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
@@ -808,6 +813,20 @@ If something goes wrong, undo it in this order:
         "Not every variable changes for the same reason. Some are values you swap all the time, and some are **constants**: they stay the same for the whole life of the runbook, and they are only variables because the same value shows up in command after command. CommandPad tells them apart by naming convention: a key written entirely in **capitals** is treated as a _constant_, and any key with a **lowercase** letter in it is treated as a _variable_.",
       constantsDemoHint:
         "The convention is purely a naming one: constants resolve, get referenced and get renamed exactly like any other variable. Rename a key below from capitals to lowercase and back to see the color follow along.",
+    },
+    variablesEditor: {
+      intro: (openEditorLabel) =>
+        `The sidebar's variables panel is built for a quick glance and a quick fix: one line for the key, one line for the value. When a value outgrows that line, **${openEditorLabel}** in the tabs bar swaps the blocks for the variables of the open runbook, laid out the way a command block lays out a command: the key on top, and the value below it in a real code editor.`,
+      whyEditor: (extractLabel) =>
+        `That editor is the same one the command block uses, so a value gets everything a command gets: it grows to as many lines as the value needs, typing \`{\` suggests the runbook's other variables, and right-clicking a piece of a value offers **${extractLabel}**, which pulls it out into a variable of its own and leaves the new key selected so you can rename it on the spot.`,
+      demoHint:
+        "Try it below. Give `SSH_OPTS` another flag and watch the value take a second line instead of scrolling out of sight, then type `{` in any value to reference another variable. `REMOTE` is already built from `HOST`, and the command at the bottom of the runbook resolves against whatever you leave behind.",
+      selection: (variableActionsLabel) =>
+        `Variables select like blocks do: hold **Shift** and click one, or hold **Shift** and drag across several. Every entry in **${variableActionsLabel}** then acts on the whole selection at once, and **Ctrl+D** duplicates it while **Del** removes it.`,
+      sameVariables:
+        "There is only one set of variables. The editor and the sidebar panel are two views of it, so a key renamed in either place rewrites every command that used it, and the value you type here is the value the sidebar shows.",
+      secrets:
+        "One difference from the sidebar: a secret's value is **not masked here**, the same way it is not masked in the runbook's source file. Both views show the runbook exactly as it sits in memory, which is what makes **Copy** produce a runnable command. Masking is still what the sidebar does, and encryption at rest is unaffected.",
     },
     variableReferences: {
       intro:

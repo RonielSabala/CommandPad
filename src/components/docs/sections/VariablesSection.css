@@ -1,0 +1,4 @@
+.docs-demo-variables-editor #runbook-variables {
+  padding: 0 var(--space-16);
+  overflow: visible;
+}

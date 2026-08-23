@@ -100,6 +100,7 @@ import { generateId } from "@/utils/id";
 import { openImportDialog } from "@/utils/importTrigger";
 import { clamp } from "@/utils/number";
 import {
+  applyOperations,
   carryVariables,
   extractedVariableKey,
   getVariableKey,
@@ -198,6 +199,8 @@ export interface StoreState {
   focusedRunbookId: string | null;
   selectedBlockIds: Set<string>;
   flashBlockIds: Set<string>;
+  selectedVariableIds: Set<string>;
+  flashVariableIds: Set<string>;
   expandedCommandSurfaces: Record<CommandSurface, Set<string>>;
   selectKeyHeld: boolean;
   linkKeyHeld: boolean;
@@ -302,7 +305,9 @@ export interface StoreState {
     value: string,
   ) => void;
   toggleVariableSecret: (variableId: string) => void;
+  applyVariableKeyCase: (variableId: string, keyword: string) => void;
   reorderVariables: (sourceId: string, targetId: string) => void;
+  clearVariableFlash: (variableId: string) => void;
   consumeVariableFocus: () => void;
 
   addBlock: (blockType: BlockType, anchor?: BlockInsertAnchor) => Promise<void>;
@@ -333,10 +338,13 @@ export interface StoreState {
   setBlockSelected: (blockId: string, selected: boolean) => void;
   toggleBlockSelection: (blockId: string) => void;
   clearBlockSelection: () => void;
+  setVariableSelected: (variableId: string, selected: boolean) => void;
+  toggleVariableSelection: (variableId: string) => void;
+  clearVariableSelection: () => void;
 
   setAppMode: (mode: AppMode) => void;
   toggleAppMode: () => void;
-  toggleRunbookView: () => void;
+  toggleRunbookView: (view: RunbookView) => void;
   applyRunbookSource: (text: string) => string | null;
   toggleTheme: () => void;
   toggleSpellcheck: () => void;
@@ -540,6 +548,17 @@ function withActiveTab(
     return { tabs: state.tabs };
   }
   return { tabs: state.tabs.map((t) => (t.id === active.id ? mutate(t) : t)) };
+}
+
+/**
+ * What a variable action acts on: the whole selection when the clicked row is
+ * part of it, that row alone otherwise. The same rule block actions follow.
+ */
+function targetVariableIds(state: StoreState, variableId: string): string[] {
+  return state.selectedVariableIds.size > 0 &&
+    state.selectedVariableIds.has(variableId)
+    ? [...state.selectedVariableIds]
+    : [variableId];
 }
 
 /**
@@ -1210,6 +1229,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       focusedRunbookId: null,
       selectedBlockIds: new Set(),
       flashBlockIds: new Set(),
+      selectedVariableIds: new Set(),
+      flashVariableIds: new Set(),
       expandedCommandSurfaces: {
         [CommandSurface.PREVIEW]: new Set(),
         [CommandSurface.EDITOR]: new Set(),
@@ -2020,7 +2041,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           variableSearchQuery: "",
         }));
 
-        if (get().variablesSectionCollapsed) {
+        if (
+          get().variablesSectionCollapsed &&
+          get().runbookView !== RunbookView.VARIABLES
+        ) {
           get().toggleVariablesSection();
         }
 
@@ -2029,50 +2053,79 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       removeVariable: (variableId) => {
-        if (get().mode === AppMode.READ) {
+        const state = get();
+        if (state.mode === AppMode.READ) {
           return;
         }
-        set((s) =>
-          withActiveTab(s, (tab) => ({
+
+        const targets = targetVariableIds(state, variableId);
+        const fromSelection = targets.length > 1;
+        const idsToRemove = new Set(targets);
+
+        set((s) => ({
+          ...withActiveTab(s, (tab) => ({
             ...tab,
-            variables: tab.variables.filter((v) => v.id !== variableId),
+            variables: tab.variables.filter((v) => !idsToRemove.has(v.id)),
           })),
-        );
+          selectedVariableIds: fromSelection
+            ? new Set<string>()
+            : s.selectedVariableIds,
+        }));
         get().saveState();
       },
 
       duplicateVariable: (variableId) => {
-        if (get().mode === AppMode.READ) {
+        const state = get();
+        if (state.mode === AppMode.READ) {
           return;
         }
 
-        const copyId = generateId();
+        const active = getActiveTab(state);
+        if (!active) {
+          return;
+        }
+
+        // Duplicate in list order
+        const targets = targetVariableIds(state, variableId);
+        const ordered = active.variables.filter((v) => targets.includes(v.id));
+        if (ordered.length === 0) {
+          return;
+        }
+
+        const fromSelection = ordered.length > 1;
+        const copyIds = ordered.map(() => generateId());
+
         set((s) => ({
           ...withActiveTab(s, (tab) => {
-            const index = tab.variables.findIndex((v) => v.id === variableId);
-            if (index < 0) {
+            const lastId = ordered[ordered.length - 1].id;
+            const insertAt = tab.variables.findIndex((v) => v.id === lastId);
+            if (insertAt < 0) {
               return tab;
             }
 
-            const source = tab.variables[index];
-            const key = getVariableKey(source);
-            const newKey = key
-              ? uniqueCopyKey(
-                  key,
-                  new Set(tab.variables.map((v) => getVariableKey(v))),
-                )
-              : key;
+            const takenKeys = new Set(
+              tab.variables.map((v) => getVariableKey(v)),
+            );
 
-            const variables = [...tab.variables];
-            variables.splice(index + 1, 0, {
-              ...source,
-              id: copyId,
-              key: newKey,
+            const copies = ordered.map((source, index) => {
+              const key = getVariableKey(source);
+              if (!key) {
+                return { ...source, id: copyIds[index] };
+              }
+
+              const newKey = uniqueCopyKey(key, takenKeys);
+              takenKeys.add(newKey);
+              return { ...source, id: copyIds[index], key: newKey };
             });
 
+            const variables = [...tab.variables];
+            variables.splice(insertAt + 1, 0, ...copies);
             return { ...tab, variables };
           }),
-          pendingFocusVariableId: copyId,
+          flashVariableIds: new Set(copyIds),
+          pendingFocusVariableId: fromSelection
+            ? null
+            : (copyIds[copyIds.length - 1] ?? null),
         }));
 
         get().saveState();
@@ -2122,15 +2175,19 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       toggleVariableSecret: (variableId) => {
-        const active = getActiveTab(get());
+        const state = get();
+        const active = getActiveTab(state);
         const marking = !active?.variables.find((v) => v.id === variableId)
           ?.secret;
+
+        // The clicked row decides
+        const targets = new Set(targetVariableIds(state, variableId));
 
         set((s) =>
           withActiveTab(s, (tab) => ({
             ...tab,
             variables: tab.variables.map((v) =>
-              v.id === variableId ? { ...v, secret: !v.secret } : v,
+              targets.has(v.id) ? { ...v, secret: marking } : v,
             ),
           })),
         );
@@ -2141,6 +2198,30 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         void ensureVaultForSecrets().then(() => get().saveState());
+      },
+
+      applyVariableKeyCase: (variableId, keyword) => {
+        const state = get();
+        if (state.mode === AppMode.READ) {
+          return;
+        }
+
+        for (const id of targetVariableIds(state, variableId)) {
+          const variable = getActiveTab(get())?.variables.find(
+            (v) => v.id === id,
+          );
+
+          const key = variable ? getVariableKey(variable) : "";
+          if (!key) {
+            continue;
+          }
+
+          get().updateVariable(
+            id,
+            VariableField.KEY,
+            applyOperations(key, [keyword], { key }).text,
+          );
+        }
       },
 
       reorderVariables: (sourceId, targetId) => {
@@ -2159,6 +2240,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         );
         get().saveState();
       },
+
+      clearVariableFlash: (variableId) =>
+        set((s) => {
+          if (!s.flashVariableIds.has(variableId)) {
+            return {};
+          }
+
+          const flashVariableIds = new Set(s.flashVariableIds);
+          flashVariableIds.delete(variableId);
+          return { flashVariableIds };
+        }),
 
       consumeVariableFocus: () => set({ pendingFocusVariableId: null }),
 
@@ -2511,6 +2603,32 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set({ selectedBlockIds: new Set() });
       },
 
+      setVariableSelected: (variableId, selected) =>
+        set((s) => {
+          const selectedVariableIds = new Set(s.selectedVariableIds);
+          if (selected) {
+            selectedVariableIds.add(variableId);
+          } else {
+            selectedVariableIds.delete(variableId);
+          }
+
+          return { selectedVariableIds };
+        }),
+
+      toggleVariableSelection: (variableId) =>
+        get().setVariableSelected(
+          variableId,
+          !get().selectedVariableIds.has(variableId),
+        ),
+
+      clearVariableSelection: () => {
+        if (get().selectedVariableIds.size === 0) {
+          return;
+        }
+
+        set({ selectedVariableIds: new Set() });
+      },
+
       // --- Mode / theme / sidebar ---
 
       setAppMode: (mode) => {
@@ -2526,13 +2644,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         get().setAppMode(wasRead ? AppMode.EDIT : AppMode.READ);
       },
 
-      toggleRunbookView: () => {
+      toggleRunbookView: (view) => {
         get().clearUserInteraction();
         set((s) => ({
-          runbookView:
-            s.runbookView === RunbookView.SOURCE
-              ? RunbookView.PREVIEW
-              : RunbookView.SOURCE,
+          runbookView: s.runbookView === view ? RunbookView.PREVIEW : view,
         }));
       },
 
@@ -2711,6 +2826,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           selectKeyHeld: false,
           linkKeyHeld: false,
           selectedBlockIds: new Set(),
+          selectedVariableIds: new Set(),
           focusedRunbookId: null,
         }),
 
@@ -3779,6 +3895,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           runbookSearchQuery: "",
           variableSearchQuery: "",
           selectedBlockIds: new Set(),
+          selectedVariableIds: new Set(),
           focusedRunbookId: null,
         });
       },
@@ -3817,6 +3934,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           runbookSearchQuery: "",
           variableSearchQuery: "",
           selectedBlockIds: new Set(),
+          selectedVariableIds: new Set(),
           focusedRunbookId: null,
         });
 

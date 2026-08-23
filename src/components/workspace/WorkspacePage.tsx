@@ -1,11 +1,12 @@
-import { PanelId } from "@/common/enums";
+import { PanelId, SelectionGroup } from "@/common/enums";
 import { PanelShell } from "@/components/common/panel/PanelShell";
-import { useBlockSelection } from "@/hooks/useBlockSelection";
 import { useWorkspaceBodyClasses } from "@/hooks/useBodyClasses";
 import { useDocumentInteractions } from "@/hooks/useDocumentInteractions";
 import { useKeybindings } from "@/hooks/useKeybindings";
+import { useLassoSelection } from "@/hooks/useLassoSelection";
 import { useLinkActivation } from "@/hooks/useLinkActivation";
 import { usePanelKeybindings } from "@/hooks/usePanelKeybindings";
+
 import { ImageLightbox } from "../blocks/image/ImageLightbox";
 import { Header } from "../header/Header";
 import { CloudFileEditorModal } from "../modals/cloud/CloudFileEditorModal";
@@ -25,7 +26,7 @@ export function WorkspacePage() {
   useKeybindings();
   usePanelKeybindings(PanelId.SIDEBAR);
   useDocumentInteractions();
-  useBlockSelection(document);
+  useLassoSelection(document, SelectionGroup.BLOCK);
   useLinkActivation(document);
 
   return (
