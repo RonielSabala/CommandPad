@@ -110,6 +110,8 @@ export interface Messages {
     title: string;
     searchPlaceholder: string;
     empty: string;
+    emptyTitle: string;
+    emptyHint: string;
     new: string;
     newTitle: string;
     openEditorTitle: string;

@@ -8,12 +8,6 @@
   padding: var(--space-8) var(--space-20) var(--space-20);
 }
 
-.runbook-variables-empty {
-  color: var(--color-text-muted);
-  font-family: var(--font-sans);
-  font-size: var(--text-md);
-}
-
 #add-variable-row {
   display: flex;
   align-items: center;

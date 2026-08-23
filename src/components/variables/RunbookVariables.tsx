@@ -1,5 +1,6 @@
 import { SelectionGroup } from "@/common/enums";
 import type { Block, Variable } from "@/common/types";
+import { EmptyState } from "@/components/common/EmptyState";
 import { PlusIcon } from "@/components/icons";
 import { useLassoSelection } from "@/hooks/useLassoSelection";
 import { useTranslation } from "@/i18n";
@@ -57,9 +58,15 @@ export function RunbookVariables() {
   return (
     <div id="runbook-variables" ref={setRoot}>
       {variables.length === 0 && (
-        <p className="runbook-variables-empty no-user-select">
-          {t.variables.empty}
-        </p>
+        <EmptyState
+          icon={
+            <span className="empty-state-glyph" aria-hidden="true">
+              {"{}"}
+            </span>
+          }
+          title={t.variables.emptyTitle}
+          hint={t.variables.emptyHint}
+        />
       )}
 
       {variables.map((variable) => (

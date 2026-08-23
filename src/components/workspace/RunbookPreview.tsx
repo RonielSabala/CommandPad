@@ -2,9 +2,12 @@ import { CssClass } from "@/common/constants/css";
 import { InputSelector } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
 import { PanelSide } from "@/common/enums";
+import { EmptyState } from "@/components/common/EmptyState";
 import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
+import { EmptyStateIcon } from "@/components/icons";
 import { blockDrag } from "@/hooks/blockDrag";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
+import { useTranslation } from "@/i18n";
 import {
   getActiveTab,
   useStore,
@@ -15,7 +18,6 @@ import { classNames } from "@/utils/string";
 import { useRef, useState } from "react";
 import { AddBlockRow } from "../blocks/AddBlockRow";
 import { BlocksList } from "../blocks/BlocksList";
-import { EmptyState } from "../blocks/EmptyState";
 import { Minimap } from "./Minimap";
 import { WorkspaceContextMenu } from "./WorkspaceContextMenu";
 
@@ -30,6 +32,7 @@ function isCrossTabBlockDrag(store: AppStoreApi): boolean {
 }
 
 export function RunbookPreview() {
+  const t = useTranslation();
   const store = useStoreApi();
   const tabsContentRef = useRef<HTMLDivElement>(null);
   const isEmpty = useStore(
@@ -101,7 +104,15 @@ export function RunbookPreview() {
           }
         }}
       >
-        {isEmpty && <EmptyState />}
+        {isEmpty && (
+          <EmptyState
+            icon={
+              <EmptyStateIcon className="empty-state-icon icon-lg icon-bold" />
+            }
+            title={t.blocks.emptyTitle}
+            hint={t.blocks.emptyHint}
+          />
+        )}
         <BlocksList />
         <AddBlockRow />
       </div>

@@ -101,6 +101,8 @@ export const en: Messages = {
     title: "VARIABLES",
     searchPlaceholder: "Search variables…",
     empty: "No variables defined.",
+    emptyTitle: "No variables yet.",
+    emptyHint: "Add one below, then reference it anywhere.",
     new: "New",
     newTitle: "New variable",
     openEditorTitle: "Open variables editor",
