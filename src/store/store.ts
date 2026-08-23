@@ -2299,6 +2299,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
         if (state.tabs.length === 0) {
+          set({ runbookView: RunbookView.PREVIEW });
+          persist.saveUiState(uiStateSnapshot(get()));
           await get().createNewTab();
         }
 
