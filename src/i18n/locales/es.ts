@@ -103,16 +103,21 @@ export const es: Messages = {
     title: "VARIABLES",
     searchPlaceholder: "Buscar variables…",
     empty: "No hay variables definidas.",
+    emptyTitle: "Aún no hay variables.",
+    emptyHint: "Agrega una abajo y referénciala donde quieras.",
     new: "Nueva",
     newTitle: "Nueva variable",
+    openEditorTitle: "Abrir editor de variables",
     keyPlaceholder: "clave",
     valuePlaceholder: "valor",
-    reveal: "Mostrar valor",
-    mask: "Ocultar valor",
+    reveal: (count) => (count === 1 ? "Mostrar valor" : "Mostrar valores"),
+    mask: (count) => (count === 1 ? "Ocultar valor" : "Ocultar valores"),
     actions: "Acciones de la variable",
-    duplicate: "Duplicar variable",
+    duplicate: (count) =>
+      count === 1 ? "Duplicar variable" : "Duplicar variables",
     renameCase: "Cambiar capitalización de la clave",
-    remove: "Eliminar variable",
+    remove: (count) =>
+      count === 1 ? "Eliminar variable" : "Eliminar variables",
     dragResizeSplit:
       "Arrastra para redimensionar clave y valor · doble clic para igualarlos",
     unusedTitle: (key) => `${key} (sin usar)`,
@@ -761,12 +766,16 @@ Si algo sale mal, deshazlo en este orden:
       items: (
         openSourceLabel,
         openPreviewLabel,
+        openEditorLabel,
       ) => `* **Haz clic** en una pestaña para cambiar a ella.
 * **Arrastra** una pestaña para reordenarla.
 * **Clic con la rueda** del ratón en una pestaña para cerrarla.
 * **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.
 * **${openSourceLabel}**, al final de la barra de pestañas, cambia los bloques de abajo por el JSON del libro.
+* **${openEditorLabel}**, a su lado, los cambia por las variables del libro.
 * **${openPreviewLabel}** devuelve los bloques.`,
+      variablesEditorNote:
+        "El editor de variables funciona igual que el editor de bloques de arriba, una fila por variable en vez de por bloque. Pruébalo abajo.",
       autoCreate:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:
@@ -968,7 +977,7 @@ Si algo sale mal, deshazlo en este orden:
       changing: (changeLabel) =>
         `Haz clic en un escudo desbloqueado para abrir **${changeLabel}**: escribe la frase de contraseña actual y luego la nueva dos veces. Todos los secretos de ese libro, incluida su copia en un archivo enlazado de la nube, se cifran de nuevo al momento. Los demás libros y los archivos ya exportados conservan la anterior.`,
       markdownWarning:
-        "Las exportaciones a Markdown y texto plano se saltan el cifrado: su razón de ser es el comando ya resuelto, secretos incluidos. Exporta JSON para lo que vaya a salir de tus manos.",
+        "Las exportaciones a Markdown y texto plano también cifran el valor de un secreto, así que un comando que lo referencia incluye el texto cifrado en vez del valor real y no se puede ejecutar tal cual se exportó.",
     },
     blocks: {
       intro: (blockActionsLabel) =>

@@ -57,6 +57,7 @@ export const CodeModelConfig = {
 
 export const CodeModelScope = {
   COMMAND: "command",
+  VARIABLE: "variable",
   PASTE_RUNBOOK: "runbook/paste",
   CLOUD_FILE: "runbook/cloud",
   RUNBOOK_SOURCE: "runbook/source",

@@ -5,9 +5,6 @@ import {
   CodeModelScope,
   COMMAND_PROMPT_PREFIX,
   CommandClampConfig,
-  EditorActionId,
-  EditorActionOrder,
-  VariableField,
 } from "@/common/editorConfig";
 import { BlockType, CommandSurface } from "@/common/enums";
 import type { CommandBlock as CommandBlockData } from "@/common/types";
@@ -22,13 +19,11 @@ import {
   CopyIcon,
   EditorToggleChevronIcon,
 } from "@/components/icons";
+import { useExtractVariableAction } from "@/hooks/useExtractVariableAction";
 import { useTranslation } from "@/i18n";
-import type { EditorAction } from "@/monaco/actions";
 import { buildVariableCompletions } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import {
-  braceToken,
-  braceTokenKeyRange,
   countCommandLines,
   hasUnresolvedTokens,
   isMaskedSegment,
@@ -62,8 +57,6 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const isEditorCollapsed = block.editorCollapsed === true;
 
   const updateBlock = useStore((state) => state.updateBlock);
-  const extractVariable = useStore((state) => state.extractVariable);
-  const updateVariable = useStore((state) => state.updateVariable);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
@@ -99,27 +92,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     [variableMap, secretKeys],
   );
 
-  const actions = useMemo<EditorAction[]>(
-    () => [
-      {
-        id: EditorActionId.EXTRACT_VARIABLE,
-        label: t.command.extractVariable,
-        order: EditorActionOrder.EXTRACT_VARIABLE,
-        run: ({ text, rename }) => {
-          const extracted = extractVariable(text);
-          if (!extracted) {
-            return;
-          }
-
-          const { id, key } = extracted;
-          rename(braceToken(key), braceTokenKeyRange(key), (newKey) =>
-            updateVariable(id, VariableField.KEY, newKey),
-          );
-        },
-      },
-    ],
-    [t, extractVariable, updateVariable],
-  );
+  const actions = useExtractVariableAction();
 
   const previewOverflows = useMemo(
     () =>

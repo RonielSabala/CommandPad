@@ -1,6 +1,11 @@
-import { LassoMode } from "@/common/enums";
+import { LassoMode, SelectionGroup } from "@/common/enums";
 
-export const lasso: { active: boolean; mode: LassoMode } = {
-  active: false,
-  mode: LassoMode.SELECT,
+interface LassoState {
+  active: boolean;
+  mode: LassoMode;
+}
+
+export const lasso: Record<SelectionGroup, LassoState> = {
+  [SelectionGroup.BLOCK]: { active: false, mode: LassoMode.SELECT },
+  [SelectionGroup.VARIABLE]: { active: false, mode: LassoMode.SELECT },
 };

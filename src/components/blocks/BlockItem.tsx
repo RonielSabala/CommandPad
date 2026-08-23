@@ -2,7 +2,7 @@ import { DRAG_TIMEOUT_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
-import { AppMode, LassoMode } from "@/common/enums";
+import { AppMode, LassoMode, SelectionGroup } from "@/common/enums";
 import { DragIcon } from "@/components/icons";
 import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
@@ -136,8 +136,9 @@ export const BlockItem = memo(function BlockItem({
         }
       }}
       onMouseEnter={() => {
-        if (lasso.active && store.getState().mode !== AppMode.READ) {
-          setBlockSelected(block.id, lasso.mode === LassoMode.SELECT);
+        const drag = lasso[SelectionGroup.BLOCK];
+        if (drag.active && store.getState().mode !== AppMode.READ) {
+          setBlockSelected(block.id, drag.mode === LassoMode.SELECT);
         }
       }}
       onAnimationEnd={() => {

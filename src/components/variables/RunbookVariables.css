@@ -1,0 +1,29 @@
+#runbook-variables {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-8) var(--space-20) var(--space-20);
+}
+
+#variables-list {
+  display: grid;
+  grid-template-columns: fit-content(calc(100% - var(--space-20)));
+  max-width: 100%;
+  gap: var(--space-6);
+  justify-items: start;
+}
+
+#add-variable-row {
+  display: flex;
+  align-items: center;
+  padding: var(--space-8) 0 0;
+  border-top: var(--space-1) dashed var(--color-border);
+  margin-top: var(--space-4);
+}
+
+body.read-mode #add-variable-row {
+  display: none;
+}

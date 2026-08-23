@@ -10,6 +10,7 @@ import {
   ExportFormat,
   PanelId,
   PanelSide,
+  RunbookView,
   SectionState,
   SyncDestination,
   Theme,
@@ -38,6 +39,9 @@ const isSyncDestination = (value: unknown): value is SyncDestination =>
 
 const isExportFormat = (value: unknown): value is ExportFormat =>
   Object.values(ExportFormat).includes(value as ExportFormat);
+
+const isRunbookView = (value: unknown): value is RunbookView =>
+  Object.values(RunbookView).includes(value as RunbookView);
 
 const toPanelSide = (value: unknown, fallback: PanelSide): PanelSide => {
   if (value === PanelSide.LEFT || value === PanelSide.RIGHT) {
@@ -97,6 +101,7 @@ const isCloudFolderPath = (value: unknown): value is CloudFolderRef[] =>
 
 interface PersistedUiState {
   mode: AppMode;
+  runbookView: RunbookView;
   theme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
@@ -118,6 +123,7 @@ export function saveUiState(ui: PersistedUiState): void {
       StorageKey.UI_STATE,
       JSON.stringify({
         mode: ui.mode,
+        runbookView: ui.runbookView,
         theme: ui.theme,
         language: ui.language,
         spellcheckEnabled: ui.spellcheckEnabled,
@@ -147,6 +153,9 @@ export function loadUiState(): Partial<PersistedUiState> | null {
 
     return {
       mode: saved.mode === AppMode.READ ? AppMode.READ : AppMode.EDIT,
+      runbookView: isRunbookView(saved.runbookView)
+        ? saved.runbookView
+        : RunbookView.PREVIEW,
       theme: saved.theme === Theme.LIGHT ? Theme.LIGHT : Theme.DARK,
       language: isLanguage(saved.language) ? saved.language : detectLanguage(),
       spellcheckEnabled: saved.spellcheckEnabled === true,

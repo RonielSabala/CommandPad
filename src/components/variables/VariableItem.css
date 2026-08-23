@@ -1,0 +1,78 @@
+.variable-item {
+  position: relative;
+  max-width: 100%;
+}
+
+.variable-drag-handle,
+.variable-actions {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-base);
+}
+
+.variable-drag-handle {
+  right: calc(100% + var(--space-4));
+}
+
+.variable-actions {
+  left: calc(100% + var(--space-4));
+}
+
+.variable-drag-handle .drag-handle,
+.variable-actions .btn {
+  position: sticky;
+  top: var(--space-4);
+  bottom: var(--space-4);
+  pointer-events: auto;
+}
+
+.variable-item:hover :is(.variable-drag-handle, .variable-actions),
+.variable-actions.menu-open {
+  opacity: 1;
+}
+
+body.read-mode :is(.variable-drag-handle, .variable-actions) {
+  display: none;
+}
+
+/* Selection */
+
+body.select-key-held:not(.read-mode)
+  :is(.variable-drag-handle, .variable-actions) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.select-key-held:not(.read-mode) .variable-item input {
+  cursor: default;
+  pointer-events: none;
+}
+
+body.select-key-held:not(.read-mode)
+  .variable-item:hover:not(.variable-selected) {
+  outline: var(--border-dashed);
+  border-radius: var(--radius-lg);
+}
+
+.variable-selected:not(.drag-over) .variable-surface {
+  user-select: none;
+  outline: var(--space-1) solid var(--accent);
+}
+
+.variable-item.drag-over {
+  border-radius: var(--radius-lg);
+}
+
+.variable-item.dragging {
+  opacity: 0.5;
+}
+
+.variable-item.duplicate-flash {
+  z-index: var(--z-raised);
+  animation: duplicate-flash 0.5s ease-out forwards;
+}

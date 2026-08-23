@@ -68,14 +68,18 @@ async function saveFile(
   downloadBlob(new Blob([content], { type: mimeType }), suggestedName);
 }
 
-export function buildMarkdownExport(content: RunbookContent): string {
+export async function buildMarkdownExport(
+  runbookId: string,
+  content: RunbookContent,
+): Promise<string> {
+  const secured = await encryptContent(runbookId, content);
   const lines: string[] = [];
-  const variableMap = getVariableMap(content.variables);
+  const variableMap = getVariableMap(secured.variables);
   const context: BlockMarkdownContext = {
     resolve: (text) => resolveCommandToString(text, variableMap),
   };
 
-  for (const block of content.blocks) {
+  for (const block of secured.blocks) {
     const markdown = blockToMarkdown(block, context);
     if (markdown === null) {
       continue;
@@ -113,7 +117,7 @@ export async function buildSecuredRunbookExportContent(
 ): Promise<string> {
   return format === ExportFormat.JSON
     ? buildRunbookSource(await encryptContent(runbookId, content))
-    : buildMarkdownExport(content);
+    : buildMarkdownExport(runbookId, content);
 }
 
 export async function runExport(

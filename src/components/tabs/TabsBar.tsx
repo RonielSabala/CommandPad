@@ -2,7 +2,8 @@ import { RunbookView } from "@/common/enums";
 import { PlusIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { BodyText, FileEarmarkCode } from "react-bootstrap-icons";
+import { BodyText, Braces, FileEarmarkCode } from "react-bootstrap-icons";
+
 import { TabItem } from "./TabItem";
 import "./TabsBar.css";
 
@@ -10,10 +11,11 @@ export function TabsBar() {
   const t = useTranslation();
   const tabs = useStore((state) => state.tabs);
   const createNewTab = useStore((state) => state.createNewTab);
-  const showingSource = useStore(
-    (state) => state.runbookView === RunbookView.SOURCE,
-  );
+  const runbookView = useStore((state) => state.runbookView);
   const toggleRunbookView = useStore((state) => state.toggleRunbookView);
+
+  const showingSource = runbookView === RunbookView.SOURCE;
+  const showingVariables = runbookView === RunbookView.VARIABLES;
 
   return (
     <div id="tabs-bar">
@@ -31,18 +33,35 @@ export function TabsBar() {
       </button>
 
       {tabs.length > 0 && (
-        <button
-          id="runbook-view-btn"
-          className="btn btn-icon btn-soft-icon"
-          title={showingSource ? t.source.openPreview : t.source.openSource}
-          onClick={toggleRunbookView}
-        >
-          {showingSource ? (
-            <BodyText className="icon-md" />
-          ) : (
-            <FileEarmarkCode className="icon-md" />
-          )}
-        </button>
+        <div id="runbook-view-actions">
+          <button
+            className="btn btn-icon btn-soft-icon runbook-view-btn"
+            title={
+              showingVariables
+                ? t.source.openPreview
+                : t.variables.openEditorTitle
+            }
+            onClick={() => toggleRunbookView(RunbookView.VARIABLES)}
+          >
+            {showingVariables ? (
+              <BodyText className="icon-md" />
+            ) : (
+              <Braces className="icon-md" />
+            )}
+          </button>
+
+          <button
+            className="btn btn-icon btn-soft-icon runbook-view-btn"
+            title={showingSource ? t.source.openPreview : t.source.openSource}
+            onClick={() => toggleRunbookView(RunbookView.SOURCE)}
+          >
+            {showingSource ? (
+              <BodyText className="icon-md" />
+            ) : (
+              <FileEarmarkCode className="icon-md" />
+            )}
+          </button>
+        </div>
       )}
     </div>
   );

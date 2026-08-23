@@ -31,6 +31,7 @@
 }
 
 .code-editor-surface {
+  position: relative;
   grid-area: 1 / 1 / 2 / -1;
   min-height: 0;
   padding: var(--space-5) 0 var(--space-5) var(--code-gutter-pad-start, 0px);
@@ -38,6 +39,25 @@
     var(--code-editor-gutter-width, 0px) + var(--space-6) * 2 +
       var(--code-editor-min-columns, 20ch)
   );
+}
+
+/* Secret masking */
+
+.code-editor.is-masked .view-lines span {
+  color: transparent !important;
+}
+
+.code-editor-mask {
+  position: absolute;
+  inset: 0;
+  padding: var(--space-5) 0 0
+    calc(var(--code-editor-gutter-width, 0px) + var(--space-6));
+  font: inherit;
+  color: var(--color-text-primary);
+  white-space: pre;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: var(--z-raised);
 }
 
 .code-editor-live .code-editor-surface::after {

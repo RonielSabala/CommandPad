@@ -1,19 +1,26 @@
-import { CssClass } from "@/common/constants/css";
-import { DataAttr, InputSelector } from "@/common/constants/dom";
+import { InputSelector } from "@/common/constants/dom";
 import { EventType, Key, MouseButton } from "@/common/constants/events";
-import { AppMode, LassoMode } from "@/common/enums";
+import { AppMode, LassoMode, type SelectionGroup } from "@/common/enums";
 import { isModifierPressed, ModifierAction } from "@/common/keybindings";
 import { useStoreApi } from "@/store/store";
 import { useEffect } from "react";
-import { lasso } from "./lasso";
 
-export function useBlockSelection(root: Document | HTMLElement | null): void {
+import { lasso } from "./lasso";
+import { SELECTION_GROUPS } from "./selectionGroups";
+
+export function useLassoSelection(
+  root: Document | HTMLElement | null,
+  group: SelectionGroup,
+): void {
   const store = useStoreApi();
 
   useEffect(() => {
     if (!root) {
       return;
     }
+
+    const definition = SELECTION_GROUPS[group];
+    const drag = lasso[group];
 
     // Only react while the pointer is over it,
     const scoped = root !== document;
@@ -65,28 +72,28 @@ export function useBlockSelection(root: Document | HTMLElement | null): void {
         return;
       }
 
-      const blockElement = (event.target as Element).closest(
-        `.${CssClass.BLOCK_ITEM}`,
+      const itemElement = (event.target as Element).closest(
+        `.${definition.itemClass}`,
       );
 
-      if (blockElement) {
-        const blockId = blockElement.getAttribute(DataAttr.BLOCK_ID);
-        if (blockId) {
-          lasso.mode = state.selectedBlockIds.has(blockId)
+      if (itemElement) {
+        const itemId = itemElement.getAttribute(definition.idAttr);
+        if (itemId) {
+          drag.mode = definition.getSelected(state).has(itemId)
             ? LassoMode.DESELECT
             : LassoMode.SELECT;
 
-          state.setBlockSelected(blockId, lasso.mode === LassoMode.SELECT);
+          definition.setSelected(state, itemId, drag.mode === LassoMode.SELECT);
         }
       } else {
-        lasso.mode = LassoMode.SELECT;
+        drag.mode = LassoMode.SELECT;
       }
 
-      lasso.active = true;
+      drag.active = true;
     };
 
     const onMouseUp = () => {
-      lasso.active = false;
+      drag.active = false;
     };
 
     const onClick = (event: MouseEvent) => {
@@ -97,12 +104,10 @@ export function useBlockSelection(root: Document | HTMLElement | null): void {
 
       const target = event.target as Element;
       if (
-        state.selectedBlockIds.size > 0 &&
-        !target.closest(
-          `.${CssClass.BLOCK_ACTIONS}, .${CssClass.BLOCK_DRAG_HANDLE}`,
-        )
+        definition.getSelected(state).size > 0 &&
+        !target.closest(definition.keepSelectionSelector)
       ) {
-        state.clearBlockSelection();
+        definition.clearSelection(state);
       }
     };
 
@@ -127,11 +132,13 @@ export function useBlockSelection(root: Document | HTMLElement | null): void {
         onMouseDown as EventListener,
       );
       root.removeEventListener(EventType.CLICK, onClick as EventListener);
+
       if (scoped) {
         root.removeEventListener(EventType.MOUSE_ENTER, onPointerEnter);
         root.removeEventListener(EventType.MOUSE_LEAVE, onPointerLeave);
       }
+
       setSelectMode(false);
     };
-  }, [store, root]);
+  }, [store, root, group]);
 }

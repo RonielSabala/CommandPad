@@ -101,16 +101,20 @@ export const en: Messages = {
     title: "VARIABLES",
     searchPlaceholder: "Search variables…",
     empty: "No variables defined.",
+    emptyTitle: "No variables yet.",
+    emptyHint: "Add one below, then reference it anywhere.",
     new: "New",
     newTitle: "New variable",
+    openEditorTitle: "Open variables editor",
     keyPlaceholder: "key",
     valuePlaceholder: "value",
-    reveal: "Reveal value",
-    mask: "Mask value",
+    reveal: (count) => (count === 1 ? "Reveal value" : "Reveal values"),
+    mask: (count) => (count === 1 ? "Mask value" : "Mask values"),
     actions: "Variable actions",
-    duplicate: "Duplicate variable",
+    duplicate: (count) =>
+      count === 1 ? "Duplicate variable" : "Duplicate variables",
     renameCase: "Change key case",
-    remove: "Remove variable",
+    remove: (count) => (count === 1 ? "Remove variable" : "Remove variables"),
     dragResizeSplit: "Drag to resize key and value · double-click to even out",
     unusedTitle: (key) => `${key} (unused)`,
   },
@@ -748,12 +752,16 @@ If something goes wrong, undo it in this order:
       items: (
         openSourceLabel,
         openPreviewLabel,
+        openEditorLabel,
       ) => `* **Click** a tab to switch to it.
 * **Drag** a tab to reorder it.
 * **Middle-click** a tab to close it.
 * **Click** the **+** at the end of the tabs bar to open a new tab.
 * **${openSourceLabel}**, at the far end of the tabs bar, swaps the blocks below for the runbook's raw JSON.
+* **${openEditorLabel}**, beside it, swaps them for the runbook's variables instead.
 * **${openPreviewLabel}** brings the blocks back.`,
+      variablesEditorNote:
+        "The variables editor works just like the block editor above, one row per variable instead of per block. Try it below.",
       autoCreate:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
@@ -954,7 +962,7 @@ If something goes wrong, undo it in this order:
       changing: (changeLabel) =>
         `Click an unlocked shield to open **${changeLabel}**: enter the current passphrase, then the new one twice. Every secret in that runbook, including its copy in a linked cloud file, is re-encrypted on the spot. Other runbooks and past exports keep the old passphrase.`,
       markdownWarning:
-        "Markdown and plain-text exports skip encryption: their whole point is the resolved command, secrets included. Export JSON for anything leaving your hands.",
+        "Markdown and plain-text exports encrypt a secret's value too, so a command that references one bakes in ciphertext instead of the real value and isn't directly runnable as exported.",
     },
     blocks: {
       intro: (blockActionsLabel) =>

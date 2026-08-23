@@ -279,6 +279,20 @@ body {
   color: var(--color-text-primary);
 }
 
+/* --- DUPLICATE FLASH --- */
+
+@keyframes duplicate-flash {
+  0% {
+    outline: var(--space-1) solid var(--accent);
+    outline-offset: var(--space-2);
+  }
+
+  100% {
+    outline: var(--space-3) solid transparent;
+    outline-offset: var(--space-2);
+  }
+}
+
 /* --- SELECT-KEY-HELD SUPPRESSIONS --- */
 
 body.select-key-held:not(.read-mode) * {

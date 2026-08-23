@@ -110,16 +110,19 @@ export interface Messages {
     title: string;
     searchPlaceholder: string;
     empty: string;
+    emptyTitle: string;
+    emptyHint: string;
     new: string;
     newTitle: string;
+    openEditorTitle: string;
     keyPlaceholder: string;
     valuePlaceholder: string;
-    reveal: string;
-    mask: string;
+    reveal: (count: number) => string;
+    mask: (count: number) => string;
     actions: string;
-    duplicate: string;
+    duplicate: (count: number) => string;
     renameCase: string;
-    remove: string;
+    remove: (count: number) => string;
     dragResizeSplit: string;
     unusedTitle: (key: string) => string;
   };
@@ -416,7 +419,12 @@ export interface Messages {
     };
     tabs: {
       intro: string;
-      items: (openSourceLabel: string, openPreviewLabel: string) => string;
+      items: (
+        openSourceLabel: string,
+        openPreviewLabel: string,
+        openEditorLabel: string,
+      ) => string;
+      variablesEditorNote: string;
       autoCreate: string;
       labelDemo: string;
     };

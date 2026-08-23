@@ -1,12 +1,13 @@
 import { InputSelector } from "@/common/constants/dom";
+import { SelectionGroup } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import type { Block, Variable } from "@/common/types";
 import { ImageLightbox } from "@/components/blocks/image/ImageLightbox";
 import { RunbookRow } from "@/components/sidebar/runbooks/RunbookRow";
 import "@/components/sidebar/shared/SidebarSectionList.css";
 import { VariableRow } from "@/components/sidebar/variables/VariableRow";
-import { useBlockSelection } from "@/hooks/useBlockSelection";
 import { useSelectModeBodyClass } from "@/hooks/useBodyClasses";
+import { useLassoSelection } from "@/hooks/useLassoSelection";
 import {
   createAppStore,
   getActiveTab,
@@ -22,6 +23,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
+
 import { buildDemoSeed, type DemoContent } from "./demoSeeds";
 import "./DemoWorkspace.css";
 import { DocsDemo } from "./DocsDemo";
@@ -127,7 +129,7 @@ export function DemoSelectionArea({ children }: { children: ReactNode }) {
   const store = useStoreApi();
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
 
-  useBlockSelection(root);
+  useLassoSelection(root, SelectionGroup.BLOCK);
   useSelectModeBodyClass();
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {

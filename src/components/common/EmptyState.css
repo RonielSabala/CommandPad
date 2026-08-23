@@ -1,21 +1,29 @@
-#empty-state {
+.empty-state {
   margin: auto;
   text-align: center;
   color: var(--color-text-muted);
   font-family: var(--font-mono);
 }
 
-#empty-state-icon {
+.empty-state-icon {
   display: inline;
   stroke: var(--color-text-muted);
   stroke-width: 2.3;
 }
 
-#empty-state-title {
+.empty-state-glyph {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--icon-lg);
+  font-weight: 300;
+  line-height: 1;
+}
+
+.empty-state-title {
   font-size: var(--text-lg);
 }
 
-#empty-state-hint {
+.empty-state-hint {
   font-size: var(--text-base);
   margin-top: var(--space-3);
 }

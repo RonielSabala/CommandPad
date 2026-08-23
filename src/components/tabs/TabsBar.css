@@ -83,9 +83,15 @@ body.read-mode #add-tab-btn {
   display: none;
 }
 
-#runbook-view-btn {
+#runbook-view-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
   margin-left: auto;
   align-self: center;
   flex-shrink: 0;
+}
+
+.runbook-view-btn {
   color: var(--color-text-secondary);
 }

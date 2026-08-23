@@ -1,22 +1,30 @@
 import { NoteStyle, RunbookView } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { TabsBar } from "@/components/tabs/TabsBar";
+import { RunbookVariables } from "@/components/variables/RunbookVariables";
 import { RunbookSource } from "@/components/workspace/RunbookSource";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import type { ComponentType } from "react";
+
 import { demoCommand, demoNote, demoVariable } from "../demos/demoSeeds";
 import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
 import "./TabsSection.css";
 
+const DEMO_RUNBOOK_VIEWS: Record<RunbookView, ComponentType> = {
+  [RunbookView.SOURCE]: RunbookSource,
+  [RunbookView.PREVIEW]: BlocksList,
+  [RunbookView.VARIABLES]: RunbookVariables,
+};
+
 function DemoRunbookPanel() {
-  const showingSource = useStore(
-    (state) => state.runbookView === RunbookView.SOURCE,
-  );
+  const view = useStore((state) => state.runbookView);
+  const View = DEMO_RUNBOOK_VIEWS[view];
 
   return (
     <div id="docs-demo-tab-panel">
-      {showingSource ? <RunbookSource /> : <BlocksList />}
+      <View />
     </div>
   );
 }
@@ -29,8 +37,13 @@ export function TabsDocs() {
     <>
       <Prose text={t.docs.tabs.intro} />
       <Prose
-        text={t.docs.tabs.items(t.source.openSource, t.source.openPreview)}
+        text={t.docs.tabs.items(
+          t.source.openSource,
+          t.source.openPreview,
+          t.variables.openEditorTitle,
+        )}
       />
+      <Prose text={t.docs.tabs.variablesEditorNote} />
       <Prose text={t.docs.tabs.autoCreate} />
       <Prose text={t.docs.tabs.labelDemo} />
 
@@ -40,8 +53,12 @@ export function TabsDocs() {
             blocks: [
               demoNote(backup.title, NoteStyle.HEADING),
               demoNote(backup.note),
-              demoCommand("zip -r backup.zip ~/Documents"),
-              demoCommand("cp backup.zip ~/Backups"),
+              demoCommand("zip -r {ARCHIVE} ~/Documents"),
+              demoCommand("ls {BACKUP_DIR}"),
+            ],
+            variables: [
+              demoVariable("BACKUP_DIR", "~/Backups"),
+              demoVariable("ARCHIVE", "{BACKUP_DIR}/backup.zip"),
             ],
           },
           {
@@ -53,7 +70,13 @@ export function TabsDocs() {
             ],
             variables: [demoVariable("SITE", "example.com")],
           },
-          { blocks: [demoNote("", NoteStyle.HEADING)] },
+          {
+            blocks: [
+              demoNote("", NoteStyle.HEADING),
+              demoCommand("systemctl restart {SERVICE}"),
+            ],
+            variables: [demoVariable("SERVICE", "nginx")],
+          },
         ]}
       >
         <TabsBar />

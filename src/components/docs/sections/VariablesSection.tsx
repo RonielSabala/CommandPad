@@ -60,7 +60,7 @@ export function SecretVariablesDocs() {
       <Prose
         text={t.docs.secretVariables.intro(
           t.variables.actions,
-          t.variables.mask,
+          t.variables.mask(1),
         )}
       />
       <Prose text={t.docs.secretVariables.copyNote} />
