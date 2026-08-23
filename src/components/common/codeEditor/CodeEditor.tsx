@@ -1,3 +1,4 @@
+import { SECRET_MASK } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { MonacoSelector } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
@@ -27,7 +28,7 @@ import { getCodeMetrics } from "@/monaco/metrics";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { useStore } from "@/store/store";
-import { classNames, countLines } from "@/utils/string";
+import { classNames, countLines, joinLines } from "@/utils/string";
 import Editor, {
   type BeforeMount,
   type Monaco,
@@ -68,6 +69,7 @@ interface Props {
   clamped?: boolean;
   folding?: boolean;
   readOnly?: boolean;
+  masked?: boolean;
   minimapSide?: PanelSide | null;
   footer?: ReactNode;
   completions?: VariableCompletion[];
@@ -124,6 +126,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       clamped = false,
       folding = false,
       readOnly = false,
+      masked = false,
       minimapSide = null,
       footer,
       completions,
@@ -351,6 +354,8 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       }
     };
 
+    const showMask = masked && value.length > 0;
+
     const editor = (
       <div
         className={classNames(
@@ -358,6 +363,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
           "code-editor-live",
           !bounded && className,
           clamped && CssClass.CLAMPED,
+          showMask && "is-masked",
         )}
         onKeyDown={handleKeyDown}
         ref={rootRef}
@@ -388,6 +394,14 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
             loading={null}
             wrapperProps={{ className: "code-editor-monaco" }}
           />
+
+          {showMask && (
+            <div className="code-editor-mask" aria-hidden="true">
+              {joinLines(
+                Array.from({ length: countLines(value) }, () => SECRET_MASK),
+              )}
+            </div>
+          )}
         </div>
 
         {footer}

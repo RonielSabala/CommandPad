@@ -98,6 +98,7 @@ export function VariableEditor({
         placeholder={t.variables.valuePlaceholder}
         completions={valueCompletions}
         actions={actions}
+        masked={isSecret}
       />
     </div>
   );
