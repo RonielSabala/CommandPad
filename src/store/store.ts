@@ -2226,19 +2226,55 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       reorderVariables: (sourceId, targetId) => {
+        const state = get();
+        if (state.mode === AppMode.READ || sourceId === targetId) {
+          return;
+        }
+
+        const active = getActiveTab(state);
+        if (!active) {
+          return;
+        }
+
+        const movingIds =
+          state.selectedVariableIds.size > 0 &&
+          state.selectedVariableIds.has(sourceId)
+            ? [...state.selectedVariableIds]
+            : [sourceId];
+
+        const targetIndex = active.variables.findIndex(
+          (v) => v.id === targetId,
+        );
+        const sourceIndex = active.variables.findIndex(
+          (v) => v.id === sourceId,
+        );
+        if (sourceIndex < 0 || targetIndex < 0) {
+          return;
+        }
+
+        const movingVariables = movingIds
+          .map((id) => active.variables.find((v) => v.id === id))
+          .filter((v): v is Variable => v !== undefined)
+          .sort(
+            (a, b) => active.variables.indexOf(a) - active.variables.indexOf(b),
+          );
+
         set((s) =>
           withActiveTab(s, (tab) => {
-            const variables = [...tab.variables];
-            const sourceIndex = variables.findIndex((v) => v.id === sourceId);
-            const targetIndex = variables.findIndex((v) => v.id === targetId);
-            if (sourceIndex < 0 || targetIndex < 0) {
-              return tab;
-            }
-            const [removed] = variables.splice(sourceIndex, 1);
-            variables.splice(targetIndex, 0, removed);
-            return { ...tab, variables };
+            const remaining = tab.variables.filter(
+              (v) => !movingIds.includes(v.id),
+            );
+            const newTargetIndex = remaining.findIndex(
+              (v) => v.id === targetId,
+            );
+            const insertIndex =
+              sourceIndex < targetIndex ? newTargetIndex + 1 : newTargetIndex;
+
+            remaining.splice(insertIndex, 0, ...movingVariables);
+            return { ...tab, variables: remaining };
           }),
         );
+
         get().saveState();
       },
 
