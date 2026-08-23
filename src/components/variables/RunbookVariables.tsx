@@ -69,14 +69,16 @@ export function RunbookVariables() {
         />
       )}
 
-      {variables.map((variable) => (
-        <VariableItem
-          key={variable.id}
-          variable={variable}
-          completions={completions}
-          unused={isVariableUnused(variable, usedKeys)}
-        />
-      ))}
+      <div id="variables-list">
+        {variables.map((variable) => (
+          <VariableItem
+            key={variable.id}
+            variable={variable}
+            completions={completions}
+            unused={isVariableUnused(variable, usedKeys)}
+          />
+        ))}
+      </div>
 
       <AddVariableRow />
     </div>
