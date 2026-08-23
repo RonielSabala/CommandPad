@@ -9,7 +9,7 @@ import { useTranslation } from "@/i18n";
 import type { VariableCompletion } from "@/monaco/completions";
 import { useStore, useStoreApi } from "@/store/store";
 import { classNames } from "@/utils/string";
-import { memo } from "react";
+import { memo, useRef } from "react";
 
 import { VariableActionsMenu } from "./VariableActionsMenu";
 import { VariableEditor } from "./VariableEditor";
@@ -41,11 +41,14 @@ export const VariableItem = memo(function VariableItem({
   const setVariableSelected = useStore((state) => state.setVariableSelected);
   const reorderVariables = useStore((state) => state.reorderVariables);
 
+  const keyRef = useRef<HTMLInputElement>(null);
+
   const { isDragging, isDragOver, handleProps, rowProps } = useRowReorder(
     DragGroup.VARIABLE,
     variableId,
     reorderVariables,
     !readMode,
+    keyRef,
   );
 
   return (
@@ -75,6 +78,7 @@ export const VariableItem = memo(function VariableItem({
         variable={variable}
         completions={completions}
         unused={unused}
+        keyRef={keyRef}
       />
 
       <div className={CssClass.VARIABLE_DRAG_HANDLE}>

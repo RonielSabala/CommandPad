@@ -1,7 +1,8 @@
 import { DRAG_TIMEOUT_MS } from "@/common/config";
 import { DragEffect } from "@/common/constants/events";
 import type { DragGroup } from "@/common/enums";
-import { useRef, useState, type DragEvent } from "react";
+import { clamp } from "@/utils/number";
+import { useRef, useState, type DragEvent, type RefObject } from "react";
 
 const dragGroups: Record<string, string | null> = {};
 
@@ -27,6 +28,7 @@ export function useRowReorder(
   id: string,
   onReorder: (sourceId: string, targetId: string) => void,
   enabled = true,
+  dragImageRef?: RefObject<HTMLElement | null>,
 ): RowReorder {
   const [draggable, setDraggable] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -50,6 +52,16 @@ export function useRowReorder(
         dragGroups[group] = id;
         event.dataTransfer.effectAllowed = DragEffect.MOVE;
         setIsDragging(true);
+
+        const dragImage = dragImageRef?.current;
+        if (dragImage) {
+          const rect = dragImage.getBoundingClientRect();
+          event.dataTransfer.setDragImage(
+            dragImage,
+            clamp(event.clientX - rect.left, 0, rect.width),
+            clamp(event.clientY - rect.top, 0, rect.height),
+          );
+        }
       },
       onDragEnd: () => {
         dragGroups[group] = null;

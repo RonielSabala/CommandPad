@@ -10,7 +10,7 @@ import type { VariableCompletion } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import { getVariableKey } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, type RefObject } from "react";
 
 import "./VariableEditor.css";
 import { VariableKeyInput } from "./VariableKeyInput";
@@ -19,9 +19,15 @@ interface Props {
   variable: Variable;
   completions: VariableCompletion[];
   unused?: boolean;
+  keyRef: RefObject<HTMLInputElement | null>;
 }
 
-export function VariableEditor({ variable, completions, unused }: Props) {
+export function VariableEditor({
+  variable,
+  completions,
+  unused,
+  keyRef,
+}: Props) {
   const t = useTranslation();
   const variableId = variable.id;
   const isSecret = !!variable.secret;
@@ -33,7 +39,6 @@ export function VariableEditor({ variable, completions, unused }: Props) {
     (state) => state.pendingFocusVariableId === variableId,
   );
 
-  const keyRef = useRef<HTMLInputElement>(null);
   const actions = useExtractVariableAction();
 
   // A variable resolving to itself can never fill in, so never offer it
@@ -54,7 +59,7 @@ export function VariableEditor({ variable, completions, unused }: Props) {
       keyRef.current?.select();
       consumeVariableFocus();
     }
-  }, [pendingFocus, consumeVariableFocus]);
+  }, [pendingFocus, consumeVariableFocus, keyRef]);
 
   return (
     <div
