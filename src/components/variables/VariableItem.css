@@ -64,8 +64,7 @@ body.select-key-held:not(.read-mode)
   outline: var(--space-1) solid var(--accent);
 }
 
-.variable-item.drag-over .variable-surface {
-  outline: var(--space-1) dashed var(--accent);
+.variable-item.drag-over {
   border-radius: var(--radius-lg);
 }
 
