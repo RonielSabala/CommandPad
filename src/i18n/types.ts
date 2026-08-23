@@ -422,6 +422,7 @@ export interface Messages {
         openPreviewLabel: string,
         openEditorLabel: string,
       ) => string;
+      variablesEditorNote: string;
       autoCreate: string;
       labelDemo: string;
     };
@@ -452,14 +453,6 @@ export interface Messages {
       demoHint: (variableActionsLabel: string) => string;
       constants: string;
       constantsDemoHint: string;
-    };
-    variablesEditor: {
-      intro: (openEditorLabel: string) => string;
-      whyEditor: (extractLabel: string) => string;
-      demoHint: string;
-      selection: (variableActionsLabel: string) => string;
-      sameVariables: string;
-      secrets: string;
     };
     variableReferences: {
       intro: string;

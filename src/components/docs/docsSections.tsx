@@ -35,7 +35,6 @@ import {
   VariableKeyDocs,
   VariableReferencesDocs,
   VariablesDocs,
-  VariablesEditorDocs,
   VariableSlicingDocs,
   VariableStripDocs,
 } from "./sections/VariablesSection";
@@ -58,7 +57,6 @@ export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {
   [DocsSectionId.IMAGE_BLOCK]: ImageBlockDocs,
   [DocsSectionId.DIVIDER_BLOCK]: DividerBlockDocs,
   [DocsSectionId.VARIABLES]: VariablesDocs,
-  [DocsSectionId.VARIABLES_EDITOR]: VariablesEditorDocs,
   [DocsSectionId.SECRET_VARIABLES]: SecretVariablesDocs,
   [DocsSectionId.SECRET_ENCRYPTION]: SecretEncryptionDocs,
   [DocsSectionId.VARIABLE_REFERENCES]: VariableReferencesDocs,

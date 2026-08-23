@@ -1,11 +1,9 @@
 import { VaultPrompt } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
-import { RunbookVariables } from "@/components/variables/RunbookVariables";
 import { useTranslation } from "@/i18n";
 import { demoCommand, demoVariable } from "../demos/demoSeeds";
 import { DemoVariableRows, DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
-import "./VariablesSection.css";
 
 export function VariablesDocs() {
   const t = useTranslation();
@@ -50,41 +48,6 @@ export function VariablesDocs() {
       <Prose text={t.docs.variables.unresolved} />
       <Prose text={t.docs.variables.tooltip} />
       <Prose text={t.docs.variables.split} />
-    </>
-  );
-}
-
-export function VariablesEditorDocs() {
-  const t = useTranslation();
-
-  return (
-    <>
-      <Prose text={t.docs.variablesEditor.intro(t.variables.openEditorTitle)} />
-      <Prose
-        text={t.docs.variablesEditor.whyEditor(t.command.extractVariable)}
-      />
-      <Prose text={t.docs.variablesEditor.demoHint} />
-      <DemoWorkspace
-        className="docs-demo-variables-editor"
-        tabs={[
-          {
-            variables: [
-              demoVariable("HOST", "deploy.example.com"),
-              demoVariable("REMOTE", "deploy@{HOST}"),
-              demoVariable(
-                "SSH_OPTS",
-                "-o StrictHostKeyChecking=accept-new -o ConnectTimeout=10",
-              ),
-            ],
-            blocks: [demoCommand("ssh {SSH_OPTS} {REMOTE}")],
-          },
-        ]}
-      >
-        <RunbookVariables />
-      </DemoWorkspace>
-      <Prose text={t.docs.variablesEditor.selection(t.variables.actions)} />
-      <Prose text={t.docs.variablesEditor.sameVariables} />
-      <Prose text={t.docs.variablesEditor.secrets} />
     </>
   );
 }
