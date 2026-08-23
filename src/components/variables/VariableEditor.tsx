@@ -1,6 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { CodeModelScope } from "@/common/editorConfig";
-import { AppMode, VariableField } from "@/common/enums";
+import { VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { EyeIcon } from "@/components/icons";
@@ -26,7 +26,6 @@ export function VariableEditor({ variable, completions, unused }: Props) {
   const variableId = variable.id;
   const isSecret = !!variable.secret;
 
-  const readMode = useStore((state) => state.mode === AppMode.READ);
   const updateVariable = useStore((state) => state.updateVariable);
   const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
   const consumeVariableFocus = useStore((state) => state.consumeVariableFocus);
@@ -94,7 +93,6 @@ export function VariableEditor({ variable, completions, unused }: Props) {
         placeholder={t.variables.valuePlaceholder}
         completions={valueCompletions}
         actions={actions}
-        readOnly={readMode}
       />
     </div>
   );

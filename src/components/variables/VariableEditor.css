@@ -61,10 +61,22 @@ body.read-mode .variable-editor-secret-btn {
 
 .variable-editor-value {
   min-width: var(--block-min-width);
+  border: var(--border-standard);
+  border-top: none;
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  overflow: clip;
 }
 
 body:not(.read-mode)
   .variable-editor.is-unused:not(:focus-within)
   :is(.variable-editor-key, .variable-editor-value) {
   opacity: 0.5;
+}
+
+body.read-mode .variable-editor-value textarea {
+  pointer-events: auto;
+  visibility: visible;
+  user-select: text;
+  cursor: text;
 }
