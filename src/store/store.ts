@@ -508,6 +508,7 @@ function withPanel(
 function uiStateSnapshot(state: StoreState) {
   return {
     mode: state.mode,
+    runbookView: state.runbookView,
     theme: state.theme,
     language: state.language,
     spellcheckEnabled: state.spellcheckEnabled,
@@ -2649,6 +2650,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set((s) => ({
           runbookView: s.runbookView === view ? RunbookView.PREVIEW : view,
         }));
+
+        persist.saveUiState(uiStateSnapshot(get()));
       },
 
       applyRunbookSource: (text) => {
