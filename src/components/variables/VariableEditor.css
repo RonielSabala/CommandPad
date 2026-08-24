@@ -13,9 +13,12 @@
   gap: var(--space-3);
 }
 
-.variable-editor-key {
+.variable-editor-key-row .variable-key-wrap {
   flex: 1;
-  min-width: 0;
+}
+
+.variable-editor-key {
+  width: 100%;
   font-family: var(--font-mono);
   font-size: var(--text-md);
   font-weight: 500;
