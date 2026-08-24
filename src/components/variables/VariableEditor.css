@@ -14,7 +14,25 @@
 }
 
 .variable-editor-key-row .variable-key-wrap {
-  flex: 1;
+  flex: 1 1 auto;
+}
+
+.variable-editor-key-row .variable-key-wrap::after {
+  content: attr(data-value) " ";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  font-weight: 500;
+  font-variant-ligatures: none;
+  font-feature-settings:
+    "liga" 0,
+    "calt" 0;
+  padding-inline: calc(var(--space-4) + 1px);
 }
 
 .variable-editor-key {

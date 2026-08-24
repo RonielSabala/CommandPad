@@ -37,7 +37,7 @@ export function VariableKeyInput({
   const scrollTarget = useDomScrollTarget(ownRef);
 
   return (
-    <div className="variable-key-wrap">
+    <div className="variable-key-wrap" data-value={variableKey}>
       <input
         ref={(node) => {
           ownRef.current = node;
