@@ -850,6 +850,8 @@ Si algo sale mal, deshazlo en este orden:
         "Un valor puede tener varios huecos. Dale a cada uno un nombre distinto y rellénalos todos en el mismo comando, separados por punto y coma:",
       nested:
         "Un hueco también puede rellenarse con otra variable. Así, un mismo valor puede rellenar el hueco de un comando y usarse por su cuenta en otro:",
+      chained:
+        "Un valor también puede escribir una referencia **alrededor** de su propio hueco. Al rellenar el hueco esa referencia queda completa, de modo que una plantilla puede apoyarse en otra en vez de quedarse en el texto que escribió:",
     },
     variableSlicing: {
       intro:
@@ -957,7 +959,8 @@ Si algo sale mal, deshazlo en este orden:
         "Antepón una barra invertida (`\\`) a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla.",
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
-      scope: "El escape solo aplica dentro de bloques de comando.",
+      scope:
+        "El escape aplica dentro de los bloques de comando, y dentro del texto que produce un hueco rellenado.",
     },
     secretVariables: {
       intro: (actionsLabel, maskLabel) =>

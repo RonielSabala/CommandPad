@@ -181,6 +181,27 @@ export function ParameterizedPlaceholdersDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.parameterizedPlaceholders.chained} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("LOG_DIR", "/var/log/{;service}"),
+              demoVariable(
+                "LOG_FILE",
+                "{LOG_DIR;service={;service}}/current.log",
+              ),
+            ],
+            blocks: [
+              demoCommand("tail -f {LOG_FILE;service=api}"),
+              demoCommand("cd {LOG_DIR;service=web}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }

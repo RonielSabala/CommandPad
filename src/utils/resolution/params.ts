@@ -11,6 +11,8 @@ interface ReferenceParam {
 interface ResolvedTemplate {
   text: string;
   fullyResolved: boolean;
+  /** Whether a blank was actually filled. */
+  filled: boolean;
 }
 
 export function parseParam(chunk: string): ReferenceParam | null {
@@ -40,12 +42,14 @@ export function applyTemplateParams(
   params: Record<string, string>,
 ): ResolvedTemplate {
   let fullyResolved = true;
+  let filled = false;
 
   const text = template.replace(
     VariableParamPlaceholderRegex,
     (match, rawName: string) => {
       const paramName = rawName.trim();
       if (paramName in params) {
+        filled = true;
         return params[paramName];
       }
 
@@ -54,5 +58,5 @@ export function applyTemplateParams(
     },
   );
 
-  return { text, fullyResolved };
+  return { text, fullyResolved, filled };
 }

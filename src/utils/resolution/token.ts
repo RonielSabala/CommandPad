@@ -29,14 +29,17 @@ export interface OpenReference {
   raw: string;
 }
 
+/** Drops every backslash that escapes a brace. */
+function dropBraceEscapes(text: string): string {
+  return text.replace(EscapedBraceOpenRegex, VariableSyntax.BRACE_OPEN);
+}
+
 /** Drops the backslash that escapes a reference. */
 export function unescapeBraces(
   text: string,
   surface: ReferenceSurface,
 ): string {
-  return ESCAPES_REFERENCES[surface]
-    ? text.replace(EscapedBraceOpenRegex, VariableSyntax.BRACE_OPEN)
-    : text;
+  return ESCAPES_REFERENCES[surface] ? dropBraceEscapes(text) : text;
 }
 
 export function braceToken(raw: string): string {
@@ -96,11 +99,7 @@ function scanUnbalanced(text: string, escapes: boolean): ReferenceMatch[] {
 }
 
 /** Finds the references sitting at the top level of `text`. */
-export function scanReferences(
-  text: string,
-  surface: ReferenceSurface,
-): ReferenceMatch[] {
-  const escapes = ESCAPES_REFERENCES[surface];
+function scanBraces(text: string, escapes: boolean): ReferenceMatch[] {
   const matches: ReferenceMatch[] = [];
   let start = -1;
   let depth = 0;
@@ -124,6 +123,14 @@ export function scanReferences(
   }
 
   return depth === 0 ? matches : scanUnbalanced(text, escapes);
+}
+
+/** Finds the references sitting at the top level of `text`. */
+export function scanReferences(
+  text: string,
+  surface: ReferenceSurface,
+): ReferenceMatch[] {
+  return scanBraces(text, ESCAPES_REFERENCES[surface]);
 }
 
 /** The innermost reference still open at `index`, `null` when there is none. */
@@ -154,26 +161,52 @@ export function openReferenceAt(
     : { start, raw: text.slice(start + 1, index) };
 }
 
-/** Rewrites every top-level reference in `text`. */
-export function replaceReferences(
+function replaceMatches(
   text: string,
-  surface: ReferenceSurface,
+  matches: ReferenceMatch[],
   replace: (match: ReferenceMatch) => string,
+  literal: (text: string) => string,
 ): string {
-  const matches = scanReferences(text, surface);
   if (matches.length === 0) {
-    return text;
+    return literal(text);
   }
 
   let result = "";
   let lastEnd = 0;
 
   for (const match of matches) {
-    result += text.slice(lastEnd, match.start) + replace(match);
+    result += literal(text.slice(lastEnd, match.start)) + replace(match);
     lastEnd = match.end;
   }
 
-  return result + text.slice(lastEnd);
+  return result + literal(text.slice(lastEnd));
+}
+
+/** Rewrites every top-level reference in `text`. */
+export function replaceReferences(
+  text: string,
+  surface: ReferenceSurface,
+  replace: (match: ReferenceMatch) => string,
+): string {
+  return replaceMatches(
+    text,
+    scanReferences(text, surface),
+    replace,
+    (literal) => literal,
+  );
+}
+
+/** Rewrites every reference a filled template produced. */
+export function replaceTemplateReferences(
+  text: string,
+  replace: (match: ReferenceMatch) => string,
+): string {
+  return replaceMatches(
+    text,
+    scanBraces(text, true),
+    replace,
+    dropBraceEscapes,
+  );
 }
 
 /** Splits a reference body into its key, its params and its operations. */

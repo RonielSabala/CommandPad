@@ -467,6 +467,7 @@ export interface Messages {
       seeExample: string;
       multiple: string;
       nested: string;
+      chained: string;
     };
     variableSlicing: {
       intro: string;

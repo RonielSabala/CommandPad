@@ -1,10 +1,15 @@
+import { ReferenceConfig } from "@/common/config";
 import { ReferenceSurface } from "@/common/enums";
 import { VariableSyntax } from "@/common/variableSyntax";
 
 import { applyOperations } from "./operations";
 import { applyTemplateParams, parseParam } from "./params";
 import type { ReferenceBodyChunk } from "./token";
-import { replaceReferences, splitReferenceBody } from "./token";
+import {
+  replaceReferences,
+  replaceTemplateReferences,
+  splitReferenceBody,
+} from "./token";
 import type { VariableLookup } from "./types";
 
 /** Whether an unfilled `{;name}` blank may pass through instead of leaving the reference unresolved. */
@@ -45,11 +50,20 @@ function unnamedValue(chunks: ReferenceBodyChunk[]): string | undefined {
  * Resolves the references written inside a param value or an operation, before
  * either is parsed.
  */
-function resolveChunk(text: string, context: ReferenceContext): ResolvedChunk {
+function resolveChunk(
+  text: string,
+  context: ReferenceContext,
+  depth: number,
+): ResolvedChunk {
   let fullyResolved = true;
 
   const resolved = replaceReferences(text, context.surface, (match) => {
-    const reference = resolveReference(match.token, match.raw, context);
+    const reference = resolveReferenceAt(
+      match.token,
+      match.raw,
+      context,
+      depth,
+    );
     if (!reference.resolved) {
       fullyResolved = false;
     }
@@ -60,11 +74,40 @@ function resolveChunk(text: string, context: ReferenceContext): ResolvedChunk {
   return { text: resolved, fullyResolved };
 }
 
+/**
+ * Resolves the references a filled template produced, so a value that is itself
+ * a template resolves rather than being emitted as literal text.
+ */
+function resolveFilledTemplate(
+  text: string,
+  context: ReferenceContext,
+  depth: number,
+): string {
+  if (depth >= ReferenceConfig.MAX_TEMPLATE_DEPTH) {
+    return text;
+  }
+
+  return replaceTemplateReferences(
+    text,
+    (match) =>
+      resolveReferenceAt(match.token, match.raw, context, depth + 1).text,
+  );
+}
+
 /** Resolves one `{KEY;params|operations}` reference against `context.lookup`. */
 export function resolveReference(
   token: string,
   raw: string,
   context: ReferenceContext,
+): ResolvedReference {
+  return resolveReferenceAt(token, raw, context, 0);
+}
+
+function resolveReferenceAt(
+  token: string,
+  raw: string,
+  context: ReferenceContext,
+  depth: number,
 ): ResolvedReference {
   const [keyChunk, ...rest] = splitReferenceBody(raw);
 
@@ -84,7 +127,7 @@ export function resolveReference(
   const operations: string[] = [];
 
   for (const chunk of rest) {
-    const resolved = resolveChunk(chunk.text, context);
+    const resolved = resolveChunk(chunk.text, context, depth);
     if (!resolved.fullyResolved) {
       return unresolvedReference();
     }
@@ -105,7 +148,11 @@ export function resolveReference(
     return unresolvedReference();
   }
 
-  const applied = applyOperations(template.text, operations, { key });
+  const filled = template.filled
+    ? resolveFilledTemplate(template.text, context, depth)
+    : template.text;
+
+  const applied = applyOperations(filled, operations, { key });
   return applied.ok
     ? { key, text: applied.text, resolved: true }
     : unresolvedReference();

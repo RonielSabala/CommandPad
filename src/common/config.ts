@@ -150,6 +150,11 @@ export const StringCaseConfig = {
   APOSTROPHE: "'",
 } as const;
 
+export const ReferenceConfig = {
+  // How many times a filled template may produce references that fill another
+  MAX_TEMPLATE_DEPTH: 10,
+} as const;
+
 export const ExtractedVariableConfig = {
   DEFAULT_KEY: "VARIABLE",
   MAX_KEY_WORDS: 3,

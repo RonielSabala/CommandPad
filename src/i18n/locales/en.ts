@@ -835,6 +835,8 @@ If something goes wrong, undo it in this order:
         "A value can have several blanks. Give each one a different name, then fill them all in the same command, separated by semicolons:",
       nested:
         "A blank can even be filled with another variable. That way the same value can fill a blank in one command and be used on its own in another:",
+      chained:
+        "A value can also spell out a reference **around** its own blank. Filling the blank finishes that reference, so one template can build on another instead of stopping at the text it wrote:",
     },
     variableSlicing: {
       intro:
@@ -942,7 +944,8 @@ If something goes wrong, undo it in this order:
         "Prefix a reference with a backslash (`\\`) in a command block to output it literally instead of resolving it.",
       tryHint:
         "Try deleting the backslash in the command below and watch the literal braces turn into an active reference:",
-      scope: "Escaping only applies inside command blocks.",
+      scope:
+        "Escaping applies inside command blocks, and inside the text a filled blank produces.",
     },
     secretVariables: {
       intro: (actionsLabel, maskLabel) =>
