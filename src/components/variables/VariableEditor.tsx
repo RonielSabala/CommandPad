@@ -77,6 +77,7 @@ export function VariableEditor({
           className="variable-editor-key"
           unused={unused}
           inputRef={keyRef}
+          scrollable
         />
 
         {isSecret && (

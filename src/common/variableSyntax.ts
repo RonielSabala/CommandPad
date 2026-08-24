@@ -6,7 +6,6 @@ import {
   anchored,
   anyOf,
   atEnd,
-  capture,
   dotAllRegex,
   either,
   escapeSyntax,
@@ -99,20 +98,8 @@ const Num = escapeSyntax(NumberSyntax);
 const Operation = escapeSyntax(OperationSyntax);
 const DateTok = escapeSyntax(DateToken);
 
-const braced = (content: string) =>
-  sequence(Ref.BRACE_OPEN, content, Ref.BRACE_CLOSE);
-
 export const EscapedBraceOpenRegex = globalRegex(
   sequence(ESCAPE, Ref.BRACE_OPEN),
-);
-
-export const VariableParamPlaceholderRegex = globalRegex(
-  braced(
-    sequence(
-      Ref.PARAM_SEPARATOR,
-      capture(oneOrMore(noneOf(Ref.BRACE_CLOSE, Ref.PARAM_SEPARATOR))),
-    ),
-  ),
 );
 
 export const TokenWhitespaceRegex = globalRegex(oneOrMore(WHITESPACE));

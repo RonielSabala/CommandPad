@@ -181,6 +181,27 @@ export function ParameterizedPlaceholdersDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.parameterizedPlaceholders.chained} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("LOG_DIR", "/var/log/{;service}"),
+              demoVariable(
+                "LOG_FILE",
+                "{LOG_DIR;service={;service}}/current.log",
+              ),
+            ],
+            blocks: [
+              demoCommand("tail -f {LOG_FILE;service=api}"),
+              demoCommand("cd {LOG_DIR;service=web}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }
@@ -363,6 +384,56 @@ export function VariableStripDocs() {
             blocks: [
               demoCommand('mkdir "{NAME}"'),
               demoCommand('mkdir "{NAME|strip}"'),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
+export function PlaceholderDefaultsDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.placeholderDefaults.intro} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("LOGFILE", "tail -f /var/log/{;service=api}/{;service}.log")],
+            blocks: [
+              demoCommand("{LOGFILE}"),
+              demoCommand("{LOGFILE;service=web}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.placeholderDefaults.override} />
+      <Prose text={t.docs.placeholderDefaults.shared} />
+    </>
+  );
+}
+
+export function TransformedPlaceholdersDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.transformedPlaceholders.intro} />
+      <Prose text={t.docs.transformedPlaceholders.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("BRANCH", "feature/{;name|kebabcase}")],
+            blocks: [
+              demoCommand("git switch -c {BRANCH;name=Fix Login Retry}"),
             ],
           },
         ]}

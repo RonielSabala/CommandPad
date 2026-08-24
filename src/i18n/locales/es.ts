@@ -651,11 +651,13 @@ export const es: Messages = {
       [DocsSectionId.VARIABLES]: "Variables",
       [DocsSectionId.VARIABLE_REFERENCES]: "Referencias de variables",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
+      [DocsSectionId.PLACEHOLDER_DEFAULTS]: "Valores por defecto",
       [DocsSectionId.VARIABLE_SLICING]: "Recortar valores",
       [DocsSectionId.VARIABLE_COUNT]: "Contar caracteres",
       [DocsSectionId.VARIABLE_KEY]: "Usar el nombre de la variable",
       [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
       [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
+      [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transformar un hueco",
       [DocsSectionId.UNNAMED_REFERENCES]: "Referencias sin variable",
       [DocsSectionId.VARIABLE_DATE]: "Fecha actual",
       [DocsSectionId.MULTILINE_REFERENCES]: "Referencias largas",
@@ -850,6 +852,16 @@ Si algo sale mal, deshazlo en este orden:
         "Un valor puede tener varios huecos. Dale a cada uno un nombre distinto y rellénalos todos en el mismo comando, separados por punto y coma:",
       nested:
         "Un hueco también puede rellenarse con otra variable. Así, un mismo valor puede rellenar el hueco de un comando y usarse por su cuenta en otro:",
+      chained:
+        "Un valor también puede escribir una referencia **alrededor** de su propio hueco. Al rellenar el hueco esa referencia queda completa, de modo que una plantilla puede apoyarse en otra en vez de quedarse en el texto que escribió:",
+    },
+    placeholderDefaults: {
+      intro:
+        "Un hueco suele representar la parte que cambia, pero muchas veces hay una respuesta que sirve casi siempre. Escríbela después de un `=` dentro del hueco, `{;param=por_defecto}`, y la variable ya sabe qué poner cuando nadie lo rellena.",
+      override:
+        "Rellenar un hueco siempre gana a su valor por defecto, así que un valor por defecto no te quita nada: solo te ahorra escribir la respuesta de siempre una y otra vez.",
+      shared:
+        "Un valor por defecto solo hay que escribirlo una vez. Cuando el mismo hueco aparece varias veces en un mismo valor, todos lo comparten.",
     },
     variableSlicing: {
       intro:
@@ -919,6 +931,12 @@ Si algo sale mal, deshazlo en este orden:
       whitespace:
         "Por defecto, las operaciones `strip` escritas sin paréntesis quitan los espacios en blanco:",
     },
+    transformedPlaceholders: {
+      intro:
+        "El hueco de un marcador parametrizado puede transformar lo que lo rellena, igual que hace el propio valor de una variable. Escribe un `|` y una operación justo después del nombre del hueco, `{;nombre|operación}`, y el valor se reescribe al entrar, antes de llegar siquiera al comando.",
+      demoHint:
+        "Esto funciona con todas las operaciones de las secciones anteriores.",
+    },
     unnamedReferences: {
       intro:
         "Una referencia no necesita nombrar ninguna variable. Omite el nombre, escribe solo operaciones después de `|`, y la referencia partirá de un valor vacío: el resultado será lo que esas operaciones produzcan.",
@@ -957,7 +975,8 @@ Si algo sale mal, deshazlo en este orden:
         "Antepón una barra invertida (`\\`) a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla.",
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
-      scope: "El escape solo aplica dentro de bloques de comando.",
+      scope:
+        "El escape aplica dentro de los bloques de comando, y dentro del texto que produce un hueco rellenado.",
     },
     secretVariables: {
       intro: (actionsLabel, maskLabel) =>

@@ -641,11 +641,13 @@ export const en: Messages = {
       [DocsSectionId.VARIABLES]: "Variables",
       [DocsSectionId.VARIABLE_REFERENCES]: "Variable references",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Parameterized placeholders",
+      [DocsSectionId.PLACEHOLDER_DEFAULTS]: "Placeholder defaults",
       [DocsSectionId.VARIABLE_SLICING]: "Slicing values",
       [DocsSectionId.VARIABLE_COUNT]: "Counting characters",
       [DocsSectionId.VARIABLE_KEY]: "Using the variable name",
       [DocsSectionId.VARIABLE_CASE]: "Changing case",
       [DocsSectionId.VARIABLE_STRIP]: "Trimming ends",
+      [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transforming a blank",
       [DocsSectionId.UNNAMED_REFERENCES]: "References with no variable",
       [DocsSectionId.VARIABLE_DATE]: "Current date",
       [DocsSectionId.MULTILINE_REFERENCES]: "Long references",
@@ -835,6 +837,16 @@ If something goes wrong, undo it in this order:
         "A value can have several blanks. Give each one a different name, then fill them all in the same command, separated by semicolons:",
       nested:
         "A blank can even be filled with another variable. That way the same value can fill a blank in one command and be used on its own in another:",
+      chained:
+        "A value can also spell out a reference **around** its own blank. Filling the blank finishes that reference, so one template can build on another instead of stopping at the text it wrote:",
+    },
+    placeholderDefaults: {
+      intro:
+        "A blank usually stands for the part that changes, but often one answer is the one you want almost every time. Write it after an `=` inside the blank, `{;param=default}`, and the variable already knows what to do when nobody fills it in.",
+      override:
+        "Filling a blank always wins over its default, so a default costs you nothing: it just saves you from typing the usual answer over and over.",
+      shared:
+        "A default only has to be written once. When the same blank turns up several times in one value, they all share it.",
     },
     variableSlicing: {
       intro:
@@ -904,6 +916,11 @@ If something goes wrong, undo it in this order:
       whitespace:
         "By default, `strip` operations written without parentheses remove whitespace:",
     },
+    transformedPlaceholders: {
+      intro:
+        "A parameterized placeholder's blank can transform whatever fills it, the same way a variable's own value does. Write a `|` and an operation right after the blank's name, `{;name|operation}`, and the value is respelled on its way in before it ever reaches the command.",
+      demoHint: "This works with every operation from the sections above.",
+    },
     unnamedReferences: {
       intro:
         "A reference does not have to name a variable. Leave the name out, write only operations after the `|`, and the reference starts from an empty value: what you get back is whatever the operations make of it.",
@@ -942,7 +959,8 @@ If something goes wrong, undo it in this order:
         "Prefix a reference with a backslash (`\\`) in a command block to output it literally instead of resolving it.",
       tryHint:
         "Try deleting the backslash in the command below and watch the literal braces turn into an active reference:",
-      scope: "Escaping only applies inside command blocks.",
+      scope:
+        "Escaping applies inside command blocks, and inside the text a filled blank produces.",
     },
     secretVariables: {
       intro: (actionsLabel, maskLabel) =>

@@ -14,6 +14,8 @@ export const EventType = {
   SCROLL: "scroll",
   WHEEL: "wheel",
   BLUR: "blur",
+  DRAG_START: "dragstart",
+  DRAG_END: "dragend",
 } as const;
 
 export const Key = {

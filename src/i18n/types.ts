@@ -467,6 +467,12 @@ export interface Messages {
       seeExample: string;
       multiple: string;
       nested: string;
+      chained: string;
+    };
+    placeholderDefaults: {
+      intro: string;
+      override: string;
+      shared: string;
     };
     variableSlicing: {
       intro: string;
@@ -501,6 +507,10 @@ export interface Messages {
       demoHint: string;
       repeats: string;
       whitespace: string;
+    };
+    transformedPlaceholders: {
+      intro: string;
+      demoHint: string;
     };
     unnamedReferences: {
       intro: string;
