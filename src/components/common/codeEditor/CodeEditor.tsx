@@ -54,6 +54,7 @@ import { StaticCodeView } from "./StaticCodeView";
 
 export interface CodeEditorHandle {
   focus(): void;
+  setScrollTop(value: number): void;
 }
 
 interface Props {
@@ -78,6 +79,7 @@ interface Props {
   onSubmit?: () => void;
   onFocus?: () => void;
   onBlur?: () => void;
+  onScrollChange?: (scrollTop: number) => void;
 }
 
 const FULL_HEIGHT = "100%";
@@ -135,6 +137,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       onSubmit,
       onFocus,
       onBlur,
+      onScrollChange,
     },
     forwardedRef,
   ) {
@@ -147,6 +150,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     );
     const rootRef = useRef<HTMLDivElement>(null);
     const pendingFocusRef = useRef(false);
+    const pendingScrollTopRef = useRef<number | null>(null);
     const openingContextMenuRef = useRef(false);
     const menuSelectionRef = useRef<{
       selection: Selection;
@@ -157,8 +161,8 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       estimateContentHeight(value),
     );
 
-    const callbacks = useRef({ onSubmit, onFocus, onBlur });
-    callbacks.current = { onSubmit, onFocus, onBlur };
+    const callbacks = useRef({ onSubmit, onFocus, onBlur, onScrollChange });
+    callbacks.current = { onSubmit, onFocus, onBlur, onScrollChange };
 
     const inputElement = useCallback(
       () =>
@@ -177,7 +181,18 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       }
     }, [inputElement]);
 
-    useImperativeHandle(forwardedRef, () => ({ focus }), [focus]);
+    const setScrollTop = useCallback((next: number) => {
+      if (editorRef.current) {
+        editorRef.current.setScrollTop(next);
+      } else {
+        pendingScrollTopRef.current = next;
+      }
+    }, []);
+
+    useImperativeHandle(forwardedRef, () => ({ focus, setScrollTop }), [
+      focus,
+      setScrollTop,
+    ]);
 
     useLayoutEffect(() => editorRef.current?.layout(), [contentHeight]);
 
@@ -269,6 +284,10 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         instance.onDidLayoutChange(applyHeight);
         setScrollTarget(monacoScrollTarget(instance));
         bindDragScrolling(instance);
+      } else {
+        instance.onDidScrollChange((event) =>
+          callbacks.current.onScrollChange?.(event.scrollTop),
+        );
       }
 
       instance.onKeyDown((event) => {
@@ -345,6 +364,12 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       if (autoFocus || pendingFocusRef.current) {
         pendingFocusRef.current = false;
         inputElement()?.focus({ preventScroll: true });
+      }
+
+      if (pendingScrollTopRef.current !== null) {
+        const pending = pendingScrollTopRef.current;
+        pendingScrollTopRef.current = null;
+        requestAnimationFrame(() => instance.setScrollTop(pending));
       }
     };
 

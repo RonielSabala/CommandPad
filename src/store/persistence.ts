@@ -1,5 +1,6 @@
 import {
   createDefaultPanels,
+  createDefaultScrollTop,
   PANEL_DEFINITIONS,
   StorageKey,
   VariableSplit,
@@ -200,7 +201,22 @@ export function loadUiState(): Partial<PersistedUiState> | null {
 
 interface PersistedTabs {
   activeTabId: string | null;
-  tabOrder: { tabId: string; runbookId: string | null; scrollTop?: number }[];
+  tabOrder: { tabId: string; runbookId: string | null; scrollTop?: unknown }[];
+}
+
+export function restoreScrollTop(value: unknown): Record<RunbookView, number> {
+  const scrollTop = createDefaultScrollTop();
+
+  if (isObject(value)) {
+    for (const view of Object.values(RunbookView)) {
+      const saved = value[view];
+      if (isNumber(saved)) {
+        scrollTop[view] = saved;
+      }
+    }
+  }
+
+  return scrollTop;
 }
 
 export function saveTabsMeta(tabs: Tab[], activeTabId: string | null): void {

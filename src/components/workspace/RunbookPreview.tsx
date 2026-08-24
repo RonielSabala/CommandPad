@@ -1,7 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { InputSelector } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
-import { PanelSide } from "@/common/enums";
+import { PanelSide, RunbookView } from "@/common/enums";
 import { EmptyState } from "@/components/common/EmptyState";
 import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
 import { EmptyStateIcon } from "@/components/icons";
@@ -47,7 +47,7 @@ export function RunbookPreview() {
   const showMinimap = minimapEnabled && !isEmpty;
   const [menuAnchor, setMenuAnchor] = useState<ContextMenuAnchor | null>(null);
 
-  useScrollPersistence(tabsContentRef);
+  useScrollPersistence(tabsContentRef, RunbookView.PREVIEW);
 
   return (
     <div

@@ -1,4 +1,4 @@
-import { RunbookConfig } from "@/common/config";
+import { createDefaultScrollTop, RunbookConfig } from "@/common/config";
 import { BlockType, NoteStyle } from "@/common/enums";
 import type {
   Block,
@@ -96,7 +96,7 @@ export function buildDemoSeed(
       runbookId: entry.id,
       blocks: content.blocks ?? [],
       variables: content.variables ?? [],
-      scrollTop: 0,
+      scrollTop: createDefaultScrollTop(),
     };
   });
 

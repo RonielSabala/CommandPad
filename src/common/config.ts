@@ -2,6 +2,7 @@ import {
   ExportFormat,
   PanelId,
   PanelSide,
+  RunbookView,
   VaultField,
   VaultPrompt,
 } from "./enums";
@@ -78,6 +79,16 @@ export function createDefaultPanels(): Record<PanelId, PanelState> {
   }
 
   return panels;
+}
+
+export function createDefaultScrollTop(): Record<RunbookView, number> {
+  const scrollTop = {} as Record<RunbookView, number>;
+
+  for (const view of Object.values(RunbookView)) {
+    scrollTop[view] = 0;
+  }
+
+  return scrollTop;
 }
 
 export const VariableSplit = {

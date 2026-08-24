@@ -1,15 +1,24 @@
 import { CodeModelScope } from "@/common/editorConfig";
-import { AppMode, CodeLanguage, PanelSide } from "@/common/enums";
-import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
+import { AppMode, CodeLanguage, PanelSide, RunbookView } from "@/common/enums";
+import {
+  CodeEditor,
+  type CodeEditorHandle,
+} from "@/components/common/codeEditor/CodeEditor";
+import { useMonacoScrollPersistence } from "@/hooks/useMonacoScrollPersistence";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { buildRunbookSource } from "@/utils/runbookSource";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import "./RunbookSource.css";
 
 export function RunbookSource() {
   const t = useTranslation();
   const tab = useStore(getActiveTab);
+  const editorRef = useRef<CodeEditorHandle>(null);
+  const { onScrollChange } = useMonacoScrollPersistence(
+    editorRef,
+    RunbookView.SOURCE,
+  );
   const readOnly = useStore((state) => state.mode === AppMode.READ);
   const applyRunbookSource = useStore((state) => state.applyRunbookSource);
   const minimapEnabled = useStore((state) => state.minimapEnabled);
@@ -52,6 +61,7 @@ export function RunbookSource() {
   return (
     <div id="runbook-source">
       <CodeEditor
+        ref={editorRef}
         modelId={`${CodeModelScope.RUNBOOK_SOURCE}/${tab.id}`}
         language={CodeLanguage.JSON}
         className="runbook-source-editor"
@@ -62,6 +72,7 @@ export function RunbookSource() {
         minimapSide={minimapSide}
         hasError={invalid}
         onChange={handleChange}
+        onScrollChange={onScrollChange}
       />
 
       {invalid && <p className="runbook-source-error">{t.source.invalid}</p>}

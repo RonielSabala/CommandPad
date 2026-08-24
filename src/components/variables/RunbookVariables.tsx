@@ -1,8 +1,9 @@
-import { SelectionGroup } from "@/common/enums";
+import { RunbookView, SelectionGroup } from "@/common/enums";
 import type { Block, Variable } from "@/common/types";
 import { EmptyState } from "@/components/common/EmptyState";
 import { PlusIcon } from "@/components/icons";
 import { useLassoSelection } from "@/hooks/useLassoSelection";
+import { useScrollPersistence } from "@/hooks/useScrollPersistence";
 import { useTranslation } from "@/i18n";
 import { buildVariableCompletions } from "@/monaco/completions";
 import { getActiveTab, useStore } from "@/store/store";
@@ -12,7 +13,7 @@ import {
   getVariableMap,
   isVariableUnused,
 } from "@/utils/resolution";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import "./RunbookVariables.css";
 import { VariableItem } from "./VariableItem";
 
@@ -40,8 +41,10 @@ export function RunbookVariables() {
   const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
 
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useLassoSelection(root, SelectionGroup.VARIABLE);
+  useScrollPersistence(scrollRef, RunbookView.VARIABLES);
 
   const variableMap = useMemo(() => getVariableMap(variables), [variables]);
   const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
@@ -56,7 +59,13 @@ export function RunbookVariables() {
   );
 
   return (
-    <div id="runbook-variables" ref={setRoot}>
+    <div
+      id="runbook-variables"
+      ref={(node) => {
+        scrollRef.current = node;
+        setRoot(node);
+      }}
+    >
       {variables.length === 0 && (
         <EmptyState
           icon={
