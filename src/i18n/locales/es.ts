@@ -651,6 +651,7 @@ export const es: Messages = {
       [DocsSectionId.VARIABLES]: "Variables",
       [DocsSectionId.VARIABLE_REFERENCES]: "Referencias de variables",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
+      [DocsSectionId.PLACEHOLDER_DEFAULTS]: "Valores por defecto",
       [DocsSectionId.VARIABLE_SLICING]: "Recortar valores",
       [DocsSectionId.VARIABLE_COUNT]: "Contar caracteres",
       [DocsSectionId.VARIABLE_KEY]: "Usar el nombre de la variable",
@@ -853,6 +854,14 @@ Si algo sale mal, deshazlo en este orden:
         "Un hueco también puede rellenarse con otra variable. Así, un mismo valor puede rellenar el hueco de un comando y usarse por su cuenta en otro:",
       chained:
         "Un valor también puede escribir una referencia **alrededor** de su propio hueco. Al rellenar el hueco esa referencia queda completa, de modo que una plantilla puede apoyarse en otra en vez de quedarse en el texto que escribió:",
+    },
+    placeholderDefaults: {
+      intro:
+        "Un hueco suele representar la parte que cambia, pero muchas veces hay una respuesta que sirve casi siempre. Escríbela después de un `=` dentro del hueco, `{;param=por_defecto}`, y la variable ya sabe qué poner cuando nadie lo rellena.",
+      override:
+        "Rellenar un hueco siempre gana a su valor por defecto, así que un valor por defecto no te quita nada: solo te ahorra escribir la respuesta de siempre una y otra vez.",
+      shared:
+        "Un valor por defecto solo hay que escribirlo una vez. Cuando el mismo hueco aparece varias veces en un mismo valor, todos lo comparten.",
     },
     variableSlicing: {
       intro:

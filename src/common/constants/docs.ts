@@ -14,6 +14,7 @@ export const DocsSectionId = {
   SECRET_ENCRYPTION: "secret-encryption",
   VARIABLE_REFERENCES: "variable-references",
   PARAMETERIZED_PLACEHOLDERS: "parameterized-placeholders",
+  PLACEHOLDER_DEFAULTS: "placeholder-defaults",
   VARIABLE_SLICING: "variable-slicing",
   VARIABLE_COUNT: "variable-count",
   VARIABLE_KEY: "variable-key",
@@ -64,6 +65,10 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.VARIABLE_REFERENCES, level: DocsSectionLevel.SUBSECTION },
   {
     id: DocsSectionId.PARAMETERIZED_PLACEHOLDERS,
+    level: DocsSectionLevel.SUBSECTION,
+  },
+  {
+    id: DocsSectionId.PLACEHOLDER_DEFAULTS,
     level: DocsSectionLevel.SUBSECTION,
   },
   { id: DocsSectionId.VARIABLE_SLICING, level: DocsSectionLevel.SUBSECTION },

@@ -395,6 +395,32 @@ export function VariableStripDocs() {
   );
 }
 
+export function PlaceholderDefaultsDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.placeholderDefaults.intro} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("LOGFILE", "tail -f /var/log/{;service=api}/{;service}.log")],
+            blocks: [
+              demoCommand("{LOGFILE}"),
+              demoCommand("{LOGFILE;service=web}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.placeholderDefaults.override} />
+      <Prose text={t.docs.placeholderDefaults.shared} />
+    </>
+  );
+}
+
 export function TransformedPlaceholdersDocs() {
   const t = useTranslation();
 

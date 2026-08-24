@@ -641,6 +641,7 @@ export const en: Messages = {
       [DocsSectionId.VARIABLES]: "Variables",
       [DocsSectionId.VARIABLE_REFERENCES]: "Variable references",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Parameterized placeholders",
+      [DocsSectionId.PLACEHOLDER_DEFAULTS]: "Placeholder defaults",
       [DocsSectionId.VARIABLE_SLICING]: "Slicing values",
       [DocsSectionId.VARIABLE_COUNT]: "Counting characters",
       [DocsSectionId.VARIABLE_KEY]: "Using the variable name",
@@ -838,6 +839,14 @@ If something goes wrong, undo it in this order:
         "A blank can even be filled with another variable. That way the same value can fill a blank in one command and be used on its own in another:",
       chained:
         "A value can also spell out a reference **around** its own blank. Filling the blank finishes that reference, so one template can build on another instead of stopping at the text it wrote:",
+    },
+    placeholderDefaults: {
+      intro:
+        "A blank usually stands for the part that changes, but often one answer is the one you want almost every time. Write it after an `=` inside the blank, `{;param=default}`, and the variable already knows what to do when nobody fills it in.",
+      override:
+        "Filling a blank always wins over its default, so a default costs you nothing: it just saves you from typing the usual answer over and over.",
+      shared:
+        "A default only has to be written once. When the same blank turns up several times in one value, they all share it.",
     },
     variableSlicing: {
       intro:

@@ -469,6 +469,11 @@ export interface Messages {
       nested: string;
       chained: string;
     };
+    placeholderDefaults: {
+      intro: string;
+      override: string;
+      shared: string;
+    };
     variableSlicing: {
       intro: string;
       demoHint: string;
