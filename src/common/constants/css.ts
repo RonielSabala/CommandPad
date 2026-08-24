@@ -27,6 +27,7 @@ export const CssClass = {
   LINK_KEY_HELD: "link-key-held",
   PANEL_RESIZING: "panel-resizing",
   VARIABLE_SPLIT_RESIZING: "variable-split-resizing",
+  ROW_DRAGGING: "row-dragging",
 
   // Miscellanea
   CONTEXT_MENU: "context-menu",

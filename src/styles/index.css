@@ -304,6 +304,13 @@ body.select-key-held:not(.read-mode) :is(textarea, .code-editor-surface) {
   pointer-events: none;
 }
 
+/* --- ROW-DRAGGING SUPPRESSIONS --- */
+
+body.row-dragging .code-editor-surface {
+  cursor: default;
+  pointer-events: none;
+}
+
 /* --- READ-MODE SUPPRESSIONS --- */
 
 body.read-mode textarea {

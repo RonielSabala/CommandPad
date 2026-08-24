@@ -33,11 +33,24 @@ export function useDocumentInteractions(): void {
       }
     };
 
+    const onDragStart = () => {
+      document.body.classList.add(CssClass.ROW_DRAGGING);
+    };
+
+    const onDragEnd = () => {
+      document.body.classList.remove(CssClass.ROW_DRAGGING);
+    };
+
     document.addEventListener(EventType.MOUSE_MOVE, onMouseMove);
     document.addEventListener(EventType.CLICK, onClick);
+    document.addEventListener(EventType.DRAG_START, onDragStart);
+    document.addEventListener(EventType.DRAG_END, onDragEnd);
     return () => {
       document.removeEventListener(EventType.MOUSE_MOVE, onMouseMove);
       document.removeEventListener(EventType.CLICK, onClick);
+      document.removeEventListener(EventType.DRAG_START, onDragStart);
+      document.removeEventListener(EventType.DRAG_END, onDragEnd);
+      document.body.classList.remove(CssClass.ROW_DRAGGING);
     };
   }, [store]);
 }
