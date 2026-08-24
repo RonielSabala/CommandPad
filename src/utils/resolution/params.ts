@@ -1,11 +1,8 @@
-import {
-  VariableParamPlaceholderRegex,
-  VariableSyntax,
-} from "@/common/variableSyntax";
+import { VariableSyntax } from "@/common/variableSyntax";
 
 import { applyOperations } from "./operations";
 import type { OperationContext } from "./operations/types";
-import { splitReferenceBody } from "./token";
+import { scanBraces, splitReferenceBody } from "./token";
 
 interface ReferenceParam {
   name: string;
@@ -86,14 +83,14 @@ function readBlanks(template: string): BlankMatch[] {
     return blanks;
   }
 
-  for (const match of template.matchAll(VariableParamPlaceholderRegex)) {
-    const blank = parseBlank(match[1]);
+  for (const match of scanBraces(template, false)) {
+    if (!match.raw.startsWith(VariableSyntax.PARAM_SEPARATOR)) {
+      continue;
+    }
+
+    const blank = parseBlank(match.raw.slice(1));
     if (blank) {
-      blanks.push({
-        blank,
-        start: match.index,
-        end: match.index + match[0].length,
-      });
+      blanks.push({ blank, start: match.start, end: match.end });
     }
   }
 
@@ -122,17 +119,79 @@ export function getTemplateParamNames(template: string): string[] {
   return [...names];
 }
 
-export function applyTemplateParams(
+/** A blank's value, resolved against `params` first and its declared default otherwise. */
+function blankValue(
+  name: string,
+  params: Record<string, string>,
+  defaults: Record<string, string>,
+  context: OperationContext,
+  cache: Map<string, string | undefined>,
+  resolving: Set<string>,
+): string | undefined {
+  if (cache.has(name)) {
+    return cache.get(name);
+  }
+
+  if (name in params) {
+    cache.set(name, params[name]);
+    return params[name];
+  }
+
+  const fallback = defaults[name];
+  if (fallback === undefined || resolving.has(name)) {
+    cache.set(name, undefined);
+    return undefined;
+  }
+
+  resolving.add(name);
+  const resolved = substituteBlanks(
+    fallback,
+    params,
+    defaults,
+    context,
+    cache,
+    resolving,
+  );
+
+  resolving.delete(name);
+
+  const value = resolved.fullyResolved ? resolved.text : undefined;
+  cache.set(name, value);
+  return value;
+}
+
+function substituteBlanks(
   template: string,
   params: Record<string, string>,
+  defaults: Record<string, string>,
   context: OperationContext,
+  cache: Map<string, string | undefined>,
+  resolving: Set<string>,
 ): ResolvedTemplate {
-  const blanks = readBlanks(template);
+  return fillBlanks(
+    template,
+    readBlanks(template),
+    params,
+    defaults,
+    context,
+    cache,
+    resolving,
+  );
+}
+
+function fillBlanks(
+  template: string,
+  blanks: BlankMatch[],
+  params: Record<string, string>,
+  defaults: Record<string, string>,
+  context: OperationContext,
+  cache: Map<string, string | undefined>,
+  resolving: Set<string>,
+): ResolvedTemplate {
   if (blanks.length === 0) {
     return { text: template, fullyResolved: true, filled: false };
   }
 
-  const defaults = collectBlankDefaults(blanks);
   let fullyResolved = true;
   let filled = false;
   let text = "";
@@ -142,8 +201,14 @@ export function applyTemplateParams(
     text += template.slice(lastEnd, start);
     lastEnd = end;
 
-    const value =
-      blank.name in params ? params[blank.name] : defaults[blank.name];
+    const value = blankValue(
+      blank.name,
+      params,
+      defaults,
+      context,
+      cache,
+      resolving,
+    );
     const applied =
       value === undefined
         ? null
@@ -160,4 +225,26 @@ export function applyTemplateParams(
   }
 
   return { text: text + template.slice(lastEnd), fullyResolved, filled };
+}
+
+export function applyTemplateParams(
+  template: string,
+  params: Record<string, string>,
+  context: OperationContext,
+): ResolvedTemplate {
+  const blanks = readBlanks(template);
+  if (blanks.length === 0) {
+    return { text: template, fullyResolved: true, filled: false };
+  }
+
+  const defaults = collectBlankDefaults(blanks);
+  return fillBlanks(
+    template,
+    blanks,
+    params,
+    defaults,
+    context,
+    new Map(),
+    new Set(),
+  );
 }

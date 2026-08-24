@@ -98,8 +98,8 @@ function scanUnbalanced(text: string, escapes: boolean): ReferenceMatch[] {
   return matches;
 }
 
-/** Finds the references sitting at the top level of `text`. */
-function scanBraces(text: string, escapes: boolean): ReferenceMatch[] {
+/** Finds the balanced brace groups sitting at the top level of `text`. */
+export function scanBraces(text: string, escapes: boolean): ReferenceMatch[] {
   const matches: ReferenceMatch[] = [];
   let start = -1;
   let depth = 0;
