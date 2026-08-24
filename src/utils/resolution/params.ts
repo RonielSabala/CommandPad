@@ -76,24 +76,41 @@ interface BlankMatch {
   end: number;
 }
 
-/** Every blank a template declares. */
-function readBlanks(template: string): BlankMatch[] {
-  const blanks: BlankMatch[] = [];
-  if (!template.includes(BLANK_OPEN)) {
-    return blanks;
+/**
+ * Collects the blanks in `text`, whose index 0 sits at `offset` in the template
+ * the spans are reported against.
+ */
+function collectBlanks(
+  text: string,
+  offset: number,
+  blanks: BlankMatch[],
+): void {
+  if (!text.includes(BLANK_OPEN)) {
+    return;
   }
 
-  for (const match of scanBraces(template, false)) {
-    if (!match.raw.startsWith(VariableSyntax.PARAM_SEPARATOR)) {
+  for (const match of scanBraces(text, false)) {
+    const blank = match.raw.startsWith(VariableSyntax.PARAM_SEPARATOR)
+      ? parseBlank(match.raw.slice(1))
+      : null;
+
+    if (blank) {
+      blanks.push({
+        blank,
+        start: offset + match.start,
+        end: offset + match.end,
+      });
       continue;
     }
 
-    const blank = parseBlank(match.raw.slice(1));
-    if (blank) {
-      blanks.push({ blank, start: match.start, end: match.end });
-    }
+    collectBlanks(match.raw, offset + match.start + 1, blanks);
   }
+}
 
+/** Every blank a template declares, in ascending order. */
+function readBlanks(template: string): BlankMatch[] {
+  const blanks: BlankMatch[] = [];
+  collectBlanks(template, 0, blanks);
   return blanks;
 }
 
@@ -109,13 +126,19 @@ function collectBlankDefaults(blanks: BlankMatch[]): Record<string, string> {
   return defaults;
 }
 
-export function getTemplateParamNames(template: string): string[] {
-  const names = new Set<string>();
-
+function addBlankNames(template: string, names: Set<string>): void {
   for (const { blank } of readBlanks(template)) {
     names.add(blank.name);
-  }
 
+    if (blank.fallback !== undefined) {
+      addBlankNames(blank.fallback, names);
+    }
+  }
+}
+
+export function getTemplateParamNames(template: string): string[] {
+  const names = new Set<string>();
+  addBlankNames(template, names);
   return [...names];
 }
 
