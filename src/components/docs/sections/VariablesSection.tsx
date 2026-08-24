@@ -395,6 +395,30 @@ export function VariableStripDocs() {
   );
 }
 
+export function TransformedPlaceholdersDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.transformedPlaceholders.intro} />
+      <Prose text={t.docs.transformedPlaceholders.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("BRANCH", "feature/{;name|kebabcase}")],
+            blocks: [
+              demoCommand("git switch -c {BRANCH;name=Fix Login Retry}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
 export function UnnamedReferencesDocs() {
   const t = useTranslation();
 

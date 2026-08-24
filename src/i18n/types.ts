@@ -503,6 +503,10 @@ export interface Messages {
       repeats: string;
       whitespace: string;
     };
+    transformedPlaceholders: {
+      intro: string;
+      demoHint: string;
+    };
     unnamedReferences: {
       intro: string;
       demoHint: string;

@@ -35,10 +35,14 @@ interface ResolvedChunk {
 }
 
 /**
- * An unnamed reference names no variable. It has to carry at least
- * one operation.
+ * An unnamed reference names no variable. It has to carry at least one
+ * operation, and it must not open with a template blank.
  */
 function unnamedValue(chunks: ReferenceBodyChunk[]): string | undefined {
+  if (chunks[0]?.separator === VariableSyntax.PARAM_SEPARATOR) {
+    return undefined;
+  }
+
   return chunks.some(
     (chunk) => chunk.separator === VariableSyntax.OPERATION_SEPARATOR,
   )
@@ -143,7 +147,7 @@ function resolveReferenceAt(
     }
   }
 
-  const template = applyTemplateParams(value, params);
+  const template = applyTemplateParams(value, params, { key });
   if (!template.fullyResolved && !KEEPS_BLANKS[context.surface]) {
     return unresolvedReference();
   }

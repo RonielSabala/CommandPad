@@ -108,10 +108,7 @@ export const EscapedBraceOpenRegex = globalRegex(
 
 export const VariableParamPlaceholderRegex = globalRegex(
   braced(
-    sequence(
-      Ref.PARAM_SEPARATOR,
-      capture(oneOrMore(noneOf(Ref.BRACE_CLOSE, Ref.PARAM_SEPARATOR))),
-    ),
+    sequence(Ref.PARAM_SEPARATOR, capture(oneOrMore(noneOf(Ref.BRACE_CLOSE)))),
   ),
 );
 

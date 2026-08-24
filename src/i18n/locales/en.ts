@@ -646,6 +646,7 @@ export const en: Messages = {
       [DocsSectionId.VARIABLE_KEY]: "Using the variable name",
       [DocsSectionId.VARIABLE_CASE]: "Changing case",
       [DocsSectionId.VARIABLE_STRIP]: "Trimming ends",
+      [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transforming a blank",
       [DocsSectionId.UNNAMED_REFERENCES]: "References with no variable",
       [DocsSectionId.VARIABLE_DATE]: "Current date",
       [DocsSectionId.MULTILINE_REFERENCES]: "Long references",
@@ -905,6 +906,11 @@ If something goes wrong, undo it in this order:
         "The text is removed as many times as it appears, and it is matched **whole**: `rstrip(ing)` never takes a stray `g`.",
       whitespace:
         "By default, `strip` operations written without parentheses remove whitespace:",
+    },
+    transformedPlaceholders: {
+      intro:
+        "A parameterized placeholder's blank can transform whatever fills it, the same way a variable's own value does. Write a `|` and an operation right after the blank's name, `{;name|operation}`, and the value is respelled on its way in before it ever reaches the command.",
+      demoHint: "This works with every operation from the sections above.",
     },
     unnamedReferences: {
       intro:

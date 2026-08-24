@@ -656,6 +656,7 @@ export const es: Messages = {
       [DocsSectionId.VARIABLE_KEY]: "Usar el nombre de la variable",
       [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
       [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
+      [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transformar un hueco",
       [DocsSectionId.UNNAMED_REFERENCES]: "Referencias sin variable",
       [DocsSectionId.VARIABLE_DATE]: "Fecha actual",
       [DocsSectionId.MULTILINE_REFERENCES]: "Referencias largas",
@@ -920,6 +921,12 @@ Si algo sale mal, deshazlo en este orden:
         "El texto se quita tantas veces como aparezca, y se compara **entero**: `rstrip(valor)` nunca se lleva una `r` suelta.",
       whitespace:
         "Por defecto, las operaciones `strip` escritas sin paréntesis quitan los espacios en blanco:",
+    },
+    transformedPlaceholders: {
+      intro:
+        "El hueco de un marcador parametrizado puede transformar lo que lo rellena, igual que hace el propio valor de una variable. Escribe un `|` y una operación justo después del nombre del hueco, `{;nombre|operación}`, y el valor se reescribe al entrar, antes de llegar siquiera al comando.",
+      demoHint:
+        "Esto funciona con todas las operaciones de las secciones anteriores.",
     },
     unnamedReferences: {
       intro:
