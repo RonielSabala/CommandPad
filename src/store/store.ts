@@ -2,6 +2,7 @@ import { createBlock, getBlockLabelText, mapBlockCommandTexts } from "@/blocks";
 import {
   CloudSyncConfig,
   createDefaultPanels,
+  createDefaultScrollTop,
   DEBOUNCE_CLOUD_SYNC_MS,
   DEBOUNCE_SAVE_MS,
   DEFAULT_TAB_LABEL,
@@ -365,7 +366,7 @@ export interface StoreState {
 
   setSelectKeyHeld: (held: boolean) => void;
   setLinkKeyHeld: (held: boolean) => void;
-  setScrollTop: (scrollTop: number) => void;
+  setScrollTop: (view: RunbookView, scrollTop: number) => void;
   clearUserInteraction: () => void;
 
   openExportModal: () => void;
@@ -535,7 +536,7 @@ function createTabObject(
     runbookId,
     variables: [],
     blocks: [],
-    scrollTop: 0,
+    scrollTop: createDefaultScrollTop(),
   };
 }
 
@@ -1357,7 +1358,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
                 runbookId,
                 variables: content.variables ?? [],
                 blocks: content.blocks ?? [],
-                scrollTop: scrollTop ?? 0,
+                scrollTop: persistence.restoreScrollTop(scrollTop),
               });
             }
 
@@ -2857,8 +2858,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       setSelectKeyHeld: (held) => set({ selectKeyHeld: held }),
       setLinkKeyHeld: (held) => set({ linkKeyHeld: held }),
-      setScrollTop: (scrollTop) => {
-        set((s) => withActiveTab(s, (tab) => ({ ...tab, scrollTop })));
+      setScrollTop: (view, scrollTop) => {
+        set((s) =>
+          withActiveTab(s, (tab) => ({
+            ...tab,
+            scrollTop: { ...tab.scrollTop, [view]: scrollTop },
+          })),
+        );
         persist.saveTabsMeta(get().tabs, get().activeTabId);
       },
 

@@ -8,6 +8,7 @@ import type {
   NoteStyle,
   NoteTableAlign,
   PanelSide,
+  RunbookView,
 } from "./enums";
 
 export interface PanelState {
@@ -64,7 +65,7 @@ export interface Tab {
   runbookId: string | null;
   blocks: Block[];
   variables: Variable[];
-  scrollTop: number;
+  scrollTop: Record<RunbookView, number>;
 }
 
 export interface RunbookSync {

@@ -1,9 +1,10 @@
 #docs-demo-tab-panel {
   --block-backdrop: var(--color-bg);
+  --docs-demo-tab-panel-height: 24rem;
 
   display: flex;
   flex-direction: column;
-  min-height: 24rem;
+  min-height: var(--docs-demo-tab-panel-height);
   padding: var(--space-8) var(--space-10);
   background: var(--color-bg);
   border: var(--border-standard);
@@ -13,4 +14,9 @@
 
 #docs-demo-tab-panel > #runbook-source {
   padding: 0;
+}
+
+#docs-demo-tab-panel > #runbook-variables-wrapper {
+  flex: 0 0 auto;
+  height: calc(var(--docs-demo-tab-panel-height) - 4rem);
 }

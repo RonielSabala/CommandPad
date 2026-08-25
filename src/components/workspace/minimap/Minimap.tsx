@@ -1,28 +1,20 @@
 import { MinimapConfig } from "@/common/config";
-import { ElementId } from "@/common/constants/dom";
 import { EventType, MouseButton } from "@/common/constants/events";
 import { CodeRendering } from "@/common/enums";
-import type { Block, Variable } from "@/common/types";
 import { CodeRenderingProvider } from "@/components/common/codeEditor/codeRendering";
-import { getActiveTab, useStore } from "@/store/store";
-import { getSecretKeys, getVariableMap } from "@/utils/resolution";
+import { classNames } from "@/utils/string";
 import {
-  memo,
   useCallback,
   useLayoutEffect,
-  useMemo,
   useRef,
   useState,
+  type ComponentType,
+  type ReactNode,
   type PointerEvent as ReactPointerEvent,
   type RefObject,
 } from "react";
-import { BlockItem } from "../blocks/BlockItem";
+
 import "./Minimap.css";
-
-const EMPTY_BLOCKS: Block[] = [];
-const EMPTY_VARIABLES: Variable[] = [];
-
-const BLOCKS_LIST_SELECTOR = `#${ElementId.BLOCKS_LIST}`;
 
 interface MinimapMetrics {
   scrollHeight: number;
@@ -47,40 +39,36 @@ function sameMetrics(a: MinimapMetrics, b: MinimapMetrics): boolean {
   );
 }
 
-/** The real blocks, rendered a second time at miniature scale. */
-const MinimapMirror = memo(function MinimapMirror({
+/** The frame every miniature renders into. */
+export function MinimapMirror({
+  className,
   width,
+  children,
 }: {
+  className: string;
   width: number;
+  children: ReactNode;
 }) {
-  const activeTab = useStore(getActiveTab);
-  const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
-  const variables = activeTab?.variables ?? EMPTY_VARIABLES;
-
-  const variableMap = useMemo(() => getVariableMap(variables), [variables]);
-  const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
-
   return (
     <CodeRenderingProvider value={CodeRendering.STATIC}>
-      <div className="minimap-mirror" inert style={{ width }}>
-        {blocks.map((block) => (
-          <BlockItem
-            key={block.id}
-            block={block}
-            variableMap={variableMap}
-            secretKeys={secretKeys}
-          />
-        ))}
+      <div
+        className={classNames("minimap-mirror", className)}
+        inert
+        style={{ width }}
+      >
+        {children}
       </div>
     </CodeRenderingProvider>
   );
-});
+}
 
 interface Props {
   scrollRef: RefObject<HTMLDivElement | null>;
+  listId: string;
+  mirror: ComponentType<{ width: number }>;
 }
 
-export function Minimap({ scrollRef }: Props) {
+export function Minimap({ scrollRef, listId, mirror: Mirror }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const overscrollRef = useRef(0);
   const [metrics, setMetrics] = useState<MinimapMetrics>(INITIAL_METRICS);
@@ -89,21 +77,21 @@ export function Minimap({ scrollRef }: Props) {
   const measure = useCallback(() => {
     const container = scrollRef.current;
     const host = hostRef.current;
-    const list = container?.querySelector<HTMLElement>(BLOCKS_LIST_SELECTOR);
+    const list = container?.querySelector<HTMLElement>(`#${listId}`);
 
     if (!container || !host || !list) {
       return;
     }
 
-    // Reserve scroll space below the content so the last block can reach the top of the view
-    const lastBlock = list.lastElementChild as HTMLElement | null;
+    // Reserve scroll space below the content so the last row can reach the top of the view
+    const lastRow = list.lastElementChild as HTMLElement | null;
     const previousReserve = overscrollRef.current;
     const baseHeight = container.scrollHeight - previousReserve;
     let reserve = 0;
 
-    if (lastBlock) {
+    if (lastRow) {
       const lastTop =
-        lastBlock.getBoundingClientRect().top -
+        lastRow.getBoundingClientRect().top -
         container.getBoundingClientRect().top +
         container.scrollTop;
 
@@ -130,7 +118,7 @@ export function Minimap({ scrollRef }: Props) {
 
     setMetrics((previous) => (sameMetrics(previous, next) ? previous : next));
     setScrollTop(container.scrollTop);
-  }, [scrollRef]);
+  }, [scrollRef, listId]);
 
   // Drop the reserved scroll space when the minimap is turned off
   useLayoutEffect(() => {
@@ -146,7 +134,7 @@ export function Minimap({ scrollRef }: Props) {
 
     const container = scrollRef.current;
     const host = hostRef.current;
-    const list = container?.querySelector<HTMLElement>(BLOCKS_LIST_SELECTOR);
+    const list = container?.querySelector<HTMLElement>(`#${listId}`);
 
     if (!container || !host || !list) {
       return;
@@ -158,7 +146,7 @@ export function Minimap({ scrollRef }: Props) {
     observer.observe(list);
 
     return () => observer.disconnect();
-  }, [measure, scrollRef]);
+  }, [measure, scrollRef, listId]);
 
   // Scroll
   useLayoutEffect(() => {
@@ -249,7 +237,7 @@ export function Minimap({ scrollRef }: Props) {
         className="minimap-content"
         style={{ transform: `translateY(${-offset}px) scale(${scale})` }}
       >
-        <MinimapMirror width={metrics.listWidth} />
+        <Mirror width={metrics.listWidth} />
       </div>
       <div
         className="minimap-viewport"

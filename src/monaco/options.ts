@@ -1,8 +1,9 @@
 import { MonacoLayout, MonacoMinimap } from "@/common/editorConfig";
 import type { PanelSide } from "@/common/enums";
 import type { editor } from "monaco-editor";
+
+import { getOverflowWidgetsRoot } from "./layers";
 import { getCodeMetrics } from "./metrics";
-import { getOverflowWidgetsRoot } from "./overflowWidgets";
 
 type Options = editor.IStandaloneEditorConstructionOptions;
 

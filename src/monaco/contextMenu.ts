@@ -2,7 +2,8 @@ import { MonacoSelector } from "@/common/constants/dom";
 import { EventType } from "@/common/constants/events";
 import { MonacoContextMenu } from "@/common/editorConfig";
 import type { editor } from "monaco-editor";
-import { getOverflowWidgetsRoot } from "./overflowWidgets";
+
+import { getOverflowWidgetsRoot } from "./layers";
 import { monaco } from "./setup";
 
 export function bindContextMenuChord(

@@ -1,18 +1,18 @@
 #runbook-variables {
   flex: 1;
+  min-width: 0;
   min-height: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
   padding: var(--space-8) var(--space-20) var(--space-20);
 }
 
-#variables-list {
+:is(#variables-list, .variables-mirror) {
   display: grid;
   grid-template-columns: fit-content(calc(100% - var(--space-20)));
   max-width: 100%;
-  gap: var(--space-6);
+  gap: var(--space-4);
   justify-items: start;
 }
 

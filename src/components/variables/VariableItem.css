@@ -53,14 +53,25 @@ body.select-key-held:not(.read-mode) .variable-item input {
   pointer-events: none;
 }
 
-body.select-key-held:not(.read-mode)
-  .variable-item:hover:not(.variable-selected) {
-  outline: var(--border-dashed);
+.variable-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   border-radius: var(--radius-lg);
+  pointer-events: none;
+}
+
+body.select-key-held:not(.read-mode)
+  .variable-item:hover:not(.variable-selected)
+  .variable-surface::after {
+  outline: var(--border-dashed);
 }
 
 .variable-selected:not(.drag-over) .variable-surface {
   user-select: none;
+}
+
+.variable-selected:not(.drag-over) .variable-surface::after {
   outline: var(--space-1) solid var(--accent);
 }
 

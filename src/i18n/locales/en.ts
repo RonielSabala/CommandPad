@@ -747,7 +747,7 @@ If something goes wrong, undo it in this order:
       intro: (newBlockLabel) =>
         `The main panel is your workbench. At the top sits the **tabs bar** with your open runbooks; below it, the blocks of the active runbook; and at the end, the **${newBlockLabel}** row to keep adding content.`,
       minimap:
-        "On the right edge lives the **minimap**: a miniature of the real runbook blocks that replaces the scrollbar. Click or drag on it to jump anywhere in a runbook. **Right-click** anywhere in the runbook content to open a small menu where you can turn it on or off, or move it to the other side.",
+        "On the right edge lives the **minimap**: a miniature of the real content that replaces the scrollbar. Click or drag on it to jump anywhere in a runbook. The blocks, the variables editor and the source view each have one of their own. **Right-click** anywhere in the runbook content to open a small menu where you can turn it on or off, or move it to the other side, and all three follow that one switch.",
     },
     tabs: {
       intro: "Each tab holds one open runbook.",

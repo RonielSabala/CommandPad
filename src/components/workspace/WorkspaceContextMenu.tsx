@@ -8,6 +8,7 @@ import {
 import { CopyIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
+import { Spellcheck } from "react-bootstrap-icons";
 
 interface Props {
   anchor: ContextMenuAnchor;
@@ -42,7 +43,11 @@ export function WorkspaceContextMenu({ anchor, onClose }: Props) {
 
       <ContextMenuSeparator />
 
-      <ContextMenuItem checked={spellcheckEnabled} onSelect={toggleSpellcheck}>
+      <ContextMenuItem
+        icon={<Spellcheck className="icon-md" />}
+        checked={spellcheckEnabled}
+        onSelect={toggleSpellcheck}
+      >
         {t.contextMenu.spellcheck}
       </ContextMenuItem>
 

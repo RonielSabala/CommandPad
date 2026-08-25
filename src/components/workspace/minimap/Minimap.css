@@ -1,3 +1,29 @@
+.minimap-host {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.minimap-host.minimap-left > .minimap {
+  order: -1;
+}
+
+.minimap-host.minimap-on > .minimap-scroller {
+  scrollbar-width: none;
+}
+
+.minimap-host.minimap-on > .minimap-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.minimap-host.minimap-on > .minimap-scroller::after {
+  content: "";
+  flex: 0 0 var(--minimap-overscroll, 0px);
+}
+
+/* The miniature */
+
 .minimap-mirror * {
   scrollbar-width: none;
 }

@@ -96,6 +96,7 @@
   mask-image: var(--code-editor-clamp-mask, none);
 }
 
+.monaco-hover-layer,
 .monaco-overflow-widgets {
   position: absolute;
   top: 0;

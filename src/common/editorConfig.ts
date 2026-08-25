@@ -129,9 +129,11 @@ export const EditorActionOrder = {
   EXTRACT_VARIABLE: 1,
 } as const;
 
-export const MonacoOverflowWidgets = {
+/** The body-level nodes Monaco renders out of the editor into. */
+export const MonacoLayer = {
   EDITOR_CLASS: "monaco-editor",
-  ROOT_CLASS: "monaco-overflow-widgets",
+  OVERFLOW_ROOT_CLASS: "monaco-overflow-widgets",
+  HOVER_ROOT_CLASS: "monaco-hover-layer",
 } as const;
 
 // --- Runbook JSON schema ---
