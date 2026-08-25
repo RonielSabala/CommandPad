@@ -1,3 +1,4 @@
+import { SECRET_MASK } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { CodeMetricProperty, MonacoLayout } from "@/common/editorConfig";
 import { useDomScrollTarget } from "@/components/common/scrollTarget";
@@ -13,6 +14,7 @@ interface Props {
   bounded?: boolean;
   hasError?: boolean;
   clamped?: boolean;
+  masked?: boolean;
   footer?: ReactNode;
 }
 
@@ -26,12 +28,14 @@ export function StaticCodeView({
   bounded = false,
   hasError = false,
   clamped = false,
+  masked = false,
   footer,
 }: Props) {
   const textRef = useRef<HTMLPreElement>(null);
   const scrollTarget = useDomScrollTarget(textRef);
 
   const lineCount = countLines(value);
+  const text = masked && value ? SECRET_MASK : value;
   const firstNumbered = promptPrefix ? SECOND_LINE : MonacoLayout.FIRST_LINE;
   const numberChars = Math.max(
     MonacoLayout.LINE_NUMBER_MIN_CHARS,
@@ -64,7 +68,7 @@ export function StaticCodeView({
         </div>
 
         <pre ref={textRef} className="code-editor-static-text no-ligatures">
-          {value || (
+          {text || (
             <span className="code-editor-static-placeholder">
               {placeholder}
             </span>

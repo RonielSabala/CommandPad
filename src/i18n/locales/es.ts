@@ -761,7 +761,7 @@ Si algo sale mal, deshazlo en este orden:
       intro: (newBlockLabel) =>
         `El panel principal es tu mesa de trabajo. Arriba está la **barra de pestañas** con tus libros abiertos; debajo, los bloques del libro activo; y al final, la fila **${newBlockLabel}** para seguir agregando contenido.`,
       minimap:
-        "En el borde derecho vive el **minimapa**: una miniatura de los bloques reales del libro que reemplaza a la barra de desplazamiento. Haz clic o arrastra sobre él para saltar a cualquier punto de un libro. Haz **clic derecho** en cualquier parte del contenido del libro para abrir un pequeño menú donde puedes activarlo o desactivarlo, o moverlo al otro lado.",
+        "En el borde derecho vive el **minimapa**: una miniatura del contenido real que reemplaza a la barra de desplazamiento. Haz clic o arrastra sobre él para saltar a cualquier punto de un libro. Los bloques, el editor de variables y la vista de código fuente tienen cada uno el suyo. Haz **clic derecho** en cualquier parte del contenido del libro para abrir un pequeño menú donde puedes activarlo o desactivarlo, o moverlo al otro lado, y los tres siguen ese mismo interruptor.",
     },
     tabs: {
       intro: "Cada pestaña contiene un libro abierto.",

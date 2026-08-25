@@ -1,12 +1,12 @@
 import { CssClass } from "@/common/constants/css";
-import { InputSelector } from "@/common/constants/dom";
+import { ElementId } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
 import { PanelSide, RunbookView } from "@/common/enums";
 import { EmptyState } from "@/components/common/EmptyState";
-import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
 import { EmptyStateIcon } from "@/components/icons";
 import { blockDrag } from "@/hooks/blockDrag";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
+import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
 import {
   getActiveTab,
@@ -15,10 +15,12 @@ import {
   type AppStoreApi,
 } from "@/store/store";
 import { classNames } from "@/utils/string";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+
 import { AddBlockRow } from "../blocks/AddBlockRow";
 import { BlocksList } from "../blocks/BlocksList";
-import { Minimap } from "./Minimap";
+import { BlocksMirror } from "./minimap/BlocksMirror";
+import { Minimap } from "./minimap/Minimap";
 import { WorkspaceContextMenu } from "./WorkspaceContextMenu";
 
 function isCrossTabBlockDrag(store: AppStoreApi): boolean {
@@ -45,7 +47,9 @@ export function RunbookPreview() {
   );
 
   const showMinimap = minimapEnabled && !isEmpty;
-  const [menuAnchor, setMenuAnchor] = useState<ContextMenuAnchor | null>(null);
+  const { menuAnchor, onContextMenu, closeMenu } = useWorkspaceContextMenu(
+    CssClass.BLOCK_ITEM,
+  );
 
   useScrollPersistence(tabsContentRef, RunbookView.PREVIEW);
 
@@ -53,31 +57,15 @@ export function RunbookPreview() {
     <div
       id="tabs-content-wrapper"
       className={classNames(
+        CssClass.MINIMAP_HOST,
         showMinimap && CssClass.MINIMAP_ON,
         minimapOnLeft && CssClass.MINIMAP_LEFT,
       )}
-      onContextMenu={(event) => {
-        const target = event.target as HTMLElement;
-        if (
-          target.closest(InputSelector.EDITABLE) ||
-          target.closest(`.${CssClass.BLOCK_ITEM}`)
-        ) {
-          return;
-        }
-
-        event.preventDefault();
-
-        // Right-clicking the open menu just closes it
-        if (target.closest(`.${CssClass.CONTEXT_MENU}`)) {
-          setMenuAnchor(null);
-          return;
-        }
-
-        setMenuAnchor({ x: event.clientX, y: event.clientY });
-      }}
+      onContextMenu={onContextMenu}
     >
       <div
         id="tabs-content"
+        className={CssClass.MINIMAP_SCROLLER}
         ref={tabsContentRef}
         onDragOver={(event) => {
           if (isCrossTabBlockDrag(store)) {
@@ -117,12 +105,16 @@ export function RunbookPreview() {
         <AddBlockRow />
       </div>
 
-      {showMinimap && <Minimap scrollRef={tabsContentRef} />}
-      {menuAnchor && (
-        <WorkspaceContextMenu
-          anchor={menuAnchor}
-          onClose={() => setMenuAnchor(null)}
+      {showMinimap && (
+        <Minimap
+          scrollRef={tabsContentRef}
+          listId={ElementId.BLOCKS_LIST}
+          mirror={BlocksMirror}
         />
+      )}
+
+      {menuAnchor && (
+        <WorkspaceContextMenu anchor={menuAnchor} onClose={closeMenu} />
       )}
     </div>
   );

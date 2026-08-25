@@ -5,30 +5,6 @@
   overflow: hidden;
 }
 
-#tabs-content-wrapper {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-  display: flex;
-}
-
-#tabs-content-wrapper.minimap-left > .minimap {
-  order: -1;
-}
-
-#tabs-content-wrapper.minimap-on > #tabs-content {
-  scrollbar-width: none;
-}
-
-#tabs-content-wrapper.minimap-on > #tabs-content::-webkit-scrollbar {
-  display: none;
-}
-
-#tabs-content-wrapper.minimap-on > #tabs-content::after {
-  content: "";
-  flex: 0 0 var(--minimap-overscroll, 0px);
-}
-
 #tabs-content {
   --sticky-scrollbar-inset: calc(var(--space-20) * -1);
 

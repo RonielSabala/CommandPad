@@ -7,20 +7,26 @@ export const CssClass = {
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",
   DROP_TARGET: "drop-target",
+
+  // Minimap
   MINIMAP_ON: "minimap-on",
   MINIMAP_LEFT: "minimap-left",
+  MINIMAP_HOST: "minimap-host",
+  MINIMAP_SCROLLER: "minimap-scroller",
 
   // Variables
   VARIABLE_ITEM: "variable-item",
   VARIABLE_SURFACE: "variable-surface",
   VARIABLE_ACTIONS: "variable-actions",
   VARIABLE_DRAG_HANDLE: "variable-drag-handle",
+  VARIABLES_MIRROR: "variables-mirror",
 
   // Blocks
   BLOCK_ITEM: "block-item",
   BLOCK_SURFACE: "block-surface",
   BLOCK_ACTIONS: "block-actions",
   BLOCK_DRAG_HANDLE: "block-drag-handle",
+  BLOCKS_MIRROR: "blocks-mirror",
 
   // Modifier-key states
   SELECT_KEY_HELD: "select-key-held",

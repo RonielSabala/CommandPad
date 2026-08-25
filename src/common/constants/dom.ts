@@ -1,5 +1,6 @@
 export const ElementId = {
   BLOCKS_LIST: "blocks-list",
+  VARIABLES_LIST: "variables-list",
 } as const;
 
 export const MonacoSelector = {
