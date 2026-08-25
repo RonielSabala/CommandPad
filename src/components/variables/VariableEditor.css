@@ -72,6 +72,7 @@
 
 :is(
     body.select-key-held:not(.read-mode) .variable-item:hover,
+    .variable-item.drag-over,
     .variable-selected
   )
   .variable-editor-key {
