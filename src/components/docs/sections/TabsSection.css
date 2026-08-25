@@ -18,5 +18,5 @@
 
 #docs-demo-tab-panel > #runbook-variables-wrapper {
   flex: 0 0 auto;
-  height: var(--docs-demo-tab-panel-height);
+  height: calc(var(--docs-demo-tab-panel-height) - 4rem);
 }
