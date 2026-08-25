@@ -181,6 +181,18 @@ body:not(.select-key-held) .note-textarea::selection {
   content: " ";
 }
 
+.note-preview:has(> :is(.note-list, .note-table):last-child)::after {
+  content: none;
+}
+
+.note-preview > :is(.note-list, .note-table):first-child {
+  margin-top: 0;
+}
+
+.note-preview > :is(.note-list, .note-table):last-child {
+  margin-bottom: 0;
+}
+
 .note-preview {
   color: var(--color-text-secondary);
   word-break: break-word;
