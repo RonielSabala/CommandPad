@@ -653,13 +653,18 @@ export const es: Messages = {
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
       [DocsSectionId.PLACEHOLDER_DEFAULTS]: "Valores por defecto",
       [DocsSectionId.VARIABLE_SLICING]: "Recortar valores",
-      [DocsSectionId.VARIABLE_COUNT]: "Contar caracteres",
+      [DocsSectionId.VARIABLE_LEN]: "Longitud en caracteres",
+      [DocsSectionId.VARIABLE_COUNT]: "Contar apariciones",
       [DocsSectionId.VARIABLE_KEY]: "Usar el nombre de la variable",
       [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
       [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
+      [DocsSectionId.VARIABLE_FILL]: "Añadir a los extremos",
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transformar un hueco",
       [DocsSectionId.UNNAMED_REFERENCES]: "Referencias sin variable",
       [DocsSectionId.VARIABLE_DATE]: "Fecha actual",
+      [DocsSectionId.VARIABLE_BOOLEAN]: "Operaciones booleanas",
+      [DocsSectionId.VARIABLE_LOGIC]: "Operaciones lógicas",
+      [DocsSectionId.VARIABLE_CONDITIONAL]: "Operaciones condicionales",
       [DocsSectionId.MULTILINE_REFERENCES]: "Referencias largas",
       [DocsSectionId.ESCAPING_BRACES]: "Escapar llaves",
       [DocsSectionId.SECRET_VARIABLES]: "Variables secretas",
@@ -700,7 +705,7 @@ export const es: Messages = {
       multiSelectNotes: ["Crear la copia de seguridad", "Limpiar"],
       greetingTemplate: "¡Hola {;name}, bienvenido a {;place}!",
       commitSubject: "Corrige reintento en subidas fallidas",
-      commitLengthCommand: 'echo "{message|count} de 50 caracteres usados"',
+      commitLengthCommand: 'echo "{message|len} de 50 caracteres usados"',
       projectName: "informe MENSUAL de ventas",
       reportFile: "ventas-mensuales.pdf",
       folderName: "   Informes de ventas   ",
@@ -879,13 +884,19 @@ Si algo sale mal, deshazlo en este orden:
       python:
         "La forma de contar viene de Python, por si quieres leer más sobre ella: [recorte de cadenas en Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). No necesitas saber Python para usarla aquí.",
     },
-    variableCount: {
+    variableLen: {
       intro:
-        "Escribe `count` después del `|` y obtienes **cuántos caracteres ocupa el valor**.",
+        "Escribe `len` después del `|` y obtienes **cuántos caracteres ocupa el valor**.",
       demoHint:
         "Por ejemplo, el asunto de un commit debería quedarse por debajo de 50 caracteres, pero nadie los cuenta a mano. Escribe en el mensaje de abajo y mira cómo el número te sigue:",
       chaining:
-        "Las operaciones se aplican de izquierda a derecha, así que puedes poner `count` después de un recorte: `{commit|slice(;7)|count}` acorta el commit primero y luego cuenta lo que queda.",
+        "Las operaciones se aplican de izquierda a derecha, así que puedes poner `len` después de un recorte: `{commit|slice(;7)|len}` acorta el commit primero y luego cuenta lo que queda.",
+    },
+    variableCount: {
+      intro:
+        "Escribe `count(x)` después del `|` y obtienes **cuántas veces aparece `x`** en el valor.",
+      demoHint:
+        "Debajo, cada `/` marca un nivel de carpeta. Cambia la ruta y el número te sigue:",
     },
     variableKey: {
       intro:
@@ -931,6 +942,20 @@ Si algo sale mal, deshazlo en este orden:
       whitespace:
         "Por defecto, las operaciones `strip` escritas sin paréntesis quitan los espacios en blanco:",
     },
+    variableFill: {
+      intro:
+        "La operación `rfill(texto; veces)` es el reflejo de la anterior: añade el texto entre paréntesis **al final** del valor, repetido tantas veces como indique el número. `lfill` lo añade **al principio**, y `fill` lo añade **por los dos extremos**.",
+      table: `| Operación | Resultado |
+| --- | --- |
+| \`rfill(-; 3)\` | el valor--- |
+| \`lfill(-; 3)\` | ---el valor |
+| \`fill(-; 3)\` | ---el valor--- |`,
+      demoHint: "Cambia el valor de abajo y el marco se mantiene:",
+      rules:
+        "El texto se añade tal cual lo escribas, espacios incluidos, así que `rfill( -; 2)` añade dos veces un espacio y un guion. Pedir `0` copias deja el valor intacto, y un número que falte o sea negativo deja la referencia entera tal y como está escrita.",
+      computedHint:
+        "El número de copias no tiene por qué ser fijo: puede calcularse a partir del propio valor. Prueba con un nombre más largo o más corto:",
+    },
     transformedPlaceholders: {
       intro:
         "El hueco de un marcador parametrizado puede transformar lo que lo rellena, igual que hace el propio valor de una variable. Escribe un `|` y una operación justo después del nombre del hueco, `{;nombre|operación}`, y el valor se reescribe al entrar, antes de llegar siquiera al comando.",
@@ -941,7 +966,7 @@ Si algo sale mal, deshazlo en este orden:
       intro:
         "Una referencia no necesita nombrar ninguna variable. Omite el nombre, escribe solo operaciones después de `|`, y la referencia partirá de un valor vacío: el resultado será lo que esas operaciones produzcan.",
       demoHint:
-        "El `{|count}` de abajo no tiene ninguna variable detrás, así que no hay nada que contar y siempre da `0`:",
+        "El `{|len}` de abajo no tiene ninguna variable detrás, así que no hay nada que medir y siempre da `0`:",
       rule: "Las llaves deben incluir al menos una operación. Unas llaves vacías se dejan tal cual, así que un comando que ya usa `{}` por su cuenta no se ve afectado.",
       anywhere:
         "Por sí solo no sirve de mucho, pero la siguiente operación le saca todo el partido a este mismo truco.",
@@ -965,6 +990,62 @@ Si algo sale mal, deshazlo en este orden:
         `La fecha se calcula justo cuando se muestra el comando, no cuando se escribió. Pulsa **${resetDemoLabel}** un par de veces y verás cómo cambian los segundos:`,
       clock:
         "Usa tu propio reloj y tu propia zona horaria, así que un runbook que se queda abierto toda la noche mostrará mañana la fecha de mañana.",
+    },
+    variableBoolean: {
+      intro:
+        "Una operación booleana no cambia el valor: **hace una pregunta sobre él** y responde con `true` o `false`. Estas son las preguntas, y todas se escriben después de un `|`:",
+      table: `| Operación | Descripción |
+| --- | --- |
+| \`isdigit\` | Todos los caracteres son dígitos |
+| \`isnumeric\` | Todos los caracteres son números, dígitos incluidos |
+| \`isalpha\` | Todos los caracteres son letras |
+| \`isalnum\` | Todos los caracteres son letras o dígitos |
+| \`isspace\` | Todos los caracteres son espacios, tabulaciones o saltos de línea |
+| \`isascii\` | Nada lleva acentos ni un alfabeto no latino |
+| \`isupper\` | Hay letras y ninguna está en minúscula |
+| \`islower\` | Hay letras y ninguna está en mayúscula |
+| \`istitle\` | Cada palabra empieza por mayúscula |
+| \`isempty\` | No queda nada |`,
+      matching:
+        "Otras tres reciben entre paréntesis lo que hay que buscar. Escribe **varias opciones separadas por `;`** y la respuesta es verdadera en cuanto coincide una de ellas:",
+      matchTable: `| Operación | Descripción |
+| --- | --- |
+| \`startswith(a; b)\` | El valor empieza por \`a\` o por \`b\` |
+| \`endswith(a; b)\` | El valor termina en \`a\` o en \`b\` |
+| \`contains(a; b)\` | \`a\` o \`b\` aparece en alguna parte del valor |`,
+      demoHint:
+        "Debajo, escribe una letra en el puerto o cambia la extensión, y mira cómo cambian las respuestas:",
+      empty:
+        "Todas necesitan al menos un carácter que mirar, así que ante un valor vacío responden con `false`. Para eso está `isempty`. Ten en cuenta que una referencia a una variable que dejaste en blanco no llega a resolverse, así que `isempty` sirve sobre todo para lo que haya producido una operación anterior, como en `{PATH|strip(/tmp/)|isempty}`.",
+    },
+    variableLogic: {
+      table: `| Operación | Descripción |
+| --- | --- |
+| \`AND(a; b; c)\` | Verdadero cuando todas las respuestas son verdaderas |
+| \`OR(a; b; c)\` | Verdadero cuando al menos una lo es |
+| \`XOR(a; b; c)\` | Verdadero cuando lo es un número impar de ellas, o sea una sola de cada par |
+| \`NOT(a)\` | Verdadero cuando \`a\` es falsa |`,
+      compare: "Otras tres comparan dos textos y responden con el resultado:",
+      compareTable: `| Operación | Descripción |
+| --- | --- |
+| \`EQUALS(a; b)\` | Verdadero cuando los dos textos son idénticos |
+| \`NOTEQUALS(a; b)\` | Verdadero cuando son distintos |
+| \`EQUALSIGNORECASE(a; b)\` | Verdadero sin mirar mayúsculas, así \`PROD\` y \`prod\` cuentan como iguales |`,
+      demoHint:
+        "Debajo, las dos comprobaciones tienen que cumplirse: cambia la rama, o escribe una letra en el puerto, y la línea pasa a `false`:",
+      booleans:
+        "Donde se espera una respuesta también puedes escribirla tú: valen `true`, `false`, `1` y `0`, con las mayúsculas que quieras. Cualquier otra cosa no es una respuesta, así que la referencia se queda en pantalla tal cual la escribiste, que es como detectas el fallo.",
+    },
+    variableConditional: {
+      intro:
+        "En `IF` es donde dan fruto las dos secciones anteriores: lee una respuesta y devuelve **uno de dos textos**, de modo que un comando puede cambiar de forma por su cuenta. Se escribe `IF(condición; entonces; si_no)`:",
+      table: `| Parte | Descripción |
+| --- | --- |
+| \`condición\` | Una respuesta, normalmente una pregunta hecha con las operaciones anteriores |
+| \`entonces\` | El texto que se usa cuando la condición es verdadera |
+| \`si_no\` | El texto que se usa cuando es falsa. Omítelo para no poner nada |`,
+      demoHint:
+        "Debajo, cambia `LEVEL` para que la primera opción aparezca y desaparezca, y escribe una letra en `RETRIES` para que la segunda desaparezca:",
     },
     multilineReferences: {
       intro:

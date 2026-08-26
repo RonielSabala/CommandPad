@@ -45,6 +45,18 @@ export function countCharacters(text: string): number {
   return Array.from(text).length;
 }
 
+export function countOccurrences(text: string, needle: string): number {
+  let count = 0;
+  let index = text.indexOf(needle);
+
+  while (index !== -1) {
+    count += 1;
+    index = text.indexOf(needle, index + needle.length);
+  }
+
+  return count;
+}
+
 export function sliceString(
   text: string,
   start: number | null,
@@ -94,6 +106,18 @@ export function stripEnd(text: string, cut: string): string {
 
 export function stripBoth(text: string, cut: string): string {
   return stripEnd(stripStart(text, cut), cut);
+}
+
+export function fillStart(text: string, fill: string, times: number): string {
+  return fill.repeat(times) + text;
+}
+
+export function fillEnd(text: string, fill: string, times: number): string {
+  return text + fill.repeat(times);
+}
+
+export function fillBoth(text: string, fill: string, times: number): string {
+  return fillEnd(fillStart(text, fill, times), fill, times);
 }
 
 export function classNames(

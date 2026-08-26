@@ -73,6 +73,7 @@ export const atStart = (source: string) => `^${source}`;
 export const atEnd = (source: string) => `${source}$`;
 export const globalRegex = (source: string) => new RegExp(source, "g");
 export const globalUnicodeRegex = (source: string) => new RegExp(source, "gu");
+export const unicodeRegex = (source: string) => new RegExp(source, "u");
 export const dotAllRegex = (source: string) => new RegExp(source, "s");
 
 // Escaping

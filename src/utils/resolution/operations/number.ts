@@ -6,7 +6,7 @@ import {
 
 type NumberArgument = number | null;
 
-function readNumberArgument(raw: string): NumberArgument | undefined {
+export function readNumberArgument(raw: string): NumberArgument | undefined {
   if (!NumberArgumentRegex.test(raw)) {
     return undefined;
   }

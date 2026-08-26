@@ -161,6 +161,10 @@ export const StringCaseConfig = {
   APOSTROPHE: "'",
 } as const;
 
+export const StringTestConfig = {
+  ASCII_MAX_CODE_POINT: 0x7f,
+} as const;
+
 export const ReferenceConfig = {
   // How many times a filled template may produce references that fill another
   MAX_TEMPLATE_DEPTH: 10,

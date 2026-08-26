@@ -1,12 +1,13 @@
-import { CountOperationRegex, OperationSyntax } from "@/common/variableSyntax";
-import { countCharacters } from "@/utils/string";
+import { CountSyntax } from "@/common/variableSyntax";
+import { countOccurrences } from "@/utils/string";
 
-import { bareKeywords, type OperationDefinition } from "./types";
+import { defineCallOperation } from "./call";
+import type { OperationDefinition } from "./types";
 
-export const COUNT_OPERATION: OperationDefinition = {
-  keywords: bareKeywords([OperationSyntax.COUNT]),
-  parse: (operation) =>
-    CountOperationRegex.test(operation.trim())
-      ? (text) => String(countCharacters(text))
-      : null,
-};
+export const COUNT_OPERATION: OperationDefinition = defineCallOperation({
+  arity: CountSyntax.ARITY,
+  builders: {
+    [CountSyntax.KEYWORD]: ([needle = ""]) =>
+      needle ? (text) => String(countOccurrences(text, needle)) : null,
+  },
+});

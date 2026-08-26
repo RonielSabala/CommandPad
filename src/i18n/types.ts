@@ -484,10 +484,14 @@ export interface Messages {
       invalid: string;
       python: string;
     };
-    variableCount: {
+    variableLen: {
       intro: string;
       demoHint: string;
       chaining: string;
+    };
+    variableCount: {
+      intro: string;
+      demoHint: string;
     };
     variableKey: {
       intro: string;
@@ -508,6 +512,13 @@ export interface Messages {
       repeats: string;
       whitespace: string;
     };
+    variableFill: {
+      intro: string;
+      table: string;
+      demoHint: string;
+      rules: string;
+      computedHint: string;
+    };
     transformedPlaceholders: {
       intro: string;
       demoHint: string;
@@ -525,6 +536,26 @@ export interface Messages {
       table: string;
       formatDemoHint: (resetDemoLabel: string) => string;
       clock: string;
+    };
+    variableBoolean: {
+      intro: string;
+      table: string;
+      matching: string;
+      matchTable: string;
+      demoHint: string;
+      empty: string;
+    };
+    variableLogic: {
+      table: string;
+      compare: string;
+      compareTable: string;
+      demoHint: string;
+      booleans: string;
+    };
+    variableConditional: {
+      intro: string;
+      table: string;
+      demoHint: string;
     };
     multilineReferences: {
       intro: string;

@@ -273,13 +273,13 @@ export function VariableSlicingDocs() {
   );
 }
 
-export function VariableCountDocs() {
+export function VariableLenDocs() {
   const t = useTranslation();
 
   return (
     <>
-      <Prose text={t.docs.variableCount.intro} />
-      <Prose text={t.docs.variableCount.demoHint} />
+      <Prose text={t.docs.variableLen.intro} />
+      <Prose text={t.docs.variableLen.demoHint} />
       <DemoWorkspace
         tabs={[
           {
@@ -294,7 +294,31 @@ export function VariableCountDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
-      <Prose text={t.docs.variableCount.chaining} />
+      <Prose text={t.docs.variableLen.chaining} />
+    </>
+  );
+}
+
+export function VariableCountDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableCount.intro} />
+      <Prose text={t.docs.variableCount.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("PATH", "/var/log/app/errors.log")],
+            blocks: [
+              demoCommand('echo "{PATH} is {PATH|count(/)} levels deep"'),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }
@@ -395,6 +419,46 @@ export function VariableStripDocs() {
   );
 }
 
+export function VariableFillDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableFill.intro} />
+      <Prose text={t.docs.variableFill.table} />
+      <Prose text={t.docs.variableFill.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("STATUS", "OK")],
+            blocks: [demoCommand('echo "{STATUS|fill(*; 3)}"')],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableFill.rules} />
+      <Prose text={t.docs.variableFill.computedHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("SERVICE", "api-gateway")],
+            blocks: [
+              demoCommand(
+                'echo "{SERVICE|rfill(.; 20 - {SERVICE|len})} restarted"',
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
 export function PlaceholderDefaultsDocs() {
   const t = useTranslation();
 
@@ -404,7 +468,12 @@ export function PlaceholderDefaultsDocs() {
       <DemoWorkspace
         tabs={[
           {
-            variables: [demoVariable("LOGFILE", "tail -f /var/log/{;service=api}/{;service}.log")],
+            variables: [
+              demoVariable(
+                "LOGFILE",
+                "tail -f /var/log/{;service=api}/{;service}.log",
+              ),
+            ],
             blocks: [
               demoCommand("{LOGFILE}"),
               demoCommand("{LOGFILE;service=web}"),
@@ -453,7 +522,7 @@ export function UnnamedReferencesDocs() {
       <Prose text={t.docs.unnamedReferences.intro} />
       <Prose text={t.docs.unnamedReferences.demoHint} />
       <DemoWorkspace
-        tabs={[{ blocks: [demoCommand('echo "Length: {|count}"')] }]}
+        tabs={[{ blocks: [demoCommand('echo "Length: {|len}"')] }]}
       >
         <BlocksList />
       </DemoWorkspace>
@@ -484,6 +553,105 @@ export function VariableDateDocs() {
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.variableDate.clock} />
+    </>
+  );
+}
+
+export function VariableBooleanDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableBoolean.intro} />
+      <Prose text={t.docs.variableBoolean.table} />
+      <Prose text={t.docs.variableBoolean.matching} />
+      <Prose text={t.docs.variableBoolean.matchTable} />
+      <Prose text={t.docs.variableBoolean.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("PORT", "8080"),
+              demoVariable("ARCHIVE", "logs.tar.gz"),
+            ],
+            blocks: [
+              demoCommand('echo "port is a number: {PORT|isdigit}"'),
+              demoCommand(
+                'echo "archive is compressed: {ARCHIVE|endswith(.zip; .tar.gz)}"',
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableBoolean.empty} />
+    </>
+  );
+}
+
+export function VariableLogicDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableLogic.table} />
+      <Prose text={t.docs.variableLogic.compare} />
+      <Prose text={t.docs.variableLogic.compareTable} />
+      <Prose text={t.docs.variableLogic.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("BRANCH", "main"),
+              demoVariable("PORT", "8080"),
+            ],
+            blocks: [
+              demoCommand(
+                'echo "ready to deploy: {|AND({|EQUALS({BRANCH}; main)}; {PORT|isdigit})}"',
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableLogic.booleans} />
+    </>
+  );
+}
+
+export function VariableConditionalDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableConditional.intro} />
+      <Prose text={t.docs.variableConditional.table} />
+      <Prose text={t.docs.variableConditional.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("LEVEL", "debug"),
+              demoVariable("RETRIES", "3"),
+            ],
+            blocks: [
+              demoCommand(
+                "run.sh {|IF({|EQUALSIGNORECASE({LEVEL}; debug)}; --verbose)}",
+              ),
+              demoCommand(
+                "curl https://api.example.com {|IF({RETRIES|isdigit}; --retry {RETRIES})}",
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }
