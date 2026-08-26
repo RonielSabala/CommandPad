@@ -648,6 +648,7 @@ export const en: Messages = {
       [DocsSectionId.VARIABLE_KEY]: "Using the variable name",
       [DocsSectionId.VARIABLE_CASE]: "Changing case",
       [DocsSectionId.VARIABLE_STRIP]: "Trimming ends",
+      [DocsSectionId.VARIABLE_FILL]: "Adding to the ends",
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transforming a blank",
       [DocsSectionId.UNNAMED_REFERENCES]: "References with no variable",
       [DocsSectionId.VARIABLE_DATE]: "Current date",
@@ -925,6 +926,20 @@ If something goes wrong, undo it in this order:
         "The text is removed as many times as it appears, and it is matched **whole**: `rstrip(ing)` never takes a stray `g`.",
       whitespace:
         "By default, `strip` operations written without parentheses remove whitespace:",
+    },
+    variableFill: {
+      intro:
+        "The `rfill(text; times)` operation is the mirror of the last one: it adds the text in parentheses to the **end** of a value, repeated as many times as the number says. `lfill` adds it to the **front** instead, and `fill` adds it to **both ends**.",
+      table: `| Operation | Result |
+| --- | --- |
+| \`rfill(-; 3)\` | the value--- |
+| \`lfill(-; 3)\` | ---the value |
+| \`fill(-; 3)\` | ---the value--- |`,
+      demoHint: "Edit the value below and the frame around it stays put:",
+      rules:
+        "The text is added exactly as you typed it, spaces included, so `rfill( -; 2)` adds a space and a dash twice. Asking for `0` copies leaves the value untouched, and a count that is missing or negative leaves the whole reference exactly as written.",
+      computedHint:
+        "The count does not have to be a fixed number: it can be worked out from the value itself. Try a longer or shorter name:",
     },
     transformedPlaceholders: {
       intro:

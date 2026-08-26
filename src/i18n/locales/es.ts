@@ -658,6 +658,7 @@ export const es: Messages = {
       [DocsSectionId.VARIABLE_KEY]: "Usar el nombre de la variable",
       [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
       [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
+      [DocsSectionId.VARIABLE_FILL]: "Añadir a los extremos",
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transformar un hueco",
       [DocsSectionId.UNNAMED_REFERENCES]: "Referencias sin variable",
       [DocsSectionId.VARIABLE_DATE]: "Fecha actual",
@@ -940,6 +941,20 @@ Si algo sale mal, deshazlo en este orden:
         "El texto se quita tantas veces como aparezca, y se compara **entero**: `rstrip(valor)` nunca se lleva una `r` suelta.",
       whitespace:
         "Por defecto, las operaciones `strip` escritas sin paréntesis quitan los espacios en blanco:",
+    },
+    variableFill: {
+      intro:
+        "La operación `rfill(texto; veces)` es el reflejo de la anterior: añade el texto entre paréntesis **al final** del valor, repetido tantas veces como indique el número. `lfill` lo añade **al principio**, y `fill` lo añade **por los dos extremos**.",
+      table: `| Operación | Resultado |
+| --- | --- |
+| \`rfill(-; 3)\` | el valor--- |
+| \`lfill(-; 3)\` | ---el valor |
+| \`fill(-; 3)\` | ---el valor--- |`,
+      demoHint: "Cambia el valor de abajo y el marco se mantiene:",
+      rules:
+        "El texto se añade tal cual lo escribas, espacios incluidos, así que `rfill( -; 2)` añade dos veces un espacio y un guion. Pedir `0` copias deja el valor intacto, y un número que falte o sea negativo deja la referencia entera tal y como está escrita.",
+      computedHint:
+        "El número de copias no tiene por qué ser fijo: puede calcularse a partir del propio valor. Prueba con un nombre más largo o más corto:",
     },
     transformedPlaceholders: {
       intro:

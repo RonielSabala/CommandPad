@@ -108,6 +108,18 @@ export function stripBoth(text: string, cut: string): string {
   return stripEnd(stripStart(text, cut), cut);
 }
 
+export function fillStart(text: string, fill: string, times: number): string {
+  return fill.repeat(times) + text;
+}
+
+export function fillEnd(text: string, fill: string, times: number): string {
+  return text + fill.repeat(times);
+}
+
+export function fillBoth(text: string, fill: string, times: number): string {
+  return fillEnd(fillStart(text, fill, times), fill, times);
+}
+
 export function classNames(
   ...classes: (string | false | null | undefined)[]
 ): string {

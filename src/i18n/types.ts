@@ -512,6 +512,13 @@ export interface Messages {
       repeats: string;
       whitespace: string;
     };
+    variableFill: {
+      intro: string;
+      table: string;
+      demoHint: string;
+      rules: string;
+      computedHint: string;
+    };
     transformedPlaceholders: {
       intro: string;
       demoHint: string;

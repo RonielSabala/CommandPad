@@ -419,6 +419,46 @@ export function VariableStripDocs() {
   );
 }
 
+export function VariableFillDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableFill.intro} />
+      <Prose text={t.docs.variableFill.table} />
+      <Prose text={t.docs.variableFill.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("STATUS", "OK")],
+            blocks: [demoCommand('echo "{STATUS|fill(*; 3)}"')],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableFill.rules} />
+      <Prose text={t.docs.variableFill.computedHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("SERVICE", "api-gateway")],
+            blocks: [
+              demoCommand(
+                'echo "{SERVICE|rfill(.; 20 - {SERVICE|len})} restarted"',
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
 export function PlaceholderDefaultsDocs() {
   const t = useTranslation();
 

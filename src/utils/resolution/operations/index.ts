@@ -3,6 +3,7 @@ import { COMPARE_OPERATION } from "./compare";
 import { IF_OPERATION } from "./conditional";
 import { COUNT_OPERATION } from "./count";
 import { DATE_OPERATION } from "./date";
+import { FILL_OPERATION } from "./fill";
 import { KEY_OPERATION } from "./key";
 import { LEN_OPERATION } from "./len";
 import { LOGIC_OPERATION } from "./logic";
@@ -25,6 +26,7 @@ const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   DATE_OPERATION,
   CASE_OPERATION,
   STRIP_OPERATION,
+  FILL_OPERATION,
   TEST_OPERATION,
   MATCH_OPERATION,
   LOGIC_OPERATION,

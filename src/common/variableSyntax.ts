@@ -80,6 +80,14 @@ export const StripSyntax = {
   ARITY: 1,
 } as const;
 
+export const FillSyntax = {
+  BOTH: "fill",
+  LEFT: "lfill",
+  RIGHT: "rfill",
+  ARITY: 2,
+  MAX_TIMES: 10000,
+} as const;
+
 export const DateSyntax = {
   KEYWORD: "date",
   ARITY: 1,
