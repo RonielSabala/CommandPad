@@ -653,7 +653,8 @@ export const es: Messages = {
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
       [DocsSectionId.PLACEHOLDER_DEFAULTS]: "Valores por defecto",
       [DocsSectionId.VARIABLE_SLICING]: "Recortar valores",
-      [DocsSectionId.VARIABLE_COUNT]: "Contar caracteres",
+      [DocsSectionId.VARIABLE_LEN]: "Longitud en caracteres",
+      [DocsSectionId.VARIABLE_COUNT]: "Contar apariciones",
       [DocsSectionId.VARIABLE_KEY]: "Usar el nombre de la variable",
       [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
       [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
@@ -703,7 +704,7 @@ export const es: Messages = {
       multiSelectNotes: ["Crear la copia de seguridad", "Limpiar"],
       greetingTemplate: "¡Hola {;name}, bienvenido a {;place}!",
       commitSubject: "Corrige reintento en subidas fallidas",
-      commitLengthCommand: 'echo "{message|count} de 50 caracteres usados"',
+      commitLengthCommand: 'echo "{message|len} de 50 caracteres usados"',
       projectName: "informe MENSUAL de ventas",
       reportFile: "ventas-mensuales.pdf",
       folderName: "   Informes de ventas   ",
@@ -882,13 +883,19 @@ Si algo sale mal, deshazlo en este orden:
       python:
         "La forma de contar viene de Python, por si quieres leer más sobre ella: [recorte de cadenas en Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). No necesitas saber Python para usarla aquí.",
     },
-    variableCount: {
+    variableLen: {
       intro:
-        "Escribe `count` después del `|` y obtienes **cuántos caracteres ocupa el valor**.",
+        "Escribe `len` después del `|` y obtienes **cuántos caracteres ocupa el valor**.",
       demoHint:
         "Por ejemplo, el asunto de un commit debería quedarse por debajo de 50 caracteres, pero nadie los cuenta a mano. Escribe en el mensaje de abajo y mira cómo el número te sigue:",
       chaining:
-        "Las operaciones se aplican de izquierda a derecha, así que puedes poner `count` después de un recorte: `{commit|slice(;7)|count}` acorta el commit primero y luego cuenta lo que queda.",
+        "Las operaciones se aplican de izquierda a derecha, así que puedes poner `len` después de un recorte: `{commit|slice(;7)|len}` acorta el commit primero y luego cuenta lo que queda.",
+    },
+    variableCount: {
+      intro:
+        "Escribe `count(x)` después del `|` y obtienes **cuántas veces aparece `x`** en el valor.",
+      demoHint:
+        "Debajo, cada `/` marca un nivel de carpeta. Cambia la ruta y el número te sigue:",
     },
     variableKey: {
       intro:
@@ -944,7 +951,7 @@ Si algo sale mal, deshazlo en este orden:
       intro:
         "Una referencia no necesita nombrar ninguna variable. Omite el nombre, escribe solo operaciones después de `|`, y la referencia partirá de un valor vacío: el resultado será lo que esas operaciones produzcan.",
       demoHint:
-        "El `{|count}` de abajo no tiene ninguna variable detrás, así que no hay nada que contar y siempre da `0`:",
+        "El `{|len}` de abajo no tiene ninguna variable detrás, así que no hay nada que medir y siempre da `0`:",
       rule: "Las llaves deben incluir al menos una operación. Unas llaves vacías se dejan tal cual, así que un comando que ya usa `{}` por su cuenta no se ve afectado.",
       anywhere:
         "Por sí solo no sirve de mucho, pero la siguiente operación le saca todo el partido a este mismo truco.",

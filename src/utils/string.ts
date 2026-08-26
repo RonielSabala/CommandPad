@@ -45,6 +45,18 @@ export function countCharacters(text: string): number {
   return Array.from(text).length;
 }
 
+export function countOccurrences(text: string, needle: string): number {
+  let count = 0;
+  let index = text.indexOf(needle);
+
+  while (index !== -1) {
+    count += 1;
+    index = text.indexOf(needle, index + needle.length);
+  }
+
+  return count;
+}
+
 export function sliceString(
   text: string,
   start: number | null,

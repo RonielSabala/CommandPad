@@ -52,8 +52,13 @@ export const SliceSyntax = {
 } as const;
 
 export const OperationSyntax = {
-  COUNT: "count",
+  LEN: "len",
   KEY: "key",
+} as const;
+
+export const CountSyntax = {
+  KEYWORD: "count",
+  ARITY: 1,
 } as const;
 
 export const CaseSyntax = {
@@ -201,7 +206,7 @@ export const NumberArgumentRegex = new RegExp(
 
 export const NumberTermRegex = globalRegex(NUMBER_TERM);
 
-export const CountOperationRegex = new RegExp(anchored(Operation.COUNT));
+export const LenOperationRegex = new RegExp(anchored(Operation.LEN));
 
 export const KeyOperationRegex = new RegExp(anchored(Operation.KEY));
 

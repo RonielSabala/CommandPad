@@ -4,6 +4,7 @@ import { IF_OPERATION } from "./conditional";
 import { COUNT_OPERATION } from "./count";
 import { DATE_OPERATION } from "./date";
 import { KEY_OPERATION } from "./key";
+import { LEN_OPERATION } from "./len";
 import { LOGIC_OPERATION } from "./logic";
 import { MATCH_OPERATION } from "./match";
 import { SLICE_OPERATION } from "./slice";
@@ -18,6 +19,7 @@ import type {
 
 const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   SLICE_OPERATION,
+  LEN_OPERATION,
   COUNT_OPERATION,
   KEY_OPERATION,
   DATE_OPERATION,

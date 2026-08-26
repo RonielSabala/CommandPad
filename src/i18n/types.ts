@@ -484,10 +484,14 @@ export interface Messages {
       invalid: string;
       python: string;
     };
-    variableCount: {
+    variableLen: {
       intro: string;
       demoHint: string;
       chaining: string;
+    };
+    variableCount: {
+      intro: string;
+      demoHint: string;
     };
     variableKey: {
       intro: string;

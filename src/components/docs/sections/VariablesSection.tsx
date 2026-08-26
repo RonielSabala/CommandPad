@@ -273,13 +273,13 @@ export function VariableSlicingDocs() {
   );
 }
 
-export function VariableCountDocs() {
+export function VariableLenDocs() {
   const t = useTranslation();
 
   return (
     <>
-      <Prose text={t.docs.variableCount.intro} />
-      <Prose text={t.docs.variableCount.demoHint} />
+      <Prose text={t.docs.variableLen.intro} />
+      <Prose text={t.docs.variableLen.demoHint} />
       <DemoWorkspace
         tabs={[
           {
@@ -294,7 +294,31 @@ export function VariableCountDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
-      <Prose text={t.docs.variableCount.chaining} />
+      <Prose text={t.docs.variableLen.chaining} />
+    </>
+  );
+}
+
+export function VariableCountDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableCount.intro} />
+      <Prose text={t.docs.variableCount.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("PATH", "/var/log/app/errors.log")],
+            blocks: [
+              demoCommand('echo "{PATH} is {PATH|count(/)} levels deep"'),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }
@@ -458,7 +482,7 @@ export function UnnamedReferencesDocs() {
       <Prose text={t.docs.unnamedReferences.intro} />
       <Prose text={t.docs.unnamedReferences.demoHint} />
       <DemoWorkspace
-        tabs={[{ blocks: [demoCommand('echo "Length: {|count}"')] }]}
+        tabs={[{ blocks: [demoCommand('echo "Length: {|len}"')] }]}
       >
         <BlocksList />
       </DemoWorkspace>

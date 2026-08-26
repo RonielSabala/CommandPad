@@ -643,7 +643,8 @@ export const en: Messages = {
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Parameterized placeholders",
       [DocsSectionId.PLACEHOLDER_DEFAULTS]: "Placeholder defaults",
       [DocsSectionId.VARIABLE_SLICING]: "Slicing values",
-      [DocsSectionId.VARIABLE_COUNT]: "Counting characters",
+      [DocsSectionId.VARIABLE_LEN]: "Character length",
+      [DocsSectionId.VARIABLE_COUNT]: "Counting occurrences",
       [DocsSectionId.VARIABLE_KEY]: "Using the variable name",
       [DocsSectionId.VARIABLE_CASE]: "Changing case",
       [DocsSectionId.VARIABLE_STRIP]: "Trimming ends",
@@ -689,7 +690,7 @@ export const en: Messages = {
       multiSelectNotes: ["Create the backup", "Clean up"],
       greetingTemplate: "Hi {;name}, welcome to {;place}!",
       commitSubject: "Fix retry backoff on failed uploads",
-      commitLengthCommand: 'echo "{message|count} of 50 characters used"',
+      commitLengthCommand: 'echo "{message|len} of 50 characters used"',
       projectName: "monthly SALES report",
       reportFile: "monthly-sales.pdf",
       folderName: "   Sales Reports   ",
@@ -867,13 +868,19 @@ If something goes wrong, undo it in this order:
       python:
         "The way the numbers work comes from Python, if you are curious to read more about it: [string slicing in Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). You do not need to know Python to use it here.",
     },
-    variableCount: {
+    variableLen: {
       intro:
-        "Write `count` after the `|` and you get **how many characters the value takes up**.",
+        "Write `len` after the `|` and you get **how many characters the value takes up**.",
       demoHint:
         "For example, a commit subject is supposed to stay under 50 characters, but nobody counts them by hand. Type into the message below and watch the number keep up:",
       chaining:
-        "Operations run left to right, so you can put `count` after a slice: `{commit|slice(;7)|count}` shortens the commit first, then counts what is left.",
+        "Operations run left to right, so you can put `len` after a slice: `{commit|slice(;7)|len}` shortens the commit first, then counts what is left.",
+    },
+    variableCount: {
+      intro:
+        "Write `count(x)` after the `|` and you get **how many times `x` appears** in the value.",
+      demoHint:
+        "Below, each `/` marks one directory level. Edit the path and the count keeps up:",
     },
     variableKey: {
       intro:
@@ -928,7 +935,7 @@ If something goes wrong, undo it in this order:
       intro:
         "A reference does not have to name a variable. Leave the name out, write only operations after the `|`, and the reference starts from an empty value: what you get back is whatever the operations make of it.",
       demoHint:
-        "`{|count}` below has no variable behind it, so there is nothing to count; it always resolves to `0`:",
+        "`{|len}` below has no variable behind it, so there is nothing to measure; it always resolves to `0`:",
       rule: "The braces have to hold at least one operation. Empty braces are left exactly as they are, so a command that writes `{}` itself keeps them.",
       anywhere:
         "On its own that is not much use, but the next operation turns this exact trick into something worth reaching for.",
