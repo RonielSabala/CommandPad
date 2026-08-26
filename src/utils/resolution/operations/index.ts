@@ -1,9 +1,14 @@
 import { CASE_OPERATION } from "./case";
+import { COMPARE_OPERATION } from "./compare";
+import { IF_OPERATION } from "./conditional";
 import { COUNT_OPERATION } from "./count";
 import { DATE_OPERATION } from "./date";
 import { KEY_OPERATION } from "./key";
+import { LOGIC_OPERATION } from "./logic";
+import { MATCH_OPERATION } from "./match";
 import { SLICE_OPERATION } from "./slice";
 import { STRIP_OPERATION } from "./strip";
+import { TEST_OPERATION } from "./test";
 import type {
   OperationContext,
   OperationDefinition,
@@ -18,6 +23,11 @@ const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   DATE_OPERATION,
   CASE_OPERATION,
   STRIP_OPERATION,
+  TEST_OPERATION,
+  MATCH_OPERATION,
+  LOGIC_OPERATION,
+  COMPARE_OPERATION,
+  IF_OPERATION,
 ];
 
 export function getOperationKeywords(): readonly OperationKeyword[] {

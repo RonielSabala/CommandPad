@@ -404,7 +404,12 @@ export function PlaceholderDefaultsDocs() {
       <DemoWorkspace
         tabs={[
           {
-            variables: [demoVariable("LOGFILE", "tail -f /var/log/{;service=api}/{;service}.log")],
+            variables: [
+              demoVariable(
+                "LOGFILE",
+                "tail -f /var/log/{;service=api}/{;service}.log",
+              ),
+            ],
             blocks: [
               demoCommand("{LOGFILE}"),
               demoCommand("{LOGFILE;service=web}"),
@@ -484,6 +489,105 @@ export function VariableDateDocs() {
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.variableDate.clock} />
+    </>
+  );
+}
+
+export function VariableBooleanDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableBoolean.intro} />
+      <Prose text={t.docs.variableBoolean.table} />
+      <Prose text={t.docs.variableBoolean.matching} />
+      <Prose text={t.docs.variableBoolean.matchTable} />
+      <Prose text={t.docs.variableBoolean.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("PORT", "8080"),
+              demoVariable("ARCHIVE", "logs.tar.gz"),
+            ],
+            blocks: [
+              demoCommand('echo "port is a number: {PORT|isdigit}"'),
+              demoCommand(
+                'echo "archive is compressed: {ARCHIVE|endswith(.zip; .tar.gz)}"',
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableBoolean.empty} />
+    </>
+  );
+}
+
+export function VariableLogicDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableLogic.table} />
+      <Prose text={t.docs.variableLogic.compare} />
+      <Prose text={t.docs.variableLogic.compareTable} />
+      <Prose text={t.docs.variableLogic.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("BRANCH", "main"),
+              demoVariable("PORT", "8080"),
+            ],
+            blocks: [
+              demoCommand(
+                'echo "ready to deploy: {|AND({|EQUALS({BRANCH}; main)}; {PORT|isdigit})}"',
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableLogic.booleans} />
+    </>
+  );
+}
+
+export function VariableConditionalDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableConditional.intro} />
+      <Prose text={t.docs.variableConditional.table} />
+      <Prose text={t.docs.variableConditional.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("LEVEL", "debug"),
+              demoVariable("RETRIES", "3"),
+            ],
+            blocks: [
+              demoCommand(
+                "run.sh {|IF({|EQUALSIGNORECASE({LEVEL}; debug)}; --verbose)}",
+              ),
+              demoCommand(
+                "curl https://api.example.com {|IF({RETRIES|isdigit}; --retry {RETRIES})}",
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }

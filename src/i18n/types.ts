@@ -526,6 +526,26 @@ export interface Messages {
       formatDemoHint: (resetDemoLabel: string) => string;
       clock: string;
     };
+    variableBoolean: {
+      intro: string;
+      table: string;
+      matching: string;
+      matchTable: string;
+      demoHint: string;
+      empty: string;
+    };
+    variableLogic: {
+      table: string;
+      compare: string;
+      compareTable: string;
+      demoHint: string;
+      booleans: string;
+    };
+    variableConditional: {
+      intro: string;
+      table: string;
+      demoHint: string;
+    };
     multilineReferences: {
       intro: string;
     };

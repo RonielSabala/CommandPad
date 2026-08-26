@@ -650,6 +650,9 @@ export const en: Messages = {
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transforming a blank",
       [DocsSectionId.UNNAMED_REFERENCES]: "References with no variable",
       [DocsSectionId.VARIABLE_DATE]: "Current date",
+      [DocsSectionId.VARIABLE_BOOLEAN]: "Boolean operations",
+      [DocsSectionId.VARIABLE_LOGIC]: "Logical operations",
+      [DocsSectionId.VARIABLE_CONDITIONAL]: "Conditional operations",
       [DocsSectionId.MULTILINE_REFERENCES]: "Long references",
       [DocsSectionId.ESCAPING_BRACES]: "Escaping braces",
       [DocsSectionId.SECRET_VARIABLES]: "Secret variables",
@@ -949,6 +952,62 @@ If something goes wrong, undo it in this order:
         `The date is read the moment the command is shown, not when it was written. Press **${resetDemoLabel}** below a couple of times and watch the seconds move:`,
       clock:
         "It reads your own clock, in your own time zone, so a runbook left open overnight copies tomorrow's date tomorrow.",
+    },
+    variableBoolean: {
+      intro:
+        "A boolean operation does not change a value, it **asks a question about it** and answers with `true` or `false`. These are the questions, each one written after a `|`:",
+      table: `| Operation | Description |
+| --- | --- |
+| \`isdigit\` | Every character is a digit |
+| \`isnumeric\` | Every character is a number, digits included |
+| \`isalpha\` | Every character is a letter |
+| \`isalnum\` | Every character is a letter or a digit |
+| \`isspace\` | Every character is a space, a tab or a line break |
+| \`isascii\` | Nothing needs an accent or a non-Latin script |
+| \`isupper\` | There are letters, and none of them are lower case |
+| \`islower\` | There are letters, and none of them are upper case |
+| \`istitle\` | Every word starts with a capital |
+| \`isempty\` | Nothing is left at all |`,
+      matching:
+        "Three more take what to look for, in parentheses. List **several separated by `;`** and the answer is true as soon as one of them matches:",
+      matchTable: `| Operation | Description |
+| --- | --- |
+| \`startswith(a; b)\` | The value starts with \`a\` or with \`b\` |
+| \`endswith(a; b)\` | The value ends with \`a\` or with \`b\` |
+| \`contains(a; b)\` | \`a\` or \`b\` appears somewhere in the value |`,
+      demoHint:
+        "Below, put a letter in the port or change the extension, and watch the answers flip:",
+      empty:
+        "Each of these needs at least one character to look at, so they all answer `false` for an empty value. That is what `isempty` is for. Note that a reference to a variable you left blank never resolves in the first place, so `isempty` is really about what an earlier operation produced, as in `{PATH|strip(/tmp/)|isempty}`.",
+    },
+    variableLogic: {
+      table: `| Operation | Description |
+| --- | --- |
+| \`AND(a; b; c)\` | True when every answer is true |
+| \`OR(a; b; c)\` | True when at least one answer is true |
+| \`XOR(a; b; c)\` | True when an odd number of them are true, so exactly one of a pair |
+| \`NOT(a)\` | True when \`a\` is false |`,
+      compare: "Three more compare two texts and answer with the result:",
+      compareTable: `| Operation | Description |
+| --- | --- |
+| \`EQUALS(a; b)\` | True when the two texts are identical |
+| \`NOTEQUALS(a; b)\` | True when they differ |
+| \`EQUALSIGNORECASE(a; b)\` | True ignoring capitals, so \`PROD\` and \`prod\` count as the same |`,
+      demoHint:
+        "Below, both checks have to pass \u2014 switch the branch, or put a letter in the port, and the line turns to `false`:",
+      booleans:
+        "Anywhere an answer is expected you can write one yourself: `true`, `false`, `1` and `0` are accepted, in any mix of capitals. Anything else is not an answer, so the reference stays on screen exactly as you typed it, which is how you spot the mistake.",
+    },
+    variableConditional: {
+      intro:
+        "`IF` is where the two sections above pay off: it reads an answer and gives back **one of two texts**, so a command can change shape on its own. It is written `IF(condition; then; else)`:",
+      table: `| Part | Description |
+| --- | --- |
+| \`condition\` | An answer, usually a question asked with the operations above |
+| \`then\` | The text used when the condition is true |
+| \`else\` | The text used when it is false. Leave it out for nothing at all |`,
+      demoHint:
+        "Below, change `LEVEL` to make the first flag come and go, and put a letter in `RETRIES` to make the second one disappear:",
     },
     multilineReferences: {
       intro:

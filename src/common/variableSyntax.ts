@@ -32,6 +32,7 @@ export const CallSyntax = {
   ARGUMENT_OPEN: "(",
   ARGUMENT_CLOSE: ")",
   ARGUMENT_SEPARATOR: ";",
+  VARIADIC: Number.POSITIVE_INFINITY,
 } as const;
 
 export const CallGroup = {
@@ -90,6 +91,54 @@ export const DateToken = {
   HOUR: "HH",
   MINUTE: "mm",
   SECOND: "ss",
+} as const;
+
+export const BooleanSyntax = {
+  TRUE: "true",
+  FALSE: "false",
+  TRUE_ALT: "1",
+  FALSE_ALT: "0",
+} as const;
+
+export const TestSyntax = {
+  IS_UPPER: "isupper",
+  IS_LOWER: "islower",
+  IS_TITLE: "istitle",
+  IS_NUMERIC: "isnumeric",
+  IS_DIGIT: "isdigit",
+  IS_ALNUM: "isalnum",
+  IS_ALPHA: "isalpha",
+  IS_SPACE: "isspace",
+  IS_ASCII: "isascii",
+  IS_EMPTY: "isempty",
+} as const;
+
+export const MatchSyntax = {
+  STARTS_WITH: "startswith",
+  ENDS_WITH: "endswith",
+  CONTAINS: "contains",
+  ARITY: CallSyntax.VARIADIC,
+} as const;
+
+export const LogicSyntax = {
+  AND: "AND",
+  OR: "OR",
+  XOR: "XOR",
+  NOT: "NOT",
+  NOT_ARITY: 1,
+  ARITY: CallSyntax.VARIADIC,
+} as const;
+
+export const CompareSyntax = {
+  EQUALS: "EQUALS",
+  NOT_EQUALS: "NOTEQUALS",
+  EQUALS_IGNORE_CASE: "EQUALSIGNORECASE",
+  ARITY: 2,
+} as const;
+
+export const IfSyntax = {
+  KEYWORD: "IF",
+  ARITY: 3,
 } as const;
 
 const Ref = escapeSyntax(VariableSyntax);

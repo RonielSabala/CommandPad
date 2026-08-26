@@ -23,6 +23,9 @@ export const DocsSectionId = {
   TRANSFORMED_PLACEHOLDERS: "transformed-placeholders",
   UNNAMED_REFERENCES: "unnamed-references",
   VARIABLE_DATE: "variable-date",
+  VARIABLE_BOOLEAN: "variable-boolean",
+  VARIABLE_LOGIC: "variable-logic",
+  VARIABLE_CONDITIONAL: "variable-conditional",
   MULTILINE_REFERENCES: "multiline-references",
   ESCAPING_BRACES: "escaping-braces",
   TABS: "tabs",
@@ -85,6 +88,12 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
     level: DocsSectionLevel.SUBSECTION,
   },
   { id: DocsSectionId.VARIABLE_DATE, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.VARIABLE_BOOLEAN, level: DocsSectionLevel.SUBSECTION },
+  { id: DocsSectionId.VARIABLE_LOGIC, level: DocsSectionLevel.SUBSECTION },
+  {
+    id: DocsSectionId.VARIABLE_CONDITIONAL,
+    level: DocsSectionLevel.SUBSECTION,
+  },
   {
     id: DocsSectionId.MULTILINE_REFERENCES,
     level: DocsSectionLevel.SUBSECTION,

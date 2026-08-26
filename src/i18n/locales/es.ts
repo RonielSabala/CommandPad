@@ -660,6 +660,9 @@ export const es: Messages = {
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transformar un hueco",
       [DocsSectionId.UNNAMED_REFERENCES]: "Referencias sin variable",
       [DocsSectionId.VARIABLE_DATE]: "Fecha actual",
+      [DocsSectionId.VARIABLE_BOOLEAN]: "Operaciones booleanas",
+      [DocsSectionId.VARIABLE_LOGIC]: "Operaciones lógicas",
+      [DocsSectionId.VARIABLE_CONDITIONAL]: "Operaciones condicionales",
       [DocsSectionId.MULTILINE_REFERENCES]: "Referencias largas",
       [DocsSectionId.ESCAPING_BRACES]: "Escapar llaves",
       [DocsSectionId.SECRET_VARIABLES]: "Variables secretas",
@@ -965,6 +968,62 @@ Si algo sale mal, deshazlo en este orden:
         `La fecha se calcula justo cuando se muestra el comando, no cuando se escribió. Pulsa **${resetDemoLabel}** un par de veces y verás cómo cambian los segundos:`,
       clock:
         "Usa tu propio reloj y tu propia zona horaria, así que un runbook que se queda abierto toda la noche mostrará mañana la fecha de mañana.",
+    },
+    variableBoolean: {
+      intro:
+        "Una operación booleana no cambia el valor: **hace una pregunta sobre él** y responde con `true` o `false`. Estas son las preguntas, y todas se escriben después de un `|`:",
+      table: `| Operación | Descripción |
+| --- | --- |
+| \`isdigit\` | Todos los caracteres son dígitos |
+| \`isnumeric\` | Todos los caracteres son números, dígitos incluidos |
+| \`isalpha\` | Todos los caracteres son letras |
+| \`isalnum\` | Todos los caracteres son letras o dígitos |
+| \`isspace\` | Todos los caracteres son espacios, tabulaciones o saltos de línea |
+| \`isascii\` | Nada lleva acentos ni un alfabeto no latino |
+| \`isupper\` | Hay letras y ninguna está en minúscula |
+| \`islower\` | Hay letras y ninguna está en mayúscula |
+| \`istitle\` | Cada palabra empieza por mayúscula |
+| \`isempty\` | No queda nada |`,
+      matching:
+        "Otras tres reciben entre paréntesis lo que hay que buscar. Escribe **varias opciones separadas por `;`** y la respuesta es verdadera en cuanto coincide una de ellas:",
+      matchTable: `| Operación | Descripción |
+| --- | --- |
+| \`startswith(a; b)\` | El valor empieza por \`a\` o por \`b\` |
+| \`endswith(a; b)\` | El valor termina en \`a\` o en \`b\` |
+| \`contains(a; b)\` | \`a\` o \`b\` aparece en alguna parte del valor |`,
+      demoHint:
+        "Debajo, escribe una letra en el puerto o cambia la extensión, y mira cómo cambian las respuestas:",
+      empty:
+        "Todas necesitan al menos un carácter que mirar, así que ante un valor vacío responden con `false`. Para eso está `isempty`. Ten en cuenta que una referencia a una variable que dejaste en blanco no llega a resolverse, así que `isempty` sirve sobre todo para lo que haya producido una operación anterior, como en `{PATH|strip(/tmp/)|isempty}`.",
+    },
+    variableLogic: {
+      table: `| Operación | Descripción |
+| --- | --- |
+| \`AND(a; b; c)\` | Verdadero cuando todas las respuestas son verdaderas |
+| \`OR(a; b; c)\` | Verdadero cuando al menos una lo es |
+| \`XOR(a; b; c)\` | Verdadero cuando lo es un número impar de ellas, o sea una sola de cada par |
+| \`NOT(a)\` | Verdadero cuando \`a\` es falsa |`,
+      compare: "Otras tres comparan dos textos y responden con el resultado:",
+      compareTable: `| Operación | Descripción |
+| --- | --- |
+| \`EQUALS(a; b)\` | Verdadero cuando los dos textos son idénticos |
+| \`NOTEQUALS(a; b)\` | Verdadero cuando son distintos |
+| \`EQUALSIGNORECASE(a; b)\` | Verdadero sin mirar mayúsculas, así \`PROD\` y \`prod\` cuentan como iguales |`,
+      demoHint:
+        "Debajo, las dos comprobaciones tienen que cumplirse: cambia la rama, o escribe una letra en el puerto, y la línea pasa a `false`:",
+      booleans:
+        "Donde se espera una respuesta también puedes escribirla tú: valen `true`, `false`, `1` y `0`, con las mayúsculas que quieras. Cualquier otra cosa no es una respuesta, así que la referencia se queda en pantalla tal cual la escribiste, que es como detectas el fallo.",
+    },
+    variableConditional: {
+      intro:
+        "En `IF` es donde dan fruto las dos secciones anteriores: lee una respuesta y devuelve **uno de dos textos**, de modo que un comando puede cambiar de forma por su cuenta. Se escribe `IF(condición; entonces; si_no)`:",
+      table: `| Parte | Descripción |
+| --- | --- |
+| \`condición\` | Una respuesta, normalmente una pregunta hecha con las operaciones anteriores |
+| \`entonces\` | El texto que se usa cuando la condición es verdadera |
+| \`si_no\` | El texto que se usa cuando es falsa. Omítelo para no poner nada |`,
+      demoHint:
+        "Debajo, cambia `LEVEL` para que la primera opción aparezca y desaparezca, y escribe una letra en `RETRIES` para que la segunda desaparezca:",
     },
     multilineReferences: {
       intro:
