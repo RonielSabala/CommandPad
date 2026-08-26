@@ -95,6 +95,7 @@ export function Select<T extends string>({
           {options.map((option) => (
             <li
               key={option.value}
+              className="no-user-select"
               role="option"
               aria-selected={option.value === value}
             >
