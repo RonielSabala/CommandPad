@@ -1,0 +1,38 @@
+import { RAW, checkResolution } from "@/test";
+
+checkResolution("the predicate operations", {
+  variables: {
+    DIGITS: "8080",
+    LETTERS: "api",
+    MIXED: "api2",
+    SPACES: "   ",
+    TITLED: "Payment Gateway",
+    ACCENTED: "caf\u00e9",
+    ROMAN: "\u2168",
+    PATH: "/tmp/build",
+  },
+  cases: [
+    ["{DIGITS|isdigit}", "true"],
+    ["{LETTERS|isdigit}", "false"],
+    ["{ROMAN|isnumeric}", "true"],
+    ["{ROMAN|isdigit}", "false"],
+    ["{LETTERS|isalpha}", "true"],
+    ["{MIXED|isalpha}", "false"],
+    ["{MIXED|isalnum}", "true"],
+    ["{PATH|isalnum}", "false"],
+    ["{SPACES|isspace}", "true"],
+    ["{LETTERS|isspace}", "false"],
+    ["{LETTERS|isascii}", "true"],
+    ["{ACCENTED|isascii}", "false"],
+    ["{TITLED|istitle}", "true"],
+    ["{LETTERS|istitle}", "false"],
+    ["{LETTERS|islower}", "true"],
+    ["{TITLED|islower}", "false"],
+    ["{DIGITS|isupper}", "false"],
+    ["{LETTERS|uppercase|isupper}", "true"],
+    ["{PATH|strip(/tmp/build)|isempty}", "true"],
+    ["{PATH|isempty}", "false"],
+    ["{LETTERS|isdigit()}", RAW],
+    ["{LETTERS|ISDIGIT}", RAW],
+  ],
+});
