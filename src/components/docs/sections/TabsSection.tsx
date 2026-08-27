@@ -41,6 +41,9 @@ export function TabsDocs() {
           t.source.openSource,
           t.source.openPreview,
           t.variables.openEditorTitle,
+          t.tabs.close,
+          t.tabs.closeOthers,
+          t.tabs.closeAll,
         )}
       />
       <Prose text={t.docs.tabs.variablesEditorNote} />

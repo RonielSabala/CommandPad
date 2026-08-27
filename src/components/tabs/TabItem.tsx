@@ -9,16 +9,24 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
-import { useEffect, useRef, useState, type DragEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type DragEvent,
+  type MouseEvent,
+} from "react";
+
 import "./TabItem.css";
 
 const tabDrag: { srcId: string | null } = { srcId: null };
 
 interface Props {
   tab: Tab;
+  onOpenMenu: (event: MouseEvent, tabId: string) => void;
 }
 
-export function TabItem({ tab }: Props) {
+export function TabItem({ tab, onOpenMenu }: Props) {
   const t = useTranslation();
   const tabId = tab.id;
   const tabLabel = displayLabel(tab.label || t.common.untitledTab, t);
@@ -69,6 +77,7 @@ export function TabItem({ tab }: Props) {
           event.preventDefault();
         }
       }}
+      onContextMenu={(event) => onOpenMenu(event, tabId)}
       onMouseUp={(event) => {
         if (event.button === MouseButton.MIDDLE) {
           event.preventDefault();

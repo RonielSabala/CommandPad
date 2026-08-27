@@ -129,6 +129,9 @@ export interface Messages {
   tabs: {
     newTab: string;
     closeTab: string;
+    close: string;
+    closeOthers: string;
+    closeAll: string;
   };
   source: {
     openSource: string;
@@ -423,6 +426,9 @@ export interface Messages {
         openSourceLabel: string,
         openPreviewLabel: string,
         openEditorLabel: string,
+        closeLabel: string,
+        closeOthersLabel: string,
+        closeAllLabel: string,
       ) => string;
       variablesEditorNote: string;
       autoCreate: string;

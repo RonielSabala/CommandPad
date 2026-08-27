@@ -271,6 +271,7 @@ export interface StoreState {
   ) => Promise<Tab | undefined>;
   switchTab: (tabId: string) => void;
   closeTab: (tabId: string) => void;
+  closeTabs: (tabIds: string[]) => void;
   reorderTabs: (
     sourceId: string,
     targetId: string,
@@ -1466,30 +1467,42 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       closeTab: (tabId) => {
+        get().closeTabs([tabId]);
+      },
+
+      closeTabs: (tabIds) => {
         const state = get();
-        let idx = state.tabs.findIndex((t) => t.id === tabId);
-        if (idx < 0) {
+        const closing = new Set(tabIds);
+        const closed = state.tabs.filter((t) => closing.has(t.id));
+
+        if (closed.length === 0) {
           return;
         }
 
-        const tabs = state.tabs.filter((t) => t.id !== tabId);
+        const tabs = state.tabs.filter((t) => !closing.has(t.id));
         let activeTabId = state.activeTabId;
 
+        // Keep the active tab, or fall back to its closest surviving neighbor
         if (tabs.length === 0) {
           activeTabId = null;
-        } else if (state.activeTabId === tabId) {
-          idx = Math.min(idx, tabs.length - 1);
-          activeTabId = tabs[idx].id;
+        } else if (activeTabId !== null && closing.has(activeTabId)) {
+          const idx = state.tabs.findIndex((t) => t.id === activeTabId);
+          const after = state.tabs.slice(idx).find((t) => !closing.has(t.id));
+          const before = state.tabs
+            .slice(0, idx)
+            .reverse()
+            .find((t) => !closing.has(t.id));
+
+          activeTabId = (after ?? before ?? tabs[0]).id;
         }
 
-        const closedRunbookId = state.tabs.find(
-          (t) => t.id === tabId,
-        )?.runbookId;
-        if (
-          closedRunbookId &&
-          !tabs.some((t) => t.runbookId === closedRunbookId)
-        ) {
-          declinedVaultSetup.delete(closedRunbookId);
+        for (const tab of closed) {
+          if (
+            tab.runbookId &&
+            !tabs.some((t) => t.runbookId === tab.runbookId)
+          ) {
+            declinedVaultSetup.delete(tab.runbookId);
+          }
         }
 
         const activeRunbookId =

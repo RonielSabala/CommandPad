@@ -121,6 +121,9 @@ export const en: Messages = {
   tabs: {
     newTab: "New tab",
     closeTab: "Close tab",
+    close: "Close",
+    closeOthers: "Close others",
+    closeAll: "Close all",
   },
   source: {
     openSource: "Open source file",
@@ -760,9 +763,13 @@ If something goes wrong, undo it in this order:
         openSourceLabel,
         openPreviewLabel,
         openEditorLabel,
+        closeLabel,
+        closeOthersLabel,
+        closeAllLabel,
       ) => `* **Click** a tab to switch to it.
 * **Drag** a tab to reorder it.
 * **Middle-click** a tab to close it.
+* **Right-click** a tab for **${closeLabel}**, **${closeOthersLabel}** and **${closeAllLabel}**.
 * **Click** the **+** at the end of the tabs bar to open a new tab.
 * **${openSourceLabel}**, at the far end of the tabs bar, swaps the blocks below for the runbook's raw JSON.
 * **${openEditorLabel}**, beside it, swaps them for the runbook's variables instead.

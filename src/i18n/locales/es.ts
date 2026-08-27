@@ -125,6 +125,9 @@ export const es: Messages = {
   tabs: {
     newTab: "Nueva pestaña",
     closeTab: "Cerrar pestaña",
+    close: "Cerrar",
+    closeOthers: "Cerrar las demás",
+    closeAll: "Cerrar todas",
   },
   source: {
     openSource: "Abrir archivo fuente",
@@ -774,9 +777,13 @@ Si algo sale mal, deshazlo en este orden:
         openSourceLabel,
         openPreviewLabel,
         openEditorLabel,
+        closeLabel,
+        closeOthersLabel,
+        closeAllLabel,
       ) => `* **Haz clic** en una pestaña para cambiar a ella.
 * **Arrastra** una pestaña para reordenarla.
 * **Clic con la rueda** del ratón en una pestaña para cerrarla.
+* **Clic derecho** en una pestaña para **${closeLabel}**, **${closeOthersLabel}** y **${closeAllLabel}**.
 * **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.
 * **${openSourceLabel}**, al final de la barra de pestañas, cambia los bloques de abajo por el JSON del libro.
 * **${openEditorLabel}**, a su lado, los cambia por las variables del libro.
