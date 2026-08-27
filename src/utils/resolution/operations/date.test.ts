@@ -1,3 +1,4 @@
+import { DateSyntax } from "@/common/variableSyntax";
 import { runbook } from "@/test";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
@@ -16,6 +17,7 @@ describe("date", () => {
   it.each([
     ["{|date}", "2026-07-31"],
     ["{|date()}", "2026-07-31"],
+    [`{|date(${DateSyntax.DEFAULT_FORMAT})}`, "2026-07-31"],
     ["{|date(YYYYMMDD-HHmmss)}", "20260731-090503"],
     ["{|date(YY)}", "26"],
     ["{|date(DD/MM/YYYY)}", "31/07/2026"],

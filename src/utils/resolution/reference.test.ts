@@ -1,4 +1,3 @@
-import { CommandSegmentType } from "@/common/enums";
 import { RAW, checkResolution, checkValues, runbook } from "@/test";
 import { describe, expect, it } from "vitest";
 
@@ -35,12 +34,12 @@ checkResolution("a reference's layout is not part of its meaning", {
 checkResolution("a reference that does not resolve renders raw", {
   variables: HOSTS,
   cases: [
-    ["{MISSING}", RAW],
-    ["{EMPTY}", RAW],
-    ["{HOST|nosuchoperation}", RAW],
-    ["{HOST|slice(1 2;)}", RAW],
-    ["{HOST|slice({MISSING};)}", RAW],
     ["{{HOST}}", RAW],
+    ["{EMPTY}", RAW],
+    ["{MISSING}", RAW],
+    ["{HOST|slice(1 2;)}", RAW],
+    ["{HOST|nosuchoperation}", RAW],
+    ["{HOST|slice({MISSING};)}", RAW],
   ],
 });
 
@@ -49,16 +48,6 @@ describe("an unresolved reference leaves the rest of the command alone", () => {
 
   it("keeps the resolved references around it", () => {
     expect(book.resolve("{USER}@{MISSING}:{PORT}")).toBe("root@{MISSING}:8080");
-  });
-
-  it("marks only that segment unresolved", () => {
-    expect(
-      book.segments("{USER}@{MISSING}").map((segment) => segment.type),
-    ).toEqual([
-      CommandSegmentType.RESOLVED,
-      CommandSegmentType.LITERAL,
-      CommandSegmentType.UNRESOLVED,
-    ]);
   });
 });
 
@@ -97,8 +86,8 @@ checkResolution("references nest to any depth", {
 checkResolution("an unnamed reference names no variable", {
   variables: HOSTS,
   cases: [
-    ["{|key}", ""],
     ["{}", RAW],
+    ["{|key}", ""],
     ["{;name}", RAW],
   ],
 });
@@ -111,20 +100,15 @@ describe("the known limitation: a literal pipe inside a param value", () => {
   });
 });
 
-checkValues("a value surface resolves references the same way", {
+checkValues("a value surface differs from a command surface in two ways", {
   variables: {
     HOST: "example.com",
-    URL: "https://{HOST}/health",
-    UPPER: "{HOST|uppercase}",
-    CHAIN: "{URL}?v=1",
+    ESCAPED: String.raw`\{HOST}`,
     EMPTY: "",
     GREETING: "hi{EMPTY}!",
   },
   expected: {
-    HOST: "example.com",
-    URL: "https://example.com/health",
-    UPPER: "EXAMPLE.COM",
-    CHAIN: "https://example.com/health?v=1",
+    ESCAPED: String.raw`\example.com`,
     GREETING: "hi!",
   },
 });

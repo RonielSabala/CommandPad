@@ -1,6 +1,9 @@
+import { ExtractedVariableConfig } from "@/common/config";
 import { describe, expect, it } from "vitest";
 
 import { extractedVariableKey, uniqueVariableKey } from "./keys";
+
+const { DEFAULT_KEY, MAX_KEY_LENGTH } = ExtractedVariableConfig;
 
 describe("uniqueVariableKey", () => {
   it("keeps a key nothing has taken", () => {
@@ -29,14 +32,14 @@ describe("extractedVariableKey", () => {
     ["8080"],
     ["2026-07-31"],
     [""],
-    ["averyverylongsinglewordthatkeepsgoing"],
+    ["a".repeat(MAX_KEY_LENGTH + 1)],
   ])("falls back to the default key for %s", (value) => {
-    expect(extractedVariableKey(value, free)).toBe("VARIABLE");
+    expect(extractedVariableKey(value, free)).toBe(DEFAULT_KEY);
   });
 
   it("uniquifies against the keys already taken", () => {
-    expect(extractedVariableKey("8080", new Set(["VARIABLE"]))).toBe(
-      "VARIABLE1",
+    expect(extractedVariableKey("8080", new Set([DEFAULT_KEY]))).toBe(
+      `${DEFAULT_KEY}1`,
     );
   });
 });

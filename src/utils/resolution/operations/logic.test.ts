@@ -1,22 +1,25 @@
+import { BooleanSyntax } from "@/common/variableSyntax";
 import { RAW, checkResolution } from "@/test";
+
+const { TRUE, FALSE } = BooleanSyntax;
 
 checkResolution("the logic combinators", {
   variables: { FILE: "backup.tar.gz", FLAG: "true" },
   cases: [
-    ["{|AND(true;true)}", "true"],
-    ["{|AND(true;false)}", "false"],
-    ["{|AND(true;true;true)}", "true"],
-    ["{|OR(false;true)}", "true"],
-    ["{|OR(false;false)}", "false"],
-    ["{|XOR(true;false)}", "true"],
-    ["{|XOR(true;true)}", "false"],
-    ["{|XOR(true;true;true)}", "true"],
-    ["{|NOT(true)}", "false"],
-    ["{|NOT(false)}", "true"],
-    ["{|AND(1;1)}", "true"],
-    ["{|OR(0;0)}", "false"],
-    ["{|AND( true ; true )}", "true"],
-    ["{|AND({FLAG};{FILE|endswith(.gz)})}", "true"],
+    ["{|AND(true;true)}", TRUE],
+    ["{|AND(true;false)}", FALSE],
+    ["{|AND(true;true;true)}", TRUE],
+    ["{|OR(false;true)}", TRUE],
+    ["{|OR(false;false)}", FALSE],
+    ["{|XOR(true;false)}", TRUE],
+    ["{|XOR(true;true)}", FALSE],
+    ["{|XOR(true;true;true)}", TRUE],
+    ["{|NOT(true)}", FALSE],
+    ["{|NOT(false)}", TRUE],
+    ["{|AND(1;1)}", TRUE],
+    ["{|OR(0;0)}", FALSE],
+    ["{|AND( true ; true )}", TRUE],
+    ["{|AND({FLAG};{FILE|endswith(.gz)})}", TRUE],
   ],
 });
 

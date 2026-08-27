@@ -1,4 +1,5 @@
 import { ReferenceSurface } from "@/common/enums";
+import { VariableSyntax } from "@/common/variableSyntax";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -12,11 +13,16 @@ import {
 
 describe("braceToken", () => {
   it("wraps a body in braces", () => {
-    expect(braceToken("HOST")).toBe("{HOST}");
+    expect(braceToken("HOST")).toBe(
+      `${VariableSyntax.BRACE_OPEN}HOST${VariableSyntax.BRACE_CLOSE}`,
+    );
   });
 
   it("reports where the key sits inside the token it wrote", () => {
-    expect(braceTokenKeyRange("HOST")).toEqual({ start: 1, length: 4 });
+    expect(braceTokenKeyRange("HOST")).toEqual({
+      start: VariableSyntax.BRACE_OPEN.length,
+      length: "HOST".length,
+    });
   });
 });
 

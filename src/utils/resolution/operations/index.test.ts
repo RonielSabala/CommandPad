@@ -1,3 +1,8 @@
+import {
+  CaseSyntax,
+  OperationSyntax,
+  SliceSyntax,
+} from "@/common/variableSyntax";
 import { describe, expect, it } from "vitest";
 
 import { applyOperations } from ".";
@@ -15,26 +20,40 @@ describe("applyOperations", () => {
 
   it("runs the operations left to right", () => {
     expect(
-      applyOperations("payment gateway", ["uppercase", "slice(0;7)"], CONTEXT),
+      applyOperations(
+        "payment gateway",
+        [CaseSyntax.UPPER, `${SliceSyntax.KEYWORD}(0;7)`],
+        CONTEXT,
+      ),
     ).toEqual({ text: "PAYMENT", ok: true });
   });
 
   it("hands each operation the reference's own key", () => {
-    expect(applyOperations("anything", ["key"], CONTEXT)).toEqual({
-      text: "HOST",
-      ok: true,
-    });
+    expect(applyOperations("anything", [OperationSyntax.KEY], CONTEXT)).toEqual(
+      {
+        text: "HOST",
+        ok: true,
+      },
+    );
   });
 
   it("fails the chain on an operation nobody recognizes", () => {
-    expect(applyOperations("abc", ["uppercase", "nope"], CONTEXT)).toEqual({
-      text: "abc",
-      ok: false,
-    });
+    expect(applyOperations("abc", [CaseSyntax.UPPER, "nope"], CONTEXT)).toEqual(
+      {
+        text: "abc",
+        ok: false,
+      },
+    );
   });
 
   it("returns the original text on failure, never a half-applied chain", () => {
-    expect(applyOperations("abc", ["uppercase", "slice()"], CONTEXT)).toEqual({
+    expect(
+      applyOperations(
+        "abc",
+        [CaseSyntax.UPPER, `${SliceSyntax.KEYWORD}()`],
+        CONTEXT,
+      ),
+    ).toEqual({
       text: "abc",
       ok: false,
     });

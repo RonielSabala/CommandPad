@@ -91,7 +91,9 @@ Re-run the affected tests on every save:
 pnpm test:watch
 ```
 
-The suite covers the **variable engine**: reference resolution, template placeholders, operations, key renames, and the string primitives behind them. It is pure logic run under [Vitest](https://vitest.dev) with no DOM, so there are no browser or UI tests.
+The suite covers the **variable engine**: reference resolution, template placeholders, operations, and key renames. It is pure logic run under [Vitest](https://vitest.dev) with no DOM, so there are no browser or UI tests.
+
+Tests sit next to the code they cover and share the helpers in [src/test/](/src/test/).
 
 ---
 

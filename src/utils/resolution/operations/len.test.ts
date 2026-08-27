@@ -12,6 +12,7 @@ checkResolution("len", {
     ["{BLANK|len}", "3"],
     ["{EMOJI|len}", "3"],
     ["{COMMIT_MESSAGE|slice(0;3)|len}", "3"],
+    ["{BLANK|strip|len}", "0"],
     ["{COMMIT_MESSAGE|LEN}", RAW],
     ["{COMMIT_MESSAGE|length}", RAW],
     ["{COMMIT_MESSAGE|len()}", RAW],

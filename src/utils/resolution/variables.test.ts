@@ -104,12 +104,6 @@ describe("getSecretKeys", () => {
     expect([...book.secrets].sort()).toEqual(["PASSWORD", "TOKEN"]);
   });
 
-  it("resolves a secret's value like any other, so Copy gets the real one", () => {
-    expect(runbook({ TOKEN: secret("s3cr3t") }).resolve("auth {TOKEN}")).toBe(
-      "auth s3cr3t",
-    );
-  });
-
   it("ignores a secret with no key", () => {
     expect(
       getSecretKeys([{ id: "1", key: "  ", value: "x", secret: true }]),

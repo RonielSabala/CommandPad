@@ -1,7 +1,12 @@
 import { RAW, checkResolution } from "@/test";
 
 checkResolution("slice", {
-  variables: { TEXT: "abcdef", DATE: "2026-07-31", INDEX: "2" },
+  variables: {
+    TEXT: "abcdef",
+    DATE: "2026-07-31",
+    INDEX: "2",
+    EMOJI: "a\u{1F600}b",
+  },
   cases: [
     ["{TEXT|slice(0;3)}", "abc"],
     ["{TEXT|slice(2;4)}", "cd"],
@@ -18,9 +23,16 @@ checkResolution("slice", {
     ["{TEXT|slice(-2;)}", "ef"],
     ["{TEXT|slice(;-2)}", "abcd"],
     ["{TEXT|slice(;;-1)}", "fedcba"],
+    ["{TEXT|slice(-1;;-2)}", "fdb"],
     // Bounds clamp instead of failing
     ["{TEXT|slice(0;99)}", "abcdef"],
     ["{TEXT|slice(99;)}", ""],
+    ["{TEXT|slice(-99;)}", "abcdef"],
+    // A stop at or before the start is an empty slice, not an error
+    ["{TEXT|slice(3;3)}", ""],
+    ["{TEXT|slice(3;1)}", ""],
+    // It slices code points, so a surrogate pair never splits
+    ["{EMOJI|slice(0;2)}", "a\u{1F600}"],
     // A lone argument is a single index, not a range
     ["{TEXT|slice(3)}", "d"],
     ["{TEXT|slice(0)}", "a"],

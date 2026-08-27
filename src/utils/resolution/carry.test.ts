@@ -1,22 +1,23 @@
+import { VariableSyntax } from "@/common/variableSyntax";
 import { buildVariables, commandBlock } from "@/test";
 import { describe, expect, it } from "vitest";
 
 import { carryVariables, uniqueCopyKey } from "./carry";
 
+const COPY = `HOST${VariableSyntax.COPY_SUFFIX}`;
+
 describe("uniqueCopyKey", () => {
   it("suffixes the key", () => {
-    expect(uniqueCopyKey("HOST", new Set())).toBe("HOST_COPY");
+    expect(uniqueCopyKey("HOST", new Set())).toBe(COPY);
   });
 
   it("counts up while the suffixed key is taken", () => {
-    expect(uniqueCopyKey("HOST", new Set(["HOST_COPY"]))).toBe("HOST_COPY1");
-    expect(uniqueCopyKey("HOST", new Set(["HOST_COPY", "HOST_COPY1"]))).toBe(
-      "HOST_COPY2",
-    );
+    expect(uniqueCopyKey("HOST", new Set([COPY]))).toBe(`${COPY}1`);
+    expect(uniqueCopyKey("HOST", new Set([COPY, `${COPY}1`]))).toBe(`${COPY}2`);
   });
 
   it("strips an existing suffix, so copying a copy does not stack them", () => {
-    expect(uniqueCopyKey("HOST_COPY2", new Set())).toBe("HOST_COPY");
+    expect(uniqueCopyKey(`${COPY}2`, new Set())).toBe(COPY);
   });
 });
 
@@ -60,8 +61,8 @@ describe("carryVariables", () => {
     const target = buildVariables({ HOST: "other.example", USER: "root" });
     const carried = carryVariables(blocks, source, target);
 
-    expect(keysOf(carried.variables)).toEqual([["HOST_COPY", "example.com"]]);
-    expect([...carried.renames]).toEqual([["HOST", "HOST_COPY"]]);
+    expect(keysOf(carried.variables)).toEqual([[COPY, "example.com"]]);
+    expect([...carried.renames]).toEqual([["HOST", COPY]]);
   });
 
   it("rewrites a carried value that references a renamed key", () => {
@@ -77,8 +78,8 @@ describe("carryVariables", () => {
     );
 
     expect(keysOf(carried.variables)).toEqual([
-      ["HOST_COPY", "example.com"],
-      ["URL", "https://{HOST_COPY}"],
+      [COPY, "example.com"],
+      ["URL", `https://{${COPY}}`],
     ]);
   });
 
@@ -90,6 +91,6 @@ describe("carryVariables", () => {
 
     expect(
       keysOf(carryVariables(blocks, secretSource, target).variables),
-    ).toEqual([["HOST_COPY", "example.com"]]);
+    ).toEqual([[COPY, "example.com"]]);
   });
 });

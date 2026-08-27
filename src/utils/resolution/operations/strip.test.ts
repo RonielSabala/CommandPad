@@ -5,6 +5,7 @@ checkResolution("strip", {
     PADDED: "  spaced  ",
     PATH: "/tmp/build/",
     REPEATED: "xxbodyxx",
+    SPACED: " two words ",
   },
   cases: [
     ["{PADDED|strip}", "spaced"],
@@ -18,6 +19,8 @@ checkResolution("strip", {
     ["{REPEATED|lstrip(x)}", "bodyxx"],
     ["{PATH|strip(;)}", "/tmp/build/"],
     ["{PATH|strip(missing)}", "/tmp/build/"],
+    ["{PATH|lstrip(pmt/)}", "/tmp/build/"],
+    ["{SPACED|strip( )}", "two words"],
     ["{PATH|nostrip}", RAW],
   ],
 });
