@@ -14,6 +14,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
   - [Requirements](#requirements)
   - [Installation](#installation)
   - [Run Locally](#run-locally)
+  - [Run Tests](#run-tests)
 - [Cloud Sync (Optional)](#cloud-sync-optional)
   - [OneDrive](#onedrive)
   - [Google Drive](#google-drive)
@@ -75,6 +76,24 @@ pnpm dev
 ```
 
 Access at `http://localhost:5173`. Use <kbd>Ctrl</kbd>+<kbd>C</kbd> to stop.
+
+---
+
+### Run Tests
+
+```bash
+pnpm test
+```
+
+Re-run the affected tests on every save:
+
+```bash
+pnpm test:watch
+```
+
+The suite covers the **variable engine**: reference resolution, template placeholders, operations, and key renames. It is pure logic run under [Vitest](https://vitest.dev) with no DOM, so there are no browser or UI tests.
+
+Tests sit next to the code they cover and share the helpers in [src/test/](/src/test/).
 
 ---
 
