@@ -1,9 +1,12 @@
 import { RunbookView } from "@/common/enums";
+import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
 import { PlusIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { useCallback, useState, type MouseEvent } from "react";
 import { BodyText, Braces, FileEarmarkCode } from "react-bootstrap-icons";
 
+import { TabContextMenu } from "./TabContextMenu";
 import { TabItem } from "./TabItem";
 import "./TabsBar.css";
 
@@ -14,6 +17,17 @@ export function TabsBar() {
   const runbookView = useStore((state) => state.runbookView);
   const toggleRunbookView = useStore((state) => state.toggleRunbookView);
 
+  const [menu, setMenu] = useState<{
+    tabId: string;
+    anchor: ContextMenuAnchor;
+  } | null>(null);
+
+  const closeMenu = useCallback(() => setMenu(null), []);
+  const onOpenMenu = useCallback((event: MouseEvent, tabId: string) => {
+    event.preventDefault();
+    setMenu({ tabId, anchor: { x: event.clientX, y: event.clientY } });
+  }, []);
+
   const showingSource = runbookView === RunbookView.SOURCE;
   const showingVariables = runbookView === RunbookView.VARIABLES;
 
@@ -21,7 +35,7 @@ export function TabsBar() {
     <div id="tabs-bar">
       <div id="tabs-strip">
         {tabs.map((tab) => (
-          <TabItem key={tab.id} tab={tab} />
+          <TabItem key={tab.id} tab={tab} onOpenMenu={onOpenMenu} />
         ))}
       </div>
       <button
@@ -62,6 +76,14 @@ export function TabsBar() {
             )}
           </button>
         </div>
+      )}
+
+      {menu && (
+        <TabContextMenu
+          tabId={menu.tabId}
+          anchor={menu.anchor}
+          onClose={closeMenu}
+        />
       )}
     </div>
   );

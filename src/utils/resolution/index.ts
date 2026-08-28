@@ -28,7 +28,8 @@ export {
   splitReferenceBody
 } from "./token";
 export type { OpenReference } from "./token";
-export type { VariableMap } from "./types";
+export type { ResolvedValue, VariableMap } from "./types";
+export { hasUnresolvedReferences } from "./unresolved";
 export { getUsedVariableKeys, isVariableUnused } from "./usage";
 export {
   getSecretKeys,

@@ -121,6 +121,10 @@ export const en: Messages = {
   tabs: {
     newTab: "New tab",
     closeTab: "Close tab",
+    close: "Close",
+    closeOthers: "Close others",
+    closeAll: "Close all",
+    unresolved: "This runbook has unresolved variables",
   },
   source: {
     openSource: "Open source file",
@@ -760,9 +764,13 @@ If something goes wrong, undo it in this order:
         openSourceLabel,
         openPreviewLabel,
         openEditorLabel,
+        closeLabel,
+        closeOthersLabel,
+        closeAllLabel,
       ) => `* **Click** a tab to switch to it.
 * **Drag** a tab to reorder it.
 * **Middle-click** a tab to close it.
+* **Right-click** a tab for **${closeLabel}**, **${closeOthersLabel}** and **${closeAllLabel}**.
 * **Click** the **+** at the end of the tabs bar to open a new tab.
 * **${openSourceLabel}**, at the far end of the tabs bar, swaps the blocks below for the runbook's raw JSON.
 * **${openEditorLabel}**, beside it, swaps them for the runbook's variables instead.
@@ -773,6 +781,8 @@ If something goes wrong, undo it in this order:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
         "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, close one, and open the source file to see a tab's runbook as JSON.",
+      unresolvedMarker:
+        "A red dot before a tab's name means that runbook holds at least one reference that resolves to nothing, so a runbook missing a value stands out without opening it. The third tab above wears one: open its variables and give `HOST` a value, and the dot goes as soon as every reference resolves.",
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",
@@ -829,6 +839,10 @@ If something goes wrong, undo it in this order:
         "A variable's value can reference other variables. That way you can build values out of smaller pieces.",
       demoHint:
         "Below, `BASE_URL` is built from `HOST`. Change `HOST` and watch the change ripple through to the command:",
+      shades:
+        "The preview highlights resolved text by how far it was read through. Text the variable you referenced wrote takes the lightest tint, text a reference **inside** that value wrote sits on a deeper one, and anything further in shares the deepest. One glance then tells you which part of a command came from where.",
+      shadesDemoHint:
+        "Here `HOST` is built from `SERVICE`, which is built from `NAME`, so the resolved command wears all three tints at once:",
       circular:
         "Circular references are safe: if two variables reference each other, the app detects the loop and leaves the reference as plain text.",
     },

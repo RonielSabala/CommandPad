@@ -129,6 +129,10 @@ export interface Messages {
   tabs: {
     newTab: string;
     closeTab: string;
+    close: string;
+    closeOthers: string;
+    closeAll: string;
+    unresolved: string;
   };
   source: {
     openSource: string;
@@ -423,10 +427,14 @@ export interface Messages {
         openSourceLabel: string,
         openPreviewLabel: string,
         openEditorLabel: string,
+        closeLabel: string,
+        closeOthersLabel: string,
+        closeAllLabel: string,
       ) => string;
       variablesEditorNote: string;
       autoCreate: string;
       labelDemo: string;
+      unresolvedMarker: string;
     };
     sidebar: {
       intro: string;
@@ -459,6 +467,8 @@ export interface Messages {
     variableReferences: {
       intro: string;
       demoHint: string;
+      shades: string;
+      shadesDemoHint: string;
       circular: string;
     };
     parameterizedPlaceholders: {

@@ -125,6 +125,10 @@ export const es: Messages = {
   tabs: {
     newTab: "Nueva pestaña",
     closeTab: "Cerrar pestaña",
+    close: "Cerrar",
+    closeOthers: "Cerrar las demás",
+    closeAll: "Cerrar todas",
+    unresolved: "Este libro tiene variables sin resolver",
   },
   source: {
     openSource: "Abrir archivo fuente",
@@ -774,9 +778,13 @@ Si algo sale mal, deshazlo en este orden:
         openSourceLabel,
         openPreviewLabel,
         openEditorLabel,
+        closeLabel,
+        closeOthersLabel,
+        closeAllLabel,
       ) => `* **Haz clic** en una pestaña para cambiar a ella.
 * **Arrastra** una pestaña para reordenarla.
 * **Clic con la rueda** del ratón en una pestaña para cerrarla.
+* **Clic derecho** en una pestaña para **${closeLabel}**, **${closeOthersLabel}** y **${closeAllLabel}**.
 * **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.
 * **${openSourceLabel}**, al final de la barra de pestañas, cambia los bloques de abajo por el JSON del libro.
 * **${openEditorLabel}**, a su lado, los cambia por las variables del libro.
@@ -787,6 +795,8 @@ Si algo sale mal, deshazlo en este orden:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:
         "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas, cierra alguna, y abre la fuente para ver el libro de una pestaña como JSON.",
+      unresolvedMarker:
+        "Un punto rojo antes del nombre de una pestaña significa que ese libro tiene al menos una referencia que no resuelve a nada, así que un libro al que le falta un valor se nota sin necesidad de abrirlo. La tercera pestaña de arriba lleva uno: abre sus variables y dale un valor a `HOST`, y el punto desaparece en cuanto todas las referencias resuelven.",
     },
     sidebar: {
       intro:
@@ -844,6 +854,10 @@ Si algo sale mal, deshazlo en este orden:
         "El valor de una variable puede referenciar otras variables. Así puedes construir valores a partir de piezas más pequeñas.",
       demoHint:
         "Abajo, `BASE_URL` se construye a partir de `HOST`. Cambia `HOST` y observa cómo el cambio se propaga hasta el comando:",
+      shades:
+        "La vista previa resalta el texto resuelto según cuántos valores atravesó. El texto que escribió la variable a la que haces referencia lleva el tono más claro, el que escribió una referencia **dentro** de ese valor se apoya en uno más intenso, y todo lo que esté más adentro comparte el más intenso. Así, de un vistazo sabes qué parte del comando viene de dónde.",
+      shadesDemoHint:
+        "Aquí `HOST` se construye a partir de `SERVICE`, que a su vez se construye a partir de `NAME`, así que el comando resuelto luce los tres tonos a la vez:",
       circular:
         "Las referencias circulares son seguras: si dos variables se referencian entre sí, la app detecta el bucle y deja la referencia como texto plano.",
     },

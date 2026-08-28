@@ -41,6 +41,9 @@ export function TabsDocs() {
           t.source.openSource,
           t.source.openPreview,
           t.variables.openEditorTitle,
+          t.tabs.close,
+          t.tabs.closeOthers,
+          t.tabs.closeAll,
         )}
       />
       <Prose text={t.docs.tabs.variablesEditorNote} />
@@ -73,7 +76,7 @@ export function TabsDocs() {
           {
             blocks: [
               demoNote("", NoteStyle.HEADING),
-              demoCommand("systemctl restart {SERVICE}"),
+              demoCommand("systemctl restart {SERVICE} --host {HOST}"),
             ],
             variables: [demoVariable("SERVICE", "nginx")],
           },
@@ -82,6 +85,8 @@ export function TabsDocs() {
         <TabsBar />
         <DemoRunbookPanel />
       </DemoWorkspace>
+
+      <Prose text={t.docs.tabs.unresolvedMarker} />
     </>
   );
 }

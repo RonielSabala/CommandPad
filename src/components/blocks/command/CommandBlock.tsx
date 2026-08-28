@@ -7,7 +7,10 @@ import {
   CommandClampConfig,
 } from "@/common/editorConfig";
 import { BlockType, CommandSurface } from "@/common/enums";
-import type { CommandBlock as CommandBlockData } from "@/common/types";
+import type {
+  CommandBlock as CommandBlockData,
+  CommandSegment,
+} from "@/common/types";
 import {
   CodeEditor,
   type CodeEditorHandle,
@@ -43,6 +46,19 @@ const CLAMP_STYLE = {
 } as CSSProperties;
 
 const SECRET_MASK = "******";
+
+function NestedText({ segment }: { segment: CommandSegment }) {
+  const spans = segment.spans;
+  if (!spans) {
+    return segment.text;
+  }
+
+  return spans.map((span, i) => (
+    <span key={i} className={`token-nesting-${span.depth}`}>
+      {span.text}
+    </span>
+  ));
+}
 
 interface Props {
   block: CommandBlockData;
@@ -164,7 +180,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
                 </span>
               ) : (
                 <span key={i} className={`token-${seg.type}`}>
-                  {seg.text}
+                  <NestedText segment={seg} />
                 </span>
               ),
             )

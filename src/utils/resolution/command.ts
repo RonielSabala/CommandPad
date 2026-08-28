@@ -3,6 +3,7 @@ import type { CommandSegment } from "@/common/types";
 
 import type { ReferenceContext } from "./reference";
 import { resolveReference } from "./reference";
+import { previewSpans } from "./spans";
 import { scanReferences, unescapeBraces } from "./token";
 import type { VariableMap } from "./types";
 
@@ -10,7 +11,7 @@ function commandContext(variableMap: VariableMap): ReferenceContext {
   return {
     surface: ReferenceSurface.COMMAND,
     lookup: (key) =>
-      Object.hasOwn(variableMap, key) && variableMap[key]
+      Object.hasOwn(variableMap, key) && variableMap[key].text
         ? variableMap[key]
         : undefined,
   };
@@ -36,7 +37,7 @@ export function resolveCommandText(
   for (const match of scanReferences(rawText, ReferenceSurface.COMMAND)) {
     pushLiteral(rawText.slice(lastEnd, match.start));
 
-    const { key, text, resolved } = resolveReference(
+    const { key, text, resolved, spans } = resolveReference(
       match.token,
       match.raw,
       context,
@@ -48,6 +49,7 @@ export function resolveCommandText(
       type: resolved
         ? CommandSegmentType.RESOLVED
         : CommandSegmentType.UNRESOLVED,
+      ...(resolved ? { spans: previewSpans(spans) } : {}),
     });
 
     lastEnd = match.end;

@@ -7,18 +7,28 @@ import { CloseIcon } from "@/components/icons";
 import { blockDrag } from "@/hooks/blockDrag";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { hasUnresolvedReferences } from "@/utils/resolution";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
-import { useEffect, useRef, useState, type DragEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type DragEvent,
+  type MouseEvent,
+} from "react";
+
 import "./TabItem.css";
 
 const tabDrag: { srcId: string | null } = { srcId: null };
 
 interface Props {
   tab: Tab;
+  onOpenMenu: (event: MouseEvent, tabId: string) => void;
 }
 
-export function TabItem({ tab }: Props) {
+export function TabItem({ tab, onOpenMenu }: Props) {
   const t = useTranslation();
   const tabId = tab.id;
   const tabLabel = displayLabel(tab.label || t.common.untitledTab, t);
@@ -28,6 +38,11 @@ export function TabItem({ tab }: Props) {
   const closeTab = useStore((state) => state.closeTab);
   const reorderTabs = useStore((state) => state.reorderTabs);
   const copyBlocksToTab = useStore((state) => state.copyBlocksToTab);
+
+  const unresolved = useMemo(
+    () => hasUnresolvedReferences(tab.blocks, tab.variables),
+    [tab.blocks, tab.variables],
+  );
 
   const [dragging, setDragging] = useState(false);
   const [dropSide, setDropSide] = useState<TabDropSide | null>(null);
@@ -69,6 +84,7 @@ export function TabItem({ tab }: Props) {
           event.preventDefault();
         }
       }}
+      onContextMenu={(event) => onOpenMenu(event, tabId)}
       onMouseUp={(event) => {
         if (event.button === MouseButton.MIDDLE) {
           event.preventDefault();
@@ -149,6 +165,13 @@ export function TabItem({ tab }: Props) {
         reorderTabs(srcId, tabId, !isLeftHalf(event));
       }}
     >
+      {unresolved && (
+        <span
+          className="tab-unresolved"
+          title={t.tabs.unresolved}
+          aria-label={t.tabs.unresolved}
+        />
+      )}
       <span className="tab-label">{tabLabel}</span>
       <button
         className="tab-close"

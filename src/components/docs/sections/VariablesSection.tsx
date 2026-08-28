@@ -125,6 +125,23 @@ export function VariableReferencesDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variableReferences.shades} />
+      <Prose text={t.docs.variableReferences.shadesDemoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("NAME", "api"),
+              demoVariable("SERVICE", "svc-{NAME}"),
+              demoVariable("HOST", "{SERVICE}.example.com"),
+            ],
+            blocks: [demoCommand("curl https://{HOST}/health")],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
       <Prose text={t.docs.variableReferences.circular} />
     </>
   );
