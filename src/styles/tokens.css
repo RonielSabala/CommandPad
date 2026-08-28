@@ -11,8 +11,8 @@
   /* Accents & semantic colors */
 
   --success: #15dd9e;
-  --success-nested-1: #12b382;
-  --success-nested-2: #0f8b66;
+  --success-nested-1: #00bd79;
+  --success-nested-2: #009c54;
 
   --accent: #3b82f6;
   --accent-dim: rgba(77, 139, 245, 0.12);
@@ -182,8 +182,8 @@
   /* Accents & semantic colors */
 
   --success: #0f8a5f;
-  --success-nested-1: #0b6746;
-  --success-nested-2: #07452f;
+  --success-nested-1: #007042;
+  --success-nested-2: #005527;
 
   --accent: #2f5de0;
   --accent-dim: rgba(47, 93, 224, 0.09);
