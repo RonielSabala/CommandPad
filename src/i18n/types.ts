@@ -132,6 +132,7 @@ export interface Messages {
     close: string;
     closeOthers: string;
     closeAll: string;
+    unresolved: string;
   };
   source: {
     openSource: string;
@@ -433,6 +434,7 @@ export interface Messages {
       variablesEditorNote: string;
       autoCreate: string;
       labelDemo: string;
+      unresolvedMarker: string;
     };
     sidebar: {
       intro: string;

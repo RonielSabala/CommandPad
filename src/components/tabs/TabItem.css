@@ -109,6 +109,16 @@
   right: -1px;
 }
 
+.tab-unresolved {
+  position: relative;
+  z-index: var(--z-raised);
+  flex-shrink: 0;
+  width: var(--space-4);
+  height: var(--space-4);
+  border-radius: 50%;
+  background: var(--danger);
+}
+
 .tab-label {
   position: relative;
   z-index: var(--z-raised);

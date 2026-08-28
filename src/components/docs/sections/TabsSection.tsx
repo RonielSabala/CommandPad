@@ -76,7 +76,7 @@ export function TabsDocs() {
           {
             blocks: [
               demoNote("", NoteStyle.HEADING),
-              demoCommand("systemctl restart {SERVICE}"),
+              demoCommand("systemctl restart {SERVICE} --host {HOST}"),
             ],
             variables: [demoVariable("SERVICE", "nginx")],
           },
@@ -85,6 +85,8 @@ export function TabsDocs() {
         <TabsBar />
         <DemoRunbookPanel />
       </DemoWorkspace>
+
+      <Prose text={t.docs.tabs.unresolvedMarker} />
     </>
   );
 }
