@@ -12,7 +12,7 @@ const ESCAPES_REFERENCES: Record<ReferenceSurface, boolean> = {
   [ReferenceSurface.VALUE]: false,
 };
 
-interface ReferenceMatch {
+export interface ReferenceMatch {
   token: string;
   raw: string;
   start: number;
@@ -159,6 +159,45 @@ export function openReferenceAt(
   return start === undefined || openEscaped.pop()
     ? null
     : { start, raw: text.slice(start + 1, index) };
+}
+
+export interface ReferencePart {
+  text: string;
+  match: ReferenceMatch | null;
+}
+
+function splitMatches(
+  text: string,
+  matches: ReferenceMatch[],
+  literal: (text: string) => string,
+): ReferencePart[] {
+  const parts: ReferencePart[] = [];
+  let lastEnd = 0;
+
+  for (const match of matches) {
+    parts.push({
+      text: literal(text.slice(lastEnd, match.start)),
+      match: null,
+    });
+
+    parts.push({ text: match.token, match });
+    lastEnd = match.end;
+  }
+
+  parts.push({ text: literal(text.slice(lastEnd)), match: null });
+  return parts;
+}
+
+/** Splits `text` into its literal runs and the references between them. */
+export function splitReferenceParts(
+  text: string,
+  surface: ReferenceSurface,
+): ReferencePart[] {
+  return splitMatches(
+    text,
+    scanReferences(text, surface),
+    (literal) => literal,
+  );
 }
 
 function replaceMatches(

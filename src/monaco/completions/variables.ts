@@ -9,7 +9,7 @@ export function buildVariableCompletions(
 ): VariableCompletion[] {
   return Object.keys(variableMap).map((key) => ({
     key,
-    detail: secretKeys.has(key) ? SECRET_MASK : variableMap[key],
-    params: getTemplateParamNames(variableMap[key]),
+    detail: secretKeys.has(key) ? SECRET_MASK : variableMap[key].text,
+    params: getTemplateParamNames(variableMap[key].text),
   }));
 }

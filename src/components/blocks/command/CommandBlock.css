@@ -105,6 +105,14 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
   color: var(--success);
 }
 
+.token-nesting-2 {
+  color: var(--success-nested-1);
+}
+
+.token-nesting-3 {
+  color: var(--success-nested-2);
+}
+
 .token-unresolved {
   color: var(--danger);
   font-weight: 600;

@@ -95,10 +95,16 @@ export interface RunbookContent {
   variables: Variable[];
 }
 
+export interface ResolvedSpan {
+  text: string;
+  depth: number;
+}
+
 export interface CommandSegment {
   key?: string;
   text: string;
   type: CommandSegmentType;
+  spans?: ResolvedSpan[];
 }
 
 export interface NoteSegment {

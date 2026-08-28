@@ -19,6 +19,7 @@ describe("resolveCommandText", () => {
         key: "HOST",
         text: "example.com",
         type: CommandSegmentType.RESOLVED,
+        spans: [{ text: "example.com", depth: 1 }],
       },
       { text: " -v", type: CommandSegmentType.LITERAL },
     ]);
@@ -30,6 +31,7 @@ describe("resolveCommandText", () => {
       key: "TOKEN",
       text: "s3cr",
       type: CommandSegmentType.RESOLVED,
+      spans: [{ text: "s3cr", depth: 1 }],
     });
   });
 });

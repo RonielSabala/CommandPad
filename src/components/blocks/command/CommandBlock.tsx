@@ -7,7 +7,10 @@ import {
   CommandClampConfig,
 } from "@/common/editorConfig";
 import { BlockType, CommandSurface } from "@/common/enums";
-import type { CommandBlock as CommandBlockData } from "@/common/types";
+import type {
+  CommandBlock as CommandBlockData,
+  CommandSegment,
+} from "@/common/types";
 import {
   CodeEditor,
   type CodeEditorHandle,
@@ -33,7 +36,14 @@ import {
 } from "@/utils/resolution";
 import { classNames, countLines } from "@/utils/string";
 import type { CSSProperties } from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import "./CommandBlock.css";
 import { CommandClampToggle } from "./CommandClampToggle";
@@ -43,6 +53,25 @@ const CLAMP_STYLE = {
 } as CSSProperties;
 
 const SECRET_MASK = "******";
+
+const BASE_NESTING_DEPTH = 1;
+
+function NestedText({ segment }: { segment: CommandSegment }) {
+  const spans = segment.spans;
+  if (!spans || spans.length < 2) {
+    return segment.text;
+  }
+
+  return spans.map((span, i) =>
+    span.depth > BASE_NESTING_DEPTH ? (
+      <span key={i} className={`token-nesting-${span.depth}`}>
+        {span.text}
+      </span>
+    ) : (
+      <Fragment key={i}>{span.text}</Fragment>
+    ),
+  );
+}
 
 interface Props {
   block: CommandBlockData;
@@ -164,7 +193,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
                 </span>
               ) : (
                 <span key={i} className={`token-${seg.type}`}>
-                  {seg.text}
+                  <NestedText segment={seg} />
                 </span>
               ),
             )

@@ -166,8 +166,8 @@ export const StringTestConfig = {
 } as const;
 
 export const ReferenceConfig = {
-  // How many times a filled template may produce references that fill another
   MAX_TEMPLATE_DEPTH: 10,
+  MAX_NESTING_DEPTH: 3,
 } as const;
 
 export const ExtractedVariableConfig = {

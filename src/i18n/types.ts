@@ -467,6 +467,8 @@ export interface Messages {
     variableReferences: {
       intro: string;
       demoHint: string;
+      shades: string;
+      shadesDemoHint: string;
       circular: string;
     };
     parameterizedPlaceholders: {

@@ -1,16 +1,18 @@
 import { ReferenceConfig } from "@/common/config";
 import { ReferenceSurface } from "@/common/enums";
+import type { ResolvedSpan } from "@/common/types";
 import { VariableSyntax } from "@/common/variableSyntax";
 
 import { applyOperations } from "./operations";
 import { applyTemplateParams, parseParam } from "./params";
+import { flatSpans } from "./spans";
 import type { ReferenceBodyChunk } from "./token";
 import {
   replaceReferences,
   replaceTemplateReferences,
   splitReferenceBody,
 } from "./token";
-import type { VariableLookup } from "./types";
+import type { ResolvedValue, VariableLookup } from "./types";
 
 /** Whether an unfilled `{;name}` blank may pass through instead of leaving the reference unresolved. */
 const KEEPS_BLANKS: Record<ReferenceSurface, boolean> = {
@@ -27,6 +29,7 @@ interface ResolvedReference {
   key: string;
   text: string;
   resolved: boolean;
+  spans: ResolvedSpan[];
 }
 
 interface ResolvedChunk {
@@ -38,7 +41,7 @@ interface ResolvedChunk {
  * An unnamed reference names no variable. It has to carry at least one
  * operation, and it must not open with a template blank.
  */
-function unnamedValue(chunks: ReferenceBodyChunk[]): string | undefined {
+function unnamedValue(chunks: ReferenceBodyChunk[]): ResolvedValue | undefined {
   if (chunks[0]?.separator === VariableSyntax.PARAM_SEPARATOR) {
     return undefined;
   }
@@ -46,7 +49,7 @@ function unnamedValue(chunks: ReferenceBodyChunk[]): string | undefined {
   return chunks.some(
     (chunk) => chunk.separator === VariableSyntax.OPERATION_SEPARATOR,
   )
-    ? ""
+    ? { text: "", spans: [] }
     : undefined;
 }
 
@@ -120,6 +123,7 @@ function resolveReferenceAt(
     key,
     text: token,
     resolved: false,
+    spans: flatSpans(token),
   });
 
   const value = key ? context.lookup(key) : unnamedValue(rest);
@@ -147,7 +151,7 @@ function resolveReferenceAt(
     }
   }
 
-  const template = applyTemplateParams(value, params, { key });
+  const template = applyTemplateParams(value.text, params, { key });
   if (!template.fullyResolved && !KEEPS_BLANKS[context.surface]) {
     return unresolvedReference();
   }
@@ -157,7 +161,15 @@ function resolveReferenceAt(
     : template.text;
 
   const applied = applyOperations(filled, operations, { key });
-  return applied.ok
-    ? { key, text: applied.text, resolved: true }
-    : unresolvedReference();
+  if (!applied.ok) {
+    return unresolvedReference();
+  }
+
+  const substituted = operations.length === 0 && !template.filled;
+  return {
+    key,
+    text: applied.text,
+    resolved: true,
+    spans: substituted ? value.spans : flatSpans(applied.text),
+  };
 }

@@ -1,5 +1,5 @@
 import type { Variable } from "@/common/types";
-import { checkValues, runbook, secret } from "@/test";
+import { checkValues, runbook, secret, variableValues } from "@/test";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -49,24 +49,27 @@ checkValues("a value resolves against its neighbours", {
 });
 
 describe("getVariableMap", () => {
+  const values = (variables?: Variable[]) =>
+    variableValues(getVariableMap(variables));
+
   it("skips a variable with no key", () => {
-    expect(getVariableMap([variable("  ", "orphan")])).toEqual({});
+    expect(values([variable("  ", "orphan")])).toEqual({});
   });
 
   it("keys by the trimmed key", () => {
-    expect(getVariableMap([variable("  HOST  ", "example.com")])).toEqual({
+    expect(values([variable("  HOST  ", "example.com")])).toEqual({
       HOST: "example.com",
     });
   });
 
   it("lets the last of two duplicate keys win", () => {
     expect(
-      getVariableMap([variable("HOST", "first"), variable("HOST", "second")]),
+      values([variable("HOST", "first"), variable("HOST", "second")]),
     ).toEqual({ HOST: "second" });
   });
 
   it("defaults to an empty map", () => {
-    expect(getVariableMap()).toEqual({});
+    expect(values()).toEqual({});
   });
 });
 

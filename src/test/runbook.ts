@@ -30,7 +30,7 @@ export type VariableSpec = Record<string, string | SecretValue>;
 
 export interface TestRunbook {
   variables: Variable[];
-  values: VariableMap;
+  values: Record<string, string>;
   secrets: Set<string>;
   resolve(command: string): string;
   segments(command: string): CommandSegment[];
@@ -46,17 +46,24 @@ export function buildVariables(spec: VariableSpec = {}): Variable[] {
   }));
 }
 
+export function variableValues(map: VariableMap): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(map).map(([key, value]) => [key, value.text]),
+  );
+}
+
 export function runbook(spec: VariableSpec = {}): TestRunbook {
   const variables = buildVariables(spec);
-  const values = getVariableMap(variables);
+  const map = getVariableMap(variables);
+  const values = variableValues(map);
   const secrets = getSecretKeys(variables);
 
   return {
     variables,
     values,
     secrets,
-    resolve: (command) => resolveCommandToString(command, values),
-    segments: (command) => resolveCommandText(command, values),
-    hasUnresolved: (command) => hasUnresolvedTokens(command, values),
+    resolve: (command) => resolveCommandToString(command, map),
+    segments: (command) => resolveCommandText(command, map),
+    hasUnresolved: (command) => hasUnresolvedTokens(command, map),
   };
 }

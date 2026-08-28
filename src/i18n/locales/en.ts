@@ -839,6 +839,10 @@ If something goes wrong, undo it in this order:
         "A variable's value can reference other variables. That way you can build values out of smaller pieces.",
       demoHint:
         "Below, `BASE_URL` is built from `HOST`. Change `HOST` and watch the change ripple through to the command:",
+      shades:
+        "The preview shades resolved text by how far it was read through. Text the variable you referenced wrote is the brightest green, text a reference **inside** that value wrote is a shade darker, and anything deeper shares the darkest shade. One glance then tells you which part of a command came from where.",
+      shadesDemoHint:
+        "Here `HOST` is built from `SERVICE`, which is built from `NAME`, so the resolved command wears all three shades at once:",
       circular:
         "Circular references are safe: if two variables reference each other, the app detects the loop and leaves the reference as plain text.",
     },
