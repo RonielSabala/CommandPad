@@ -26,6 +26,10 @@
   display: none;
 }
 
+#tabs-strip:empty {
+  display: none;
+}
+
 [data-panel-collapsed="true"]:not([data-panel-side="right"]) #tabs-bar {
   padding-left: var(--space-20);
 }
