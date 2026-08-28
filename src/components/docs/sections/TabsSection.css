@@ -12,10 +12,6 @@
   border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 
-#docs-demo-tab-panel > #runbook-source {
-  padding: 0;
-}
-
 #docs-demo-tab-panel > #runbook-variables-wrapper {
   flex: 0 0 auto;
   height: calc(var(--docs-demo-tab-panel-height) - 4rem);
