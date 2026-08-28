@@ -11,8 +11,6 @@
   /* Accents & semantic colors */
 
   --success: #15dd9e;
-  --success-nested-1: #00bd79;
-  --success-nested-2: #009c54;
 
   --accent: #3b82f6;
   --accent-dim: rgba(77, 139, 245, 0.12);
@@ -59,6 +57,12 @@
   /* Note text styles */
   --code-color: #ffab3d;
   --code-bg: rgba(255, 171, 61, 0.09);
+
+  /* Resolved command preview */
+  --resolved-color: #15dd9e;
+  --resolved-bg-1: rgba(21, 221, 158, 0.05);
+  --resolved-bg-2: rgba(21, 221, 158, 0.15);
+  --resolved-bg-3: rgba(21, 221, 158, 0.3);
 
   /* Misc & utilities */
   --white-a10: rgba(255, 255, 255, 0.1);
@@ -182,8 +186,6 @@
   /* Accents & semantic colors */
 
   --success: #0f8a5f;
-  --success-nested-1: #007042;
-  --success-nested-2: #005527;
 
   --accent: #2f5de0;
   --accent-dim: rgba(47, 93, 224, 0.09);
@@ -222,6 +224,12 @@
   /* Note text styles */
   --code-color: #b4490a;
   --code-bg: rgba(180, 73, 10, 0.08);
+
+  /* Resolved command preview */
+  --resolved-color: #076041;
+  --resolved-bg-1: rgba(16, 185, 129, 0.1);
+  --resolved-bg-2: rgba(16, 185, 129, 0.25);
+  --resolved-bg-3: rgba(16, 185, 129, 0.4);
 
   /* Misc & utilities */
   --shadow-color-float: rgba(22, 26, 34, 0.12);

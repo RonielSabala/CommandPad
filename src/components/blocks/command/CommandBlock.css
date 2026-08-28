@@ -102,15 +102,19 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
 /* Token styles */
 
 .token-resolved {
-  color: var(--success);
+  color: var(--resolved-color);
+}
+
+.token-nesting-1 {
+  background: var(--resolved-bg-1);
 }
 
 .token-nesting-2 {
-  color: var(--success-nested-1);
+  background: var(--resolved-bg-2);
 }
 
 .token-nesting-3 {
-  color: var(--success-nested-2);
+  background: var(--resolved-bg-3);
 }
 
 .token-unresolved {

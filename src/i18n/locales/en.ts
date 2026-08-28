@@ -840,9 +840,9 @@ If something goes wrong, undo it in this order:
       demoHint:
         "Below, `BASE_URL` is built from `HOST`. Change `HOST` and watch the change ripple through to the command:",
       shades:
-        "The preview shades resolved text by how far it was read through. Text the variable you referenced wrote is the brightest green, text a reference **inside** that value wrote is a shade darker, and anything deeper shares the darkest shade. One glance then tells you which part of a command came from where.",
+        "The preview highlights resolved text by how far it was read through. Text the variable you referenced wrote takes the lightest tint, text a reference **inside** that value wrote sits on a deeper one, and anything further in shares the deepest. One glance then tells you which part of a command came from where.",
       shadesDemoHint:
-        "Here `HOST` is built from `SERVICE`, which is built from `NAME`, so the resolved command wears all three shades at once:",
+        "Here `HOST` is built from `SERVICE`, which is built from `NAME`, so the resolved command wears all three tints at once:",
       circular:
         "Circular references are safe: if two variables reference each other, the app detects the loop and leaves the reference as plain text.",
     },

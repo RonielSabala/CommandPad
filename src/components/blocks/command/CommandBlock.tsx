@@ -36,14 +36,7 @@ import {
 } from "@/utils/resolution";
 import { classNames, countLines } from "@/utils/string";
 import type { CSSProperties } from "react";
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import "./CommandBlock.css";
 import { CommandClampToggle } from "./CommandClampToggle";
@@ -54,23 +47,17 @@ const CLAMP_STYLE = {
 
 const SECRET_MASK = "******";
 
-const BASE_NESTING_DEPTH = 1;
-
 function NestedText({ segment }: { segment: CommandSegment }) {
   const spans = segment.spans;
-  if (!spans || spans.length < 2) {
+  if (!spans) {
     return segment.text;
   }
 
-  return spans.map((span, i) =>
-    span.depth > BASE_NESTING_DEPTH ? (
-      <span key={i} className={`token-nesting-${span.depth}`}>
-        {span.text}
-      </span>
-    ) : (
-      <Fragment key={i}>{span.text}</Fragment>
-    ),
-  );
+  return spans.map((span, i) => (
+    <span key={i} className={`token-nesting-${span.depth}`}>
+      {span.text}
+    </span>
+  ));
 }
 
 interface Props {

@@ -855,7 +855,7 @@ Si algo sale mal, deshazlo en este orden:
       demoHint:
         "Abajo, `BASE_URL` se construye a partir de `HOST`. Cambia `HOST` y observa cómo el cambio se propaga hasta el comando:",
       shades:
-        "La vista previa matiza el texto resuelto según cuántos valores atravesó. El texto que escribió la variable a la que haces referencia es el verde más claro, el que escribió una referencia **dentro** de ese valor es un tono más oscuro, y todo lo que esté más adentro comparte el tono más oscuro. Así, de un vistazo sabes qué parte del comando viene de dónde.",
+        "La vista previa resalta el texto resuelto según cuántos valores atravesó. El texto que escribió la variable a la que haces referencia lleva el tono más claro, el que escribió una referencia **dentro** de ese valor se apoya en uno más intenso, y todo lo que esté más adentro comparte el más intenso. Así, de un vistazo sabes qué parte del comando viene de dónde.",
       shadesDemoHint:
         "Aquí `HOST` se construye a partir de `SERVICE`, que a su vez se construye a partir de `NAME`, así que el comando resuelto luce los tres tonos a la vez:",
       circular:
