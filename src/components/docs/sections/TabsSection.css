@@ -16,3 +16,7 @@
   flex: 0 0 auto;
   height: calc(var(--docs-demo-tab-panel-height) - 4rem);
 }
+
+#docs-demo-tab-panel .runbook-source-editor {
+  border-radius: var(--radius-md);
+}
