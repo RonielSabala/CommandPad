@@ -105,6 +105,17 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
   color: var(--resolved-color);
 }
 
+.token-nesting-1,
+.token-nesting-2,
+.token-nesting-3 {
+  display: inline-block;
+}
+
+.token-nesting-blank {
+  width: 0.2em;
+  user-select: none;
+}
+
 .token-nesting-1 {
   background: var(--resolved-bg-1);
 }

@@ -1,4 +1,9 @@
-import { COPY_FEEDBACK_TIMEOUT_MS } from "@/common/config";
+import {
+  CARRIAGE_RETURN,
+  COPY_FEEDBACK_TIMEOUT_MS,
+  LINE_BREAK,
+  NON_BREAKING_SPACE,
+} from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import {
@@ -34,9 +39,16 @@ import {
   resolveCommandToString,
   type VariableMap,
 } from "@/utils/resolution";
-import { classNames, countLines } from "@/utils/string";
+import { classNames, countLines, splitLines, stripEnd } from "@/utils/string";
 import type { CSSProperties } from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import "./CommandBlock.css";
 import { CommandClampToggle } from "./CommandClampToggle";
@@ -47,6 +59,30 @@ const CLAMP_STYLE = {
 
 const SECRET_MASK = "******";
 
+function HighlightedLines({
+  text,
+  className,
+}: {
+  text: string;
+  className: string;
+}) {
+  return splitLines(text).map((line, i) => {
+    const content = stripEnd(line, CARRIAGE_RETURN);
+    const isBlank = content === "";
+
+    return (
+      <Fragment key={i}>
+        {i > 0 && LINE_BREAK}
+        <span
+          className={classNames(className, isBlank && "token-nesting-blank")}
+        >
+          {isBlank ? NON_BREAKING_SPACE : content}
+        </span>
+      </Fragment>
+    );
+  });
+}
+
 function NestedText({ segment }: { segment: CommandSegment }) {
   const spans = segment.spans;
   if (!spans) {
@@ -54,9 +90,11 @@ function NestedText({ segment }: { segment: CommandSegment }) {
   }
 
   return spans.map((span, i) => (
-    <span key={i} className={`token-nesting-${span.depth}`}>
-      {span.text}
-    </span>
+    <HighlightedLines
+      key={i}
+      text={span.text}
+      className={`token-nesting-${span.depth}`}
+    />
   ));
 }
 
