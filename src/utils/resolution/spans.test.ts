@@ -22,21 +22,23 @@ describe("nesting depth", () => {
   });
 
   it("puts a variable's own value at the first level", () => {
-    expect(spans(book, "{NAME}")).toEqual([{ text: "api", depth: 1 }]);
+    expect(spans(book, "{NAME}")).toEqual([
+      { text: "api", depth: 1, source: "NAME" },
+    ]);
   });
 
   it("puts a reference inside that value one level deeper", () => {
     expect(spans(book, "{SERVICE}")).toEqual([
-      { text: "svc-", depth: 1 },
-      { text: "api", depth: 2 },
+      { text: "svc-", depth: 1, source: "SERVICE" },
+      { text: "api", depth: 2, source: "NAME" },
     ]);
   });
 
   it("keeps counting through a third level", () => {
     expect(spans(book, "{HOST}")).toEqual([
-      { text: "svc-", depth: 2 },
-      { text: "api", depth: 3 },
-      { text: ".example.com", depth: 1 },
+      { text: "svc-", depth: 2, source: "SERVICE" },
+      { text: "api", depth: 3, source: "NAME" },
+      { text: ".example.com", depth: 1, source: "HOST" },
     ]);
   });
 
@@ -47,39 +49,42 @@ describe("nesting depth", () => {
     expect(deepest).toBe(ReferenceConfig.MAX_NESTING_DEPTH);
   });
 
-  it("joins the neighbours the clamp lands on one level", () => {
+  it("keeps the neighbours the clamp lands on one level apart by source", () => {
     expect(spans(book, "{DEEP}")).toEqual([
-      { text: "a-", depth: 1 },
-      { text: "svc-api", depth: 3 },
-      { text: ".example.com", depth: 2 },
-      { text: "-z", depth: 1 },
+      { text: "a-", depth: 1, source: "DEEP" },
+      { text: "svc-", depth: 3, source: "SERVICE" },
+      { text: "api", depth: 3, source: "NAME" },
+      { text: ".example.com", depth: 2, source: "HOST" },
+      { text: "-z", depth: 1, source: "DEEP" },
     ]);
   });
 
   it("sits the text that filled a blank one level under the template", () => {
     expect(spans(book, "{GREETING;name=Ada}")).toEqual([
-      { text: "Hi ", depth: 1 },
-      { text: "Ada", depth: 2 },
+      { text: "Hi ", depth: 1, source: "GREETING" },
+      { text: "Ada", depth: 2, source: "GREETING;name" },
     ]);
   });
 
   it("keeps the levels around a filled blank", () => {
     expect(spans(book, "{ROUTE;route=fav}")).toEqual([
-      { text: "my/", depth: 1 },
-      { text: "fav", depth: 2 },
-      { text: "/path ", depth: 1 },
-      { text: "api", depth: 2 },
+      { text: "my/", depth: 1, source: "ROUTE" },
+      { text: "fav", depth: 2, source: "ROUTE;route" },
+      { text: "/path ", depth: 1, source: "ROUTE" },
+      { text: "api", depth: 2, source: "NAME" },
     ]);
   });
 
   it("flattens a reference an operation transformed", () => {
     expect(spans(book, "{SERVICE|uppercase}")).toEqual([
-      { text: "SVC-API", depth: 1 },
+      { text: "SVC-API", depth: 1, source: "SERVICE" },
     ]);
   });
 
   it("keeps the level a transformed nested reference sits at", () => {
-    expect(spans(book, "{LOUD}")).toEqual([{ text: "API", depth: 2 }]);
+    expect(spans(book, "{LOUD}")).toEqual([
+      { text: "API", depth: 2, source: "NAME" },
+    ]);
   });
 
   it("gives an unresolved reference no spans", () => {

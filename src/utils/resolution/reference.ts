@@ -176,6 +176,8 @@ function resolveReferenceAt(
     key,
     text: applied.text,
     resolved: true,
-    spans: rewritten ? flatSpans(applied.text) : template.spans,
+    spans: rewritten
+      ? flatSpans(applied.text, key || undefined)
+      : template.spans,
   };
 }

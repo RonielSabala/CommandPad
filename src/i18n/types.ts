@@ -469,6 +469,7 @@ export interface Messages {
       demoHint: string;
       shades: string;
       shadesDemoHint: string;
+      shadesHover: string;
       circular: string;
     };
     parameterizedPlaceholders: {

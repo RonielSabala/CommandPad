@@ -843,6 +843,8 @@ If something goes wrong, undo it in this order:
         "The preview highlights resolved text by how far it was read through. Text the variable you referenced wrote takes the lightest tint, text a reference **inside** that value wrote sits on a deeper one, and anything further in shares the deepest. One glance then tells you which part of a command came from where.",
       shadesDemoHint:
         "Here `HOST` is built from `SERVICE`, which is built from `NAME`, so the resolved command wears all three tints at once:",
+      shadesHover:
+        "When the tints alone are not enough, hover over any highlighted piece of a resolved command: it names the variable that wrote it.",
       circular:
         "Circular references are safe: if two variables reference each other, the app detects the loop and leaves the reference as plain text.",
     },

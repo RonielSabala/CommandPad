@@ -1,19 +1,19 @@
 import { ReferenceConfig } from "@/common/config";
 import type { ResolvedSpan } from "@/common/types";
 
-export function flatSpans(text: string): ResolvedSpan[] {
-  return text ? [{ text, depth: 0 }] : [];
+export function flatSpans(text: string, source?: string): ResolvedSpan[] {
+  return text ? [{ text, depth: 0, source }] : [];
 }
 
 export function nestSpans(spans: readonly ResolvedSpan[]): ResolvedSpan[] {
-  return spans.map(({ text, depth }) => ({ text, depth: depth + 1 }));
+  return spans.map((span) => ({ ...span, depth: span.depth + 1 }));
 }
 
 export function spansText(spans: readonly ResolvedSpan[]): string {
   return spans.map((span) => span.text).join("");
 }
 
-/** Joins the neighbors sitting at one depth and drops the empty ones. */
+/** Joins the neighbors sitting at one depth under one source and drops the empty ones. */
 export function mergeSpans(spans: readonly ResolvedSpan[]): ResolvedSpan[] {
   const merged: ResolvedSpan[] = [];
 
@@ -23,7 +23,7 @@ export function mergeSpans(spans: readonly ResolvedSpan[]): ResolvedSpan[] {
     }
 
     const last = merged[merged.length - 1];
-    if (last && last.depth === span.depth) {
+    if (last && last.depth === span.depth && last.source === span.source) {
       last.text += span.text;
       continue;
     }
@@ -36,9 +36,9 @@ export function mergeSpans(spans: readonly ResolvedSpan[]): ResolvedSpan[] {
 
 export function previewSpans(spans: readonly ResolvedSpan[]): ResolvedSpan[] {
   return mergeSpans(
-    spans.map(({ text, depth }) => ({
-      text,
-      depth: Math.min(depth + 1, ReferenceConfig.MAX_NESTING_DEPTH),
+    spans.map((span) => ({
+      ...span,
+      depth: Math.min(span.depth + 1, ReferenceConfig.MAX_NESTING_DEPTH),
     })),
   );
 }
@@ -59,8 +59,8 @@ export function sliceSpans(
 
     if (to > from) {
       sliced.push({
+        ...span,
         text: span.text.slice(from - at, to - at),
-        depth: span.depth,
       });
     }
 

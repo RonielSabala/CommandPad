@@ -142,6 +142,7 @@ export function VariableReferencesDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variableReferences.shadesHover} />
       <Prose text={t.docs.variableReferences.circular} />
     </>
   );

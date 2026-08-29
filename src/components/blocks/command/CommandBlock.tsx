@@ -62,9 +62,11 @@ const SECRET_MASK = "******";
 function HighlightedLines({
   text,
   className,
+  title,
 }: {
   text: string;
   className: string;
+  title?: string;
 }) {
   return splitLines(text).map((line, i) => {
     const content = stripEnd(line, CARRIAGE_RETURN);
@@ -75,6 +77,7 @@ function HighlightedLines({
         {i > 0 && LINE_BREAK}
         <span
           className={classNames(className, isBlank && "token-nesting-blank")}
+          title={title}
         >
           {isBlank ? NON_BREAKING_SPACE : content}
         </span>
@@ -94,6 +97,7 @@ function NestedText({ segment }: { segment: CommandSegment }) {
       key={i}
       text={span.text}
       className={`token-nesting-${span.depth}`}
+      title={span.source}
     />
   ));
 }

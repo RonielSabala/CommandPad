@@ -98,6 +98,7 @@ export interface RunbookContent {
 export interface ResolvedSpan {
   text: string;
   depth: number;
+  source?: string;
 }
 
 export interface CommandSegment {

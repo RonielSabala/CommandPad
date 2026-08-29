@@ -70,6 +70,10 @@ function parseBlank(body: string): TemplateBlank | null {
   return { ...declaration, operations };
 }
 
+function blankSource(key: string, name: string): string | undefined {
+  return key ? `${key}${VariableSyntax.PARAM_SEPARATOR}${name}` : undefined;
+}
+
 /** Every blank opens with this. */
 const BLANK_OPEN = `${VariableSyntax.BRACE_OPEN}${VariableSyntax.PARAM_SEPARATOR}`;
 
@@ -258,7 +262,11 @@ function fillBlanks(
 
     filled = true;
     text += applied.text;
-    pieces.push({ text: applied.text, depth: depthAt(spans, start) + 1 });
+    pieces.push({
+      text: applied.text,
+      depth: depthAt(spans, start) + 1,
+      source: blankSource(context.key, blank.name),
+    });
   }
 
   pieces.push(...sliceSpans(spans, lastEnd, template.length));
