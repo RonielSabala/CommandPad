@@ -228,7 +228,11 @@ export type CommandSurface =
 
 export const CodeLanguage = {
   PLAIN: "plaintext",
+  BASH: "shell",
+  POWERSHELL: "powershell",
   JSON: "json",
+  XML: "xml",
+  YAML: "yaml",
 } as const;
 export type CodeLanguage = (typeof CodeLanguage)[keyof typeof CodeLanguage];
 

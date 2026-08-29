@@ -1,0 +1,22 @@
+.command-language-trigger {
+  padding: var(--space-2) var(--space-4);
+  gap: var(--space-2);
+  background: var(--command-clamp-halo, transparent);
+  border: none;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 var(--space-4) var(--space-2)
+    var(--command-clamp-halo, transparent);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.command-language-trigger:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+}
+
+.command-language-trigger .select-chevron {
+  color: var(--color-text-muted);
+}

@@ -153,6 +153,7 @@ export interface Messages {
   };
   command: {
     emptyPreview: string;
+    changeLanguage: string;
     showEditor: string;
     hideEditor: string;
     showMoreLines: string;
@@ -596,6 +597,7 @@ export interface Messages {
       parts: string;
       multiline: string;
       editorFeatures: string;
+      language: (languages: string) => string;
       longCommands: (showMoreLines: string) => string;
       variablesTeaser: string;
     };

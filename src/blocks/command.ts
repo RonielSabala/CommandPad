@@ -1,9 +1,17 @@
-import { BlockField, JsonSchemaType } from "@/common/editorConfig";
-import { BlockType } from "@/common/enums";
+import {
+  BlockField,
+  COMMAND_LANGUAGE_ORDER,
+  DEFAULT_COMMAND_LANGUAGE,
+  JsonSchemaType,
+} from "@/common/editorConfig";
+import { BlockType, CodeLanguage } from "@/common/enums";
 import { MarkdownSyntax } from "@/common/markdownSyntax";
 import { joinLines } from "@/utils/string";
 import { isBoolean, isString } from "@/utils/typeGuards";
 import type { BlockDefinition } from "./types";
+
+const isCommandLanguage = (value: unknown): value is CodeLanguage =>
+  COMMAND_LANGUAGE_ORDER.includes(value as CodeLanguage);
 
 export const commandBlockDefinition: BlockDefinition<typeof BlockType.COMMAND> =
   {
@@ -11,16 +19,25 @@ export const commandBlockDefinition: BlockDefinition<typeof BlockType.COMMAND> =
     jsonSchema: {
       properties: {
         [BlockField.TEXT]: { type: JsonSchemaType.STRING },
+        [BlockField.LANGUAGE]: { enum: [...COMMAND_LANGUAGE_ORDER] },
         [BlockField.EDITOR_COLLAPSED]: { type: JsonSchemaType.BOOLEAN },
       },
       required: [BlockField.TEXT],
     },
 
-    create: (id) => ({ id, type: BlockType.COMMAND, text: "" }),
+    create: (id) => ({
+      id,
+      type: BlockType.COMMAND,
+      text: "",
+      language: DEFAULT_COMMAND_LANGUAGE,
+    }),
 
     normalize: (block) => ({
       ...block,
       text: isString(block.text) ? block.text : "",
+      language: isCommandLanguage(block.language)
+        ? block.language
+        : DEFAULT_COMMAND_LANGUAGE,
       editorCollapsed: isBoolean(block.editorCollapsed)
         ? block.editorCollapsed
         : false,

@@ -172,12 +172,17 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
 
 .command-block-editor {
   --command-clamp-halo: var(--color-surface);
+  --code-editor-header-height: var(--space-16);
   --code-editor-clamp-height: calc(
     var(--command-clamp-lines-height) + var(--space-10)
   );
   --code-editor-clamp-mask: var(--command-clamp-mask);
 
   border-top: var(--border-standard);
+}
+
+body.select-key-held:not(.read-mode) .code-editor-header {
+  pointer-events: none;
 }
 
 .command-block-editor.collapsed,

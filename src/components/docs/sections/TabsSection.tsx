@@ -1,4 +1,4 @@
-import { NoteStyle, RunbookView } from "@/common/enums";
+import { CodeLanguage, NoteStyle, RunbookView } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { TabsBar } from "@/components/tabs/TabsBar";
 import { RunbookVariables } from "@/components/variables/RunbookVariables";
@@ -56,8 +56,12 @@ export function TabsDocs() {
             blocks: [
               demoNote(backup.title, NoteStyle.HEADING),
               demoNote(backup.note),
-              demoCommand("zip -r {ARCHIVE} ~/Documents"),
-              demoCommand("ls {BACKUP_DIR}"),
+              demoCommand(
+                "zip -r {ARCHIVE} ~/Documents",
+                undefined,
+                CodeLanguage.BASH,
+              ),
+              demoCommand("ls {BACKUP_DIR}", undefined, CodeLanguage.BASH),
             ],
             variables: [
               demoVariable("BACKUP_DIR", "~/Backups"),
@@ -68,15 +72,19 @@ export function TabsDocs() {
             blocks: [
               demoNote(siteCheck.title, NoteStyle.HEADING),
               demoNote(siteCheck.note),
-              demoCommand("ping {SITE}"),
-              demoCommand("curl {SITE}/health"),
+              demoCommand("ping {SITE}", undefined, CodeLanguage.BASH),
+              demoCommand("curl {SITE}/health", undefined, CodeLanguage.BASH),
             ],
             variables: [demoVariable("SITE", "example.com")],
           },
           {
             blocks: [
               demoNote("", NoteStyle.HEADING),
-              demoCommand("systemctl restart {SERVICE} --host {HOST}"),
+              demoCommand(
+                "systemctl restart {SERVICE} --host {HOST}",
+                undefined,
+                CodeLanguage.BASH,
+              ),
             ],
             variables: [demoVariable("SERVICE", "nginx")],
           },

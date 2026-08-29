@@ -156,6 +156,7 @@ export const es: Messages = {
   },
   command: {
     emptyPreview: "comando vacío",
+    changeLanguage: "Cambiar el lenguaje del editor",
     showEditor: "Mostrar editor",
     hideEditor: "Ocultar editor",
     showMoreLines: "Mostrar más líneas",
@@ -1108,6 +1109,8 @@ Si algo sale mal, deshazlo en este orden:
         "Los comandos pueden ocupar varias líneas, y el editor se puede scrollear hacia los lados cuando una línea es muy larga. El margen izquierdo marca la primera línea con `$` y numera las siguientes.",
       editorFeatures:
         "El editor es un editor de código completo. `Ctrl+F` busca texto, `Alt+Arriba` y `Alt+Abajo` mueven una línea, `Ctrl+Shift+K` la elimina, `Alt+Clic` añade otro cursor, etc.",
+      language: (languages) =>
+        `El selector entre la vista previa y el editor elige el lenguaje con el que el editor resalta el comando: ${languages}. La elección nunca cambia lo que el comando *es*: se copia y se resuelve igual en todos los lenguajes.`,
       longCommands: (showMoreLines) =>
         `Un comando muy largo no estira el bloque para siempre. Cuando una parte pasa su límite de altura se detiene ahí y se desvanece, con un control **${showMoreLines}** debajo. Haz clic para revelar el resto, y haz clic otra vez para volver a plegarlo. La vista previa y el editor se limitan por separado, así que puedes abrir uno sin abrir el otro.`,
       variablesTeaser:

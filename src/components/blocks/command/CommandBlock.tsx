@@ -11,7 +11,7 @@ import {
   COMMAND_PROMPT_PREFIX,
   CommandClampConfig,
 } from "@/common/editorConfig";
-import { BlockType, CommandSurface } from "@/common/enums";
+import { BlockType, CodeLanguage, CommandSurface } from "@/common/enums";
 import type {
   CommandBlock as CommandBlockData,
   CommandSegment,
@@ -52,6 +52,7 @@ import {
 
 import "./CommandBlock.css";
 import { CommandClampToggle } from "./CommandClampToggle";
+import { CommandLanguageSelect } from "./CommandLanguageSelect";
 
 const CLAMP_STYLE = {
   [CommandClampConfig.MAX_LINES_PROPERTY]: CommandClampConfig.MAX_LINES,
@@ -170,6 +171,12 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     [updateBlock, blockId],
   );
 
+  const handleLanguageChange = useCallback(
+    (language: CodeLanguage) =>
+      updateBlock(blockId, BlockType.COMMAND, { language }),
+    [updateBlock, blockId],
+  );
+
   const handleEditorFocus = useCallback(() => {
     if (editorOverflows && !editorExpanded) {
       autoExpandedEditorRef.current = true;
@@ -280,6 +287,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           isEditorCollapsed && CssClass.COLLAPSED,
         )}
         value={blockText}
+        language={block.language}
         onChange={handleChange}
         onFocus={handleEditorFocus}
         onBlur={handleEditorBlur}
@@ -288,6 +296,12 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         actions={actions}
         promptPrefix={COMMAND_PROMPT_PREFIX}
         clamped={editorClamped}
+        header={
+          <CommandLanguageSelect
+            language={block.language}
+            onChange={handleLanguageChange}
+          />
+        }
         footer={
           editorOverflows && (
             <CommandClampToggle

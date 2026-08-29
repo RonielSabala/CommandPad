@@ -84,7 +84,7 @@ export function flowingEditorOptions(folding: boolean): Options {
     quickSuggestions: true,
     suggestOnTriggerCharacters: true,
     wordBasedSuggestions: "off",
-    renderValidationDecorations: "off",
+    renderValidationDecorations: "editable",
   };
 }
 

@@ -9,7 +9,7 @@
   isolation: isolate;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: 1fr auto auto;
+  grid-template-rows: var(--code-editor-header-height, 0px) 1fr auto auto;
   width: 100%;
   min-width: 0;
   font-family: var(--font-mono);
@@ -30,11 +30,34 @@
   z-index: var(--z-behind);
 }
 
+.code-editor-header {
+  grid-area: 1 / 1 / -1 / -1;
+  align-self: start;
+  position: sticky;
+  top: var(--space-2);
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: var(--code-editor-header-height, 0px);
+  padding-inline-end: var(--code-editor-header-inset-end, var(--space-6));
+  pointer-events: none;
+}
+
+.code-editor-header > * {
+  pointer-events: auto;
+}
+
+.code-editor:has(.code-editor-header) .code-editor-surface {
+  --code-editor-surface-padding-top: 0px;
+}
+
 .code-editor-surface {
   position: relative;
-  grid-area: 1 / 1 / 2 / -1;
+  grid-area: 2 / 1 / 3 / -1;
   min-height: 0;
-  padding: var(--space-5) 0 var(--space-5) var(--code-gutter-pad-start, 0px);
+  padding: var(--code-editor-surface-padding-top, var(--space-5)) 0
+    var(--space-5) var(--code-gutter-pad-start, 0px);
   min-width: calc(
     var(--code-editor-gutter-width, 0px) + var(--space-6) * 2 +
       var(--code-editor-min-columns, 20ch)
@@ -80,12 +103,13 @@
   width: 100%;
 }
 
-.code-editor > :not(.code-editor-surface, .sticky-scrollbar) {
-  grid-area: 2 / 1 / 3 / -1;
+.code-editor
+  > :not(.code-editor-surface, .code-editor-header, .sticky-scrollbar) {
+  grid-area: 3 / 1 / 4 / -1;
 }
 
 .code-editor > .sticky-scrollbar {
-  grid-area: 3 / 1 / 4 / -1;
+  grid-area: 4 / 1 / 5 / -1;
   margin-inline-start: var(--code-editor-gutter-width, 0px);
 }
 

@@ -1,3 +1,4 @@
+import { CodeLanguage } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
 import { demoCommand, demoNote } from "../demos/demoSeeds";
@@ -18,10 +19,14 @@ export function MultiSelectDocs() {
           {
             blocks: [
               demoNote(t.docs.demo.multiSelectNotes[0]),
-              demoCommand("zip -r backup.zip ~/Documents", true),
-              demoCommand("cp backup.zip ~/Backups", true),
+              demoCommand(
+                "zip -r backup.zip ~/Documents",
+                true,
+                CodeLanguage.BASH,
+              ),
+              demoCommand("cp backup.zip ~/Backups", true, CodeLanguage.BASH),
               demoNote(t.docs.demo.multiSelectNotes[1]),
-              demoCommand("rm backup.zip", true),
+              demoCommand("rm backup.zip", true, CodeLanguage.BASH),
             ],
           },
         ]}
