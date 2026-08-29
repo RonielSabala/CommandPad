@@ -18,6 +18,7 @@ describe("nesting depth", () => {
     DEEP: "a-{HOST}-z",
     GREETING: "Hi {;name=Sam}",
     LOUD: "{NAME|uppercase}",
+    ROUTE: "my/{;route}/path {NAME}",
   });
 
   it("puts a variable's own value at the first level", () => {
@@ -55,9 +56,19 @@ describe("nesting depth", () => {
     ]);
   });
 
-  it("flattens a reference whose template filled a blank", () => {
+  it("sits the text that filled a blank one level under the template", () => {
     expect(spans(book, "{GREETING;name=Ada}")).toEqual([
-      { text: "Hi Ada", depth: 1 },
+      { text: "Hi ", depth: 1 },
+      { text: "Ada", depth: 2 },
+    ]);
+  });
+
+  it("keeps the levels around a filled blank", () => {
+    expect(spans(book, "{ROUTE;route=fav}")).toEqual([
+      { text: "my/", depth: 1 },
+      { text: "fav", depth: 2 },
+      { text: "/path ", depth: 1 },
+      { text: "api", depth: 2 },
     ]);
   });
 
