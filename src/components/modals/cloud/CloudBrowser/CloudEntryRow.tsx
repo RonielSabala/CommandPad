@@ -133,8 +133,11 @@ export function CloudEntryRow({
       ? null
       : formatTimestamp(entry.modifiedAt, language);
 
-  const size =
-    entry.size === null
+  const size = entry.isFolder
+    ? entry.itemCount === null
+      ? CloudSyncConfig.NO_SIZE_PLACEHOLDER
+      : t.cloudModal.folderItemCount(entry.itemCount)
+    : entry.size === null
       ? CloudSyncConfig.NO_SIZE_PLACEHOLDER
       : formatFileSize(entry.size, language);
 

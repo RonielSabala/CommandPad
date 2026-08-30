@@ -39,13 +39,17 @@ interface DriveFileResource {
   size?: string;
 }
 
-function toEntry(item: DriveFileResource): CloudEntry {
+function toEntry(
+  item: DriveFileResource,
+  itemCount: number | null = null,
+): CloudEntry {
   return {
     id: item.id,
     name: item.name,
     isFolder: item.mimeType === FOLDER_MIME_TYPE,
     modifiedAt: item.modifiedTime ?? null,
     size: item.size === undefined ? null : Number(item.size),
+    itemCount,
   };
 }
 
@@ -318,7 +322,7 @@ class GoogleDriveClient implements CloudClient {
     );
 
     const data = (await response.json()) as { files: DriveFileResource[] };
-    return data.files.map(toEntry).filter(isBrowsableEntry);
+    return data.files.map((item) => toEntry(item)).filter(isBrowsableEntry);
   }
 
   async createFolder(
@@ -339,7 +343,7 @@ class GoogleDriveClient implements CloudClient {
       },
     );
 
-    return toEntry((await response.json()) as DriveFileResource);
+    return toEntry((await response.json()) as DriveFileResource, 0);
   }
 
   async fileExists(

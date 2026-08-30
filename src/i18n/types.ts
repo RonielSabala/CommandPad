@@ -238,6 +238,7 @@ export interface Messages {
     columnName: string;
     columnModified: string;
     columnSize: string;
+    folderItemCount: (count: number) => string;
     sortAscending: (column: string) => string;
     sortDescending: (column: string) => string;
     searchFilesPlaceholder: string;

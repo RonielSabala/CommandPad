@@ -287,6 +287,8 @@ export const es: Messages = {
     columnName: "Nombre",
     columnModified: "Modificado",
     columnSize: "Tamaño",
+    folderItemCount: (count) =>
+      count === 1 ? "1 elemento" : `${count} elementos`,
     sortAscending: (column) => `Ordenar por ${column}, ascendente`,
     sortDescending: (column) => `Ordenar por ${column}, descendente`,
     searchFilesPlaceholder: "Buscar archivos y carpetas",

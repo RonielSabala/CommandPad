@@ -283,6 +283,7 @@ export const en: Messages = {
     columnName: "Name",
     columnModified: "Modified",
     columnSize: "Size",
+    folderItemCount: (count) => (count === 1 ? "1 item" : `${count} items`),
     sortAscending: (column) => `Sort by ${column}, ascending`,
     sortDescending: (column) => `Sort by ${column}, descending`,
     searchFilesPlaceholder: "Search files and folders",

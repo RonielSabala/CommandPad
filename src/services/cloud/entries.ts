@@ -44,7 +44,7 @@ function columnValue(
     case CloudSortColumn.MODIFIED:
       return entry.modifiedAt;
     case CloudSortColumn.SIZE:
-      return entry.size;
+      return entry.isFolder ? entry.itemCount : entry.size;
   }
 }
 

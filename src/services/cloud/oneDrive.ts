@@ -27,7 +27,7 @@ interface DriveItem {
   name: string;
   lastModifiedDateTime?: string;
   size?: number;
-  folder?: unknown;
+  folder?: { childCount?: number };
 }
 
 function toEntry(item: DriveItem): CloudEntry {
@@ -39,6 +39,7 @@ function toEntry(item: DriveItem): CloudEntry {
     isFolder,
     modifiedAt: item.lastModifiedDateTime ?? null,
     size: isFolder ? null : (item.size ?? null),
+    itemCount: isFolder ? (item.folder?.childCount ?? null) : null,
   };
 }
 
