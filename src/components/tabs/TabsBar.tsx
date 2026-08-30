@@ -32,6 +32,13 @@ export function TabsBar() {
   const showingSource = runbookView === RunbookView.SOURCE;
   const showingVariables = runbookView === RunbookView.VARIABLES;
 
+  const toggleVariablesLabel = showingVariables
+    ? t.source.openPreview
+    : t.variables.openEditorTitle;
+  const toggleSourceLabel = showingSource
+    ? t.source.openPreview
+    : t.source.openSource;
+
   return (
     <div id="tabs-bar">
       <div id="tabs-strip">
@@ -52,16 +59,8 @@ export function TabsBar() {
         <div id="runbook-view-actions">
           <button
             className="btn btn-icon btn-soft-icon runbook-view-btn"
-            aria-label={
-              showingVariables
-                ? t.source.openPreview
-                : t.variables.openEditorTitle
-            }
-            {...tooltip(
-              showingVariables
-                ? t.source.openPreview
-                : t.variables.openEditorTitle,
-            )}
+            aria-label={toggleVariablesLabel}
+            {...tooltip(toggleVariablesLabel)}
             onClick={() => toggleRunbookView(RunbookView.VARIABLES)}
           >
             {showingVariables ? (
@@ -73,12 +72,8 @@ export function TabsBar() {
 
           <button
             className="btn btn-icon btn-soft-icon runbook-view-btn"
-            aria-label={
-              showingSource ? t.source.openPreview : t.source.openSource
-            }
-            {...tooltip(
-              showingSource ? t.source.openPreview : t.source.openSource,
-            )}
+            aria-label={toggleSourceLabel}
+            {...tooltip(toggleSourceLabel)}
             onClick={() => toggleRunbookView(RunbookView.SOURCE)}
           >
             {showingSource ? (

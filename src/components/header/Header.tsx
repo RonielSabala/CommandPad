@@ -35,6 +35,13 @@ export function Header() {
     (state) => !(getActiveTab(state)?.blocks.length ?? 0),
   );
 
+  const toggleModeLabel = isRead
+    ? t.header.switchToEdit
+    : t.header.switchToRead;
+  const toggleThemeLabel = isLight
+    ? t.header.switchToDark
+    : t.header.switchToLight;
+
   return (
     <header className="header-bar">
       <span
@@ -59,8 +66,8 @@ export function Header() {
         <button
           className="btn btn-lg btn-flat-icon"
           onClick={toggleAppMode}
-          aria-label={isRead ? t.header.switchToEdit : t.header.switchToRead}
-          {...tooltip(isRead ? t.header.switchToEdit : t.header.switchToRead)}
+          aria-label={toggleModeLabel}
+          {...tooltip(toggleModeLabel)}
         >
           {isRead ? (
             <PencilIcon className="icon icon-bold" />
@@ -86,8 +93,8 @@ export function Header() {
         <button
           className="btn btn-lg btn-flat-icon"
           onClick={toggleTheme}
-          aria-label={isLight ? t.header.switchToDark : t.header.switchToLight}
-          {...tooltip(isLight ? t.header.switchToDark : t.header.switchToLight)}
+          aria-label={toggleThemeLabel}
+          {...tooltip(toggleThemeLabel)}
         >
           {isLight ? (
             <MoonIcon className="icon icon-bold" />

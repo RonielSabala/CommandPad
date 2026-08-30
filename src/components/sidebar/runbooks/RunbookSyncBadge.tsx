@@ -21,6 +21,9 @@ export function RunbookSyncBadge({ runbookId, sync }: Props) {
     (state) => state.runbookSyncStatus[runbookId] ?? RunbookSyncStatus.SYNCED,
   );
   const syncRunbookNow = useStore((state) => state.syncRunbookNow);
+  const statusLabel = t.runbooks.syncStatus[syncStatus](
+    PROVIDER_NAME[sync.provider],
+  );
 
   return (
     <button
@@ -29,12 +32,8 @@ export function RunbookSyncBadge({ runbookId, sync }: Props) {
         "runbook-sync",
         `sync-${syncStatus}`,
       )}
-      aria-label={t.runbooks.syncStatus[syncStatus](
-        PROVIDER_NAME[sync.provider],
-      )}
-      {...tooltip(
-        t.runbooks.syncStatus[syncStatus](PROVIDER_NAME[sync.provider]),
-      )}
+      aria-label={statusLabel}
+      {...tooltip(statusLabel)}
       onClick={() => void syncRunbookNow(runbookId)}
     >
       {syncStatus === RunbookSyncStatus.SIGNED_OUT ? (

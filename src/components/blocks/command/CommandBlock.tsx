@@ -120,6 +120,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const blockId = block.id;
   const blockText = block.text;
   const isEditorCollapsed = block.editorCollapsed === true;
+  const toggleEditorLabel = isEditorCollapsed
+    ? t.command.showEditor
+    : t.command.hideEditor;
 
   const updateBlock = useStore((state) => state.updateBlock);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
@@ -254,12 +257,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
                 editorCollapsed: !isEditorCollapsed,
               })
             }
-            aria-label={
-              isEditorCollapsed ? t.command.showEditor : t.command.hideEditor
-            }
-            {...tooltip(
-              isEditorCollapsed ? t.command.showEditor : t.command.hideEditor,
-            )}
+            aria-label={toggleEditorLabel}
+            {...tooltip(toggleEditorLabel)}
           >
             <EditorToggleChevronIcon className="toggle-editor-icon icon-md icon-bold" />
           </button>

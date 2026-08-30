@@ -23,6 +23,9 @@ export function SiteHeader({ title, showDocsLink }: Props) {
   const t = useTranslation();
   const isLight = useStore((state) => state.theme === Theme.LIGHT);
   const toggleTheme = useStore((state) => state.toggleTheme);
+  const toggleThemeLabel = isLight
+    ? t.header.switchToDark
+    : t.header.switchToLight;
 
   return (
     <header className="header-bar">
@@ -53,8 +56,8 @@ export function SiteHeader({ title, showDocsLink }: Props) {
         <button
           className="btn btn-lg btn-flat-icon"
           onClick={toggleTheme}
-          aria-label={isLight ? t.header.switchToDark : t.header.switchToLight}
-          {...tooltip(isLight ? t.header.switchToDark : t.header.switchToLight)}
+          aria-label={toggleThemeLabel}
+          {...tooltip(toggleThemeLabel)}
         >
           {isLight ? (
             <MoonIcon className="icon icon-bold" />
