@@ -190,11 +190,13 @@ body.read-mode :is(.toggle-editor-btn, .command-block-editor) {
   display: none;
 }
 
-.command-block-editor:focus-within .command-clamp-toggle {
+.command-block-editor:has(.code-editor-surface:focus-within)
+  .command-clamp-toggle {
   display: none;
 }
 
-.command-block-editor:focus-within.clamped > .code-editor-surface {
+.command-block-editor.clamped:has(.code-editor-surface:focus-within)
+  > .code-editor-surface {
   max-height: none;
   overflow: visible;
   -webkit-mask-image: none;
