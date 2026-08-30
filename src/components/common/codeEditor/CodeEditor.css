@@ -40,7 +40,7 @@
   align-items: center;
   justify-content: flex-end;
   height: var(--code-editor-header-height, 0px);
-  padding-inline-end: var(--code-editor-header-inset-end, var(--space-6));
+  padding-inline-end: var(--space-6);
   pointer-events: none;
 }
 
