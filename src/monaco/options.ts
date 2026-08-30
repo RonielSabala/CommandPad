@@ -15,6 +15,7 @@ export function baseEditorOptions(folding: boolean): Options {
     automaticLayout: true,
     contextmenu: true,
     editContext: false,
+    accessibilitySupport: "off",
 
     fontFamily: metrics.fontFamily,
     fontLigatures: false,
