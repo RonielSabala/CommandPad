@@ -181,7 +181,7 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
   border-top: var(--border-standard);
 }
 
-body.select-key-held:not(.read-mode) .code-editor-header {
+body.select-key-held:not(.read-mode) .code-editor-header > * {
   pointer-events: none;
 }
 
