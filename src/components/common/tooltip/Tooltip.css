@@ -4,10 +4,12 @@
   width: max-content;
   max-width: var(--tooltip-max-width);
   padding: var(--space-2) var(--space-5);
-  background: var(--color-surface-alt);
+  background: var(--color-surface);
   border: var(--border-standard);
   border-radius: var(--radius-md);
-  box-shadow: 0 var(--space-2) var(--space-6) var(--shadow-color-float);
+  box-shadow:
+    0 var(--space-1) var(--space-3) var(--shadow-color-float),
+    0 var(--space-2) var(--space-8) var(--shadow-color-float);
   color: var(--color-text-primary);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
@@ -53,7 +55,7 @@
   left: var(--tooltip-arrow-x);
   width: var(--tooltip-gap);
   height: var(--tooltip-gap);
-  background: inherit;
+  background: var(--color-surface);
   border: var(--border-standard);
   transform: translateX(-50%) rotate(45deg);
 }
