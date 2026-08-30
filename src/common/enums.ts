@@ -23,6 +23,19 @@ export const SectionState = {
 } as const;
 export type SectionState = (typeof SectionState)[keyof typeof SectionState];
 
+export const TooltipVariant = {
+  TEXT: "text",
+  CODE: "code",
+} as const;
+export type TooltipVariant =
+  (typeof TooltipVariant)[keyof typeof TooltipVariant];
+
+export const TooltipSide = {
+  TOP: "top",
+  BOTTOM: "bottom",
+} as const;
+export type TooltipSide = (typeof TooltipSide)[keyof typeof TooltipSide];
+
 export const PanelSide = {
   LEFT: "left",
   RIGHT: "right",

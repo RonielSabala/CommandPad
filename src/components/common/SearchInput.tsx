@@ -1,6 +1,8 @@
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SearchIcon, XIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
+
 import "./SearchInput.css";
 
 interface Props {
@@ -32,7 +34,8 @@ export function SearchInput({
       {value && (
         <button
           className="search-input-clear-btn"
-          title={t.common.clearSearch}
+          aria-label={t.common.clearSearch}
+          {...tooltip(t.common.clearSearch)}
           onClick={() => onChange("")}
         >
           <XIcon className="icon-sm icon-bold" />

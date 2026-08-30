@@ -1,4 +1,5 @@
 import { CloudSortColumn, SortDirection } from "@/common/enums";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -36,7 +37,7 @@ function SortButton({ column, label, className }: SortButtonProps) {
         className,
       )}
       onClick={() => toggleCloudSort(column)}
-      title={title}
+      {...tooltip(title)}
       aria-label={title}
     >
       {label}

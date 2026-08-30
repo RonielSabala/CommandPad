@@ -1,9 +1,11 @@
 import { Anchor } from "@/common/constants/dom";
 import { AppRoute } from "@/common/constants/routes";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
 import { Github, Linkedin, type Icon } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
+
 import "./Footer.css";
 
 interface FooterLinkProps {
@@ -20,7 +22,7 @@ export function FooterLink({ icon, title, href }: FooterLinkProps) {
       href={href}
       target={Anchor.TARGET_BLANK}
       rel={Anchor.REL}
-      title={title}
+      {...tooltip(title)}
     >
       <IconComponent className="icon-md" aria-label={title} />
     </a>

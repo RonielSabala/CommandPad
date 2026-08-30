@@ -4,6 +4,7 @@ import {
   FilenameInput,
   FilenameInputSize,
 } from "@/components/common/FilenameInput";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
 import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
@@ -160,7 +161,7 @@ export function CloudEntryRow({
         <EntryIcon className="icon-md cloud-browser-row-icon" />
 
         <span className="cloud-browser-row-text">
-          <span className={NAME_CLASS} title={activateTitle}>
+          <span className={NAME_CLASS} {...tooltip(activateTitle)}>
             {entry.name}
           </span>
 

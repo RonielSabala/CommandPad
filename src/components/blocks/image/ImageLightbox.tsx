@@ -1,11 +1,13 @@
 import { EventType, Key } from "@/common/constants/events";
 import { BlockType } from "@/common/enums";
 import type { Block, ImageBlock } from "@/common/types";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { Modal } from "@/components/modals/Modal";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "react-bootstrap-icons";
+
 import "./ImageLightbox.css";
 import { ImagePlaceholderBadge } from "./ImagePlaceholderBadge";
 
@@ -118,7 +120,7 @@ export function ImageLightbox() {
           <>
             <button
               className="image-lightbox-nav btn btn-icon"
-              title={t.image.previous}
+              {...tooltip(t.image.previous)}
               aria-label={t.image.previous}
               disabled={index === 0}
               onClick={() => step(-1)}
@@ -128,7 +130,7 @@ export function ImageLightbox() {
 
             <button
               className="image-lightbox-nav is-next btn btn-icon"
-              title={t.image.next}
+              {...tooltip(t.image.next)}
               aria-label={t.image.next}
               disabled={index === total - 1}
               onClick={() => step(1)}

@@ -1,6 +1,8 @@
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { classNames } from "@/utils/string";
 import { useRef, useState, type ReactNode } from "react";
 import { ThreeDots, ThreeDotsVertical } from "react-bootstrap-icons";
+
 import {
   ContextMenu,
   ContextMenuAlign,
@@ -51,7 +53,8 @@ export function ActionsMenu({
         ref={triggerRef}
         className={triggerClassName}
         onClick={toggle}
-        title={title}
+        aria-label={title}
+        {...tooltip(title)}
         aria-haspopup="menu"
         aria-expanded={anchor !== null}
       >

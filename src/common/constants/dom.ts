@@ -36,6 +36,9 @@ export const DataAttr = {
   DRAG_IMAGE: "data-drag-image",
   PANEL_SIDE: "data-panel-side",
   PANEL_COLLAPSED: "data-panel-collapsed",
+  TOOLTIP: "data-tooltip",
+  TOOLTIP_VARIANT: "data-tooltip-variant",
+  TOOLTIP_SIDE: "data-tooltip-side",
 } as const;
 
 export const Cursor = {

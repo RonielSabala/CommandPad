@@ -1,5 +1,6 @@
 import { BLOCK_TYPE_ORDER } from "@/blocks";
 import { BlockType } from "@/common/enums";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import "./AddBlockRow.css";
@@ -19,7 +20,7 @@ export function AddBlockButton({ type }: AddBlockButtonProps) {
     <button
       className="btn"
       onClick={() => void addBlock(type)}
-      title={t.blocks.typeTitle(label)}
+      {...tooltip(t.blocks.typeTitle(label))}
     >
       <Icon className="icon-md icon-bold" />
       {label}

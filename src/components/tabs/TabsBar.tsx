@@ -1,5 +1,6 @@
 import { RunbookView } from "@/common/enums";
 import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PlusIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -40,7 +41,8 @@ export function TabsBar() {
       </div>
       <button
         id="add-tab-btn"
-        title={t.tabs.newTab}
+        aria-label={t.tabs.newTab}
+        {...tooltip(t.tabs.newTab)}
         onClick={() => void createNewTab()}
       >
         <PlusIcon className="icon-md icon-bold" />
@@ -50,11 +52,16 @@ export function TabsBar() {
         <div id="runbook-view-actions">
           <button
             className="btn btn-icon btn-soft-icon runbook-view-btn"
-            title={
+            aria-label={
               showingVariables
                 ? t.source.openPreview
                 : t.variables.openEditorTitle
             }
+            {...tooltip(
+              showingVariables
+                ? t.source.openPreview
+                : t.variables.openEditorTitle,
+            )}
             onClick={() => toggleRunbookView(RunbookView.VARIABLES)}
           >
             {showingVariables ? (
@@ -66,7 +73,12 @@ export function TabsBar() {
 
           <button
             className="btn btn-icon btn-soft-icon runbook-view-btn"
-            title={showingSource ? t.source.openPreview : t.source.openSource}
+            aria-label={
+              showingSource ? t.source.openPreview : t.source.openSource
+            }
+            {...tooltip(
+              showingSource ? t.source.openPreview : t.source.openSource,
+            )}
             onClick={() => toggleRunbookView(RunbookView.SOURCE)}
           >
             {showingSource ? (

@@ -1,10 +1,12 @@
 import { AppRoute } from "@/common/constants/routes";
 import { Theme } from "@/common/enums";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { MoonIcon, SunIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { BoxArrowLeft } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
+
 import "../header/Header.css";
 import { LanguageSelect } from "../header/LanguageSelect";
 import "./DocsHeader.css";
@@ -20,7 +22,7 @@ export function DocsHeader() {
         to={AppRoute.HOME}
         id="docs-logo"
         className="logo no-user-select"
-        title={t.docs.meta.backToApp}
+        {...tooltip(t.docs.meta.backToApp)}
       >
         <span className="logo-word">Command</span>
         <span className="logo-pad">{"{Pad}"}</span>
@@ -36,7 +38,8 @@ export function DocsHeader() {
         <button
           className="btn btn-lg btn-flat-icon"
           onClick={toggleTheme}
-          title={isLight ? t.header.switchToDark : t.header.switchToLight}
+          aria-label={isLight ? t.header.switchToDark : t.header.switchToLight}
+          {...tooltip(isLight ? t.header.switchToDark : t.header.switchToLight)}
         >
           {isLight ? (
             <MoonIcon className="icon icon-bold" />

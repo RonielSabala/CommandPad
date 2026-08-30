@@ -1,3 +1,4 @@
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CheckIcon, XIcon } from "@/components/icons";
 
 interface CloudRowConfirmActionsProps {
@@ -21,7 +22,8 @@ export function CloudRowConfirmActions({
         className="btn btn-flat-icon"
         onClick={onConfirm}
         disabled={confirmDisabled}
-        title={confirmTitle}
+        aria-label={confirmTitle}
+        {...tooltip(confirmTitle)}
       >
         <CheckIcon className="icon-md icon-bold" />
       </button>
@@ -29,7 +31,8 @@ export function CloudRowConfirmActions({
       <button
         className="btn btn-flat-icon"
         onClick={onCancel}
-        title={cancelTitle}
+        aria-label={cancelTitle}
+        {...tooltip(cancelTitle)}
       >
         <XIcon className="icon-md icon-bold" />
       </button>

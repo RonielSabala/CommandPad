@@ -1,5 +1,7 @@
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { classNames } from "@/utils/string";
 import type { SVGProps } from "react";
+
 import "./SidebarSectionFooter.css";
 
 interface FooterAction {
@@ -26,7 +28,7 @@ function FooterButton({
     <button
       className={classNames("btn", danger && "btn-danger")}
       onClick={onClick}
-      title={title}
+      {...tooltip(title)}
     >
       <IconComponent className="icon-md icon-bold" />
       {label}

@@ -1,4 +1,5 @@
 import { VaultStatus } from "@/common/enums";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -30,7 +31,7 @@ export function RunbookSecretBadge({ runbookId }: Props) {
         "runbook-secret",
         `secret-${status}`,
       )}
-      title={t.runbooks.secretStatus[status]}
+      {...tooltip(t.runbooks.secretStatus[status])}
       aria-label={t.runbooks.secretStatus[status]}
       disabled={status === VaultStatus.UNSUPPORTED}
       onClick={() => {

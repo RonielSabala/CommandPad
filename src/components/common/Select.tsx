@@ -1,4 +1,5 @@
 import { EventType, Key } from "@/common/constants/events";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import { classNames } from "@/utils/string";
 import {
@@ -10,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
+
 import "./Select.css";
 
 export const SelectAlign = {
@@ -146,7 +148,7 @@ export function Select<T extends string>({
     <div className={classNames("select", className)} ref={rootRef}>
       <button
         className={triggerClassName}
-        title={title}
+        {...tooltip(title)}
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((isOpen) => !isOpen)}

@@ -1,7 +1,9 @@
 import { PanelId, PanelSide } from "@/common/enums";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PanelCollapseIcon, PanelSideIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+
 import "./PanelActions.css";
 
 interface Props {
@@ -23,14 +25,16 @@ export function PanelActions({ panelId, name }: Props) {
       <button
         className="btn btn-icon"
         onClick={() => togglePanel(panelId)}
-        title={collapsed ? t.panel.expand(name) : t.panel.collapse(name)}
+        aria-label={collapsed ? t.panel.expand(name) : t.panel.collapse(name)}
+        {...tooltip(collapsed ? t.panel.expand(name) : t.panel.collapse(name))}
       >
         <PanelCollapseIcon className="panel-collapse-chevron icon-md icon-bold" />
       </button>
       <button
         className="btn btn-icon"
         onClick={() => togglePanelSide(panelId)}
-        title={isRight ? t.panel.moveLeft(name) : t.panel.moveRight(name)}
+        aria-label={isRight ? t.panel.moveLeft(name) : t.panel.moveRight(name)}
+        {...tooltip(isRight ? t.panel.moveLeft(name) : t.panel.moveRight(name))}
       >
         <PanelSideIcon className="icon-md icon-bold" mirrored={isRight} />
       </button>

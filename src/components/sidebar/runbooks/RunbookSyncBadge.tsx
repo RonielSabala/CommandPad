@@ -1,6 +1,7 @@
 import { RunbookSyncStatus } from "@/common/enums";
 import type { RunbookSync } from "@/common/types";
 import { Spinner } from "@/components/common/Spinner";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -28,7 +29,12 @@ export function RunbookSyncBadge({ runbookId, sync }: Props) {
         "runbook-sync",
         `sync-${syncStatus}`,
       )}
-      title={t.runbooks.syncStatus[syncStatus](PROVIDER_NAME[sync.provider])}
+      aria-label={t.runbooks.syncStatus[syncStatus](
+        PROVIDER_NAME[sync.provider],
+      )}
+      {...tooltip(
+        t.runbooks.syncStatus[syncStatus](PROVIDER_NAME[sync.provider]),
+      )}
       onClick={() => void syncRunbookNow(runbookId)}
     >
       {syncStatus === RunbookSyncStatus.SIGNED_OUT ? (

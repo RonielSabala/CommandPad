@@ -2,6 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { AppMode, DragGroup, LassoMode, SelectionGroup } from "@/common/enums";
 import type { Variable } from "@/common/types";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { DragIcon } from "@/components/icons";
 import { lasso } from "@/hooks/lasso";
 import { useRowReorder } from "@/hooks/useRowReorder";
@@ -84,7 +85,7 @@ export const VariableItem = memo(function VariableItem({
       <div className={CssClass.VARIABLE_DRAG_HANDLE}>
         <div
           className="drag-handle"
-          title={t.common.dragToReorder}
+          {...tooltip(t.common.dragToReorder)}
           {...handleProps}
         >
           <DragIcon className="icon-md" />

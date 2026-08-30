@@ -1,7 +1,8 @@
 import { Key } from "@/common/constants/events";
-import { VariableField } from "@/common/enums";
+import { TooltipVariant, VariableField } from "@/common/enums";
 import { useDomScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -66,7 +67,10 @@ export function VariableKeyInput({
 
           handlePairWrap(event);
         }}
-        title={unused ? t.variables.unusedTitle(variableKey) : variableKey}
+        {...tooltip(
+          unused ? t.variables.unusedTitle(variableKey) : variableKey,
+          TooltipVariant.CODE,
+        )}
       />
 
       {scrollable && (

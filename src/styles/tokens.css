@@ -112,9 +112,9 @@
   --z-sticky: 2;
   --z-docked: 3;
   --z-dropdown: 4;
-  --z-tooltip: 5;
-  --z-modal: 6;
-  --z-popover: 7;
+  --z-modal: 5;
+  --z-popover: 6;
+  --z-tooltip: 7;
 
   /* --- LAYOUT DIMENSIONS --- */
 
@@ -161,6 +161,7 @@
   --vault-badge-size: 2.5rem;
 
   --minimap-width: 7rem;
+  --tooltip-max-width: 18rem;
 
   --context-menu-min-width: 10rem;
   --context-menu-min-height: 3rem;

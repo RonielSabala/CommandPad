@@ -1,4 +1,5 @@
 import { Key } from "@/common/constants/events";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useId, useState } from "react";
@@ -57,7 +58,7 @@ export function PassphraseField({
           type="button"
           onClick={() => setRevealed((shown) => !shown)}
           disabled={disabled}
-          title={toggleLabel}
+          {...tooltip(toggleLabel)}
           aria-label={toggleLabel}
         >
           <EyeIcon slashed={!revealed} className="icon-md icon-bold" />

@@ -9,9 +9,11 @@ import type {
   NoteTable,
   NoteTableCell,
 } from "@/common/types";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { parseNoteNodes } from "@/utils/markdown";
+
 import "./NoteText.css";
 
 const SEGMENT_CLASS: Record<NoteSegmentType, string | undefined> = {
@@ -49,7 +51,7 @@ function NoteSegments({ segments, requiresLinkModifier }: SegmentsProps) {
               className={CssClass.NOTE_LINK}
               target={Anchor.TARGET_BLANK}
               rel={Anchor.REL}
-              title={followLinkTooltip}
+              {...tooltip(followLinkTooltip)}
               {...offset}
             >
               {segment.text}

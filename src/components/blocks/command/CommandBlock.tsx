@@ -11,7 +11,12 @@ import {
   COMMAND_PROMPT_PREFIX,
   CommandClampConfig,
 } from "@/common/editorConfig";
-import { BlockType, CodeLanguage, CommandSurface } from "@/common/enums";
+import {
+  BlockType,
+  CodeLanguage,
+  CommandSurface,
+  TooltipVariant,
+} from "@/common/enums";
 import type {
   CommandBlock as CommandBlockData,
   CommandSegment,
@@ -22,6 +27,7 @@ import {
 } from "@/components/common/codeEditor/CodeEditor";
 import { useDomScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import {
   CheckIcon,
   CopyIcon,
@@ -78,7 +84,7 @@ function HighlightedLines({
         {i > 0 && LINE_BREAK}
         <span
           className={classNames(className, isBlank && "token-nesting-blank")}
-          title={title}
+          {...tooltip(title, TooltipVariant.CODE)}
         >
           {isBlank ? NON_BREAKING_SPACE : content}
         </span>
@@ -248,9 +254,12 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
                 editorCollapsed: !isEditorCollapsed,
               })
             }
-            title={
+            aria-label={
               isEditorCollapsed ? t.command.showEditor : t.command.hideEditor
             }
+            {...tooltip(
+              isEditorCollapsed ? t.command.showEditor : t.command.hideEditor,
+            )}
           >
             <EditorToggleChevronIcon className="toggle-editor-icon icon-md icon-bold" />
           </button>
@@ -259,7 +268,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
             className="btn"
             onClick={copy}
             disabled={!blockText}
-            title={t.command.copy}
+            aria-label={t.command.copy}
+            {...tooltip(t.command.copy)}
           >
             {copied ? (
               <CheckIcon className="icon-md icon-bold copy-check-icon" />

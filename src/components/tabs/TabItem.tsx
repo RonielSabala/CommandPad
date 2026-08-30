@@ -3,6 +3,7 @@ import { CssClass } from "@/common/constants/css";
 import { DragEffect, MouseButton } from "@/common/constants/events";
 import { TabDropSide } from "@/common/enums";
 import type { Tab } from "@/common/types";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CloseIcon } from "@/components/icons";
 import { blockDrag } from "@/hooks/blockDrag";
 import { useTranslation } from "@/i18n";
@@ -76,7 +77,7 @@ export function TabItem({ tab, onOpenMenu }: Props) {
   return (
     <div
       className={tabClass}
-      title={tabLabel}
+      {...tooltip(tabLabel)}
       draggable
       onClick={() => switchTab(tabId)}
       onMouseDown={(event) => {
@@ -168,14 +169,15 @@ export function TabItem({ tab, onOpenMenu }: Props) {
       {unresolved && (
         <span
           className="tab-unresolved"
-          title={t.tabs.unresolved}
+          {...tooltip(t.tabs.unresolved)}
           aria-label={t.tabs.unresolved}
         />
       )}
       <span className="tab-label">{tabLabel}</span>
       <button
         className="tab-close"
-        title={t.tabs.closeTab}
+        aria-label={t.tabs.closeTab}
+        {...tooltip(t.tabs.closeTab)}
         onClick={(event) => {
           event.stopPropagation();
           closeTab(tabId);
