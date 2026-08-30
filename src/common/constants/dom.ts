@@ -16,6 +16,10 @@ export const InputSelector = {
   CODE: `${MonacoSelector.INPUT}, ${MonacoSelector.EDIT_CONTEXT}`,
 } as const;
 
+export const ModalSelector = {
+  OPEN: ".modal-backdrop.modal-visible",
+} as const;
+
 export const EditCommand = {
   INSERT_TEXT: "insertText",
 } as const;

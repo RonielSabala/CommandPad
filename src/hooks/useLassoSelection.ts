@@ -1,4 +1,4 @@
-import { InputSelector } from "@/common/constants/dom";
+import { InputSelector, ModalSelector } from "@/common/constants/dom";
 import { EventType, Key, MouseButton } from "@/common/constants/events";
 import { AppMode, LassoMode, type SelectionGroup } from "@/common/enums";
 import { isModifierPressed, ModifierAction } from "@/common/keybindings";
@@ -29,6 +29,8 @@ export function useLassoSelection(
     const isEditing = () =>
       !!document.activeElement?.matches(InputSelector.EDITABLE);
 
+    const isModalOpen = () => !!document.querySelector(ModalSelector.OPEN);
+
     const setSelectMode = (held: boolean) =>
       store.getState().setSelectKeyHeld(held);
 
@@ -37,6 +39,7 @@ export function useLassoSelection(
         pointerInside &&
         !event.ctrlKey &&
         !isEditing() &&
+        !isModalOpen() &&
         isModifierPressed(event, ModifierAction.SELECT_BLOCKS) &&
         store.getState().mode !== AppMode.READ
       ) {
@@ -67,7 +70,8 @@ export function useLassoSelection(
         state.mode === AppMode.READ ||
         event.button !== MouseButton.LEFT ||
         !isModifierPressed(event, ModifierAction.SELECT_BLOCKS) ||
-        isEditing()
+        isEditing() ||
+        isModalOpen()
       ) {
         return;
       }
