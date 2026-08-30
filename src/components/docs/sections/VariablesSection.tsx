@@ -477,6 +477,44 @@ export function VariableFillDocs() {
   );
 }
 
+export function VariableReplaceDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableReplace.intro} />
+      <Prose text={t.docs.variableReplace.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("TICKET", t.docs.demo.ticketTitle)],
+            blocks: [demoCommand("git checkout -b fix/{TICKET|replace( ;-)}")],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableReplace.verbatim} />
+      <Prose text={t.docs.variableReplace.remove} />
+      <Prose text={t.docs.variableReplace.removeDemoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("SIZE", "1,048,576")],
+            blocks: [
+              demoCommand("head -c {SIZE|remove(,)} disk.img > head.bin"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
 export function PlaceholderDefaultsDocs() {
   const t = useTranslation();
 

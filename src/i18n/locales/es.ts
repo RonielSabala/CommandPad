@@ -666,6 +666,7 @@ export const es: Messages = {
       [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
       [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
       [DocsSectionId.VARIABLE_FILL]: "Añadir a los extremos",
+      [DocsSectionId.VARIABLE_REPLACE]: "Cambiar texto",
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transformar un hueco",
       [DocsSectionId.UNNAMED_REFERENCES]: "Referencias sin variable",
       [DocsSectionId.VARIABLE_DATE]: "Fecha actual",
@@ -716,6 +717,7 @@ export const es: Messages = {
       projectName: "informe MENSUAL de ventas",
       reportFile: "ventas-mensuales.pdf",
       folderName: "   Informes de ventas   ",
+      ticketTitle: "arreglar caducidad de sesión",
       noteSample:
         "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace: https://example.com. Haz clic fuera para verla renderizada de nuevo.",
       tableSample: `| Código de salida | Significado | Acción |
@@ -974,6 +976,18 @@ Si algo sale mal, deshazlo en este orden:
         "El texto se añade tal cual lo escribas, espacios incluidos, así que `rfill( -; 2)` añade dos veces un espacio y un guion. Pedir `0` copias deja el valor intacto, y un número que falte o sea negativo deja la referencia entera tal y como está escrita.",
       computedHint:
         "El número de copias no tiene por qué ser fijo: puede calcularse a partir del propio valor. Prueba con un nombre más largo o más corto:",
+    },
+    variableReplace: {
+      intro:
+        "La operación `replace(viejo;nuevo)` cambia cada aparición de un texto por otro, esté donde esté dentro del valor. A diferencia de `strip`, no se limita a los extremos.",
+      demoHint:
+        "Abajo, el título de un ticket se convierte en el nombre de una rama. Cambia el título y la rama te sigue:",
+      verbatim:
+        "Los dos argumentos se toman **tal cual se escriben**, espacios incluidos, que es justo lo que permite cambiar un espacio.",
+      remove:
+        "Cuando no hay nada que poner a cambio, escribe `remove(texto)`: quita ese texto allá donde aparezca.",
+      removeDemoHint:
+        "Abajo, un tamaño en bytes copiado de un explorador de archivos aún trae sus separadores de miles, que el comando no admite. Cambia el número y el comando sigue siendo ejecutable:",
     },
     transformedPlaceholders: {
       intro:

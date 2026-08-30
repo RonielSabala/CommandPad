@@ -402,6 +402,7 @@ export interface Messages {
       projectName: string;
       reportFile: string;
       folderName: string;
+      ticketTitle: string;
     };
     gettingStarted: {
       intro: string;
@@ -531,6 +532,13 @@ export interface Messages {
       demoHint: string;
       rules: string;
       computedHint: string;
+    };
+    variableReplace: {
+      intro: string;
+      demoHint: string;
+      verbatim: string;
+      remove: string;
+      removeDemoHint: string;
     };
     transformedPlaceholders: {
       intro: string;

@@ -655,6 +655,7 @@ export const en: Messages = {
       [DocsSectionId.VARIABLE_CASE]: "Changing case",
       [DocsSectionId.VARIABLE_STRIP]: "Trimming ends",
       [DocsSectionId.VARIABLE_FILL]: "Adding to the ends",
+      [DocsSectionId.VARIABLE_REPLACE]: "Swapping text out",
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transforming a blank",
       [DocsSectionId.UNNAMED_REFERENCES]: "References with no variable",
       [DocsSectionId.VARIABLE_DATE]: "Current date",
@@ -701,6 +702,7 @@ export const en: Messages = {
       projectName: "monthly SALES report",
       reportFile: "monthly-sales.pdf",
       folderName: "   Sales Reports   ",
+      ticketTitle: "fix login timeout",
       noteSample:
         "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link: https://example.com. Click away to see it rendered again.",
       tableSample: `| Exit code | Meaning | Action |
@@ -958,6 +960,18 @@ If something goes wrong, undo it in this order:
         "The text is added exactly as you typed it, spaces included, so `rfill( -; 2)` adds a space and a dash twice. Asking for `0` copies leaves the value untouched, and a count that is missing or negative leaves the whole reference exactly as written.",
       computedHint:
         "The count does not have to be a fixed number: it can be worked out from the value itself. Try a longer or shorter name:",
+    },
+    variableReplace: {
+      intro:
+        "The `replace(old;new)` operation swaps every occurrence of one piece of text for another, wherever it sits in the value. Unlike `strip`, it is not tied to the ends.",
+      demoHint:
+        "Below, a ticket title becomes a branch name. Retitle the ticket and the branch follows:",
+      verbatim:
+        "Both arguments are taken **exactly as written**, spaces included, which is what lets a space be the thing you swap.",
+      remove:
+        "When there is nothing to swap in, write `remove(text)` instead: it takes that text out wherever it appears.",
+      removeDemoHint:
+        "Below, a byte count copied out of a file browser still carries its thousands separators, which the command cannot take. Edit the number and the command stays runnable:",
     },
     transformedPlaceholders: {
       intro:
