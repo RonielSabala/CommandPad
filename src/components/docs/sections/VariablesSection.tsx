@@ -1,4 +1,4 @@
-import { CodeLanguage, VaultPrompt } from "@/common/enums";
+import { VaultPrompt } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
 import { demoCommand, demoVariable } from "../demos/demoSeeds";
@@ -19,8 +19,8 @@ export function VariablesDocs() {
           {
             variables: [demoVariable("server", "192.168.1.50")],
             blocks: [
-              demoCommand("ping {server}", undefined, CodeLanguage.BASH),
-              demoCommand("ssh admin@{server}", undefined, CodeLanguage.BASH),
+              demoCommand("ping {server}"),
+              demoCommand("ssh admin@{server}"),
             ],
           },
         ]}
@@ -38,13 +38,7 @@ export function VariablesDocs() {
               demoVariable("endpoint", "health"),
               demoVariable("API_URL", "https://api.example.com"),
             ],
-            blocks: [
-              demoCommand(
-                "curl {API_URL}/{endpoint}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
-            ],
+            blocks: [demoCommand("curl {API_URL}/{endpoint}")],
           },
         ]}
       >
@@ -75,11 +69,7 @@ export function SecretVariablesDocs() {
           {
             variables: [demoVariable("password", "s3cr3t-value", true)],
             blocks: [
-              demoCommand(
-                "zip -r -P {password} backup.zip ~/Documents",
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand("zip -r -P {password} backup.zip ~/Documents"),
             ],
           },
         ]}
@@ -128,13 +118,7 @@ export function VariableReferencesDocs() {
               demoVariable("HOST", "api.example.com"),
               demoVariable("BASE_URL", "https://{HOST}/api"),
             ],
-            blocks: [
-              demoCommand(
-                "curl {BASE_URL}/health",
-                undefined,
-                CodeLanguage.BASH,
-              ),
-            ],
+            blocks: [demoCommand("curl {BASE_URL}/health")],
           },
         ]}
       >
@@ -151,13 +135,7 @@ export function VariableReferencesDocs() {
               demoVariable("SERVICE", "svc-{NAME}"),
               demoVariable("HOST", "{SERVICE}.example.com"),
             ],
-            blocks: [
-              demoCommand(
-                "curl https://{HOST}/health",
-                undefined,
-                CodeLanguage.BASH,
-              ),
-            ],
+            blocks: [demoCommand("curl https://{HOST}/health")],
           },
         ]}
       >
@@ -182,13 +160,7 @@ export function ParameterizedPlaceholdersDocs() {
         tabs={[
           {
             variables: [demoVariable("PROJECT", "projects/{;name}/src")],
-            blocks: [
-              demoCommand(
-                "cd {PROJECT;name=commandpad}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
-            ],
+            blocks: [demoCommand("cd {PROJECT;name=commandpad}")],
           },
         ]}
       >
@@ -201,11 +173,7 @@ export function ParameterizedPlaceholdersDocs() {
           {
             variables: [demoVariable("GREETING", t.docs.demo.greetingTemplate)],
             blocks: [
-              demoCommand(
-                'echo "{GREETING;name=Sam;place=CommandPad}"',
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand('echo "{GREETING;name=Sam;place=CommandPad}"'),
             ],
           },
         ]}
@@ -222,16 +190,8 @@ export function ParameterizedPlaceholdersDocs() {
               demoVariable("FOLDER", "~/Projects/{;name}"),
             ],
             blocks: [
-              demoCommand(
-                "cd {FOLDER;name={project}}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
-              demoCommand(
-                "git clone https://github.com/user/{project}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand("cd {FOLDER;name={project}}"),
+              demoCommand("git clone https://github.com/user/{project}"),
             ],
           },
         ]}
@@ -251,16 +211,8 @@ export function ParameterizedPlaceholdersDocs() {
               ),
             ],
             blocks: [
-              demoCommand(
-                "tail -f {LOG_FILE;service=api}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
-              demoCommand(
-                "cd {LOG_DIR;service=web}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand("tail -f {LOG_FILE;service=api}"),
+              demoCommand("cd {LOG_DIR;service=web}"),
             ],
           },
         ]}
@@ -289,16 +241,8 @@ export function VariableSlicingDocs() {
               ),
             ],
             blocks: [
-              demoCommand(
-                "git checkout {commit}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
-              demoCommand(
-                "git tag release-{commit|slice(;7)}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand("git checkout {commit}"),
+              demoCommand("git tag release-{commit|slice(;7)}"),
             ],
           },
         ]}
@@ -313,21 +257,9 @@ export function VariableSlicingDocs() {
           {
             variables: [demoVariable("date", "2026-07-31")],
             blocks: [
-              demoCommand(
-                "echo {date|slice(;4)}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
-              demoCommand(
-                "echo {date|slice(5;7)}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
-              demoCommand(
-                "echo {date|slice(-2;)}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand("echo {date|slice(;4)}"),
+              demoCommand("echo {date|slice(5;7)}"),
+              demoCommand("echo {date|slice(-2;)}"),
             ],
           },
         ]}
@@ -343,14 +275,8 @@ export function VariableSlicingDocs() {
             blocks: [
               demoCommand(
                 "zip -r backup-v{VERSION|slice(;;2)}.zip ~/Documents",
-                undefined,
-                CodeLanguage.BASH,
               ),
-              demoCommand(
-                "echo {VERSION|slice(;;-1)}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand("echo {VERSION|slice(;;-1)}"),
             ],
           },
         ]}
@@ -377,16 +303,8 @@ export function VariableLenDocs() {
           {
             variables: [demoVariable("message", t.docs.demo.commitSubject)],
             blocks: [
-              demoCommand(
-                'git commit -m "{message}"',
-                undefined,
-                CodeLanguage.BASH,
-              ),
-              demoCommand(
-                t.docs.demo.commitLengthCommand,
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand('git commit -m "{message}"'),
+              demoCommand(t.docs.demo.commitLengthCommand),
             ],
           },
         ]}
@@ -411,11 +329,7 @@ export function VariableCountDocs() {
           {
             variables: [demoVariable("PATH", "/var/log/app/errors.log")],
             blocks: [
-              demoCommand(
-                'echo "{PATH} is {PATH|count(/)} levels deep"',
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand('echo "{PATH} is {PATH|count(/)} levels deep"'),
             ],
           },
         ]}
@@ -438,13 +352,7 @@ export function VariableKeyDocs() {
         tabs={[
           {
             variables: [demoVariable("PORT", "8080")],
-            blocks: [
-              demoCommand(
-                'echo "{PORT|key}={PORT}"',
-                undefined,
-                CodeLanguage.BASH,
-              ),
-            ],
+            blocks: [demoCommand('echo "{PORT|key}={PORT}"')],
           },
         ]}
       >
@@ -470,16 +378,8 @@ export function VariableCaseDocs() {
           {
             variables: [demoVariable("PROJECT", t.docs.demo.projectName)],
             blocks: [
-              demoCommand(
-                "mkdir {PROJECT|snakecase}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
-              demoCommand(
-                'echo "{PROJECT|title}"',
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand("mkdir {PROJECT|snakecase}"),
+              demoCommand('echo "{PROJECT|title}"'),
             ],
           },
         ]}
@@ -508,16 +408,8 @@ export function VariableStripDocs() {
               demoVariable("FILE", t.docs.demo.reportFile),
             ],
             blocks: [
-              demoCommand(
-                "ping {SITE|lstrip(https://)|rstrip(/)}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
-              demoCommand(
-                "zip {FILE|rstrip(.pdf)}.zip {FILE}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand("ping {SITE|lstrip(https://)|rstrip(/)}"),
+              demoCommand("zip {FILE|rstrip(.pdf)}.zip {FILE}"),
             ],
           },
         ]}
@@ -532,8 +424,8 @@ export function VariableStripDocs() {
           {
             variables: [demoVariable("NAME", t.docs.demo.folderName)],
             blocks: [
-              demoCommand('mkdir "{NAME}"', undefined, CodeLanguage.BASH),
-              demoCommand('mkdir "{NAME|strip}"', undefined, CodeLanguage.BASH),
+              demoCommand('mkdir "{NAME}"'),
+              demoCommand('mkdir "{NAME|strip}"'),
             ],
           },
         ]}
@@ -557,13 +449,7 @@ export function VariableFillDocs() {
         tabs={[
           {
             variables: [demoVariable("STATUS", "OK")],
-            blocks: [
-              demoCommand(
-                'echo "{STATUS|fill(*; 3)}"',
-                undefined,
-                CodeLanguage.BASH,
-              ),
-            ],
+            blocks: [demoCommand('echo "{STATUS|fill(*; 3)}"')],
           },
         ]}
       >
@@ -579,8 +465,6 @@ export function VariableFillDocs() {
             blocks: [
               demoCommand(
                 'echo "{SERVICE|rfill(.; 20 - {SERVICE|len})} restarted"',
-                undefined,
-                CodeLanguage.BASH,
               ),
             ],
           },
@@ -636,11 +520,7 @@ export function TransformedPlaceholdersDocs() {
           {
             variables: [demoVariable("BRANCH", "feature/{;name|kebabcase}")],
             blocks: [
-              demoCommand(
-                "git switch -c {BRANCH;name=Fix Login Retry}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand("git switch -c {BRANCH;name=Fix Login Retry}"),
             ],
           },
         ]}
@@ -662,13 +542,7 @@ export function UnnamedReferencesDocs() {
       <DemoWorkspace
         tabs={[
           {
-            blocks: [
-              demoCommand(
-                'echo "Length: {|len}"',
-                undefined,
-                CodeLanguage.BASH,
-              ),
-            ],
+            blocks: [demoCommand('echo "Length: {|len}"')],
           },
         ]}
       >
@@ -690,13 +564,7 @@ export function VariableDateDocs() {
       <DemoWorkspace
         tabs={[
           {
-            blocks: [
-              demoCommand(
-                "mkdir backup-{|date()}",
-                undefined,
-                CodeLanguage.BASH,
-              ),
-            ],
+            blocks: [demoCommand("mkdir backup-{|date()}")],
           },
         ]}
       >
@@ -708,13 +576,7 @@ export function VariableDateDocs() {
       <DemoWorkspace
         tabs={[
           {
-            blocks: [
-              demoCommand(
-                'echo "Saved at {|date(HH:mm:ss)}"',
-                undefined,
-                CodeLanguage.BASH,
-              ),
-            ],
+            blocks: [demoCommand('echo "Saved at {|date(HH:mm:ss)}"')],
           },
         ]}
       >
@@ -743,15 +605,9 @@ export function VariableBooleanDocs() {
               demoVariable("ARCHIVE", "logs.tar.gz"),
             ],
             blocks: [
-              demoCommand(
-                'echo "port is a number: {PORT|isdigit}"',
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand('echo "port is a number: {PORT|isdigit}"'),
               demoCommand(
                 'echo "archive is compressed: {ARCHIVE|endswith(.zip; .tar.gz)}"',
-                undefined,
-                CodeLanguage.BASH,
               ),
             ],
           },
@@ -784,8 +640,6 @@ export function VariableLogicDocs() {
             blocks: [
               demoCommand(
                 'echo "ready to deploy: {|AND({|EQUALS({BRANCH}; main)}; {PORT|isdigit})}"',
-                undefined,
-                CodeLanguage.BASH,
               ),
             ],
           },
@@ -817,13 +671,9 @@ export function VariableConditionalDocs() {
             blocks: [
               demoCommand(
                 "run.sh {|IF({|EQUALSIGNORECASE({LEVEL}; debug)}; --verbose)}",
-                undefined,
-                CodeLanguage.BASH,
               ),
               demoCommand(
                 "curl https://api.example.com {|IF({RETRIES|isdigit}; --retry {RETRIES})}",
-                undefined,
-                CodeLanguage.BASH,
               ),
             ],
           },
@@ -851,15 +701,9 @@ export function MultilineReferencesDocs() {
               demoVariable("ARCHIVE", "{;name}_{;year}_{;month}.zip"),
             ],
             blocks: [
-              demoCommand(
-                'echo "Archiving {project} on {date}"',
-                undefined,
-                CodeLanguage.BASH,
-              ),
+              demoCommand('echo "Archiving {project} on {date}"'),
               demoCommand(
                 "zip -r {\n\tARCHIVE\n\t; name = {project}\n\t; year = {date|slice(;4)}\n\t; month = {date|slice(5;7)}\n} ~/Documents",
-                undefined,
-                CodeLanguage.BASH,
               ),
             ],
           },
@@ -883,13 +727,7 @@ export function EscapingBracesDocs() {
         tabs={[
           {
             variables: [demoVariable("user", "admin")],
-            blocks: [
-              demoCommand(
-                'echo "\\{user} = {user}"',
-                undefined,
-                CodeLanguage.BASH,
-              ),
-            ],
+            blocks: [demoCommand('echo "\\{user} = {user}"')],
           },
         ]}
       >

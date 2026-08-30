@@ -211,7 +211,7 @@ export const CODE_LANGUAGE_LABEL: Record<CodeLanguage, string> = {
   [CodeLanguage.YAML]: "YAML",
 };
 
-export const DEFAULT_COMMAND_LANGUAGE = CodeLanguage.PLAIN;
+export const DEFAULT_COMMAND_LANGUAGE = CodeLanguage.BASH;
 
 export const RUNBOOK_JSON_PLACEHOLDER =
   '{\n  "variables": [],\n  "blocks": []\n}';

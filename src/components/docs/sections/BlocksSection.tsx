@@ -3,7 +3,7 @@ import {
   CODE_LANGUAGE_LABEL,
   COMMAND_LANGUAGE_ORDER,
 } from "@/common/editorConfig";
-import { CodeLanguage, NoteStyle } from "@/common/enums";
+import { NoteStyle } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -93,11 +93,7 @@ export function CommandBlockDocs() {
       <Prose text={t.docs.commandBlock.editorFeatures} />
       <Prose text={t.docs.commandBlock.language(COMMAND_LANGUAGE_NAMES)} />
       <Prose text={t.docs.commandBlock.longCommands(t.command.showMoreLines)} />
-      <DemoWorkspace
-        tabs={[
-          { blocks: [demoCommand(LONG_COMMAND, undefined, CodeLanguage.BASH)] },
-        ]}
-      >
+      <DemoWorkspace tabs={[{ blocks: [demoCommand(LONG_COMMAND)] }]}>
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.commandBlock.variablesTeaser} />
