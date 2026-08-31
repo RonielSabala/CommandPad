@@ -28,9 +28,9 @@
 
   /* Surfaces */
   --color-bg: #090b10;
-  --color-surface: #1b2029;
-  --color-surface-alt: #2a303d;
-  --color-border: #323844;
+  --color-surface: #171a21;
+  --color-surface-alt: #262b35;
+  --color-border: #343a46;
   --color-border-focus: #4d8bf5;
   --block-backdrop: var(--color-bg);
   --cloud-row-selected-bg: color-mix(in srgb, var(--accent) 13%, transparent);
@@ -206,7 +206,7 @@
   --color-bg: #eaeef4;
   --color-surface: #ffffff;
   --color-surface-alt: #eef0f4;
-  --color-border: #c0c9d6;
+  --color-border: #c9d1dc;
   --color-border-focus: #2a56d6;
 
   /* Text */
