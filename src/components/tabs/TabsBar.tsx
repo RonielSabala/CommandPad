@@ -1,5 +1,6 @@
 import { RunbookView } from "@/common/enums";
 import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PlusIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -31,6 +32,13 @@ export function TabsBar() {
   const showingSource = runbookView === RunbookView.SOURCE;
   const showingVariables = runbookView === RunbookView.VARIABLES;
 
+  const toggleVariablesLabel = showingVariables
+    ? t.source.openPreview
+    : t.variables.openEditorTitle;
+  const toggleSourceLabel = showingSource
+    ? t.source.openPreview
+    : t.source.openSource;
+
   return (
     <div id="tabs-bar">
       <div id="tabs-strip">
@@ -40,7 +48,8 @@ export function TabsBar() {
       </div>
       <button
         id="add-tab-btn"
-        title={t.tabs.newTab}
+        aria-label={t.tabs.newTab}
+        {...tooltip(t.tabs.newTab)}
         onClick={() => void createNewTab()}
       >
         <PlusIcon className="icon-md icon-bold" />
@@ -50,11 +59,8 @@ export function TabsBar() {
         <div id="runbook-view-actions">
           <button
             className="btn btn-icon btn-soft-icon runbook-view-btn"
-            title={
-              showingVariables
-                ? t.source.openPreview
-                : t.variables.openEditorTitle
-            }
+            aria-label={toggleVariablesLabel}
+            {...tooltip(toggleVariablesLabel)}
             onClick={() => toggleRunbookView(RunbookView.VARIABLES)}
           >
             {showingVariables ? (
@@ -66,7 +72,8 @@ export function TabsBar() {
 
           <button
             className="btn btn-icon btn-soft-icon runbook-view-btn"
-            title={showingSource ? t.source.openPreview : t.source.openSource}
+            aria-label={toggleSourceLabel}
+            {...tooltip(toggleSourceLabel)}
             onClick={() => toggleRunbookView(RunbookView.SOURCE)}
           >
             {showingSource ? (

@@ -1,5 +1,6 @@
 import { CloudSyncConfig } from "@/common/config";
 import { HistoryDirection } from "@/common/enums";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -11,6 +12,7 @@ import {
   ChevronRight,
   FolderPlus,
 } from "react-bootstrap-icons";
+
 import "./CloudPathBar.css";
 
 interface CloudPathBarProps {
@@ -38,7 +40,8 @@ export function CloudPathBar({
         className="btn btn-flat-icon"
         onClick={() => navigateCloudHistory(HistoryDirection.BACK)}
         disabled={historyIndex === 0}
-        title={t.cloudModal.navigateBack}
+        aria-label={t.cloudModal.navigateBack}
+        {...tooltip(t.cloudModal.navigateBack)}
       >
         <ArrowLeft className="icon-md icon-semibold" />
       </button>
@@ -47,7 +50,8 @@ export function CloudPathBar({
         className="btn btn-flat-icon"
         onClick={() => navigateCloudHistory(HistoryDirection.FORWARD)}
         disabled={historyIndex >= historyLength - 1}
-        title={t.cloudModal.navigateForward}
+        aria-label={t.cloudModal.navigateForward}
+        {...tooltip(t.cloudModal.navigateForward)}
       >
         <ArrowRight className="icon-md icon-semibold" />
       </button>
@@ -57,7 +61,9 @@ export function CloudPathBar({
           className="cloud-browser-crumb"
           onClick={() => navigateCloudToDepth(0)}
           disabled={path.length === 0}
-          title={t.cloudModal.openFolderAction(CloudSyncConfig.APP_FOLDER_NAME)}
+          {...tooltip(
+            t.cloudModal.openFolderAction(CloudSyncConfig.APP_FOLDER_NAME),
+          )}
         >
           {CloudSyncConfig.APP_FOLDER_NAME}
         </button>
@@ -69,7 +75,7 @@ export function CloudPathBar({
               className="cloud-browser-crumb"
               onClick={() => navigateCloudToDepth(index + 1)}
               disabled={index === path.length - 1}
-              title={t.cloudModal.openFolderAction(folder.name)}
+              {...tooltip(t.cloudModal.openFolderAction(folder.name))}
             >
               {folder.name}
             </button>
@@ -81,7 +87,8 @@ export function CloudPathBar({
         className="btn btn-flat-icon"
         onClick={onStartNewFolder}
         disabled={loading || creatingFolder}
-        title={t.cloudModal.newFolder}
+        aria-label={t.cloudModal.newFolder}
+        {...tooltip(t.cloudModal.newFolder)}
       >
         <FolderPlus className="icon-md icon-semibold" />
       </button>
@@ -90,7 +97,8 @@ export function CloudPathBar({
         className="btn btn-flat-icon"
         onClick={() => void refreshCloudEntries()}
         disabled={loading}
-        title={t.cloudModal.refresh}
+        aria-label={t.cloudModal.refresh}
+        {...tooltip(t.cloudModal.refresh)}
       >
         <ArrowClockwise
           id="refresh-cloud-files-icon"

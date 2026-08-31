@@ -5,6 +5,7 @@ import { AppMode, BlockType, DialogTone } from "@/common/enums";
 import type { ImageBlock as ImageBlockData } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { ImportIcon, TrashIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useTranslation } from "@/i18n";
@@ -19,6 +20,7 @@ import {
 import { classNames } from "@/utils/string";
 import { useEffect, useRef, useState, type ClipboardEvent } from "react";
 import { ArrowsFullscreen } from "react-bootstrap-icons";
+
 import type { BlockViewProps } from "../blockViews";
 import "./ImageBlock.css";
 import { ImagePlaceholderBadge } from "./ImagePlaceholderBadge";
@@ -181,7 +183,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
               src={src}
               alt={block.alt ?? ""}
               draggable={false}
-              title={isReadMode ? t.image.viewFullscreen : undefined}
+              {...tooltip(isReadMode ? t.image.viewFullscreen : undefined)}
               role={isReadMode ? "button" : undefined}
               tabIndex={isReadMode ? 0 : undefined}
               onClick={isReadMode ? expand : undefined}
@@ -195,7 +197,8 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
                 {!loadFailed && (
                   <button
                     className="btn btn-icon btn-accent"
-                    title={t.image.viewFullscreen}
+                    aria-label={t.image.viewFullscreen}
+                    {...tooltip(t.image.viewFullscreen)}
                     onClick={expand}
                   >
                     <ArrowsFullscreen className="icon-md" />

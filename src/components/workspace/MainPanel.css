@@ -5,6 +5,10 @@
   overflow: hidden;
 }
 
+#tabs-content-wrapper {
+  border-right: var(--main-rail-inset) solid transparent;
+}
+
 #tabs-content {
   --sticky-scrollbar-inset: calc(var(--space-20) * -1);
 

@@ -1,6 +1,7 @@
 .panel-shell {
   --panel-content-width: min(var(--panel-width), var(--panel-max-width));
   --panel-column: var(--panel-content-width);
+  --main-rail-inset: 0px;
 
   grid-template-columns: var(--panel-column) 1fr;
   grid-template-areas:
@@ -17,4 +18,8 @@
   grid-template-areas:
     "header header"
     "main panel";
+}
+
+.panel-shell[data-panel-side="right"][data-panel-collapsed="true"] {
+  --main-rail-inset: var(--panel-scroll-gutter);
 }

@@ -7,6 +7,7 @@ export interface CloudEntry {
   isFolder: boolean;
   modifiedAt: string | null;
   size: number | null;
+  itemCount: number | null;
 }
 
 /** One step of a folder trail; an empty trail means the app root folder. */

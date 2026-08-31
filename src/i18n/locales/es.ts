@@ -156,6 +156,7 @@ export const es: Messages = {
   },
   command: {
     emptyPreview: "comando vacío",
+    changeLanguage: "Cambiar el lenguaje del editor",
     showEditor: "Mostrar editor",
     hideEditor: "Ocultar editor",
     showMoreLines: "Mostrar más líneas",
@@ -286,6 +287,8 @@ export const es: Messages = {
     columnName: "Nombre",
     columnModified: "Modificado",
     columnSize: "Tamaño",
+    folderItemCount: (count) =>
+      count === 1 ? "1 elemento" : `${count} elementos`,
     sortAscending: (column) => `Ordenar por ${column}, ascendente`,
     sortDescending: (column) => `Ordenar por ${column}, descendente`,
     searchFilesPlaceholder: "Buscar archivos y carpetas",
@@ -663,6 +666,7 @@ export const es: Messages = {
       [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
       [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
       [DocsSectionId.VARIABLE_FILL]: "Añadir a los extremos",
+      [DocsSectionId.VARIABLE_REPLACE]: "Cambiar texto",
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transformar un hueco",
       [DocsSectionId.UNNAMED_REFERENCES]: "Referencias sin variable",
       [DocsSectionId.VARIABLE_DATE]: "Fecha actual",
@@ -713,6 +717,7 @@ export const es: Messages = {
       projectName: "informe MENSUAL de ventas",
       reportFile: "ventas-mensuales.pdf",
       folderName: "   Informes de ventas   ",
+      ticketTitle: "arreglar caducidad de sesión",
       noteSample:
         "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace: https://example.com. Haz clic fuera para verla renderizada de nuevo.",
       tableSample: `| Código de salida | Significado | Acción |
@@ -858,6 +863,8 @@ Si algo sale mal, deshazlo en este orden:
         "La vista previa resalta el texto resuelto según cuántos valores atravesó. El texto que escribió la variable a la que haces referencia lleva el tono más claro, el que escribió una referencia **dentro** de ese valor se apoya en uno más intenso, y todo lo que esté más adentro comparte el más intenso. Así, de un vistazo sabes qué parte del comando viene de dónde.",
       shadesDemoHint:
         "Aquí `HOST` se construye a partir de `SERVICE`, que a su vez se construye a partir de `NAME`, así que el comando resuelto luce los tres tonos a la vez:",
+      shadesHover:
+        "Cuando los tonos no bastan, pasa el cursor sobre cualquier fragmento resaltado de un comando resuelto: te dice la variable que lo escribió.",
       circular:
         "Las referencias circulares son seguras: si dos variables se referencian entre sí, la app detecta el bucle y deja la referencia como texto plano.",
     },
@@ -969,6 +976,18 @@ Si algo sale mal, deshazlo en este orden:
         "El texto se añade tal cual lo escribas, espacios incluidos, así que `rfill( -; 2)` añade dos veces un espacio y un guion. Pedir `0` copias deja el valor intacto, y un número que falte o sea negativo deja la referencia entera tal y como está escrita.",
       computedHint:
         "El número de copias no tiene por qué ser fijo: puede calcularse a partir del propio valor. Prueba con un nombre más largo o más corto:",
+    },
+    variableReplace: {
+      intro:
+        "La operación `replace(viejo;nuevo)` cambia cada aparición de un texto por otro, esté donde esté dentro del valor. A diferencia de `strip`, no se limita a los extremos.",
+      demoHint:
+        "Abajo, el título de un ticket se convierte en el nombre de una rama. Cambia el título y la rama te sigue:",
+      verbatim:
+        "Los dos argumentos se toman **tal cual se escriben**, espacios incluidos, que es justo lo que permite cambiar un espacio.",
+      remove:
+        "Cuando no hay nada que poner a cambio, escribe `remove(texto)`: quita ese texto allá donde aparezca.",
+      removeDemoHint:
+        "Abajo, un tamaño en bytes copiado de un explorador de archivos aún trae sus separadores de miles, que el comando no admite. Cambia el número y el comando sigue siendo ejecutable:",
     },
     transformedPlaceholders: {
       intro:
@@ -1106,6 +1125,8 @@ Si algo sale mal, deshazlo en este orden:
         "Los comandos pueden ocupar varias líneas, y el editor se puede scrollear hacia los lados cuando una línea es muy larga. El margen izquierdo marca la primera línea con `$` y numera las siguientes.",
       editorFeatures:
         "El editor es un editor de código completo. `Ctrl+F` busca texto, `Alt+Arriba` y `Alt+Abajo` mueven una línea, `Ctrl+Shift+K` la elimina, `Alt+Clic` añade otro cursor, etc.",
+      language: (languages) =>
+        `El selector entre la vista previa y el editor elige el lenguaje con el que el editor resalta el comando: ${languages}. La elección nunca cambia lo que el comando *es*: se copia y se resuelve igual en todos los lenguajes.`,
       longCommands: (showMoreLines) =>
         `Un comando muy largo no estira el bloque para siempre. Cuando una parte pasa su límite de altura se detiene ahí y se desvanece, con un control **${showMoreLines}** debajo. Haz clic para revelar el resto, y haz clic otra vez para volver a plegarlo. La vista previa y el editor se limitan por separado, así que puedes abrir uno sin abrir el otro.`,
       variablesTeaser:

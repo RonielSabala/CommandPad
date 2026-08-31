@@ -1,7 +1,17 @@
 import { EventType, Key } from "@/common/constants/events";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import { classNames } from "@/utils/string";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
+import { createPortal } from "react-dom";
+
 import "./Select.css";
 
 export const SelectAlign = {
@@ -24,6 +34,7 @@ interface SelectProps<T extends string> {
   triggerClassName?: string;
   align?: SelectAlign;
   title?: string;
+  portal?: boolean;
 }
 
 export function Select<T extends string>({
@@ -35,9 +46,12 @@ export function Select<T extends string>({
   triggerClassName,
   align = SelectAlign.END,
   title,
+  portal = false,
 }: SelectProps<T>) {
   const [open, setOpen] = useState(false);
+  const [menuStyle, setMenuStyle] = useState<CSSProperties>();
   const rootRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     if (!open) {
@@ -45,7 +59,11 @@ export function Select<T extends string>({
     }
 
     const onMouseDown = (event: MouseEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (
+        !rootRef.current?.contains(target) &&
+        !menuRef.current?.contains(target)
+      ) {
         setOpen(false);
       }
     };
@@ -58,22 +76,79 @@ export function Select<T extends string>({
 
     document.addEventListener(EventType.MOUSE_DOWN, onMouseDown);
     document.addEventListener(EventType.KEY_DOWN, onKeyDown);
+
+    const onScroll = portal ? () => setOpen(false) : null;
+    if (onScroll) {
+      document.addEventListener(EventType.SCROLL, onScroll, true);
+    }
+
     return () => {
       document.removeEventListener(EventType.MOUSE_DOWN, onMouseDown);
       document.removeEventListener(EventType.KEY_DOWN, onKeyDown);
+      if (onScroll) {
+        document.removeEventListener(EventType.SCROLL, onScroll, true);
+      }
     };
-  }, [open]);
+  }, [open, portal]);
+
+  useLayoutEffect(() => {
+    if (!open || !portal) {
+      return;
+    }
+
+    const rect = rootRef.current?.getBoundingClientRect();
+    if (rect) {
+      setMenuStyle({
+        top: rect.bottom,
+        minWidth: rect.width,
+        ...(align === SelectAlign.END
+          ? { right: window.innerWidth - rect.right }
+          : { left: rect.left }),
+      });
+    }
+  }, [open, portal, align]);
 
   const select = (next: T) => {
     onChange(next);
     setOpen(false);
   };
 
+  const menu = open && (
+    <ul
+      ref={menuRef}
+      className={classNames(
+        "select-menu",
+        portal ? "select-menu-portal" : `align-${align}`,
+      )}
+      style={portal ? menuStyle : undefined}
+      role="listbox"
+    >
+      {options.map((option) => (
+        <li
+          key={option.value}
+          className="no-user-select"
+          role="option"
+          aria-selected={option.value === value}
+        >
+          <button
+            className={classNames(
+              "select-option",
+              option.value === value && "is-selected",
+            )}
+            onClick={() => select(option.value)}
+          >
+            {option.label}
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+
   return (
     <div className={classNames("select", className)} ref={rootRef}>
       <button
         className={triggerClassName}
-        title={title}
+        {...tooltip(title)}
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((isOpen) => !isOpen)}
@@ -87,31 +162,7 @@ export function Select<T extends string>({
         />
       </button>
 
-      {open && (
-        <ul
-          className={classNames("select-menu", `align-${align}`)}
-          role="listbox"
-        >
-          {options.map((option) => (
-            <li
-              key={option.value}
-              className="no-user-select"
-              role="option"
-              aria-selected={option.value === value}
-            >
-              <button
-                className={classNames(
-                  "select-option",
-                  option.value === value && "is-selected",
-                )}
-                onClick={() => select(option.value)}
-              >
-                {option.label}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      {portal && menu ? createPortal(menu, document.body) : menu}
     </div>
   );
 }

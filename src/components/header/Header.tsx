@@ -1,6 +1,7 @@
 import { Key } from "@/common/constants/events";
 import { AppRoute } from "@/common/constants/routes";
 import { AppMode, Theme } from "@/common/enums";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import {
   BookIcon,
   ChevronsRightIcon,
@@ -14,6 +15,7 @@ import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { Link, useNavigate } from "react-router-dom";
+
 import "./Header.css";
 import { LanguageSelect } from "./LanguageSelect";
 
@@ -33,13 +35,20 @@ export function Header() {
     (state) => !(getActiveTab(state)?.blocks.length ?? 0),
   );
 
+  const toggleModeLabel = isRead
+    ? t.header.switchToEdit
+    : t.header.switchToRead;
+  const toggleThemeLabel = isLight
+    ? t.header.switchToDark
+    : t.header.switchToLight;
+
   return (
     <header className="header-bar">
       <span
         className="logo no-user-select"
         role="button"
         tabIndex={0}
-        title={t.header.reloadTitle}
+        {...tooltip(t.header.reloadTitle)}
         onClick={() => location.reload()}
         onKeyDown={(event) => {
           if (event.key === Key.ENTER) {
@@ -57,7 +66,8 @@ export function Header() {
         <button
           className="btn btn-lg btn-flat-icon"
           onClick={toggleAppMode}
-          title={isRead ? t.header.switchToEdit : t.header.switchToRead}
+          aria-label={toggleModeLabel}
+          {...tooltip(toggleModeLabel)}
         >
           {isRead ? (
             <PencilIcon className="icon icon-bold" />
@@ -70,7 +80,7 @@ export function Header() {
           className="btn btn-lg"
           disabled={isEmpty || isRead}
           onClick={toggleAllCommandEditors}
-          title={t.header.toggleEditorsTitle}
+          {...tooltip(t.header.toggleEditorsTitle)}
         >
           <ChevronsRightIcon className="icon icon-bold" />
           {t.header.collapseAll}
@@ -83,7 +93,8 @@ export function Header() {
         <button
           className="btn btn-lg btn-flat-icon"
           onClick={toggleTheme}
-          title={isLight ? t.header.switchToDark : t.header.switchToLight}
+          aria-label={toggleThemeLabel}
+          {...tooltip(toggleThemeLabel)}
         >
           {isLight ? (
             <MoonIcon className="icon icon-bold" />
@@ -101,7 +112,8 @@ export function Header() {
         <Link
           to={AppRoute.DOCS}
           className="btn btn-lg btn-flat-icon"
-          title={t.docs.meta.openDocs}
+          aria-label={t.docs.meta.openDocs}
+          {...tooltip(t.docs.meta.openDocs)}
         >
           <BookIcon className="icon icon-bold" />
         </Link>
@@ -115,7 +127,8 @@ export function Header() {
               navigate(AppRoute.HOME);
             }
           }}
-          title={t.header.resetWorkspaceTitle}
+          aria-label={t.header.resetWorkspaceTitle}
+          {...tooltip(t.header.resetWorkspaceTitle)}
         >
           <ArrowCounterclockwise
             id="reset-workspace-icon"
@@ -129,7 +142,7 @@ export function Header() {
           className="btn btn-lg btn-primary"
           disabled={isEmpty}
           onClick={openExportModal}
-          title={t.header.exportTitle}
+          {...tooltip(t.header.exportTitle)}
         >
           <ExportIcon className="icon icon-bold" />
           {t.header.export}

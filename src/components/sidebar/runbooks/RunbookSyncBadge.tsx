@@ -1,6 +1,7 @@
 import { RunbookSyncStatus } from "@/common/enums";
 import type { RunbookSync } from "@/common/types";
 import { Spinner } from "@/components/common/Spinner";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -20,6 +21,9 @@ export function RunbookSyncBadge({ runbookId, sync }: Props) {
     (state) => state.runbookSyncStatus[runbookId] ?? RunbookSyncStatus.SYNCED,
   );
   const syncRunbookNow = useStore((state) => state.syncRunbookNow);
+  const statusLabel = t.runbooks.syncStatus[syncStatus](
+    PROVIDER_NAME[sync.provider],
+  );
 
   return (
     <button
@@ -28,7 +32,8 @@ export function RunbookSyncBadge({ runbookId, sync }: Props) {
         "runbook-sync",
         `sync-${syncStatus}`,
       )}
-      title={t.runbooks.syncStatus[syncStatus](PROVIDER_NAME[sync.provider])}
+      aria-label={statusLabel}
+      {...tooltip(statusLabel)}
       onClick={() => void syncRunbookNow(runbookId)}
     >
       {syncStatus === RunbookSyncStatus.SIGNED_OUT ? (

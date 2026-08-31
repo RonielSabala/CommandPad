@@ -1,6 +1,7 @@
 import { Key } from "@/common/constants/events";
 import { AppRoute } from "@/common/constants/routes";
 import { Theme } from "@/common/enums";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import "@/components/docs/DocsHeader.css";
 import "@/components/header/Header.css";
 import { LanguageSelect } from "@/components/header/LanguageSelect";
@@ -10,10 +11,10 @@ import { useStore } from "@/store/store";
 import { markHomeVisited } from "@/utils/session";
 import { BoxArrowInRight } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
+
 import "./SiteHeader.css";
 
 interface Props {
-  /** Optional label shown next to the logo */
   title?: string;
   showDocsLink?: boolean;
 }
@@ -22,6 +23,9 @@ export function SiteHeader({ title, showDocsLink }: Props) {
   const t = useTranslation();
   const isLight = useStore((state) => state.theme === Theme.LIGHT);
   const toggleTheme = useStore((state) => state.toggleTheme);
+  const toggleThemeLabel = isLight
+    ? t.header.switchToDark
+    : t.header.switchToLight;
 
   return (
     <header className="header-bar">
@@ -29,7 +33,7 @@ export function SiteHeader({ title, showDocsLink }: Props) {
         to={AppRoute.HOME}
         id="site-logo"
         className="logo no-user-select"
-        title={t.header.reloadTitle}
+        {...tooltip(t.header.reloadTitle)}
         onKeyDown={(event) => {
           if (event.key === Key.ENTER) {
             location.reload();
@@ -52,7 +56,8 @@ export function SiteHeader({ title, showDocsLink }: Props) {
         <button
           className="btn btn-lg btn-flat-icon"
           onClick={toggleTheme}
-          title={isLight ? t.header.switchToDark : t.header.switchToLight}
+          aria-label={toggleThemeLabel}
+          {...tooltip(toggleThemeLabel)}
         >
           {isLight ? (
             <MoonIcon className="icon icon-bold" />
@@ -71,7 +76,8 @@ export function SiteHeader({ title, showDocsLink }: Props) {
             <Link
               to={AppRoute.DOCS}
               className="btn btn-lg btn-flat-icon"
-              title={t.docs.meta.openDocs}
+              aria-label={t.docs.meta.openDocs}
+              {...tooltip(t.docs.meta.openDocs)}
             >
               <BookIcon className="icon icon-bold" />
             </Link>

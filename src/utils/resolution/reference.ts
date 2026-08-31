@@ -151,7 +151,13 @@ function resolveReferenceAt(
     }
   }
 
-  const template = applyTemplateParams(value.text, params, { key });
+  const template = applyTemplateParams(
+    value.text,
+    params,
+    { key },
+    value.spans,
+  );
+
   if (!template.fullyResolved && !KEEPS_BLANKS[context.surface]) {
     return unresolvedReference();
   }
@@ -165,11 +171,13 @@ function resolveReferenceAt(
     return unresolvedReference();
   }
 
-  const substituted = operations.length === 0 && !template.filled;
+  const rewritten = operations.length > 0 || filled !== template.text;
   return {
     key,
     text: applied.text,
     resolved: true,
-    spans: substituted ? value.spans : flatSpans(applied.text),
+    spans: rewritten
+      ? flatSpans(applied.text, key || undefined)
+      : template.spans,
   };
 }

@@ -1,10 +1,12 @@
 import { CloudSyncConfig } from "@/common/config";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { XIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
 import { FileEarmark, FolderFill } from "react-bootstrap-icons";
 
+import { TooltipVariant } from "@/common/enums";
 import "./CloudSelectionPills.css";
 
 interface Props {
@@ -35,14 +37,17 @@ export function CloudSelectionPills({ listedIds }: Props) {
           <span
             className="cloud-selection-pill"
             key={entry.id}
-            title={`${formatCloudPath(path)}${CloudSyncConfig.PATH_SEPARATOR}${entry.name}`}
+            {...tooltip(
+              `${formatCloudPath(path)}${CloudSyncConfig.PATH_SEPARATOR}${entry.name}`,
+              TooltipVariant.CODE,
+            )}
           >
             <EntryIcon className="icon-sm cloud-selection-pill-icon" />
 
             <span className="cloud-selection-pill-name">{entry.name}</span>
             <button
               className="cloud-selection-pill-drop"
-              title={dropTitle}
+              {...tooltip(dropTitle)}
               aria-label={dropTitle}
               onClick={() => toggleCloudSelected(entry)}
             >

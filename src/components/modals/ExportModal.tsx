@@ -6,6 +6,7 @@ import {
 } from "@/common/enums";
 import { FilenameInput } from "@/components/common/FilenameInput";
 import { Spinner } from "@/components/common/Spinner";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
@@ -17,6 +18,7 @@ import {
   FolderFill,
   LaptopFill,
 } from "react-bootstrap-icons";
+
 import { CloudFolderPicker } from "./cloud/CloudFolderPicker";
 import { CloudModalTitle } from "./cloud/CloudModalTitle";
 import {
@@ -218,7 +220,7 @@ export function ExportModal() {
               <button
                 className="export-modal-folder"
                 onClick={() => setPickingFolder(true)}
-                title={t.exportModal.chooseFolder}
+                {...tooltip(t.exportModal.chooseFolder)}
               >
                 <FolderFill className="icon-md" />
                 <span className="export-modal-folder-path">

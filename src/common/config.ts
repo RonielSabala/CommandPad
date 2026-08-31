@@ -107,6 +107,15 @@ export const TAB_HOVER_SWITCH_MS = 300;
 export const SECTION_ANIMATION_FALLBACK_MS = 250;
 export const ROUTE_PREFETCH_TIMEOUT_MS = 2000;
 
+export const TooltipConfig = {
+  SHOW_DELAY_MS: 500,
+  WARM_DELAY_MS: 90,
+  WARM_WINDOW_MS: 500,
+  GAP: 8,
+  VIEWPORT_MARGIN: 8,
+  ARROW_INSET: 14,
+} as const;
+
 export const MinimapConfig = {
   SCALE: 0.12,
   OVERSCROLL_PROPERTY: "--minimap-overscroll",
@@ -126,6 +135,8 @@ export const WrapPairs = {
 } as const;
 
 export const LINE_BREAK = "\n";
+export const CARRIAGE_RETURN = "\r";
+export const NON_BREAKING_SPACE = "\u00A0";
 
 export const SECRET_MASK = "•".repeat(8);
 

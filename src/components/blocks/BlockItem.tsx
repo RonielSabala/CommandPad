@@ -3,6 +3,7 @@ import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
 import { AppMode, LassoMode, SelectionGroup } from "@/common/enums";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { DragIcon } from "@/components/icons";
 import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
@@ -11,6 +12,7 @@ import { getActiveTab, useStore, useStoreApi } from "@/store/store";
 import { clamp } from "@/utils/number";
 import { classNames } from "@/utils/string";
 import { memo, useRef, useState } from "react";
+
 import { BlockActionsMenu } from "./BlockActionsMenu";
 import "./BlockItem.css";
 import { getBlockComponent, type BlockViewProps } from "./blockViews";
@@ -156,7 +158,7 @@ export const BlockItem = memo(function BlockItem({
       <div className={CssClass.BLOCK_DRAG_HANDLE}>
         <div
           className="drag-handle"
-          title={t.common.dragToReorder}
+          {...tooltip(t.common.dragToReorder)}
           onMouseDown={() => setDraggable(true)}
           onMouseUp={() => {
             clearTimeout(disarmTimer.current);

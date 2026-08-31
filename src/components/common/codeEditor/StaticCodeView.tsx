@@ -15,6 +15,7 @@ interface Props {
   hasError?: boolean;
   clamped?: boolean;
   masked?: boolean;
+  header?: ReactNode;
   footer?: ReactNode;
 }
 
@@ -29,6 +30,7 @@ export function StaticCodeView({
   hasError = false,
   clamped = false,
   masked = false,
+  header,
   footer,
 }: Props) {
   const textRef = useRef<HTMLPreElement>(null);
@@ -54,6 +56,8 @@ export function StaticCodeView({
         { [CodeMetricProperty.LINE_NUMBER_CHARS]: numberChars } as CSSProperties
       }
     >
+      {header && <div className="code-editor-header">{header}</div>}
+
       <div className="code-editor-surface">
         <div className="code-editor-static-gutter">
           {promptPrefix && (

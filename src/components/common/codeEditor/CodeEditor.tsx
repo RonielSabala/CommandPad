@@ -6,6 +6,7 @@ import {
   CodeEditorProperty,
   CodeModelConfig,
   MonacoLayout,
+  RUNBOOK_JSON_SCOPES,
 } from "@/common/editorConfig";
 import { CodeLanguage, CodeRendering, PanelSide } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
@@ -27,6 +28,7 @@ import { bindDragScrolling } from "@/monaco/dragScroll";
 import { getCodeMetrics } from "@/monaco/metrics";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
+import { validateModel } from "@/monaco/validation";
 import { useStore } from "@/store/store";
 import { classNames, countLines, joinLines } from "@/utils/string";
 import Editor, {
@@ -72,6 +74,7 @@ interface Props {
   readOnly?: boolean;
   masked?: boolean;
   minimapSide?: PanelSide | null;
+  header?: ReactNode;
   footer?: ReactNode;
   completions?: VariableCompletion[];
   actions?: EditorAction[];
@@ -93,11 +96,10 @@ function focusIsAdrift(): boolean {
   return !document.activeElement || document.activeElement === document.body;
 }
 
-function modelPath(modelId: string, language: CodeLanguage): string {
-  const suffix =
-    language === CodeLanguage.JSON
-      ? CodeModelConfig.RUNBOOK_SUFFIX
-      : CodeModelConfig.PLAIN_SUFFIX;
+function modelPath(modelId: string): string {
+  const suffix = RUNBOOK_JSON_SCOPES.some((scope) => modelId.startsWith(scope))
+    ? CodeModelConfig.RUNBOOK_SUFFIX
+    : CodeModelConfig.PLAIN_SUFFIX;
 
   return `${CodeModelConfig.SCHEME}://${modelId}${suffix}`;
 }
@@ -130,6 +132,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       readOnly = false,
       masked = false,
       minimapSide = null,
+      header,
       footer,
       completions,
       actions,
@@ -211,11 +214,18 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         return;
       }
 
-      const key = completionModelKey(modelPath(modelId, language));
+      const key = completionModelKey(modelPath(modelId));
       setModelCompletions(key, completions);
 
       return () => clearModelCompletions(key);
-    }, [completions, modelId, language]);
+    }, [completions, modelId]);
+
+    useEffect(() => {
+      const model = mounted?.getModel();
+      if (model) {
+        validateModel(model);
+      }
+    }, [mounted, value, language]);
 
     // A label is fixed at registration and has to follow the UI language
     useEffect(() => {
@@ -393,9 +403,11 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         onKeyDown={handleKeyDown}
         ref={rootRef}
       >
+        {header && <div className="code-editor-header">{header}</div>}
+
         <div className="code-editor-surface" data-value={value}>
           <Editor
-            path={modelPath(modelId, language)}
+            path={modelPath(modelId)}
             language={language}
             theme={themeName}
             value={value}

@@ -152,6 +152,7 @@ export const en: Messages = {
   },
   command: {
     emptyPreview: "empty command",
+    changeLanguage: "Change the editor language",
     showEditor: "Show editor",
     hideEditor: "Hide editor",
     showMoreLines: "Show more lines",
@@ -282,6 +283,7 @@ export const en: Messages = {
     columnName: "Name",
     columnModified: "Modified",
     columnSize: "Size",
+    folderItemCount: (count) => (count === 1 ? "1 item" : `${count} items`),
     sortAscending: (column) => `Sort by ${column}, ascending`,
     sortDescending: (column) => `Sort by ${column}, descending`,
     searchFilesPlaceholder: "Search files and folders",
@@ -653,6 +655,7 @@ export const en: Messages = {
       [DocsSectionId.VARIABLE_CASE]: "Changing case",
       [DocsSectionId.VARIABLE_STRIP]: "Trimming ends",
       [DocsSectionId.VARIABLE_FILL]: "Adding to the ends",
+      [DocsSectionId.VARIABLE_REPLACE]: "Swapping text out",
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transforming a blank",
       [DocsSectionId.UNNAMED_REFERENCES]: "References with no variable",
       [DocsSectionId.VARIABLE_DATE]: "Current date",
@@ -699,6 +702,7 @@ export const en: Messages = {
       projectName: "monthly SALES report",
       reportFile: "monthly-sales.pdf",
       folderName: "   Sales Reports   ",
+      ticketTitle: "fix login timeout",
       noteSample:
         "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link: https://example.com. Click away to see it rendered again.",
       tableSample: `| Exit code | Meaning | Action |
@@ -843,6 +847,8 @@ If something goes wrong, undo it in this order:
         "The preview highlights resolved text by how far it was read through. Text the variable you referenced wrote takes the lightest tint, text a reference **inside** that value wrote sits on a deeper one, and anything further in shares the deepest. One glance then tells you which part of a command came from where.",
       shadesDemoHint:
         "Here `HOST` is built from `SERVICE`, which is built from `NAME`, so the resolved command wears all three tints at once:",
+      shadesHover:
+        "When the tints alone are not enough, hover over any highlighted piece of a resolved command: it names the variable that wrote it.",
       circular:
         "Circular references are safe: if two variables reference each other, the app detects the loop and leaves the reference as plain text.",
     },
@@ -954,6 +960,18 @@ If something goes wrong, undo it in this order:
         "The text is added exactly as you typed it, spaces included, so `rfill( -; 2)` adds a space and a dash twice. Asking for `0` copies leaves the value untouched, and a count that is missing or negative leaves the whole reference exactly as written.",
       computedHint:
         "The count does not have to be a fixed number: it can be worked out from the value itself. Try a longer or shorter name:",
+    },
+    variableReplace: {
+      intro:
+        "The `replace(old;new)` operation swaps every occurrence of one piece of text for another, wherever it sits in the value. Unlike `strip`, it is not tied to the ends.",
+      demoHint:
+        "Below, a ticket title becomes a branch name. Retitle the ticket and the branch follows:",
+      verbatim:
+        "Both arguments are taken **exactly as written**, spaces included, which is what lets a space be the thing you swap.",
+      remove:
+        "When there is nothing to swap in, write `remove(text)` instead: it takes that text out wherever it appears.",
+      removeDemoHint:
+        "Below, a byte count copied out of a file browser still carries its thousands separators, which the command cannot take. Edit the number and the command stays runnable:",
     },
     transformedPlaceholders: {
       intro:
@@ -1090,6 +1108,8 @@ If something goes wrong, undo it in this order:
         "Commands can span several lines, and the editor can scroll sideways when a line gets very long. The left margin marks the first line with `$` and numbers the rest.",
       editorFeatures:
         "The editor is a full code editor. `Ctrl+F` finds text, `Alt+Up` and `Alt+Down` move a line, `Ctrl+Shift+K` deletes one, `Alt+Click` adds another cursor, etc.",
+      language: (languages) =>
+        `The selector between the preview and the editor picks the language the editor highlights the command as: ${languages}. The choice never changes what the command *is*: it is copied and resolved exactly the same way in every language.`,
       longCommands: (showMoreLines) =>
         `A very long command does not stretch the block forever. Once a part passes its height limit it stops there and fades out, with a **${showMoreLines}** control underneath. Click it to reveal the rest, and click it again to fold it back. The preview and the editor are capped separately, so you can open one without opening the other.`,
       variablesTeaser:

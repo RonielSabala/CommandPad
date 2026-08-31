@@ -153,6 +153,7 @@ export interface Messages {
   };
   command: {
     emptyPreview: string;
+    changeLanguage: string;
     showEditor: string;
     hideEditor: string;
     showMoreLines: string;
@@ -237,6 +238,7 @@ export interface Messages {
     columnName: string;
     columnModified: string;
     columnSize: string;
+    folderItemCount: (count: number) => string;
     sortAscending: (column: string) => string;
     sortDescending: (column: string) => string;
     searchFilesPlaceholder: string;
@@ -400,6 +402,7 @@ export interface Messages {
       projectName: string;
       reportFile: string;
       folderName: string;
+      ticketTitle: string;
     };
     gettingStarted: {
       intro: string;
@@ -469,6 +472,7 @@ export interface Messages {
       demoHint: string;
       shades: string;
       shadesDemoHint: string;
+      shadesHover: string;
       circular: string;
     };
     parameterizedPlaceholders: {
@@ -528,6 +532,13 @@ export interface Messages {
       demoHint: string;
       rules: string;
       computedHint: string;
+    };
+    variableReplace: {
+      intro: string;
+      demoHint: string;
+      verbatim: string;
+      remove: string;
+      removeDemoHint: string;
     };
     transformedPlaceholders: {
       intro: string;
@@ -595,6 +606,7 @@ export interface Messages {
       parts: string;
       multiline: string;
       editorFeatures: string;
+      language: (languages: string) => string;
       longCommands: (showMoreLines: string) => string;
       variablesTeaser: string;
     };

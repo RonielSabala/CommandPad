@@ -1,5 +1,6 @@
 import { AppRoute } from "@/common/constants/routes";
 import { PageSpinner } from "@/components/common/PageSpinner";
+import { TooltipLayer } from "@/components/common/tooltip/TooltipLayer";
 import { useDocumentLanguage, useThemeClass } from "@/hooks/useBodyClasses";
 import { useRoutePrefetch, type RouteLoader } from "@/hooks/useRoutePrefetch";
 import { useMonacoBootstrap } from "@/monaco/useMonacoBootstrap";
@@ -56,18 +57,21 @@ export default function App() {
   }, [isInitialized]);
 
   return (
-    <Suspense fallback={<PageSpinner />}>
-      <Routes>
-        <Route path={AppRoute.HOME} element={<HomePage />} />
-        <Route path={AppRoute.WORKSPACE} element={<WorkspacePage />} />
-        <Route path={AppRoute.DOCS} element={<DocsPage />} />
-        <Route path={AppRoute.PRIVACY} element={<PrivacyPage />} />
-        <Route path={AppRoute.TERMS} element={<TermsPage />} />
-        <Route
-          path="*"
-          element={<Navigate to={AppRoute.WORKSPACE} replace />}
-        />
-      </Routes>
-    </Suspense>
+    <>
+      <TooltipLayer />
+      <Suspense fallback={<PageSpinner />}>
+        <Routes>
+          <Route path={AppRoute.HOME} element={<HomePage />} />
+          <Route path={AppRoute.WORKSPACE} element={<WorkspacePage />} />
+          <Route path={AppRoute.DOCS} element={<DocsPage />} />
+          <Route path={AppRoute.PRIVACY} element={<PrivacyPage />} />
+          <Route path={AppRoute.TERMS} element={<TermsPage />} />
+          <Route
+            path="*"
+            element={<Navigate to={AppRoute.WORKSPACE} replace />}
+          />
+        </Routes>
+      </Suspense>
+    </>
   );
 }

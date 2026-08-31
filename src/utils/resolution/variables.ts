@@ -68,7 +68,7 @@ export function getVariableMap(variables: Variable[] = []): VariableMap {
       ReferenceSurface.VALUE,
     )) {
       if (!part.match) {
-        spans.push(...flatSpans(part.text));
+        spans.push(...flatSpans(part.text, key));
         continue;
       }
 
@@ -81,7 +81,7 @@ export function getVariableMap(variables: Variable[] = []): VariableMap {
       spans.push(
         ...(reference.resolved
           ? nestSpans(reference.spans)
-          : flatSpans(reference.text)),
+          : flatSpans(reference.text, key)),
       );
     }
 

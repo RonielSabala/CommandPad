@@ -6,9 +6,11 @@ import {
 } from "@/common/constants/docs";
 import { PanelId } from "@/common/enums";
 import { ResizablePanel } from "@/components/common/panel/ResizablePanel";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
+
 import "./DocsToc.css";
 import type { DocsCollapse } from "./useDocsCollapse";
 
@@ -32,7 +34,7 @@ export function DocsToc({ activeId, collapse, onNavigate }: Props) {
       <button
         id="docs-toc-header"
         className="no-user-select"
-        title={toggleAllLabel}
+        {...tooltip(toggleAllLabel)}
         aria-label={toggleAllLabel}
         aria-expanded={!collapse.allCollapsed}
         onClick={collapse.toggleAll}

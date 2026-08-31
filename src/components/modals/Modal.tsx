@@ -1,8 +1,10 @@
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CloseIcon } from "@/components/icons";
 import { useModalDismiss } from "@/hooks/useModalDismiss";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
 import type { ReactNode } from "react";
+
 import "./Modal.css";
 
 interface Props {
@@ -47,7 +49,7 @@ export function Modal({
         <button
           className="modal-close btn btn-soft-icon"
           onClick={onClose}
-          title={t.common.close}
+          {...tooltip(t.common.close)}
           aria-label={t.common.close}
         >
           <CloseIcon className="icon-semibold" />

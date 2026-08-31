@@ -57,6 +57,14 @@ export function countOccurrences(text: string, needle: string): number {
   return count;
 }
 
+export function replaceOccurrences(
+  text: string,
+  needle: string,
+  replacement: string,
+): string {
+  return needle ? text.split(needle).join(replacement) : text;
+}
+
 export function sliceString(
   text: string,
   start: number | null,

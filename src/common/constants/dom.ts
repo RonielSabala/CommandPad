@@ -16,6 +16,10 @@ export const InputSelector = {
   CODE: `${MonacoSelector.INPUT}, ${MonacoSelector.EDIT_CONTEXT}`,
 } as const;
 
+export const ModalSelector = {
+  OPEN: ".modal-backdrop.modal-visible",
+} as const;
+
 export const EditCommand = {
   INSERT_TEXT: "insertText",
 } as const;
@@ -36,6 +40,9 @@ export const DataAttr = {
   DRAG_IMAGE: "data-drag-image",
   PANEL_SIDE: "data-panel-side",
   PANEL_COLLAPSED: "data-panel-collapsed",
+  TOOLTIP: "data-tooltip",
+  TOOLTIP_VARIANT: "data-tooltip-variant",
+  TOOLTIP_SIDE: "data-tooltip-side",
 } as const;
 
 export const Cursor = {

@@ -142,6 +142,7 @@ export function VariableReferencesDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variableReferences.shadesHover} />
       <Prose text={t.docs.variableReferences.circular} />
     </>
   );
@@ -476,6 +477,44 @@ export function VariableFillDocs() {
   );
 }
 
+export function VariableReplaceDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableReplace.intro} />
+      <Prose text={t.docs.variableReplace.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("TICKET", t.docs.demo.ticketTitle)],
+            blocks: [demoCommand("git checkout -b fix/{TICKET|replace( ;-)}")],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableReplace.verbatim} />
+      <Prose text={t.docs.variableReplace.remove} />
+      <Prose text={t.docs.variableReplace.removeDemoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("SIZE", "1,048,576")],
+            blocks: [
+              demoCommand("head -c {SIZE|remove(,)} disk.img > head.bin"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
 export function PlaceholderDefaultsDocs() {
   const t = useTranslation();
 
@@ -539,7 +578,11 @@ export function UnnamedReferencesDocs() {
       <Prose text={t.docs.unnamedReferences.intro} />
       <Prose text={t.docs.unnamedReferences.demoHint} />
       <DemoWorkspace
-        tabs={[{ blocks: [demoCommand('echo "Length: {|len}"')] }]}
+        tabs={[
+          {
+            blocks: [demoCommand('echo "Length: {|len}"')],
+          },
+        ]}
       >
         <BlocksList />
       </DemoWorkspace>
@@ -557,7 +600,11 @@ export function VariableDateDocs() {
       <Prose text={t.docs.variableDate.intro} />
       <Prose text={t.docs.variableDate.demoHint} />
       <DemoWorkspace
-        tabs={[{ blocks: [demoCommand("mkdir backup-{|date()}")] }]}
+        tabs={[
+          {
+            blocks: [demoCommand("mkdir backup-{|date()}")],
+          },
+        ]}
       >
         <BlocksList />
       </DemoWorkspace>
@@ -565,7 +612,11 @@ export function VariableDateDocs() {
       <Prose text={t.docs.variableDate.table} />
       <Prose text={t.docs.variableDate.formatDemoHint(t.docs.demo.reset)} />
       <DemoWorkspace
-        tabs={[{ blocks: [demoCommand('echo "Saved at {|date(HH:mm:ss)}"')] }]}
+        tabs={[
+          {
+            blocks: [demoCommand('echo "Saved at {|date(HH:mm:ss)}"')],
+          },
+        ]}
       >
         <BlocksList />
       </DemoWorkspace>

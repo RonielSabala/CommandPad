@@ -1,7 +1,9 @@
+import type { ResolvedSpan } from "@/common/types";
 import { VariableSyntax } from "@/common/variableSyntax";
 
 import { applyOperations } from "./operations";
 import type { OperationContext } from "./operations/types";
+import { depthAt, flatSpans, mergeSpans, sliceSpans } from "./spans";
 import { scanBraces, splitReferenceBody } from "./token";
 
 interface ReferenceParam {
@@ -20,6 +22,7 @@ interface ResolvedTemplate {
   fullyResolved: boolean;
   /** Whether a blank was actually filled. */
   filled: boolean;
+  spans: ResolvedSpan[];
 }
 
 export function parseParam(chunk: string): ReferenceParam | null {
@@ -65,6 +68,10 @@ function parseBlank(body: string): TemplateBlank | null {
   }
 
   return { ...declaration, operations };
+}
+
+function blankSource(key: string, name: string): string | undefined {
+  return key ? `${key}${VariableSyntax.PARAM_SEPARATOR}${name}` : undefined;
 }
 
 /** Every blank opens with this. */
@@ -193,6 +200,7 @@ function substituteBlanks(
 ): ResolvedTemplate {
   return fillBlanks(
     template,
+    flatSpans(template),
     readBlanks(template),
     params,
     defaults,
@@ -204,6 +212,7 @@ function substituteBlanks(
 
 function fillBlanks(
   template: string,
+  spans: readonly ResolvedSpan[],
   blanks: BlankMatch[],
   params: Record<string, string>,
   defaults: Record<string, string>,
@@ -212,16 +221,23 @@ function fillBlanks(
   resolving: Set<string>,
 ): ResolvedTemplate {
   if (blanks.length === 0) {
-    return { text: template, fullyResolved: true, filled: false };
+    return {
+      text: template,
+      fullyResolved: true,
+      filled: false,
+      spans: [...spans],
+    };
   }
 
   let fullyResolved = true;
   let filled = false;
   let text = "";
   let lastEnd = 0;
+  const pieces: ResolvedSpan[] = [];
 
   for (const { blank, start, end } of blanks) {
     text += template.slice(lastEnd, start);
+    pieces.push(...sliceSpans(spans, lastEnd, start));
     lastEnd = end;
 
     const value = blankValue(
@@ -240,29 +256,48 @@ function fillBlanks(
     if (!applied?.ok) {
       fullyResolved = false;
       text += template.slice(start, end);
+      pieces.push(...sliceSpans(spans, start, end));
       continue;
     }
 
     filled = true;
     text += applied.text;
+    pieces.push({
+      text: applied.text,
+      depth: depthAt(spans, start) + 1,
+      source: blankSource(context.key, blank.name),
+    });
   }
 
-  return { text: text + template.slice(lastEnd), fullyResolved, filled };
+  pieces.push(...sliceSpans(spans, lastEnd, template.length));
+  return {
+    text: text + template.slice(lastEnd),
+    fullyResolved,
+    filled,
+    spans: mergeSpans(pieces),
+  };
 }
 
 export function applyTemplateParams(
   template: string,
   params: Record<string, string>,
   context: OperationContext,
+  spans: readonly ResolvedSpan[] = flatSpans(template),
 ): ResolvedTemplate {
   const blanks = readBlanks(template);
   if (blanks.length === 0) {
-    return { text: template, fullyResolved: true, filled: false };
+    return {
+      text: template,
+      fullyResolved: true,
+      filled: false,
+      spans: [...spans],
+    };
   }
 
   const defaults = collectBlankDefaults(blanks);
   return fillBlanks(
     template,
+    spans,
     blanks,
     params,
     defaults,

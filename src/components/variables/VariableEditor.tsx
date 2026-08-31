@@ -3,6 +3,7 @@ import { CodeModelScope } from "@/common/editorConfig";
 import { VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
 import { useExtractVariableAction } from "@/hooks/useExtractVariableAction";
 import { useTranslation } from "@/i18n";
@@ -84,7 +85,8 @@ export function VariableEditor({
           <button
             className="btn btn-icon variable-editor-secret-btn"
             onClick={() => toggleVariableSecret(variableId)}
-            title={t.variables.reveal(1)}
+            aria-label={t.variables.reveal(1)}
+            {...tooltip(t.variables.reveal(1))}
           >
             <EyeIcon slashed className="icon-md icon-bold" />
           </button>

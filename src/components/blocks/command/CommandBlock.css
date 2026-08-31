@@ -105,6 +105,17 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
   color: var(--resolved-color);
 }
 
+.token-nesting-1,
+.token-nesting-2,
+.token-nesting-3 {
+  display: inline-block;
+}
+
+.token-nesting-blank {
+  width: 0.2em;
+  user-select: none;
+}
+
 .token-nesting-1 {
   background: var(--resolved-bg-1);
 }
@@ -161,6 +172,7 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
 
 .command-block-editor {
   --command-clamp-halo: var(--color-surface);
+  --code-editor-header-height: var(--space-16);
   --code-editor-clamp-height: calc(
     var(--command-clamp-lines-height) + var(--space-10)
   );
@@ -169,16 +181,22 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
   border-top: var(--border-standard);
 }
 
+body.select-key-held:not(.read-mode) .code-editor-header > * {
+  pointer-events: none;
+}
+
 .command-block-editor.collapsed,
 body.read-mode :is(.toggle-editor-btn, .command-block-editor) {
   display: none;
 }
 
-.command-block-editor:focus-within .command-clamp-toggle {
+.command-block-editor:has(.code-editor-surface:focus-within)
+  .command-clamp-toggle {
   display: none;
 }
 
-.command-block-editor:focus-within.clamped > .code-editor-surface {
+.command-block-editor.clamped:has(.code-editor-surface:focus-within)
+  > .code-editor-surface {
   max-height: none;
   overflow: visible;
   -webkit-mask-image: none;

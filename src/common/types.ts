@@ -1,6 +1,7 @@
 import type {
   BlockType,
   CloudProvider,
+  CodeLanguage,
   CommandSegmentType,
   InsertPosition,
   NoteNodeType,
@@ -28,6 +29,7 @@ export interface CommandBlock {
   id: string;
   type: typeof BlockType.COMMAND;
   text: string;
+  language?: CodeLanguage;
   editorCollapsed?: boolean;
 }
 
@@ -98,6 +100,7 @@ export interface RunbookContent {
 export interface ResolvedSpan {
   text: string;
   depth: number;
+  source?: string;
 }
 
 export interface CommandSegment {

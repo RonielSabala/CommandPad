@@ -1,10 +1,12 @@
 import { CssClass } from "@/common/constants/css";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useLinkModeBodyClass } from "@/hooks/useBodyClasses";
 import { useLinkActivation } from "@/hooks/useLinkActivation";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
 import { useState, type ReactNode } from "react";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
+
 import "./DocsDemo.css";
 
 interface Props {
@@ -34,7 +36,8 @@ export function DocsDemo({ children, onReset, className }: Props) {
       <button
         className="docs-demo-reset"
         onClick={handleReset}
-        title={t.docs.demo.reset}
+        aria-label={t.docs.demo.reset}
+        {...tooltip(t.docs.demo.reset)}
       >
         <ArrowCounterclockwise
           className={classNames("icon", spinning && CssClass.ANIMATING)}

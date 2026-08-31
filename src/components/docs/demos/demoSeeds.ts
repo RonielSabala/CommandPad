@@ -1,5 +1,6 @@
 import { createDefaultScrollTop, RunbookConfig } from "@/common/config";
-import { BlockType, NoteStyle } from "@/common/enums";
+import { DEFAULT_COMMAND_LANGUAGE } from "@/common/editorConfig";
+import { BlockType, type CodeLanguage, NoteStyle } from "@/common/enums";
 import type {
   Block,
   RunbookContent,
@@ -14,10 +15,12 @@ import { getRunbookLabel } from "@/utils/runbook";
 export const demoCommand = (
   text: string,
   editorCollapsed?: boolean,
+  language: CodeLanguage = DEFAULT_COMMAND_LANGUAGE,
 ): Block => ({
   id: generateId(),
   type: BlockType.COMMAND,
   text,
+  language,
   ...(editorCollapsed !== undefined ? { editorCollapsed } : {}),
 });
 

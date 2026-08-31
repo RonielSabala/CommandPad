@@ -64,3 +64,10 @@
   background: var(--accent-dim);
   color: var(--accent-text);
 }
+
+.select-menu-portal {
+  position: fixed;
+  top: 0;
+  margin-top: var(--space-2);
+  z-index: var(--z-popover);
+}

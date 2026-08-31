@@ -1,5 +1,8 @@
-import { MonacoLayout, VariableCompletionConfig } from "@/common/editorConfig";
-import { CodeLanguage } from "@/common/enums";
+import {
+  COMMAND_LANGUAGE_ORDER,
+  MonacoLayout,
+  VariableCompletionConfig,
+} from "@/common/editorConfig";
 import { VariableSyntax } from "@/common/variableSyntax";
 import type { editor, languages, Position } from "monaco-editor";
 import { monaco } from "../setup";
@@ -60,12 +63,14 @@ function provideCompletionItems(
 }
 
 export function registerVariableCompletions(): void {
-  monaco.languages.registerCompletionItemProvider(CodeLanguage.PLAIN, {
-    triggerCharacters: [
-      VariableSyntax.BRACE_OPEN,
-      VariableSyntax.PARAM_SEPARATOR,
-      VariableSyntax.OPERATION_SEPARATOR,
-    ],
-    provideCompletionItems,
-  });
+  COMMAND_LANGUAGE_ORDER.forEach((language) =>
+    monaco.languages.registerCompletionItemProvider(language, {
+      triggerCharacters: [
+        VariableSyntax.BRACE_OPEN,
+        VariableSyntax.PARAM_SEPARATOR,
+        VariableSyntax.OPERATION_SEPARATOR,
+      ],
+      provideCompletionItems,
+    }),
+  );
 }

@@ -1,3 +1,4 @@
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { classNames } from "@/utils/string";
 import { CheckCircleFill, Circle } from "react-bootstrap-icons";
 
@@ -13,7 +14,7 @@ export function CloudSelectCircle({ selected, title, onToggle }: Props) {
       className={classNames("cloud-browser-row-select", selected && "is-on")}
       role="checkbox"
       aria-checked={selected}
-      title={title}
+      {...tooltip(title)}
       aria-label={title}
       onClick={onToggle}
     >

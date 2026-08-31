@@ -2,6 +2,7 @@
   --panel-rail-start: 0px;
   --panel-rail-end: var(--panel-rail-width);
   --panel-scrollbar-inset: var(--panel-scroll-gutter);
+  --panel-grab-width: calc(var(--panel-rail-width) / 2);
 
   grid-area: panel;
   position: relative;
@@ -11,11 +12,6 @@
   border-right: var(--border-standard);
 }
 
-.resizable-panel[data-panel-collapsed="true"] {
-  border-left: none;
-  border-right: none;
-}
-
 .resizable-panel[data-panel-side="right"] {
   --panel-rail-start: var(--panel-rail-width);
   --panel-rail-end: 0px;
@@ -23,6 +19,17 @@
 
   border-right: none;
   border-left: var(--border-standard);
+}
+
+.resizable-panel[data-panel-collapsed="true"] {
+  --panel-grab-width: var(--panel-rail-width);
+
+  border-left: none;
+  border-right: none;
+}
+
+.resizable-panel[data-panel-side="right"][data-panel-collapsed="true"] {
+  --panel-grab-width: var(--panel-scroll-gutter);
 }
 
 .panel-content {
@@ -43,7 +50,7 @@
   top: 0;
   bottom: 0;
   right: 0;
-  width: calc(var(--panel-rail-width) / 2);
+  width: var(--panel-grab-width);
   z-index: var(--z-docked);
   cursor: col-resize;
   transform: translateX(100%);
@@ -57,7 +64,7 @@
 
 .resizable-panel[data-panel-side="right"][data-panel-collapsed="true"]
   .panel-resize-handle {
-  transform: translateX(calc(-100% - var(--scrollbar-size)));
+  transform: translateX(-100%);
 }
 
 /* The visible line */
@@ -83,7 +90,7 @@
 .resizable-panel[data-panel-side="right"][data-panel-collapsed="true"]
   .panel-resize-handle::before {
   left: auto;
-  right: calc(var(--scrollbar-size) * -1);
+  right: 0;
 }
 
 .resizable-panel .panel-resize-handle:hover::before,

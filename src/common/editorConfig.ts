@@ -1,3 +1,5 @@
+import { CodeLanguage } from "./enums";
+
 export const COMMAND_PROMPT_PREFIX = "$";
 
 export const CommandClampConfig = {
@@ -63,6 +65,12 @@ export const CodeModelScope = {
   RUNBOOK_SOURCE: "runbook/source",
 } as const;
 
+export const RUNBOOK_JSON_SCOPES: readonly string[] = [
+  CodeModelScope.PASTE_RUNBOOK,
+  CodeModelScope.CLOUD_FILE,
+  CodeModelScope.RUNBOOK_SOURCE,
+];
+
 export const MonacoMinimap = {
   showSlider: "mouseover",
   renderCharacters: true,
@@ -92,6 +100,20 @@ export const MonacoTokenScope = {
   JSON_KEYWORD: "keyword.json",
   JSON_DELIMITER: "delimiter",
   JSON_COMMENT: "comment",
+} as const;
+
+export const MonacoMarker = {
+  OWNER: "commandpad",
+} as const;
+
+export const XmlValidation = {
+  MIME_TYPE: "application/xml",
+  ERROR_TAG: "parsererror",
+  CHROMIUM_LINE: "error on line ",
+  CHROMIUM_COLUMN: " at column ",
+  CHROMIUM_MESSAGE: ": ",
+  FIREFOX_LINE: "Line Number ",
+  FIREFOX_COLUMN: ", Column ",
 } as const;
 
 export const MonacoLayout = {
@@ -167,8 +189,29 @@ export const BlockField = {
   SRC: "src",
   ALT: "alt",
   STYLE: "style",
+  LANGUAGE: "language",
   EDITOR_COLLAPSED: "editorCollapsed",
 } as const;
+
+export const COMMAND_LANGUAGE_ORDER = [
+  CodeLanguage.PLAIN,
+  CodeLanguage.BASH,
+  CodeLanguage.POWERSHELL,
+  CodeLanguage.JSON,
+  CodeLanguage.XML,
+  CodeLanguage.YAML,
+] as const;
+
+export const CODE_LANGUAGE_LABEL: Record<CodeLanguage, string> = {
+  [CodeLanguage.PLAIN]: "Plain text",
+  [CodeLanguage.BASH]: "Bash",
+  [CodeLanguage.POWERSHELL]: "PowerShell",
+  [CodeLanguage.JSON]: "JSON",
+  [CodeLanguage.XML]: "XML",
+  [CodeLanguage.YAML]: "YAML",
+};
+
+export const DEFAULT_COMMAND_LANGUAGE = CodeLanguage.BASH;
 
 export const RUNBOOK_JSON_PLACEHOLDER =
   '{\n  "variables": [],\n  "blocks": []\n}';

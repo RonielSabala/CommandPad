@@ -1,4 +1,9 @@
-import { COPY_FEEDBACK_TIMEOUT_MS } from "@/common/config";
+import {
+  CARRIAGE_RETURN,
+  COPY_FEEDBACK_TIMEOUT_MS,
+  LINE_BREAK,
+  NON_BREAKING_SPACE,
+} from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import {
@@ -6,7 +11,12 @@ import {
   COMMAND_PROMPT_PREFIX,
   CommandClampConfig,
 } from "@/common/editorConfig";
-import { BlockType, CommandSurface } from "@/common/enums";
+import {
+  BlockType,
+  CodeLanguage,
+  CommandSurface,
+  TooltipVariant,
+} from "@/common/enums";
 import type {
   CommandBlock as CommandBlockData,
   CommandSegment,
@@ -17,6 +27,7 @@ import {
 } from "@/components/common/codeEditor/CodeEditor";
 import { useDomScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import {
   CheckIcon,
   CopyIcon,
@@ -34,18 +45,53 @@ import {
   resolveCommandToString,
   type VariableMap,
 } from "@/utils/resolution";
-import { classNames, countLines } from "@/utils/string";
+import { classNames, countLines, splitLines, stripEnd } from "@/utils/string";
 import type { CSSProperties } from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import "./CommandBlock.css";
 import { CommandClampToggle } from "./CommandClampToggle";
+import { CommandLanguageSelect } from "./CommandLanguageSelect";
 
 const CLAMP_STYLE = {
   [CommandClampConfig.MAX_LINES_PROPERTY]: CommandClampConfig.MAX_LINES,
 } as CSSProperties;
 
 const SECRET_MASK = "******";
+
+function HighlightedLines({
+  text,
+  className,
+  title,
+}: {
+  text: string;
+  className: string;
+  title?: string;
+}) {
+  return splitLines(text).map((line, i) => {
+    const content = stripEnd(line, CARRIAGE_RETURN);
+    const isBlank = content === "";
+
+    return (
+      <Fragment key={i}>
+        {i > 0 && LINE_BREAK}
+        <span
+          className={classNames(className, isBlank && "token-nesting-blank")}
+          {...tooltip(title, TooltipVariant.CODE)}
+        >
+          {isBlank ? NON_BREAKING_SPACE : content}
+        </span>
+      </Fragment>
+    );
+  });
+}
 
 function NestedText({ segment }: { segment: CommandSegment }) {
   const spans = segment.spans;
@@ -54,9 +100,12 @@ function NestedText({ segment }: { segment: CommandSegment }) {
   }
 
   return spans.map((span, i) => (
-    <span key={i} className={`token-nesting-${span.depth}`}>
-      {span.text}
-    </span>
+    <HighlightedLines
+      key={i}
+      text={span.text}
+      className={`token-nesting-${span.depth}`}
+      title={span.source}
+    />
   ));
 }
 
@@ -71,6 +120,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const blockId = block.id;
   const blockText = block.text;
   const isEditorCollapsed = block.editorCollapsed === true;
+  const toggleEditorLabel = isEditorCollapsed
+    ? t.command.showEditor
+    : t.command.hideEditor;
 
   const updateBlock = useStore((state) => state.updateBlock);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
@@ -125,6 +177,12 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
 
   const handleChange = useCallback(
     (value: string) => updateBlock(blockId, BlockType.COMMAND, { text: value }),
+    [updateBlock, blockId],
+  );
+
+  const handleLanguageChange = useCallback(
+    (language: CodeLanguage) =>
+      updateBlock(blockId, BlockType.COMMAND, { language }),
     [updateBlock, blockId],
   );
 
@@ -199,9 +257,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
                 editorCollapsed: !isEditorCollapsed,
               })
             }
-            title={
-              isEditorCollapsed ? t.command.showEditor : t.command.hideEditor
-            }
+            aria-label={toggleEditorLabel}
+            {...tooltip(toggleEditorLabel)}
           >
             <EditorToggleChevronIcon className="toggle-editor-icon icon-md icon-bold" />
           </button>
@@ -210,7 +267,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
             className="btn"
             onClick={copy}
             disabled={!blockText}
-            title={t.command.copy}
+            aria-label={t.command.copy}
+            {...tooltip(t.command.copy)}
           >
             {copied ? (
               <CheckIcon className="icon-md icon-bold copy-check-icon" />
@@ -238,6 +296,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           isEditorCollapsed && CssClass.COLLAPSED,
         )}
         value={blockText}
+        language={block.language}
         onChange={handleChange}
         onFocus={handleEditorFocus}
         onBlur={handleEditorBlur}
@@ -246,6 +305,12 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         actions={actions}
         promptPrefix={COMMAND_PROMPT_PREFIX}
         clamped={editorClamped}
+        header={
+          <CommandLanguageSelect
+            language={block.language}
+            onChange={handleLanguageChange}
+          />
+        }
         footer={
           editorOverflows && (
             <CommandClampToggle

@@ -1,4 +1,8 @@
 import { ImageBlockConfig } from "@/common/config";
+import {
+  CODE_LANGUAGE_LABEL,
+  COMMAND_LANGUAGE_ORDER,
+} from "@/common/editorConfig";
 import { NoteStyle } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
@@ -13,6 +17,10 @@ import {
 } from "../demos/demoSeeds";
 import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
+
+const COMMAND_LANGUAGE_NAMES = COMMAND_LANGUAGE_ORDER.map(
+  (language) => CODE_LANGUAGE_LABEL[language],
+).join(", ");
 
 const LONG_COMMAND = joinLines([
   "echo 'Starting backup...' \\",
@@ -83,6 +91,7 @@ export function CommandBlockDocs() {
       </DemoWorkspace>
       <Prose text={t.docs.commandBlock.multiline} />
       <Prose text={t.docs.commandBlock.editorFeatures} />
+      <Prose text={t.docs.commandBlock.language(COMMAND_LANGUAGE_NAMES)} />
       <Prose text={t.docs.commandBlock.longCommands(t.command.showMoreLines)} />
       <DemoWorkspace tabs={[{ blocks: [demoCommand(LONG_COMMAND)] }]}>
         <BlocksList />

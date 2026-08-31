@@ -88,6 +88,16 @@ export const FillSyntax = {
   MAX_TIMES: 10000,
 } as const;
 
+export const ReplaceSyntax = {
+  KEYWORD: "replace",
+  ARITY: 2,
+} as const;
+
+export const RemoveSyntax = {
+  KEYWORD: "remove",
+  ARITY: 1,
+} as const;
+
 export const DateSyntax = {
   KEYWORD: "date",
   ARITY: 1,

@@ -4,6 +4,7 @@ import {
   FilenameInput,
   FilenameInputSize,
 } from "@/components/common/FilenameInput";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
 import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
@@ -133,8 +134,11 @@ export function CloudEntryRow({
       ? null
       : formatTimestamp(entry.modifiedAt, language);
 
-  const size =
-    entry.size === null
+  const size = entry.isFolder
+    ? entry.itemCount === null
+      ? CloudSyncConfig.NO_SIZE_PLACEHOLDER
+      : t.cloudModal.folderItemCount(entry.itemCount)
+    : entry.size === null
       ? CloudSyncConfig.NO_SIZE_PLACEHOLDER
       : formatFileSize(entry.size, language);
 
@@ -157,7 +161,7 @@ export function CloudEntryRow({
         <EntryIcon className="icon-md cloud-browser-row-icon" />
 
         <span className="cloud-browser-row-text">
-          <span className={NAME_CLASS} title={activateTitle}>
+          <span className={NAME_CLASS} {...tooltip(activateTitle)}>
             {entry.name}
           </span>
 

@@ -1,11 +1,13 @@
 import { DataAttr } from "@/common/constants/dom";
 import { PanelId } from "@/common/enums";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { usePanelResize } from "@/hooks/usePanelResize";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useRef, type ReactNode } from "react";
 import { PanelActions } from "./PanelActions";
+
 import "./ResizablePanel.css";
 
 interface Props {
@@ -39,9 +41,9 @@ export function ResizablePanel({ panelId, id, className, children }: Props) {
         className="panel-resize-handle no-user-select"
         onPointerDown={onPointerDown}
         onDoubleClick={onDoubleClick}
-        title={
-          collapsed ? t.panel.doubleClickExpand : t.panel.dragResizeCollapse
-        }
+        {...tooltip(
+          collapsed ? t.panel.doubleClickExpand : t.panel.dragResizeCollapse,
+        )}
       >
         <PanelActions panelId={panelId} name={name} />
       </div>

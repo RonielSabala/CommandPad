@@ -8,6 +8,8 @@ import { KEY_OPERATION } from "./key";
 import { LEN_OPERATION } from "./len";
 import { LOGIC_OPERATION } from "./logic";
 import { MATCH_OPERATION } from "./match";
+import { REMOVE_OPERATION } from "./remove";
+import { REPLACE_OPERATION } from "./replace";
 import { SLICE_OPERATION } from "./slice";
 import { STRIP_OPERATION } from "./strip";
 import { TEST_OPERATION } from "./test";
@@ -27,6 +29,8 @@ const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   CASE_OPERATION,
   STRIP_OPERATION,
   FILL_OPERATION,
+  REPLACE_OPERATION,
+  REMOVE_OPERATION,
   TEST_OPERATION,
   MATCH_OPERATION,
   LOGIC_OPERATION,
