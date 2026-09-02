@@ -10,6 +10,7 @@ import {
   CodeModelScope,
   COMMAND_PROMPT_PREFIX,
   CommandClampConfig,
+  DEFAULT_COMMAND_LANGUAGE,
 } from "@/common/editorConfig";
 import {
   BlockType,
@@ -25,6 +26,7 @@ import {
   CodeEditor,
   type CodeEditorHandle,
 } from "@/components/common/codeEditor/CodeEditor";
+import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageSelect";
 import { useDomScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -58,7 +60,6 @@ import {
 
 import "./CommandBlock.css";
 import { CommandClampToggle } from "./CommandClampToggle";
-import { CommandLanguageSelect } from "./CommandLanguageSelect";
 
 const CLAMP_STYLE = {
   [CommandClampConfig.MAX_LINES_PROPERTY]: CommandClampConfig.MAX_LINES,
@@ -306,8 +307,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         promptPrefix={COMMAND_PROMPT_PREFIX}
         clamped={editorClamped}
         header={
-          <CommandLanguageSelect
-            language={block.language}
+          <CodeLanguageSelect
+            language={block.language ?? DEFAULT_COMMAND_LANGUAGE}
             onChange={handleLanguageChange}
           />
         }

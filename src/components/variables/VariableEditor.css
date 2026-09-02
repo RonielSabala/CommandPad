@@ -94,6 +94,9 @@ body.read-mode .variable-editor-secret-btn {
 /* Value */
 
 .variable-editor-value {
+  --code-editor-header-halo: var(--color-bg);
+  --code-editor-header-height: var(--space-16);
+
   min-width: var(--block-min-width);
   border: var(--border-standard);
   border-top: none;
@@ -106,6 +109,10 @@ body:not(.read-mode)
   .variable-editor.is-unused:not(:focus-within)
   :is(.variable-editor-key, .variable-editor-value) {
   opacity: 0.5;
+}
+
+body.read-mode .variable-editor-value {
+  --code-editor-header-height: 0px;
 }
 
 body.read-mode .variable-editor-value textarea {

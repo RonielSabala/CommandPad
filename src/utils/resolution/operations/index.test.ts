@@ -22,35 +22,39 @@ describe("applyOperations", () => {
     expect(
       applyOperations(
         "payment gateway",
-        [CaseSyntax.UPPER, `${SliceSyntax.KEYWORD}(0;7)`],
+        [{ text: CaseSyntax.UPPER }, { text: `${SliceSyntax.KEYWORD}(0;7)` }],
         CONTEXT,
       ),
     ).toEqual({ text: "PAYMENT", ok: true });
   });
 
   it("hands each operation the reference's own key", () => {
-    expect(applyOperations("anything", [OperationSyntax.KEY], CONTEXT)).toEqual(
-      {
-        text: "HOST",
-        ok: true,
-      },
-    );
+    expect(
+      applyOperations("anything", [{ text: OperationSyntax.KEY }], CONTEXT),
+    ).toEqual({
+      text: "HOST",
+      ok: true,
+    });
   });
 
   it("fails the chain on an operation nobody recognizes", () => {
-    expect(applyOperations("abc", [CaseSyntax.UPPER, "nope"], CONTEXT)).toEqual(
-      {
-        text: "abc",
-        ok: false,
-      },
-    );
+    expect(
+      applyOperations(
+        "abc",
+        [{ text: CaseSyntax.UPPER }, { text: "nope" }],
+        CONTEXT,
+      ),
+    ).toEqual({
+      text: "abc",
+      ok: false,
+    });
   });
 
   it("returns the original text on failure, never a half-applied chain", () => {
     expect(
       applyOperations(
         "abc",
-        [CaseSyntax.UPPER, `${SliceSyntax.KEYWORD}()`],
+        [{ text: CaseSyntax.UPPER }, { text: `${SliceSyntax.KEYWORD}()` }],
         CONTEXT,
       ),
     ).toEqual({

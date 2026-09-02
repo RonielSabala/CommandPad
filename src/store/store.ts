@@ -15,6 +15,7 @@ import {
   VaultConfig,
   ZIP_EXTENSION,
 } from "@/common/config";
+import { DEFAULT_VARIABLE_LANGUAGE } from "@/common/editorConfig";
 import {
   AppMode,
   BlockType,
@@ -1219,7 +1220,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       mode: AppMode.EDIT,
       runbookView: RunbookView.PREVIEW,
-      theme: Theme.DARK,
+      theme: Theme.LIGHT,
       language: detectLanguage(),
       spellcheckEnabled: true,
       panels: createDefaultPanels(),
@@ -2023,7 +2024,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           await get().createNewTab();
         }
 
-        const newVariable: Variable = { id: generateId(), key: "", value: "" };
+        const newVariable: Variable = {
+          id: generateId(),
+          key: "",
+          value: "",
+          language: DEFAULT_VARIABLE_LANGUAGE,
+        };
         set((s) => ({
           ...withActiveTab(s, (tab) => ({
             ...tab,
@@ -2046,7 +2052,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           value,
           new Set(tab.variables.map((v) => getVariableKey(v))),
         );
-        const newVariable: Variable = { id: generateId(), key, value };
+        const newVariable: Variable = {
+          id: generateId(),
+          key,
+          value,
+          language: DEFAULT_VARIABLE_LANGUAGE,
+        };
 
         set((s) => ({
           ...withActiveTab(s, (t) => ({
@@ -2234,7 +2245,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           get().updateVariable(
             id,
             VariableField.KEY,
-            applyOperations(key, [keyword], { key }).text,
+            applyOperations(key, [{ text: keyword }], { key }).text,
           );
         }
       },

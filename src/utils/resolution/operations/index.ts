@@ -1,3 +1,7 @@
+import type { ResolvedSpan } from "@/common/types";
+import { isString } from "@/utils/typeGuards";
+
+import { spansText } from "../spans";
 import { CASE_OPERATION } from "./case";
 import { COMPARE_OPERATION } from "./compare";
 import { IF_OPERATION } from "./conditional";
@@ -14,6 +18,7 @@ import { SLICE_OPERATION } from "./slice";
 import { STRIP_OPERATION } from "./strip";
 import { TEST_OPERATION } from "./test";
 import type {
+  OperationChunk,
   OperationContext,
   OperationDefinition,
   OperationKeyword,
@@ -38,6 +43,8 @@ const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   IF_OPERATION,
 ];
 
+export type { OperationChunk } from "./types";
+
 export function getOperationKeywords(): readonly OperationKeyword[] {
   return OPERATION_DEFINITIONS.flatMap((definition) => definition.keywords);
 }
@@ -49,9 +56,10 @@ export function getCaseOperationKeywords(): readonly string[] {
 interface AppliedOperations {
   text: string;
   ok: boolean;
+  spans?: ResolvedSpan[];
 }
 
-function parseOperation(operation: string): OperationTransform | null {
+function parseOperation(operation: OperationChunk): OperationTransform | null {
   for (const definition of OPERATION_DEFINITIONS) {
     const transform = definition.parse(operation);
     if (transform) {
@@ -65,10 +73,11 @@ function parseOperation(operation: string): OperationTransform | null {
 /** Runs a token's operations left to right. */
 export function applyOperations(
   text: string,
-  operations: string[],
+  operations: readonly OperationChunk[],
   context: OperationContext,
 ): AppliedOperations {
   let result = text;
+  let spans: ResolvedSpan[] | undefined;
 
   for (const operation of operations) {
     const transform = parseOperation(operation);
@@ -76,8 +85,16 @@ export function applyOperations(
       return { text, ok: false };
     }
 
-    result = transform(result, context);
+    const output = transform(result, context);
+    if (isString(output)) {
+      result = output;
+      spans = undefined;
+      continue;
+    }
+
+    result = output.text;
+    spans = spansText(output.spans) === output.text ? output.spans : undefined;
   }
 
-  return { text: result, ok: true };
+  return { text: result, ok: true, spans };
 }

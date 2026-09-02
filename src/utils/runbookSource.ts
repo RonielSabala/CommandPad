@@ -1,6 +1,11 @@
 import { normalizeBlock } from "@/blocks";
 import { RunbookSourceConfig } from "@/common/config";
+import {
+  DEFAULT_VARIABLE_LANGUAGE,
+  isCommandLanguage,
+} from "@/common/editorConfig";
 import type { Block, RunbookContent, Variable } from "@/common/types";
+
 import { generateId } from "./id";
 import { isObject, isString } from "./typeGuards";
 
@@ -31,6 +36,9 @@ function normalizeVariable(
     id: isString(raw.id) && raw.id ? raw.id : (carried ?? generateId()),
     key: isString(raw.key) ? raw.key : "",
     value: isString(raw.value) ? raw.value : "",
+    language: isCommandLanguage(raw.language)
+      ? raw.language
+      : DEFAULT_VARIABLE_LANGUAGE,
     ...(raw.secret === true ? { secret: true } : {}),
   };
 }

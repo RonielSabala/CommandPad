@@ -91,3 +91,59 @@ describe("nesting depth", () => {
     expect(spans(book, "{MISSING}")).toEqual([]);
   });
 });
+
+describe("nesting through an IF branch", () => {
+  const book = runbook({
+    NAME: "api",
+    SERVICE: "svc-{NAME}",
+    ENV: "prod",
+  });
+
+  it("keeps the nesting of the branch it took", () => {
+    expect(spans(book, "{|IF(true;{SERVICE};{NAME})}")).toEqual([
+      { text: "svc-", depth: 2, source: "SERVICE" },
+      { text: "api", depth: 3, source: "NAME" },
+    ]);
+  });
+
+  it("keeps the nesting of the branch it did not skip", () => {
+    expect(spans(book, "{|IF(false;{SERVICE};{NAME})}")).toEqual([
+      { text: "api", depth: 2, source: "NAME" },
+    ]);
+  });
+
+  it("leaves a literal branch at the first level", () => {
+    expect(spans(book, "{|IF(false;{SERVICE};plain)}")).toEqual([
+      { text: "plain", depth: 1 },
+    ]);
+  });
+
+  it("keeps a branch mixing literal text and a reference apart", () => {
+    expect(spans(book, "{|IF(true;run {NAME};skip)}")).toEqual([
+      { text: "run ", depth: 1 },
+      { text: "api", depth: 2, source: "NAME" },
+    ]);
+  });
+
+  it("names the reference itself as the source of a literal branch", () => {
+    expect(spans(book, "{ENV|IF(true;plain;no)}")).toEqual([
+      { text: "plain", depth: 1, source: "ENV" },
+    ]);
+  });
+
+  it("drops the whitespace the branch was spaced out with", () => {
+    expect(spans(book, "{|IF(true; {NAME} ;no)}")).toEqual([
+      { text: "api", depth: 2, source: "NAME" },
+    ]);
+  });
+
+  it("gives an empty else branch no spans", () => {
+    expect(spans(book, "{|IF(false;{NAME})}")).toEqual([]);
+  });
+
+  it("flattens a branch a later operation transformed", () => {
+    expect(spans(book, "{|IF(true;{SERVICE};{NAME})|uppercase}")).toEqual([
+      { text: "SVC-API", depth: 1 },
+    ]);
+  });
+});

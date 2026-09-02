@@ -2,7 +2,7 @@ import type { ResolvedSpan } from "@/common/types";
 import { VariableSyntax } from "@/common/variableSyntax";
 
 import { applyOperations } from "./operations";
-import type { OperationContext } from "./operations/types";
+import type { OperationChunk, OperationContext } from "./operations/types";
 import { depthAt, flatSpans, mergeSpans, sliceSpans } from "./spans";
 import { scanBraces, splitReferenceBody } from "./token";
 
@@ -14,7 +14,7 @@ interface ReferenceParam {
 interface TemplateBlank {
   name: string;
   fallback?: string;
-  operations: string[];
+  operations: OperationChunk[];
 }
 
 interface ResolvedTemplate {
@@ -57,14 +57,14 @@ function parseBlank(body: string): TemplateBlank | null {
     return null;
   }
 
-  const operations: string[] = [];
+  const operations: OperationChunk[] = [];
 
   for (const chunk of rest) {
     if (chunk.separator !== VariableSyntax.OPERATION_SEPARATOR) {
       return null;
     }
 
-    operations.push(chunk.text);
+    operations.push({ text: chunk.text });
   }
 
   return { ...declaration, operations };

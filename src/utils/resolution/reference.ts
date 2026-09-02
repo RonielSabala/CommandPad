@@ -3,14 +3,15 @@ import { ReferenceSurface } from "@/common/enums";
 import type { ResolvedSpan } from "@/common/types";
 import { VariableSyntax } from "@/common/variableSyntax";
 
+import type { OperationChunk } from "./operations";
 import { applyOperations } from "./operations";
 import { applyTemplateParams, parseParam } from "./params";
-import { flatSpans } from "./spans";
+import { flatSpans, mergeSpans, nestSpans, spansText } from "./spans";
 import type { ReferenceBodyChunk } from "./token";
 import {
-  replaceReferences,
   replaceTemplateReferences,
   splitReferenceBody,
+  splitReferenceParts,
 } from "./token";
 import type { ResolvedValue, VariableLookup } from "./types";
 
@@ -34,6 +35,7 @@ interface ResolvedReference {
 
 interface ResolvedChunk {
   text: string;
+  spans: ResolvedSpan[];
   fullyResolved: boolean;
 }
 
@@ -55,30 +57,42 @@ function unnamedValue(chunks: ReferenceBodyChunk[]): ResolvedValue | undefined {
 
 /**
  * Resolves the references written inside a param value or an operation, before
- * either is parsed.
+ * either is parsed. It reports the spans of what it resolved too.
  */
 function resolveChunk(
   text: string,
   context: ReferenceContext,
+  key: string,
   depth: number,
 ): ResolvedChunk {
   let fullyResolved = true;
+  const source = key || undefined;
+  const spans: ResolvedSpan[] = [];
 
-  const resolved = replaceReferences(text, context.surface, (match) => {
+  for (const part of splitReferenceParts(text, context.surface)) {
+    if (!part.match) {
+      spans.push(...flatSpans(part.text, source));
+      continue;
+    }
+
     const reference = resolveReferenceAt(
-      match.token,
-      match.raw,
+      part.match.token,
+      part.match.raw,
       context,
       depth,
     );
+
     if (!reference.resolved) {
       fullyResolved = false;
+      spans.push(...flatSpans(reference.text, source));
+      continue;
     }
 
-    return reference.text;
-  });
+    spans.push(...nestSpans(reference.spans));
+  }
 
-  return { text: resolved, fullyResolved };
+  const merged = mergeSpans(spans);
+  return { text: spansText(merged), spans: merged, fullyResolved };
 }
 
 /**
@@ -132,16 +146,16 @@ function resolveReferenceAt(
   }
 
   const params: Record<string, string> = {};
-  const operations: string[] = [];
+  const operations: OperationChunk[] = [];
 
   for (const chunk of rest) {
-    const resolved = resolveChunk(chunk.text, context, depth);
+    const resolved = resolveChunk(chunk.text, context, key, depth);
     if (!resolved.fullyResolved) {
       return unresolvedReference();
     }
 
     if (chunk.separator === VariableSyntax.OPERATION_SEPARATOR) {
-      operations.push(resolved.text);
+      operations.push({ text: resolved.text, spans: resolved.spans });
       continue;
     }
 
@@ -176,8 +190,8 @@ function resolveReferenceAt(
     key,
     text: applied.text,
     resolved: true,
-    spans: rewritten
-      ? flatSpans(applied.text, key || undefined)
-      : template.spans,
+    spans:
+      applied.spans ??
+      (rewritten ? flatSpans(applied.text, key || undefined) : template.spans),
   };
 }

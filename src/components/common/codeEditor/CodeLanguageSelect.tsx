@@ -1,17 +1,12 @@
 import {
   CODE_LANGUAGE_LABEL,
   COMMAND_LANGUAGE_ORDER,
-  DEFAULT_COMMAND_LANGUAGE,
 } from "@/common/editorConfig";
 import { CodeLanguage } from "@/common/enums";
-import {
-  Select,
-  SelectAlign,
-  type SelectOption,
-} from "@/components/common/Select";
 import { useTranslation } from "@/i18n";
+import { Select, SelectAlign, type SelectOption } from "../Select";
 
-import "./CommandLanguageSelect.css";
+import "./CodeLanguageSelect.css";
 
 const LANGUAGE_OPTIONS: readonly SelectOption<CodeLanguage>[] =
   COMMAND_LANGUAGE_ORDER.map((language) => ({
@@ -20,17 +15,16 @@ const LANGUAGE_OPTIONS: readonly SelectOption<CodeLanguage>[] =
   }));
 
 interface Props {
-  language: CodeLanguage | undefined;
+  language: CodeLanguage;
   onChange: (language: CodeLanguage) => void;
 }
 
-export function CommandLanguageSelect({ language, onChange }: Props) {
+export function CodeLanguageSelect({ language: value, onChange }: Props) {
   const t = useTranslation();
-  const value = language ?? DEFAULT_COMMAND_LANGUAGE;
 
   return (
     <Select
-      triggerClassName="btn command-language-trigger"
+      triggerClassName="btn code-language-trigger"
       title={t.command.changeLanguage}
       align={SelectAlign.END}
       portal
@@ -38,9 +32,7 @@ export function CommandLanguageSelect({ language, onChange }: Props) {
       options={LANGUAGE_OPTIONS}
       onChange={onChange}
     >
-      <span className="command-language-label">
-        {CODE_LANGUAGE_LABEL[value]}
-      </span>
+      <span className="code-language-label">{CODE_LANGUAGE_LABEL[value]}</span>
     </Select>
   );
 }

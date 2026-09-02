@@ -59,6 +59,7 @@ export interface Variable {
   key: string;
   value: string;
   secret?: boolean;
+  language?: CodeLanguage;
 }
 
 export interface Tab {

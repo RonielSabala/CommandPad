@@ -2,16 +2,14 @@ import {
   BlockField,
   COMMAND_LANGUAGE_ORDER,
   DEFAULT_COMMAND_LANGUAGE,
+  isCommandLanguage,
   JsonSchemaType,
 } from "@/common/editorConfig";
-import { BlockType, CodeLanguage } from "@/common/enums";
+import { BlockType } from "@/common/enums";
 import { MarkdownSyntax } from "@/common/markdownSyntax";
 import { joinLines } from "@/utils/string";
 import { isBoolean, isString } from "@/utils/typeGuards";
 import type { BlockDefinition } from "./types";
-
-const isCommandLanguage = (value: unknown): value is CodeLanguage =>
-  COMMAND_LANGUAGE_ORDER.includes(value as CodeLanguage);
 
 export const commandBlockDefinition: BlockDefinition<typeof BlockType.COMMAND> =
   {

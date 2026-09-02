@@ -154,6 +154,7 @@ export function ImageBlockDocs() {
       <Prose
         text={t.docs.imageBlock.demoHint(
           t.image.viewFullscreen,
+          t.image.download,
           t.image.replace,
           t.image.remove,
         )}

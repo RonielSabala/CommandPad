@@ -1,8 +1,12 @@
 import { CssClass } from "@/common/constants/css";
-import { CodeModelScope } from "@/common/editorConfig";
-import { VariableField } from "@/common/enums";
+import {
+  CodeModelScope,
+  DEFAULT_VARIABLE_LANGUAGE,
+} from "@/common/editorConfig";
+import { AppMode, CodeLanguage, VariableField } from "@/common/enums";
 import type { Variable } from "@/common/types";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
+import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageSelect";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
 import { useExtractVariableAction } from "@/hooks/useExtractVariableAction";
@@ -33,7 +37,10 @@ export function VariableEditor({
   const variableId = variable.id;
   const isSecret = !!variable.secret;
 
+  const language = variable.language ?? DEFAULT_VARIABLE_LANGUAGE;
+
   const updateVariable = useStore((state) => state.updateVariable);
+  const readMode = useStore((state) => state.mode === AppMode.READ);
   const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
   const consumeVariableFocus = useStore((state) => state.consumeVariableFocus);
   const pendingFocus = useStore(
@@ -51,6 +58,12 @@ export function VariableEditor({
 
   const handleChange = useCallback(
     (value: string) => updateVariable(variableId, VariableField.VALUE, value),
+    [updateVariable, variableId],
+  );
+
+  const handleLanguageChange = useCallback(
+    (next: CodeLanguage) =>
+      updateVariable(variableId, VariableField.LANGUAGE, next),
     [updateVariable, variableId],
   );
 
@@ -97,11 +110,20 @@ export function VariableEditor({
         modelId={`${CodeModelScope.VARIABLE}/${variableId}`}
         className="variable-editor-value"
         value={variable.value}
+        language={language}
         onChange={handleChange}
         placeholder={t.variables.valuePlaceholder}
         completions={valueCompletions}
         actions={actions}
         masked={isSecret}
+        header={
+          !readMode && (
+            <CodeLanguageSelect
+              language={language}
+              onChange={handleLanguageChange}
+            />
+          )
+        }
       />
     </div>
   );

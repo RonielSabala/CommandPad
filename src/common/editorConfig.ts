@@ -181,6 +181,7 @@ export const VariableField = {
   KEY: "key",
   VALUE: "value",
   SECRET: "secret",
+  LANGUAGE: "language",
 } as const;
 
 export const BlockField = {
@@ -211,7 +212,12 @@ export const CODE_LANGUAGE_LABEL: Record<CodeLanguage, string> = {
   [CodeLanguage.YAML]: "YAML",
 };
 
+export const isCommandLanguage = (value: unknown): value is CodeLanguage =>
+  COMMAND_LANGUAGE_ORDER.includes(value as CodeLanguage);
+
 export const DEFAULT_COMMAND_LANGUAGE = CodeLanguage.BASH;
+
+export const DEFAULT_VARIABLE_LANGUAGE = CodeLanguage.PLAIN;
 
 export const RUNBOOK_JSON_PLACEHOLDER =
   '{\n  "variables": [],\n  "blocks": []\n}';

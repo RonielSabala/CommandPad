@@ -181,6 +181,7 @@ export const en: Messages = {
     urlPlaceholder: "https://example.com/image.png",
     addUrl: "Add",
     viewFullscreen: "View full screen",
+    download: "Download image",
     previous: "Previous image",
     next: "Next image",
     position: (index, total) => `${index} / ${total}`,
@@ -192,6 +193,8 @@ export const en: Messages = {
     notAnImage: "That file is not an image.",
     invalidUrl: "Enter an http or https image address.",
     readFailed: "That image could not be read.",
+    downloadFailed:
+      "That image could not be downloaded. A linked image can only be saved when the site hosting it allows it.",
     tooLarge: (limit) => `Images have to be smaller than ${limit}.`,
   },
   exportModal: {
@@ -780,7 +783,7 @@ If something goes wrong, undo it in this order:
 * **${openEditorLabel}**, beside it, swaps them for the runbook's variables instead.
 * **${openPreviewLabel}** brings the blocks back.`,
       variablesEditorNote:
-        "The variables editor works just like the block editor above, one row per variable instead of per block. Try it below.",
+        "The variables editor works just like the block editor above, one row per variable instead of per block, down to the language selector on each value: a value starts as plain text, and picking a language only changes how it is highlighted and checked. Try it below.",
       autoCreate:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
@@ -1157,8 +1160,8 @@ If something goes wrong, undo it in this order:
         "A picture is shown at its own size, but never below a readable minimum and never beyond what the block allows: a tiny image is scaled up, a huge one is scaled down, and neither is ever stretched out of shape.",
       slideshow:
         "When a runbook holds more than one image, full screen becomes a slideshow: the arrows parked at the left and right edges of the screen, or the `Left` and `Right` arrow keys, move you through every image in the runbook in the order they appear, and the counter tells you where you are. The page follows along, parking each image at the top of the screen, so closing full screen leaves you right on the last one you looked at.",
-      demoHint: (viewFullscreen, replace, remove) =>
-        `Hover over an image to reveal its controls: **${viewFullscreen}** opens it over a dimmed page, and its actions menu holds **${replace}**, which swaps the picture without touching the block, and **${remove}**, which empties it back to the drop area.`,
+      demoHint: (viewFullscreen, download, replace, remove) =>
+        `Hover over an image to reveal its controls: **${viewFullscreen}** opens it over a dimmed page, and its actions menu holds **${download}**, which saves the picture to your computer, **${replace}**, which swaps the picture without touching the block, and **${remove}**, which empties it back to the drop area.`,
     },
     dividerBlock: {
       intro:

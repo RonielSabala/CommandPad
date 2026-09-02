@@ -29,5 +29,5 @@ const CASE_TRANSFORMS: Record<string, OperationTransform | undefined> = {
 
 export const CASE_OPERATION: OperationDefinition = {
   keywords: bareKeywords(Object.keys(CASE_TRANSFORMS)),
-  parse: (operation) => CASE_TRANSFORMS[operation.trim()] ?? null,
+  parse: (operation) => CASE_TRANSFORMS[operation.text.trim()] ?? null,
 };
