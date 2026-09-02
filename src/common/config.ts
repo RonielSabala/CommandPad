@@ -193,6 +193,11 @@ export const ImageBlockConfig = {
   MAX_BYTES: 5 * 1024 * 1024,
   DATA_IMAGE_PREFIX: "data:image/",
   HTTP_PROTOCOLS: ["http:", "https:"],
+  DEFAULT_DOWNLOAD_NAME: "image",
+  PATH_SEPARATOR: "/",
+  EXTENSION_SEPARATOR: ".",
+  MIME_SUFFIX_SEPARATOR: "+",
+  MIME_PARAM_SEPARATOR: ";",
 } as const;
 
 // Supported file types

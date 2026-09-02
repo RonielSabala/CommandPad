@@ -185,6 +185,7 @@ export const es: Messages = {
     urlPlaceholder: "https://ejemplo.com/imagen.png",
     addUrl: "Añadir",
     viewFullscreen: "Ver a pantalla completa",
+    download: "Descargar imagen",
     previous: "Imagen anterior",
     next: "Imagen siguiente",
     position: (index, total) => `${index} / ${total}`,
@@ -196,6 +197,8 @@ export const es: Messages = {
     notAnImage: "Ese archivo no es una imagen.",
     invalidUrl: "Escribe una dirección de imagen http o https.",
     readFailed: "No se pudo leer esa imagen.",
+    downloadFailed:
+      "No se pudo descargar esa imagen. Una imagen enlazada solo se puede guardar si el sitio que la aloja lo permite.",
     tooLarge: (limit) => `Las imágenes deben pesar menos de ${limit}.`,
   },
   exportModal: {
@@ -1174,8 +1177,8 @@ Si algo sale mal, deshazlo en este orden:
         "Una imagen se muestra con su mismo tamaño, pero nunca por debajo de un mínimo legible ni más allá de lo que permite el bloque: una imagen diminuta se amplía, una enorme se reduce, y ninguna se deforma.",
       slideshow:
         "Cuando un libro tiene más de una imagen, la pantalla completa se convierte en un pase de diapositivas: las flechas fijas en los bordes izquierdo y derecho de la pantalla, o las teclas `Izquierda` y `Derecha`, recorren todas las imágenes del libro en el orden en que aparecen, y el contador indica en cuál estás. La página acompaña el recorrido y deja cada imagen en la parte superior de la pantalla, para que así al cerrar la pantalla completa te quedes justo en la última que miraste.",
-      demoHint: (viewFullscreen, replace, remove) =>
-        `Pasa el cursor sobre una imagen para revelar sus controles: **${viewFullscreen}** la abre sobre la página atenuada, y su menú de acciones tiene **${replace}**, que cambia la foto sin tocar el bloque, y **${remove}**, que lo vacía y devuelve la zona para soltar.`,
+      demoHint: (viewFullscreen, download, replace, remove) =>
+        `Pasa el cursor sobre una imagen para revelar sus controles: **${viewFullscreen}** la abre sobre la página atenuada, y su menú de acciones tiene **${download}**, que guarda la foto en tu computadora, **${replace}**, que cambia la foto sin tocar el bloque, y **${remove}**, que lo vacía y devuelve la zona para soltar.`,
     },
     dividerBlock: {
       intro:

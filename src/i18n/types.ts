@@ -173,6 +173,7 @@ export interface Messages {
     urlPlaceholder: string;
     addUrl: string;
     viewFullscreen: string;
+    download: string;
     previous: string;
     next: string;
     position: (index: number, total: number) => string;
@@ -184,6 +185,7 @@ export interface Messages {
     notAnImage: string;
     invalidUrl: string;
     readFailed: string;
+    downloadFailed: string;
     tooLarge: (limit: string) => string;
   };
   exportModal: {
@@ -631,6 +633,7 @@ export interface Messages {
       slideshow: string;
       demoHint: (
         viewFullscreen: string,
+        download: string,
         replace: string,
         remove: string,
       ) => string;

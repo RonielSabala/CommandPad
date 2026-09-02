@@ -12,6 +12,7 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { formatFileSize } from "@/utils/format";
 import {
+  downloadImage,
   isAttachedImage,
   isImageFile,
   normalizeImageSrc,
@@ -19,7 +20,7 @@ import {
 } from "@/utils/image";
 import { classNames } from "@/utils/string";
 import { useEffect, useRef, useState, type ClipboardEvent } from "react";
-import { ArrowsFullscreen } from "react-bootstrap-icons";
+import { ArrowsFullscreen, Download } from "react-bootstrap-icons";
 
 import type { BlockViewProps } from "../blockViews";
 import "./ImageBlock.css";
@@ -145,6 +146,16 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
 
   const expand = () => openImageViewer(blockId);
 
+  const download = async () => {
+    setError(null);
+
+    try {
+      await downloadImage(src, block.alt);
+    } catch {
+      setError(t.image.downloadFailed);
+    }
+  };
+
   const clear = () =>
     updateBlock(blockId, BlockType.IMAGE, { src: "", alt: undefined });
 
@@ -211,8 +222,17 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
                   triggerClassName="btn btn-icon btn-accent"
                   horizontal
                 >
+                  {!loadFailed && (
+                    <ContextMenuItem
+                      icon={<Download className="icon-md" />}
+                      onSelect={() => void download()}
+                    >
+                      {t.image.download}
+                    </ContextMenuItem>
+                  )}
+
                   <ContextMenuItem
-                    icon={<ImportIcon className="icon-md icon-bold" />}
+                    icon={<ImportIcon className="icon-md icon-semibold" />}
                     onSelect={openFilePicker}
                   >
                     {t.image.replace}
