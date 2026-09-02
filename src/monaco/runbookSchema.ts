@@ -1,5 +1,6 @@
 import { getBlockJsonSchemas } from "@/blocks";
 import {
+  COMMAND_LANGUAGE_ORDER,
   JsonSchemaType,
   RunbookField,
   VariableField,
@@ -19,6 +20,7 @@ export const RUNBOOK_JSON_SCHEMA = {
           [VariableField.KEY]: { type: JsonSchemaType.STRING },
           [VariableField.VALUE]: { type: JsonSchemaType.STRING },
           [VariableField.SECRET]: { type: JsonSchemaType.BOOLEAN },
+          [VariableField.LANGUAGE]: { enum: [...COMMAND_LANGUAGE_ORDER] },
         },
       },
     },

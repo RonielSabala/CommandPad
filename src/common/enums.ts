@@ -135,6 +135,7 @@ export const VariableField = {
   KEY: "key",
   VALUE: "value",
   SECRET: "secret",
+  LANGUAGE: "language",
 } as const;
 export type VariableField = (typeof VariableField)[keyof typeof VariableField];
 

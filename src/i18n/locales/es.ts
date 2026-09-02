@@ -798,7 +798,7 @@ Si algo sale mal, deshazlo en este orden:
 * **${openEditorLabel}**, a su lado, los cambia por las variables del libro.
 * **${openPreviewLabel}** devuelve los bloques.`,
       variablesEditorNote:
-        "El editor de variables funciona igual que el editor de bloques de arriba, una fila por variable en vez de por bloque. Pruébalo abajo.",
+        "El editor de variables funciona igual que el editor de bloques de arriba, una fila por variable en vez de por bloque, incluido el selector de lenguaje de cada valor: un valor empieza como texto plano, y elegir un lenguaje solo cambia cómo se resalta y se revisa. Pruébalo abajo.",
       autoCreate:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:

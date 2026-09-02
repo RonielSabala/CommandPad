@@ -783,7 +783,7 @@ If something goes wrong, undo it in this order:
 * **${openEditorLabel}**, beside it, swaps them for the runbook's variables instead.
 * **${openPreviewLabel}** brings the blocks back.`,
       variablesEditorNote:
-        "The variables editor works just like the block editor above, one row per variable instead of per block. Try it below.",
+        "The variables editor works just like the block editor above, one row per variable instead of per block, down to the language selector on each value: a value starts as plain text, and picking a language only changes how it is highlighted and checked. Try it below.",
       autoCreate:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
