@@ -1219,7 +1219,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       mode: AppMode.EDIT,
       runbookView: RunbookView.PREVIEW,
-      theme: Theme.DARK,
+      theme: Theme.LIGHT,
       language: detectLanguage(),
       spellcheckEnabled: true,
       panels: createDefaultPanels(),
