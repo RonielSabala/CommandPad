@@ -6,7 +6,7 @@ import { bareKeywords, type OperationDefinition } from "./types";
 export const LEN_OPERATION: OperationDefinition = {
   keywords: bareKeywords([OperationSyntax.LEN]),
   parse: (operation) =>
-    LenOperationRegex.test(operation.trim())
+    LenOperationRegex.test(operation.text.trim())
       ? (text) => String(countCharacters(text))
       : null,
 };

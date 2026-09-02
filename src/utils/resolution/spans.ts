@@ -86,3 +86,12 @@ export function depthAt(spans: readonly ResolvedSpan[], index: number): number {
 
   return 0;
 }
+
+/** The spans of the trimmed text `spans` describes. */
+export function trimSpans(spans: readonly ResolvedSpan[]): ResolvedSpan[] {
+  const text = spansText(spans);
+  const start = text.length - text.trimStart().length;
+  const end = text.trimEnd().length;
+
+  return end > start ? sliceSpans(spans, start, end) : [];
+}

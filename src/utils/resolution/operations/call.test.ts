@@ -1,4 +1,5 @@
 import { CallSyntax } from "@/common/variableSyntax";
+import { isString } from "@/utils/typeGuards";
 import { describe, expect, it } from "vitest";
 
 import { defineCallOperation } from "./call";
@@ -16,8 +17,13 @@ function reporter(arity: number) {
 }
 
 function call(arity: number, operation: string): string | null {
-  const transform = reporter(arity).parse(operation);
-  return transform ? transform("", CONTEXT) : null;
+  const transform = reporter(arity).parse({ text: operation });
+  if (!transform) {
+    return null;
+  }
+
+  const output = transform("", CONTEXT);
+  return isString(output) ? output : output.text;
 }
 
 describe("defineCallOperation", () => {

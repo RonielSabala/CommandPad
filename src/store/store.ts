@@ -2245,7 +2245,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           get().updateVariable(
             id,
             VariableField.KEY,
-            applyOperations(key, [keyword], { key }).text,
+            applyOperations(key, [{ text: keyword }], { key }).text,
           );
         }
       },
