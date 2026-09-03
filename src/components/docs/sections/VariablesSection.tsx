@@ -741,7 +741,7 @@ export function MultilineReferencesDocs() {
             blocks: [
               demoCommand('echo "Archiving {project} on {date}"'),
               demoCommand(
-                "zip -r {\n\tARCHIVE\n\t; name = {project}\n\t; year = {date|slice(;4)}\n\t; month = {date|slice(5;7)}\n} ~/Documents",
+                "zip -r {\n\tARCHIVE;\n\tname = {project};\n\tyear = {date|slice(;4)};\n\tmonth = {date|slice(5;7)}\n} ~/Documents",
               ),
             ],
           },
