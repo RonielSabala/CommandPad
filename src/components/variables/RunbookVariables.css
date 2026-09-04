@@ -1,4 +1,6 @@
 #runbook-variables {
+  --sticky-scrollbar-inset: calc(var(--space-20) * -1);
+
   flex: 1;
   min-width: 0;
   min-height: 0;
