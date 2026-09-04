@@ -3,18 +3,25 @@ import {
   CodeModelScope,
   DEFAULT_VARIABLE_LANGUAGE,
 } from "@/common/editorConfig";
-import { AppMode, CodeLanguage, VariableField } from "@/common/enums";
+import {
+  AppMode,
+  ClampSurface,
+  CodeLanguage,
+  VariableField,
+} from "@/common/enums";
 import type { Variable } from "@/common/types";
+import { ClampToggle } from "@/components/common/codeEditor/ClampToggle";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageSelect";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
+import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
 import { useExtractVariableAction } from "@/hooks/useExtractVariableAction";
 import { useTranslation } from "@/i18n";
 import type { VariableCompletion } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import { getVariableKey } from "@/utils/resolution";
-import { classNames } from "@/utils/string";
+import { classNames, countLines } from "@/utils/string";
 import { useCallback, useEffect, useMemo, type RefObject } from "react";
 
 import "./VariableEditor.css";
@@ -45,6 +52,16 @@ export function VariableEditor({
   const consumeVariableFocus = useStore((state) => state.consumeVariableFocus);
   const pendingFocus = useStore(
     (state) => state.pendingFocusVariableId === variableId,
+  );
+
+  const valueLines = useMemo(
+    () => countLines(variable.value),
+    [variable.value],
+  );
+  const valueClamp = useClampSurface(
+    variableId,
+    ClampSurface.VALUE,
+    valueLines,
   );
 
   const actions = useExtractVariableAction();
@@ -80,9 +97,11 @@ export function VariableEditor({
       className={classNames(
         "variable-editor",
         CssClass.VARIABLE_SURFACE,
+        CssClass.CLAMP_SURFACE,
         isSecret && "is-secret",
         unused && "is-unused",
       )}
+      style={CLAMP_SURFACE_STYLE}
     >
       <div className="variable-editor-key-row">
         <VariableKeyInput
@@ -112,15 +131,26 @@ export function VariableEditor({
         value={variable.value}
         language={language}
         onChange={handleChange}
+        onFocus={valueClamp.onFocus}
+        onBlur={valueClamp.onBlur}
         placeholder={t.variables.valuePlaceholder}
         completions={valueCompletions}
         actions={actions}
         masked={isSecret}
+        clamped={valueClamp.clamped}
         header={
           !readMode && (
             <CodeLanguageSelect
               language={language}
               onChange={handleLanguageChange}
+            />
+          )
+        }
+        footer={
+          valueClamp.overflows && (
+            <ClampToggle
+              expanded={valueClamp.expanded}
+              onToggle={valueClamp.toggle}
             />
           )
         }

@@ -22,6 +22,28 @@ function folderPath(folderId: string | null): string {
   return folderId === null ? APP_ROOT_PATH : driveItemPath(folderId);
 }
 
+let appRootIdPromise: Promise<string> | null = null;
+
+async function getAppRootId(): Promise<string> {
+  appRootIdPromise ??= (async () => {
+    const response = await graphFetch(`${APP_ROOT_PATH}?$select=id`);
+    const item = (await response.json()) as { id: string };
+
+    return item.id;
+  })();
+
+  try {
+    return await appRootIdPromise;
+  } catch (error) {
+    appRootIdPromise = null;
+    throw error;
+  }
+}
+
+async function childrenPath(folderId: string | null): Promise<string> {
+  return `${driveItemPath(folderId ?? (await getAppRootId()))}/children`;
+}
+
 interface DriveItem {
   id: string;
   name: string;
@@ -109,6 +131,14 @@ async function getAccessToken(): Promise<string> {
   }
 }
 
+async function graphError(response: Response): Promise<CloudSyncError> {
+  const detail = await response.text().catch(() => "");
+
+  return new CloudSyncError(
+    `Microsoft Graph request failed (${response.status})${detail ? `: ${detail}` : ""}`,
+  );
+}
+
 async function graphFetch(path: string, init?: RequestInit): Promise<Response> {
   const token = await getAccessToken();
   const response = await fetch(`${OneDriveConfig.GRAPH_BASE_URL}${path}`, {
@@ -117,9 +147,7 @@ async function graphFetch(path: string, init?: RequestInit): Promise<Response> {
   });
 
   if (!response.ok) {
-    throw new CloudSyncError(
-      `Microsoft Graph request failed (${response.status})`,
-    );
+    throw await graphError(response);
   }
 
   return response;
@@ -136,9 +164,7 @@ async function graphItemExists(path: string): Promise<boolean> {
   }
 
   if (!response.ok) {
-    throw new CloudSyncError(
-      `Microsoft Graph request failed (${response.status})`,
-    );
+    throw await graphError(response);
   }
 
   return true;
@@ -178,6 +204,7 @@ class OneDriveClient implements CloudClient {
     });
 
     instance.setActiveAccount(result.account);
+    appRootIdPromise = null;
   }
 
   async signOut(): Promise<void> {
@@ -186,6 +213,7 @@ class OneDriveClient implements CloudClient {
     await instance.clearCache(account ? { account } : undefined);
 
     instance.setActiveAccount(null);
+    appRootIdPromise = null;
   }
 
   async listEntries(folderId: string | null): Promise<CloudEntry[]> {
@@ -201,7 +229,7 @@ class OneDriveClient implements CloudClient {
     name: string,
     parentId: string | null,
   ): Promise<CloudEntry> {
-    const response = await graphFetch(`${folderPath(parentId)}/children`, {
+    const response = await graphFetch(await childrenPath(parentId), {
       method: HttpMethod.POST,
       headers: contentTypeHeaders(MimeType.JSON),
       body: JSON.stringify({

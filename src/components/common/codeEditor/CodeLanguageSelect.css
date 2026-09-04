@@ -4,8 +4,7 @@
   background: var(--code-editor-header-halo, transparent);
   border: none;
   border-radius: var(--radius-pill);
-  box-shadow: 0 0 var(--space-4) var(--space-2)
-    var(--code-editor-header-halo, transparent);
+  box-shadow: 0 0 var(--space-3) var(--code-editor-header-halo, transparent);
   color: var(--color-text-muted);
   font-family: var(--font-mono);
   font-size: var(--text-sm);

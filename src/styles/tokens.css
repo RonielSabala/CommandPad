@@ -181,6 +181,15 @@
   --code-line-height-small: calc(
     var(--text-sm) * var(--code-line-height-ratio)
   );
+
+  /* Clamping a surface at a line limit */
+  --clamp-line-height: var(--code-line-height-base);
+  --clamp-toggle-height: var(--space-16);
+  --clamp-mask: linear-gradient(
+    to bottom in oklab,
+    #000 calc(100% - var(--space-16)),
+    transparent 100%
+  );
 }
 
 :root.theme-light {

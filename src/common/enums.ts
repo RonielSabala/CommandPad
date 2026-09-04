@@ -233,12 +233,13 @@ export const RunbookView = {
 } as const;
 export type RunbookView = (typeof RunbookView)[keyof typeof RunbookView];
 
-export const CommandSurface = {
+/** Every surface that clips itself behind a show-more toggle. */
+export const ClampSurface = {
   PREVIEW: "preview",
   EDITOR: "editor",
+  VALUE: "value",
 } as const;
-export type CommandSurface =
-  (typeof CommandSurface)[keyof typeof CommandSurface];
+export type ClampSurface = (typeof ClampSurface)[keyof typeof ClampSurface];
 
 export const CodeLanguage = {
   PLAIN: "plaintext",

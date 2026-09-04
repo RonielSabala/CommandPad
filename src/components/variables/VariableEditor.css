@@ -71,15 +71,26 @@
 }
 
 :is(
-    body.select-key-held:not(.read-mode) .variable-item:hover,
+    .variable-selected,
     .variable-item.drag-over,
-    .variable-selected
+    body.select-key-held:not(.read-mode) .variable-item:hover
   )
   .variable-editor-key {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   border-top-left-radius: var(--radius-lg);
   border-top-right-radius: var(--radius-lg);
+}
+
+:is(
+    body:not(.read-mode) .variable-selected,
+    body:not(.read-mode) .variable-item.drag-over,
+    body.select-key-held:not(.read-mode) .variable-item:hover
+  )
+  .variable-editor.is-secret
+  .variable-editor-key {
+  border-top-right-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
 }
 
 body.read-mode .variable-editor-key {
@@ -94,8 +105,8 @@ body.read-mode .variable-editor-secret-btn {
 /* Value */
 
 .variable-editor-value {
+  --clamp-halo: var(--color-bg);
   --code-editor-header-halo: var(--color-bg);
-  --code-editor-header-height: var(--space-16);
 
   min-width: var(--block-min-width);
   border: var(--border-standard);
@@ -109,10 +120,6 @@ body:not(.read-mode)
   .variable-editor.is-unused:not(:focus-within)
   :is(.variable-editor-key, .variable-editor-value) {
   opacity: 0.5;
-}
-
-body.read-mode .variable-editor-value {
-  --code-editor-header-height: 0px;
 }
 
 body.read-mode .variable-editor-value textarea {

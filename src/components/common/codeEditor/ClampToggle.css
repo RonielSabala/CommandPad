@@ -1,4 +1,4 @@
-.command-clamp-toggle {
+.clamp-toggle {
   position: sticky;
   bottom: 0;
   z-index: var(--z-raised);
@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-4);
-  height: var(--command-clamp-toggle-height);
+  height: var(--clamp-toggle-height);
   padding: 0 var(--space-6);
   border: none;
   cursor: pointer;
@@ -15,23 +15,23 @@
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   transition: color var(--transition-fast);
-  background: var(--command-clamp-halo);
+  background: var(--clamp-halo);
   border-radius: var(--radius-pill);
-  box-shadow: 0 0 var(--space-8) var(--space-2) var(--command-clamp-halo);
+  box-shadow: 0 0 var(--space-8) var(--space-2) var(--clamp-halo);
 }
 
-.command-clamp-toggle:hover {
+.clamp-toggle:hover {
   color: var(--color-text-primary);
 }
 
-.command-clamp-toggle-icon {
+.clamp-toggle-icon {
   transition: transform var(--transition-base);
 }
 
-.command-clamp-toggle.expanded .command-clamp-toggle-icon {
+.clamp-toggle.expanded .clamp-toggle-icon {
   transform: rotate(180deg);
 }
 
-body.select-key-held:not(.read-mode) .command-clamp-toggle {
+body.select-key-held:not(.read-mode) .clamp-toggle {
   pointer-events: none;
 }

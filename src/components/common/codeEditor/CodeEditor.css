@@ -5,6 +5,9 @@
       var(--code-gutter-gap-before, 0px)
   );
 
+  --code-editor-clamp-height: calc(var(--clamp-lines-height) + var(--space-10));
+  --code-editor-clamp-mask: var(--clamp-mask);
+
   position: relative;
   isolation: isolate;
   display: grid;
@@ -48,6 +51,10 @@
   pointer-events: auto;
 }
 
+.code-editor:has(.code-editor-header) {
+  --code-editor-header-height: var(--space-16);
+}
+
 .code-editor:has(.code-editor-header) .code-editor-surface {
   --code-editor-surface-padding-top: 0px;
 }
@@ -73,7 +80,7 @@
 .code-editor-mask {
   position: absolute;
   inset: 0;
-  padding: var(--space-5) 0 0
+  padding: var(--code-editor-surface-padding-top, var(--space-5)) 0 0
     calc(var(--code-editor-gutter-width, 0px) + var(--space-6));
   font: inherit;
   color: var(--color-text-primary);
@@ -118,6 +125,18 @@
   overflow: clip;
   -webkit-mask-image: var(--code-editor-clamp-mask, none);
   mask-image: var(--code-editor-clamp-mask, none);
+}
+
+.code-editor:has(.code-editor-surface:focus-within) .clamp-toggle {
+  display: none;
+}
+
+.code-editor.clamped:has(.code-editor-surface:focus-within)
+  > .code-editor-surface {
+  max-height: none;
+  overflow: visible;
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 .monaco-hover-layer,

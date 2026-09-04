@@ -9,19 +9,19 @@ import { DataAttr } from "@/common/constants/dom";
 import {
   CodeModelScope,
   COMMAND_PROMPT_PREFIX,
-  CommandClampConfig,
   DEFAULT_COMMAND_LANGUAGE,
 } from "@/common/editorConfig";
 import {
   BlockType,
+  ClampSurface,
   CodeLanguage,
-  CommandSurface,
   TooltipVariant,
 } from "@/common/enums";
 import type {
   CommandBlock as CommandBlockData,
   CommandSegment,
 } from "@/common/types";
+import { ClampToggle } from "@/components/common/codeEditor/ClampToggle";
 import {
   CodeEditor,
   type CodeEditorHandle,
@@ -35,6 +35,7 @@ import {
   CopyIcon,
   EditorToggleChevronIcon,
 } from "@/components/icons";
+import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
 import { useExtractVariableAction } from "@/hooks/useExtractVariableAction";
 import { useTranslation } from "@/i18n";
 import { buildVariableCompletions } from "@/monaco/completions";
@@ -48,7 +49,6 @@ import {
   type VariableMap,
 } from "@/utils/resolution";
 import { classNames, countLines, splitLines, stripEnd } from "@/utils/string";
-import type { CSSProperties } from "react";
 import {
   Fragment,
   useCallback,
@@ -59,11 +59,6 @@ import {
 } from "react";
 
 import "./CommandBlock.css";
-import { CommandClampToggle } from "./CommandClampToggle";
-
-const CLAMP_STYLE = {
-  [CommandClampConfig.MAX_LINES_PROPERTY]: CommandClampConfig.MAX_LINES,
-} as CSSProperties;
 
 const SECRET_MASK = "******";
 
@@ -131,21 +126,10 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     (state) => state.pendingFocusBlockId === blockId,
   );
 
-  const previewExpanded = useStore((state) =>
-    state.expandedCommandSurfaces[CommandSurface.PREVIEW].has(blockId),
-  );
-  const editorExpanded = useStore((state) =>
-    state.expandedCommandSurfaces[CommandSurface.EDITOR].has(blockId),
-  );
-  const toggleExpanded = useStore(
-    (state) => state.toggleCommandSurfaceExpanded,
-  );
-
   const [copied, setCopied] = useState(false);
   const previewRef = useRef<HTMLSpanElement>(null);
   const previewScrollTarget = useDomScrollTarget(previewRef);
   const editorRef = useRef<CodeEditorHandle>(null);
-  const autoExpandedEditorRef = useRef(false);
 
   const segments = useMemo(
     () => resolveCommandText(blockText, variableMap),
@@ -163,18 +147,14 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
 
   const actions = useExtractVariableAction();
 
-  const previewOverflows = useMemo(
-    () =>
-      countCommandLines(segments, secretKeys) > CommandClampConfig.MAX_LINES,
+  const previewLines = useMemo(
+    () => countCommandLines(segments, secretKeys),
     [segments, secretKeys],
   );
-  const editorOverflows = useMemo(
-    () => countLines(blockText) > CommandClampConfig.MAX_LINES,
-    [blockText],
-  );
+  const editorLines = useMemo(() => countLines(blockText), [blockText]);
 
-  const previewClamped = previewOverflows && !previewExpanded;
-  const editorClamped = editorOverflows && !editorExpanded;
+  const preview = useClampSurface(blockId, ClampSurface.PREVIEW, previewLines);
+  const editor = useClampSurface(blockId, ClampSurface.EDITOR, editorLines);
 
   const handleChange = useCallback(
     (value: string) => updateBlock(blockId, BlockType.COMMAND, { text: value }),
@@ -186,20 +166,6 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
       updateBlock(blockId, BlockType.COMMAND, { language }),
     [updateBlock, blockId],
   );
-
-  const handleEditorFocus = useCallback(() => {
-    if (editorOverflows && !editorExpanded) {
-      autoExpandedEditorRef.current = true;
-      toggleExpanded(blockId, CommandSurface.EDITOR);
-    }
-  }, [editorOverflows, editorExpanded, toggleExpanded, blockId]);
-
-  const handleEditorBlur = useCallback(() => {
-    if (autoExpandedEditorRef.current) {
-      autoExpandedEditorRef.current = false;
-      toggleExpanded(blockId, CommandSurface.EDITOR);
-    }
-  }, [toggleExpanded, blockId]);
 
   useEffect(() => {
     if (pendingFocus) {
@@ -218,8 +184,12 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
 
   return (
     <div
-      className={classNames("command-block", CssClass.BLOCK_SURFACE)}
-      style={CLAMP_STYLE}
+      className={classNames(
+        "command-block",
+        CssClass.BLOCK_SURFACE,
+        CssClass.CLAMP_SURFACE,
+      )}
+      style={CLAMP_SURFACE_STYLE}
     >
       <div className="command-preview" {...{ [DataAttr.DRAG_IMAGE]: "" }}>
         <span
@@ -228,7 +198,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
             "command-preview-text",
             "no-ligatures",
             unresolved && "has-unresolved",
-            previewClamped && CssClass.CLAMPED,
+            preview.clamped && CssClass.CLAMPED,
           )}
         >
           {blockText ? (
@@ -279,11 +249,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           </button>
         </div>
 
-        {previewOverflows && (
-          <CommandClampToggle
-            expanded={previewExpanded}
-            onToggle={() => toggleExpanded(blockId, CommandSurface.PREVIEW)}
-          />
+        {preview.overflows && (
+          <ClampToggle expanded={preview.expanded} onToggle={preview.toggle} />
         )}
 
         <StickyScrollbar target={previewScrollTarget} deps={[segments]} />
@@ -299,13 +266,13 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         value={blockText}
         language={block.language}
         onChange={handleChange}
-        onFocus={handleEditorFocus}
-        onBlur={handleEditorBlur}
+        onFocus={editor.onFocus}
+        onBlur={editor.onBlur}
         placeholder={t.command.placeholder}
         completions={completions}
         actions={actions}
         promptPrefix={COMMAND_PROMPT_PREFIX}
-        clamped={editorClamped}
+        clamped={editor.clamped}
         header={
           <CodeLanguageSelect
             language={block.language ?? DEFAULT_COMMAND_LANGUAGE}
@@ -313,11 +280,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           />
         }
         footer={
-          editorOverflows && (
-            <CommandClampToggle
-              expanded={editorExpanded}
-              onToggle={() => toggleExpanded(blockId, CommandSurface.EDITOR)}
-            />
+          editor.overflows && (
+            <ClampToggle expanded={editor.expanded} onToggle={editor.toggle} />
           )
         }
       />
