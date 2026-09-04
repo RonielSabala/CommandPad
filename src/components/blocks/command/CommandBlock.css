@@ -2,9 +2,9 @@
   background: var(--color-surface);
   border: var(--border-standard);
   border-radius: var(--radius-lg);
-  overflow: clip;
   max-width: 100%;
   min-width: var(--block-min-width);
+  overflow: clip;
 }
 
 /* Command preview */
@@ -17,6 +17,7 @@
   grid-template-columns: minmax(0, 1fr) auto;
   column-gap: var(--space-6);
   background: var(--color-bg);
+  overflow: clip;
 }
 
 .command-preview > .clamp-toggle {
@@ -163,6 +164,7 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
   --code-editor-header-halo: var(--color-surface);
 
   border-top: var(--border-standard);
+  overflow: clip;
 }
 
 body.select-key-held:not(.read-mode) .code-editor-header > * {
