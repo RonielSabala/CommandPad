@@ -73,7 +73,7 @@
 .code-editor-mask {
   position: absolute;
   inset: 0;
-  padding: var(--space-5) 0 0
+  padding: var(--code-editor-surface-padding-top, var(--space-5)) 0 0
     calc(var(--code-editor-gutter-width, 0px) + var(--space-6));
   font: inherit;
   color: var(--color-text-primary);
