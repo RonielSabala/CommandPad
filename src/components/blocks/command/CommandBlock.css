@@ -1,15 +1,5 @@
 .command-block {
-  --command-clamp-line-height: var(--code-line-height-base);
-  --command-clamp-lines-height: calc(
-    var(--command-clamp-line-height) * var(--command-clamp-max-lines)
-  );
-  --command-clamp-fade: var(--space-16);
-  --command-clamp-toggle-height: var(--space-16);
-  --command-clamp-mask: linear-gradient(
-    to bottom in oklab,
-    #000 calc(100% - var(--command-clamp-fade)),
-    transparent 100%
-  );
+  --clamp-lines-height: calc(var(--clamp-line-height) * var(--clamp-max-lines));
 
   background: var(--color-surface);
   border: var(--border-standard);
@@ -22,7 +12,7 @@
 /* Command preview */
 
 .command-preview {
-  --command-clamp-halo: var(--color-bg);
+  --clamp-halo: var(--color-bg);
 
   padding: var(--space-4) var(--space-6);
   display: grid;
@@ -31,7 +21,7 @@
   background: var(--color-bg);
 }
 
-.command-preview > .command-clamp-toggle {
+.command-preview > .clamp-toggle {
   grid-area: 2 / 1 / 3 / -1;
 }
 
@@ -45,7 +35,7 @@
   grid-area: 1 / 1 / 2 / 2;
   font-family: var(--font-mono);
   font-size: var(--text-base);
-  line-height: var(--command-clamp-line-height);
+  line-height: var(--clamp-line-height);
   color: var(--success);
   overflow-x: auto;
   overflow-y: hidden;
@@ -57,10 +47,10 @@
 
 .command-preview-text.clamped {
   max-height: calc(
-    var(--command-clamp-lines-height) + var(--command-preview-scroll-space)
+    var(--clamp-lines-height) + var(--command-preview-scroll-space)
   );
-  -webkit-mask-image: var(--command-clamp-mask);
-  mask-image: var(--command-clamp-mask);
+  -webkit-mask-image: var(--clamp-mask);
+  mask-image: var(--clamp-mask);
 }
 
 .command-preview-actions {
@@ -171,13 +161,11 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
 /* Command editor */
 
 .command-block-editor {
-  --command-clamp-halo: var(--color-surface);
+  --clamp-halo: var(--color-surface);
   --code-editor-header-halo: var(--color-surface);
   --code-editor-header-height: var(--space-16);
-  --code-editor-clamp-height: calc(
-    var(--command-clamp-lines-height) + var(--space-10)
-  );
-  --code-editor-clamp-mask: var(--command-clamp-mask);
+  --code-editor-clamp-height: calc(var(--clamp-lines-height) + var(--space-10));
+  --code-editor-clamp-mask: var(--clamp-mask);
 
   border-top: var(--border-standard);
 }
@@ -189,17 +177,4 @@ body.select-key-held:not(.read-mode) .code-editor-header > * {
 .command-block-editor.collapsed,
 body.read-mode :is(.toggle-editor-btn, .command-block-editor) {
   display: none;
-}
-
-.command-block-editor:has(.code-editor-surface:focus-within)
-  .command-clamp-toggle {
-  display: none;
-}
-
-.command-block-editor.clamped:has(.code-editor-surface:focus-within)
-  > .code-editor-surface {
-  max-height: none;
-  overflow: visible;
-  -webkit-mask-image: none;
-  mask-image: none;
 }

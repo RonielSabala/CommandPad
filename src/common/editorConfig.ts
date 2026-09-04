@@ -2,9 +2,9 @@ import { CodeLanguage } from "./enums";
 
 export const COMMAND_PROMPT_PREFIX = "$";
 
-export const CommandClampConfig = {
+export const ClampConfig = {
   MAX_LINES: 8,
-  MAX_LINES_PROPERTY: "--command-clamp-max-lines",
+  MAX_LINES_PROPERTY: "--clamp-max-lines",
 } as const;
 
 export const CodeToken = {

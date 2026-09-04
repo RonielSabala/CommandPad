@@ -7,21 +7,22 @@ import {
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import {
+  ClampConfig,
   CodeModelScope,
   COMMAND_PROMPT_PREFIX,
-  CommandClampConfig,
   DEFAULT_COMMAND_LANGUAGE,
 } from "@/common/editorConfig";
 import {
   BlockType,
+  ClampSurface,
   CodeLanguage,
-  CommandSurface,
   TooltipVariant,
 } from "@/common/enums";
 import type {
   CommandBlock as CommandBlockData,
   CommandSegment,
 } from "@/common/types";
+import { ClampToggle } from "@/components/common/codeEditor/ClampToggle";
 import {
   CodeEditor,
   type CodeEditorHandle,
@@ -59,10 +60,9 @@ import {
 } from "react";
 
 import "./CommandBlock.css";
-import { CommandClampToggle } from "./CommandClampToggle";
 
 const CLAMP_STYLE = {
-  [CommandClampConfig.MAX_LINES_PROPERTY]: CommandClampConfig.MAX_LINES,
+  [ClampConfig.MAX_LINES_PROPERTY]: ClampConfig.MAX_LINES,
 } as CSSProperties;
 
 const SECRET_MASK = "******";
@@ -132,14 +132,12 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   );
 
   const previewExpanded = useStore((state) =>
-    state.expandedCommandSurfaces[CommandSurface.PREVIEW].has(blockId),
+    state.expandedClampSurfaces[ClampSurface.PREVIEW].has(blockId),
   );
   const editorExpanded = useStore((state) =>
-    state.expandedCommandSurfaces[CommandSurface.EDITOR].has(blockId),
+    state.expandedClampSurfaces[ClampSurface.EDITOR].has(blockId),
   );
-  const toggleExpanded = useStore(
-    (state) => state.toggleCommandSurfaceExpanded,
-  );
+  const toggleExpanded = useStore((state) => state.toggleClampSurfaceExpanded);
 
   const [copied, setCopied] = useState(false);
   const previewRef = useRef<HTMLSpanElement>(null);
@@ -164,12 +162,11 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const actions = useExtractVariableAction();
 
   const previewOverflows = useMemo(
-    () =>
-      countCommandLines(segments, secretKeys) > CommandClampConfig.MAX_LINES,
+    () => countCommandLines(segments, secretKeys) > ClampConfig.MAX_LINES,
     [segments, secretKeys],
   );
   const editorOverflows = useMemo(
-    () => countLines(blockText) > CommandClampConfig.MAX_LINES,
+    () => countLines(blockText) > ClampConfig.MAX_LINES,
     [blockText],
   );
 
@@ -190,14 +187,14 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const handleEditorFocus = useCallback(() => {
     if (editorOverflows && !editorExpanded) {
       autoExpandedEditorRef.current = true;
-      toggleExpanded(blockId, CommandSurface.EDITOR);
+      toggleExpanded(blockId, ClampSurface.EDITOR);
     }
   }, [editorOverflows, editorExpanded, toggleExpanded, blockId]);
 
   const handleEditorBlur = useCallback(() => {
     if (autoExpandedEditorRef.current) {
       autoExpandedEditorRef.current = false;
-      toggleExpanded(blockId, CommandSurface.EDITOR);
+      toggleExpanded(blockId, ClampSurface.EDITOR);
     }
   }, [toggleExpanded, blockId]);
 
@@ -280,9 +277,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         </div>
 
         {previewOverflows && (
-          <CommandClampToggle
+          <ClampToggle
             expanded={previewExpanded}
-            onToggle={() => toggleExpanded(blockId, CommandSurface.PREVIEW)}
+            onToggle={() => toggleExpanded(blockId, ClampSurface.PREVIEW)}
           />
         )}
 
@@ -314,9 +311,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         }
         footer={
           editorOverflows && (
-            <CommandClampToggle
+            <ClampToggle
               expanded={editorExpanded}
-              onToggle={() => toggleExpanded(blockId, CommandSurface.EDITOR)}
+              onToggle={() => toggleExpanded(blockId, ClampSurface.EDITOR)}
             />
           )
         }

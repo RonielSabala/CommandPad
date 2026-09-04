@@ -1,10 +1,17 @@
 import { CssClass } from "@/common/constants/css";
 import {
+  ClampConfig,
   CodeModelScope,
   DEFAULT_VARIABLE_LANGUAGE,
 } from "@/common/editorConfig";
-import { AppMode, CodeLanguage, VariableField } from "@/common/enums";
+import {
+  AppMode,
+  ClampSurface,
+  CodeLanguage,
+  VariableField,
+} from "@/common/enums";
 import type { Variable } from "@/common/types";
+import { ClampToggle } from "@/components/common/codeEditor/ClampToggle";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageSelect";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -14,11 +21,16 @@ import { useTranslation } from "@/i18n";
 import type { VariableCompletion } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import { getVariableKey } from "@/utils/resolution";
-import { classNames } from "@/utils/string";
-import { useCallback, useEffect, useMemo, type RefObject } from "react";
+import { classNames, countLines } from "@/utils/string";
+import type { CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, type RefObject } from "react";
 
 import "./VariableEditor.css";
 import { VariableKeyInput } from "./VariableKeyInput";
+
+const CLAMP_STYLE = {
+  [ClampConfig.MAX_LINES_PROPERTY]: ClampConfig.MAX_LINES,
+} as CSSProperties;
 
 interface Props {
   variable: Variable;
@@ -47,6 +59,18 @@ export function VariableEditor({
     (state) => state.pendingFocusVariableId === variableId,
   );
 
+  const valueExpanded = useStore((state) =>
+    state.expandedClampSurfaces[ClampSurface.VALUE].has(variableId),
+  );
+  const toggleExpanded = useStore((state) => state.toggleClampSurfaceExpanded);
+  const autoExpandedRef = useRef(false);
+
+  const valueOverflows = useMemo(
+    () => countLines(variable.value) > ClampConfig.MAX_LINES,
+    [variable.value],
+  );
+  const valueClamped = valueOverflows && !valueExpanded;
+
   const actions = useExtractVariableAction();
 
   // A variable resolving to itself can never fill in, so never offer it
@@ -67,6 +91,20 @@ export function VariableEditor({
     [updateVariable, variableId],
   );
 
+  const handleFocus = useCallback(() => {
+    if (valueOverflows && !valueExpanded) {
+      autoExpandedRef.current = true;
+      toggleExpanded(variableId, ClampSurface.VALUE);
+    }
+  }, [valueOverflows, valueExpanded, toggleExpanded, variableId]);
+
+  const handleBlur = useCallback(() => {
+    if (autoExpandedRef.current) {
+      autoExpandedRef.current = false;
+      toggleExpanded(variableId, ClampSurface.VALUE);
+    }
+  }, [toggleExpanded, variableId]);
+
   useEffect(() => {
     if (pendingFocus) {
       keyRef.current?.focus();
@@ -83,6 +121,7 @@ export function VariableEditor({
         isSecret && "is-secret",
         unused && "is-unused",
       )}
+      style={CLAMP_STYLE}
     >
       <div className="variable-editor-key-row">
         <VariableKeyInput
@@ -112,15 +151,26 @@ export function VariableEditor({
         value={variable.value}
         language={language}
         onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         placeholder={t.variables.valuePlaceholder}
         completions={valueCompletions}
         actions={actions}
         masked={isSecret}
+        clamped={valueClamped}
         header={
           !readMode && (
             <CodeLanguageSelect
               language={language}
               onChange={handleLanguageChange}
+            />
+          )
+        }
+        footer={
+          valueOverflows && (
+            <ClampToggle
+              expanded={valueExpanded}
+              onToggle={() => toggleExpanded(variableId, ClampSurface.VALUE)}
             />
           )
         }

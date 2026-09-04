@@ -120,6 +120,18 @@
   mask-image: var(--code-editor-clamp-mask, none);
 }
 
+.code-editor:has(.code-editor-surface:focus-within) .clamp-toggle {
+  display: none;
+}
+
+.code-editor.clamped:has(.code-editor-surface:focus-within)
+  > .code-editor-surface {
+  max-height: none;
+  overflow: visible;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
 .monaco-hover-layer,
 .monaco-overflow-widgets {
   position: absolute;

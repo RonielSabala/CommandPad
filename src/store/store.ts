@@ -19,10 +19,10 @@ import { DEFAULT_VARIABLE_LANGUAGE } from "@/common/editorConfig";
 import {
   AppMode,
   BlockType,
+  ClampSurface,
   CloudExportStatus,
   CloudProvider,
   CloudSortColumn,
-  CommandSurface,
   DialogTone,
   ExportFormat,
   HistoryDirection,
@@ -203,7 +203,7 @@ export interface StoreState {
   flashBlockIds: Set<string>;
   selectedVariableIds: Set<string>;
   flashVariableIds: Set<string>;
-  expandedCommandSurfaces: Record<CommandSurface, Set<string>>;
+  expandedClampSurfaces: Record<ClampSurface, Set<string>>;
   selectKeyHeld: boolean;
   linkKeyHeld: boolean;
   pendingFocusBlockId: string | null;
@@ -331,10 +331,7 @@ export interface StoreState {
   ) => void;
   clearFlash: (blockId: string) => void;
   consumeBlockFocus: () => void;
-  toggleCommandSurfaceExpanded: (
-    blockId: string,
-    surface: CommandSurface,
-  ) => void;
+  toggleClampSurfaceExpanded: (id: string, surface: ClampSurface) => void;
   openImageViewer: (blockId: string) => void;
   closeImageViewer: () => void;
 
@@ -1235,9 +1232,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       flashBlockIds: new Set(),
       selectedVariableIds: new Set(),
       flashVariableIds: new Set(),
-      expandedCommandSurfaces: {
-        [CommandSurface.PREVIEW]: new Set(),
-        [CommandSurface.EDITOR]: new Set(),
+      expandedClampSurfaces: {
+        [ClampSurface.PREVIEW]: new Set(),
+        [ClampSurface.EDITOR]: new Set(),
+        [ClampSurface.VALUE]: new Set(),
       },
       selectKeyHeld: false,
       linkKeyHeld: false,
@@ -2623,18 +2621,18 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       consumeBlockFocus: () => set({ pendingFocusBlockId: null }),
 
-      toggleCommandSurfaceExpanded: (blockId, surface) =>
+      toggleClampSurfaceExpanded: (id, surface) =>
         set((s) => {
-          const ids = new Set(s.expandedCommandSurfaces[surface]);
-          if (ids.has(blockId)) {
-            ids.delete(blockId);
+          const ids = new Set(s.expandedClampSurfaces[surface]);
+          if (ids.has(id)) {
+            ids.delete(id);
           } else {
-            ids.add(blockId);
+            ids.add(id);
           }
 
           return {
-            expandedCommandSurfaces: {
-              ...s.expandedCommandSurfaces,
+            expandedClampSurfaces: {
+              ...s.expandedClampSurfaces,
               [surface]: ids,
             },
           };
