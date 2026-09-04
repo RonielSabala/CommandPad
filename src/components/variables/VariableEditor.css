@@ -71,15 +71,26 @@
 }
 
 :is(
-    body.select-key-held:not(.read-mode) .variable-item:hover,
+    .variable-selected,
     .variable-item.drag-over,
-    .variable-selected
+    body.select-key-held:not(.read-mode) .variable-item:hover
   )
   .variable-editor-key {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   border-top-left-radius: var(--radius-lg);
   border-top-right-radius: var(--radius-lg);
+}
+
+:is(
+    body:not(.read-mode) .variable-selected,
+    body:not(.read-mode) .variable-item.drag-over,
+    body.select-key-held:not(.read-mode) .variable-item:hover
+  )
+  .variable-editor.is-secret
+  .variable-editor-key {
+  border-top-right-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
 }
 
 body.read-mode .variable-editor-key {
