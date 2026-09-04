@@ -1,6 +1,4 @@
 .variable-editor {
-  --clamp-lines-height: calc(var(--clamp-line-height) * var(--clamp-max-lines));
-
   position: relative;
   display: flex;
   flex-direction: column;
@@ -109,9 +107,6 @@ body.read-mode .variable-editor-secret-btn {
 .variable-editor-value {
   --clamp-halo: var(--color-bg);
   --code-editor-header-halo: var(--color-bg);
-  --code-editor-header-height: var(--space-16);
-  --code-editor-clamp-height: calc(var(--clamp-lines-height) + var(--space-10));
-  --code-editor-clamp-mask: var(--clamp-mask);
 
   min-width: var(--block-min-width);
   border: var(--border-standard);
@@ -125,10 +120,6 @@ body:not(.read-mode)
   .variable-editor.is-unused:not(:focus-within)
   :is(.variable-editor-key, .variable-editor-value) {
   opacity: 0.5;
-}
-
-body.read-mode .variable-editor-value {
-  --code-editor-header-height: 0px;
 }
 
 body.read-mode .variable-editor-value textarea {

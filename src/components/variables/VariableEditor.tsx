@@ -1,6 +1,5 @@
 import { CssClass } from "@/common/constants/css";
 import {
-  ClampConfig,
   CodeModelScope,
   DEFAULT_VARIABLE_LANGUAGE,
 } from "@/common/editorConfig";
@@ -16,21 +15,17 @@ import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageSelect";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
+import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
 import { useExtractVariableAction } from "@/hooks/useExtractVariableAction";
 import { useTranslation } from "@/i18n";
 import type { VariableCompletion } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import { getVariableKey } from "@/utils/resolution";
 import { classNames, countLines } from "@/utils/string";
-import type { CSSProperties } from "react";
-import { useCallback, useEffect, useMemo, useRef, type RefObject } from "react";
+import { useCallback, useEffect, useMemo, type RefObject } from "react";
 
 import "./VariableEditor.css";
 import { VariableKeyInput } from "./VariableKeyInput";
-
-const CLAMP_STYLE = {
-  [ClampConfig.MAX_LINES_PROPERTY]: ClampConfig.MAX_LINES,
-} as CSSProperties;
 
 interface Props {
   variable: Variable;
@@ -59,17 +54,15 @@ export function VariableEditor({
     (state) => state.pendingFocusVariableId === variableId,
   );
 
-  const valueExpanded = useStore((state) =>
-    state.expandedClampSurfaces[ClampSurface.VALUE].has(variableId),
-  );
-  const toggleExpanded = useStore((state) => state.toggleClampSurfaceExpanded);
-  const autoExpandedRef = useRef(false);
-
-  const valueOverflows = useMemo(
-    () => countLines(variable.value) > ClampConfig.MAX_LINES,
+  const valueLines = useMemo(
+    () => countLines(variable.value),
     [variable.value],
   );
-  const valueClamped = valueOverflows && !valueExpanded;
+  const valueClamp = useClampSurface(
+    variableId,
+    ClampSurface.VALUE,
+    valueLines,
+  );
 
   const actions = useExtractVariableAction();
 
@@ -91,20 +84,6 @@ export function VariableEditor({
     [updateVariable, variableId],
   );
 
-  const handleFocus = useCallback(() => {
-    if (valueOverflows && !valueExpanded) {
-      autoExpandedRef.current = true;
-      toggleExpanded(variableId, ClampSurface.VALUE);
-    }
-  }, [valueOverflows, valueExpanded, toggleExpanded, variableId]);
-
-  const handleBlur = useCallback(() => {
-    if (autoExpandedRef.current) {
-      autoExpandedRef.current = false;
-      toggleExpanded(variableId, ClampSurface.VALUE);
-    }
-  }, [toggleExpanded, variableId]);
-
   useEffect(() => {
     if (pendingFocus) {
       keyRef.current?.focus();
@@ -118,10 +97,11 @@ export function VariableEditor({
       className={classNames(
         "variable-editor",
         CssClass.VARIABLE_SURFACE,
+        CssClass.CLAMP_SURFACE,
         isSecret && "is-secret",
         unused && "is-unused",
       )}
-      style={CLAMP_STYLE}
+      style={CLAMP_SURFACE_STYLE}
     >
       <div className="variable-editor-key-row">
         <VariableKeyInput
@@ -151,13 +131,13 @@ export function VariableEditor({
         value={variable.value}
         language={language}
         onChange={handleChange}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
+        onFocus={valueClamp.onFocus}
+        onBlur={valueClamp.onBlur}
         placeholder={t.variables.valuePlaceholder}
         completions={valueCompletions}
         actions={actions}
         masked={isSecret}
-        clamped={valueClamped}
+        clamped={valueClamp.clamped}
         header={
           !readMode && (
             <CodeLanguageSelect
@@ -167,10 +147,10 @@ export function VariableEditor({
           )
         }
         footer={
-          valueOverflows && (
+          valueClamp.overflows && (
             <ClampToggle
-              expanded={valueExpanded}
-              onToggle={() => toggleExpanded(variableId, ClampSurface.VALUE)}
+              expanded={valueClamp.expanded}
+              onToggle={valueClamp.toggle}
             />
           )
         }

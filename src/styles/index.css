@@ -252,6 +252,12 @@ body {
   overflow: visible;
 }
 
+/* --- CLAMPED SURFACES --- */
+
+.clamp-surface {
+  --clamp-lines-height: calc(var(--clamp-line-height) * var(--clamp-max-lines));
+}
+
 /* --- DRAG HANDLE --- */
 
 .dragging {

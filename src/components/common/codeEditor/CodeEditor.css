@@ -5,6 +5,9 @@
       var(--code-gutter-gap-before, 0px)
   );
 
+  --code-editor-clamp-height: calc(var(--clamp-lines-height) + var(--space-10));
+  --code-editor-clamp-mask: var(--clamp-mask);
+
   position: relative;
   isolation: isolate;
   display: grid;
@@ -46,6 +49,10 @@
 
 .code-editor-header > * {
   pointer-events: auto;
+}
+
+.code-editor:has(.code-editor-header) {
+  --code-editor-header-height: var(--space-16);
 }
 
 .code-editor:has(.code-editor-header) .code-editor-surface {
