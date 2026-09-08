@@ -145,10 +145,12 @@ export const MonacoContextMenu = {
 
 export const EditorActionId = {
   EXTRACT_VARIABLE: "commandpad.extractVariable",
+  ESCAPE_VARIABLE: "commandpad.escapeVariable",
 } as const;
 
 export const EditorActionOrder = {
   EXTRACT_VARIABLE: 1,
+  ESCAPE_VARIABLE: 2,
 } as const;
 
 /** The body-level nodes Monaco renders out of the editor into. */

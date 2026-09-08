@@ -18,10 +18,15 @@ export interface EditorAction {
   id: string;
   label: string;
   order: number;
+  caretRange?: (
+    line: string,
+    offset: number,
+  ) => { start: number; end: number } | null;
   run: (context: EditorActionContext) => void;
 }
 
 function actionRange(
+  action: EditorAction,
   instance: editor.ICodeEditor,
   model: editor.ITextModel,
 ): IRange | null {
@@ -35,21 +40,28 @@ function actionRange(
   }
 
   const position = selection.getPosition();
-  const word = model.getWordAtPosition(position);
+  const { lineNumber } = position;
 
+  if (action.caretRange) {
+    const range = action.caretRange(
+      model.getLineContent(lineNumber),
+      position.column - 1,
+    );
+
+    return range
+      ? new monaco.Range(lineNumber, range.start + 1, lineNumber, range.end + 1)
+      : null;
+  }
+
+  const word = model.getWordAtPosition(position);
   return word
-    ? new monaco.Range(
-        position.lineNumber,
-        word.startColumn,
-        position.lineNumber,
-        word.endColumn,
-      )
+    ? new monaco.Range(lineNumber, word.startColumn, lineNumber, word.endColumn)
     : null;
 }
 
 function runAction(action: EditorAction, instance: editor.ICodeEditor): void {
   const model = instance.getModel();
-  const range = model && actionRange(instance, model);
+  const range = model && actionRange(action, instance, model);
   if (!model || !range) {
     return;
   }

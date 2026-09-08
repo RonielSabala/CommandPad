@@ -164,6 +164,7 @@ export const es: Messages = {
     copy: "Copiar comando",
     placeholder: "ssh {USUARIO}@{HOST}",
     extractVariable: "Extraer en una variable",
+    escapeVariable: "Escapar la referencia",
   },
   note: {
     styleLabel: {
@@ -1090,6 +1091,8 @@ Si algo sale mal, deshazlo en este orden:
     escapingBraces: {
       intro:
         "Antepón una barra invertida (`\\`) a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla.",
+      menu: (escapeLabel) =>
+        `No hace falta escribir la barra invertida a mano. Pon el cursor dentro de una referencia (o selecciona una o varias), haz clic derecho y elige **${escapeLabel}**. Una barra invertida pegada a la llave de cierre se elimina.`,
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
       scope:

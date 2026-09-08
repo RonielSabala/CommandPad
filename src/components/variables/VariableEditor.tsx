@@ -16,7 +16,7 @@ import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageS
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
 import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
-import { useExtractVariableAction } from "@/hooks/useExtractVariableAction";
+import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
 import type { VariableCompletion } from "@/monaco/completions";
 import { useStore } from "@/store/store";
@@ -64,7 +64,7 @@ export function VariableEditor({
     valueLines,
   );
 
-  const actions = useExtractVariableAction();
+  const actions = useEditorActions();
 
   // A variable resolving to itself can never fill in, so never offer it
   const ownKey = getVariableKey(variable);

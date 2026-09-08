@@ -160,6 +160,7 @@ export const en: Messages = {
     copy: "Copy command",
     placeholder: "ssh {USER}@{HOST}",
     extractVariable: "Extract into a variable",
+    escapeVariable: "Escape the reference",
   },
   note: {
     styleLabel: {
@@ -1073,6 +1074,8 @@ If something goes wrong, undo it in this order:
     escapingBraces: {
       intro:
         "Prefix a reference with a backslash (`\\`) in a command block to output it literally instead of resolving it.",
+      menu: (escapeLabel) =>
+        `You do not have to type the backslash yourself. Put the caret inside a reference (or select one or more of them), right-click it and pick **${escapeLabel}**. A backslash left against the closing brace is dropped.`,
       tryHint:
         "Try deleting the backslash in the command below and watch the literal braces turn into an active reference:",
       scope:

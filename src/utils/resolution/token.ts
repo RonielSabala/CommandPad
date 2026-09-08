@@ -34,12 +34,37 @@ function dropBraceEscapes(text: string): string {
   return text.replace(EscapedBraceOpenRegex, VariableSyntax.BRACE_OPEN);
 }
 
+/** Drops a backslash left against a closing brace. */
+function dropTrailingEscape(raw: string): string {
+  return raw.endsWith(ESCAPE_CHAR) ? raw.slice(0, -1) : raw;
+}
+
 /** Drops the backslash that escapes a reference. */
 export function unescapeBraces(
   text: string,
   surface: ReferenceSurface,
 ): string {
   return ESCAPES_REFERENCES[surface] ? dropBraceEscapes(text) : text;
+}
+
+/** Escapes every reference in `text`, and normalizes the escaping it finds. */
+export function escapeBraces(text: string): string {
+  let result = "";
+  let lastEnd = 0;
+
+  for (const match of scanBraces(text, false)) {
+    const start = match.start;
+    const escaped = text[start - 1] === ESCAPE_CHAR && start - 1 >= lastEnd;
+
+    result +=
+      text.slice(lastEnd, escaped ? start - 1 : start) +
+      ESCAPE_CHAR +
+      braceToken(dropTrailingEscape(match.raw));
+
+    lastEnd = match.end;
+  }
+
+  return result + text.slice(lastEnd);
 }
 
 export function braceToken(raw: string): string {
@@ -131,6 +156,24 @@ export function scanReferences(
   surface: ReferenceSurface,
 ): ReferenceMatch[] {
   return scanBraces(text, ESCAPES_REFERENCES[surface]);
+}
+
+/** The reference `index` sits inside, together with the backslash escaping it. */
+export function escapableReferenceAt(
+  text: string,
+  index: number,
+): { start: number; end: number } | null {
+  const match = scanBraces(text, false).find(
+    (reference) => index >= reference.start && index <= reference.end,
+  );
+
+  if (!match) {
+    return null;
+  }
+
+  const start = match.start;
+  const escaped = text[start - 1] === ESCAPE_CHAR;
+  return { start: escaped ? start - 1 : start, end: match.end };
 }
 
 /** The innermost reference still open at `index`, `null` when there is none. */
