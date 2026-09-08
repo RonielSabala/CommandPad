@@ -29,6 +29,7 @@ export const ColorToken = {
   ACCENT_DIM: "--accent-dim",
   ACCENT_TEXT: "--accent-text",
   CONSTANT_TEXT: "--constant-text",
+  FLAG_TEXT: "--flag-text",
   SURFACE: "--color-surface",
   SURFACE_ALT: "--color-surface-alt",
   BORDER: "--color-border",
@@ -95,11 +96,18 @@ export const MonacoTheme = {
 
 export const MonacoTokenScope = {
   JSON_KEY: "string.key.json",
-  JSON_STRING: "string.value.json",
   JSON_NUMBER: "number.json",
   JSON_KEYWORD: "keyword.json",
-  JSON_DELIMITER: "delimiter",
-  JSON_COMMENT: "comment",
+  NUMBER: "number",
+  CONSTANT: "constant",
+  VARIABLE: "variable",
+  KEYWORD: "keyword",
+  COMMENT: "comment",
+  ATTRIBUTE_NAME: "attribute.name",
+  DELIMITER: "delimiter",
+  REGEXP: "regexp",
+  TAG: "tag",
+  TYPE: "type",
 } as const;
 
 export const MonacoMarker = {
