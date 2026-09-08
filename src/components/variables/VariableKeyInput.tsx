@@ -1,5 +1,5 @@
 import { Key } from "@/common/constants/events";
-import { TooltipVariant, VariableField } from "@/common/enums";
+import { AppMode, TooltipVariant, VariableField } from "@/common/enums";
 import { useDomScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -30,6 +30,7 @@ export function VariableKeyInput({
   scrollable,
 }: Props) {
   const t = useTranslation();
+  const readMode = useStore((state) => state.mode === AppMode.READ);
   const updateVariable = useStore((state) => state.updateVariable);
   const handlePairWrap = usePairWrapping((value) =>
     updateVariable(variableId, VariableField.KEY, value),
@@ -54,6 +55,8 @@ export function VariableKeyInput({
         type="text"
         placeholder={t.variables.keyPlaceholder}
         value={variableKey}
+        readOnly={readMode}
+        tabIndex={readMode ? -1 : undefined}
         spellCheck={false}
         autoComplete="off"
         onChange={(event) =>
