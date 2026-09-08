@@ -160,6 +160,7 @@ export const en: Messages = {
     copy: "Copy command",
     placeholder: "ssh {USER}@{HOST}",
     extractVariable: "Extract into a variable",
+    escapeVariable: "Escape the reference",
   },
   note: {
     styleLabel: {
@@ -680,6 +681,7 @@ export const en: Messages = {
       [DocsSectionId.CLOUD_EXPORT]: "Cloud export & import",
       [DocsSectionId.CLOUD_LINKED_SYNC]: "Keeping a runbook in sync",
       [DocsSectionId.CLOUD_FILE_MANAGEMENT]: "Managing cloud files",
+      [DocsSectionId.AI_AGENT]: "AI agent",
       [DocsSectionId.LANGUAGE]: "Language",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Keyboard shortcuts",
       [DocsSectionId.QA]: "Q&A",
@@ -1073,6 +1075,8 @@ If something goes wrong, undo it in this order:
     escapingBraces: {
       intro:
         "Prefix a reference with a backslash (`\\`) in a command block to output it literally instead of resolving it.",
+      menu: (escapeLabel) =>
+        `You do not have to type the backslash yourself. Put the caret inside a reference (or select one or more of them), right-click it and pick **${escapeLabel}**. A backslash left against the closing brace is dropped.`,
       tryHint:
         "Try deleting the backslash in the command below and watch the literal braces turn into an active reference:",
       scope:
@@ -1236,6 +1240,14 @@ If something goes wrong, undo it in this order:
         "**Edit** opens the file's raw JSON in place, so a quick fix doesn't require importing, changing, and re-exporting it. It has to stay valid JSON to save.",
       recycleBin:
         "A deleted file or folder isn't gone for good: cloud providers move it to a _Recycle Bin_ first.",
+    },
+    aiAgent: {
+      intro: (copyLabel) =>
+        `A runbook is plain JSON, so an AI assistant can write one for you. Click **${copyLabel}** on the prompt below and give it to your assistant as a standing instruction. From then on you describe the task and paste the JSON it answers with.`,
+      promptLanguage:
+        "The prompt is a specification, so it stays in English. You can still talk to your assistant, and have it write the runbook itself, in whatever language you prefer.",
+      updates:
+        "It grows with the app: every new block type, field and operation lands in it too, so copy it again after an update. And read what your agent writes before you run it, exactly as you would a script somebody sent you.",
     },
     language: {
       intro:

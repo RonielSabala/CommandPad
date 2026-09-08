@@ -23,11 +23,13 @@ export { countCommandLines, isMaskedSegment } from "./segments";
 export {
   braceToken,
   braceTokenKeyRange,
+  escapableReferenceAt,
+  escapeBraces,
   getTokenKey,
   openReferenceAt,
   splitReferenceBody
 } from "./token";
-export type { OpenReference } from "./token";
+export type { OpenReference, ReferenceMatch } from "./token";
 export type { ResolvedValue, VariableMap } from "./types";
 export { hasUnresolvedReferences } from "./unresolved";
 export { getUsedVariableKeys, isVariableUnused } from "./usage";

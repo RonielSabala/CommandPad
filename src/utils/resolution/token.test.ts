@@ -5,6 +5,8 @@ import { describe, expect, it } from "vitest";
 import {
   braceToken,
   braceTokenKeyRange,
+  escapableReferenceAt,
+  escapeBraces,
   getTokenKey,
   openReferenceAt,
   scanReferences,
@@ -122,5 +124,58 @@ describe("openReferenceAt", () => {
     expect(
       openReferenceAt(String.raw`\{US`, 4, ReferenceSurface.COMMAND),
     ).toBeNull();
+  });
+});
+
+describe("escapeBraces", () => {
+  it("escapes every reference in the text", () => {
+    expect(escapeBraces("ssh {USER}@{HOST}")).toBe(
+      String.raw`ssh \{USER}@\{HOST}`,
+    );
+  });
+
+  it("leaves an already escaped reference with the one backslash it has", () => {
+    expect(escapeBraces(String.raw`\{A} {B}`)).toBe(String.raw`\{A} \{B}`);
+  });
+
+  it("drops a backslash left against the closing brace", () => {
+    expect(escapeBraces(String.raw`{A\}`)).toBe(String.raw`\{A}`);
+  });
+
+  it("normalizes a reference escaped at both ends", () => {
+    expect(escapeBraces(String.raw`\{A\}`)).toBe(String.raw`\{A}`);
+  });
+
+  it("is idempotent", () => {
+    const once = escapeBraces("ping {HOST}");
+    expect(escapeBraces(once)).toBe(once);
+  });
+});
+
+describe("escapableReferenceAt", () => {
+  function spanAt(text: string, index: number): string | null {
+    const span = escapableReferenceAt(text, index);
+    return span ? text.slice(span.start, span.end) : null;
+  }
+
+  it("takes the reference the index sits inside", () => {
+    expect(spanAt("ssh {USER}@{HOST}", 6)).toBe("{USER}");
+  });
+
+  it("takes the whole reference from inside a nested one", () => {
+    expect(spanAt("{A;b={C}}", 6)).toBe("{A;b={C}}");
+  });
+
+  it("holds at either end of the reference", () => {
+    expect(spanAt("{A} x", 0)).toBe("{A}");
+    expect(spanAt("{A} x", 3)).toBe("{A}");
+  });
+
+  it("takes the backslash escaping it along", () => {
+    expect(spanAt(String.raw`x \{A}`, 4)).toBe(String.raw`\{A}`);
+  });
+
+  it("is null outside every reference", () => {
+    expect(spanAt("ssh {USER}@{HOST}", 2)).toBeNull();
   });
 });

@@ -44,6 +44,7 @@
   /* Text */
   --accent-text: #a6c8ff;
   --constant-text: #ae81ff;
+  --flag-text: #3ec457;
   --color-text-primary: #eef1f6;
   --color-text-secondary: #9aa3b2;
   --color-text-muted: #656d7d;
@@ -221,6 +222,7 @@
   /* Text */
   --accent-text: #1e46c7;
   --constant-text: #6d28d9;
+  --flag-text: #1b6a28;
   --color-text-primary: #161a22;
   --color-text-secondary: #4d5666;
   --color-text-muted: #838c9c;

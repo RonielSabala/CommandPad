@@ -36,7 +36,7 @@ import {
   EditorToggleChevronIcon,
 } from "@/components/icons";
 import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
-import { useExtractVariableAction } from "@/hooks/useExtractVariableAction";
+import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
 import { buildVariableCompletions } from "@/monaco/completions";
 import { useStore } from "@/store/store";
@@ -145,7 +145,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     [variableMap, secretKeys],
   );
 
-  const actions = useExtractVariableAction();
+  const actions = useEditorActions();
 
   const previewLines = useMemo(
     () => countCommandLines(segments, secretKeys),

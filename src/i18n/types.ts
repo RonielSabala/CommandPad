@@ -161,6 +161,7 @@ export interface Messages {
     copy: string;
     placeholder: string;
     extractVariable: string;
+    escapeVariable: string;
   };
   note: {
     styleLabel: Record<NoteStyle, string>;
@@ -585,6 +586,7 @@ export interface Messages {
     };
     escapingBraces: {
       intro: string;
+      menu: (escapeLabel: string) => string;
       tryHint: string;
       scope: string;
     };
@@ -684,6 +686,11 @@ export interface Messages {
       bulkActions: string;
       editFile: string;
       recycleBin: string;
+    };
+    aiAgent: {
+      intro: (copyLabel: string) => string;
+      promptLanguage: string;
+      updates: string;
     };
     language: {
       intro: string;
