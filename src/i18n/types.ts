@@ -687,6 +687,11 @@ export interface Messages {
       editFile: string;
       recycleBin: string;
     };
+    aiAgent: {
+      intro: (copyLabel: string) => string;
+      promptLanguage: string;
+      updates: string;
+    };
     language: {
       intro: string;
       detection: string;

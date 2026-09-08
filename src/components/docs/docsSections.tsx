@@ -1,6 +1,7 @@
 import { DocsSectionId } from "@/common/constants/docs";
 import type { ComponentType } from "react";
 
+import { AiAgentDocs } from "./sections/AiAgentSection";
 import {
   BlocksDocs,
   CommandBlockDocs,
@@ -94,6 +95,7 @@ export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {
   [DocsSectionId.CLOUD_EXPORT]: CloudExportDocs,
   [DocsSectionId.CLOUD_LINKED_SYNC]: CloudLinkedSyncDocs,
   [DocsSectionId.CLOUD_FILE_MANAGEMENT]: CloudFileManagementDocs,
+  [DocsSectionId.AI_AGENT]: AiAgentDocs,
   [DocsSectionId.LANGUAGE]: LanguageDocs,
   [DocsSectionId.KEYBOARD_SHORTCUTS]: KeyboardShortcutsDocs,
   [DocsSectionId.QA]: QaDocs,

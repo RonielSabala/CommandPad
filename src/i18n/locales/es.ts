@@ -692,6 +692,7 @@ export const es: Messages = {
       [DocsSectionId.CLOUD_EXPORT]: "Exportar e importar en la nube",
       [DocsSectionId.CLOUD_LINKED_SYNC]: "Mantener un libro sincronizado",
       [DocsSectionId.CLOUD_FILE_MANAGEMENT]: "Gestionar archivos en la nube",
+      [DocsSectionId.AI_AGENT]: "Agente de IA",
       [DocsSectionId.LANGUAGE]: "Idioma",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Atajos de teclado",
       [DocsSectionId.QA]: "Preguntas y respuestas",
@@ -1256,6 +1257,14 @@ Si algo sale mal, deshazlo en este orden:
         "**Editar** abre el JSON del archivo en el sitio, así que un arreglo rápido ya no implica importar, cambiar y volver a exportar. Tiene que seguir siendo JSON válido para guardarse.",
       recycleBin:
         "Un archivo o carpeta eliminado no se pierde para siempre: los proveedores de nube lo mueven primero a una _Papelera de reciclaje_.",
+    },
+    aiAgent: {
+      intro: (copyLabel) =>
+        `Un runbook no es más que JSON, así que puedes pedirle uno a un asistente de IA. Pulsa **${copyLabel}** en el prompt de abajo y dáselo a tu asistente como instrucción permanente. A partir de ahí solo describes la tarea y pegas el JSON que te devuelva.`,
+      promptLanguage:
+        "El prompt es una especificación, por eso se queda en inglés. Tú puedes hablarle al asistente, y pedirle el runbook, en el idioma que prefieras.",
+      updates:
+        "Crece con la aplicación: cada bloque, campo u operación que se añade acaba también aquí, así que vuelve a copiarlo después de cada actualización. Y revisa lo que escriba tu agente antes de ejecutarlo, igual que harías con cualquier script que te pasen.",
     },
     language: {
       intro:
