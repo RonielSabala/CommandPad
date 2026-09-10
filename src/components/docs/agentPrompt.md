@@ -38,6 +38,16 @@ A variable is an object with these fields:
 Define a variable for anything that appears in more than one command, and for anything the
 user is expected to change: hosts, ports, paths, project names, environments, credentials.
 
+Do not define a variable for a value that is used in exactly one place: write the literal
+into the command instead. A single-use value earns a variable only when its name carries a
+meaning the literal does not (an environment, a project name, a credential), or when the
+runbook is plainly going to reuse it as it grows.
+
+Variables are referenced from command blocks and from another variable's value, and from
+nowhere else. A `{KEY}` written in a note block is not resolved: it stays on screen exactly
+as typed. Never reference a variable from a note, write the value out or name the key as
+`code` instead.
+
 ## Blocks
 
 Blocks are rendered top to bottom. Each one is an object with a `type`:
@@ -93,10 +103,12 @@ The first note block names the runbook, so always open with a `heading` note.
 - A leading backslash escapes a mark. Remember that JSON doubles that backslash.
 
 Notes are where warnings, prerequisites, and explanations of a command's output belong.
+They hold no variable references, only plain markdown text.
 
 ## Variable references
 
-A command, and a variable's own value, may reference a variable:
+A command, and a variable's own value, may reference a variable. A note block may not:
+references there are never resolved.
 
 - `{KEY}` the variable's value.
 - `{KEY;name=value}` fill a blank in that variable's value.
@@ -179,8 +191,11 @@ are ordinary text, which is what keeps shell syntax such as `find . -exec rm {} 
 - Put a body note next to a command whenever it needs a warning, a prerequisite, or an
   explanation of what its output means.
 - Use a divider between phases, such as setup, deploy, verify and rollback.
-- Every host, port, path, name and credential the user might change is a variable, and the
-  commands reference it rather than repeating the literal value.
+- Every host, port, path, name and credential the user might change and that is used more
+  than once is a variable, and the commands reference it rather than repeating the literal
+  value. A value used once stays a literal unless its name says something the value does
+  not.
+- Notes never reference variables, only command blocks and variable values do.
 - Mark every credential `"secret": true`.
 - Keep each command runnable exactly as written once the variables hold real values.
 
@@ -189,5 +204,8 @@ are ordinary text, which is what keeps shell syntax such as `find . -exec rm {} 
 - The reply is exactly one JSON document and nothing else.
 - `variables` and `blocks` are both present and are both arrays.
 - Every block has a valid `type` and its required field.
-- Every `{KEY}` used anywhere matches a variable key you defined.
+- Every `{KEY}` used anywhere matches a variable key you defined, and every one of them
+  sits in a command block or in a variable's value, never in a note.
+- Every variable is referenced from at least two places, or is one whose name carries a
+  meaning of its own.
 - There is no `id` field anywhere.
