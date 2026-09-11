@@ -88,7 +88,7 @@ export function VariableEditor({
 
   useEffect(() => {
     if (pendingFocus) {
-      keyRef.current?.focus();
+      keyRef.current?.focus({ preventScroll: true });
       keyRef.current?.select();
       consumeVariableFocus();
     }
