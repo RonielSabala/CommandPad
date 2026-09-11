@@ -22,14 +22,15 @@
 }
 
 .resizable-panel[data-panel-collapsed="true"] {
-  --panel-grab-width: var(--panel-rail-width);
+  --panel-grab-width: var(--panel-scroll-gutter);
 
   border-left: none;
   border-right: none;
 }
 
-.resizable-panel[data-panel-side="right"][data-panel-collapsed="true"] {
-  --panel-grab-width: var(--panel-scroll-gutter);
+body.read-mode
+  .resizable-panel[data-panel-side="left"][data-panel-collapsed="true"] {
+  --panel-grab-width: var(--panel-rail-width);
 }
 
 .panel-content {
