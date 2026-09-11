@@ -28,6 +28,7 @@ import { bindDragScrolling } from "@/monaco/dragScroll";
 import { getCodeMetrics } from "@/monaco/metrics";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
 import { bindRevealScrolling } from "@/monaco/revealScroll";
+import { bindStickyWidgets } from "@/monaco/stickyWidgets";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { validateModel } from "@/monaco/validation";
 import { useStore } from "@/store/store";
@@ -294,8 +295,11 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         instance.onDidContentSizeChange(applyHeight);
         instance.onDidLayoutChange(applyHeight);
         setScrollTarget(monacoScrollTarget(instance));
+
+        // Bindings
         bindDragScrolling(instance);
         bindRevealScrolling(instance);
+        bindStickyWidgets(instance);
       } else {
         instance.onDidScrollChange((event) =>
           callbacks.current.onScrollChange?.(event.scrollTop),

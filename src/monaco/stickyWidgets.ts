@@ -1,0 +1,78 @@
+import { CodeSurfaceSelector, MonacoSelector } from "@/common/constants/dom";
+import { EventType } from "@/common/constants/events";
+import { CodeEditorProperty, MonacoFind } from "@/common/editorConfig";
+import type { IDisposable, editor } from "monaco-editor";
+
+import { findScrollParent, scrollParentBox } from "./scrollParent";
+
+const PASSIVE = { passive: true } as const;
+const PASSIVE_CAPTURE = { passive: true, capture: true } as const;
+
+interface FindController extends editor.IEditorContribution {
+  getState(): {
+    readonly isRevealed: boolean;
+    onFindReplaceStateChange(listener: () => void): IDisposable;
+  };
+}
+
+/** Keeps the find/replace widget inside the visible band of a flowing editor. */
+export function bindStickyWidgets(
+  instance: editor.IStandaloneCodeEditor,
+): void {
+  const node = instance.getDomNode();
+  const find = instance.getContribution<FindController>(
+    MonacoFind.CONTROLLER_ID,
+  );
+
+  if (!node || !find) {
+    return;
+  }
+
+  const root = node.closest(CodeSurfaceSelector.ROOT);
+  const state = find.getState();
+  let tracking = false;
+
+  const pin = () => {
+    const widget = node.querySelector<HTMLElement>(MonacoSelector.FIND_WIDGET);
+    if (!widget) {
+      return;
+    }
+
+    const box = node.getBoundingClientRect();
+    const { top } = scrollParentBox(findScrollParent(node));
+
+    const header = root?.querySelector(CodeSurfaceSelector.HEADER);
+    const clear = Math.max(top, header?.getBoundingClientRect().bottom ?? top);
+
+    const travel = Math.max(box.height - widget.offsetHeight, 0);
+    const offset = Math.min(Math.max(clear - box.top, 0), travel);
+
+    node.style.setProperty(CodeEditorProperty.WIDGET_OFFSET, `${offset}px`);
+  };
+
+  const stop = () => {
+    if (!tracking) {
+      return;
+    }
+
+    tracking = false;
+    document.removeEventListener(EventType.SCROLL, pin, PASSIVE_CAPTURE);
+    window.removeEventListener(EventType.RESIZE, pin);
+    node.style.removeProperty(CodeEditorProperty.WIDGET_OFFSET);
+  };
+
+  const start = () => {
+    if (!tracking) {
+      tracking = true;
+
+      document.addEventListener(EventType.SCROLL, pin, PASSIVE_CAPTURE);
+      window.addEventListener(EventType.RESIZE, pin, PASSIVE);
+    }
+
+    pin();
+  };
+
+  // Every change re-pins
+  state.onFindReplaceStateChange(() => (state.isRevealed ? start() : stop()));
+  instance.onDidDispose(stop);
+}

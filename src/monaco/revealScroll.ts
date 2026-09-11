@@ -37,9 +37,19 @@ export function bindRevealScrolling(
     const below = caretTop + visible.height - (bottom - margin);
     const above = top + margin - caretTop;
 
+    if (below <= 0 && above <= 0) {
+      return;
+    }
+
+    if (event.source === MonacoCursorSource.API) {
+      scroller.scrollTop +=
+        caretTop - top - (bottom - top - visible.height) / 2;
+      return;
+    }
+
     if (below > 0) {
       scroller.scrollTop += below;
-    } else if (above > 0) {
+    } else {
       scroller.scrollTop -= above;
     }
   });

@@ -180,6 +180,10 @@
   pointer-events: none;
 }
 
+.code-editor .monaco-editor .find-widget {
+  translate: 0 var(--code-editor-widget-offset, 0px);
+}
+
 /* Blur suppressions */
 
 .monaco-editor:not(.focused)
