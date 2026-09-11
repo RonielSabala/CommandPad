@@ -1,4 +1,21 @@
-import { DataAttr } from "@/common/constants/dom";
+import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
+
+/** Bring the row carrying `rowId` into view, scoped to the list it belongs to. */
+export function scrollRowIntoView(
+  list: HTMLElement | null,
+  attribute: string,
+  rowId: string | null,
+  align: ScrollLogicalPosition,
+): void {
+  if (!rowId) {
+    return;
+  }
+
+  list?.querySelector(`[${attribute}="${rowId}"]`)?.scrollIntoView({
+    block: align,
+    behavior: ScrollIntoView.BEHAVIOR_SMOOTH,
+  });
+}
 
 /** Distance from `value` to the nearest edge of `[min, max]` (0 when inside). */
 function distanceToRange(value: number, min: number, max: number): number {

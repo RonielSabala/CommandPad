@@ -50,6 +50,7 @@ export const CodeMetricProperty = {
 
 export const CodeEditorProperty = {
   GUTTER_WIDTH: "--code-editor-gutter-width",
+  WIDGET_OFFSET: "--code-editor-widget-offset",
 } as const;
 
 export const CodeModelConfig = {
@@ -135,6 +136,21 @@ export const DragScrollConfig = {
   RAMP_PX: 56,
   MIN_SPEED: 4,
   MAX_SPEED: 16,
+} as const;
+
+export const MonacoCursorSource = {
+  API: "api",
+  MOUSE: "mouse",
+} as const;
+
+export const MonacoFind = {
+  CONTROLLER_ID: "editor.contrib.findController",
+} as const;
+
+/** How much of the window a revealed caret keeps clear of its edges. */
+export const RevealScrollConfig = {
+  MARGIN_PX: 64,
+  MAX_MARGIN_FRACTION: 4,
 } as const;
 
 export const VariableCompletionConfig = {

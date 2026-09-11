@@ -1,5 +1,5 @@
 import { CssClass } from "@/common/constants/css";
-import { ElementId } from "@/common/constants/dom";
+import { DataAttr, ElementId, ScrollIntoView } from "@/common/constants/dom";
 import { PanelSide, RunbookView, SelectionGroup } from "@/common/enums";
 import type { Block, Variable } from "@/common/types";
 import { EmptyState } from "@/components/common/EmptyState";
@@ -13,6 +13,7 @@ import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
 import { buildVariableCompletions } from "@/monaco/completions";
 import { getActiveTab, useStore } from "@/store/store";
+import { scrollRowIntoView } from "@/utils/dom";
 import {
   getSecretKeys,
   getUsedVariableKeys,
@@ -20,7 +21,7 @@ import {
   isVariableUnused,
 } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import "./RunbookVariables.css";
 import { VariableItem } from "./VariableItem";
@@ -50,6 +51,10 @@ export function RunbookVariables() {
 
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const pendingFocusVariableId = useStore(
+    (state) => state.pendingFocusVariableId,
+  );
 
   const minimapEnabled = useStore((state) => state.minimapEnabled);
   const minimapOnLeft = useStore(
@@ -62,6 +67,15 @@ export function RunbookVariables() {
 
   useLassoSelection(root, SelectionGroup.VARIABLE);
   useScrollPersistence(scrollRef, RunbookView.VARIABLES);
+
+  useEffect(() => {
+    scrollRowIntoView(
+      listRef.current,
+      DataAttr.VARIABLE_ID,
+      pendingFocusVariableId,
+      ScrollIntoView.BLOCK_CENTER,
+    );
+  }, [pendingFocusVariableId]);
 
   const variableMap = useMemo(() => getVariableMap(variables), [variables]);
   const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
@@ -105,7 +119,7 @@ export function RunbookVariables() {
           />
         )}
 
-        <div id={ElementId.VARIABLES_LIST}>
+        <div id={ElementId.VARIABLES_LIST} ref={listRef}>
           {variables.map((variable) => (
             <VariableItem
               key={variable.id}

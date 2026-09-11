@@ -22,7 +22,7 @@ import type { VariableCompletion } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import { getVariableKey } from "@/utils/resolution";
 import { classNames, countLines } from "@/utils/string";
-import { useCallback, useEffect, useMemo, type RefObject } from "react";
+import { useCallback, useEffect, useMemo, useRef, type RefObject } from "react";
 
 import "./VariableEditor.css";
 import { VariableKeyInput } from "./VariableKeyInput";
@@ -58,10 +58,12 @@ export function VariableEditor({
     () => countLines(variable.value),
     [variable.value],
   );
+  const rootRef = useRef<HTMLDivElement>(null);
   const valueClamp = useClampSurface(
     variableId,
     ClampSurface.VALUE,
     valueLines,
+    rootRef,
   );
 
   const actions = useEditorActions();
@@ -86,7 +88,7 @@ export function VariableEditor({
 
   useEffect(() => {
     if (pendingFocus) {
-      keyRef.current?.focus();
+      keyRef.current?.focus({ preventScroll: true });
       keyRef.current?.select();
       consumeVariableFocus();
     }
@@ -94,6 +96,7 @@ export function VariableEditor({
 
   return (
     <div
+      ref={rootRef}
       className={classNames(
         "variable-editor",
         CssClass.VARIABLE_SURFACE,

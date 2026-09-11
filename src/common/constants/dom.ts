@@ -7,8 +7,14 @@ export const MonacoSelector = {
   INPUT: "textarea.inputarea",
   EDIT_CONTEXT: ".native-edit-context",
   VIEW_LINES: ".view-lines",
+  FIND_WIDGET: ".find-widget",
   CONTEXT_MENU: ".monaco-menu",
   MENU_ITEM: ".action-item:not(.disabled):not(.separator)",
+} as const;
+
+export const CodeSurfaceSelector = {
+  ROOT: ".code-editor",
+  HEADER: ".code-editor-header",
 } as const;
 
 export const InputSelector = {
@@ -59,5 +65,6 @@ export const Anchor = {
 export const ScrollIntoView = {
   BLOCK_START: "start",
   BLOCK_CENTER: "center",
+  BLOCK_NEAREST: "nearest",
   BEHAVIOR_SMOOTH: "smooth",
 } as const;

@@ -25,8 +25,11 @@ import {
   whenContextMenuCloses,
 } from "@/monaco/contextMenu";
 import { bindDragScrolling } from "@/monaco/dragScroll";
+import { getFindController, isFindRevealed } from "@/monaco/findWidget";
 import { getCodeMetrics } from "@/monaco/metrics";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
+import { bindRevealScrolling } from "@/monaco/revealScroll";
+import { bindStickyWidgets } from "@/monaco/stickyWidgets";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { validateModel } from "@/monaco/validation";
 import { useStore } from "@/store/store";
@@ -94,6 +97,16 @@ function estimateContentHeight(value: string): number {
 /** Nothing else claimed focus while the menu was up. */
 function focusIsAdrift(): boolean {
   return !document.activeElement || document.activeElement === document.body;
+}
+
+/** Whether the editor is still being worked in, having lost its *text* focus. */
+function editorIsInUse(instance: editor.IStandaloneCodeEditor): boolean {
+  const node = instance.getDomNode();
+  if (node?.contains(document.activeElement)) {
+    return true;
+  }
+
+  return isFindRevealed(instance) && focusIsAdrift();
 }
 
 function modelPath(modelId: string): string {
@@ -293,7 +306,11 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         instance.onDidContentSizeChange(applyHeight);
         instance.onDidLayoutChange(applyHeight);
         setScrollTarget(monacoScrollTarget(instance));
+
+        // Bindings
         bindDragScrolling(instance);
+        bindRevealScrolling(instance);
+        bindStickyWidgets(instance);
       } else {
         instance.onDidScrollChange((event) =>
           callbacks.current.onScrollChange?.(event.scrollTop),
@@ -334,11 +351,10 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         }
       };
 
-      instance.onDidFocusEditorText(() => callbacks.current.onFocus?.());
-      instance.onDidBlurEditorText(() =>
+      const maybeBlur = () =>
         requestAnimationFrame(() => {
           const model = instance.getModel();
-          if (!model || instance.hasTextFocus()) {
+          if (!model || instance.hasTextFocus() || editorIsInUse(instance)) {
             return;
           }
 
@@ -368,8 +384,18 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
           }
 
           callbacks.current.onBlur?.();
-        }),
-      );
+        });
+
+      instance.onDidFocusEditorText(() => callbacks.current.onFocus?.());
+      instance.onDidBlurEditorText(maybeBlur);
+      instance.onDidBlurEditorWidget(maybeBlur);
+
+      const findState = getFindController(instance)?.getState();
+      findState?.onFindReplaceStateChange(() => {
+        if (!findState.isRevealed) {
+          maybeBlur();
+        }
+      });
 
       if (autoFocus || pendingFocusRef.current) {
         pendingFocusRef.current = false;

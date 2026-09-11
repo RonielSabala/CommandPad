@@ -127,6 +127,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   );
 
   const [copied, setCopied] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLSpanElement>(null);
   const previewScrollTarget = useDomScrollTarget(previewRef);
   const editorRef = useRef<CodeEditorHandle>(null);
@@ -153,8 +154,18 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   );
   const editorLines = useMemo(() => countLines(blockText), [blockText]);
 
-  const preview = useClampSurface(blockId, ClampSurface.PREVIEW, previewLines);
-  const editor = useClampSurface(blockId, ClampSurface.EDITOR, editorLines);
+  const preview = useClampSurface(
+    blockId,
+    ClampSurface.PREVIEW,
+    previewLines,
+    rootRef,
+  );
+  const editor = useClampSurface(
+    blockId,
+    ClampSurface.EDITOR,
+    editorLines,
+    rootRef,
+  );
 
   const handleChange = useCallback(
     (value: string) => updateBlock(blockId, BlockType.COMMAND, { text: value }),
@@ -184,6 +195,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
 
   return (
     <div
+      ref={rootRef}
       className={classNames(
         "command-block",
         CssClass.BLOCK_SURFACE,

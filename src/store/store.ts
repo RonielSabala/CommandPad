@@ -2034,6 +2034,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             variables: [...tab.variables, newVariable],
           })),
           pendingFocusVariableId: newVariable.id,
+          variableSearchQuery: "",
         }));
         get().saveState();
       },
