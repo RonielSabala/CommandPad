@@ -137,6 +137,16 @@ export const DragScrollConfig = {
   MAX_SPEED: 16,
 } as const;
 
+export const MonacoCursorSource = {
+  MOUSE: "mouse",
+} as const;
+
+/** How much of the window a revealed caret keeps clear of its edges. */
+export const RevealScrollConfig = {
+  MARGIN_PX: 64,
+  MAX_MARGIN_FRACTION: 4,
+} as const;
+
 export const VariableCompletionConfig = {
   /** The snippet parks the caret inside a call's parentheses. */
   SNIPPET_CARET: "$0",

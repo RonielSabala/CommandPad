@@ -7,28 +7,11 @@ import {
 import { DragScrollConfig } from "@/common/editorConfig";
 import type { editor } from "monaco-editor";
 
-const SCROLLABLE_OVERFLOW = ["auto", "scroll", "overlay"];
+import { findScrollParent, scrollParentBox } from "./scrollParent";
 
-/** The nearest ancestor that actually scrolls the editor out of view. */
-function findScrollParent(element: HTMLElement): HTMLElement {
-  for (let node = element.parentElement; node; node = node.parentElement) {
-    if (
-      SCROLLABLE_OVERFLOW.includes(getComputedStyle(node).overflowY) &&
-      node.scrollHeight > node.clientHeight
-    ) {
-      return node;
-    }
-  }
-
-  return document.scrollingElement as HTMLElement;
-}
-
-/** Pixels to scroll this frame */
+/** Pixels to scroll this frame. */
 function frameDelta(clientY: number, scroller: HTMLElement): number {
-  const { top, bottom } =
-    scroller === document.scrollingElement
-      ? { top: 0, bottom: window.innerHeight }
-      : scroller.getBoundingClientRect();
+  const { top, bottom } = scrollParentBox(scroller);
 
   const {
     EDGE_PX: EDGE,

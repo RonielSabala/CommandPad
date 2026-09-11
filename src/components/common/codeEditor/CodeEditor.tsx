@@ -27,6 +27,7 @@ import {
 import { bindDragScrolling } from "@/monaco/dragScroll";
 import { getCodeMetrics } from "@/monaco/metrics";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
+import { bindRevealScrolling } from "@/monaco/revealScroll";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { validateModel } from "@/monaco/validation";
 import { useStore } from "@/store/store";
@@ -294,6 +295,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         instance.onDidLayoutChange(applyHeight);
         setScrollTarget(monacoScrollTarget(instance));
         bindDragScrolling(instance);
+        bindRevealScrolling(instance);
       } else {
         instance.onDidScrollChange((event) =>
           callbacks.current.onScrollChange?.(event.scrollTop),

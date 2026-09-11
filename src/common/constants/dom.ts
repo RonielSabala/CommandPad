@@ -59,5 +59,6 @@ export const Anchor = {
 export const ScrollIntoView = {
   BLOCK_START: "start",
   BLOCK_CENTER: "center",
+  BLOCK_NEAREST: "nearest",
   BEHAVIOR_SMOOTH: "smooth",
 } as const;
