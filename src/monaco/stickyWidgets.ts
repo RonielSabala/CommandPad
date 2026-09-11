@@ -1,25 +1,17 @@
 import { CodeSurfaceSelector, MonacoSelector } from "@/common/constants/dom";
 import { EventType, PASSIVE, PASSIVE_CAPTURE } from "@/common/constants/events";
-import { CodeEditorProperty, MonacoFind } from "@/common/editorConfig";
-import type { IDisposable, editor } from "monaco-editor";
+import { CodeEditorProperty } from "@/common/editorConfig";
+import type { editor } from "monaco-editor";
 
+import { getFindController } from "./findWidget";
 import { findScrollParent, scrollParentBox } from "./scrollParent";
-
-interface FindController extends editor.IEditorContribution {
-  getState(): {
-    readonly isRevealed: boolean;
-    onFindReplaceStateChange(listener: () => void): IDisposable;
-  };
-}
 
 /** Keeps the find/replace widget inside the visible band of a flowing editor. */
 export function bindStickyWidgets(
   instance: editor.IStandaloneCodeEditor,
 ): void {
   const node = instance.getDomNode();
-  const find = instance.getContribution<FindController>(
-    MonacoFind.CONTROLLER_ID,
-  );
+  const find = getFindController(instance);
 
   if (!node || !find) {
     return;
