@@ -1,6 +1,6 @@
 import { TooltipConfig } from "@/common/config";
 import { DataAttr } from "@/common/constants/dom";
-import { EventType } from "@/common/constants/events";
+import { EventType, PASSIVE, PASSIVE_CAPTURE } from "@/common/constants/events";
 import type { TooltipVariant } from "@/common/enums";
 import { classNames } from "@/utils/string";
 import {
@@ -24,9 +24,6 @@ interface ActiveTooltip {
 }
 
 const FOCUS_VISIBLE = ":focus-visible";
-
-const PASSIVE = { passive: true } as const;
-const PASSIVE_CAPTURE = { passive: true, capture: true } as const;
 
 /** The app's one tooltip. */
 export function TooltipLayer() {

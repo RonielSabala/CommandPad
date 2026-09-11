@@ -23,6 +23,12 @@ export const EventType = {
   DRAG_END: "dragend",
 } as const;
 
+/** A listener that never calls `preventDefault`. */
+export const PASSIVE = { passive: true } as const;
+
+/** Passive, in capture, so a scroll on an inner scroller counts too. */
+export const PASSIVE_CAPTURE = { passive: true, capture: true } as const;
+
 export const Key = {
   CTRL: "Control",
   ALT: "Alt",

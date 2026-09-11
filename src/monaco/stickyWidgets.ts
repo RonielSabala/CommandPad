@@ -1,12 +1,9 @@
 import { CodeSurfaceSelector, MonacoSelector } from "@/common/constants/dom";
-import { EventType } from "@/common/constants/events";
+import { EventType, PASSIVE, PASSIVE_CAPTURE } from "@/common/constants/events";
 import { CodeEditorProperty, MonacoFind } from "@/common/editorConfig";
 import type { IDisposable, editor } from "monaco-editor";
 
 import { findScrollParent, scrollParentBox } from "./scrollParent";
-
-const PASSIVE = { passive: true } as const;
-const PASSIVE_CAPTURE = { passive: true, capture: true } as const;
 
 interface FindController extends editor.IEditorContribution {
   getState(): {
