@@ -67,6 +67,11 @@ function resolveChunk(
 ): ResolvedChunk {
   let fullyResolved = true;
   const source = key || undefined;
+
+  if (!text.includes(VariableSyntax.BRACE_OPEN)) {
+    return { text, spans: flatSpans(text, source), fullyResolved };
+  }
+
   const spans: ResolvedSpan[] = [];
 
   for (const part of splitReferenceParts(text, context.surface)) {
