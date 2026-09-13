@@ -515,6 +515,31 @@ export function VariableReplaceDocs() {
   );
 }
 
+export function VariableInsertDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableInsert.intro} />
+      <Prose text={t.docs.variableInsert.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("FILE", "nginx.conf")],
+            blocks: [
+              demoCommand("cp {FILE} {FILE|insert(-old; {FILE|index(.)})}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableInsert.rules} />
+    </>
+  );
+}
+
 export function PlaceholderDefaultsDocs() {
   const t = useTranslation();
 

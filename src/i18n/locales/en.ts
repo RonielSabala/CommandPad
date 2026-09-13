@@ -660,6 +660,7 @@ export const en: Messages = {
       [DocsSectionId.VARIABLE_STRIP]: "Trimming ends",
       [DocsSectionId.VARIABLE_FILL]: "Adding to the ends",
       [DocsSectionId.VARIABLE_REPLACE]: "Swapping text out",
+      [DocsSectionId.VARIABLE_INSERT]: "Finding and inserting text",
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transforming a blank",
       [DocsSectionId.UNNAMED_REFERENCES]: "References with no variable",
       [DocsSectionId.VARIABLE_DATE]: "Current date",
@@ -977,6 +978,14 @@ If something goes wrong, undo it in this order:
         "When there is nothing to swap in, write `remove(text)` instead: it takes that text out wherever it appears.",
       removeDemoHint:
         "Below, a byte count copied out of a file browser still carries its thousands separators, which the command cannot take. Edit the number and the command stays runnable:",
+    },
+    variableInsert: {
+      intro:
+        "`index(text)` gives the position of the first `text`, starting at `0`, or `-1` if it is not there. `insert(text; position)` puts `text` at that position.",
+      demoHint:
+        "Together they back up a file by adding `-old` right before its extension, whatever the name is. Try another file name:",
+      rules:
+        "Positions count like `slice`, so a negative one counts from the end. If `index` finds nothing, its `-1` inserts before the last character.",
     },
     transformedPlaceholders: {
       intro:

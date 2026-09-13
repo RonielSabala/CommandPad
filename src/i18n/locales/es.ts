@@ -671,6 +671,7 @@ export const es: Messages = {
       [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
       [DocsSectionId.VARIABLE_FILL]: "Añadir a los extremos",
       [DocsSectionId.VARIABLE_REPLACE]: "Cambiar texto",
+      [DocsSectionId.VARIABLE_INSERT]: "Buscar e insertar texto",
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transformar un hueco",
       [DocsSectionId.UNNAMED_REFERENCES]: "Referencias sin variable",
       [DocsSectionId.VARIABLE_DATE]: "Fecha actual",
@@ -993,6 +994,14 @@ Si algo sale mal, deshazlo en este orden:
         "Cuando no hay nada que poner a cambio, escribe `remove(texto)`: quita ese texto allá donde aparezca.",
       removeDemoHint:
         "Abajo, un tamaño en bytes copiado de un explorador de archivos aún trae sus separadores de miles, que el comando no admite. Cambia el número y el comando sigue siendo ejecutable:",
+    },
+    variableInsert: {
+      intro:
+        "`index(texto)` da la posición del primer `texto`, empezando en `0`, o `-1` si no aparece. `insert(texto; posición)` coloca `texto` en esa posición.",
+      demoHint:
+        "Juntas hacen una copia de seguridad de un archivo añadiendo `-old` justo antes de su extensión, sea cual sea el nombre. Prueba con otro nombre de archivo:",
+      rules:
+        "Las posiciones cuentan igual que en `slice`, así que una negativa cuenta desde el final. Si `index` no encuentra nada, su `-1` inserta antes del último carácter.",
     },
     transformedPlaceholders: {
       intro:

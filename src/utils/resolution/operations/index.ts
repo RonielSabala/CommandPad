@@ -8,6 +8,8 @@ import { IF_OPERATION } from "./conditional";
 import { COUNT_OPERATION } from "./count";
 import { DATE_OPERATION } from "./date";
 import { FILL_OPERATION } from "./fill";
+import { INDEX_OPERATION } from "./indexOf";
+import { INSERT_OPERATION } from "./insert";
 import { KEY_OPERATION } from "./key";
 import { LEN_OPERATION } from "./len";
 import { LOGIC_OPERATION } from "./logic";
@@ -36,6 +38,8 @@ const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   FILL_OPERATION,
   REPLACE_OPERATION,
   REMOVE_OPERATION,
+  INDEX_OPERATION,
+  INSERT_OPERATION,
   TEST_OPERATION,
   MATCH_OPERATION,
   LOGIC_OPERATION,

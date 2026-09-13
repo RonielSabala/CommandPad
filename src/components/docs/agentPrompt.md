@@ -157,6 +157,12 @@ Working on text:
   ends, the start or the end.
 - `replace(from;to)` replace every occurrence.
 - `remove(text)` remove every occurrence.
+- `index(text)` the position of the first `text`, counting from 0, or `-1` when it is
+  absent.
+- `insert(text;n)` put `text` before position `n`. A negative `n` counts from the end and
+  an out-of-range one clamps to that end. `n` may be a `+`/`-` sum, and
+  `{FILE|insert(-old;{FILE|index(.)})}` adds `-old` before the extension.
+- Positions in `slice`, `len`, `index` and `insert` all count characters the same way.
 - `date(format)` the current local date. Tokens `YYYY`, `YY`, `MM`, `DD`, `HH`, `mm`, `ss`
   are filled and everything else is kept. Defaults to `YYYY-MM-DD`.
 

@@ -98,6 +98,16 @@ export const RemoveSyntax = {
   ARITY: 1,
 } as const;
 
+export const IndexSyntax = {
+  KEYWORD: "index",
+  ARITY: 1,
+} as const;
+
+export const InsertSyntax = {
+  KEYWORD: "insert",
+  ARITY: 2,
+} as const;
+
 export const DateSyntax = {
   KEYWORD: "date",
   ARITY: 1,

@@ -543,6 +543,11 @@ export interface Messages {
       remove: string;
       removeDemoHint: string;
     };
+    variableInsert: {
+      intro: string;
+      demoHint: string;
+      rules: string;
+    };
     transformedPlaceholders: {
       intro: string;
       demoHint: string;

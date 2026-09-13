@@ -57,6 +57,21 @@ export function countOccurrences(text: string, needle: string): number {
   return count;
 }
 
+export function indexOfText(text: string, needle: string): number {
+  const index = text.indexOf(needle);
+  return index === -1 ? index : countCharacters(text.slice(0, index));
+}
+
+export function insertText(
+  text: string,
+  insertion: string,
+  index: number,
+): string {
+  const chars = Array.from(text);
+  chars.splice(index, 0, insertion);
+  return chars.join("");
+}
+
 export function replaceOccurrences(
   text: string,
   needle: string,
