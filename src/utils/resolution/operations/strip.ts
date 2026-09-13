@@ -9,8 +9,7 @@ function stripEndBuilder(
   trim: (text: string) => string,
   cut: (text: string, cut: string) => string,
 ): CallBuilder {
-  return ([argument = ""]) =>
-    argument ? (text) => cut(text, argument) : (text) => trim(text);
+  return ([argument = ""]) => (argument ? (text) => cut(text, argument) : trim);
 }
 
 export const STRIP_OPERATION: OperationDefinition = defineCallOperation({

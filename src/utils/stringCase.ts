@@ -47,36 +47,39 @@ export function splitWords(text: string): string[] {
 }
 
 export function upperFirst(text: string): string {
-  const [first, ...rest] = Array.from(text);
-  return first === undefined ? text : first.toUpperCase() + rest.join("");
+  const first = text.codePointAt(0);
+  if (first === undefined) {
+    return text;
+  }
+
+  const head = String.fromCodePoint(first);
+  return head.toUpperCase() + text.slice(head.length);
 }
 
-function capitalizeWord(word: string): string {
-  return upperFirst(word.toLowerCase());
+function joinLowerWords(text: string, separator: string): string {
+  return splitWords(text)
+    .map((word) => word.toLowerCase())
+    .join(separator);
 }
 
 export function toSnakeCase(text: string): string {
-  return splitWords(text)
-    .map((word) => word.toLowerCase())
-    .join(StringCaseConfig.SNAKE_SEPARATOR);
+  return joinLowerWords(text, StringCaseConfig.SNAKE_SEPARATOR);
 }
 
 export function toKebabCase(text: string): string {
-  return splitWords(text)
-    .map((word) => word.toLowerCase())
-    .join(StringCaseConfig.KEBAB_SEPARATOR);
+  return joinLowerWords(text, StringCaseConfig.KEBAB_SEPARATOR);
 }
 
 export function toCamelCase(text: string): string {
   return splitWords(text)
     .map((word, index) =>
-      index === 0 ? word.toLowerCase() : capitalizeWord(word),
+      index === 0 ? word.toLowerCase() : capitalizeText(word),
     )
     .join("");
 }
 
 export function toPascalCase(text: string): string {
-  return splitWords(text).map(capitalizeWord).join("");
+  return splitWords(text).map(capitalizeText).join("");
 }
 
 export function capitalizeText(text: string): string {
@@ -84,7 +87,7 @@ export function capitalizeText(text: string): string {
 }
 
 export function toTitleCase(text: string): string {
-  return text.replace(TitleWordRegex, (word) => capitalizeWord(word));
+  return text.replace(TitleWordRegex, capitalizeText);
 }
 
 export function swapCase(text: string): string {

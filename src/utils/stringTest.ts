@@ -62,10 +62,13 @@ export function isSpaceText(text: string): boolean {
 }
 
 export function isAsciiText(text: string): boolean {
-  return Array.from(text).every(
-    (char) =>
-      (char.codePointAt(0) ?? 0) <= StringTestConfig.ASCII_MAX_CODE_POINT,
-  );
+  for (let i = 0; i < text.length; i += 1) {
+    if (text.charCodeAt(i) > StringTestConfig.ASCII_MAX_CODE_POINT) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 export function isEmptyText(text: string): boolean {

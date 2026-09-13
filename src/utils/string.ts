@@ -5,7 +5,7 @@ export function splitLines(text: string): string[] {
 }
 
 export function countLines(text: string): number {
-  return splitLines(text).length;
+  return countOccurrences(text, LINE_BREAK) + 1;
 }
 
 export function joinLines(lines: string[]): string {
@@ -109,26 +109,39 @@ export function sliceString(
   return sliced.join("");
 }
 
-export function stripStart(text: string, cut: string): string {
-  let result = text;
-  while (cut && result.startsWith(cut)) {
-    result = result.slice(cut.length);
+function strippedStart(text: string, cut: string): number {
+  let start = 0;
+  while (text.startsWith(cut, start)) {
+    start += cut.length;
   }
 
-  return result;
+  return start;
+}
+
+function strippedEnd(text: string, cut: string, start = 0): number {
+  let end = text.length;
+  while (end - cut.length >= start && text.endsWith(cut, end)) {
+    end -= cut.length;
+  }
+
+  return end;
+}
+
+export function stripStart(text: string, cut: string): string {
+  return cut ? text.slice(strippedStart(text, cut)) : text;
 }
 
 export function stripEnd(text: string, cut: string): string {
-  let result = text;
-  while (cut && result.endsWith(cut)) {
-    result = result.slice(0, -cut.length);
-  }
-
-  return result;
+  return cut ? text.slice(0, strippedEnd(text, cut)) : text;
 }
 
 export function stripBoth(text: string, cut: string): string {
-  return stripEnd(stripStart(text, cut), cut);
+  if (!cut) {
+    return text;
+  }
+
+  const start = strippedStart(text, cut);
+  return text.slice(start, strippedEnd(text, cut, start));
 }
 
 export function fillStart(text: string, fill: string, times: number): string {
@@ -140,7 +153,8 @@ export function fillEnd(text: string, fill: string, times: number): string {
 }
 
 export function fillBoth(text: string, fill: string, times: number): string {
-  return fillEnd(fillStart(text, fill, times), fill, times);
+  const padding = fill.repeat(times);
+  return padding + text + padding;
 }
 
 export function classNames(
