@@ -5,12 +5,29 @@ import {
 } from "@/common/variableSyntax";
 import { describe, expect, it } from "vitest";
 
-import { applyOperations } from ".";
+import { applyOperations, getOperationKeywords } from ".";
 import type { OperationContext } from "./types";
 
 const CONTEXT: OperationContext = { key: "HOST" };
 
+describe("getOperationKeywords", () => {
+  it("gives every keyword to exactly one operation", () => {
+    const keywords = getOperationKeywords().map(({ keyword }) => keyword);
+    expect(new Set(keywords).size).toBe(keywords.length);
+  });
+});
+
 describe("applyOperations", () => {
+  it("dispatches a call written with whitespace around its keyword", () => {
+    expect(
+      applyOperations(
+        "abc",
+        [{ text: `  ${SliceSyntax.KEYWORD} (1;)  ` }],
+        CONTEXT,
+      ),
+    ).toEqual({ text: "bc", ok: true });
+  });
+
   it("passes the text through when there is nothing to apply", () => {
     expect(applyOperations("abc", [], CONTEXT)).toEqual({
       text: "abc",

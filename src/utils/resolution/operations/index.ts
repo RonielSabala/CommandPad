@@ -1,4 +1,5 @@
 import type { ResolvedSpan } from "@/common/types";
+import { CallGroup, OperationKeywordRegex } from "@/common/variableSyntax";
 import { isString } from "@/utils/typeGuards";
 
 import { spansText } from "../spans";
@@ -63,15 +64,19 @@ interface AppliedOperations {
   spans?: ResolvedSpan[];
 }
 
-function parseOperation(operation: OperationChunk): OperationTransform | null {
-  for (const definition of OPERATION_DEFINITIONS) {
-    const transform = definition.parse(operation);
-    if (transform) {
-      return transform;
-    }
-  }
+const DEFINITIONS_BY_KEYWORD = new Map(
+  OPERATION_DEFINITIONS.flatMap((definition) =>
+    definition.keywords.map(({ keyword }) => [keyword, definition] as const),
+  ),
+);
 
-  return null;
+function parseOperation(operation: OperationChunk): OperationTransform | null {
+  const keyword = OperationKeywordRegex.exec(operation.text)?.groups?.[
+    CallGroup.KEYWORD
+  ];
+
+  const definition = keyword && DEFINITIONS_BY_KEYWORD.get(keyword);
+  return definition ? definition.parse(operation) : null;
 }
 
 /** Runs a token's operations left to right. */

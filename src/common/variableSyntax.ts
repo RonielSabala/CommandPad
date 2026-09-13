@@ -6,6 +6,7 @@ import {
   anchored,
   anyOf,
   atEnd,
+  atStart,
   dotAllRegex,
   either,
   escapeSyntax,
@@ -186,15 +187,21 @@ export const EscapedBraceOpenRegex = globalRegex(
 
 export const TokenWhitespaceRegex = globalRegex(oneOrMore(WHITESPACE));
 
+const OPERATION_KEYWORD = named(
+  CallGroup.KEYWORD,
+  oneOrMore(noneOf(Call.ARGUMENT_OPEN, Call.ARGUMENT_CLOSE, WHITESPACE)),
+);
+
+export const OperationKeywordRegex = new RegExp(
+  atStart(sequence(zeroOrMore(WHITESPACE), OPERATION_KEYWORD)),
+);
+
 /** One `keyword(a;b;c)` call. */
 export const CallOperationRegex = dotAllRegex(
   anchored(
     sequence(
       zeroOrMore(WHITESPACE),
-      named(
-        CallGroup.KEYWORD,
-        oneOrMore(noneOf(Call.ARGUMENT_OPEN, Call.ARGUMENT_CLOSE, WHITESPACE)),
-      ),
+      OPERATION_KEYWORD,
       zeroOrMore(WHITESPACE),
       optional(
         group(
