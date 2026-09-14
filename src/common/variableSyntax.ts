@@ -6,6 +6,7 @@ import {
   anchored,
   anyOf,
   atEnd,
+  atStart,
   dotAllRegex,
   either,
   escapeSyntax,
@@ -54,6 +55,7 @@ export const SliceSyntax = {
 export const OperationSyntax = {
   LEN: "len",
   KEY: "key",
+  HASH: "hash",
 } as const;
 
 export const CountSyntax = {
@@ -88,6 +90,14 @@ export const FillSyntax = {
   MAX_TIMES: 10000,
 } as const;
 
+export const JustSyntax = {
+  CENTER: "just",
+  LEFT: "ljust",
+  RIGHT: "rjust",
+  ARITY: 2,
+  MAX_WIDTH: 10000,
+} as const;
+
 export const ReplaceSyntax = {
   KEYWORD: "replace",
   ARITY: 2,
@@ -96,6 +106,16 @@ export const ReplaceSyntax = {
 export const RemoveSyntax = {
   KEYWORD: "remove",
   ARITY: 1,
+} as const;
+
+export const IndexSyntax = {
+  KEYWORD: "index",
+  ARITY: 1,
+} as const;
+
+export const InsertSyntax = {
+  KEYWORD: "insert",
+  ARITY: 2,
 } as const;
 
 export const DateSyntax = {
@@ -176,15 +196,21 @@ export const EscapedBraceOpenRegex = globalRegex(
 
 export const TokenWhitespaceRegex = globalRegex(oneOrMore(WHITESPACE));
 
+const OPERATION_KEYWORD = named(
+  CallGroup.KEYWORD,
+  oneOrMore(noneOf(Call.ARGUMENT_OPEN, Call.ARGUMENT_CLOSE, WHITESPACE)),
+);
+
+export const OperationKeywordRegex = new RegExp(
+  atStart(sequence(zeroOrMore(WHITESPACE), OPERATION_KEYWORD)),
+);
+
 /** One `keyword(a;b;c)` call. */
 export const CallOperationRegex = dotAllRegex(
   anchored(
     sequence(
       zeroOrMore(WHITESPACE),
-      named(
-        CallGroup.KEYWORD,
-        oneOrMore(noneOf(Call.ARGUMENT_OPEN, Call.ARGUMENT_CLOSE, WHITESPACE)),
-      ),
+      OPERATION_KEYWORD,
       zeroOrMore(WHITESPACE),
       optional(
         group(
@@ -227,6 +253,8 @@ export const NumberTermRegex = globalRegex(NUMBER_TERM);
 export const LenOperationRegex = new RegExp(anchored(Operation.LEN));
 
 export const KeyOperationRegex = new RegExp(anchored(Operation.KEY));
+
+export const HashOperationRegex = new RegExp(anchored(Operation.HASH));
 
 export const DateTokenRegex = globalRegex(
   either(

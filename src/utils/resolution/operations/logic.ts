@@ -22,8 +22,8 @@ export const LOGIC_OPERATION: OperationDefinition = defineCallOperation({
   builders: {
     [LogicSyntax.AND]: logicBuilder((values) => values.every(Boolean)),
     [LogicSyntax.OR]: logicBuilder((values) => values.some(Boolean)),
-    [LogicSyntax.XOR]: logicBuilder(
-      (values) => values.filter(Boolean).length % 2 === 1,
+    [LogicSyntax.XOR]: logicBuilder((values) =>
+      values.reduce((odd, value) => odd !== value, false),
     ),
     [LogicSyntax.NOT]: logicBuilder(([value]) => !value, LogicSyntax.NOT_ARITY),
   },

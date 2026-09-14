@@ -69,19 +69,58 @@ export interface DemoSeed {
   contentSeed: Record<string, RunbookContent>;
 }
 
+/** A demo's seeded content, ids excluded. */
+export const demoSeedSignature = (
+  tabs: DemoContent[],
+  library: DemoContent[],
+): string =>
+  JSON.stringify([tabs, library], (key, value: unknown) =>
+    key === "id" ? undefined : value,
+  );
+
+/** Takes each item's id from the previous seed's item in the same slot, when it is the same kind. */
+function reuseIds<T extends { id: string }>(
+  items: T[],
+  previous: T[] = [],
+  sameKind: (item: T, previousItem: T) => boolean = () => true,
+): T[] {
+  return items.map((item, index) => {
+    const previousItem = previous[index];
+    return previousItem && sameKind(item, previousItem)
+      ? { ...item, id: previousItem.id }
+      : item;
+  });
+}
+
+/** Builds a demo's store seed. */
 export function buildDemoSeed(
   tabs: DemoContent[],
   library: DemoContent[],
   language: StoreState["language"],
+  previous?: DemoSeed,
 ): DemoSeed {
   const contentSeed: Record<string, RunbookContent> = {};
   const runbookLibrary: RunbookEntry[] = [];
+  const previousLibrary = previous?.state.runbookLibrary ?? [];
+  const previousTabs = previous?.state.tabs ?? [];
 
   const register = (content: DemoContent): RunbookEntry => {
-    const blocks = content.blocks ?? [];
-    const variables = content.variables ?? [];
+    const previousEntry = previousLibrary[runbookLibrary.length];
+    const previousContent =
+      previousEntry && previous?.contentSeed[previousEntry.id];
+
+    const blocks = reuseIds(
+      content.blocks ?? [],
+      previousContent?.blocks,
+      (block, previousBlock) => block.type === previousBlock.type,
+    );
+    const variables = reuseIds(
+      content.variables ?? [],
+      previousContent?.variables,
+    );
+
     const entry: RunbookEntry = {
-      id: generateId(),
+      id: previousEntry?.id ?? generateId(),
       label: getRunbookLabel(blocks, RunbookConfig.DEFAULT_LABEL),
       filename: "",
     };
@@ -91,14 +130,13 @@ export function buildDemoSeed(
     return entry;
   };
 
-  const seededTabs: Tab[] = tabs.map((content) => {
+  const seededTabs: Tab[] = tabs.map((content, index) => {
     const entry = register(content);
     return {
-      id: generateId(),
+      id: previousTabs[index]?.id ?? generateId(),
       label: entry.label,
       runbookId: entry.id,
-      blocks: content.blocks ?? [],
-      variables: content.variables ?? [],
+      ...contentSeed[entry.id],
       scrollTop: createDefaultScrollTop(),
     };
   });

@@ -667,10 +667,12 @@ export const es: Messages = {
       [DocsSectionId.VARIABLE_LEN]: "Longitud en caracteres",
       [DocsSectionId.VARIABLE_COUNT]: "Contar apariciones",
       [DocsSectionId.VARIABLE_KEY]: "Usar el nombre de la variable",
+      [DocsSectionId.VARIABLE_HASH]: "Calcular el hash de un valor",
       [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
       [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
       [DocsSectionId.VARIABLE_FILL]: "Añadir a los extremos",
       [DocsSectionId.VARIABLE_REPLACE]: "Cambiar texto",
+      [DocsSectionId.VARIABLE_INSERT]: "Buscar e insertar texto",
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transformar un hueco",
       [DocsSectionId.UNNAMED_REFERENCES]: "Referencias sin variable",
       [DocsSectionId.VARIABLE_DATE]: "Fecha actual",
@@ -932,6 +934,12 @@ Si algo sale mal, deshazlo en este orden:
       chaining:
         "Ignora el valor por completo, así que nada de lo que guarde la variable puede cambiar lo que obtienes.",
     },
+    variableHash: {
+      intro:
+        "Escribe `hash` después del `|` para obtener el hash SHA-256 del valor. El mismo valor da siempre el mismo hash, y cambiar un solo carácter lo cambia entero.",
+      demoHint:
+        "Cambia la configuración de abajo y mira cómo cambia la etiqueta:",
+    },
     variableCase: {
       intro:
         "Escribe una palabra clave después del `|` y el valor se reescribe antes de llegar al comando. Cada resultado de la tabla está escrito con el estilo que nombra:",
@@ -981,6 +989,16 @@ Si algo sale mal, deshazlo en este orden:
         "El texto se añade tal cual lo escribas, espacios incluidos, así que `rfill( -; 2)` añade dos veces un espacio y un guion. Pedir `0` copias deja el valor intacto, y un número que falte o sea negativo deja la referencia entera tal y como está escrita.",
       computedHint:
         "El número de copias no tiene por qué ser fijo: puede calcularse a partir del propio valor. Prueba con un nombre más largo o más corto:",
+      justify:
+        "Rellenar un valor hasta un ancho fijo es tan habitual que tiene sus propias operaciones. `ljust(texto; ancho)` añade el texto **al final** hasta que el valor mide `ancho` caracteres, `rjust` lo añade **al principio**, y `just` lo reparte entre **los dos extremos**.",
+      justifyTable: `| Operación | Resultado |
+| --- | --- |
+| \`rfill(.; 3)\` | api... |
+| \`ljust(.; 6)\` | api... |
+| \`rjust(.; 6)\` | ...api |
+| \`just(.; 7)\` | ..api.. |`,
+      justifyDemoHint:
+        "No las confundas con `fill`: el número de `rfill` es **cuántas copias** añadir, así que un valor más largo sale más largo, mientras que el número de `ljust` es el **ancho total**, así que todos los valores salen del mismo tamaño. Cambia el nombre de cualquiera de los servicios de abajo: las líneas con `rfill` quedan desiguales, mientras que las de `ljust` mantienen sus columnas:",
     },
     variableReplace: {
       intro:
@@ -993,6 +1011,14 @@ Si algo sale mal, deshazlo en este orden:
         "Cuando no hay nada que poner a cambio, escribe `remove(texto)`: quita ese texto allá donde aparezca.",
       removeDemoHint:
         "Abajo, un tamaño en bytes copiado de un explorador de archivos aún trae sus separadores de miles, que el comando no admite. Cambia el número y el comando sigue siendo ejecutable:",
+    },
+    variableInsert: {
+      intro:
+        "`index(texto)` da la posición del primer `texto`, empezando en `0`, o `-1` si no aparece. `insert(texto; posición)` coloca `texto` en esa posición.",
+      demoHint:
+        "Juntas hacen una copia de seguridad de un archivo añadiendo `-old` justo antes de su extensión, sea cual sea el nombre. Prueba con otro nombre de archivo:",
+      rules:
+        "Las posiciones cuentan igual que en `slice`, así que una negativa cuenta desde el final. Si `index` no encuentra nada, su `-1` inserta antes del último carácter.",
     },
     transformedPlaceholders: {
       intro:

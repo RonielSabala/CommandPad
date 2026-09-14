@@ -46,6 +46,7 @@ import {
   useEffect,
   useImperativeHandle,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
@@ -416,6 +417,22 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     };
 
     const showMask = masked && value.length > 0;
+    const shownPlaceholder = value ? undefined : placeholder;
+
+    const options = useMemo<editor.IStandaloneEditorConstructionOptions>(
+      () => ({
+        ...(bounded
+          ? boundedEditorOptions(folding, minimapSide)
+          : flowingEditorOptions(folding)),
+        placeholder: shownPlaceholder,
+        readOnly,
+        lineNumbers: promptPrefix
+          ? (line) =>
+              line === MonacoLayout.FIRST_LINE ? promptPrefix : String(line)
+          : "on",
+      }),
+      [bounded, folding, minimapSide, shownPlaceholder, readOnly, promptPrefix],
+    );
 
     const editor = (
       <div
@@ -439,19 +456,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
             value={value}
             onChange={(next) => onChange(next ?? "")}
             height={bounded ? FULL_HEIGHT : contentHeight}
-            options={{
-              ...(bounded
-                ? boundedEditorOptions(folding, minimapSide)
-                : flowingEditorOptions(folding)),
-              placeholder,
-              readOnly,
-              lineNumbers: promptPrefix
-                ? (line) =>
-                    line === MonacoLayout.FIRST_LINE
-                      ? promptPrefix
-                      : String(line)
-                : "on",
-            }}
+            options={options}
             beforeMount={handleBeforeMount}
             onMount={handleMount}
             loading={null}

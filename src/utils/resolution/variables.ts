@@ -48,7 +48,10 @@ export function getVariableMap(variables: Variable[] = []): VariableMap {
         return undefined;
       }
 
-      const value = resolveValue(refKey, new Set(visitedKeys).add(refKey));
+      visitedKeys.add(refKey);
+      const value = resolveValue(refKey, visitedKeys);
+      visitedKeys.delete(refKey);
+
       if (loopedKeys.has(refKey)) {
         looped = true;
         return undefined;
@@ -104,9 +107,14 @@ export function getVariableMap(variables: Variable[] = []): VariableMap {
 }
 
 export function getSecretKeys(variables: Variable[] = []): Set<string> {
-  return new Set(
-    variables
-      .filter((variable) => variable.secret && getVariableKey(variable))
-      .map((variable) => getVariableKey(variable)),
-  );
+  const keys = new Set<string>();
+
+  for (const variable of variables) {
+    const key = getVariableKey(variable);
+    if (variable.secret && key) {
+      keys.add(key);
+    }
+  }
+
+  return keys;
 }

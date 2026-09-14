@@ -656,10 +656,12 @@ export const en: Messages = {
       [DocsSectionId.VARIABLE_LEN]: "Character length",
       [DocsSectionId.VARIABLE_COUNT]: "Counting occurrences",
       [DocsSectionId.VARIABLE_KEY]: "Using the variable name",
+      [DocsSectionId.VARIABLE_HASH]: "Hashing a value",
       [DocsSectionId.VARIABLE_CASE]: "Changing case",
       [DocsSectionId.VARIABLE_STRIP]: "Trimming ends",
       [DocsSectionId.VARIABLE_FILL]: "Adding to the ends",
       [DocsSectionId.VARIABLE_REPLACE]: "Swapping text out",
+      [DocsSectionId.VARIABLE_INSERT]: "Finding and inserting text",
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transforming a blank",
       [DocsSectionId.UNNAMED_REFERENCES]: "References with no variable",
       [DocsSectionId.VARIABLE_DATE]: "Current date",
@@ -916,6 +918,11 @@ If something goes wrong, undo it in this order:
       chaining:
         "It ignores the value entirely, so nothing the variable holds can change what you get back.",
     },
+    variableHash: {
+      intro:
+        "Write `hash` after the `|` to get the value's SHA-256 hash. The same value always gives the same hash, and changing one character changes all of it.",
+      demoHint: "Change the config below and watch the tag change:",
+    },
     variableCase: {
       intro:
         "Write a case keyword after the `|` and the value is respelled on its way into the command. Each result below is written in the case it names:",
@@ -965,6 +972,16 @@ If something goes wrong, undo it in this order:
         "The text is added exactly as you typed it, spaces included, so `rfill( -; 2)` adds a space and a dash twice. Asking for `0` copies leaves the value untouched, and a count that is missing or negative leaves the whole reference exactly as written.",
       computedHint:
         "The count does not have to be a fixed number: it can be worked out from the value itself. Try a longer or shorter name:",
+      justify:
+        "Padding a value out to a set width is common enough to have operations of its own. `ljust(text; width)` adds the text to the **end** until the value is `width` characters long, `rjust` adds it to the **front**, and `just` splits it between **both ends**.",
+      justifyTable: `| Operation | Result |
+| --- | --- |
+| \`rfill(.; 3)\` | api... |
+| \`ljust(.; 6)\` | api... |
+| \`rjust(.; 6)\` | ...api |
+| \`just(.; 7)\` | ..api.. |`,
+      justifyDemoHint:
+        "Don't mix them up with `fill`: the number in `rfill` is **how many copies** to add, so a longer value comes out longer, while the number in `ljust` is the **total width**, so every value comes out the same size. Rename either service below: the `rfill` lines stay ragged, while the `ljust` lines keep their columns:",
     },
     variableReplace: {
       intro:
@@ -977,6 +994,14 @@ If something goes wrong, undo it in this order:
         "When there is nothing to swap in, write `remove(text)` instead: it takes that text out wherever it appears.",
       removeDemoHint:
         "Below, a byte count copied out of a file browser still carries its thousands separators, which the command cannot take. Edit the number and the command stays runnable:",
+    },
+    variableInsert: {
+      intro:
+        "`index(text)` gives the position of the first `text`, starting at `0`, or `-1` if it is not there. `insert(text; position)` puts `text` at that position.",
+      demoHint:
+        "Together they back up a file by adding `-old` right before its extension, whatever the name is. Try another file name:",
+      rules:
+        "Positions count like `slice`, so a negative one counts from the end. If `index` finds nothing, its `-1` inserts before the last character.",
     },
     transformedPlaceholders: {
       intro:

@@ -515,6 +515,10 @@ export interface Messages {
       demoHint: string;
       chaining: string;
     };
+    variableHash: {
+      intro: string;
+      demoHint: string;
+    };
     variableCase: {
       intro: string;
       table: string;
@@ -535,6 +539,9 @@ export interface Messages {
       demoHint: string;
       rules: string;
       computedHint: string;
+      justify: string;
+      justifyTable: string;
+      justifyDemoHint: string;
     };
     variableReplace: {
       intro: string;
@@ -542,6 +549,11 @@ export interface Messages {
       verbatim: string;
       remove: string;
       removeDemoHint: string;
+    };
+    variableInsert: {
+      intro: string;
+      demoHint: string;
+      rules: string;
     };
     transformedPlaceholders: {
       intro: string;

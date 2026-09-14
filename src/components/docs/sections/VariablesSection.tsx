@@ -364,6 +364,31 @@ export function VariableKeyDocs() {
   );
 }
 
+export function VariableHashDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableHash.intro} />
+      <Prose text={t.docs.variableHash.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("CONFIG", "replicas=3 region=eu-west-1")],
+            blocks: [
+              demoCommand('echo "{CONFIG|hash}"'),
+              demoCommand("docker tag app app:{CONFIG|hash|slice(;12)}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
 export function VariableCaseDocs() {
   const t = useTranslation();
 
@@ -473,6 +498,32 @@ export function VariableFillDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variableFill.justify} />
+      <Prose text={t.docs.variableFill.justifyTable} />
+      <Prose text={t.docs.variableFill.justifyDemoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("SERVICE", "api-gateway"),
+              demoVariable("WORKER", "auth"),
+            ],
+            blocks: [
+              demoCommand(
+                [
+                  'echo "{SERVICE|rfill(.; 3)} restarted"',
+                  'echo "{WORKER|rfill(.; 3)} restarted"',
+                  'echo "{SERVICE|ljust(.; 16)} restarted"',
+                  'echo "{WORKER|ljust(.; 16)} restarted"',
+                ].join("\n"),
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }
@@ -511,6 +562,31 @@ export function VariableReplaceDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+    </>
+  );
+}
+
+export function VariableInsertDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableInsert.intro} />
+      <Prose text={t.docs.variableInsert.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("FILE", "nginx.conf")],
+            blocks: [
+              demoCommand("cp {FILE} {FILE|insert(-old; {FILE|index(.)})}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableInsert.rules} />
     </>
   );
 }

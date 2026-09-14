@@ -151,12 +151,24 @@ Working on text:
 - `len` the number of characters.
 - `count(text)` how many times `text` appears.
 - `key` the key of the variable being resolved.
+- `hash` the SHA-256 digest of the value's UTF-8 bytes, as 64 lowercase hexadecimal
+  characters. It matches `printf '%s' "$VALUE" | sha256sum`.
 - `strip(text)`, `lstrip(text)`, `rstrip(text)` remove `text` from both ends, the start or
   the end, as many times as it is there. With no argument they trim whitespace.
 - `fill(text;n)`, `lfill(text;n)`, `rfill(text;n)` append `n` copies of `text` to both
   ends, the start or the end.
+- `ljust(text;width)`, `rjust(text;width)`, `just(text;width)` pad the end, the start or
+  both ends with `text` until the value is `width` characters long. Unlike `fill`, the
+  number is a total width, not a count of copies, and a value already that wide is left
+  untouched. `width` may be a `+`/`-` sum.
 - `replace(from;to)` replace every occurrence.
 - `remove(text)` remove every occurrence.
+- `index(text)` the position of the first `text`, counting from 0, or `-1` when it is
+  absent.
+- `insert(text;n)` put `text` before position `n`. A negative `n` counts from the end and
+  an out-of-range one clamps to that end. `n` may be a `+`/`-` sum, and
+  `{FILE|insert(-old;{FILE|index(.)})}` adds `-old` before the extension.
+- Positions in `slice`, `len`, `index` and `insert` all count characters the same way.
 - `date(format)` the current local date. Tokens `YYYY`, `YY`, `MM`, `DD`, `HH`, `mm`, `ss`
   are filled and everything else is kept. Defaults to `YYYY-MM-DD`.
 

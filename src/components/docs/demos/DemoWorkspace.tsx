@@ -17,14 +17,19 @@ import {
 } from "@/store/store";
 import { getUsedVariableKeys, isVariableUnused } from "@/utils/resolution";
 import {
-  useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
   type KeyboardEvent,
   type ReactNode,
 } from "react";
 
-import { buildDemoSeed, type DemoContent } from "./demoSeeds";
+import {
+  buildDemoSeed,
+  demoSeedSignature,
+  type DemoContent,
+  type DemoSeed,
+} from "./demoSeeds";
 import "./DemoWorkspace.css";
 import { DocsDemo } from "./DocsDemo";
 
@@ -49,24 +54,42 @@ export function DemoWorkspace({
   const language = useStore((state) => state.language);
   const theme = useStore((state) => state.theme);
 
-  const buildStore = () => {
-    const { state, contentSeed } = buildDemoSeed(tabs, library, language);
-    const store = createAppStore({ isDemo: true, contentSeed });
-    store.setState({ ...state, theme });
-    return store;
+  const buildDemo = (
+    previous?: DemoSeed,
+    signature = demoSeedSignature(tabs, library),
+  ) => {
+    const seed = buildDemoSeed(tabs, library, language, previous);
+    const store = createAppStore({
+      isDemo: true,
+      contentSeed: seed.contentSeed,
+    });
+
+    store.setState({ ...seed.state, theme });
+    return { store, seed, language, signature };
   };
 
-  const [store, setStore] = useState(buildStore);
+  const [demo, setDemo] = useState(() => buildDemo());
   const [version, setVersion] = useState(0);
-
-  useEffect(() => {
-    store.setState({ theme });
-  }, [store, theme]);
+  const { store } = demo;
 
   const reset = () => {
-    setStore(buildStore());
+    setDemo(buildDemo());
     setVersion((count) => count + 1);
   };
+
+  // A language switch reseeds only a demo whose content is translated
+  if (demo.language !== language) {
+    const signature = demoSeedSignature(tabs, library);
+    setDemo(
+      signature === demo.signature
+        ? { ...demo, language }
+        : buildDemo(demo.seed, signature),
+    );
+  }
+
+  useLayoutEffect(() => {
+    store.setState({ theme, language });
+  }, [store, theme, language]);
 
   return (
     <StoreProvider value={store}>

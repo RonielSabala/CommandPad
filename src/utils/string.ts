@@ -5,7 +5,7 @@ export function splitLines(text: string): string[] {
 }
 
 export function countLines(text: string): number {
-  return splitLines(text).length;
+  return countOccurrences(text, LINE_BREAK) + 1;
 }
 
 export function joinLines(lines: string[]): string {
@@ -57,6 +57,21 @@ export function countOccurrences(text: string, needle: string): number {
   return count;
 }
 
+export function indexOfText(text: string, needle: string): number {
+  const index = text.indexOf(needle);
+  return index === -1 ? index : countCharacters(text.slice(0, index));
+}
+
+export function insertText(
+  text: string,
+  insertion: string,
+  index: number,
+): string {
+  const chars = Array.from(text);
+  chars.splice(index, 0, insertion);
+  return chars.join("");
+}
+
 export function replaceOccurrences(
   text: string,
   needle: string,
@@ -94,26 +109,39 @@ export function sliceString(
   return sliced.join("");
 }
 
-export function stripStart(text: string, cut: string): string {
-  let result = text;
-  while (cut && result.startsWith(cut)) {
-    result = result.slice(cut.length);
+function strippedStart(text: string, cut: string): number {
+  let start = 0;
+  while (text.startsWith(cut, start)) {
+    start += cut.length;
   }
 
-  return result;
+  return start;
+}
+
+function strippedEnd(text: string, cut: string, start = 0): number {
+  let end = text.length;
+  while (end - cut.length >= start && text.endsWith(cut, end)) {
+    end -= cut.length;
+  }
+
+  return end;
+}
+
+export function stripStart(text: string, cut: string): string {
+  return cut ? text.slice(strippedStart(text, cut)) : text;
 }
 
 export function stripEnd(text: string, cut: string): string {
-  let result = text;
-  while (cut && result.endsWith(cut)) {
-    result = result.slice(0, -cut.length);
-  }
-
-  return result;
+  return cut ? text.slice(0, strippedEnd(text, cut)) : text;
 }
 
 export function stripBoth(text: string, cut: string): string {
-  return stripEnd(stripStart(text, cut), cut);
+  if (!cut) {
+    return text;
+  }
+
+  const start = strippedStart(text, cut);
+  return text.slice(start, strippedEnd(text, cut, start));
 }
 
 export function fillStart(text: string, fill: string, times: number): string {
@@ -125,7 +153,43 @@ export function fillEnd(text: string, fill: string, times: number): string {
 }
 
 export function fillBoth(text: string, fill: string, times: number): string {
-  return fillEnd(fillStart(text, fill, times), fill, times);
+  const padding = fill.repeat(times);
+  return padding + text + padding;
+}
+
+function padding(fill: string, length: number): string {
+  const size = countCharacters(fill);
+  const repeated = fill.repeat(Math.ceil(length / size));
+
+  return size === fill.length
+    ? repeated.slice(0, length)
+    : Array.from(repeated).slice(0, length).join("");
+}
+
+function missingWidth(text: string, width: number): number {
+  return Math.max(0, width - countCharacters(text));
+}
+
+export function justifyLeft(text: string, fill: string, width: number): string {
+  return text + padding(fill, missingWidth(text, width));
+}
+
+export function justifyRight(
+  text: string,
+  fill: string,
+  width: number,
+): string {
+  return padding(fill, missingWidth(text, width)) + text;
+}
+
+export function justifyCenter(
+  text: string,
+  fill: string,
+  width: number,
+): string {
+  const missing = missingWidth(text, width);
+  const start = Math.floor(missing / 2);
+  return padding(fill, start) + text + padding(fill, missing - start);
 }
 
 export function classNames(

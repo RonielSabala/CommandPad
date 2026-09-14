@@ -285,22 +285,12 @@ export function applyTemplateParams(
   spans: readonly ResolvedSpan[] = flatSpans(template),
 ): ResolvedTemplate {
   const blanks = readBlanks(template);
-  if (blanks.length === 0) {
-    return {
-      text: template,
-      fullyResolved: true,
-      filled: false,
-      spans: [...spans],
-    };
-  }
-
-  const defaults = collectBlankDefaults(blanks);
   return fillBlanks(
     template,
     spans,
     blanks,
     params,
-    defaults,
+    collectBlankDefaults(blanks),
     context,
     new Map(),
     new Set(),

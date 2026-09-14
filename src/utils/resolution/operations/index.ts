@@ -1,4 +1,5 @@
 import type { ResolvedSpan } from "@/common/types";
+import { CallGroup, OperationKeywordRegex } from "@/common/variableSyntax";
 import { isString } from "@/utils/typeGuards";
 
 import { spansText } from "../spans";
@@ -8,6 +9,10 @@ import { IF_OPERATION } from "./conditional";
 import { COUNT_OPERATION } from "./count";
 import { DATE_OPERATION } from "./date";
 import { FILL_OPERATION } from "./fill";
+import { HASH_OPERATION } from "./hash";
+import { INDEX_OPERATION } from "./indexOf";
+import { INSERT_OPERATION } from "./insert";
+import { JUST_OPERATION } from "./just";
 import { KEY_OPERATION } from "./key";
 import { LEN_OPERATION } from "./len";
 import { LOGIC_OPERATION } from "./logic";
@@ -30,12 +35,16 @@ const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   LEN_OPERATION,
   COUNT_OPERATION,
   KEY_OPERATION,
+  HASH_OPERATION,
   DATE_OPERATION,
   CASE_OPERATION,
   STRIP_OPERATION,
   FILL_OPERATION,
+  JUST_OPERATION,
   REPLACE_OPERATION,
   REMOVE_OPERATION,
+  INDEX_OPERATION,
+  INSERT_OPERATION,
   TEST_OPERATION,
   MATCH_OPERATION,
   LOGIC_OPERATION,
@@ -59,15 +68,19 @@ interface AppliedOperations {
   spans?: ResolvedSpan[];
 }
 
-function parseOperation(operation: OperationChunk): OperationTransform | null {
-  for (const definition of OPERATION_DEFINITIONS) {
-    const transform = definition.parse(operation);
-    if (transform) {
-      return transform;
-    }
-  }
+const DEFINITIONS_BY_KEYWORD = new Map(
+  OPERATION_DEFINITIONS.flatMap((definition) =>
+    definition.keywords.map(({ keyword }) => [keyword, definition] as const),
+  ),
+);
 
-  return null;
+function parseOperation(operation: OperationChunk): OperationTransform | null {
+  const keyword = OperationKeywordRegex.exec(operation.text)?.groups?.[
+    CallGroup.KEYWORD
+  ];
+
+  const definition = keyword && DEFINITIONS_BY_KEYWORD.get(keyword);
+  return definition ? definition.parse(operation) : null;
 }
 
 /** Runs a token's operations left to right. */
