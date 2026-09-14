@@ -656,6 +656,7 @@ export const en: Messages = {
       [DocsSectionId.VARIABLE_LEN]: "Character length",
       [DocsSectionId.VARIABLE_COUNT]: "Counting occurrences",
       [DocsSectionId.VARIABLE_KEY]: "Using the variable name",
+      [DocsSectionId.VARIABLE_HASH]: "Hashing a value",
       [DocsSectionId.VARIABLE_CASE]: "Changing case",
       [DocsSectionId.VARIABLE_STRIP]: "Trimming ends",
       [DocsSectionId.VARIABLE_FILL]: "Adding to the ends",
@@ -916,6 +917,11 @@ If something goes wrong, undo it in this order:
         "Try renaming the variable below and watch the command update itself, the name and the value never fall out of sync:",
       chaining:
         "It ignores the value entirely, so nothing the variable holds can change what you get back.",
+    },
+    variableHash: {
+      intro:
+        "Write `hash` after the `|` to get the value's SHA-256 hash. The same value always gives the same hash, and changing one character changes all of it.",
+      demoHint: "Change the config below and watch the tag change:",
     },
     variableCase: {
       intro:

@@ -515,6 +515,10 @@ export interface Messages {
       demoHint: string;
       chaining: string;
     };
+    variableHash: {
+      intro: string;
+      demoHint: string;
+    };
     variableCase: {
       intro: string;
       table: string;

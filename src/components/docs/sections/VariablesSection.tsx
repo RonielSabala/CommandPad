@@ -364,6 +364,31 @@ export function VariableKeyDocs() {
   );
 }
 
+export function VariableHashDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableHash.intro} />
+      <Prose text={t.docs.variableHash.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("CONFIG", "replicas=3 region=eu-west-1")],
+            blocks: [
+              demoCommand('echo "{CONFIG|hash}"'),
+              demoCommand("docker tag app app:{CONFIG|hash|slice(;12)}"),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+    </>
+  );
+}
+
 export function VariableCaseDocs() {
   const t = useTranslation();
 

@@ -151,6 +151,8 @@ Working on text:
 - `len` the number of characters.
 - `count(text)` how many times `text` appears.
 - `key` the key of the variable being resolved.
+- `hash` the SHA-256 digest of the value's UTF-8 bytes, as 64 lowercase hexadecimal
+  characters. It matches `printf '%s' "$VALUE" | sha256sum`.
 - `strip(text)`, `lstrip(text)`, `rstrip(text)` remove `text` from both ends, the start or
   the end, as many times as it is there. With no argument they trim whitespace.
 - `fill(text;n)`, `lfill(text;n)`, `rfill(text;n)` append `n` copies of `text` to both

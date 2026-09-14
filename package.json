@@ -16,6 +16,7 @@
   "dependencies": {
     "@azure/msal-browser": "^5.17.1",
     "@monaco-editor/react": "^4.7.0",
+    "@noble/hashes": "^2.4.0",
     "monaco-editor": "0.55.0",
     "react": "^19.1.0",
     "react-bootstrap-icons": "^1.11.6",

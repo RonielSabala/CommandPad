@@ -55,6 +55,7 @@ export const SliceSyntax = {
 export const OperationSyntax = {
   LEN: "len",
   KEY: "key",
+  HASH: "hash",
 } as const;
 
 export const CountSyntax = {
@@ -252,6 +253,8 @@ export const NumberTermRegex = globalRegex(NUMBER_TERM);
 export const LenOperationRegex = new RegExp(anchored(Operation.LEN));
 
 export const KeyOperationRegex = new RegExp(anchored(Operation.KEY));
+
+export const HashOperationRegex = new RegExp(anchored(Operation.HASH));
 
 export const DateTokenRegex = globalRegex(
   either(

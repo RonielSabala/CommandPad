@@ -9,6 +9,7 @@ import { IF_OPERATION } from "./conditional";
 import { COUNT_OPERATION } from "./count";
 import { DATE_OPERATION } from "./date";
 import { FILL_OPERATION } from "./fill";
+import { HASH_OPERATION } from "./hash";
 import { INDEX_OPERATION } from "./indexOf";
 import { INSERT_OPERATION } from "./insert";
 import { JUST_OPERATION } from "./just";
@@ -34,6 +35,7 @@ const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   LEN_OPERATION,
   COUNT_OPERATION,
   KEY_OPERATION,
+  HASH_OPERATION,
   DATE_OPERATION,
   CASE_OPERATION,
   STRIP_OPERATION,

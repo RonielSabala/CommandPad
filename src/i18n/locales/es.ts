@@ -667,6 +667,7 @@ export const es: Messages = {
       [DocsSectionId.VARIABLE_LEN]: "Longitud en caracteres",
       [DocsSectionId.VARIABLE_COUNT]: "Contar apariciones",
       [DocsSectionId.VARIABLE_KEY]: "Usar el nombre de la variable",
+      [DocsSectionId.VARIABLE_HASH]: "Calcular el hash de un valor",
       [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
       [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
       [DocsSectionId.VARIABLE_FILL]: "Añadir a los extremos",
@@ -932,6 +933,12 @@ Si algo sale mal, deshazlo en este orden:
         "Cambia el nombre de la variable de abajo y mira cómo el comando se actualiza solo, el nombre y el valor nunca se desincronizan:",
       chaining:
         "Ignora el valor por completo, así que nada de lo que guarde la variable puede cambiar lo que obtienes.",
+    },
+    variableHash: {
+      intro:
+        "Escribe `hash` después del `|` para obtener el hash SHA-256 del valor. El mismo valor da siempre el mismo hash, y cambiar un solo carácter lo cambia entero.",
+      demoHint:
+        "Cambia la configuración de abajo y mira cómo cambia la etiqueta:",
     },
     variableCase: {
       intro:
