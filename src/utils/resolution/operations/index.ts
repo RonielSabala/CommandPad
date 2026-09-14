@@ -11,6 +11,7 @@ import { DATE_OPERATION } from "./date";
 import { FILL_OPERATION } from "./fill";
 import { INDEX_OPERATION } from "./indexOf";
 import { INSERT_OPERATION } from "./insert";
+import { JUST_OPERATION } from "./just";
 import { KEY_OPERATION } from "./key";
 import { LEN_OPERATION } from "./len";
 import { LOGIC_OPERATION } from "./logic";
@@ -37,6 +38,7 @@ const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   CASE_OPERATION,
   STRIP_OPERATION,
   FILL_OPERATION,
+  JUST_OPERATION,
   REPLACE_OPERATION,
   REMOVE_OPERATION,
   INDEX_OPERATION,

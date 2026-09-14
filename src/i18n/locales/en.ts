@@ -966,6 +966,16 @@ If something goes wrong, undo it in this order:
         "The text is added exactly as you typed it, spaces included, so `rfill( -; 2)` adds a space and a dash twice. Asking for `0` copies leaves the value untouched, and a count that is missing or negative leaves the whole reference exactly as written.",
       computedHint:
         "The count does not have to be a fixed number: it can be worked out from the value itself. Try a longer or shorter name:",
+      justify:
+        "Padding a value out to a set width is common enough to have operations of its own. `ljust(text; width)` adds the text to the **end** until the value is `width` characters long, `rjust` adds it to the **front**, and `just` splits it between **both ends**.",
+      justifyTable: `| Operation | Result |
+| --- | --- |
+| \`rfill(.; 3)\` | api... |
+| \`ljust(.; 6)\` | api... |
+| \`rjust(.; 6)\` | ...api |
+| \`just(.; 7)\` | ..api.. |`,
+      justifyDemoHint:
+        "Don't mix them up with `fill`: the number in `rfill` is **how many copies** to add, so a longer value comes out longer, while the number in `ljust` is the **total width**, so every value comes out the same size. Rename either service below: the `rfill` lines stay ragged, while the `ljust` lines keep their columns:",
     },
     variableReplace: {
       intro:

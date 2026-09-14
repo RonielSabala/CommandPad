@@ -473,6 +473,32 @@ export function VariableFillDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variableFill.justify} />
+      <Prose text={t.docs.variableFill.justifyTable} />
+      <Prose text={t.docs.variableFill.justifyDemoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("SERVICE", "api-gateway"),
+              demoVariable("WORKER", "auth"),
+            ],
+            blocks: [
+              demoCommand(
+                [
+                  'echo "{SERVICE|rfill(.; 3)} restarted"',
+                  'echo "{WORKER|rfill(.; 3)} restarted"',
+                  'echo "{SERVICE|ljust(.; 16)} restarted"',
+                  'echo "{WORKER|ljust(.; 16)} restarted"',
+                ].join("\n"),
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
     </>
   );
 }

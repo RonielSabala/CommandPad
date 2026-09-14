@@ -155,6 +155,10 @@ Working on text:
   the end, as many times as it is there. With no argument they trim whitespace.
 - `fill(text;n)`, `lfill(text;n)`, `rfill(text;n)` append `n` copies of `text` to both
   ends, the start or the end.
+- `ljust(text;width)`, `rjust(text;width)`, `just(text;width)` pad the end, the start or
+  both ends with `text` until the value is `width` characters long. Unlike `fill`, the
+  number is a total width, not a count of copies, and a value already that wide is left
+  untouched. `width` may be a `+`/`-` sum.
 - `replace(from;to)` replace every occurrence.
 - `remove(text)` remove every occurrence.
 - `index(text)` the position of the first `text`, counting from 0, or `-1` when it is

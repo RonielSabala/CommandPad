@@ -982,6 +982,16 @@ Si algo sale mal, deshazlo en este orden:
         "El texto se añade tal cual lo escribas, espacios incluidos, así que `rfill( -; 2)` añade dos veces un espacio y un guion. Pedir `0` copias deja el valor intacto, y un número que falte o sea negativo deja la referencia entera tal y como está escrita.",
       computedHint:
         "El número de copias no tiene por qué ser fijo: puede calcularse a partir del propio valor. Prueba con un nombre más largo o más corto:",
+      justify:
+        "Rellenar un valor hasta un ancho fijo es tan habitual que tiene sus propias operaciones. `ljust(texto; ancho)` añade el texto **al final** hasta que el valor mide `ancho` caracteres, `rjust` lo añade **al principio**, y `just` lo reparte entre **los dos extremos**.",
+      justifyTable: `| Operación | Resultado |
+| --- | --- |
+| \`rfill(.; 3)\` | api... |
+| \`ljust(.; 6)\` | api... |
+| \`rjust(.; 6)\` | ...api |
+| \`just(.; 7)\` | ..api.. |`,
+      justifyDemoHint:
+        "No las confundas con `fill`: el número de `rfill` es **cuántas copias** añadir, así que un valor más largo sale más largo, mientras que el número de `ljust` es el **ancho total**, así que todos los valores salen del mismo tamaño. Cambia el nombre de cualquiera de los servicios de abajo: las líneas con `rfill` quedan desiguales, mientras que las de `ljust` mantienen sus columnas:",
     },
     variableReplace: {
       intro:

@@ -157,6 +157,41 @@ export function fillBoth(text: string, fill: string, times: number): string {
   return padding + text + padding;
 }
 
+function padding(fill: string, length: number): string {
+  const size = countCharacters(fill);
+  const repeated = fill.repeat(Math.ceil(length / size));
+
+  return size === fill.length
+    ? repeated.slice(0, length)
+    : Array.from(repeated).slice(0, length).join("");
+}
+
+function missingWidth(text: string, width: number): number {
+  return Math.max(0, width - countCharacters(text));
+}
+
+export function justifyLeft(text: string, fill: string, width: number): string {
+  return text + padding(fill, missingWidth(text, width));
+}
+
+export function justifyRight(
+  text: string,
+  fill: string,
+  width: number,
+): string {
+  return padding(fill, missingWidth(text, width)) + text;
+}
+
+export function justifyCenter(
+  text: string,
+  fill: string,
+  width: number,
+): string {
+  const missing = missingWidth(text, width);
+  const start = Math.floor(missing / 2);
+  return padding(fill, start) + text + padding(fill, missing - start);
+}
+
 export function classNames(
   ...classes: (string | false | null | undefined)[]
 ): string {

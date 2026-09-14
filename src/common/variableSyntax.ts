@@ -89,6 +89,14 @@ export const FillSyntax = {
   MAX_TIMES: 10000,
 } as const;
 
+export const JustSyntax = {
+  CENTER: "just",
+  LEFT: "ljust",
+  RIGHT: "rjust",
+  ARITY: 2,
+  MAX_WIDTH: 10000,
+} as const;
+
 export const ReplaceSyntax = {
   KEYWORD: "replace",
   ARITY: 2,

@@ -535,6 +535,9 @@ export interface Messages {
       demoHint: string;
       rules: string;
       computedHint: string;
+      justify: string;
+      justifyTable: string;
+      justifyDemoHint: string;
     };
     variableReplace: {
       intro: string;
