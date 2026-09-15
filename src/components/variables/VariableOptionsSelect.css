@@ -13,11 +13,6 @@
   outline: none;
 }
 
-body.select-key-held:not(.read-mode) .variable-options-trigger {
-  cursor: default;
-  pointer-events: none;
-}
-
 .variable-option-remove {
   flex-shrink: 0;
 }

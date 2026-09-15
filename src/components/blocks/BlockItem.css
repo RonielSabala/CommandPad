@@ -41,11 +41,6 @@ body.read-mode :is(.block-drag-handle, .block-actions) {
   display: none;
 }
 
-body.select-key-held:not(.read-mode) :is(.block-drag-handle, .block-actions) {
-  opacity: 0;
-  pointer-events: none;
-}
-
 body.select-key-held:not(.read-mode) .block-item:hover:not(.block-selected) {
   outline: var(--border-dashed);
   border-radius: var(--radius-lg);

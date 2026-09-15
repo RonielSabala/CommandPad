@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { AppMode, VariableField } from "@/common/enums";
 import { Select, SelectAlign } from "@/components/common/Select";
@@ -50,6 +51,7 @@ export function VariableOptionsSelect({
       className={classNames("variable-options-select", className)}
       triggerClassName={classNames(
         "variable-options-trigger",
+        CssClass.SELECT_KEY_INERT,
         triggerClassName,
       )}
       align={SelectAlign.START}

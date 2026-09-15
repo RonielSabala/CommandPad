@@ -42,17 +42,6 @@ body.read-mode :is(.variable-drag-handle, .variable-actions) {
 
 /* Selection */
 
-body.select-key-held:not(.read-mode)
-  :is(.variable-drag-handle, .variable-actions) {
-  opacity: 0;
-  pointer-events: none;
-}
-
-body.select-key-held:not(.read-mode) .variable-item input {
-  cursor: default;
-  pointer-events: none;
-}
-
 .variable-surface::after {
   content: "";
   position: absolute;

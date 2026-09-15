@@ -60,7 +60,10 @@ export function BlockActionsMenu({ blockId }: Props) {
   );
 
   return (
-    <ActionsMenu className={CssClass.BLOCK_ACTIONS} title={t.blocks.actions}>
+    <ActionsMenu
+      className={`${CssClass.BLOCK_ACTIONS} ${CssClass.SELECT_KEY_HIDDEN}`}
+      title={t.blocks.actions}
+    >
       <ContextMenuItem
         icon={<DuplicateIcon className="icon-md icon-bold" />}
         onSelect={() => duplicateBlock(blockId)}

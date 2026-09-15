@@ -29,11 +29,6 @@ body.read-mode .note-style-row {
   visibility: hidden;
 }
 
-body.select-key-held:not(.read-mode) .note-style-row {
-  opacity: 0;
-  pointer-events: none;
-}
-
 .note-block.is-focused .note-preview {
   display: none;
 }
@@ -88,11 +83,6 @@ body.select-key-held:not(.read-mode) .note-style-row {
 
 .note-block:not(.is-focused) .note-auto-width::after {
   content: none;
-}
-
-body.select-key-held:not(.read-mode) .note-auto-width {
-  cursor: default;
-  pointer-events: none;
 }
 
 /* Note styles */

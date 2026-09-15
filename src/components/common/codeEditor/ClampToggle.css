@@ -31,7 +31,3 @@
 .clamp-toggle.expanded .clamp-toggle-icon {
   transform: rotate(180deg);
 }
-
-body.select-key-held:not(.read-mode) .clamp-toggle {
-  pointer-events: none;
-}

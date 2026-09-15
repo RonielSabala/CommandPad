@@ -232,7 +232,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           )}
         </span>
 
-        <div className="command-preview-actions">
+        <div
+          className={`command-preview-actions ${CssClass.SELECT_KEY_HIDDEN}`}
+        >
           <button
             className={`btn toggle-editor-btn${isEditorCollapsed ? " editor-collapsed" : ""}`}
             onClick={() =>

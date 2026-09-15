@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { EditorToggleChevronIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
@@ -16,6 +17,7 @@ export function ClampToggle({ expanded, onToggle }: Props) {
       className={classNames(
         "clamp-toggle",
         "no-user-select",
+        CssClass.SELECT_KEY_INERT,
         expanded && "expanded",
       )}
       onMouseDown={(event) => event.preventDefault()}

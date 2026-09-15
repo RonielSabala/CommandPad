@@ -111,7 +111,10 @@ export function VariableEditor({
         <VariableKeyInput
           variableId={variableId}
           variableKey={variable.key}
-          className="variable-editor-key"
+          className={classNames(
+            "variable-editor-key",
+            CssClass.SELECT_KEY_INERT,
+          )}
           unused={unused}
           inputRef={keyRef}
           scrollable

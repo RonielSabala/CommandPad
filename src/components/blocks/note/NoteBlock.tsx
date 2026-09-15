@@ -92,7 +92,7 @@ export function NoteBlock({ block }: Props) {
         focused && "is-focused",
       )}
     >
-      <div className="note-style-row">
+      <div className={`note-style-row ${CssClass.SELECT_KEY_HIDDEN}`}>
         {NOTE_STYLES.map((style) => (
           <button
             key={style}
@@ -104,14 +104,14 @@ export function NoteBlock({ block }: Props) {
         ))}
       </div>
       <label
-        className={`note-auto-width style-${blockStyle}`}
+        className={`note-auto-width style-${blockStyle} ${CssClass.SELECT_KEY_INERT}`}
         data-value={blockText || placeholder}
         onMouseDown={handleMouseDown}
         onClick={handleClick}
       >
         <textarea
           ref={textareaRef}
-          className={`note-textarea style-${blockStyle}`}
+          className={`note-textarea style-${blockStyle} ${CssClass.SELECT_KEY_INERT}`}
           placeholder={placeholder}
           spellCheck={spellcheck}
           lang={language}

@@ -68,11 +68,6 @@ body.read-mode .image-view {
   opacity: 1;
 }
 
-body.select-key-held:not(.read-mode) .image-actions {
-  opacity: 0;
-  pointer-events: none;
-}
-
 .image-actions-group {
   position: sticky;
   top: var(--space-4);
@@ -134,10 +129,6 @@ body.select-key-held:not(.read-mode) .image-actions {
   )
   .image-dropzone {
   border-color: transparent;
-}
-
-body.select-key-held:not(.read-mode) .image-dropzone > * {
-  pointer-events: none;
 }
 
 /* Placeholder badge */

@@ -82,7 +82,12 @@ export const VariableItem = memo(function VariableItem({
         keyRef={keyRef}
       />
 
-      <div className={CssClass.VARIABLE_DRAG_HANDLE}>
+      <div
+        className={classNames(
+          CssClass.VARIABLE_DRAG_HANDLE,
+          CssClass.SELECT_KEY_HIDDEN,
+        )}
+      >
         <div
           className="drag-handle"
           {...tooltip(t.common.dragToReorder)}
@@ -96,7 +101,10 @@ export const VariableItem = memo(function VariableItem({
         variableId={variableId}
         isSecret={!!variable.secret}
         isEnum={!!variable.options}
-        className={CssClass.VARIABLE_ACTIONS}
+        className={classNames(
+          CssClass.VARIABLE_ACTIONS,
+          CssClass.SELECT_KEY_HIDDEN,
+        )}
       />
     </div>
   );

@@ -305,8 +305,17 @@ body.select-key-held:not(.read-mode) * {
   user-select: none;
 }
 
-body.select-key-held:not(.read-mode) :is(textarea, .code-editor-surface) {
+body.select-key-held:not(.read-mode) .select-key-inert {
   cursor: default;
+  pointer-events: none;
+}
+
+body.select-key-held:not(.read-mode) .select-key-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.select-key-held:not(.read-mode) .select-key-inert-children > * {
   pointer-events: none;
 }
 
