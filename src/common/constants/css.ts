@@ -31,6 +31,9 @@ export const CssClass = {
 
   // Modifier-key states
   SELECT_KEY_HELD: "select-key-held",
+  SELECT_KEY_INERT: "select-key-inert",
+  SELECT_KEY_HIDDEN: "select-key-hidden",
+  SELECT_KEY_INERT_CHILDREN: "select-key-inert-children",
   LINK_KEY_HELD: "link-key-held",
   PANEL_RESIZING: "panel-resizing",
   VARIABLE_SPLIT_RESIZING: "variable-split-resizing",

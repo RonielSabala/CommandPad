@@ -75,11 +75,6 @@
   color: var(--color-text-muted);
 }
 
-body.select-key-held:not(.read-mode) .command-preview .btn {
-  opacity: 0;
-  pointer-events: none;
-}
-
 .command-preview-text {
   scrollbar-width: none;
 }
@@ -165,10 +160,6 @@ body.select-key-held:not(.read-mode) .command-preview .btn {
 
   border-top: var(--border-standard);
   overflow: clip;
-}
-
-body.select-key-held:not(.read-mode) .code-editor-header > * {
-  pointer-events: none;
 }
 
 .command-block-editor.collapsed,

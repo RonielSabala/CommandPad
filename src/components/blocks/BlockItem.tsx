@@ -155,7 +155,9 @@ export const BlockItem = memo(function BlockItem({
         secretKeys={secretKeys}
       />
 
-      <div className={CssClass.BLOCK_DRAG_HANDLE}>
+      <div
+        className={`${CssClass.BLOCK_DRAG_HANDLE} ${CssClass.SELECT_KEY_HIDDEN}`}
+      >
         <div
           className="drag-handle"
           {...tooltip(t.common.dragToReorder)}

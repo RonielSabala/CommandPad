@@ -44,10 +44,6 @@
   color: var(--accent-text);
 }
 
-body.select-key-held:not(.read-mode) .note-link {
-  pointer-events: none;
-}
-
 /* --- LIST --- */
 
 .note-list {

@@ -48,7 +48,7 @@ function NoteSegments({ segments, requiresLinkModifier }: SegmentsProps) {
             <a
               key={i}
               href={segment.href ?? segment.text}
-              className={CssClass.NOTE_LINK}
+              className={`${CssClass.NOTE_LINK} ${CssClass.SELECT_KEY_INERT}`}
               target={Anchor.TARGET_BLANK}
               rel={Anchor.REL}
               {...tooltip(followLinkTooltip)}

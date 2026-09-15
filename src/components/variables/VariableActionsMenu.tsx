@@ -1,3 +1,4 @@
+import { VariableKind } from "@/common/enums";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
@@ -5,25 +6,28 @@ import { DuplicateIcon, EyeIcon, TrashIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { getCaseOperationKeywords } from "@/utils/resolution";
-import { AlphabetUppercase } from "react-bootstrap-icons";
+import { AlphabetUppercase, CursorText, ListUl } from "react-bootstrap-icons";
 
 const CASE_KEYWORDS = getCaseOperationKeywords();
 
 interface Props {
   variableId: string;
   isSecret: boolean;
+  isEnum: boolean;
   className: string;
 }
 
 export function VariableActionsMenu({
   variableId,
   isSecret,
+  isEnum,
   className,
 }: Props) {
   const t = useTranslation();
   const removeVariable = useStore((state) => state.removeVariable);
   const duplicateVariable = useStore((state) => state.duplicateVariable);
   const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
+  const setVariableKind = useStore((state) => state.setVariableKind);
   const applyVariableKeyCase = useStore((state) => state.applyVariableKeyCase);
 
   const count = useStore((state) =>
@@ -35,11 +39,31 @@ export function VariableActionsMenu({
   return (
     <ActionsMenu className={className} title={t.variables.actions}>
       <ContextMenuItem
-        icon={<EyeIcon slashed={!isSecret} className="icon-md icon-bold" />}
-        onSelect={() => toggleVariableSecret(variableId)}
+        icon={
+          isEnum ? (
+            <CursorText className="icon-md" />
+          ) : (
+            <ListUl className="icon-md" />
+          )
+        }
+        onSelect={() =>
+          setVariableKind(
+            variableId,
+            isEnum ? VariableKind.TEXT : VariableKind.ENUM,
+          )
+        }
       >
-        {isSecret ? t.variables.reveal(count) : t.variables.mask(count)}
+        {isEnum ? t.variables.makeText(count) : t.variables.makeEnum(count)}
       </ContextMenuItem>
+
+      {!isEnum && (
+        <ContextMenuItem
+          icon={<EyeIcon slashed={!isSecret} className="icon-md icon-bold" />}
+          onSelect={() => toggleVariableSecret(variableId)}
+        >
+          {isSecret ? t.variables.reveal(count) : t.variables.mask(count)}
+        </ContextMenuItem>
+      )}
 
       <ContextMenuItem
         icon={<DuplicateIcon className="icon-md icon-bold" />}

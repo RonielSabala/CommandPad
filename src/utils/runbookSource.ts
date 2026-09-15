@@ -40,6 +40,9 @@ function normalizeVariable(
       ? raw.language
       : DEFAULT_VARIABLE_LANGUAGE,
     ...(raw.secret === true ? { secret: true } : {}),
+    ...(Array.isArray(raw.options)
+      ? { options: [...new Set(raw.options.filter(isString))] }
+      : {}),
   };
 }
 

@@ -119,6 +119,13 @@ export interface Messages {
     valuePlaceholder: string;
     reveal: (count: number) => string;
     mask: (count: number) => string;
+    makeEnum: (count: number) => string;
+    makeText: (count: number) => string;
+    optionPlaceholder: string;
+    noOptions: string;
+    addOptionPlaceholder: string;
+    addOption: string;
+    removeOption: (option: string) => string;
     actions: string;
     duplicate: (count: number) => string;
     renameCase: string;
@@ -469,6 +476,8 @@ export interface Messages {
       demoHint: (variableActionsLabel: string) => string;
       constants: string;
       constantsDemoHint: string;
+      enums: (variableActionsLabel: string, makeEnumLabel: string) => string;
+      enumsDemoHint: string;
     };
     variableReferences: {
       intro: string;

@@ -45,6 +45,29 @@ export function VariablesDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose
+        text={t.docs.variables.enums(
+          t.variables.actions,
+          t.variables.makeEnum(1),
+        )}
+      />
+      <Prose text={t.docs.variables.enumsDemoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              {
+                ...demoVariable("env", "staging"),
+                options: ["dev", "staging", "prod"],
+              },
+            ],
+            blocks: [demoCommand("kubectl --context {env} get pods")],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
       <Prose text={t.docs.variables.unresolved} />
       <Prose text={t.docs.variables.tooltip} />
       <Prose text={t.docs.variables.split} />

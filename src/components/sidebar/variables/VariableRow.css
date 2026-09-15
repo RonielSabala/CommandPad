@@ -72,6 +72,10 @@ body:not(.variable-split-resizing)
   color: var(--color-text-primary);
 }
 
+.variable-value-input.variable-options-trigger:hover {
+  border-color: var(--color-border-focus);
+}
+
 .variable-key-input,
 .variable-value-input {
   font-family: var(--font-mono);

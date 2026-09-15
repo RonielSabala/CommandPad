@@ -14,6 +14,7 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { DragIcon, EyeIcon } from "@/components/icons";
 import { VariableActionsMenu } from "@/components/variables/VariableActionsMenu";
 import { VariableKeyInput } from "@/components/variables/VariableKeyInput";
+import { VariableOptionsSelect } from "@/components/variables/VariableOptionsSelect";
 import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useVariableSplitResize } from "@/hooks/useVariableSplitResize";
@@ -124,38 +125,47 @@ export const VariableRow = memo(function VariableRow({
           {...splitResize}
         />
 
-        <div className="variable-value-wrap">
-          <input
-            className="variable-value-input no-ligatures"
-            type="text"
-            placeholder={t.variables.valuePlaceholder}
+        {variable.options ? (
+          <VariableOptionsSelect
+            variableId={variableId}
             value={variableValue}
-            spellCheck={false}
-            autoComplete="off"
-            onChange={(event) =>
-              updateVariable(
-                variableId,
-                VariableField.VALUE,
-                event.target.value,
-              )
-            }
-            onKeyDown={(event) => {
-              if (event.key === Key.ENTER || event.key === Key.ESCAPE) {
-                event.currentTarget.blur();
-                return;
-              }
-
-              handleValuePairWrap(event);
-            }}
-            {...tooltip(isSecret ? "" : variableValue, TooltipVariant.CODE)}
+            options={variable.options}
+            triggerClassName="variable-value-input"
           />
+        ) : (
+          <div className="variable-value-wrap">
+            <input
+              className="variable-value-input no-ligatures"
+              type="text"
+              placeholder={t.variables.valuePlaceholder}
+              value={variableValue}
+              spellCheck={false}
+              autoComplete="off"
+              onChange={(event) =>
+                updateVariable(
+                  variableId,
+                  VariableField.VALUE,
+                  event.target.value,
+                )
+              }
+              onKeyDown={(event) => {
+                if (event.key === Key.ENTER || event.key === Key.ESCAPE) {
+                  event.currentTarget.blur();
+                  return;
+                }
 
-          {isSecret && variableValue && (
-            <div className="variable-value-mask" aria-hidden="true">
-              {SECRET_MASK}
-            </div>
-          )}
-        </div>
+                handleValuePairWrap(event);
+              }}
+              {...tooltip(isSecret ? "" : variableValue, TooltipVariant.CODE)}
+            />
+
+            {isSecret && variableValue && (
+              <div className="variable-value-mask" aria-hidden="true">
+                {SECRET_MASK}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {isSecret && (
@@ -172,6 +182,7 @@ export const VariableRow = memo(function VariableRow({
       <VariableActionsMenu
         variableId={variableId}
         isSecret={isSecret}
+        isEnum={!!variable.options}
         className={CssClass.ROW_ACTIONS}
       />
 

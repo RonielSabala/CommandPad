@@ -446,9 +446,18 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         onKeyDown={handleKeyDown}
         ref={rootRef}
       >
-        {header && <div className="code-editor-header">{header}</div>}
+        {header && (
+          <div
+            className={`code-editor-header ${CssClass.SELECT_KEY_INERT_CHILDREN}`}
+          >
+            {header}
+          </div>
+        )}
 
-        <div className="code-editor-surface" data-value={value}>
+        <div
+          className={`code-editor-surface ${CssClass.SELECT_KEY_INERT}`}
+          data-value={value}
+        >
           <Editor
             path={modelPath(modelId)}
             language={language}

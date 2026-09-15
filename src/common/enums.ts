@@ -139,6 +139,12 @@ export const VariableField = {
 } as const;
 export type VariableField = (typeof VariableField)[keyof typeof VariableField];
 
+export const VariableKind = {
+  TEXT: "text",
+  ENUM: "enum",
+} as const;
+export type VariableKind = (typeof VariableKind)[keyof typeof VariableKind];
+
 export const SelectionGroup = {
   BLOCK: "block",
   VARIABLE: "variable",

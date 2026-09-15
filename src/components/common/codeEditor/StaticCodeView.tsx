@@ -56,9 +56,15 @@ export function StaticCodeView({
         { [CodeMetricProperty.LINE_NUMBER_CHARS]: numberChars } as CSSProperties
       }
     >
-      {header && <div className="code-editor-header">{header}</div>}
+      {header && (
+        <div
+          className={`code-editor-header ${CssClass.SELECT_KEY_INERT_CHILDREN}`}
+        >
+          {header}
+        </div>
+      )}
 
-      <div className="code-editor-surface">
+      <div className={`code-editor-surface ${CssClass.SELECT_KEY_INERT}`}>
         <div className="code-editor-static-gutter">
           {promptPrefix && (
             <span className={CssClass.CODE_EDITOR_PROMPT}>{promptPrefix}</span>

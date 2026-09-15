@@ -203,7 +203,9 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
           )}
 
           {!isReadMode && (
-            <div className="image-actions">
+            <div
+              className={`image-actions ${CssClass.SELECT_KEY_HIDDEN} ${CssClass.SELECT_KEY_INERT_CHILDREN}`}
+            >
               <div className="image-actions-group">
                 {!loadFailed && (
                   <button
@@ -256,7 +258,11 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
           <p className="image-message">{t.image.emptyReadOnly}</p>
         </div>
       ) : (
-        <div className="image-dropzone" ref={dropzoneRef} tabIndex={0}>
+        <div
+          className={`image-dropzone ${CssClass.SELECT_KEY_INERT_CHILDREN}`}
+          ref={dropzoneRef}
+          tabIndex={0}
+        >
           <ImagePlaceholderBadge />
 
           <p className="image-message">{t.image.dropHint}</p>
