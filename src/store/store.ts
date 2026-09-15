@@ -36,6 +36,7 @@ import {
   SyncDestination,
   Theme,
   VariableField,
+  VariableKind,
   VaultError,
   VaultField,
   VaultPrompt,
@@ -308,6 +309,9 @@ export interface StoreState {
     value: string,
   ) => void;
   toggleVariableSecret: (variableId: string) => void;
+  setVariableKind: (variableId: string, kind: VariableKind) => void;
+  addVariableOption: (variableId: string, option: string) => void;
+  removeVariableOption: (variableId: string, option: string) => void;
   applyVariableKeyCase: (variableId: string, keyword: string) => void;
   reorderVariables: (sourceId: string, targetId: string) => void;
   clearVariableFlash: (variableId: string) => void;
@@ -2184,7 +2188,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
                   }
 
                   const value = renameValueTokens(v.value, oldKey, newKey);
-                  return value === v.value ? v : { ...v, value };
+                  const options = v.options?.map((option) =>
+                    renameValueTokens(option, oldKey, newKey),
+                  );
+
+                  const optionsChanged = options?.some(
+                    (option, index) => option !== v.options?.[index],
+                  );
+
+                  return value === v.value && !optionsChanged
+                    ? v
+                    : { ...v, value, options };
                 });
               }
             }
@@ -2212,7 +2226,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           withActiveTab(s, (tab) => ({
             ...tab,
             variables: tab.variables.map((v) =>
-              targets.has(v.id) ? { ...v, secret: marking } : v,
+              targets.has(v.id) && !(marking && v.options)
+                ? { ...v, secret: marking }
+                : v,
             ),
           })),
         );
@@ -2223,6 +2239,94 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         void ensureVaultForSecrets().then(() => get().saveState());
+      },
+
+      setVariableKind: (variableId, kind) => {
+        const state = get();
+        if (state.mode === AppMode.READ) {
+          return;
+        }
+
+        const targets = new Set(targetVariableIds(state, variableId));
+
+        set((s) =>
+          withActiveTab(s, (tab) => ({
+            ...tab,
+            variables: tab.variables.map((v) => {
+              if (!targets.has(v.id)) {
+                return v;
+              }
+
+              if (kind === VariableKind.TEXT) {
+                if (!v.options) {
+                  return v;
+                }
+
+                const text = { ...v };
+                delete text.options;
+                return text;
+              }
+
+              if (v.options) {
+                return v;
+              }
+
+              // The current value becomes the first choice
+              const choice = { ...v, options: v.value ? [v.value] : [] };
+              delete choice.secret;
+              return choice;
+            }),
+          })),
+        );
+
+        get().saveState();
+      },
+
+      addVariableOption: (variableId, option) => {
+        const trimmed = option.trim();
+        if (get().mode === AppMode.READ || !trimmed) {
+          return;
+        }
+
+        set((s) =>
+          withActiveTab(s, (tab) => ({
+            ...tab,
+            variables: tab.variables.map((v) =>
+              v.id !== variableId || !v.options || v.options.includes(trimmed)
+                ? v
+                : {
+                    ...v,
+                    options: [...v.options, trimmed],
+                    value: v.value || trimmed,
+                  },
+            ),
+          })),
+        );
+
+        get().saveState();
+      },
+
+      removeVariableOption: (variableId, option) => {
+        if (get().mode === AppMode.READ) {
+          return;
+        }
+
+        set((s) =>
+          withActiveTab(s, (tab) => ({
+            ...tab,
+            variables: tab.variables.map((v) => {
+              if (v.id !== variableId || !v.options?.includes(option)) {
+                return v;
+              }
+
+              const options = v.options.filter((entry) => entry !== option);
+              const value = v.value === option ? (options[0] ?? "") : v.value;
+              return { ...v, options, value };
+            }),
+          })),
+        );
+
+        get().saveState();
       },
 
       applyVariableKeyCase: (variableId, keyword) => {

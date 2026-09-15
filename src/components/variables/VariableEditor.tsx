@@ -26,6 +26,7 @@ import { useCallback, useEffect, useMemo, useRef, type RefObject } from "react";
 
 import "./VariableEditor.css";
 import { VariableKeyInput } from "./VariableKeyInput";
+import { VariableOptionsSelect } from "./VariableOptionsSelect";
 
 interface Props {
   variable: Variable;
@@ -128,36 +129,45 @@ export function VariableEditor({
         )}
       </div>
 
-      <CodeEditor
-        modelId={`${CodeModelScope.VARIABLE}/${variableId}`}
-        className="variable-editor-value"
-        value={variable.value}
-        language={language}
-        onChange={handleChange}
-        onFocus={valueClamp.onFocus}
-        onBlur={valueClamp.onBlur}
-        placeholder={t.variables.valuePlaceholder}
-        completions={valueCompletions}
-        actions={actions}
-        masked={isSecret}
-        clamped={valueClamp.clamped}
-        header={
-          !readMode && (
-            <CodeLanguageSelect
-              language={language}
-              onChange={handleLanguageChange}
-            />
-          )
-        }
-        footer={
-          valueClamp.overflows && (
-            <ClampToggle
-              expanded={valueClamp.expanded}
-              onToggle={valueClamp.toggle}
-            />
-          )
-        }
-      />
+      {variable.options ? (
+        <VariableOptionsSelect
+          variableId={variableId}
+          value={variable.value}
+          options={variable.options}
+          triggerClassName="variable-editor-options"
+        />
+      ) : (
+        <CodeEditor
+          modelId={`${CodeModelScope.VARIABLE}/${variableId}`}
+          className="variable-editor-value"
+          value={variable.value}
+          language={language}
+          onChange={handleChange}
+          onFocus={valueClamp.onFocus}
+          onBlur={valueClamp.onBlur}
+          placeholder={t.variables.valuePlaceholder}
+          completions={valueCompletions}
+          actions={actions}
+          masked={isSecret}
+          clamped={valueClamp.clamped}
+          header={
+            !readMode && (
+              <CodeLanguageSelect
+                language={language}
+                onChange={handleLanguageChange}
+              />
+            )
+          }
+          footer={
+            valueClamp.overflows && (
+              <ClampToggle
+                expanded={valueClamp.expanded}
+                onToggle={valueClamp.toggle}
+              />
+            )
+          }
+        />
+      )}
     </div>
   );
 }

@@ -208,6 +208,7 @@ export const VariableField = {
   VALUE: "value",
   SECRET: "secret",
   LANGUAGE: "language",
+  OPTIONS: "options",
 } as const;
 
 export const BlockField = {

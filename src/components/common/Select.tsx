@@ -35,6 +35,9 @@ interface SelectProps<T extends string> {
   align?: SelectAlign;
   title?: string;
   portal?: boolean;
+  optionAction?: (value: T) => ReactNode;
+  empty?: ReactNode;
+  footer?: ReactNode;
 }
 
 export function Select<T extends string>({
@@ -47,6 +50,9 @@ export function Select<T extends string>({
   align = SelectAlign.END,
   title,
   portal = false,
+  optionAction,
+  empty,
+  footer,
 }: SelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState<CSSProperties>();
@@ -123,10 +129,17 @@ export function Select<T extends string>({
       style={portal ? menuStyle : undefined}
       role="listbox"
     >
+      {options.length === 0 && empty && (
+        <li className="select-empty no-user-select">{empty}</li>
+      )}
+
       {options.map((option) => (
         <li
           key={option.value}
-          className="no-user-select"
+          className={classNames(
+            "no-user-select",
+            optionAction && "select-option-row",
+          )}
           role="option"
           aria-selected={option.value === value}
         >
@@ -139,8 +152,12 @@ export function Select<T extends string>({
           >
             {option.label}
           </button>
+
+          {optionAction?.(option.value)}
         </li>
       ))}
+
+      {footer && <li className="select-footer">{footer}</li>}
     </ul>
   );
 

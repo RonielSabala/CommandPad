@@ -95,6 +95,7 @@ export const VariableItem = memo(function VariableItem({
       <VariableActionsMenu
         variableId={variableId}
         isSecret={!!variable.secret}
+        isEnum={!!variable.options}
         className={CssClass.VARIABLE_ACTIONS}
       />
     </div>

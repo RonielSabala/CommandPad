@@ -1,0 +1,66 @@
+.variable-options-select {
+  min-width: 0;
+}
+
+.variable-options-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
+
+body.select-key-held:not(.read-mode) .variable-options-trigger {
+  cursor: default;
+  pointer-events: none;
+}
+
+.variable-option-remove {
+  flex-shrink: 0;
+}
+
+.variable-option-remove:hover {
+  background: transparent;
+  color: var(--danger);
+}
+
+.variable-option-add-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.variable-option-add {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  background: var(--color-surface-alt);
+  border: var(--border-standard);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  outline: none;
+}
+
+.variable-option-add:focus {
+  border-color: var(--color-border-focus);
+}
+
+.variable-option-add::placeholder {
+  color: var(--color-text-muted);
+}
+
+.variable-options-value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
+}
+
+.variable-options-value.is-placeholder {
+  color: var(--color-text-muted);
+}

@@ -34,6 +34,10 @@ A variable is an object with these fields:
   token, key or connection string.
 - `language` (optional): one of `plaintext`, `shell`, `powershell`, `json`, `xml`, `yaml`.
   Highlighting for the value only; defaults to `plaintext`.
+- `options` (optional, array of text): makes the variable an **enum**, edited by picking
+  from a list instead of typing. `value` must be one of the options. Use it when the value
+  is always one of a few known choices (environments, regions, log levels), and never
+  together with `secret`.
 
 Define a variable for anything that appears in more than one command, and for anything the
 user is expected to change: hosts, ports, paths, project names, environments, credentials.

@@ -116,9 +116,27 @@ body.read-mode .variable-editor-secret-btn {
   overflow: clip;
 }
 
+.variable-editor-options {
+  min-width: var(--block-min-width);
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  color: var(--color-text-primary);
+  background: transparent;
+  border: var(--border-standard);
+  border-top: none;
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  transition: opacity var(--transition-base);
+}
+
+.variable-editor-options:hover {
+  background: var(--color-surface-alt);
+}
+
 body:not(.read-mode)
   .variable-editor.is-unused:not(:focus-within)
-  :is(.variable-editor-key, .variable-editor-value) {
+  :is(.variable-editor-key, .variable-editor-value, .variable-editor-options) {
   opacity: 0.5;
 }
 

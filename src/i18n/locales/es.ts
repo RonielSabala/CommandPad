@@ -112,6 +112,15 @@ export const es: Messages = {
     valuePlaceholder: "valor",
     reveal: (count) => (count === 1 ? "Mostrar valor" : "Mostrar valores"),
     mask: (count) => (count === 1 ? "Ocultar valor" : "Ocultar valores"),
+    makeEnum: (count) =>
+      count === 1 ? "Elegir valor de una lista" : "Elegir valores de una lista",
+    makeText: (count) =>
+      count === 1 ? "Escribir valor libremente" : "Escribir valores libremente",
+    optionPlaceholder: "elige una opción",
+    noOptions: "Aún no hay opciones",
+    addOptionPlaceholder: "Agregar opción…",
+    addOption: "Agregar opción",
+    removeOption: (option) => `Eliminar ${option}`,
     actions: "Acciones de la variable",
     duplicate: (count) =>
       count === 1 ? "Duplicar variable" : "Duplicar variables",
@@ -860,6 +869,10 @@ Si algo sale mal, deshazlo en este orden:
         "No todas las variables cambian por el mismo motivo. Unas son valores que cambias a cada rato y otras son **constantes**: se mantienen igual durante toda la vida del libro, y solo son variables porque ese mismo valor aparece en comando tras comando. CommandPad las distingue por convención de nombres: una clave escrita entera en **mayúsculas** se considera una _constante_ y cualquier clave con alguna **minúscula** se considera _variable_.",
       constantsDemoHint:
         "La convención es solo de nombres: las constantes se resuelven, se referencian y se renombran igual que cualquier otra variable. Renombra abajo una clave de mayúsculas a minúsculas y al revés para ver cómo el color la sigue.",
+      enums: (variableActionsLabel, makeEnumLabel) =>
+        `Un valor también puede ser un conjunto fijo de opciones, como un entorno o una región, en lugar de texto libre: elige **${makeEnumLabel}** en el menú de **${variableActionsLabel}** de una variable para convertir su valor en un combo box, donde cada opción puede quitarse y una casilla al final añade una nueva.`,
+      enumsDemoHint:
+        "Abajo, `env` solo puede ser uno de tres clústeres. Elige otro y el comando lo sigue, sin posibilidad de equivocarte al escribir el contexto:",
     },
     variableReferences: {
       intro:
@@ -993,7 +1006,6 @@ Si algo sale mal, deshazlo en este orden:
         "Rellenar un valor hasta un ancho fijo es tan habitual que tiene sus propias operaciones. `ljust(texto; ancho)` añade el texto **al final** hasta que el valor mide `ancho` caracteres, `rjust` lo añade **al principio**, y `just` lo reparte entre **los dos extremos**.",
       justifyTable: `| Operación | Resultado |
 | --- | --- |
-| \`rfill(.; 3)\` | api... |
 | \`ljust(.; 6)\` | api... |
 | \`rjust(.; 6)\` | ...api |
 | \`just(.; 7)\` | ..api.. |`,

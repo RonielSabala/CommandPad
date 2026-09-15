@@ -6,7 +6,6 @@ import {
   VariableField,
 } from "@/common/editorConfig";
 
-/** The import/export shape for validation inside the JSON editors. */
 export const RUNBOOK_JSON_SCHEMA = {
   type: JsonSchemaType.OBJECT,
   required: [RunbookField.VARIABLES, RunbookField.BLOCKS],
@@ -21,6 +20,10 @@ export const RUNBOOK_JSON_SCHEMA = {
           [VariableField.VALUE]: { type: JsonSchemaType.STRING },
           [VariableField.SECRET]: { type: JsonSchemaType.BOOLEAN },
           [VariableField.LANGUAGE]: { enum: [...COMMAND_LANGUAGE_ORDER] },
+          [VariableField.OPTIONS]: {
+            type: JsonSchemaType.ARRAY,
+            items: { type: JsonSchemaType.STRING },
+          },
         },
       },
     },
