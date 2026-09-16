@@ -3,6 +3,7 @@ import { SelectSelector } from "@/common/constants/dom";
 import { EventType, Key } from "@/common/constants/events";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SidebarSectionChevronIcon } from "@/components/icons";
+import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import {
   useEffect,
@@ -58,10 +59,15 @@ export function Select<T extends string>({
 }: SelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState<CSSProperties>();
+  const mode = useStore((state) => state.mode);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLUListElement>(null);
   const optionCountRef = useRef(options.length);
   const scrollable = options.length > SelectConfig.MAX_VISIBLE_OPTIONS;
+
+  useEffect(() => {
+    setOpen(false);
+  }, [mode]);
 
   useEffect(() => {
     if (!open) {
