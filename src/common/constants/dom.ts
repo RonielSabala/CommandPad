@@ -22,6 +22,11 @@ export const InputSelector = {
   CODE: `${MonacoSelector.INPUT}, ${MonacoSelector.EDIT_CONTEXT}`,
 } as const;
 
+export const SelectSelector = {
+  OPTION: '[role="option"]',
+  SELECTED_OPTION: ".select-option.is-selected",
+} as const;
+
 export const ModalSelector = {
   OPEN: ".modal-backdrop.modal-visible",
 } as const;

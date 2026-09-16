@@ -107,6 +107,10 @@ export const TAB_HOVER_SWITCH_MS = 300;
 export const SECTION_ANIMATION_FALLBACK_MS = 250;
 export const ROUTE_PREFETCH_TIMEOUT_MS = 2000;
 
+export const SelectConfig = {
+  MAX_VISIBLE_OPTIONS: 6,
+} as const;
+
 export const TooltipConfig = {
   SHOW_DELAY_MS: 500,
   WARM_DELAY_MS: 90,
