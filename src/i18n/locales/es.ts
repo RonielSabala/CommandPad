@@ -1131,7 +1131,7 @@ Si algo sale mal, deshazlo en este orden:
       intro:
         "Antepón una barra invertida (`\\`) a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla.",
       menu: (escapeLabel) =>
-        `No hace falta escribir la barra invertida a mano. Pon el cursor dentro de una referencia (o selecciona una o varias), haz clic derecho y elige **${escapeLabel}**. Una barra invertida pegada a la llave de cierre se elimina.`,
+        `No hace falta escribir la barra invertida a mano. Pon el cursor dentro de una referencia (o selecciona una o varias), haz clic derecho y elige **${escapeLabel}**. Cada referencia que abarque recibe su barra invertida, incluidas las anidadas dentro de otra. Una barra invertida pegada a la llave de cierre se elimina.`,
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
       scope:

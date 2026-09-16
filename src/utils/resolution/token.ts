@@ -59,7 +59,7 @@ export function escapeBraces(text: string): string {
     result +=
       text.slice(lastEnd, escaped ? start - 1 : start) +
       ESCAPE_CHAR +
-      braceToken(dropTrailingEscape(match.raw));
+      braceToken(escapeBraces(dropTrailingEscape(match.raw)));
 
     lastEnd = match.end;
   }
