@@ -59,6 +59,8 @@ checkResolution("escaping a brace", {
     [String.raw`echo \{a,b\}`, String.raw`echo {a,b\}`],
     [String.raw`\{TEMPLATE;name={HOST}}`, "{TEMPLATE;name=example.com}"],
     [String.raw`\{TEMPLATE;name=\{HOST}}`, "{TEMPLATE;name={HOST}}"],
+    [String.raw`{TEMPLATE;name=\{HOST}}`, "projects/{HOST}/src"],
+    [String.raw`{|IF(1;\{HOST};no)}`, "{HOST}"],
   ],
 });
 
