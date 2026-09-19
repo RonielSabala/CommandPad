@@ -1134,6 +1134,8 @@ If something goes wrong, undo it in this order:
         "Only secret values are encrypted; everything else stays plain text, so an exported runbook is still readable and diffable. On disk a secret looks like `cpv1.<salt>.<iv>.<ciphertext>`: a label plus everything needed to decrypt it except your passphrase, which is why the file opens on any machine that has it.",
       unlocking:
         "Reopening the tab locks every runbook again, but only the one in front of you asks to unlock; the rest wait until you open them. A shield by a runbook's name shows its state: green and closed when unlocked, plain when locked, crossed out when nothing protects it. Click it to unlock, or to set a passphrase.",
+      importing:
+        "Importing a `.json` that holds secrets is the same story, with one shortcut: if any runbook you already unlocked this session uses the passphrase that file was encrypted with, it opens without asking you for it again.",
       changing: (changeLabel) =>
         `Click an unlocked shield to open **${changeLabel}**: enter the current passphrase, then the new one twice. Every secret in that runbook, including its copy in a linked cloud file, is re-encrypted on the spot. Other runbooks and past exports keep the old passphrase.`,
       markdownWarning:

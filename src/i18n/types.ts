@@ -620,6 +620,7 @@ export interface Messages {
       passphrase: (createLabel: string) => string;
       covered: string;
       unlocking: string;
+      importing: string;
       changing: (changeLabel: string) => string;
       markdownWarning: string;
     };

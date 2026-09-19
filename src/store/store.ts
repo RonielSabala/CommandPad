@@ -1096,7 +1096,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       const attempt = await decryptContentWithOpenVaults(content);
 
       if (attempt.failed === 0) {
-        return { content: attempt.content, vault, passphrase: null };
+        return {
+          content: attempt.content,
+          vault,
+          passphrase: attempt.passphrase,
+        };
       }
 
       let opened = attempt.content;
