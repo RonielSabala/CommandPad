@@ -75,6 +75,7 @@ interface Props {
   hasError?: boolean;
   clamped?: boolean;
   folding?: boolean;
+  gutter?: boolean;
   readOnly?: boolean;
   masked?: boolean;
   minimapSide?: PanelSide | null;
@@ -110,6 +111,22 @@ function editorIsInUse(instance: editor.IStandaloneCodeEditor): boolean {
   return isFindRevealed(instance) && focusIsAdrift();
 }
 
+function gutterOptions(
+  gutter: boolean,
+  promptPrefix?: string,
+): editor.IStandaloneEditorConstructionOptions {
+  if (!gutter) {
+    return { lineNumbers: "off", lineDecorationsWidth: 0 };
+  }
+
+  return {
+    lineNumbers: promptPrefix
+      ? (line) =>
+          line === MonacoLayout.FIRST_LINE ? promptPrefix : String(line)
+      : "on",
+  };
+}
+
 function modelPath(modelId: string): string {
   const suffix = RUNBOOK_JSON_SCOPES.some((scope) => modelId.startsWith(scope))
     ? CodeModelConfig.RUNBOOK_SUFFIX
@@ -143,6 +160,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       hasError = false,
       clamped = false,
       folding = false,
+      gutter = true,
       readOnly = false,
       masked = false,
       minimapSide = null,
@@ -180,6 +198,9 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
 
     const callbacks = useRef({ onSubmit, onFocus, onBlur, onScrollChange });
     callbacks.current = { onSubmit, onFocus, onBlur, onScrollChange };
+
+    const gutterRef = useRef(gutter);
+    gutterRef.current = gutter;
 
     const inputElement = useCallback(
       () =>
@@ -254,10 +275,13 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     const publishGutterWidth = (instance: editor.ICodeEditor) => {
       const { contentLeft } = instance.getLayoutInfo();
       const { gutterPadStart, gutterGapAfter } = getCodeMetrics();
+      const width = gutterRef.current
+        ? gutterPadStart + contentLeft - gutterGapAfter
+        : 0;
 
       rootRef.current?.style.setProperty(
         CodeEditorProperty.GUTTER_WIDTH,
-        `${gutterPadStart + contentLeft - gutterGapAfter}px`,
+        `${width}px`,
       );
     };
 
@@ -426,12 +450,17 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
           : flowingEditorOptions(folding)),
         placeholder: shownPlaceholder,
         readOnly,
-        lineNumbers: promptPrefix
-          ? (line) =>
-              line === MonacoLayout.FIRST_LINE ? promptPrefix : String(line)
-          : "on",
+        ...gutterOptions(gutter, promptPrefix),
       }),
-      [bounded, folding, minimapSide, shownPlaceholder, readOnly, promptPrefix],
+      [
+        bounded,
+        folding,
+        minimapSide,
+        shownPlaceholder,
+        readOnly,
+        gutter,
+        promptPrefix,
+      ],
     );
 
     const editor = (
@@ -439,6 +468,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         className={classNames(
           "code-editor",
           "code-editor-live",
+          !gutter && "no-gutter",
           !bounded && className,
           clamped && CssClass.CLAMPED,
           showMask && "is-masked",

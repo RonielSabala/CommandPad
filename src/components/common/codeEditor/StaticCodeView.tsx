@@ -14,6 +14,7 @@ interface Props {
   bounded?: boolean;
   hasError?: boolean;
   clamped?: boolean;
+  gutter?: boolean;
   masked?: boolean;
   header?: ReactNode;
   footer?: ReactNode;
@@ -29,6 +30,7 @@ export function StaticCodeView({
   bounded = false,
   hasError = false,
   clamped = false,
+  gutter = true,
   masked = false,
   header,
   footer,
@@ -49,6 +51,7 @@ export function StaticCodeView({
       className={classNames(
         "code-editor",
         "code-editor-static",
+        !gutter && "no-gutter",
         !bounded && className,
         clamped && CssClass.CLAMPED,
       )}
@@ -65,17 +68,24 @@ export function StaticCodeView({
       )}
 
       <div className={`code-editor-surface ${CssClass.SELECT_KEY_INERT}`}>
-        <div className="code-editor-static-gutter">
-          {promptPrefix && (
-            <span className={CssClass.CODE_EDITOR_PROMPT}>{promptPrefix}</span>
-          )}
+        {gutter && (
+          <div className="code-editor-static-gutter">
+            {promptPrefix && (
+              <span className={CssClass.CODE_EDITOR_PROMPT}>
+                {promptPrefix}
+              </span>
+            )}
 
-          {Array.from({ length: lineCount - firstNumbered + 1 }, (_, index) => (
-            <span key={index} className="code-editor-static-line">
-              {firstNumbered + index}
-            </span>
-          ))}
-        </div>
+            {Array.from(
+              { length: lineCount - firstNumbered + 1 },
+              (_, index) => (
+                <span key={index} className="code-editor-static-line">
+                  {firstNumbered + index}
+                </span>
+              ),
+            )}
+          </div>
+        )}
 
         <pre ref={textRef} className="code-editor-static-text no-ligatures">
           {text || (
