@@ -1,6 +1,6 @@
 .clamp-toggle {
   position: sticky;
-  bottom: 0;
+  bottom: var(--clamp-toggle-inset-bottom);
   z-index: var(--z-raised);
   justify-self: center;
   display: flex;

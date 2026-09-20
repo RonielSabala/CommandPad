@@ -1,4 +1,6 @@
 #docs-main {
+  --clamp-toggle-inset-bottom: var(--space-4);
+
   grid-area: main;
   overflow-y: auto;
   background: var(--color-bg);
