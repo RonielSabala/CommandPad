@@ -4,6 +4,10 @@
   background: var(--color-bg);
 }
 
+.panel-shell[data-panel-side="right"][data-panel-collapsed="true"] #docs-main {
+  border-right: var(--main-rail-inset) solid transparent;
+}
+
 #docs-article {
   max-width: var(--docs-max-width);
   margin: 0 auto;
