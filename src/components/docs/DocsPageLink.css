@@ -47,7 +47,8 @@
 .docs-page-link-title {
   display: flex;
   gap: var(--space-4);
-  font-size: var(--text-md);
+  font-family: var(--font-docs);
+  font-size: var(--docs-toc-size);
   font-weight: 600;
 }
 

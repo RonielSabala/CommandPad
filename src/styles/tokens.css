@@ -2,7 +2,8 @@
   /* --- CORE CONFIG --- */
   --tab-size: 4;
   --base-unit: 17px;
-  --font-sans: "Inter", sans-serif;
+  --font-sans: sans-serif;
+  --font-docs: "Segoe UI", sans-serif;
   --font-mono: "Cascadia Code", monospace;
   --code-line-height-ratio: 1.6;
 
@@ -169,6 +170,7 @@
 
   --docs-max-width: 52rem;
   --docs-heading-lg: 1.75rem;
+  --docs-toc-size: 0.9375rem;
   --docs-demo-sidebar-width: 18.75rem;
 
   /* --- COMPOUND TOKENS --- */

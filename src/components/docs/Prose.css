@@ -1,6 +1,7 @@
 /* Prose */
 
 .docs-prose {
+  font-family: var(--font-docs);
   font-size: var(--text-base);
   line-height: 1.7;
   color: var(--color-text-secondary);
