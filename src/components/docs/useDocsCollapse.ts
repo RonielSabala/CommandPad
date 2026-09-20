@@ -1,12 +1,10 @@
 import {
-  DOCS_SECTION_ORDER,
   getDocsSectionParents,
   type DocsSectionId,
 } from "@/common/constants/docs";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 
 const SECTION_PARENTS = getDocsSectionParents();
-const SECTION_IDS = DOCS_SECTION_ORDER.map((entry) => entry.id);
 const PARENT_IDS = new Set(
   Object.values(SECTION_PARENTS).filter(
     (id): id is DocsSectionId => id !== null,
@@ -14,72 +12,37 @@ const PARENT_IDS = new Set(
 );
 
 export interface DocsCollapse {
-  isArticleCollapsed: (id: DocsSectionId) => boolean;
-  isArticleVisible: (id: DocsSectionId) => boolean;
-  toggleArticle: (id: DocsSectionId) => void;
-  isNavCollapsed: (id: DocsSectionId) => boolean;
-  isNavVisible: (id: DocsSectionId) => boolean;
+  isCollapsed: (id: DocsSectionId) => boolean;
+  isVisible: (id: DocsSectionId) => boolean;
   hasChildren: (id: DocsSectionId) => boolean;
-  activateFromToc: (id: DocsSectionId) => void;
-  toggleNav: (id: DocsSectionId) => void;
+  toggle: (id: DocsSectionId) => void;
   allCollapsed: boolean;
   toggleAll: () => void;
-  visibleIds: readonly DocsSectionId[];
 }
 
 export function useDocsCollapse(): DocsCollapse {
-  const [articleCollapsed, setArticleCollapsed] = useState<
-    ReadonlySet<DocsSectionId>
-  >(() => new Set());
-
-  const [navCollapsed, setNavCollapsed] = useState<ReadonlySet<DocsSectionId>>(
+  const [collapsed, setCollapsed] = useState<ReadonlySet<DocsSectionId>>(
     () => new Set(),
   );
 
-  const isArticleCollapsed = useCallback(
-    (id: DocsSectionId) => articleCollapsed.has(id),
-    [articleCollapsed],
+  const isCollapsed = useCallback(
+    (id: DocsSectionId) => collapsed.has(id),
+    [collapsed],
   );
-
-  const isArticleVisible = useCallback(
+  const isVisible = useCallback(
     (id: DocsSectionId) => {
       const parent = SECTION_PARENTS[id];
-      return parent === null || !articleCollapsed.has(parent);
+      return parent === null || !collapsed.has(parent);
     },
-    [articleCollapsed],
+    [collapsed],
   );
-
-  const toggleArticle = useCallback((id: DocsSectionId) => {
-    setArticleCollapsed((current) => {
-      const next = new Set(current);
-      if (!next.delete(id)) {
-        next.add(id);
-      }
-
-      return next;
-    });
-  }, []);
-
-  const isNavCollapsed = useCallback(
-    (id: DocsSectionId) => navCollapsed.has(id),
-    [navCollapsed],
-  );
-
-  const isNavVisible = useCallback(
-    (id: DocsSectionId) => {
-      const parent = SECTION_PARENTS[id];
-      return parent === null || !navCollapsed.has(parent);
-    },
-    [navCollapsed],
-  );
-
   const hasChildren = useCallback(
     (id: DocsSectionId) => PARENT_IDS.has(id),
     [],
   );
 
-  const toggleNav = useCallback((id: DocsSectionId) => {
-    setNavCollapsed((current) => {
+  const toggle = useCallback((id: DocsSectionId) => {
+    setCollapsed((current) => {
       const next = new Set(current);
       if (!next.delete(id)) {
         next.add(id);
@@ -89,50 +52,21 @@ export function useDocsCollapse(): DocsCollapse {
     });
   }, []);
 
-  const activateFromToc = useCallback((id: DocsSectionId) => {
-    setArticleCollapsed((current) => {
-      const parent = SECTION_PARENTS[id];
-      if (!current.has(id) && (parent === null || !current.has(parent))) {
-        return current;
-      }
-
-      const next = new Set(current);
-      next.delete(id);
-      if (parent !== null) {
-        next.delete(parent);
-      }
-
-      return next;
-    });
-  }, []);
-
-  const allCollapsed = articleCollapsed.size === SECTION_IDS.length;
+  // Only a parent has rows to fold, so only a parent counts as collapsed
+  const allCollapsed = collapsed.size === PARENT_IDS.size;
 
   const toggleAll = useCallback(() => {
-    setArticleCollapsed((current) => {
-      const collapsing = current.size !== SECTION_IDS.length;
-      setNavCollapsed(collapsing ? new Set(SECTION_IDS) : new Set());
-
-      return collapsing ? new Set(SECTION_IDS) : new Set();
-    });
+    setCollapsed((current) =>
+      current.size === PARENT_IDS.size ? new Set() : new Set(PARENT_IDS),
+    );
   }, []);
 
-  const visibleIds = useMemo(
-    () => SECTION_IDS.filter((id) => isArticleVisible(id)),
-    [isArticleVisible],
-  );
-
   return {
-    isArticleCollapsed,
-    isArticleVisible,
-    toggleArticle,
-    isNavCollapsed,
-    isNavVisible,
+    isCollapsed,
+    isVisible,
     hasChildren,
-    activateFromToc,
-    toggleNav,
+    toggle,
     allCollapsed,
     toggleAll,
-    visibleIds,
   };
 }

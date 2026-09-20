@@ -652,6 +652,8 @@ export const en: Messages = {
       tocTitle: "Contents",
       expandAll: "Expand all sections",
       collapseAll: "Collapse all sections",
+      previousPage: "Previous",
+      nextPage: "Next",
     },
     toc: {
       [DocsSectionId.GETTING_STARTED]: "Getting started",

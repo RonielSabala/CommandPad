@@ -72,4 +72,5 @@ export const ScrollIntoView = {
   BLOCK_CENTER: "center",
   BLOCK_NEAREST: "nearest",
   BEHAVIOR_SMOOTH: "smooth",
+  BEHAVIOR_INSTANT: "instant",
 } as const;

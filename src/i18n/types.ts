@@ -394,6 +394,8 @@ export interface Messages {
       tocTitle: string;
       expandAll: string;
       collapseAll: string;
+      previousPage: string;
+      nextPage: string;
     };
     toc: Record<DocsSectionId, string>;
     demo: {

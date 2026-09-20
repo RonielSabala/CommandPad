@@ -125,11 +125,6 @@ export const MinimapConfig = {
   OVERSCROLL_PROPERTY: "--minimap-overscroll",
 } as const;
 
-// A docs section becomes current once its top edge crosses this far down the scroll container
-export const DocsScrollSpy = {
-  TRIGGER_RATIO: 0.05,
-} as const;
-
 export const WrapPairs = {
   "(": ")",
   "[": "]",

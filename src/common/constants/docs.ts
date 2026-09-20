@@ -55,9 +55,15 @@ export const DocsSectionLevel = {
 export type DocsSectionLevel =
   (typeof DocsSectionLevel)[keyof typeof DocsSectionLevel];
 
-interface DocsSectionEntry {
+export interface DocsSectionEntry {
   id: DocsSectionId;
   level: DocsSectionLevel;
+}
+
+const SECTION_IDS = new Set<string>(Object.values(DocsSectionId));
+
+export function isDocsSectionId(value: string): value is DocsSectionId {
+  return SECTION_IDS.has(value);
 }
 
 // Display order
