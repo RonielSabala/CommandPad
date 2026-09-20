@@ -1,31 +1,58 @@
 .docs-page-link {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   min-width: 0;
-  padding: var(--space-6) var(--space-8);
-  background: var(--color-surface);
+  max-width: var(--docs-page-link-max-width);
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
   border: var(--border-standard);
+  border-color: transparent;
   border-radius: var(--radius-md);
   text-align: left;
   color: var(--color-text-secondary);
   cursor: pointer;
-}
-
-.docs-page-link.is-next {
-  grid-column: 2;
-  justify-content: flex-end;
-  text-align: right;
+  transition:
+    background var(--transition-base),
+    border-color var(--transition-base),
+    color var(--transition-base);
 }
 
 .docs-page-link:hover {
-  border-color: var(--accent);
+  background: var(--color-surface-alt);
+  border-color: var(--accent-text);
   color: var(--color-text-primary);
 }
+
+/* Next button */
+
+.docs-page-link.is-next {
+  grid-column: 3;
+  justify-self: end;
+  justify-content: flex-end;
+  text-align: right;
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.docs-page-link.is-next:hover {
+  background: var(--accent-dim);
+  border-color: var(--accent-text);
+  color: var(--accent-text);
+}
+
+.docs-page-link.is-next .docs-page-link-icon,
+.docs-page-link.is-next .docs-page-link-number {
+  color: var(--accent-text);
+}
+
+/* Button elements */
 
 .docs-page-link-icon {
   flex-shrink: 0;
   color: var(--color-text-muted);
+  transition: color var(--transition-base);
 }
 
 .docs-page-link:hover .docs-page-link-icon {
@@ -35,18 +62,20 @@
 .docs-page-link-text {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
   min-width: 0;
 }
 
 .docs-page-link-label {
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: var(--color-text-muted);
 }
 
 .docs-page-link-title {
   display: flex;
-  gap: var(--space-4);
+  gap: var(--space-3);
+  min-width: 0;
   font-family: var(--font-docs);
   font-size: var(--docs-toc-size);
   font-weight: 600;
@@ -56,9 +85,17 @@
   justify-content: flex-end;
 }
 
+.docs-page-link-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .docs-page-link-number {
+  flex-shrink: 0;
   font-family: var(--font-mono);
   color: var(--color-text-muted);
+  transition: color var(--transition-base);
 }
 
 .docs-page-link:hover .docs-page-link-number {

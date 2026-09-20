@@ -9,9 +9,9 @@ import { usePanelKeybindings } from "@/hooks/usePanelKeybindings";
 import { useTranslation } from "@/i18n";
 import { useEffect, useRef } from "react";
 
-import { DocsFooter } from "./DocsFooter";
 import { DocsHeader } from "./DocsHeader";
 import "./DocsPage.css";
+import { DocsPageBack } from "./DocsPageBack";
 import { DocsPageNav } from "./DocsPageNav";
 import { DocsSection } from "./DocsSection";
 import { DOCS_SECTION_CONTENT } from "./docsSections";
@@ -23,10 +23,12 @@ const SECTION_NUMBERS = getDocsSectionNumbers();
 
 export function DocsPage() {
   const t = useTranslation();
-  const mainRef = useRef<HTMLElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const collapse = useDocsCollapse();
 
-  const { entry, previousId, nextId, goTo } = useDocsPagination(mainRef);
+  const { entry, previousId, nextId, position, total, goTo } =
+    useDocsPagination(scrollRef);
+
   const { id, level } = entry;
 
   const Content = DOCS_SECTION_CONTENT[id];
@@ -51,25 +53,29 @@ export function DocsPage() {
 
       <DocsToc pageId={id} collapse={collapse} onNavigate={goTo} />
 
-      <main ref={mainRef} id="docs-main">
-        <article id="docs-article">
-          <DocsSection
-            id={id}
-            level={level}
-            number={SECTION_NUMBERS[id]}
-            title={t.docs.toc[id]}
-          >
-            <Content />
-          </DocsSection>
+      <main id="docs-main">
+        <div ref={scrollRef} id="docs-scroll">
+          <article id="docs-article">
+            {previousId && <DocsPageBack id={previousId} onNavigate={goTo} />}
 
-          <DocsPageNav
-            previousId={previousId}
-            nextId={nextId}
-            onNavigate={goTo}
-          />
+            <DocsSection
+              id={id}
+              level={level}
+              number={SECTION_NUMBERS[id]}
+              title={t.docs.toc[id]}
+            >
+              <Content />
+            </DocsSection>
+          </article>
+        </div>
 
-          <DocsFooter />
-        </article>
+        <DocsPageNav
+          previousId={previousId}
+          nextId={nextId}
+          position={position}
+          total={total}
+          onNavigate={goTo}
+        />
       </main>
     </PanelShell>
   );

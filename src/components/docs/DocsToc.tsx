@@ -5,12 +5,14 @@ import {
   getDocsSectionParents,
   type DocsSectionId,
 } from "@/common/constants/docs";
+import { ScrollIntoView } from "@/common/constants/dom";
 import { PanelId } from "@/common/enums";
 import { ResizablePanel } from "@/components/common/panel/ResizablePanel";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
+import { useEffect, useRef } from "react";
 
 import "./DocsToc.css";
 import type { DocsCollapse } from "./useDocsCollapse";
@@ -26,10 +28,18 @@ interface Props {
 
 export function DocsToc({ pageId, collapse, onNavigate }: Props) {
   const t = useTranslation();
+  const activeRef = useRef<HTMLAnchorElement>(null);
 
   const highlightId = collapse.isVisible(pageId)
     ? pageId
     : SECTION_PARENTS[pageId];
+
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({
+      block: ScrollIntoView.BLOCK_NEAREST,
+      behavior: ScrollIntoView.BEHAVIOR_SMOOTH,
+    });
+  }, [highlightId]);
 
   const toggleAllLabel = collapse.allCollapsed
     ? t.docs.meta.expandAll
@@ -62,6 +72,7 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
           ({ id, level }) => (
             <a
               key={id}
+              ref={id === highlightId ? activeRef : null}
               href={`#${id}`}
               className={classNames(
                 "docs-toc-item",

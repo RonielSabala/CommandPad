@@ -1,6 +1,41 @@
+#docs-page-bar {
+  --docs-bar-inline-padding: var(--space-20);
+
+  position: relative;
+  grid-area: nav;
+  background: var(--color-surface);
+}
+
+/* Page progress */
+
+.docs-page-progress {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  height: var(--docs-page-progress-height);
+  background: var(--color-surface-alt);
+}
+
+.docs-page-progress::after {
+  content: "";
+  display: block;
+  width: var(--docs-page-progress);
+  height: 100%;
+  background: var(--accent);
+  transition: width var(--transition-base);
+}
+
 #docs-page-nav {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr auto auto 1fr;
+  align-items: center;
   gap: var(--space-6);
-  margin-top: var(--space-16);
+  padding: var(--space-4) var(--docs-bar-inline-padding);
+}
+
+.docs-page-nav-count {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
 }

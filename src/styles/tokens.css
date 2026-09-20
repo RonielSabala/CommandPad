@@ -172,6 +172,8 @@
   --docs-heading-lg: 1.75rem;
   --docs-toc-size: 0.9375rem;
   --docs-demo-sidebar-width: 18.75rem;
+  --docs-page-link-max-width: 18rem;
+  --docs-page-progress-height: 0.1875rem;
 
   /* --- COMPOUND TOKENS --- */
   --border-standard: 1px solid var(--color-border);

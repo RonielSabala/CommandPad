@@ -396,6 +396,8 @@ export interface Messages {
       collapseAll: string;
       previousPage: string;
       nextPage: string;
+      backTo: (title: string) => string;
+      pageProgress: (position: number, total: number) => string;
     };
     toc: Record<DocsSectionId, string>;
     demo: {

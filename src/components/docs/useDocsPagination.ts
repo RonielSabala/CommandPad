@@ -13,6 +13,8 @@ export interface DocsPagination {
   entry: DocsSectionEntry;
   previousId: DocsSectionId | null;
   nextId: DocsSectionId | null;
+  position: number;
+  total: number;
   goTo: (id: DocsSectionId) => void;
 }
 
@@ -63,6 +65,8 @@ export function useDocsPagination(
       index < DOCS_SECTION_ORDER.length - 1
         ? DOCS_SECTION_ORDER[index + 1].id
         : null,
+    position: index + 1,
+    total: DOCS_SECTION_ORDER.length,
     goTo,
   };
 }

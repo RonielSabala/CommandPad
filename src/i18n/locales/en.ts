@@ -654,6 +654,8 @@ export const en: Messages = {
       collapseAll: "Collapse all sections",
       previousPage: "Previous",
       nextPage: "Next",
+      backTo: (title) => `Back to ${title}`,
+      pageProgress: (position, total) => `${position} of ${total}`,
     },
     toc: {
       [DocsSectionId.GETTING_STARTED]: "Getting started",

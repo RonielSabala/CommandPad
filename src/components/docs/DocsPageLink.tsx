@@ -33,7 +33,7 @@ export function DocsPageLink({ id, next = false, onNavigate }: Props) {
 
         <span className="docs-page-link-title">
           <span className="docs-page-link-number">{SECTION_NUMBERS[id]}</span>
-          {t.docs.toc[id]}
+          <span className="docs-page-link-name">{t.docs.toc[id]}</span>
         </span>
       </span>
 
