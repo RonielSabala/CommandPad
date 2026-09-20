@@ -2,16 +2,19 @@ import { CssClass } from "@/common/constants/css";
 import { Cursor } from "@/common/constants/dom";
 import { AppMode, Theme } from "@/common/enums";
 import { useStore } from "@/store/store";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 
 export function useThemeClass(): void {
   const theme = useStore((state) => state.theme);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle(
-      CssClass.THEME_LIGHT,
-      theme === Theme.LIGHT,
-    );
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    root.classList.add(CssClass.THEME_SWITCHING);
+    root.classList.toggle(CssClass.THEME_LIGHT, theme === Theme.LIGHT);
+
+    // Commit the new colors while transitions are off
+    root.getBoundingClientRect();
+    root.classList.remove(CssClass.THEME_SWITCHING);
   }, [theme]);
 }
 
