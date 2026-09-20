@@ -1,3 +1,5 @@
+import { CssClass } from "@/common/constants/css";
+
 export const ElementId = {
   BLOCKS_LIST: "blocks-list",
   VARIABLES_LIST: "variables-list",
@@ -29,6 +31,10 @@ export const SelectSelector = {
 
 export const ModalSelector = {
   OPEN: ".modal-backdrop.modal-visible",
+} as const;
+
+export const BodySelector = {
+  RESIZING: `.${CssClass.PANEL_RESIZING}, .${CssClass.VARIABLE_SPLIT_RESIZING}`,
 } as const;
 
 export const EditCommand = {

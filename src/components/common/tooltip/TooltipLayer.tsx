@@ -1,5 +1,5 @@
 import { TooltipConfig } from "@/common/config";
-import { DataAttr } from "@/common/constants/dom";
+import { BodySelector, DataAttr } from "@/common/constants/dom";
 import { EventType, PASSIVE, PASSIVE_CAPTURE } from "@/common/constants/events";
 import type { TooltipVariant } from "@/common/enums";
 import { classNames } from "@/utils/string";
@@ -74,6 +74,11 @@ export function TooltipLayer() {
 
   const show = useCallback(
     (element: HTMLElement) => {
+      if (document.body.matches(BodySelector.RESIZING)) {
+        hide();
+        return;
+      }
+
       if (activeRef.current?.element === element) {
         return;
       }
