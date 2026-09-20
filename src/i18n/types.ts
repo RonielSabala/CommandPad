@@ -130,6 +130,7 @@ export interface Messages {
     duplicate: (count: number) => string;
     renameCase: string;
     remove: (count: number) => string;
+    selected: (count: number) => string;
     dragResizeSplit: string;
     unusedTitle: (key: string) => string;
   };
@@ -155,6 +156,7 @@ export interface Messages {
     insertBelow: string;
     duplicate: (count: number) => string;
     delete: (count: number) => string;
+    selected: (count: number) => string;
     emptyTitle: string;
     emptyHint: string;
   };

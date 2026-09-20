@@ -124,6 +124,8 @@ export const en: Messages = {
       count === 1 ? "Duplicate variable" : "Duplicate variables",
     renameCase: "Change key case",
     remove: (count) => (count === 1 ? "Remove variable" : "Remove variables"),
+    selected: (count) =>
+      count === 1 ? "1 variable selected" : `${count} variables selected`,
     dragResizeSplit: "Drag to resize key and value · double-click to even out",
     unusedTitle: (key) => `${key} (unused)`,
   },
@@ -156,6 +158,8 @@ export const en: Messages = {
     duplicate: (count) =>
       count === 1 ? "Duplicate block" : "Duplicate blocks",
     delete: (count) => (count === 1 ? "Delete block" : "Delete blocks"),
+    selected: (count) =>
+      count === 1 ? "1 block selected" : `${count} blocks selected`,
     emptyTitle: "No blocks yet.",
     emptyHint: "Add a command or note below.",
   },

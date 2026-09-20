@@ -127,6 +127,10 @@ export const es: Messages = {
     renameCase: "Cambiar capitalización de la clave",
     remove: (count) =>
       count === 1 ? "Eliminar variable" : "Eliminar variables",
+    selected: (count) =>
+      count === 1
+        ? "1 variable seleccionada"
+        : `${count} variables seleccionadas`,
     dragResizeSplit:
       "Arrastra para redimensionar clave y valor · doble clic para igualarlos",
     unusedTitle: (key) => `${key} (sin usar)`,
@@ -160,6 +164,8 @@ export const es: Messages = {
     duplicate: (count) =>
       count === 1 ? "Duplicar bloque" : "Duplicar bloques",
     delete: (count) => (count === 1 ? "Eliminar bloque" : "Eliminar bloques"),
+    selected: (count) =>
+      count === 1 ? "1 bloque seleccionado" : `${count} bloques seleccionados`,
     emptyTitle: "Aún no hay bloques.",
     emptyHint: "Agrega un comando o una nota abajo.",
   },

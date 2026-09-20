@@ -20,6 +20,7 @@ import { VaultModal } from "../modals/vault/VaultModal";
 import { RunbookImportInput } from "../sidebar/runbooks/RunbookImportInput";
 import { Sidebar } from "../sidebar/Sidebar";
 import { MainPanel } from "./MainPanel";
+import { SelectionCount } from "./SelectionCount";
 
 export function WorkspacePage() {
   useWorkspaceBodyClasses();
@@ -36,6 +37,7 @@ export function WorkspacePage() {
         <Sidebar />
         <RunbookImportInput />
         <MainPanel />
+        <SelectionCount />
       </PanelShell>
 
       <ImageLightbox />
