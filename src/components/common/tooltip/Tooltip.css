@@ -48,6 +48,10 @@
   text-align: left;
 }
 
+.tooltip-label {
+  display: block;
+}
+
 /* Tooltip arrow */
 
 .tooltip-arrow {

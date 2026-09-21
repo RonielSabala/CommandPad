@@ -124,6 +124,8 @@ export const en: Messages = {
       count === 1 ? "Duplicate variable" : "Duplicate variables",
     renameCase: "Change key case",
     remove: (count) => (count === 1 ? "Remove variable" : "Remove variables"),
+    selected: (count) =>
+      count === 1 ? "1 variable selected" : `${count} variables selected`,
     dragResizeSplit: "Drag to resize key and value · double-click to even out",
     unusedTitle: (key) => `${key} (unused)`,
   },
@@ -156,6 +158,8 @@ export const en: Messages = {
     duplicate: (count) =>
       count === 1 ? "Duplicate block" : "Duplicate blocks",
     delete: (count) => (count === 1 ? "Delete block" : "Delete blocks"),
+    selected: (count) =>
+      count === 1 ? "1 block selected" : `${count} blocks selected`,
     emptyTitle: "No blocks yet.",
     emptyHint: "Add a command or note below.",
   },
@@ -648,6 +652,10 @@ export const en: Messages = {
       tocTitle: "Contents",
       expandAll: "Expand all sections",
       collapseAll: "Collapse all sections",
+      previousPage: "Previous",
+      nextPage: "Next",
+      backTo: (title) => `Back to ${title}`,
+      pageProgress: (position, total) => `${position} of ${total}`,
     },
     toc: {
       [DocsSectionId.GETTING_STARTED]: "Getting started",
@@ -1113,7 +1121,7 @@ If something goes wrong, undo it in this order:
       intro:
         "Prefix a reference with a backslash (`\\`) in a command block to output it literally instead of resolving it.",
       menu: (escapeLabel) =>
-        `You do not have to type the backslash yourself. Put the caret inside a reference (or select one or more of them), right-click it and pick **${escapeLabel}**. A backslash left against the closing brace is dropped.`,
+        `You do not have to type the backslash yourself. Put the caret inside a reference (or select one or more of them), right-click it and pick **${escapeLabel}**. Every reference it covers gets a backslash, including the ones nested inside another. A backslash left against the closing brace is dropped.`,
       tryHint:
         "Try deleting the backslash in the command below and watch the literal braces turn into an active reference:",
       scope:
@@ -1134,6 +1142,8 @@ If something goes wrong, undo it in this order:
         "Only secret values are encrypted; everything else stays plain text, so an exported runbook is still readable and diffable. On disk a secret looks like `cpv1.<salt>.<iv>.<ciphertext>`: a label plus everything needed to decrypt it except your passphrase, which is why the file opens on any machine that has it.",
       unlocking:
         "Reopening the tab locks every runbook again, but only the one in front of you asks to unlock; the rest wait until you open them. A shield by a runbook's name shows its state: green and closed when unlocked, plain when locked, crossed out when nothing protects it. Click it to unlock, or to set a passphrase.",
+      importing:
+        "Importing a `.json` that holds secrets is the same story, with one shortcut: if any runbook you already unlocked this session uses the passphrase that file was encrypted with, it opens without asking you for it again.",
       changing: (changeLabel) =>
         `Click an unlocked shield to open **${changeLabel}**: enter the current passphrase, then the new one twice. Every secret in that runbook, including its copy in a linked cloud file, is re-encrypted on the spot. Other runbooks and past exports keep the old passphrase.`,
       markdownWarning:

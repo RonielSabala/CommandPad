@@ -39,7 +39,8 @@
   gap: var(--space-4);
   padding: var(--space-4) var(--space-10);
   border-left: var(--space-2) solid transparent;
-  font-size: var(--text-md);
+  font-family: var(--font-docs);
+  font-size: var(--docs-toc-size);
   line-height: 1.4;
   color: var(--color-text-secondary);
   text-decoration: none;
@@ -100,7 +101,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   color: var(--color-text-muted);
-  min-width: var(--space-10);
+  padding-right: var(--space-2);
 }
 
 .docs-toc-active .docs-toc-number {

@@ -16,6 +16,7 @@ import {
 interface VaultSession {
   key: CryptoKey;
   salt: Uint8Array;
+  passphrase: string;
 }
 
 const sessions = new Map<string, VaultSession>();
@@ -54,7 +55,7 @@ export async function createVault(
 ): Promise<VaultRecord> {
   const salt = randomSalt();
   const key = await deriveVaultKey(passphrase, salt);
-  sessions.set(scope, { key, salt });
+  sessions.set(scope, { key, salt, passphrase });
 
   return {
     salt: encodeSalt(salt),
@@ -76,7 +77,7 @@ export async function unlockVault(
     return false;
   }
 
-  sessions.set(scope, { key, salt });
+  sessions.set(scope, { key, salt, passphrase });
   return true;
 }
 
@@ -208,23 +209,48 @@ export async function decryptContent(
   return decryptWith(content, async () => open.key);
 }
 
+export interface OpenVaultDecryptResult extends DecryptResult {
+  /** The open vault's passphrase that opened the file, when a salt did not. */
+  passphrase: string | null;
+}
+
 /**
- * Decrypts against whichever vault is already open, matching each payload to a
- * session by the salt it carries.
+ * Decrypts against whichever vault is already open: first by matching each
+ * payload to a session by the salt it carries, then by retrying the passphrases
+ * those sessions were opened with.
  */
 export async function decryptContentWithOpenVaults(
   content: RunbookContent,
-): Promise<DecryptResult> {
+): Promise<OpenVaultDecryptResult> {
   const keysBySalt = new Map<string, CryptoKey>();
 
   for (const { key, salt } of sessions.values()) {
     keysBySalt.set(encodeSalt(salt), key);
   }
 
-  return decryptWith(content, async (value) => {
+  const bySalt = await decryptWith(content, async (value) => {
     const salt = readPayloadSalt(value);
     return (salt && keysBySalt.get(salt)) || null;
   });
+
+  if (bySalt.failed > 0) {
+    const openPassphrases = new Set(
+      [...sessions.values()].map((session) => session.passphrase),
+    );
+
+    for (const passphrase of openPassphrases) {
+      const attempt = await decryptContentWithPassphrase(
+        bySalt.content,
+        passphrase,
+      );
+
+      if (attempt.failed === 0) {
+        return { ...attempt, passphrase };
+      }
+    }
+  }
+
+  return { ...bySalt, passphrase: null };
 }
 
 /**

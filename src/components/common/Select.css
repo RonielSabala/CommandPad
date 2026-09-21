@@ -27,6 +27,12 @@
   box-shadow: 0 var(--space-2) var(--space-6) var(--shadow-color-float);
 }
 
+.select-menu.is-scrollable {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding-bottom: 0;
+}
+
 .select-menu.align-start {
   left: 0;
 }
@@ -83,9 +89,16 @@
 }
 
 .select-footer:not(:first-child) {
-  margin-top: var(--space-1);
   padding-top: var(--space-2);
   border-top: var(--border-standard);
+}
+
+.select-menu.is-scrollable .select-footer {
+  position: sticky;
+  bottom: 0;
+  margin: calc(-1 * var(--space-1)) calc(-1 * var(--space-2)) 0;
+  padding: var(--space-2);
+  background: var(--color-surface);
 }
 
 .select-menu-portal {

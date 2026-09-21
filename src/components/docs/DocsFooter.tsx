@@ -3,7 +3,7 @@ import "./DocsFooter.css";
 
 export function DocsFooter() {
   return (
-    <footer id="docs-footer" className="footer no-user-select">
+    <footer id="docs-footer" className="footer">
       <FooterContent />
     </footer>
   );

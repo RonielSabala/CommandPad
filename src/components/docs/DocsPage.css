@@ -1,11 +1,27 @@
 #docs-main {
+  --clamp-toggle-inset-bottom: var(--space-4);
+
   grid-area: main;
-  overflow-y: auto;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "scroll"
+    "nav";
+  min-height: 0;
   background: var(--color-bg);
+}
+
+.panel-shell[data-panel-side="right"][data-panel-collapsed="true"] #docs-main {
+  border-right: var(--main-rail-inset) solid transparent;
+}
+
+#docs-scroll {
+  grid-area: scroll;
+  overflow-y: auto;
 }
 
 #docs-article {
   max-width: var(--docs-max-width);
   margin: 0 auto;
-  padding: var(--space-12) var(--space-20) 60vh;
+  padding: var(--space-12) var(--space-20);
 }

@@ -5,6 +5,11 @@
       var(--code-gutter-gap-before, 0px)
   );
 
+  --code-editor-text-start: calc(
+    var(--code-editor-gutter-width, 0px) - var(--code-gutter-pad-start, 0px) +
+      var(--space-6)
+  );
+
   --code-editor-clamp-height: calc(var(--clamp-lines-height) + var(--space-10));
   --code-editor-clamp-mask: var(--clamp-mask);
 
@@ -31,6 +36,16 @@
   border-right: var(--border-standard);
   pointer-events: none;
   z-index: var(--z-behind);
+}
+
+.code-editor.no-gutter {
+  --code-editor-gutter-width: 0px;
+  --code-gutter-pad-start: var(--space-6);
+  --code-editor-text-start: 0px;
+}
+
+.code-editor.no-gutter::before {
+  content: none;
 }
 
 .code-editor-header {
@@ -81,7 +96,7 @@
   position: absolute;
   inset: 0;
   padding: var(--code-editor-surface-padding-top, var(--space-5)) 0 0
-    calc(var(--code-editor-gutter-width, 0px) + var(--space-6));
+    calc(var(--code-gutter-pad-start, 0px) + var(--code-editor-text-start, 0px));
   font: inherit;
   color: var(--color-text-primary);
   white-space: pre;
@@ -98,11 +113,7 @@
   visibility: hidden;
   white-space: pre;
   tab-size: var(--tab-size);
-  padding-inline: calc(
-      var(--code-editor-gutter-width, 0px) - var(--code-gutter-pad-start, 0px) +
-        var(--space-6)
-    )
-    var(--space-6);
+  padding-inline: var(--code-editor-text-start, 0px) var(--space-6);
 }
 
 .code-editor-monaco {
@@ -267,6 +278,10 @@
 
 .code-editor-static-text::-webkit-scrollbar {
   display: none;
+}
+
+.code-editor.no-gutter .code-editor-static-text {
+  padding-left: 0;
 }
 
 .code-editor-static-placeholder {

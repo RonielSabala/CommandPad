@@ -1,0 +1,28 @@
+.selection-count {
+  --selection-count-blur: 2px;
+
+  position: fixed;
+  inset-block-end: var(--space-8);
+  inset-inline-end: var(--space-8);
+  z-index: var(--z-docked);
+
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  -webkit-backdrop-filter: blur(var(--selection-count-blur));
+  backdrop-filter: blur(var(--selection-count-blur));
+
+  color: var(--accent-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+[data-panel-side="right"] .selection-count {
+  inset-inline-end: calc(var(--space-8) + var(--panel-column));
+}

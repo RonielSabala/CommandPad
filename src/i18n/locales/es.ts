@@ -127,6 +127,10 @@ export const es: Messages = {
     renameCase: "Cambiar capitalización de la clave",
     remove: (count) =>
       count === 1 ? "Eliminar variable" : "Eliminar variables",
+    selected: (count) =>
+      count === 1
+        ? "1 variable seleccionada"
+        : `${count} variables seleccionadas`,
     dragResizeSplit:
       "Arrastra para redimensionar clave y valor · doble clic para igualarlos",
     unusedTitle: (key) => `${key} (sin usar)`,
@@ -160,6 +164,8 @@ export const es: Messages = {
     duplicate: (count) =>
       count === 1 ? "Duplicar bloque" : "Duplicar bloques",
     delete: (count) => (count === 1 ? "Eliminar bloque" : "Eliminar bloques"),
+    selected: (count) =>
+      count === 1 ? "1 bloque seleccionado" : `${count} bloques seleccionados`,
     emptyTitle: "Aún no hay bloques.",
     emptyHint: "Agrega un comando o una nota abajo.",
   },
@@ -659,6 +665,10 @@ export const es: Messages = {
       tocTitle: "Contenido",
       expandAll: "Expandir todas las secciones",
       collapseAll: "Contraer todas las secciones",
+      previousPage: "Anterior",
+      nextPage: "Siguiente",
+      backTo: (title) => `Volver a ${title}`,
+      pageProgress: (position, total) => `${position} de ${total}`,
     },
     toc: {
       [DocsSectionId.GETTING_STARTED]: "Primeros pasos",
@@ -1131,7 +1141,7 @@ Si algo sale mal, deshazlo en este orden:
       intro:
         "Antepón una barra invertida (`\\`) a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla.",
       menu: (escapeLabel) =>
-        `No hace falta escribir la barra invertida a mano. Pon el cursor dentro de una referencia (o selecciona una o varias), haz clic derecho y elige **${escapeLabel}**. Una barra invertida pegada a la llave de cierre se elimina.`,
+        `No hace falta escribir la barra invertida a mano. Pon el cursor dentro de una referencia (o selecciona una o varias), haz clic derecho y elige **${escapeLabel}**. Cada referencia que abarque recibe su barra invertida, incluidas las anidadas dentro de otra. Una barra invertida pegada a la llave de cierre se elimina.`,
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
       scope:
@@ -1152,6 +1162,8 @@ Si algo sale mal, deshazlo en este orden:
         "Solo se cifran los valores secretos; el resto sigue en texto plano, así que un libro exportado se puede seguir leyendo y comparando. En el disco, un secreto se ve como `cpv1.<sal>.<iv>.<cifrado>`: una etiqueta más todo lo necesario para descifrarlo salvo tu frase de contraseña, por eso el archivo se abre en cualquier máquina que la tenga.",
       unlocking:
         "Volver a abrir la pestaña bloquea todos los libros de nuevo, pero solo el que tienes delante te pide desbloquearlo; los demás esperan a que los abras. Un escudo junto al nombre del libro muestra su estado: verde y cerrado si está desbloqueado, neutro si está bloqueado, tachado si nada lo protege. Haz clic para desbloquearlo o para ponerle una frase de contraseña.",
+      importing:
+        "Importar un `.json` con secretos funciona igual, con un atajo: si algún libro que ya desbloqueaste en esta sesión usa la frase de contraseña con la que se cifró ese archivo, se abre sin volver a pedírtela.",
       changing: (changeLabel) =>
         `Haz clic en un escudo desbloqueado para abrir **${changeLabel}**: escribe la frase de contraseña actual y luego la nueva dos veces. Todos los secretos de ese libro, incluida su copia en un archivo enlazado de la nube, se cifran de nuevo al momento. Los demás libros y los archivos ya exportados conservan la anterior.`,
       markdownWarning:

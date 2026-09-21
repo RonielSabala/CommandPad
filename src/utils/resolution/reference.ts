@@ -12,6 +12,7 @@ import {
   replaceTemplateReferences,
   splitReferenceBody,
   splitReferenceParts,
+  unescapeBraces,
 } from "./token";
 import type { ResolvedValue, VariableLookup } from "./types";
 
@@ -64,9 +65,12 @@ function resolveChunk(
   context: ReferenceContext,
   key: string,
   depth: number,
+  consumesEscapes: boolean,
 ): ResolvedChunk {
   let fullyResolved = true;
   const source = key || undefined;
+  const literal = (raw: string): string =>
+    consumesEscapes ? unescapeBraces(raw, context.surface) : raw;
 
   if (!text.includes(VariableSyntax.BRACE_OPEN)) {
     return { text, spans: flatSpans(text, source), fullyResolved };
@@ -76,7 +80,7 @@ function resolveChunk(
 
   for (const part of splitReferenceParts(text, context.surface)) {
     if (!part.match) {
-      spans.push(...flatSpans(part.text, source));
+      spans.push(...flatSpans(literal(part.text), source));
       continue;
     }
 
@@ -154,12 +158,14 @@ function resolveReferenceAt(
   const operations: OperationChunk[] = [];
 
   for (const chunk of rest) {
-    const resolved = resolveChunk(chunk.text, context, key, depth);
+    const isOperation = chunk.separator === VariableSyntax.OPERATION_SEPARATOR;
+    const resolved = resolveChunk(chunk.text, context, key, depth, isOperation);
+
     if (!resolved.fullyResolved) {
       return unresolvedReference();
     }
 
-    if (chunk.separator === VariableSyntax.OPERATION_SEPARATOR) {
+    if (isOperation) {
       operations.push({ text: resolved.text, spans: resolved.spans });
       continue;
     }

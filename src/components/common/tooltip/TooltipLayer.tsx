@@ -1,5 +1,5 @@
 import { TooltipConfig } from "@/common/config";
-import { DataAttr } from "@/common/constants/dom";
+import { BodySelector, DataAttr } from "@/common/constants/dom";
 import { EventType, PASSIVE, PASSIVE_CAPTURE } from "@/common/constants/events";
 import type { TooltipVariant } from "@/common/enums";
 import { classNames } from "@/utils/string";
@@ -25,12 +25,26 @@ interface ActiveTooltip {
 
 const FOCUS_VISIBLE = ":focus-visible";
 
+/** The width of the widest line box the text wrapped into. */
+function longestLineWidth(text: HTMLElement): number {
+  const range = document.createRange();
+  range.selectNodeContents(text);
+
+  let widest = 0;
+  for (const line of range.getClientRects()) {
+    widest = Math.max(widest, line.width);
+  }
+
+  return Math.ceil(widest);
+}
+
 /** The app's one tooltip. */
 export function TooltipLayer() {
   const [active, setActive] = useState<ActiveTooltip | null>(null);
   const [placement, setPlacement] = useState<TooltipPlacement | null>(null);
 
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
   const activeRef = useRef<ActiveTooltip | null>(null);
   const lastActiveRef = useRef<ActiveTooltip | null>(null);
   const lastPlacementRef = useRef<TooltipPlacement | null>(null);
@@ -60,6 +74,11 @@ export function TooltipLayer() {
 
   const show = useCallback(
     (element: HTMLElement) => {
+      if (document.body.matches(BodySelector.RESIZING)) {
+        hide();
+        return;
+      }
+
       if (activeRef.current?.element === element) {
         return;
       }
@@ -151,10 +170,12 @@ export function TooltipLayer() {
     };
   }, [clearTimer, hide, show]);
 
-  // Measure the rendered bubble, then place it
+  // Shrink the rendered bubble to its text, then place it
   useLayoutEffect(() => {
     const bubble = tooltipRef.current;
-    if (!active || !bubble) {
+    const text = textRef.current;
+
+    if (!active || !bubble || !text) {
       setPlacement(null);
       return;
     }
@@ -162,6 +183,12 @@ export function TooltipLayer() {
     if (!active.element.isConnected) {
       hide();
       return;
+    }
+
+    text.style.width = "";
+    const longest = longestLineWidth(text);
+    if (longest > 0) {
+      text.style.width = `${longest}px`;
     }
 
     const next = placeTooltip(
@@ -205,7 +232,9 @@ export function TooltipLayer() {
         } as CSSProperties
       }
     >
-      {shown?.text}
+      <span className="tooltip-label" ref={textRef}>
+        {shown?.text}
+      </span>
       <span className="tooltip-arrow" />
     </div>,
     document.body,

@@ -16,6 +16,7 @@ export const EventType = {
   FOCUS_IN: "focusin",
   FOCUS_OUT: "focusout",
   RESIZE: "resize",
+  HASH_CHANGE: "hashchange",
   SCROLL: "scroll",
   WHEEL: "wheel",
   BLUR: "blur",

@@ -107,6 +107,10 @@ export const TAB_HOVER_SWITCH_MS = 300;
 export const SECTION_ANIMATION_FALLBACK_MS = 250;
 export const ROUTE_PREFETCH_TIMEOUT_MS = 2000;
 
+export const SelectConfig = {
+  MAX_VISIBLE_OPTIONS: 6,
+} as const;
+
 export const TooltipConfig = {
   SHOW_DELAY_MS: 500,
   WARM_DELAY_MS: 90,
@@ -119,11 +123,6 @@ export const TooltipConfig = {
 export const MinimapConfig = {
   SCALE: 0.12,
   OVERSCROLL_PROPERTY: "--minimap-overscroll",
-} as const;
-
-// A docs section becomes current once its top edge crosses this far down the scroll container
-export const DocsScrollSpy = {
-  TRIGGER_RATIO: 0.05,
 } as const;
 
 export const WrapPairs = {

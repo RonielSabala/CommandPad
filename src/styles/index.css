@@ -28,6 +28,15 @@ body {
   height: 100vh;
 }
 
+/* --- THEME SWITCH --- */
+
+.theme-switching,
+.theme-switching *,
+.theme-switching *::after,
+.theme-switching *::before {
+  transition: none !important;
+}
+
 /* --- DISABLE USER SELECT --- */
 
 .btn,

@@ -52,11 +52,15 @@ describe("an unresolved reference leaves the rest of the command alone", () => {
 });
 
 checkResolution("escaping a brace", {
-  variables: HOSTS,
+  variables: { ...HOSTS, TEMPLATE: "projects/{;name}/src" },
   cases: [
     [String.raw`\{HOST}`, "{HOST}"],
     [String.raw`\{HOST} is {HOST}`, "{HOST} is example.com"],
     [String.raw`echo \{a,b\}`, String.raw`echo {a,b\}`],
+    [String.raw`\{TEMPLATE;name={HOST}}`, "{TEMPLATE;name=example.com}"],
+    [String.raw`\{TEMPLATE;name=\{HOST}}`, "{TEMPLATE;name={HOST}}"],
+    [String.raw`{TEMPLATE;name=\{HOST}}`, "projects/{HOST}/src"],
+    [String.raw`{|IF(1;\{HOST};no)}`, "{HOST}"],
   ],
 });
 

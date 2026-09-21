@@ -146,8 +146,35 @@ describe("escapeBraces", () => {
     expect(escapeBraces(String.raw`\{A\}`)).toBe(String.raw`\{A}`);
   });
 
+  it("escapes a reference nested inside another one", () => {
+    expect(escapeBraces("{A;b={C}}")).toBe(String.raw`\{A;b=\{C}}`);
+  });
+
+  it("escapes a reference nested in an operation argument", () => {
+    expect(escapeBraces("{A|slice({I};)}")).toBe(String.raw`\{A|slice(\{I};)}`);
+  });
+
+  it("escapes every level of a deeply nested reference", () => {
+    expect(escapeBraces("{A;b={C;d={E}}}")).toBe(
+      String.raw`\{A;b=\{C;d=\{E}}}`,
+    );
+  });
+
+  it("leaves an already escaped nested reference with the one backslash it has", () => {
+    expect(escapeBraces(String.raw`{A;b=\{C}}`)).toBe(String.raw`\{A;b=\{C}}`);
+  });
+
+  it("drops a backslash left against a nested closing brace", () => {
+    expect(escapeBraces(String.raw`{A;b={C\}}`)).toBe(String.raw`\{A;b=\{C}}`);
+  });
+
   it("is idempotent", () => {
     const once = escapeBraces("ping {HOST}");
+    expect(escapeBraces(once)).toBe(once);
+  });
+
+  it("is idempotent over nested references", () => {
+    const once = escapeBraces("{A;b={C;d={E}}}");
     expect(escapeBraces(once)).toBe(once);
   });
 });

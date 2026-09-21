@@ -117,6 +117,7 @@ export function SecretEncryptionDocs() {
       />
       <Prose text={t.docs.secretEncryption.covered} />
       <Prose text={t.docs.secretEncryption.unlocking} />
+      <Prose text={t.docs.secretEncryption.importing} />
       <Prose
         text={t.docs.secretEncryption.changing(
           t.vaultModal.title[VaultPrompt.CHANGE],

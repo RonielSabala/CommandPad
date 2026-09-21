@@ -2,7 +2,8 @@
   /* --- CORE CONFIG --- */
   --tab-size: 4;
   --base-unit: 17px;
-  --font-sans: "Inter", sans-serif;
+  --font-sans: sans-serif;
+  --font-docs: "Segoe UI", sans-serif;
   --font-mono: "Cascadia Code", monospace;
   --code-line-height-ratio: 1.6;
 
@@ -169,7 +170,10 @@
 
   --docs-max-width: 52rem;
   --docs-heading-lg: 1.75rem;
+  --docs-toc-size: 0.9375rem;
   --docs-demo-sidebar-width: 18.75rem;
+  --docs-page-link-max-width: 18rem;
+  --docs-page-progress-height: 0.1875rem;
 
   /* --- COMPOUND TOKENS --- */
   --border-standard: 1px solid var(--color-border);
@@ -186,6 +190,7 @@
   /* Clamping a surface at a line limit */
   --clamp-line-height: var(--code-line-height-base);
   --clamp-toggle-height: var(--space-16);
+  --clamp-toggle-inset-bottom: 0px;
   --clamp-mask: linear-gradient(
     to bottom in oklab,
     #000 calc(100% - var(--space-16)),

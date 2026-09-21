@@ -2,6 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import {
   CodeModelScope,
   DEFAULT_VARIABLE_LANGUAGE,
+  MonacoLayout,
 } from "@/common/editorConfig";
 import {
   AppMode,
@@ -152,6 +153,7 @@ export function VariableEditor({
           completions={valueCompletions}
           actions={actions}
           masked={isSecret}
+          gutter={valueLines > MonacoLayout.FIRST_LINE}
           clamped={valueClamp.clamped}
           header={
             !readMode && (
