@@ -3,6 +3,7 @@
   --panel-column: var(--panel-content-width);
   --panel-inset: var(--space-4);
 
+  background: var(--color-app-bg);
   grid-template-columns: var(--panel-column) 1fr;
   grid-template-areas:
     "header header"

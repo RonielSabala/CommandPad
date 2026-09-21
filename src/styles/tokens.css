@@ -28,6 +28,7 @@
   --warning-solid: #9a6c00;
 
   /* Surfaces */
+  --color-app-bg: #12151c;
   --color-bg: #090b10;
   --color-surface: #171a21;
   --color-surface-alt: #262b35;
@@ -215,6 +216,7 @@
   --warning-solid: #b45309;
 
   /* Surfaces */
+  --color-app-bg: #dce2eb;
   --color-bg: #eaeef4;
   --color-surface: #ffffff;
   --color-surface-alt: #eef0f4;
