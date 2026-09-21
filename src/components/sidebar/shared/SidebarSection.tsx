@@ -49,6 +49,7 @@ export function SidebarSection({
 
   const classes = classNames(
     "sidebar-section",
+    "panel-card",
     collapsed && CssClass.COLLAPSED,
     animating && CssClass.ANIMATING,
     dropZone?.isDropActive && CssClass.DROP_TARGET,

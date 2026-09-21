@@ -24,7 +24,7 @@
 }
 
 #app-footer {
-  padding: var(--space-3) var(--space-5);
+  padding: var(--space-1);
   flex-shrink: 0;
   margin-top: auto;
 }
