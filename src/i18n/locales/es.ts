@@ -1093,7 +1093,7 @@ Si algo sale mal, deshazlo en este orden:
 | \`istitle\` | Cada palabra empieza por mayúscula |
 | \`isempty\` | No queda nada |`,
       matching:
-        "Otras tres reciben entre paréntesis lo que hay que buscar. Escribe **varias opciones separadas por `;`** y la respuesta es verdadera en cuanto coincide una de ellas:",
+        "Otras tres reciben entre paréntesis lo que hay que buscar. Escribe **varias opciones separadas por** `;` y la respuesta es verdadera en cuanto coincide una de ellas:",
       matchTable: `| Operación | Descripción |
 | --- | --- |
 | \`startswith(a; b)\` | El valor empieza por \`a\` o por \`b\` |

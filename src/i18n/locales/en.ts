@@ -1073,7 +1073,7 @@ If something goes wrong, undo it in this order:
 | \`istitle\` | Every word starts with a capital |
 | \`isempty\` | Nothing is left at all |`,
       matching:
-        "Three more take what to look for, in parentheses. List **several separated by `;`** and the answer is true as soon as one of them matches:",
+        "Three more take what to look for, in parentheses. List **several separated by** `;` and the answer is true as soon as one of them matches:",
       matchTable: `| Operation | Description |
 | --- | --- |
 | \`startswith(a; b)\` | The value starts with \`a\` or with \`b\` |
