@@ -60,10 +60,11 @@ body.read-mode
   content: "";
   position: absolute;
   top: 0;
-  bottom: 0;
+  bottom: var(--panel-inset);
   left: 0;
   transform: translateX(-50%);
   width: var(--space-2);
+  border-radius: var(--radius-pill);
   background: transparent;
   transition: background var(--transition-base);
   pointer-events: none;
