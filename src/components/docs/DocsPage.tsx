@@ -53,7 +53,7 @@ export function DocsPage() {
 
       <DocsToc pageId={id} collapse={collapse} onNavigate={goTo} />
 
-      <main id="docs-main">
+      <main id="docs-main" className="panel-card">
         <div ref={scrollRef} id="docs-scroll">
           <article id="docs-article">
             {previousId && <DocsPageBack id={previousId} onNavigate={goTo} />}

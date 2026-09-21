@@ -84,6 +84,13 @@ body {
 
 /* --- SHARED PRIMITIVES --- */
 
+.panel-card {
+  background: var(--color-surface);
+  border: var(--border-standard);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
 .vertical-divider {
   width: 1px;
   height: var(--space-12);

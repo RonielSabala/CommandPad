@@ -1,27 +1,15 @@
 .resizable-panel {
-  --panel-scrollbar-inset: var(--panel-scroll-gutter);
   --panel-grab-width: calc(var(--panel-rail-width) / 2);
-  --panel-inset: var(--space-4);
 
   grid-area: panel;
   position: relative;
   min-width: 0;
   min-height: 0;
-  background: var(--color-bg);
-  border-right: var(--border-standard);
-}
-
-.resizable-panel[data-panel-side="right"] {
-  border-right: none;
-  border-left: var(--border-standard);
 }
 
 .resizable-panel[data-panel-collapsed="true"] {
   --panel-inset: 0px;
   --panel-grab-width: var(--panel-scroll-gutter);
-
-  border-left: none;
-  border-right: none;
 }
 
 body.read-mode
@@ -40,15 +28,6 @@ body.read-mode
 
 .panel-content > * {
   min-width: calc(var(--panel-content-width) - var(--panel-inset) * 2);
-}
-
-/* --- CARD --- */
-
-.panel-card {
-  background: var(--color-surface);
-  border: var(--border-standard);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
 }
 
 /* --- RESIZE HANDLE --- */
