@@ -22,7 +22,7 @@ body.read-mode
   display: flex;
   flex-direction: column;
   gap: var(--panel-inset);
-  padding: var(--panel-inset);
+  padding: 0 var(--panel-inset) var(--panel-inset);
   overflow: hidden;
 }
 

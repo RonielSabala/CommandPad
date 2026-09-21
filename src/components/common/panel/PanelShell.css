@@ -20,18 +20,21 @@
     "main panel";
 }
 
-.panel-shell > .panel-card {
+.panel-shell > .header-bar {
+  background: none;
+  border-bottom: none;
+}
+
+.panel-shell > main.panel-card {
   grid-area: main;
-  margin: var(--panel-inset);
-  margin-inline-start: 0;
+  margin: 0 var(--panel-inset) var(--panel-inset) 0;
   background: var(--color-bg);
 }
 
-.panel-shell[data-panel-side="right"] > .panel-card {
-  margin-inline-start: var(--panel-inset);
-  margin-inline-end: 0;
+.panel-shell[data-panel-side="right"] > main.panel-card {
+  margin: 0 0 var(--panel-inset) var(--panel-inset);
 }
 
-.panel-shell[data-panel-collapsed="true"] > .panel-card {
-  margin: var(--panel-inset);
+.panel-shell[data-panel-collapsed="true"] > main.panel-card {
+  margin: 0 var(--panel-inset) var(--panel-inset);
 }
