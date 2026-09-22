@@ -22,7 +22,7 @@ export function MainPanel() {
   const View = RUNBOOK_VIEWS[view];
 
   return (
-    <main id="main-panel">
+    <main id="main-panel" className="panel-card">
       <TabsBar />
       <View />
     </main>

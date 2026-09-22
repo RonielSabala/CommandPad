@@ -1,12 +1,6 @@
 #main-panel {
-  grid-area: main;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-}
-
-#tabs-content-wrapper {
-  border-right: var(--main-rail-inset) solid transparent;
 }
 
 #tabs-content {

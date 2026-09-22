@@ -520,7 +520,7 @@ export const es: Messages = {
   },
   privacy: {
     title: "Política de Privacidad",
-    updated: "Última actualización: 2 de agosto de 2026",
+    updated: "Última actualización: 21 de septiembre de 2026",
     intro:
       "CommandPad es una aplicación del lado del cliente que funciona por completo en tu navegador. Esta política explica qué datos maneja la app y, más importante aún, cuáles no.",
     sections: [
@@ -595,7 +595,7 @@ export const es: Messages = {
   },
   terms: {
     title: "Términos del Servicio",
-    updated: "Última actualización: 2 de agosto de 2026",
+    updated: "Última actualización: 21 de septiembre de 2026",
     intro:
       "Estos términos rigen tu uso de CommandPad. Al usar la app aceptas estos términos. Por favor, léelos, ya que son breves y están redactados para ser comprensibles.",
     sections: [
@@ -1093,7 +1093,7 @@ Si algo sale mal, deshazlo en este orden:
 | \`istitle\` | Cada palabra empieza por mayúscula |
 | \`isempty\` | No queda nada |`,
       matching:
-        "Otras tres reciben entre paréntesis lo que hay que buscar. Escribe **varias opciones separadas por `;`** y la respuesta es verdadera en cuanto coincide una de ellas:",
+        "Otras tres reciben entre paréntesis lo que hay que buscar. Escribe **varias opciones separadas por** `;` y la respuesta es verdadera en cuanto coincide una de ellas:",
       matchTable: `| Operación | Descripción |
 | --- | --- |
 | \`startswith(a; b)\` | El valor empieza por \`a\` o por \`b\` |

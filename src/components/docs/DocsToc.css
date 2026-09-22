@@ -1,3 +1,10 @@
+#docs-toc-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 #docs-toc-header {
   display: flex;
   align-items: center;
@@ -7,8 +14,6 @@
   width: 100%;
   height: var(--space-20);
   padding: var(--space-6);
-  padding-right: max(var(--space-6), var(--panel-rail-end));
-  padding-left: max(var(--space-6), var(--panel-rail-start));
   background: transparent;
   border: none;
   border-bottom: var(--border-standard);
@@ -20,8 +25,7 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  border-right: var(--panel-scrollbar-inset) solid transparent;
-  padding: var(--space-4) var(--panel-scroll-gutter) var(--space-6) 0;
+  padding: var(--space-4) var(--panel-scroll-gutter) var(--space-4) 0;
 }
 
 #docs-toc-header:hover {

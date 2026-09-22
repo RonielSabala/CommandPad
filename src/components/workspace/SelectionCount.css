@@ -2,8 +2,8 @@
   --selection-count-blur: 2px;
 
   position: fixed;
-  inset-block-end: var(--space-8);
-  inset-inline-end: var(--space-8);
+  inset-block-end: var(--space-10);
+  inset-inline-end: var(--space-10);
   z-index: var(--z-docked);
 
   padding: var(--space-2) var(--space-4);

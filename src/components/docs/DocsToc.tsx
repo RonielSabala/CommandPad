@@ -47,74 +47,76 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
 
   return (
     <ResizablePanel panelId={PanelId.DOCS_TOC} id="docs-toc">
-      <button
-        id="docs-toc-header"
-        className="no-user-select"
-        {...tooltip(toggleAllLabel)}
-        aria-label={toggleAllLabel}
-        aria-expanded={!collapse.allCollapsed}
-        onClick={collapse.toggleAll}
-      >
-        <span id="docs-toc-title" className="section-title">
-          {t.docs.meta.tocTitle}
-        </span>
+      <div id="docs-toc-card" className="panel-card">
+        <button
+          id="docs-toc-header"
+          className="no-user-select"
+          {...tooltip(toggleAllLabel)}
+          aria-label={toggleAllLabel}
+          aria-expanded={!collapse.allCollapsed}
+          onClick={collapse.toggleAll}
+        >
+          <span id="docs-toc-title" className="section-title">
+            {t.docs.meta.tocTitle}
+          </span>
 
-        <SidebarSectionChevronIcon
-          className={classNames(
-            "docs-toc-chevron icon-md icon-bold",
-            collapse.allCollapsed && "is-collapsed",
+          <SidebarSectionChevronIcon
+            className={classNames(
+              "docs-toc-chevron icon-md icon-bold",
+              collapse.allCollapsed && "is-collapsed",
+            )}
+          />
+        </button>
+
+        <nav id="docs-toc-nav">
+          {DOCS_SECTION_ORDER.filter(({ id }) => collapse.isVisible(id)).map(
+            ({ id, level }) => (
+              <a
+                key={id}
+                ref={id === highlightId ? activeRef : null}
+                href={`#${id}`}
+                className={classNames(
+                  "docs-toc-item",
+                  "no-user-select",
+                  level === DocsSectionLevel.SUBSECTION && "docs-toc-sub",
+                  id === highlightId && "docs-toc-active",
+                )}
+                onClick={(event) => {
+                  event.preventDefault();
+                  onNavigate(id);
+                }}
+              >
+                <span className="docs-toc-number">{SECTION_NUMBERS[id]}</span>
+
+                {t.docs.toc[id]}
+
+                {collapse.hasChildren(id) ? (
+                  <span
+                    className="docs-toc-chevron-hit"
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={!collapse.isCollapsed(id)}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      collapse.toggle(id);
+                    }}
+                  >
+                    <SidebarSectionChevronIcon
+                      className={classNames(
+                        "docs-toc-chevron icon-md icon-bold",
+                        collapse.isCollapsed(id) && "is-collapsed",
+                      )}
+                    />
+                  </span>
+                ) : (
+                  <span className="docs-toc-chevron-spacer" />
+                )}
+              </a>
+            ),
           )}
-        />
-      </button>
-
-      <nav id="docs-toc-nav">
-        {DOCS_SECTION_ORDER.filter(({ id }) => collapse.isVisible(id)).map(
-          ({ id, level }) => (
-            <a
-              key={id}
-              ref={id === highlightId ? activeRef : null}
-              href={`#${id}`}
-              className={classNames(
-                "docs-toc-item",
-                "no-user-select",
-                level === DocsSectionLevel.SUBSECTION && "docs-toc-sub",
-                id === highlightId && "docs-toc-active",
-              )}
-              onClick={(event) => {
-                event.preventDefault();
-                onNavigate(id);
-              }}
-            >
-              <span className="docs-toc-number">{SECTION_NUMBERS[id]}</span>
-
-              {t.docs.toc[id]}
-
-              {collapse.hasChildren(id) ? (
-                <span
-                  className="docs-toc-chevron-hit"
-                  role="button"
-                  tabIndex={0}
-                  aria-expanded={!collapse.isCollapsed(id)}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    collapse.toggle(id);
-                  }}
-                >
-                  <SidebarSectionChevronIcon
-                    className={classNames(
-                      "docs-toc-chevron icon-md icon-bold",
-                      collapse.isCollapsed(id) && "is-collapsed",
-                    )}
-                  />
-                </span>
-              ) : (
-                <span className="docs-toc-chevron-spacer" />
-              )}
-            </a>
-          ),
-        )}
-      </nav>
+        </nav>
+      </div>
     </ResizablePanel>
   );
 }

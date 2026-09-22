@@ -1,8 +1,9 @@
 .panel-shell {
   --panel-content-width: min(var(--panel-width), var(--panel-max-width));
   --panel-column: var(--panel-content-width);
-  --main-rail-inset: 0px;
+  --panel-inset: var(--space-4);
 
+  background: var(--color-app-bg);
   grid-template-columns: var(--panel-column) 1fr;
   grid-template-areas:
     "header header"
@@ -20,6 +21,21 @@
     "main panel";
 }
 
-.panel-shell[data-panel-side="right"][data-panel-collapsed="true"] {
-  --main-rail-inset: var(--panel-scroll-gutter);
+.panel-shell > .header-bar {
+  background: none;
+  border-bottom: none;
+}
+
+.panel-shell > main.panel-card {
+  grid-area: main;
+  margin: 0 var(--panel-inset) var(--panel-inset) 0;
+  background: var(--color-bg);
+}
+
+.panel-shell[data-panel-side="right"] > main.panel-card {
+  margin: 0 0 var(--panel-inset) var(--panel-inset);
+}
+
+.panel-shell[data-panel-collapsed="true"] > main.panel-card {
+  margin: 0 var(--panel-inset) var(--panel-inset);
 }

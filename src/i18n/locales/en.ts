@@ -507,7 +507,7 @@ export const en: Messages = {
   },
   privacy: {
     title: "Privacy Policy",
-    updated: "Last updated: August 2, 2026",
+    updated: "Last updated: September 21, 2026",
     intro:
       "CommandPad is a client-side application that runs entirely in your web browser. This policy explains what data the app handles and, more importantly, what it does not.",
     sections: [
@@ -582,7 +582,7 @@ export const en: Messages = {
   },
   terms: {
     title: "Terms of Service",
-    updated: "Last updated: August 2, 2026",
+    updated: "Last updated: September 21, 2026",
     intro:
       "These terms govern your use of CommandPad. By using the app you agree to them. Please read them, as they are short and written to be understandable.",
     sections: [
@@ -1073,7 +1073,7 @@ If something goes wrong, undo it in this order:
 | \`istitle\` | Every word starts with a capital |
 | \`isempty\` | Nothing is left at all |`,
       matching:
-        "Three more take what to look for, in parentheses. List **several separated by `;`** and the answer is true as soon as one of them matches:",
+        "Three more take what to look for, in parentheses. List **several separated by** `;` and the answer is true as soon as one of them matches:",
       matchTable: `| Operation | Description |
 | --- | --- |
 | \`startswith(a; b)\` | The value starts with \`a\` or with \`b\` |

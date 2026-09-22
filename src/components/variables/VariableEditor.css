@@ -105,8 +105,8 @@ body.read-mode .variable-editor-secret-btn {
 /* Value */
 
 .variable-editor-value {
-  --clamp-halo: var(--color-bg);
-  --code-editor-header-halo: var(--color-bg);
+  --clamp-halo: var(--block-backdrop);
+  --code-editor-header-halo: var(--block-backdrop);
 
   min-width: var(--block-min-width);
   border: var(--border-standard);
