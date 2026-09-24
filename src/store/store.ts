@@ -119,12 +119,13 @@ import { buildRunbookSource, parseRunbookSource } from "@/utils/runbookSource";
 import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
 import {
   entryId,
-  hiddenVariableIds,
+  fromVariableEntries,
   insertVariableEntry,
   mapVariableEntries,
   moveVariableEntries,
   normalizeVariableSections,
   revealVariables,
+  sectionVariables,
   toVariableEntries,
   type VariableEntry,
 } from "@/utils/variableSections";
@@ -609,7 +610,7 @@ function appendVariable(tab: Tab, variable: Variable): Tab {
     variables,
     variableSections: revealVariables(
       { variables, variableSections: tab.variableSections },
-      [variable.id],
+      new Set([variable.id]),
     ),
   };
 }
@@ -632,19 +633,20 @@ function withVariableSection(
  * What a variable action acts on: the whole selection when the clicked row is
  * part of it, that row alone otherwise. The same rule block actions follow.
  */
-function targetVariableIds(state: StoreState, variableId: string): string[] {
-  return state.selectedVariableIds.size > 0 &&
-    state.selectedVariableIds.has(variableId)
-    ? [...state.selectedVariableIds]
-    : [variableId];
+function targetVariableIds(
+  state: StoreState,
+  variableId: string,
+): ReadonlySet<string> {
+  return state.selectedVariableIds.has(variableId)
+    ? state.selectedVariableIds
+    : new Set([variableId]);
 }
 
-function countSections(state: StoreState, ids: Iterable<string>): number {
-  const sections = getActiveTab(state)?.variableSections ?? [];
+/** How many of `ids` are sections. */
+function countSections(state: StoreState, ids: ReadonlySet<string>): number {
   let count = 0;
-
-  for (const id of ids) {
-    if (sections.some((section) => section.id === id)) {
+  for (const section of getActiveTab(state)?.variableSections ?? []) {
+    if (ids.has(section.id)) {
       count++;
     }
   }
@@ -656,9 +658,19 @@ export function countVariableTargets(
   state: StoreState,
   variableId: string,
 ): { sections: number; variables: number } {
-  const targets = targetVariableIds(state, variableId);
-  const sections = countSections(state, targets);
-  return { sections, variables: targets.length - sections };
+  const selected = state.selectedVariableIds;
+  if (!selected.has(variableId)) {
+    const isSection = !!getActiveTab(state)?.variableSections.some(
+      (section) => section.id === variableId,
+    );
+
+    return isSection
+      ? { sections: 1, variables: 0 }
+      : { sections: 0, variables: 1 };
+  }
+
+  const sections = countSections(state, selected);
+  return { sections, variables: selected.size - sections };
 }
 
 export function countSelectedSections(state: StoreState): number {
@@ -2170,14 +2182,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         const targets = targetVariableIds(state, variableId);
-        const fromSelection = targets.length > 1;
-        const idsToRemove = new Set(targets);
+        const fromSelection = targets.size > 1;
 
         set((s) => ({
           ...withActiveTab(s, (tab) => ({
             ...tab,
             ...mapVariableEntries(tab, (entries) =>
-              entries.filter((entry) => !idsToRemove.has(entryId(entry))),
+              entries.filter((entry) => !targets.has(entryId(entry))),
             ),
           })),
           selectedVariableIds: fromSelection
@@ -2199,13 +2210,23 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         // Duplicate in list order, sections included
-        const targets = new Set(targetVariableIds(state, variableId));
-        const ordered = toVariableEntries(
+        const targets = targetVariableIds(state, variableId);
+        const entries = toVariableEntries(
           active.variables,
           active.variableSections,
-        ).filter((entry) => targets.has(entryId(entry)));
+        );
 
-        if (ordered.length === 0) {
+        const ordered: VariableEntry[] = [];
+        let last = -1;
+
+        entries.forEach((entry, i) => {
+          if (targets.has(entryId(entry))) {
+            ordered.push(entry);
+            last = i;
+          }
+        });
+
+        if (last < 0) {
           return;
         }
 
@@ -2231,30 +2252,20 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           };
         });
 
-        const copyIds = copies.map(entryId);
-        const lastId = entryId(ordered[ordered.length - 1]);
+        // Right after the last source, so the copies stay in its section
+        entries.splice(last + 1, 0, ...copies);
+
+        const layout = fromVariableEntries(entries, active);
+        const copyIds = new Set(copies.map(entryId));
         const single = copies.length === 1 ? copies[0] : null;
 
         set((s) => ({
-          ...withActiveTab(s, (tab) => {
-            // Right after the last source, so the copies stay in its section
-            const layout = mapVariableEntries(tab, (entries) => {
-              const next = [...entries];
-              const after = next.findIndex(
-                (entry) => entryId(entry) === lastId,
-              );
-
-              next.splice(after + 1, 0, ...copies);
-              return next;
-            });
-
-            return {
-              ...tab,
-              ...layout,
-              variableSections: revealVariables(layout, copyIds),
-            };
-          }),
-          flashVariableIds: new Set(copyIds),
+          ...withActiveTab(s, (tab) => ({
+            ...tab,
+            ...layout,
+            variableSections: revealVariables(layout, copyIds),
+          })),
+          flashVariableIds: copyIds,
           pendingFocusVariableId:
             single?.kind === VariableEntryKind.VARIABLE
               ? single.variable.id
@@ -2328,7 +2339,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           ?.secret;
 
         // The clicked row decides
-        const targets = new Set(targetVariableIds(state, variableId));
+        const targets = targetVariableIds(state, variableId);
 
         set((s) =>
           withActiveTab(s, (tab) => ({
@@ -2355,7 +2366,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
 
-        const targets = new Set(targetVariableIds(state, variableId));
+        const targets = targetVariableIds(state, variableId);
 
         set((s) =>
           withActiveTab(s, (tab) => ({
@@ -2443,16 +2454,15 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
 
-        for (const id of targetVariableIds(state, variableId)) {
-          const variable = getActiveTab(get())?.variables.find(
-            (v) => v.id === id,
-          );
+        // Read the keys in one pass
+        const targets = targetVariableIds(state, variableId);
+        const variables = getActiveTab(state)?.variables ?? [];
+        const renames = variables.flatMap((v) => {
+          const key = targets.has(v.id) ? getVariableKey(v) : "";
+          return key ? [{ id: v.id, key }] : [];
+        });
 
-          const key = variable ? getVariableKey(variable) : "";
-          if (!key) {
-            continue;
-          }
-
+        for (const { id, key } of renames) {
           get().updateVariable(
             id,
             VariableField.KEY,
@@ -2463,31 +2473,21 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       reorderVariables: (sourceId, targetId) => {
         const state = get();
-        if (state.mode === AppMode.READ || sourceId === targetId) {
+        if (
+          state.mode === AppMode.READ ||
+          sourceId === targetId ||
+          !getActiveTab(state)
+        ) {
           return;
         }
 
-        const active = getActiveTab(state);
-        if (!active) {
-          return;
-        }
-
-        const movingIds =
-          state.selectedVariableIds.size > 0 &&
-          state.selectedVariableIds.has(sourceId)
-            ? [...state.selectedVariableIds]
-            : [sourceId];
+        const movingIds = targetVariableIds(state, sourceId);
 
         set((s) =>
           withActiveTab(s, (tab) => ({
             ...tab,
             ...mapVariableEntries(tab, (entries) =>
-              moveVariableEntries(
-                entries,
-                new Set(movingIds),
-                sourceId,
-                targetId,
-              ),
+              moveVariableEntries(entries, movingIds, sourceId, targetId),
             ),
           })),
         );
@@ -2517,12 +2517,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
 
-        const variableIds = new Set(active.variables.map((v) => v.id));
-        const moving = new Set(
-          (variableId ? targetVariableIds(state, variableId) : []).filter(
-            (id) => variableIds.has(id),
-          ),
-        );
+        const targets = variableId
+          ? targetVariableIds(state, variableId)
+          : new Set<string>();
 
         const section: VariableSection = {
           id: generateId(),
@@ -2530,19 +2527,30 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           start: active.variables.length,
         };
 
-        // A new section goes last
+        // A new section goes last, taking the target variables with it
+
+        const kept: VariableEntry[] = [];
+        const moved: VariableEntry[] = [];
+
+        for (const entry of toVariableEntries(
+          active.variables,
+          active.variableSections,
+        )) {
+          const moves =
+            entry.kind === VariableEntryKind.VARIABLE &&
+            targets.has(entry.variable.id);
+
+          (moves ? moved : kept).push(entry);
+        }
+
+        kept.push({ kind: VariableEntryKind.SECTION, section }, ...moved);
+        const layout = fromVariableEntries(kept, active);
+
         set((s) => ({
-          ...withActiveTab(s, (tab) => ({
-            ...tab,
-            ...mapVariableEntries(tab, (entries) => [
-              ...entries.filter((entry) => !moving.has(entryId(entry))),
-              { kind: VariableEntryKind.SECTION, section },
-              ...entries.filter((entry) => moving.has(entryId(entry))),
-            ]),
-          })),
+          ...withActiveTab(s, (tab) => ({ ...tab, ...layout })),
           pendingFocusSectionId: section.id,
           selectedVariableIds:
-            moving.size > 1 ? new Set<string>() : s.selectedVariableIds,
+            moved.length > 1 ? new Set<string>() : s.selectedVariableIds,
         }));
 
         get().saveState();
@@ -2580,7 +2588,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             return {
               ...tab,
               ...layout,
-              variableSections: revealVariables(layout, [id]),
+              variableSections: revealVariables(layout, new Set([id])),
             };
           }),
           pendingFocusVariableId:
@@ -2609,25 +2617,41 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       toggleVariableSection: (sectionId) => {
         set((s) => {
-          const updated = withVariableSection(s, sectionId, (section) => ({
-            ...section,
-            collapsed: !section.collapsed,
-          }));
+          const tab = getActiveTab(s);
+          const at =
+            tab?.variableSections.findIndex(
+              (section) => section.id === sectionId,
+            ) ?? -1;
 
-          const tab = getActiveTab({ ...s, ...updated });
-          const hidden = tab
-            ? hiddenVariableIds(tab.variables, tab.variableSections)
-            : new Set<string>();
+          if (!tab || at < 0) {
+            return {};
+          }
 
-          const selectedVariableIds = [...s.selectedVariableIds].some((id) =>
-            hidden.has(id),
-          )
-            ? new Set(
-                [...s.selectedVariableIds].filter((id) => !hidden.has(id)),
+          const section = tab.variableSections[at];
+          const collapsed = !section.collapsed;
+          const variableSections = tab.variableSections.slice();
+          variableSections[at] = { ...section, collapsed };
+
+          // Only the rows this section now hides can leave the selection
+          const hidden = collapsed
+            ? sectionVariables(tab, at).filter((v) =>
+                s.selectedVariableIds.has(v.id),
               )
-            : s.selectedVariableIds;
+            : [];
 
-          return { ...updated, selectedVariableIds };
+          let selectedVariableIds = s.selectedVariableIds;
+          if (hidden.length > 0) {
+            selectedVariableIds = new Set(selectedVariableIds);
+
+            for (const variable of hidden) {
+              selectedVariableIds.delete(variable.id);
+            }
+          }
+
+          return {
+            ...withActiveTab(s, (t) => ({ ...t, variableSections })),
+            selectedVariableIds,
+          };
         });
 
         get().saveState();
