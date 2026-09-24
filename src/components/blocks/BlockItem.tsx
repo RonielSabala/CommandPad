@@ -152,9 +152,7 @@ export const BlockItem = memo(function BlockItem({
         secretKeys={secretKeys}
       />
 
-      <div
-        className={`${CssClass.BLOCK_DRAG_HANDLE} ${CssClass.SELECT_KEY_HIDDEN}`}
-      >
+      <div className={CssClass.ITEM_DRAG_HANDLE}>
         <DragHandle
           handleProps={{
             onMouseDown: () => setDraggable(true),

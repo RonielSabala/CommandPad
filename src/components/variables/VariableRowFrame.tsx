@@ -10,11 +10,6 @@ import type { ReactNode, RefObject } from "react";
 
 import "./VariableItem.css";
 
-const ACTIONS_CLASS = classNames(
-  CssClass.VARIABLE_ACTIONS,
-  CssClass.SELECT_KEY_HIDDEN,
-);
-
 interface Props {
   rowId: string;
   className?: string;
@@ -74,16 +69,11 @@ export function VariableRowFrame({
     >
       {children}
 
-      <div
-        className={classNames(
-          CssClass.VARIABLE_DRAG_HANDLE,
-          CssClass.SELECT_KEY_HIDDEN,
-        )}
-      >
+      <div className={CssClass.ITEM_DRAG_HANDLE}>
         <DragHandle handleProps={handleProps} />
       </div>
 
-      {menu(ACTIONS_CLASS)}
+      {menu(CssClass.ITEM_ACTIONS)}
     </div>
   );
 }

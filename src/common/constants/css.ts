@@ -22,8 +22,6 @@ export const CssClass = {
   // Variables
   VARIABLE_ITEM: "variable-item",
   VARIABLE_SURFACE: "variable-surface",
-  VARIABLE_ACTIONS: "variable-actions",
-  VARIABLE_DRAG_HANDLE: "variable-drag-handle",
   VARIABLES_MIRROR: "variables-mirror",
   VARIABLE_SELECTED: "variable-selected",
 
@@ -34,9 +32,11 @@ export const CssClass = {
   // Blocks
   BLOCK_ITEM: "block-item",
   BLOCK_SURFACE: "block-surface",
-  BLOCK_ACTIONS: "block-actions",
-  BLOCK_DRAG_HANDLE: "block-drag-handle",
   BLOCKS_MIRROR: "blocks-mirror",
+
+  // Controls beside a block or variable item
+  ITEM_ACTIONS: "item-actions",
+  ITEM_DRAG_HANDLE: "item-drag-handle",
 
   // Modifier-key states
   SELECT_KEY_HELD: "select-key-held",
