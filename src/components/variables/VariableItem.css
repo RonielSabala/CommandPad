@@ -30,7 +30,3 @@ body.select-key-held:not(.read-mode)
 .variable-item.drag-over {
   border-radius: var(--radius-lg);
 }
-
-.variable-item.dragging {
-  opacity: 0.5;
-}
