@@ -54,8 +54,3 @@ body.select-key-held:not(.read-mode) .block-item:hover:not(.block-selected) {
 .block-item.drag-over {
   border-radius: var(--radius-lg);
 }
-
-.block-item.duplicate-flash {
-  z-index: var(--z-raised);
-  animation: duplicate-flash 0.5s ease-out forwards;
-}

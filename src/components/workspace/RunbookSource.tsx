@@ -28,7 +28,11 @@ export function RunbookSource() {
   const source = useMemo(
     () =>
       tab
-        ? buildRunbookSource({ variables: tab.variables, blocks: tab.blocks })
+        ? buildRunbookSource({
+            variables: tab.variables,
+            blocks: tab.blocks,
+            variableSections: tab.variableSections,
+          })
         : "",
     [tab],
   );

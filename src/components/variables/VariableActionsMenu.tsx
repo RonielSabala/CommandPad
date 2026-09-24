@@ -4,9 +4,19 @@ import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
 import { DuplicateIcon, EyeIcon, TrashIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { countVariableTargets, useStore } from "@/store/store";
 import { getCaseOperationKeywords } from "@/utils/resolution";
-import { AlphabetUppercase, CursorText, ListUl } from "react-bootstrap-icons";
+import {
+  AlphabetUppercase,
+  Collection,
+  CursorText,
+  ListUl,
+} from "react-bootstrap-icons";
+
+import {
+  MixedSelectionItems,
+  VariableInsertItems,
+} from "./VariableRowMenuItems";
 
 const CASE_KEYWORDS = getCaseOperationKeywords();
 
@@ -15,6 +25,8 @@ interface Props {
   isSecret: boolean;
   isEnum: boolean;
   className: string;
+  /** Whether this surface shows sections. */
+  sectioned?: boolean;
 }
 
 export function VariableActionsMenu({
@@ -22,19 +34,30 @@ export function VariableActionsMenu({
   isSecret,
   isEnum,
   className,
+  sectioned,
 }: Props) {
   const t = useTranslation();
-  const removeVariable = useStore((state) => state.removeVariable);
-  const duplicateVariable = useStore((state) => state.duplicateVariable);
-  const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
   const setVariableKind = useStore((state) => state.setVariableKind);
+  const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
+  const duplicateVariable = useStore((state) => state.duplicateVariable);
   const applyVariableKeyCase = useStore((state) => state.applyVariableKeyCase);
+  const addVariableSection = useStore((state) => state.addVariableSection);
+  const removeVariable = useStore((state) => state.removeVariable);
 
-  const count = useStore((state) =>
-    state.selectedVariableIds.has(variableId)
-      ? state.selectedVariableIds.size
-      : 1,
+  const count = useStore(
+    (state) => countVariableTargets(state, variableId).variables,
   );
+  const mixed = useStore(
+    (state) => countVariableTargets(state, variableId).sections > 0,
+  );
+
+  if (mixed) {
+    return (
+      <ActionsMenu className={className} title={t.variables.actions}>
+        <MixedSelectionItems targetId={variableId} sectioned={sectioned} />
+      </ActionsMenu>
+    );
+  }
 
   return (
     <ActionsMenu className={className} title={t.variables.actions}>
@@ -86,6 +109,17 @@ export function VariableActionsMenu({
           </ContextMenuItem>
         ))}
       </ContextMenuSubmenu>
+
+      {sectioned && (
+        <ContextMenuItem
+          icon={<Collection className="icon-md" />}
+          onSelect={() => addVariableSection(variableId)}
+        >
+          {t.variables.moveToNewSection(count)}
+        </ContextMenuItem>
+      )}
+
+      {sectioned && <VariableInsertItems targetId={variableId} />}
 
       <ContextMenuItem
         icon={<TrashIcon className="icon-md icon-bold" />}

@@ -56,10 +56,10 @@ export const VariableItem = memo(function VariableItem({
     <div
       className={classNames(
         CssClass.VARIABLE_ITEM,
-        isSelected && "variable-selected",
-        isFlashing && "duplicate-flash",
         isDragging && CssClass.DRAGGING,
         isDragOver && CssClass.DRAG_OVER,
+        isSelected && CssClass.VARIABLE_SELECTED,
+        isFlashing && CssClass.DUPLICATE_FLASH,
       )}
       {...{ [DataAttr.VARIABLE_ID]: variableId }}
       {...rowProps}
@@ -89,7 +89,7 @@ export const VariableItem = memo(function VariableItem({
         )}
       >
         <div
-          className="drag-handle"
+          className={CssClass.DRAG_HANDLE}
           {...tooltip(t.common.dragToReorder)}
           {...handleProps}
         >
@@ -101,6 +101,7 @@ export const VariableItem = memo(function VariableItem({
         variableId={variableId}
         isSecret={!!variable.secret}
         isEnum={!!variable.options}
+        sectioned
         className={classNames(
           CssClass.VARIABLE_ACTIONS,
           CssClass.SELECT_KEY_HIDDEN,

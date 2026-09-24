@@ -103,7 +103,7 @@ export const VariableRow = memo(function VariableRow({
       {...rowProps}
     >
       <div
-        className="drag-handle"
+        className={CssClass.DRAG_HANDLE}
         {...tooltip(t.common.dragToReorder)}
         {...handleProps}
       >

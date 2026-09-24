@@ -35,6 +35,7 @@ import {
   SortDirection,
   SyncDestination,
   Theme,
+  VariableEntryKind,
   VariableField,
   VariableKind,
   VaultError,
@@ -52,6 +53,7 @@ import type {
   RunbookSync,
   Tab,
   Variable,
+  VariableSection,
   VaultRecord,
 } from "@/common/types";
 import { detectLanguage, getMessages } from "@/i18n/messages";
@@ -115,6 +117,17 @@ import {
 import { displayLabel, getRunbookLabel } from "@/utils/runbook";
 import { buildRunbookSource, parseRunbookSource } from "@/utils/runbookSource";
 import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
+import {
+  entryId,
+  hiddenVariableIds,
+  insertVariableEntry,
+  mapVariableEntries,
+  moveVariableEntries,
+  normalizeVariableSections,
+  revealVariables,
+  toVariableEntries,
+  type VariableEntry,
+} from "@/utils/variableSections";
 import { createContext, useContext } from "react";
 import {
   createStore,
@@ -209,6 +222,7 @@ export interface StoreState {
   linkKeyHeld: boolean;
   pendingFocusBlockId: string | null;
   pendingFocusVariableId: string | null;
+  pendingFocusSectionId: string | null;
   imageViewerBlockId: string | null;
 
   // Search
@@ -316,6 +330,16 @@ export interface StoreState {
   reorderVariables: (sourceId: string, targetId: string) => void;
   clearVariableFlash: (variableId: string) => void;
   consumeVariableFocus: () => void;
+
+  addVariableSection: (variableId?: string) => void;
+  insertVariableRow: (
+    targetId: string,
+    kind: VariableEntryKind,
+    position: InsertPosition,
+  ) => void;
+  renameVariableSection: (sectionId: string, name: string) => void;
+  toggleVariableSection: (sectionId: string) => void;
+  consumeSectionFocus: () => void;
 
   addBlock: (blockType: BlockType, anchor?: BlockInsertAnchor) => Promise<void>;
   removeBlock: (blockId: string) => void;
@@ -539,7 +563,29 @@ function createTabObject(
     runbookId,
     variables: [],
     blocks: [],
+    variableSections: [],
     scrollTop: createDefaultScrollTop(),
+  };
+}
+
+function tabContent(tab: Tab | null | undefined): RunbookContent {
+  return {
+    blocks: tab?.blocks ?? [],
+    variables: tab?.variables ?? [],
+    variableSections: tab?.variableSections ?? [],
+  };
+}
+
+/** A tab's content fields, read from stored content that may predate sections. */
+function contentFields(content: RunbookContent) {
+  const variables = content.variables ?? [];
+  return {
+    blocks: content.blocks ?? [],
+    variables,
+    variableSections: normalizeVariableSections(
+      content.variableSections,
+      variables.length,
+    ),
   };
 }
 
@@ -555,6 +601,33 @@ function withActiveTab(
   return { tabs: state.tabs.map((t) => (t.id === active.id ? mutate(t) : t)) };
 }
 
+/** Append a variable, expanding the section it lands in so it is on screen. */
+function appendVariable(tab: Tab, variable: Variable): Tab {
+  const variables = [...tab.variables, variable];
+  return {
+    ...tab,
+    variables,
+    variableSections: revealVariables(
+      { variables, variableSections: tab.variableSections },
+      [variable.id],
+    ),
+  };
+}
+
+/** Replace one section of the active tab. */
+function withVariableSection(
+  state: StoreState,
+  sectionId: string,
+  patch: (section: VariableSection) => VariableSection,
+) {
+  return withActiveTab(state, (tab) => ({
+    ...tab,
+    variableSections: tab.variableSections.map((section) =>
+      section.id === sectionId ? patch(section) : section,
+    ),
+  }));
+}
+
 /**
  * What a variable action acts on: the whole selection when the clicked row is
  * part of it, that row alone otherwise. The same rule block actions follow.
@@ -564,6 +637,32 @@ function targetVariableIds(state: StoreState, variableId: string): string[] {
     state.selectedVariableIds.has(variableId)
     ? [...state.selectedVariableIds]
     : [variableId];
+}
+
+function countSections(state: StoreState, ids: Iterable<string>): number {
+  const sections = getActiveTab(state)?.variableSections ?? [];
+  let count = 0;
+
+  for (const id of ids) {
+    if (sections.some((section) => section.id === id)) {
+      count++;
+    }
+  }
+
+  return count;
+}
+
+export function countVariableTargets(
+  state: StoreState,
+  variableId: string,
+): { sections: number; variables: number } {
+  const targets = targetVariableIds(state, variableId);
+  const sections = countSections(state, targets);
+  return { sections, variables: targets.length - sections };
+}
+
+export function countSelectedSections(state: StoreState): number {
+  return countSections(state, state.selectedVariableIds);
 }
 
 /**
@@ -1017,7 +1116,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
     const decryptOpenTabs = async (runbookId: string) => {
       const decrypted = await Promise.all(
         get().tabs.map(async (tab) => {
-          const content = { variables: tab.variables, blocks: tab.blocks };
+          const content = tabContent(tab);
           if (tab.runbookId !== runbookId || !countEncryptedSecrets(content)) {
             return tab;
           }
@@ -1042,11 +1141,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         return false;
       }
 
-      const locked = countEncryptedSecrets({
-        variables: tab.variables,
-        blocks: tab.blocks,
-      });
-
+      const locked = countEncryptedSecrets(tabContent(tab));
       return locked > 0
         ? await promptVault(VaultPrompt.UNLOCK, unlockVaultWith(runbookId))
         : false;
@@ -1131,9 +1226,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
     /** The runbook's content as the tab holds it, else as the DB holds it. */
     const readRunbookContent = async (runbookId: string) => {
       const openTab = get().tabs.find((t) => t.runbookId === runbookId);
-      return openTab
-        ? { variables: openTab.variables, blocks: openTab.blocks }
-        : await contentDb.get(runbookId);
+      return openTab ? tabContent(openTab) : await contentDb.get(runbookId);
     };
 
     let cloudRequestId = 0;
@@ -1249,6 +1342,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       linkKeyHeld: false,
       pendingFocusBlockId: null,
       pendingFocusVariableId: null,
+      pendingFocusSectionId: null,
       imageViewerBlockId: null,
 
       runbookSearchQuery: "",
@@ -1308,14 +1402,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         const active = getActiveTab(state);
         if (active?.runbookId) {
-          const content = {
-            variables: active.variables,
-            blocks: active.blocks,
-          };
-
+          const content = tabContent(active);
           writeRunbookContent(active.runbookId, content).catch((error) =>
             console.warn("Failed to persist runbook content:", error),
           );
+
           queueCloudSync(active.runbookId, content);
         }
       },
@@ -1364,8 +1455,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
                 id: tabId,
                 label: entry.label,
                 runbookId,
-                variables: content.variables ?? [],
-                blocks: content.blocks ?? [],
+                ...contentFields(content),
                 scrollTop: persistence.restoreScrollTop(scrollTop),
               });
             }
@@ -1396,10 +1486,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         // cloud, so every linked tab gets one catch-up push on load
         for (const tab of get().tabs) {
           if (tab.runbookId) {
-            queueCloudSync(tab.runbookId, {
-              variables: tab.variables,
-              blocks: tab.blocks,
-            });
+            queueCloudSync(tab.runbookId, tabContent(tab));
           }
         }
       },
@@ -1440,10 +1527,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             focusedRunbookId: null,
           }));
 
-          await writeRunbookContent(newRunbookId, {
-            variables: [],
-            blocks: [],
-          });
+          await writeRunbookContent(newRunbookId, tabContent(null));
           persist.saveRunbookLibrary(
             get().runbookLibrary,
             get().activeRunbookId,
@@ -1553,9 +1637,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         const runbook = state.runbookLibrary.find((r) => r.id === runbookId);
         const label = runbook?.label ?? DEFAULT_TAB_LABEL;
-        const tab = createTabObject(label, runbookId);
-        tab.variables = content.variables ?? [];
-        tab.blocks = content.blocks ?? [];
+        const tab = {
+          ...createTabObject(label, runbookId),
+          ...contentFields(content),
+        };
 
         set((s) => ({
           tabs: [...s.tabs, tab],
@@ -1672,14 +1757,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         const source = state.runbookLibrary[sourceIndex];
         const openTab = state.tabs.find((t) => t.runbookId === id);
-        const content = openTab
-          ? { variables: openTab.variables, blocks: openTab.blocks }
-          : await contentDb.get(id);
+        const stored = openTab ? tabContent(openTab) : await contentDb.get(id);
 
-        if (!content) {
+        if (!stored) {
           return;
         }
 
+        const content = contentFields(stored);
         const copy: RunbookContent = {
           variables: content.variables.map((variable) => ({
             ...variable,
@@ -1687,6 +1771,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           })),
           blocks: content.blocks.map((block) => ({
             ...block,
+            id: generateId(),
+          })),
+          variableSections: content.variableSections.map((section) => ({
+            ...section,
             id: generateId(),
           })),
         };
@@ -1807,11 +1895,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             ),
             tabs: s.tabs.map((t) =>
               t.runbookId === existing.id
-                ? {
-                    ...t,
-                    variables: content.variables ?? [],
-                    blocks: content.blocks ?? [],
-                  }
+                ? { ...t, ...contentFields(content) }
                 : t,
             ),
           }));
@@ -2037,10 +2121,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           language: DEFAULT_VARIABLE_LANGUAGE,
         };
         set((s) => ({
-          ...withActiveTab(s, (tab) => ({
-            ...tab,
-            variables: [...tab.variables, newVariable],
-          })),
+          ...withActiveTab(s, (tab) => appendVariable(tab, newVariable)),
           pendingFocusVariableId: newVariable.id,
           variableSearchQuery: "",
         }));
@@ -2067,10 +2148,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         };
 
         set((s) => ({
-          ...withActiveTab(s, (t) => ({
-            ...t,
-            variables: [...t.variables, newVariable],
-          })),
+          ...withActiveTab(s, (t) => appendVariable(t, newVariable)),
           variableSearchQuery: "",
         }));
 
@@ -2098,7 +2176,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set((s) => ({
           ...withActiveTab(s, (tab) => ({
             ...tab,
-            variables: tab.variables.filter((v) => !idsToRemove.has(v.id)),
+            ...mapVariableEntries(tab, (entries) =>
+              entries.filter((entry) => !idsToRemove.has(entryId(entry))),
+            ),
           })),
           selectedVariableIds: fromSelection
             ? new Set<string>()
@@ -2118,47 +2198,71 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
 
-        // Duplicate in list order
-        const targets = targetVariableIds(state, variableId);
-        const ordered = active.variables.filter((v) => targets.includes(v.id));
+        // Duplicate in list order, sections included
+        const targets = new Set(targetVariableIds(state, variableId));
+        const ordered = toVariableEntries(
+          active.variables,
+          active.variableSections,
+        ).filter((entry) => targets.has(entryId(entry)));
+
         if (ordered.length === 0) {
           return;
         }
 
-        const fromSelection = ordered.length > 1;
-        const copyIds = ordered.map(() => generateId());
+        const takenKeys = new Set(
+          active.variables.map((v) => getVariableKey(v)),
+        );
+
+        const copies = ordered.map((entry): VariableEntry => {
+          if (entry.kind === VariableEntryKind.SECTION) {
+            return {
+              ...entry,
+              section: { ...entry.section, id: generateId() },
+            };
+          }
+
+          const source = entry.variable;
+          const key = getVariableKey(source);
+          const newKey = key ? uniqueCopyKey(key, takenKeys) : source.key;
+          takenKeys.add(newKey);
+          return {
+            ...entry,
+            variable: { ...source, id: generateId(), key: newKey },
+          };
+        });
+
+        const copyIds = copies.map(entryId);
+        const lastId = entryId(ordered[ordered.length - 1]);
+        const single = copies.length === 1 ? copies[0] : null;
 
         set((s) => ({
           ...withActiveTab(s, (tab) => {
-            const lastId = ordered[ordered.length - 1].id;
-            const insertAt = tab.variables.findIndex((v) => v.id === lastId);
-            if (insertAt < 0) {
-              return tab;
-            }
+            // Right after the last source, so the copies stay in its section
+            const layout = mapVariableEntries(tab, (entries) => {
+              const next = [...entries];
+              const after = next.findIndex(
+                (entry) => entryId(entry) === lastId,
+              );
 
-            const takenKeys = new Set(
-              tab.variables.map((v) => getVariableKey(v)),
-            );
-
-            const copies = ordered.map((source, index) => {
-              const key = getVariableKey(source);
-              if (!key) {
-                return { ...source, id: copyIds[index] };
-              }
-
-              const newKey = uniqueCopyKey(key, takenKeys);
-              takenKeys.add(newKey);
-              return { ...source, id: copyIds[index], key: newKey };
+              next.splice(after + 1, 0, ...copies);
+              return next;
             });
 
-            const variables = [...tab.variables];
-            variables.splice(insertAt + 1, 0, ...copies);
-            return { ...tab, variables };
+            return {
+              ...tab,
+              ...layout,
+              variableSections: revealVariables(layout, copyIds),
+            };
           }),
           flashVariableIds: new Set(copyIds),
-          pendingFocusVariableId: fromSelection
-            ? null
-            : (copyIds[copyIds.length - 1] ?? null),
+          pendingFocusVariableId:
+            single?.kind === VariableEntryKind.VARIABLE
+              ? single.variable.id
+              : null,
+          pendingFocusSectionId:
+            single?.kind === VariableEntryKind.SECTION
+              ? single.section.id
+              : null,
         }));
 
         get().saveState();
@@ -2374,37 +2478,18 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             ? [...state.selectedVariableIds]
             : [sourceId];
 
-        const targetIndex = active.variables.findIndex(
-          (v) => v.id === targetId,
-        );
-        const sourceIndex = active.variables.findIndex(
-          (v) => v.id === sourceId,
-        );
-        if (sourceIndex < 0 || targetIndex < 0) {
-          return;
-        }
-
-        const movingVariables = movingIds
-          .map((id) => active.variables.find((v) => v.id === id))
-          .filter((v): v is Variable => v !== undefined)
-          .sort(
-            (a, b) => active.variables.indexOf(a) - active.variables.indexOf(b),
-          );
-
         set((s) =>
-          withActiveTab(s, (tab) => {
-            const remaining = tab.variables.filter(
-              (v) => !movingIds.includes(v.id),
-            );
-            const newTargetIndex = remaining.findIndex(
-              (v) => v.id === targetId,
-            );
-            const insertIndex =
-              sourceIndex < targetIndex ? newTargetIndex + 1 : newTargetIndex;
-
-            remaining.splice(insertIndex, 0, ...movingVariables);
-            return { ...tab, variables: remaining };
-          }),
+          withActiveTab(s, (tab) => ({
+            ...tab,
+            ...mapVariableEntries(tab, (entries) =>
+              moveVariableEntries(
+                entries,
+                new Set(movingIds),
+                sourceId,
+                targetId,
+              ),
+            ),
+          })),
         );
 
         get().saveState();
@@ -2422,6 +2507,133 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }),
 
       consumeVariableFocus: () => set({ pendingFocusVariableId: null }),
+
+      // --- Variable sections ---
+
+      addVariableSection: (variableId) => {
+        const state = get();
+        const active = getActiveTab(state);
+        if (state.mode === AppMode.READ || !active) {
+          return;
+        }
+
+        const variableIds = new Set(active.variables.map((v) => v.id));
+        const moving = new Set(
+          (variableId ? targetVariableIds(state, variableId) : []).filter(
+            (id) => variableIds.has(id),
+          ),
+        );
+
+        const section: VariableSection = {
+          id: generateId(),
+          name: "",
+          start: active.variables.length,
+        };
+
+        // A new section goes last
+        set((s) => ({
+          ...withActiveTab(s, (tab) => ({
+            ...tab,
+            ...mapVariableEntries(tab, (entries) => [
+              ...entries.filter((entry) => !moving.has(entryId(entry))),
+              { kind: VariableEntryKind.SECTION, section },
+              ...entries.filter((entry) => moving.has(entryId(entry))),
+            ]),
+          })),
+          pendingFocusSectionId: section.id,
+          selectedVariableIds:
+            moving.size > 1 ? new Set<string>() : s.selectedVariableIds,
+        }));
+
+        get().saveState();
+      },
+
+      insertVariableRow: (targetId, kind, position) => {
+        const state = get();
+        if (state.mode === AppMode.READ || !getActiveTab(state)) {
+          return;
+        }
+
+        const entry: VariableEntry =
+          kind === VariableEntryKind.SECTION
+            ? {
+                kind: VariableEntryKind.SECTION,
+                section: { id: generateId(), name: "", start: 0 },
+              }
+            : {
+                kind: VariableEntryKind.VARIABLE,
+                variable: {
+                  id: generateId(),
+                  key: "",
+                  value: "",
+                  language: DEFAULT_VARIABLE_LANGUAGE,
+                },
+              };
+
+        const id = entryId(entry);
+        set((s) => ({
+          ...withActiveTab(s, (tab) => {
+            const layout = mapVariableEntries(tab, (entries) =>
+              insertVariableEntry(entries, entry, targetId, position),
+            );
+
+            return {
+              ...tab,
+              ...layout,
+              variableSections: revealVariables(layout, [id]),
+            };
+          }),
+          pendingFocusVariableId:
+            kind === VariableEntryKind.VARIABLE ? id : s.pendingFocusVariableId,
+          pendingFocusSectionId:
+            kind === VariableEntryKind.SECTION ? id : s.pendingFocusSectionId,
+        }));
+
+        get().saveState();
+      },
+
+      renameVariableSection: (sectionId, name) => {
+        if (get().mode === AppMode.READ) {
+          return;
+        }
+
+        set((s) =>
+          withVariableSection(s, sectionId, (section) => ({
+            ...section,
+            name,
+          })),
+        );
+
+        debouncedSaveState();
+      },
+
+      toggleVariableSection: (sectionId) => {
+        set((s) => {
+          const updated = withVariableSection(s, sectionId, (section) => ({
+            ...section,
+            collapsed: !section.collapsed,
+          }));
+
+          const tab = getActiveTab({ ...s, ...updated });
+          const hidden = tab
+            ? hiddenVariableIds(tab.variables, tab.variableSections)
+            : new Set<string>();
+
+          const selectedVariableIds = [...s.selectedVariableIds].some((id) =>
+            hidden.has(id),
+          )
+            ? new Set(
+                [...s.selectedVariableIds].filter((id) => !hidden.has(id)),
+              )
+            : s.selectedVariableIds;
+
+          return { ...updated, selectedVariableIds };
+        });
+
+        get().saveState();
+      },
+
+      consumeSectionFocus: () => set({ pendingFocusSectionId: null }),
 
       // --- Blocks ---
 
@@ -2598,16 +2810,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         // The target may not be the active tab, so persist its content explicitly
         const updated = get().tabs.find((t) => t.id === targetTabId);
         if (updated?.runbookId) {
-          const content = {
-            variables: updated.variables,
-            blocks: updated.blocks,
-          };
-
+          const content = tabContent(updated);
           contentDb
             .put(updated.runbookId, content)
             .catch((error) =>
               console.warn("Failed to persist runbook content:", error),
             );
+
           queueCloudSync(updated.runbookId, content);
         }
 
@@ -2833,21 +3042,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         let content: RunbookContent;
         try {
-          content = parseRunbookSource(text, {
-            variables: active.variables,
-            blocks: active.blocks,
-          });
+          content = parseRunbookSource(text, tabContent(active));
         } catch {
           return null;
         }
 
         set((s) => {
-          const updated = withActiveTab(s, (tab) => ({
-            ...tab,
-            variables: content.variables,
-            blocks: content.blocks,
-          }));
-
+          const updated = withActiveTab(s, (tab) => ({ ...tab, ...content }));
           return { ...updated, ...relabelActive({ ...s, ...updated }) };
         });
 
@@ -3063,10 +3264,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         });
 
         const active = getActiveTab(get());
-        const content = {
-          variables: active?.variables ?? [],
-          blocks: active?.blocks ?? [],
-        };
+        const content = tabContent(active);
 
         const scope = active?.runbookId ?? "";
         const fullName = `${filename}.${format}`;
@@ -3904,10 +4102,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       copyRunbookMarkdown: async () => {
         const active = getActiveTab(get());
-        const text = await buildMarkdownExport(active?.runbookId ?? "", {
-          variables: active?.variables ?? [],
-          blocks: active?.blocks ?? [],
-        });
+        const text = await buildMarkdownExport(
+          active?.runbookId ?? "",
+          tabContent(active),
+        );
 
         await navigator.clipboard.writeText(text);
       },

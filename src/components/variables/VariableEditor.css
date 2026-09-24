@@ -134,6 +134,13 @@ body.read-mode .variable-editor-secret-btn {
   background: var(--color-surface-alt);
 }
 
+body.select-key-held:not(.read-mode)
+  .variable-item:hover
+  :is(.variable-editor-value, .variable-editor-options),
+.variable-selected :is(.variable-editor-value, .variable-editor-options) {
+  border-color: transparent;
+}
+
 body:not(.read-mode)
   .variable-editor.is-unused:not(:focus-within)
   :is(.variable-editor-key, .variable-editor-value, .variable-editor-options) {

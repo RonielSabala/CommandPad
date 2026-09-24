@@ -7,6 +7,7 @@ import type {
   RunbookEntry,
   Tab,
   Variable,
+  VariableSection,
 } from "@/common/types";
 import type { StoreState } from "@/store/store";
 import { generateId } from "@/utils/id";
@@ -57,11 +58,23 @@ export const demoVariable = (
   ...(secret !== undefined ? { secret } : {}),
 });
 
+export const demoSection = (
+  name: string,
+  start: number,
+  collapsed?: boolean,
+): VariableSection => ({
+  id: generateId(),
+  name,
+  start,
+  ...(collapsed !== undefined ? { collapsed } : {}),
+});
+
 const DEMO_VARIABLE_KEY_RATIO = 0.25;
 
 export interface DemoContent {
   blocks?: Block[];
   variables?: Variable[];
+  variableSections?: VariableSection[];
 }
 
 export interface DemoSeed {
@@ -118,6 +131,10 @@ export function buildDemoSeed(
       content.variables ?? [],
       previousContent?.variables,
     );
+    const variableSections = reuseIds(
+      content.variableSections ?? [],
+      previousContent?.variableSections,
+    );
 
     const entry: RunbookEntry = {
       id: previousEntry?.id ?? generateId(),
@@ -126,7 +143,7 @@ export function buildDemoSeed(
     };
 
     runbookLibrary.push(entry);
-    contentSeed[entry.id] = { blocks, variables };
+    contentSeed[entry.id] = { blocks, variables, variableSections };
     return entry;
   };
 

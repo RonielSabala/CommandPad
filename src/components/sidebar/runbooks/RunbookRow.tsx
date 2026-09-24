@@ -72,7 +72,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
       {...rowProps}
     >
       <div
-        className="drag-handle"
+        className={CssClass.DRAG_HANDLE}
         {...tooltip(t.common.dragToReorder)}
         {...handleProps}
       >

@@ -39,6 +39,18 @@ A variable is an object with these fields:
   is always one of a few known choices (environments, regions, log levels), and never
   together with `secret`.
 
+The `variables` array may also hold **sections**, which group the variables that follow
+them. A section is an object with exactly these fields, and never `key` or `value`:
+
+- `section` (required, text): the section's name.
+- `collapsed` (optional, `true`): the section starts folded, hiding its variables.
+
+A section holds every variable after it up to the next section; variables before the first
+section belong to none. Sections do not nest. They change nothing about how references
+resolve. Use them only in runbooks with many variables, to set apart the ones the user
+fills in each run from the ones that rarely change, e.g. put the changing ones first and a
+collapsed `{"section": "Constants", "collapsed": true}` before the fixed ones.
+
 Define a variable for anything that appears in more than one command, and for anything the
 user is expected to change: hosts, ports, paths, project names, environments, credentials.
 

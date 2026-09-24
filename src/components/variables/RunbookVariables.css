@@ -11,21 +11,20 @@
 }
 
 :is(#variables-list, .variables-mirror) {
+  --variable-row-max-width: calc(100% - var(--space-20));
+  --variable-section-indent: var(--space-8);
+
   display: grid;
-  grid-template-columns: fit-content(calc(100% - var(--space-20)));
+  grid-template-columns: minmax(0, 1fr);
   max-width: 100%;
   gap: var(--space-4);
   justify-items: start;
 }
 
-#add-variable-row {
-  display: flex;
-  align-items: center;
-  padding: var(--space-8) 0 0;
-  border-top: var(--space-1) dashed var(--color-border);
-  margin-top: var(--space-4);
-}
+.variable-section ~ .variable-item:not(.variable-section) {
+  --variable-row-max-width: calc(
+    100% - var(--space-20) - var(--variable-section-indent)
+  );
 
-body.read-mode #add-variable-row {
-  display: none;
+  margin-left: var(--variable-section-indent);
 }

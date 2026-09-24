@@ -315,6 +315,11 @@ body {
   }
 }
 
+.duplicate-flash {
+  z-index: var(--z-raised);
+  animation: duplicate-flash 0.5s ease-out forwards;
+}
+
 /* --- SELECT-KEY-HELD SUPPRESSIONS --- */
 
 body.select-key-held:not(.read-mode) * {

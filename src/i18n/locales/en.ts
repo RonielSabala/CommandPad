@@ -128,6 +128,30 @@ export const en: Messages = {
       count === 1 ? "1 variable selected" : `${count} variables selected`,
     dragResizeSplit: "Drag to resize key and value · double-click to even out",
     unusedTitle: (key) => `${key} (unused)`,
+    newSection: "New section",
+    newRowLabel: "NEW",
+    variableLabel: "Variable",
+    sectionLabel: "Section",
+    moveToNewSection: (count) =>
+      count === 1 ? "Move to a new section" : "Move variables to a new section",
+    sectionPlaceholder: "Section name",
+    sectionActions: "Section actions",
+    duplicateSection: (count) =>
+      count === 1 ? "Duplicate section" : "Duplicate sections",
+    removeSection: (count) =>
+      count === 1 ? "Remove section" : "Remove sections",
+    duplicateItems: "Duplicate items",
+    removeItems: "Remove items",
+    insertAbove: "Insert above",
+    insertBelow: "Insert below",
+    sectionsSelected: (count) =>
+      count === 1 ? "1 section selected" : `${count} sections selected`,
+    itemsSelected: (count) =>
+      count === 1 ? "1 item selected" : `${count} items selected`,
+    sectionCount: (count) =>
+      count === 1 ? "1 variable" : `${count} variables`,
+    expandSection: "Expand section",
+    collapseSection: "Collapse section",
   },
   tabs: {
     newTab: "New tab",
@@ -712,6 +736,7 @@ export const en: Messages = {
         backup: {
           title: "Backup checklist",
           note: "Run this before you shut down for the day.",
+          constants: "Constants",
         },
         siteCheck: {
           title: "Website check",
@@ -805,6 +830,8 @@ If something goes wrong, undo it in this order:
 * **${openPreviewLabel}** brings the blocks back.`,
       variablesEditorNote:
         "The variables editor works just like the block editor above, one row per variable instead of per block, down to the language selector on each value: a value starts as plain text, and picking a language only changes how it is highlighted and checked. Try it below.",
+      variableSections: (newRowLabel, sectionLabel, moveToNewSection) =>
+        `Variables you never touch, like constants, can be tucked away in a **section**. A section has a name and holds every variable below it until the next section, and collapsing it hides them all. Add one with **${sectionLabel}** in the **${newRowLabel}** row, or select variables and pick **${moveToNewSection}** from their actions menu; drag variables across a section's header to move them in or out, and drag the header itself to move where the section starts.`,
       autoCreate:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:

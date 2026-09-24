@@ -1,16 +1,11 @@
 import { CssClass } from "@/common/constants/css";
-import { Key } from "@/common/constants/events";
-import { AppMode, BlockType, NoteStyle } from "@/common/enums";
+import { BlockType, NoteStyle } from "@/common/enums";
 import type { NoteBlock as NoteBlockData } from "@/common/types";
-import { useNoteFormatting } from "@/hooks/useNoteFormatting";
-import { useTabInsertion } from "@/hooks/useTabInsertion";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { getNoteCaretAtPoint } from "@/utils/dom";
-import { classNames } from "@/utils/string";
-import { useEffect, useRef, useState, type MouseEvent } from "react";
-import "./NoteBlock.css";
-import { NoteText } from "./NoteText";
+import { useCallback } from "react";
+
+import { NoteEditor } from "./NoteEditor";
 
 const NOTE_STYLES: NoteStyle[] = [
   NoteStyle.HEADING,
@@ -25,119 +20,41 @@ interface Props {
 export function NoteBlock({ block }: Props) {
   const t = useTranslation();
   const blockId = block.id;
-  const blockText = block.text;
 
   const updateBlock = useStore((state) => state.updateBlock);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
-  const readMode = useStore((state) => state.mode === AppMode.READ);
-  const language = useStore((state) => state.language);
-  const spellcheck = useStore((state) => state.spellcheckEnabled);
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
   );
 
-  const [focused, setFocused] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const previewRef = useRef<HTMLDivElement>(null);
-
   const blockStyle = block.style || NoteStyle.BODY;
-  const placeholder = t.note.stylePlaceholder[blockStyle];
-  const applyText = (value: string) =>
-    updateBlock(blockId, BlockType.NOTE, { text: value });
-  const handleTabKey = useTabInsertion(applyText);
-  const handleFormatKey = useNoteFormatting(applyText);
-
-  const placesCaret = (event: MouseEvent) =>
-    !focused &&
-    !readMode &&
-    previewRef.current !== null &&
-    !(event.target as Element | null)?.closest(`.${CssClass.NOTE_LINK}`);
-
-  const handleMouseDown = (event: MouseEvent) => {
-    if (placesCaret(event)) {
-      event.preventDefault();
-    }
-  };
-
-  const handleClick = (event: MouseEvent) => {
-    if (!placesCaret(event) || !previewRef.current) {
-      return;
-    }
-
-    const caret = getNoteCaretAtPoint(
-      previewRef.current,
-      event.clientX,
-      event.clientY,
-    );
-
-    const textarea = textareaRef.current;
-    textarea?.focus();
-    if (caret !== undefined) {
-      textarea?.setSelectionRange(caret, caret);
-    }
-  };
-
-  useEffect(() => {
-    if (pendingFocus) {
-      textareaRef.current?.focus({ preventScroll: true });
-      consumeBlockFocus();
-    }
-  }, [pendingFocus, consumeBlockFocus]);
+  const applyText = useCallback(
+    (value: string) => updateBlock(blockId, BlockType.NOTE, { text: value }),
+    [updateBlock, blockId],
+  );
 
   return (
-    <div
-      className={classNames(
-        "note-block",
-        CssClass.BLOCK_SURFACE,
-        focused && "is-focused",
-      )}
-    >
-      <div className={`note-style-row ${CssClass.SELECT_KEY_HIDDEN}`}>
-        {NOTE_STYLES.map((style) => (
-          <button
-            key={style}
-            className={`note-style-btn${blockStyle === style ? ` ${CssClass.ACTIVE}` : ""}`}
-            onClick={() => updateBlock(blockId, BlockType.NOTE, { style })}
-          >
-            {t.note.styleLabel[style]}
-          </button>
-        ))}
-      </div>
-      <label
-        className={`note-auto-width style-${blockStyle} ${CssClass.SELECT_KEY_INERT}`}
-        data-value={blockText || placeholder}
-        onMouseDown={handleMouseDown}
-        onClick={handleClick}
-      >
-        <textarea
-          ref={textareaRef}
-          className={`note-textarea style-${blockStyle} ${CssClass.SELECT_KEY_INERT}`}
-          placeholder={placeholder}
-          spellCheck={spellcheck}
-          lang={language}
-          rows={1}
-          value={blockText}
-          onChange={(event) => applyText(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === Key.ESCAPE) {
-              event.currentTarget.blur();
-              return;
-            }
-
-            handleFormatKey(event);
-            handleTabKey(event);
-          }}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-        />
-        <div ref={previewRef} className={`note-preview style-${blockStyle}`}>
-          {blockText ? (
-            <NoteText text={blockText} requiresLinkModifier />
-          ) : (
-            <span className="note-preview-placeholder">{placeholder}</span>
-          )}
+    <NoteEditor
+      value={block.text}
+      onChange={applyText}
+      placeholder={t.note.stylePlaceholder[blockStyle]}
+      styleClass={`style-${blockStyle}`}
+      className={CssClass.BLOCK_SURFACE}
+      focusRequested={pendingFocus}
+      onFocusHandled={consumeBlockFocus}
+      header={
+        <div className={`note-style-row ${CssClass.SELECT_KEY_HIDDEN}`}>
+          {NOTE_STYLES.map((style) => (
+            <button
+              key={style}
+              className={`note-style-btn${blockStyle === style ? ` ${CssClass.ACTIVE}` : ""}`}
+              onClick={() => updateBlock(blockId, BlockType.NOTE, { style })}
+            >
+              {t.note.styleLabel[style]}
+            </button>
+          ))}
         </div>
-      </label>
-    </div>
+      }
+    />
   );
 }

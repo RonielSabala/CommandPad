@@ -1,6 +1,6 @@
 .variable-item {
   position: relative;
-  max-width: 100%;
+  max-width: var(--variable-row-max-width, 100%);
 }
 
 .variable-drag-handle,
@@ -70,9 +70,4 @@ body.select-key-held:not(.read-mode)
 
 .variable-item.dragging {
   opacity: 0.5;
-}
-
-.variable-item.duplicate-flash {
-  z-index: var(--z-raised);
-  animation: duplicate-flash 0.5s ease-out forwards;
 }

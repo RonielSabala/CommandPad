@@ -43,10 +43,10 @@ export const BlockItem = memo(function BlockItem({
   const BlockView = getBlockComponent(block.type);
   const blockClass = classNames(
     CssClass.BLOCK_ITEM,
-    isSelected && "block-selected",
-    isFlashing && "duplicate-flash",
     dragging && CssClass.DRAGGING,
     dragOver && CssClass.DRAG_OVER,
+    isSelected && "block-selected",
+    isFlashing && CssClass.DUPLICATE_FLASH,
   );
 
   return (
@@ -159,7 +159,7 @@ export const BlockItem = memo(function BlockItem({
         className={`${CssClass.BLOCK_DRAG_HANDLE} ${CssClass.SELECT_KEY_HIDDEN}`}
       >
         <div
-          className="drag-handle"
+          className={CssClass.DRAG_HANDLE}
           {...tooltip(t.common.dragToReorder)}
           onMouseDown={() => setDraggable(true)}
           onMouseUp={() => {
