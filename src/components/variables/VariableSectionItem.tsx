@@ -1,30 +1,16 @@
 import { CssClass } from "@/common/constants/css";
-import { DataAttr } from "@/common/constants/dom";
-import { AppMode, DragGroup, LassoMode, SelectionGroup } from "@/common/enums";
+import { AppMode, VariableEntryKind } from "@/common/enums";
 import type { VariableSection } from "@/common/types";
 import { NoteEditor } from "@/components/blocks/note/NoteEditor";
-import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
-import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import {
-  DragIcon,
-  DuplicateIcon,
-  SidebarSectionChevronIcon,
-  TrashIcon,
-} from "@/components/icons";
-import { lasso } from "@/hooks/lasso";
-import { useRowReorder } from "@/hooks/useRowReorder";
+import { SidebarSectionChevronIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { countVariableTargets, useStore, useStoreApi } from "@/store/store";
+import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { memo, useCallback, useRef, type MouseEvent } from "react";
 
-import {
-  MixedSelectionItems,
-  VariableInsertItems,
-} from "./VariableRowMenuItems";
-
-import "./VariableItem.css";
+import { VariableRowFrame } from "./VariableRowFrame";
+import { BasicRowItems, VariableRowMenu } from "./VariableRowMenuItems";
 import "./VariableSectionItem.css";
 
 interface Props {
@@ -37,35 +23,17 @@ export const VariableSectionItem = memo(function VariableSectionItem({
   count,
 }: Props) {
   const t = useTranslation();
-  const store = useStoreApi();
 
   const empty = count === 0;
   const sectionId = section.id;
   const collapsed = !!section.collapsed && !empty;
 
   const readMode = useStore((state) => state.mode === AppMode.READ);
-  const isFlashing = useStore((state) => state.flashVariableIds.has(sectionId));
-  const isSelected = useStore((state) =>
-    state.selectedVariableIds.has(sectionId),
-  );
   const pendingFocus = useStore(
     (state) => state.pendingFocusSectionId === sectionId,
   );
 
-  const sectionCount = useStore(
-    (state) => countVariableTargets(state, sectionId).sections,
-  );
-  const mixed = useStore(
-    (state) => countVariableTargets(state, sectionId).variables > 0,
-  );
-
-  const removeVariable = useStore((state) => state.removeVariable);
-  const duplicateVariable = useStore((state) => state.duplicateVariable);
-  const setVariableSelected = useStore((state) => state.setVariableSelected);
-  const clearVariableFlash = useStore((state) => state.clearVariableFlash);
   const consumeSectionFocus = useStore((state) => state.consumeSectionFocus);
-  const reorderVariables = useStore((state) => state.reorderVariables);
-
   const renameVariableSection = useStore(
     (state) => state.renameVariableSection,
   );
@@ -94,42 +62,36 @@ export const VariableSectionItem = memo(function VariableSectionItem({
   };
 
   const headerRef = useRef<HTMLDivElement>(null);
-  const { isDragging, isDragOver, handleProps, rowProps } = useRowReorder(
-    DragGroup.VARIABLE,
-    sectionId,
-    reorderVariables,
-    !readMode,
-    headerRef,
-  );
-
   const toggleLabel = collapsed
     ? t.variables.expandSection
     : t.variables.collapseSection;
 
   return (
-    <div
+    <VariableRowFrame
+      rowId={sectionId}
       className={classNames(
-        CssClass.VARIABLE_ITEM,
         CssClass.VARIABLE_SECTION,
         collapsed && CssClass.COLLAPSED,
-        isDragging && CssClass.DRAGGING,
-        isDragOver && CssClass.DRAG_OVER,
-        isSelected && CssClass.VARIABLE_SELECTED,
-        isFlashing && CssClass.DUPLICATE_FLASH,
       )}
-      {...{ [DataAttr.VARIABLE_ID]: sectionId }}
-      {...rowProps}
-      onMouseEnter={() => {
-        const drag = lasso[SelectionGroup.VARIABLE];
-        if (drag.active && store.getState().mode !== AppMode.READ) {
-          setVariableSelected(sectionId, drag.mode === LassoMode.SELECT);
-        }
-      }}
-      onAnimationEnd={() => {
-        if (isFlashing) {
-          clearVariableFlash(sectionId);
-        }
-      }}
+      dragImageRef={headerRef}
+      menu={(className) => (
+        <VariableRowMenu
+          targetId={sectionId}
+          kind={VariableEntryKind.SECTION}
+          title={t.variables.sectionActions}
+          className={className}
+          sectioned
+        >
+          {(targets) => (
+            <BasicRowItems
+              targetId={sectionId}
+              sectioned
+              duplicateLabel={t.variables.duplicateSection(targets)}
+              removeLabel={t.variables.removeSection(targets)}
+            />
+          )}
+        </VariableRowMenu>
+      )}
     >
       <div
         ref={headerRef}
@@ -180,52 +142,6 @@ export const VariableSectionItem = memo(function VariableSectionItem({
           </button>
         )}
       </div>
-
-      <div
-        className={classNames(
-          CssClass.VARIABLE_DRAG_HANDLE,
-          CssClass.SELECT_KEY_HIDDEN,
-        )}
-      >
-        <div
-          className={CssClass.DRAG_HANDLE}
-          {...tooltip(t.common.dragToReorder)}
-          {...handleProps}
-        >
-          <DragIcon className="icon-md" />
-        </div>
-      </div>
-
-      <ActionsMenu
-        className={classNames(
-          CssClass.VARIABLE_ACTIONS,
-          CssClass.SELECT_KEY_HIDDEN,
-        )}
-        title={t.variables.sectionActions}
-      >
-        {mixed ? (
-          <MixedSelectionItems targetId={sectionId} sectioned />
-        ) : (
-          <>
-            <ContextMenuItem
-              icon={<DuplicateIcon className="icon-md icon-bold" />}
-              onSelect={() => duplicateVariable(sectionId)}
-            >
-              {t.variables.duplicateSection(sectionCount)}
-            </ContextMenuItem>
-
-            <VariableInsertItems targetId={sectionId} />
-
-            <ContextMenuItem
-              icon={<TrashIcon className="icon-md icon-bold" />}
-              onSelect={() => removeVariable(sectionId)}
-              danger
-            >
-              {t.variables.removeSection(sectionCount)}
-            </ContextMenuItem>
-          </>
-        )}
-      </ActionsMenu>
-    </div>
+    </VariableRowFrame>
   );
 });

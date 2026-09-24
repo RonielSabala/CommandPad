@@ -4,8 +4,9 @@ import { AppMode, DragGroup } from "@/common/enums";
 import type { RunbookEntry } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
+import { DragHandle } from "@/components/common/DragHandle";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { DragIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
+import { DuplicateIcon, TrashIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -71,13 +72,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
       {...{ [DataAttr.RUNBOOK_ID]: runbookId }}
       {...rowProps}
     >
-      <div
-        className={CssClass.DRAG_HANDLE}
-        {...tooltip(t.common.dragToReorder)}
-        {...handleProps}
-      >
-        <DragIcon className="icon-md" />
-      </div>
+      <DragHandle handleProps={handleProps} />
 
       <div className="runbook-row-main">
         <button

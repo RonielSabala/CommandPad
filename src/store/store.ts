@@ -654,23 +654,28 @@ function countSections(state: StoreState, ids: ReadonlySet<string>): number {
   return count;
 }
 
+/** How many of each kind `variableId`'s actions reach. */
 export function countVariableTargets(
   state: StoreState,
   variableId: string,
-): { sections: number; variables: number } {
+): Record<VariableEntryKind, number> {
   const selected = state.selectedVariableIds;
   if (!selected.has(variableId)) {
     const isSection = !!getActiveTab(state)?.variableSections.some(
       (section) => section.id === variableId,
     );
 
-    return isSection
-      ? { sections: 1, variables: 0 }
-      : { sections: 0, variables: 1 };
+    return {
+      [VariableEntryKind.SECTION]: isSection ? 1 : 0,
+      [VariableEntryKind.VARIABLE]: isSection ? 0 : 1,
+    };
   }
 
   const sections = countSections(state, selected);
-  return { sections, variables: selected.size - sections };
+  return {
+    [VariableEntryKind.SECTION]: sections,
+    [VariableEntryKind.VARIABLE]: selected.size - sections,
+  };
 }
 
 export function countSelectedSections(state: StoreState): number {

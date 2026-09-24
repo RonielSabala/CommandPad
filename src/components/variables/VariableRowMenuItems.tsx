@@ -1,4 +1,5 @@
 import { InsertPosition, VariableEntryKind } from "@/common/enums";
+import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuItem,
   ContextMenuSeparator,
@@ -13,7 +14,7 @@ import {
   VariableIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { countVariableTargets, useStore } from "@/store/store";
 import type { ReactNode } from "react";
 
 interface Props {
@@ -80,37 +81,97 @@ export function VariableInsertItems({ targetId }: Props) {
   );
 }
 
-interface MixedSelectionProps extends Props {
-  /** Whether this surface shows sections. */
-  sectioned?: boolean;
+interface ItemProps extends Props {
+  children: ReactNode;
 }
 
-export function MixedSelectionItems({
-  targetId,
-  sectioned,
-}: MixedSelectionProps) {
-  const t = useTranslation();
+export function DuplicateItem({ targetId, children }: ItemProps) {
   const duplicateVariable = useStore((state) => state.duplicateVariable);
+
+  return (
+    <ContextMenuItem
+      icon={<DuplicateIcon className="icon-md icon-bold" />}
+      onSelect={() => duplicateVariable(targetId)}
+    >
+      {children}
+    </ContextMenuItem>
+  );
+}
+
+export function RemoveItem({ targetId, children }: ItemProps) {
   const removeVariable = useStore((state) => state.removeVariable);
 
   return (
+    <ContextMenuItem
+      icon={<TrashIcon className="icon-md icon-bold" />}
+      onSelect={() => removeVariable(targetId)}
+      danger
+    >
+      {children}
+    </ContextMenuItem>
+  );
+}
+
+interface BasicItemsProps extends Props {
+  /** Whether this surface shows sections. */
+  sectioned?: boolean;
+  duplicateLabel: string;
+  removeLabel: string;
+}
+
+export function BasicRowItems({
+  targetId,
+  sectioned,
+  duplicateLabel,
+  removeLabel,
+}: BasicItemsProps) {
+  return (
     <>
-      <ContextMenuItem
-        icon={<DuplicateIcon className="icon-md icon-bold" />}
-        onSelect={() => duplicateVariable(targetId)}
-      >
-        {t.variables.duplicateItems}
-      </ContextMenuItem>
-
+      <DuplicateItem targetId={targetId}>{duplicateLabel}</DuplicateItem>
       {sectioned && <VariableInsertItems targetId={targetId} />}
-
-      <ContextMenuItem
-        icon={<TrashIcon className="icon-md icon-bold" />}
-        onSelect={() => removeVariable(targetId)}
-        danger
-      >
-        {t.variables.removeItems}
-      </ContextMenuItem>
+      <RemoveItem targetId={targetId}>{removeLabel}</RemoveItem>
     </>
+  );
+}
+
+interface MenuProps extends Props {
+  kind: VariableEntryKind;
+  title: string;
+  className: string;
+  sectioned?: boolean;
+  children: (count: number) => ReactNode;
+}
+
+export function VariableRowMenu({
+  targetId,
+  kind,
+  title,
+  className,
+  sectioned,
+  children,
+}: MenuProps) {
+  const t = useTranslation();
+  const count = useStore((state) => {
+    const targets = countVariableTargets(state, targetId);
+
+    return targets[VariableEntryKind.VARIABLE] > 0 &&
+      targets[VariableEntryKind.SECTION] > 0
+      ? null
+      : targets[kind];
+  });
+
+  return (
+    <ActionsMenu className={className} title={title}>
+      {count === null ? (
+        <BasicRowItems
+          targetId={targetId}
+          sectioned={sectioned}
+          duplicateLabel={t.variables.duplicateItems}
+          removeLabel={t.variables.removeItems}
+        />
+      ) : (
+        children(count)
+      )}
+    </ActionsMenu>
   );
 }
