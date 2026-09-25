@@ -413,6 +413,8 @@ export interface Messages {
       tocTitle: string;
       expandAll: string;
       collapseAll: string;
+      showSubsections: string;
+      hideSubsections: string;
       previousPage: string;
       nextPage: string;
       backTo: (title: string) => string;

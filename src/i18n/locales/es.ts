@@ -697,6 +697,8 @@ export const es: Messages = {
       tocTitle: "Contenido",
       expandAll: "Expandir todas las secciones",
       collapseAll: "Contraer todas las secciones",
+      showSubsections: "Mostrar subsecciones",
+      hideSubsections: "Ocultar subsecciones",
       previousPage: "Anterior",
       nextPage: "Siguiente",
       backTo: (title) => `Volver a ${title}`,

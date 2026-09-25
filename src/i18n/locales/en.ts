@@ -678,6 +678,8 @@ export const en: Messages = {
       tocTitle: "Contents",
       expandAll: "Expand all sections",
       collapseAll: "Collapse all sections",
+      showSubsections: "Show subsections",
+      hideSubsections: "Hide subsections",
       previousPage: "Previous",
       nextPage: "Next",
       backTo: (title) => `Back to ${title}`,
