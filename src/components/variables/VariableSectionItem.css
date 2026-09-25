@@ -20,7 +20,7 @@
 body.select-key-held:not(.read-mode)
   .variable-section:hover
   .variable-section-header,
-.variable-section.variable-selected .variable-section-header,
+.variable-section.variable-item-selected .variable-section-header,
 .variable-section.drag-over .variable-section-header {
   border-bottom-color: transparent;
 }

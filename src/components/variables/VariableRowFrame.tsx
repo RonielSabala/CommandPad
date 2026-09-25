@@ -50,7 +50,7 @@ export function VariableRowFrame({
         className,
         isDragging && CssClass.DRAGGING,
         isDragOver && CssClass.DRAG_OVER,
-        isSelected && CssClass.VARIABLE_SELECTED,
+        isSelected && "variable-item-selected",
         isFlashing && CssClass.DUPLICATE_FLASH,
       )}
       {...{ [DataAttr.VARIABLE_ID]: rowId }}

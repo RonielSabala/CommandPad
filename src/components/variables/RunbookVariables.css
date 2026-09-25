@@ -10,7 +10,7 @@
   padding: var(--space-8) var(--space-20) var(--space-20);
 }
 
-:is(#variables-list, .variables-mirror) {
+:is(#variables-list, #variables-mirror) {
   --variable-row-max-width: calc(100% - var(--space-20));
   --variable-section-indent: var(--space-8);
 

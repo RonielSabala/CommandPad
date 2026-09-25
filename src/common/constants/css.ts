@@ -22,17 +22,11 @@ export const CssClass = {
   // Variables
   VARIABLE_ITEM: "variable-item",
   VARIABLE_SURFACE: "variable-surface",
-  VARIABLES_MIRROR: "variables-mirror",
-  VARIABLE_SELECTED: "variable-selected",
-
-  // Variable sections
-  VARIABLE_SECTION: "variable-section",
   VARIABLE_SECTION_NAME: "variable-section-name",
 
   // Blocks
   BLOCK_ITEM: "block-item",
   BLOCK_SURFACE: "block-surface",
-  BLOCKS_MIRROR: "blocks-mirror",
 
   // Controls beside a block or variable item
   ITEM_ACTIONS: "item-actions",
@@ -50,7 +44,6 @@ export const CssClass = {
 
   // Miscellanea
   NOTE_LINK: "note-link",
-  DRAG_HANDLE: "drag-handle",
   ROW_ACTIONS: "row-actions",
   CONTEXT_MENU: "context-menu",
   RUNBOOK_ITEM_BTN: "runbook-item-btn",

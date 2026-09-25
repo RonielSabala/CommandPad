@@ -14,16 +14,16 @@
 }
 
 body.select-key-held:not(.read-mode)
-  .variable-item:hover:not(.variable-selected)
+  .variable-item:hover:not(.variable-item-selected)
   .variable-surface::after {
   outline: var(--border-dashed);
 }
 
-.variable-selected:not(.drag-over) .variable-surface {
+.variable-item-selected:not(.drag-over) .variable-surface {
   user-select: none;
 }
 
-.variable-selected:not(.drag-over) .variable-surface::after {
+.variable-item-selected:not(.drag-over) .variable-surface::after {
   outline: var(--space-1) solid var(--accent);
 }
 

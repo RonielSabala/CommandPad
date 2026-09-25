@@ -1,4 +1,3 @@
-import { CssClass } from "@/common/constants/css";
 import type { Block, Variable, VariableSection } from "@/common/types";
 import { VariableRows } from "@/components/variables/VariableRows";
 import type { VariableCompletion } from "@/monaco/completions";
@@ -30,7 +29,7 @@ export const VariablesMirror = memo(function VariablesMirror({
   );
 
   return (
-    <MinimapMirror className={CssClass.VARIABLES_MIRROR} width={width}>
+    <MinimapMirror id="variables-mirror" width={width}>
       <VariableRows
         variables={variables}
         sections={sections}

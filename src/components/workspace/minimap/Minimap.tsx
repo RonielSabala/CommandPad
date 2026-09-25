@@ -2,7 +2,6 @@ import { MinimapConfig } from "@/common/config";
 import { EventType, MouseButton } from "@/common/constants/events";
 import { CodeRendering } from "@/common/enums";
 import { CodeRenderingProvider } from "@/components/common/codeEditor/codeRendering";
-import { classNames } from "@/utils/string";
 import {
   useCallback,
   useLayoutEffect,
@@ -41,21 +40,17 @@ function sameMetrics(a: MinimapMetrics, b: MinimapMetrics): boolean {
 
 /** The frame every miniature renders into. */
 export function MinimapMirror({
-  className,
+  id,
   width,
   children,
 }: {
-  className: string;
+  id: string;
   width: number;
   children: ReactNode;
 }) {
   return (
     <CodeRenderingProvider value={CodeRendering.STATIC}>
-      <div
-        className={classNames("minimap-mirror", className)}
-        inert
-        style={{ width }}
-      >
+      <div id={id} className="minimap-mirror" inert style={{ width }}>
         {children}
       </div>
     </CodeRenderingProvider>

@@ -70,7 +70,7 @@ export const VariableSectionItem = memo(function VariableSectionItem({
     <VariableRowFrame
       rowId={sectionId}
       className={classNames(
-        CssClass.VARIABLE_SECTION,
+        "variable-section",
         collapsed && CssClass.COLLAPSED,
       )}
       dragImageRef={headerRef}
