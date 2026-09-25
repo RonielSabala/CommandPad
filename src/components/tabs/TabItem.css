@@ -42,11 +42,9 @@
   color: var(--color-text-primary);
   background: var(--color-bg);
   border-color: var(--color-border);
-  border-bottom: var(--border-standard);
   z-index: var(--z-raised);
   align-self: stretch;
   margin-bottom: calc(-1 * var(--space-2));
-  bottom: -1px;
 }
 
 /* Accent bar */

@@ -3,7 +3,7 @@
   align-items: stretch;
   gap: var(--space-6);
   background: var(--color-surface);
-  border-bottom: var(--border-standard);
+  box-shadow: inset 0 -1px 0 var(--color-border);
   overflow: hidden;
   flex-shrink: 0;
   height: var(--space-20);
