@@ -44,6 +44,7 @@ export const CssClass = {
 
   // Miscellanea
   NOTE_LINK: "note-link",
+  NOTE_EDITOR: "note-editor",
   ROW_ACTIONS: "row-actions",
   CONTEXT_MENU: "context-menu",
   RUNBOOK_ITEM_BTN: "runbook-item-btn",

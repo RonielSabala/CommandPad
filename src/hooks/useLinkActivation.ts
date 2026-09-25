@@ -24,7 +24,7 @@ export function useLinkActivation(root: Document | HTMLElement | null): void {
 
     const linkForEvent = (event: MouseEvent): HTMLAnchorElement | undefined => {
       const target = event.target as Element | null;
-      if (!target?.closest(`.${CssClass.BLOCK_ITEM}`)) {
+      if (!target?.closest(`.${CssClass.NOTE_EDITOR}`)) {
         return undefined;
       }
 

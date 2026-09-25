@@ -89,7 +89,11 @@ export function NoteEditor({
 
   return (
     <div
-      className={classNames("note-editor", focused && "is-focused", className)}
+      className={classNames(
+        CssClass.NOTE_EDITOR,
+        focused && "is-focused",
+        className,
+      )}
     >
       {header}
       <label
