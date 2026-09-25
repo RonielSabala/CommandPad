@@ -10,8 +10,9 @@ import {
   VariableField,
 } from "@/common/enums";
 import type { Variable } from "@/common/types";
+import { DragHandle } from "@/components/common/DragHandle";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { DragIcon, EyeIcon } from "@/components/icons";
+import { EyeIcon } from "@/components/icons";
 import { VariableActionsMenu } from "@/components/variables/VariableActionsMenu";
 import { VariableKeyInput } from "@/components/variables/VariableKeyInput";
 import { VariableOptionsSelect } from "@/components/variables/VariableOptionsSelect";
@@ -102,13 +103,7 @@ export const VariableRow = memo(function VariableRow({
       {...{ [DataAttr.VARIABLE_ID]: variableId }}
       {...rowProps}
     >
-      <div
-        className="drag-handle"
-        {...tooltip(t.common.dragToReorder)}
-        {...handleProps}
-      >
-        <DragIcon className="icon-md" />
-      </div>
+      <DragHandle handleProps={handleProps} />
 
       <div className={variableInputsClass} style={splitStyle}>
         <VariableKeyInput

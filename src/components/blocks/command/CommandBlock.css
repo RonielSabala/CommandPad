@@ -166,3 +166,18 @@
 body.read-mode :is(.toggle-editor-btn, .command-block-editor) {
   display: none;
 }
+
+:is(
+    .block-selected,
+    .block-item.drag-over,
+    body.select-key-held:not(.read-mode) .block-item:hover
+  )
+  .command-block {
+  border-color: transparent;
+  background-clip: padding-box;
+}
+
+.block-item:has(> .command-block),
+.block-selected .command-block {
+  outline-offset: -1px;
+}

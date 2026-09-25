@@ -1,15 +1,15 @@
-import { CssClass } from "@/common/constants/css";
-import type { Block, Variable } from "@/common/types";
-import { VariableItem } from "@/components/variables/VariableItem";
+import type { Block, Variable, VariableSection } from "@/common/types";
+import { VariableRows } from "@/components/variables/VariableRows";
 import type { VariableCompletion } from "@/monaco/completions";
 import { getActiveTab, useStore } from "@/store/store";
-import { getUsedVariableKeys, isVariableUnused } from "@/utils/resolution";
+import { getUsedVariableKeys } from "@/utils/resolution";
 import { memo, useMemo } from "react";
 
 import { MinimapMirror } from "./Minimap";
 
 const EMPTY_BLOCKS: Block[] = [];
 const EMPTY_VARIABLES: Variable[] = [];
+const EMPTY_SECTIONS: VariableSection[] = [];
 const NO_COMPLETIONS: VariableCompletion[] = [];
 
 export const VariablesMirror = memo(function VariablesMirror({
@@ -18,8 +18,10 @@ export const VariablesMirror = memo(function VariablesMirror({
   width: number;
 }) {
   const activeTab = useStore(getActiveTab);
-  const variables = activeTab?.variables ?? EMPTY_VARIABLES;
+
   const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
+  const variables = activeTab?.variables ?? EMPTY_VARIABLES;
+  const sections = activeTab?.variableSections ?? EMPTY_SECTIONS;
 
   const usedKeys = useMemo(
     () => getUsedVariableKeys(blocks, variables),
@@ -27,15 +29,13 @@ export const VariablesMirror = memo(function VariablesMirror({
   );
 
   return (
-    <MinimapMirror className={CssClass.VARIABLES_MIRROR} width={width}>
-      {variables.map((variable) => (
-        <VariableItem
-          key={variable.id}
-          variable={variable}
-          completions={NO_COMPLETIONS}
-          unused={isVariableUnused(variable, usedKeys)}
-        />
-      ))}
+    <MinimapMirror id="variables-mirror" width={width}>
+      <VariableRows
+        variables={variables}
+        sections={sections}
+        usedKeys={usedKeys}
+        completions={NO_COMPLETIONS}
+      />
     </MinimapMirror>
   );
 });

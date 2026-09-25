@@ -216,6 +216,24 @@ export function DividerIcon(props: IconProps) {
   );
 }
 
+export function VariableIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+      <path d="M6 2.5c-1.5 0-2 .7-2 2V6c0 1-.6 2-1.5 2 .9 0 1.5 1 1.5 2v1.5c0 1.3.5 2 2 2" />
+      <path d="M10 2.5c1.5 0 2 .7 2 2V6c0 1 .6 2 1.5 2-.9 0-1.5 1-1.5 2v1.5c0 1.3-.5 2-2 2" />
+    </svg>
+  );
+}
+
+export function SectionIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+      <path d="M2 3.5h12" />
+      <path d="M5 8h9M5 12.5h9" />
+    </svg>
+  );
+}
+
 export function EditorToggleChevronIcon(props: IconProps) {
   return (
     <svg aria-hidden="true" viewBox="0 0 12 12" {...props}>

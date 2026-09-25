@@ -3,20 +3,55 @@ import { RunbookSourceConfig } from "@/common/config";
 import {
   DEFAULT_VARIABLE_LANGUAGE,
   isCommandLanguage,
+  VariableSectionField,
 } from "@/common/editorConfig";
-import type { Block, RunbookContent, Variable } from "@/common/types";
+import { VariableEntryKind } from "@/common/enums";
+import type {
+  Block,
+  RunbookContent,
+  Variable,
+  VariableSection,
+} from "@/common/types";
 
 import { generateId } from "./id";
 import { isObject, isString } from "./typeGuards";
+import {
+  fromVariableEntries,
+  toVariableEntries,
+  type VariableEntry,
+} from "./variableSections";
 
-const EMPTY_CONTENT: RunbookContent = { variables: [], blocks: [] };
+const EMPTY_CONTENT: RunbookContent = {
+  blocks: [],
+  variables: [],
+  variableSections: [],
+};
 
 const INVALID_SOURCE = "Invalid runbook format";
 
+function serializeSection(section: VariableSection) {
+  return {
+    [VariableSectionField.SECTION]: section.name,
+    ...(section.collapsed ? { [VariableSectionField.COLLAPSED]: true } : {}),
+  };
+}
+
 /** Serialize content to its JSON source. */
 export function buildRunbookSource(content: RunbookContent): string {
+  const entries = toVariableEntries(
+    content.variables ?? [],
+    content.variableSections ?? [],
+  );
+
   const data = {
-    variables: (content.variables ?? []).map(({ id, ...rest }) => rest),
+    variables: entries.map((entry) => {
+      if (entry.kind === VariableEntryKind.SECTION) {
+        return serializeSection(entry.section);
+      }
+
+      const { id, ...rest } = entry.variable;
+      return rest;
+    }),
     blocks: (content.blocks ?? []).map(({ id, ...rest }) => rest),
   };
 
@@ -46,6 +81,46 @@ function normalizeVariable(
   };
 }
 
+function parseVariableEntries(
+  raw: unknown[],
+  previous: RunbookContent,
+): VariableEntry[] {
+  let variableIndex = 0;
+  let sectionIndex = 0;
+  const entries: VariableEntry[] = [];
+
+  for (const item of raw) {
+    const name = isObject(item) ? item[VariableSectionField.SECTION] : null;
+    if (isObject(item) && isString(name)) {
+      entries.push({
+        kind: VariableEntryKind.SECTION,
+        section: {
+          id: previous.variableSections[sectionIndex++]?.id ?? generateId(),
+          name,
+          start: 0,
+          ...(item[VariableSectionField.COLLAPSED] === true
+            ? { collapsed: true }
+            : {}),
+        },
+      });
+
+      continue;
+    }
+
+    const variable = normalizeVariable(
+      item,
+      previous.variables[variableIndex]?.id ?? null,
+    );
+
+    if (variable) {
+      variableIndex++;
+      entries.push({ kind: VariableEntryKind.VARIABLE, variable });
+    }
+  }
+
+  return entries;
+}
+
 /** Give an untrusted block the id of the entry it is replacing, if it has none. */
 function withCarriedId(raw: unknown, carried: string | null): unknown {
   if (!carried || !isObject(raw) || raw.id) {
@@ -70,11 +145,7 @@ export function parseRunbookSource(
   }
 
   return {
-    variables: parsed.variables
-      .map((variable, idx) =>
-        normalizeVariable(variable, previous.variables[idx]?.id ?? null),
-      )
-      .filter((variable): variable is Variable => variable !== null),
+    ...fromVariableEntries(parseVariableEntries(parsed.variables, previous)),
 
     blocks: parsed.blocks
       .map((block, idx) => {

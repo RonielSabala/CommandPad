@@ -1,0 +1,133 @@
+.note-editor {
+  display: inline-grid;
+  min-width: 0;
+  border-radius: var(--radius-lg);
+}
+
+.note-editor.is-focused .note-preview {
+  display: none;
+}
+
+.note-editor.is-focused .note-textarea {
+  color: var(--color-text-secondary);
+}
+
+/* Note auto width */
+
+.note-auto-width {
+  width: 100%;
+  display: inline-grid;
+}
+
+.note-auto-width::after {
+  content: attr(data-value) " ";
+  grid-area: 1 / 1 / 2 / 2;
+  white-space: pre-wrap;
+  word-break: break-word;
+  visibility: hidden;
+}
+
+.note-editor:not(.is-focused) .note-auto-width::after {
+  content: none;
+}
+
+/* Shared note styles */
+
+.note-textarea,
+.note-preview,
+.note-auto-width::after {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  tab-size: var(--tab-size);
+  padding: var(--space-2) 0;
+}
+
+.note-textarea,
+.note-preview {
+  grid-area: 1 / 1 / 2 / 2;
+}
+
+/* Note textarea */
+
+.note-textarea {
+  color: transparent;
+  caret-color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  width: 0;
+  min-width: 100%;
+  font-weight: inherit;
+}
+
+.note-textarea::selection,
+.note-textarea::placeholder {
+  background: transparent;
+}
+
+.note-textarea::grammar-error,
+.note-textarea::spelling-error {
+  text-decoration: transparent;
+}
+
+.note-editor.is-focused .note-textarea::grammar-error {
+  text-decoration: underline wavy var(--accent);
+}
+
+.note-editor.is-focused .note-textarea::spelling-error {
+  text-decoration: underline wavy var(--danger);
+}
+
+body.read-mode .note-textarea:focus {
+  caret-color: transparent;
+  outline: none;
+}
+
+body:not(.select-key-held) .note-textarea::selection {
+  background-color: var(--selection-color);
+}
+
+/* Note preview */
+
+.note-preview::after {
+  content: " ";
+}
+
+.note-preview:has(> :is(.note-list, .note-table):last-child)::after {
+  content: none;
+}
+
+.note-preview > :is(.note-list, .note-table):first-child {
+  margin-top: 0;
+}
+
+.note-preview > :is(.note-list, .note-table):last-child {
+  margin-bottom: 0;
+}
+
+.note-preview {
+  color: var(--color-text-secondary);
+  word-break: break-word;
+  white-space: pre-wrap;
+  pointer-events: none;
+  position: relative;
+  z-index: var(--z-raised);
+  user-select: none;
+}
+
+body.read-mode .note-preview {
+  pointer-events: auto;
+  cursor: text;
+  user-select: text;
+}
+
+body.read-mode :is(.note-preview::selection, .note-preview *::selection) {
+  background-color: var(--selection-color);
+}
+
+.note-preview-placeholder {
+  color: var(--color-text-muted);
+}

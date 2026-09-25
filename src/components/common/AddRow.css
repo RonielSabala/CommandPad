@@ -1,38 +1,37 @@
-#add-block-row {
+.add-row {
   display: flex;
   align-items: center;
-  gap: 0;
   padding: var(--space-8) 0 0;
   border-top: var(--space-1) dashed var(--color-border);
   margin-top: var(--space-4);
 }
 
-.new-block-label {
+.add-row-label {
   margin-right: var(--space-6);
 }
 
-#add-block-row .btn {
-  border-radius: 0;
+.add-row .btn {
   position: relative;
+  border-radius: 0;
 }
 
-#add-block-row .btn:not(:last-of-type) {
+.add-row .btn:not(:last-of-type) {
   margin-right: -1px;
 }
 
-#add-block-row .btn:first-of-type {
+.add-row .btn:first-of-type {
   border-radius: var(--radius-md) 0 0 var(--radius-md);
 }
 
-#add-block-row .btn:last-of-type {
+.add-row .btn:last-of-type {
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
-#add-block-row .btn:hover {
+.add-row .btn:hover {
   z-index: var(--z-raised);
   border-color: var(--color-border-focus);
 }
 
-body.read-mode #add-block-row {
+body.read-mode .add-row {
   display: none;
 }

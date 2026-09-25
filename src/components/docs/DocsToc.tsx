@@ -6,6 +6,7 @@ import {
   type DocsSectionId,
 } from "@/common/constants/docs";
 import { ScrollIntoView } from "@/common/constants/dom";
+import { Key } from "@/common/constants/events";
 import { PanelId } from "@/common/enums";
 import { ResizablePanel } from "@/components/common/panel/ResizablePanel";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -44,6 +45,11 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
   const toggleAllLabel = collapse.allCollapsed
     ? t.docs.meta.expandAll
     : t.docs.meta.collapseAll;
+
+  const foldLabel = (id: DocsSectionId) =>
+    collapse.isCollapsed(id)
+      ? t.docs.meta.showSubsections
+      : t.docs.meta.hideSubsections;
 
   return (
     <ResizablePanel panelId={PanelId.DOCS_TOC} id="docs-toc">
@@ -95,11 +101,20 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
                     className="docs-toc-chevron-hit"
                     role="button"
                     tabIndex={0}
+                    {...tooltip(foldLabel(id))}
+                    aria-label={foldLabel(id)}
                     aria-expanded={!collapse.isCollapsed(id)}
                     onClick={(event) => {
                       event.preventDefault();
                       event.stopPropagation();
                       collapse.toggle(id);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === Key.ENTER || event.key === Key.SPACE) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        collapse.toggle(id);
+                      }
                     }}
                   >
                     <SidebarSectionChevronIcon

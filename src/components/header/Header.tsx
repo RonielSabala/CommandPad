@@ -1,6 +1,6 @@
 import { Key } from "@/common/constants/events";
 import { AppRoute } from "@/common/constants/routes";
-import { AppMode, Theme } from "@/common/enums";
+import { AppMode, RunbookView, Theme } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import {
   BookIcon,
@@ -22,18 +22,27 @@ import { LanguageSelect } from "./LanguageSelect";
 export function Header() {
   const t = useTranslation();
   const navigate = useNavigate();
+
   const isRead = useStore((state) => state.mode === AppMode.READ);
   const isLight = useStore((state) => state.theme === Theme.LIGHT);
+
   const toggleTheme = useStore((state) => state.toggleTheme);
   const toggleAppMode = useStore((state) => state.toggleAppMode);
   const clearAllData = useStore((state) => state.clearAllData);
   const openExportModal = useStore((state) => state.openExportModal);
-  const toggleAllCommandEditors = useStore(
-    (state) => state.toggleAllCommandEditors,
-  );
+  const toggleCollapseAll = useStore((state) => state.toggleCollapseAll);
+
   const isEmpty = useStore(
     (state) => !(getActiveTab(state)?.blocks.length ?? 0),
   );
+  const inVariables = useStore(
+    (state) => state.runbookView === RunbookView.VARIABLES,
+  );
+  const hasSections = useStore(
+    (state) => !!getActiveTab(state)?.variableSections.length,
+  );
+
+  const canCollapse = inVariables ? hasSections : !isEmpty && !isRead;
 
   const toggleModeLabel = isRead
     ? t.header.switchToEdit
@@ -75,12 +84,18 @@ export function Header() {
             <PadlockIcon className="icon icon-bold" />
           )}
         </button>
+
         <div className="vertical-divider" />
+
         <button
           className="btn btn-lg"
-          disabled={isEmpty || isRead}
-          onClick={toggleAllCommandEditors}
-          {...tooltip(t.header.toggleEditorsTitle)}
+          disabled={!canCollapse}
+          onClick={toggleCollapseAll}
+          {...tooltip(
+            inVariables
+              ? t.header.toggleSectionsTitle
+              : t.header.toggleEditorsTitle,
+          )}
         >
           <ChevronsRightIcon className="icon icon-bold" />
           {t.header.collapseAll}

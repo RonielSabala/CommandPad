@@ -7,7 +7,12 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import type { ComponentType } from "react";
 
-import { demoCommand, demoNote, demoVariable } from "../demos/demoSeeds";
+import {
+  demoCommand,
+  demoNote,
+  demoSection,
+  demoVariable,
+} from "../demos/demoSeeds";
 import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
 import "./TabsSection.css";
@@ -47,6 +52,13 @@ export function TabsDocs() {
         )}
       />
       <Prose text={t.docs.tabs.variablesEditorNote} />
+      <Prose
+        text={t.docs.tabs.variableSections(
+          t.variables.newRowLabel,
+          t.variables.sectionLabel,
+          t.variables.moveToNewSection(1),
+        )}
+      />
       <Prose text={t.docs.tabs.autoCreate} />
       <Prose text={t.docs.tabs.labelDemo} />
 
@@ -56,13 +68,15 @@ export function TabsDocs() {
             blocks: [
               demoNote(backup.title, NoteStyle.HEADING),
               demoNote(backup.note),
-              demoCommand("zip -r {ARCHIVE} ~/Documents"),
+              demoCommand("zip -r {BACKUP_DIR}/{archive} {SOURCE_DIR}"),
               demoCommand("ls {BACKUP_DIR}"),
             ],
             variables: [
+              demoVariable("archive", "backup.zip"),
               demoVariable("BACKUP_DIR", "~/Backups"),
-              demoVariable("ARCHIVE", "{BACKUP_DIR}/backup.zip"),
+              demoVariable("SOURCE_DIR", "~/Documents"),
             ],
+            variableSections: [demoSection(backup.constants, 1, true)],
           },
           {
             blocks: [

@@ -1,11 +1,11 @@
-:is(#blocks-list, .blocks-mirror) {
+:is(#blocks-list, #blocks-mirror) {
   display: grid;
   grid-template-columns: fit-content(calc(100% - var(--space-20)));
   max-width: 100%;
-  gap: var(--space-3);
+  gap: var(--space-4);
   justify-items: start;
 }
 
-:is(#blocks-list, .blocks-mirror) .block-item:has(.divider-block) {
+:is(#blocks-list, #blocks-mirror) .block-item:has(.divider-block) {
   justify-self: stretch;
 }

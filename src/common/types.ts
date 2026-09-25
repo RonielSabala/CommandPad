@@ -18,19 +18,19 @@ export interface PanelState {
   width: number;
 }
 
-export interface NoteBlock {
-  id: string;
-  type: typeof BlockType.NOTE;
-  text: string;
-  style?: NoteStyle;
-}
-
 export interface CommandBlock {
   id: string;
   type: typeof BlockType.COMMAND;
   text: string;
   language?: CodeLanguage;
   editorCollapsed?: boolean;
+}
+
+export interface NoteBlock {
+  id: string;
+  type: typeof BlockType.NOTE;
+  text: string;
+  style?: NoteStyle;
 }
 
 export interface ImageBlock {
@@ -63,12 +63,21 @@ export interface Variable {
   options?: string[];
 }
 
+export interface VariableSection {
+  id: string;
+  name: string;
+  /** Index of the section's first variable */
+  start: number;
+  collapsed?: boolean;
+}
+
 export interface Tab {
   id: string;
   label: string;
   runbookId: string | null;
   blocks: Block[];
   variables: Variable[];
+  variableSections: VariableSection[];
   scrollTop: Record<RunbookView, number>;
 }
 
@@ -97,6 +106,7 @@ export interface RunbookEntry {
 export interface RunbookContent {
   blocks: Block[];
   variables: Variable[];
+  variableSections: VariableSection[];
 }
 
 export interface ResolvedSpan {

@@ -67,6 +67,7 @@ export interface Messages {
     switchToLight: string;
     collapseAll: string;
     toggleEditorsTitle: string;
+    toggleSectionsTitle: string;
     resetWorkspaceTitle: string;
     exportTitle: string;
     export: string;
@@ -133,6 +134,24 @@ export interface Messages {
     selected: (count: number) => string;
     dragResizeSplit: string;
     unusedTitle: (key: string) => string;
+    newSection: string;
+    newRowLabel: string;
+    variableLabel: string;
+    sectionLabel: string;
+    moveToNewSection: (count: number) => string;
+    sectionPlaceholder: string;
+    sectionActions: string;
+    duplicateSection: (count: number) => string;
+    removeSection: (count: number) => string;
+    duplicateItems: string;
+    removeItems: string;
+    insertAbove: string;
+    insertBelow: string;
+    sectionsSelected: (count: number) => string;
+    itemsSelected: (count: number) => string;
+    sectionCount: (count: number) => string;
+    expandSection: string;
+    collapseSection: string;
   };
   tabs: {
     newTab: string;
@@ -394,6 +413,8 @@ export interface Messages {
       tocTitle: string;
       expandAll: string;
       collapseAll: string;
+      showSubsections: string;
+      hideSubsections: string;
       previousPage: string;
       nextPage: string;
       backTo: (title: string) => string;
@@ -407,7 +428,7 @@ export interface Messages {
       tableSample: string;
       listSample: string;
       tabSamples: {
-        backup: { title: string; note: string };
+        backup: { title: string; note: string; constants: string };
         siteCheck: { title: string; note: string };
       };
       runbookSamples: string[];
@@ -451,6 +472,11 @@ export interface Messages {
         closeAllLabel: string,
       ) => string;
       variablesEditorNote: string;
+      variableSections: (
+        newRowLabel: string,
+        sectionLabel: string,
+        moveToNewSection: string,
+      ) => string;
       autoCreate: string;
       labelDemo: string;
       unresolvedMarker: string;

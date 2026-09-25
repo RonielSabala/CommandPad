@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { InputSelector, ModalSelector } from "@/common/constants/dom";
 import { EventType, Key, MouseButton } from "@/common/constants/events";
 import { AppMode, LassoMode, type SelectionGroup } from "@/common/enums";
@@ -7,6 +8,9 @@ import { useEffect } from "react";
 
 import { lasso } from "./lasso";
 import { SELECTION_GROUPS } from "./selectionGroups";
+
+/** A click on one of these controls must not clear the selection. */
+const KEEP_SELECTION_SELECTOR = `.${CssClass.ITEM_ACTIONS}, .${CssClass.ITEM_DRAG_HANDLE}`;
 
 export function useLassoSelection(
   root: Document | HTMLElement | null,
@@ -109,7 +113,7 @@ export function useLassoSelection(
       const target = event.target as Element;
       if (
         definition.getSelected(state).size > 0 &&
-        !target.closest(definition.keepSelectionSelector)
+        !target.closest(KEEP_SELECTION_SELECTOR)
       ) {
         definition.clearSelection(state);
       }

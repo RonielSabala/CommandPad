@@ -40,6 +40,7 @@ export const es: Messages = {
     switchToLight: "Cambiar a modo claro",
     collapseAll: "Contraer todo",
     toggleEditorsTitle: "Expandir/contraer todos los editores de comandos",
+    toggleSectionsTitle: "Expandir/contraer todas las secciones de variables",
     resetWorkspaceTitle: "Resetear espacio de trabajo",
     exportTitle: "Exportar libro",
     export: "Exportar",
@@ -134,6 +135,36 @@ export const es: Messages = {
     dragResizeSplit:
       "Arrastra para redimensionar clave y valor · doble clic para igualarlos",
     unusedTitle: (key) => `${key} (sin usar)`,
+    newSection: "Nueva sección",
+    newRowLabel: "NUEVA",
+    variableLabel: "Variable",
+    sectionLabel: "Sección",
+    moveToNewSection: (count) =>
+      count === 1
+        ? "Mover a una nueva sección"
+        : "Mover variables a una nueva sección",
+    sectionPlaceholder: "Nombre de la sección",
+    sectionActions: "Acciones de la sección",
+    duplicateSection: (count) =>
+      count === 1 ? "Duplicar sección" : "Duplicar secciones",
+    removeSection: (count) =>
+      count === 1 ? "Quitar sección" : "Quitar secciones",
+    duplicateItems: "Duplicar elementos",
+    removeItems: "Eliminar elementos",
+    insertAbove: "Insertar arriba",
+    insertBelow: "Insertar abajo",
+    sectionsSelected: (count) =>
+      count === 1
+        ? "1 sección seleccionada"
+        : `${count} secciones seleccionadas`,
+    itemsSelected: (count) =>
+      count === 1
+        ? "1 elemento seleccionado"
+        : `${count} elementos seleccionados`,
+    sectionCount: (count) =>
+      count === 1 ? "1 variable" : `${count} variables`,
+    expandSection: "Expandir sección",
+    collapseSection: "Contraer sección",
   },
   tabs: {
     newTab: "Nueva pestaña",
@@ -447,7 +478,8 @@ export const es: Messages = {
     [KeyBinding.EXPORT]: "Abrir el diálogo de exportación",
     [KeyBinding.DELETE_RUNBOOK]: "Eliminar el libro enfocado de la biblioteca",
     [KeyBinding.CLEAR_LIBRARY]: "Abrir el diálogo de eliminar todos los libros",
-    [KeyBinding.TOGGLE_EDITORS]: "Alternar todos los editores de comandos",
+    [KeyBinding.TOGGLE_EDITORS]:
+      "Alternar todos los editores de comandos, o todas las secciones en el editor de variables",
     [KeyBinding.MULTISELECT_BLOCKS]: "Selección múltiple de bloques",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicar bloques seleccionados",
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
@@ -665,6 +697,8 @@ export const es: Messages = {
       tocTitle: "Contenido",
       expandAll: "Expandir todas las secciones",
       collapseAll: "Contraer todas las secciones",
+      showSubsections: "Mostrar subsecciones",
+      hideSubsections: "Ocultar subsecciones",
       previousPage: "Anterior",
       nextPage: "Siguiente",
       backTo: (title) => `Volver a ${title}`,
@@ -725,6 +759,7 @@ export const es: Messages = {
         backup: {
           title: "Checklist de respaldo",
           note: "Ejecuta esto antes de apagar el equipo al terminar el día.",
+          constants: "Constantes",
         },
         siteCheck: {
           title: "Comprobación del sitio",
@@ -790,7 +825,7 @@ Si algo sale mal, deshazlo en este orden:
         collapseAllLabel,
       ) => `* El **logo de CommandPad**: haz clic en él para recargar la app.
 * El **candado / lápiz**: alterna entre el modo lectura y el modo edición. Tiene su propia sección más adelante.
-* **${collapseAllLabel}**: contrae o expande de golpe todos los editores de comandos del libro activo.
+* **${collapseAllLabel}**: contrae o expande de golpe todos los editores de comandos del libro activo. En el editor de variables pliega o despliega todas las secciones de variables.
 * El **sol / la luna**: cambia entre el tema claro y oscuro.
 * El **selector de idioma**: cambia el idioma de la interfaz.
 * El **libro**: abre esta documentación.
@@ -822,6 +857,8 @@ Si algo sale mal, deshazlo en este orden:
 * **${openPreviewLabel}** devuelve los bloques.`,
       variablesEditorNote:
         "El editor de variables funciona igual que el editor de bloques de arriba, una fila por variable en vez de por bloque, incluido el selector de lenguaje de cada valor: un valor empieza como texto plano, y elegir un lenguaje solo cambia cómo se resalta y se revisa. Pruébalo abajo.",
+      variableSections: (newRowLabel, sectionLabel, moveToNewSection) =>
+        `Las variables que nunca tocas, como las constantes, pueden guardarse en una **sección**. Una sección tiene un nombre y contiene todas las variables que hay debajo de ella hasta la siguiente sección, y al contraerla las oculta todas. Agrega una con **${sectionLabel}** en la fila **${newRowLabel}**, o selecciona variables y elige **${moveToNewSection}** en su menú de acciones; arrastra variables sobre el encabezado de una sección para meterlas o sacarlas, y arrastra el propio encabezado para cambiar dónde empieza la sección.`,
       autoCreate:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:

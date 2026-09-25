@@ -301,6 +301,41 @@ body {
   color: var(--color-text-primary);
 }
 
+/* --- ITEM CONTROLS --- */
+
+.item-drag-handle,
+.item-actions {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-base);
+}
+
+.item-drag-handle {
+  right: calc(100% + var(--space-4));
+}
+
+.item-actions {
+  left: calc(100% + var(--space-4));
+}
+
+.item-drag-handle .drag-handle,
+.item-actions .btn {
+  position: sticky;
+  top: var(--space-4);
+  bottom: var(--space-4);
+  pointer-events: auto;
+}
+
+:hover > :is(.item-drag-handle, .item-actions),
+.item-actions.menu-open {
+  opacity: 1;
+}
+
 /* --- DUPLICATE FLASH --- */
 
 @keyframes duplicate-flash {
@@ -315,6 +350,11 @@ body {
   }
 }
 
+.duplicate-flash {
+  z-index: var(--z-raised);
+  animation: duplicate-flash 0.5s ease-out forwards;
+}
+
 /* --- SELECT-KEY-HELD SUPPRESSIONS --- */
 
 body.select-key-held:not(.read-mode) * {
@@ -326,7 +366,8 @@ body.select-key-held:not(.read-mode) .select-key-inert {
   pointer-events: none;
 }
 
-body.select-key-held:not(.read-mode) .select-key-hidden {
+body.select-key-held:not(.read-mode)
+  :is(.select-key-hidden, .item-drag-handle, .item-actions) {
   opacity: 0;
   pointer-events: none;
 }
@@ -352,5 +393,9 @@ body.read-mode textarea {
 }
 
 body.read-mode .drag-handle {
+  display: none;
+}
+
+body.read-mode :is(.item-drag-handle, .item-actions) {
   display: none;
 }

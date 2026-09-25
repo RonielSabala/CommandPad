@@ -40,6 +40,7 @@ export const en: Messages = {
     switchToLight: "Switch to light mode",
     collapseAll: "Collapse All",
     toggleEditorsTitle: "Expand/collapse all command editors",
+    toggleSectionsTitle: "Expand/collapse all variable sections",
     resetWorkspaceTitle: "Reset workspace",
     exportTitle: "Export runbook",
     export: "Export",
@@ -128,6 +129,30 @@ export const en: Messages = {
       count === 1 ? "1 variable selected" : `${count} variables selected`,
     dragResizeSplit: "Drag to resize key and value · double-click to even out",
     unusedTitle: (key) => `${key} (unused)`,
+    newSection: "New section",
+    newRowLabel: "NEW",
+    variableLabel: "Variable",
+    sectionLabel: "Section",
+    moveToNewSection: (count) =>
+      count === 1 ? "Move to a new section" : "Move variables to a new section",
+    sectionPlaceholder: "Section name",
+    sectionActions: "Section actions",
+    duplicateSection: (count) =>
+      count === 1 ? "Duplicate section" : "Duplicate sections",
+    removeSection: (count) =>
+      count === 1 ? "Remove section" : "Remove sections",
+    duplicateItems: "Duplicate items",
+    removeItems: "Remove items",
+    insertAbove: "Insert above",
+    insertBelow: "Insert below",
+    sectionsSelected: (count) =>
+      count === 1 ? "1 section selected" : `${count} sections selected`,
+    itemsSelected: (count) =>
+      count === 1 ? "1 item selected" : `${count} items selected`,
+    sectionCount: (count) =>
+      count === 1 ? "1 variable" : `${count} variables`,
+    expandSection: "Expand section",
+    collapseSection: "Collapse section",
   },
   tabs: {
     newTab: "New tab",
@@ -437,7 +462,8 @@ export const en: Messages = {
     [KeyBinding.EXPORT]: "Open export dialog",
     [KeyBinding.DELETE_RUNBOOK]: "Delete the focused runbook from the library",
     [KeyBinding.CLEAR_LIBRARY]: "Open delete all runbooks dialog",
-    [KeyBinding.TOGGLE_EDITORS]: "Toggle all command editors",
+    [KeyBinding.TOGGLE_EDITORS]:
+      "Toggle all command editors, or all sections in the variables editor",
     [KeyBinding.MULTISELECT_BLOCKS]: "Multi-select blocks",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicate selected blocks",
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
@@ -652,6 +678,8 @@ export const en: Messages = {
       tocTitle: "Contents",
       expandAll: "Expand all sections",
       collapseAll: "Collapse all sections",
+      showSubsections: "Show subsections",
+      hideSubsections: "Hide subsections",
       previousPage: "Previous",
       nextPage: "Next",
       backTo: (title) => `Back to ${title}`,
@@ -712,6 +740,7 @@ export const en: Messages = {
         backup: {
           title: "Backup checklist",
           note: "Run this before you shut down for the day.",
+          constants: "Constants",
         },
         siteCheck: {
           title: "Website check",
@@ -773,7 +802,7 @@ If something goes wrong, undo it in this order:
         collapseAllLabel,
       ) => `* The **CommandPad logo**: click it to reload the app.
 * The **padlock / pencil**: switches between read mode and edit mode. It has its own section later in this guide.
-* **${collapseAllLabel}**: collapses or expands every command editor in the active runbook at once.
+* **${collapseAllLabel}**: collapses or expands every command editor in the active runbook at once. In the variables editor it folds or unfolds every variable section instead.
 * The **sun / moon**: switches between the light and dark themes.
 * The **language selector**: changes the interface language.
 * The **book**: opens this documentation.
@@ -805,6 +834,8 @@ If something goes wrong, undo it in this order:
 * **${openPreviewLabel}** brings the blocks back.`,
       variablesEditorNote:
         "The variables editor works just like the block editor above, one row per variable instead of per block, down to the language selector on each value: a value starts as plain text, and picking a language only changes how it is highlighted and checked. Try it below.",
+      variableSections: (newRowLabel, sectionLabel, moveToNewSection) =>
+        `Variables you never touch, like constants, can be tucked away in a **section**. A section has a name and holds every variable below it until the next section, and collapsing it hides them all. Add one with **${sectionLabel}** in the **${newRowLabel}** row, or select variables and pick **${moveToNewSection}** from their actions menu; drag variables across a section's header to move them in or out, and drag the header itself to move where the section starts.`,
       autoCreate:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:

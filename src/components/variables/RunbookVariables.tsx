@@ -1,9 +1,15 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr, ElementId, ScrollIntoView } from "@/common/constants/dom";
-import { PanelSide, RunbookView, SelectionGroup } from "@/common/enums";
-import type { Block, Variable } from "@/common/types";
+import {
+  PanelSide,
+  RunbookView,
+  SelectionGroup,
+  VariableEntryKind,
+} from "@/common/enums";
+import type { Block, Variable, VariableSection } from "@/common/types";
+import { AddRow } from "@/components/common/AddRow";
 import { EmptyState } from "@/components/common/EmptyState";
-import { PlusIcon } from "@/components/icons";
+import { SectionIcon, VariableIcon } from "@/components/icons";
 import { Minimap } from "@/components/workspace/minimap/Minimap";
 import { VariablesMirror } from "@/components/workspace/minimap/VariablesMirror";
 import { WorkspaceContextMenu } from "@/components/workspace/WorkspaceContextMenu";
@@ -18,49 +24,71 @@ import {
   getSecretKeys,
   getUsedVariableKeys,
   getVariableMap,
-  isVariableUnused,
 } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import "./RunbookVariables.css";
-import { VariableItem } from "./VariableItem";
+import { VariableRows } from "./VariableRows";
 
-const EMPTY_VARIABLES: Variable[] = [];
 const EMPTY_BLOCKS: Block[] = [];
+const EMPTY_VARIABLES: Variable[] = [];
+const EMPTY_SECTIONS: VariableSection[] = [];
 
 function AddVariableRow() {
   const t = useTranslation();
   const addVariable = useStore((state) => state.addVariable);
+  const addVariableSection = useStore((state) => state.addVariableSection);
 
   return (
-    <div id="add-variable-row">
-      <button className="btn" onClick={() => void addVariable()}>
-        <PlusIcon className="icon-md icon-bold" />
-        {t.variables.newTitle}
-      </button>
-    </div>
+    <AddRow
+      label={t.variables.newRowLabel}
+      items={[
+        {
+          key: VariableEntryKind.VARIABLE,
+          icon: VariableIcon,
+          label: t.variables.variableLabel,
+          title: t.variables.newTitle,
+          onAdd: addVariable,
+        },
+        {
+          key: VariableEntryKind.SECTION,
+          icon: SectionIcon,
+          label: t.variables.sectionLabel,
+          title: t.variables.newSection,
+          onAdd: addVariableSection,
+        },
+      ]}
+    />
   );
 }
 
 export function RunbookVariables() {
   const t = useTranslation();
   const activeTab = useStore(getActiveTab);
-  const variables = activeTab?.variables ?? EMPTY_VARIABLES;
+
   const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
+  const variables = activeTab?.variables ?? EMPTY_VARIABLES;
+  const sections = activeTab?.variableSections ?? EMPTY_SECTIONS;
+
+  const isEmpty = variables.length === 0 && sections.length === 0;
 
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+
   const pendingFocusVariableId = useStore(
     (state) => state.pendingFocusVariableId,
+  );
+  const pendingFocusSectionId = useStore(
+    (state) => state.pendingFocusSectionId,
   );
 
   const minimapEnabled = useStore((state) => state.minimapEnabled);
   const minimapOnLeft = useStore(
     (state) => state.minimapPosition === PanelSide.LEFT,
   );
-  const showMinimap = minimapEnabled && variables.length > 0;
+  const showMinimap = minimapEnabled && !isEmpty;
   const { menuAnchor, onContextMenu, closeMenu } = useWorkspaceContextMenu(
     CssClass.VARIABLE_ITEM,
   );
@@ -77,13 +105,21 @@ export function RunbookVariables() {
     );
   }, [pendingFocusVariableId]);
 
+  useEffect(() => {
+    scrollRowIntoView(
+      listRef.current,
+      DataAttr.VARIABLE_ID,
+      pendingFocusSectionId,
+      ScrollIntoView.BLOCK_CENTER,
+    );
+  }, [pendingFocusSectionId]);
+
   const variableMap = useMemo(() => getVariableMap(variables), [variables]);
   const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
   const usedKeys = useMemo(
     () => getUsedVariableKeys(blocks, variables),
     [blocks, variables],
   );
-
   const completions = useMemo(
     () => buildVariableCompletions(variableMap, secretKeys),
     [variableMap, secretKeys],
@@ -107,7 +143,7 @@ export function RunbookVariables() {
           setRoot(node);
         }}
       >
-        {variables.length === 0 && (
+        {isEmpty && (
           <EmptyState
             icon={
               <span className="empty-state-glyph" aria-hidden="true">
@@ -120,14 +156,12 @@ export function RunbookVariables() {
         )}
 
         <div id={ElementId.VARIABLES_LIST} ref={listRef}>
-          {variables.map((variable) => (
-            <VariableItem
-              key={variable.id}
-              variable={variable}
-              completions={completions}
-              unused={isVariableUnused(variable, usedKeys)}
-            />
-          ))}
+          <VariableRows
+            variables={variables}
+            sections={sections}
+            usedKeys={usedKeys}
+            completions={completions}
+          />
         </div>
 
         <AddVariableRow />

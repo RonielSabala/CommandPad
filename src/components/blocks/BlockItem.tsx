@@ -3,11 +3,9 @@ import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
 import { AppMode, LassoMode, SelectionGroup } from "@/common/enums";
-import { tooltip } from "@/components/common/tooltip/tooltip";
-import { DragIcon } from "@/components/icons";
+import { DragHandle } from "@/components/common/DragHandle";
 import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
-import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore, useStoreApi } from "@/store/store";
 import { clamp } from "@/utils/number";
 import { classNames } from "@/utils/string";
@@ -24,7 +22,6 @@ export const BlockItem = memo(function BlockItem({
   variableMap,
   secretKeys,
 }: Props) {
-  const t = useTranslation();
   const store = useStoreApi();
   const isSelected = useStore((state) => state.selectedBlockIds.has(block.id));
   const isFlashing = useStore((state) => state.flashBlockIds.has(block.id));
@@ -43,10 +40,10 @@ export const BlockItem = memo(function BlockItem({
   const BlockView = getBlockComponent(block.type);
   const blockClass = classNames(
     CssClass.BLOCK_ITEM,
-    isSelected && "block-selected",
-    isFlashing && "duplicate-flash",
     dragging && CssClass.DRAGGING,
     dragOver && CssClass.DRAG_OVER,
+    isSelected && "block-selected",
+    isFlashing && CssClass.DUPLICATE_FLASH,
   );
 
   return (
@@ -155,23 +152,19 @@ export const BlockItem = memo(function BlockItem({
         secretKeys={secretKeys}
       />
 
-      <div
-        className={`${CssClass.BLOCK_DRAG_HANDLE} ${CssClass.SELECT_KEY_HIDDEN}`}
-      >
-        <div
-          className="drag-handle"
-          {...tooltip(t.common.dragToReorder)}
-          onMouseDown={() => setDraggable(true)}
-          onMouseUp={() => {
-            clearTimeout(disarmTimer.current);
-            disarmTimer.current = setTimeout(
-              () => setDraggable(false),
-              DRAG_TIMEOUT_MS,
-            );
+      <div className={CssClass.ITEM_DRAG_HANDLE}>
+        <DragHandle
+          handleProps={{
+            onMouseDown: () => setDraggable(true),
+            onMouseUp: () => {
+              clearTimeout(disarmTimer.current);
+              disarmTimer.current = setTimeout(
+                () => setDraggable(false),
+                DRAG_TIMEOUT_MS,
+              );
+            },
           }}
-        >
-          <DragIcon className="icon-md" />
-        </div>
+        />
       </div>
 
       <BlockActionsMenu blockId={block.id} />

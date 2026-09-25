@@ -145,6 +145,13 @@ export const VariableKind = {
 } as const;
 export type VariableKind = (typeof VariableKind)[keyof typeof VariableKind];
 
+export const VariableEntryKind = {
+  VARIABLE: "variable",
+  SECTION: "section",
+} as const;
+export type VariableEntryKind =
+  (typeof VariableEntryKind)[keyof typeof VariableEntryKind];
+
 export const SelectionGroup = {
   BLOCK: "block",
   VARIABLE: "variable",

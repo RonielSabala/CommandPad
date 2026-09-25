@@ -211,6 +211,11 @@ export const VariableField = {
   OPTIONS: "options",
 } as const;
 
+export const VariableSectionField = {
+  SECTION: "section",
+  COLLAPSED: "collapsed",
+} as const;
+
 export const BlockField = {
   TYPE: "type",
   TEXT: "text",

@@ -19,8 +19,6 @@
 }
 
 .docs-page-link:hover {
-  background: var(--color-surface-alt);
-  border-color: var(--accent-text);
   color: var(--color-text-primary);
 }
 

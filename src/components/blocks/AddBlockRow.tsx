@@ -1,43 +1,27 @@
 import { BLOCK_TYPE_ORDER } from "@/blocks";
-import { BlockType } from "@/common/enums";
-import { tooltip } from "@/components/common/tooltip/tooltip";
+import { AddRow } from "@/components/common/AddRow";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import "./AddBlockRow.css";
+
 import { getBlockIcon } from "./blockViews";
-
-interface AddBlockButtonProps {
-  type: BlockType;
-}
-
-export function AddBlockButton({ type }: AddBlockButtonProps) {
-  const t = useTranslation();
-  const addBlock = useStore((state) => state.addBlock);
-  const label = t.blocks.typeLabel[type];
-  const Icon = getBlockIcon(type);
-
-  return (
-    <button
-      className="btn"
-      onClick={() => void addBlock(type)}
-      {...tooltip(t.blocks.typeTitle(label))}
-    >
-      <Icon className="icon-md icon-bold" />
-      {label}
-    </button>
-  );
-}
 
 export function AddBlockRow() {
   const t = useTranslation();
+  const addBlock = useStore((state) => state.addBlock);
+
   return (
-    <div id="add-block-row">
-      <p className="new-block-label section-title no-user-select">
-        {t.blocks.newBlockLabel}
-      </p>
-      {BLOCK_TYPE_ORDER.map((type) => (
-        <AddBlockButton key={type} type={type} />
-      ))}
-    </div>
+    <AddRow
+      label={t.blocks.newBlockLabel}
+      items={BLOCK_TYPE_ORDER.map((type) => {
+        const label = t.blocks.typeLabel[type];
+        return {
+          key: type,
+          icon: getBlockIcon(type),
+          label,
+          title: t.blocks.typeTitle(label),
+          onAdd: () => void addBlock(type),
+        };
+      })}
+    />
   );
 }
