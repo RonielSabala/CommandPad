@@ -14,7 +14,7 @@ import {
   type ReactNode,
 } from "react";
 
-import "./NoteBlock.css";
+import "./NoteEditor.css";
 import { NoteText } from "./NoteText";
 
 interface Props {
@@ -89,7 +89,7 @@ export function NoteEditor({
 
   return (
     <div
-      className={classNames("note-block", focused && "is-focused", className)}
+      className={classNames("note-editor", focused && "is-focused", className)}
     >
       {header}
       <label

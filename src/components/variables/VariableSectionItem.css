@@ -41,15 +41,6 @@ body.select-key-held:not(.read-mode)
 
 /* Section name */
 
-.variable-section-name.note-block {
-  min-width: 0;
-}
-
-.variable-section-name .note-textarea {
-  width: 0;
-  min-width: 100%;
-}
-
 body.read-mode .variable-section-name.is-clickable .note-preview {
   cursor: pointer;
   user-select: none;

@@ -1,8 +1,13 @@
-.note-block {
-  display: inline-grid;
+.note-editor.note-block {
   min-width: var(--block-min-width);
-  border-radius: var(--radius-lg);
 }
+
+.note-block .note-textarea {
+  width: auto;
+  min-width: var(--block-min-width);
+}
+
+/* Note style row */
 
 .note-style-row {
   position: sticky;
@@ -19,8 +24,8 @@
   transition: opacity var(--transition-base);
 }
 
-.note-block:hover .note-style-row,
-.note-block.is-focused .note-style-row {
+.note-editor:hover .note-style-row,
+.note-editor.is-focused .note-style-row {
   opacity: 1;
   pointer-events: auto;
 }
@@ -29,15 +34,7 @@ body.read-mode .note-style-row {
   visibility: hidden;
 }
 
-.note-block.is-focused .note-preview {
-  display: none;
-}
-
-.note-block.is-focused .note-textarea {
-  color: var(--color-text-secondary);
-}
-
-/* Note style btn */
+/* Note style button */
 
 .note-style-btn {
   padding: var(--space-1) var(--space-3);
@@ -66,25 +63,6 @@ body.read-mode .note-style-row {
   border-radius: var(--radius-lg);
 }
 
-/* Note auto width */
-
-.note-auto-width {
-  width: 100%;
-  display: inline-grid;
-}
-
-.note-auto-width::after {
-  content: attr(data-value) " ";
-  grid-area: 1 / 1 / 2 / 2;
-  white-space: pre-wrap;
-  word-break: break-word;
-  visibility: hidden;
-}
-
-.note-block:not(.is-focused) .note-auto-width::after {
-  content: none;
-}
-
 /* Note styles */
 
 .note-auto-width.style-heading::after,
@@ -107,110 +85,10 @@ body.read-mode .note-style-row {
   letter-spacing: 0.03em;
 }
 
-/* Shared note block styles */
-
-.note-textarea,
-.note-preview,
-.note-auto-width::after {
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: 1.65;
-  tab-size: var(--tab-size);
-  padding: var(--space-2) 0;
-}
-
-.note-textarea,
-.note-preview {
-  grid-area: 1 / 1 / 2 / 2;
-}
-
-/* Note textarea */
-
-.note-textarea {
-  color: transparent;
-  caret-color: var(--color-text-primary);
-  background: transparent;
-  border: none;
-  outline: none;
-  resize: none;
-  overflow: hidden;
-  min-width: var(--block-min-width);
-  width: auto;
-}
-
-.note-textarea::selection,
-.note-textarea::placeholder {
-  background: transparent;
-}
-
-.note-textarea::grammar-error,
-.note-textarea::spelling-error {
-  text-decoration: transparent;
-}
-
-.note-block.is-focused .note-textarea::grammar-error {
-  text-decoration: underline wavy var(--accent);
-}
-
-.note-block.is-focused .note-textarea::spelling-error {
-  text-decoration: underline wavy var(--danger);
-}
-
-body.read-mode .note-textarea:focus {
-  caret-color: transparent;
-  outline: none;
-}
-
-body:not(.select-key-held) .note-textarea::selection {
-  background-color: var(--selection-color);
-}
-
-/* Note preview */
-
-.note-preview::after {
-  content: " ";
-}
-
-.note-preview:has(> :is(.note-list, .note-table):last-child)::after {
-  content: none;
-}
-
-.note-preview > :is(.note-list, .note-table):first-child {
-  margin-top: 0;
-}
-
-.note-preview > :is(.note-list, .note-table):last-child {
-  margin-bottom: 0;
-}
-
-.note-preview {
-  color: var(--color-text-secondary);
-  word-break: break-word;
-  white-space: pre-wrap;
-  pointer-events: none;
-  position: relative;
-  z-index: var(--z-raised);
-  user-select: none;
-}
-
-body.read-mode .note-preview {
-  pointer-events: auto;
-  cursor: text;
-  user-select: text;
-}
-
-body.read-mode :is(.note-preview::selection, .note-preview *::selection) {
-  background-color: var(--selection-color);
-}
-
 .note-preview.style-heading {
   color: var(--color-text-primary);
 }
 
 .note-preview.style-subheading {
   color: var(--accent-text);
-}
-
-.note-preview-placeholder {
-  color: var(--color-text-muted);
 }

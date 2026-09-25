@@ -5,6 +5,7 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { useCallback } from "react";
 
+import "./NoteBlock.css";
 import { NoteEditor } from "./NoteEditor";
 
 const NOTE_STYLES: NoteStyle[] = [
@@ -39,7 +40,7 @@ export function NoteBlock({ block }: Props) {
       onChange={applyText}
       placeholder={t.note.stylePlaceholder[blockStyle]}
       styleClass={`style-${blockStyle}`}
-      className={CssClass.BLOCK_SURFACE}
+      className={`note-block ${CssClass.BLOCK_SURFACE}`}
       focusRequested={pendingFocus}
       onFocusHandled={consumeBlockFocus}
       header={
