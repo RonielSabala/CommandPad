@@ -121,7 +121,7 @@ export function useKeybindings(): void {
         state.beginImport();
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.TOGGLE_EDITORS)) {
-        state.toggleAllCommandEditors();
+        state.toggleCollapseAll();
         hit = true;
       }
 

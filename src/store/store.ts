@@ -126,6 +126,7 @@ import {
   normalizeVariableSections,
   revealVariables,
   sectionVariables,
+  toggleAllSections,
   toVariableEntries,
   type VariableEntry,
 } from "@/utils/variableSections";
@@ -351,6 +352,7 @@ export interface StoreState {
     patch: Partial<Omit<BlockOfType<T>, "id" | "type">>,
   ) => void;
   toggleAllCommandEditors: () => void;
+  toggleCollapseAll: () => void;
   reorderBlocks: (sourceId: string, targetId: string) => void;
   copyBlocksToTab: (
     sourceTabId: string,
@@ -2886,6 +2888,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         if (state.mode === AppMode.READ) {
           return;
         }
+
         const active = getActiveTab(state);
         if (!active) {
           return;
@@ -2909,6 +2912,37 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             ),
           })),
         );
+        get().saveState();
+      },
+
+      toggleCollapseAll: () => {
+        const state = get();
+        const tab = getActiveTab(state);
+        if (state.runbookView !== RunbookView.VARIABLES) {
+          state.toggleAllCommandEditors();
+          return;
+        }
+
+        if (!tab?.variableSections.length) {
+          return;
+        }
+
+        const variableSections = toggleAllSections(tab);
+        const hidden = variableSections.some((section) => section.collapsed)
+          ? new Set(
+              tab.variables
+                .slice(variableSections[0].start)
+                .map((variable) => variable.id),
+            )
+          : new Set<string>();
+
+        set((s) => ({
+          ...withActiveTab(s, (t) => ({ ...t, variableSections })),
+          selectedVariableIds: new Set(
+            [...s.selectedVariableIds].filter((id) => !hidden.has(id)),
+          ),
+        }));
+
         get().saveState();
       },
 

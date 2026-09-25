@@ -40,6 +40,7 @@ export const es: Messages = {
     switchToLight: "Cambiar a modo claro",
     collapseAll: "Contraer todo",
     toggleEditorsTitle: "Expandir/contraer todos los editores de comandos",
+    toggleSectionsTitle: "Expandir/contraer todas las secciones de variables",
     resetWorkspaceTitle: "Resetear espacio de trabajo",
     exportTitle: "Exportar libro",
     export: "Exportar",
@@ -477,7 +478,8 @@ export const es: Messages = {
     [KeyBinding.EXPORT]: "Abrir el diálogo de exportación",
     [KeyBinding.DELETE_RUNBOOK]: "Eliminar el libro enfocado de la biblioteca",
     [KeyBinding.CLEAR_LIBRARY]: "Abrir el diálogo de eliminar todos los libros",
-    [KeyBinding.TOGGLE_EDITORS]: "Alternar todos los editores de comandos",
+    [KeyBinding.TOGGLE_EDITORS]:
+      "Alternar todos los editores de comandos, o todas las secciones en el editor de variables",
     [KeyBinding.MULTISELECT_BLOCKS]: "Selección múltiple de bloques",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicar bloques seleccionados",
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
@@ -821,7 +823,7 @@ Si algo sale mal, deshazlo en este orden:
         collapseAllLabel,
       ) => `* El **logo de CommandPad**: haz clic en él para recargar la app.
 * El **candado / lápiz**: alterna entre el modo lectura y el modo edición. Tiene su propia sección más adelante.
-* **${collapseAllLabel}**: contrae o expande de golpe todos los editores de comandos del libro activo.
+* **${collapseAllLabel}**: contrae o expande de golpe todos los editores de comandos del libro activo. En el editor de variables pliega o despliega todas las secciones de variables.
 * El **sol / la luna**: cambia entre el tema claro y oscuro.
 * El **selector de idioma**: cambia el idioma de la interfaz.
 * El **libro**: abre esta documentación.

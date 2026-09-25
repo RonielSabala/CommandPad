@@ -166,6 +166,23 @@ export function sectionVariables(
   );
 }
 
+/** Fold every section that holds a variable, or unfold them all if they are. */
+export function toggleAllSections(layout: VariableLayout): VariableSection[] {
+  const { variables, variableSections: sections } = layout;
+  const total = variables.length;
+
+  const foldable = new Set(
+    sections.filter(
+      (section, at) => sectionEnd(sections, at, total) > section.start,
+    ),
+  );
+
+  const collapsed = ![...foldable].every((section) => section.collapsed);
+  return sections.map((section) =>
+    foldable.has(section) ? { ...section, collapsed } : section,
+  );
+}
+
 /** Expand whichever collapsed section holds any of `variableIds`. */
 export function revealVariables(
   layout: VariableLayout,

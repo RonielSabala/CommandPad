@@ -67,6 +67,7 @@ export interface Messages {
     switchToLight: string;
     collapseAll: string;
     toggleEditorsTitle: string;
+    toggleSectionsTitle: string;
     resetWorkspaceTitle: string;
     exportTitle: string;
     export: string;
