@@ -137,7 +137,8 @@ body.read-mode .variable-editor-secret-btn {
 body.select-key-held:not(.read-mode)
   .variable-item:hover
   :is(.variable-editor-value, .variable-editor-options),
-.variable-item-selected :is(.variable-editor-value, .variable-editor-options) {
+:is(.variable-item-selected, .variable-item.drag-over)
+  :is(.variable-editor-value, .variable-editor-options) {
   border-color: transparent;
 }
 
