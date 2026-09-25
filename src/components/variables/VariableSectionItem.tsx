@@ -120,7 +120,6 @@ export const VariableSectionItem = memo(function VariableSectionItem({
           value={section.name}
           onChange={rename}
           placeholder={t.variables.sectionPlaceholder}
-          styleClass="style-section"
           className={classNames(
             CssClass.VARIABLE_SECTION_NAME,
             nameToggles && "is-clickable",

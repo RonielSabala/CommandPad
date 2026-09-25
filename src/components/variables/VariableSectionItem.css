@@ -41,19 +41,17 @@ body.select-key-held:not(.read-mode)
 
 /* Section name */
 
-body.read-mode .variable-section-name.is-clickable .note-preview {
-  cursor: pointer;
-  user-select: none;
-}
-
-.note-textarea.style-section,
-.note-preview.style-section,
-.note-auto-width.style-section::after {
+.variable-section-name {
   font-weight: 600;
 }
 
-.note-preview.style-section {
+.variable-section-name .note-preview {
   color: var(--color-text-primary);
+}
+
+body.read-mode .variable-section-name.is-clickable .note-preview {
+  cursor: pointer;
+  user-select: none;
 }
 
 /* Section variable count */

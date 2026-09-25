@@ -21,7 +21,7 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
-  styleClass: string;
+  styleClass?: string;
   className?: string;
   header?: ReactNode;
   focusRequested?: boolean;
@@ -93,14 +93,22 @@ export function NoteEditor({
     >
       {header}
       <label
-        className={`note-auto-width ${styleClass} ${CssClass.SELECT_KEY_INERT}`}
+        className={classNames(
+          "note-auto-width",
+          styleClass,
+          CssClass.SELECT_KEY_INERT,
+        )}
         data-value={value || placeholder}
         onMouseDown={handleMouseDown}
         onClick={handleClick}
       >
         <textarea
           ref={textareaRef}
-          className={`note-textarea ${styleClass} ${CssClass.SELECT_KEY_INERT}`}
+          className={classNames(
+            "note-textarea",
+            styleClass,
+            CssClass.SELECT_KEY_INERT,
+          )}
           placeholder={placeholder}
           spellCheck={spellcheck}
           lang={language}
@@ -119,7 +127,10 @@ export function NoteEditor({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
         />
-        <div ref={previewRef} className={`note-preview ${styleClass}`}>
+        <div
+          ref={previewRef}
+          className={classNames("note-preview", styleClass)}
+        >
           {value ? (
             <NoteText text={value} requiresLinkModifier />
           ) : (
