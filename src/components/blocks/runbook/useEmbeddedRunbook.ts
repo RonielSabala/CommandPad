@@ -1,7 +1,7 @@
 import { RunbookBlockConfig } from "@/common/config";
 import type { EmbeddedRunbookStatus } from "@/common/enums";
 import type { RunbookBlock, RunbookContent, Variable } from "@/common/types";
-import { countEncryptedSecrets } from "@/services/vault";
+import { hasEncryptedSecrets } from "@/services/vault";
 import { tabContent, useStore } from "@/store/store";
 import { resolveEmbedSource, type EmbedSource } from "@/utils/embeddedRunbook";
 import {
@@ -82,7 +82,7 @@ export function useEmbeddedRunbook(
   const embeddedSecrets = useMemo(() => getSecretKeys(variables), [variables]);
 
   const locked = useMemo(
-    () => !!content && countEncryptedSecrets(content) > 0,
+    () => !!content && hasEncryptedSecrets(content),
     [content],
   );
   const nestedTrail = useMemo(

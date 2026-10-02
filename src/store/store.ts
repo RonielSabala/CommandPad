@@ -83,12 +83,12 @@ import {
 } from "@/services/cloud";
 import {
   adoptOpenVault,
-  countEncryptedSecrets,
   createVault,
   decryptContent,
   decryptContentWithOpenVaults,
   decryptContentWithPassphrase,
   encryptContent,
+  hasEncryptedSecrets,
   hasPlainSecrets,
   holdsSecrets,
   isVaultSupported,
@@ -1160,7 +1160,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       const decrypted = await Promise.all(
         get().tabs.map(async (tab) => {
           const content = tabContent(tab);
-          if (tab.runbookId !== runbookId || !countEncryptedSecrets(content)) {
+          if (tab.runbookId !== runbookId || !hasEncryptedSecrets(content)) {
             return tab;
           }
 
@@ -1184,8 +1184,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         return false;
       }
 
-      const locked = countEncryptedSecrets(tabContent(tab));
-      return locked > 0
+      return hasEncryptedSecrets(tabContent(tab))
         ? await promptVault(VaultPrompt.UNLOCK, unlockVaultWith(runbookId))
         : false;
     };
@@ -1226,7 +1225,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       content: RunbookContent,
       filename: string | null = null,
     ): Promise<ImportedVaultResult> => {
-      if (countEncryptedSecrets(content) === 0) {
+      if (!hasEncryptedSecrets(content)) {
         return { content, vault: null, passphrase: null };
       }
 
@@ -1334,7 +1333,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       content: RunbookContent,
     ): Promise<EmbeddedRunbook> => ({
       status: EmbeddedRunbookStatus.READY,
-      content: countEncryptedSecrets(content)
+      content: hasEncryptedSecrets(content)
         ? (await decryptContentWithOpenVaults(content)).content
         : content,
     });
