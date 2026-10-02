@@ -22,14 +22,25 @@ function findNamed(
   entries: CloudEntry[],
   name: string,
   isFolder: boolean,
-): CloudEntry | undefined {
-  const candidates = entries.filter((entry) => entry.isFolder === isFolder);
+): CloudEntry | null {
   const lower = name.toLowerCase();
+  let caseless: CloudEntry | null = null;
 
-  return (
-    candidates.find((entry) => entry.name === name) ??
-    candidates.find((entry) => entry.name.toLowerCase() === lower)
-  );
+  for (const entry of entries) {
+    if (entry.isFolder !== isFolder) {
+      continue;
+    }
+
+    if (entry.name === name) {
+      return entry;
+    }
+
+    if (!caseless && entry.name.toLowerCase() === lower) {
+      caseless = entry;
+    }
+  }
+
+  return caseless;
 }
 
 export async function resolveCloudPath(
@@ -52,14 +63,9 @@ export async function resolveCloudPath(
     folderId = folder.id;
   }
 
-  const entries = await listFolder(client, folderId);
-  const named = filename.endsWith(JSON_EXTENSION)
+  const named = filename.toLowerCase().endsWith(JSON_EXTENSION)
     ? filename
     : filename + JSON_EXTENSION;
 
-  return (
-    findNamed(entries, filename, false) ??
-    findNamed(entries, named, false) ??
-    null
-  );
+  return findNamed(await listFolder(client, folderId), named, false);
 }

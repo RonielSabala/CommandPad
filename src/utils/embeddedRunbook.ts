@@ -48,12 +48,19 @@ export function resolveLocalRunbook(
   block: Pick<RunbookBlock, "label" | "runbookId">,
 ): RunbookEntry | null {
   const label = block.label.trim();
+  let labeled: RunbookEntry | null = null;
 
-  return (
-    library.find((entry) => entry.id === block.runbookId) ??
-    (label ? library.find((entry) => entry.label.trim() === label) : null) ??
-    null
-  );
+  for (const entry of library) {
+    if (entry.id === block.runbookId) {
+      return entry;
+    }
+
+    if (!labeled && label && entry.label.trim() === label) {
+      labeled = entry;
+    }
+  }
+
+  return labeled;
 }
 
 export function resolveEmbedSource(
