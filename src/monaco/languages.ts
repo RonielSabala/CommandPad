@@ -3,7 +3,10 @@ import { RunbookSchemaConfig } from "@/common/editorConfig";
 import { CodeLanguage } from "@/common/enums";
 import { jsonDefaults } from "monaco-editor/esm/vs/language/json/monaco.contribution.js";
 
-import { registerVariableCompletions } from "./completions";
+import {
+  registerChoiceCompletions,
+  registerVariableCompletions,
+} from "./completions";
 import { RUNBOOK_JSON_SCHEMA } from "./runbookSchema";
 import { monaco } from "./setup";
 
@@ -27,6 +30,7 @@ export function configureLanguages(): void {
   });
 
   registerVariableCompletions();
+  registerChoiceCompletions();
 
   monaco.languages.setLanguageConfiguration(CodeLanguage.JSON, {
     surroundingPairs: PAIRS,

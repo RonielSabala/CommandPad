@@ -42,6 +42,16 @@ export const demoImage = (src: string, alt?: string): Block => ({
   ...(alt !== undefined ? { alt } : {}),
 });
 
+export const demoRunbook = (
+  label: string,
+  overrides?: Record<string, string>,
+): Block => ({
+  id: generateId(),
+  type: BlockType.RUNBOOK,
+  label,
+  ...(overrides !== undefined ? { overrides } : {}),
+});
+
 export const demoDivider = (): Block => ({
   id: generateId(),
   type: BlockType.DIVIDER,

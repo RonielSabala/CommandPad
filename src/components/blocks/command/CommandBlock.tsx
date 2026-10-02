@@ -1,109 +1,30 @@
-import {
-  CARRIAGE_RETURN,
-  COPY_FEEDBACK_TIMEOUT_MS,
-  LINE_BREAK,
-  NON_BREAKING_SPACE,
-} from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { DataAttr } from "@/common/constants/dom";
 import {
   CodeModelScope,
   COMMAND_PROMPT_PREFIX,
   DEFAULT_COMMAND_LANGUAGE,
 } from "@/common/editorConfig";
-import {
-  BlockType,
-  ClampSurface,
-  CodeLanguage,
-  TooltipVariant,
-} from "@/common/enums";
-import type {
-  CommandBlock as CommandBlockData,
-  CommandSegment,
-} from "@/common/types";
+import { BlockType, ClampSurface, CodeLanguage } from "@/common/enums";
+import type { CommandBlock as CommandBlockData } from "@/common/types";
 import { ClampToggle } from "@/components/common/codeEditor/ClampToggle";
 import {
   CodeEditor,
   type CodeEditorHandle,
 } from "@/components/common/codeEditor/CodeEditor";
 import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageSelect";
-import { useDomScrollTarget } from "@/components/common/scrollTarget";
-import { StickyScrollbar } from "@/components/common/StickyScrollbar";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import {
-  CheckIcon,
-  CopyIcon,
-  EditorToggleChevronIcon,
-} from "@/components/icons";
+import { EditorToggleChevronIcon } from "@/components/icons";
 import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
 import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
 import { buildVariableCompletions } from "@/monaco/completions";
 import { useStore } from "@/store/store";
-import {
-  countCommandLines,
-  hasUnresolvedTokens,
-  isMaskedSegment,
-  resolveCommandText,
-  resolveCommandToString,
-  type VariableMap,
-} from "@/utils/resolution";
-import { classNames, countLines, splitLines, stripEnd } from "@/utils/string";
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import type { VariableMap } from "@/utils/resolution";
+import { classNames, countLines } from "@/utils/string";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import "./CommandBlock.css";
-
-const SECRET_MASK = "******";
-
-function HighlightedLines({
-  text,
-  className,
-  title,
-}: {
-  text: string;
-  className: string;
-  title?: string;
-}) {
-  return splitLines(text).map((line, i) => {
-    const content = stripEnd(line, CARRIAGE_RETURN);
-    const isBlank = content === "";
-
-    return (
-      <Fragment key={i}>
-        {i > 0 && LINE_BREAK}
-        <span
-          className={classNames(className, isBlank && "token-nesting-blank")}
-          {...tooltip(title, TooltipVariant.CODE)}
-        >
-          {isBlank ? NON_BREAKING_SPACE : content}
-        </span>
-      </Fragment>
-    );
-  });
-}
-
-function NestedText({ segment }: { segment: CommandSegment }) {
-  const spans = segment.spans;
-  if (!spans) {
-    return segment.text;
-  }
-
-  return spans.map((span, i) => (
-    <HighlightedLines
-      key={i}
-      text={span.text}
-      className={`token-nesting-${span.depth}`}
-      title={span.source}
-    />
-  ));
-}
+import { CommandPreview } from "./CommandPreview";
 
 interface Props {
   block: CommandBlockData;
@@ -126,20 +47,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     (state) => state.pendingFocusBlockId === blockId,
   );
 
-  const [copied, setCopied] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const previewRef = useRef<HTMLSpanElement>(null);
-  const previewScrollTarget = useDomScrollTarget(previewRef);
   const editorRef = useRef<CodeEditorHandle>(null);
-
-  const segments = useMemo(
-    () => resolveCommandText(blockText, variableMap),
-    [blockText, variableMap],
-  );
-  const unresolved = useMemo(
-    () => hasUnresolvedTokens(blockText, variableMap),
-    [blockText, variableMap],
-  );
 
   const completions = useMemo(
     () => buildVariableCompletions(variableMap, secretKeys),
@@ -148,18 +57,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
 
   const actions = useEditorActions();
 
-  const previewLines = useMemo(
-    () => countCommandLines(segments, secretKeys),
-    [segments, secretKeys],
-  );
   const editorLines = useMemo(() => countLines(blockText), [blockText]);
 
-  const preview = useClampSurface(
-    blockId,
-    ClampSurface.PREVIEW,
-    previewLines,
-    rootRef,
-  );
   const editor = useClampSurface(
     blockId,
     ClampSurface.EDITOR,
@@ -185,14 +84,6 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     }
   }, [pendingFocus, consumeBlockFocus]);
 
-  const copy = () => {
-    const resolved = resolveCommandToString(blockText, variableMap);
-    void navigator.clipboard.writeText(resolved).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), COPY_FEEDBACK_TIMEOUT_MS);
-    });
-  };
-
   return (
     <div
       ref={rootRef}
@@ -203,38 +94,13 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
       )}
       style={CLAMP_SURFACE_STYLE}
     >
-      <div className="command-preview" {...{ [DataAttr.DRAG_IMAGE]: "" }}>
-        <span
-          ref={previewRef}
-          className={classNames(
-            "command-preview-text",
-            "no-ligatures",
-            unresolved && "has-unresolved",
-            preview.clamped && CssClass.CLAMPED,
-          )}
-        >
-          {blockText ? (
-            segments.map((seg, i) =>
-              isMaskedSegment(seg, secretKeys) ? (
-                <span key={i} className="token-secret">
-                  {SECRET_MASK}
-                </span>
-              ) : (
-                <span key={i} className={`token-${seg.type}`}>
-                  <NestedText segment={seg} />
-                </span>
-              ),
-            )
-          ) : (
-            <span className="command-preview-placeholder">
-              {t.command.emptyPreview}
-            </span>
-          )}
-        </span>
-
-        <div
-          className={`command-preview-actions ${CssClass.SELECT_KEY_HIDDEN}`}
-        >
+      <CommandPreview
+        clampId={blockId}
+        text={blockText}
+        variableMap={variableMap}
+        secretKeys={secretKeys}
+        surfaceRef={rootRef}
+        actions={
           <button
             className={`btn toggle-editor-btn${isEditorCollapsed ? " editor-collapsed" : ""}`}
             onClick={() =>
@@ -247,28 +113,8 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
           >
             <EditorToggleChevronIcon className="toggle-editor-icon icon-md icon-bold" />
           </button>
-
-          <button
-            className="btn"
-            onClick={copy}
-            disabled={!blockText}
-            aria-label={t.command.copy}
-            {...tooltip(t.command.copy)}
-          >
-            {copied ? (
-              <CheckIcon className="icon-md icon-bold copy-check-icon" />
-            ) : (
-              <CopyIcon className="icon-md icon-bold" />
-            )}
-          </button>
-        </div>
-
-        {preview.overflows && (
-          <ClampToggle expanded={preview.expanded} onToggle={preview.toggle} />
-        )}
-
-        <StickyScrollbar target={previewScrollTarget} deps={[segments]} />
-      </div>
+        }
+      />
 
       <CodeEditor
         ref={editorRef}

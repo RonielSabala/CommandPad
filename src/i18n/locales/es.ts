@@ -186,6 +186,7 @@ export const es: Messages = {
       [BlockType.COMMAND]: "Comando",
       [BlockType.NOTE]: "Nota",
       [BlockType.IMAGE]: "Imagen",
+      [BlockType.RUNBOOK]: "Runbook",
       [BlockType.DIVIDER]: "Divisor",
     },
     typeTitle: (label) => `Bloque de ${label.toLowerCase()}`,
@@ -199,6 +200,35 @@ export const es: Messages = {
       count === 1 ? "1 bloque seleccionado" : `${count} bloques seleccionados`,
     emptyTitle: "Aún no hay bloques.",
     emptyHint: "Agrega un comando o una nota abajo.",
+  },
+  runbookBlock: {
+    changeSource: "Dónde está el runbook",
+    labelPlaceholder: "Etiqueta del runbook",
+    pathPlaceholder: "carpeta/runbook.json",
+    unresolvedLabel: (label) =>
+      `Ningún runbook de tu biblioteca tiene la etiqueta \`${label}\`.`,
+    emptyLabel: "Escribe la etiqueta de un runbook de tu biblioteca.",
+    emptyPath: "Escribe la ruta de un runbook en la nube.",
+    loading: "Cargando el runbook...",
+    missing: "No se encontró ningún runbook en esta ruta.",
+    error: "No se pudo cargar el runbook.",
+    signedOut: (provider) =>
+      `Inicia sesión en ${provider} para cargar este runbook.`,
+    signIn: "Iniciar sesión",
+    locked: "Sus valores secretos están bloqueados.",
+    unlock: "Desbloquear",
+    refresh: "Cargarlo de nuevo",
+    open: "Abrir el runbook",
+    collapse: "Contraer el runbook",
+    expand: "Expandir el runbook",
+    circular:
+      "Este runbook se incrusta a sí mismo, así que no se vuelve a mostrar aquí.",
+    tooDeep: "Este runbook está anidado demasiado profundo para mostrarse.",
+    empty: "Este runbook está vacío.",
+    noVariables: "Este runbook no tiene variables.",
+    showVariables: "Mostrar sus variables",
+    showBlocks: "Mostrar sus bloques",
+    resetOverride: "Usar el valor del propio runbook",
   },
   command: {
     emptyPreview: "comando vacío",
@@ -740,6 +770,7 @@ export const es: Messages = {
       [DocsSectionId.COMMAND_BLOCK]: "Bloque de comando",
       [DocsSectionId.NOTE_BLOCK]: "Bloque de nota",
       [DocsSectionId.IMAGE_BLOCK]: "Bloque de imagen",
+      [DocsSectionId.RUNBOOK_BLOCK]: "Bloque de runbook",
       [DocsSectionId.DIVIDER_BLOCK]: "Bloque divisor",
       [DocsSectionId.MULTI_SELECT]: "Selección múltiple",
       [DocsSectionId.READ_MODE]: "Modo lectura",
@@ -1275,6 +1306,24 @@ Si algo sale mal, deshazlo en este orden:
       intro:
         "No es más que un separador visual. Se estira hasta igualar el ancho del bloque más ancho, lo que lo hace perfecto para dividir un libro en secciones.",
       demoNote: "Escribe aquí y observa cómo el divisor crece o se encoge.",
+    },
+    runbookBlock: {
+      intro:
+        "Un bloque de runbook muestra **otro runbook** dentro de este. Escribe una vez los pasos que repites en todas partes (un despliegue, una copia de seguridad, una comprobación de estado) e incrústalos donde hagan falta: una sola copia que mantener al día. Para elegir el runbook, escribe su **etiqueta** en la cabecera del bloque. El cuadro sugiere todos los runbooks de tu biblioteca, y una etiqueta que no coincide con ninguno se pone en rojo, como una variable desconocida.",
+      demoHint: (showVariables) =>
+        `Este runbook de versión incrusta el runbook de despliegue, apuntado a \`prod\`. Pulsa **${showVariables}** (el \`{}\` de la cabecera del bloque), cambia \`ENV\` a \`dev\` y vuelve atrás: todos los comandos incrustados lo siguen. La flecha junto a \`ENV\` descarta tu valor y recupera el del propio runbook de despliegue.`,
+      overrides:
+        "Lo que escribes ahí es una **sobrescritura**: vive en este bloque y nunca toca el runbook incrustado, así que cada runbook que lo incrusta indica solo lo que cambia. Un valor puede referenciar las variables de este runbook (`{STAGE}`), una opción se elige de la propia lista de la variable, y una sobrescritura construida a partir de un secreto sigue enmascarada.",
+      readOnly: (open) =>
+        `Los bloques incrustados son de solo lectura: puedes copiar un comando o abrir una imagen a pantalla completa, pero no editar nada. Para cambiar el propio runbook, pulsa **${open}**. Todos los runbooks que lo incrustan recogen el cambio, y renombrarlo nunca rompe el enlace. En el modo lectura la cabecera desaparece y solo quedan los bloques incrustados.`,
+      cloud: (local, signIn, refresh) =>
+        `El runbook no tiene que estar en tu biblioteca. Cambia **${local}** por un proveedor de nube y escribe la ruta del archivo dentro de la carpeta de la aplicación (\`ops/deploy.json\`, el \`.json\` es opcional). El archivo se lee, nunca se importa, y se conserva durante la sesión: **${refresh}** lo vuelve a leer. Mientras no tengas la sesión iniciada, el bloque espera a que pulses **${signIn}** en lugar de abrir una ventana emergente por su cuenta.`,
+      secrets: (unlock) =>
+        `Si el runbook incrustado guarda secretos cifrados, pulsa **${unlock}** e introduce su frase de contraseña. Basta una vez por sesión: cualquier otro runbook que incruste el mismo reutiliza la bóveda abierta.`,
+      limits:
+        "Los runbooks incrustados pueden anidarse unos pocos niveles, y un runbook que acaba incrustándose a sí mismo se muestra una sola vez. Al exportar como Markdown o texto, un bloque de runbook se escribe como una referencia a lo que incrusta, nunca como su contenido.",
+      demoDeployTitle: "Desplegar la API",
+      demoReleaseTitle: "Versión 2.4",
     },
     multiSelect: {
       intro:

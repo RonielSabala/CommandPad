@@ -62,6 +62,8 @@ export const CodeModelConfig = {
 export const CodeModelScope = {
   COMMAND: "command",
   VARIABLE: "variable",
+  RUNBOOK_LABEL: "runbook-label",
+  RUNBOOK_OVERRIDE: "runbook-override",
   PASTE_RUNBOOK: "runbook/paste",
   CLOUD_FILE: "runbook/cloud",
   RUNBOOK_SOURCE: "runbook/source",
@@ -143,6 +145,18 @@ export const MonacoCursorSource = {
   MOUSE: "mouse",
 } as const;
 
+export const EditorLanguage = {
+  CHOICE: "commandpad-choice",
+} as const;
+export type EditorLanguage =
+  (typeof EditorLanguage)[keyof typeof EditorLanguage];
+
+export const MonacoSuggest = {
+  CONTROLLER_ID: "editor.contrib.suggestController",
+  TRIGGER_ACTION_ID: "editor.action.triggerSuggest",
+  IDLE_STATE: 0,
+} as const;
+
 export const MonacoFind = {
   CONTROLLER_ID: "editor.contrib.findController",
 } as const;
@@ -218,11 +232,18 @@ export const VariableSectionField = {
 
 export const BlockField = {
   TYPE: "type",
+  RUNBOOK_ID: "runbookId",
   TEXT: "text",
+  LABEL: "label",
   SRC: "src",
+  PATH: "path",
   ALT: "alt",
   STYLE: "style",
+  CLOUD: "cloud",
+  PROVIDER: "provider",
+  OVERRIDES: "overrides",
   LANGUAGE: "language",
+  COLLAPSED: "collapsed",
   EDITOR_COLLAPSED: "editorCollapsed",
 } as const;
 

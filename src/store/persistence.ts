@@ -27,22 +27,13 @@ import { detectLanguage, isLanguage } from "@/i18n/messages";
 import type { Language } from "@/i18n/types";
 import type { CloudFolderRef } from "@/services/cloud";
 import { clamp } from "@/utils/number";
-import { isNumber, isObject, isString } from "@/utils/typeGuards";
+import { isEnumValue, isNumber, isObject, isString } from "@/utils/typeGuards";
 
 const PANEL_IDS = Object.keys(PANEL_DEFINITIONS) as PanelId[];
 
 function getSavedItemByKey(key: string) {
   return JSON.parse(localStorage.getItem(key) ?? "null");
 }
-
-const isSyncDestination = (value: unknown): value is SyncDestination =>
-  Object.values(SyncDestination).includes(value as SyncDestination);
-
-const isExportFormat = (value: unknown): value is ExportFormat =>
-  Object.values(ExportFormat).includes(value as ExportFormat);
-
-const isRunbookView = (value: unknown): value is RunbookView =>
-  Object.values(RunbookView).includes(value as RunbookView);
 
 const toPanelSide = (value: unknown, fallback: PanelSide): PanelSide => {
   if (value === PanelSide.LEFT || value === PanelSide.RIGHT) {
@@ -154,7 +145,7 @@ export function loadUiState(): Partial<PersistedUiState> | null {
 
     return {
       mode: saved.mode === AppMode.READ ? AppMode.READ : AppMode.EDIT,
-      runbookView: isRunbookView(saved.runbookView)
+      runbookView: isEnumValue(RunbookView, saved.runbookView)
         ? saved.runbookView
         : RunbookView.PREVIEW,
       theme: saved.theme === Theme.LIGHT ? Theme.LIGHT : Theme.DARK,
@@ -172,10 +163,10 @@ export function loadUiState(): Partial<PersistedUiState> | null {
         : {}),
       minimapEnabled: saved.minimapEnabled !== false,
       minimapPosition: toPanelSide(saved.minimapPosition, PanelSide.RIGHT),
-      ...(isSyncDestination(saved.lastExportDestination)
+      ...(isEnumValue(SyncDestination, saved.lastExportDestination)
         ? { lastExportDestination: saved.lastExportDestination }
         : {}),
-      ...(isExportFormat(saved.lastExportFormat)
+      ...(isEnumValue(ExportFormat, saved.lastExportFormat)
         ? { lastExportFormat: saved.lastExportFormat }
         : {}),
       ...(isString(saved.lastExportFilename)
@@ -187,7 +178,7 @@ export function loadUiState(): Partial<PersistedUiState> | null {
       ...(isCloudFolderPath(saved.lastExportFolderPath)
         ? { lastExportFolderPath: saved.lastExportFolderPath }
         : {}),
-      ...(isSyncDestination(saved.lastImportSource)
+      ...(isEnumValue(SyncDestination, saved.lastImportSource)
         ? { lastImportSource: saved.lastImportSource }
         : {}),
     };
@@ -260,7 +251,7 @@ interface PersistedRunbooks {
 
 const isRunbookSync = (value: unknown): value is RunbookSync =>
   isObject(value) &&
-  Object.values(CloudProvider).includes(value.provider as CloudProvider) &&
+  isEnumValue(CloudProvider, value.provider) &&
   isString(value.filename) &&
   (isString(value.folderId) || value.folderId === null);
 

@@ -1,6 +1,6 @@
-import { Key } from "@/common/constants/events";
 import { AppRoute } from "@/common/constants/routes";
 import { AppMode, RunbookView, Theme } from "@/common/enums";
+import { asButton } from "@/components/common/asButton";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import {
   BookIcon,
@@ -55,15 +55,8 @@ export function Header() {
     <header className="header-bar">
       <span
         className="logo no-user-select"
-        role="button"
-        tabIndex={0}
         {...tooltip(t.header.reloadTitle)}
-        onClick={() => location.reload()}
-        onKeyDown={(event) => {
-          if (event.key === Key.ENTER) {
-            location.reload();
-          }
-        }}
+        {...asButton(() => location.reload())}
       >
         <span className="logo-word">Command</span>
         <span className="logo-pad">{"{Pad}"}</span>

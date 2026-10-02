@@ -1,4 +1,4 @@
-import { normalizeBlock } from "@/blocks";
+import { blockToJson, normalizeBlock } from "@/blocks";
 import { RunbookSourceConfig } from "@/common/config";
 import {
   DEFAULT_VARIABLE_LANGUAGE,
@@ -52,7 +52,7 @@ export function buildRunbookSource(content: RunbookContent): string {
       const { id, ...rest } = entry.variable;
       return rest;
     }),
-    blocks: (content.blocks ?? []).map(({ id, ...rest }) => rest),
+    blocks: (content.blocks ?? []).map(blockToJson),
   };
 
   return JSON.stringify(data, null, RunbookSourceConfig.INDENT);

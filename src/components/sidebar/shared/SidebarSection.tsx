@@ -1,10 +1,11 @@
 import { SECTION_ANIMATION_FALLBACK_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { Key } from "@/common/constants/events";
+import { asButton } from "@/components/common/asButton";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import type { FileDrop } from "@/hooks/useFileDrop";
 import { classNames } from "@/utils/string";
 import { useEffect, useState, type ReactNode } from "react";
+
 import "./SidebarSection.css";
 
 interface DropZone extends FileDrop {
@@ -64,16 +65,8 @@ export function SidebarSection({
       )}
       <div
         className="sidebar-section-header no-user-select"
-        role="button"
-        tabIndex={0}
         aria-expanded={!collapsed}
-        onClick={onToggle}
-        onKeyDown={(event) => {
-          if (event.key === Key.ENTER || event.key === Key.SPACE) {
-            event.preventDefault();
-            onToggle();
-          }
-        }}
+        {...asButton(onToggle)}
       >
         <p className="section-title">{title}</p>
         <SidebarSectionChevronIcon className="sidebar-section-chevron icon-md icon-bold" />

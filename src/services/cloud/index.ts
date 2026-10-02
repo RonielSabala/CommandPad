@@ -13,6 +13,7 @@ export {
   DEFAULT_CLOUD_SORT
 } from "./entries";
 export type { CloudSort } from "./entries";
+export { resolveCloudPath } from "./path";
 export { walkCloudTree } from "./search";
 export {
   buildCloudEntriesZip,

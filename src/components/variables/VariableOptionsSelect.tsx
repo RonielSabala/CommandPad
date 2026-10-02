@@ -17,6 +17,7 @@ interface Props {
   options: readonly string[];
   className?: string;
   triggerClassName: string;
+  onChange?: (value: string) => void;
 }
 
 export function VariableOptionsSelect({
@@ -25,6 +26,7 @@ export function VariableOptionsSelect({
   options,
   className,
   triggerClassName,
+  onChange,
 }: Props) {
   const t = useTranslation();
   const readMode = useStore((state) => state.mode === AppMode.READ);
@@ -33,6 +35,7 @@ export function VariableOptionsSelect({
   const removeVariableOption = useStore((state) => state.removeVariableOption);
   const [draft, setDraft] = useState("");
 
+  const editable = !readMode && !onChange;
   const selectOptions = useMemo(
     () => options.map((option) => ({ value: option, label: option })),
     [options],
@@ -47,7 +50,10 @@ export function VariableOptionsSelect({
     <Select
       value={value}
       options={selectOptions}
-      onChange={(next) => updateVariable(variableId, VariableField.VALUE, next)}
+      onChange={
+        onChange ??
+        ((next) => updateVariable(variableId, VariableField.VALUE, next))
+      }
       className={classNames("variable-options-select", className)}
       triggerClassName={classNames(
         "variable-options-trigger",
@@ -58,9 +64,8 @@ export function VariableOptionsSelect({
       empty={t.variables.noOptions}
       portal
       optionAction={
-        readMode
-          ? undefined
-          : (option) => (
+        editable
+          ? (option) => (
               <button
                 className="btn btn-flat-icon variable-option-remove"
                 onClick={() => removeVariableOption(variableId, option)}
@@ -70,9 +75,10 @@ export function VariableOptionsSelect({
                 <TrashIcon className="icon-md icon-bold" />
               </button>
             )
+          : undefined
       }
       footer={
-        !readMode && (
+        editable && (
           <div className="variable-option-add-row">
             <input
               className="variable-option-add no-ligatures"

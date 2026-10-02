@@ -3,6 +3,7 @@ import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { AppMode, BlockType, DialogTone } from "@/common/enums";
 import type { ImageBlock as ImageBlockData } from "@/common/types";
+import { asButton } from "@/components/common/asButton";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -190,14 +191,12 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
             </div>
           ) : (
             <img
-              className="image-view"
+              className={classNames("image-view", isReadMode && "is-clickable")}
               src={src}
               alt={block.alt ?? ""}
               draggable={false}
               {...tooltip(isReadMode ? t.image.viewFullscreen : undefined)}
-              role={isReadMode ? "button" : undefined}
-              tabIndex={isReadMode ? 0 : undefined}
-              onClick={isReadMode ? expand : undefined}
+              {...(isReadMode ? asButton(expand) : {})}
               onError={() => setLoadFailed(true)}
             />
           )}

@@ -24,12 +24,14 @@ import {
   CloudProvider,
   CloudSortColumn,
   DialogTone,
+  EmbeddedRunbookStatus,
   ExportFormat,
   HistoryDirection,
   InsertPosition,
   MoveDirection,
   PanelId,
   PanelSide,
+  RunbookEmbedView,
   RunbookSyncStatus,
   RunbookView,
   SortDirection,
@@ -47,6 +49,9 @@ import type {
   Block,
   BlockInsertAnchor,
   BlockOfType,
+  CloudRunbookRef,
+  EmbeddedRunbook,
+  ImageBlock,
   PanelState,
   RunbookContent,
   RunbookEntry,
@@ -67,8 +72,10 @@ import {
   DEFAULT_CLOUD_SORT,
   getCachedCloudEntries,
   getCloudClient,
+  resolveCloudPath,
   setCachedCloudEntries,
   walkCloudTree,
+  type CloudClient,
   type CloudEntry,
   type CloudFolderRef,
   type CloudSort,
@@ -93,6 +100,7 @@ import {
 } from "@/services/vault";
 import { debounce } from "@/utils/debounce";
 import { downloadBlob } from "@/utils/download";
+import { localSourceKey, type EmbedSource } from "@/utils/embeddedRunbook";
 import {
   buildMarkdownExport,
   buildSecuredRunbookExportContent,
@@ -199,6 +207,12 @@ export interface StoreState {
   runbookLibrary: RunbookEntry[];
   activeRunbookId: string | null;
   runbookSyncStatus: Record<string, RunbookSyncStatus>;
+  /** Runbooks embedded by runbook blocks, by source key.*/
+  embeddedRunbooks: Record<string, EmbeddedRunbook>;
+  /** What each runbook block's body shows, by block id.*/
+  runbookEmbedViews: Record<string, RunbookEmbedView>;
+  /** Sections folded or unfolded inside an embed, by the embed's scope and section id. */
+  embeddedSectionFolds: Record<string, boolean>;
 
   // UI
   mode: AppMode;
@@ -226,6 +240,7 @@ export interface StoreState {
   pendingFocusVariableId: string | null;
   pendingFocusSectionId: string | null;
   imageViewerBlockId: string | null;
+  imageViewerSlides: ImageBlock[] | null;
 
   // Search
   runbookSearchQuery: string;
@@ -309,6 +324,14 @@ export interface StoreState {
   ) => Promise<boolean>;
   syncRunbookNow: (id: string) => Promise<void>;
   unlinkRunbookSync: (id: string) => void;
+
+  loadEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
+  refreshEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
+  setRunbookEmbedView: (blockId: string, view: RunbookEmbedView) => void;
+  setEmbeddedSectionFolded: (foldKey: string, folded: boolean) => void;
+  unlockEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
+  signInForEmbeddedRunbooks: (provider: CloudProvider) => Promise<void>;
+
   importRunbooks: (files: File[]) => Promise<void>;
   importRunbookFromText: (text: string) => Promise<boolean>;
   reorderRunbooks: (sourceId: string, targetId: string) => void;
@@ -363,7 +386,7 @@ export interface StoreState {
   clearFlash: (blockId: string) => void;
   consumeBlockFocus: () => void;
   toggleClampSurfaceExpanded: (id: string, surface: ClampSurface) => void;
-  openImageViewer: (blockId: string) => void;
+  openImageViewer: (blockId: string, slides?: ImageBlock[] | null) => void;
   closeImageViewer: () => void;
 
   setBlockSelected: (blockId: string, selected: boolean) => void;
@@ -571,7 +594,7 @@ function createTabObject(
   };
 }
 
-function tabContent(tab: Tab | null | undefined): RunbookContent {
+export function tabContent(tab: Tab | null | undefined): RunbookContent {
   return {
     blocks: tab?.blocks ?? [],
     variables: tab?.variables ?? [],
@@ -1024,6 +1047,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
     ) => {
       await contentDb.put(runbookId, content);
       markRunbookSecured(runbookId, holdsSecrets(content));
+      invalidateEmbed(localSourceKey(runbookId));
     };
 
     const encryptStoredRunbook = async (runbookId: string) => {
@@ -1248,6 +1272,93 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       return openTab ? tabContent(openTab) : await contentDb.get(runbookId);
     };
 
+    // --- Embedded runbooks ---
+
+    // The load a key is waiting on, so an invalidated one can't land late
+    const embedRequests = new Map<string, number>();
+    let embedRequestId = 0;
+
+    const setEmbeddedRunbook = (key: string, entry: EmbeddedRunbook | null) =>
+      set((s) => {
+        if (!entry && !(key in s.embeddedRunbooks)) {
+          return {};
+        }
+
+        const embeddedRunbooks = { ...s.embeddedRunbooks };
+        if (entry) {
+          embeddedRunbooks[key] = entry;
+        } else {
+          delete embeddedRunbooks[key];
+        }
+
+        return { embeddedRunbooks };
+      });
+
+    /** Marks what an embed loaded as due a reload. */
+    const invalidateEmbed = (key: string) => {
+      embedRequests.delete(key);
+      const entry = get().embeddedRunbooks[key];
+
+      setEmbeddedRunbook(
+        key,
+        entry?.content ? { ...entry, stale: true } : null,
+      );
+    };
+
+    /** Loaded content. */
+    const readyEmbed = async (
+      content: RunbookContent,
+    ): Promise<EmbeddedRunbook> => ({
+      status: EmbeddedRunbookStatus.READY,
+      content: countEncryptedSecrets(content)
+        ? (await decryptContentWithOpenVaults(content)).content
+        : content,
+    });
+
+    const emptyEmbed = (status: EmbeddedRunbookStatus): EmbeddedRunbook => ({
+      status,
+      content: null,
+    });
+
+    const fetchLocalEmbed = async (runbookId: string) => {
+      const content = await readRunbookContent(runbookId);
+      return content
+        ? readyEmbed(content)
+        : emptyEmbed(EmbeddedRunbookStatus.MISSING);
+    };
+
+    const fetchCloudEmbed = async (
+      ref: CloudRunbookRef,
+      previous: RunbookContent | null,
+    ) => {
+      const client = getCloudClient(ref.provider);
+      if (isDemo || !client.isConfigured()) {
+        return emptyEmbed(EmbeddedRunbookStatus.ERROR);
+      }
+
+      await client.init();
+      if (!client.isSignedIn()) {
+        return emptyEmbed(EmbeddedRunbookStatus.SIGNED_OUT);
+      }
+
+      const file = await resolveCloudPath(client, ref.path);
+      if (!file) {
+        return emptyEmbed(EmbeddedRunbookStatus.MISSING);
+      }
+
+      return readyEmbed(
+        parseRunbookSource(await client.readFile(file), previous ?? undefined),
+      );
+    };
+
+    /** Signs in unless already signed in. */
+    const ensureSignedIn = async (client: CloudClient) => {
+      await client.init();
+      if (!client.isSignedIn()) {
+        await client.signIn();
+      }
+    };
+
     let cloudRequestId = 0;
     const startCloudRequest = () => ++cloudRequestId;
     const isCurrentCloudRequest = (id: number) => cloudRequestId === id;
@@ -1335,6 +1446,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       activeRunbookId: null,
       runbookSyncStatus: {},
 
+      embeddedRunbooks: {},
+      runbookEmbedViews: {},
+      embeddedSectionFolds: {},
+
       mode: AppMode.EDIT,
       runbookView: RunbookView.PREVIEW,
       theme: Theme.LIGHT,
@@ -1363,6 +1478,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       pendingFocusVariableId: null,
       pendingFocusSectionId: null,
       imageViewerBlockId: null,
+      imageViewerSlides: null,
 
       runbookSearchQuery: "",
       variableSearchQuery: "",
@@ -1979,10 +2095,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         // Retrying is a click, so a sign-in popup here is expected rather than ambushing
         try {
-          await client.init();
-          if (!client.isSignedIn()) {
-            await client.signIn();
-          }
+          await ensureSignedIn(client);
         } catch (error) {
           console.error("Cloud sync sign-in failed", error);
           setSyncStatus(id, RunbookSyncStatus.SIGNED_OUT);
@@ -1991,6 +2104,111 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         queuedSyncContent.set(id, { json: runbookJson(content), content });
         await flushQueuedSyncs();
+      },
+
+      loadEmbeddedRunbook: async (source) => {
+        const { key } = source;
+        const current = get().embeddedRunbooks[key];
+
+        if (embedRequests.has(key) || (current && !current.stale)) {
+          return;
+        }
+
+        const requestId = ++embedRequestId;
+        embedRequests.set(key, requestId);
+
+        if (!current) {
+          setEmbeddedRunbook(key, emptyEmbed(EmbeddedRunbookStatus.LOADING));
+        }
+
+        let entry: EmbeddedRunbook;
+        try {
+          entry = source.cloud
+            ? await fetchCloudEmbed(source.cloud, current?.content ?? null)
+            : await fetchLocalEmbed(source.local.id);
+        } catch (error) {
+          console.error("Failed to load embedded runbook", key, error);
+          entry = emptyEmbed(EmbeddedRunbookStatus.ERROR);
+        }
+
+        if (embedRequests.get(key) === requestId) {
+          embedRequests.delete(key);
+          setEmbeddedRunbook(key, entry);
+        }
+      },
+
+      refreshEmbeddedRunbook: async (source) => {
+        if (source.cloud) {
+          clearCachedCloudEntries(source.cloud.provider);
+        }
+
+        invalidateEmbed(source.key);
+        await get().loadEmbeddedRunbook(source);
+      },
+
+      setRunbookEmbedView: (blockId, view) =>
+        set((s) =>
+          s.runbookEmbedViews[blockId] === view
+            ? {}
+            : {
+                runbookEmbedViews: { ...s.runbookEmbedViews, [blockId]: view },
+              },
+        ),
+
+      setEmbeddedSectionFolded: (foldKey, folded) =>
+        set((s) => ({
+          embeddedSectionFolds: {
+            ...s.embeddedSectionFolds,
+            [foldKey]: folded,
+          },
+        })),
+
+      unlockEmbeddedRunbook: async (source) => {
+        if (source.local) {
+          const runbookId = source.local.id;
+          if (
+            getVaultRecord(runbookId) &&
+            (await promptVault(VaultPrompt.UNLOCK, unlockVaultWith(runbookId)))
+          ) {
+            await get().refreshEmbeddedRunbook(source);
+          }
+
+          return;
+        }
+
+        const { key, cloud } = source;
+        const content = get().embeddedRunbooks[key]?.content;
+        const record = content ? recordFromCiphertext(content) : null;
+
+        if (!content || !record) {
+          return;
+        }
+
+        const unlocked = await promptVault(
+          VaultPrompt.UNLOCK,
+          (passphrases) =>
+            unlockVault(key, passphrases[VaultField.CURRENT], record),
+          cloud.path,
+        );
+
+        if (unlocked) {
+          setEmbeddedRunbook(key, await readyEmbed(content));
+        }
+      },
+
+      signInForEmbeddedRunbooks: async (provider) => {
+        try {
+          await ensureSignedIn(getCloudClient(provider));
+        } catch (error) {
+          console.error("Cloud sign-in failed", error);
+          return;
+        }
+
+        for (const [key, entry] of Object.entries(get().embeddedRunbooks)) {
+          if (entry.status === EmbeddedRunbookStatus.SIGNED_OUT) {
+            invalidateEmbed(key);
+          }
+        }
       },
 
       unlinkRunbookSync: (id) => {
@@ -3019,9 +3237,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           };
         }),
 
-      openImageViewer: (blockId) => set({ imageViewerBlockId: blockId }),
+      openImageViewer: (blockId, slides) =>
+        set({ imageViewerBlockId: blockId, imageViewerSlides: slides ?? null }),
 
-      closeImageViewer: () => set({ imageViewerBlockId: null }),
+      closeImageViewer: () =>
+        set({ imageViewerBlockId: null, imageViewerSlides: null }),
 
       // --- Selection ---
 
@@ -3347,10 +3567,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         const client = getCloudClient(destination);
         try {
-          await client.init();
-          if (!client.isSignedIn()) {
-            await client.signIn();
-          }
+          await ensureSignedIn(client);
 
           // A same-named file in the target folder is replaced, so ask first
           if (await client.fileExists(fullName, folderId)) {
@@ -4331,6 +4548,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           activeRunbookId: null,
           runbookLibrary: [],
           runbookSyncStatus: {},
+          embeddedRunbooks: {},
+          runbookEmbedViews: {},
+          embeddedSectionFolds: {},
           runbookSearchQuery: "",
           variableSearchQuery: "",
           selectedBlockIds: new Set(),
@@ -4370,6 +4590,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           activeRunbookId: null,
           runbookLibrary: [],
           runbookSyncStatus: {},
+          embeddedRunbooks: {},
+          runbookEmbedViews: {},
+          embeddedSectionFolds: {},
           runbookSearchQuery: "",
           variableSearchQuery: "",
           selectedBlockIds: new Set(),

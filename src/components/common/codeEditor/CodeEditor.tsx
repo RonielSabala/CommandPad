@@ -1,10 +1,11 @@
-import { SECRET_MASK } from "@/common/config";
+import { CARRIAGE_RETURN, LINE_BREAK, SECRET_MASK } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { MonacoSelector } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import {
   CodeEditorProperty,
   CodeModelConfig,
+  EditorLanguage,
   MonacoLayout,
   RUNBOOK_JSON_SCOPES,
 } from "@/common/editorConfig";
@@ -14,9 +15,10 @@ import type { ScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
 import { registerEditorActions, type EditorAction } from "@/monaco/actions";
 import {
-  clearModelCompletions,
   completionModelKey,
-  setModelCompletions,
+  modelChoices,
+  modelCompletions,
+  type EditorChoice,
   type VariableCompletion,
 } from "@/monaco/completions";
 import {
@@ -30,6 +32,7 @@ import { getCodeMetrics } from "@/monaco/metrics";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
 import { bindRevealScrolling } from "@/monaco/revealScroll";
 import { bindStickyWidgets } from "@/monaco/stickyWidgets";
+import { isSuggesting, triggerSuggest } from "@/monaco/suggest";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { validateModel } from "@/monaco/validation";
 import { useStore } from "@/store/store";
@@ -61,13 +64,14 @@ import { StaticCodeView } from "./StaticCodeView";
 export interface CodeEditorHandle {
   focus(): void;
   setScrollTop(value: number): void;
+  suggest(): void;
 }
 
 interface Props {
   value: string;
   onChange: (value: string) => void;
   modelId: string;
-  language?: CodeLanguage;
+  language?: CodeLanguage | EditorLanguage;
   placeholder?: string;
   className?: string;
   promptPrefix?: string;
@@ -82,6 +86,9 @@ interface Props {
   header?: ReactNode;
   footer?: ReactNode;
   completions?: VariableCompletion[];
+  choices?: EditorChoice[];
+  /** Enter commits instead of breaking the line. */
+  singleLine?: boolean;
   actions?: EditorAction[];
   autoFocus?: boolean;
   onSubmit?: () => void;
@@ -127,12 +134,34 @@ function gutterOptions(
   };
 }
 
+function toSingleLine(text: string): string {
+  return text.replaceAll(CARRIAGE_RETURN, "").replaceAll(LINE_BREAK, "");
+}
+
 function modelPath(modelId: string): string {
   const suffix = RUNBOOK_JSON_SCOPES.some((scope) => modelId.startsWith(scope))
     ? CodeModelConfig.RUNBOOK_SUFFIX
     : CodeModelConfig.PLAIN_SUFFIX;
 
   return `${CodeModelConfig.SCHEME}://${modelId}${suffix}`;
+}
+
+/** Files `entries` under the editor's model for as long as it is mounted. */
+function useModelEntries<T>(
+  registry: Map<string, T>,
+  modelId: string,
+  entries: T | undefined,
+): void {
+  useEffect(() => {
+    if (!entries) {
+      return;
+    }
+
+    const key = completionModelKey(modelPath(modelId));
+    registry.set(key, entries);
+
+    return () => void registry.delete(key);
+  }, [registry, modelId, entries]);
 }
 
 export const CodeEditor = forwardRef<CodeEditorHandle, Props>(
@@ -167,6 +196,8 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       header,
       footer,
       completions,
+      choices,
+      singleLine = false,
       actions,
       autoFocus = false,
       onSubmit,
@@ -227,10 +258,17 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       }
     }, []);
 
-    useImperativeHandle(forwardedRef, () => ({ focus, setScrollTop }), [
-      focus,
-      setScrollTop,
-    ]);
+    const suggest = useCallback(() => {
+      if (editorRef.current) {
+        triggerSuggest(editorRef.current);
+      }
+    }, []);
+
+    useImperativeHandle(
+      forwardedRef,
+      () => ({ focus, setScrollTop, suggest }),
+      [focus, setScrollTop, suggest],
+    );
 
     useLayoutEffect(() => editorRef.current?.layout(), [contentHeight]);
 
@@ -244,16 +282,8 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       }
     }, [bounded, value]);
 
-    useEffect(() => {
-      if (!completions) {
-        return;
-      }
-
-      const key = completionModelKey(modelPath(modelId));
-      setModelCompletions(key, completions);
-
-      return () => clearModelCompletions(key);
-    }, [completions, modelId]);
+    useModelEntries(modelCompletions, modelId, completions);
+    useModelEntries(modelChoices, modelId, choices);
 
     useEffect(() => {
       const model = mounted?.getModel();
@@ -343,6 +373,17 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       }
 
       instance.onKeyDown((event) => {
+        if (
+          singleLine &&
+          event.browserEvent.key === Key.ENTER &&
+          !isSuggesting(instance)
+        ) {
+          event.preventDefault();
+          event.stopPropagation();
+          inputElement()?.blur();
+          return;
+        }
+
         if (
           !callbacks.current.onSubmit ||
           !matchesKeybinding(event.browserEvent, KeyBinding.SUBMIT_EDITOR)
@@ -493,7 +534,9 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
             language={language}
             theme={themeName}
             value={value}
-            onChange={(next) => onChange(next ?? "")}
+            onChange={(next) =>
+              onChange(singleLine ? toSingleLine(next ?? "") : (next ?? ""))
+            }
             height={bounded ? FULL_HEIGHT : contentHeight}
             options={options}
             beforeMount={handleBeforeMount}

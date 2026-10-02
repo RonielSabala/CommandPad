@@ -179,6 +179,32 @@ export interface Messages {
     emptyTitle: string;
     emptyHint: string;
   };
+  runbookBlock: {
+    changeSource: string;
+    labelPlaceholder: string;
+    pathPlaceholder: string;
+    unresolvedLabel: (label: string) => string;
+    emptyLabel: string;
+    emptyPath: string;
+    loading: string;
+    missing: string;
+    error: string;
+    signedOut: (provider: string) => string;
+    signIn: string;
+    locked: string;
+    unlock: string;
+    refresh: string;
+    open: string;
+    collapse: string;
+    expand: string;
+    circular: string;
+    tooDeep: string;
+    empty: string;
+    noVariables: string;
+    showVariables: string;
+    showBlocks: string;
+    resetOverride: string;
+  };
   command: {
     emptyPreview: string;
     changeLanguage: string;
@@ -697,6 +723,17 @@ export interface Messages {
     dividerBlock: {
       intro: string;
       demoNote: string;
+    };
+    runbookBlock: {
+      intro: string;
+      demoHint: (showVariables: string) => string;
+      overrides: string;
+      readOnly: (open: string) => string;
+      cloud: (local: string, signIn: string, refresh: string) => string;
+      secrets: (unlock: string) => string;
+      limits: string;
+      demoDeployTitle: string;
+      demoReleaseTitle: string;
     };
     multiSelect: {
       intro: string;

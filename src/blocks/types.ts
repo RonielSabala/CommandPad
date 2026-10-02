@@ -9,6 +9,7 @@ export interface BlockJsonSchema {
 export interface BlockDefinition<T extends BlockType = BlockType> {
   type: T;
   jsonSchema: BlockJsonSchema;
+  runtimeFields?: readonly string[];
 
   create(id: string): BlockOfType<T>;
 
@@ -43,6 +44,7 @@ export type BlockDefinitions = {
 
 export interface AnyBlockDefinition {
   type: BlockType;
+  runtimeFields?: readonly string[];
   create(id: string): Block;
   normalize(block: Block): Block | null;
   toMarkdown(block: Block, context: BlockMarkdownContext): string | null;

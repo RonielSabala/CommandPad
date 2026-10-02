@@ -7,14 +7,14 @@ import { VariableSyntax } from "@/common/variableSyntax";
 import type { editor, languages, Position } from "monaco-editor";
 import { monaco } from "../setup";
 import { readCompletionContext } from "./context";
-import { getModelCompletions } from "./registry";
+import { modelCompletions } from "./registry";
 import { buildSuggestions } from "./suggestions";
 
 function provideCompletionItems(
   model: editor.ITextModel,
   position: Position,
 ): languages.CompletionList {
-  const completions = getModelCompletions(model.uri.toString());
+  const completions = modelCompletions.get(model.uri.toString());
   if (!completions) {
     return { suggestions: [] };
   }

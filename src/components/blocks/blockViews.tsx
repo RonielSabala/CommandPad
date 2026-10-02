@@ -5,6 +5,7 @@ import {
   DividerIcon,
   ImageIcon,
   NoteIcon,
+  RunbookIcon,
 } from "@/components/icons";
 import type { VariableMap } from "@/utils/resolution";
 import type { ComponentType } from "react";
@@ -13,6 +14,7 @@ import { CommandBlock } from "./command/CommandBlock";
 import { DividerBlock } from "./divider/DividerBlock";
 import { ImageBlock } from "./image/ImageBlock";
 import { NoteBlock } from "./note/NoteBlock";
+import { RunbookBlock } from "./runbook/RunbookBlock";
 
 export interface BlockViewProps<T extends Block = Block> {
   block: T;
@@ -31,6 +33,7 @@ export const BLOCK_VIEWS: { [T in BlockType]: BlockView<T> } = {
   [BlockType.COMMAND]: { icon: CommandIcon, Component: CommandBlock },
   [BlockType.NOTE]: { icon: NoteIcon, Component: NoteBlock },
   [BlockType.IMAGE]: { icon: ImageIcon, Component: ImageBlock },
+  [BlockType.RUNBOOK]: { icon: RunbookIcon, Component: RunbookBlock },
   [BlockType.DIVIDER]: { icon: DividerIcon, Component: DividerBlock },
 };
 

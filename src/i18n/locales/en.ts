@@ -174,6 +174,7 @@ export const en: Messages = {
       [BlockType.COMMAND]: "Command",
       [BlockType.NOTE]: "Note",
       [BlockType.IMAGE]: "Image",
+      [BlockType.RUNBOOK]: "Runbook",
       [BlockType.DIVIDER]: "Divider",
     },
     typeTitle: (label) => `${label} block`,
@@ -187,6 +188,33 @@ export const en: Messages = {
       count === 1 ? "1 block selected" : `${count} blocks selected`,
     emptyTitle: "No blocks yet.",
     emptyHint: "Add a command or note below.",
+  },
+  runbookBlock: {
+    changeSource: "Where the runbook lives",
+    labelPlaceholder: "Runbook label",
+    pathPlaceholder: "folder/runbook.json",
+    unresolvedLabel: (label) =>
+      `No runbook in your library is labeled \`${label}\`.`,
+    emptyLabel: "Type the label of a runbook in your library.",
+    emptyPath: "Type the path of a runbook in the cloud.",
+    loading: "Loading the runbook...",
+    missing: "No runbook was found at this path.",
+    error: "The runbook couldn't be loaded.",
+    signedOut: (provider) => `Sign in to ${provider} to load this runbook.`,
+    signIn: "Sign in",
+    locked: "Its secret values are locked.",
+    unlock: "Unlock",
+    refresh: "Load it again",
+    open: "Open the runbook",
+    collapse: "Collapse the runbook",
+    expand: "Expand the runbook",
+    circular: "This runbook embeds itself, so it isn't shown again here.",
+    tooDeep: "This runbook is nested too deeply to be shown.",
+    empty: "This runbook is empty.",
+    noVariables: "This runbook has no variables.",
+    showVariables: "Show its variables",
+    showBlocks: "Show its blocks",
+    resetOverride: "Use the runbook's own value",
   },
   command: {
     emptyPreview: "empty command",
@@ -721,6 +749,7 @@ export const en: Messages = {
       [DocsSectionId.COMMAND_BLOCK]: "Command block",
       [DocsSectionId.NOTE_BLOCK]: "Note block",
       [DocsSectionId.IMAGE_BLOCK]: "Image block",
+      [DocsSectionId.RUNBOOK_BLOCK]: "Runbook block",
       [DocsSectionId.DIVIDER_BLOCK]: "Divider block",
       [DocsSectionId.MULTI_SELECT]: "Multi-select",
       [DocsSectionId.READ_MODE]: "Read mode",
@@ -1249,6 +1278,24 @@ If something goes wrong, undo it in this order:
       intro:
         "Nothing more than a visual separator. It stretches to match the width of the widest block, which makes it perfect for splitting a runbook into sections.",
       demoNote: "Type here and watch how the divider grows or shrinks.",
+    },
+    runbookBlock: {
+      intro:
+        "A runbook block shows **another runbook** inside this one. Write the steps you repeat everywhere (a deploy, a backup, a health check) once, then embed them wherever they're needed: one copy to keep up to date. To pick the runbook, type its **label** in the block's header. The box suggests every runbook in your library, and a label that matches nothing turns red, like an unknown variable.",
+      demoHint: (showVariables) =>
+        `This release runbook embeds the deploy runbook, aimed at \`prod\`. Press **${showVariables}** (the \`{}\` in the block's header), change \`ENV\` to \`dev\` and switch back: every embedded command follows. The arrow beside \`ENV\` drops your value for the deploy runbook's own.`,
+      overrides:
+        "What you type there is an **override**: it lives on this block and never touches the embedded runbook, so each runbook that embeds it states only what differs. A value can reference this runbook's own variables (`{STAGE}`), an option is picked from the variable's own list, and an override built from a secret stays masked.",
+      readOnly: (open) =>
+        `The embedded blocks are read-only: copy a command or open an image full screen, but edit nothing. To change the runbook itself, press **${open}**. Every runbook that embeds it picks up the edit, and renaming it never breaks the link. In read mode the header disappears and only the embedded blocks remain.`,
+      cloud: (local, signIn, refresh) =>
+        `The runbook doesn't have to be in your library. Switch **${local}** to a cloud provider and type the file's path in the app's folder (\`ops/deploy.json\`, the \`.json\` is optional). The file is read, never imported, and kept for the session: **${refresh}** reads it again. While you're signed out, the block waits for you to press **${signIn}** rather than opening a popup on its own.`,
+      secrets: (unlock) =>
+        `If the embedded runbook holds encrypted secrets, press **${unlock}** and enter its passphrase. Once per session is enough: every other runbook embedding the same one reuses the open vault.`,
+      limits:
+        "Embeds can nest a few levels deep, and a runbook that ends up embedding itself is shown only once. A Markdown or text export writes the block as a reference to what it embeds, never its content.",
+      demoDeployTitle: "Deploy the API",
+      demoReleaseTitle: "Release 2.4",
     },
     multiSelect: {
       intro:

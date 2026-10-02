@@ -186,6 +186,15 @@ export const ExtractedVariableConfig = {
   MAX_KEY_LENGTH: 24,
 } as const;
 
+export const RunbookBlockConfig = {
+  MAX_DEPTH: 4,
+  LOCAL_SOURCE: "local",
+  CLOUD_SOURCE: "cloud",
+  KEY_SEPARATOR: ":",
+  PATH_SEPARATOR: "/",
+  SCOPE_SEPARATOR: "/",
+} as const;
+
 export const ImageBlockConfig = {
   ACCEPT: "image/*",
   MIME_PREFIX: "image/",

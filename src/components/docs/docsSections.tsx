@@ -8,6 +8,7 @@ import {
   DividerBlockDocs,
   ImageBlockDocs,
   NoteBlockDocs,
+  RunbookBlockDocs,
 } from "./sections/BlocksSection";
 import {
   CloudExportDocs,
@@ -67,6 +68,7 @@ export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {
   [DocsSectionId.NOTE_BLOCK]: NoteBlockDocs,
   [DocsSectionId.IMAGE_BLOCK]: ImageBlockDocs,
   [DocsSectionId.DIVIDER_BLOCK]: DividerBlockDocs,
+  [DocsSectionId.RUNBOOK_BLOCK]: RunbookBlockDocs,
   [DocsSectionId.VARIABLES]: VariablesDocs,
   [DocsSectionId.SECRET_VARIABLES]: SecretVariablesDocs,
   [DocsSectionId.SECRET_ENCRYPTION]: SecretEncryptionDocs,
