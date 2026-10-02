@@ -35,6 +35,7 @@ import { useCallback, useMemo, useRef } from "react";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 
 import { NoteText } from "../note/NoteText";
+import "./EmbeddedVariables.css";
 import { EmbedNotice } from "./RunbookEmbed";
 import type { EmbeddedRunbookState } from "./useEmbeddedRunbook";
 

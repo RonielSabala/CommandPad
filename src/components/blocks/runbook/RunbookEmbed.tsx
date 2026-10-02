@@ -25,6 +25,7 @@ import {
   EmbeddedNote,
   type EmbeddedBlockProps,
 } from "./EmbeddedBlockViews";
+import "./RunbookEmbed.css";
 import {
   useEmbeddedRunbook,
   type EmbeddedRunbookState,

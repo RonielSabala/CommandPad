@@ -21,6 +21,7 @@ import "../image/ImageBlock.css";
 import "../note/NoteBlock.css";
 import "../note/NoteEditor.css";
 import { NoteText } from "../note/NoteText";
+import "./EmbeddedBlockViews.css";
 
 export interface EmbeddedBlockProps<T extends Block = Block> {
   block: T;
