@@ -1294,6 +1294,30 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         return { embeddedRunbooks };
       });
 
+    /** Empties the workspace, after its stored runbooks are gone. */
+    const resetWorkspace = () => {
+      queuedSyncContent.clear();
+      pushedSyncContent.clear();
+      declinedVaultSetup.clear();
+      embedRequests.clear();
+
+      set({
+        tabs: [],
+        activeTabId: null,
+        activeRunbookId: null,
+        runbookLibrary: [],
+        runbookSyncStatus: {},
+        embeddedRunbooks: {},
+        runbookEmbedViews: {},
+        embeddedSectionFolds: {},
+        runbookSearchQuery: "",
+        variableSearchQuery: "",
+        selectedBlockIds: new Set(),
+        selectedVariableIds: new Set(),
+        focusedRunbookId: null,
+      });
+    };
+
     /** Marks what an embed loaded as due a reload. */
     const invalidateEmbed = (key: string) => {
       embedRequests.delete(key);
@@ -4539,24 +4563,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           persistence.clearStoredRunbooks();
         }
 
-        queuedSyncContent.clear();
-        pushedSyncContent.clear();
-        declinedVaultSetup.clear();
-        set({
-          tabs: [],
-          activeTabId: null,
-          activeRunbookId: null,
-          runbookLibrary: [],
-          runbookSyncStatus: {},
-          embeddedRunbooks: {},
-          runbookEmbedViews: {},
-          embeddedSectionFolds: {},
-          runbookSearchQuery: "",
-          variableSearchQuery: "",
-          selectedBlockIds: new Set(),
-          selectedVariableIds: new Set(),
-          focusedRunbookId: null,
-        });
+        resetWorkspace();
       },
 
       clearAllData: async () => {
@@ -4581,25 +4588,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           set({ vaultStatus: {} });
         }
 
-        queuedSyncContent.clear();
-        pushedSyncContent.clear();
-        declinedVaultSetup.clear();
-        set({
-          tabs: [],
-          activeTabId: null,
-          activeRunbookId: null,
-          runbookLibrary: [],
-          runbookSyncStatus: {},
-          embeddedRunbooks: {},
-          runbookEmbedViews: {},
-          embeddedSectionFolds: {},
-          runbookSearchQuery: "",
-          variableSearchQuery: "",
-          selectedBlockIds: new Set(),
-          selectedVariableIds: new Set(),
-          focusedRunbookId: null,
-        });
-
+        resetWorkspace();
         return true;
       },
     };
