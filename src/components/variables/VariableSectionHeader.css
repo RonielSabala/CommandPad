@@ -1,0 +1,49 @@
+.variable-section-header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  border-bottom: var(--border-standard);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+body.select-key-held:not(.read-mode)
+  .variable-section:hover
+  .variable-section-header,
+.variable-section.variable-item-selected .variable-section-header,
+.variable-section.drag-over .variable-section-header {
+  border-bottom-color: transparent;
+}
+
+.variable-section-toggle,
+.variable-section-count {
+  flex-shrink: 0;
+  margin-top: var(--space-2);
+}
+
+/* Chevron */
+
+.variable-section-chevron {
+  transition: transform var(--transition-base);
+}
+
+.variable-section-header.collapsed .variable-section-chevron {
+  transform: rotate(-90deg);
+}
+
+/* Variable count */
+
+.variable-section-count {
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.variable-section-count:hover {
+  color: var(--color-text-secondary);
+}

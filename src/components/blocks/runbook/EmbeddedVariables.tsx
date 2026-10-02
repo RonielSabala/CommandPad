@@ -34,7 +34,6 @@ import { buildVariableLayout } from "@/utils/variableSections";
 import { useCallback, useMemo, useRef } from "react";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 
-import "@/components/variables/VariableEditor.css";
 import { NoteText } from "../note/NoteText";
 import { EmbedNotice } from "./RunbookEmbed";
 import type { EmbeddedRunbookState } from "./useEmbeddedRunbook";

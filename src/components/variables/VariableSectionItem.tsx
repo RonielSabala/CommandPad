@@ -10,6 +10,7 @@ import { memo, useCallback, useRef, type MouseEvent } from "react";
 import { VariableRowFrame } from "./VariableRowFrame";
 import { BasicRowItems, VariableRowMenu } from "./VariableRowMenuItems";
 import { VariableSectionHeader } from "./VariableSectionHeader";
+import "./VariableSectionItem.css";
 
 interface Props {
   section: VariableSection;
@@ -64,10 +65,7 @@ export const VariableSectionItem = memo(function VariableSectionItem({
   return (
     <VariableRowFrame
       rowId={sectionId}
-      className={classNames(
-        "variable-section",
-        collapsed && CssClass.COLLAPSED,
-      )}
+      className={classNames("variable-section")}
       dragImageRef={headerRef}
       menu={(className) => (
         <VariableRowMenu

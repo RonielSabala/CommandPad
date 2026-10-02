@@ -5,7 +5,7 @@ import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
 import type { MouseEventHandler, ReactNode, Ref } from "react";
 
-import "./VariableSectionItem.css";
+import "./VariableSectionHeader.css";
 
 interface Props {
   children: ReactNode;
@@ -35,7 +35,11 @@ export function VariableSectionHeader({
   return (
     <div
       ref={ref}
-      className={classNames("variable-section-header", className)}
+      className={classNames(
+        "variable-section-header",
+        collapsed && CssClass.COLLAPSED,
+        className,
+      )}
       onClick={onClick}
     >
       {foldable && (
