@@ -42,8 +42,15 @@ export function RunbookBlock({
   secretKeys,
 }: BlockViewProps<RunbookBlockData>) {
   const t = useTranslation();
+  const {
+    id: blockId,
+    label,
+    runbookId,
+    cloud,
+    collapsed: blockCollapsed,
+  } = block;
 
-  const blockId = block.id;
+  const cloudPath = cloud?.path ?? "";
   const hostRunbookId = useStore(
     (state) => getActiveTab(state)?.runbookId ?? null,
   );
@@ -76,8 +83,8 @@ export function RunbookBlock({
   const local = embed.source?.local ?? null;
 
   // A path is only looked up once it's committed
-  const [pathDraft, setPathDraft] = useState(block.cloud?.path ?? "");
-  useEffect(() => setPathDraft(block.cloud?.path ?? ""), [block.cloud?.path]);
+  const [pathDraft, setPathDraft] = useState(cloudPath);
+  useEffect(() => setPathDraft(cloudPath), [cloudPath]);
 
   const pathRef = useRef<HTMLInputElement>(null);
   const labelRef = useRef<CodeEditorHandle>(null);
@@ -87,14 +94,14 @@ export function RunbookBlock({
       return;
     }
 
-    if (block.cloud) {
+    if (cloud) {
       pathRef.current?.focus({ preventScroll: true });
     } else {
       labelRef.current?.focus();
     }
 
     consumeBlockFocus();
-  }, [pendingFocus, consumeBlockFocus, block.cloud]);
+  }, [pendingFocus, consumeBlockFocus, cloud]);
 
   // Once a label matches, remember the runbook
   useEffect(() => {
@@ -102,8 +109,8 @@ export function RunbookBlock({
       return;
     }
 
-    const relabeled = block.label.trim() !== local.label.trim();
-    if (!relabeled && block.runbookId === local.id) {
+    const relabeled = label.trim() !== local.label.trim();
+    if (!relabeled && runbookId === local.id) {
       return;
     }
 
@@ -111,7 +118,7 @@ export function RunbookBlock({
       runbookId: local.id,
       ...(relabeled ? { label: local.label } : {}),
     });
-  }, [isMirror, local, block.runbookId, block.label, blockId, updateBlock]);
+  }, [isMirror, local, runbookId, label, blockId, updateBlock]);
 
   // Every library runbook except the current one
   const choices = useMemo(() => {
@@ -133,27 +140,27 @@ export function RunbookBlock({
       cloud:
         destination === SyncDestination.LOCAL
           ? undefined
-          : { provider: destination, path: block.cloud?.path ?? "" },
+          : { provider: destination, path: cloudPath },
     });
 
   const commitPath = () => {
-    if (!block.cloud || block.cloud.path === pathDraft) {
+    if (!cloud || cloudPath === pathDraft) {
       return;
     }
 
     updateBlock(blockId, BlockType.RUNBOOK, {
-      cloud: { ...block.cloud, path: pathDraft },
+      cloud: { ...cloud, path: pathDraft },
     });
   };
 
-  const collapsed = !readMode && !!embed.source && block.collapsed === true;
+  const collapsed = !readMode && !!embed.source && blockCollapsed === true;
   const showingVariables = !readMode && view === RunbookEmbedView.VARIABLES;
 
   const canSwitchView =
     !collapsed && !!embed.content && !embed.circular && !embed.tooDeep;
-  const unresolved = block.cloud
+  const unresolved = cloud
     ? embed.status === EmbeddedRunbookStatus.MISSING
-    : !local && !!block.label.trim();
+    : !local && !!label.trim();
 
   const viewLabel = showingVariables
     ? t.runbookBlock.showBlocks
@@ -172,13 +179,13 @@ export function RunbookBlock({
         {...{ [DataAttr.DRAG_IMAGE]: "" }}
       >
         <ProviderSelect
-          provider={block.cloud?.provider ?? SyncDestination.LOCAL}
+          provider={cloud?.provider ?? SyncDestination.LOCAL}
           onChange={changeSource}
           title={t.runbookBlock.changeSource}
           portal
         />
 
-        {block.cloud ? (
+        {cloud ? (
           <input
             ref={pathRef}
             className={classNames(
@@ -204,7 +211,7 @@ export function RunbookBlock({
               "runbook-block-label",
               unresolved && "is-unresolved",
             )}
-            value={block.label}
+            value={label}
             language={EditorLanguage.CHOICE}
             choices={choices}
             singleLine
