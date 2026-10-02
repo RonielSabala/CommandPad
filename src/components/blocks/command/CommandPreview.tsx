@@ -33,7 +33,7 @@ import {
   type RefObject,
 } from "react";
 
-import "./CommandBlock.css";
+import "./CommandPreview.css";
 
 const SECRET_MASK = "******";
 
