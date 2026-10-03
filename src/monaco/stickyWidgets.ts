@@ -3,8 +3,8 @@ import { EventType, PASSIVE, PASSIVE_CAPTURE } from "@/common/constants/events";
 import { CodeEditorProperty } from "@/common/editorConfig";
 import type { editor } from "monaco-editor";
 
+import { findScrollParent, scrollParentBox } from "@/utils/scrollParent";
 import { getFindController } from "./findWidget";
-import { findScrollParent, scrollParentBox } from "./scrollParent";
 
 /** Keeps the find/replace widget inside the visible band of a flowing editor. */
 export function bindStickyWidgets(

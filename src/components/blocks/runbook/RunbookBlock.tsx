@@ -1,5 +1,5 @@
 import { CssClass } from "@/common/constants/css";
-import { DataAttr } from "@/common/constants/dom";
+import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { CodeModelScope, EditorLanguage } from "@/common/editorConfig";
 import {
@@ -154,10 +154,16 @@ export function RunbookBlock({
     });
   };
 
-  const collapsed = !readMode && !!embed.source && blockCollapsed === true;
   const rootRef = useRef<HTMLDivElement>(null);
-  const keepInView = useKeepInView(rootRef, collapsed);
+  const collapsed = !readMode && !!embed.source && blockCollapsed === true;
   const showingVariables = !readMode && view === RunbookEmbedView.VARIABLES;
+
+  const keepInViewOnCollapse = useKeepInView(rootRef, collapsed);
+  const keepInViewOnSwitch = useKeepInView(
+    rootRef,
+    showingVariables,
+    ScrollIntoView.BLOCK_START,
+  );
 
   const canSwitchView =
     !collapsed && !!embed.content && !embed.circular && !embed.tooDeep;
@@ -245,14 +251,15 @@ export function RunbookBlock({
           {canSwitchView && (
             <button
               className="btn btn-flat-icon"
-              onClick={() =>
+              onClick={() => {
+                keepInViewOnSwitch();
                 setRunbookEmbedView(
                   blockId,
                   showingVariables
                     ? RunbookEmbedView.BLOCKS
                     : RunbookEmbedView.VARIABLES,
-                )
-              }
+                );
+              }}
               aria-label={viewLabel}
               {...tooltip(viewLabel)}
             >
@@ -271,7 +278,7 @@ export function RunbookBlock({
               collapsed={collapsed}
               label={collapseLabel}
               onToggle={() => {
-                keepInView();
+                keepInViewOnCollapse();
                 updateBlock(blockId, BlockType.RUNBOOK, {
                   collapsed: !collapsed,
                 });
