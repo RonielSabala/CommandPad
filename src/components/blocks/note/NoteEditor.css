@@ -31,8 +31,7 @@
   content: none;
 }
 
-.note-textarea,
-.note-preview {
+.note-auto-width > :is(.note-textarea, .note-preview) {
   grid-area: 1 / 1 / 2 / 2;
 }
 

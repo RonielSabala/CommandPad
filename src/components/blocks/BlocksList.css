@@ -6,6 +6,6 @@
   justify-items: start;
 }
 
-:is(#blocks-list, #blocks-mirror) .block-item:has(.divider-block) {
+:is(#blocks-list, #blocks-mirror) .block-item:has(> .divider-block) {
   justify-self: stretch;
 }
