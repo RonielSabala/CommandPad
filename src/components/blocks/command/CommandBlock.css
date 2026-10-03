@@ -1,14 +1,3 @@
-.command-block {
-  background: var(--color-surface);
-  border: var(--border-standard);
-  border-radius: var(--radius-lg);
-  max-width: 100%;
-  min-width: var(--block-min-width);
-  overflow: clip;
-}
-
-/* Editor toggle */
-
 .toggle-editor-btn {
   background: transparent;
   border: none;

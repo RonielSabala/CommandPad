@@ -88,6 +88,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     <div
       ref={rootRef}
       className={classNames(
+        "command-card",
         "command-block",
         CssClass.BLOCK_SURFACE,
         CssClass.CLAMP_SURFACE,

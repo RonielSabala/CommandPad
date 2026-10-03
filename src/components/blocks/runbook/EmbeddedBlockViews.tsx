@@ -6,22 +6,17 @@ import type {
   ImageBlock,
   NoteBlock,
 } from "@/common/types";
-import { asButton } from "@/components/common/asButton";
-import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CLAMP_SURFACE_STYLE } from "@/hooks/useClampSurface";
-import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { useRef } from "react";
 
 import { CommandPreview } from "../command/CommandPreview";
-import "../divider/DividerBlock.css";
-import "../image/ImageBlock.css";
+import { DividerLine } from "../divider/DividerBlock";
+import { ImageView } from "../image/ImageView";
 import "../note/NoteBlock.css";
-import "../note/NoteEditor.css";
-import { NoteText } from "../note/NoteText";
-import "./EmbeddedBlockViews.css";
+import { NotePreview } from "../note/NotePreview";
 
 export interface EmbeddedBlockProps<T extends Block = Block> {
   block: T;
@@ -44,7 +39,7 @@ export function EmbeddedCommand({
   return (
     <div
       ref={rootRef}
-      className={classNames("embedded-command", CssClass.CLAMP_SURFACE)}
+      className={classNames("command-card", CssClass.CLAMP_SURFACE)}
       style={CLAMP_SURFACE_STYLE}
     >
       <CommandPreview
@@ -60,15 +55,11 @@ export function EmbeddedCommand({
 
 export function EmbeddedNote({ block }: EmbeddedBlockProps<NoteBlock>) {
   return (
-    <div
-      className={classNames(
-        "note-preview",
-        "embedded-note",
-        `style-${block.style ?? NoteStyle.BODY}`,
-      )}
-    >
-      <NoteText text={block.text} />
-    </div>
+    <NotePreview
+      text={block.text}
+      styleClass={`style-${block.style ?? NoteStyle.BODY}`}
+      standalone
+    />
   );
 }
 
@@ -77,29 +68,20 @@ export function EmbeddedImage({
   scopeId,
   images,
 }: EmbeddedBlockProps<ImageBlock>) {
-  const t = useTranslation();
   const openImageViewer = useStore((state) => state.openImageViewer);
-
   if (!block.src) {
     return null;
   }
 
   return (
-    <img
-      className="image-view is-clickable"
+    <ImageView
       src={block.src}
-      alt={block.alt ?? ""}
-      draggable={false}
-      {...asButton(() => openImageViewer(scopeId, images))}
-      {...tooltip(t.image.viewFullscreen)}
+      alt={block.alt}
+      onExpand={() => openImageViewer(scopeId, images)}
     />
   );
 }
 
 export function EmbeddedDivider() {
-  return (
-    <div className="divider-block">
-      <div className="divider-line" />
-    </div>
-  );
+  return <DividerLine />;
 }

@@ -3,7 +3,6 @@ import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { AppMode, BlockType, DialogTone } from "@/common/enums";
 import type { ImageBlock as ImageBlockData } from "@/common/types";
-import { asButton } from "@/components/common/asButton";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -26,6 +25,7 @@ import { ArrowsFullscreen, Download } from "react-bootstrap-icons";
 import type { BlockViewProps } from "../blockViews";
 import "./ImageBlock.css";
 import { ImagePlaceholderBadge } from "./ImagePlaceholderBadge";
+import { ImageView } from "./ImageView";
 
 export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
   const t = useTranslation();
@@ -190,13 +190,10 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
               {!isAttachedImage(src) && <p className="image-source">{src}</p>}
             </div>
           ) : (
-            <img
-              className={classNames("image-view", isReadMode && "is-clickable")}
+            <ImageView
               src={src}
-              alt={block.alt ?? ""}
-              draggable={false}
-              {...tooltip(isReadMode ? t.image.viewFullscreen : undefined)}
-              {...(isReadMode ? asButton(expand) : {})}
+              alt={block.alt}
+              onExpand={isReadMode ? expand : undefined}
               onError={() => setLoadFailed(true)}
             />
           )}
