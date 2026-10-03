@@ -170,7 +170,13 @@ export function RunbookBlock({
     : t.runbookBlock.collapse;
 
   return (
-    <div className={classNames("runbook-block", CssClass.BLOCK_SURFACE)}>
+    <div
+      className={classNames(
+        "runbook-block",
+        CssClass.BLOCK_CARD,
+        CssClass.BLOCK_SURFACE,
+      )}
+    >
       <div
         className={classNames(
           "runbook-block-header",

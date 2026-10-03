@@ -38,7 +38,7 @@ export function EmbeddedCommand({
   return (
     <div
       ref={rootRef}
-      className={classNames("command-card", CssClass.CLAMP_SURFACE)}
+      className={classNames(CssClass.COMMAND_CARD, CssClass.CLAMP_SURFACE)}
       style={CLAMP_SURFACE_STYLE}
     >
       <CommandPreview

@@ -36,6 +36,8 @@ export const CssClass = {
   BLOCKS_LIST: "blocks-list",
   BLOCK_ITEM: "block-item",
   BLOCK_SURFACE: "block-surface",
+  BLOCK_CARD: "block-card",
+  COMMAND_CARD: "command-card",
 
   // Controls beside a block or variable item
   ITEM_ACTIONS: "item-actions",

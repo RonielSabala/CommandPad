@@ -17,3 +17,18 @@ body.select-key-held:not(.read-mode) .block-item:hover:not(.block-selected) {
 .block-item.drag-over {
   border-radius: var(--radius-lg);
 }
+
+:is(
+    .block-selected,
+    .block-item.drag-over,
+    body.select-key-held:not(.read-mode) .block-item:hover
+  )
+  .block-card {
+  border-color: transparent;
+  background-clip: padding-box;
+}
+
+.block-item:has(> .block-card),
+.block-selected .block-card {
+  outline-offset: -1px;
+}
