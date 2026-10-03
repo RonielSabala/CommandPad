@@ -7,6 +7,7 @@ import type {
   NoteBlock,
 } from "@/common/types";
 import { CLAMP_SURFACE_STYLE } from "@/hooks/useClampSurface";
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
@@ -14,6 +15,7 @@ import { useRef } from "react";
 
 import { CommandPreview } from "../command/CommandPreview";
 import { DividerLine } from "../divider/DividerBlock";
+import { ImageEmpty } from "../image/ImageEmpty";
 import { ImageView } from "../image/ImageView";
 import { NotePreview } from "../note/NotePreview";
 
@@ -53,10 +55,14 @@ export function EmbeddedCommand({
 }
 
 export function EmbeddedNote({ block }: EmbeddedBlockProps<NoteBlock>) {
+  const t = useTranslation();
+  const style = block.style ?? NoteStyle.BODY;
+
   return (
     <NotePreview
       text={block.text}
-      styleClass={`style-${block.style ?? NoteStyle.BODY}`}
+      placeholder={t.note.stylePlaceholder[style]}
+      styleClass={`style-${style}`}
       standalone
     />
   );
@@ -69,7 +75,7 @@ export function EmbeddedImage({
 }: EmbeddedBlockProps<ImageBlock>) {
   const openImageViewer = useStore((state) => state.openImageViewer);
   if (!block.src) {
-    return null;
+    return <ImageEmpty />;
   }
 
   return (

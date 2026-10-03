@@ -65,9 +65,9 @@
 
 /* --- EMPTY STATE --- */
 
+.image-empty,
 .image-broken,
-.image-dropzone,
-.image-empty-readonly {
+.image-dropzone {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -78,8 +78,8 @@
   text-align: center;
 }
 
-.image-broken,
-.image-empty-readonly {
+.image-empty,
+.image-broken {
   border: var(--border-standard);
 }
 

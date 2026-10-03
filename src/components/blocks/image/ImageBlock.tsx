@@ -24,6 +24,7 @@ import { ArrowsFullscreen, Download } from "react-bootstrap-icons";
 
 import type { BlockViewProps } from "../blockViews";
 import "./ImageBlock.css";
+import { ImageEmpty } from "./ImageEmpty";
 import { ImagePlaceholderBadge } from "./ImagePlaceholderBadge";
 import { ImageView } from "./ImageView";
 
@@ -249,10 +250,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
           )}
         </div>
       ) : isReadMode ? (
-        <div className="image-empty-readonly">
-          <ImagePlaceholderBadge />
-          <p className="image-message">{t.image.emptyReadOnly}</p>
-        </div>
+        <ImageEmpty />
       ) : (
         <div
           className={`image-dropzone ${CssClass.SELECT_KEY_INERT_CHILDREN}`}
