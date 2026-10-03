@@ -205,8 +205,7 @@ export const es: Messages = {
     changeSource: "Dónde está el runbook",
     labelPlaceholder: "Etiqueta del runbook",
     pathPlaceholder: "carpeta/runbook.json",
-    unresolvedLabel: (label) =>
-      `Ningún runbook de tu biblioteca tiene la etiqueta \`${label}\`.`,
+    unresolvedLabel: "Ningún runbook de tu biblioteca tiene esta etiqueta.",
     emptyLabel: "Escribe la etiqueta de un runbook de tu biblioteca.",
     emptyPath: "Escribe la ruta de un runbook en la nube.",
     noSource: "Aquí no hay ningún runbook incrustado.",
@@ -1310,7 +1309,7 @@ Si algo sale mal, deshazlo en este orden:
     },
     runbookBlock: {
       intro:
-        "Un bloque de runbook muestra **otro runbook** dentro de este. Escribe una vez los pasos que repites en todas partes (un despliegue, una copia de seguridad, una comprobación de estado) e incrústalos donde hagan falta: una sola copia que mantener al día. Para elegir el runbook, escribe su **etiqueta** en la cabecera del bloque. El cuadro sugiere todos los runbooks de tu biblioteca, y una etiqueta que no coincide con ninguno se pone en rojo, como una variable desconocida.",
+        "Un bloque de runbook muestra **otro runbook** dentro de este. Escribe una vez los pasos que repites en todas partes (un despliegue, una copia de seguridad, una comprobación de estado) e incrústalos donde hagan falta: una sola copia que mantener al día. Para elegir el runbook, escribe su **etiqueta** en la cabecera del bloque. El cuadro sugiere todos los runbooks de tu biblioteca, y una etiqueta que no coincide con ninguno recibe un borde rojo.",
       demoHint: (showVariables) =>
         `Este runbook de versión incrusta el runbook de despliegue, apuntado a \`prod\`. Pulsa **${showVariables}** (el \`{}\` de la cabecera del bloque), cambia \`ENV\` a \`dev\` y vuelve atrás: todos los comandos incrustados lo siguen. La flecha junto a \`ENV\` descarta tu valor y recupera el del propio runbook de despliegue.`,
       overrides:

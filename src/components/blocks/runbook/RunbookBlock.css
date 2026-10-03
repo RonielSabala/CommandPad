@@ -85,9 +85,8 @@
 }
 
 .runbook-block-input.is-unresolved,
-.runbook-block-label.is-unresolved
-  :is(.view-lines span, .code-editor-static-text) {
-  color: var(--danger) !important;
+.runbook-block-label.is-unresolved {
+  border-color: var(--danger);
 }
 
 /* Actions */

@@ -19,7 +19,6 @@ import {
 
 import { CssClass } from "@/common/constants/css";
 import "@/components/blocks/BlocksList.css";
-import { NoteText } from "../note/NoteText";
 import {
   EmbeddedCommand,
   EmbeddedDivider,
@@ -137,13 +136,7 @@ export function EmbedBody({
   if (!source) {
     const label = block.label.trim();
     if (!block.cloud && label) {
-      return (
-        <EmbedNotice error>
-          <span className={CssClass.NOTE_CODE_NEUTRAL}>
-            <NoteText text={t.runbookBlock.unresolvedLabel(label)} />
-          </span>
-        </EmbedNotice>
-      );
+      return <EmbedNotice error>{t.runbookBlock.unresolvedLabel}</EmbedNotice>;
     }
 
     return (

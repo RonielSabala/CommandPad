@@ -183,7 +183,7 @@ export interface Messages {
     changeSource: string;
     labelPlaceholder: string;
     pathPlaceholder: string;
-    unresolvedLabel: (label: string) => string;
+    unresolvedLabel: string;
     emptyLabel: string;
     emptyPath: string;
     noSource: string;

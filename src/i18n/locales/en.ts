@@ -193,8 +193,7 @@ export const en: Messages = {
     changeSource: "Where the runbook lives",
     labelPlaceholder: "Runbook label",
     pathPlaceholder: "folder/runbook.json",
-    unresolvedLabel: (label) =>
-      `No runbook in your library is labeled \`${label}\`.`,
+    unresolvedLabel: "No runbook in your library has this label.",
     emptyLabel: "Type the label of a runbook in your library.",
     emptyPath: "Type the path of a runbook in the cloud.",
     noSource: "No runbook is embedded here.",
@@ -1282,7 +1281,7 @@ If something goes wrong, undo it in this order:
     },
     runbookBlock: {
       intro:
-        "A runbook block shows **another runbook** inside this one. Write the steps you repeat everywhere (a deploy, a backup, a health check) once, then embed them wherever they're needed: one copy to keep up to date. To pick the runbook, type its **label** in the block's header. The box suggests every runbook in your library, and a label that matches nothing turns red, like an unknown variable.",
+        "A runbook block shows **another runbook** inside this one. Write the steps you repeat everywhere (a deploy, a backup, a health check) once, then embed them wherever they're needed: one copy to keep up to date. To pick the runbook, type its **label** in the block's header. The box suggests every runbook in your library, and a label that matches nothing gets a red border.",
       demoHint: (showVariables) =>
         `This release runbook embeds the deploy runbook, aimed at \`prod\`. Press **${showVariables}** (the \`{}\` in the block's header), change \`ENV\` to \`dev\` and switch back: every embedded command follows. The arrow beside \`ENV\` drops your value for the deploy runbook's own.`,
       overrides:
