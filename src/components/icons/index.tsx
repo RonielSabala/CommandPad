@@ -211,10 +211,9 @@ export function ImageIcon(props: IconProps) {
 export function RunbookIcon(props: IconProps) {
   return (
     <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
-      <path d="M3.5 1.5h6l3 3v10h-9z" />
-      <path d="M9.5 1.5v3h3" />
-      <line x1="5.5" y1="8" x2="10.5" y2="8" />
-      <line x1="5.5" y1="11" x2="10.5" y2="11" />
+      <path d="M2.5 11.5V1.5h7.5" />
+      <path d="M5.5 4.5h5l3 3v7h-8z" />
+      <path d="M10.5 4.5v3h3" />
     </svg>
   );
 }
