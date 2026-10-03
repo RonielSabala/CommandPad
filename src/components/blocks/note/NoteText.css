@@ -22,6 +22,11 @@
   padding: 0.05em var(--space-3);
 }
 
+.note-code-neutral .note-code {
+  color: var(--color-text-primary);
+  background: var(--color-surface-alt);
+}
+
 .note-link {
   cursor: text;
   color: var(--accent);

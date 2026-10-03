@@ -139,7 +139,7 @@ export function EmbedBody({
     if (!block.cloud && label) {
       return (
         <EmbedNotice error>
-          <span>
+          <span className={CssClass.NOTE_CODE_NEUTRAL}>
             <NoteText text={t.runbookBlock.unresolvedLabel(label)} />
           </span>
         </EmbedNotice>

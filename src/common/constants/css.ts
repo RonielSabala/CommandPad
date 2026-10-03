@@ -55,6 +55,7 @@ export const CssClass = {
 
   // Miscellanea
   NOTE_LINK: "note-link",
+  NOTE_CODE_NEUTRAL: "note-code-neutral",
   NOTE_EDITOR: "note-editor",
   ROW_ACTIONS: "row-actions",
   RUNBOOK_EMBED_ACTIONS: "runbook-embed-actions",

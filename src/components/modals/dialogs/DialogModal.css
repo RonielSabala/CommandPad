@@ -71,11 +71,6 @@
   color: var(--dialog-emphasis);
 }
 
-.dialog-message .note-code {
-  color: var(--color-text-primary);
-  background: var(--color-surface-alt);
-}
-
 .modal-dialog .btn-tone {
   background: var(--dialog-accent-dim);
   border-color: var(--dialog-accent);
