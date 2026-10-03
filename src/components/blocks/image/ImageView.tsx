@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { asButton } from "@/components/common/asButton";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
@@ -17,7 +18,11 @@ export function ImageView({ src, alt, onExpand, onError }: Props) {
 
   return (
     <img
-      className={classNames("image-view", onExpand && "is-clickable")}
+      className={classNames(
+        "image-view",
+        onExpand && "is-clickable",
+        onExpand && CssClass.SELECT_KEY_INERT,
+      )}
       src={src}
       alt={alt ?? ""}
       draggable={false}
