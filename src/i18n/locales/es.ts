@@ -209,6 +209,7 @@ export const es: Messages = {
       `Ningún runbook de tu biblioteca tiene la etiqueta \`${label}\`.`,
     emptyLabel: "Escribe la etiqueta de un runbook de tu biblioteca.",
     emptyPath: "Escribe la ruta de un runbook en la nube.",
+    noSource: "Aquí no hay ningún runbook incrustado.",
     loading: "Cargando el runbook...",
     missing: "No se encontró ningún runbook en esta ruta.",
     error: "No se pudo cargar el runbook.",

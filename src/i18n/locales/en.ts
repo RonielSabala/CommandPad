@@ -197,6 +197,7 @@ export const en: Messages = {
       `No runbook in your library is labeled \`${label}\`.`,
     emptyLabel: "Type the label of a runbook in your library.",
     emptyPath: "Type the path of a runbook in the cloud.",
+    noSource: "No runbook is embedded here.",
     loading: "Loading the runbook...",
     missing: "No runbook was found at this path.",
     error: "The runbook couldn't be loaded.",

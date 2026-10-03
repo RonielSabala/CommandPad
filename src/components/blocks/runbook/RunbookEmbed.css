@@ -11,7 +11,7 @@
   color: var(--danger);
 }
 
-body.read-mode :is(.runbook-embed-header, .runbook-embed-notice.is-hint) {
+body.read-mode .runbook-embed-header {
   display: none;
 }
 

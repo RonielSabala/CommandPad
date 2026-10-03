@@ -186,6 +186,7 @@ export interface Messages {
     unresolvedLabel: (label: string) => string;
     emptyLabel: string;
     emptyPath: string;
+    noSource: string;
     loading: string;
     missing: string;
     error: string;

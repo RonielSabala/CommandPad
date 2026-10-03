@@ -1,4 +1,4 @@
-import { BlockType, EmbeddedRunbookStatus } from "@/common/enums";
+import { AppMode, BlockType, EmbeddedRunbookStatus } from "@/common/enums";
 import type { Block, BlockOfType, RunbookBlock } from "@/common/types";
 import { Spinner } from "@/components/common/Spinner";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -45,18 +45,11 @@ const EMBEDDED_VIEWS: {
 interface NoticeProps {
   children: ReactNode;
   error?: boolean;
-  hint?: boolean;
 }
 
-export function EmbedNotice({ children, error, hint }: NoticeProps) {
+export function EmbedNotice({ children, error }: NoticeProps) {
   return (
-    <div
-      className={classNames(
-        "runbook-embed-notice",
-        error && "is-error",
-        hint && "is-hint",
-      )}
-    >
+    <div className={classNames("runbook-embed-notice", error && "is-error")}>
       {children}
     </div>
   );
@@ -129,21 +122,30 @@ interface BodyProps {
 export function EmbedBody({ block, embed, children }: BodyProps) {
   const t = useTranslation();
   const { source } = embed;
+  const readMode = useStore((state) => state.mode === AppMode.READ);
   const signInForEmbeddedRunbooks = useStore(
     (state) => state.signInForEmbeddedRunbooks,
   );
 
   if (!source) {
     const label = block.label.trim();
-    return !block.cloud && label ? (
-      <EmbedNotice error>
-        <span>
-          <NoteText text={t.runbookBlock.unresolvedLabel(label)} />
-        </span>
-      </EmbedNotice>
-    ) : (
-      <EmbedNotice hint>
-        {block.cloud ? t.runbookBlock.emptyPath : t.runbookBlock.emptyLabel}
+    if (!block.cloud && label) {
+      return (
+        <EmbedNotice error>
+          <span>
+            <NoteText text={t.runbookBlock.unresolvedLabel(label)} />
+          </span>
+        </EmbedNotice>
+      );
+    }
+
+    return (
+      <EmbedNotice>
+        {readMode
+          ? t.runbookBlock.noSource
+          : block.cloud
+            ? t.runbookBlock.emptyPath
+            : t.runbookBlock.emptyLabel}
       </EmbedNotice>
     );
   }
