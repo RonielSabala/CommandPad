@@ -156,7 +156,6 @@ function EmbeddedSection({ section, count, onToggle }: SectionProps) {
       className={classNames(
         CssClass.VARIABLE_SECTION,
         collapsed && CssClass.COLLAPSED,
-        "embedded-section",
       )}
     >
       <VariableSectionHeader
@@ -167,10 +166,7 @@ function EmbeddedSection({ section, count, onToggle }: SectionProps) {
         <NotePreview
           text={section.name}
           placeholder={t.variables.sectionPlaceholder}
-          className={classNames(
-            CssClass.VARIABLE_SECTION_NAME,
-            "embedded-section-name",
-          )}
+          className={CssClass.VARIABLE_SECTION_NAME}
           standalone
         />
       </VariableSectionHeader>

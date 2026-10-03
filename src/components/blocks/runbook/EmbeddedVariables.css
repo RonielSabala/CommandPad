@@ -2,23 +2,12 @@
   --variable-row-gutter: 0px;
 }
 
-.embedded-section {
-  justify-self: stretch;
-}
-
-.embedded-section-name {
-  flex: 1;
-  min-width: 0;
-}
-
 .embedded-variable.is-overridden
   :is(.variable-editor-value, .variable-editor-options) {
   border-color: var(--warning);
 }
 
 .embedded-variable-key {
-  flex: 1 1 auto;
-  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: pre;
