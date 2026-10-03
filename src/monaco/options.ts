@@ -69,13 +69,16 @@ export function baseEditorOptions(folding: boolean): Options {
   };
 }
 
-export function flowingEditorOptions(folding: boolean): Options {
+export function flowingEditorOptions(
+  folding: boolean,
+  compact = false,
+): Options {
   const metrics = getCodeMetrics();
 
   return {
     ...baseEditorOptions(folding),
-    fontSize: metrics.fontSizeBase,
-    lineHeight: metrics.lineHeightBase,
+    fontSize: compact ? metrics.fontSizeMedium : metrics.fontSizeBase,
+    lineHeight: compact ? metrics.lineHeightMedium : metrics.lineHeightBase,
     scrollbar: {
       vertical: "hidden",
       horizontal: "hidden",

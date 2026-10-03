@@ -100,8 +100,9 @@ interface Props {
 
 const FULL_HEIGHT = "100%";
 
-function estimateContentHeight(value: string): number {
-  return countLines(value) * getCodeMetrics().lineHeightBase;
+function estimateContentHeight(value: string, compact: boolean): number {
+  const { lineHeightBase, lineHeightMedium } = getCodeMetrics();
+  return countLines(value) * (compact ? lineHeightMedium : lineHeightBase);
 }
 
 /** Nothing else claimed focus while the menu was up. */
@@ -226,7 +227,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     } | null>(null);
     const [scrollTarget, setScrollTarget] = useState<ScrollTarget | null>(null);
     const [contentHeight, setContentHeight] = useState<number>(() =>
-      estimateContentHeight(value),
+      estimateContentHeight(value, singleLine),
     );
 
     const callbacks = useRef({ onSubmit, onFocus, onBlur, onScrollChange });
@@ -379,7 +380,10 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
 
         // Bindings
         bindDragScrolling(instance);
-        bindRevealScrolling(instance);
+        if (!singleLine) {
+          bindRevealScrolling(instance);
+        }
+
         bindStickyWidgets(instance);
       } else {
         instance.onDidScrollChange((event) =>
@@ -503,7 +507,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       () => ({
         ...(bounded
           ? boundedEditorOptions(folding, minimapSide)
-          : flowingEditorOptions(folding)),
+          : flowingEditorOptions(folding, singleLine)),
         placeholder: shownPlaceholder,
         readOnly,
         ...gutterOptions(gutter, promptPrefix),
@@ -511,6 +515,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       [
         bounded,
         folding,
+        singleLine,
         minimapSide,
         shownPlaceholder,
         readOnly,
@@ -525,6 +530,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
           "code-editor",
           "code-editor-live",
           !gutter && "no-gutter",
+          singleLine && "code-editor-single-line",
           !bounded && className,
           clamped && CssClass.CLAMPED,
           showMask && "is-masked",

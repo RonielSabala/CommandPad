@@ -16,6 +16,9 @@
 /* Header */
 
 .runbook-block-header {
+  position: sticky;
+  top: var(--space-4);
+  z-index: var(--z-docked);
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -25,10 +28,24 @@
   flex: none;
 }
 
+.runbook-block-header
+  :is(.provider-select-trigger, .runbook-embed-actions .btn) {
+  position: relative;
+}
+
+.runbook-block-header
+  :is(.provider-select-trigger, .runbook-embed-actions .btn)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-behind);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  box-shadow: 0 0 var(--space-8) var(--space-2) var(--color-bg);
+}
+
 .runbook-block-input,
 .runbook-block-label {
-  flex: 1;
-  min-width: 0;
   border-radius: var(--radius-md);
   border: var(--border-standard);
   background: var(--color-bg);
@@ -36,6 +53,8 @@
 }
 
 .runbook-block-input {
+  flex: 1;
+  min-width: 0;
   padding: var(--space-3) var(--space-4);
   color: var(--color-text-primary);
   font-family: var(--font-mono);
@@ -52,8 +71,10 @@
 }
 
 .runbook-block-label {
+  --code-editor-width: max-content;
   --code-editor-min-columns: 24ch;
 
+  max-width: 100%;
   overflow: clip;
 }
 

@@ -11,6 +11,7 @@ export const CodeToken = {
   FONT_MONO: "--font-mono",
   TAB_SIZE: "--tab-size",
   TEXT_BASE: "--text-base",
+  TEXT_MD: "--text-md",
   TEXT_SM: "--text-sm",
   LINE_HEIGHT_RATIO: "--code-line-height-ratio",
   GUTTER_PAD_START: "--space-5",
@@ -42,6 +43,7 @@ export const ColorToken = {
 
 export const CodeMetricProperty = {
   LINE_HEIGHT_BASE: "--code-line-height-base",
+  LINE_HEIGHT_MEDIUM: "--code-line-height-medium",
   LINE_HEIGHT_SMALL: "--code-line-height-small",
   LINE_NUMBER_CHARS: "--code-line-number-chars",
   GUTTER_PAD_START: "--code-gutter-pad-start",

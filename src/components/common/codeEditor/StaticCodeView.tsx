@@ -16,6 +16,7 @@ interface Props {
   clamped?: boolean;
   gutter?: boolean;
   masked?: boolean;
+  singleLine?: boolean;
   header?: ReactNode;
   footer?: ReactNode;
 }
@@ -32,6 +33,7 @@ export function StaticCodeView({
   clamped = false,
   gutter = true,
   masked = false,
+  singleLine = false,
   header,
   footer,
 }: Props) {
@@ -52,6 +54,7 @@ export function StaticCodeView({
         "code-editor",
         "code-editor-static",
         !gutter && "no-gutter",
+        singleLine && "code-editor-single-line",
         !bounded && className,
         clamped && CssClass.CLAMPED,
       )}

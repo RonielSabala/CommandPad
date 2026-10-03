@@ -181,6 +181,9 @@
   --code-line-height-base: calc(
     var(--text-base) * var(--code-line-height-ratio)
   );
+  --code-line-height-medium: calc(
+    var(--text-md) * var(--code-line-height-ratio)
+  );
   --code-line-height-small: calc(
     var(--text-sm) * var(--code-line-height-ratio)
   );

@@ -18,11 +18,17 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: var(--code-editor-header-height, 0px) 1fr auto auto;
-  width: 100%;
+  width: var(--code-editor-width, 100%);
   min-width: 0;
   font-family: var(--font-mono);
   font-size: var(--code-editor-font-size, var(--text-base));
   line-height: var(--code-editor-line-height);
+}
+
+/* A one-line field. */
+.code-editor-single-line {
+  --code-editor-font-size: var(--text-md);
+  --code-editor-line-height: var(--code-line-height-medium);
 }
 
 /* The gutter strip */
