@@ -117,10 +117,16 @@ export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
 interface BodyProps {
   block: RunbookBlock;
   embed: EmbeddedRunbookState;
+  readOnly?: boolean;
   children: ReactNode;
 }
 
-export function EmbedBody({ block, embed, children }: BodyProps) {
+export function EmbedBody({
+  block,
+  embed,
+  readOnly = false,
+  children,
+}: BodyProps) {
   const t = useTranslation();
   const { source } = embed;
   const readMode = useStore((state) => state.mode === AppMode.READ);
@@ -142,7 +148,7 @@ export function EmbedBody({ block, embed, children }: BodyProps) {
 
     return (
       <EmbedNotice>
-        {readMode
+        {readMode || readOnly
           ? t.runbookBlock.noSource
           : block.cloud
             ? t.runbookBlock.emptyPath
@@ -258,7 +264,7 @@ function NestedRunbook({
         </div>
       </div>
 
-      <EmbedBody block={block} embed={embed}>
+      <EmbedBody block={block} embed={embed} readOnly>
         <EmbeddedBlocks embed={embed} scopeId={scopeId} />
       </EmbedBody>
     </div>
