@@ -36,6 +36,7 @@ import { isSuggesting, triggerSuggest } from "@/monaco/suggest";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { validateModel } from "@/monaco/validation";
 import { useStore } from "@/store/store";
+import { whenElementSettles } from "@/utils/dom";
 import { classNames, countLines, joinLines } from "@/utils/string";
 import Editor, {
   type BeforeMount,
@@ -217,6 +218,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     const rootRef = useRef<HTMLDivElement>(null);
     const pendingFocusRef = useRef(false);
     const pendingScrollTopRef = useRef<number | null>(null);
+    const cancelSuggestRef = useRef<(() => void) | null>(null);
     const openingContextMenuRef = useRef(false);
     const menuSelectionRef = useRef<{
       selection: Selection;
@@ -259,10 +261,23 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     }, []);
 
     const suggest = useCallback(() => {
-      if (editorRef.current) {
-        triggerSuggest(editorRef.current);
+      const instance = editorRef.current;
+      const node = instance?.getDomNode();
+      if (!instance || !node) {
+        return;
       }
+
+      cancelSuggestRef.current?.();
+      cancelSuggestRef.current = whenElementSettles(node, () => {
+        cancelSuggestRef.current = null;
+
+        if (instance.hasTextFocus()) {
+          triggerSuggest(instance);
+        }
+      });
     }, []);
+
+    useEffect(() => () => cancelSuggestRef.current?.(), []);
 
     useImperativeHandle(
       forwardedRef,
