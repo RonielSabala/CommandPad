@@ -1,0 +1,23 @@
+.toggle-editor-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  padding: var(--space-3);
+  transition: color var(--transition-fast);
+}
+
+.toggle-editor-btn:hover {
+  color: var(--color-text-secondary);
+}
+
+.toggle-editor-btn .toggle-editor-icon {
+  transition: transform var(--transition-base);
+}
+
+.toggle-editor-btn.editor-collapsed .toggle-editor-icon {
+  transform: rotate(-90deg);
+}
+
+body.read-mode .toggle-editor-btn {
+  display: none;
+}

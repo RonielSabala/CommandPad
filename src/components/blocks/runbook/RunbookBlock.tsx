@@ -17,7 +17,6 @@ import {
 } from "@/components/common/codeEditor/CodeEditor";
 import { useCodeRendering } from "@/components/common/codeEditor/codeRendering";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { EditorToggleChevronIcon } from "@/components/icons";
 import { ProviderSelect } from "@/components/modals/cloud/ProviderSelect";
 import { useTranslation } from "@/i18n";
 import type { EditorChoice } from "@/monaco/completions";
@@ -29,6 +28,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { BodyText, Braces } from "react-bootstrap-icons";
 
 import type { BlockViewProps } from "../blockViews";
+import { EditorToggle } from "../EditorToggle";
 import { EmbeddedVariables } from "./EmbeddedVariables";
 import "./RunbookBlock.css";
 import { EmbedActions, EmbedBody, EmbeddedBlocks } from "./RunbookEmbed";
@@ -231,7 +231,7 @@ export function RunbookBlock({
           />
         )}
 
-        <div className="runbook-embed-actions">
+        <div className={CssClass.RUNBOOK_EMBED_ACTIONS}>
           {canSwitchView && (
             <button
               className="btn btn-flat-icon"
@@ -257,21 +257,15 @@ export function RunbookBlock({
           <EmbedActions embed={embed} />
 
           {embed.source && (
-            <button
-              className={classNames(
-                "btn toggle-editor-btn",
-                collapsed && "editor-collapsed",
-              )}
-              onClick={() =>
+            <EditorToggle
+              collapsed={collapsed}
+              label={collapseLabel}
+              onToggle={() =>
                 updateBlock(blockId, BlockType.RUNBOOK, {
                   collapsed: !collapsed,
                 })
               }
-              aria-label={collapseLabel}
-              {...tooltip(collapseLabel)}
-            >
-              <EditorToggleChevronIcon className="toggle-editor-icon icon-md icon-bold" />
-            </button>
+            />
           )}
         </div>
       </div>

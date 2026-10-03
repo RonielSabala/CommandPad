@@ -54,6 +54,7 @@ export const CssClass = {
   NOTE_LINK: "note-link",
   NOTE_EDITOR: "note-editor",
   ROW_ACTIONS: "row-actions",
+  RUNBOOK_EMBED_ACTIONS: "runbook-embed-actions",
   CONTEXT_MENU: "context-menu",
   RUNBOOK_ITEM_BTN: "runbook-item-btn",
   CODE_EDITOR_PROMPT: "code-editor-prompt",

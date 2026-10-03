@@ -12,8 +12,6 @@ import {
   type CodeEditorHandle,
 } from "@/components/common/codeEditor/CodeEditor";
 import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageSelect";
-import { tooltip } from "@/components/common/tooltip/tooltip";
-import { EditorToggleChevronIcon } from "@/components/icons";
 import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
 import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
@@ -23,6 +21,7 @@ import type { VariableMap } from "@/utils/resolution";
 import { classNames, countLines } from "@/utils/string";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
+import { EditorToggle } from "../EditorToggle";
 import "./CommandBlock.css";
 import { CommandPreview } from "./CommandPreview";
 
@@ -102,18 +101,15 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         secretKeys={secretKeys}
         surfaceRef={rootRef}
         actions={
-          <button
-            className={`btn toggle-editor-btn${isEditorCollapsed ? " editor-collapsed" : ""}`}
-            onClick={() =>
+          <EditorToggle
+            collapsed={isEditorCollapsed}
+            label={toggleEditorLabel}
+            onToggle={() =>
               updateBlock(blockId, BlockType.COMMAND, {
                 editorCollapsed: !isEditorCollapsed,
               })
             }
-            aria-label={toggleEditorLabel}
-            {...tooltip(toggleEditorLabel)}
-          >
-            <EditorToggleChevronIcon className="toggle-editor-icon icon-md icon-bold" />
-          </button>
+          />
         }
       />
 

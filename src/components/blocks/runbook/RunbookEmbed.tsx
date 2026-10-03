@@ -17,6 +17,7 @@ import {
   ShieldLock,
 } from "react-bootstrap-icons";
 
+import { CssClass } from "@/common/constants/css";
 import { NoteText } from "../note/NoteText";
 import {
   EmbeddedCommand,
@@ -249,7 +250,7 @@ function NestedRunbook({
     <div className="runbook-embed">
       <div className="runbook-embed-header">
         <RunbookIcon className="icon-md icon-semibold runbook-embed-icon" />
-        <div className="runbook-embed-actions">
+        <div className={CssClass.RUNBOOK_EMBED_ACTIONS}>
           <EmbedActions embed={embed} />
         </div>
       </div>
