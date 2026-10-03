@@ -41,7 +41,7 @@
   z-index: var(--z-behind);
   border-radius: var(--radius-md);
   background: var(--color-bg);
-  box-shadow: 0 0 var(--space-8) var(--space-2) var(--color-bg);
+  box-shadow: 0 0 var(--space-6) var(--space-1) var(--color-bg);
 }
 
 .runbook-block-input,

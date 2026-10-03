@@ -18,6 +18,7 @@ import {
 import { useCodeRendering } from "@/components/common/codeEditor/codeRendering";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { ProviderSelect } from "@/components/modals/cloud/ProviderSelect";
+import { useKeepInView } from "@/hooks/useKeepInView";
 import { useTranslation } from "@/i18n";
 import type { EditorChoice } from "@/monaco/completions";
 import { getActiveTab, useStore } from "@/store/store";
@@ -154,6 +155,8 @@ export function RunbookBlock({
   };
 
   const collapsed = !readMode && !!embed.source && blockCollapsed === true;
+  const rootRef = useRef<HTMLDivElement>(null);
+  const keepInView = useKeepInView(rootRef, collapsed);
   const showingVariables = !readMode && view === RunbookEmbedView.VARIABLES;
 
   const canSwitchView =
@@ -171,6 +174,7 @@ export function RunbookBlock({
 
   return (
     <div
+      ref={rootRef}
       className={classNames(
         "runbook-block",
         CssClass.BLOCK_CARD,
@@ -266,11 +270,12 @@ export function RunbookBlock({
             <EditorToggle
               collapsed={collapsed}
               label={collapseLabel}
-              onToggle={() =>
+              onToggle={() => {
+                keepInView();
                 updateBlock(blockId, BlockType.RUNBOOK, {
                   collapsed: !collapsed,
-                })
-              }
+                });
+              }}
             />
           )}
         </div>
