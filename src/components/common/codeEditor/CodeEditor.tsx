@@ -379,12 +379,11 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         setScrollTarget(monacoScrollTarget(instance));
 
         // Bindings
-        bindDragScrolling(instance);
         if (!singleLine) {
+          bindDragScrolling(instance);
           bindRevealScrolling(instance);
+          bindStickyWidgets(instance);
         }
-
-        bindStickyWidgets(instance);
       } else {
         instance.onDidScrollChange((event) =>
           callbacks.current.onScrollChange?.(event.scrollTop),
