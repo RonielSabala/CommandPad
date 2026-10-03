@@ -22,19 +22,7 @@ body.read-mode .runbook-embed-header {
 }
 
 .runbook-embed-blocks {
-  display: grid;
-  grid-template-columns: fit-content(100%);
-  max-width: 100%;
-  gap: var(--space-4);
-  justify-items: start;
-}
-
-.runbook-embed-blocks > * {
-  max-width: 100%;
-}
-
-.runbook-embed-blocks > .divider-block {
-  justify-self: stretch;
+  --block-row-gutter: 0px;
 }
 
 .runbook-embed {

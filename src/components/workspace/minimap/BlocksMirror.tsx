@@ -1,5 +1,7 @@
+import { CssClass } from "@/common/constants/css";
 import type { Block, Variable } from "@/common/types";
 import { BlockItem } from "@/components/blocks/BlockItem";
+import "@/components/blocks/BlocksList.css";
 import { getActiveTab, useStore } from "@/store/store";
 import { getSecretKeys, getVariableMap } from "@/utils/resolution";
 import { memo, useMemo } from "react";
@@ -22,7 +24,7 @@ export const BlocksMirror = memo(function BlocksMirror({
   const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
 
   return (
-    <MinimapMirror id="blocks-mirror" width={width}>
+    <MinimapMirror className={CssClass.BLOCKS_LIST} width={width}>
       {blocks.map((block) => (
         <BlockItem
           key={block.id}

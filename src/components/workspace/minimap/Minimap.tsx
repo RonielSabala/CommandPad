@@ -41,12 +41,10 @@ function sameMetrics(a: MinimapMetrics, b: MinimapMetrics): boolean {
 
 /** The frame every miniature renders into. */
 export function MinimapMirror({
-  id,
   className,
   width,
   children,
 }: {
-  id: string;
   className?: string;
   width: number;
   children: ReactNode;
@@ -54,7 +52,6 @@ export function MinimapMirror({
   return (
     <CodeRenderingProvider value={CodeRendering.STATIC}>
       <div
-        id={id}
         className={classNames("minimap-mirror", className)}
         inert
         style={{ width }}

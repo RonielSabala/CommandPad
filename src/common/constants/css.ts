@@ -33,6 +33,7 @@ export const CssClass = {
   VARIABLE_SECTION_NAME: "variable-section-name",
 
   // Blocks
+  BLOCKS_LIST: "blocks-list",
   BLOCK_ITEM: "block-item",
   BLOCK_SURFACE: "block-surface",
 

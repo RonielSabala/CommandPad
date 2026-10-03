@@ -18,6 +18,7 @@ import {
 } from "react-bootstrap-icons";
 
 import { CssClass } from "@/common/constants/css";
+import "@/components/blocks/BlocksList.css";
 import { NoteText } from "../note/NoteText";
 import {
   EmbeddedCommand,
@@ -217,7 +218,7 @@ export function EmbeddedBlocks({
   }
 
   return (
-    <div className="runbook-embed-blocks">
+    <div className={classNames(CssClass.BLOCKS_LIST, "runbook-embed-blocks")}>
       {blocks.map((child) => {
         const View = EMBEDDED_VIEWS[child.type] as ComponentType<
           EmbeddedBlockProps<Block>

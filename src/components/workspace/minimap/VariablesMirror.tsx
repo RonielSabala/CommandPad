@@ -31,11 +31,7 @@ export const VariablesMirror = memo(function VariablesMirror({
   );
 
   return (
-    <MinimapMirror
-      id="variables-mirror"
-      className={CssClass.VARIABLES_LIST}
-      width={width}
-    >
+    <MinimapMirror className={CssClass.VARIABLES_LIST} width={width}>
       <VariableRows
         variables={variables}
         sections={sections}
