@@ -55,6 +55,14 @@
   background: transparent;
 }
 
+.note-textarea::placeholder {
+  color: transparent;
+}
+
+.note-editor.is-focused .note-textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
 .note-textarea::grammar-error,
 .note-textarea::spelling-error {
   text-decoration: transparent;
