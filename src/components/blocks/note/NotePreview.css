@@ -1,3 +1,45 @@
+.note-preview,
+.note-textarea,
+.note-auto-width::after {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  tab-size: var(--tab-size);
+  padding: var(--space-2) 0;
+}
+
+/* Note styles */
+
+.note-preview.style-heading,
+.note-textarea.style-heading,
+.note-auto-width.style-heading::after {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: transparent;
+  letter-spacing: -0.02em;
+}
+
+.note-preview.style-subheading,
+.note-textarea.style-subheading,
+.note-auto-width.style-subheading::after {
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  color: transparent;
+  letter-spacing: 0.03em;
+}
+
+.note-preview.style-heading {
+  color: var(--color-text-primary);
+}
+
+.note-preview.style-subheading {
+  color: var(--accent-text);
+}
+
+/* Note preview */
+
 .note-preview {
   color: var(--color-text-secondary);
   word-break: break-word;

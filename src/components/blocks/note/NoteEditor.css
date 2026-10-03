@@ -31,18 +31,6 @@
   content: none;
 }
 
-/* Shared note styles */
-
-.note-textarea,
-.note-preview,
-.note-auto-width::after {
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: 1.65;
-  tab-size: var(--tab-size);
-  padding: var(--space-2) 0;
-}
-
 .note-textarea,
 .note-preview {
   grid-area: 1 / 1 / 2 / 2;

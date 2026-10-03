@@ -15,7 +15,6 @@ import { useRef } from "react";
 import { CommandPreview } from "../command/CommandPreview";
 import { DividerLine } from "../divider/DividerBlock";
 import { ImageView } from "../image/ImageView";
-import "../note/NoteBlock.css";
 import { NotePreview } from "../note/NotePreview";
 
 export interface EmbeddedBlockProps<T extends Block = Block> {
