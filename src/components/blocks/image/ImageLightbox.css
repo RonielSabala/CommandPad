@@ -25,19 +25,22 @@
   transform: none;
 }
 
-.modal-lightbox .modal-close,
-.modal-lightbox .modal-close:hover {
+.modal-lightbox .modal-close {
   position: fixed;
   top: var(--space-12);
   right: var(--image-lightbox-control-inset);
   z-index: var(--z-raised);
-  background: var(--block-backdrop);
+  background: var(--color-surface);
+  border: var(--border-standard);
   border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
   box-shadow: 0 var(--space-2) var(--space-6) var(--shadow-color-float);
 }
 
 .modal-lightbox .modal-close:hover {
-  color: var(--color-text-primary);
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .image-lightbox {
