@@ -1,3 +1,4 @@
+import { RunbookBlockConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
@@ -24,7 +25,8 @@ import type { EditorChoice } from "@/monaco/completions";
 import { getActiveTab, useStore } from "@/store/store";
 import { localSourceKey } from "@/utils/embeddedRunbook";
 import { displayLabel } from "@/utils/runbook";
-import { classNames } from "@/utils/string";
+import { classNames, countCharacters } from "@/utils/string";
+import type { CSSProperties } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { BodyText, Braces } from "react-bootstrap-icons";
 
@@ -208,6 +210,12 @@ export function RunbookBlock({
               "runbook-block-input",
               unresolved && "is-unresolved",
             )}
+            style={
+              {
+                [RunbookBlockConfig.PATH_COLUMNS_PROPERTY]:
+                  countCharacters(pathDraft) + 1,
+              } as CSSProperties
+            }
             value={pathDraft}
             placeholder={t.runbookBlock.pathPlaceholder}
             spellCheck={false}

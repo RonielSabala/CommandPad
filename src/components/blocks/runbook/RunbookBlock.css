@@ -53,7 +53,9 @@
 }
 
 .runbook-block-input {
-  flex: 1;
+  flex: 0 1 auto;
+  box-sizing: content-box;
+  width: max(24ch, var(--runbook-block-path-columns, 0) * 1ch);
   min-width: 0;
   padding: var(--space-3) var(--space-4);
   color: var(--color-text-primary);
