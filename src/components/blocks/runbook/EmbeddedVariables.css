@@ -1,17 +1,5 @@
 .runbook-embed-variables {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-4);
-  justify-items: start;
-}
-
-.runbook-embed-variables > * {
-  max-width: 100%;
-}
-
-.embedded-section ~ .embedded-variable {
-  max-width: calc(100% - var(--space-8));
-  margin-left: var(--space-8);
+  --variable-row-gutter: 0px;
 }
 
 .embedded-section {
@@ -21,12 +9,11 @@
 .embedded-section-name {
   flex: 1;
   min-width: 0;
-  padding: var(--space-2) 0;
-  line-height: 1.65;
 }
 
-.embedded-section-name.is-placeholder {
-  color: var(--color-text-muted);
+.embedded-variable.is-overridden
+  :is(.variable-editor-value, .variable-editor-options) {
+  border-color: var(--warning);
 }
 
 .embedded-variable-key {
@@ -40,9 +27,4 @@
 
 .embedded-variable-reset {
   flex: none;
-}
-
-.variable-editor.is-overridden
-  :is(.variable-editor-value, .variable-editor-options) {
-  border-color: var(--warning);
 }

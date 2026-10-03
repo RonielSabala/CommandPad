@@ -81,14 +81,14 @@ export const VariableRow = memo(function VariableRow({
   const rowClass = classNames(
     "variable-row",
     "sidebar-section-list-row",
-    isSecret && "is-secret",
-    unused && "is-unused",
+    isSecret && CssClass.IS_SECRET,
+    unused && CssClass.IS_UNUSED,
     isDragging && CssClass.DRAGGING,
   );
 
   const variableInputsClass = classNames(
     "variable-inputs",
-    isSecret && "is-secret",
+    isSecret && CssClass.IS_SECRET,
     isDragOver && CssClass.DRAG_OVER,
   );
 

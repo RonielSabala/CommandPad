@@ -15,13 +15,24 @@ body.select-key-held:not(.read-mode)
   border-bottom-color: transparent;
 }
 
+/* Section name */
+
+.variable-section-name {
+  font-weight: 600;
+}
+
+.variable-section-name,
+.variable-section-name .note-preview {
+  color: var(--color-text-primary);
+}
+
+/* Section actions */
+
 .variable-section-toggle,
 .variable-section-count {
   flex-shrink: 0;
   margin-top: var(--space-2);
 }
-
-/* Chevron */
 
 .variable-section-chevron {
   transition: transform var(--transition-base);

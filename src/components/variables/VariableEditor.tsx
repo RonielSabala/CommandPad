@@ -1,33 +1,18 @@
 import { CssClass } from "@/common/constants/css";
-import {
-  CodeModelScope,
-  DEFAULT_VARIABLE_LANGUAGE,
-  MonacoLayout,
-} from "@/common/editorConfig";
-import {
-  AppMode,
-  ClampSurface,
-  CodeLanguage,
-  VariableField,
-} from "@/common/enums";
+import { CodeModelScope } from "@/common/editorConfig";
 import type { Variable } from "@/common/types";
-import { ClampToggle } from "@/components/common/codeEditor/ClampToggle";
-import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
-import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageSelect";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
-import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
-import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
 import type { VariableCompletion } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import { getVariableKey } from "@/utils/resolution";
-import { classNames, countLines } from "@/utils/string";
-import { useCallback, useEffect, useMemo, useRef, type RefObject } from "react";
+import { classNames } from "@/utils/string";
+import { useEffect, useMemo, type RefObject } from "react";
 
 import "./VariableEditor.css";
 import { VariableKeyInput } from "./VariableKeyInput";
-import { VariableOptionsSelect } from "./VariableOptionsSelect";
+import { VariableValueField } from "./VariableValueField";
 
 interface Props {
   variable: Variable;
@@ -46,46 +31,17 @@ export function VariableEditor({
   const variableId = variable.id;
   const isSecret = !!variable.secret;
 
-  const language = variable.language ?? DEFAULT_VARIABLE_LANGUAGE;
-
-  const updateVariable = useStore((state) => state.updateVariable);
-  const readMode = useStore((state) => state.mode === AppMode.READ);
   const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
   const consumeVariableFocus = useStore((state) => state.consumeVariableFocus);
   const pendingFocus = useStore(
     (state) => state.pendingFocusVariableId === variableId,
   );
 
-  const valueLines = useMemo(
-    () => countLines(variable.value),
-    [variable.value],
-  );
-  const rootRef = useRef<HTMLDivElement>(null);
-  const valueClamp = useClampSurface(
-    variableId,
-    ClampSurface.VALUE,
-    valueLines,
-    rootRef,
-  );
-
-  const actions = useEditorActions();
-
   // A variable resolving to itself can never fill in, so never offer it
   const ownKey = getVariableKey(variable);
   const valueCompletions = useMemo(
     () => completions.filter((entry) => entry.key !== ownKey),
     [completions, ownKey],
-  );
-
-  const handleChange = useCallback(
-    (value: string) => updateVariable(variableId, VariableField.VALUE, value),
-    [updateVariable, variableId],
-  );
-
-  const handleLanguageChange = useCallback(
-    (next: CodeLanguage) =>
-      updateVariable(variableId, VariableField.LANGUAGE, next),
-    [updateVariable, variableId],
   );
 
   useEffect(() => {
@@ -97,82 +53,42 @@ export function VariableEditor({
   }, [pendingFocus, consumeVariableFocus, keyRef]);
 
   return (
-    <div
-      ref={rootRef}
+    <VariableValueField
+      variable={variable}
+      value={variable.value}
+      scope={CodeModelScope.VARIABLE}
+      surfaceId={variableId}
+      completions={valueCompletions}
       className={classNames(
-        "variable-editor",
         CssClass.VARIABLE_SURFACE,
-        CssClass.CLAMP_SURFACE,
-        isSecret && "is-secret",
-        unused && "is-unused",
+        unused && CssClass.IS_UNUSED,
       )}
-      style={CLAMP_SURFACE_STYLE}
-    >
-      <div className="variable-editor-key-row">
-        <VariableKeyInput
-          variableId={variableId}
-          variableKey={variable.key}
-          className={classNames(
-            "variable-editor-key",
-            CssClass.SELECT_KEY_INERT,
+      keyRow={
+        <>
+          <VariableKeyInput
+            variableId={variableId}
+            variableKey={variable.key}
+            className={classNames(
+              CssClass.VARIABLE_EDITOR_KEY,
+              CssClass.SELECT_KEY_INERT,
+            )}
+            unused={unused}
+            inputRef={keyRef}
+            scrollable
+          />
+
+          {isSecret && (
+            <button
+              className="btn btn-icon variable-editor-secret-btn"
+              onClick={() => toggleVariableSecret(variableId)}
+              aria-label={t.variables.reveal(1)}
+              {...tooltip(t.variables.reveal(1))}
+            >
+              <EyeIcon slashed className="icon-md icon-bold" />
+            </button>
           )}
-          unused={unused}
-          inputRef={keyRef}
-          scrollable
-        />
-
-        {isSecret && (
-          <button
-            className="btn btn-icon variable-editor-secret-btn"
-            onClick={() => toggleVariableSecret(variableId)}
-            aria-label={t.variables.reveal(1)}
-            {...tooltip(t.variables.reveal(1))}
-          >
-            <EyeIcon slashed className="icon-md icon-bold" />
-          </button>
-        )}
-      </div>
-
-      {variable.options ? (
-        <VariableOptionsSelect
-          variableId={variableId}
-          value={variable.value}
-          options={variable.options}
-          triggerClassName="variable-editor-options"
-        />
-      ) : (
-        <CodeEditor
-          modelId={`${CodeModelScope.VARIABLE}/${variableId}`}
-          className="variable-editor-value"
-          value={variable.value}
-          language={language}
-          onChange={handleChange}
-          onFocus={valueClamp.onFocus}
-          onBlur={valueClamp.onBlur}
-          placeholder={t.variables.valuePlaceholder}
-          completions={valueCompletions}
-          actions={actions}
-          masked={isSecret}
-          gutter={valueLines > MonacoLayout.FIRST_LINE}
-          clamped={valueClamp.clamped}
-          header={
-            !readMode && (
-              <CodeLanguageSelect
-                language={language}
-                onChange={handleLanguageChange}
-              />
-            )
-          }
-          footer={
-            valueClamp.overflows && (
-              <ClampToggle
-                expanded={valueClamp.expanded}
-                onToggle={valueClamp.toggle}
-              />
-            )
-          }
-        />
-      )}
-    </div>
+        </>
+      }
+    />
   );
 }

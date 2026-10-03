@@ -19,6 +19,7 @@ export interface EmbeddedRunbookState {
   status: EmbeddedRunbookStatus | undefined;
   isOpen: boolean;
   content: RunbookContent | null;
+  variables: Variable[];
   variableMap: VariableMap;
   secretKeys: Set<string>;
   locked: boolean;
@@ -95,6 +96,7 @@ export function useEmbeddedRunbook(
     status: entry?.status,
     isOpen: !!openTab,
     content,
+    variables,
     variableMap: embeddedMap,
     secretKeys: embeddedSecrets,
     locked,

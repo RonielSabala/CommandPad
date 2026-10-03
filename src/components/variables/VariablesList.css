@@ -1,0 +1,29 @@
+.variables-list {
+  --variable-row-gutter: var(--space-20);
+  --variable-section-indent: var(--space-8);
+  --variable-row-max-width: calc(100% - var(--variable-row-gutter));
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 100%;
+  gap: var(--space-4);
+  justify-items: start;
+}
+
+.variables-list > * {
+  max-width: var(--variable-row-max-width);
+}
+
+/* Variable section */
+
+.variables-list > .variable-section:not(:first-child) {
+  margin-top: var(--space-6);
+}
+
+.variables-list > .variable-section ~ :not(.variable-section) {
+  --variable-row-max-width: calc(
+    100% - var(--variable-row-gutter) - var(--variable-section-indent)
+  );
+
+  margin-left: var(--variable-section-indent);
+}

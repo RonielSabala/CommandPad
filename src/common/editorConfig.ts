@@ -68,6 +68,8 @@ export const CodeModelScope = {
   CLOUD_FILE: "runbook/cloud",
   RUNBOOK_SOURCE: "runbook/source",
 } as const;
+export type CodeModelScope =
+  (typeof CodeModelScope)[keyof typeof CodeModelScope];
 
 export const RUNBOOK_JSON_SCOPES: readonly string[] = [
   CodeModelScope.PASTE_RUNBOOK,

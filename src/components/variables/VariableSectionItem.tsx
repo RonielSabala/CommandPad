@@ -65,7 +65,7 @@ export const VariableSectionItem = memo(function VariableSectionItem({
   return (
     <VariableRowFrame
       rowId={sectionId}
-      className={classNames("variable-section")}
+      className={CssClass.VARIABLE_SECTION}
       dragImageRef={headerRef}
       menu={(className) => (
         <VariableRowMenu

@@ -1,6 +1,5 @@
 .variable-item {
   position: relative;
-  max-width: var(--variable-row-max-width, 100%);
 }
 
 /* Selection */

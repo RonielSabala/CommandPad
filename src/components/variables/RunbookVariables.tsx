@@ -30,6 +30,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import "./RunbookVariables.css";
 import { VariableRows } from "./VariableRows";
+import "./VariablesList.css";
 
 const EMPTY_BLOCKS: Block[] = [];
 const EMPTY_VARIABLES: Variable[] = [];
@@ -155,7 +156,11 @@ export function RunbookVariables() {
           />
         )}
 
-        <div id={ElementId.VARIABLES_LIST} ref={listRef}>
+        <div
+          id={ElementId.VARIABLES_LIST}
+          className={CssClass.VARIABLES_LIST}
+          ref={listRef}
+        >
           <VariableRows
             variables={variables}
             sections={sections}

@@ -20,8 +20,16 @@ export const CssClass = {
   MINIMAP_SCROLLER: "minimap-scroller",
 
   // Variables
+
+  IS_SECRET: "is-secret",
+  IS_UNUSED: "is-unused",
+  IS_CONSTANT: "is-constant",
+
+  VARIABLES_LIST: "variables-list",
   VARIABLE_ITEM: "variable-item",
   VARIABLE_SURFACE: "variable-surface",
+  VARIABLE_EDITOR_KEY: "variable-editor-key",
+  VARIABLE_SECTION: "variable-section",
   VARIABLE_SECTION_NAME: "variable-section-name",
 
   // Blocks

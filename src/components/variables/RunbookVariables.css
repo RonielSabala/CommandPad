@@ -9,22 +9,3 @@
   flex-direction: column;
   padding: var(--space-8) var(--space-20) var(--space-20);
 }
-
-:is(#variables-list, #variables-mirror) {
-  --variable-row-max-width: calc(100% - var(--space-20));
-  --variable-section-indent: var(--space-8);
-
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  max-width: 100%;
-  gap: var(--space-4);
-  justify-items: start;
-}
-
-.variable-section ~ .variable-item:not(.variable-section) {
-  --variable-row-max-width: calc(
-    100% - var(--space-20) - var(--variable-section-indent)
-  );
-
-  margin-left: var(--variable-section-indent);
-}

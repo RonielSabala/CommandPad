@@ -1,21 +1,3 @@
-.variable-section {
-  margin-top: var(--space-6);
-}
-
-.variable-section:first-child {
-  margin-top: 0;
-}
-
-/* Section name */
-
-.variable-section-name {
-  font-weight: 600;
-}
-
-.variable-section-name .note-preview {
-  color: var(--color-text-primary);
-}
-
 body.read-mode .variable-section-name.is-clickable .note-preview {
   cursor: pointer;
   user-select: none;

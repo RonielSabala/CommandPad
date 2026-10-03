@@ -1,22 +1,10 @@
 import { CssClass } from "@/common/constants/css";
-import {
-  CodeModelScope,
-  DEFAULT_VARIABLE_LANGUAGE,
-  MonacoLayout,
-} from "@/common/editorConfig";
-import {
-  BlockType,
-  ClampSurface,
-  TooltipVariant,
-  VariableEntryKind,
-} from "@/common/enums";
+import { CodeModelScope } from "@/common/editorConfig";
+import { BlockType, TooltipVariant, VariableEntryKind } from "@/common/enums";
 import type { RunbookBlock, Variable, VariableSection } from "@/common/types";
-import { ClampToggle } from "@/components/common/codeEditor/ClampToggle";
-import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { VariableOptionsSelect } from "@/components/variables/VariableOptionsSelect";
 import { VariableSectionHeader } from "@/components/variables/VariableSectionHeader";
-import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
+import { VariableValueField } from "@/components/variables/VariableValueField";
 import { useTranslation } from "@/i18n";
 import {
   buildVariableCompletions,
@@ -25,16 +13,20 @@ import {
 import { useStore } from "@/store/store";
 import { embedScopeId } from "@/utils/embeddedRunbook";
 import {
+  getUsedVariableKeys,
   getVariableKey,
+  isConstantVariableKey,
+  isVariableUnused,
   withOverride,
   type OverrideHost,
 } from "@/utils/resolution";
-import { classNames, countLines } from "@/utils/string";
+import { classNames } from "@/utils/string";
 import { buildVariableLayout } from "@/utils/variableSections";
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo } from "react";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 
-import { NoteText } from "../note/NoteText";
+import "@/components/variables/VariablesList.css";
+import { NotePreview } from "../note/NotePreview";
 import "./EmbeddedVariables.css";
 import { EmbedNotice } from "./RunbookEmbed";
 import type { EmbeddedRunbookState } from "./useEmbeddedRunbook";
@@ -69,6 +61,11 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
     return buildVariableLayout(variables ?? [], sections);
   }, [variables, variableSections, folds, blockId]);
 
+  const usedKeys = useMemo(
+    () => getUsedVariableKeys(embed.content?.blocks, embed.variables),
+    [embed.content, embed.variables],
+  );
+
   // Completions
   const hostCompletions = useMemo(
     () => buildVariableCompletions(variableMap, secretKeys),
@@ -100,7 +97,9 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
   }
 
   return (
-    <div className="runbook-embed-variables">
+    <div
+      className={classNames(CssClass.VARIABLES_LIST, "runbook-embed-variables")}
+    >
       {rows.map((row) => {
         if (row.kind === VariableEntryKind.SECTION) {
           const { section } = row;
@@ -131,6 +130,7 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
                 : undefined
             }
             scopedId={embedScopeId(blockId, variable.id)}
+            unused={isVariableUnused(variable, usedKeys)}
             hostCompletions={hostCompletions}
             embeddedCompletions={embeddedCompletions}
             onChange={setOverride}
@@ -154,9 +154,9 @@ function EmbeddedSection({ section, count, onToggle }: SectionProps) {
   return (
     <div
       className={classNames(
-        "variable-section",
-        "embedded-section",
+        CssClass.VARIABLE_SECTION,
         collapsed && CssClass.COLLAPSED,
+        "embedded-section",
       )}
     >
       <VariableSectionHeader
@@ -164,15 +164,15 @@ function EmbeddedSection({ section, count, onToggle }: SectionProps) {
         count={count}
         onToggle={onToggle}
       >
-        <div
+        <NotePreview
+          text={section.name}
+          placeholder={t.variables.sectionPlaceholder}
           className={classNames(
-            "variable-section-name",
+            CssClass.VARIABLE_SECTION_NAME,
             "embedded-section-name",
-            !section.name && "is-placeholder",
           )}
-        >
-          <NoteText text={section.name || t.variables.sectionPlaceholder} />
-        </div>
+          standalone
+        />
       </VariableSectionHeader>
     </div>
   );
@@ -182,6 +182,7 @@ interface VariableProps {
   variable: Variable;
   override: string | undefined;
   scopedId: string;
+  unused: boolean;
   hostCompletions: VariableCompletion[];
   embeddedCompletions: VariableCompletion[];
   onChange: (variable: Variable, value: string) => void;
@@ -191,6 +192,7 @@ function EmbeddedVariable({
   variable,
   override,
   scopedId,
+  unused,
   hostCompletions,
   embeddedCompletions,
   onChange,
@@ -199,11 +201,6 @@ function EmbeddedVariable({
   const key = getVariableKey(variable);
   const value = override ?? variable.value;
   const overridden = override !== undefined;
-  const isSecret = !!variable.secret;
-
-  const rootRef = useRef<HTMLDivElement>(null);
-  const lines = useMemo(() => countLines(value), [value]);
-  const clamp = useClampSurface(scopedId, ClampSurface.VALUE, lines, rootRef);
 
   const completions = useMemo(
     () => [
@@ -218,66 +215,47 @@ function EmbeddedVariable({
   );
 
   return (
-    <div
-      ref={rootRef}
+    <VariableValueField
+      variable={variable}
+      value={value}
+      scope={CodeModelScope.RUNBOOK_OVERRIDE}
+      surfaceId={scopedId}
+      completions={completions}
       className={classNames(
-        "variable-editor",
         "embedded-variable",
-        CssClass.CLAMP_SURFACE,
-        isSecret && "is-secret",
         overridden && "is-overridden",
+        unused && CssClass.IS_UNUSED,
       )}
-      style={CLAMP_SURFACE_STYLE}
-    >
-      <div className="variable-editor-key-row">
-        <div
-          className="variable-editor-key embedded-variable-key no-ligatures"
-          {...tooltip(key, TooltipVariant.CODE)}
-        >
-          {key}
-        </div>
-
-        {overridden && (
-          <button
-            className="btn btn-flat-icon embedded-variable-reset"
-            onClick={() => onChange(variable, variable.value)}
-            aria-label={t.runbookBlock.resetOverride}
-            {...tooltip(t.runbookBlock.resetOverride)}
+      onChange={handleChange}
+      keyRow={
+        <>
+          <div
+            className={classNames(
+              CssClass.VARIABLE_EDITOR_KEY,
+              "embedded-variable-key",
+              "no-ligatures",
+              isConstantVariableKey(key) && CssClass.IS_CONSTANT,
+            )}
+            {...tooltip(
+              unused ? t.variables.unusedTitle(key) : key,
+              TooltipVariant.CODE,
+            )}
           >
-            <ArrowCounterclockwise className="icon-md" />
-          </button>
-        )}
-      </div>
+            {key}
+          </div>
 
-      {variable.options ? (
-        <VariableOptionsSelect
-          variableId={variable.id}
-          value={value}
-          options={variable.options}
-          triggerClassName="variable-editor-options"
-          onChange={handleChange}
-        />
-      ) : (
-        <CodeEditor
-          modelId={`${CodeModelScope.RUNBOOK_OVERRIDE}/${scopedId}`}
-          className="variable-editor-value"
-          value={value}
-          language={variable.language ?? DEFAULT_VARIABLE_LANGUAGE}
-          onChange={handleChange}
-          onFocus={clamp.onFocus}
-          onBlur={clamp.onBlur}
-          placeholder={t.variables.valuePlaceholder}
-          completions={completions}
-          masked={isSecret}
-          gutter={lines > MonacoLayout.FIRST_LINE}
-          clamped={clamp.clamped}
-          footer={
-            clamp.overflows && (
-              <ClampToggle expanded={clamp.expanded} onToggle={clamp.toggle} />
-            )
-          }
-        />
-      )}
-    </div>
+          {overridden && (
+            <button
+              className="btn btn-flat-icon embedded-variable-reset"
+              onClick={() => onChange(variable, variable.value)}
+              aria-label={t.runbookBlock.resetOverride}
+              {...tooltip(t.runbookBlock.resetOverride)}
+            >
+              <ArrowCounterclockwise className="icon-md" />
+            </button>
+          )}
+        </>
+      }
+    />
   );
 }
