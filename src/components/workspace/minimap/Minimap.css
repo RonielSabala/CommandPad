@@ -32,10 +32,14 @@
   display: none;
 }
 
+.minimap-mirror :is(.item-drag-handle, .item-actions) {
+  display: none;
+}
+
 .minimap {
   position: relative;
   flex: 0 0 var(--minimap-width);
-  overflow: hidden;
+  overflow: clip;
   user-select: none;
   touch-action: none;
 }
@@ -53,8 +57,10 @@
 
 .minimap-viewport {
   position: absolute;
+  top: 0;
   left: 0;
   right: 0;
+  will-change: transform;
   background: var(--minimap-slider);
   opacity: 0;
   transition: opacity var(--transition-fast);

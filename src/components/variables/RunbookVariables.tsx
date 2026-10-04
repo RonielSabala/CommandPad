@@ -14,6 +14,7 @@ import { Minimap } from "@/components/workspace/minimap/Minimap";
 import { VariablesMirror } from "@/components/workspace/minimap/VariablesMirror";
 import { WorkspaceContextMenu } from "@/components/workspace/WorkspaceContextMenu";
 import { useLassoSelection } from "@/hooks/useLassoSelection";
+import { useScrollingClass } from "@/hooks/useScrollingClass";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
@@ -94,8 +95,9 @@ export function RunbookVariables() {
     CssClass.VARIABLE_ITEM,
   );
 
-  useLassoSelection(root, SelectionGroup.VARIABLE);
+  useScrollingClass(scrollRef);
   useScrollPersistence(scrollRef, RunbookView.VARIABLES);
+  useLassoSelection(root, SelectionGroup.VARIABLE);
 
   useEffect(() => {
     scrollRowIntoView(

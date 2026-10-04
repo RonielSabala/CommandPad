@@ -5,6 +5,7 @@ import { PanelSide, RunbookView } from "@/common/enums";
 import { EmptyState } from "@/components/common/EmptyState";
 import { EmptyStateIcon } from "@/components/icons";
 import { blockDrag } from "@/hooks/blockDrag";
+import { useScrollingClass } from "@/hooks/useScrollingClass";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
@@ -51,6 +52,7 @@ export function RunbookPreview() {
     CssClass.BLOCK_ITEM,
   );
 
+  useScrollingClass(tabsContentRef);
   useScrollPersistence(tabsContentRef, RunbookView.PREVIEW);
 
   return (

@@ -355,6 +355,19 @@ body {
   animation: duplicate-flash 0.5s ease-out forwards;
 }
 
+/* --- SCROLLING SUPPRESSIONS --- */
+
+.is-scrolling > * {
+  pointer-events: none;
+}
+
+/* --- ROW-DRAGGING SUPPRESSIONS --- */
+
+body.row-dragging .code-editor-surface {
+  cursor: default;
+  pointer-events: none;
+}
+
 /* --- SELECT-KEY-HELD SUPPRESSIONS --- */
 
 body.select-key-held:not(.read-mode) * {
@@ -373,13 +386,6 @@ body.select-key-held:not(.read-mode)
 }
 
 body.select-key-held:not(.read-mode) .select-key-inert-children > * {
-  pointer-events: none;
-}
-
-/* --- ROW-DRAGGING SUPPRESSIONS --- */
-
-body.row-dragging .code-editor-surface {
-  cursor: default;
   pointer-events: none;
 }
 

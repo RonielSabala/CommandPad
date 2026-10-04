@@ -100,6 +100,7 @@ export const VariableSplit = {
 // Timeout durations
 export const DRAG_TIMEOUT_MS = 50;
 export const DEBOUNCE_SAVE_MS = 150;
+export const SCROLL_IDLE_MS = 150;
 export const DEBOUNCE_CLOUD_SYNC_MS = 1000;
 export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
 export const EXPORT_SUCCESS_TIMEOUT_MS = 1000;
