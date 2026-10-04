@@ -92,4 +92,9 @@ export const runbookBlockDefinition: BlockDefinition<typeof BlockType.RUNBOOK> =
         return changed ? { ...block, overrides } : block;
       },
     },
+
+    folding: {
+      isFolded: (block) => block.collapsed === true,
+      setFolded: (block, collapsed) => ({ ...block, collapsed }),
+    },
   };

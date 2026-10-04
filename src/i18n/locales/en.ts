@@ -39,7 +39,7 @@ export const en: Messages = {
     switchToDark: "Switch to dark mode",
     switchToLight: "Switch to light mode",
     collapseAll: "Collapse All",
-    toggleEditorsTitle: "Expand/collapse all command editors",
+    toggleEditorsTitle: "Expand/collapse all blocks",
     toggleSectionsTitle: "Expand/collapse all variable sections",
     resetWorkspaceTitle: "Reset workspace",
     exportTitle: "Export runbook",
@@ -498,7 +498,7 @@ export const en: Messages = {
     [KeyBinding.DELETE_RUNBOOK]: "Delete the focused runbook from the library",
     [KeyBinding.CLEAR_LIBRARY]: "Open delete all runbooks dialog",
     [KeyBinding.TOGGLE_EDITORS]:
-      "Toggle all command editors, or all sections in the variables editor",
+      "Toggle all blocks, or all sections in the variables editor",
     [KeyBinding.MULTISELECT_BLOCKS]: "Multi-select blocks",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicate selected blocks",
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
@@ -838,7 +838,7 @@ If something goes wrong, undo it in this order:
         collapseAllLabel,
       ) => `* The **CommandPad logo**: click it to reload the app.
 * The **padlock / pencil**: switches between read mode and edit mode. It has its own section later in this guide.
-* **${collapseAllLabel}**: collapses or expands every command editor in the active runbook at once. In the variables editor it folds or unfolds every variable section instead.
+* **${collapseAllLabel}**: collapses or expands every block in the active runbook at once. In the variables editor it folds or unfolds every variable section instead.
 * The **sun / moon**: switches between the light and dark themes.
 * The **language selector**: changes the interface language.
 * The **book**: opens this documentation.

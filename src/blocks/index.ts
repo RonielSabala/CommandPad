@@ -81,6 +81,23 @@ export function mapBlockCommandTexts(
   return definitionFor(block).commandTexts?.map(block, transform) ?? block;
 }
 
+export function isBlockFoldable(block: Block): boolean {
+  return definitionFor(block).folding !== undefined;
+}
+
+export function isBlockFolded(block: Block): boolean {
+  return definitionFor(block).folding?.isFolded(block) ?? false;
+}
+
+export function setBlockFolded(block: Block, folded: boolean): Block {
+  const folding = definitionFor(block).folding;
+  if (!folding || folding.isFolded(block) === folded) {
+    return block;
+  }
+
+  return folding.setFolded(block, folded);
+}
+
 export function getBlockLabelText(block: Block): string | null {
   return definitionFor(block).getLabelText?.(block) ?? null;
 }

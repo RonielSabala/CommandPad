@@ -1,4 +1,11 @@
-import { createBlock, getBlockLabelText, mapBlockCommandTexts } from "@/blocks";
+import {
+  createBlock,
+  getBlockLabelText,
+  isBlockFoldable,
+  isBlockFolded,
+  mapBlockCommandTexts,
+  setBlockFolded,
+} from "@/blocks";
 import {
   CloudSyncConfig,
   createDefaultPanels,
@@ -386,7 +393,7 @@ export interface StoreState {
     blockId: string,
     overrides: Record<string, string> | undefined,
   ) => void;
-  toggleAllCommandEditors: () => void;
+  toggleAllBlocksFolded: () => void;
   toggleCollapseAll: () => void;
   reorderBlocks: (sourceId: string, targetId: string) => void;
   copyBlocksToTab: (
@@ -3250,7 +3257,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         debouncedSaveState();
       },
 
-      toggleAllCommandEditors: () => {
+      toggleAllBlocksFolded: () => {
         const state = get();
         if (state.mode === AppMode.READ) {
           return;
@@ -3261,22 +3268,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
 
-        const allCollapsed = active.blocks
-          .filter((b) => b.type === BlockType.COMMAND)
-          .every(
-            (b) =>
-              (b as { editorCollapsed?: boolean }).editorCollapsed === true,
-          );
-        const newState = !allCollapsed;
+        const folded = !active.blocks
+          .filter(isBlockFoldable)
+          .every(isBlockFolded);
 
         set((s) =>
           withActiveTab(s, (tab) => ({
             ...tab,
-            blocks: tab.blocks.map((b) =>
-              b.type === BlockType.COMMAND
-                ? { ...b, editorCollapsed: newState }
-                : b,
-            ),
+            blocks: tab.blocks.map((b) => setBlockFolded(b, folded)),
           })),
         );
         get().saveState();
@@ -3286,7 +3285,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const state = get();
         const tab = getActiveTab(state);
         if (getRunbookView(state) !== RunbookView.VARIABLES) {
-          state.toggleAllCommandEditors();
+          state.toggleAllBlocksFolded();
           return;
         }
 

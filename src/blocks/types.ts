@@ -22,6 +22,7 @@ export interface BlockDefinition<T extends BlockType = BlockType> {
   ): string | null;
 
   commandTexts?: BlockCommandTexts<T>;
+  folding?: BlockFolding<T>;
   getLabelText?(block: BlockOfType<T>): string | null;
 }
 
@@ -40,6 +41,11 @@ export interface BlockCommandTexts<T extends BlockType> {
   ): BlockOfType<T>;
 }
 
+export interface BlockFolding<T extends BlockType> {
+  isFolded(block: BlockOfType<T>): boolean;
+  setFolded(block: BlockOfType<T>, folded: boolean): BlockOfType<T>;
+}
+
 export type BlockDefinitions = {
   [T in BlockType]: BlockDefinition<T>;
 };
@@ -53,6 +59,10 @@ export interface AnyBlockDefinition {
   commandTexts?: {
     get(block: Block): string[];
     map(block: Block, transform: (text: string) => string): Block;
+  };
+  folding?: {
+    isFolded(block: Block): boolean;
+    setFolded(block: Block, folded: boolean): Block;
   };
   getLabelText?(block: Block): string | null;
 }
