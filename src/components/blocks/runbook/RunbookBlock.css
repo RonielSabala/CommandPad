@@ -101,3 +101,24 @@ body.read-mode .runbook-block {
   gap: var(--space-2);
   margin-left: auto;
 }
+
+/* Drag image */
+
+.runbook-block-drag-image {
+  position: absolute;
+  top: 0;
+  left: -100vw;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 48ch;
+  padding: var(--space-3) var(--space-4);
+  overflow: hidden;
+  background: var(--color-surface);
+  border: var(--border-standard);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}

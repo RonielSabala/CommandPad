@@ -18,6 +18,7 @@ import {
 } from "@/components/common/codeEditor/CodeEditor";
 import { useCodeRendering } from "@/components/common/codeEditor/codeRendering";
 import { tooltip } from "@/components/common/tooltip/tooltip";
+import { RunbookIcon } from "@/components/icons";
 import { ProviderSelect } from "@/components/modals/cloud/ProviderSelect";
 import { useKeepInView } from "@/hooks/useKeepInView";
 import { useTranslation } from "@/i18n";
@@ -185,13 +186,21 @@ export function RunbookBlock({
 
   const canSwitchView =
     !collapsed && !!embed.content && !embed.circular && !embed.tooDeep;
+
   const unresolved = cloud
     ? embed.status === EmbeddedRunbookStatus.MISSING
     : !local && !!label.trim();
 
+  // Labels
+
+  const dragImageLabel = cloud
+    ? pathDraft || t.runbookBlock.pathPlaceholder
+    : displayLabel(label, t) || t.runbookBlock.labelPlaceholder;
+
   const viewLabel = showingVariables
     ? t.runbookBlock.showBlocks
     : t.runbookBlock.showVariables;
+
   const collapseLabel = collapsed
     ? t.runbookBlock.expand
     : t.runbookBlock.collapse;
@@ -205,13 +214,21 @@ export function RunbookBlock({
         CssClass.BLOCK_SURFACE,
       )}
     >
+      <div
+        className="runbook-block-drag-image"
+        aria-hidden
+        {...{ [DataAttr.DRAG_IMAGE]: "" }}
+      >
+        <RunbookIcon className="icon-md icon-bold" />
+        {dragImageLabel}
+      </div>
+
       {(!readMode || canSwitchView || !!local) && (
         <div
           className={classNames(
             "runbook-block-header",
             CssClass.SELECT_KEY_INERT_CHILDREN,
           )}
-          {...{ [DataAttr.DRAG_IMAGE]: "" }}
         >
           {!readMode && (
             <ProviderSelect

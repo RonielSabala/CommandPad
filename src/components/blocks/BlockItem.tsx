@@ -7,7 +7,6 @@ import { DragHandle } from "@/components/common/DragHandle";
 import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
 import { getActiveTab, useStore, useStoreApi } from "@/store/store";
-import { clamp } from "@/utils/number";
 import { classNames } from "@/utils/string";
 import { memo, useRef, useState } from "react";
 
@@ -76,10 +75,17 @@ export const BlockItem = memo(function BlockItem({
 
         if (dragImage) {
           const rect = dragImage.getBoundingClientRect();
+          const rectHeight = rect.height;
+
+          const x = event.clientX - rect.left;
+          const y = event.clientY - rect.top;
+          const underPointer =
+            x >= 0 && x <= rect.width && y >= 0 && y <= rectHeight;
+
           event.dataTransfer.setDragImage(
             dragImage,
-            clamp(event.clientX - rect.left, 0, rect.width),
-            clamp(event.clientY - rect.top, 0, rect.height),
+            underPointer ? x : 0,
+            underPointer ? y : rectHeight,
           );
         }
       }}
