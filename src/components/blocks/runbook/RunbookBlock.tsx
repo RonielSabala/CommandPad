@@ -24,6 +24,7 @@ import { useTranslation } from "@/i18n";
 import type { EditorChoice } from "@/monaco/completions";
 import { getActiveTab, useStore } from "@/store/store";
 import { localSourceKey } from "@/utils/embeddedRunbook";
+import { formatFileSize } from "@/utils/format";
 import { displayLabel } from "@/utils/runbook";
 import { classNames, countCharacters } from "@/utils/string";
 import type { CSSProperties } from "react";
@@ -59,6 +60,8 @@ export function RunbookBlock({
   );
 
   const library = useStore((state) => state.runbookLibrary);
+  const readRunbookStats = useStore((state) => state.readRunbookStats);
+  const language = useStore((state) => state.language);
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const isMirror = useCodeRendering() === CodeRendering.STATIC;
 
@@ -132,11 +135,24 @@ export function RunbookBlock({
         continue;
       }
 
-      byLabel.set(label, { label: displayLabel(label, t), value: label });
+      byLabel.set(label, {
+        label: displayLabel(label, t),
+        value: label,
+        describe: async () => {
+          const stats = await readRunbookStats(id);
+          return stats
+            ? t.runbookBlock.choiceStats(
+                formatFileSize(stats.bytes, language),
+                stats.blocks,
+                stats.variables,
+              )
+            : undefined;
+        },
+      });
     }
 
     return [...byLabel.values()];
-  }, [library, hostRunbookId, t]);
+  }, [library, hostRunbookId, readRunbookStats, language, t]);
 
   const changeSource = (destination: SyncDestination) =>
     updateBlock(blockId, BlockType.RUNBOOK, {

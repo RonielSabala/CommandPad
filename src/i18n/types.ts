@@ -186,6 +186,7 @@ export interface Messages {
     unresolvedLabel: string;
     emptyLabel: string;
     emptyPath: string;
+    choiceStats: (size: string, blocks: number, variables: number) => string;
     noSource: string;
     loading: string;
     missing: string;

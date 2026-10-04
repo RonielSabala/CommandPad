@@ -55,6 +55,7 @@ import type {
   PanelState,
   RunbookContent,
   RunbookEntry,
+  RunbookStats,
   RunbookSync,
   Tab,
   Variable,
@@ -123,7 +124,11 @@ import {
   uniqueCopyKey,
 } from "@/utils/resolution";
 import { displayLabel, getRunbookLabel } from "@/utils/runbook";
-import { buildRunbookSource, parseRunbookSource } from "@/utils/runbookSource";
+import {
+  buildRunbookSource,
+  getRunbookStats,
+  parseRunbookSource,
+} from "@/utils/runbookSource";
 import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
 import {
   entryId,
@@ -325,6 +330,7 @@ export interface StoreState {
   syncRunbookNow: (id: string) => Promise<void>;
   unlinkRunbookSync: (id: string) => void;
 
+  readRunbookStats: (runbookId: string) => Promise<RunbookStats | null>;
   loadEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
   refreshEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
   setRunbookEmbedView: (blockId: string, view: RunbookEmbedView) => void;
@@ -1041,12 +1047,16 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
     };
 
+    const storedStats = new Map<string, Promise<RunbookStats | null>>();
+    const tabStats = new WeakMap<Tab, RunbookStats>();
+
     const writeRunbookContent = async (
       runbookId: string,
       content: RunbookContent,
     ) => {
       await contentDb.put(runbookId, content);
       markRunbookSecured(runbookId, holdsSecrets(content));
+      storedStats.delete(runbookId);
       invalidateEmbed(localSourceKey(runbookId));
     };
 
@@ -2127,6 +2137,36 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         queuedSyncContent.set(id, { json: runbookJson(content), content });
         await flushQueuedSyncs();
+      },
+
+      readRunbookStats: (runbookId) => {
+        const openTab = get().tabs.find((t) => t.runbookId === runbookId);
+        if (openTab) {
+          let stats = tabStats.get(openTab);
+          if (!stats) {
+            stats = getRunbookStats(tabContent(openTab));
+            tabStats.set(openTab, stats);
+          }
+
+          return Promise.resolve(stats);
+        }
+
+        let stats = storedStats.get(runbookId);
+        if (stats) {
+          return stats;
+        }
+
+        stats = contentDb
+          .get(runbookId)
+          .then((content) => (content ? getRunbookStats(content) : null))
+          .catch((error) => {
+            storedStats.delete(runbookId);
+            console.warn("Failed to measure runbook:", runbookId, error);
+            return null;
+          });
+
+        storedStats.set(runbookId, stats);
+        return stats;
       },
 
       loadEmbeddedRunbook: async (source) => {

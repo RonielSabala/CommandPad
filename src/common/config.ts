@@ -308,6 +308,15 @@ export const ZipConfig = {
   DOS_EPOCH_YEAR: 1980,
 } as const;
 
+export const Utf8Config = {
+  ONE_BYTE_MAX: 0x7f,
+  TWO_BYTE_MAX: 0x7ff,
+  SURROGATE_MIN: 0xd800,
+  SURROGATE_MAX: 0xdfff,
+  SURROGATE_BYTES: 2,
+  THREE_BYTES: 3,
+} as const;
+
 export const FileSizeConfig = {
   BASE: 1024,
   UNITS: ["B", "KB", "MB", "GB"],

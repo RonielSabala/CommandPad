@@ -196,6 +196,15 @@ export const en: Messages = {
     unresolvedLabel: "No runbook in your library has this label.",
     emptyLabel: "Type the label of a runbook in your library.",
     emptyPath: "Type the path of a runbook in the cloud.",
+    choiceStats: (size, blocks, variables) =>
+      [
+        size,
+        blocks > 0 && `${blocks} ${blocks === 1 ? "block" : "blocks"}`,
+        variables > 0 &&
+          `${variables} ${variables === 1 ? "variable" : "variables"}`,
+      ]
+        .filter(Boolean)
+        .join(" · "),
     noSource: "No runbook is embedded here.",
     loading: "Loading the runbook...",
     missing: "No runbook was found at this path.",

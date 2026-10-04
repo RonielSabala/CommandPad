@@ -124,6 +124,12 @@ export interface RunbookEntry {
   vault?: VaultRecord;
 }
 
+export interface RunbookStats {
+  bytes: number;
+  blocks: number;
+  variables: number;
+}
+
 export interface RunbookContent {
   blocks: Block[];
   variables: Variable[];

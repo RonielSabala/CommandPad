@@ -208,6 +208,15 @@ export const es: Messages = {
     unresolvedLabel: "Ningún runbook de tu biblioteca tiene esta etiqueta.",
     emptyLabel: "Escribe la etiqueta de un runbook de tu biblioteca.",
     emptyPath: "Escribe la ruta de un runbook en la nube.",
+    choiceStats: (size, blocks, variables) =>
+      [
+        size,
+        blocks > 0 && `${blocks} ${blocks === 1 ? "bloque" : "bloques"}`,
+        variables > 0 &&
+          `${variables} ${variables === 1 ? "variable" : "variables"}`,
+      ]
+        .filter(Boolean)
+        .join(" · "),
     noSource: "Aquí no hay ningún runbook incrustado.",
     loading: "Cargando el runbook...",
     missing: "No se encontró ningún runbook en esta ruta.",
