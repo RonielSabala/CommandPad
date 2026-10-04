@@ -1300,7 +1300,7 @@ If something goes wrong, undo it in this order:
       secrets: (unlock) =>
         `If the embedded runbook holds encrypted secrets, press **${unlock}** and enter its passphrase. Once per session is enough: every other runbook embedding the same one reuses the open vault.`,
       limits:
-        "Embeds can nest a few levels deep, and a runbook that ends up embedding itself is shown only once. A Markdown or text export writes the block as a reference to what it embeds, never its content.",
+        "Embeds can nest a few levels deep, and a runbook that ends up embedding itself is shown only once. A Markdown or text export, and copying a runbook as Markdown, writes the embedded blocks in place with your overrides applied. Only an embed that can't be read is written as a reference to what it embeds.",
       demoDeployTitle: "Deploy the API",
       demoReleaseTitle: "Release 2.4",
     },

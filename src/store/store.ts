@@ -101,7 +101,11 @@ import {
 } from "@/services/vault";
 import { debounce } from "@/utils/debounce";
 import { downloadBlob } from "@/utils/download";
-import { localSourceKey, type EmbedSource } from "@/utils/embeddedRunbook";
+import {
+  localSourceKey,
+  resolveEmbedSource,
+  type EmbedSource,
+} from "@/utils/embeddedRunbook";
 import {
   buildMarkdownExport,
   buildSecuredRunbookExportContent,
@@ -109,6 +113,7 @@ import {
   runExport,
   stripJsonExtension,
   withJsonExtension,
+  type EmbeddedReader,
 } from "@/utils/export";
 import { generateId } from "@/utils/id";
 import { openImportDialog } from "@/utils/importTrigger";
@@ -902,6 +907,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
                 ExportFormat.JSON,
                 runbookId,
                 content,
+                readEmbeddedForExport,
               ),
               MimeType.JSON,
               link.folderId,
@@ -1386,6 +1392,33 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       return readyEmbed(
         parseRunbookSource(await client.readFile(file), previous ?? undefined),
       );
+    };
+
+    const readEmbeddedForExport: EmbeddedReader = async (block) => {
+      const source = resolveEmbedSource(get().runbookLibrary, block);
+      if (!source) {
+        return null;
+      }
+
+      const cached = get().embeddedRunbooks[source.key]?.content;
+      try {
+        const { content } = source.cloud
+          ? cached
+            ? { content: cached }
+            : await fetchCloudEmbed(source.cloud, null)
+          : await fetchLocalEmbed(source.local.id);
+
+        return content
+          ? {
+              key: source.key,
+              scope: source.local?.id ?? source.key,
+              content,
+            }
+          : null;
+      } catch (error) {
+        console.error("Failed to read embedded runbook", source.key, error);
+        return null;
+      }
     };
 
     /** Signs in unless already signed in. */
@@ -3632,7 +3665,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         // Local export
         if (destination === SyncDestination.LOCAL) {
           set({ exportModalOpen: false });
-          await runExport(format, scope, content, fullName);
+          await runExport(
+            format,
+            scope,
+            content,
+            fullName,
+            readEmbeddedForExport,
+          );
           return;
         }
 
@@ -3669,7 +3708,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
           await client.writeFile(
             fullName,
-            await buildSecuredRunbookExportContent(format, scope, content),
+            await buildSecuredRunbookExportContent(
+              format,
+              scope,
+              content,
+              readEmbeddedForExport,
+            ),
             FilePickerConfig[format].mimeType,
             folderId,
           );
@@ -4462,6 +4506,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const text = await buildMarkdownExport(
           active?.runbookId ?? "",
           tabContent(active),
+          readEmbeddedForExport,
         );
 
         await navigator.clipboard.writeText(text);

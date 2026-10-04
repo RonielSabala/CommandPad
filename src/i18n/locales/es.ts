@@ -1325,7 +1325,7 @@ Si algo sale mal, deshazlo en este orden:
       secrets: (unlock) =>
         `Si el runbook incrustado guarda secretos cifrados, pulsa **${unlock}** e introduce su frase de contraseña. Basta una vez por sesión: cualquier otro runbook que incruste el mismo reutiliza la bóveda abierta.`,
       limits:
-        "Los runbooks incrustados pueden anidarse unos pocos niveles, y un runbook que acaba incrustándose a sí mismo se muestra una sola vez. Al exportar como Markdown o texto, un bloque de runbook se escribe como una referencia a lo que incrusta, nunca como su contenido.",
+        "Los runbooks incrustados pueden anidarse unos pocos niveles, y un runbook que acaba incrustándose a sí mismo se muestra una sola vez. Al exportar como Markdown o texto, o al copiar un runbook como Markdown, los bloques incrustados se escriben en su lugar con tus sobrescrituras aplicadas. Solo un runbook incrustado que no se puede leer se escribe como una referencia a lo que incrusta.",
       demoDeployTitle: "Desplegar la API",
       demoReleaseTitle: "Versión 2.4",
     },

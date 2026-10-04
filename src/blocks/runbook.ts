@@ -59,7 +59,12 @@ export const runbookBlockDefinition: BlockDefinition<typeof BlockType.RUNBOOK> =
       ...(block.collapsed === true ? { collapsed: true } : {}),
     }),
 
-    toMarkdown: (block) => {
+    toMarkdown: (block, context) => {
+      const embedded = context.embedded(block);
+      if (embedded !== null) {
+        return embedded;
+      }
+
       const target = block.cloud
         ? `${block.cloud.provider}:${block.cloud.path}`
         : block.label.trim();

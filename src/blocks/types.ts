@@ -1,5 +1,5 @@
 import type { BlockType } from "@/common/enums";
-import type { Block, BlockOfType } from "@/common/types";
+import type { Block, BlockOfType, RunbookBlock } from "@/common/types";
 
 export interface BlockJsonSchema {
   properties: Record<string, unknown>;
@@ -28,6 +28,8 @@ export interface BlockDefinition<T extends BlockType = BlockType> {
 export interface BlockMarkdownContext {
   /** Resolve variable references in command-grammar text. */
   resolve(text: string): string;
+  /** The embedded runbook's own markdown. */
+  embedded(block: RunbookBlock): string | null;
 }
 
 export interface BlockCommandTexts<T extends BlockType> {
