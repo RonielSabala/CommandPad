@@ -13,6 +13,10 @@
   max-width: 100%;
 }
 
+body.read-mode .runbook-block {
+  gap: 0;
+}
+
 /* Header */
 
 .runbook-block-header {
