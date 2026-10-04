@@ -54,8 +54,8 @@
   grid-area: 1 / 2 / 2 / 3;
   align-self: center;
   position: sticky;
-  top: var(--space-4);
-  bottom: var(--space-4);
+  top: var(--sticky-inset-top, var(--sticky-inset));
+  bottom: var(--sticky-inset);
   display: flex;
   align-items: center;
   gap: var(--space-4);

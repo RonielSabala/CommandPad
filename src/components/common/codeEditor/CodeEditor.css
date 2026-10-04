@@ -58,7 +58,7 @@
   grid-area: 1 / 1 / -1 / -1;
   align-self: start;
   position: sticky;
-  top: var(--space-2);
+  top: calc(var(--sticky-inset-top, var(--sticky-inset)) - var(--space-2));
   z-index: var(--z-sticky);
   display: flex;
   align-items: center;

@@ -1,6 +1,10 @@
 .runbook-block {
   --block-backdrop: var(--color-bg);
   --runbook-block-padding: var(--space-6) var(--space-8);
+  --runbook-block-header-height: var(--space-16);
+  --sticky-inset-top: calc(
+    var(--sticky-inset) + var(--runbook-block-header-height) + var(--space-6)
+  );
 
   display: flex;
   flex-direction: column;
@@ -21,11 +25,12 @@ body.read-mode .runbook-block {
 
 .runbook-block-header {
   position: sticky;
-  top: var(--space-4);
+  top: var(--sticky-inset);
   z-index: var(--z-docked);
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-height: var(--runbook-block-header-height);
 }
 
 .runbook-block-header > .provider-select {

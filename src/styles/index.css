@@ -324,8 +324,8 @@ body {
 
 .item-control :is(.drag-handle, .btn) {
   position: sticky;
-  top: var(--space-4);
-  bottom: var(--space-4);
+  top: var(--sticky-inset-top, var(--sticky-inset));
+  bottom: var(--sticky-inset);
   pointer-events: auto;
 }
 

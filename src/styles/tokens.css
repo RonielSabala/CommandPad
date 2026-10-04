@@ -174,10 +174,13 @@
   --docs-page-progress-height: 0.1875rem;
 
   /* --- COMPOUND TOKENS --- */
+
   --border-standard: 1px solid var(--color-border);
   --border-dashed: var(--space-1) dashed var(--accent);
+
   --transition-fast: 0.15s;
   --transition-base: 0.2s;
+
   --code-line-height-base: calc(
     var(--text-base) * var(--code-line-height-ratio)
   );
@@ -187,6 +190,8 @@
   --code-line-height-small: calc(
     var(--text-sm) * var(--code-line-height-ratio)
   );
+
+  --sticky-inset: var(--space-4);
 
   /* Clamping a surface at a line limit */
   --clamp-line-height: var(--code-line-height-base);

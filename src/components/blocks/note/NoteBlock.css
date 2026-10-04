@@ -11,7 +11,7 @@
 
 .note-style-row {
   position: sticky;
-  top: var(--space-4);
+  top: var(--sticky-inset-top, var(--sticky-inset));
   z-index: var(--z-sticky);
   display: flex;
   justify-self: start;
