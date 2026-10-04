@@ -1330,7 +1330,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
     /** Marks what an embed loaded as due a reload. */
     const invalidateEmbed = (key: string) => {
       embedRequests.delete(key);
+
       const entry = get().embeddedRunbooks[key];
+      if (entry?.stale) {
+        return;
+      }
 
       setEmbeddedRunbook(
         key,
@@ -1761,6 +1765,16 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             !tabs.some((t) => t.runbookId === tab.runbookId)
           ) {
             declinedVaultSetup.delete(tab.runbookId);
+
+            // Update the embed runbook block that read this tab
+            const key = localSourceKey(tab.runbookId);
+            if (key in state.embeddedRunbooks) {
+              embedRequests.delete(key);
+              setEmbeddedRunbook(key, {
+                status: EmbeddedRunbookStatus.READY,
+                content: tabContent(tab),
+              });
+            }
           }
         }
 
