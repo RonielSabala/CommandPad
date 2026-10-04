@@ -303,8 +303,7 @@ body {
 
 /* --- ITEM CONTROLS --- */
 
-.item-drag-handle,
-.item-actions {
+.item-control {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -323,16 +322,15 @@ body {
   left: calc(100% + var(--space-4));
 }
 
-.item-drag-handle .drag-handle,
-.item-actions .btn {
+.item-control :is(.drag-handle, .btn) {
   position: sticky;
   top: var(--space-4);
   bottom: var(--space-4);
   pointer-events: auto;
 }
 
-:hover > :is(.item-drag-handle, .item-actions),
-.item-actions.menu-open {
+:hover > .item-control,
+.item-control.menu-open {
   opacity: 1;
 }
 
@@ -379,8 +377,7 @@ body.select-key-held:not(.read-mode) .select-key-inert {
   pointer-events: none;
 }
 
-body.select-key-held:not(.read-mode)
-  :is(.select-key-hidden, .item-drag-handle, .item-actions) {
+body.select-key-held:not(.read-mode) :is(.select-key-hidden, .item-control) {
   opacity: 0;
   pointer-events: none;
 }
@@ -398,10 +395,6 @@ body.read-mode textarea {
   visibility: hidden;
 }
 
-body.read-mode .drag-handle {
-  display: none;
-}
-
-body.read-mode :is(.item-drag-handle, .item-actions) {
+body.read-mode :is(.item-control, .drag-handle) {
   display: none;
 }

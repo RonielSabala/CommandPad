@@ -10,7 +10,7 @@ import { lasso } from "./lasso";
 import { SELECTION_GROUPS } from "./selectionGroups";
 
 /** A click on one of these controls must not clear the selection. */
-const KEEP_SELECTION_SELECTOR = `.${CssClass.ITEM_ACTIONS}, .${CssClass.ITEM_DRAG_HANDLE}`;
+const KEEP_SELECTION_SELECTOR = `.${CssClass.ITEM_CONTROL}`;
 
 export function useLassoSelection(
   root: Document | HTMLElement | null,

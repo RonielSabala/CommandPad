@@ -32,7 +32,7 @@
   display: none;
 }
 
-.minimap-mirror :is(.item-drag-handle, .item-actions) {
+.minimap-mirror .item-control {
   display: none;
 }
 

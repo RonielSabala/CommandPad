@@ -58,6 +58,7 @@ export const CssClass = {
 
   // Controls beside a block/variable item
 
+  ITEM_CONTROL: "item-control",
   ITEM_ACTIONS: "item-actions",
   ITEM_DRAG_HANDLE: "item-drag-handle",
   RUNBOOK_EMBED_ACTIONS: "runbook-embed-actions",
