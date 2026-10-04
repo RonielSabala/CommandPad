@@ -776,6 +776,7 @@ export const es: Messages = {
       [DocsSectionId.NOTE_BLOCK]: "Bloque de nota",
       [DocsSectionId.IMAGE_BLOCK]: "Bloque de imagen",
       [DocsSectionId.RUNBOOK_BLOCK]: "Bloque de runbook",
+      [DocsSectionId.EMBEDDING_RUNBOOKS]: "Incrustar runbooks",
       [DocsSectionId.DIVIDER_BLOCK]: "Bloque divisor",
       [DocsSectionId.MULTI_SELECT]: "Selección múltiple",
       [DocsSectionId.READ_MODE]: "Modo lectura",
@@ -1313,20 +1314,22 @@ Si algo sale mal, deshazlo en este orden:
       demoNote: "Escribe aquí y observa cómo el divisor crece o se encoge.",
     },
     runbookBlock: {
+      teaser: (embeddingSection, tabsSection) =>
+        `Queda un bloque más: el bloque de runbook, que muestra otro runbook completo dentro de este. Está hecho de casi todo lo demás de CommandPad (variables, pestañas, tu biblioteca de runbooks), así que tiene su propia sección, **${embeddingSection}**, justo después de **${tabsSection}**. Sigue en orden. Cuando llegues habrás usado cada pieza de la que está hecho, y su demo se explicará sola.`,
       intro:
-        "Un bloque de runbook muestra **otro runbook** dentro de este. Escribe una vez los pasos que repites en todas partes (un despliegue, una copia de seguridad, una comprobación de estado) e incrústalos donde hagan falta: una sola copia que mantener al día. Para elegir el runbook, escribe su **etiqueta** en la cabecera del bloque. El cuadro sugiere todos los runbooks de tu biblioteca, y una etiqueta que no coincide con ninguno recibe un borde rojo.",
+        "Un bloque de runbook muestra otro runbook dentro de este. Escribe una sola vez un procedimiento que repites en varios sitios, como un despliegue o una copia de seguridad, e incrústalo donde haga falta. Para elegir el runbook, escribe su etiqueta en la cabecera del bloque: el cuadro sugiere todos los runbooks de tu biblioteca.",
       demoHint: (showVariables) =>
-        `Este runbook de versión incrusta el runbook de despliegue, apuntado a \`prod\`. Pulsa **${showVariables}** (el \`{}\` de la cabecera del bloque), cambia \`ENV\` a \`dev\` y vuelve atrás: todos los comandos incrustados lo siguen. La flecha junto a \`ENV\` descarta tu valor y recupera el del propio runbook de despliegue.`,
+        `La primera pestaña es un runbook de versión que incrusta el runbook de despliegue de la segunda. Pulsa **${showVariables}** en la cabecera del bloque, cambia \`ENV\` de \`prod\` a \`dev\` y vuelve: los comandos incrustados lo siguen. Después edita un comando en la pestaña de despliegue y regresa a la primera. El cambio ya está ahí.`,
       overrides:
-        "Lo que escribes ahí es una **sobrescritura**: vive en este bloque y nunca toca el runbook incrustado, así que cada runbook que lo incrusta indica solo lo que cambia. Un valor puede referenciar las variables de este runbook (`{STAGE}`), una opción se elige de la propia lista de la variable, y una sobrescritura construida a partir de un secreto sigue enmascarada.",
+        "Un valor que fijas en el bloque es una sobrescritura. Pertenece a este bloque y nunca cambia el runbook incrustado, así que cada runbook que lo incrusta indica solo lo que cambia. Puede referenciar las variables de este runbook, y la flecha a su lado la descarta.",
       readOnly: (open) =>
-        `Los bloques incrustados son de solo lectura: puedes copiar un comando o abrir una imagen a pantalla completa, pero no editar nada. Para cambiar el propio runbook, pulsa **${open}**. Todos los runbooks que lo incrustan recogen el cambio, y renombrarlo nunca rompe el enlace. En el modo lectura la cabecera conserva solo **${open}** y el cambio entre bloques y variables, y el bloque se queda en la vista que estaba mostrando.`,
+        `Los bloques incrustados son de solo lectura: puedes copiar un comando o ver una imagen, pero no editarlos. Para cambiar el propio runbook, pulsa **${open}**. Todos los runbooks que lo incrustan recogen el cambio, y renombrarlo no rompe el enlace.`,
       cloud: (local, signIn, refresh) =>
-        `El runbook no tiene que estar en tu biblioteca. Cambia **${local}** por un proveedor de nube y escribe la ruta del archivo dentro de la carpeta de la aplicación (\`ops/deploy.json\`, el \`.json\` es opcional). El archivo se lee, nunca se importa, y se conserva durante la sesión: **${refresh}** lo vuelve a leer. Mientras no tengas la sesión iniciada, el bloque espera a que pulses **${signIn}** en lugar de abrir una ventana emergente por su cuenta.`,
+        `El runbook también puede estar en la nube. Cambia **${local}** por un proveedor y escribe la ruta del archivo, como \`ops/deploy.json\`. El archivo se lee, no se importa, y **${refresh}** lo vuelve a leer. Mientras no hayas iniciado sesión, el bloque espera a que pulses **${signIn}**.`,
       secrets: (unlock) =>
-        `Si el runbook incrustado guarda secretos cifrados, pulsa **${unlock}** e introduce su frase de contraseña. Basta una vez por sesión: cualquier otro runbook que incruste el mismo reutiliza la bóveda abierta.`,
+        `Si el runbook incrustado tiene secretos cifrados, pulsa **${unlock}** e introduce su frase de contraseña. Basta una vez por sesión.`,
       limits:
-        "Los runbooks incrustados pueden anidarse unos pocos niveles, y un runbook que acaba incrustándose a sí mismo se muestra una sola vez. Al exportar como Markdown o texto, o al copiar un runbook como Markdown, los bloques incrustados se escriben en su lugar con tus sobrescrituras aplicadas. Solo un runbook incrustado que no se puede leer se escribe como una referencia a lo que incrusta.",
+        "Los runbooks incrustados pueden anidarse unos pocos niveles, y uno que acabaría incrustándose a sí mismo se muestra una sola vez. Las exportaciones a Markdown y texto escriben los bloques incrustados en su lugar, con tus sobrescrituras aplicadas.",
       demoDeployTitle: "Desplegar la API",
       demoReleaseTitle: "Versión 2.4",
     },

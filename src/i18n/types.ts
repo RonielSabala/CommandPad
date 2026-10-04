@@ -727,6 +727,7 @@ export interface Messages {
       demoNote: string;
     };
     runbookBlock: {
+      teaser: (embeddingSection: string, tabsSection: string) => string;
       intro: string;
       demoHint: (showVariables: string) => string;
       overrides: string;

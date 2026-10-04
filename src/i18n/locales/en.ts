@@ -757,6 +757,7 @@ export const en: Messages = {
       [DocsSectionId.NOTE_BLOCK]: "Note block",
       [DocsSectionId.IMAGE_BLOCK]: "Image block",
       [DocsSectionId.RUNBOOK_BLOCK]: "Runbook block",
+      [DocsSectionId.EMBEDDING_RUNBOOKS]: "Embedding runbooks",
       [DocsSectionId.DIVIDER_BLOCK]: "Divider block",
       [DocsSectionId.MULTI_SELECT]: "Multi-select",
       [DocsSectionId.READ_MODE]: "Read mode",
@@ -1287,20 +1288,22 @@ If something goes wrong, undo it in this order:
       demoNote: "Type here and watch how the divider grows or shrinks.",
     },
     runbookBlock: {
+      teaser: (embeddingSection, tabsSection) =>
+        `There is one more block: the runbook block, which shows a whole other runbook inside this one. It's made of nearly everything else in CommandPad (variables, tabs, your runbook library), so it gets its own section, **${embeddingSection}**, right after **${tabsSection}**. Keep going in order. By the time you get there you'll have used every piece it's built from, and its demo will explain itself.`,
       intro:
-        "A runbook block shows **another runbook** inside this one. Write the steps you repeat everywhere (a deploy, a backup, a health check) once, then embed them wherever they're needed: one copy to keep up to date. To pick the runbook, type its **label** in the block's header. The box suggests every runbook in your library, and a label that matches nothing gets a red border.",
+        "A runbook block shows another runbook inside this one. Write a procedure you repeat in several places once, such as a deploy or a backup, and embed it wherever it's needed. To pick the runbook, type its label in the block's header: the box suggests every runbook in your library.",
       demoHint: (showVariables) =>
-        `This release runbook embeds the deploy runbook, aimed at \`prod\`. Press **${showVariables}** (the \`{}\` in the block's header), change \`ENV\` to \`dev\` and switch back: every embedded command follows. The arrow beside \`ENV\` drops your value for the deploy runbook's own.`,
+        `The first tab is a release runbook that embeds the deploy runbook from the second tab. Press **${showVariables}** in the block's header, change \`ENV\` from \`prod\` to \`dev\` and switch back: the embedded commands follow. Then edit a command in the deploy tab and come back to the first one. The change is already there.`,
       overrides:
-        "What you type there is an **override**: it lives on this block and never touches the embedded runbook, so each runbook that embeds it states only what differs. A value can reference this runbook's own variables (`{STAGE}`), an option is picked from the variable's own list, and an override built from a secret stays masked.",
+        "A value you set on the block is an override. It belongs to this block and never changes the embedded runbook, so each runbook that embeds it only states what differs. It can reference this runbook's own variables, and the arrow beside it drops it again.",
       readOnly: (open) =>
-        `The embedded blocks are read-only: copy a command or open an image full screen, but edit nothing. To change the runbook itself, press **${open}**. Every runbook that embeds it picks up the edit, and renaming it never breaks the link. In read mode the header keeps only **${open}** and the switch between blocks and variables, and the block stays on whichever one it was showing.`,
+        `Embedded blocks are read-only: you can copy a command or view an image, but not edit them. To change the runbook itself, press **${open}**. Every runbook that embeds it picks up the edit, and renaming it doesn't break the link.`,
       cloud: (local, signIn, refresh) =>
-        `The runbook doesn't have to be in your library. Switch **${local}** to a cloud provider and type the file's path in the app's folder (\`ops/deploy.json\`, the \`.json\` is optional). The file is read, never imported, and kept for the session: **${refresh}** reads it again. While you're signed out, the block waits for you to press **${signIn}** rather than opening a popup on its own.`,
+        `The runbook can also live in the cloud. Switch **${local}** to a provider and type the file's path, such as \`ops/deploy.json\`. The file is read, not imported, and **${refresh}** reads it again. While you're signed out, the block waits for you to press **${signIn}**.`,
       secrets: (unlock) =>
-        `If the embedded runbook holds encrypted secrets, press **${unlock}** and enter its passphrase. Once per session is enough: every other runbook embedding the same one reuses the open vault.`,
+        `If the embedded runbook has encrypted secrets, press **${unlock}** and enter its passphrase. Once per session is enough.`,
       limits:
-        "Embeds can nest a few levels deep, and a runbook that ends up embedding itself is shown only once. A Markdown or text export, and copying a runbook as Markdown, writes the embedded blocks in place with your overrides applied. Only an embed that can't be read is written as a reference to what it embeds.",
+        "Embeds can nest a few levels deep, and a runbook that would end up embedding itself is shown only once. Markdown and text exports write the embedded blocks in place, with your overrides applied.",
       demoDeployTitle: "Deploy the API",
       demoReleaseTitle: "Release 2.4",
     },

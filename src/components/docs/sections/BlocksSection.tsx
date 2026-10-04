@@ -14,8 +14,6 @@ import {
   demoDivider,
   demoImage,
   demoNote,
-  demoRunbook,
-  demoVariable,
 } from "../demos/demoSeeds";
 import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
@@ -194,57 +192,6 @@ export function DividerBlockDocs() {
       >
         <BlocksList />
       </DemoWorkspace>
-    </>
-  );
-}
-
-export function RunbookBlockDocs() {
-  const t = useTranslation();
-  const docs = t.docs.runbookBlock;
-
-  return (
-    <>
-      <Prose text={docs.intro} />
-      <Prose text={docs.demoHint(t.runbookBlock.showVariables)} />
-      <DemoWorkspace
-        tabs={[
-          {
-            blocks: [
-              demoNote(docs.demoReleaseTitle, NoteStyle.HEADING),
-              demoRunbook(docs.demoDeployTitle, { ENV: "prod" }),
-            ],
-          },
-        ]}
-        library={[
-          {
-            blocks: [
-              demoNote(docs.demoDeployTitle, NoteStyle.HEADING),
-              demoCommand("ssh deploy@{HOST}"),
-              demoCommand(
-                "kubectl --context {ENV} rollout restart deployment/{SERVICE}",
-              ),
-            ],
-            variables: [
-              demoVariable("ENV", "staging"),
-              demoVariable("HOST", "api.{ENV}.example.com"),
-              demoVariable("SERVICE", "api"),
-            ],
-          },
-        ]}
-      >
-        <BlocksList />
-      </DemoWorkspace>
-      <Prose text={docs.overrides} />
-      <Prose text={docs.readOnly(t.runbookBlock.open)} />
-      <Prose
-        text={docs.cloud(
-          t.destinationModal.local,
-          t.runbookBlock.signIn,
-          t.runbookBlock.refresh,
-        )}
-      />
-      <Prose text={docs.secrets(t.runbookBlock.unlock)} />
-      <Prose text={docs.limits} />
     </>
   );
 }

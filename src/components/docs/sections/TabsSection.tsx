@@ -23,7 +23,8 @@ const DEMO_RUNBOOK_VIEWS: Record<RunbookView, ComponentType> = {
   [RunbookView.VARIABLES]: RunbookVariables,
 };
 
-function DemoRunbookPanel() {
+/** The active demo tab's runbook. */
+export function DemoRunbookPanel() {
   const view = useStore(getRunbookView);
   const View = DEMO_RUNBOOK_VIEWS[view];
 
