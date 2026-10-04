@@ -231,6 +231,7 @@ function EmbeddedVariable({
               CssClass.VARIABLE_EDITOR_KEY,
               "embedded-variable-key",
               "no-ligatures",
+              !key && "is-empty",
               isConstantVariableKey(key) && CssClass.IS_CONSTANT,
             )}
             {...tooltip(
@@ -238,7 +239,7 @@ function EmbeddedVariable({
               TooltipVariant.CODE,
             )}
           >
-            {key}
+            {key || t.variables.keyPlaceholder}
           </div>
 
           {overridden && (

@@ -14,6 +14,10 @@
   cursor: default;
 }
 
+.embedded-variable-key.is-empty {
+  color: var(--color-text-muted);
+}
+
 .embedded-variable-reset {
   flex: none;
 }
