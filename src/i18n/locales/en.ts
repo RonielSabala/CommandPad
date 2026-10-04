@@ -158,7 +158,7 @@ export const en: Messages = {
     close: "Close",
     closeOthers: "Close others",
     closeAll: "Close all",
-    unresolved: "This runbook has unresolved variables",
+    closeUnresolvedTab: "Close tab (this runbook has unresolved variables)",
   },
   source: {
     openSource: "Open source file",
@@ -877,7 +877,7 @@ If something goes wrong, undo it in this order:
       labelDemo:
         "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, close one, and open the source file to see a tab's runbook as JSON.",
       unresolvedMarker:
-        "A red dot before a tab's name means that runbook holds at least one reference that resolves to nothing, so a runbook missing a value stands out without opening it. The third tab above wears one: open its variables and give `HOST` a value, and the dot goes as soon as every reference resolves.",
+        "When a tab's close button is a solid red dot, that runbook holds at least one reference that resolves to nothing, so a runbook missing a value stands out without opening it. Point at the dot and it turns back into the close button. The third tab above wears one: open its variables and give `HOST` a value, and the dot goes as soon as every reference resolves.",
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",

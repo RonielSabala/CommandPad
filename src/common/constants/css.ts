@@ -24,6 +24,7 @@ export const CssClass = {
   IS_SECRET: "is-secret",
   IS_UNUSED: "is-unused",
   IS_CONSTANT: "is-constant",
+  IS_UNRESOLVED: "is-unresolved",
 
   VARIABLES_LIST: "variables-list",
   VARIABLE_ITEM: "variable-item",

@@ -74,6 +74,7 @@ export function TabItem({ tab, onOpenMenu }: Props) {
     blockDropTarget && "block-drop-target",
   );
 
+  const closeLabel = unresolved ? t.tabs.closeUnresolvedTab : t.tabs.closeTab;
   return (
     <div
       className={tabClass}
@@ -166,18 +167,14 @@ export function TabItem({ tab, onOpenMenu }: Props) {
         reorderTabs(srcId, tabId, !isLeftHalf(event));
       }}
     >
-      {unresolved && (
-        <span
-          className="tab-unresolved"
-          {...tooltip(t.tabs.unresolved)}
-          aria-label={t.tabs.unresolved}
-        />
-      )}
       <span className="tab-label">{tabLabel}</span>
       <button
-        className="tab-close"
-        aria-label={t.tabs.closeTab}
-        {...tooltip(t.tabs.closeTab)}
+        className={classNames(
+          "tab-close",
+          unresolved && CssClass.IS_UNRESOLVED,
+        )}
+        aria-label={closeLabel}
+        {...tooltip(closeLabel)}
         onClick={(event) => {
           event.stopPropagation();
           closeTab(tabId);

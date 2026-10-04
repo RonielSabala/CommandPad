@@ -227,7 +227,7 @@ export function RunbookBlock({
               ref={pathRef}
               className={classNames(
                 "runbook-block-input",
-                unresolved && "is-unresolved",
+                unresolved && CssClass.IS_UNRESOLVED,
               )}
               style={
                 {
@@ -252,7 +252,7 @@ export function RunbookBlock({
               modelId={`${CodeModelScope.RUNBOOK_LABEL}/${blockId}`}
               className={classNames(
                 "runbook-block-label",
-                unresolved && "is-unresolved",
+                unresolved && CssClass.IS_UNRESOLVED,
               )}
               value={label}
               language={EditorLanguage.CHOICE}

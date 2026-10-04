@@ -159,7 +159,7 @@ export interface Messages {
     close: string;
     closeOthers: string;
     closeAll: string;
-    unresolved: string;
+    closeUnresolvedTab: string;
   };
   source: {
     openSource: string;
