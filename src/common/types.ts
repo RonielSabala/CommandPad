@@ -99,6 +99,7 @@ export interface Tab {
   blocks: Block[];
   variables: Variable[];
   variableSections: VariableSection[];
+  view: RunbookView;
   scrollTop: Record<RunbookView, number>;
 }
 

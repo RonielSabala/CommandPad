@@ -12,7 +12,7 @@ import {
   SunIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import { getActiveTab, getRunbookView, useStore } from "@/store/store";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -36,7 +36,7 @@ export function Header() {
     (state) => !(getActiveTab(state)?.blocks.length ?? 0),
   );
   const inVariables = useStore(
-    (state) => state.runbookView === RunbookView.VARIABLES,
+    (state) => getRunbookView(state) === RunbookView.VARIABLES,
   );
   const hasSections = useStore(
     (state) => !!getActiveTab(state)?.variableSections.length,

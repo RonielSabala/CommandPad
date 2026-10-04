@@ -1,6 +1,11 @@
 import { createDefaultScrollTop, RunbookConfig } from "@/common/config";
 import { DEFAULT_COMMAND_LANGUAGE } from "@/common/editorConfig";
-import { BlockType, type CodeLanguage, NoteStyle } from "@/common/enums";
+import {
+  BlockType,
+  type CodeLanguage,
+  NoteStyle,
+  RunbookView,
+} from "@/common/enums";
 import type {
   Block,
   RunbookContent,
@@ -164,6 +169,7 @@ export function buildDemoSeed(
       label: entry.label,
       runbookId: entry.id,
       ...contentSeed[entry.id],
+      view: RunbookView.PREVIEW,
       scrollTop: createDefaultScrollTop(),
     };
   });

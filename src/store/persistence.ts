@@ -93,7 +93,6 @@ const isCloudFolderPath = (value: unknown): value is CloudFolderRef[] =>
 
 interface PersistedUiState {
   mode: AppMode;
-  runbookView: RunbookView;
   theme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
@@ -115,7 +114,6 @@ export function saveUiState(ui: PersistedUiState): void {
       StorageKey.UI_STATE,
       JSON.stringify({
         mode: ui.mode,
-        runbookView: ui.runbookView,
         theme: ui.theme,
         language: ui.language,
         spellcheckEnabled: ui.spellcheckEnabled,
@@ -145,9 +143,6 @@ export function loadUiState(): Partial<PersistedUiState> | null {
 
     return {
       mode: saved.mode === AppMode.READ ? AppMode.READ : AppMode.EDIT,
-      runbookView: isEnumValue(RunbookView, saved.runbookView)
-        ? saved.runbookView
-        : RunbookView.PREVIEW,
       theme: saved.theme === Theme.LIGHT ? Theme.LIGHT : Theme.DARK,
       language: isLanguage(saved.language) ? saved.language : detectLanguage(),
       spellcheckEnabled: saved.spellcheckEnabled === true,
@@ -192,7 +187,16 @@ export function loadUiState(): Partial<PersistedUiState> | null {
 
 interface PersistedTabs {
   activeTabId: string | null;
-  tabOrder: { tabId: string; runbookId: string | null; scrollTop?: unknown }[];
+  tabOrder: {
+    tabId: string;
+    runbookId: string | null;
+    view?: unknown;
+    scrollTop?: unknown;
+  }[];
+}
+
+export function restoreRunbookView(value: unknown): RunbookView {
+  return isEnumValue(RunbookView, value) ? value : RunbookView.PREVIEW;
 }
 
 export function restoreScrollTop(value: unknown): Record<RunbookView, number> {
@@ -219,6 +223,7 @@ export function saveTabsMeta(tabs: Tab[], activeTabId: string | null): void {
         tabOrder: tabs.map((tab) => ({
           tabId: tab.id,
           runbookId: tab.runbookId,
+          view: tab.view,
           scrollTop: tab.scrollTop,
         })),
       }),

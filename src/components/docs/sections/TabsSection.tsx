@@ -4,7 +4,7 @@ import { TabsBar } from "@/components/tabs/TabsBar";
 import { RunbookVariables } from "@/components/variables/RunbookVariables";
 import { RunbookSource } from "@/components/workspace/RunbookSource";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { getRunbookView, useStore } from "@/store/store";
 import type { ComponentType } from "react";
 
 import {
@@ -24,7 +24,7 @@ const DEMO_RUNBOOK_VIEWS: Record<RunbookView, ComponentType> = {
 };
 
 function DemoRunbookPanel() {
-  const view = useStore((state) => state.runbookView);
+  const view = useStore(getRunbookView);
   const View = DEMO_RUNBOOK_VIEWS[view];
 
   return (

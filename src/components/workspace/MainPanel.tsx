@@ -1,6 +1,6 @@
 import { RunbookView } from "@/common/enums";
 import { RunbookVariables } from "@/components/variables/RunbookVariables";
-import { getActiveTab, useStore } from "@/store/store";
+import { getRunbookView, useStore } from "@/store/store";
 import type { ComponentType } from "react";
 
 import { TabsBar } from "../tabs/TabsBar";
@@ -15,10 +15,7 @@ const RUNBOOK_VIEWS: Record<RunbookView, ComponentType> = {
 };
 
 export function MainPanel() {
-  const view = useStore((state) =>
-    getActiveTab(state) === null ? RunbookView.PREVIEW : state.runbookView,
-  );
-
+  const view = useStore(getRunbookView);
   const View = RUNBOOK_VIEWS[view];
 
   return (

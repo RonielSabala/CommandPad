@@ -20,7 +20,7 @@ import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useVariableSplitResize } from "@/hooks/useVariableSplitResize";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { getRunbookView, useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { memo, useEffect, useRef, type CSSProperties } from "react";
 
@@ -49,7 +49,7 @@ export const VariableRow = memo(function VariableRow({
   const reorderVariables = useStore((state) => state.reorderVariables);
 
   const editorShowing = useStore(
-    (state) => state.runbookView === RunbookView.VARIABLES,
+    (state) => getRunbookView(state) === RunbookView.VARIABLES,
   );
   const pendingFocus = useStore(
     (state) => state.pendingFocusVariableId === variableId,

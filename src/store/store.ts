@@ -226,7 +226,6 @@ export interface StoreState {
 
   // UI
   mode: AppMode;
-  runbookView: RunbookView;
   theme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
@@ -556,6 +555,10 @@ export function getActiveTab(state: StoreState): Tab | null {
   );
 }
 
+export function getRunbookView(state: StoreState): RunbookView {
+  return getActiveTab(state)?.view ?? RunbookView.PREVIEW;
+}
+
 /** Replace one panel's state. */
 function withPanel(
   state: StoreState,
@@ -573,7 +576,6 @@ function withPanel(
 function uiStateSnapshot(state: StoreState) {
   return {
     mode: state.mode,
-    runbookView: state.runbookView,
     theme: state.theme,
     language: state.language,
     spellcheckEnabled: state.spellcheckEnabled,
@@ -601,6 +603,7 @@ function createTabObject(
     variables: [],
     blocks: [],
     variableSections: [],
+    view: RunbookView.PREVIEW,
     scrollTop: createDefaultScrollTop(),
   };
 }
@@ -1521,7 +1524,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       embeddedSectionFolds: {},
 
       mode: AppMode.EDIT,
-      runbookView: RunbookView.PREVIEW,
       theme: Theme.LIGHT,
       language: detectLanguage(),
       spellcheckEnabled: true,
@@ -1647,7 +1649,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             const currentLibrary = get().runbookLibrary;
             const loadedTabs: Tab[] = [];
 
-            for (const { tabId, runbookId, scrollTop } of meta.tabOrder) {
+            for (const { tabId, runbookId, view, scrollTop } of meta.tabOrder) {
               const entry = currentLibrary.find((r) => r.id === runbookId);
               if (!entry || runbookId === null) {
                 continue;
@@ -1661,6 +1663,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
                 label: entry.label,
                 runbookId,
                 ...contentFields(content),
+                view: persistence.restoreRunbookView(view),
                 scrollTop: persistence.restoreScrollTop(scrollTop),
               });
             }
@@ -2501,7 +2504,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         if (
           get().variablesSectionCollapsed &&
-          get().runbookView !== RunbookView.VARIABLES
+          getRunbookView(get()) !== RunbookView.VARIABLES
         ) {
           get().toggleVariablesSection();
         }
@@ -3002,8 +3005,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
         if (state.tabs.length === 0) {
-          set({ runbookView: RunbookView.PREVIEW });
-          persist.saveUiState(uiStateSnapshot(get()));
           await get().createNewTab();
         }
 
@@ -3246,7 +3247,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       toggleCollapseAll: () => {
         const state = get();
         const tab = getActiveTab(state);
-        if (state.runbookView !== RunbookView.VARIABLES) {
+        if (getRunbookView(state) !== RunbookView.VARIABLES) {
           state.toggleAllCommandEditors();
           return;
         }
@@ -3418,12 +3419,19 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       toggleRunbookView: (view) => {
-        get().clearUserInteraction();
-        set((s) => ({
-          runbookView: s.runbookView === view ? RunbookView.PREVIEW : view,
-        }));
+        if (!getActiveTab(get())) {
+          return;
+        }
 
-        persist.saveUiState(uiStateSnapshot(get()));
+        get().clearUserInteraction();
+        set((s) =>
+          withActiveTab(s, (tab) => ({
+            ...tab,
+            view: tab.view === view ? RunbookView.PREVIEW : view,
+          })),
+        );
+
+        persist.saveTabsMeta(get().tabs, get().activeTabId);
       },
 
       applyRunbookSource: (text) => {
