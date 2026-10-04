@@ -11,6 +11,7 @@ import {
   ExportFormat,
   PanelId,
   PanelSide,
+  RunbookEmbedView,
   RunbookView,
   SectionState,
   SyncDestination,
@@ -192,11 +193,28 @@ interface PersistedTabs {
     runbookId: string | null;
     view?: unknown;
     scrollTop?: unknown;
+    embedViews?: unknown;
   }[];
 }
 
 export function restoreRunbookView(value: unknown): RunbookView {
   return isEnumValue(RunbookView, value) ? value : RunbookView.PREVIEW;
+}
+
+export function restoreEmbedViews(
+  value: unknown,
+): Record<string, RunbookEmbedView> {
+  const embedViews: Record<string, RunbookEmbedView> = {};
+
+  if (isObject(value)) {
+    for (const [blockId, view] of Object.entries(value)) {
+      if (isEnumValue(RunbookEmbedView, view)) {
+        embedViews[blockId] = view;
+      }
+    }
+  }
+
+  return embedViews;
 }
 
 export function restoreScrollTop(value: unknown): Record<RunbookView, number> {
@@ -225,6 +243,7 @@ export function saveTabsMeta(tabs: Tab[], activeTabId: string | null): void {
           runbookId: tab.runbookId,
           view: tab.view,
           scrollTop: tab.scrollTop,
+          embedViews: tab.embedViews,
         })),
       }),
     );

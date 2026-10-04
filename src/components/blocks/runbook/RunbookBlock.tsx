@@ -22,7 +22,7 @@ import { ProviderSelect } from "@/components/modals/cloud/ProviderSelect";
 import { useKeepInView } from "@/hooks/useKeepInView";
 import { useTranslation } from "@/i18n";
 import type { EditorChoice } from "@/monaco/completions";
-import { getActiveTab, useStore } from "@/store/store";
+import { getActiveTab, getRunbookEmbedView, useStore } from "@/store/store";
 import { localSourceKey } from "@/utils/embeddedRunbook";
 import { formatFileSize } from "@/utils/format";
 import { displayLabel } from "@/utils/runbook";
@@ -66,8 +66,8 @@ export function RunbookBlock({
   const isMirror = useCodeRendering() === CodeRendering.STATIC;
 
   const setRunbookEmbedView = useStore((state) => state.setRunbookEmbedView);
-  const view = useStore(
-    (state) => state.runbookEmbedViews[blockId] ?? RunbookEmbedView.BLOCKS,
+  const view = useStore((state) =>
+    getRunbookEmbedView(getActiveTab(state), blockId),
   );
 
   const updateBlock = useStore((state) => state.updateBlock);

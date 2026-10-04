@@ -219,8 +219,6 @@ export interface StoreState {
   runbookSyncStatus: Record<string, RunbookSyncStatus>;
   /** Runbooks embedded by runbook blocks, by source key.*/
   embeddedRunbooks: Record<string, EmbeddedRunbook>;
-  /** What each runbook block's body shows, by block id.*/
-  runbookEmbedViews: Record<string, RunbookEmbedView>;
   /** Sections folded or unfolded inside an embed, by the embed's scope and section id. */
   embeddedSectionFolds: Record<string, boolean>;
 
@@ -561,6 +559,13 @@ export function getActiveTab(state: StoreState): Tab | null {
 
 export function getRunbookView(state: StoreState): RunbookView {
   return getActiveTab(state)?.view ?? RunbookView.PREVIEW;
+}
+
+export function getRunbookEmbedView(
+  tab: Tab | null,
+  blockId: string,
+): RunbookEmbedView {
+  return tab?.embedViews?.[blockId] ?? RunbookEmbedView.BLOCKS;
 }
 
 /** Replace one panel's state. */
@@ -1330,7 +1335,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         runbookLibrary: [],
         runbookSyncStatus: {},
         embeddedRunbooks: {},
-        runbookEmbedViews: {},
         embeddedSectionFolds: {},
         runbookSearchQuery: "",
         variableSearchQuery: "",
@@ -1524,7 +1528,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       runbookSyncStatus: {},
 
       embeddedRunbooks: {},
-      runbookEmbedViews: {},
       embeddedSectionFolds: {},
 
       mode: AppMode.EDIT,
@@ -1653,21 +1656,30 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             const currentLibrary = get().runbookLibrary;
             const loadedTabs: Tab[] = [];
 
-            for (const { tabId, runbookId, view, scrollTop } of meta.tabOrder) {
+            for (const {
+              tabId,
+              runbookId,
+              view,
+              scrollTop,
+              embedViews,
+            } of meta.tabOrder) {
               const entry = currentLibrary.find((r) => r.id === runbookId);
               if (!entry || runbookId === null) {
                 continue;
               }
+
               const content = await contentDb.get(runbookId);
               if (!content) {
                 continue;
               }
+
               loadedTabs.push({
                 id: tabId,
                 label: entry.label,
                 runbookId,
                 ...contentFields(content),
                 view: persistence.restoreRunbookView(view),
+                embedViews: persistence.restoreEmbedViews(embedViews),
                 scrollTop: persistence.restoreScrollTop(scrollTop),
               });
             }
@@ -2263,14 +2275,21 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         await get().loadEmbeddedRunbook(source);
       },
 
-      setRunbookEmbedView: (blockId, view) =>
+      setRunbookEmbedView: (blockId, view) => {
+        const active = getActiveTab(get());
+        if (!active || getRunbookEmbedView(active, blockId) === view) {
+          return;
+        }
+
         set((s) =>
-          s.runbookEmbedViews[blockId] === view
-            ? {}
-            : {
-                runbookEmbedViews: { ...s.runbookEmbedViews, [blockId]: view },
-              },
-        ),
+          withActiveTab(s, (tab) => ({
+            ...tab,
+            embedViews: { ...tab.embedViews, [blockId]: view },
+          })),
+        );
+
+        persist.saveTabsMeta(get().tabs, get().activeTabId);
+      },
 
       setEmbeddedSectionFolded: (foldKey, folded) =>
         set((s) => ({

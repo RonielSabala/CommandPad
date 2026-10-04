@@ -10,6 +10,7 @@ import type {
   NoteStyle,
   NoteTableAlign,
   PanelSide,
+  RunbookEmbedView,
   RunbookView,
 } from "./enums";
 
@@ -101,6 +102,8 @@ export interface Tab {
   variableSections: VariableSection[];
   view: RunbookView;
   scrollTop: Record<RunbookView, number>;
+  /** What each runbook block's body shows. */
+  embedViews?: Record<string, RunbookEmbedView>;
 }
 
 export interface RunbookSync {
