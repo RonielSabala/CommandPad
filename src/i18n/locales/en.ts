@@ -1,4 +1,4 @@
-import { VaultConfig } from "@/common/config";
+import { MIDDLE_DOT, VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
@@ -56,7 +56,7 @@ export const en: Messages = {
     moveLeft: (name) => `Move ${name} to left`,
     moveRight: (name) => `Move ${name} to right`,
     doubleClickExpand: "Double-click to expand",
-    dragResizeCollapse: "Drag to resize · double-click to collapse",
+    dragResizeCollapse: `Drag to resize ${MIDDLE_DOT} double-click to collapse`,
   },
   contextMenu: {
     copyMarkdown: "Copy runbook as Markdown",
@@ -86,14 +86,12 @@ export const en: Messages = {
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
         `Sign in to ${provider} to keep syncing`,
       [RunbookSyncStatus.ERROR]: (provider) =>
-        `Could not save to ${provider} · click to retry`,
+        `Could not save to ${provider} ${MIDDLE_DOT} click to retry`,
     },
     secretStatus: {
-      [VaultStatus.UNLOCKED]:
-        "Secrets are encrypted · click to change the passphrase",
-      [VaultStatus.LOCKED]: "Secrets are locked · click to unlock them",
-      [VaultStatus.ABSENT]:
-        "Secrets are stored unencrypted · click to set a passphrase",
+      [VaultStatus.UNLOCKED]: `Secrets are encrypted ${MIDDLE_DOT} click to change the passphrase`,
+      [VaultStatus.LOCKED]: `Secrets are locked ${MIDDLE_DOT} click to unlock them`,
+      [VaultStatus.ABSENT]: `Secrets are stored unencrypted ${MIDDLE_DOT} click to set a passphrase`,
       [VaultStatus.UNSUPPORTED]:
         "This browser cannot encrypt secrets, so they are stored as written",
     },
@@ -127,7 +125,7 @@ export const en: Messages = {
     remove: (count) => (count === 1 ? "Remove variable" : "Remove variables"),
     selected: (count) =>
       count === 1 ? "1 variable selected" : `${count} variables selected`,
-    dragResizeSplit: "Drag to resize key and value · double-click to even out",
+    dragResizeSplit: `Drag to resize key and value ${MIDDLE_DOT} double-click to even out`,
     unusedTitle: (key) => `${key} (unused)`,
     newSection: "New section",
     newRowLabel: "NEW",
@@ -204,7 +202,7 @@ export const en: Messages = {
           `${variables} ${variables === 1 ? "variable" : "variables"}`,
       ]
         .filter(Boolean)
-        .join(" · "),
+        .join(` ${MIDDLE_DOT} `),
     noSource: "No runbook is embedded here.",
     loading: "Loading the runbook...",
     missing: "No runbook was found at this path.",

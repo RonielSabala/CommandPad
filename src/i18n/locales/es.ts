@@ -1,4 +1,4 @@
-import { VaultConfig } from "@/common/config";
+import { MIDDLE_DOT, VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
@@ -56,8 +56,7 @@ export const es: Messages = {
     moveLeft: (name) => `Mover ${name} a la izquierda`,
     moveRight: (name) => `Mover ${name} a la derecha`,
     doubleClickExpand: "Doble clic para expandir",
-    dragResizeCollapse:
-      "Arrastra para redimensionar · doble clic para contraer",
+    dragResizeCollapse: `Arrastra para redimensionar ${MIDDLE_DOT} doble clic para contraer`,
   },
   contextMenu: {
     copyMarkdown: "Copiar libro como Markdown",
@@ -87,15 +86,12 @@ export const es: Messages = {
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
         `Inicia sesión en ${provider} para seguir sincronizando`,
       [RunbookSyncStatus.ERROR]: (provider) =>
-        `No se pudo guardar en ${provider} · haz clic para reintentar`,
+        `No se pudo guardar en ${provider} ${MIDDLE_DOT} haz clic para reintentar`,
     },
     secretStatus: {
-      [VaultStatus.UNLOCKED]:
-        "Los secretos están cifrados · haz clic para cambiar la frase de contraseña",
-      [VaultStatus.LOCKED]:
-        "Los secretos están bloqueados · haz clic para desbloquearlos",
-      [VaultStatus.ABSENT]:
-        "Los secretos se guardan sin cifrar · haz clic para poner una frase de contraseña",
+      [VaultStatus.UNLOCKED]: `Los secretos están cifrados ${MIDDLE_DOT} haz clic para cambiar la frase de contraseña`,
+      [VaultStatus.LOCKED]: `Los secretos están bloqueados ${MIDDLE_DOT} haz clic para desbloquearlos`,
+      [VaultStatus.ABSENT]: `Los secretos se guardan sin cifrar ${MIDDLE_DOT} haz clic para poner una frase de contraseña`,
       [VaultStatus.UNSUPPORTED]:
         "Este navegador no puede cifrar secretos, así que se guardan tal cual",
     },
@@ -132,8 +128,7 @@ export const es: Messages = {
       count === 1
         ? "1 variable seleccionada"
         : `${count} variables seleccionadas`,
-    dragResizeSplit:
-      "Arrastra para redimensionar clave y valor · doble clic para igualarlos",
+    dragResizeSplit: `Arrastra para redimensionar clave y valor ${MIDDLE_DOT} doble clic para igualarlos`,
     unusedTitle: (key) => `${key} (sin usar)`,
     newSection: "Nueva sección",
     newRowLabel: "NUEVA",
@@ -216,7 +211,7 @@ export const es: Messages = {
           `${variables} ${variables === 1 ? "variable" : "variables"}`,
       ]
         .filter(Boolean)
-        .join(" · "),
+        .join(` ${MIDDLE_DOT} `),
     noSource: "Aquí no hay ningún runbook incrustado.",
     loading: "Cargando el runbook...",
     missing: "No se encontró ningún runbook en esta ruta.",
