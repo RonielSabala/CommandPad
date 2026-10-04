@@ -1,6 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { CodeModelScope } from "@/common/editorConfig";
-import { BlockType, TooltipVariant, VariableEntryKind } from "@/common/enums";
+import { TooltipVariant, VariableEntryKind } from "@/common/enums";
 import type { RunbookBlock, Variable, VariableSection } from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { VariableSectionHeader } from "@/components/variables/VariableSectionHeader";
@@ -44,7 +44,7 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
   const { variableMap, secretKeys } = host;
 
   const folds = useStore((state) => state.embeddedSectionFolds);
-  const updateBlock = useStore((state) => state.updateBlock);
+  const setRunbookOverrides = useStore((state) => state.setRunbookOverrides);
   const setEmbeddedSectionFolded = useStore(
     (state) => state.setEmbeddedSectionFolded,
   );
@@ -81,15 +81,16 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
 
   const setOverride = useCallback(
     (variable: Variable, value: string) =>
-      updateBlock(blockId, BlockType.RUNBOOK, {
-        overrides: withOverride(
+      setRunbookOverrides(
+        blockId,
+        withOverride(
           overrides,
           getVariableKey(variable),
           value,
           variable.value,
         ),
-      }),
-    [updateBlock, blockId, overrides],
+      ),
+    [setRunbookOverrides, blockId, overrides],
   );
 
   if (rows.length === 0) {

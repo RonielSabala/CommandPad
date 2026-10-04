@@ -1294,7 +1294,7 @@ If something goes wrong, undo it in this order:
       overrides:
         "What you type there is an **override**: it lives on this block and never touches the embedded runbook, so each runbook that embeds it states only what differs. A value can reference this runbook's own variables (`{STAGE}`), an option is picked from the variable's own list, and an override built from a secret stays masked.",
       readOnly: (open) =>
-        `The embedded blocks are read-only: copy a command or open an image full screen, but edit nothing. To change the runbook itself, press **${open}**. Every runbook that embeds it picks up the edit, and renaming it never breaks the link. In read mode the header disappears and only the embedded blocks remain.`,
+        `The embedded blocks are read-only: copy a command or open an image full screen, but edit nothing. To change the runbook itself, press **${open}**. Every runbook that embeds it picks up the edit, and renaming it never breaks the link. In read mode the header keeps only **${open}** and the switch between blocks and variables, and the block stays on whichever one it was showing.`,
       cloud: (local, signIn, refresh) =>
         `The runbook doesn't have to be in your library. Switch **${local}** to a cloud provider and type the file's path in the app's folder (\`ops/deploy.json\`, the \`.json\` is optional). The file is read, never imported, and kept for the session: **${refresh}** reads it again. While you're signed out, the block waits for you to press **${signIn}** rather than opening a popup on its own.`,
       secrets: (unlock) =>

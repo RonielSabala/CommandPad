@@ -174,7 +174,7 @@ export function RunbookBlock({
 
   const rootRef = useRef<HTMLDivElement>(null);
   const collapsed = !readMode && !!embed.source && blockCollapsed === true;
-  const showingVariables = !readMode && view === RunbookEmbedView.VARIABLES;
+  const showingVariables = view === RunbookEmbedView.VARIABLES;
 
   const keepInViewOnCollapse = useKeepInView(rootRef, collapsed);
   const keepInViewOnSwitch = useKeepInView(
@@ -205,112 +205,116 @@ export function RunbookBlock({
         CssClass.BLOCK_SURFACE,
       )}
     >
-      <div
-        className={classNames(
-          "runbook-block-header",
-          CssClass.SELECT_KEY_INERT_CHILDREN,
-        )}
-        {...{ [DataAttr.DRAG_IMAGE]: "" }}
-      >
-        <ProviderSelect
-          provider={cloud?.provider ?? SyncDestination.LOCAL}
-          onChange={changeSource}
-          title={t.runbookBlock.changeSource}
-          portal
-        />
-
-        {cloud ? (
-          <input
-            ref={pathRef}
-            className={classNames(
-              "runbook-block-input",
-              unresolved && "is-unresolved",
-            )}
-            style={
-              {
-                [RunbookBlockConfig.PATH_COLUMNS_PROPERTY]:
-                  countCharacters(pathDraft) + 1,
-              } as CSSProperties
-            }
-            value={pathDraft}
-            placeholder={t.runbookBlock.pathPlaceholder}
-            spellCheck={false}
-            onChange={(event) => setPathDraft(event.target.value)}
-            onBlur={commitPath}
-            onKeyDown={(event) => {
-              if (event.key === Key.ENTER) {
-                commitPath();
-              }
-            }}
-          />
-        ) : (
-          <CodeEditor
-            ref={labelRef}
-            modelId={`${CodeModelScope.RUNBOOK_LABEL}/${blockId}`}
-            className={classNames(
-              "runbook-block-label",
-              unresolved && "is-unresolved",
-            )}
-            value={label}
-            language={EditorLanguage.CHOICE}
-            choices={choices}
-            singleLine
-            gutter={false}
-            placeholder={t.runbookBlock.labelPlaceholder}
-            onChange={(label) =>
-              updateBlock(blockId, BlockType.RUNBOOK, {
-                label,
-                runbookId: undefined,
-              })
-            }
-            onFocus={() => {
-              if (!local) {
-                labelRef.current?.suggest();
-              }
-            }}
-          />
-        )}
-
-        <div className={CssClass.RUNBOOK_EMBED_ACTIONS}>
-          {canSwitchView && (
-            <button
-              className="btn btn-flat-icon"
-              onClick={() => {
-                keepInViewOnSwitch();
-                setRunbookEmbedView(
-                  blockId,
-                  showingVariables
-                    ? RunbookEmbedView.BLOCKS
-                    : RunbookEmbedView.VARIABLES,
-                );
-              }}
-              aria-label={viewLabel}
-              {...tooltip(viewLabel)}
-            >
-              {showingVariables ? (
-                <BodyText className="icon-md" />
-              ) : (
-                <Braces className="icon-md" />
-              )}
-            </button>
+      {(!readMode || canSwitchView || !!local) && (
+        <div
+          className={classNames(
+            "runbook-block-header",
+            CssClass.SELECT_KEY_INERT_CHILDREN,
+          )}
+          {...{ [DataAttr.DRAG_IMAGE]: "" }}
+        >
+          {!readMode && (
+            <ProviderSelect
+              provider={cloud?.provider ?? SyncDestination.LOCAL}
+              onChange={changeSource}
+              title={t.runbookBlock.changeSource}
+              portal
+            />
           )}
 
-          <EmbedActions embed={embed} />
-
-          {embed.source && (
-            <EditorToggle
-              collapsed={collapsed}
-              label={collapseLabel}
-              onToggle={() => {
-                keepInViewOnCollapse();
+          {readMode ? null : cloud ? (
+            <input
+              ref={pathRef}
+              className={classNames(
+                "runbook-block-input",
+                unresolved && "is-unresolved",
+              )}
+              style={
+                {
+                  [RunbookBlockConfig.PATH_COLUMNS_PROPERTY]:
+                    countCharacters(pathDraft) + 1,
+                } as CSSProperties
+              }
+              value={pathDraft}
+              placeholder={t.runbookBlock.pathPlaceholder}
+              spellCheck={false}
+              onChange={(event) => setPathDraft(event.target.value)}
+              onBlur={commitPath}
+              onKeyDown={(event) => {
+                if (event.key === Key.ENTER) {
+                  commitPath();
+                }
+              }}
+            />
+          ) : (
+            <CodeEditor
+              ref={labelRef}
+              modelId={`${CodeModelScope.RUNBOOK_LABEL}/${blockId}`}
+              className={classNames(
+                "runbook-block-label",
+                unresolved && "is-unresolved",
+              )}
+              value={label}
+              language={EditorLanguage.CHOICE}
+              choices={choices}
+              singleLine
+              gutter={false}
+              placeholder={t.runbookBlock.labelPlaceholder}
+              onChange={(label) =>
                 updateBlock(blockId, BlockType.RUNBOOK, {
-                  collapsed: !collapsed,
-                });
+                  label,
+                  runbookId: undefined,
+                })
+              }
+              onFocus={() => {
+                if (!local) {
+                  labelRef.current?.suggest();
+                }
               }}
             />
           )}
+
+          <div className={CssClass.RUNBOOK_EMBED_ACTIONS}>
+            {canSwitchView && (
+              <button
+                className="btn btn-flat-icon"
+                onClick={() => {
+                  keepInViewOnSwitch();
+                  setRunbookEmbedView(
+                    blockId,
+                    showingVariables
+                      ? RunbookEmbedView.BLOCKS
+                      : RunbookEmbedView.VARIABLES,
+                  );
+                }}
+                aria-label={viewLabel}
+                {...tooltip(viewLabel)}
+              >
+                {showingVariables ? (
+                  <BodyText className="icon-md" />
+                ) : (
+                  <Braces className="icon-md" />
+                )}
+              </button>
+            )}
+
+            <EmbedActions embed={embed} />
+
+            {!readMode && embed.source && (
+              <EditorToggle
+                collapsed={collapsed}
+                label={collapseLabel}
+                onToggle={() => {
+                  keepInViewOnCollapse();
+                  updateBlock(blockId, BlockType.RUNBOOK, {
+                    collapsed: !collapsed,
+                  });
+                }}
+              />
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {!collapsed && (
         <EmbedBody block={block} embed={embed}>

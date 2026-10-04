@@ -384,6 +384,10 @@ export interface StoreState {
     type: T,
     patch: Partial<Omit<BlockOfType<T>, "id" | "type">>,
   ) => void;
+  setRunbookOverrides: (
+    blockId: string,
+    overrides: Record<string, string> | undefined,
+  ) => void;
   toggleAllCommandEditors: () => void;
   toggleCollapseAll: () => void;
   reorderBlocks: (sourceId: string, targetId: string) => void;
@@ -3208,6 +3212,21 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             ? { ...updated, ...relabelActive(next) }
             : updated;
         });
+
+        debouncedSaveState();
+      },
+
+      setRunbookOverrides: (blockId, overrides) => {
+        set((s) =>
+          withActiveTab(s, (tab) => ({
+            ...tab,
+            blocks: tab.blocks.map((b) =>
+              b.id === blockId && b.type === BlockType.RUNBOOK
+                ? { ...b, overrides }
+                : b,
+            ),
+          })),
+        );
 
         debouncedSaveState();
       },

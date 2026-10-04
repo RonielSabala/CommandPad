@@ -57,6 +57,7 @@ export function EmbedNotice({ children, error }: NoticeProps) {
 
 export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
   const t = useTranslation();
+  const readMode = useStore((state) => state.mode === AppMode.READ);
 
   const refreshEmbeddedRunbook = useStore(
     (state) => state.refreshEmbeddedRunbook,
@@ -76,7 +77,7 @@ export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
   const localId = source.local?.id;
   return (
     <>
-      {embed.locked && (
+      {!readMode && embed.locked && (
         <button
           className="btn runbook-embed-unlock"
           onClick={() => void unlockEmbeddedRunbook(source)}
@@ -98,7 +99,7 @@ export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
         </button>
       )}
 
-      {!embed.isOpen && !embed.circular && !embed.tooDeep && (
+      {!readMode && !embed.isOpen && !embed.circular && !embed.tooDeep && (
         <button
           className="btn btn-flat-icon"
           onClick={() => void refreshEmbeddedRunbook(source)}
