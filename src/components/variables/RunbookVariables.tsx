@@ -14,6 +14,7 @@ import { Minimap } from "@/components/workspace/minimap/Minimap";
 import { VariablesMirror } from "@/components/workspace/minimap/VariablesMirror";
 import { WorkspaceContextMenu } from "@/components/workspace/WorkspaceContextMenu";
 import { useLassoSelection } from "@/hooks/useLassoSelection";
+import { useScrollingClass } from "@/hooks/useScrollingClass";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
@@ -30,6 +31,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import "./RunbookVariables.css";
 import { VariableRows } from "./VariableRows";
+import "./VariablesList.css";
 
 const EMPTY_BLOCKS: Block[] = [];
 const EMPTY_VARIABLES: Variable[] = [];
@@ -93,8 +95,9 @@ export function RunbookVariables() {
     CssClass.VARIABLE_ITEM,
   );
 
-  useLassoSelection(root, SelectionGroup.VARIABLE);
+  useScrollingClass(scrollRef);
   useScrollPersistence(scrollRef, RunbookView.VARIABLES);
+  useLassoSelection(root, SelectionGroup.VARIABLE);
 
   useEffect(() => {
     scrollRowIntoView(
@@ -155,7 +158,11 @@ export function RunbookVariables() {
           />
         )}
 
-        <div id={ElementId.VARIABLES_LIST} ref={listRef}>
+        <div
+          id={ElementId.VARIABLES_LIST}
+          className={CssClass.VARIABLES_LIST}
+          ref={listRef}
+        >
           <VariableRows
             variables={variables}
             sections={sections}

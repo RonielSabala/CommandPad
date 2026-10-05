@@ -100,6 +100,7 @@ export const VariableSplit = {
 // Timeout durations
 export const DRAG_TIMEOUT_MS = 50;
 export const DEBOUNCE_SAVE_MS = 150;
+export const SCROLL_IDLE_MS = 150;
 export const DEBOUNCE_CLOUD_SYNC_MS = 1000;
 export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
 export const EXPORT_SUCCESS_TIMEOUT_MS = 1000;
@@ -137,6 +138,7 @@ export const LINE_BREAK = "\n";
 export const CARRIAGE_RETURN = "\r";
 export const NON_BREAKING_SPACE = "\u00A0";
 
+export const MIDDLE_DOT = "·";
 export const SECRET_MASK = "•".repeat(8);
 
 export const VaultConfig = {
@@ -184,6 +186,16 @@ export const ExtractedVariableConfig = {
   DEFAULT_KEY: "VARIABLE",
   MAX_KEY_WORDS: 3,
   MAX_KEY_LENGTH: 24,
+} as const;
+
+export const RunbookBlockConfig = {
+  MAX_DEPTH: 4,
+  LOCAL_SOURCE: "local",
+  CLOUD_SOURCE: "cloud",
+  KEY_SEPARATOR: ":",
+  PATH_SEPARATOR: "/",
+  SCOPE_SEPARATOR: "/",
+  PARENT_FOLDER_LABEL: "..",
 } as const;
 
 export const ImageBlockConfig = {
@@ -296,6 +308,15 @@ export const ZipConfig = {
   CRC_SEED: 0xffffffff,
   CRC_TABLE_SIZE: 256,
   DOS_EPOCH_YEAR: 1980,
+} as const;
+
+export const Utf8Config = {
+  ONE_BYTE_MAX: 0x7f,
+  TWO_BYTE_MAX: 0x7ff,
+  SURROGATE_MIN: 0xd800,
+  SURROGATE_MAX: 0xdfff,
+  SURROGATE_BYTES: 2,
+  THREE_BYTES: 3,
 } as const;
 
 export const FileSizeConfig = {

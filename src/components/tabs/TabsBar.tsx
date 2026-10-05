@@ -3,7 +3,7 @@ import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextM
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PlusIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { getRunbookView, useStore } from "@/store/store";
 import { useCallback, useState, type MouseEvent } from "react";
 import { BodyText, Braces, FileEarmarkCode } from "react-bootstrap-icons";
 
@@ -15,7 +15,7 @@ export function TabsBar() {
   const t = useTranslation();
   const tabs = useStore((state) => state.tabs);
   const createNewTab = useStore((state) => state.createNewTab);
-  const runbookView = useStore((state) => state.runbookView);
+  const runbookView = useStore(getRunbookView);
   const toggleRunbookView = useStore((state) => state.toggleRunbookView);
 
   const [menu, setMenu] = useState<{

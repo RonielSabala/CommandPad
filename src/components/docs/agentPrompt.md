@@ -59,10 +59,10 @@ into the command instead. A single-use value earns a variable only when its name
 meaning the literal does not (an environment, a project name, a credential), or when the
 runbook is plainly going to reuse it as it grows.
 
-Variables are referenced from command blocks and from another variable's value, and from
-nowhere else. A `{KEY}` written in a note block is not resolved: it stays on screen exactly
-as typed. Never reference a variable from a note, write the value out or name the key as
-`code` instead.
+Variables are referenced from command blocks, from another variable's value and from a
+runbook block's `overrides`, and from nowhere else. A `{KEY}` written in a note block is not
+resolved: it stays on screen exactly as typed. Never reference a variable from a note, write
+the value out or name the key as `code` instead.
 
 ## Blocks
 
@@ -106,6 +106,32 @@ Blocks are rendered top to bottom. Each one is an object with a `type`:
 ```
 
 A horizontal rule between phases. It takes no other field.
+
+```json
+{
+  "type": "runbook",
+  "label": "Deploy the API",
+  "overrides": { "ENV": "prod", "TAG": "{RELEASE}" }
+}
+```
+
+Embeds another runbook, read-only, in place: its blocks are shown and resolved against
+its own variables.
+
+- `label` (required): the label of a runbook already in the user's library, i.e. the text
+  of that runbook's first note. Only use a label the user gave you; an unknown one shows in
+  red.
+- `cloud` (optional): `{"provider": "onedrive" | "google-drive", "path": "folder/file.json"}`
+  reads the runbook from that path in the provider's app folder instead of the library.
+  `label` is then ignored, write it as `""`.
+- `overrides` (optional): an object mapping a variable key to a value. Each replaces that
+  variable's value in the embedded runbook. A key that runbook does not define is ignored,
+  so only use keys the user named. A value may reference this runbook's variables, like a
+  command does, and a reference this runbook does not define is left for the embedded one.
+- `collapsed` (optional): `true` folds the embedded runbook down to its header.
+
+Use a runbook block only when the user names an existing runbook to reuse. Never use one to
+split up a runbook you are writing yourself.
 
 The first note block names the runbook, so always open with a `heading` note.
 
@@ -233,7 +259,8 @@ are ordinary text, which is what keeps shell syntax such as `find . -exec rm {} 
 - `variables` and `blocks` are both present and are both arrays.
 - Every block has a valid `type` and its required field.
 - Every `{KEY}` used anywhere matches a variable key you defined, and every one of them
-  sits in a command block or in a variable's value, never in a note.
+  sits in a command block, a variable's value or a runbook block's `overrides`, never in a
+  note.
 - Every variable is referenced from at least two places, or is one whose name carries a
   meaning of its own.
 - There is no `id` field anywhere.

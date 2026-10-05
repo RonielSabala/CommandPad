@@ -1,4 +1,4 @@
-import { normalizeBlock } from "@/blocks";
+import { blockToJson, normalizeBlock } from "@/blocks";
 import { RunbookSourceConfig } from "@/common/config";
 import {
   DEFAULT_VARIABLE_LANGUAGE,
@@ -9,11 +9,13 @@ import { VariableEntryKind } from "@/common/enums";
 import type {
   Block,
   RunbookContent,
+  RunbookStats,
   Variable,
   VariableSection,
 } from "@/common/types";
 
 import { generateId } from "./id";
+import { utf8ByteLength } from "./string";
 import { isObject, isString } from "./typeGuards";
 import {
   fromVariableEntries,
@@ -52,10 +54,18 @@ export function buildRunbookSource(content: RunbookContent): string {
       const { id, ...rest } = entry.variable;
       return rest;
     }),
-    blocks: (content.blocks ?? []).map(({ id, ...rest }) => rest),
+    blocks: (content.blocks ?? []).map(blockToJson),
   };
 
   return JSON.stringify(data, null, RunbookSourceConfig.INDENT);
+}
+
+export function getRunbookStats(content: RunbookContent): RunbookStats {
+  return {
+    bytes: utf8ByteLength(buildRunbookSource(content)),
+    blocks: content.blocks?.length ?? 0,
+    variables: content.variables?.length ?? 0,
+  };
 }
 
 /** Coerce an untrusted variable into a valid one. */

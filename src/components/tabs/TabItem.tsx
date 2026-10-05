@@ -6,14 +6,13 @@ import type { Tab } from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CloseIcon } from "@/components/icons";
 import { blockDrag } from "@/hooks/blockDrag";
+import { useTabUnresolved } from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { hasUnresolvedReferences } from "@/utils/resolution";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import {
   useEffect,
-  useMemo,
   useRef,
   useState,
   type DragEvent,
@@ -40,10 +39,7 @@ export function TabItem({ tab, onOpenMenu }: Props) {
   const reorderTabs = useStore((state) => state.reorderTabs);
   const copyBlocksToTab = useStore((state) => state.copyBlocksToTab);
 
-  const unresolved = useMemo(
-    () => hasUnresolvedReferences(tab.blocks, tab.variables),
-    [tab.blocks, tab.variables],
-  );
+  const unresolved = useTabUnresolved(tab);
 
   const [dragging, setDragging] = useState(false);
   const [dropSide, setDropSide] = useState<TabDropSide | null>(null);
@@ -74,6 +70,7 @@ export function TabItem({ tab, onOpenMenu }: Props) {
     blockDropTarget && "block-drop-target",
   );
 
+  const closeLabel = unresolved ? t.tabs.closeUnresolvedTab : t.tabs.closeTab;
   return (
     <div
       className={tabClass}
@@ -166,18 +163,14 @@ export function TabItem({ tab, onOpenMenu }: Props) {
         reorderTabs(srcId, tabId, !isLeftHalf(event));
       }}
     >
-      {unresolved && (
-        <span
-          className="tab-unresolved"
-          {...tooltip(t.tabs.unresolved)}
-          aria-label={t.tabs.unresolved}
-        />
-      )}
       <span className="tab-label">{tabLabel}</span>
       <button
-        className="tab-close"
-        aria-label={t.tabs.closeTab}
-        {...tooltip(t.tabs.closeTab)}
+        className={classNames(
+          "tab-close",
+          unresolved && CssClass.IS_UNRESOLVED,
+        )}
+        aria-label={closeLabel}
+        {...tooltip(closeLabel)}
         onClick={(event) => {
           event.stopPropagation();
           closeTab(tabId);

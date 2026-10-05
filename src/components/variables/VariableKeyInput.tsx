@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { AppMode, TooltipVariant, VariableField } from "@/common/enums";
 import { useDomScrollTarget } from "@/components/common/scrollTarget";
@@ -50,7 +51,7 @@ export function VariableKeyInput({
         className={classNames(
           className,
           "no-ligatures",
-          isConstantVariableKey(variableKey) && "is-constant",
+          isConstantVariableKey(variableKey) && CssClass.IS_CONSTANT,
         )}
         type="text"
         placeholder={t.variables.keyPlaceholder}

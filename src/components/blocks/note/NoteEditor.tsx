@@ -15,7 +15,7 @@ import {
 } from "react";
 
 import "./NoteEditor.css";
-import { NoteText } from "./NoteText";
+import { NotePreview } from "./NotePreview";
 
 interface Props {
   value: string;
@@ -131,16 +131,13 @@ export function NoteEditor({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
         />
-        <div
+        <NotePreview
           ref={previewRef}
-          className={classNames("note-preview", styleClass)}
-        >
-          {value ? (
-            <NoteText text={value} requiresLinkModifier />
-          ) : (
-            <span className="note-preview-placeholder">{placeholder}</span>
-          )}
-        </div>
+          text={value}
+          placeholder={placeholder}
+          styleClass={styleClass}
+          requiresLinkModifier
+        />
       </label>
     </div>
   );

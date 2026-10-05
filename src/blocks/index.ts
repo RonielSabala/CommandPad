@@ -2,12 +2,13 @@ import { BlockField, JsonSchemaType } from "@/common/editorConfig";
 import { BlockType } from "@/common/enums";
 import type { Block } from "@/common/types";
 import { generateId } from "@/utils/id";
-import { isObject } from "@/utils/typeGuards";
+import { isEnumValue, isObject } from "@/utils/typeGuards";
 
 import { commandBlockDefinition } from "./command";
 import { dividerBlockDefinition } from "./divider";
 import { imageBlockDefinition } from "./image";
 import { noteBlockDefinition } from "./note";
+import { runbookBlockDefinition } from "./runbook";
 import type {
   AnyBlockDefinition,
   BlockDefinitions,
@@ -19,23 +20,21 @@ export type {
   BlockMarkdownContext
 } from "./types";
 
-export const BLOCK_DEFINITIONS: BlockDefinitions = {
+const BLOCK_DEFINITIONS: BlockDefinitions = {
   [BlockType.COMMAND]: commandBlockDefinition,
   [BlockType.NOTE]: noteBlockDefinition,
   [BlockType.IMAGE]: imageBlockDefinition,
   [BlockType.DIVIDER]: dividerBlockDefinition,
+  [BlockType.RUNBOOK]: runbookBlockDefinition,
 };
 
 export const BLOCK_TYPE_ORDER: readonly BlockType[] = [
   BlockType.COMMAND,
   BlockType.NOTE,
   BlockType.IMAGE,
+  BlockType.RUNBOOK,
   BlockType.DIVIDER,
 ];
-
-export function isBlockType(value: unknown): value is BlockType {
-  return Object.values(BlockType).includes(value as BlockType);
-}
 
 function definitionFor(block: Block): AnyBlockDefinition {
   return BLOCK_DEFINITIONS[block.type];
@@ -47,12 +46,21 @@ export function createBlock(type: BlockType): Block {
 
 /** Coerce an untrusted block into a valid one. */
 export function normalizeBlock(raw: unknown): Block | null {
-  if (!isObject(raw) || !isBlockType(raw.type)) {
+  if (!isObject(raw) || !isEnumValue(BlockType, raw.type)) {
     return null;
   }
 
   const block = { ...raw, id: raw.id || generateId() } as Block;
   return definitionFor(block).normalize(block);
+}
+
+export function blockToJson(block: Block): Record<string, unknown> {
+  const { id, ...rest } = block;
+  const runtimeFields = definitionFor(block).runtimeFields ?? [];
+
+  return Object.fromEntries(
+    Object.entries(rest).filter(([field]) => !runtimeFields.includes(field)),
+  );
 }
 
 export function blockToMarkdown(
@@ -71,6 +79,23 @@ export function mapBlockCommandTexts(
   transform: (text: string) => string,
 ): Block {
   return definitionFor(block).commandTexts?.map(block, transform) ?? block;
+}
+
+export function isBlockFoldable(block: Block): boolean {
+  return definitionFor(block).folding !== undefined;
+}
+
+export function isBlockFolded(block: Block): boolean {
+  return definitionFor(block).folding?.isFolded(block) ?? false;
+}
+
+export function setBlockFolded(block: Block, folded: boolean): Block {
+  const folding = definitionFor(block).folding;
+  if (!folding || folding.isFolded(block) === folded) {
+    return block;
+  }
+
+  return folding.setFolded(block, folded);
 }
 
 export function getBlockLabelText(block: Block): string | null {

@@ -31,20 +31,7 @@
   content: none;
 }
 
-/* Shared note styles */
-
-.note-textarea,
-.note-preview,
-.note-auto-width::after {
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: 1.65;
-  tab-size: var(--tab-size);
-  padding: var(--space-2) 0;
-}
-
-.note-textarea,
-.note-preview {
+.note-auto-width > :is(.note-textarea, .note-preview) {
   grid-area: 1 / 1 / 2 / 2;
 }
 
@@ -68,6 +55,14 @@
   background: transparent;
 }
 
+.note-textarea::placeholder {
+  color: transparent;
+}
+
+.note-editor.is-focused .note-textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
 .note-textarea::grammar-error,
 .note-textarea::spelling-error {
   text-decoration: transparent;
@@ -88,46 +83,4 @@ body.read-mode .note-textarea:focus {
 
 body:not(.select-key-held) .note-textarea::selection {
   background-color: var(--selection-color);
-}
-
-/* Note preview */
-
-.note-preview::after {
-  content: " ";
-}
-
-.note-preview:has(> :is(.note-list, .note-table):last-child)::after {
-  content: none;
-}
-
-.note-preview > :is(.note-list, .note-table):first-child {
-  margin-top: 0;
-}
-
-.note-preview > :is(.note-list, .note-table):last-child {
-  margin-bottom: 0;
-}
-
-.note-preview {
-  color: var(--color-text-secondary);
-  word-break: break-word;
-  white-space: pre-wrap;
-  pointer-events: none;
-  position: relative;
-  z-index: var(--z-raised);
-  user-select: none;
-}
-
-body.read-mode .note-preview {
-  pointer-events: auto;
-  cursor: text;
-  user-select: text;
-}
-
-body.read-mode :is(.note-preview::selection, .note-preview *::selection) {
-  background-color: var(--selection-color);
-}
-
-.note-preview-placeholder {
-  color: var(--color-text-muted);
 }

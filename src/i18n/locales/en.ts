@@ -1,4 +1,4 @@
-import { VaultConfig } from "@/common/config";
+import { MIDDLE_DOT, VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
@@ -39,7 +39,7 @@ export const en: Messages = {
     switchToDark: "Switch to dark mode",
     switchToLight: "Switch to light mode",
     collapseAll: "Collapse All",
-    toggleEditorsTitle: "Expand/collapse all command editors",
+    toggleEditorsTitle: "Expand/collapse all blocks",
     toggleSectionsTitle: "Expand/collapse all variable sections",
     resetWorkspaceTitle: "Reset workspace",
     exportTitle: "Export runbook",
@@ -56,7 +56,7 @@ export const en: Messages = {
     moveLeft: (name) => `Move ${name} to left`,
     moveRight: (name) => `Move ${name} to right`,
     doubleClickExpand: "Double-click to expand",
-    dragResizeCollapse: "Drag to resize · double-click to collapse",
+    dragResizeCollapse: `Drag to resize ${MIDDLE_DOT} double-click to collapse`,
   },
   contextMenu: {
     copyMarkdown: "Copy runbook as Markdown",
@@ -86,14 +86,12 @@ export const en: Messages = {
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
         `Sign in to ${provider} to keep syncing`,
       [RunbookSyncStatus.ERROR]: (provider) =>
-        `Could not save to ${provider} · click to retry`,
+        `Could not save to ${provider} ${MIDDLE_DOT} click to retry`,
     },
     secretStatus: {
-      [VaultStatus.UNLOCKED]:
-        "Secrets are encrypted · click to change the passphrase",
-      [VaultStatus.LOCKED]: "Secrets are locked · click to unlock them",
-      [VaultStatus.ABSENT]:
-        "Secrets are stored unencrypted · click to set a passphrase",
+      [VaultStatus.UNLOCKED]: `Secrets are encrypted ${MIDDLE_DOT} click to change the passphrase`,
+      [VaultStatus.LOCKED]: `Secrets are locked ${MIDDLE_DOT} click to unlock them`,
+      [VaultStatus.ABSENT]: `Secrets are stored unencrypted ${MIDDLE_DOT} click to set a passphrase`,
       [VaultStatus.UNSUPPORTED]:
         "This browser cannot encrypt secrets, so they are stored as written",
     },
@@ -127,7 +125,7 @@ export const en: Messages = {
     remove: (count) => (count === 1 ? "Remove variable" : "Remove variables"),
     selected: (count) =>
       count === 1 ? "1 variable selected" : `${count} variables selected`,
-    dragResizeSplit: "Drag to resize key and value · double-click to even out",
+    dragResizeSplit: `Drag to resize key and value ${MIDDLE_DOT} double-click to even out`,
     unusedTitle: (key) => `${key} (unused)`,
     newSection: "New section",
     newRowLabel: "NEW",
@@ -160,7 +158,7 @@ export const en: Messages = {
     close: "Close",
     closeOthers: "Close others",
     closeAll: "Close all",
-    unresolved: "This runbook has unresolved variables",
+    closeUnresolvedTab: "Close tab (this runbook has unresolved parts)",
   },
   source: {
     openSource: "Open source file",
@@ -174,6 +172,7 @@ export const en: Messages = {
       [BlockType.COMMAND]: "Command",
       [BlockType.NOTE]: "Note",
       [BlockType.IMAGE]: "Image",
+      [BlockType.RUNBOOK]: "Runbook",
       [BlockType.DIVIDER]: "Divider",
     },
     typeTitle: (label) => `${label} block`,
@@ -187,6 +186,42 @@ export const en: Messages = {
       count === 1 ? "1 block selected" : `${count} blocks selected`,
     emptyTitle: "No blocks yet.",
     emptyHint: "Add a command or note below.",
+  },
+  runbookBlock: {
+    changeSource: "Where the runbook lives",
+    labelPlaceholder: "Runbook label",
+    pathPlaceholder: "folder/runbook.json",
+    parentFolder: "Back to the previous folder",
+    unresolvedLabel: "No runbook in your library has this label.",
+    emptyLabel: "Type the label of a runbook in your library.",
+    emptyPath: "Type the path of a runbook in the cloud.",
+    choiceStats: (size, blocks, variables) =>
+      [
+        size,
+        blocks > 0 && `${blocks} ${blocks === 1 ? "block" : "blocks"}`,
+        variables > 0 &&
+          `${variables} ${variables === 1 ? "variable" : "variables"}`,
+      ]
+        .filter(Boolean)
+        .join(` ${MIDDLE_DOT} `),
+    noSource: "No runbook is embedded here.",
+    loading: "Loading the runbook...",
+    missing: "No runbook was found at this path.",
+    error: "The runbook couldn't be loaded.",
+    signedOut: (provider) => `Sign in to ${provider} to load this runbook.`,
+    signIn: "Sign in",
+    unlock: "Unlock",
+    refresh: "Load it again",
+    open: "Open the runbook",
+    collapse: "Collapse the runbook",
+    expand: "Expand the runbook",
+    circular: "This runbook embeds itself, so it isn't shown again here.",
+    tooDeep: "This runbook is nested too deeply to be shown.",
+    empty: "This runbook is empty.",
+    noVariables: "This runbook has no variables.",
+    showVariables: "Show its variables",
+    showBlocks: "Show its blocks",
+    resetOverride: "Use the runbook's own value",
   },
   command: {
     emptyPreview: "empty command",
@@ -463,7 +498,7 @@ export const en: Messages = {
     [KeyBinding.DELETE_RUNBOOK]: "Delete the focused runbook from the library",
     [KeyBinding.CLEAR_LIBRARY]: "Open delete all runbooks dialog",
     [KeyBinding.TOGGLE_EDITORS]:
-      "Toggle all command editors, or all sections in the variables editor",
+      "Toggle all blocks, or all sections in the variables editor",
     [KeyBinding.MULTISELECT_BLOCKS]: "Multi-select blocks",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicate selected blocks",
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
@@ -721,6 +756,8 @@ export const en: Messages = {
       [DocsSectionId.COMMAND_BLOCK]: "Command block",
       [DocsSectionId.NOTE_BLOCK]: "Note block",
       [DocsSectionId.IMAGE_BLOCK]: "Image block",
+      [DocsSectionId.RUNBOOK_BLOCK]: "Runbook block",
+      [DocsSectionId.EMBEDDING_RUNBOOKS]: "Embedding runbooks",
       [DocsSectionId.DIVIDER_BLOCK]: "Divider block",
       [DocsSectionId.MULTI_SELECT]: "Multi-select",
       [DocsSectionId.READ_MODE]: "Read mode",
@@ -802,7 +839,7 @@ If something goes wrong, undo it in this order:
         collapseAllLabel,
       ) => `* The **CommandPad logo**: click it to reload the app.
 * The **padlock / pencil**: switches between read mode and edit mode. It has its own section later in this guide.
-* **${collapseAllLabel}**: collapses or expands every command editor in the active runbook at once. In the variables editor it folds or unfolds every variable section instead.
+* **${collapseAllLabel}**: collapses or expands every block in the active runbook at once. In the variables editor it folds or unfolds every variable section instead.
 * The **sun / moon**: switches between the light and dark themes.
 * The **language selector**: changes the interface language.
 * The **book**: opens this documentation.
@@ -841,7 +878,7 @@ If something goes wrong, undo it in this order:
       labelDemo:
         "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, close one, and open the source file to see a tab's runbook as JSON.",
       unresolvedMarker:
-        "A red dot before a tab's name means that runbook holds at least one reference that resolves to nothing, so a runbook missing a value stands out without opening it. The third tab above wears one: open its variables and give `HOST` a value, and the dot goes as soon as every reference resolves.",
+        "When a tab's close button is a solid red dot, that runbook has unresolved parts, so a runbook that isn't ready to run stands out without opening it. Point at the dot and it turns back into the close button. The third tab above wears one: open its variables and give `HOST` a value, and the dot goes as soon as every reference resolves.",
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",
@@ -1249,6 +1286,26 @@ If something goes wrong, undo it in this order:
       intro:
         "Nothing more than a visual separator. It stretches to match the width of the widest block, which makes it perfect for splitting a runbook into sections.",
       demoNote: "Type here and watch how the divider grows or shrinks.",
+    },
+    runbookBlock: {
+      teaser: (embeddingSection, tabsSection) =>
+        `There is one more block: the runbook block, which shows a whole other runbook inside this one. It's made of nearly everything else in CommandPad (variables, tabs, your runbook library), so it gets its own section, **${embeddingSection}**, right after **${tabsSection}**. Keep going in order. By the time you get there you'll have used every piece it's built from, and its demo will explain itself.`,
+      intro:
+        "A runbook block shows another runbook inside this one. Write a procedure you repeat in several places once, such as a deploy or a backup, and embed it wherever it's needed. To pick the runbook, type its label in the block's header: the box suggests every runbook in your library.",
+      demoHint: (showVariables) =>
+        `The first tab is a release runbook that embeds the deploy runbook from the second tab. Press **${showVariables}** in the block's header, change \`ENV\` from \`prod\` to \`dev\` and switch back: the embedded commands follow. Then edit a command in the deploy tab and come back to the first one. The change is already there.`,
+      overrides:
+        "A value you set on the block is an override. It belongs to this block and never changes the embedded runbook, so each runbook that embeds it only states what differs. It can reference this runbook's own variables, and the arrow beside it drops it again.",
+      readOnly: (open) =>
+        `Embedded blocks are read-only: you can copy a command or view an image, but not edit them. To change the runbook itself, press **${open}**. Every runbook that embeds it picks up the edit, and renaming it doesn't break the link.`,
+      cloud: (local, signIn, refresh) =>
+        `The runbook can also live in the cloud. Switch **${local}** to a provider and type the file's path, such as \`ops/deploy.json\`. Once you're signed in, the box suggests what's in the folder typed so far: picking a folder opens it, \`..\` goes back up a level, and picking a file loads it. Press \`Ctrl+Space\` to list the folder again. Embedding it reads the file, it doesn't import it, and **${refresh}** reads it again. While you're signed out, the block waits for you to press **${signIn}**.`,
+      secrets: (unlock) =>
+        `If the embedded runbook has encrypted secrets, press the warning shield in its header (**${unlock}**) and enter its passphrase. Once per session is enough.`,
+      limits:
+        "Embeds can nest a few levels deep, and a runbook that would end up embedding itself is shown only once. Markdown and text exports write the embedded blocks in place, with your overrides applied.",
+      demoDeployTitle: "Deploy the API",
+      demoReleaseTitle: "Release 2.4",
     },
     multiSelect: {
       intro:

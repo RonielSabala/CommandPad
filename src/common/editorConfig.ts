@@ -11,6 +11,7 @@ export const CodeToken = {
   FONT_MONO: "--font-mono",
   TAB_SIZE: "--tab-size",
   TEXT_BASE: "--text-base",
+  TEXT_MD: "--text-md",
   TEXT_SM: "--text-sm",
   LINE_HEIGHT_RATIO: "--code-line-height-ratio",
   GUTTER_PAD_START: "--space-5",
@@ -42,6 +43,7 @@ export const ColorToken = {
 
 export const CodeMetricProperty = {
   LINE_HEIGHT_BASE: "--code-line-height-base",
+  LINE_HEIGHT_MEDIUM: "--code-line-height-medium",
   LINE_HEIGHT_SMALL: "--code-line-height-small",
   LINE_NUMBER_CHARS: "--code-line-number-chars",
   GUTTER_PAD_START: "--code-gutter-pad-start",
@@ -62,10 +64,14 @@ export const CodeModelConfig = {
 export const CodeModelScope = {
   COMMAND: "command",
   VARIABLE: "variable",
+  RUNBOOK_LABEL: "runbook-label",
+  RUNBOOK_OVERRIDE: "runbook-override",
   PASTE_RUNBOOK: "runbook/paste",
   CLOUD_FILE: "runbook/cloud",
   RUNBOOK_SOURCE: "runbook/source",
 } as const;
+export type CodeModelScope =
+  (typeof CodeModelScope)[keyof typeof CodeModelScope];
 
 export const RUNBOOK_JSON_SCOPES: readonly string[] = [
   CodeModelScope.PASTE_RUNBOOK,
@@ -143,6 +149,25 @@ export const MonacoCursorSource = {
   MOUSE: "mouse",
 } as const;
 
+export const EditorLanguage = {
+  CHOICE: "commandpad-choice",
+} as const;
+export type EditorLanguage =
+  (typeof EditorLanguage)[keyof typeof EditorLanguage];
+
+export const MonacoSuggest = {
+  CONTROLLER_ID: "editor.contrib.suggestController",
+  TRIGGER_ACTION_ID: "editor.action.triggerSuggest",
+  IDLE_STATE: 0,
+} as const;
+
+export const ChoiceConfig = {
+  PICK_COMMAND_ID: "commandpad.pickChoice",
+  PINNED_RANK: "0",
+  FOLDER_RANK: "1",
+  ITEM_RANK: "2",
+} as const;
+
 export const MonacoFind = {
   CONTROLLER_ID: "editor.contrib.findController",
 } as const;
@@ -218,11 +243,18 @@ export const VariableSectionField = {
 
 export const BlockField = {
   TYPE: "type",
+  RUNBOOK_ID: "runbookId",
   TEXT: "text",
+  LABEL: "label",
   SRC: "src",
+  PATH: "path",
   ALT: "alt",
   STYLE: "style",
+  CLOUD: "cloud",
+  PROVIDER: "provider",
+  OVERRIDES: "overrides",
   LANGUAGE: "language",
+  COLLAPSED: "collapsed",
   EDITOR_COLLAPSED: "editorCollapsed",
 } as const;
 

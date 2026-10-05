@@ -24,7 +24,9 @@ import { ArrowsFullscreen, Download } from "react-bootstrap-icons";
 
 import type { BlockViewProps } from "../blockViews";
 import "./ImageBlock.css";
+import { ImageEmpty } from "./ImageEmpty";
 import { ImagePlaceholderBadge } from "./ImagePlaceholderBadge";
+import { ImageView } from "./ImageView";
 
 export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
   const t = useTranslation();
@@ -189,15 +191,10 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
               {!isAttachedImage(src) && <p className="image-source">{src}</p>}
             </div>
           ) : (
-            <img
-              className="image-view"
+            <ImageView
               src={src}
-              alt={block.alt ?? ""}
-              draggable={false}
-              {...tooltip(isReadMode ? t.image.viewFullscreen : undefined)}
-              role={isReadMode ? "button" : undefined}
-              tabIndex={isReadMode ? 0 : undefined}
-              onClick={isReadMode ? expand : undefined}
+              alt={block.alt}
+              onExpand={isReadMode ? expand : undefined}
               onError={() => setLoadFailed(true)}
             />
           )}
@@ -253,10 +250,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
           )}
         </div>
       ) : isReadMode ? (
-        <div className="image-empty-readonly">
-          <ImagePlaceholderBadge />
-          <p className="image-message">{t.image.emptyReadOnly}</p>
-        </div>
+        <ImageEmpty />
       ) : (
         <div
           className={`image-dropzone ${CssClass.SELECT_KEY_INERT_CHILDREN}`}

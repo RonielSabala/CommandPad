@@ -3,13 +3,21 @@ import {
   DEFAULT_TAB_LABEL,
   FilePickerConfig,
   JSON_EXTENSION,
+  RunbookBlockConfig,
   RunbookConfig,
 } from "@/common/config";
-import { ExportFormat } from "@/common/enums";
-import type { RunbookContent } from "@/common/types";
+import { BlockType, ExportFormat } from "@/common/enums";
+import type { RunbookBlock, RunbookContent } from "@/common/types";
 import { encryptContent } from "@/services/vault";
 import { downloadBlob } from "./download";
-import { getVariableMap, resolveCommandToString } from "./resolution";
+import { localSourceKey } from "./embeddedRunbook";
+import {
+  applyOverrides,
+  getSecretKeys,
+  getVariableMap,
+  resolveCommandToString,
+  type OverrideHost,
+} from "./resolution";
 import { slugifyLabel } from "./runbook";
 import { buildRunbookSource } from "./runbookSource";
 import { joinLines } from "./string";
@@ -68,27 +76,89 @@ async function saveFile(
   downloadBlob(new Blob([content], { type: mimeType }), suggestedName);
 }
 
+/** Each block followed by a blank line. */
+function markdownLines(blocks: string[]): string[] {
+  return blocks.flatMap((markdown) => [markdown, ""]);
+}
+
+/** What a runbook block embeds. */
+export interface EmbeddedExport {
+  /** The embed's source key. */
+  key: string;
+  /** The vault scope its secrets are encrypted under. */
+  scope: string;
+  content: RunbookContent;
+}
+
+export type EmbeddedReader = (
+  block: RunbookBlock,
+) => Promise<EmbeddedExport | null>;
+
+async function renderMarkdownBlocks(
+  scope: string,
+  content: RunbookContent,
+  readEmbedded: EmbeddedReader,
+  trail: readonly string[],
+): Promise<string[]> {
+  const secured = await encryptContent(scope, content);
+  const host: OverrideHost = {
+    variableMap: getVariableMap(secured.variables),
+    secretKeys: getSecretKeys(secured.variables),
+  };
+
+  // Rendered up front
+  const embeds = new Map<string, string>();
+  if (trail.length <= RunbookBlockConfig.MAX_DEPTH) {
+    for (const block of secured.blocks) {
+      if (block.type !== BlockType.RUNBOOK) {
+        continue;
+      }
+
+      const embedded = await readEmbedded(block);
+      if (!embedded || trail.includes(embedded.key)) {
+        continue;
+      }
+
+      const rendered = await renderMarkdownBlocks(
+        embedded.scope,
+        {
+          ...embedded.content,
+          variables: applyOverrides(
+            embedded.content.variables,
+            block.overrides,
+            host,
+          ),
+        },
+        readEmbedded,
+        [...trail, embedded.key],
+      );
+
+      if (rendered.length > 0) {
+        embeds.set(block.id, joinLines(markdownLines(rendered).slice(0, -1)));
+      }
+    }
+  }
+
+  const context: BlockMarkdownContext = {
+    resolve: (text) => resolveCommandToString(text, host.variableMap),
+    embedded: (block) => embeds.get(block.id) ?? null,
+  };
+
+  return secured.blocks
+    .map((block) => blockToMarkdown(block, context))
+    .filter((markdown): markdown is string => markdown !== null);
+}
+
 export async function buildMarkdownExport(
   runbookId: string,
   content: RunbookContent,
+  readEmbedded: EmbeddedReader,
 ): Promise<string> {
-  const secured = await encryptContent(runbookId, content);
-  const lines: string[] = [];
-  const variableMap = getVariableMap(secured.variables);
-  const context: BlockMarkdownContext = {
-    resolve: (text) => resolveCommandToString(text, variableMap),
-  };
+  const blocks = await renderMarkdownBlocks(runbookId, content, readEmbedded, [
+    localSourceKey(runbookId),
+  ]);
 
-  for (const block of secured.blocks) {
-    const markdown = blockToMarkdown(block, context);
-    if (markdown === null) {
-      continue;
-    }
-
-    lines.push(markdown, "");
-  }
-
-  return joinLines(lines);
+  return joinLines(markdownLines(blocks));
 }
 
 export function stripJsonExtension(filename: string): string {
@@ -114,10 +184,11 @@ export async function buildSecuredRunbookExportContent(
   format: ExportFormat,
   runbookId: string,
   content: RunbookContent,
+  readEmbedded: EmbeddedReader,
 ): Promise<string> {
   return format === ExportFormat.JSON
     ? buildRunbookSource(await encryptContent(runbookId, content))
-    : buildMarkdownExport(runbookId, content);
+    : buildMarkdownExport(runbookId, content, readEmbedded);
 }
 
 export async function runExport(
@@ -125,11 +196,17 @@ export async function runExport(
   runbookId: string,
   content: RunbookContent,
   filename: string,
+  readEmbedded: EmbeddedReader,
 ): Promise<void> {
   const config = FilePickerConfig[format];
 
   await saveFile(
-    await buildSecuredRunbookExportContent(format, runbookId, content),
+    await buildSecuredRunbookExportContent(
+      format,
+      runbookId,
+      content,
+      readEmbedded,
+    ),
     config.mimeType,
     filename,
     [...config.types],

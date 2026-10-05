@@ -7,8 +7,10 @@ import {
 export interface CodeMetrics {
   fontFamily: string;
   fontSizeBase: number;
+  fontSizeMedium: number;
   fontSizeSmall: number;
   lineHeightBase: number;
+  lineHeightMedium: number;
   lineHeightSmall: number;
   tabSize: number;
   gutterPadStart: number;
@@ -30,6 +32,7 @@ export function publishCodeMetrics(): CodeMetrics {
 
   const ratio = readNumber(style, CodeToken.LINE_HEIGHT_RATIO);
   const fontSizeBase = readNumber(style, CodeToken.TEXT_BASE) * rootFontSize;
+  const fontSizeMedium = readNumber(style, CodeToken.TEXT_MD) * rootFontSize;
   const fontSizeSmall = readNumber(style, CodeToken.TEXT_SM) * rootFontSize;
   const pixels = (token: string) =>
     Math.round(readNumber(style, token) * rootFontSize);
@@ -37,8 +40,10 @@ export function publishCodeMetrics(): CodeMetrics {
   metrics = {
     fontFamily: style.getPropertyValue(CodeToken.FONT_MONO).trim(),
     fontSizeBase,
+    fontSizeMedium,
     fontSizeSmall,
     lineHeightBase: Math.round(fontSizeBase * ratio),
+    lineHeightMedium: Math.round(fontSizeMedium * ratio),
     lineHeightSmall: Math.round(fontSizeSmall * ratio),
     tabSize: readNumber(style, CodeToken.TAB_SIZE),
     gutterPadStart: pixels(CodeToken.GUTTER_PAD_START),
@@ -49,6 +54,10 @@ export function publishCodeMetrics(): CodeMetrics {
   root.style.setProperty(
     CodeMetricProperty.LINE_HEIGHT_BASE,
     `${metrics.lineHeightBase}px`,
+  );
+  root.style.setProperty(
+    CodeMetricProperty.LINE_HEIGHT_MEDIUM,
+    `${metrics.lineHeightMedium}px`,
   );
   root.style.setProperty(
     CodeMetricProperty.LINE_HEIGHT_SMALL,

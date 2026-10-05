@@ -11,6 +11,7 @@ import {
   ExportFormat,
   PanelId,
   PanelSide,
+  RunbookEmbedView,
   RunbookView,
   SectionState,
   SyncDestination,
@@ -27,22 +28,13 @@ import { detectLanguage, isLanguage } from "@/i18n/messages";
 import type { Language } from "@/i18n/types";
 import type { CloudFolderRef } from "@/services/cloud";
 import { clamp } from "@/utils/number";
-import { isNumber, isObject, isString } from "@/utils/typeGuards";
+import { isEnumValue, isNumber, isObject, isString } from "@/utils/typeGuards";
 
 const PANEL_IDS = Object.keys(PANEL_DEFINITIONS) as PanelId[];
 
 function getSavedItemByKey(key: string) {
   return JSON.parse(localStorage.getItem(key) ?? "null");
 }
-
-const isSyncDestination = (value: unknown): value is SyncDestination =>
-  Object.values(SyncDestination).includes(value as SyncDestination);
-
-const isExportFormat = (value: unknown): value is ExportFormat =>
-  Object.values(ExportFormat).includes(value as ExportFormat);
-
-const isRunbookView = (value: unknown): value is RunbookView =>
-  Object.values(RunbookView).includes(value as RunbookView);
 
 const toPanelSide = (value: unknown, fallback: PanelSide): PanelSide => {
   if (value === PanelSide.LEFT || value === PanelSide.RIGHT) {
@@ -102,7 +94,6 @@ const isCloudFolderPath = (value: unknown): value is CloudFolderRef[] =>
 
 interface PersistedUiState {
   mode: AppMode;
-  runbookView: RunbookView;
   theme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
@@ -124,7 +115,6 @@ export function saveUiState(ui: PersistedUiState): void {
       StorageKey.UI_STATE,
       JSON.stringify({
         mode: ui.mode,
-        runbookView: ui.runbookView,
         theme: ui.theme,
         language: ui.language,
         spellcheckEnabled: ui.spellcheckEnabled,
@@ -154,9 +144,6 @@ export function loadUiState(): Partial<PersistedUiState> | null {
 
     return {
       mode: saved.mode === AppMode.READ ? AppMode.READ : AppMode.EDIT,
-      runbookView: isRunbookView(saved.runbookView)
-        ? saved.runbookView
-        : RunbookView.PREVIEW,
       theme: saved.theme === Theme.LIGHT ? Theme.LIGHT : Theme.DARK,
       language: isLanguage(saved.language) ? saved.language : detectLanguage(),
       spellcheckEnabled: saved.spellcheckEnabled === true,
@@ -172,10 +159,10 @@ export function loadUiState(): Partial<PersistedUiState> | null {
         : {}),
       minimapEnabled: saved.minimapEnabled !== false,
       minimapPosition: toPanelSide(saved.minimapPosition, PanelSide.RIGHT),
-      ...(isSyncDestination(saved.lastExportDestination)
+      ...(isEnumValue(SyncDestination, saved.lastExportDestination)
         ? { lastExportDestination: saved.lastExportDestination }
         : {}),
-      ...(isExportFormat(saved.lastExportFormat)
+      ...(isEnumValue(ExportFormat, saved.lastExportFormat)
         ? { lastExportFormat: saved.lastExportFormat }
         : {}),
       ...(isString(saved.lastExportFilename)
@@ -187,7 +174,7 @@ export function loadUiState(): Partial<PersistedUiState> | null {
       ...(isCloudFolderPath(saved.lastExportFolderPath)
         ? { lastExportFolderPath: saved.lastExportFolderPath }
         : {}),
-      ...(isSyncDestination(saved.lastImportSource)
+      ...(isEnumValue(SyncDestination, saved.lastImportSource)
         ? { lastImportSource: saved.lastImportSource }
         : {}),
     };
@@ -201,7 +188,33 @@ export function loadUiState(): Partial<PersistedUiState> | null {
 
 interface PersistedTabs {
   activeTabId: string | null;
-  tabOrder: { tabId: string; runbookId: string | null; scrollTop?: unknown }[];
+  tabOrder: {
+    tabId: string;
+    runbookId: string | null;
+    view?: unknown;
+    scrollTop?: unknown;
+    embedViews?: unknown;
+  }[];
+}
+
+export function restoreRunbookView(value: unknown): RunbookView {
+  return isEnumValue(RunbookView, value) ? value : RunbookView.PREVIEW;
+}
+
+export function restoreEmbedViews(
+  value: unknown,
+): Record<string, RunbookEmbedView> {
+  const embedViews: Record<string, RunbookEmbedView> = {};
+
+  if (isObject(value)) {
+    for (const [blockId, view] of Object.entries(value)) {
+      if (isEnumValue(RunbookEmbedView, view)) {
+        embedViews[blockId] = view;
+      }
+    }
+  }
+
+  return embedViews;
 }
 
 export function restoreScrollTop(value: unknown): Record<RunbookView, number> {
@@ -228,7 +241,9 @@ export function saveTabsMeta(tabs: Tab[], activeTabId: string | null): void {
         tabOrder: tabs.map((tab) => ({
           tabId: tab.id,
           runbookId: tab.runbookId,
+          view: tab.view,
           scrollTop: tab.scrollTop,
+          embedViews: tab.embedViews,
         })),
       }),
     );
@@ -260,7 +275,7 @@ interface PersistedRunbooks {
 
 const isRunbookSync = (value: unknown): value is RunbookSync =>
   isObject(value) &&
-  Object.values(CloudProvider).includes(value.provider as CloudProvider) &&
+  isEnumValue(CloudProvider, value.provider) &&
   isString(value.filename) &&
   (isString(value.folderId) || value.folderId === null);
 

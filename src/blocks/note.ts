@@ -1,7 +1,7 @@
 import { BlockField, JsonSchemaType } from "@/common/editorConfig";
 import { BlockType, NoteStyle } from "@/common/enums";
 import { MarkdownSyntax } from "@/common/markdownSyntax";
-import { isString } from "@/utils/typeGuards";
+import { isEnumValue, isString } from "@/utils/typeGuards";
 import type { BlockDefinition } from "./types";
 
 const MARKDOWN_PREFIX: Record<NoteStyle, string> = {
@@ -9,9 +9,6 @@ const MARKDOWN_PREFIX: Record<NoteStyle, string> = {
   [NoteStyle.SUBHEADING]: `${MarkdownSyntax.SUBHEADING} `,
   [NoteStyle.BODY]: "",
 };
-
-const isNoteStyle = (value: unknown): value is NoteStyle =>
-  Object.values(NoteStyle).includes(value as NoteStyle);
 
 export const noteBlockDefinition: BlockDefinition<typeof BlockType.NOTE> = {
   type: BlockType.NOTE,
@@ -33,7 +30,7 @@ export const noteBlockDefinition: BlockDefinition<typeof BlockType.NOTE> = {
   normalize: (block) => ({
     ...block,
     text: isString(block.text) ? block.text : "",
-    style: isNoteStyle(block.style) ? block.style : NoteStyle.BODY,
+    style: isEnumValue(NoteStyle, block.style) ? block.style : NoteStyle.BODY,
   }),
 
   toMarkdown: (block) =>

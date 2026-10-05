@@ -1,6 +1,6 @@
-import { Key } from "@/common/constants/events";
 import { AppRoute } from "@/common/constants/routes";
 import { AppMode, RunbookView, Theme } from "@/common/enums";
+import { asButton } from "@/components/common/asButton";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import {
   BookIcon,
@@ -12,7 +12,7 @@ import {
   SunIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import { getActiveTab, getRunbookView, useStore } from "@/store/store";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -36,7 +36,7 @@ export function Header() {
     (state) => !(getActiveTab(state)?.blocks.length ?? 0),
   );
   const inVariables = useStore(
-    (state) => state.runbookView === RunbookView.VARIABLES,
+    (state) => getRunbookView(state) === RunbookView.VARIABLES,
   );
   const hasSections = useStore(
     (state) => !!getActiveTab(state)?.variableSections.length,
@@ -55,15 +55,8 @@ export function Header() {
     <header className="header-bar">
       <span
         className="logo no-user-select"
-        role="button"
-        tabIndex={0}
         {...tooltip(t.header.reloadTitle)}
-        onClick={() => location.reload()}
-        onKeyDown={(event) => {
-          if (event.key === Key.ENTER) {
-            location.reload();
-          }
-        }}
+        {...asButton(() => location.reload())}
       >
         <span className="logo-word">Command</span>
         <span className="logo-pad">{"{Pad}"}</span>

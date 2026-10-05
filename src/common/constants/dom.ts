@@ -80,3 +80,8 @@ export const ScrollIntoView = {
   BEHAVIOR_SMOOTH: "smooth",
   BEHAVIOR_INSTANT: "instant",
 } as const;
+
+export const ScrollSettle = {
+  STABLE_FRAMES: 3,
+  MAX_FRAMES: 60,
+} as const;

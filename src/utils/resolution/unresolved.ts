@@ -1,18 +1,36 @@
 import { getBlockCommandTexts } from "@/blocks";
-import type { Block, Variable } from "@/common/types";
+import type { Block } from "@/common/types";
 
 import { hasUnresolvedTokens } from "./command";
-import { getVariableMap } from "./variables";
+import type { VariableMap } from "./types";
+
+const blockResults = new WeakMap<
+  Block,
+  { variableMap: VariableMap; unresolved: boolean }
+>();
+
+function hasUnresolvedBlockReferences(
+  block: Block,
+  variableMap: VariableMap,
+): boolean {
+  const cached = blockResults.get(block);
+  if (cached?.variableMap === variableMap) {
+    return cached.unresolved;
+  }
+
+  const unresolved = getBlockCommandTexts(block).some((text) =>
+    hasUnresolvedTokens(text, variableMap),
+  );
+
+  blockResults.set(block, { variableMap, unresolved });
+  return unresolved;
+}
 
 export function hasUnresolvedReferences(
-  blocks: Block[] = [],
-  variables: Variable[] = [],
+  blocks: readonly Block[],
+  variableMap: VariableMap,
 ): boolean {
-  const variableMap = getVariableMap(variables);
-
   return blocks.some((block) =>
-    getBlockCommandTexts(block).some((text) =>
-      hasUnresolvedTokens(text, variableMap),
-    ),
+    hasUnresolvedBlockReferences(block, variableMap),
   );
 }

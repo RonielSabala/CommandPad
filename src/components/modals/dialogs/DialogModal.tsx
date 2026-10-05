@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { DialogTone } from "@/common/enums";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { classNames } from "@/utils/string";
@@ -53,7 +54,7 @@ export function DialogModal({
         <ToneIcon className="dialog-icon" aria-hidden="true" />
         <p className="dialog-title">{title}</p>
       </header>
-      <div className="dialog-message">
+      <div className={classNames("dialog-message", CssClass.NOTE_CODE_NEUTRAL)}>
         <NoteText text={message} />
       </div>
       <div className="modal-actions">{children}</div>

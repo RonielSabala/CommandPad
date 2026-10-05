@@ -1,7 +1,8 @@
 import { MinimapConfig } from "@/common/config";
-import { EventType, MouseButton } from "@/common/constants/events";
+import { EventType, MouseButton, PASSIVE } from "@/common/constants/events";
 import { CodeRendering } from "@/common/enums";
 import { CodeRenderingProvider } from "@/components/common/codeEditor/codeRendering";
+import { classNames } from "@/utils/string";
 import {
   useCallback,
   useLayoutEffect,
@@ -40,17 +41,21 @@ function sameMetrics(a: MinimapMetrics, b: MinimapMetrics): boolean {
 
 /** The frame every miniature renders into. */
 export function MinimapMirror({
-  id,
+  className,
   width,
   children,
 }: {
-  id: string;
+  className?: string;
   width: number;
   children: ReactNode;
 }) {
   return (
     <CodeRenderingProvider value={CodeRendering.STATIC}>
-      <div id={id} className="minimap-mirror" inert style={{ width }}>
+      <div
+        className={classNames("minimap-mirror", className)}
+        inert
+        style={{ width }}
+      >
         {children}
       </div>
     </CodeRenderingProvider>
@@ -65,9 +70,34 @@ interface Props {
 
 export function Minimap({ scrollRef, listId, mirror: Mirror }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const overscrollRef = useRef(0);
+
   const [metrics, setMetrics] = useState<MinimapMetrics>(INITIAL_METRICS);
-  const [scrollTop, setScrollTop] = useState(0);
+  const metricsRef = useRef(metrics);
+
+  const place = useCallback(() => {
+    const container = scrollRef.current;
+    const content = contentRef.current;
+    const viewport = viewportRef.current;
+
+    if (!container || !content || !viewport) {
+      return;
+    }
+
+    const scale = MinimapConfig.SCALE;
+    const { scrollHeight, clientHeight, hostHeight } = metricsRef.current;
+
+    const maxScroll = Math.max(0, scrollHeight - clientHeight);
+    const overflow = Math.max(0, scrollHeight * scale - hostHeight);
+    const offset =
+      maxScroll > 0 ? (container.scrollTop / maxScroll) * overflow : 0;
+
+    content.style.transform = `translateY(${-offset}px) scale(${scale})`;
+    viewport.style.height = `${clientHeight * scale}px`;
+    viewport.style.transform = `translateY(${container.scrollTop * scale - offset}px)`;
+  }, [scrollRef]);
 
   const measure = useCallback(() => {
     const container = scrollRef.current;
@@ -111,9 +141,13 @@ export function Minimap({ scrollRef, listId, mirror: Mirror }: Props) {
       listWidth: list.clientWidth,
     };
 
-    setMetrics((previous) => (sameMetrics(previous, next) ? previous : next));
-    setScrollTop(container.scrollTop);
-  }, [scrollRef, listId]);
+    if (!sameMetrics(metricsRef.current, next)) {
+      metricsRef.current = next;
+      setMetrics(next);
+    }
+
+    place();
+  }, [scrollRef, listId, place]);
 
   // Drop the reserved scroll space when the minimap is turned off
   useLayoutEffect(() => {
@@ -150,10 +184,9 @@ export function Minimap({ scrollRef, listId, mirror: Mirror }: Props) {
       return;
     }
 
-    const onScroll = () => setScrollTop(container.scrollTop);
-    container.addEventListener(EventType.SCROLL, onScroll, { passive: true });
-    return () => container.removeEventListener(EventType.SCROLL, onScroll);
-  }, [scrollRef]);
+    container.addEventListener(EventType.SCROLL, place, PASSIVE);
+    return () => container.removeEventListener(EventType.SCROLL, place);
+  }, [scrollRef, place]);
 
   // Scroll wheel
   useLayoutEffect(() => {
@@ -214,12 +247,6 @@ export function Minimap({ scrollRef, listId, mirror: Mirror }: Props) {
     }
   };
 
-  const scale = MinimapConfig.SCALE;
-  const contentHeight = metrics.scrollHeight * scale;
-  const maxScroll = Math.max(0, metrics.scrollHeight - metrics.clientHeight);
-  const overflow = Math.max(0, contentHeight - metrics.hostHeight);
-  const offset = maxScroll > 0 ? (scrollTop / maxScroll) * overflow : 0;
-
   return (
     <div
       className="minimap"
@@ -228,19 +255,10 @@ export function Minimap({ scrollRef, listId, mirror: Mirror }: Props) {
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
     >
-      <div
-        className="minimap-content"
-        style={{ transform: `translateY(${-offset}px) scale(${scale})` }}
-      >
+      <div className="minimap-content" ref={contentRef}>
         <Mirror width={metrics.listWidth} />
       </div>
-      <div
-        className="minimap-viewport"
-        style={{
-          top: scrollTop * scale - offset,
-          height: metrics.clientHeight * scale,
-        }}
-      />
+      <div className="minimap-viewport" ref={viewportRef} />
     </div>
   );
 }

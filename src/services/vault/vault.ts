@@ -127,7 +127,13 @@ export function hasPlainSecrets(content: RunbookContent): boolean {
   );
 }
 
-export function countEncryptedSecrets(content: RunbookContent): number {
+export function hasEncryptedSecrets(content: RunbookContent): boolean {
+  return (content.variables ?? []).some((variable) =>
+    isEncryptedValue(variable.value),
+  );
+}
+
+function countEncryptedSecrets(content: RunbookContent): number {
   return (content.variables ?? []).filter((variable) =>
     isEncryptedValue(variable.value),
   ).length;

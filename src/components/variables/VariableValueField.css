@@ -1,0 +1,97 @@
+.variable-editor {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-radius: var(--radius-lg);
+}
+
+/* Variable key */
+
+.variable-editor-key-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.variable-editor-key {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  font-weight: 500;
+  color: var(--accent-text);
+  background: var(--color-surface-alt);
+  border: var(--border-standard);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  outline: none;
+  transition:
+    border-color var(--transition-base),
+    opacity var(--transition-base);
+}
+
+.variable-editor-key.is-constant {
+  color: var(--constant-text);
+}
+
+.variable-editor-key:focus {
+  border-color: var(--color-border-focus);
+}
+
+.variable-editor-key::placeholder {
+  color: var(--color-text-muted);
+}
+
+body.read-mode .variable-editor-key {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Variable value */
+
+.variable-editor-value {
+  --clamp-halo: var(--block-backdrop);
+  --code-editor-header-halo: var(--block-backdrop);
+
+  min-width: var(--block-min-width);
+  border: var(--border-standard);
+  border-top: none;
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  overflow: clip;
+}
+
+body.read-mode .variable-editor-value textarea {
+  pointer-events: auto;
+  visibility: visible;
+  user-select: text;
+  cursor: text;
+}
+
+/* Variable options */
+
+.variable-editor-options {
+  min-width: var(--block-min-width);
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  color: var(--color-text-primary);
+  background: transparent;
+  border: var(--border-standard);
+  border-top: none;
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  transition: opacity var(--transition-base);
+}
+
+.variable-editor-options:hover {
+  background: var(--color-surface-alt);
+}
+
+/* Unused variable */
+
+body:not(.read-mode)
+  .variable-editor.is-unused:not(:focus-within)
+  :is(.variable-editor-key, .variable-editor-value, .variable-editor-options) {
+  opacity: 0.5;
+}

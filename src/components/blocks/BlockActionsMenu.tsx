@@ -15,6 +15,7 @@ import {
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import type { ReactNode } from "react";
 import { getBlockIcon } from "./blockViews";
 
@@ -60,7 +61,10 @@ export function BlockActionsMenu({ blockId }: Props) {
   );
 
   return (
-    <ActionsMenu className={CssClass.ITEM_ACTIONS} title={t.blocks.actions}>
+    <ActionsMenu
+      className={classNames(CssClass.ITEM_CONTROL, CssClass.ITEM_ACTIONS)}
+      title={t.blocks.actions}
+    >
       <ContextMenuItem
         icon={<DuplicateIcon className="icon-md icon-bold" />}
         onSelect={() => duplicateBlock(blockId)}

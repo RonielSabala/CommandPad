@@ -1,7 +1,7 @@
 import { MonacoCursorSource, RevealScrollConfig } from "@/common/editorConfig";
 import type { editor } from "monaco-editor";
 
-import { findScrollParent, scrollParentBox } from "./scrollParent";
+import { findScrollParent, scrollParentBox } from "@/utils/scrollParent";
 
 export function bindRevealScrolling(
   instance: editor.IStandaloneCodeEditor,

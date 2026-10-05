@@ -1,10 +1,10 @@
 import { EventType, Key } from "@/common/constants/events";
-import { BlockType } from "@/common/enums";
 import type { Block, ImageBlock } from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { Modal } from "@/components/modals/Modal";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
+import { isFilledImage } from "@/utils/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "react-bootstrap-icons";
 
@@ -19,20 +19,19 @@ interface Slide {
   total: number;
 }
 
-function isFilledImage(block: Block): block is ImageBlock {
-  return block.type === BlockType.IMAGE && !!block.src;
-}
-
 export function ImageLightbox() {
   const t = useTranslation();
-
   const activeTab = useStore(getActiveTab);
-  const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
   const viewerBlockId = useStore((state) => state.imageViewerBlockId);
+  const slides = useStore((state) => state.imageViewerSlides);
   const openImageViewer = useStore((state) => state.openImageViewer);
   const closeImageViewer = useStore((state) => state.closeImageViewer);
 
-  const images = useMemo(() => blocks.filter(isFilledImage), [blocks]);
+  const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
+  const images = useMemo(
+    () => slides ?? blocks.filter(isFilledImage),
+    [slides, blocks],
+  );
   const currentIndex = images.findIndex((image) => image.id === viewerBlockId);
   const current = images[currentIndex];
 
@@ -52,10 +51,10 @@ export function ImageLightbox() {
     (delta: number) => {
       const next = images[currentIndex + delta];
       if (next) {
-        openImageViewer(next.id);
+        openImageViewer(next.id, slides);
       }
     },
-    [images, currentIndex, openImageViewer],
+    [images, currentIndex, openImageViewer, slides],
   );
 
   useEffect(() => {

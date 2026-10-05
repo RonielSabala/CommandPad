@@ -3,12 +3,14 @@ import type {
   CloudProvider,
   CodeLanguage,
   CommandSegmentType,
+  EmbeddedRunbookStatus,
   InsertPosition,
   NoteNodeType,
   NoteSegmentType,
   NoteStyle,
   NoteTableAlign,
   PanelSide,
+  RunbookEmbedView,
   RunbookView,
 } from "./enums";
 
@@ -40,12 +42,32 @@ export interface ImageBlock {
   alt?: string;
 }
 
+export interface CloudRunbookRef {
+  provider: CloudProvider;
+  path: string;
+}
+
+export interface RunbookBlock {
+  id: string;
+  type: typeof BlockType.RUNBOOK;
+  label: string;
+  runbookId?: string;
+  cloud?: CloudRunbookRef;
+  overrides?: Record<string, string>;
+  collapsed?: boolean;
+}
+
 export interface DividerBlock {
   id: string;
   type: typeof BlockType.DIVIDER;
 }
 
-export type Block = CommandBlock | NoteBlock | ImageBlock | DividerBlock;
+export type Block =
+  | CommandBlock
+  | NoteBlock
+  | ImageBlock
+  | RunbookBlock
+  | DividerBlock;
 
 export type BlockOfType<T extends BlockType> = Extract<Block, { type: T }>;
 
@@ -78,7 +100,10 @@ export interface Tab {
   blocks: Block[];
   variables: Variable[];
   variableSections: VariableSection[];
+  view: RunbookView;
   scrollTop: Record<RunbookView, number>;
+  /** What each runbook block's body shows. */
+  embedViews?: Record<string, RunbookEmbedView>;
 }
 
 export interface RunbookSync {
@@ -103,10 +128,25 @@ export interface RunbookEntry {
   vault?: VaultRecord;
 }
 
+export interface RunbookStats {
+  bytes: number;
+  blocks: number;
+  variables: number;
+}
+
 export interface RunbookContent {
   blocks: Block[];
   variables: Variable[];
   variableSections: VariableSection[];
+}
+
+export interface EmbeddedRunbook {
+  status: EmbeddedRunbookStatus;
+  content: RunbookContent | null;
+  /** Due a reload. */
+  stale?: boolean;
+  /** The library runbook kept in this cloud file. */
+  runbookId?: string;
 }
 
 export interface ResolvedSpan {

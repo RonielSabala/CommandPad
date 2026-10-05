@@ -111,16 +111,6 @@
   right: -1px;
 }
 
-.tab-unresolved {
-  position: relative;
-  z-index: var(--z-raised);
-  flex-shrink: 0;
-  width: var(--space-4);
-  height: var(--space-4);
-  border-radius: 50%;
-  background: var(--danger);
-}
-
 .tab-label {
   position: relative;
   z-index: var(--z-raised);
@@ -163,7 +153,6 @@
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background: transparent;
-  transition: background var(--transition-fast);
 }
 
 .tab:hover .tab-close,
@@ -181,4 +170,18 @@
 
 .tab-close .tab-close-icon {
   stroke-width: 2.5;
+}
+
+.tab-close.is-unresolved {
+  opacity: 1;
+}
+
+.tab-close.is-unresolved:not(:hover, :focus-visible)::before {
+  width: var(--space-4);
+  height: var(--space-4);
+  background: var(--danger);
+}
+
+.tab-close.is-unresolved:not(:hover, :focus-visible) .tab-close-icon {
+  opacity: 0;
 }

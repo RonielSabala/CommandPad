@@ -50,6 +50,7 @@ const Mark = escapeSyntax(MarkdownDelimiter);
 
 const FENCE = "```";
 const IMAGE_MARKER = "!";
+const RUNBOOK_REFERENCE_LABEL = "Runbook:";
 const link = (label: string, target: string) =>
   sequence(
     MarkdownDelimiter.LINK_LABEL_OPEN,
@@ -67,6 +68,8 @@ export const MarkdownSyntax = {
   CODE_FENCE: `${FENCE}bash`,
   CODE_FENCE_END: FENCE,
   IMAGE: (alt: string, src: string) => `${IMAGE_MARKER}${link(alt, src)}`,
+  RUNBOOK_REFERENCE: (target: string) =>
+    `${MarkdownDelimiter.BOLD}${RUNBOOK_REFERENCE_LABEL}${MarkdownDelimiter.BOLD} ${MarkdownDelimiter.CODE}${target}${MarkdownDelimiter.CODE}`,
 } as const;
 
 // The inline marks

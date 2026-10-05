@@ -7,7 +7,7 @@ import {
 import { DragScrollConfig } from "@/common/editorConfig";
 import type { editor } from "monaco-editor";
 
-import { findScrollParent, scrollParentBox } from "./scrollParent";
+import { findScrollParent, scrollParentBox } from "@/utils/scrollParent";
 
 /** Pixels to scroll this frame. */
 function frameDelta(clientY: number, scroller: HTMLElement): number {

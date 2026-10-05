@@ -57,4 +57,9 @@ export const commandBlockDefinition: BlockDefinition<typeof BlockType.COMMAND> =
         return text === block.text ? block : { ...block, text };
       },
     },
+
+    folding: {
+      isFolded: (block) => block.editorCollapsed === true,
+      setFolded: (block, editorCollapsed) => ({ ...block, editorCollapsed }),
+    },
   };

@@ -69,11 +69,13 @@ export function VariableRowFrame({
     >
       {children}
 
-      <div className={CssClass.ITEM_DRAG_HANDLE}>
+      <div
+        className={classNames(CssClass.ITEM_CONTROL, CssClass.ITEM_DRAG_HANDLE)}
+      >
         <DragHandle handleProps={handleProps} />
       </div>
 
-      {menu(CssClass.ITEM_ACTIONS)}
+      {menu(classNames(CssClass.ITEM_CONTROL, CssClass.ITEM_ACTIONS))}
     </div>
   );
 }

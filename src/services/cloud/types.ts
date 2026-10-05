@@ -22,6 +22,12 @@ export interface PlacedCloudEntry {
   path: CloudFolderRef[];
 }
 
+/** A file together with the id of the folder holding it. */
+export interface CloudFileLocation {
+  file: CloudEntry;
+  folderId: string | null;
+}
+
 export class CloudSyncError extends Error {}
 
 export interface CloudClient {

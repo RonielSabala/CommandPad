@@ -1,4 +1,4 @@
-import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
+import { DataAttr, ScrollIntoView, ScrollSettle } from "@/common/constants/dom";
 
 /** Bring the row carrying `rowId` into view, scoped to the list it belongs to. */
 export function scrollRowIntoView(
@@ -15,6 +15,37 @@ export function scrollRowIntoView(
     block: align,
     behavior: ScrollIntoView.BEHAVIOR_SMOOTH,
   });
+}
+
+/** Run `callback` once `element` has stopped moving on screen */
+export function whenElementSettles(
+  element: HTMLElement,
+  callback: () => void,
+): () => void {
+  let previous: number | undefined;
+  let stable = 0;
+  let frames = 0;
+  let frame = 0;
+
+  const watch = () => {
+    const { top } = element.getBoundingClientRect();
+    stable = top === previous ? stable + 1 : 0;
+    previous = top;
+    frames += 1;
+
+    if (
+      stable >= ScrollSettle.STABLE_FRAMES ||
+      frames >= ScrollSettle.MAX_FRAMES
+    ) {
+      callback();
+      return;
+    }
+
+    frame = requestAnimationFrame(watch);
+  };
+
+  frame = requestAnimationFrame(watch);
+  return () => cancelAnimationFrame(frame);
 }
 
 /** Distance from `value` to the nearest edge of `[min, max]` (0 when inside). */

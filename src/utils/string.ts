@@ -1,4 +1,4 @@
-import { DuplicateNameConfig, LINE_BREAK } from "@/common/config";
+import { DuplicateNameConfig, LINE_BREAK, Utf8Config } from "@/common/config";
 
 export function splitLines(text: string): string[] {
   return text.split(LINE_BREAK);
@@ -196,4 +196,27 @@ export function classNames(
   ...classes: (string | false | null | undefined)[]
 ): string {
   return classes.filter(Boolean).join(" ");
+}
+
+/** The text's size in UTF-8 bytes. */
+export function utf8ByteLength(text: string): number {
+  let bytes = 0;
+
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i);
+    if (code <= Utf8Config.ONE_BYTE_MAX) {
+      bytes += 1;
+    } else if (code <= Utf8Config.TWO_BYTE_MAX) {
+      bytes += 2;
+    } else if (
+      code >= Utf8Config.SURROGATE_MIN &&
+      code <= Utf8Config.SURROGATE_MAX
+    ) {
+      bytes += Utf8Config.SURROGATE_BYTES;
+    } else {
+      bytes += Utf8Config.THREE_BYTES;
+    }
+  }
+
+  return bytes;
 }

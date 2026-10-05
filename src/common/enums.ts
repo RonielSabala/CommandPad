@@ -61,12 +61,30 @@ export const MoveDirection = {
 export type MoveDirection = (typeof MoveDirection)[keyof typeof MoveDirection];
 
 export const BlockType = {
-  NOTE: "note",
   COMMAND: "command",
+  NOTE: "note",
   IMAGE: "image",
+  RUNBOOK: "runbook",
   DIVIDER: "divider",
 } as const;
 export type BlockType = (typeof BlockType)[keyof typeof BlockType];
+
+export const EmbeddedRunbookStatus = {
+  ERROR: "error",
+  MISSING: "missing",
+  SIGNED_OUT: "signed-out",
+  LOADING: "loading",
+  READY: "ready",
+} as const;
+export type EmbeddedRunbookStatus =
+  (typeof EmbeddedRunbookStatus)[keyof typeof EmbeddedRunbookStatus];
+
+export const RunbookEmbedView = {
+  BLOCKS: "blocks",
+  VARIABLES: "variables",
+} as const;
+export type RunbookEmbedView =
+  (typeof RunbookEmbedView)[keyof typeof RunbookEmbedView];
 
 export const InsertPosition = {
   ABOVE: "above",

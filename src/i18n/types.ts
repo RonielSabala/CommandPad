@@ -159,7 +159,7 @@ export interface Messages {
     close: string;
     closeOthers: string;
     closeAll: string;
-    unresolved: string;
+    closeUnresolvedTab: string;
   };
   source: {
     openSource: string;
@@ -178,6 +178,34 @@ export interface Messages {
     selected: (count: number) => string;
     emptyTitle: string;
     emptyHint: string;
+  };
+  runbookBlock: {
+    changeSource: string;
+    labelPlaceholder: string;
+    pathPlaceholder: string;
+    parentFolder: string;
+    unresolvedLabel: string;
+    emptyLabel: string;
+    emptyPath: string;
+    choiceStats: (size: string, blocks: number, variables: number) => string;
+    noSource: string;
+    loading: string;
+    missing: string;
+    error: string;
+    signedOut: (provider: string) => string;
+    signIn: string;
+    unlock: string;
+    refresh: string;
+    open: string;
+    collapse: string;
+    expand: string;
+    circular: string;
+    tooDeep: string;
+    empty: string;
+    noVariables: string;
+    showVariables: string;
+    showBlocks: string;
+    resetOverride: string;
   };
   command: {
     emptyPreview: string;
@@ -697,6 +725,18 @@ export interface Messages {
     dividerBlock: {
       intro: string;
       demoNote: string;
+    };
+    runbookBlock: {
+      teaser: (embeddingSection: string, tabsSection: string) => string;
+      intro: string;
+      demoHint: (showVariables: string) => string;
+      overrides: string;
+      readOnly: (open: string) => string;
+      cloud: (local: string, signIn: string, refresh: string) => string;
+      secrets: (unlock: string) => string;
+      limits: string;
+      demoDeployTitle: string;
+      demoReleaseTitle: string;
     };
     multiSelect: {
       intro: string;

@@ -1,4 +1,11 @@
-import { createBlock, getBlockLabelText, mapBlockCommandTexts } from "@/blocks";
+import {
+  createBlock,
+  getBlockLabelText,
+  isBlockFoldable,
+  isBlockFolded,
+  mapBlockCommandTexts,
+  setBlockFolded,
+} from "@/blocks";
 import {
   CloudSyncConfig,
   createDefaultPanels,
@@ -24,12 +31,14 @@ import {
   CloudProvider,
   CloudSortColumn,
   DialogTone,
+  EmbeddedRunbookStatus,
   ExportFormat,
   HistoryDirection,
   InsertPosition,
   MoveDirection,
   PanelId,
   PanelSide,
+  RunbookEmbedView,
   RunbookSyncStatus,
   RunbookView,
   SortDirection,
@@ -47,9 +56,13 @@ import type {
   Block,
   BlockInsertAnchor,
   BlockOfType,
+  CloudRunbookRef,
+  EmbeddedRunbook,
+  ImageBlock,
   PanelState,
   RunbookContent,
   RunbookEntry,
+  RunbookStats,
   RunbookSync,
   Tab,
   Variable,
@@ -67,21 +80,25 @@ import {
   DEFAULT_CLOUD_SORT,
   getCachedCloudEntries,
   getCloudClient,
+  listCloudFolder,
+  resolveCloudFile,
   setCachedCloudEntries,
   walkCloudTree,
+  type CloudClient,
   type CloudEntry,
+  type CloudFileLocation,
   type CloudFolderRef,
   type CloudSort,
   type PlacedCloudEntry,
 } from "@/services/cloud";
 import {
   adoptOpenVault,
-  countEncryptedSecrets,
   createVault,
   decryptContent,
   decryptContentWithOpenVaults,
   decryptContentWithPassphrase,
   encryptContent,
+  hasEncryptedSecrets,
   hasPlainSecrets,
   holdsSecrets,
   isVaultSupported,
@@ -94,12 +111,18 @@ import {
 import { debounce } from "@/utils/debounce";
 import { downloadBlob } from "@/utils/download";
 import {
+  localSourceKey,
+  resolveEmbedSource,
+  type EmbedSource,
+} from "@/utils/embeddedRunbook";
+import {
   buildMarkdownExport,
   buildSecuredRunbookExportContent,
   getExportBasename,
   runExport,
   stripJsonExtension,
   withJsonExtension,
+  type EmbeddedReader,
 } from "@/utils/export";
 import { generateId } from "@/utils/id";
 import { openImportDialog } from "@/utils/importTrigger";
@@ -115,7 +138,11 @@ import {
   uniqueCopyKey,
 } from "@/utils/resolution";
 import { displayLabel, getRunbookLabel } from "@/utils/runbook";
-import { buildRunbookSource, parseRunbookSource } from "@/utils/runbookSource";
+import {
+  buildRunbookSource,
+  getRunbookStats,
+  parseRunbookSource,
+} from "@/utils/runbookSource";
 import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
 import {
   entryId,
@@ -199,10 +226,13 @@ export interface StoreState {
   runbookLibrary: RunbookEntry[];
   activeRunbookId: string | null;
   runbookSyncStatus: Record<string, RunbookSyncStatus>;
+  /** Runbooks embedded by runbook blocks, by source key.*/
+  embeddedRunbooks: Record<string, EmbeddedRunbook>;
+  /** Sections folded or unfolded inside an embed, by the embed's scope and section id. */
+  embeddedSectionFolds: Record<string, boolean>;
 
   // UI
   mode: AppMode;
-  runbookView: RunbookView;
   theme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
@@ -226,6 +256,7 @@ export interface StoreState {
   pendingFocusVariableId: string | null;
   pendingFocusSectionId: string | null;
   imageViewerBlockId: string | null;
+  imageViewerSlides: ImageBlock[] | null;
 
   // Search
   runbookSearchQuery: string;
@@ -309,6 +340,20 @@ export interface StoreState {
   ) => Promise<boolean>;
   syncRunbookNow: (id: string) => Promise<void>;
   unlinkRunbookSync: (id: string) => void;
+
+  readRunbookStats: (runbookId: string) => Promise<RunbookStats | null>;
+  loadEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
+  refreshEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
+  openEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
+  setRunbookEmbedView: (blockId: string, view: RunbookEmbedView) => void;
+  setEmbeddedSectionFolded: (foldKey: string, folded: boolean) => void;
+  unlockEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
+  signInForEmbeddedRunbooks: (provider: CloudProvider) => Promise<void>;
+  listEmbeddableCloudFolder: (
+    provider: CloudProvider,
+    path: string,
+  ) => Promise<CloudEntry[] | null>;
+
   importRunbooks: (files: File[]) => Promise<void>;
   importRunbookFromText: (text: string) => Promise<boolean>;
   reorderRunbooks: (sourceId: string, targetId: string) => void;
@@ -351,7 +396,11 @@ export interface StoreState {
     type: T,
     patch: Partial<Omit<BlockOfType<T>, "id" | "type">>,
   ) => void;
-  toggleAllCommandEditors: () => void;
+  setRunbookOverrides: (
+    blockId: string,
+    overrides: Record<string, string> | undefined,
+  ) => void;
+  toggleAllBlocksFolded: () => void;
   toggleCollapseAll: () => void;
   reorderBlocks: (sourceId: string, targetId: string) => void;
   copyBlocksToTab: (
@@ -363,7 +412,7 @@ export interface StoreState {
   clearFlash: (blockId: string) => void;
   consumeBlockFocus: () => void;
   toggleClampSurfaceExpanded: (id: string, surface: ClampSurface) => void;
-  openImageViewer: (blockId: string) => void;
+  openImageViewer: (blockId: string, slides?: ImageBlock[] | null) => void;
   closeImageViewer: () => void;
 
   setBlockSelected: (blockId: string, selected: boolean) => void;
@@ -522,6 +571,17 @@ export function getActiveTab(state: StoreState): Tab | null {
   );
 }
 
+export function getRunbookView(state: StoreState): RunbookView {
+  return getActiveTab(state)?.view ?? RunbookView.PREVIEW;
+}
+
+export function getRunbookEmbedView(
+  tab: Tab | null,
+  blockId: string,
+): RunbookEmbedView {
+  return tab?.embedViews?.[blockId] ?? RunbookEmbedView.BLOCKS;
+}
+
 /** Replace one panel's state. */
 function withPanel(
   state: StoreState,
@@ -539,7 +599,6 @@ function withPanel(
 function uiStateSnapshot(state: StoreState) {
   return {
     mode: state.mode,
-    runbookView: state.runbookView,
     theme: state.theme,
     language: state.language,
     spellcheckEnabled: state.spellcheckEnabled,
@@ -567,11 +626,12 @@ function createTabObject(
     variables: [],
     blocks: [],
     variableSections: [],
+    view: RunbookView.PREVIEW,
     scrollTop: createDefaultScrollTop(),
   };
 }
 
-function tabContent(tab: Tab | null | undefined): RunbookContent {
+export function tabContent(tab: Tab | null | undefined): RunbookContent {
   return {
     blocks: tab?.blocks ?? [],
     variables: tab?.variables ?? [],
@@ -873,6 +933,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
                 ExportFormat.JSON,
                 runbookId,
                 content,
+                readEmbeddedForExport,
               ),
               MimeType.JSON,
               link.folderId,
@@ -1018,12 +1079,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
     };
 
+    const storedStats = new Map<string, Promise<RunbookStats | null>>();
+    const tabStats = new WeakMap<Tab, RunbookStats>();
+
     const writeRunbookContent = async (
       runbookId: string,
       content: RunbookContent,
     ) => {
       await contentDb.put(runbookId, content);
       markRunbookSecured(runbookId, holdsSecrets(content));
+      storedStats.delete(runbookId);
+      invalidateEmbed(localSourceKey(runbookId));
     };
 
     const encryptStoredRunbook = async (runbookId: string) => {
@@ -1136,7 +1202,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       const decrypted = await Promise.all(
         get().tabs.map(async (tab) => {
           const content = tabContent(tab);
-          if (tab.runbookId !== runbookId || !countEncryptedSecrets(content)) {
+          if (tab.runbookId !== runbookId || !hasEncryptedSecrets(content)) {
             return tab;
           }
 
@@ -1160,8 +1226,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         return false;
       }
 
-      const locked = countEncryptedSecrets(tabContent(tab));
-      return locked > 0
+      return hasEncryptedSecrets(tabContent(tab))
         ? await promptVault(VaultPrompt.UNLOCK, unlockVaultWith(runbookId))
         : false;
     };
@@ -1198,33 +1263,39 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       passphrase: string | null;
     }
 
+    const readImportedContent = async (
+      content: RunbookContent,
+    ): Promise<ImportedVaultResult> => {
+      if (!hasEncryptedSecrets(content)) {
+        return { content, vault: null, passphrase: null };
+      }
+
+      const attempt = await decryptContentWithOpenVaults(content);
+      return {
+        content: attempt.content,
+        vault: recordFromCiphertext(content),
+        passphrase: attempt.passphrase,
+      };
+    };
+
     const decryptImportedContent = async (
       content: RunbookContent,
       filename: string | null = null,
     ): Promise<ImportedVaultResult> => {
-      if (countEncryptedSecrets(content) === 0) {
-        return { content, vault: null, passphrase: null };
+      const read = await readImportedContent(content);
+
+      if (!hasEncryptedSecrets(read.content)) {
+        return read;
       }
 
-      const vault = recordFromCiphertext(content);
-      const attempt = await decryptContentWithOpenVaults(content);
-
-      if (attempt.failed === 0) {
-        return {
-          content: attempt.content,
-          vault,
-          passphrase: attempt.passphrase,
-        };
-      }
-
-      let opened = attempt.content;
+      let opened = read.content;
       let passphrase: string | null = null;
       await promptVault(
         VaultPrompt.UNLOCK,
         async (passphrases) => {
           const candidate = passphrases[VaultField.CURRENT];
           const result = await decryptContentWithPassphrase(
-            attempt.content,
+            read.content,
             candidate,
           );
 
@@ -1239,13 +1310,195 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         filename,
       );
 
-      return { content: opened, vault, passphrase };
+      return { content: opened, vault: read.vault, passphrase };
     };
+
+    /** Adds a runbook read out of a cloud file, linked to the file it came from. */
+    const addCloudRunbook = (
+      filename: string,
+      { content, vault, passphrase }: ImportedVaultResult,
+      sync: RunbookSync | undefined,
+    ) =>
+      get().addRunbookToLibrary(
+        content,
+        stripJsonExtension(filename),
+        filename,
+        sync,
+        undefined,
+        vault ? { record: vault, passphrase } : undefined,
+      );
+
+    const cloudFileSync = (
+      provider: CloudProvider,
+      { file, folderId }: CloudFileLocation,
+    ): RunbookSync => ({ provider, filename: file.name, folderId });
+
+    const runbookLinkedTo = (link: RunbookSync) =>
+      get().runbookLibrary.find(
+        (item) =>
+          item.sync?.provider === link.provider &&
+          item.sync.filename === link.filename &&
+          item.sync.folderId === link.folderId,
+      )?.id;
 
     /** The runbook's content as the tab holds it, else as the DB holds it. */
     const readRunbookContent = async (runbookId: string) => {
       const openTab = get().tabs.find((t) => t.runbookId === runbookId);
       return openTab ? tabContent(openTab) : await contentDb.get(runbookId);
+    };
+
+    // --- Embedded runbooks ---
+
+    // The load a key is waiting on, so an invalidated one can't land late
+    const embedRequests = new Map<string, number>();
+    let embedRequestId = 0;
+
+    const setEmbeddedRunbook = (key: string, entry: EmbeddedRunbook | null) =>
+      set((s) => {
+        if (!entry && !(key in s.embeddedRunbooks)) {
+          return {};
+        }
+
+        const embeddedRunbooks = { ...s.embeddedRunbooks };
+        if (entry) {
+          embeddedRunbooks[key] = entry;
+        } else {
+          delete embeddedRunbooks[key];
+        }
+
+        return { embeddedRunbooks };
+      });
+
+    /** Empties the workspace, after its stored runbooks are gone. */
+    const resetWorkspace = () => {
+      queuedSyncContent.clear();
+      pushedSyncContent.clear();
+      declinedVaultSetup.clear();
+      embedRequests.clear();
+
+      set({
+        tabs: [],
+        activeTabId: null,
+        activeRunbookId: null,
+        runbookLibrary: [],
+        runbookSyncStatus: {},
+        embeddedRunbooks: {},
+        embeddedSectionFolds: {},
+        runbookSearchQuery: "",
+        variableSearchQuery: "",
+        selectedBlockIds: new Set(),
+        selectedVariableIds: new Set(),
+        focusedRunbookId: null,
+      });
+    };
+
+    /** Every embed reading a runbook. */
+    const embedsReadingRunbook = (runbookId: string) =>
+      Object.entries(get().embeddedRunbooks).filter(
+        ([key, entry]) =>
+          key === localSourceKey(runbookId) || entry.runbookId === runbookId,
+      );
+
+    /** Marks what an embed loaded as due a reload. */
+    const invalidateEmbed = (key: string) => {
+      embedRequests.delete(key);
+
+      const entry = get().embeddedRunbooks[key];
+      if (entry?.stale) {
+        return;
+      }
+
+      setEmbeddedRunbook(
+        key,
+        entry?.content ? { ...entry, stale: true } : null,
+      );
+    };
+
+    /** Loaded content. */
+    const readyEmbed = async (
+      content: RunbookContent,
+    ): Promise<EmbeddedRunbook> => ({
+      status: EmbeddedRunbookStatus.READY,
+      content: hasEncryptedSecrets(content)
+        ? (await decryptContentWithOpenVaults(content)).content
+        : content,
+    });
+
+    const emptyEmbed = (status: EmbeddedRunbookStatus): EmbeddedRunbook => ({
+      status,
+      content: null,
+    });
+
+    const fetchLocalEmbed = async (runbookId: string) => {
+      const content = await readRunbookContent(runbookId);
+      return content
+        ? readyEmbed(content)
+        : emptyEmbed(EmbeddedRunbookStatus.MISSING);
+    };
+
+    const fetchCloudEmbed = async (
+      ref: CloudRunbookRef,
+      previous: RunbookContent | null,
+    ) => {
+      const client = getCloudClient(ref.provider);
+      if (isDemo || !client.isConfigured()) {
+        return emptyEmbed(EmbeddedRunbookStatus.ERROR);
+      }
+
+      await client.init();
+      if (!client.isSignedIn()) {
+        return emptyEmbed(EmbeddedRunbookStatus.SIGNED_OUT);
+      }
+
+      const located = await resolveCloudFile(client, ref.path);
+      if (!located) {
+        return emptyEmbed(EmbeddedRunbookStatus.MISSING);
+      }
+
+      const entry = await readyEmbed(
+        parseRunbookSource(
+          await client.readFile(located.file),
+          previous ?? undefined,
+        ),
+      );
+
+      const runbookId = runbookLinkedTo(cloudFileSync(ref.provider, located));
+      return runbookId ? { ...entry, runbookId } : entry;
+    };
+
+    const readEmbeddedForExport: EmbeddedReader = async (block) => {
+      const source = resolveEmbedSource(get().runbookLibrary, block);
+      if (!source) {
+        return null;
+      }
+
+      const cached = get().embeddedRunbooks[source.key]?.content;
+      try {
+        const { content } = source.cloud
+          ? cached
+            ? { content: cached }
+            : await fetchCloudEmbed(source.cloud, null)
+          : await fetchLocalEmbed(source.local.id);
+
+        return content
+          ? {
+              key: source.key,
+              scope: source.local?.id ?? source.key,
+              content,
+            }
+          : null;
+      } catch (error) {
+        console.error("Failed to read embedded runbook", source.key, error);
+        return null;
+      }
+    };
+
+    /** Signs in unless already signed in. */
+    const ensureSignedIn = async (client: CloudClient) => {
+      await client.init();
+      if (!client.isSignedIn()) {
+        await client.signIn();
+      }
     };
 
     let cloudRequestId = 0;
@@ -1335,8 +1588,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       activeRunbookId: null,
       runbookSyncStatus: {},
 
+      embeddedRunbooks: {},
+      embeddedSectionFolds: {},
+
       mode: AppMode.EDIT,
-      runbookView: RunbookView.PREVIEW,
       theme: Theme.LIGHT,
       language: detectLanguage(),
       spellcheckEnabled: true,
@@ -1363,6 +1618,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       pendingFocusVariableId: null,
       pendingFocusSectionId: null,
       imageViewerBlockId: null,
+      imageViewerSlides: null,
 
       runbookSearchQuery: "",
       variableSearchQuery: "",
@@ -1461,20 +1717,30 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             const currentLibrary = get().runbookLibrary;
             const loadedTabs: Tab[] = [];
 
-            for (const { tabId, runbookId, scrollTop } of meta.tabOrder) {
+            for (const {
+              tabId,
+              runbookId,
+              view,
+              scrollTop,
+              embedViews,
+            } of meta.tabOrder) {
               const entry = currentLibrary.find((r) => r.id === runbookId);
               if (!entry || runbookId === null) {
                 continue;
               }
+
               const content = await contentDb.get(runbookId);
               if (!content) {
                 continue;
               }
+
               loadedTabs.push({
                 id: tabId,
                 label: entry.label,
                 runbookId,
                 ...contentFields(content),
+                view: persistence.restoreRunbookView(view),
+                embedViews: persistence.restoreEmbedViews(embedViews),
                 scrollTop: persistence.restoreScrollTop(scrollTop),
               });
             }
@@ -1612,6 +1878,16 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             !tabs.some((t) => t.runbookId === tab.runbookId)
           ) {
             declinedVaultSetup.delete(tab.runbookId);
+
+            // Update the embed runbook blocks that read this tab
+            for (const [key, entry] of embedsReadingRunbook(tab.runbookId)) {
+              embedRequests.delete(key);
+              setEmbeddedRunbook(key, {
+                status: EmbeddedRunbookStatus.READY,
+                content: tabContent(tab),
+                ...(entry.runbookId ? { runbookId: entry.runbookId } : {}),
+              });
+            }
           }
         }
 
@@ -1979,10 +2255,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         // Retrying is a click, so a sign-in popup here is expected rather than ambushing
         try {
-          await client.init();
-          if (!client.isSignedIn()) {
-            await client.signIn();
-          }
+          await ensureSignedIn(client);
         } catch (error) {
           console.error("Cloud sync sign-in failed", error);
           setSyncStatus(id, RunbookSyncStatus.SIGNED_OUT);
@@ -1991,6 +2264,226 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         queuedSyncContent.set(id, { json: runbookJson(content), content });
         await flushQueuedSyncs();
+      },
+
+      readRunbookStats: (runbookId) => {
+        const openTab = get().tabs.find((t) => t.runbookId === runbookId);
+        if (openTab) {
+          let stats = tabStats.get(openTab);
+          if (!stats) {
+            stats = getRunbookStats(tabContent(openTab));
+            tabStats.set(openTab, stats);
+          }
+
+          return Promise.resolve(stats);
+        }
+
+        let stats = storedStats.get(runbookId);
+        if (stats) {
+          return stats;
+        }
+
+        stats = contentDb
+          .get(runbookId)
+          .then((content) => (content ? getRunbookStats(content) : null))
+          .catch((error) => {
+            storedStats.delete(runbookId);
+            console.warn("Failed to measure runbook:", runbookId, error);
+            return null;
+          });
+
+        storedStats.set(runbookId, stats);
+        return stats;
+      },
+
+      loadEmbeddedRunbook: async (source) => {
+        const { key } = source;
+        const current = get().embeddedRunbooks[key];
+
+        if (embedRequests.has(key) || (current && !current.stale)) {
+          return;
+        }
+
+        const requestId = ++embedRequestId;
+        embedRequests.set(key, requestId);
+
+        if (!current) {
+          setEmbeddedRunbook(key, emptyEmbed(EmbeddedRunbookStatus.LOADING));
+        }
+
+        let entry: EmbeddedRunbook;
+        try {
+          entry = source.cloud
+            ? await fetchCloudEmbed(source.cloud, current?.content ?? null)
+            : await fetchLocalEmbed(source.local.id);
+        } catch (error) {
+          console.error("Failed to load embedded runbook", key, error);
+          entry = emptyEmbed(EmbeddedRunbookStatus.ERROR);
+        }
+
+        if (embedRequests.get(key) === requestId) {
+          embedRequests.delete(key);
+          setEmbeddedRunbook(key, entry);
+        }
+      },
+
+      refreshEmbeddedRunbook: async (source) => {
+        if (source.cloud) {
+          clearCachedCloudEntries(source.cloud.provider);
+        }
+
+        invalidateEmbed(source.key);
+        await get().loadEmbeddedRunbook(source);
+      },
+
+      /** Opens the embedded runbook in a tab. */
+      openEmbeddedRunbook: async (source) => {
+        if (source.local) {
+          await get().loadRunbookFromLibrary(source.local.id);
+          return;
+        }
+
+        const { key, cloud } = source;
+        const client = getCloudClient(cloud.provider);
+        if (isDemo || !client.isConfigured()) {
+          return;
+        }
+
+        try {
+          await ensureSignedIn(client);
+
+          const located = await resolveCloudFile(client, cloud.path);
+          if (!located) {
+            await get().refreshEmbeddedRunbook(source);
+            return;
+          }
+
+          const link = cloudFileSync(cloud.provider, located);
+          const linked = runbookLinkedTo(link);
+          if (linked) {
+            await get().loadRunbookFromLibrary(linked);
+            return;
+          }
+
+          // The ids the embed already holds
+          const previous = get().embeddedRunbooks[key]?.content ?? undefined;
+          const content = parseRunbookSource(
+            await client.readFile(located.file),
+            previous,
+          );
+
+          const opened = await addCloudRunbook(
+            located.file.name,
+            await readImportedContent(content),
+            link,
+          );
+          if (!opened) {
+            return;
+          }
+
+          const runbookId = runbookLinkedTo(link);
+          if (!runbookId) {
+            return;
+          }
+
+          const entry = get().embeddedRunbooks[key];
+          if (entry) {
+            setEmbeddedRunbook(key, { ...entry, runbookId });
+          }
+
+          await get().loadRunbookFromLibrary(runbookId);
+        } catch (error) {
+          console.error("Failed to open the embedded runbook", key, error);
+        }
+      },
+
+      setRunbookEmbedView: (blockId, view) => {
+        const active = getActiveTab(get());
+        if (!active || getRunbookEmbedView(active, blockId) === view) {
+          return;
+        }
+
+        set((s) =>
+          withActiveTab(s, (tab) => ({
+            ...tab,
+            embedViews: { ...tab.embedViews, [blockId]: view },
+          })),
+        );
+
+        persist.saveTabsMeta(get().tabs, get().activeTabId);
+      },
+
+      setEmbeddedSectionFolded: (foldKey, folded) =>
+        set((s) => ({
+          embeddedSectionFolds: {
+            ...s.embeddedSectionFolds,
+            [foldKey]: folded,
+          },
+        })),
+
+      unlockEmbeddedRunbook: async (source) => {
+        if (source.local) {
+          const runbookId = source.local.id;
+          if (
+            getVaultRecord(runbookId) &&
+            (await promptVault(VaultPrompt.UNLOCK, unlockVaultWith(runbookId)))
+          ) {
+            await get().refreshEmbeddedRunbook(source);
+          }
+
+          return;
+        }
+
+        const { key, cloud } = source;
+        const content = get().embeddedRunbooks[key]?.content;
+        const record = content ? recordFromCiphertext(content) : null;
+
+        if (!content || !record) {
+          return;
+        }
+
+        const unlocked = await promptVault(
+          VaultPrompt.UNLOCK,
+          (passphrases) =>
+            unlockVault(key, passphrases[VaultField.CURRENT], record),
+          cloud.path,
+        );
+
+        if (unlocked) {
+          setEmbeddedRunbook(key, await readyEmbed(content));
+        }
+      },
+
+      signInForEmbeddedRunbooks: async (provider) => {
+        try {
+          await ensureSignedIn(getCloudClient(provider));
+        } catch (error) {
+          console.error("Cloud sign-in failed", error);
+          return;
+        }
+
+        for (const [key, entry] of Object.entries(get().embeddedRunbooks)) {
+          if (entry.status === EmbeddedRunbookStatus.SIGNED_OUT) {
+            invalidateEmbed(key);
+          }
+        }
+      },
+
+      listEmbeddableCloudFolder: async (provider, path) => {
+        const client = getCloudClient(provider);
+        if (isDemo || !client.isConfigured()) {
+          return null;
+        }
+
+        try {
+          await client.init();
+          return client.isSignedIn()
+            ? await listCloudFolder(client, path)
+            : null;
+        } catch (error) {
+          console.error("Failed to list cloud folder", path, error);
+          return null;
+        }
       },
 
       unlinkRunbookSync: (id) => {
@@ -2003,6 +2496,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             item.id === id ? { ...item, sync: undefined } : item,
           ),
         }));
+
+        // Unlink the embed runbook blocks that read this runbook
+        for (const [key, entry] of Object.entries(get().embeddedRunbooks)) {
+          if (entry.runbookId === id) {
+            setEmbeddedRunbook(key, { ...entry, runbookId: undefined });
+            invalidateEmbed(key);
+          }
+        }
 
         forgetSyncState(id);
         persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
@@ -2173,7 +2674,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         if (
           get().variablesSectionCollapsed &&
-          get().runbookView !== RunbookView.VARIABLES
+          getRunbookView(get()) !== RunbookView.VARIABLES
         ) {
           get().toggleVariablesSection();
         }
@@ -2674,8 +3175,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
         if (state.tabs.length === 0) {
-          set({ runbookView: RunbookView.PREVIEW });
-          persist.saveUiState(uiStateSnapshot(get()));
           await get().createNewTab();
         }
 
@@ -2883,7 +3382,22 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         debouncedSaveState();
       },
 
-      toggleAllCommandEditors: () => {
+      setRunbookOverrides: (blockId, overrides) => {
+        set((s) =>
+          withActiveTab(s, (tab) => ({
+            ...tab,
+            blocks: tab.blocks.map((b) =>
+              b.id === blockId && b.type === BlockType.RUNBOOK
+                ? { ...b, overrides }
+                : b,
+            ),
+          })),
+        );
+
+        debouncedSaveState();
+      },
+
+      toggleAllBlocksFolded: () => {
         const state = get();
         if (state.mode === AppMode.READ) {
           return;
@@ -2894,22 +3408,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           return;
         }
 
-        const allCollapsed = active.blocks
-          .filter((b) => b.type === BlockType.COMMAND)
-          .every(
-            (b) =>
-              (b as { editorCollapsed?: boolean }).editorCollapsed === true,
-          );
-        const newState = !allCollapsed;
+        const folded = !active.blocks
+          .filter(isBlockFoldable)
+          .every(isBlockFolded);
 
         set((s) =>
           withActiveTab(s, (tab) => ({
             ...tab,
-            blocks: tab.blocks.map((b) =>
-              b.type === BlockType.COMMAND
-                ? { ...b, editorCollapsed: newState }
-                : b,
-            ),
+            blocks: tab.blocks.map((b) => setBlockFolded(b, folded)),
           })),
         );
         get().saveState();
@@ -2918,8 +3424,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       toggleCollapseAll: () => {
         const state = get();
         const tab = getActiveTab(state);
-        if (state.runbookView !== RunbookView.VARIABLES) {
-          state.toggleAllCommandEditors();
+        if (getRunbookView(state) !== RunbookView.VARIABLES) {
+          state.toggleAllBlocksFolded();
           return;
         }
 
@@ -3019,9 +3525,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           };
         }),
 
-      openImageViewer: (blockId) => set({ imageViewerBlockId: blockId }),
+      openImageViewer: (blockId, slides) =>
+        set({ imageViewerBlockId: blockId, imageViewerSlides: slides ?? null }),
 
-      closeImageViewer: () => set({ imageViewerBlockId: null }),
+      closeImageViewer: () =>
+        set({ imageViewerBlockId: null, imageViewerSlides: null }),
 
       // --- Selection ---
 
@@ -3088,12 +3596,19 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       },
 
       toggleRunbookView: (view) => {
-        get().clearUserInteraction();
-        set((s) => ({
-          runbookView: s.runbookView === view ? RunbookView.PREVIEW : view,
-        }));
+        if (!getActiveTab(get())) {
+          return;
+        }
 
-        persist.saveUiState(uiStateSnapshot(get()));
+        get().clearUserInteraction();
+        set((s) =>
+          withActiveTab(s, (tab) => ({
+            ...tab,
+            view: tab.view === view ? RunbookView.PREVIEW : view,
+          })),
+        );
+
+        persist.saveTabsMeta(get().tabs, get().activeTabId);
       },
 
       applyRunbookSource: (text) => {
@@ -3335,7 +3850,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         // Local export
         if (destination === SyncDestination.LOCAL) {
           set({ exportModalOpen: false });
-          await runExport(format, scope, content, fullName);
+          await runExport(
+            format,
+            scope,
+            content,
+            fullName,
+            readEmbeddedForExport,
+          );
           return;
         }
 
@@ -3347,10 +3868,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         const client = getCloudClient(destination);
         try {
-          await client.init();
-          if (!client.isSignedIn()) {
-            await client.signIn();
-          }
+          await ensureSignedIn(client);
 
           // A same-named file in the target folder is replaced, so ask first
           if (await client.fileExists(fullName, folderId)) {
@@ -3375,7 +3893,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
           await client.writeFile(
             fullName,
-            await buildSecuredRunbookExportContent(format, scope, content),
+            await buildSecuredRunbookExportContent(
+              format,
+              scope,
+              content,
+              readEmbeddedForExport,
+            ),
             FilePickerConfig[format].mimeType,
             folderId,
           );
@@ -3786,18 +4309,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         let added = 0;
         for (const { file, content } of pending) {
           const decrypted = await decryptImportedContent(content, file.name);
-          const accepted = await get().addRunbookToLibrary(
-            decrypted.content,
-            stripJsonExtension(file.name),
-            file.name,
-            syncs.get(file.id),
-            undefined,
-            decrypted.vault
-              ? { record: decrypted.vault, passphrase: decrypted.passphrase }
-              : undefined,
-          );
-
-          if (accepted) {
+          if (await addCloudRunbook(file.name, decrypted, syncs.get(file.id))) {
             added++;
           }
         }
@@ -4168,6 +4680,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         const text = await buildMarkdownExport(
           active?.runbookId ?? "",
           tabContent(active),
+          readEmbeddedForExport,
         );
 
         await navigator.clipboard.writeText(text);
@@ -4322,21 +4835,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           persistence.clearStoredRunbooks();
         }
 
-        queuedSyncContent.clear();
-        pushedSyncContent.clear();
-        declinedVaultSetup.clear();
-        set({
-          tabs: [],
-          activeTabId: null,
-          activeRunbookId: null,
-          runbookLibrary: [],
-          runbookSyncStatus: {},
-          runbookSearchQuery: "",
-          variableSearchQuery: "",
-          selectedBlockIds: new Set(),
-          selectedVariableIds: new Set(),
-          focusedRunbookId: null,
-        });
+        resetWorkspace();
       },
 
       clearAllData: async () => {
@@ -4361,22 +4860,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           set({ vaultStatus: {} });
         }
 
-        queuedSyncContent.clear();
-        pushedSyncContent.clear();
-        declinedVaultSetup.clear();
-        set({
-          tabs: [],
-          activeTabId: null,
-          activeRunbookId: null,
-          runbookLibrary: [],
-          runbookSyncStatus: {},
-          runbookSearchQuery: "",
-          variableSearchQuery: "",
-          selectedBlockIds: new Set(),
-          selectedVariableIds: new Set(),
-          focusedRunbookId: null,
-        });
-
+        resetWorkspace();
         return true;
       },
     };

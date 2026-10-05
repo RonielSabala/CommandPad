@@ -2,8 +2,6 @@ import { CssClass } from "@/common/constants/css";
 import { AppMode, VariableEntryKind } from "@/common/enums";
 import type { VariableSection } from "@/common/types";
 import { NoteEditor } from "@/components/blocks/note/NoteEditor";
-import { tooltip } from "@/components/common/tooltip/tooltip";
-import { SidebarSectionChevronIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -11,6 +9,7 @@ import { memo, useCallback, useRef, type MouseEvent } from "react";
 
 import { VariableRowFrame } from "./VariableRowFrame";
 import { BasicRowItems, VariableRowMenu } from "./VariableRowMenuItems";
+import { VariableSectionHeader } from "./VariableSectionHeader";
 import "./VariableSectionItem.css";
 
 interface Props {
@@ -62,17 +61,11 @@ export const VariableSectionItem = memo(function VariableSectionItem({
   };
 
   const headerRef = useRef<HTMLDivElement>(null);
-  const toggleLabel = collapsed
-    ? t.variables.expandSection
-    : t.variables.collapseSection;
 
   return (
     <VariableRowFrame
       rowId={sectionId}
-      className={classNames(
-        "variable-section",
-        collapsed && CssClass.COLLAPSED,
-      )}
+      className={CssClass.VARIABLE_SECTION}
       dragImageRef={headerRef}
       menu={(className) => (
         <VariableRowMenu
@@ -93,29 +86,14 @@ export const VariableSectionItem = memo(function VariableSectionItem({
         </VariableRowMenu>
       )}
     >
-      <div
+      <VariableSectionHeader
         ref={headerRef}
-        className={classNames(
-          "variable-section-header",
-          CssClass.VARIABLE_SURFACE,
-        )}
+        className={CssClass.VARIABLE_SURFACE}
+        collapsed={collapsed}
+        count={count}
+        onToggle={toggle}
         onClick={handleHeaderClick}
       >
-        {!empty && (
-          <button
-            className={classNames(
-              "btn btn-flat-icon variable-section-toggle",
-              CssClass.SELECT_KEY_INERT,
-            )}
-            onClick={toggle}
-            aria-expanded={!collapsed}
-            aria-label={toggleLabel}
-            {...tooltip(toggleLabel)}
-          >
-            <SidebarSectionChevronIcon className="variable-section-chevron icon-md icon-bold" />
-          </button>
-        )}
-
         <NoteEditor
           value={section.name}
           onChange={rename}
@@ -127,20 +105,7 @@ export const VariableSectionItem = memo(function VariableSectionItem({
           focusRequested={pendingFocus}
           onFocusHandled={consumeSectionFocus}
         />
-
-        {!empty && (
-          <button
-            className={classNames(
-              "variable-section-count no-user-select",
-              CssClass.SELECT_KEY_INERT,
-            )}
-            onClick={toggle}
-            tabIndex={-1}
-          >
-            {t.variables.sectionCount(count)}
-          </button>
-        )}
-      </div>
+      </VariableSectionHeader>
     </VariableRowFrame>
   );
 });

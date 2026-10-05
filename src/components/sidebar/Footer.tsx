@@ -1,3 +1,4 @@
+import { MIDDLE_DOT } from "@/common/config";
 import { Anchor } from "@/common/constants/dom";
 import { AppRoute } from "@/common/constants/routes";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -42,7 +43,7 @@ export function FooterLegalLinks() {
         {t.footer.privacy}
       </Link>
       <span className="footer-legal-sep" aria-hidden="true">
-        ·
+        {MIDDLE_DOT}
       </span>
       <Link className="footer-legal-link" to={AppRoute.TERMS}>
         {t.footer.terms}

@@ -6,8 +6,8 @@ import {
   type DocsSectionId,
 } from "@/common/constants/docs";
 import { ScrollIntoView } from "@/common/constants/dom";
-import { Key } from "@/common/constants/events";
 import { PanelId } from "@/common/enums";
+import { asButton } from "@/components/common/asButton";
 import { ResizablePanel } from "@/components/common/panel/ResizablePanel";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SidebarSectionChevronIcon } from "@/components/icons";
@@ -99,23 +99,14 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
                 {collapse.hasChildren(id) ? (
                   <span
                     className="docs-toc-chevron-hit"
-                    role="button"
-                    tabIndex={0}
                     {...tooltip(foldLabel(id))}
                     aria-label={foldLabel(id)}
                     aria-expanded={!collapse.isCollapsed(id)}
-                    onClick={(event) => {
+                    {...asButton((event) => {
                       event.preventDefault();
                       event.stopPropagation();
                       collapse.toggle(id);
-                    }}
-                    onKeyDown={(event) => {
-                      if (event.key === Key.ENTER || event.key === Key.SPACE) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        collapse.toggle(id);
-                      }
-                    }}
+                    })}
                   >
                     <SidebarSectionChevronIcon
                       className={classNames(

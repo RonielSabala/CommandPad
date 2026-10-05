@@ -12,9 +12,16 @@ import "./ProviderSelect.css";
 interface ProviderSelectProps {
   provider: SyncDestination;
   onChange: (destination: SyncDestination) => void;
+  title?: string;
+  portal?: boolean;
 }
 
-export function ProviderSelect({ provider, onChange }: ProviderSelectProps) {
+export function ProviderSelect({
+  provider,
+  onChange,
+  title,
+  portal,
+}: ProviderSelectProps) {
   const t = useTranslation();
   const options: readonly SelectOption<SyncDestination>[] = [
     {
@@ -51,8 +58,9 @@ export function ProviderSelect({ provider, onChange }: ProviderSelectProps) {
     <Select
       className="provider-select"
       triggerClassName="btn provider-select-trigger"
-      title={t.cloudModal.changeProvider}
+      title={title ?? t.cloudModal.changeProvider}
       align={SelectAlign.START}
+      portal={portal}
       value={provider}
       options={options}
       onChange={onChange}

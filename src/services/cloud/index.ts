@@ -13,6 +13,7 @@ export {
   DEFAULT_CLOUD_SORT
 } from "./entries";
 export type { CloudSort } from "./entries";
+export { listCloudFolder, resolveCloudFile } from "./path";
 export { walkCloudTree } from "./search";
 export {
   buildCloudEntriesZip,
@@ -23,6 +24,7 @@ export { CloudSyncError } from "./types";
 export type {
   CloudClient,
   CloudEntry,
+  CloudFileLocation,
   CloudFolderRef,
   PlacedCloudEntry
 } from "./types";

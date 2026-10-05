@@ -1,0 +1,23 @@
+.runbook-embed-variables {
+  --variable-row-gutter: 0px;
+}
+
+.embedded-variable.is-overridden
+  :is(.variable-editor-value, .variable-editor-options) {
+  border-color: var(--warning);
+}
+
+.embedded-variable-key {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
+  cursor: default;
+}
+
+.embedded-variable-key.is-empty {
+  color: var(--color-text-muted);
+}
+
+.embedded-variable-reset {
+  flex: none;
+}

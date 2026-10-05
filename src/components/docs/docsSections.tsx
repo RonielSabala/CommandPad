@@ -20,6 +20,10 @@ import { LanguageDocs } from "./sections/LanguageSection";
 import { MultiSelectDocs } from "./sections/MultiSelectSection";
 import { QaDocs } from "./sections/QaSection";
 import { ReadModeDocs } from "./sections/ReadModeSection";
+import {
+  EmbeddingRunbooksDocs,
+  RunbookBlockDocs,
+} from "./sections/RunbookBlockSection";
 import { RunbookLibraryDocs } from "./sections/RunbookLibrarySection";
 import { KeyboardShortcutsDocs } from "./sections/ShortcutsSection";
 import { TabsDocs } from "./sections/TabsSection";
@@ -67,6 +71,8 @@ export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {
   [DocsSectionId.NOTE_BLOCK]: NoteBlockDocs,
   [DocsSectionId.IMAGE_BLOCK]: ImageBlockDocs,
   [DocsSectionId.DIVIDER_BLOCK]: DividerBlockDocs,
+  [DocsSectionId.RUNBOOK_BLOCK]: RunbookBlockDocs,
+  [DocsSectionId.EMBEDDING_RUNBOOKS]: EmbeddingRunbooksDocs,
   [DocsSectionId.VARIABLES]: VariablesDocs,
   [DocsSectionId.SECRET_VARIABLES]: SecretVariablesDocs,
   [DocsSectionId.SECRET_ENCRYPTION]: SecretEncryptionDocs,

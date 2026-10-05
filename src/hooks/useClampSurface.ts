@@ -1,9 +1,10 @@
-import { ScrollIntoView } from "@/common/constants/dom";
 import { ClampConfig } from "@/common/editorConfig";
 import type { ClampSurface } from "@/common/enums";
 import { useStore } from "@/store/store";
 import type { CSSProperties, RefObject } from "react";
-import { useCallback, useLayoutEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
+
+import { useKeepInView } from "./useKeepInView";
 
 export const CLAMP_SURFACE_STYLE = {
   [ClampConfig.MAX_LINES_PROPERTY]: ClampConfig.MAX_LINES,
@@ -31,23 +32,12 @@ export function useClampSurface(
   );
   const toggleExpanded = useStore((state) => state.toggleClampSurfaceExpanded);
   const autoExpandedRef = useRef(false);
-  const keepInViewRef = useRef(false);
+  const keepInView = useKeepInView(surfaceRef, expanded);
 
   const toggle = useCallback(() => {
-    keepInViewRef.current = true;
+    keepInView();
     toggleExpanded(id, surface);
-  }, [toggleExpanded, id, surface]);
-
-  useLayoutEffect(() => {
-    if (!keepInViewRef.current) {
-      return;
-    }
-
-    keepInViewRef.current = false;
-    surfaceRef?.current?.scrollIntoView({
-      block: ScrollIntoView.BLOCK_NEAREST,
-    });
-  }, [expanded, surfaceRef]);
+  }, [keepInView, toggleExpanded, id, surface]);
 
   const onFocus = useCallback(() => {
     if (overflows && !expanded) {

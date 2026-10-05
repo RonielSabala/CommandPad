@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { DataAttr, ElementId, ScrollIntoView } from "@/common/constants/dom";
 import type { Block, Variable } from "@/common/types";
 import { getActiveTab, useStore } from "@/store/store";
@@ -41,7 +42,11 @@ export function BlocksList() {
   }, [imageViewerBlockId]);
 
   return (
-    <div id={ElementId.BLOCKS_LIST} ref={listRef}>
+    <div
+      id={ElementId.BLOCKS_LIST}
+      className={CssClass.BLOCKS_LIST}
+      ref={listRef}
+    >
       {blocks.map((block) => (
         <BlockItem
           key={block.id}

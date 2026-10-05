@@ -1,0 +1,17 @@
+.image-view {
+  display: block;
+  min-width: var(--image-view-min-width);
+  max-width: 100%;
+  max-height: var(--image-block-max-height);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: var(--radius-lg);
+  border: var(--border-standard);
+  background: var(--color-surface);
+}
+
+.image-view.is-clickable {
+  cursor: pointer;
+  outline: none;
+}

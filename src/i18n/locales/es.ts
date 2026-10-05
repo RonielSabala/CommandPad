@@ -1,4 +1,4 @@
-import { VaultConfig } from "@/common/config";
+import { MIDDLE_DOT, VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
@@ -39,7 +39,7 @@ export const es: Messages = {
     switchToDark: "Cambiar a modo oscuro",
     switchToLight: "Cambiar a modo claro",
     collapseAll: "Contraer todo",
-    toggleEditorsTitle: "Expandir/contraer todos los editores de comandos",
+    toggleEditorsTitle: "Expandir/contraer todos los bloques",
     toggleSectionsTitle: "Expandir/contraer todas las secciones de variables",
     resetWorkspaceTitle: "Resetear espacio de trabajo",
     exportTitle: "Exportar libro",
@@ -56,8 +56,7 @@ export const es: Messages = {
     moveLeft: (name) => `Mover ${name} a la izquierda`,
     moveRight: (name) => `Mover ${name} a la derecha`,
     doubleClickExpand: "Doble clic para expandir",
-    dragResizeCollapse:
-      "Arrastra para redimensionar · doble clic para contraer",
+    dragResizeCollapse: `Arrastra para redimensionar ${MIDDLE_DOT} doble clic para contraer`,
   },
   contextMenu: {
     copyMarkdown: "Copiar libro como Markdown",
@@ -87,15 +86,12 @@ export const es: Messages = {
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
         `Inicia sesión en ${provider} para seguir sincronizando`,
       [RunbookSyncStatus.ERROR]: (provider) =>
-        `No se pudo guardar en ${provider} · haz clic para reintentar`,
+        `No se pudo guardar en ${provider} ${MIDDLE_DOT} haz clic para reintentar`,
     },
     secretStatus: {
-      [VaultStatus.UNLOCKED]:
-        "Los secretos están cifrados · haz clic para cambiar la frase de contraseña",
-      [VaultStatus.LOCKED]:
-        "Los secretos están bloqueados · haz clic para desbloquearlos",
-      [VaultStatus.ABSENT]:
-        "Los secretos se guardan sin cifrar · haz clic para poner una frase de contraseña",
+      [VaultStatus.UNLOCKED]: `Los secretos están cifrados ${MIDDLE_DOT} haz clic para cambiar la frase de contraseña`,
+      [VaultStatus.LOCKED]: `Los secretos están bloqueados ${MIDDLE_DOT} haz clic para desbloquearlos`,
+      [VaultStatus.ABSENT]: `Los secretos se guardan sin cifrar ${MIDDLE_DOT} haz clic para poner una frase de contraseña`,
       [VaultStatus.UNSUPPORTED]:
         "Este navegador no puede cifrar secretos, así que se guardan tal cual",
     },
@@ -132,8 +128,7 @@ export const es: Messages = {
       count === 1
         ? "1 variable seleccionada"
         : `${count} variables seleccionadas`,
-    dragResizeSplit:
-      "Arrastra para redimensionar clave y valor · doble clic para igualarlos",
+    dragResizeSplit: `Arrastra para redimensionar clave y valor ${MIDDLE_DOT} doble clic para igualarlos`,
     unusedTitle: (key) => `${key} (sin usar)`,
     newSection: "Nueva sección",
     newRowLabel: "NUEVA",
@@ -172,7 +167,7 @@ export const es: Messages = {
     close: "Cerrar",
     closeOthers: "Cerrar las demás",
     closeAll: "Cerrar todas",
-    unresolved: "Este libro tiene variables sin resolver",
+    closeUnresolvedTab: "Cerrar pestaña (este libro tiene partes sin resolver)",
   },
   source: {
     openSource: "Abrir archivo fuente",
@@ -186,6 +181,7 @@ export const es: Messages = {
       [BlockType.COMMAND]: "Comando",
       [BlockType.NOTE]: "Nota",
       [BlockType.IMAGE]: "Imagen",
+      [BlockType.RUNBOOK]: "Runbook",
       [BlockType.DIVIDER]: "Divisor",
     },
     typeTitle: (label) => `Bloque de ${label.toLowerCase()}`,
@@ -199,6 +195,44 @@ export const es: Messages = {
       count === 1 ? "1 bloque seleccionado" : `${count} bloques seleccionados`,
     emptyTitle: "Aún no hay bloques.",
     emptyHint: "Agrega un comando o una nota abajo.",
+  },
+  runbookBlock: {
+    changeSource: "Dónde está el runbook",
+    labelPlaceholder: "Etiqueta del runbook",
+    pathPlaceholder: "carpeta/runbook.json",
+    parentFolder: "Volver a la carpeta anterior",
+    unresolvedLabel: "Ningún runbook de tu biblioteca tiene esta etiqueta.",
+    emptyLabel: "Escribe la etiqueta de un runbook de tu biblioteca.",
+    emptyPath: "Escribe la ruta de un runbook en la nube.",
+    choiceStats: (size, blocks, variables) =>
+      [
+        size,
+        blocks > 0 && `${blocks} ${blocks === 1 ? "bloque" : "bloques"}`,
+        variables > 0 &&
+          `${variables} ${variables === 1 ? "variable" : "variables"}`,
+      ]
+        .filter(Boolean)
+        .join(` ${MIDDLE_DOT} `),
+    noSource: "Aquí no hay ningún runbook incrustado.",
+    loading: "Cargando el runbook...",
+    missing: "No se encontró ningún runbook en esta ruta.",
+    error: "No se pudo cargar el runbook.",
+    signedOut: (provider) =>
+      `Inicia sesión en ${provider} para cargar este runbook.`,
+    signIn: "Iniciar sesión",
+    unlock: "Desbloquear",
+    refresh: "Cargarlo de nuevo",
+    open: "Abrir el runbook",
+    collapse: "Contraer el runbook",
+    expand: "Expandir el runbook",
+    circular:
+      "Este runbook se incrusta a sí mismo, así que no se vuelve a mostrar aquí.",
+    tooDeep: "Este runbook está anidado demasiado profundo para mostrarse.",
+    empty: "Este runbook está vacío.",
+    noVariables: "Este runbook no tiene variables.",
+    showVariables: "Mostrar sus variables",
+    showBlocks: "Mostrar sus bloques",
+    resetOverride: "Usar el valor del propio runbook",
   },
   command: {
     emptyPreview: "comando vacío",
@@ -479,7 +513,7 @@ export const es: Messages = {
     [KeyBinding.DELETE_RUNBOOK]: "Eliminar el libro enfocado de la biblioteca",
     [KeyBinding.CLEAR_LIBRARY]: "Abrir el diálogo de eliminar todos los libros",
     [KeyBinding.TOGGLE_EDITORS]:
-      "Alternar todos los editores de comandos, o todas las secciones en el editor de variables",
+      "Alternar todos los bloques, o todas las secciones en el editor de variables",
     [KeyBinding.MULTISELECT_BLOCKS]: "Selección múltiple de bloques",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicar bloques seleccionados",
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
@@ -740,6 +774,8 @@ export const es: Messages = {
       [DocsSectionId.COMMAND_BLOCK]: "Bloque de comando",
       [DocsSectionId.NOTE_BLOCK]: "Bloque de nota",
       [DocsSectionId.IMAGE_BLOCK]: "Bloque de imagen",
+      [DocsSectionId.RUNBOOK_BLOCK]: "Bloque de runbook",
+      [DocsSectionId.EMBEDDING_RUNBOOKS]: "Incrustar runbooks",
       [DocsSectionId.DIVIDER_BLOCK]: "Bloque divisor",
       [DocsSectionId.MULTI_SELECT]: "Selección múltiple",
       [DocsSectionId.READ_MODE]: "Modo lectura",
@@ -825,7 +861,7 @@ Si algo sale mal, deshazlo en este orden:
         collapseAllLabel,
       ) => `* El **logo de CommandPad**: haz clic en él para recargar la app.
 * El **candado / lápiz**: alterna entre el modo lectura y el modo edición. Tiene su propia sección más adelante.
-* **${collapseAllLabel}**: contrae o expande de golpe todos los editores de comandos del libro activo. En el editor de variables pliega o despliega todas las secciones de variables.
+* **${collapseAllLabel}**: contrae o expande de golpe todos los bloques del libro activo. En el editor de variables pliega o despliega todas las secciones de variables.
 * El **sol / la luna**: cambia entre el tema claro y oscuro.
 * El **selector de idioma**: cambia el idioma de la interfaz.
 * El **libro**: abre esta documentación.
@@ -864,7 +900,7 @@ Si algo sale mal, deshazlo en este orden:
       labelDemo:
         "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas, cierra alguna, y abre la fuente para ver el libro de una pestaña como JSON.",
       unresolvedMarker:
-        "Un punto rojo antes del nombre de una pestaña significa que ese libro tiene al menos una referencia que no resuelve a nada, así que un libro al que le falta un valor se nota sin necesidad de abrirlo. La tercera pestaña de arriba lleva uno: abre sus variables y dale un valor a `HOST`, y el punto desaparece en cuanto todas las referencias resuelven.",
+        "Cuando el botón de cerrar de una pestaña es un punto rojo relleno, ese libro tiene partes sin resolver, así que un libro que no está listo para usarse se nota sin necesidad de abrirlo. Al pasar el puntero por el punto, vuelve a ser el botón de cerrar. La tercera pestaña de arriba lleva uno: abre sus variables y dale un valor a `HOST`, y el punto desaparece en cuanto todas las referencias resuelven.",
     },
     sidebar: {
       intro:
@@ -1275,6 +1311,26 @@ Si algo sale mal, deshazlo en este orden:
       intro:
         "No es más que un separador visual. Se estira hasta igualar el ancho del bloque más ancho, lo que lo hace perfecto para dividir un libro en secciones.",
       demoNote: "Escribe aquí y observa cómo el divisor crece o se encoge.",
+    },
+    runbookBlock: {
+      teaser: (embeddingSection, tabsSection) =>
+        `Queda un bloque más: el bloque de runbook, que muestra otro runbook completo dentro de este. Está hecho de casi todo lo demás de CommandPad (variables, pestañas, tu biblioteca de runbooks), así que tiene su propia sección, **${embeddingSection}**, justo después de **${tabsSection}**. Sigue en orden. Cuando llegues habrás usado cada pieza de la que está hecho, y su demo se explicará sola.`,
+      intro:
+        "Un bloque de runbook muestra otro runbook dentro de este. Escribe una sola vez un procedimiento que repites en varios sitios, como un despliegue o una copia de seguridad, e incrústalo donde haga falta. Para elegir el runbook, escribe su etiqueta en la cabecera del bloque: el cuadro sugiere todos los runbooks de tu biblioteca.",
+      demoHint: (showVariables) =>
+        `La primera pestaña es un runbook de versión que incrusta el runbook de despliegue de la segunda. Pulsa **${showVariables}** en la cabecera del bloque, cambia \`ENV\` de \`prod\` a \`dev\` y vuelve: los comandos incrustados lo siguen. Después edita un comando en la pestaña de despliegue y regresa a la primera. El cambio ya está ahí.`,
+      overrides:
+        "Un valor que fijas en el bloque es una sobrescritura. Pertenece a este bloque y nunca cambia el runbook incrustado, así que cada runbook que lo incrusta indica solo lo que cambia. Puede referenciar las variables de este runbook, y la flecha a su lado la descarta.",
+      readOnly: (open) =>
+        `Los bloques incrustados son de solo lectura: puedes copiar un comando o ver una imagen, pero no editarlos. Para cambiar el propio runbook, pulsa **${open}**. Todos los runbooks que lo incrustan recogen el cambio, y renombrarlo no rompe el enlace.`,
+      cloud: (local, signIn, refresh) =>
+        `El runbook también puede estar en la nube. Cambia **${local}** por un proveedor y escribe la ruta del archivo, como \`ops/deploy.json\`. Con la sesión iniciada, la caja sugiere lo que hay en la carpeta escrita hasta ahora: elegir una carpeta la abre, \`..\` sube un nivel y elegir un archivo lo carga. Pulsa \`Ctrl+Space\` para volver a listar la carpeta. Incrustarlo lee el archivo, no lo importa, y **${refresh}** lo vuelve a leer. Mientras no hayas iniciado sesión, el bloque espera a que pulses **${signIn}**.`,
+      secrets: (unlock) =>
+        `Si el runbook incrustado tiene secretos cifrados, pulsa el escudo de advertencia de su cabecera (**${unlock}**) e introduce su frase de contraseña. Basta una vez por sesión.`,
+      limits:
+        "Los runbooks incrustados pueden anidarse unos pocos niveles, y uno que acabaría incrustándose a sí mismo se muestra una sola vez. Las exportaciones a Markdown y texto escriben los bloques incrustados en su lugar, con tus sobrescrituras aplicadas.",
+      demoDeployTitle: "Desplegar la API",
+      demoReleaseTitle: "Versión 2.4",
     },
     multiSelect: {
       intro:

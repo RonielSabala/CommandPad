@@ -1,5 +1,5 @@
 import type { BlockType } from "@/common/enums";
-import type { Block, BlockOfType } from "@/common/types";
+import type { Block, BlockOfType, RunbookBlock } from "@/common/types";
 
 export interface BlockJsonSchema {
   properties: Record<string, unknown>;
@@ -9,6 +9,7 @@ export interface BlockJsonSchema {
 export interface BlockDefinition<T extends BlockType = BlockType> {
   type: T;
   jsonSchema: BlockJsonSchema;
+  runtimeFields?: readonly string[];
 
   create(id: string): BlockOfType<T>;
 
@@ -21,12 +22,15 @@ export interface BlockDefinition<T extends BlockType = BlockType> {
   ): string | null;
 
   commandTexts?: BlockCommandTexts<T>;
+  folding?: BlockFolding<T>;
   getLabelText?(block: BlockOfType<T>): string | null;
 }
 
 export interface BlockMarkdownContext {
   /** Resolve variable references in command-grammar text. */
   resolve(text: string): string;
+  /** The embedded runbook's own markdown. */
+  embedded(block: RunbookBlock): string | null;
 }
 
 export interface BlockCommandTexts<T extends BlockType> {
@@ -37,18 +41,28 @@ export interface BlockCommandTexts<T extends BlockType> {
   ): BlockOfType<T>;
 }
 
+export interface BlockFolding<T extends BlockType> {
+  isFolded(block: BlockOfType<T>): boolean;
+  setFolded(block: BlockOfType<T>, folded: boolean): BlockOfType<T>;
+}
+
 export type BlockDefinitions = {
   [T in BlockType]: BlockDefinition<T>;
 };
 
 export interface AnyBlockDefinition {
   type: BlockType;
+  runtimeFields?: readonly string[];
   create(id: string): Block;
   normalize(block: Block): Block | null;
   toMarkdown(block: Block, context: BlockMarkdownContext): string | null;
   commandTexts?: {
     get(block: Block): string[];
     map(block: Block, transform: (text: string) => string): Block;
+  };
+  folding?: {
+    isFolded(block: Block): boolean;
+    setFolded(block: Block, folded: boolean): Block;
   };
   getLabelText?(block: Block): string | null;
 }

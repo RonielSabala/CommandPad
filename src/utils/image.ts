@@ -1,8 +1,14 @@
 import { ImageBlockConfig } from "@/common/config";
+import { BlockType } from "@/common/enums";
+import type { Block, ImageBlock } from "@/common/types";
 import { downloadBlob } from "./download";
 import { isString } from "./typeGuards";
 
 const HTTP_PROTOCOLS: readonly string[] = ImageBlockConfig.HTTP_PROTOCOLS;
+
+export function isFilledImage(block: Block): block is ImageBlock {
+  return block.type === BlockType.IMAGE && !!block.src;
+}
 
 export function isAttachedImage(src: string): boolean {
   return src.startsWith(ImageBlockConfig.DATA_IMAGE_PREFIX);
