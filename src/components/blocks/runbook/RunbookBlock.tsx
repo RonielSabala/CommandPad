@@ -35,7 +35,12 @@ import type { BlockViewProps } from "../blockViews";
 import { EditorToggle } from "../EditorToggle";
 import { EmbeddedVariables } from "./EmbeddedVariables";
 import "./RunbookBlock.css";
-import { EmbedActions, EmbedBody, EmbeddedBlocks } from "./RunbookEmbed";
+import {
+  EmbedActions,
+  EmbedBody,
+  EmbeddedBlocks,
+  EmbedUnlock,
+} from "./RunbookEmbed";
 import { useEmbeddedRunbook } from "./useEmbeddedRunbook";
 
 const NO_TRAIL: readonly string[] = [];
@@ -340,6 +345,8 @@ export function RunbookBlock({
           )}
 
           <div className={CssClass.RUNBOOK_EMBED_ACTIONS}>
+            <EmbedUnlock embed={embed} />
+
             {canSwitchView && (
               <button
                 className="btn btn-flat-icon"

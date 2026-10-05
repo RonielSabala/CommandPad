@@ -55,17 +55,37 @@ export function EmbedNotice({ children, error }: NoticeProps) {
   );
 }
 
-export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
+export function EmbedUnlock({ embed }: { embed: EmbeddedRunbookState }) {
   const t = useTranslation();
   const readMode = useStore((state) => state.mode === AppMode.READ);
-
-  const refreshEmbeddedRunbook = useStore(
-    (state) => state.refreshEmbeddedRunbook,
-  );
   const unlockEmbeddedRunbook = useStore(
     (state) => state.unlockEmbeddedRunbook,
   );
+
+  const { source } = embed;
+  if (readMode || !source || !embed.locked) {
+    return null;
+  }
+
+  return (
+    <button
+      className="btn btn-flat-icon runbook-embed-unlock"
+      onClick={() => void unlockEmbeddedRunbook(source)}
+      aria-label={t.runbookBlock.unlock}
+      {...tooltip(t.runbookBlock.unlock)}
+    >
+      <ShieldExclamation className="icon-md" />
+    </button>
+  );
+}
+
+export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
+  const t = useTranslation();
+  const readMode = useStore((state) => state.mode === AppMode.READ);
   const openEmbeddedRunbook = useStore((state) => state.openEmbeddedRunbook);
+  const refreshEmbeddedRunbook = useStore(
+    (state) => state.refreshEmbeddedRunbook,
+  );
 
   const { source } = embed;
   if (!source) {
@@ -75,17 +95,6 @@ export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
   const canOpen = !!source.local || !!embed.content;
   return (
     <>
-      {!readMode && embed.locked && (
-        <button
-          className="btn btn-flat-icon runbook-embed-unlock"
-          onClick={() => void unlockEmbeddedRunbook(source)}
-          aria-label={t.runbookBlock.unlock}
-          {...tooltip(t.runbookBlock.unlock)}
-        >
-          <ShieldExclamation className="icon-md" />
-        </button>
-      )}
-
       {canOpen && (
         <button
           className="btn btn-flat-icon"
@@ -252,6 +261,7 @@ function NestedRunbook({
       <div className="runbook-embed-header">
         <RunbookIcon className="icon-md icon-semibold runbook-embed-icon" />
         <div className={CssClass.RUNBOOK_EMBED_ACTIONS}>
+          <EmbedUnlock embed={embed} />
           <EmbedActions embed={embed} />
         </div>
       </div>
