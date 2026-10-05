@@ -219,14 +219,23 @@ export function RunbookBlock({
           : { provider: destination, path: cloudPath },
     });
 
-  const commitPath = () => {
-    if (!cloud || cloudPath === pathDraft) {
+  const commitPath = (path: string) => {
+    if (!cloud || cloudPath === path) {
       return;
     }
 
     updateBlock(blockId, BlockType.RUNBOOK, {
-      cloud: { ...cloud, path: pathDraft },
+      cloud: { ...cloud, path },
     });
+  };
+
+  const changePath = (path: string) => {
+    setPathDraft(path);
+    if (cloudPathSegments(path).length) {
+      return;
+    }
+
+    commitPath(path);
   };
 
   const rootRef = useRef<HTMLDivElement>(null);
@@ -315,13 +324,13 @@ export function RunbookBlock({
               }
               onChange={(text) =>
                 cloud
-                  ? setPathDraft(text)
+                  ? changePath(text)
                   : updateBlock(blockId, BlockType.RUNBOOK, {
                       label: text,
                       runbookId: undefined,
                     })
               }
-              onBlur={commitPath}
+              onBlur={() => commitPath(pathDraft)}
               onFocus={() => {
                 if (cloud ? !embed.content : !local) {
                   sourceRef.current?.suggest();
