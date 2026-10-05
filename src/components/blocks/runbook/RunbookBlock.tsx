@@ -6,7 +6,6 @@ import {
   AppMode,
   BlockType,
   CodeRendering,
-  EmbeddedRunbookStatus,
   RunbookEmbedView,
   SyncDestination,
 } from "@/common/enums";
@@ -24,7 +23,11 @@ import { useTranslation } from "@/i18n";
 import type { ChoiceSource, EditorChoice } from "@/monaco/completions";
 import type { CloudEntry } from "@/services/cloud";
 import { getActiveTab, getRunbookEmbedView, useStore } from "@/store/store";
-import { cloudPathSegments, localSourceKey } from "@/utils/embeddedRunbook";
+import {
+  cloudPathSegments,
+  isEmbedUnresolved,
+  localSourceKey,
+} from "@/utils/embeddedRunbook";
 import { formatFileSize } from "@/utils/format";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
@@ -254,12 +257,9 @@ export function RunbookBlock({
     ScrollIntoView.BLOCK_START,
   );
 
+  const unresolved = isEmbedUnresolved(block, embed.source, embed.status);
   const canSwitchView =
     !collapsed && !!embed.content && !embed.circular && !embed.tooDeep;
-
-  const unresolved = cloud
-    ? embed.status === EmbeddedRunbookStatus.MISSING
-    : !local && !!label.trim();
 
   // Labels
 

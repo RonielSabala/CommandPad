@@ -1,7 +1,8 @@
 import { RunbookBlockConfig } from "@/common/config";
-import { CloudProvider } from "@/common/enums";
+import { CloudProvider, EmbeddedRunbookStatus } from "@/common/enums";
 import type {
   CloudRunbookRef,
+  EmbeddedRunbook,
   RunbookBlock,
   RunbookEntry,
 } from "@/common/types";
@@ -76,6 +77,48 @@ export function resolveEmbedSource(
 
   const local = resolveLocalRunbook(library, block);
   return local ? { key: localSourceKey(local.id), local } : null;
+}
+
+export function isEmbedUnresolved(
+  block: RunbookBlock,
+  source: EmbedSource | null,
+  status: EmbeddedRunbookStatus | undefined,
+): boolean {
+  return block.cloud
+    ? status === EmbeddedRunbookStatus.MISSING
+    : !source && !!block.label.trim();
+}
+
+/** Each block's last source. */
+const blockSources = new WeakMap<
+  RunbookBlock,
+  { library: readonly RunbookEntry[]; source: EmbedSource | null }
+>();
+
+function cachedEmbedSource(
+  library: readonly RunbookEntry[],
+  block: RunbookBlock,
+): EmbedSource | null {
+  const cached = blockSources.get(block);
+  if (cached?.library === library) {
+    return cached.source;
+  }
+
+  const source = resolveEmbedSource(library, block);
+  blockSources.set(block, { library, source });
+  return source;
+}
+
+export function hasUnresolvedEmbeds(
+  blocks: readonly RunbookBlock[],
+  library: readonly RunbookEntry[],
+  embeddedRunbooks: Readonly<Record<string, EmbeddedRunbook>>,
+): boolean {
+  return blocks.some((block) => {
+    const source = cachedEmbedSource(library, block);
+    const status = source ? embeddedRunbooks[source.key]?.status : undefined;
+    return isEmbedUnresolved(block, source, status);
+  });
 }
 
 export function embedScopeId(scopeId: string, id: string): string {
