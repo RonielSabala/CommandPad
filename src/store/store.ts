@@ -1263,33 +1263,39 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       passphrase: string | null;
     }
 
-    const decryptImportedContent = async (
+    const readImportedContent = async (
       content: RunbookContent,
-      filename: string | null = null,
     ): Promise<ImportedVaultResult> => {
       if (!hasEncryptedSecrets(content)) {
         return { content, vault: null, passphrase: null };
       }
 
-      const vault = recordFromCiphertext(content);
       const attempt = await decryptContentWithOpenVaults(content);
+      return {
+        content: attempt.content,
+        vault: recordFromCiphertext(content),
+        passphrase: attempt.passphrase,
+      };
+    };
 
-      if (attempt.failed === 0) {
-        return {
-          content: attempt.content,
-          vault,
-          passphrase: attempt.passphrase,
-        };
+    const decryptImportedContent = async (
+      content: RunbookContent,
+      filename: string | null = null,
+    ): Promise<ImportedVaultResult> => {
+      const read = await readImportedContent(content);
+
+      if (!hasEncryptedSecrets(read.content)) {
+        return read;
       }
 
-      let opened = attempt.content;
+      let opened = read.content;
       let passphrase: string | null = null;
       await promptVault(
         VaultPrompt.UNLOCK,
         async (passphrases) => {
           const candidate = passphrases[VaultField.CURRENT];
           const result = await decryptContentWithPassphrase(
-            attempt.content,
+            read.content,
             candidate,
           );
 
@@ -1304,27 +1310,23 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         filename,
       );
 
-      return { content: opened, vault, passphrase };
+      return { content: opened, vault: read.vault, passphrase };
     };
 
     /** Adds a runbook read out of a cloud file, linked to the file it came from. */
-    const addCloudRunbook = async (
-      file: CloudEntry,
-      content: RunbookContent,
+    const addCloudRunbook = (
+      filename: string,
+      { content, vault, passphrase }: ImportedVaultResult,
       sync: RunbookSync | undefined,
-    ) => {
-      const decrypted = await decryptImportedContent(content, file.name);
-      return await get().addRunbookToLibrary(
-        decrypted.content,
-        stripJsonExtension(file.name),
-        file.name,
+    ) =>
+      get().addRunbookToLibrary(
+        content,
+        stripJsonExtension(filename),
+        filename,
         sync,
         undefined,
-        decrypted.vault
-          ? { record: decrypted.vault, passphrase: decrypted.passphrase }
-          : undefined,
+        vault ? { record: vault, passphrase } : undefined,
       );
-    };
 
     const cloudFileSync = (
       provider: CloudProvider,
@@ -2370,7 +2372,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             previous,
           );
 
-          if (!(await addCloudRunbook(located.file, content, link))) {
+          const opened = await addCloudRunbook(
+            located.file.name,
+            await readImportedContent(content),
+            link,
+          );
+          if (!opened) {
             return;
           }
 
@@ -4301,7 +4308,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         let added = 0;
         for (const { file, content } of pending) {
-          if (await addCloudRunbook(file, content, syncs.get(file.id))) {
+          const decrypted = await decryptImportedContent(content, file.name);
+          if (await addCloudRunbook(file.name, decrypted, syncs.get(file.id))) {
             added++;
           }
         }
