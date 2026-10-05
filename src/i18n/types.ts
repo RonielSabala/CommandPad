@@ -183,6 +183,7 @@ export interface Messages {
     changeSource: string;
     labelPlaceholder: string;
     pathPlaceholder: string;
+    parentFolder: string;
     unresolvedLabel: string;
     emptyLabel: string;
     emptyPath: string;

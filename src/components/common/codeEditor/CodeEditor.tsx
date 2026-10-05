@@ -18,7 +18,7 @@ import {
   completionModelKey,
   modelChoices,
   modelCompletions,
-  type EditorChoice,
+  type ChoiceSource,
   type VariableCompletion,
 } from "@/monaco/completions";
 import {
@@ -87,7 +87,7 @@ interface Props {
   header?: ReactNode;
   footer?: ReactNode;
   completions?: VariableCompletion[];
-  choices?: EditorChoice[];
+  choices?: ChoiceSource;
   /** Enter commits instead of breaking the line. */
   singleLine?: boolean;
   actions?: EditorAction[];

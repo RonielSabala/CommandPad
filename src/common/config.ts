@@ -195,7 +195,7 @@ export const RunbookBlockConfig = {
   KEY_SEPARATOR: ":",
   PATH_SEPARATOR: "/",
   SCOPE_SEPARATOR: "/",
-  PATH_COLUMNS_PROPERTY: "--runbook-block-path-columns",
+  PARENT_FOLDER_LABEL: "..",
 } as const;
 
 export const ImageBlockConfig = {

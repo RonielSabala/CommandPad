@@ -191,6 +191,7 @@ export const en: Messages = {
     changeSource: "Where the runbook lives",
     labelPlaceholder: "Runbook label",
     pathPlaceholder: "folder/runbook.json",
+    parentFolder: "Back to the previous folder",
     unresolvedLabel: "No runbook in your library has this label.",
     emptyLabel: "Type the label of a runbook in your library.",
     emptyPath: "Type the path of a runbook in the cloud.",
@@ -1299,7 +1300,7 @@ If something goes wrong, undo it in this order:
       readOnly: (open) =>
         `Embedded blocks are read-only: you can copy a command or view an image, but not edit them. To change the runbook itself, press **${open}**. Every runbook that embeds it picks up the edit, and renaming it doesn't break the link.`,
       cloud: (local, signIn, refresh) =>
-        `The runbook can also live in the cloud. Switch **${local}** to a provider and type the file's path, such as \`ops/deploy.json\`. The file is read, not imported, and **${refresh}** reads it again. While you're signed out, the block waits for you to press **${signIn}**.`,
+        `The runbook can also live in the cloud. Switch **${local}** to a provider and type the file's path, such as \`ops/deploy.json\`. Once you're signed in, the box suggests what's in the folder typed so far: picking a folder opens it, \`..\` goes back up a level, and picking a file loads it. Press \`Ctrl+Space\` to list the folder again. The file is read, not imported, and **${refresh}** reads it again. While you're signed out, the block waits for you to press **${signIn}**.`,
       secrets: (unlock) =>
         `If the embedded runbook has encrypted secrets, press **${unlock}** and enter its passphrase. Once per session is enough.`,
       limits:

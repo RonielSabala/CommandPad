@@ -161,6 +161,13 @@ export const MonacoSuggest = {
   IDLE_STATE: 0,
 } as const;
 
+export const ChoiceConfig = {
+  PICK_COMMAND_ID: "commandpad.pickChoice",
+  PINNED_RANK: "0",
+  FOLDER_RANK: "1",
+  ITEM_RANK: "2",
+} as const;
+
 export const MonacoFind = {
   CONTROLLER_ID: "editor.contrib.findController",
 } as const;

@@ -1,7 +1,6 @@
 import { RunbookBlockConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
-import { Key } from "@/common/constants/events";
 import { CodeModelScope, EditorLanguage } from "@/common/editorConfig";
 import {
   AppMode,
@@ -22,13 +21,13 @@ import { RunbookIcon } from "@/components/icons";
 import { ProviderSelect } from "@/components/modals/cloud/ProviderSelect";
 import { useKeepInView } from "@/hooks/useKeepInView";
 import { useTranslation } from "@/i18n";
-import type { EditorChoice } from "@/monaco/completions";
+import type { ChoiceSource, EditorChoice } from "@/monaco/completions";
+import type { CloudEntry } from "@/services/cloud";
 import { getActiveTab, getRunbookEmbedView, useStore } from "@/store/store";
-import { localSourceKey } from "@/utils/embeddedRunbook";
+import { cloudPathSegments, localSourceKey } from "@/utils/embeddedRunbook";
 import { formatFileSize } from "@/utils/format";
 import { displayLabel } from "@/utils/runbook";
-import { classNames, countCharacters } from "@/utils/string";
-import type { CSSProperties } from "react";
+import { classNames } from "@/utils/string";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { BodyText, Braces } from "react-bootstrap-icons";
 
@@ -72,6 +71,9 @@ export function RunbookBlock({
   );
 
   const updateBlock = useStore((state) => state.updateBlock);
+  const listEmbeddableCloudFolder = useStore(
+    (state) => state.listEmbeddableCloudFolder,
+  );
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
@@ -93,22 +95,16 @@ export function RunbookBlock({
   const [pathDraft, setPathDraft] = useState(cloudPath);
   useEffect(() => setPathDraft(cloudPath), [cloudPath]);
 
-  const pathRef = useRef<HTMLInputElement>(null);
-  const labelRef = useRef<CodeEditorHandle>(null);
+  const sourceRef = useRef<CodeEditorHandle>(null);
 
   useEffect(() => {
     if (!pendingFocus) {
       return;
     }
 
-    if (cloud) {
-      pathRef.current?.focus({ preventScroll: true });
-    } else {
-      labelRef.current?.focus();
-    }
-
+    sourceRef.current?.focus();
     consumeBlockFocus();
-  }, [pendingFocus, consumeBlockFocus, cloud]);
+  }, [pendingFocus, consumeBlockFocus]);
 
   // Once a label matches, remember the runbook
   useEffect(() => {
@@ -154,6 +150,66 @@ export function RunbookBlock({
 
     return [...byLabel.values()];
   }, [library, hostRunbookId, readRunbookStats, language, t]);
+
+  // The folder typed so far, one level at a time
+  const provider = cloud?.provider ?? null;
+  const pathChoices = useMemo<ChoiceSource | undefined>(() => {
+    if (!provider) {
+      return undefined;
+    }
+
+    const separator = RunbookBlockConfig.PATH_SEPARATOR;
+    const describe = (entry: CloudEntry) =>
+      entry.isFolder
+        ? entry.itemCount === null
+          ? undefined
+          : t.cloudModal.folderItemCount(entry.itemCount)
+        : entry.size === null
+          ? undefined
+          : formatFileSize(entry.size, language);
+
+    return async (text) => {
+      const folder = text.slice(0, text.lastIndexOf(separator) + 1);
+      const entries = await listEmbeddableCloudFolder(provider, folder);
+      if (!entries) {
+        return [];
+      }
+
+      const choices = entries.map((entry): EditorChoice => {
+        const value = folder + entry.name;
+        return entry.isFolder
+          ? {
+              label: entry.name,
+              value: value + separator,
+              describe: () => describe(entry),
+              folder: true,
+            }
+          : {
+              label: entry.name,
+              value,
+              describe: () => describe(entry),
+              onPick: () =>
+                updateBlock(blockId, BlockType.RUNBOOK, {
+                  cloud: { provider, path: value },
+                }),
+            };
+      });
+
+      const segments = cloudPathSegments(folder);
+      if (segments.length > 0) {
+        const parent = segments.slice(0, -1);
+        choices.push({
+          label: RunbookBlockConfig.PARENT_FOLDER_LABEL,
+          value: parent.map((segment) => segment + separator).join(""),
+          describe: () => t.runbookBlock.parentFolder,
+          folder: true,
+          pinned: true,
+        });
+      }
+
+      return choices;
+    };
+  }, [provider, listEmbeddableCloudFolder, updateBlock, blockId, language, t]);
 
   const changeSource = (destination: SyncDestination) =>
     updateBlock(blockId, BlockType.RUNBOOK, {
@@ -239,53 +295,36 @@ export function RunbookBlock({
             />
           )}
 
-          {readMode ? null : cloud ? (
-            <input
-              ref={pathRef}
-              className={classNames(
-                "runbook-block-input",
-                unresolved && CssClass.IS_UNRESOLVED,
-              )}
-              style={
-                {
-                  [RunbookBlockConfig.PATH_COLUMNS_PROPERTY]:
-                    countCharacters(pathDraft) + 1,
-                } as CSSProperties
-              }
-              value={pathDraft}
-              placeholder={t.runbookBlock.pathPlaceholder}
-              spellCheck={false}
-              onChange={(event) => setPathDraft(event.target.value)}
-              onBlur={commitPath}
-              onKeyDown={(event) => {
-                if (event.key === Key.ENTER) {
-                  commitPath();
-                }
-              }}
-            />
-          ) : (
+          {!readMode && (
             <CodeEditor
-              ref={labelRef}
+              ref={sourceRef}
               modelId={`${CodeModelScope.RUNBOOK_LABEL}/${blockId}`}
               className={classNames(
-                "runbook-block-label",
+                "runbook-block-source",
                 unresolved && CssClass.IS_UNRESOLVED,
               )}
-              value={label}
+              value={cloud ? pathDraft : label}
               language={EditorLanguage.CHOICE}
-              choices={choices}
+              choices={cloud ? pathChoices : choices}
               singleLine
               gutter={false}
-              placeholder={t.runbookBlock.labelPlaceholder}
-              onChange={(label) =>
-                updateBlock(blockId, BlockType.RUNBOOK, {
-                  label,
-                  runbookId: undefined,
-                })
+              placeholder={
+                cloud
+                  ? t.runbookBlock.pathPlaceholder
+                  : t.runbookBlock.labelPlaceholder
               }
+              onChange={(text) =>
+                cloud
+                  ? setPathDraft(text)
+                  : updateBlock(blockId, BlockType.RUNBOOK, {
+                      label: text,
+                      runbookId: undefined,
+                    })
+              }
+              onBlur={commitPath}
               onFocus={() => {
-                if (!local) {
-                  labelRef.current?.suggest();
+                if (cloud ? !embed.content : !local) {
+                  sourceRef.current?.suggest();
                 }
               }}
             />

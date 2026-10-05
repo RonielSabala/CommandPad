@@ -1,4 +1,4 @@
-import { JSON_EXTENSION } from "@/common/config";
+import { JSON_EXTENSION, RunbookBlockConfig } from "@/common/config";
 import { cloudPathSegments } from "@/utils/embeddedRunbook";
 
 import { getCachedCloudEntries, setCachedCloudEntries } from "./cache";
@@ -43,6 +43,24 @@ function findNamed(
   return caseless;
 }
 
+export async function listCloudFolder(
+  client: CloudClient,
+  path: string,
+): Promise<CloudEntry[] | null> {
+  let folderId: string | null = null;
+
+  for (const segment of cloudPathSegments(path)) {
+    const folder = findNamed(await listFolder(client, folderId), segment, true);
+    if (!folder) {
+      return null;
+    }
+
+    folderId = folder.id;
+  }
+
+  return listFolder(client, folderId);
+}
+
 export async function resolveCloudPath(
   client: CloudClient,
   path: string,
@@ -53,19 +71,14 @@ export async function resolveCloudPath(
     return null;
   }
 
-  let folderId: string | null = null;
-  for (const segment of segments) {
-    const folder = findNamed(await listFolder(client, folderId), segment, true);
-    if (!folder) {
-      return null;
-    }
-
-    folderId = folder.id;
-  }
+  const entries = await listCloudFolder(
+    client,
+    segments.join(RunbookBlockConfig.PATH_SEPARATOR),
+  );
 
   const named = filename.toLowerCase().endsWith(JSON_EXTENSION)
     ? filename
     : filename + JSON_EXTENSION;
 
-  return findNamed(await listFolder(client, folderId), named, false);
+  return entries && findNamed(entries, named, false);
 }

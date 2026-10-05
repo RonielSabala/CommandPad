@@ -53,48 +53,27 @@ body.read-mode .runbook-block {
   box-shadow: 0 0 var(--space-6) var(--space-1) var(--color-bg);
 }
 
-.runbook-block-input,
-.runbook-block-label {
+.runbook-block-source {
+  --code-editor-width: max-content;
+  --code-editor-min-columns: 24ch;
+
+  max-width: 100%;
+  overflow: clip;
   border-radius: var(--radius-md);
   border: var(--border-standard);
   background: var(--color-bg);
   transition: border-color var(--transition-base);
 }
 
-.runbook-block-input {
-  flex: 0 1 auto;
-  box-sizing: content-box;
-  width: max(24ch, var(--runbook-block-path-columns, 0) * 1ch);
-  min-width: 0;
-  padding: var(--space-3) var(--space-4);
-  color: var(--color-text-primary);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  outline: none;
-}
-
-.runbook-block-input::placeholder {
-  color: var(--color-text-muted);
-}
-
-:is(.runbook-block-input:focus, .runbook-block-label:focus-within) {
+.runbook-block-source:focus-within {
   border-color: var(--color-border-focus);
 }
 
-.runbook-block-label {
-  --code-editor-width: max-content;
-  --code-editor-min-columns: 24ch;
-
-  max-width: 100%;
-  overflow: clip;
-}
-
-.runbook-block-label .code-editor-surface {
+.runbook-block-source .code-editor-surface {
   padding-block: var(--space-2);
 }
 
-.runbook-block-input.is-unresolved,
-.runbook-block-label.is-unresolved {
+.runbook-block-source.is-unresolved {
   border-color: var(--danger);
 }
 

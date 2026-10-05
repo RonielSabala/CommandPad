@@ -80,6 +80,7 @@ import {
   DEFAULT_CLOUD_SORT,
   getCachedCloudEntries,
   getCloudClient,
+  listCloudFolder,
   resolveCloudPath,
   setCachedCloudEntries,
   walkCloudTree,
@@ -346,6 +347,10 @@ export interface StoreState {
   setEmbeddedSectionFolded: (foldKey: string, folded: boolean) => void;
   unlockEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
   signInForEmbeddedRunbooks: (provider: CloudProvider) => Promise<void>;
+  listEmbeddableCloudFolder: (
+    provider: CloudProvider,
+    path: string,
+  ) => Promise<CloudEntry[] | null>;
 
   importRunbooks: (files: File[]) => Promise<void>;
   importRunbookFromText: (text: string) => Promise<boolean>;
@@ -2351,6 +2356,23 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           if (entry.status === EmbeddedRunbookStatus.SIGNED_OUT) {
             invalidateEmbed(key);
           }
+        }
+      },
+
+      listEmbeddableCloudFolder: async (provider, path) => {
+        const client = getCloudClient(provider);
+        if (isDemo || !client.isConfigured()) {
+          return null;
+        }
+
+        try {
+          await client.init();
+          return client.isSignedIn()
+            ? await listCloudFolder(client, path)
+            : null;
+        } catch (error) {
+          console.error("Failed to list cloud folder", path, error);
+          return null;
         }
       },
 
