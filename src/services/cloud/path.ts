@@ -2,7 +2,7 @@ import { JSON_EXTENSION, RunbookBlockConfig } from "@/common/config";
 import { cloudPathSegments } from "@/utils/embeddedRunbook";
 
 import { getCachedCloudEntries, setCachedCloudEntries } from "./cache";
-import type { CloudClient, CloudEntry } from "./types";
+import type { CloudClient, CloudEntry, CloudFileLocation } from "./types";
 
 async function listFolder(
   client: CloudClient,
@@ -43,10 +43,11 @@ function findNamed(
   return caseless;
 }
 
-export async function listCloudFolder(
+/** The folder a path names, with what it holds. */
+async function walkToFolder(
   client: CloudClient,
   path: string,
-): Promise<CloudEntry[] | null> {
+): Promise<{ folderId: string | null; entries: CloudEntry[] } | null> {
   let folderId: string | null = null;
 
   for (const segment of cloudPathSegments(path)) {
@@ -58,27 +59,38 @@ export async function listCloudFolder(
     folderId = folder.id;
   }
 
-  return listFolder(client, folderId);
+  return { folderId, entries: await listFolder(client, folderId) };
 }
 
-export async function resolveCloudPath(
+export async function listCloudFolder(
   client: CloudClient,
   path: string,
-): Promise<CloudEntry | null> {
+): Promise<CloudEntry[] | null> {
+  return (await walkToFolder(client, path))?.entries ?? null;
+}
+
+export async function resolveCloudFile(
+  client: CloudClient,
+  path: string,
+): Promise<CloudFileLocation | null> {
   const segments = cloudPathSegments(path);
   const filename = segments.pop();
   if (!filename) {
     return null;
   }
 
-  const entries = await listCloudFolder(
+  const folder = await walkToFolder(
     client,
     segments.join(RunbookBlockConfig.PATH_SEPARATOR),
   );
+  if (!folder) {
+    return null;
+  }
 
   const named = filename.toLowerCase().endsWith(JSON_EXTENSION)
     ? filename
     : filename + JSON_EXTENSION;
 
-  return entries && findNamed(entries, named, false);
+  const file = findNamed(folder.entries, named, false);
+  return file && { file, folderId: folder.folderId };
 }

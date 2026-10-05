@@ -1326,7 +1326,7 @@ Si algo sale mal, deshazlo en este orden:
       readOnly: (open) =>
         `Los bloques incrustados son de solo lectura: puedes copiar un comando o ver una imagen, pero no editarlos. Para cambiar el propio runbook, pulsa **${open}**. Todos los runbooks que lo incrustan recogen el cambio, y renombrarlo no rompe el enlace.`,
       cloud: (local, signIn, refresh) =>
-        `El runbook también puede estar en la nube. Cambia **${local}** por un proveedor y escribe la ruta del archivo, como \`ops/deploy.json\`. Con la sesión iniciada, la caja sugiere lo que hay en la carpeta escrita hasta ahora: elegir una carpeta la abre, \`..\` sube un nivel y elegir un archivo lo carga. Pulsa \`Ctrl+Space\` para volver a listar la carpeta. El archivo se lee, no se importa, y **${refresh}** lo vuelve a leer. Mientras no hayas iniciado sesión, el bloque espera a que pulses **${signIn}**.`,
+        `El runbook también puede estar en la nube. Cambia **${local}** por un proveedor y escribe la ruta del archivo, como \`ops/deploy.json\`. Con la sesión iniciada, la caja sugiere lo que hay en la carpeta escrita hasta ahora: elegir una carpeta la abre, \`..\` sube un nivel y elegir un archivo lo carga. Pulsa \`Ctrl+Space\` para volver a listar la carpeta. Incrustarlo lee el archivo, no lo importa, y **${refresh}** lo vuelve a leer. Mientras no hayas iniciado sesión, el bloque espera a que pulses **${signIn}**.`,
       secrets: (unlock) =>
         `Si el runbook incrustado tiene secretos cifrados, pulsa **${unlock}** e introduce su frase de contraseña. Basta una vez por sesión.`,
       limits:

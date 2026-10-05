@@ -140,12 +140,13 @@ export interface RunbookContent {
   variableSections: VariableSection[];
 }
 
-/** What a runbook block has loaded for the runbook it embeds. */
 export interface EmbeddedRunbook {
   status: EmbeddedRunbookStatus;
   content: RunbookContent | null;
-  /** Due a reload, which keeps showing `content` until the new copy lands. */
+  /** Due a reload. */
   stale?: boolean;
+  /** The library runbook kept in this cloud file. */
+  runbookId?: string;
 }
 
 export interface ResolvedSpan {

@@ -44,14 +44,15 @@ export function useEmbeddedRunbook(
   );
 
   const key = source?.key ?? null;
-  const localId = source?.local?.id;
-  const openTab = useStore((state) =>
-    localId
-      ? (state.tabs.find((tab) => tab.runbookId === localId) ?? null)
-      : null,
-  );
   const entry = useStore((state) =>
     key ? state.embeddedRunbooks[key] : undefined,
+  );
+
+  const runbookId = source?.local?.id ?? entry?.runbookId;
+  const openTab = useStore((state) =>
+    runbookId
+      ? (state.tabs.find((tab) => tab.runbookId === runbookId) ?? null)
+      : null,
   );
 
   const circular = key !== null && trail.includes(key);

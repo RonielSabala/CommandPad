@@ -65,16 +65,14 @@ export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
   const unlockEmbeddedRunbook = useStore(
     (state) => state.unlockEmbeddedRunbook,
   );
-  const loadRunbookFromLibrary = useStore(
-    (state) => state.loadRunbookFromLibrary,
-  );
+  const openEmbeddedRunbook = useStore((state) => state.openEmbeddedRunbook);
 
   const { source } = embed;
   if (!source) {
     return null;
   }
 
-  const localId = source.local?.id;
+  const canOpen = !!source.local || !!embed.content;
   return (
     <>
       {!readMode && embed.locked && (
@@ -88,10 +86,10 @@ export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
         </button>
       )}
 
-      {localId && (
+      {canOpen && (
         <button
           className="btn btn-flat-icon"
-          onClick={() => void loadRunbookFromLibrary(localId)}
+          onClick={() => void openEmbeddedRunbook(source)}
           aria-label={t.runbookBlock.open}
           {...tooltip(t.runbookBlock.open)}
         >

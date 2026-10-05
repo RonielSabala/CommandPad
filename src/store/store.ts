@@ -81,11 +81,12 @@ import {
   getCachedCloudEntries,
   getCloudClient,
   listCloudFolder,
-  resolveCloudPath,
+  resolveCloudFile,
   setCachedCloudEntries,
   walkCloudTree,
   type CloudClient,
   type CloudEntry,
+  type CloudFileLocation,
   type CloudFolderRef,
   type CloudSort,
   type PlacedCloudEntry,
@@ -343,6 +344,7 @@ export interface StoreState {
   readRunbookStats: (runbookId: string) => Promise<RunbookStats | null>;
   loadEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
   refreshEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
+  openEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
   setRunbookEmbedView: (blockId: string, view: RunbookEmbedView) => void;
   setEmbeddedSectionFolded: (foldKey: string, folded: boolean) => void;
   unlockEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
@@ -1305,6 +1307,38 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       return { content: opened, vault, passphrase };
     };
 
+    /** Adds a runbook read out of a cloud file, linked to the file it came from. */
+    const addCloudRunbook = async (
+      file: CloudEntry,
+      content: RunbookContent,
+      sync: RunbookSync | undefined,
+    ) => {
+      const decrypted = await decryptImportedContent(content, file.name);
+      return await get().addRunbookToLibrary(
+        decrypted.content,
+        stripJsonExtension(file.name),
+        file.name,
+        sync,
+        undefined,
+        decrypted.vault
+          ? { record: decrypted.vault, passphrase: decrypted.passphrase }
+          : undefined,
+      );
+    };
+
+    const cloudFileSync = (
+      provider: CloudProvider,
+      { file, folderId }: CloudFileLocation,
+    ): RunbookSync => ({ provider, filename: file.name, folderId });
+
+    const runbookLinkedTo = (link: RunbookSync) =>
+      get().runbookLibrary.find(
+        (item) =>
+          item.sync?.provider === link.provider &&
+          item.sync.filename === link.filename &&
+          item.sync.folderId === link.folderId,
+      )?.id;
+
     /** The runbook's content as the tab holds it, else as the DB holds it. */
     const readRunbookContent = async (runbookId: string) => {
       const openTab = get().tabs.find((t) => t.runbookId === runbookId);
@@ -1355,6 +1389,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         focusedRunbookId: null,
       });
     };
+
+    /** Every embed reading a runbook. */
+    const embedsReadingRunbook = (runbookId: string) =>
+      Object.entries(get().embeddedRunbooks).filter(
+        ([key, entry]) =>
+          key === localSourceKey(runbookId) || entry.runbookId === runbookId,
+      );
 
     /** Marks what an embed loaded as due a reload. */
     const invalidateEmbed = (key: string) => {
@@ -1407,14 +1448,20 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         return emptyEmbed(EmbeddedRunbookStatus.SIGNED_OUT);
       }
 
-      const file = await resolveCloudPath(client, ref.path);
-      if (!file) {
+      const located = await resolveCloudFile(client, ref.path);
+      if (!located) {
         return emptyEmbed(EmbeddedRunbookStatus.MISSING);
       }
 
-      return readyEmbed(
-        parseRunbookSource(await client.readFile(file), previous ?? undefined),
+      const entry = await readyEmbed(
+        parseRunbookSource(
+          await client.readFile(located.file),
+          previous ?? undefined,
+        ),
       );
+
+      const runbookId = runbookLinkedTo(cloudFileSync(ref.provider, located));
+      return runbookId ? { ...entry, runbookId } : entry;
     };
 
     const readEmbeddedForExport: EmbeddedReader = async (block) => {
@@ -1830,13 +1877,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           ) {
             declinedVaultSetup.delete(tab.runbookId);
 
-            // Update the embed runbook block that read this tab
-            const key = localSourceKey(tab.runbookId);
-            if (key in state.embeddedRunbooks) {
+            // Update the embed runbook blocks that read this tab
+            for (const [key, entry] of embedsReadingRunbook(tab.runbookId)) {
               embedRequests.delete(key);
               setEmbeddedRunbook(key, {
                 status: EmbeddedRunbookStatus.READY,
                 content: tabContent(tab),
+                ...(entry.runbookId ? { runbookId: entry.runbookId } : {}),
               });
             }
           }
@@ -2287,6 +2334,62 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         await get().loadEmbeddedRunbook(source);
       },
 
+      /** Opens the embedded runbook in a tab. */
+      openEmbeddedRunbook: async (source) => {
+        if (source.local) {
+          await get().loadRunbookFromLibrary(source.local.id);
+          return;
+        }
+
+        const { key, cloud } = source;
+        const client = getCloudClient(cloud.provider);
+        if (isDemo || !client.isConfigured()) {
+          return;
+        }
+
+        try {
+          await ensureSignedIn(client);
+
+          const located = await resolveCloudFile(client, cloud.path);
+          if (!located) {
+            await get().refreshEmbeddedRunbook(source);
+            return;
+          }
+
+          const link = cloudFileSync(cloud.provider, located);
+          const linked = runbookLinkedTo(link);
+          if (linked) {
+            await get().loadRunbookFromLibrary(linked);
+            return;
+          }
+
+          // The ids the embed already holds
+          const previous = get().embeddedRunbooks[key]?.content ?? undefined;
+          const content = parseRunbookSource(
+            await client.readFile(located.file),
+            previous,
+          );
+
+          if (!(await addCloudRunbook(located.file, content, link))) {
+            return;
+          }
+
+          const runbookId = runbookLinkedTo(link);
+          if (!runbookId) {
+            return;
+          }
+
+          const entry = get().embeddedRunbooks[key];
+          if (entry) {
+            setEmbeddedRunbook(key, { ...entry, runbookId });
+          }
+
+          await get().loadRunbookFromLibrary(runbookId);
+        } catch (error) {
+          console.error("Failed to open the embedded runbook", key, error);
+        }
+      },
+
       setRunbookEmbedView: (blockId, view) => {
         const active = getActiveTab(get());
         if (!active || getRunbookEmbedView(active, blockId) === view) {
@@ -2386,6 +2489,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             item.id === id ? { ...item, sync: undefined } : item,
           ),
         }));
+
+        // Unlink the embed runbook blocks that read this runbook
+        for (const [key, entry] of Object.entries(get().embeddedRunbooks)) {
+          if (entry.runbookId === id) {
+            setEmbeddedRunbook(key, { ...entry, runbookId: undefined });
+            invalidateEmbed(key);
+          }
+        }
 
         forgetSyncState(id);
         persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
@@ -4190,19 +4301,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         let added = 0;
         for (const { file, content } of pending) {
-          const decrypted = await decryptImportedContent(content, file.name);
-          const accepted = await get().addRunbookToLibrary(
-            decrypted.content,
-            stripJsonExtension(file.name),
-            file.name,
-            syncs.get(file.id),
-            undefined,
-            decrypted.vault
-              ? { record: decrypted.vault, passphrase: decrypted.passphrase }
-              : undefined,
-          );
-
-          if (accepted) {
+          if (await addCloudRunbook(file, content, syncs.get(file.id))) {
             added++;
           }
         }
