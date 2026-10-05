@@ -1,10 +1,11 @@
 #docs-demo-tab-panel {
   --block-backdrop: var(--color-bg);
-  --docs-demo-tab-panel-height: 24rem;
+  --docs-demo-tab-panel-height: 28rem;
 
   display: flex;
   flex-direction: column;
-  min-height: var(--docs-demo-tab-panel-height);
+  height: var(--docs-demo-tab-panel-height);
+  overflow-y: auto;
   padding: var(--space-8) var(--space-10);
   background: var(--color-bg);
   border: var(--border-standard);
@@ -13,8 +14,8 @@
 }
 
 #docs-demo-tab-panel > #runbook-variables-wrapper {
-  flex: 0 0 auto;
-  height: calc(var(--docs-demo-tab-panel-height) - 4rem);
+  flex: 1;
+  min-height: 0;
 }
 
 #docs-demo-tab-panel .runbook-source-editor {

@@ -170,7 +170,6 @@
 
 .tab-close .tab-close-icon {
   stroke-width: 2.5;
-  transition: opacity var(--transition-fast);
 }
 
 .tab-close.is-unresolved {
