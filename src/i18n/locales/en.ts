@@ -210,7 +210,6 @@ export const en: Messages = {
     error: "The runbook couldn't be loaded.",
     signedOut: (provider) => `Sign in to ${provider} to load this runbook.`,
     signIn: "Sign in",
-    locked: "Its secret values are locked.",
     unlock: "Unlock",
     refresh: "Load it again",
     open: "Open the runbook",
@@ -1302,7 +1301,7 @@ If something goes wrong, undo it in this order:
       cloud: (local, signIn, refresh) =>
         `The runbook can also live in the cloud. Switch **${local}** to a provider and type the file's path, such as \`ops/deploy.json\`. Once you're signed in, the box suggests what's in the folder typed so far: picking a folder opens it, \`..\` goes back up a level, and picking a file loads it. Press \`Ctrl+Space\` to list the folder again. Embedding it reads the file, it doesn't import it, and **${refresh}** reads it again. While you're signed out, the block waits for you to press **${signIn}**.`,
       secrets: (unlock) =>
-        `If the embedded runbook has encrypted secrets, press **${unlock}** and enter its passphrase. Once per session is enough.`,
+        `If the embedded runbook has encrypted secrets, press the warning shield in its header (**${unlock}**) and enter its passphrase. Once per session is enough.`,
       limits:
         "Embeds can nest a few levels deep, and a runbook that would end up embedding itself is shown only once. Markdown and text exports write the embedded blocks in place, with your overrides applied.",
       demoDeployTitle: "Deploy the API",

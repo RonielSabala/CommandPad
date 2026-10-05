@@ -194,7 +194,6 @@ export interface Messages {
     error: string;
     signedOut: (provider: string) => string;
     signIn: string;
-    locked: string;
     unlock: string;
     refresh: string;
     open: string;

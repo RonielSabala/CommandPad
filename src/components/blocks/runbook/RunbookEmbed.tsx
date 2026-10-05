@@ -14,7 +14,7 @@ import {
   ArrowRepeat,
   BoxArrowInRight,
   BoxArrowUpRight,
-  ShieldLock,
+  ShieldExclamation,
 } from "react-bootstrap-icons";
 
 import { CssClass } from "@/common/constants/css";
@@ -77,12 +77,12 @@ export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
     <>
       {!readMode && embed.locked && (
         <button
-          className="btn runbook-embed-unlock"
+          className="btn btn-flat-icon runbook-embed-unlock"
           onClick={() => void unlockEmbeddedRunbook(source)}
-          {...tooltip(t.runbookBlock.locked)}
+          aria-label={t.runbookBlock.unlock}
+          {...tooltip(t.runbookBlock.unlock)}
         >
-          <ShieldLock className="icon-md" />
-          {t.runbookBlock.unlock}
+          <ShieldExclamation className="icon-md" />
         </button>
       )}
 

@@ -221,7 +221,6 @@ export const es: Messages = {
     signedOut: (provider) =>
       `Inicia sesión en ${provider} para cargar este runbook.`,
     signIn: "Iniciar sesión",
-    locked: "Sus valores secretos están bloqueados.",
     unlock: "Desbloquear",
     refresh: "Cargarlo de nuevo",
     open: "Abrir el runbook",
@@ -1328,7 +1327,7 @@ Si algo sale mal, deshazlo en este orden:
       cloud: (local, signIn, refresh) =>
         `El runbook también puede estar en la nube. Cambia **${local}** por un proveedor y escribe la ruta del archivo, como \`ops/deploy.json\`. Con la sesión iniciada, la caja sugiere lo que hay en la carpeta escrita hasta ahora: elegir una carpeta la abre, \`..\` sube un nivel y elegir un archivo lo carga. Pulsa \`Ctrl+Space\` para volver a listar la carpeta. Incrustarlo lee el archivo, no lo importa, y **${refresh}** lo vuelve a leer. Mientras no hayas iniciado sesión, el bloque espera a que pulses **${signIn}**.`,
       secrets: (unlock) =>
-        `Si el runbook incrustado tiene secretos cifrados, pulsa **${unlock}** e introduce su frase de contraseña. Basta una vez por sesión.`,
+        `Si el runbook incrustado tiene secretos cifrados, pulsa el escudo de advertencia de su cabecera (**${unlock}**) e introduce su frase de contraseña. Basta una vez por sesión.`,
       limits:
         "Los runbooks incrustados pueden anidarse unos pocos niveles, y uno que acabaría incrustándose a sí mismo se muestra una sola vez. Las exportaciones a Markdown y texto escriben los bloques incrustados en su lugar, con tus sobrescrituras aplicadas.",
       demoDeployTitle: "Desplegar la API",
