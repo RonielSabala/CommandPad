@@ -52,8 +52,8 @@ export function SidebarSection({
     <div
       id={id}
       className={classNames(
-        "panel-card",
         "sidebar-section",
+        CssClass.PANEL_CARD,
         collapsed && CssClass.COLLAPSED,
         animating && CssClass.ANIMATING,
         dropZone?.isDropActive && CssClass.DROP_TARGET,
@@ -78,7 +78,7 @@ export function SidebarSection({
         aria-expanded={!collapsed}
         {...asButton(onToggle)}
       >
-        <p className="section-title">{title}</p>
+        <p className={CssClass.SECTION_TITLE}>{title}</p>
         <SidebarSectionChevronIcon
           className={classNames(
             "sidebar-section-chevron",

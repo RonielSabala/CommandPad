@@ -76,13 +76,13 @@ export function SiteHeader({ title, showDocsLink }: Props) {
           )}
         </button>
 
-        <div className="vertical-divider" />
+        <div className={CssClass.VERTICAL_DIVIDER} />
 
         <LanguageSelect />
 
         {showDocsLink && (
           <>
-            <div className="vertical-divider" />
+            <div className={CssClass.VERTICAL_DIVIDER} />
             <Link
               to={AppRoute.DOCS}
               className={classNames(
@@ -100,7 +100,7 @@ export function SiteHeader({ title, showDocsLink }: Props) {
           </>
         )}
 
-        <div className="vertical-divider" />
+        <div className={CssClass.VERTICAL_DIVIDER} />
 
         <Link
           to={AppRoute.WORKSPACE}

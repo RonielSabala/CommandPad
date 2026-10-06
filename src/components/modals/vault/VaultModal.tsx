@@ -107,7 +107,7 @@ export function VaultModal() {
           {t.vaultModal.skip}
         </button>
 
-        <div className="vertical-divider" />
+        <div className={CssClass.VERTICAL_DIVIDER} />
 
         <button
           className={classNames(

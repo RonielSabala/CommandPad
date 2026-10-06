@@ -70,7 +70,12 @@ export function StaticCodeView({
         </div>
       )}
 
-      <div className={`code-editor-surface ${CssClass.SELECT_KEY_INERT}`}>
+      <div
+        className={classNames(
+          CssClass.CODE_EDITOR_SURFACE,
+          CssClass.SELECT_KEY_INERT,
+        )}
+      >
         {gutter && (
           <div className="code-editor-static-gutter">
             {promptPrefix && (

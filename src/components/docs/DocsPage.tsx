@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import {
   getDocsSectionNumbers,
   isDocsSectionId,
@@ -53,7 +54,7 @@ export function DocsPage() {
 
       <DocsToc pageId={id} collapse={collapse} onNavigate={goTo} />
 
-      <main id="docs-main" className="panel-card">
+      <main id="docs-main" className={CssClass.PANEL_CARD}>
         <div ref={scrollRef} id="docs-scroll">
           <article id="docs-article">
             {previousId && <DocsPageBack id={previousId} onNavigate={goTo} />}

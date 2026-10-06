@@ -23,7 +23,8 @@ export function AddRow({ label, items }: Props) {
     <div className="add-row">
       <p
         className={classNames(
-          "add-row-label section-title",
+          "add-row-label",
+          CssClass.SECTION_TITLE,
           CssClass.NO_USER_SELECT,
         )}
       >

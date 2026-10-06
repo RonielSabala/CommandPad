@@ -288,7 +288,7 @@ export function ExportModal() {
               {t.common.cancel}
             </button>
 
-            <div className="vertical-divider" />
+            <div className={CssClass.VERTICAL_DIVIDER} />
 
             <button
               className={classNames(

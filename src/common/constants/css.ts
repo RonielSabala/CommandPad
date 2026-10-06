@@ -18,8 +18,13 @@ export const CssClass = {
   CLAMPED: "clamped",
   CLAMP_SURFACE: "clamp-surface",
 
+  PANEL_CARD: "panel-card",
+  SECTION_TITLE: "section-title",
+  VERTICAL_DIVIDER: "vertical-divider",
+
   CONTEXT_MENU: "context-menu",
   CODE_EDITOR_PROMPT: "code-editor-prompt",
+  CODE_EDITOR_SURFACE: "code-editor-surface",
 
   // Buttons
 

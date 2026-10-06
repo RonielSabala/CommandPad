@@ -54,7 +54,7 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
 
   return (
     <ResizablePanel panelId={PanelId.DOCS_TOC} id="docs-toc">
-      <div id="docs-toc-card" className="panel-card">
+      <div id="docs-toc-card" className={CssClass.PANEL_CARD}>
         <button
           id="docs-toc-header"
           className={CssClass.NO_USER_SELECT}
@@ -63,7 +63,7 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
           aria-expanded={!collapse.allCollapsed}
           onClick={collapse.toggleAll}
         >
-          <span id="docs-toc-title" className="section-title">
+          <span id="docs-toc-title" className={CssClass.SECTION_TITLE}>
             {t.docs.meta.tocTitle}
           </span>
 

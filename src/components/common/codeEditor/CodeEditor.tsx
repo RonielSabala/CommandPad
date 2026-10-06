@@ -546,7 +546,10 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         )}
 
         <div
-          className={`code-editor-surface ${CssClass.SELECT_KEY_INERT}`}
+          className={classNames(
+            CssClass.CODE_EDITOR_SURFACE,
+            CssClass.SELECT_KEY_INERT,
+          )}
           data-value={value}
         >
           <Editor

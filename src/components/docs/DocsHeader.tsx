@@ -61,9 +61,11 @@ export function DocsHeader() {
           )}
         </button>
 
-        <div className="vertical-divider" />
+        <div className={CssClass.VERTICAL_DIVIDER} />
+
         <LanguageSelect />
-        <div className="vertical-divider" />
+
+        <div className={CssClass.VERTICAL_DIVIDER} />
 
         <Link
           to={AppRoute.HOME}

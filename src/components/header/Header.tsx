@@ -89,7 +89,7 @@ export function Header() {
           )}
         </button>
 
-        <div className="vertical-divider" />
+        <div className={CssClass.VERTICAL_DIVIDER} />
 
         <button
           className={classNames(CssClass.BTN, CssClass.BTN_LG)}
@@ -132,11 +132,11 @@ export function Header() {
           )}
         </button>
 
-        <div className="vertical-divider" />
+        <div className={CssClass.VERTICAL_DIVIDER} />
 
         <LanguageSelect />
 
-        <div className="vertical-divider" />
+        <div className={CssClass.VERTICAL_DIVIDER} />
 
         <Link
           to={AppRoute.DOCS}
@@ -151,7 +151,7 @@ export function Header() {
           <BookIcon className={classNames(CssClass.ICON, CssClass.ICON_BOLD)} />
         </Link>
 
-        <div className="vertical-divider" />
+        <div className={CssClass.VERTICAL_DIVIDER} />
 
         <button
           className={classNames(
@@ -173,7 +173,7 @@ export function Header() {
           />
         </button>
 
-        <div className="vertical-divider" />
+        <div className={CssClass.VERTICAL_DIVIDER} />
 
         <button
           className={classNames(

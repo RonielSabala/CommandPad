@@ -71,7 +71,7 @@ export function ConfirmModal() {
         {t.common.cancel}
       </button>
 
-      <div className="vertical-divider" />
+      <div className={CssClass.VERTICAL_DIVIDER} />
 
       <button
         ref={confirmRef}
