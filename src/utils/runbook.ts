@@ -1,5 +1,12 @@
 import { getBlockLabelText } from "@/blocks";
 import { DEFAULT_TAB_LABEL, RunbookConfig } from "@/common/config";
+import {
+  globalUnicodeRegex,
+  LETTER,
+  noneOf,
+  NUMBER,
+  oneOrMore,
+} from "@/common/regex";
 import type { Block } from "@/common/types";
 import type { Messages } from "@/i18n/types";
 import { noteToPlainText } from "@/utils/markdown";
@@ -42,10 +49,16 @@ export function displayLabel(label: string, t: Messages): string {
   return label;
 }
 
+const SLUG_SEPARATOR_REGEX = globalUnicodeRegex(
+  oneOrMore(noneOf(LETTER, NUMBER)),
+);
+const SLUG_EDGE_DASHES_REGEX = /^-+|-+$/g;
+
 export function slugifyLabel(label: string): string {
   return label
+    .normalize("NFC")
     .trim()
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+    .replace(SLUG_SEPARATOR_REGEX, "-")
+    .replace(SLUG_EDGE_DASHES_REGEX, "");
 }
