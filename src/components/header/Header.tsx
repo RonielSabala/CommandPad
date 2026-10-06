@@ -49,6 +49,7 @@ export function Header() {
   const toggleModeLabel = isRead
     ? t.header.switchToEdit
     : t.header.switchToRead;
+
   const toggleThemeLabel = isLight
     ? t.header.switchToDark
     : t.header.switchToLight;
@@ -68,7 +69,11 @@ export function Header() {
 
       <div className="header-actions">
         <button
-          className="btn btn-lg btn-flat-icon"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_FLAT_ICON,
+          )}
           onClick={toggleAppMode}
           aria-label={toggleModeLabel}
           {...tooltip(toggleModeLabel)}
@@ -87,7 +92,7 @@ export function Header() {
         <div className="vertical-divider" />
 
         <button
-          className="btn btn-lg"
+          className={classNames(CssClass.BTN, CssClass.BTN_LG)}
           disabled={!canCollapse}
           onClick={toggleCollapseAll}
           {...tooltip(
@@ -107,7 +112,11 @@ export function Header() {
 
       <div className="header-actions">
         <button
-          className="btn btn-lg btn-flat-icon"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_FLAT_ICON,
+          )}
           onClick={toggleTheme}
           aria-label={toggleThemeLabel}
           {...tooltip(toggleThemeLabel)}
@@ -131,7 +140,11 @@ export function Header() {
 
         <Link
           to={AppRoute.DOCS}
-          className="btn btn-lg btn-flat-icon"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_FLAT_ICON,
+          )}
           aria-label={t.docs.meta.openDocs}
           {...tooltip(t.docs.meta.openDocs)}
         >
@@ -141,7 +154,11 @@ export function Header() {
         <div className="vertical-divider" />
 
         <button
-          className="btn btn-lg btn-danger"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_DANGER,
+          )}
           onClick={async () => {
             if (await clearAllData()) {
               navigate(AppRoute.HOME);
@@ -159,7 +176,11 @@ export function Header() {
         <div className="vertical-divider" />
 
         <button
-          className="btn btn-lg btn-primary"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_PRIMARY,
+          )}
           disabled={isEmpty}
           onClick={openExportModal}
           {...tooltip(t.header.exportTitle)}

@@ -67,7 +67,11 @@ export function VariableOptionsSelect({
         editable
           ? (option) => (
               <button
-                className="btn btn-flat-icon variable-option-remove"
+                className={classNames(
+                  "variable-option-remove",
+                  CssClass.BTN,
+                  CssClass.BTN_FLAT_ICON,
+                )}
                 onClick={() => removeVariableOption(variableId, option)}
                 aria-label={t.variables.removeOption(option)}
                 {...tooltip(t.variables.removeOption(option))}
@@ -101,7 +105,7 @@ export function VariableOptionsSelect({
               }}
             />
             <button
-              className="btn btn-flat-icon"
+              className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
               onClick={commitDraft}
               disabled={!draft.trim()}
               aria-label={t.variables.addOption}

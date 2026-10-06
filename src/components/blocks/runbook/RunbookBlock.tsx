@@ -351,7 +351,7 @@ export function RunbookBlock({
 
             {canSwitchView && (
               <button
-                className="btn btn-flat-icon"
+                className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
                 onClick={() => {
                   keepInViewOnSwitch();
                   setRunbookEmbedView(

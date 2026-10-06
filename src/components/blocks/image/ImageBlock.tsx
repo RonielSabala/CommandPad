@@ -206,7 +206,11 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
               <div className="image-actions-group">
                 {!loadFailed && (
                   <button
-                    className="btn btn-icon btn-accent"
+                    className={classNames(
+                      CssClass.BTN,
+                      CssClass.BTN_ICON,
+                      CssClass.BTN_ACCENT,
+                    )}
                     aria-label={t.image.viewFullscreen}
                     {...tooltip(t.image.viewFullscreen)}
                     onClick={expand}
@@ -218,7 +222,11 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
                 <ActionsMenu
                   className="image-actions-menu"
                   title={t.image.actions}
-                  triggerClassName="btn btn-icon btn-accent"
+                  triggerClassName={classNames(
+                    CssClass.BTN,
+                    CssClass.BTN_ICON,
+                    CssClass.BTN_ACCENT,
+                  )}
                   horizontal
                 >
                   {!loadFailed && (
@@ -275,7 +283,10 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
 
           <p className="image-message">{t.image.dropHint}</p>
 
-          <button className="btn btn-lg" onClick={openFilePicker}>
+          <button
+            className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+            onClick={openFilePicker}
+          >
             {t.image.choose}
           </button>
 
@@ -295,7 +306,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
               }}
             />
             <button
-              className="btn"
+              className={CssClass.BTN}
               disabled={!urlDraft.trim()}
               onClick={() => void applyUrl(urlDraft)}
             >

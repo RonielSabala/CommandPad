@@ -120,7 +120,11 @@ export function ImageLightbox() {
         {total > 1 && (
           <>
             <button
-              className="image-lightbox-nav btn btn-icon"
+              className={classNames(
+                "image-lightbox-nav",
+                CssClass.BTN,
+                CssClass.BTN_ICON,
+              )}
               {...tooltip(t.image.previous)}
               aria-label={t.image.previous}
               disabled={index === 0}
@@ -130,7 +134,11 @@ export function ImageLightbox() {
             </button>
 
             <button
-              className="image-lightbox-nav is-next btn btn-icon"
+              className={classNames(
+                "image-lightbox-nav is-next",
+                CssClass.BTN,
+                CssClass.BTN_ICON,
+              )}
               {...tooltip(t.image.next)}
               aria-label={t.image.next}
               disabled={index === total - 1}

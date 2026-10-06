@@ -94,11 +94,18 @@ function CloudExportStatusView({ onDone }: { onDone: () => void }) {
             {t.exportModal.exportError}
           </p>
           <div className="modal-actions">
-            <button className="btn btn-lg" onClick={closeExportModal}>
+            <button
+              className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+              onClick={closeExportModal}
+            >
               {t.common.close}
             </button>
             <button
-              className="btn btn-lg btn-primary"
+              className={classNames(
+                CssClass.BTN,
+                CssClass.BTN_LG,
+                CssClass.BTN_PRIMARY,
+              )}
               onClick={resetCloudExportStatus}
             >
               {t.exportModal.tryAgain}
@@ -274,14 +281,21 @@ export function ExportModal() {
           </div>
 
           <div className="modal-actions">
-            <button className="btn btn-lg" onClick={onClose}>
+            <button
+              className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+              onClick={onClose}
+            >
               {t.common.cancel}
             </button>
 
             <div className="vertical-divider" />
 
             <button
-              className="btn btn-lg btn-primary"
+              className={classNames(
+                CssClass.BTN,
+                CssClass.BTN_LG,
+                CssClass.BTN_PRIMARY,
+              )}
               onClick={handleExport}
               disabled={!canExport}
             >

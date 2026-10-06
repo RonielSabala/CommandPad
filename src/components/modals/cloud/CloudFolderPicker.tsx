@@ -1,8 +1,11 @@
+import { CssClass } from "@/common/constants/css";
 import type { CloudProvider } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import type { CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { useEffect } from "react";
+
 import { CloudBrowser } from "./CloudBrowser";
 
 interface CloudFolderPickerProps {
@@ -33,14 +36,21 @@ export function CloudFolderPicker({
       <CloudBrowser />
 
       <div className="modal-actions">
-        <button className="btn btn-lg" onClick={onCancel}>
+        <button
+          className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+          onClick={onCancel}
+        >
           {t.common.cancel}
         </button>
 
         <div className="vertical-divider" />
 
         <button
-          className="btn btn-lg btn-primary"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_PRIMARY,
+          )}
           onClick={() => onSelect(path)}
           disabled={!signedIn || loading}
         >

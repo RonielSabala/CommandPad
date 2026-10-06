@@ -5,8 +5,10 @@ import { NoteText } from "@/components/blocks/note/NoteText";
 import { Spinner } from "@/components/common/Spinner";
 import { useTranslation } from "@/i18n";
 import { useStore, type VaultPassphrases } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { useEffect, useRef, useState } from "react";
 import { ShieldLock } from "react-bootstrap-icons";
+
 import { Modal } from "../Modal";
 import { PassphraseField } from "./PassphraseField";
 import "./VaultModal.css";
@@ -97,14 +99,22 @@ export function VaultModal() {
       {error && <p className="vault-error">{t.vaultModal.errors[error]}</p>}
 
       <div className="modal-actions">
-        <button className="btn btn-lg" onClick={dismiss} disabled={busy}>
+        <button
+          className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+          onClick={dismiss}
+          disabled={busy}
+        >
           {t.vaultModal.skip}
         </button>
 
         <div className="vertical-divider" />
 
         <button
-          className="btn btn-lg btn-primary"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_PRIMARY,
+          )}
           onClick={handleSubmit}
           disabled={busy}
         >

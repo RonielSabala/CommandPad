@@ -24,7 +24,7 @@ export function ActionsMenu({
   children,
   className,
   align = ContextMenuAlign.START,
-  triggerClassName = "btn btn-flat-icon",
+  triggerClassName = classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON),
   horizontal = false,
 }: Props) {
   const triggerRef = useRef<HTMLButtonElement>(null);

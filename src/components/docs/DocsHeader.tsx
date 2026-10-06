@@ -41,7 +41,11 @@ export function DocsHeader() {
 
       <div className="header-actions">
         <button
-          className="btn btn-lg btn-flat-icon"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_FLAT_ICON,
+          )}
           onClick={toggleTheme}
           aria-label={toggleThemeLabel}
           {...tooltip(toggleThemeLabel)}
@@ -58,12 +62,17 @@ export function DocsHeader() {
         </button>
 
         <div className="vertical-divider" />
-
         <LanguageSelect />
-
         <div className="vertical-divider" />
 
-        <Link to={AppRoute.HOME} className="btn btn-lg btn-primary">
+        <Link
+          to={AppRoute.HOME}
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_PRIMARY,
+          )}
+        >
           <BoxArrowLeft className={CssClass.ICON} />
           {t.docs.meta.backToApp}
         </Link>

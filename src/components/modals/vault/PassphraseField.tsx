@@ -56,7 +56,11 @@ export function PassphraseField({
         />
 
         <button
-          className="btn btn-flat-icon passphrase-reveal"
+          className={classNames(
+            "passphrase-reveal",
+            CssClass.BTN,
+            CssClass.BTN_FLAT_ICON,
+          )}
           type="button"
           onClick={() => setRevealed((shown) => !shown)}
           disabled={disabled}

@@ -16,7 +16,7 @@ export function EditorToggle({ collapsed, label, onToggle }: Props) {
   return (
     <button
       className={classNames(
-        "btn",
+        CssClass.BTN,
         "toggle-editor-btn",
         collapsed && "editor-collapsed",
       )}

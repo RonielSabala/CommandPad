@@ -27,7 +27,7 @@ function FooterButton({
 }: FooterAction) {
   return (
     <button
-      className={classNames("btn", danger && "btn-danger")}
+      className={classNames(CssClass.BTN, danger && CssClass.BTN_DANGER)}
       onClick={onClick}
       {...tooltip(title)}
     >

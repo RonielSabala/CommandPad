@@ -9,7 +9,9 @@ import {
   type Language,
 } from "@/i18n";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { Translate } from "react-bootstrap-icons";
+
 import "./LanguageSelect.css";
 
 interface FlagCircleProps {
@@ -44,7 +46,11 @@ export function LanguageSelect() {
   return (
     <Select
       className="language-select"
-      triggerClassName="btn btn-lg btn-flat-icon"
+      triggerClassName={classNames(
+        CssClass.BTN,
+        CssClass.BTN_LG,
+        CssClass.BTN_FLAT_ICON,
+      )}
       title={t.header.changeLanguage}
       value={language}
       options={LANGUAGE_OPTIONS}

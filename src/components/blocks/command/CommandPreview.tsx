@@ -164,7 +164,7 @@ export function CommandPreview({
         {actions}
 
         <button
-          className="btn"
+          className={CssClass.BTN}
           onClick={copy}
           disabled={!text}
           aria-label={t.command.copy}

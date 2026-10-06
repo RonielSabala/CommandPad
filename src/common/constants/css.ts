@@ -21,6 +21,19 @@ export const CssClass = {
   CONTEXT_MENU: "context-menu",
   CODE_EDITOR_PROMPT: "code-editor-prompt",
 
+  // Buttons
+
+  BTN: "btn",
+  BTN_LG: "btn-lg",
+
+  BTN_ICON: "btn-icon",
+  BTN_FLAT_ICON: "btn-flat-icon",
+  BTN_SOFT_ICON: "btn-soft-icon",
+
+  BTN_PRIMARY: "btn-primary",
+  BTN_DANGER: "btn-danger",
+  BTN_ACCENT: "btn-accent",
+
   // Icons
   ICON: "icon",
   ICON_SM: "icon-sm",

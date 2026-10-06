@@ -69,7 +69,11 @@ export function EmbedUnlock({ embed }: { embed: EmbeddedRunbookState }) {
 
   return (
     <button
-      className="btn btn-flat-icon runbook-embed-unlock"
+      className={classNames(
+        "runbook-embed-unlock",
+        CssClass.BTN,
+        CssClass.BTN_FLAT_ICON,
+      )}
       onClick={() => void unlockEmbeddedRunbook(source)}
       aria-label={t.runbookBlock.unlock}
       {...tooltip(t.runbookBlock.unlock)}
@@ -97,7 +101,7 @@ export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
     <>
       {canOpen && (
         <button
-          className="btn btn-flat-icon"
+          className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
           onClick={() => void openEmbeddedRunbook(source)}
           aria-label={t.runbookBlock.open}
           {...tooltip(t.runbookBlock.open)}
@@ -108,7 +112,7 @@ export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
 
       {!readMode && !embed.isOpen && !embed.circular && !embed.tooDeep && (
         <button
-          className="btn btn-flat-icon"
+          className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
           onClick={() => void refreshEmbeddedRunbook(source)}
           disabled={embed.refreshing}
           aria-label={t.runbookBlock.refresh}
@@ -181,7 +185,7 @@ export function EmbedBody({
             {t.runbookBlock.signedOut(PROVIDER_NAME[provider])}
 
             <button
-              className="btn"
+              className={CssClass.BTN}
               onClick={() => void signInForEmbeddedRunbooks(provider)}
             >
               <BoxArrowInRight className={CssClass.ICON_MD} />

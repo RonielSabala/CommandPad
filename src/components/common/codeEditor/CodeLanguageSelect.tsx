@@ -1,9 +1,11 @@
+import { CssClass } from "@/common/constants/css";
 import {
   CODE_LANGUAGE_LABEL,
   COMMAND_LANGUAGE_ORDER,
 } from "@/common/editorConfig";
 import { CodeLanguage } from "@/common/enums";
 import { useTranslation } from "@/i18n";
+import { classNames } from "@/utils/string";
 import { Select, SelectAlign, type SelectOption } from "../Select";
 
 import "./CodeLanguageSelect.css";
@@ -24,7 +26,7 @@ export function CodeLanguageSelect({ language: value, onChange }: Props) {
 
   return (
     <Select
-      triggerClassName="btn code-language-trigger"
+      triggerClassName={classNames("code-language-trigger", CssClass.BTN)}
       title={t.command.changeLanguage}
       align={SelectAlign.END}
       portal

@@ -31,7 +31,12 @@ export function AddRow({ label, items }: Props) {
       </p>
 
       {items.map(({ key, icon: Icon, label, title, onAdd }) => (
-        <button key={key} className="btn" onClick={onAdd} {...tooltip(title)}>
+        <button
+          key={key}
+          className={CssClass.BTN}
+          onClick={onAdd}
+          {...tooltip(title)}
+        >
           <Icon className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)} />
           {label}
         </button>

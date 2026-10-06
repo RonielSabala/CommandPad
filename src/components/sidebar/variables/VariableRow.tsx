@@ -170,7 +170,11 @@ export const VariableRow = memo(function VariableRow({
 
       {isSecret && (
         <button
-          className="btn btn-icon variable-secret-btn"
+          className={classNames(
+            "variable-secret-btn",
+            CssClass.BTN,
+            CssClass.BTN_ICON,
+          )}
           onClick={() => toggleVariableSecret(variableId)}
           aria-label={t.variables.reveal(1)}
           {...tooltip(t.variables.reveal(1))}
@@ -191,7 +195,11 @@ export const VariableRow = memo(function VariableRow({
 
       {!isSecret && showSecretColumn && (
         <div
-          className="btn btn-icon variable-secret-btn is-placeholder"
+          className={classNames(
+            "variable-secret-btn is-placeholder",
+            CssClass.BTN,
+            CssClass.BTN_ICON,
+          )}
           aria-hidden="true"
         >
           <EyeIcon

@@ -45,7 +45,9 @@ export function VariableSectionHeader({
       {foldable && (
         <button
           className={classNames(
-            "btn btn-flat-icon variable-section-toggle",
+            "variable-section-toggle",
+            CssClass.BTN,
+            CssClass.BTN_FLAT_ICON,
             CssClass.SELECT_KEY_INERT,
           )}
           onClick={onToggle}

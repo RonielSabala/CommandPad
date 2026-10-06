@@ -79,7 +79,11 @@ export function VariableEditor({
 
           {isSecret && (
             <button
-              className="btn btn-icon variable-editor-secret-btn"
+              className={classNames(
+                "variable-editor-secret-btn",
+                CssClass.BTN,
+                CssClass.BTN_ICON,
+              )}
               onClick={() => toggleVariableSecret(variableId)}
               aria-label={t.variables.reveal(1)}
               {...tooltip(t.variables.reveal(1))}

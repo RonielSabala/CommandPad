@@ -1,9 +1,12 @@
 import { DEFAULT_CONFIRM_LABEL } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import { EventType, Key } from "@/common/constants/events";
 import { DialogTone } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { useEffect, useRef } from "react";
+
 import { DialogModal } from "./DialogModal";
 
 interface CachedDialog {
@@ -61,7 +64,10 @@ export function ConfirmModal() {
       title={title}
       message={message}
     >
-      <button className="btn btn-lg" onClick={() => resolve(false)}>
+      <button
+        className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+        onClick={() => resolve(false)}
+      >
         {t.common.cancel}
       </button>
 
@@ -69,7 +75,7 @@ export function ConfirmModal() {
 
       <button
         ref={confirmRef}
-        className="btn btn-lg btn-tone"
+        className={classNames("btn-tone", CssClass.BTN, CssClass.BTN_LG)}
         onClick={() => resolve(true)}
       >
         {confirmLabel}

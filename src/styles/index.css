@@ -147,6 +147,11 @@ body {
   border-color: var(--color-border);
 }
 
+.btn-lg {
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--text-md);
+}
+
 .btn-icon {
   padding: var(--space-2);
   border-radius: var(--radius-sm);
@@ -212,11 +217,6 @@ body {
   background: var(--accent-dim);
   border-color: var(--accent);
   color: var(--accent);
-}
-
-.btn-lg {
-  padding: var(--space-4) var(--space-5);
-  font-size: var(--text-md);
 }
 
 /* ICONS */

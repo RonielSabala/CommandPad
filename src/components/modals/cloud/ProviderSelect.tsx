@@ -6,7 +6,9 @@ import {
   type SelectOption,
 } from "@/components/common/Select";
 import { useTranslation } from "@/i18n";
+import { classNames } from "@/utils/string";
 import { LaptopFill } from "react-bootstrap-icons";
+
 import { PROVIDER_ICON, PROVIDER_NAME, PROVIDERS } from "./cloudProviders";
 import "./ProviderSelect.css";
 
@@ -58,7 +60,7 @@ export function ProviderSelect({
   return (
     <Select
       className="provider-select"
-      triggerClassName="btn provider-select-trigger"
+      triggerClassName={classNames("provider-select-trigger", CssClass.BTN)}
       title={title ?? t.cloudModal.changeProvider}
       align={SelectAlign.START}
       portal={portal}

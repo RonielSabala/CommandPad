@@ -62,7 +62,12 @@ export function TabsBar() {
       {tabs.length > 0 && (
         <div id="runbook-view-actions">
           <button
-            className="btn btn-icon btn-soft-icon runbook-view-btn"
+            className={classNames(
+              "runbook-view-btn",
+              CssClass.BTN,
+              CssClass.BTN_ICON,
+              CssClass.BTN_SOFT_ICON,
+            )}
             aria-label={toggleVariablesLabel}
             {...tooltip(toggleVariablesLabel)}
             onClick={() => toggleRunbookView(RunbookView.VARIABLES)}
@@ -75,7 +80,12 @@ export function TabsBar() {
           </button>
 
           <button
-            className="btn btn-icon btn-soft-icon runbook-view-btn"
+            className={classNames(
+              "runbook-view-btn",
+              CssClass.BTN,
+              CssClass.BTN_ICON,
+              CssClass.BTN_SOFT_ICON,
+            )}
             aria-label={toggleSourceLabel}
             {...tooltip(toggleSourceLabel)}
             onClick={() => toggleRunbookView(RunbookView.SOURCE)}

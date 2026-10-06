@@ -165,7 +165,11 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
           </p>
 
           <button
-            className="btn btn-lg btn-primary"
+            className={classNames(
+              CssClass.BTN,
+              CssClass.BTN_LG,
+              CssClass.BTN_PRIMARY,
+            )}
             onClick={() => void signInToCloud()}
             disabled={loading}
           >
@@ -180,7 +184,7 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
           <div className="cloud-browser-account">
             <span>{t.cloudModal.signedInAs(accountLabel ?? "")}</span>
             <button
-              className="btn btn-accent"
+              className={classNames(CssClass.BTN, CssClass.BTN_ACCENT)}
               onClick={() => void signOutOfCloud()}
             >
               {t.cloudModal.signOut}

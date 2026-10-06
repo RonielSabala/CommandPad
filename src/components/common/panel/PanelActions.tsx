@@ -29,7 +29,7 @@ export function PanelActions({ panelId, name }: Props) {
   return (
     <div className="panel-actions">
       <button
-        className="btn btn-icon"
+        className={classNames(CssClass.BTN, CssClass.BTN_ICON)}
         onClick={() => togglePanel(panelId)}
         aria-label={toggleLabel}
         {...tooltip(toggleLabel)}
@@ -43,7 +43,7 @@ export function PanelActions({ panelId, name }: Props) {
         />
       </button>
       <button
-        className="btn btn-icon"
+        className={classNames(CssClass.BTN, CssClass.BTN_ICON)}
         onClick={() => togglePanelSide(panelId)}
         aria-label={toggleSideLabel}
         {...tooltip(toggleSideLabel)}

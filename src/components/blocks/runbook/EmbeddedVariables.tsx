@@ -244,7 +244,11 @@ function EmbeddedVariable({
 
           {overridden && (
             <button
-              className="btn btn-flat-icon embedded-variable-reset"
+              className={classNames(
+                "embedded-variable-reset",
+                CssClass.BTN,
+                CssClass.BTN_FLAT_ICON,
+              )}
               onClick={() => onChange(variable, variable.value)}
               aria-label={t.runbookBlock.resetOverride}
               {...tooltip(t.runbookBlock.resetOverride)}

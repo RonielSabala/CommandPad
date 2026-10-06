@@ -2,6 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { SyncDestination } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { LaptopFill } from "react-bootstrap-icons";
 
 import {
@@ -50,7 +51,10 @@ export function DestinationModal() {
       </div>
 
       <div className="modal-actions">
-        <button className="btn btn-lg" onClick={closeDestinationModal}>
+        <button
+          className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+          onClick={closeDestinationModal}
+        >
           {t.common.cancel}
         </button>
       </div>

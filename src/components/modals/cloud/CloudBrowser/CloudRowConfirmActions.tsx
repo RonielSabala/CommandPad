@@ -21,7 +21,7 @@ export function CloudRowConfirmActions({
   return (
     <div className="cloud-browser-row-actions">
       <button
-        className="btn btn-flat-icon"
+        className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
         onClick={onConfirm}
         disabled={confirmDisabled}
         aria-label={confirmTitle}
@@ -33,7 +33,7 @@ export function CloudRowConfirmActions({
       </button>
 
       <button
-        className="btn btn-flat-icon"
+        className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
         onClick={onCancel}
         aria-label={cancelTitle}
         {...tooltip(cancelTitle)}

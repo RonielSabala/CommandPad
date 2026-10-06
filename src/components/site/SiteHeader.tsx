@@ -56,7 +56,11 @@ export function SiteHeader({ title, showDocsLink }: Props) {
 
       <div className="header-actions">
         <button
-          className="btn btn-lg btn-flat-icon"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_FLAT_ICON,
+          )}
           onClick={toggleTheme}
           aria-label={toggleThemeLabel}
           {...tooltip(toggleThemeLabel)}
@@ -81,7 +85,11 @@ export function SiteHeader({ title, showDocsLink }: Props) {
             <div className="vertical-divider" />
             <Link
               to={AppRoute.DOCS}
-              className="btn btn-lg btn-flat-icon"
+              className={classNames(
+                CssClass.BTN,
+                CssClass.BTN_LG,
+                CssClass.BTN_FLAT_ICON,
+              )}
               aria-label={t.docs.meta.openDocs}
               {...tooltip(t.docs.meta.openDocs)}
             >
@@ -96,7 +104,11 @@ export function SiteHeader({ title, showDocsLink }: Props) {
 
         <Link
           to={AppRoute.WORKSPACE}
-          className="btn btn-lg btn-primary"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_PRIMARY,
+          )}
           onClick={markHomeVisited}
         >
           <BoxArrowInRight className={CssClass.ICON} />

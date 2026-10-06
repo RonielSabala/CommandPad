@@ -38,7 +38,7 @@ export function CloudPathBar({
   return (
     <div className="cloud-browser-path-bar">
       <button
-        className="btn btn-flat-icon"
+        className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
         onClick={() => navigateCloudHistory(HistoryDirection.BACK)}
         disabled={historyIndex === 0}
         aria-label={t.cloudModal.navigateBack}
@@ -50,7 +50,7 @@ export function CloudPathBar({
       </button>
 
       <button
-        className="btn btn-flat-icon"
+        className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
         onClick={() => navigateCloudHistory(HistoryDirection.FORWARD)}
         disabled={historyIndex >= historyLength - 1}
         aria-label={t.cloudModal.navigateForward}
@@ -89,7 +89,7 @@ export function CloudPathBar({
       </nav>
 
       <button
-        className="btn btn-flat-icon"
+        className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
         onClick={onStartNewFolder}
         disabled={loading || creatingFolder}
         aria-label={t.cloudModal.newFolder}
@@ -101,7 +101,7 @@ export function CloudPathBar({
       </button>
 
       <button
-        className="btn btn-flat-icon"
+        className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
         onClick={() => void refreshCloudEntries()}
         disabled={loading}
         aria-label={t.cloudModal.refresh}
