@@ -1144,6 +1144,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         refreshVaultStatus();
         await decryptOpenTabs(runbookId);
+        await decryptLoadedEmbeds();
         return true;
       };
 
@@ -1216,6 +1217,20 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           (tab) => decrypted.find((next) => next.id === tab.id) ?? tab,
         ),
       }));
+    };
+
+    const decryptLoadedEmbeds = async () => {
+      for (const [key, entry] of Object.entries(get().embeddedRunbooks)) {
+        const entryContent = entry.content;
+        if (!entryContent || !hasEncryptedSecrets(entryContent)) {
+          continue;
+        }
+
+        const { content } = await decryptContentWithOpenVaults(entryContent);
+        if (get().embeddedRunbooks[key] === entry) {
+          setEmbeddedRunbook(key, { ...entry, content });
+        }
+      }
     };
 
     const promptUnlockForActiveTab = async () => {
@@ -2450,7 +2465,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         );
 
         if (unlocked) {
-          setEmbeddedRunbook(key, await readyEmbed(content));
+          await decryptLoadedEmbeds();
         }
       },
 
