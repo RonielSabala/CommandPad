@@ -6,7 +6,7 @@ export function tooltip(
   text: string | undefined | null,
   variant: TooltipVariant = TooltipVariant.TEXT,
 ) {
-  if (!text) {
+  if (!text?.trim()) {
     return {};
   }
 
@@ -22,5 +22,5 @@ export function tooltipTarget(target: EventTarget | null): HTMLElement | null {
   }
 
   const element = target.closest<HTMLElement>(`[${DataAttr.TOOLTIP}]`);
-  return element?.getAttribute(DataAttr.TOOLTIP) ? element : null;
+  return element?.getAttribute(DataAttr.TOOLTIP)?.trim() ? element : null;
 }
