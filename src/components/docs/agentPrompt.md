@@ -32,7 +32,7 @@ A variable is an object with these fields:
   may itself reference other variables.
 - `secret` (optional, `true`): masks the value on screen. Use it for every password,
   token, key or connection string.
-- `language` (optional): one of `plaintext`, `shell`, `powershell`, `json`, `xml`, `yaml`.
+- `language` (optional): one of `plaintext`, `shell`, `powershell`, `json`, `sql`, `xml`, `yaml`.
   Highlighting for the value only; defaults to `plaintext`.
 - `options` (optional, array of text): makes the variable an **enum**, edited by picking
   from a list instead of typing. `value` must be one of the options. Use it when the value

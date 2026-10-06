@@ -2,6 +2,7 @@ import { MonacoWorkerLabel } from "@/common/editorConfig";
 import { loader } from "@monaco-editor/react";
 import "monaco-editor/esm/vs/basic-languages/powershell/powershell.contribution.js";
 import "monaco-editor/esm/vs/basic-languages/shell/shell.contribution.js";
+import "monaco-editor/esm/vs/basic-languages/sql/sql.contribution.js";
 import "monaco-editor/esm/vs/basic-languages/xml/xml.contribution.js";
 import "monaco-editor/esm/vs/basic-languages/yaml/yaml.contribution.js";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
