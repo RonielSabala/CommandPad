@@ -20,6 +20,7 @@ import { LOGIC_OPERATION } from "./logic";
 import { MATCH_OPERATION } from "./match";
 import { REMOVE_OPERATION } from "./remove";
 import { REPLACE_OPERATION } from "./replace";
+import { ROUND_OPERATION } from "./round";
 import { SLICE_OPERATION } from "./slice";
 import { STRIP_OPERATION } from "./strip";
 import { TEST_OPERATION } from "./test";
@@ -39,6 +40,7 @@ const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   HASH_OPERATION,
   DATE_OPERATION,
   CALC_OPERATION,
+  ROUND_OPERATION,
   CASE_OPERATION,
   STRIP_OPERATION,
   FILL_OPERATION,
@@ -101,6 +103,10 @@ export function applyOperations(
     }
 
     const output = transform(result, context);
+    if (output === null) {
+      return { text, ok: false };
+    }
+
     if (isString(output)) {
       result = output;
       spans = undefined;

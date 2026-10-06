@@ -745,6 +745,28 @@ export function VariableCalcDocs() {
       </DemoWorkspace>
       <Prose text={t.docs.variableCalc.table} />
       <Prose text={t.docs.variableCalc.rules} />
+      <Prose text={t.docs.variableCalc.rounding} />
+      <Prose text={t.docs.variableCalc.roundingDemoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("PHOTOS", "1250"),
+              demoVariable("PER_FOLDER", "400"),
+            ],
+            blocks: [
+              demoCommand(
+                'echo "{PHOTOS} photos need {|calc({PHOTOS} / {PER_FOLDER})|ceil} folders"',
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableCalc.roundingTable} />
+      <Prose text={t.docs.variableCalc.roundingRules} />
     </>
   );
 }

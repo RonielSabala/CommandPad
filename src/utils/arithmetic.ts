@@ -1,4 +1,10 @@
-import { CalcGroup, CalcSyntax, CalcTokenRegex } from "@/common/variableSyntax";
+import {
+  CalcGroup,
+  CalcSyntax,
+  CalcTokenRegex,
+  NumberValueRegex,
+  RoundSyntax,
+} from "@/common/variableSyntax";
 import { isNumber } from "@/utils/typeGuards";
 
 type CalcToken = number | string;
@@ -113,4 +119,28 @@ export function evaluateArithmetic(expression: string): number | undefined {
 
 export function formatArithmetic(value: number): string {
   return String(Number(value.toPrecision(CalcSyntax.PRECISION)) || 0);
+}
+
+export function parseNumber(text: string): number | undefined {
+  const trimmed = text.trim();
+  return NumberValueRegex.test(trimmed) ? Number(trimmed) : undefined;
+}
+
+/**
+ * Moves the decimal point by `places` through the exponent, so the digits are
+ * never multiplied.
+ */
+function shiftDecimal(value: number, places: number): number {
+  const [mantissa, exponent = "0"] = String(value).split(RoundSyntax.EXPONENT);
+  return Number(
+    `${mantissa}${RoundSyntax.EXPONENT}${Number(exponent) + places}`,
+  );
+}
+
+export function roundToDigits(
+  value: number,
+  digits: number,
+  round: (value: number) => number,
+): number {
+  return shiftDecimal(round(shiftDecimal(value, digits)), -digits);
 }

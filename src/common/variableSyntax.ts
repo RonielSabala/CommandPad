@@ -135,6 +135,16 @@ export const CalcSyntax = {
   PRECISION: 12,
 } as const;
 
+export const RoundSyntax = {
+  ROUND: "round",
+  FLOOR: "floor",
+  CEIL: "ceil",
+  ARITY: 1,
+  DEFAULT_DIGITS: 0,
+  MAX_DIGITS: 12,
+  EXPONENT: "e",
+} as const;
+
 export const CalcGroup = {
   NUMBER: "number",
   SYMBOL: "symbol",
@@ -240,15 +250,14 @@ export const CallOperationRegex = dotAllRegex(
   ),
 );
 
+const CALC_NUMBER = sequence(
+  oneOrMore(DIGIT),
+  optional(group(sequence(Calc.DECIMAL_POINT, oneOrMore(DIGIT)))),
+);
+
 export const CalcTokenRegex = globalRegex(
   either(
-    named(
-      CalcGroup.NUMBER,
-      sequence(
-        oneOrMore(DIGIT),
-        optional(group(sequence(Calc.DECIMAL_POINT, oneOrMore(DIGIT)))),
-      ),
-    ),
+    named(CalcGroup.NUMBER, CALC_NUMBER),
     named(
       CalcGroup.SYMBOL,
       anyOf(
@@ -264,6 +273,10 @@ export const CalcTokenRegex = globalRegex(
     named(CalcGroup.SPACE, oneOrMore(WHITESPACE)),
     named(CalcGroup.INVALID, ANY),
   ),
+);
+
+export const NumberValueRegex = new RegExp(
+  anchored(sequence(optional(anyOf(Calc.PLUS, Calc.MINUS)), CALC_NUMBER)),
 );
 
 export const LenOperationRegex = new RegExp(anchored(Operation.LEN));

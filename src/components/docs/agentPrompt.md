@@ -220,6 +220,12 @@ Working on text:
   on a reference with no key, and references inside it are resolved first:
   `sleep {|calc({MINUTES} * 60)}`. `/` may give a decimal, `%` takes the divisor's sign,
   and dividing by zero leaves the reference unresolved.
+- `round(digits)`, `floor(digits)`, `ceil(digits)` round the value, which must be a plain
+  number, to the nearest, down or up. `digits` is how many decimals to keep, `0` when left
+  out (`round` and `round()` are the same), and a negative one rounds to tens, hundreds...
+  A half rounds away from zero and trailing zeros are dropped. They normally follow a
+  `calc`: `--replicas={|calc({LOAD} / {PER_POD})|ceil}`. A value that is not a number
+  leaves the reference unresolved.
 
 Changing case, all written as a bare keyword: `snakecase`, `kebabcase`, `camelcase`,
 `pascalcase`, `capitalize`, `title`, `lowercase`, `uppercase`, `swapcase`.

@@ -647,6 +647,10 @@ export interface Messages {
       demoHint: string;
       table: string;
       rules: string;
+      rounding: string;
+      roundingDemoHint: string;
+      roundingTable: string;
+      roundingRules: string;
     };
     variableBoolean: {
       intro: string;

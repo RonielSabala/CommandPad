@@ -1139,6 +1139,19 @@ If something goes wrong, undo it in this order:
 | \`( )\` | Group, to work something out first |`,
       rules:
         "Multiplying and dividing come before adding and subtracting, as usual. Division can give a decimal (`7 / 2` is `3.5`), and a remainder takes the sign of the number you divide by, so `-1 % 3` is `2`. Dividing by zero, or anything that is not a number, leaves the reference exactly as written.",
+      rounding:
+        "A division rarely lands on a whole number, and a command usually wants one. `round`, `floor` and `ceil` turn the value coming down the chain into a whole number: to the nearest one, always down, or always up.",
+      roundingDemoHint:
+        "Picking the right one matters. Below, photos are sorted into folders of 400. 1250 photos fill 3.125 folders, and `ceil` rounds that up to 4: with only 3, the last 50 photos would have nowhere to go. Change the number of photos and watch the folder count follow.",
+      roundingTable: `| Operation | \`2.5\` | \`-2.5\` | \`3.14159\` |
+| --- | --- | --- | --- |
+| \`round\` | 3 | -3 | 3 |
+| \`floor\` | 2 | -3 | 3 |
+| \`ceil\` | 3 | -2 | 4 |
+| \`round(2)\` | 2.5 | -2.5 | 3.14 |
+| \`ceil(2)\` | 2.5 | -2.5 | 3.15 |`,
+      roundingRules:
+        "The number in parentheses is how many decimals to keep, `0` when left out, and a negative one rounds to tens, hundreds and so on. A value that is not a number, such as `api` or `1 + 2`, leaves the reference exactly as written.",
     },
     variableBoolean: {
       intro:

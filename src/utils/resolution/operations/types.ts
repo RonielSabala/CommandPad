@@ -13,7 +13,10 @@ export interface OperationChunk {
   spans?: readonly ResolvedSpan[];
 }
 
-export type OperationOutput = string | { text: string; spans: ResolvedSpan[] };
+export type OperationOutput =
+  | string
+  | { text: string; spans: ResolvedSpan[] }
+  | null;
 
 export type OperationTransform = (
   text: string,

@@ -1164,6 +1164,19 @@ Si algo sale mal, deshazlo en este orden:
 | \`( )\` | Agrupar lo que quieras calcular primero |`,
       rules:
         "Como en cualquier calculadora, las multiplicaciones y divisiones se hacen antes que las sumas y restas. Una división puede dar decimales (`7 / 2` da `3.5`), y el resto lleva el signo del divisor, por eso `-1 % 3` da `2`. Si divides entre cero o algo de la expresión no es un número, la referencia se queda tal cual la escribiste.",
+      rounding:
+        "Una división casi nunca da un número entero, y un comando casi siempre quiere uno. `round`, `floor` y `ceil` convierten el valor que les llega en un entero: al más cercano, siempre hacia abajo o siempre hacia arriba.",
+      roundingDemoHint:
+        "Elegir bien importa. Abajo, las fotos se reparten en carpetas de 400. 1250 fotos llenan 3.125 carpetas, y `ceil` lo redondea hacia arriba a 4: con solo 3, las últimas 50 fotos se quedarían sin sitio. Cambia el número de fotos y mira cómo cambia el número de carpetas.",
+      roundingTable: `| Operación | \`2.5\` | \`-2.5\` | \`3.14159\` |
+| --- | --- | --- | --- |
+| \`round\` | 3 | -3 | 3 |
+| \`floor\` | 2 | -3 | 3 |
+| \`ceil\` | 3 | -2 | 4 |
+| \`round(2)\` | 2.5 | -2.5 | 3.14 |
+| \`ceil(2)\` | 2.5 | -2.5 | 3.15 |`,
+      roundingRules:
+        "El número entre paréntesis es cuántos decimales conservar, `0` si no pones nada, y uno negativo redondea a decenas, centenas, etc. Si el valor no es un número, como `api` o `1 + 2`, la referencia se queda tal cual la escribiste.",
     },
     variableBoolean: {
       intro:
