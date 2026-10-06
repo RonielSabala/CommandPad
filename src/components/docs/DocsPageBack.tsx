@@ -1,5 +1,7 @@
+import { CssClass } from "@/common/constants/css";
 import type { DocsSectionId } from "@/common/constants/docs";
 import { useTranslation } from "@/i18n";
+import { classNames } from "@/utils/string";
 import { ChevronLeft } from "react-bootstrap-icons";
 
 import "./DocsPageBack.css";
@@ -15,7 +17,7 @@ export function DocsPageBack({ id, onNavigate }: Props) {
 
   return (
     <button
-      className="docs-page-back no-user-select"
+      className={classNames("docs-page-back", CssClass.NO_USER_SELECT)}
       onClick={() => onNavigate(id)}
     >
       <ChevronLeft className="icon" />

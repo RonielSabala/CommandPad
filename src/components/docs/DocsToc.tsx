@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import {
   DOCS_SECTION_ORDER,
   DocsSectionLevel,
@@ -56,7 +57,7 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
       <div id="docs-toc-card" className="panel-card">
         <button
           id="docs-toc-header"
-          className="no-user-select"
+          className={CssClass.NO_USER_SELECT}
           {...tooltip(toggleAllLabel)}
           aria-label={toggleAllLabel}
           aria-expanded={!collapse.allCollapsed}
@@ -83,9 +84,9 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
                 href={`#${id}`}
                 className={classNames(
                   "docs-toc-item",
-                  "no-user-select",
-                  level === DocsSectionLevel.SUBSECTION && "docs-toc-sub",
                   id === highlightId && "docs-toc-active",
+                  level === DocsSectionLevel.SUBSECTION && "docs-toc-sub",
+                  CssClass.NO_USER_SELECT,
                 )}
                 onClick={(event) => {
                   event.preventDefault();

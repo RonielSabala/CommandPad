@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { AppRoute } from "@/common/constants/routes";
 import { AppMode, RunbookView, Theme } from "@/common/enums";
 import { asButton } from "@/components/common/asButton";
@@ -13,6 +14,7 @@ import {
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, getRunbookView, useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -54,7 +56,7 @@ export function Header() {
   return (
     <header className="header-bar">
       <span
-        className="logo no-user-select"
+        className={classNames("logo", CssClass.NO_USER_SELECT)}
         {...tooltip(t.header.reloadTitle)}
         {...asButton(() => location.reload())}
       >

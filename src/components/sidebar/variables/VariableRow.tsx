@@ -115,7 +115,10 @@ export const VariableRow = memo(function VariableRow({
         />
 
         <div
-          className="variable-split-handle no-user-select"
+          className={classNames(
+            "variable-split-handle",
+            CssClass.NO_USER_SELECT,
+          )}
           {...tooltip(t.variables.dragResizeSplit)}
           {...splitResize}
         />
@@ -130,7 +133,10 @@ export const VariableRow = memo(function VariableRow({
         ) : (
           <div className="variable-value-wrap">
             <input
-              className="variable-value-input no-ligatures"
+              className={classNames(
+                "variable-value-input",
+                CssClass.NO_LIGATURES,
+              )}
               type="text"
               placeholder={t.variables.valuePlaceholder}
               value={variableValue}

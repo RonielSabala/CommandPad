@@ -267,7 +267,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
 
           <div className="image-url-row">
             <input
-              className="image-url-input no-ligatures"
+              className={classNames("image-url-input", CssClass.NO_LIGATURES)}
               type="url"
               spellCheck={false}
               placeholder={t.image.urlPlaceholder}

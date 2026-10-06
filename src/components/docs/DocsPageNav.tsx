@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import type { DocsSectionId } from "@/common/constants/docs";
 import { useTranslation } from "@/i18n";
 import type { CSSProperties } from "react";
@@ -25,7 +26,7 @@ export function DocsPageNav({
   const progress = `${(position / total) * 100}%`;
 
   return (
-    <div id="docs-page-bar" className="no-user-select">
+    <div id="docs-page-bar" className={CssClass.NO_USER_SELECT}>
       <div
         className="docs-page-progress"
         style={{ "--docs-page-progress": progress } as CSSProperties}

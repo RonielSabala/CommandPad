@@ -1,4 +1,7 @@
+import { CssClass } from "@/common/constants/css";
+import { classNames } from "@/utils/string";
 import type { ReactNode } from "react";
+
 import "./EmptyState.css";
 
 interface Props {
@@ -9,7 +12,7 @@ interface Props {
 
 export function EmptyState({ icon, title, hint }: Props) {
   return (
-    <div className="empty-state no-user-select">
+    <div className={classNames("empty-state", CssClass.NO_USER_SELECT)}>
       {icon}
       <p className="empty-state-title">{title}</p>
       <p className="empty-state-hint">{hint}</p>

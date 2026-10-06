@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { AppRoute } from "@/common/constants/routes";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { NoteText } from "@/components/blocks/note/NoteText";
@@ -13,6 +14,7 @@ import "@/components/site/SitePage.css";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { hasVisitedHome, markHomeVisited } from "@/utils/session";
+import { classNames } from "@/utils/string";
 import {
   Book,
   BoxArrowInRight,
@@ -24,6 +26,7 @@ import {
   type Icon,
 } from "react-bootstrap-icons";
 import { Link, Navigate } from "react-router-dom";
+
 import "./HomePage.css";
 import { SymbolField } from "./SymbolField";
 
@@ -53,7 +56,9 @@ export function HomePage() {
 
           <div className="home-intro-inner">
             <section className="home-hero">
-              <p className="home-eyebrow no-user-select">
+              <p
+                className={classNames("home-eyebrow", CssClass.NO_USER_SELECT)}
+              >
                 {t.home.hero.eyebrow}
               </p>
               <h1 className="home-title">{t.home.hero.title}</h1>

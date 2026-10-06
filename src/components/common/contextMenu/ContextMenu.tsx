@@ -101,7 +101,7 @@ export function ContextMenu({
         value={{ activeId: activeSubmenuId, setActiveId: setActiveSubmenuId }}
       >
         <div
-          className={classNames(CssClass.CONTEXT_MENU, "no-user-select")}
+          className={classNames(CssClass.CONTEXT_MENU, CssClass.NO_USER_SELECT)}
           ref={menuRef}
           role="menu"
           style={{ left: position.x, top: position.y }}

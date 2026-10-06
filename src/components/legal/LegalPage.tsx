@@ -1,9 +1,12 @@
+import { CssClass } from "@/common/constants/css";
 import { Collapsible } from "@/components/common/Collapsible";
 import { Prose } from "@/components/docs/Prose";
 import { PageFooter } from "@/components/sidebar/Footer";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import "@/components/site/SitePage.css";
 import type { LegalPageMessages } from "@/i18n/types";
+import { classNames } from "@/utils/string";
+
 import "./LegalPage.css";
 
 export function LegalPage({ content }: { content: LegalPageMessages }) {
@@ -14,7 +17,9 @@ export function LegalPage({ content }: { content: LegalPageMessages }) {
       <main className="site-main">
         <article className="legal-article">
           <h1 className="legal-title">{content.title}</h1>
-          <p className="legal-updated no-user-select">{content.updated}</p>
+          <p className={classNames("legal-updated", CssClass.NO_USER_SELECT)}>
+            {content.updated}
+          </p>
 
           <Prose text={content.intro} />
 

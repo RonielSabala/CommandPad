@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { CloudProvider } from "@/common/enums";
 import { SearchInput } from "@/components/common/SearchInput";
 import { Spinner } from "@/components/common/Spinner";
@@ -240,7 +241,12 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
               </div>
 
               {busy && (
-                <p className="cloud-browser-status no-user-select">
+                <p
+                  className={classNames(
+                    "cloud-browser-status",
+                    CssClass.NO_USER_SELECT,
+                  )}
+                >
                   <span className="cloud-browser-status-label">
                     <Spinner />
                     {t.common.loading}

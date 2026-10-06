@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { AppRoute } from "@/common/constants/routes";
 import { Theme } from "@/common/enums";
@@ -9,6 +10,7 @@ import { BookIcon, MoonIcon, SunIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { markHomeVisited } from "@/utils/session";
+import { classNames } from "@/utils/string";
 import { BoxArrowInRight } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
@@ -32,7 +34,7 @@ export function SiteHeader({ title, showDocsLink }: Props) {
       <Link
         to={AppRoute.HOME}
         id="site-logo"
-        className="logo no-user-select"
+        className={classNames("logo", CssClass.NO_USER_SELECT)}
         {...tooltip(t.header.reloadTitle)}
         onKeyDown={(event) => {
           if (event.key === Key.ENTER) {
@@ -45,7 +47,7 @@ export function SiteHeader({ title, showDocsLink }: Props) {
       </Link>
 
       {title && (
-        <span id="docs-header-title" className="no-user-select">
+        <span id="docs-header-title" className={CssClass.NO_USER_SELECT}>
           {title}
         </span>
       )}

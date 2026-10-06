@@ -1,9 +1,11 @@
+import { CssClass } from "@/common/constants/css";
 import { AppRoute } from "@/common/constants/routes";
 import { Theme } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { MoonIcon, SunIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { BoxArrowLeft } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
@@ -24,14 +26,14 @@ export function DocsHeader() {
       <Link
         to={AppRoute.HOME}
         id="docs-logo"
-        className="logo no-user-select"
+        className={classNames("logo", CssClass.NO_USER_SELECT)}
         {...tooltip(t.docs.meta.backToApp)}
       >
         <span className="logo-word">Command</span>
         <span className="logo-pad">{"{Pad}"}</span>
       </Link>
 
-      <span id="docs-header-title" className="no-user-select">
+      <span id="docs-header-title" className={CssClass.NO_USER_SELECT}>
         {t.docs.meta.title}
       </span>
 

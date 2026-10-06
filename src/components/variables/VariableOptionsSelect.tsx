@@ -81,7 +81,10 @@ export function VariableOptionsSelect({
         editable && (
           <div className="variable-option-add-row">
             <input
-              className="variable-option-add no-ligatures"
+              className={classNames(
+                "variable-option-add",
+                CssClass.NO_LIGATURES,
+              )}
               type="text"
               placeholder={t.variables.addOptionPlaceholder}
               value={draft}

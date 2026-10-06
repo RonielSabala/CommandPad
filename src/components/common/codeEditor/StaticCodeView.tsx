@@ -90,7 +90,13 @@ export function StaticCodeView({
           </div>
         )}
 
-        <pre ref={textRef} className="code-editor-static-text no-ligatures">
+        <pre
+          ref={textRef}
+          className={classNames(
+            "code-editor-static-text",
+            CssClass.NO_LIGATURES,
+          )}
+        >
           {text || (
             <span className="code-editor-static-placeholder">
               {placeholder}

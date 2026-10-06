@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SearchIcon, XIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
@@ -22,7 +23,7 @@ export function SearchInput({
   return (
     <div className={classNames("search-input-wrapper", className)}>
       <input
-        className="search-input no-ligatures"
+        className={classNames("search-input", CssClass.NO_LIGATURES)}
         type="text"
         placeholder={placeholder}
         spellCheck={false}

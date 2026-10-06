@@ -62,7 +62,8 @@ export function VariableSectionHeader({
       {foldable && (
         <button
           className={classNames(
-            "variable-section-count no-user-select",
+            "variable-section-count",
+            CssClass.NO_USER_SELECT,
             CssClass.SELECT_KEY_INERT,
           )}
           onClick={onToggle}

@@ -52,23 +52,13 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
     !readMode,
   );
 
-  const rowClass = classNames(
-    "runbook-row",
-    "sidebar-section-list-row",
-    isDragging && CssClass.DRAGGING,
-  );
-
-  const runbookBtnClass = classNames(
-    "no-user-select",
-    CssClass.RUNBOOK_ITEM_BTN,
-    isActive && CssClass.ACTIVE,
-    isFocused && "runbook-focused",
-    isDragOver && CssClass.DRAG_OVER,
-  );
-
   return (
     <div
-      className={rowClass}
+      className={classNames(
+        "runbook-row",
+        "sidebar-section-list-row",
+        isDragging && CssClass.DRAGGING,
+      )}
       {...{ [DataAttr.RUNBOOK_ID]: runbookId }}
       {...rowProps}
     >
@@ -76,7 +66,13 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
 
       <div className="runbook-row-main">
         <button
-          className={runbookBtnClass}
+          className={classNames(
+            CssClass.NO_USER_SELECT,
+            CssClass.RUNBOOK_ITEM_BTN,
+            isActive && CssClass.ACTIVE,
+            isFocused && "runbook-focused",
+            isDragOver && CssClass.DRAG_OVER,
+          )}
           onClick={() => {
             setRunbookFocus(null);
             void loadRunbookFromLibrary(runbookId);

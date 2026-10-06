@@ -48,23 +48,33 @@ export function SidebarSection({
     return () => window.clearTimeout(timer);
   }, [animating]);
 
-  const classes = classNames(
-    "sidebar-section",
-    "panel-card",
-    collapsed && CssClass.COLLAPSED,
-    animating && CssClass.ANIMATING,
-    dropZone?.isDropActive && CssClass.DROP_TARGET,
-  );
-
   return (
-    <div id={id} className={classes} {...dropZone?.dropProps}>
+    <div
+      id={id}
+      className={classNames(
+        "panel-card",
+        "sidebar-section",
+        collapsed && CssClass.COLLAPSED,
+        animating && CssClass.ANIMATING,
+        dropZone?.isDropActive && CssClass.DROP_TARGET,
+      )}
+      {...dropZone?.dropProps}
+    >
       {dropZone?.isDropActive && (
-        <div className="sidebar-section-drop-overlay no-user-select">
+        <div
+          className={classNames(
+            "sidebar-section-drop-overlay",
+            CssClass.NO_USER_SELECT,
+          )}
+        >
           {dropZone.hint}
         </div>
       )}
       <div
-        className="sidebar-section-header no-user-select"
+        className={classNames(
+          "sidebar-section-header",
+          CssClass.NO_USER_SELECT,
+        )}
         aria-expanded={!collapsed}
         {...asButton(onToggle)}
       >

@@ -228,10 +228,10 @@ function EmbeddedVariable({
         <>
           <div
             className={classNames(
-              CssClass.VARIABLE_EDITOR_KEY,
               "embedded-variable-key",
-              "no-ligatures",
               !key && "is-empty",
+              CssClass.NO_LIGATURES,
+              CssClass.VARIABLE_EDITOR_KEY,
               isConstantVariableKey(key) && CssClass.IS_CONSTANT,
             )}
             {...tooltip(

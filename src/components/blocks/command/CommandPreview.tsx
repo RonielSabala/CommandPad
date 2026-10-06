@@ -136,8 +136,8 @@ export function CommandPreview({
         ref={previewRef}
         className={classNames(
           "command-preview-text",
-          "no-ligatures",
           unresolved && "has-unresolved",
+          CssClass.NO_LIGATURES,
           clamp.clamped && CssClass.CLAMPED,
         )}
       >

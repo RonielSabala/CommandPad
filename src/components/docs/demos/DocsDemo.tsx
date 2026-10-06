@@ -30,7 +30,7 @@ export function DocsDemo({ children, onReset, className }: Props) {
 
   return (
     <div ref={setRoot} className={classNames("docs-demo", className)}>
-      <span className="docs-demo-label no-user-select">
+      <span className={classNames("docs-demo-label", CssClass.NO_USER_SELECT)}>
         {t.docs.demo.tryIt}
       </span>
       <button

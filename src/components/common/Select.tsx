@@ -1,4 +1,5 @@
 import { SelectConfig } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import { SelectSelector } from "@/common/constants/dom";
 import { EventType, Key } from "@/common/constants/events";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -193,14 +194,16 @@ export function Select<T extends string>({
       role="listbox"
     >
       {options.length === 0 && empty && (
-        <li className="select-empty no-user-select">{empty}</li>
+        <li className={classNames("select-empty", CssClass.NO_USER_SELECT)}>
+          {empty}
+        </li>
       )}
 
       {options.map((option) => (
         <li
           key={option.value}
           className={classNames(
-            "no-user-select",
+            CssClass.NO_USER_SELECT,
             optionAction && "select-option-row",
           )}
           role="option"
