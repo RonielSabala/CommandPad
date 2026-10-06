@@ -189,7 +189,7 @@ Working on text:
 
 - `slice(start;stop;step)` Python slicing. Any bound may be left empty for its default, a
   lone argument is a single index, a negative bound counts from the end, and a negative
-  step reverses. A bound may be a `+`/`-` sum of numbers.
+  step reverses. A bound may be any `calc` expression that gives a whole number.
 - `len` the number of characters.
 - `count(text)` how many times `text` appears.
 - `key` the key of the variable being resolved.
@@ -202,13 +202,13 @@ Working on text:
 - `ljust(text;width)`, `rjust(text;width)`, `just(text;width)` pad the end, the start or
   both ends with `text` until the value is `width` characters long. Unlike `fill`, the
   number is a total width, not a count of copies, and a value already that wide is left
-  untouched. `width` may be a `+`/`-` sum.
+  untouched. `width` may be a `calc` expression.
 - `replace(from;to)` replace every occurrence.
 - `remove(text)` remove every occurrence.
 - `index(text)` the position of the first `text`, counting from 0, or `-1` when it is
   absent.
 - `insert(text;n)` put `text` before position `n`. A negative `n` counts from the end and
-  an out-of-range one clamps to that end. `n` may be a `+`/`-` sum, and
+  an out-of-range one clamps to that end. `n` may be a `calc` expression, and
   `{FILE|insert(-old;{FILE|index(.)})}` adds `-old` before the extension.
 - Positions in `slice`, `len`, `index` and `insert` all count characters the same way.
 - `date(format)` the current local date. Tokens `YYYY`, `YY`, `MM`, `DD`, `HH`, `mm`, `ss`

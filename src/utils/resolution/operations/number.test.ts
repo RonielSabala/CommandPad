@@ -13,6 +13,11 @@ describe("readNumberArgument", () => {
     ["2-1", 1],
     [" 10 - 2 ", 8],
     ["- 2", -2],
+    ["2 * 3", 6],
+    ["(1 + 2) * 2", 6],
+    ["10 / 2", 5],
+    ["7 % 3", 1],
+    ["1.5 * 2", 3],
   ])("%s -> %s", (raw, expected) => {
     expect(readNumberArgument(raw)).toBe(expected);
   });
@@ -22,12 +27,17 @@ describe("readNumberArgument", () => {
     expect(readNumberArgument("   ")).toBeNull();
   });
 
-  it.each([["1 2"], ["abc"], ["1.5"], ["2 * 3"], ["(1 + 2)"], ["1 +"]])(
-    "rejects %s",
-    (raw) => {
-      expect(readNumberArgument(raw)).toBeUndefined();
-    },
-  );
+  it.each([
+    ["1 2"],
+    ["abc"],
+    ["1.5"],
+    ["7 / 2"],
+    ["1 / 0"],
+    ["(1 + 2"],
+    ["1 +"],
+  ])("rejects %s", (raw) => {
+    expect(readNumberArgument(raw)).toBeUndefined();
+  });
 });
 
 describe("readNumberArguments", () => {

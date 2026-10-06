@@ -43,6 +43,10 @@ checkResolution("slice", {
     // A bound may come from a reference
     ["{TEXT|slice({INDEX};)}", "cdef"],
     ["{TEXT|slice({INDEX} + 1;)}", "def"],
+    // A bound is any calc expression that lands on a whole number
+    ["{TEXT|slice(;{INDEX} * 2)}", "abcd"],
+    ["{TEXT|slice((1 + 1) * 2;)}", "ef"],
+    ["{TEXT|slice(;6 / 2)}", "abc"],
   ],
 });
 
@@ -54,6 +58,8 @@ checkResolution("slice fails loudly", {
     ["{TEXT|slice(  )}", RAW],
     ["{TEXT|slice(a;b)}", RAW],
     ["{TEXT|slice(1 2;)}", RAW],
+    ["{TEXT|slice(;7 / 2)}", RAW],
+    ["{TEXT|slice(;1 / 0)}", RAW],
     ["{TEXT|slice(0;3;0)}", RAW],
     ["{TEXT|slice(1;2;3;4)}", RAW],
   ],
