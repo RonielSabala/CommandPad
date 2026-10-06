@@ -20,7 +20,6 @@ export const CssClass = {
 
   PANEL_CARD: "panel-card",
   SECTION_TITLE: "section-title",
-  VERTICAL_DIVIDER: "vertical-divider",
 
   CONTEXT_MENU: "context-menu",
   CODE_EDITOR_PROMPT: "code-editor-prompt",

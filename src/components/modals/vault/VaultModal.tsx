@@ -3,6 +3,7 @@ import { CssClass } from "@/common/constants/css";
 import { VaultField, VaultPrompt } from "@/common/enums";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { Spinner } from "@/components/common/Spinner";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
 import { useStore, type VaultPassphrases } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -107,7 +108,7 @@ export function VaultModal() {
           {t.vaultModal.skip}
         </button>
 
-        <div className={CssClass.VERTICAL_DIVIDER} />
+        <VerticalDivider />
 
         <button
           className={classNames(

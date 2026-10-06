@@ -2,6 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { AppRoute } from "@/common/constants/routes";
 import { Theme } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { MoonIcon, SunIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -61,11 +62,11 @@ export function DocsHeader() {
           )}
         </button>
 
-        <div className={CssClass.VERTICAL_DIVIDER} />
+        <VerticalDivider />
 
         <LanguageSelect />
 
-        <div className={CssClass.VERTICAL_DIVIDER} />
+        <VerticalDivider />
 
         <Link
           to={AppRoute.HOME}

@@ -5,6 +5,7 @@ import {
 } from "@/common/editorConfig";
 import { CodeLanguage, PanelSide } from "@/common/enums";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -83,7 +84,7 @@ export function PasteRunbookModal() {
           {t.common.cancel}
         </button>
 
-        <div className={CssClass.VERTICAL_DIVIDER} />
+        <VerticalDivider />
 
         <button
           className={classNames(

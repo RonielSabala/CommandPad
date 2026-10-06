@@ -3,6 +3,7 @@ import { Key } from "@/common/constants/events";
 import { AppRoute } from "@/common/constants/routes";
 import { Theme } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import "@/components/docs/DocsHeader.css";
 import "@/components/header/Header.css";
 import { LanguageSelect } from "@/components/header/LanguageSelect";
@@ -76,13 +77,13 @@ export function SiteHeader({ title, showDocsLink }: Props) {
           )}
         </button>
 
-        <div className={CssClass.VERTICAL_DIVIDER} />
+        <VerticalDivider />
 
         <LanguageSelect />
 
         {showDocsLink && (
           <>
-            <div className={CssClass.VERTICAL_DIVIDER} />
+            <VerticalDivider />
             <Link
               to={AppRoute.DOCS}
               className={classNames(
@@ -100,7 +101,7 @@ export function SiteHeader({ title, showDocsLink }: Props) {
           </>
         )}
 
-        <div className={CssClass.VERTICAL_DIVIDER} />
+        <VerticalDivider />
 
         <Link
           to={AppRoute.WORKSPACE}

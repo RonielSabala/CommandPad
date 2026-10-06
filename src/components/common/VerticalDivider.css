@@ -1,0 +1,6 @@
+.vertical-divider {
+  width: 1px;
+  height: var(--space-12);
+  background: var(--color-border);
+  margin: 0 var(--space-4);
+}

@@ -1,5 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import type { CloudProvider } from "@/common/enums";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
 import type { CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
@@ -43,7 +44,7 @@ export function CloudFolderPicker({
           {t.common.cancel}
         </button>
 
-        <div className={CssClass.VERTICAL_DIVIDER} />
+        <VerticalDivider />
 
         <button
           className={classNames(

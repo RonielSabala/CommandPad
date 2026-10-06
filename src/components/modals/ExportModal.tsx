@@ -8,6 +8,7 @@ import {
 import { FilenameInput } from "@/components/common/FilenameInput";
 import { Spinner } from "@/components/common/Spinner";
 import { tooltip } from "@/components/common/tooltip/tooltip";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
@@ -288,7 +289,7 @@ export function ExportModal() {
               {t.common.cancel}
             </button>
 
-            <div className={CssClass.VERTICAL_DIVIDER} />
+            <VerticalDivider />
 
             <button
               className={classNames(

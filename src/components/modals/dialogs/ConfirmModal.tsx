@@ -2,6 +2,7 @@ import { DEFAULT_CONFIRM_LABEL } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { EventType, Key } from "@/common/constants/events";
 import { DialogTone } from "@/common/enums";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -71,7 +72,7 @@ export function ConfirmModal() {
         {t.common.cancel}
       </button>
 
-      <div className={CssClass.VERTICAL_DIVIDER} />
+      <VerticalDivider />
 
       <button
         ref={confirmRef}

@@ -8,6 +8,7 @@ import { CodeLanguage, PanelSide } from "@/common/enums";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { Spinner } from "@/components/common/Spinner";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
@@ -83,7 +84,7 @@ export function CloudFileEditorModal() {
           {t.common.cancel}
         </button>
 
-        <div className={CssClass.VERTICAL_DIVIDER} />
+        <VerticalDivider />
 
         <button
           className={classNames(

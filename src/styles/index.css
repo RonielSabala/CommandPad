@@ -91,13 +91,6 @@ body {
   overflow: hidden;
 }
 
-.vertical-divider {
-  width: 1px;
-  height: var(--space-12);
-  background: var(--color-border);
-  margin: 0 var(--space-4);
-}
-
 .section-title {
   font-size: var(--text-xs);
   font-family: var(--font-sans);

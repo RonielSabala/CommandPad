@@ -3,6 +3,7 @@ import { AppRoute } from "@/common/constants/routes";
 import { AppMode, RunbookView, Theme } from "@/common/enums";
 import { asButton } from "@/components/common/asButton";
 import { tooltip } from "@/components/common/tooltip/tooltip";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import {
   BookIcon,
   ChevronsRightIcon,
@@ -89,7 +90,7 @@ export function Header() {
           )}
         </button>
 
-        <div className={CssClass.VERTICAL_DIVIDER} />
+        <VerticalDivider />
 
         <button
           className={classNames(CssClass.BTN, CssClass.BTN_LG)}
@@ -132,11 +133,11 @@ export function Header() {
           )}
         </button>
 
-        <div className={CssClass.VERTICAL_DIVIDER} />
+        <VerticalDivider />
 
         <LanguageSelect />
 
-        <div className={CssClass.VERTICAL_DIVIDER} />
+        <VerticalDivider />
 
         <Link
           to={AppRoute.DOCS}
@@ -151,7 +152,7 @@ export function Header() {
           <BookIcon className={classNames(CssClass.ICON, CssClass.ICON_BOLD)} />
         </Link>
 
-        <div className={CssClass.VERTICAL_DIVIDER} />
+        <VerticalDivider />
 
         <button
           className={classNames(
@@ -173,7 +174,7 @@ export function Header() {
           />
         </button>
 
-        <div className={CssClass.VERTICAL_DIVIDER} />
+        <VerticalDivider />
 
         <button
           className={classNames(
