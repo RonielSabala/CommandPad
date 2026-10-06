@@ -11,9 +11,7 @@ function commandContext(variableMap: VariableMap): ReferenceContext {
   return {
     surface: ReferenceSurface.COMMAND,
     lookup: (key) =>
-      Object.hasOwn(variableMap, key) && variableMap[key].text
-        ? variableMap[key]
-        : undefined,
+      Object.hasOwn(variableMap, key) ? variableMap[key] : undefined,
   };
 }
 

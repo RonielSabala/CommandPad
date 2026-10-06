@@ -1165,7 +1165,7 @@ If something goes wrong, undo it in this order:
       demoHint:
         "Below, put a letter in the port or change the extension, and watch the answers flip:",
       empty:
-        "Each of these needs at least one character to look at, so they all answer `false` for an empty value. That is what `isempty` is for. Note that a reference to a variable you left blank never resolves in the first place, so `isempty` is really about what an earlier operation produced, as in `{PATH|strip(/tmp/)|isempty}`.",
+        "Each of these needs at least one character to look at, so they all answer `false` for an empty value. That is what `isempty` is for. It works on a variable you left blank (`{PATH|isempty}`) and on what an earlier operation produced (`{PATH|strip(/tmp/)|isempty}`). A blank variable with nothing to say about it, like a plain `{PATH}`, still stays as written so you can see it needs filling in.",
     },
     variableLogic: {
       table: `| Operation | Description |

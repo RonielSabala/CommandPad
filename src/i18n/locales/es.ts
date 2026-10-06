@@ -1190,7 +1190,7 @@ Si algo sale mal, deshazlo en este orden:
       demoHint:
         "Debajo, escribe una letra en el puerto o cambia la extensión, y mira cómo cambian las respuestas:",
       empty:
-        "Todas necesitan al menos un carácter que mirar, así que ante un valor vacío responden con `false`. Para eso está `isempty`. Ten en cuenta que una referencia a una variable que dejaste en blanco no llega a resolverse, así que `isempty` sirve sobre todo para lo que haya producido una operación anterior, como en `{PATH|strip(/tmp/)|isempty}`.",
+        "Todas necesitan al menos un carácter que mirar, así que ante un valor vacío responden con `false`. Para eso está `isempty`. Funciona con una variable que dejaste en blanco (`{PATH|isempty}`) y con lo que haya producido una operación anterior (`{PATH|strip(/tmp/)|isempty}`). Una variable en blanco sin nada que decir sobre ella, como un simple `{PATH}`, se queda tal cual para que veas que falta rellenarla.",
     },
     variableLogic: {
       table: `| Operación | Descripción |

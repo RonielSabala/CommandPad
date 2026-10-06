@@ -28,8 +28,10 @@ A variable is an object with these fields:
 
 - `key` (required, text): the name commands refer to. Use UPPER_SNAKE_CASE. Keys are
   trimmed and must be unique within the runbook.
-- `value` (required, text): may be empty when the user is expected to fill it in. A value
-  may itself reference other variables.
+- `value` (required, text): may be empty when the user is expected to fill it in. A
+  command referencing an empty variable keeps the reference as written until it is
+  filled, unless an operation still produces text from it (`{X|isempty}`, `{X|len}`). A
+  value may itself reference other variables.
 - `secret` (optional, `true`): masks the value on screen. Use it for every password,
   token, key or connection string.
 - `language` (optional): one of `plaintext`, `shell`, `powershell`, `json`, `sql`, `xml`, `yaml`.
