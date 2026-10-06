@@ -763,6 +763,7 @@ export const es: Messages = {
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transformar un hueco",
       [DocsSectionId.UNNAMED_REFERENCES]: "Referencias sin variable",
       [DocsSectionId.VARIABLE_DATE]: "Fecha actual",
+      [DocsSectionId.VARIABLE_CALC]: "Aritmética",
       [DocsSectionId.VARIABLE_BOOLEAN]: "Operaciones booleanas",
       [DocsSectionId.VARIABLE_LOGIC]: "Operaciones lógicas",
       [DocsSectionId.VARIABLE_CONDITIONAL]: "Operaciones condicionales",
@@ -1149,6 +1150,20 @@ Si algo sale mal, deshazlo en este orden:
         `La fecha se calcula justo cuando se muestra el comando, no cuando se escribió. Pulsa **${resetDemoLabel}** un par de veces y verás cómo cambian los segundos:`,
       clock:
         "Usa tu propio reloj y tu propia zona horaria, así que un runbook que se queda abierto toda la noche mostrará mañana la fecha de mañana.",
+    },
+    variableCalc: {
+      intro:
+        "`calc(expresión)` hace la cuenta que escribas entre paréntesis y te devuelve el resultado. Como `date`, no usa el valor que le llega, así que lo normal es escribirla sola. Y si dentro hay referencias a variables, primero se sustituyen por su valor y luego se calcula.",
+      demoHint:
+        "Un caso de lo más habitual es una pausa en un script: `sleep` cuenta en segundos, pero nadie piensa una espera así. Pon los minutos abajo y deja que el comando haga la conversión:",
+      table: `| Operador | Significado |
+| --- | --- |
+| \`+\` \`-\` | Sumar, restar |
+| \`*\` \`/\` | Multiplicar, dividir |
+| \`%\` | Resto |
+| \`( )\` | Agrupar lo que quieras calcular primero |`,
+      rules:
+        "Como en cualquier calculadora, las multiplicaciones y divisiones se hacen antes que las sumas y restas. Una división puede dar decimales (`7 / 2` da `3.5`), y el resto lleva el signo del divisor, por eso `-1 % 3` da `2`. Si divides entre cero o algo de la expresión no es un número, la referencia se queda tal cual la escribiste.",
     },
     variableBoolean: {
       intro:

@@ -3,6 +3,7 @@ import { CallGroup, OperationKeywordRegex } from "@/common/variableSyntax";
 import { isString } from "@/utils/typeGuards";
 
 import { spansText } from "../spans";
+import { CALC_OPERATION } from "./calc";
 import { CASE_OPERATION } from "./case";
 import { COMPARE_OPERATION } from "./compare";
 import { IF_OPERATION } from "./conditional";
@@ -37,6 +38,7 @@ const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   KEY_OPERATION,
   HASH_OPERATION,
   DATE_OPERATION,
+  CALC_OPERATION,
   CASE_OPERATION,
   STRIP_OPERATION,
   FILL_OPERATION,

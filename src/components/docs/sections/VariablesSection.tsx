@@ -725,6 +725,30 @@ export function VariableDateDocs() {
   );
 }
 
+export function VariableCalcDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableCalc.intro} />
+      <Prose text={t.docs.variableCalc.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("MINUTES", "5")],
+            blocks: [demoCommand("sleep {|calc({MINUTES} * 60)}")],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableCalc.table} />
+      <Prose text={t.docs.variableCalc.rules} />
+    </>
+  );
+}
+
 export function VariableBooleanDocs() {
   const t = useTranslation();
 

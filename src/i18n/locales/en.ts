@@ -745,6 +745,7 @@ export const en: Messages = {
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transforming a blank",
       [DocsSectionId.UNNAMED_REFERENCES]: "References with no variable",
       [DocsSectionId.VARIABLE_DATE]: "Current date",
+      [DocsSectionId.VARIABLE_CALC]: "Arithmetic",
       [DocsSectionId.VARIABLE_BOOLEAN]: "Boolean operations",
       [DocsSectionId.VARIABLE_LOGIC]: "Logical operations",
       [DocsSectionId.VARIABLE_CONDITIONAL]: "Conditional operations",
@@ -1124,6 +1125,20 @@ If something goes wrong, undo it in this order:
         `The date is read the moment the command is shown, not when it was written. Press **${resetDemoLabel}** below a couple of times and watch the seconds move:`,
       clock:
         "It reads your own clock, in your own time zone, so a runbook left open overnight copies tomorrow's date tomorrow.",
+    },
+    variableCalc: {
+      intro:
+        "`calc(expression)` works out the arithmetic in its parentheses and gives back the result. Like `date`, it ignores the value it is handed, so it is normally written on its own, and any reference inside it is filled in before the sum is done.",
+      demoHint:
+        "A classic case is a pause in a script: `sleep` counts in seconds, but nobody thinks of a wait that way. Set the minutes below and let the command do the conversion:",
+      table: `| Operator | Meaning |
+| --- | --- |
+| \`+\` \`-\` | Add, subtract |
+| \`*\` \`/\` | Multiply, divide |
+| \`%\` | Remainder |
+| \`( )\` | Group, to work something out first |`,
+      rules:
+        "Multiplying and dividing come before adding and subtracting, as usual. Division can give a decimal (`7 / 2` is `3.5`), and a remainder takes the sign of the number you divide by, so `-1 % 3` is `2`. Dividing by zero, or anything that is not a number, leaves the reference exactly as written.",
     },
     variableBoolean: {
       intro:

@@ -126,6 +126,27 @@ export const DateSyntax = {
   PAD_CHAR: "0",
 } as const;
 
+export const CalcSyntax = {
+  KEYWORD: "calc",
+  ARITY: 1,
+  PLUS: "+",
+  MINUS: "-",
+  MULTIPLY: "*",
+  DIVIDE: "/",
+  MODULO: "%",
+  GROUP_OPEN: "(",
+  GROUP_CLOSE: ")",
+  DECIMAL_POINT: ".",
+  PRECISION: 12,
+} as const;
+
+export const CalcGroup = {
+  NUMBER: "number",
+  SYMBOL: "symbol",
+  SPACE: "space",
+  INVALID: "invalid",
+} as const;
+
 export const DateToken = {
   YEAR: "YYYY",
   YEAR_SHORT: "YY",
@@ -189,6 +210,7 @@ const Call = escapeSyntax(CallSyntax);
 const Num = escapeSyntax(NumberSyntax);
 const Operation = escapeSyntax(OperationSyntax);
 const DateTok = escapeSyntax(DateToken);
+const Calc = escapeSyntax(CalcSyntax);
 
 export const EscapedBraceOpenRegex = globalRegex(
   sequence(ESCAPE, Ref.BRACE_OPEN),
@@ -249,6 +271,32 @@ export const NumberArgumentRegex = new RegExp(
 );
 
 export const NumberTermRegex = globalRegex(NUMBER_TERM);
+
+export const CalcTokenRegex = globalRegex(
+  either(
+    named(
+      CalcGroup.NUMBER,
+      sequence(
+        oneOrMore(DIGIT),
+        optional(group(sequence(Calc.DECIMAL_POINT, oneOrMore(DIGIT)))),
+      ),
+    ),
+    named(
+      CalcGroup.SYMBOL,
+      anyOf(
+        Calc.PLUS,
+        Calc.MULTIPLY,
+        Calc.DIVIDE,
+        Calc.MODULO,
+        Calc.GROUP_OPEN,
+        Calc.GROUP_CLOSE,
+        Calc.MINUS,
+      ),
+    ),
+    named(CalcGroup.SPACE, oneOrMore(WHITESPACE)),
+    named(CalcGroup.INVALID, ANY),
+  ),
+);
 
 export const LenOperationRegex = new RegExp(anchored(Operation.LEN));
 

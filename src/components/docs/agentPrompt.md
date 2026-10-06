@@ -213,6 +213,11 @@ Working on text:
 - Positions in `slice`, `len`, `index` and `insert` all count characters the same way.
 - `date(format)` the current local date. Tokens `YYYY`, `YY`, `MM`, `DD`, `HH`, `mm`, `ss`
   are filled and everything else is kept. Defaults to `YYYY-MM-DD`.
+- `calc(expression)` the result of `+`, `-`, `*`, `/` and `%` over numbers, with the usual
+  precedence and `(` `)` for grouping. It ignores the value it is handed, so it is written
+  on a reference with no key, and references inside it are resolved first:
+  `sleep {|calc({MINUTES} * 60)}`. `/` may give a decimal, `%` takes the divisor's sign,
+  and dividing by zero leaves the reference unresolved.
 
 Changing case, all written as a bare keyword: `snakecase`, `kebabcase`, `camelcase`,
 `pascalcase`, `capitalize`, `title`, `lowercase`, `uppercase`, `swapcase`.
