@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CloseIcon } from "@/components/icons";
 import { useModalDismiss } from "@/hooks/useModalDismiss";
@@ -52,7 +53,7 @@ export function Modal({
           {...tooltip(t.common.close)}
           aria-label={t.common.close}
         >
-          <CloseIcon className="icon-semibold" />
+          <CloseIcon className={CssClass.ICON_SEMIBOLD} />
         </button>
         {children}
       </div>

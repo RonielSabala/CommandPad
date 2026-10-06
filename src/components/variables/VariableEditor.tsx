@@ -84,7 +84,10 @@ export function VariableEditor({
               aria-label={t.variables.reveal(1)}
               {...tooltip(t.variables.reveal(1))}
             >
-              <EyeIcon slashed className="icon-md icon-bold" />
+              <EyeIcon
+                slashed
+                className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+              />
             </button>
           )}
         </>

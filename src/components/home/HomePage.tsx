@@ -72,12 +72,14 @@ export function HomePage() {
                   className="btn btn-lg btn-primary home-cta"
                   onClick={markHomeVisited}
                 >
-                  <BoxArrowInRight className="icon" />
+                  <BoxArrowInRight className={CssClass.ICON} />
                   {t.home.hero.primaryCta}
                 </Link>
 
                 <Link to={AppRoute.DOCS} className="btn btn-lg home-cta">
-                  <BookIcon className="icon icon-bold" />
+                  <BookIcon
+                    className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+                  />
                   {t.home.hero.secondaryCta}
                 </Link>
               </div>
@@ -144,7 +146,7 @@ export function HomePage() {
               className="btn btn-lg btn-primary home-cta"
               onClick={markHomeVisited}
             >
-              <BoxArrowInRight className="icon" />
+              <BoxArrowInRight className={CssClass.ICON} />
               {t.home.closing.cta}
             </Link>
           </section>

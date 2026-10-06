@@ -97,7 +97,13 @@ export function RunbookPreview() {
         {isEmpty && (
           <EmptyState
             icon={
-              <EmptyStateIcon className="empty-state-icon icon-lg icon-bold" />
+              <EmptyStateIcon
+                className={classNames(
+                  "empty-state-icon",
+                  CssClass.ICON_LG,
+                  CssClass.ICON_BOLD,
+                )}
+              />
             }
             title={t.blocks.emptyTitle}
             hint={t.blocks.emptyHint}

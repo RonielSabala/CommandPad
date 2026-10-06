@@ -239,8 +239,10 @@ export function Select<T extends string>({
         {children}
         <SidebarSectionChevronIcon
           className={classNames(
-            "select-chevron icon-md icon-bold",
+            "select-chevron",
             open && "is-open",
+            CssClass.ICON_MD,
+            CssClass.ICON_BOLD,
           )}
         />
       </button>

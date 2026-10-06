@@ -1,5 +1,7 @@
+import { CssClass } from "@/common/constants/css";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { ArrowLeft } from "react-bootstrap-icons";
 import { Modal } from "../Modal";
 import { CloudBrowser } from "./CloudBrowser";
@@ -33,7 +35,9 @@ export function CloudImportModal() {
 
       <div className="modal-actions">
         <button className="btn btn-lg" onClick={returnToDestinationModal}>
-          <ArrowLeft className="icon-md icon-semibold" />
+          <ArrowLeft
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
+          />
           {t.common.back}
         </button>
 

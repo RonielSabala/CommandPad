@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { DragIcon } from "@/components/icons";
 import type { RowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
@@ -17,7 +18,7 @@ export function DragHandle({ handleProps }: Props) {
       {...tooltip(t.common.dragToReorder)}
       {...handleProps}
     >
-      <DragIcon className="icon-md" />
+      <DragIcon className={CssClass.ICON_MD} />
     </div>
   );
 }

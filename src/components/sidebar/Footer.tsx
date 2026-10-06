@@ -26,7 +26,7 @@ export function FooterLink({ icon, title, href }: FooterLinkProps) {
       rel={Anchor.REL}
       {...tooltip(title)}
     >
-      <IconComponent className="icon-md" aria-label={title} />
+      <IconComponent className={CssClass.ICON_MD} aria-label={title} />
     </a>
   );
 }

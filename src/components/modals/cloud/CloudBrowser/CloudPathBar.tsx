@@ -1,4 +1,5 @@
 import { CloudSyncConfig } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import { HistoryDirection } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
@@ -43,7 +44,9 @@ export function CloudPathBar({
         aria-label={t.cloudModal.navigateBack}
         {...tooltip(t.cloudModal.navigateBack)}
       >
-        <ArrowLeft className="icon-md icon-semibold" />
+        <ArrowLeft
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
+        />
       </button>
 
       <button
@@ -53,7 +56,9 @@ export function CloudPathBar({
         aria-label={t.cloudModal.navigateForward}
         {...tooltip(t.cloudModal.navigateForward)}
       >
-        <ArrowRight className="icon-md icon-semibold" />
+        <ArrowRight
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
+        />
       </button>
 
       <nav className="cloud-browser-path">
@@ -90,7 +95,9 @@ export function CloudPathBar({
         aria-label={t.cloudModal.newFolder}
         {...tooltip(t.cloudModal.newFolder)}
       >
-        <FolderPlus className="icon-md icon-semibold" />
+        <FolderPlus
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
+        />
       </button>
 
       <button
@@ -102,7 +109,7 @@ export function CloudPathBar({
       >
         <ArrowClockwise
           id="refresh-cloud-files-icon"
-          className={classNames("icon-md icon-semibold")}
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
         />
       </button>
     </div>

@@ -211,7 +211,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
                     {...tooltip(t.image.viewFullscreen)}
                     onClick={expand}
                   >
-                    <ArrowsFullscreen className="icon-md" />
+                    <ArrowsFullscreen className={CssClass.ICON_MD} />
                   </button>
                 )}
 
@@ -223,7 +223,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
                 >
                   {!loadFailed && (
                     <ContextMenuItem
-                      icon={<Download className="icon-md" />}
+                      icon={<Download className={CssClass.ICON_MD} />}
                       onSelect={() => void download()}
                     >
                       {t.image.download}
@@ -231,14 +231,28 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
                   )}
 
                   <ContextMenuItem
-                    icon={<ImportIcon className="icon-md icon-semibold" />}
+                    icon={
+                      <ImportIcon
+                        className={classNames(
+                          CssClass.ICON_MD,
+                          CssClass.ICON_SEMIBOLD,
+                        )}
+                      />
+                    }
                     onSelect={openFilePicker}
                   >
                     {t.image.replace}
                   </ContextMenuItem>
 
                   <ContextMenuItem
-                    icon={<TrashIcon className="icon-md icon-bold" />}
+                    icon={
+                      <TrashIcon
+                        className={classNames(
+                          CssClass.ICON_MD,
+                          CssClass.ICON_BOLD,
+                        )}
+                      />
+                    }
                     onSelect={clear}
                     danger
                   >

@@ -1,5 +1,7 @@
+import { CssClass } from "@/common/constants/css";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CheckIcon, XIcon } from "@/components/icons";
+import { classNames } from "@/utils/string";
 
 interface CloudRowConfirmActionsProps {
   onConfirm: () => void;
@@ -25,7 +27,9 @@ export function CloudRowConfirmActions({
         aria-label={confirmTitle}
         {...tooltip(confirmTitle)}
       >
-        <CheckIcon className="icon-md icon-bold" />
+        <CheckIcon
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+        />
       </button>
 
       <button
@@ -34,7 +38,7 @@ export function CloudRowConfirmActions({
         aria-label={cancelTitle}
         {...tooltip(cancelTitle)}
       >
-        <XIcon className="icon-md icon-bold" />
+        <XIcon className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)} />
       </button>
     </div>
   );

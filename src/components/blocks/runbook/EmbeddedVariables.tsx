@@ -249,7 +249,7 @@ function EmbeddedVariable({
               aria-label={t.runbookBlock.resetOverride}
               {...tooltip(t.runbookBlock.resetOverride)}
             >
-              <ArrowCounterclockwise className="icon-md" />
+              <ArrowCounterclockwise className={CssClass.ICON_MD} />
             </button>
           )}
         </>

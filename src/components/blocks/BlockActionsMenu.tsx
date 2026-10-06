@@ -41,7 +41,11 @@ function InsertSubmenu({ blockId, position, label, icon }: InsertSubmenuProps) {
         return (
           <ContextMenuItem
             key={type}
-            icon={<Icon className="icon-md icon-bold" />}
+            icon={
+              <Icon
+                className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+              />
+            }
             onSelect={() => void addBlock(type, { blockId, position })}
           >
             {t.blocks.typeLabel[type]}
@@ -66,7 +70,11 @@ export function BlockActionsMenu({ blockId }: Props) {
       title={t.blocks.actions}
     >
       <ContextMenuItem
-        icon={<DuplicateIcon className="icon-md icon-bold" />}
+        icon={
+          <DuplicateIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
         onSelect={() => duplicateBlock(blockId)}
       >
         {t.blocks.duplicate(selectionCount)}
@@ -78,20 +86,32 @@ export function BlockActionsMenu({ blockId }: Props) {
         blockId={blockId}
         position={InsertPosition.ABOVE}
         label={t.blocks.insertAbove}
-        icon={<InsertAboveIcon className="icon-md icon-bold" />}
+        icon={
+          <InsertAboveIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
       />
 
       <InsertSubmenu
         blockId={blockId}
         position={InsertPosition.BELOW}
         label={t.blocks.insertBelow}
-        icon={<InsertBelowIcon className="icon-md icon-bold" />}
+        icon={
+          <InsertBelowIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
       />
 
       <ContextMenuSeparator />
 
       <ContextMenuItem
-        icon={<TrashIcon className="icon-md icon-bold" />}
+        icon={
+          <TrashIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
         onSelect={() => removeBlock(blockId)}
         danger
       >

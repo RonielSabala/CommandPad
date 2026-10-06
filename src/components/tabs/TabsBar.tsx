@@ -1,9 +1,11 @@
+import { CssClass } from "@/common/constants/css";
 import { RunbookView } from "@/common/enums";
 import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PlusIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { getRunbookView, useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { useCallback, useState, type MouseEvent } from "react";
 import { BodyText, Braces, FileEarmarkCode } from "react-bootstrap-icons";
 
@@ -52,7 +54,9 @@ export function TabsBar() {
         {...tooltip(t.tabs.newTab)}
         onClick={() => void createNewTab()}
       >
-        <PlusIcon className="icon-md icon-bold" />
+        <PlusIcon
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+        />
       </button>
 
       {tabs.length > 0 && (
@@ -64,9 +68,9 @@ export function TabsBar() {
             onClick={() => toggleRunbookView(RunbookView.VARIABLES)}
           >
             {showingVariables ? (
-              <BodyText className="icon-md" />
+              <BodyText className={CssClass.ICON_MD} />
             ) : (
-              <Braces className="icon-md" />
+              <Braces className={CssClass.ICON_MD} />
             )}
           </button>
 
@@ -77,9 +81,9 @@ export function TabsBar() {
             onClick={() => toggleRunbookView(RunbookView.SOURCE)}
           >
             {showingSource ? (
-              <BodyText className="icon-md" />
+              <BodyText className={CssClass.ICON_MD} />
             ) : (
-              <FileEarmarkCode className="icon-md" />
+              <FileEarmarkCode className={CssClass.ICON_MD} />
             )}
           </button>
         </div>

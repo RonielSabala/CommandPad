@@ -40,7 +40,7 @@ export function DocsDemo({ children, onReset, className }: Props) {
         {...tooltip(t.docs.demo.reset)}
       >
         <ArrowCounterclockwise
-          className={classNames("icon", spinning && CssClass.ANIMATING)}
+          className={classNames(CssClass.ICON, spinning && CssClass.ANIMATING)}
           onAnimationEnd={() => setSpinning(false)}
         />
       </button>

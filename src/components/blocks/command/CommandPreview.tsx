@@ -171,9 +171,17 @@ export function CommandPreview({
           {...tooltip(t.command.copy)}
         >
           {copied ? (
-            <CheckIcon className="icon-md icon-bold copy-check-icon" />
+            <CheckIcon
+              className={classNames(
+                "copy-check-icon",
+                CssClass.ICON_MD,
+                CssClass.ICON_BOLD,
+              )}
+            />
           ) : (
-            <CopyIcon className="icon-md icon-bold" />
+            <CopyIcon
+              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+            />
           )}
         </button>
       </div>

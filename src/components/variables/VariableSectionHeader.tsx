@@ -53,7 +53,13 @@ export function VariableSectionHeader({
           aria-label={toggleLabel}
           {...tooltip(toggleLabel)}
         >
-          <SidebarSectionChevronIcon className="variable-section-chevron icon-md icon-bold" />
+          <SidebarSectionChevronIcon
+            className={classNames(
+              "variable-section-chevron",
+              CssClass.ICON_MD,
+              CssClass.ICON_BOLD,
+            )}
+          />
         </button>
       )}
 

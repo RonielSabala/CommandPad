@@ -31,7 +31,13 @@ export function SearchInput({
         value={value}
         onChange={(event) => onChange(event.target.value)}
       />
-      <SearchIcon className="search-input-icon icon-md icon-bold" />
+      <SearchIcon
+        className={classNames(
+          "search-input-icon",
+          CssClass.ICON_MD,
+          CssClass.ICON_BOLD,
+        )}
+      />
       {value && (
         <button
           className="search-input-clear-btn"
@@ -39,7 +45,7 @@ export function SearchInput({
           {...tooltip(t.common.clearSearch)}
           onClick={() => onChange("")}
         >
-          <XIcon className="icon-sm icon-bold" />
+          <XIcon className={classNames(CssClass.ICON_SM, CssClass.ICON_BOLD)} />
         </button>
       )}
     </div>

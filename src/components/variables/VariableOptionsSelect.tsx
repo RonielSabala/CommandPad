@@ -72,7 +72,9 @@ export function VariableOptionsSelect({
                 aria-label={t.variables.removeOption(option)}
                 {...tooltip(t.variables.removeOption(option))}
               >
-                <TrashIcon className="icon-md icon-bold" />
+                <TrashIcon
+                  className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+                />
               </button>
             )
           : undefined
@@ -105,7 +107,9 @@ export function VariableOptionsSelect({
               aria-label={t.variables.addOption}
               {...tooltip(t.variables.addOption)}
             >
-              <PlusIcon className="icon-md icon-bold" />
+              <PlusIcon
+                className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+              />
             </button>
           </div>
         )

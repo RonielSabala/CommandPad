@@ -74,7 +74,7 @@ export function EmbedUnlock({ embed }: { embed: EmbeddedRunbookState }) {
       aria-label={t.runbookBlock.unlock}
       {...tooltip(t.runbookBlock.unlock)}
     >
-      <ShieldExclamation className="icon-md" />
+      <ShieldExclamation className={CssClass.ICON_MD} />
     </button>
   );
 }
@@ -102,7 +102,7 @@ export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
           aria-label={t.runbookBlock.open}
           {...tooltip(t.runbookBlock.open)}
         >
-          <BoxArrowUpRight className="icon-md" />
+          <BoxArrowUpRight className={CssClass.ICON_MD} />
         </button>
       )}
 
@@ -114,7 +114,11 @@ export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
           aria-label={t.runbookBlock.refresh}
           {...tooltip(t.runbookBlock.refresh)}
         >
-          {embed.refreshing ? <Spinner /> : <ArrowRepeat className="icon-md" />}
+          {embed.refreshing ? (
+            <Spinner />
+          ) : (
+            <ArrowRepeat className={CssClass.ICON_MD} />
+          )}
         </button>
       )}
     </>
@@ -180,7 +184,7 @@ export function EmbedBody({
               className="btn"
               onClick={() => void signInForEmbeddedRunbooks(provider)}
             >
-              <BoxArrowInRight className="icon-md" />
+              <BoxArrowInRight className={CssClass.ICON_MD} />
               {t.runbookBlock.signIn}
             </button>
           </EmbedNotice>
@@ -259,7 +263,13 @@ function NestedRunbook({
   return (
     <div className="runbook-embed">
       <div className="runbook-embed-header">
-        <RunbookIcon className="icon-md icon-semibold runbook-embed-icon" />
+        <RunbookIcon
+          className={classNames(
+            "runbook-embed-icon",
+            CssClass.ICON_MD,
+            CssClass.ICON_SEMIBOLD,
+          )}
+        />
         <div className={CssClass.RUNBOOK_EMBED_ACTIONS}>
           <EmbedUnlock embed={embed} />
           <EmbedActions embed={embed} />

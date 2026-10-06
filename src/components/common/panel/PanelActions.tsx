@@ -1,8 +1,10 @@
+import { CssClass } from "@/common/constants/css";
 import { PanelId, PanelSide } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PanelCollapseIcon, PanelSideIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 
 import "./PanelActions.css";
 
@@ -32,7 +34,13 @@ export function PanelActions({ panelId, name }: Props) {
         aria-label={toggleLabel}
         {...tooltip(toggleLabel)}
       >
-        <PanelCollapseIcon className="panel-collapse-chevron icon-md icon-bold" />
+        <PanelCollapseIcon
+          className={classNames(
+            "panel-collapse-chevron",
+            CssClass.ICON_MD,
+            CssClass.ICON_BOLD,
+          )}
+        />
       </button>
       <button
         className="btn btn-icon"
@@ -40,7 +48,10 @@ export function PanelActions({ panelId, name }: Props) {
         aria-label={toggleSideLabel}
         {...tooltip(toggleSideLabel)}
       >
-        <PanelSideIcon className="icon-md icon-bold" mirrored={isRight} />
+        <PanelSideIcon
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          mirrored={isRight}
+        />
       </button>
     </div>
   );

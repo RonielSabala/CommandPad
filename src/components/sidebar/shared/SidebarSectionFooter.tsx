@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { classNames } from "@/utils/string";
 import type { SVGProps } from "react";
@@ -30,7 +31,9 @@ function FooterButton({
       onClick={onClick}
       {...tooltip(title)}
     >
-      <IconComponent className="icon-md icon-bold" />
+      <IconComponent
+        className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+      />
       {label}
     </button>
   );

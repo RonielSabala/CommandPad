@@ -147,7 +147,9 @@ export function ContextMenuItem({
     >
       <span className="context-menu-icon">
         {isCheckbox && checked ? (
-          <CheckIcon className="icon-md icon-bold" />
+          <CheckIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
         ) : (
           icon
         )}

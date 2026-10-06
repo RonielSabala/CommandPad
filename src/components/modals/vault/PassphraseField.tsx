@@ -1,7 +1,9 @@
+import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
+import { classNames } from "@/utils/string";
 import { useId, useState } from "react";
 
 import "./PassphraseField.css";
@@ -61,7 +63,10 @@ export function PassphraseField({
           {...tooltip(toggleLabel)}
           aria-label={toggleLabel}
         >
-          <EyeIcon slashed={!revealed} className="icon-md icon-bold" />
+          <EyeIcon
+            slashed={!revealed}
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
         </button>
       </div>
     </div>

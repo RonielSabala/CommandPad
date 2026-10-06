@@ -21,6 +21,14 @@ export const CssClass = {
   CONTEXT_MENU: "context-menu",
   CODE_EDITOR_PROMPT: "code-editor-prompt",
 
+  // Icons
+  ICON: "icon",
+  ICON_SM: "icon-sm",
+  ICON_MD: "icon-md",
+  ICON_LG: "icon-lg",
+  ICON_SEMIBOLD: "icon-semibold",
+  ICON_BOLD: "icon-bold",
+
   // Action states
   IS_SCROLLING: "is-scrolling",
   ROW_DRAGGING: "row-dragging",

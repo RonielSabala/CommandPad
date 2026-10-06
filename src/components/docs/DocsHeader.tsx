@@ -47,9 +47,13 @@ export function DocsHeader() {
           {...tooltip(toggleThemeLabel)}
         >
           {isLight ? (
-            <MoonIcon className="icon icon-bold" />
+            <MoonIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           ) : (
-            <SunIcon className="icon icon-bold" />
+            <SunIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           )}
         </button>
 
@@ -60,7 +64,7 @@ export function DocsHeader() {
         <div className="vertical-divider" />
 
         <Link to={AppRoute.HOME} className="btn btn-lg btn-primary">
-          <BoxArrowLeft className="icon" />
+          <BoxArrowLeft className={CssClass.ICON} />
           {t.docs.meta.backToApp}
         </Link>
       </div>

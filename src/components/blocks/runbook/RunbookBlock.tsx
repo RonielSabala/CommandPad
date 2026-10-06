@@ -289,7 +289,9 @@ export function RunbookBlock({
         aria-hidden
         {...{ [DataAttr.DRAG_IMAGE]: "" }}
       >
-        <RunbookIcon className="icon-md icon-bold" />
+        <RunbookIcon
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+        />
         {dragImageLabel}
       </div>
 
@@ -363,9 +365,9 @@ export function RunbookBlock({
                 {...tooltip(viewLabel)}
               >
                 {showingVariables ? (
-                  <BodyText className="icon-md" />
+                  <BodyText className={CssClass.ICON_MD} />
                 ) : (
-                  <Braces className="icon-md" />
+                  <Braces className={CssClass.ICON_MD} />
                 )}
               </button>
             )}

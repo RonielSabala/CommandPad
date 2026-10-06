@@ -78,34 +78,33 @@ export const VariableRow = memo(function VariableRow({
     }
   }, [pendingFocus, editorShowing, consumeVariableFocus]);
 
-  const rowClass = classNames(
-    "variable-row",
-    "sidebar-section-list-row",
-    isSecret && CssClass.IS_SECRET,
-    unused && CssClass.IS_UNUSED,
-    isDragging && CssClass.DRAGGING,
-  );
-
-  const variableInputsClass = classNames(
-    "variable-inputs",
-    isSecret && CssClass.IS_SECRET,
-    isDragOver && CssClass.DRAG_OVER,
-  );
-
-  const splitStyle = {
-    "--variable-key-fr": `${keyRatio}fr`,
-    "--variable-value-fr": `${1 - keyRatio}fr`,
-  } as CSSProperties;
-
   return (
     <div
-      className={rowClass}
+      className={classNames(
+        "variable-row",
+        "sidebar-section-list-row",
+        unused && CssClass.IS_UNUSED,
+        isSecret && CssClass.IS_SECRET,
+        isDragging && CssClass.DRAGGING,
+      )}
       {...{ [DataAttr.VARIABLE_ID]: variableId }}
       {...rowProps}
     >
       <DragHandle handleProps={handleProps} />
 
-      <div className={variableInputsClass} style={splitStyle}>
+      <div
+        className={classNames(
+          "variable-inputs",
+          isSecret && CssClass.IS_SECRET,
+          isDragOver && CssClass.DRAG_OVER,
+        )}
+        style={
+          {
+            "--variable-key-fr": `${keyRatio}fr`,
+            "--variable-value-fr": `${1 - keyRatio}fr`,
+          } as CSSProperties
+        }
+      >
         <VariableKeyInput
           variableId={variableId}
           variableKey={variableKey}
@@ -176,7 +175,10 @@ export const VariableRow = memo(function VariableRow({
           aria-label={t.variables.reveal(1)}
           {...tooltip(t.variables.reveal(1))}
         >
-          <EyeIcon slashed className="icon-md icon-bold" />
+          <EyeIcon
+            slashed
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
         </button>
       )}
 
@@ -192,7 +194,10 @@ export const VariableRow = memo(function VariableRow({
           className="btn btn-icon variable-secret-btn is-placeholder"
           aria-hidden="true"
         >
-          <EyeIcon slashed className="icon-md icon-bold" />
+          <EyeIcon
+            slashed
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
         </div>
       )}
     </div>

@@ -79,7 +79,13 @@ export function SidebarSection({
         {...asButton(onToggle)}
       >
         <p className="section-title">{title}</p>
-        <SidebarSectionChevronIcon className="sidebar-section-chevron icon-md icon-bold" />
+        <SidebarSectionChevronIcon
+          className={classNames(
+            "sidebar-section-chevron",
+            CssClass.ICON_MD,
+            CssClass.ICON_BOLD,
+          )}
+        />
       </div>
       <div
         className="sidebar-section-body-wrapper"

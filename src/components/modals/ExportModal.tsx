@@ -1,4 +1,5 @@
 import { EXPORT_SUCCESS_TIMEOUT_MS } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import {
   CloudExportStatus,
   ExportFormat,
@@ -72,7 +73,12 @@ function CloudExportStatusView({ onDone }: { onDone: () => void }) {
 
       {status === CloudExportStatus.SUCCESS && (
         <>
-          <CheckCircleFill className="icon-lg cloud-export-icon-success" />
+          <CheckCircleFill
+            className={classNames(
+              "cloud-export-icon-success",
+              CssClass.ICON_LG,
+            )}
+          />
           <p className="cloud-export-status-text">
             {t.exportModal.savedTo(providerName)}
           </p>
@@ -81,7 +87,9 @@ function CloudExportStatusView({ onDone }: { onDone: () => void }) {
 
       {status === CloudExportStatus.ERROR && (
         <>
-          <ExclamationTriangleFill className="icon-lg cloud-export-icon-error" />
+          <ExclamationTriangleFill
+            className={classNames("cloud-export-icon-error", CssClass.ICON_LG)}
+          />
           <p className="cloud-export-status-text">
             {t.exportModal.exportError}
           </p>
@@ -190,7 +198,7 @@ export function ExportModal() {
                 )}
                 onClick={() => setExportDestination(SyncDestination.LOCAL)}
               >
-                <LaptopFill className="icon-md" />
+                <LaptopFill className={CssClass.ICON_MD} />
                 {t.destinationModal.local}
               </button>
 
@@ -205,7 +213,7 @@ export function ExportModal() {
                     )}
                     onClick={() => setExportDestination(provider)}
                   >
-                    <ProviderIcon className="icon-md" />
+                    <ProviderIcon className={CssClass.ICON_MD} />
                     {PROVIDER_NAME[provider]}
                   </button>
                 );
@@ -222,7 +230,7 @@ export function ExportModal() {
                 onClick={() => setPickingFolder(true)}
                 {...tooltip(t.exportModal.chooseFolder)}
               >
-                <FolderFill className="icon-md" />
+                <FolderFill className={CssClass.ICON_MD} />
                 <span className="export-modal-folder-path">
                   {formatCloudPath(folderPath)}
                 </span>

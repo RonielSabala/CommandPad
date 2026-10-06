@@ -169,7 +169,7 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
             onClick={() => void signInToCloud()}
             disabled={loading}
           >
-            <ProviderIcon className="icon-md" />
+            <ProviderIcon className={CssClass.ICON_MD} />
             {signInLabel}
           </button>
         </div>

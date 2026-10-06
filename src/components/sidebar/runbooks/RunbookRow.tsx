@@ -90,7 +90,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
       <ActionsMenu className={CssClass.ROW_ACTIONS} title={t.runbooks.actions}>
         {sync && (
           <ContextMenuItem
-            icon={<CloudSlash className="icon-md" />}
+            icon={<CloudSlash className={CssClass.ICON_MD} />}
             onSelect={() => unlinkRunbookSync(runbookId)}
           >
             {t.runbooks.stopSyncing}
@@ -98,14 +98,22 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
         )}
 
         <ContextMenuItem
-          icon={<DuplicateIcon className="icon-md icon-bold" />}
+          icon={
+            <DuplicateIcon
+              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+            />
+          }
           onSelect={() => void duplicateRunbook(runbookId)}
         >
           {t.runbooks.duplicate}
         </ContextMenuItem>
 
         <ContextMenuItem
-          icon={<TrashIcon className="icon-md icon-bold" />}
+          icon={
+            <TrashIcon
+              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+            />
+          }
           onSelect={() => void removeRunbookFromLibrary(runbookId)}
           danger
         >

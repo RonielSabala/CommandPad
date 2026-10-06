@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import { classNames } from "@/utils/string";
 import { useState, type ReactNode } from "react";
@@ -22,8 +23,10 @@ export function Collapsible({ title, children, className }: CollapsibleProps) {
       >
         <SidebarSectionChevronIcon
           className={classNames(
-            "collapsible-chevron icon-md icon-bold",
+            "collapsible-chevron",
             open && "is-open",
+            CssClass.ICON_MD,
+            CssClass.ICON_BOLD,
           )}
         />
         {title}

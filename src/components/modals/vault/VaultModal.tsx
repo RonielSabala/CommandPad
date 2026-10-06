@@ -1,4 +1,5 @@
 import { VAULT_PROMPT_FIELDS } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import { VaultField, VaultPrompt } from "@/common/enums";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { Spinner } from "@/components/common/Spinner";
@@ -64,7 +65,7 @@ export function VaultModal() {
     <Modal open={isOpen} onClose={dismiss} className="modal-vault">
       <div className="vault-header">
         <span className="vault-badge">
-          <ShieldLock className="icon-lg" />
+          <ShieldLock className={CssClass.ICON_LG} />
         </span>
 
         <div className="vault-heading">

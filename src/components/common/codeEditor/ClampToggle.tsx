@@ -23,7 +23,13 @@ export function ClampToggle({ expanded, onToggle }: Props) {
       onMouseDown={(event) => event.preventDefault()}
       onClick={onToggle}
     >
-      <EditorToggleChevronIcon className="clamp-toggle-icon icon-md icon-bold" />
+      <EditorToggleChevronIcon
+        className={classNames(
+          "clamp-toggle-icon",
+          CssClass.ICON_MD,
+          CssClass.ICON_BOLD,
+        )}
+      />
       {expanded ? t.command.showFewerLines : t.command.showMoreLines}
     </button>
   );

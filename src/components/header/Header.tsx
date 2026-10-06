@@ -74,9 +74,13 @@ export function Header() {
           {...tooltip(toggleModeLabel)}
         >
           {isRead ? (
-            <PencilIcon className="icon icon-bold" />
+            <PencilIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           ) : (
-            <PadlockIcon className="icon icon-bold" />
+            <PadlockIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           )}
         </button>
 
@@ -92,7 +96,9 @@ export function Header() {
               : t.header.toggleEditorsTitle,
           )}
         >
-          <ChevronsRightIcon className="icon icon-bold" />
+          <ChevronsRightIcon
+            className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+          />
           {t.header.collapseAll}
         </button>
       </div>
@@ -107,9 +113,13 @@ export function Header() {
           {...tooltip(toggleThemeLabel)}
         >
           {isLight ? (
-            <MoonIcon className="icon icon-bold" />
+            <MoonIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           ) : (
-            <SunIcon className="icon icon-bold" />
+            <SunIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           )}
         </button>
 
@@ -125,7 +135,7 @@ export function Header() {
           aria-label={t.docs.meta.openDocs}
           {...tooltip(t.docs.meta.openDocs)}
         >
-          <BookIcon className="icon icon-bold" />
+          <BookIcon className={classNames(CssClass.ICON, CssClass.ICON_BOLD)} />
         </Link>
 
         <div className="vertical-divider" />
@@ -142,7 +152,7 @@ export function Header() {
         >
           <ArrowCounterclockwise
             id="reset-workspace-icon"
-            className="icon icon-semibold"
+            className={classNames(CssClass.ICON, CssClass.ICON_SEMIBOLD)}
           />
         </button>
 
@@ -154,7 +164,9 @@ export function Header() {
           onClick={openExportModal}
           {...tooltip(t.header.exportTitle)}
         >
-          <ExportIcon className="icon icon-bold" />
+          <ExportIcon
+            className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+          />
           {t.header.export}
         </button>
       </div>

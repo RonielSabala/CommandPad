@@ -69,8 +69,10 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
 
           <SidebarSectionChevronIcon
             className={classNames(
-              "docs-toc-chevron icon-md icon-bold",
+              "docs-toc-chevron",
               collapse.allCollapsed && "is-collapsed",
+              CssClass.ICON_MD,
+              CssClass.ICON_BOLD,
             )}
           />
         </button>
@@ -111,8 +113,10 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
                   >
                     <SidebarSectionChevronIcon
                       className={classNames(
-                        "docs-toc-chevron icon-md icon-bold",
+                        "docs-toc-chevron",
                         collapse.isCollapsed(id) && "is-collapsed",
+                        CssClass.ICON_MD,
+                        CssClass.ICON_BOLD,
                       )}
                     />
                   </span>

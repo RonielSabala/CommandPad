@@ -20,7 +20,7 @@ export function DocsPageBack({ id, onNavigate }: Props) {
       className={classNames("docs-page-back", CssClass.NO_USER_SELECT)}
       onClick={() => onNavigate(id)}
     >
-      <ChevronLeft className="icon" />
+      <ChevronLeft className={CssClass.ICON} />
       {t.docs.meta.backTo(title)}
     </button>
   );

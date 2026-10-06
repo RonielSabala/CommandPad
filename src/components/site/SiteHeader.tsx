@@ -62,9 +62,13 @@ export function SiteHeader({ title, showDocsLink }: Props) {
           {...tooltip(toggleThemeLabel)}
         >
           {isLight ? (
-            <MoonIcon className="icon icon-bold" />
+            <MoonIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           ) : (
-            <SunIcon className="icon icon-bold" />
+            <SunIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           )}
         </button>
 
@@ -81,7 +85,9 @@ export function SiteHeader({ title, showDocsLink }: Props) {
               aria-label={t.docs.meta.openDocs}
               {...tooltip(t.docs.meta.openDocs)}
             >
-              <BookIcon className="icon icon-bold" />
+              <BookIcon
+                className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+              />
             </Link>
           </>
         )}
@@ -93,7 +99,7 @@ export function SiteHeader({ title, showDocsLink }: Props) {
           className="btn btn-lg btn-primary"
           onClick={markHomeVisited}
         >
-          <BoxArrowInRight className="icon" />
+          <BoxArrowInRight className={CssClass.ICON} />
           {t.home.meta.openApp}
         </Link>
       </div>

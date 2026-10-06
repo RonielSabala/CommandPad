@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { SyncDestination } from "@/common/enums";
 import {
   Select,
@@ -28,7 +29,7 @@ export function ProviderSelect({
       value: SyncDestination.LOCAL,
       label: (
         <>
-          <LaptopFill className="icon-md" />
+          <LaptopFill className={CssClass.ICON_MD} />
           {t.destinationModal.local}
         </>
       ),
@@ -39,7 +40,7 @@ export function ProviderSelect({
         value: provider,
         label: (
           <>
-            <ProviderIcon className="icon-md" />
+            <ProviderIcon className={CssClass.ICON_MD} />
             {PROVIDER_NAME[provider]}
           </>
         ),
@@ -65,7 +66,7 @@ export function ProviderSelect({
       options={options}
       onChange={onChange}
     >
-      <ProviderIcon className="icon-md" />
+      <ProviderIcon className={CssClass.ICON_MD} />
       {label}
     </Select>
   );

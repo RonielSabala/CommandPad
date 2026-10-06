@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { RunbookSyncStatus } from "@/common/enums";
 import type { RunbookSync } from "@/common/types";
 import { Spinner } from "@/components/common/Spinner";
@@ -37,13 +38,13 @@ export function RunbookSyncBadge({ runbookId, sync }: Props) {
       onClick={() => void syncRunbookNow(runbookId)}
     >
       {syncStatus === RunbookSyncStatus.SIGNED_OUT ? (
-        <CloudSlash className="icon-md" />
+        <CloudSlash className={CssClass.ICON_MD} />
       ) : syncStatus === RunbookSyncStatus.SYNCED ? (
-        <CloudCheck className="icon-md" />
+        <CloudCheck className={CssClass.ICON_MD} />
       ) : syncStatus === RunbookSyncStatus.SYNCING ? (
         <Spinner />
       ) : (
-        <ArrowRepeat className="icon-md" />
+        <ArrowRepeat className={CssClass.ICON_MD} />
       )}
     </button>
   );

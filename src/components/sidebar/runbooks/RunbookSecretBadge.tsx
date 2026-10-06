@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { VaultStatus } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
@@ -41,9 +42,9 @@ export function RunbookSecretBadge({ runbookId }: Props) {
       }}
     >
       {unprotected ? (
-        <ShieldSlash className="icon-md" />
+        <ShieldSlash className={CssClass.ICON_MD} />
       ) : (
-        <ShieldCheck className="icon-md" />
+        <ShieldCheck className={CssClass.ICON_MD} />
       )}
     </button>
   );

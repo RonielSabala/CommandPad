@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { Select, type SelectOption } from "@/components/common/Select";
 import { LanguageFlag } from "@/components/icons/flags";
 import {
@@ -51,7 +52,7 @@ export function LanguageSelect() {
     >
       <FlagCircle language={language} />
       <span className="language-code">{LANGUAGE_LABELS[language]}</span>
-      <Translate className="icon" />
+      <Translate className={CssClass.ICON} />
     </Select>
   );
 }
