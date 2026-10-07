@@ -1,8 +1,10 @@
+import { CommandSegmentType } from "@/common/enums";
 import type { VariableSpec } from "@/test";
 import { buildVariables, runbook, secret, variableValues } from "@/test";
 import { describe, expect, it } from "vitest";
 
-import { applyOverrides, withOverride } from "./overrides";
+import { resolveCommandText } from "./command";
+import { applyOverrides, overrideScope, withOverride } from "./overrides";
 import { getSecretKeys, getVariableMap } from "./variables";
 
 /** The embedded runbook's resolved values once `overrides` are applied from `host`. */
@@ -12,15 +14,20 @@ function embed(
   host: VariableSpec = {},
 ) {
   const book = runbook(host);
-  const variables = applyOverrides(buildVariables(embedded), overrides, {
-    variableMap: getVariableMap(book.variables),
-    secretKeys: book.secrets,
-  });
+  const variables = applyOverrides(
+    buildVariables(embedded),
+    overrides,
+    book.secrets,
+  );
+  const variableMap = getVariableMap(
+    variables,
+    overrideScope(variables, overrides, getVariableMap(book.variables)),
+  );
 
   return {
-    variables,
-    values: variableValues(getVariableMap(variables)),
-    secrets: getSecretKeys(variables),
+    values: variableValues(variableMap),
+    secretKeys: getSecretKeys(variables),
+    resolve: (command: string) => resolveCommandText(command, variableMap),
   };
 }
 
@@ -54,6 +61,38 @@ describe("applyOverrides", () => {
     ).toEqual({ ENV: "dev", HOST: "prod.internal" });
   });
 
+  it("keeps the host's nesting in the overridden value", () => {
+    const host = { B: "hi from {C}", C: "x" };
+    const [segment] = embed({ A: "" }, { A: "{B}" }, host).resolve("{A}");
+
+    expect(segment.spans).toEqual([
+      { text: "hi from ", depth: 2, source: "B" },
+      { text: "x", depth: 3, source: "C" },
+    ]);
+  });
+
+  it("lets an empty host value leave the reference unresolved", () => {
+    const { values, resolve } = embed({ A: "dev" }, { A: "{B}" }, { B: "" });
+
+    expect(values).toEqual({ A: "" });
+    expect(resolve("echo {A}")).toEqual([
+      { text: "echo ", type: CommandSegmentType.LITERAL },
+      { key: "A", text: "{A}", type: CommandSegmentType.UNRESOLVED },
+    ]);
+  });
+
+  it("reads an empty host value before the embedded runbook's own", () => {
+    expect(
+      embed({ A: "", B: "embedded" }, { A: "{B}" }, { B: "" }).values,
+    ).toEqual({ A: "", B: "embedded" });
+  });
+
+  it("resolves the embedded runbook's own values without the host", () => {
+    expect(
+      embed({ A: "", HOST: "{ENV}" }, { A: "x" }, { ENV: "prod" }).values,
+    ).toEqual({ A: "x", HOST: "{ENV}" });
+  });
+
   it("ignores a key the runbook does not define", () => {
     expect(embed({ HOST: "example.com" }, { REGION: "eu" }).values).toEqual({
       HOST: "example.com",
@@ -61,28 +100,37 @@ describe("applyOverrides", () => {
   });
 
   it("keeps an overridden secret masked", () => {
-    expect(embed({ TOKEN: secret("old") }, { TOKEN: "new" }).secrets).toEqual(
-      new Set(["TOKEN"]),
-    );
+    expect(
+      embed({ TOKEN: secret("old") }, { TOKEN: "new" }).secretKeys,
+    ).toEqual(new Set(["TOKEN"]));
   });
 
   it("masks an override built from a host secret, at any depth", () => {
     const host = { PASSWORD: secret("hunter2") };
 
-    expect(embed({ AUTH: "" }, { AUTH: "{PASSWORD}" }, host).secrets).toEqual(
-      new Set(["AUTH"]),
-    );
     expect(
-      embed({ AUTH: "" }, { AUTH: "{|IF(true;{PASSWORD};x)}" }, host).secrets,
+      embed({ AUTH: "" }, { AUTH: "{PASSWORD}" }, host).secretKeys,
+    ).toEqual(new Set(["AUTH"]));
+
+    expect(
+      embed({ AUTH: "" }, { AUTH: "{|IF(true;{PASSWORD};x)}" }, host)
+        .secretKeys,
     ).toEqual(new Set(["AUTH"]));
   });
 
   it("returns the same variables when there is nothing to apply", () => {
     const variables = buildVariables({ ENV: "dev" });
-    const host = { variableMap: {}, secretKeys: new Set<string>() };
+    const secretKeys = new Set<string>();
 
-    expect(applyOverrides(variables, {}, host)).toBe(variables);
-    expect(applyOverrides(variables, undefined, host)).toBe(variables);
+    expect(applyOverrides(variables, {}, secretKeys)).toBe(variables);
+    expect(applyOverrides(variables, undefined, secretKeys)).toBe(variables);
+  });
+
+  it("reads no host scope when no override applies", () => {
+    const variables = buildVariables({ ENV: "dev" });
+
+    expect(overrideScope(variables, undefined, {})).toBeUndefined();
+    expect(overrideScope(variables, { REGION: "eu" }, {})).toBeUndefined();
   });
 });
 
