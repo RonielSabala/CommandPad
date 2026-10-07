@@ -234,6 +234,10 @@ Answering true or false: `isdigit`, `isnumeric`, `isalpha`, `isalnum`, `isspace`
 `isascii`, `isupper`, `islower`, `istitle`, `isempty`, and `startswith(a;b;...)`,
 `endswith(a;b;...)`, `contains(a;b;...)`, which are true when any argument matches.
 
+A `!` written immediately before any of these keywords, or before any combinator below
+except `IF`, flips the answer: `{X|!isempty}`, `{FILE|!endswith(.zip)}`,
+`{|!EQUALS(a;b)}`. On anything else it leaves the reference unresolved.
+
 Combining answers, on a reference with no key. `true`, `false`, `1` and `0` are all read
 as booleans:
 

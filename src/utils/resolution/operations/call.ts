@@ -29,6 +29,8 @@ export interface CallOperationSpec {
    * and one unresolved reference fails the call.
    */
   verbatimFrom?: number;
+  /** Whether a leading negation mark may flip the answer. */
+  negatable?: true;
   /** Every keyword the call answers to, mapped to what that spelling builds. */
   builders: Record<string, CallBuilder | undefined>;
 }
@@ -62,6 +64,7 @@ export function defineCallOperation(
       keyword,
       arity: spec.arity,
     })),
+    negatable: spec.negatable,
     parse: (operation) => {
       const groups = CallOperationRegex.exec(operation.text)?.groups;
       const build = groups && spec.builders[groups[CallGroup.KEYWORD]];

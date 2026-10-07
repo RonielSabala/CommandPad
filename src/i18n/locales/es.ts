@@ -1222,6 +1222,8 @@ Si algo sale mal, deshazlo en este orden:
 | \`EQUALS(a; b)\` | Verdadero cuando los dos textos son idénticos |
 | \`NOTEQUALS(a; b)\` | Verdadero cuando son distintos |
 | \`EQUALSIGNORECASE(a; b)\` | Verdadero sin mirar mayúsculas, así \`PROD\` y \`prod\` cuentan como iguales |`,
+      negation:
+        "`NOT` no es la única forma de invertir una respuesta. Un `!` justo delante de cualquiera de estos nombres hace lo mismo con lo que devuelva la llamada, así que `{|!AND(a; b)}` y `{|NOT({|AND(a; b)})}` dicen lo mismo con una referencia en lugar de dos.",
       demoHint:
         "Debajo, las dos comprobaciones tienen que cumplirse: cambia la rama, o escribe una letra en el puerto, y la línea pasa a `false`:",
       booleans:

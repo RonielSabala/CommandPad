@@ -1197,6 +1197,8 @@ If something goes wrong, undo it in this order:
 | \`EQUALS(a; b)\` | True when the two texts are identical |
 | \`NOTEQUALS(a; b)\` | True when they differ |
 | \`EQUALSIGNORECASE(a; b)\` | True ignoring capitals, so \`PROD\` and \`prod\` count as the same |`,
+      negation:
+        "`NOT` is not the only way to flip an answer. A `!` right before any of these keywords does the same to whatever the call returns, so `{|!AND(a; b)}` and `{|NOT({|AND(a; b)})}` say the same thing with one reference instead of two.",
       demoHint:
         "Below, both checks have to pass \u2014 switch the branch, or put a letter in the port, and the line turns to `false`:",
       booleans:

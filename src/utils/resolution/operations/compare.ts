@@ -23,6 +23,7 @@ const equalsIgnoreCase: Comparison = (left, right) =>
 
 export const COMPARE_OPERATION: OperationDefinition = defineCallOperation({
   arity: CompareSyntax.ARITY,
+  negatable: true,
   builders: {
     [CompareSyntax.EQUALS]: compareBuilder(equals),
     [CompareSyntax.NOT_EQUALS]: compareBuilder(

@@ -4,6 +4,7 @@ import { CallSyntax, VariableSyntax } from "@/common/variableSyntax";
 import {
   getTokenKey,
   openReferenceAt,
+  readNegation,
   splitReferenceBody,
 } from "@/utils/resolution";
 
@@ -21,6 +22,18 @@ const COMPLETABLE: Record<ReferenceChunk, (typed: string) => boolean> = {
     !typed.includes(VariableSyntax.PARAM_ASSIGNMENT),
   [ReferenceChunk.OPERATION]: (typed) =>
     !typed.includes(CallSyntax.ARGUMENT_OPEN),
+};
+
+function trimmedStart(typed: string): number {
+  return typed.length - typed.trimStart().length;
+}
+
+/** Where the name an editor completes begins inside the chunk being typed. */
+const NAME_START: Record<ReferenceChunk, (typed: string) => number> = {
+  [ReferenceChunk.KEY]: trimmedStart,
+  [ReferenceChunk.PARAM]: trimmedStart,
+  [ReferenceChunk.OPERATION]: (typed) =>
+    readNegation(typed)?.length ?? trimmedStart(typed),
 };
 
 /** Which chunks a reference opened on an earlier line still completes. */
@@ -74,7 +87,7 @@ export function readCompletionContext(
     return null;
   }
 
-  const leading = typedText.length - typedText.trimStart().length;
+  const leading = NAME_START[chunk](typedText);
   return {
     chunk,
     key: getTokenKey(reference.raw),

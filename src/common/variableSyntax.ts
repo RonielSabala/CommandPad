@@ -167,6 +167,7 @@ export const BooleanSyntax = {
   FALSE: "false",
   TRUE_ALT: "1",
   FALSE_ALT: "0",
+  NEGATE: "!",
 } as const;
 
 export const TestSyntax = {
@@ -211,6 +212,7 @@ export const IfSyntax = {
 } as const;
 
 const Ref = escapeSyntax(VariableSyntax);
+const Bool = escapeSyntax(BooleanSyntax);
 const Call = escapeSyntax(CallSyntax);
 const Operation = escapeSyntax(OperationSyntax);
 const DateTok = escapeSyntax(DateToken);
@@ -277,6 +279,10 @@ export const CalcTokenRegex = globalRegex(
 
 export const NumberValueRegex = new RegExp(
   anchored(sequence(optional(anyOf(Calc.PLUS, Calc.MINUS)), CALC_NUMBER)),
+);
+
+export const NegationPrefixRegex = new RegExp(
+  atStart(sequence(zeroOrMore(WHITESPACE), Bool.NEGATE)),
 );
 
 export const LenOperationRegex = new RegExp(anchored(Operation.LEN));

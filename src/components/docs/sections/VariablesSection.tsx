@@ -830,6 +830,7 @@ export function VariableLogicDocs() {
       <Prose text={t.docs.variableLogic.table} />
       <Prose text={t.docs.variableLogic.compare} />
       <Prose text={t.docs.variableLogic.compareTable} />
+      <Prose text={t.docs.variableLogic.negation} />
       <Prose text={t.docs.variableLogic.demoHint} />
       <DemoWorkspace
         tabs={[

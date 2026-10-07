@@ -666,6 +666,7 @@ export interface Messages {
       table: string;
       compare: string;
       compareTable: string;
+      negation: string;
       demoHint: string;
       booleans: string;
     };
