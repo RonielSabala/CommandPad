@@ -122,6 +122,7 @@ export const en: Messages = {
     duplicate: (count) =>
       count === 1 ? "Duplicate variable" : "Duplicate variables",
     renameCase: "Change key case",
+    clearValues: (count) => (count === 1 ? "Clear value" : "Clear values"),
     remove: (count) => (count === 1 ? "Remove variable" : "Remove variables"),
     selected: (count) =>
       count === 1 ? "1 variable selected" : `${count} variables selected`,
@@ -934,6 +935,8 @@ If something goes wrong, undo it in this order:
         `A value can also be a fixed set of choices, like an environment or a region, instead of free text: pick **${makeEnumLabel}** from a variable's **${variableActionsLabel}** menu to turn its value into a combo box, where each choice can be removed and a box at the bottom adds a new one.`,
       enumsDemoHint:
         "Below, `env` can only be one of three clusters. Pick another one and the command follows, with no chance of a typo in the context name:",
+      clearValues: (clearValuesLabel) =>
+        `In the variables editor, a row's actions menu also offers **${clearValuesLabel}**, which empties the value and leaves the key.`,
     },
     variableReferences: {
       intro:

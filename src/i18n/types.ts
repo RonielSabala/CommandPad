@@ -130,6 +130,7 @@ export interface Messages {
     actions: string;
     duplicate: (count: number) => string;
     renameCase: string;
+    clearValues: (count: number) => string;
     remove: (count: number) => string;
     selected: (count: number) => string;
     dragResizeSplit: string;
@@ -538,6 +539,7 @@ export interface Messages {
       constantsDemoHint: string;
       enums: (variableActionsLabel: string, makeEnumLabel: string) => string;
       enumsDemoHint: string;
+      clearValues: (clearValuesLabel: string) => string;
     };
     variableReferences: {
       intro: string;

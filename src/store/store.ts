@@ -374,6 +374,7 @@ export interface StoreState {
   addVariableOption: (variableId: string, option: string) => void;
   removeVariableOption: (variableId: string, option: string) => void;
   applyVariableKeyCase: (variableId: string, keyword: string) => void;
+  clearVariableValues: (variableId: string) => void;
   reorderVariables: (sourceId: string, targetId: string) => void;
   clearVariableFlash: (variableId: string) => void;
   consumeVariableFocus: () => void;
@@ -2992,6 +2993,26 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             applyOperations(key, [{ text: keyword }], { key }).text,
           );
         }
+      },
+
+      clearVariableValues: (variableId) => {
+        const state = get();
+        if (state.mode === AppMode.READ) {
+          return;
+        }
+
+        const targets = targetVariableIds(state, variableId);
+
+        set((s) =>
+          withActiveTab(s, (tab) => ({
+            ...tab,
+            variables: tab.variables.map((v) =>
+              targets.has(v.id) && v.value ? { ...v, value: "" } : v,
+            ),
+          })),
+        );
+
+        get().saveState();
       },
 
       reorderVariables: (sourceId, targetId) => {

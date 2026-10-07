@@ -11,6 +11,7 @@ import {
   AlphabetUppercase,
   Collection,
   CursorText,
+  Eraser,
   ListUl,
 } from "react-bootstrap-icons";
 
@@ -44,6 +45,7 @@ export function VariableActionsMenu({
   const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
   const applyVariableKeyCase = useStore((state) => state.applyVariableKeyCase);
   const addVariableSection = useStore((state) => state.addVariableSection);
+  const clearVariableValues = useStore((state) => state.clearVariableValues);
 
   return (
     <VariableRowMenu
@@ -105,6 +107,13 @@ export function VariableActionsMenu({
               </ContextMenuItem>
             ))}
           </ContextMenuSubmenu>
+
+          <ContextMenuItem
+            icon={<Eraser className={CssClass.ICON_MD} />}
+            onSelect={() => clearVariableValues(variableId)}
+          >
+            {t.variables.clearValues(count)}
+          </ContextMenuItem>
 
           {sectioned && (
             <ContextMenuItem

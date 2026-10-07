@@ -122,6 +122,7 @@ export const es: Messages = {
     duplicate: (count) =>
       count === 1 ? "Duplicar variable" : "Duplicar variables",
     renameCase: "Cambiar capitalización de la clave",
+    clearValues: (count) => (count === 1 ? "Vaciar valor" : "Vaciar valores"),
     remove: (count) =>
       count === 1 ? "Eliminar variable" : "Eliminar variables",
     selected: (count) =>
@@ -957,6 +958,8 @@ Si algo sale mal, deshazlo en este orden:
         `Un valor también puede ser un conjunto fijo de opciones, como un entorno o una región, en lugar de texto libre: elige **${makeEnumLabel}** en el menú de **${variableActionsLabel}** de una variable para convertir su valor en un combo box, donde cada opción puede quitarse y una casilla al final añade una nueva.`,
       enumsDemoHint:
         "Abajo, `env` solo puede ser uno de tres clústeres. Elige otro y el comando lo sigue, sin posibilidad de equivocarte al escribir el contexto:",
+      clearValues: (clearValuesLabel) =>
+        `En el editor de variables, el menú de acciones de una fila también ofrece **${clearValuesLabel}**, que vacía el valor y deja igual la clave.`,
     },
     variableReferences: {
       intro:
