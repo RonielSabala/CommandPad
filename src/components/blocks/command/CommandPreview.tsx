@@ -17,7 +17,7 @@ import { useClampSurface } from "@/hooks/useClampSurface";
 import { useTranslation } from "@/i18n";
 import {
   countCommandLines,
-  hasUnresolvedTokens,
+  hasUnresolvedSegments,
   isMaskedSegment,
   resolveCommandText,
   resolveCommandToString,
@@ -46,19 +46,24 @@ function HighlightedLines({
   className: string;
   title?: string;
 }) {
-  return splitLines(text).map((line, i) => {
+  const lines = splitLines(text);
+  const lastLineIdx = lines.length - 1;
+
+  return lines.map((line, i) => {
     const content = stripEnd(line, CARRIAGE_RETURN);
-    const isBlank = content === "";
+    const isBlank = content === "" && i > 0 && i < lastLineIdx;
 
     return (
       <Fragment key={i}>
         {i > 0 && LINE_BREAK}
-        <span
-          className={classNames(className, isBlank && "token-nesting-blank")}
-          {...tooltip(title, TooltipVariant.CODE)}
-        >
-          {isBlank ? NON_BREAKING_SPACE : content}
-        </span>
+        {(content !== "" || isBlank) && (
+          <span
+            className={classNames(className, isBlank && "token-nesting-blank")}
+            {...tooltip(title, TooltipVariant.CODE)}
+          >
+            {isBlank ? NON_BREAKING_SPACE : content}
+          </span>
+        )}
       </Fragment>
     );
   });
@@ -74,7 +79,10 @@ function NestedText({ segment }: { segment: CommandSegment }) {
     <HighlightedLines
       key={i}
       text={span.text}
-      className={`token-nesting-${span.depth}`}
+      className={classNames(
+        `token-nesting-${span.depth}`,
+        span.unresolved && "token-nesting-unresolved",
+      )}
       title={span.source}
     />
   ));
@@ -106,15 +114,11 @@ export function CommandPreview({
     () => resolveCommandText(text, variableMap),
     [text, variableMap],
   );
-  const unresolved = useMemo(
-    () => hasUnresolvedTokens(text, variableMap),
-    [text, variableMap],
-  );
   const lines = useMemo(
     () => countCommandLines(segments, secretKeys),
     [segments, secretKeys],
   );
-
+  const unresolved = useMemo(() => hasUnresolvedSegments(segments), [segments]);
   const clamp = useClampSurface(
     clampId,
     ClampSurface.PREVIEW,

@@ -545,6 +545,8 @@ export interface Messages {
       shades: string;
       shadesDemoHint: string;
       shadesHover: string;
+      shadesUnresolved: string;
+      shadesUnresolvedDemoHint: string;
       circular: string;
     };
     parameterizedPlaceholders: {
@@ -671,6 +673,7 @@ export interface Messages {
       intro: string;
       table: string;
       demoHint: string;
+      partialBranch: string;
     };
     multilineReferences: {
       intro: string;

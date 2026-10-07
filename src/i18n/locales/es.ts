@@ -969,6 +969,10 @@ Si algo sale mal, deshazlo en este orden:
         "Aquí `HOST` se construye a partir de `SERVICE`, que a su vez se construye a partir de `NAME`, así que el comando resuelto luce los tres tonos a la vez:",
       shadesHover:
         "Cuando los tonos no bastan, pasa el cursor sobre cualquier fragmento resaltado de un comando resuelto: te dice la variable que lo escribió.",
+      shadesUnresolved:
+        "Una referencia que no se resuelve se cuenta igual, en rojo en vez de verde: el resto del comando sigue resolviéndose y solo se marca la parte rota, a la profundidad en la que está. Así un vistazo también te dice qué tan hondo está el problema, no solo que lo hay.",
+      shadesUnresolvedDemoHint:
+        "Debajo, `BUCKET` referencia `{REGIN}`, un error de tipeo de `REGION`, y es la única parte en rojo. Corrige el nombre en el valor y verás cómo pasa a verde:",
       circular:
         "Las referencias circulares son seguras: si dos variables se referencian entre sí, la app detecta el bucle y deja la referencia como texto plano.",
     },
@@ -1233,6 +1237,8 @@ Si algo sale mal, deshazlo en este orden:
 | \`si_no\` | El texto que se usa cuando es falsa. Omítelo para no poner nada |`,
       demoHint:
         "Debajo, cambia `LEVEL` para que la primera opción aparezca y desaparezca, y escribe una letra en `RETRIES` para que la segunda desaparezca:",
+      partialBranch:
+        "Una rama se devuelve tal como la escribiste, así que una referencia dentro de ella que no se resuelva se marca en rojo y el resto de la rama sigue resolviéndose. La rama que nadie tomó no se lee nunca, así que una referencia rota ahí no cuesta nada. La condición es la única parte que debe resolverse: sin una respuesta no hay con qué elegir, así que toda la referencia se queda tal cual.",
     },
     multilineReferences: {
       intro:

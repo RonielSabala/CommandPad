@@ -153,6 +153,7 @@ export interface ResolvedSpan {
   text: string;
   depth: number;
   source?: string;
+  unresolved?: boolean;
 }
 
 export interface CommandSegment {

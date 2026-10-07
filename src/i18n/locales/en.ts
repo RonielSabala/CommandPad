@@ -946,6 +946,10 @@ If something goes wrong, undo it in this order:
         "Here `HOST` is built from `SERVICE`, which is built from `NAME`, so the resolved command wears all three tints at once:",
       shadesHover:
         "When the tints alone are not enough, hover over any highlighted piece of a resolved command: it names the variable that wrote it.",
+      shadesUnresolved:
+        "A reference that does not resolve is counted the same way, in red instead of green: the rest of the command still resolves and only the broken part is marked, at the depth it sits at. So one glance also tells you how deep a problem is, not just that there is one.",
+      shadesUnresolvedDemoHint:
+        "Below, `BUCKET` references `{REGIN}`, a typo for `REGION`, which is the only part in red. Fix the typo in the value and watch it turn green:",
       circular:
         "Circular references are safe: if two variables reference each other, the app detects the loop and leaves the reference as plain text.",
     },
@@ -1208,6 +1212,8 @@ If something goes wrong, undo it in this order:
 | \`else\` | The text used when it is false. Leave it out for nothing at all |`,
       demoHint:
         "Below, change `LEVEL` to make the first flag come and go, and put a letter in `RETRIES` to make the second one disappear:",
+      partialBranch:
+        "A branch is handed back as you wrote it, so a reference inside it that does not resolve is marked in red and the rest of the branch still resolves. The branch nobody took is never read at all, so a broken reference parked there costs nothing. The condition is the one part that must resolve: without an answer there is nothing to choose with, so the whole reference stays as written.",
     },
     multilineReferences: {
       intro:

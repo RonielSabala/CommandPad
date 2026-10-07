@@ -21,7 +21,11 @@ export {
   renameCommandTokens,
   renameValueTokens
 } from "./rename";
-export { countCommandLines, isMaskedSegment } from "./segments";
+export {
+  countCommandLines,
+  hasUnresolvedSegments,
+  isMaskedSegment
+} from "./segments";
 export {
   braceToken,
   braceTokenKeyRange,

@@ -1,6 +1,7 @@
 import { VaultPrompt } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
+
 import { demoCommand, demoVariable } from "../demos/demoSeeds";
 import { DemoVariableRows, DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
@@ -167,6 +168,22 @@ export function VariableReferencesDocs() {
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.variableReferences.shadesHover} />
+      <Prose text={t.docs.variableReferences.shadesUnresolved} />
+      <Prose text={t.docs.variableReferences.shadesUnresolvedDemoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("REGION", "eu-west-1"),
+              demoVariable("BUCKET", "backups-{REGIN}"),
+            ],
+            blocks: [demoCommand("aws s3 ls s3://{BUCKET}/nightly")],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
       <Prose text={t.docs.variableReferences.circular} />
     </>
   );
@@ -866,6 +883,7 @@ export function VariableConditionalDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variableConditional.partialBranch} />
     </>
   );
 }

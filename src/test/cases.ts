@@ -1,3 +1,4 @@
+import { isString } from "@/utils/typeGuards";
 import { describe, expect, it } from "vitest";
 
 import type { VariableSpec } from "./runbook";
@@ -9,7 +10,22 @@ import { runbook } from "./runbook";
  */
 export const RAW = Symbol("raw");
 
-export type Expected = string | typeof RAW;
+/**
+ * The expectation for a command that resolves while a reference nested inside it
+ * stayed raw.
+ */
+const PARTIAL = Symbol("partial");
+
+interface PartialExpectation {
+  [PARTIAL]: true;
+  text: string;
+}
+
+export function partial(text: string): PartialExpectation {
+  return { [PARTIAL]: true, text };
+}
+
+export type Expected = string | typeof RAW | PartialExpectation;
 
 /** One command and what resolving it should produce. */
 export type ResolutionCase = readonly [command: string, expected: Expected];
@@ -20,7 +36,13 @@ interface ResolutionSpec {
 }
 
 function label(expected: Expected): string {
-  return expected === RAW ? "renders raw" : JSON.stringify(expected);
+  if (expected === RAW) {
+    return "renders raw";
+  }
+
+  return isString(expected)
+    ? JSON.stringify(expected)
+    : `${JSON.stringify(expected.text)} with a raw reference`;
 }
 
 /** Declares one test per command, all against the same variables. */
@@ -36,8 +58,11 @@ export function checkResolution(title: string, spec: ResolutionSpec): void {
           return;
         }
 
-        expect(book.resolve(command)).toBe(expected);
-        expect(book.hasUnresolved(command)).toBe(false);
+        const partially = !isString(expected);
+        expect(book.resolve(command)).toBe(
+          partially ? expected.text : expected,
+        );
+        expect(book.hasUnresolved(command)).toBe(partially);
       });
     }
   });
