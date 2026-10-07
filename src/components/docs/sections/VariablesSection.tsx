@@ -725,6 +725,52 @@ export function VariableDateDocs() {
   );
 }
 
+export function VariableCalcDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableCalc.intro} />
+      <Prose text={t.docs.variableCalc.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("MINUTES", "5")],
+            blocks: [demoCommand("sleep {|calc({MINUTES} * 60)}")],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableCalc.table} />
+      <Prose text={t.docs.variableCalc.rules} />
+      <Prose text={t.docs.variableCalc.rounding} />
+      <Prose text={t.docs.variableCalc.roundingDemoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("PHOTOS", "1250"),
+              demoVariable("PER_FOLDER", "400"),
+            ],
+            blocks: [
+              demoCommand(
+                'echo "{PHOTOS} photos need {|calc({PHOTOS} / {PER_FOLDER})|ceil} folders"',
+              ),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableCalc.roundingTable} />
+      <Prose text={t.docs.variableCalc.roundingRules} />
+    </>
+  );
+}
+
 export function VariableBooleanDocs() {
   const t = useTranslation();
 

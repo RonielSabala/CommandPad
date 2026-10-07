@@ -228,10 +228,10 @@ function EmbeddedVariable({
         <>
           <div
             className={classNames(
-              CssClass.VARIABLE_EDITOR_KEY,
               "embedded-variable-key",
-              "no-ligatures",
               !key && "is-empty",
+              CssClass.NO_LIGATURES,
+              CssClass.VARIABLE_EDITOR_KEY,
               isConstantVariableKey(key) && CssClass.IS_CONSTANT,
             )}
             {...tooltip(
@@ -244,12 +244,16 @@ function EmbeddedVariable({
 
           {overridden && (
             <button
-              className="btn btn-flat-icon embedded-variable-reset"
+              className={classNames(
+                "embedded-variable-reset",
+                CssClass.BTN,
+                CssClass.BTN_FLAT_ICON,
+              )}
               onClick={() => onChange(variable, variable.value)}
               aria-label={t.runbookBlock.resetOverride}
               {...tooltip(t.runbookBlock.resetOverride)}
             >
-              <ArrowCounterclockwise className="icon-md" />
+              <ArrowCounterclockwise className={CssClass.ICON_MD} />
             </button>
           )}
         </>

@@ -23,7 +23,7 @@ function call(arity: number, operation: string): string | null {
   }
 
   const output = transform("", CONTEXT);
-  return isString(output) ? output : output.text;
+  return output === null || isString(output) ? output : output.text;
 }
 
 describe("defineCallOperation", () => {

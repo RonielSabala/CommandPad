@@ -1,4 +1,5 @@
 import { CloudSyncConfig } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import { ExportFormat } from "@/common/enums";
 import {
   FilenameInput,
@@ -102,7 +103,9 @@ export function CloudEntryRow({
   if (draft !== null) {
     return (
       <div className="cloud-browser-row cloud-browser-row-editing">
-        <EntryIcon className="icon-md cloud-browser-row-icon" />
+        <EntryIcon
+          className={classNames("cloud-browser-row-icon", CssClass.ICON_MD)}
+        />
         <FilenameInput
           value={draft}
           extension={entry.isFolder ? undefined : ExportFormat.JSON}
@@ -158,7 +161,9 @@ export function CloudEntryRow({
       />
 
       <span className="cloud-browser-row-name-cell">
-        <EntryIcon className="icon-md cloud-browser-row-icon" />
+        <EntryIcon
+          className={classNames("cloud-browser-row-icon", CssClass.ICON_MD)}
+        />
 
         <span className="cloud-browser-row-text">
           <span className={NAME_CLASS} {...tooltip(activateTitle)}>

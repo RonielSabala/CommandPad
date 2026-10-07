@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { classNames } from "@/utils/string";
 import { useRef, useState, type ReactNode } from "react";
@@ -23,7 +24,7 @@ export function ActionsMenu({
   children,
   className,
   align = ContextMenuAlign.START,
-  triggerClassName = "btn btn-flat-icon",
+  triggerClassName = classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON),
   horizontal = false,
 }: Props) {
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -59,9 +60,9 @@ export function ActionsMenu({
         aria-expanded={anchor !== null}
       >
         {horizontal ? (
-          <ThreeDots className="icon-md" />
+          <ThreeDots className={CssClass.ICON_MD} />
         ) : (
-          <ThreeDotsVertical className="icon-md" />
+          <ThreeDotsVertical className={CssClass.ICON_MD} />
         )}
       </button>
 

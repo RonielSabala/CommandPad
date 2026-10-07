@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { CloudProvider } from "@/common/enums";
 import { SearchInput } from "@/components/common/SearchInput";
 import { Spinner } from "@/components/common/Spinner";
@@ -164,11 +165,15 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
           </p>
 
           <button
-            className="btn btn-lg btn-primary"
+            className={classNames(
+              CssClass.BTN,
+              CssClass.BTN_LG,
+              CssClass.BTN_PRIMARY,
+            )}
             onClick={() => void signInToCloud()}
             disabled={loading}
           >
-            <ProviderIcon className="icon-md" />
+            <ProviderIcon className={CssClass.ICON_MD} />
             {signInLabel}
           </button>
         </div>
@@ -179,7 +184,7 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
           <div className="cloud-browser-account">
             <span>{t.cloudModal.signedInAs(accountLabel ?? "")}</span>
             <button
-              className="btn btn-accent"
+              className={classNames(CssClass.BTN, CssClass.BTN_ACCENT)}
               onClick={() => void signOutOfCloud()}
             >
               {t.cloudModal.signOut}
@@ -240,7 +245,12 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
               </div>
 
               {busy && (
-                <p className="cloud-browser-status no-user-select">
+                <p
+                  className={classNames(
+                    "cloud-browser-status",
+                    CssClass.NO_USER_SELECT,
+                  )}
+                >
                   <span className="cloud-browser-status-label">
                     <Spinner />
                     {t.common.loading}

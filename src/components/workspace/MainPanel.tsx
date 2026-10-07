@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { RunbookView } from "@/common/enums";
 import { RunbookVariables } from "@/components/variables/RunbookVariables";
 import { getRunbookView, useStore } from "@/store/store";
@@ -19,7 +20,7 @@ export function MainPanel() {
   const View = RUNBOOK_VIEWS[view];
 
   return (
-    <main id="main-panel" className="panel-card">
+    <main id="main-panel" className={CssClass.PANEL_CARD}>
       <TabsBar />
       <View />
     </main>

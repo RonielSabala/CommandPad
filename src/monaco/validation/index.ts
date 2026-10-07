@@ -13,6 +13,7 @@ const VALIDATORS: Record<CodeLanguage, CodeValidator | null> = {
   [CodeLanguage.BASH]: null,
   [CodeLanguage.POWERSHELL]: null,
   [CodeLanguage.JSON]: null,
+  [CodeLanguage.SQL]: null,
   [CodeLanguage.XML]: validateXml,
   [CodeLanguage.YAML]: null,
 };

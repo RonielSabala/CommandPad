@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { EventType, Key } from "@/common/constants/events";
 import type { Block, ImageBlock } from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -5,6 +6,7 @@ import { Modal } from "@/components/modals/Modal";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { isFilledImage } from "@/utils/image";
+import { classNames } from "@/utils/string";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "react-bootstrap-icons";
 
@@ -97,7 +99,7 @@ export function ImageLightbox() {
     <Modal
       open={!!current}
       onClose={closeImageViewer}
-      className="modal-lightbox no-user-select"
+      className={classNames("modal-lightbox", CssClass.NO_USER_SELECT)}
     >
       <div className="image-lightbox">
         {loadFailed ? (
@@ -118,7 +120,11 @@ export function ImageLightbox() {
         {total > 1 && (
           <>
             <button
-              className="image-lightbox-nav btn btn-icon"
+              className={classNames(
+                "image-lightbox-nav",
+                CssClass.BTN,
+                CssClass.BTN_ICON,
+              )}
               {...tooltip(t.image.previous)}
               aria-label={t.image.previous}
               disabled={index === 0}
@@ -128,7 +134,11 @@ export function ImageLightbox() {
             </button>
 
             <button
-              className="image-lightbox-nav is-next btn btn-icon"
+              className={classNames(
+                "image-lightbox-nav is-next",
+                CssClass.BTN,
+                CssClass.BTN_ICON,
+              )}
               {...tooltip(t.image.next)}
               aria-label={t.image.next}
               disabled={index === total - 1}

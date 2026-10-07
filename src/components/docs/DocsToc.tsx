@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import {
   DOCS_SECTION_ORDER,
   DocsSectionLevel,
@@ -53,23 +54,25 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
 
   return (
     <ResizablePanel panelId={PanelId.DOCS_TOC} id="docs-toc">
-      <div id="docs-toc-card" className="panel-card">
+      <div id="docs-toc-card" className={CssClass.PANEL_CARD}>
         <button
           id="docs-toc-header"
-          className="no-user-select"
+          className={CssClass.NO_USER_SELECT}
           {...tooltip(toggleAllLabel)}
           aria-label={toggleAllLabel}
           aria-expanded={!collapse.allCollapsed}
           onClick={collapse.toggleAll}
         >
-          <span id="docs-toc-title" className="section-title">
+          <span id="docs-toc-title" className={CssClass.SECTION_TITLE}>
             {t.docs.meta.tocTitle}
           </span>
 
           <SidebarSectionChevronIcon
             className={classNames(
-              "docs-toc-chevron icon-md icon-bold",
+              "docs-toc-chevron",
               collapse.allCollapsed && "is-collapsed",
+              CssClass.ICON_MD,
+              CssClass.ICON_BOLD,
             )}
           />
         </button>
@@ -83,9 +86,9 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
                 href={`#${id}`}
                 className={classNames(
                   "docs-toc-item",
-                  "no-user-select",
-                  level === DocsSectionLevel.SUBSECTION && "docs-toc-sub",
                   id === highlightId && "docs-toc-active",
+                  level === DocsSectionLevel.SUBSECTION && "docs-toc-sub",
+                  CssClass.NO_USER_SELECT,
                 )}
                 onClick={(event) => {
                   event.preventDefault();
@@ -110,8 +113,10 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
                   >
                     <SidebarSectionChevronIcon
                       className={classNames(
-                        "docs-toc-chevron icon-md icon-bold",
+                        "docs-toc-chevron",
                         collapse.isCollapsed(id) && "is-collapsed",
+                        CssClass.ICON_MD,
+                        CssClass.ICON_BOLD,
                       )}
                     />
                   </span>

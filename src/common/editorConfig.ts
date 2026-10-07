@@ -99,22 +99,29 @@ export const MonacoTheme = {
   SLIDER_OPACITY: 0.07,
   SLIDER_HOVER_OPACITY: 0.1,
   SLIDER_ACTIVE_OPACITY: 0.15,
+  BASE_STRING_DARK: "#ce9178",
+  BASE_STRING_LIGHT: "#a31515",
 } as const;
 
 export const MonacoTokenScope = {
-  JSON_KEY: "string.key.json",
-  JSON_NUMBER: "number.json",
-  JSON_KEYWORD: "keyword.json",
   NUMBER: "number",
   CONSTANT: "constant",
   VARIABLE: "variable",
   KEYWORD: "keyword",
   COMMENT: "comment",
-  ATTRIBUTE_NAME: "attribute.name",
-  DELIMITER: "delimiter",
   REGEXP: "regexp",
+  DELIMITER: "delimiter",
+  ATTRIBUTE_NAME: "attribute.name",
   TAG: "tag",
   TYPE: "type",
+  // JSON
+  JSON_KEY: "string.key.json",
+  JSON_NUMBER: "number.json",
+  JSON_KEYWORD: "keyword.json",
+  // SQL
+  SQL_STRING: "string.sql",
+  SQL_PREDEFINED: "predefined.sql",
+  SQL_OPERATOR: "operator.sql",
 } as const;
 
 export const MonacoMarker = {
@@ -263,6 +270,7 @@ export const COMMAND_LANGUAGE_ORDER = [
   CodeLanguage.BASH,
   CodeLanguage.POWERSHELL,
   CodeLanguage.JSON,
+  CodeLanguage.SQL,
   CodeLanguage.XML,
   CodeLanguage.YAML,
 ] as const;
@@ -272,6 +280,7 @@ export const CODE_LANGUAGE_LABEL: Record<CodeLanguage, string> = {
   [CodeLanguage.BASH]: "Bash",
   [CodeLanguage.POWERSHELL]: "PowerShell",
   [CodeLanguage.JSON]: "JSON",
+  [CodeLanguage.SQL]: "SQL",
   [CodeLanguage.XML]: "XML",
   [CodeLanguage.YAML]: "YAML",
 };

@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EditorToggleChevronIcon } from "@/components/icons";
 import { classNames } from "@/utils/string";
@@ -15,7 +16,7 @@ export function EditorToggle({ collapsed, label, onToggle }: Props) {
   return (
     <button
       className={classNames(
-        "btn",
+        CssClass.BTN,
         "toggle-editor-btn",
         collapsed && "editor-collapsed",
       )}
@@ -23,7 +24,13 @@ export function EditorToggle({ collapsed, label, onToggle }: Props) {
       aria-label={label}
       {...tooltip(label)}
     >
-      <EditorToggleChevronIcon className="toggle-editor-icon icon-md icon-bold" />
+      <EditorToggleChevronIcon
+        className={classNames(
+          "toggle-editor-icon",
+          CssClass.ICON_MD,
+          CssClass.ICON_BOLD,
+        )}
+      />
     </button>
   );
 }

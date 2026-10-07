@@ -79,12 +79,19 @@ export function VariableEditor({
 
           {isSecret && (
             <button
-              className="btn btn-icon variable-editor-secret-btn"
+              className={classNames(
+                "variable-editor-secret-btn",
+                CssClass.BTN,
+                CssClass.BTN_ICON,
+              )}
               onClick={() => toggleVariableSecret(variableId)}
               aria-label={t.variables.reveal(1)}
               {...tooltip(t.variables.reveal(1))}
             >
-              <EyeIcon slashed className="icon-md icon-bold" />
+              <EyeIcon
+                slashed
+                className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+              />
             </button>
           )}
         </>

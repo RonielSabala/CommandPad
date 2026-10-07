@@ -32,22 +32,20 @@ export const BlockItem = memo(function BlockItem({
   const [dragging, setDragging] = useState(false);
   const [dragOver, setDragOver] = useState(false);
 
+  const BlockView = getBlockComponent(block.type);
   const disarmTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
 
-  const BlockView = getBlockComponent(block.type);
-  const blockClass = classNames(
-    CssClass.BLOCK_ITEM,
-    dragging && CssClass.DRAGGING,
-    dragOver && CssClass.DRAG_OVER,
-    isSelected && "block-selected",
-    isFlashing && CssClass.DUPLICATE_FLASH,
-  );
-
   return (
     <div
-      className={blockClass}
+      className={classNames(
+        CssClass.BLOCK_ITEM,
+        dragging && CssClass.DRAGGING,
+        dragOver && CssClass.DRAG_OVER,
+        isFlashing && CssClass.DUPLICATE_FLASH,
+        isSelected && "block-selected",
+      )}
       {...{ [DataAttr.BLOCK_ID]: block.id }}
       draggable={draggable}
       onDragStart={(event) => {

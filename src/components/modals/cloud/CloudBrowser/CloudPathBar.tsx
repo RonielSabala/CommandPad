@@ -1,4 +1,5 @@
 import { CloudSyncConfig } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import { HistoryDirection } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
@@ -37,23 +38,27 @@ export function CloudPathBar({
   return (
     <div className="cloud-browser-path-bar">
       <button
-        className="btn btn-flat-icon"
+        className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
         onClick={() => navigateCloudHistory(HistoryDirection.BACK)}
         disabled={historyIndex === 0}
         aria-label={t.cloudModal.navigateBack}
         {...tooltip(t.cloudModal.navigateBack)}
       >
-        <ArrowLeft className="icon-md icon-semibold" />
+        <ArrowLeft
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
+        />
       </button>
 
       <button
-        className="btn btn-flat-icon"
+        className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
         onClick={() => navigateCloudHistory(HistoryDirection.FORWARD)}
         disabled={historyIndex >= historyLength - 1}
         aria-label={t.cloudModal.navigateForward}
         {...tooltip(t.cloudModal.navigateForward)}
       >
-        <ArrowRight className="icon-md icon-semibold" />
+        <ArrowRight
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
+        />
       </button>
 
       <nav className="cloud-browser-path">
@@ -84,17 +89,19 @@ export function CloudPathBar({
       </nav>
 
       <button
-        className="btn btn-flat-icon"
+        className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
         onClick={onStartNewFolder}
         disabled={loading || creatingFolder}
         aria-label={t.cloudModal.newFolder}
         {...tooltip(t.cloudModal.newFolder)}
       >
-        <FolderPlus className="icon-md icon-semibold" />
+        <FolderPlus
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
+        />
       </button>
 
       <button
-        className="btn btn-flat-icon"
+        className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
         onClick={() => void refreshCloudEntries()}
         disabled={loading}
         aria-label={t.cloudModal.refresh}
@@ -102,7 +109,7 @@ export function CloudPathBar({
       >
         <ArrowClockwise
           id="refresh-cloud-files-icon"
-          className={classNames("icon-md icon-semibold")}
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
         />
       </button>
     </div>

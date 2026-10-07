@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { classNames } from "@/utils/string";
 import "./FilenameInput.css";
@@ -36,7 +37,7 @@ export function FilenameInput({
     <div className={classNames("filename-input", `is-${size}`)}>
       <input
         id={id}
-        className="filename-input-field no-ligatures"
+        className={classNames("filename-input-field", CssClass.NO_LIGATURES)}
         value={value}
         spellCheck={false}
         autoComplete="off"

@@ -1,7 +1,9 @@
+import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { AppRoute } from "@/common/constants/routes";
 import { Theme } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import "@/components/docs/DocsHeader.css";
 import "@/components/header/Header.css";
 import { LanguageSelect } from "@/components/header/LanguageSelect";
@@ -9,6 +11,7 @@ import { BookIcon, MoonIcon, SunIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { markHomeVisited } from "@/utils/session";
+import { classNames } from "@/utils/string";
 import { BoxArrowInRight } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
@@ -32,7 +35,7 @@ export function SiteHeader({ title, showDocsLink }: Props) {
       <Link
         to={AppRoute.HOME}
         id="site-logo"
-        className="logo no-user-select"
+        className={classNames("logo", CssClass.NO_USER_SELECT)}
         {...tooltip(t.header.reloadTitle)}
         onKeyDown={(event) => {
           if (event.key === Key.ENTER) {
@@ -45,7 +48,7 @@ export function SiteHeader({ title, showDocsLink }: Props) {
       </Link>
 
       {title && (
-        <span id="docs-header-title" className="no-user-select">
+        <span id="docs-header-title" className={CssClass.NO_USER_SELECT}>
           {title}
         </span>
       )}
@@ -54,44 +57,62 @@ export function SiteHeader({ title, showDocsLink }: Props) {
 
       <div className="header-actions">
         <button
-          className="btn btn-lg btn-flat-icon"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_FLAT_ICON,
+          )}
           onClick={toggleTheme}
           aria-label={toggleThemeLabel}
           {...tooltip(toggleThemeLabel)}
         >
           {isLight ? (
-            <MoonIcon className="icon icon-bold" />
+            <MoonIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           ) : (
-            <SunIcon className="icon icon-bold" />
+            <SunIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           )}
         </button>
 
-        <div className="vertical-divider" />
+        <VerticalDivider />
 
         <LanguageSelect />
 
         {showDocsLink && (
           <>
-            <div className="vertical-divider" />
+            <VerticalDivider />
             <Link
               to={AppRoute.DOCS}
-              className="btn btn-lg btn-flat-icon"
+              className={classNames(
+                CssClass.BTN,
+                CssClass.BTN_LG,
+                CssClass.BTN_FLAT_ICON,
+              )}
               aria-label={t.docs.meta.openDocs}
               {...tooltip(t.docs.meta.openDocs)}
             >
-              <BookIcon className="icon icon-bold" />
+              <BookIcon
+                className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+              />
             </Link>
           </>
         )}
 
-        <div className="vertical-divider" />
+        <VerticalDivider />
 
         <Link
           to={AppRoute.WORKSPACE}
-          className="btn btn-lg btn-primary"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_PRIMARY,
+          )}
           onClick={markHomeVisited}
         >
-          <BoxArrowInRight className="icon" />
+          <BoxArrowInRight className={CssClass.ICON} />
           {t.home.meta.openApp}
         </Link>
       </div>

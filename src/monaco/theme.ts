@@ -118,6 +118,15 @@ function buildTheme(theme: Theme): monaco.editor.IStandaloneThemeData {
       { token: MonacoTokenScope.JSON_KEY, foreground: c.accentText },
       { token: MonacoTokenScope.JSON_NUMBER, foreground: c.constantText },
       { token: MonacoTokenScope.JSON_KEYWORD, foreground: c.constantText },
+      {
+        token: MonacoTokenScope.SQL_STRING,
+        foreground:
+          theme === Theme.LIGHT
+            ? MonacoTheme.BASE_STRING_LIGHT
+            : MonacoTheme.BASE_STRING_DARK,
+      },
+      { token: MonacoTokenScope.SQL_PREDEFINED, foreground: c.accentText },
+      { token: MonacoTokenScope.SQL_OPERATOR, foreground: c.accentText },
     ],
     colors: {
       "editor.background": MonacoTheme.TRANSPARENT,

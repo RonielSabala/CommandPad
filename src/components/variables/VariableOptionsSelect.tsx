@@ -67,12 +67,18 @@ export function VariableOptionsSelect({
         editable
           ? (option) => (
               <button
-                className="btn btn-flat-icon variable-option-remove"
+                className={classNames(
+                  "variable-option-remove",
+                  CssClass.BTN,
+                  CssClass.BTN_FLAT_ICON,
+                )}
                 onClick={() => removeVariableOption(variableId, option)}
                 aria-label={t.variables.removeOption(option)}
                 {...tooltip(t.variables.removeOption(option))}
               >
-                <TrashIcon className="icon-md icon-bold" />
+                <TrashIcon
+                  className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+                />
               </button>
             )
           : undefined
@@ -81,7 +87,10 @@ export function VariableOptionsSelect({
         editable && (
           <div className="variable-option-add-row">
             <input
-              className="variable-option-add no-ligatures"
+              className={classNames(
+                "variable-option-add",
+                CssClass.NO_LIGATURES,
+              )}
               type="text"
               placeholder={t.variables.addOptionPlaceholder}
               value={draft}
@@ -96,13 +105,15 @@ export function VariableOptionsSelect({
               }}
             />
             <button
-              className="btn btn-flat-icon"
+              className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
               onClick={commitDraft}
               disabled={!draft.trim()}
               aria-label={t.variables.addOption}
               {...tooltip(t.variables.addOption)}
             >
-              <PlusIcon className="icon-md icon-bold" />
+              <PlusIcon
+                className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+              />
             </button>
           </div>
         )

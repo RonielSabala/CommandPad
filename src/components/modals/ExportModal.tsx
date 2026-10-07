@@ -1,4 +1,5 @@
 import { EXPORT_SUCCESS_TIMEOUT_MS } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import {
   CloudExportStatus,
   ExportFormat,
@@ -7,6 +8,7 @@ import {
 import { FilenameInput } from "@/components/common/FilenameInput";
 import { Spinner } from "@/components/common/Spinner";
 import { tooltip } from "@/components/common/tooltip/tooltip";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
@@ -72,7 +74,12 @@ function CloudExportStatusView({ onDone }: { onDone: () => void }) {
 
       {status === CloudExportStatus.SUCCESS && (
         <>
-          <CheckCircleFill className="icon-lg cloud-export-icon-success" />
+          <CheckCircleFill
+            className={classNames(
+              "cloud-export-icon-success",
+              CssClass.ICON_LG,
+            )}
+          />
           <p className="cloud-export-status-text">
             {t.exportModal.savedTo(providerName)}
           </p>
@@ -81,16 +88,25 @@ function CloudExportStatusView({ onDone }: { onDone: () => void }) {
 
       {status === CloudExportStatus.ERROR && (
         <>
-          <ExclamationTriangleFill className="icon-lg cloud-export-icon-error" />
+          <ExclamationTriangleFill
+            className={classNames("cloud-export-icon-error", CssClass.ICON_LG)}
+          />
           <p className="cloud-export-status-text">
             {t.exportModal.exportError}
           </p>
           <div className="modal-actions">
-            <button className="btn btn-lg" onClick={closeExportModal}>
+            <button
+              className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+              onClick={closeExportModal}
+            >
               {t.common.close}
             </button>
             <button
-              className="btn btn-lg btn-primary"
+              className={classNames(
+                CssClass.BTN,
+                CssClass.BTN_LG,
+                CssClass.BTN_PRIMARY,
+              )}
               onClick={resetCloudExportStatus}
             >
               {t.exportModal.tryAgain}
@@ -190,7 +206,7 @@ export function ExportModal() {
                 )}
                 onClick={() => setExportDestination(SyncDestination.LOCAL)}
               >
-                <LaptopFill className="icon-md" />
+                <LaptopFill className={CssClass.ICON_MD} />
                 {t.destinationModal.local}
               </button>
 
@@ -205,7 +221,7 @@ export function ExportModal() {
                     )}
                     onClick={() => setExportDestination(provider)}
                   >
-                    <ProviderIcon className="icon-md" />
+                    <ProviderIcon className={CssClass.ICON_MD} />
                     {PROVIDER_NAME[provider]}
                   </button>
                 );
@@ -222,7 +238,7 @@ export function ExportModal() {
                 onClick={() => setPickingFolder(true)}
                 {...tooltip(t.exportModal.chooseFolder)}
               >
-                <FolderFill className="icon-md" />
+                <FolderFill className={CssClass.ICON_MD} />
                 <span className="export-modal-folder-path">
                   {formatCloudPath(folderPath)}
                 </span>
@@ -266,14 +282,21 @@ export function ExportModal() {
           </div>
 
           <div className="modal-actions">
-            <button className="btn btn-lg" onClick={onClose}>
+            <button
+              className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+              onClick={onClose}
+            >
               {t.common.cancel}
             </button>
 
-            <div className="vertical-divider" />
+            <VerticalDivider />
 
             <button
-              className="btn btn-lg btn-primary"
+              className={classNames(
+                CssClass.BTN,
+                CssClass.BTN_LG,
+                CssClass.BTN_PRIMARY,
+              )}
               onClick={handleExport}
               disabled={!canExport}
             >

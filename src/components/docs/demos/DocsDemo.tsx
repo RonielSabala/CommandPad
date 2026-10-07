@@ -30,7 +30,7 @@ export function DocsDemo({ children, onReset, className }: Props) {
 
   return (
     <div ref={setRoot} className={classNames("docs-demo", className)}>
-      <span className="docs-demo-label no-user-select">
+      <span className={classNames("docs-demo-label", CssClass.NO_USER_SELECT)}>
         {t.docs.demo.tryIt}
       </span>
       <button
@@ -40,7 +40,7 @@ export function DocsDemo({ children, onReset, className }: Props) {
         {...tooltip(t.docs.demo.reset)}
       >
         <ArrowCounterclockwise
-          className={classNames("icon", spinning && CssClass.ANIMATING)}
+          className={classNames(CssClass.ICON, spinning && CssClass.ANIMATING)}
           onAnimationEnd={() => setSpinning(false)}
         />
       </button>

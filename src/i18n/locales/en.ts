@@ -745,6 +745,7 @@ export const en: Messages = {
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transforming a blank",
       [DocsSectionId.UNNAMED_REFERENCES]: "References with no variable",
       [DocsSectionId.VARIABLE_DATE]: "Current date",
+      [DocsSectionId.VARIABLE_CALC]: "Arithmetic",
       [DocsSectionId.VARIABLE_BOOLEAN]: "Boolean operations",
       [DocsSectionId.VARIABLE_LOGIC]: "Logical operations",
       [DocsSectionId.VARIABLE_CONDITIONAL]: "Conditional operations",
@@ -979,7 +980,7 @@ If something goes wrong, undo it in this order:
       positionsHint:
         "Negative numbers count back from the end, so `slice(-2;)` is the last two characters. A date shows the three forms side by side:",
       step: "A third number is the **step**: how many positions the slice skips between one character and the next. `slice(;;2)` takes one character out of every two and skips the rest, and a negative step walks backwards, so `slice(;;-1)` on its own reverses a value:",
-      math: "Each number can also be a small sum: write `+` or `-` between whole numbers and they are worked out left to right.",
+      math: "Each number can also be a small calculation, using `+`, `-`, `*`, `/`, `%` and parentheses, as long as the result is a whole number.",
       invalid:
         "If a slice does not make sense, such as a step of zero, the whole reference stays **unresolved** and shows up exactly as you typed it, so the mistake is easy to spot. Asking for more characters than there are is fine, though: you simply get the ones that exist.",
       python:
@@ -1125,6 +1126,33 @@ If something goes wrong, undo it in this order:
       clock:
         "It reads your own clock, in your own time zone, so a runbook left open overnight copies tomorrow's date tomorrow.",
     },
+    variableCalc: {
+      intro:
+        "`calc(expression)` works out the arithmetic in its parentheses and gives back the result. Like `date`, it ignores the value it is handed, so it is normally written on its own, and any reference inside it is filled in before the sum is done.",
+      demoHint:
+        "A classic case is a pause in a script: `sleep` counts in seconds, but nobody thinks of a wait that way. Set the minutes below and let the command do the conversion:",
+      table: `| Operator | Meaning |
+| --- | --- |
+| \`+\` \`-\` | Add, subtract |
+| \`*\` \`/\` | Multiply, divide |
+| \`%\` | Remainder |
+| \`( )\` | Group, to work something out first |`,
+      rules:
+        "Multiplying and dividing come before adding and subtracting, as usual. Division can give a decimal (`7 / 2` is `3.5`), and a remainder takes the sign of the number you divide by, so `-1 % 3` is `2`. Dividing by zero, or anything that is not a number, leaves the reference exactly as written.",
+      rounding:
+        "A division rarely lands on a whole number, and a command usually wants one. `round`, `floor` and `ceil` turn the value coming down the chain into a whole number: to the nearest one, always down, or always up.",
+      roundingDemoHint:
+        "Picking the right one matters. Below, photos are sorted into folders of 400. 1250 photos fill 3.125 folders, and `ceil` rounds that up to 4: with only 3, the last 50 photos would have nowhere to go. Change the number of photos and watch the folder count follow.",
+      roundingTable: `| Operation | \`2.5\` | \`-2.5\` | \`3.14159\` |
+| --- | --- | --- | --- |
+| \`round\` | 3 | -3 | 3 |
+| \`floor\` | 2 | -3 | 3 |
+| \`ceil\` | 3 | -2 | 4 |
+| \`round(2)\` | 2.5 | -2.5 | 3.14 |
+| \`ceil(2)\` | 2.5 | -2.5 | 3.15 |`,
+      roundingRules:
+        "The number in parentheses is how many decimals to keep, `0` when left out, and a negative one rounds to tens, hundreds and so on. A value that is not a number, such as `api` or `1 + 2`, leaves the reference exactly as written.",
+    },
     variableBoolean: {
       intro:
         "A boolean operation does not change a value, it **asks a question about it** and answers with `true` or `false`. These are the questions, each one written after a `|`:",
@@ -1150,7 +1178,7 @@ If something goes wrong, undo it in this order:
       demoHint:
         "Below, put a letter in the port or change the extension, and watch the answers flip:",
       empty:
-        "Each of these needs at least one character to look at, so they all answer `false` for an empty value. That is what `isempty` is for. Note that a reference to a variable you left blank never resolves in the first place, so `isempty` is really about what an earlier operation produced, as in `{PATH|strip(/tmp/)|isempty}`.",
+        "Each of these needs at least one character to look at, so they all answer `false` for an empty value. That is what `isempty` is for. It works on a variable you left blank (`{PATH|isempty}`) and on what an earlier operation produced (`{PATH|strip(/tmp/)|isempty}`). A blank variable with nothing to say about it, like a plain `{PATH}`, still stays as written so you can see it needs filling in.",
     },
     variableLogic: {
       table: `| Operation | Description |

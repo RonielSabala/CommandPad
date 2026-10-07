@@ -1,8 +1,10 @@
+import { CssClass } from "@/common/constants/css";
 import {
   FilenameInput,
   FilenameInputSize,
 } from "@/components/common/FilenameInput";
 import { useTranslation } from "@/i18n";
+import { classNames } from "@/utils/string";
 import { FolderFill } from "react-bootstrap-icons";
 import "./CloudNewFolderRow.css";
 import { CloudRowConfirmActions } from "./CloudRowConfirmActions";
@@ -24,7 +26,9 @@ export function CloudNewFolderRow({
 
   return (
     <div className="cloud-browser-new-folder-row">
-      <FolderFill className="icon-md cloud-browser-row-icon" />
+      <FolderFill
+        className={classNames("cloud-browser-row-icon", CssClass.ICON_MD)}
+      />
       <FilenameInput
         value={value}
         size={FilenameInputSize.COMPACT}

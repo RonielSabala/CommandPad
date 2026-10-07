@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuAlign,
@@ -5,6 +6,7 @@ import {
 } from "@/components/common/contextMenu/ContextMenu";
 import { TrashIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
+import { classNames } from "@/utils/string";
 import {
   BoxArrowInDown,
   Copy,
@@ -44,14 +46,17 @@ export function CloudRowMenu({
       horizontal={true}
     >
       {onRename && (
-        <ContextMenuItem icon={<Vr className="icon-md" />} onSelect={onRename}>
+        <ContextMenuItem
+          icon={<Vr className={CssClass.ICON_MD} />}
+          onSelect={onRename}
+        >
           {t.cloudModal.rename}
         </ContextMenuItem>
       )}
 
       {onEdit && (
         <ContextMenuItem
-          icon={<PencilSquare className="icon-md" />}
+          icon={<PencilSquare className={CssClass.ICON_MD} />}
           onSelect={onEdit}
         >
           {t.cloudModal.edit}
@@ -60,7 +65,7 @@ export function CloudRowMenu({
 
       {onImport && (
         <ContextMenuItem
-          icon={<BoxArrowInDown className="icon-md" />}
+          icon={<BoxArrowInDown className={CssClass.ICON_MD} />}
           onSelect={onImport}
         >
           {t.cloudModal.importFiles}
@@ -68,21 +73,25 @@ export function CloudRowMenu({
       )}
 
       <ContextMenuItem
-        icon={<Copy className="icon-md" />}
+        icon={<Copy className={CssClass.ICON_MD} />}
         onSelect={onDuplicate}
       >
         {t.cloudModal.duplicate(count)}
       </ContextMenuItem>
 
       <ContextMenuItem
-        icon={<Download className="icon-md" />}
+        icon={<Download className={CssClass.ICON_MD} />}
         onSelect={onDownload}
       >
         {t.cloudModal.download(count)}
       </ContextMenuItem>
 
       <ContextMenuItem
-        icon={<TrashIcon className="icon-md icon-bold" />}
+        icon={
+          <TrashIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
         onSelect={onDelete}
         danger
       >

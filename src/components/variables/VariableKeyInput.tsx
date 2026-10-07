@@ -50,7 +50,7 @@ export function VariableKeyInput({
         }}
         className={classNames(
           className,
-          "no-ligatures",
+          CssClass.NO_LIGATURES,
           isConstantVariableKey(variableKey) && CssClass.IS_CONSTANT,
         )}
         type="text"

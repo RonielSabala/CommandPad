@@ -61,19 +61,17 @@ export function TabItem({ tab, onOpenMenu }: Props) {
     return event.clientX < rect.left + rect.width / 2;
   };
 
-  const tabClass = classNames(
-    "tab",
-    isActive && "tab-active",
-    dragging && CssClass.DRAGGING,
-    dropSide === TabDropSide.LEFT && "drag-over-left",
-    dropSide === TabDropSide.RIGHT && "drag-over-right",
-    blockDropTarget && "block-drop-target",
-  );
-
   const closeLabel = unresolved ? t.tabs.closeUnresolvedTab : t.tabs.closeTab;
   return (
     <div
-      className={tabClass}
+      className={classNames(
+        "tab",
+        isActive && "tab-active",
+        blockDropTarget && "block-drop-target",
+        dropSide === TabDropSide.LEFT && "drag-over-left",
+        dropSide === TabDropSide.RIGHT && "drag-over-right",
+        dragging && CssClass.DRAGGING,
+      )}
       {...tooltip(tabLabel)}
       draggable
       onClick={() => switchTab(tabId)}
@@ -176,7 +174,13 @@ export function TabItem({ tab, onOpenMenu }: Props) {
           closeTab(tabId);
         }}
       >
-        <CloseIcon className="tab-close-icon icon-sm icon-bold" />
+        <CloseIcon
+          className={classNames(
+            "tab-close-icon",
+            CssClass.ICON_SM,
+            CssClass.ICON_BOLD,
+          )}
+        />
       </button>
     </div>
   );

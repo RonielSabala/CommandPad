@@ -1,4 +1,5 @@
 import { MIDDLE_DOT } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import { Anchor } from "@/common/constants/dom";
 import { AppRoute } from "@/common/constants/routes";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -25,7 +26,7 @@ export function FooterLink({ icon, title, href }: FooterLinkProps) {
       rel={Anchor.REL}
       {...tooltip(title)}
     >
-      <IconComponent className="icon-md" aria-label={title} />
+      <IconComponent className={CssClass.ICON_MD} aria-label={title} />
     </a>
   );
 }
@@ -88,7 +89,11 @@ export function FooterContent() {
 export function PageFooter({ className }: { className?: string }) {
   return (
     <footer
-      className={classNames("footer page-footer no-user-select", className)}
+      className={classNames(
+        "footer page-footer",
+        className,
+        CssClass.NO_USER_SELECT,
+      )}
     >
       <FooterContent />
     </footer>
@@ -97,7 +102,10 @@ export function PageFooter({ className }: { className?: string }) {
 
 export function Footer() {
   return (
-    <footer id="app-footer" className="footer no-user-select">
+    <footer
+      id="app-footer"
+      className={classNames("footer", CssClass.NO_USER_SELECT)}
+    >
       <FooterContent />
     </footer>
   );

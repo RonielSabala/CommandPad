@@ -4,6 +4,9 @@ export const CssClass = {
   THEME_LIGHT: "theme-light",
   THEME_SWITCHING: "theme-switching",
 
+  NO_LIGATURES: "no-ligatures",
+  NO_USER_SELECT: "no-user-select",
+
   ACTIVE: "active",
   COLLAPSED: "collapsed",
   ANIMATING: "animating",
@@ -15,8 +18,33 @@ export const CssClass = {
   CLAMPED: "clamped",
   CLAMP_SURFACE: "clamp-surface",
 
+  PANEL_CARD: "panel-card",
+  SECTION_TITLE: "section-title",
+
   CONTEXT_MENU: "context-menu",
   CODE_EDITOR_PROMPT: "code-editor-prompt",
+  CODE_EDITOR_SURFACE: "code-editor-surface",
+
+  // Buttons
+
+  BTN: "btn",
+  BTN_LG: "btn-lg",
+
+  BTN_ICON: "btn-icon",
+  BTN_FLAT_ICON: "btn-flat-icon",
+  BTN_SOFT_ICON: "btn-soft-icon",
+
+  BTN_PRIMARY: "btn-primary",
+  BTN_DANGER: "btn-danger",
+  BTN_ACCENT: "btn-accent",
+
+  // Icons
+  ICON: "icon",
+  ICON_SM: "icon-sm",
+  ICON_MD: "icon-md",
+  ICON_LG: "icon-lg",
+  ICON_SEMIBOLD: "icon-semibold",
+  ICON_BOLD: "icon-bold",
 
   // Action states
   IS_SCROLLING: "is-scrolling",

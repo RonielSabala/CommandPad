@@ -1,7 +1,9 @@
+import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
+import { classNames } from "@/utils/string";
 import { useId, useState } from "react";
 
 import "./PassphraseField.css";
@@ -54,14 +56,21 @@ export function PassphraseField({
         />
 
         <button
-          className="btn btn-flat-icon passphrase-reveal"
+          className={classNames(
+            "passphrase-reveal",
+            CssClass.BTN,
+            CssClass.BTN_FLAT_ICON,
+          )}
           type="button"
           onClick={() => setRevealed((shown) => !shown)}
           disabled={disabled}
           {...tooltip(toggleLabel)}
           aria-label={toggleLabel}
         >
-          <EyeIcon slashed={!revealed} className="icon-md icon-bold" />
+          <EyeIcon
+            slashed={!revealed}
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
         </button>
       </div>
     </div>

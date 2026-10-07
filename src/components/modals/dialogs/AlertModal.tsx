@@ -1,7 +1,10 @@
+import { CssClass } from "@/common/constants/css";
 import { DialogTone } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { useEffect, useRef } from "react";
+
 import { DialogModal } from "./DialogModal";
 
 interface CachedDialog {
@@ -45,7 +48,11 @@ export function AlertModal() {
       title={title}
       message={message}
     >
-      <button ref={okRef} className="btn btn-lg btn-tone" onClick={resolve}>
+      <button
+        ref={okRef}
+        className={classNames("btn-tone", CssClass.BTN, CssClass.BTN_LG)}
+        onClick={resolve}
+      >
         {t.common.ok}
       </button>
     </DialogModal>

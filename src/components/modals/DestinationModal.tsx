@@ -1,7 +1,10 @@
+import { CssClass } from "@/common/constants/css";
 import { SyncDestination } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { LaptopFill } from "react-bootstrap-icons";
+
 import {
   PROVIDER_ICON,
   PROVIDER_NAME,
@@ -28,7 +31,7 @@ export function DestinationModal() {
           className="destination-modal-option"
           onClick={() => chooseDestination(SyncDestination.LOCAL)}
         >
-          <LaptopFill className="icon-lg" />
+          <LaptopFill className={CssClass.ICON_LG} />
           {t.destinationModal.local}
         </button>
 
@@ -40,7 +43,7 @@ export function DestinationModal() {
               className="destination-modal-option"
               onClick={() => chooseDestination(provider)}
             >
-              <ProviderIcon className="icon-lg" />
+              <ProviderIcon className={CssClass.ICON_LG} />
               {PROVIDER_NAME[provider]}
             </button>
           );
@@ -48,7 +51,10 @@ export function DestinationModal() {
       </div>
 
       <div className="modal-actions">
-        <button className="btn btn-lg" onClick={closeDestinationModal}>
+        <button
+          className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+          onClick={closeDestinationModal}
+        >
           {t.common.cancel}
         </button>
       </div>

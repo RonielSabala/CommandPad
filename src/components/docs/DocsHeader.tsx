@@ -1,9 +1,12 @@
+import { CssClass } from "@/common/constants/css";
 import { AppRoute } from "@/common/constants/routes";
 import { Theme } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { MoonIcon, SunIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { BoxArrowLeft } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
@@ -24,14 +27,14 @@ export function DocsHeader() {
       <Link
         to={AppRoute.HOME}
         id="docs-logo"
-        className="logo no-user-select"
+        className={classNames("logo", CssClass.NO_USER_SELECT)}
         {...tooltip(t.docs.meta.backToApp)}
       >
         <span className="logo-word">Command</span>
         <span className="logo-pad">{"{Pad}"}</span>
       </Link>
 
-      <span id="docs-header-title" className="no-user-select">
+      <span id="docs-header-title" className={CssClass.NO_USER_SELECT}>
         {t.docs.meta.title}
       </span>
 
@@ -39,26 +42,41 @@ export function DocsHeader() {
 
       <div className="header-actions">
         <button
-          className="btn btn-lg btn-flat-icon"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_FLAT_ICON,
+          )}
           onClick={toggleTheme}
           aria-label={toggleThemeLabel}
           {...tooltip(toggleThemeLabel)}
         >
           {isLight ? (
-            <MoonIcon className="icon icon-bold" />
+            <MoonIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           ) : (
-            <SunIcon className="icon icon-bold" />
+            <SunIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           )}
         </button>
 
-        <div className="vertical-divider" />
+        <VerticalDivider />
 
         <LanguageSelect />
 
-        <div className="vertical-divider" />
+        <VerticalDivider />
 
-        <Link to={AppRoute.HOME} className="btn btn-lg btn-primary">
-          <BoxArrowLeft className="icon" />
+        <Link
+          to={AppRoute.HOME}
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_PRIMARY,
+          )}
+        >
+          <BoxArrowLeft className={CssClass.ICON} />
           {t.docs.meta.backToApp}
         </Link>
       </div>

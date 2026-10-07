@@ -15,6 +15,7 @@ const VALUES = {
   ACCENTED: "café",
   ROMAN: "Ⅸ",
   PATH: "/tmp/build",
+  EMPTY: "",
 };
 
 checkResolution("the character-class predicates", {
@@ -58,6 +59,9 @@ checkResolution(
     variables: VALUES,
     cases: [
       ["{PATH|isempty}", FALSE],
+      ["{EMPTY|isempty}", TRUE],
+      ["{EMPTY|isdigit}", FALSE],
+      ["{EMPTY|uppercase}", RAW],
       ["{SPACES|isempty}", FALSE],
       ["{PATH|strip(/tmp/build)|isempty}", TRUE],
       ["{PATH|strip(/tmp/build)|isdigit}", FALSE],

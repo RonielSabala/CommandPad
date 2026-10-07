@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { InsertPosition, VariableEntryKind } from "@/common/enums";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
@@ -15,6 +16,7 @@ import {
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { countVariableTargets, useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import type { ReactNode } from "react";
 
 interface Props {
@@ -39,7 +41,11 @@ function InsertSubmenu({
   return (
     <ContextMenuSubmenu icon={icon} label={label}>
       <ContextMenuItem
-        icon={<VariableIcon className="icon-md icon-bold" />}
+        icon={
+          <VariableIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
         onSelect={() =>
           insertVariableRow(targetId, VariableEntryKind.VARIABLE, position)
         }
@@ -47,7 +53,11 @@ function InsertSubmenu({
         {t.variables.variableLabel}
       </ContextMenuItem>
       <ContextMenuItem
-        icon={<SectionIcon className="icon-md icon-bold" />}
+        icon={
+          <SectionIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
         onSelect={() =>
           insertVariableRow(targetId, VariableEntryKind.SECTION, position)
         }
@@ -68,13 +78,21 @@ export function VariableInsertItems({ targetId }: Props) {
         targetId={targetId}
         position={InsertPosition.ABOVE}
         label={t.variables.insertAbove}
-        icon={<InsertAboveIcon className="icon-md icon-bold" />}
+        icon={
+          <InsertAboveIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
       />
       <InsertSubmenu
         targetId={targetId}
         position={InsertPosition.BELOW}
         label={t.variables.insertBelow}
-        icon={<InsertBelowIcon className="icon-md icon-bold" />}
+        icon={
+          <InsertBelowIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
       />
       <ContextMenuSeparator />
     </>
@@ -90,7 +108,11 @@ export function DuplicateItem({ targetId, children }: ItemProps) {
 
   return (
     <ContextMenuItem
-      icon={<DuplicateIcon className="icon-md icon-bold" />}
+      icon={
+        <DuplicateIcon
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+        />
+      }
       onSelect={() => duplicateVariable(targetId)}
     >
       {children}
@@ -103,7 +125,11 @@ export function RemoveItem({ targetId, children }: ItemProps) {
 
   return (
     <ContextMenuItem
-      icon={<TrashIcon className="icon-md icon-bold" />}
+      icon={
+        <TrashIcon
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+        />
+      }
       onSelect={() => removeVariable(targetId)}
       danger
     >

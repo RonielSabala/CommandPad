@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { SyncDestination } from "@/common/enums";
 import {
   Select,
@@ -5,7 +6,9 @@ import {
   type SelectOption,
 } from "@/components/common/Select";
 import { useTranslation } from "@/i18n";
+import { classNames } from "@/utils/string";
 import { LaptopFill } from "react-bootstrap-icons";
+
 import { PROVIDER_ICON, PROVIDER_NAME, PROVIDERS } from "./cloudProviders";
 import "./ProviderSelect.css";
 
@@ -28,7 +31,7 @@ export function ProviderSelect({
       value: SyncDestination.LOCAL,
       label: (
         <>
-          <LaptopFill className="icon-md" />
+          <LaptopFill className={CssClass.ICON_MD} />
           {t.destinationModal.local}
         </>
       ),
@@ -39,7 +42,7 @@ export function ProviderSelect({
         value: provider,
         label: (
           <>
-            <ProviderIcon className="icon-md" />
+            <ProviderIcon className={CssClass.ICON_MD} />
             {PROVIDER_NAME[provider]}
           </>
         ),
@@ -57,7 +60,7 @@ export function ProviderSelect({
   return (
     <Select
       className="provider-select"
-      triggerClassName="btn provider-select-trigger"
+      triggerClassName={classNames("provider-select-trigger", CssClass.BTN)}
       title={title ?? t.cloudModal.changeProvider}
       align={SelectAlign.START}
       portal={portal}
@@ -65,7 +68,7 @@ export function ProviderSelect({
       options={options}
       onChange={onChange}
     >
-      <ProviderIcon className="icon-md" />
+      <ProviderIcon className={CssClass.ICON_MD} />
       {label}
     </Select>
   );

@@ -1,27 +1,14 @@
-import {
-  NumberArgumentRegex,
-  NumberTermRegex,
-  TokenWhitespaceRegex,
-} from "@/common/variableSyntax";
+import { evaluateArithmetic } from "@/utils/arithmetic";
 
 type NumberArgument = number | null;
 
 export function readNumberArgument(raw: string): NumberArgument | undefined {
-  if (!NumberArgumentRegex.test(raw)) {
-    return undefined;
-  }
-
-  const text = raw.replace(TokenWhitespaceRegex, "");
-  if (!text) {
+  if (!raw.trim()) {
     return null;
   }
 
-  let total = 0;
-  for (const [term] of text.matchAll(NumberTermRegex)) {
-    total += Number(term);
-  }
-
-  return total;
+  const value = evaluateArithmetic(raw);
+  return value !== undefined && Number.isInteger(value) ? value : undefined;
 }
 
 export function readNumberArguments(

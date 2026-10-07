@@ -763,6 +763,7 @@ export const es: Messages = {
       [DocsSectionId.TRANSFORMED_PLACEHOLDERS]: "Transformar un hueco",
       [DocsSectionId.UNNAMED_REFERENCES]: "Referencias sin variable",
       [DocsSectionId.VARIABLE_DATE]: "Fecha actual",
+      [DocsSectionId.VARIABLE_CALC]: "Aritmética",
       [DocsSectionId.VARIABLE_BOOLEAN]: "Operaciones booleanas",
       [DocsSectionId.VARIABLE_LOGIC]: "Operaciones lógicas",
       [DocsSectionId.VARIABLE_CONDITIONAL]: "Operaciones condicionales",
@@ -1002,7 +1003,7 @@ Si algo sale mal, deshazlo en este orden:
       positionsHint:
         "Los números negativos cuentan desde el final, así que `slice(-2;)` son los dos últimos caracteres. Con una fecha se ven las tres formas de un vistazo:",
       step: "Un tercer número es el **paso**: cuántas posiciones salta el recorte entre un carácter y el siguiente. `slice(;;2)` toma un carácter de cada dos y se salta el resto, y un paso negativo avanza hacia atrás, así que `slice(;;-1)` por sí solo invierte un valor:",
-      math: "Cada número también puede ser una cuenta sencilla: escribe `+` o `-` entre números enteros y se resuelven de izquierda a derecha.",
+      math: "Cada número también puede ser una pequeña cuenta con `+`, `-`, `*`, `/`, `%` y paréntesis, siempre que el resultado sea un número entero.",
       invalid:
         "Si un recorte no tiene sentido, por ejemplo con un paso de cero, la referencia entera se queda **sin resolver** y aparece tal cual la escribiste, así que el error se nota enseguida. En cambio, pedir más caracteres de los que hay no es problema: obtienes los que existan.",
       python:
@@ -1150,6 +1151,33 @@ Si algo sale mal, deshazlo en este orden:
       clock:
         "Usa tu propio reloj y tu propia zona horaria, así que un runbook que se queda abierto toda la noche mostrará mañana la fecha de mañana.",
     },
+    variableCalc: {
+      intro:
+        "`calc(expresión)` hace la cuenta que escribas entre paréntesis y te devuelve el resultado. Como `date`, no usa el valor que le llega, así que lo normal es escribirla sola. Y si dentro hay referencias a variables, primero se sustituyen por su valor y luego se calcula.",
+      demoHint:
+        "Un caso de lo más habitual es una pausa en un script: `sleep` cuenta en segundos, pero nadie piensa una espera así. Pon los minutos abajo y deja que el comando haga la conversión:",
+      table: `| Operador | Significado |
+| --- | --- |
+| \`+\` \`-\` | Sumar, restar |
+| \`*\` \`/\` | Multiplicar, dividir |
+| \`%\` | Resto |
+| \`( )\` | Agrupar lo que quieras calcular primero |`,
+      rules:
+        "Como en cualquier calculadora, las multiplicaciones y divisiones se hacen antes que las sumas y restas. Una división puede dar decimales (`7 / 2` da `3.5`), y el resto lleva el signo del divisor, por eso `-1 % 3` da `2`. Si divides entre cero o algo de la expresión no es un número, la referencia se queda tal cual la escribiste.",
+      rounding:
+        "Una división casi nunca da un número entero, y un comando casi siempre quiere uno. `round`, `floor` y `ceil` convierten el valor que les llega en un entero: al más cercano, siempre hacia abajo o siempre hacia arriba.",
+      roundingDemoHint:
+        "Elegir bien importa. Abajo, las fotos se reparten en carpetas de 400. 1250 fotos llenan 3.125 carpetas, y `ceil` lo redondea hacia arriba a 4: con solo 3, las últimas 50 fotos se quedarían sin sitio. Cambia el número de fotos y mira cómo cambia el número de carpetas.",
+      roundingTable: `| Operación | \`2.5\` | \`-2.5\` | \`3.14159\` |
+| --- | --- | --- | --- |
+| \`round\` | 3 | -3 | 3 |
+| \`floor\` | 2 | -3 | 3 |
+| \`ceil\` | 3 | -2 | 4 |
+| \`round(2)\` | 2.5 | -2.5 | 3.14 |
+| \`ceil(2)\` | 2.5 | -2.5 | 3.15 |`,
+      roundingRules:
+        "El número entre paréntesis es cuántos decimales conservar, `0` si no pones nada, y uno negativo redondea a decenas, centenas, etc. Si el valor no es un número, como `api` o `1 + 2`, la referencia se queda tal cual la escribiste.",
+    },
     variableBoolean: {
       intro:
         "Una operación booleana no cambia el valor: **hace una pregunta sobre él** y responde con `true` o `false`. Estas son las preguntas, y todas se escriben después de un `|`:",
@@ -1175,7 +1203,7 @@ Si algo sale mal, deshazlo en este orden:
       demoHint:
         "Debajo, escribe una letra en el puerto o cambia la extensión, y mira cómo cambian las respuestas:",
       empty:
-        "Todas necesitan al menos un carácter que mirar, así que ante un valor vacío responden con `false`. Para eso está `isempty`. Ten en cuenta que una referencia a una variable que dejaste en blanco no llega a resolverse, así que `isempty` sirve sobre todo para lo que haya producido una operación anterior, como en `{PATH|strip(/tmp/)|isempty}`.",
+        "Todas necesitan al menos un carácter que mirar, así que ante un valor vacío responden con `false`. Para eso está `isempty`. Funciona con una variable que dejaste en blanco (`{PATH|isempty}`) y con lo que haya producido una operación anterior (`{PATH|strip(/tmp/)|isempty}`). Una variable en blanco sin nada que decir sobre ella, como un simple `{PATH}`, se queda tal cual para que veas que falta rellenarla.",
     },
     variableLogic: {
       table: `| Operación | Descripción |

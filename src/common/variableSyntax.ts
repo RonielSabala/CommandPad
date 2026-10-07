@@ -41,11 +41,6 @@ export const CallGroup = {
   ARGUMENTS: "args",
 } as const;
 
-export const NumberSyntax = {
-  PLUS: "+",
-  MINUS: "-",
-} as const;
-
 export const SliceSyntax = {
   KEYWORD: "slice",
   ARITY: 3,
@@ -126,6 +121,37 @@ export const DateSyntax = {
   PAD_CHAR: "0",
 } as const;
 
+export const CalcSyntax = {
+  KEYWORD: "calc",
+  ARITY: 1,
+  PLUS: "+",
+  MINUS: "-",
+  MULTIPLY: "*",
+  DIVIDE: "/",
+  MODULO: "%",
+  GROUP_OPEN: "(",
+  GROUP_CLOSE: ")",
+  DECIMAL_POINT: ".",
+  PRECISION: 12,
+} as const;
+
+export const RoundSyntax = {
+  ROUND: "round",
+  FLOOR: "floor",
+  CEIL: "ceil",
+  ARITY: 1,
+  DEFAULT_DIGITS: 0,
+  MAX_DIGITS: 12,
+  EXPONENT: "e",
+} as const;
+
+export const CalcGroup = {
+  NUMBER: "number",
+  SYMBOL: "symbol",
+  SPACE: "space",
+  INVALID: "invalid",
+} as const;
+
 export const DateToken = {
   YEAR: "YYYY",
   YEAR_SHORT: "YY",
@@ -186,15 +212,13 @@ export const IfSyntax = {
 
 const Ref = escapeSyntax(VariableSyntax);
 const Call = escapeSyntax(CallSyntax);
-const Num = escapeSyntax(NumberSyntax);
 const Operation = escapeSyntax(OperationSyntax);
 const DateTok = escapeSyntax(DateToken);
+const Calc = escapeSyntax(CalcSyntax);
 
 export const EscapedBraceOpenRegex = globalRegex(
   sequence(ESCAPE, Ref.BRACE_OPEN),
 );
-
-export const TokenWhitespaceRegex = globalRegex(oneOrMore(WHITESPACE));
 
 const OPERATION_KEYWORD = named(
   CallGroup.KEYWORD,
@@ -226,29 +250,34 @@ export const CallOperationRegex = dotAllRegex(
   ),
 );
 
-const NUMBER_SIGN = anyOf(Num.PLUS, Num.MINUS);
-const NUMBER_TERM = sequence(optional(NUMBER_SIGN), oneOrMore(DIGIT));
-const NUMBER_GAP = zeroOrMore(WHITESPACE);
-const NUMBER_FIRST = sequence(
-  optional(NUMBER_SIGN),
-  NUMBER_GAP,
+const CALC_NUMBER = sequence(
   oneOrMore(DIGIT),
-);
-const NUMBER_NEXT = group(
-  sequence(NUMBER_GAP, NUMBER_SIGN, NUMBER_GAP, oneOrMore(DIGIT)),
+  optional(group(sequence(Calc.DECIMAL_POINT, oneOrMore(DIGIT)))),
 );
 
-export const NumberArgumentRegex = new RegExp(
-  anchored(
-    sequence(
-      NUMBER_GAP,
-      optional(group(sequence(NUMBER_FIRST, zeroOrMore(NUMBER_NEXT)))),
-      NUMBER_GAP,
+export const CalcTokenRegex = globalRegex(
+  either(
+    named(CalcGroup.NUMBER, CALC_NUMBER),
+    named(
+      CalcGroup.SYMBOL,
+      anyOf(
+        Calc.PLUS,
+        Calc.MULTIPLY,
+        Calc.DIVIDE,
+        Calc.MODULO,
+        Calc.GROUP_OPEN,
+        Calc.GROUP_CLOSE,
+        Calc.MINUS,
+      ),
     ),
+    named(CalcGroup.SPACE, oneOrMore(WHITESPACE)),
+    named(CalcGroup.INVALID, ANY),
   ),
 );
 
-export const NumberTermRegex = globalRegex(NUMBER_TERM);
+export const NumberValueRegex = new RegExp(
+  anchored(sequence(optional(anyOf(Calc.PLUS, Calc.MINUS)), CALC_NUMBER)),
+);
 
 export const LenOperationRegex = new RegExp(anchored(Operation.LEN));
 

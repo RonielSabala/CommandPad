@@ -78,34 +78,33 @@ export const VariableRow = memo(function VariableRow({
     }
   }, [pendingFocus, editorShowing, consumeVariableFocus]);
 
-  const rowClass = classNames(
-    "variable-row",
-    "sidebar-section-list-row",
-    isSecret && CssClass.IS_SECRET,
-    unused && CssClass.IS_UNUSED,
-    isDragging && CssClass.DRAGGING,
-  );
-
-  const variableInputsClass = classNames(
-    "variable-inputs",
-    isSecret && CssClass.IS_SECRET,
-    isDragOver && CssClass.DRAG_OVER,
-  );
-
-  const splitStyle = {
-    "--variable-key-fr": `${keyRatio}fr`,
-    "--variable-value-fr": `${1 - keyRatio}fr`,
-  } as CSSProperties;
-
   return (
     <div
-      className={rowClass}
+      className={classNames(
+        "variable-row",
+        "sidebar-section-list-row",
+        unused && CssClass.IS_UNUSED,
+        isSecret && CssClass.IS_SECRET,
+        isDragging && CssClass.DRAGGING,
+      )}
       {...{ [DataAttr.VARIABLE_ID]: variableId }}
       {...rowProps}
     >
       <DragHandle handleProps={handleProps} />
 
-      <div className={variableInputsClass} style={splitStyle}>
+      <div
+        className={classNames(
+          "variable-inputs",
+          isSecret && CssClass.IS_SECRET,
+          isDragOver && CssClass.DRAG_OVER,
+        )}
+        style={
+          {
+            "--variable-key-fr": `${keyRatio}fr`,
+            "--variable-value-fr": `${1 - keyRatio}fr`,
+          } as CSSProperties
+        }
+      >
         <VariableKeyInput
           variableId={variableId}
           variableKey={variableKey}
@@ -115,7 +114,10 @@ export const VariableRow = memo(function VariableRow({
         />
 
         <div
-          className="variable-split-handle no-user-select"
+          className={classNames(
+            "variable-split-handle",
+            CssClass.NO_USER_SELECT,
+          )}
           {...tooltip(t.variables.dragResizeSplit)}
           {...splitResize}
         />
@@ -130,7 +132,10 @@ export const VariableRow = memo(function VariableRow({
         ) : (
           <div className="variable-value-wrap">
             <input
-              className="variable-value-input no-ligatures"
+              className={classNames(
+                "variable-value-input",
+                CssClass.NO_LIGATURES,
+              )}
               type="text"
               placeholder={t.variables.valuePlaceholder}
               value={variableValue}
@@ -165,12 +170,19 @@ export const VariableRow = memo(function VariableRow({
 
       {isSecret && (
         <button
-          className="btn btn-icon variable-secret-btn"
+          className={classNames(
+            "variable-secret-btn",
+            CssClass.BTN,
+            CssClass.BTN_ICON,
+          )}
           onClick={() => toggleVariableSecret(variableId)}
           aria-label={t.variables.reveal(1)}
           {...tooltip(t.variables.reveal(1))}
         >
-          <EyeIcon slashed className="icon-md icon-bold" />
+          <EyeIcon
+            slashed
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
         </button>
       )}
 
@@ -183,10 +195,17 @@ export const VariableRow = memo(function VariableRow({
 
       {!isSecret && showSecretColumn && (
         <div
-          className="btn btn-icon variable-secret-btn is-placeholder"
+          className={classNames(
+            "variable-secret-btn is-placeholder",
+            CssClass.BTN,
+            CssClass.BTN_ICON,
+          )}
           aria-hidden="true"
         >
-          <EyeIcon slashed className="icon-md icon-bold" />
+          <EyeIcon
+            slashed
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
         </div>
       )}
     </div>

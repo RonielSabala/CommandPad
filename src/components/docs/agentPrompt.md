@@ -28,11 +28,13 @@ A variable is an object with these fields:
 
 - `key` (required, text): the name commands refer to. Use UPPER_SNAKE_CASE. Keys are
   trimmed and must be unique within the runbook.
-- `value` (required, text): may be empty when the user is expected to fill it in. A value
-  may itself reference other variables.
+- `value` (required, text): may be empty when the user is expected to fill it in. A
+  command referencing an empty variable keeps the reference as written until it is
+  filled, unless an operation still produces text from it (`{X|isempty}`, `{X|len}`). A
+  value may itself reference other variables.
 - `secret` (optional, `true`): masks the value on screen. Use it for every password,
   token, key or connection string.
-- `language` (optional): one of `plaintext`, `shell`, `powershell`, `json`, `xml`, `yaml`.
+- `language` (optional): one of `plaintext`, `shell`, `powershell`, `json`, `sql`, `xml`, `yaml`.
   Highlighting for the value only; defaults to `plaintext`.
 - `options` (optional, array of text): makes the variable an **enum**, edited by picking
   from a list instead of typing. `value` must be one of the options. Use it when the value
@@ -189,7 +191,7 @@ Working on text:
 
 - `slice(start;stop;step)` Python slicing. Any bound may be left empty for its default, a
   lone argument is a single index, a negative bound counts from the end, and a negative
-  step reverses. A bound may be a `+`/`-` sum of numbers.
+  step reverses. A bound may be any `calc` expression that gives a whole number.
 - `len` the number of characters.
 - `count(text)` how many times `text` appears.
 - `key` the key of the variable being resolved.
@@ -202,17 +204,28 @@ Working on text:
 - `ljust(text;width)`, `rjust(text;width)`, `just(text;width)` pad the end, the start or
   both ends with `text` until the value is `width` characters long. Unlike `fill`, the
   number is a total width, not a count of copies, and a value already that wide is left
-  untouched. `width` may be a `+`/`-` sum.
+  untouched. `width` may be a `calc` expression.
 - `replace(from;to)` replace every occurrence.
 - `remove(text)` remove every occurrence.
 - `index(text)` the position of the first `text`, counting from 0, or `-1` when it is
   absent.
 - `insert(text;n)` put `text` before position `n`. A negative `n` counts from the end and
-  an out-of-range one clamps to that end. `n` may be a `+`/`-` sum, and
+  an out-of-range one clamps to that end. `n` may be a `calc` expression, and
   `{FILE|insert(-old;{FILE|index(.)})}` adds `-old` before the extension.
 - Positions in `slice`, `len`, `index` and `insert` all count characters the same way.
 - `date(format)` the current local date. Tokens `YYYY`, `YY`, `MM`, `DD`, `HH`, `mm`, `ss`
   are filled and everything else is kept. Defaults to `YYYY-MM-DD`.
+- `calc(expression)` the result of `+`, `-`, `*`, `/` and `%` over numbers, with the usual
+  precedence and `(` `)` for grouping. It ignores the value it is handed, so it is written
+  on a reference with no key, and references inside it are resolved first:
+  `sleep {|calc({MINUTES} * 60)}`. `/` may give a decimal, `%` takes the divisor's sign,
+  and dividing by zero leaves the reference unresolved.
+- `round(digits)`, `floor(digits)`, `ceil(digits)` round the value, which must be a plain
+  number, to the nearest, down or up. `digits` is how many decimals to keep, `0` when left
+  out (`round` and `round()` are the same), and a negative one rounds to tens, hundreds...
+  A half rounds away from zero and trailing zeros are dropped. They normally follow a
+  `calc`: `--replicas={|calc({LOAD} / {PER_POD})|ceil}`. A value that is not a number
+  leaves the reference unresolved.
 
 Changing case, all written as a bare keyword: `snakecase`, `kebabcase`, `camelcase`,
 `pascalcase`, `capitalize`, `title`, `lowercase`, `uppercase`, `swapcase`.

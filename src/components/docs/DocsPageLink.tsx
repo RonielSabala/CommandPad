@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import {
   getDocsSectionNumbers,
   type DocsSectionId,
@@ -26,7 +27,11 @@ export function DocsPageLink({ id, next = false, onNavigate }: Props) {
       aria-label={`${direction}: ${t.docs.toc[id]}`}
       onClick={() => onNavigate(id)}
     >
-      {!next && <ChevronLeft className="docs-page-link-icon icon" />}
+      {!next && (
+        <ChevronLeft
+          className={classNames("docs-page-link-icon", CssClass.ICON)}
+        />
+      )}
 
       <span className="docs-page-link-text">
         <span className="docs-page-link-label">{direction}</span>
@@ -37,7 +42,11 @@ export function DocsPageLink({ id, next = false, onNavigate }: Props) {
         </span>
       </span>
 
-      {next && <ChevronRight className="docs-page-link-icon icon" />}
+      {next && (
+        <ChevronRight
+          className={classNames("docs-page-link-icon", CssClass.ICON)}
+        />
+      )}
     </button>
   );
 }

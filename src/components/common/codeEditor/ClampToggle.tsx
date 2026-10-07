@@ -16,14 +16,20 @@ export function ClampToggle({ expanded, onToggle }: Props) {
     <button
       className={classNames(
         "clamp-toggle",
-        "no-user-select",
-        CssClass.SELECT_KEY_INERT,
         expanded && "expanded",
+        CssClass.NO_USER_SELECT,
+        CssClass.SELECT_KEY_INERT,
       )}
       onMouseDown={(event) => event.preventDefault()}
       onClick={onToggle}
     >
-      <EditorToggleChevronIcon className="clamp-toggle-icon icon-md icon-bold" />
+      <EditorToggleChevronIcon
+        className={classNames(
+          "clamp-toggle-icon",
+          CssClass.ICON_MD,
+          CssClass.ICON_BOLD,
+        )}
+      />
       {expanded ? t.command.showFewerLines : t.command.showMoreLines}
     </button>
   );

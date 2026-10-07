@@ -8,6 +8,7 @@ import {
   applyOverrides,
   getSecretKeys,
   getVariableMap,
+  overrideScope,
   type OverrideHost,
   type VariableMap,
 } from "@/utils/resolution";
@@ -65,6 +66,7 @@ export function useEmbeddedRunbook(
     }
   }, [source, due, loadEmbeddedRunbook]);
 
+  const { overrides } = block;
   const content = useMemo(
     () => (openTab ? tabContent(openTab) : (entry?.content ?? null)),
     [openTab, entry],
@@ -72,15 +74,23 @@ export function useEmbeddedRunbook(
   const variables = useMemo(
     () =>
       content
-        ? applyOverrides(content.variables, block.overrides, {
-            variableMap,
-            secretKeys,
-          })
+        ? applyOverrides(content.variables, overrides, secretKeys)
         : NO_VARIABLES,
-    [content, block.overrides, variableMap, secretKeys],
+    [content, overrides, secretKeys],
   );
 
-  const embeddedMap = useMemo(() => getVariableMap(variables), [variables]);
+  // Only an override reads the host
+  const overrideHost = overrides ? variableMap : null;
+  const embeddedMap = useMemo(
+    () =>
+      getVariableMap(
+        variables,
+        overrideHost
+          ? overrideScope(variables, overrides, overrideHost)
+          : undefined,
+      ),
+    [variables, overrides, overrideHost],
+  );
   const embeddedSecrets = useMemo(() => getSecretKeys(variables), [variables]);
 
   const locked = useMemo(

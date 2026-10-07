@@ -7,14 +7,16 @@ import {
   RunbookConfig,
 } from "@/common/config";
 import { BlockType, ExportFormat } from "@/common/enums";
-import type { RunbookBlock, RunbookContent } from "@/common/types";
+import type { RunbookBlock, RunbookContent, Variable } from "@/common/types";
 import { encryptContent } from "@/services/vault";
 import { downloadBlob } from "./download";
 import { localSourceKey } from "./embeddedRunbook";
 import {
   applyOverrides,
   getSecretKeys,
+  getVariableKey,
   getVariableMap,
+  overrideScope,
   resolveCommandToString,
   type OverrideHost,
 } from "./resolution";
@@ -94,6 +96,31 @@ export type EmbeddedReader = (
   block: RunbookBlock,
 ) => Promise<EmbeddedExport | null>;
 
+/**
+ * The embedded runbook's variables with each override baked into the text it
+ * resolves to.
+ */
+function bakeOverrides(
+  variables: Variable[],
+  { overrides }: RunbookBlock,
+  host: OverrideHost,
+): Variable[] {
+  const overridden = applyOverrides(variables, overrides, host.secretKeys);
+  const scope = overrideScope(overridden, overrides, host.variableMap);
+  if (!scope) {
+    return overridden;
+  }
+
+  const resolved = getVariableMap(overridden, scope);
+  return overridden.map((variable) => {
+    const key = getVariableKey(variable);
+
+    return scope.keys.has(key)
+      ? { ...variable, value: resolved[key]?.text ?? "" }
+      : variable;
+  });
+}
+
 async function renderMarkdownBlocks(
   scope: string,
   content: RunbookContent,
@@ -123,11 +150,7 @@ async function renderMarkdownBlocks(
         embedded.scope,
         {
           ...embedded.content,
-          variables: applyOverrides(
-            embedded.content.variables,
-            block.overrides,
-            host,
-          ),
+          variables: bakeOverrides(embedded.content.variables, block, host),
         },
         readEmbedded,
         [...trail, embedded.key],

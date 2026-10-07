@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { VariableEntryKind, VariableKind } from "@/common/enums";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
@@ -5,6 +6,7 @@ import { EyeIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { getCaseOperationKeywords } from "@/utils/resolution";
+import { classNames } from "@/utils/string";
 import {
   AlphabetUppercase,
   Collection,
@@ -56,9 +58,9 @@ export function VariableActionsMenu({
           <ContextMenuItem
             icon={
               isEnum ? (
-                <CursorText className="icon-md" />
+                <CursorText className={CssClass.ICON_MD} />
               ) : (
-                <ListUl className="icon-md" />
+                <ListUl className={CssClass.ICON_MD} />
               )
             }
             onSelect={() =>
@@ -74,7 +76,10 @@ export function VariableActionsMenu({
           {!isEnum && (
             <ContextMenuItem
               icon={
-                <EyeIcon slashed={!isSecret} className="icon-md icon-bold" />
+                <EyeIcon
+                  slashed={!isSecret}
+                  className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+                />
               }
               onSelect={() => toggleVariableSecret(variableId)}
             >
@@ -87,7 +92,7 @@ export function VariableActionsMenu({
           </DuplicateItem>
 
           <ContextMenuSubmenu
-            icon={<AlphabetUppercase className="icon-md" />}
+            icon={<AlphabetUppercase className={CssClass.ICON_MD} />}
             label={t.variables.renameCase}
             iconlessItems
           >
@@ -103,7 +108,7 @@ export function VariableActionsMenu({
 
           {sectioned && (
             <ContextMenuItem
-              icon={<Collection className="icon-md" />}
+              icon={<Collection className={CssClass.ICON_MD} />}
               onSelect={() => addVariableSection(variableId)}
             >
               {t.variables.moveToNewSection(count)}

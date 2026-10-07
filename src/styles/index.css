@@ -91,13 +91,6 @@ body {
   overflow: hidden;
 }
 
-.vertical-divider {
-  width: 1px;
-  height: var(--space-12);
-  background: var(--color-border);
-  margin: 0 var(--space-4);
-}
-
 .section-title {
   font-size: var(--text-xs);
   font-family: var(--font-sans);
@@ -145,6 +138,11 @@ body {
   color: var(--color-text-secondary);
   background: var(--color-surface-alt);
   border-color: var(--color-border);
+}
+
+.btn-lg {
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--text-md);
 }
 
 .btn-icon {
@@ -212,11 +210,6 @@ body {
   background: var(--accent-dim);
   border-color: var(--accent);
   color: var(--accent);
-}
-
-.btn-lg {
-  padding: var(--space-4) var(--space-5);
-  font-size: var(--text-md);
 }
 
 /* ICONS */

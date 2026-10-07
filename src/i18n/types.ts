@@ -642,6 +642,16 @@ export interface Messages {
       formatDemoHint: (resetDemoLabel: string) => string;
       clock: string;
     };
+    variableCalc: {
+      intro: string;
+      demoHint: string;
+      table: string;
+      rules: string;
+      rounding: string;
+      roundingDemoHint: string;
+      roundingTable: string;
+      roundingRules: string;
+    };
     variableBoolean: {
       intro: string;
       table: string;

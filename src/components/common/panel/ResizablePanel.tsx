@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { PanelId } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -38,7 +39,7 @@ export function ResizablePanel({ panelId, id, className, children }: Props) {
       <div className="panel-content">{children}</div>
 
       <div
-        className="panel-resize-handle no-user-select"
+        className={classNames("panel-resize-handle", CssClass.NO_USER_SELECT)}
         onPointerDown={onPointerDown}
         onDoubleClick={onDoubleClick}
         {...tooltip(

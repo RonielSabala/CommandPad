@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { PanelSide } from "@/common/enums";
 import {
   ContextMenu,
@@ -8,6 +9,7 @@ import {
 import { CopyIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { Spellcheck } from "react-bootstrap-icons";
 
 interface Props {
@@ -34,7 +36,11 @@ export function WorkspaceContextMenu({ anchor, onClose }: Props) {
   return (
     <ContextMenu anchor={anchor} onClose={onClose}>
       <ContextMenuItem
-        icon={<CopyIcon className="icon-md icon-bold" />}
+        icon={
+          <CopyIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
         disabled={isEmpty}
         onSelect={() => void copyRunbookMarkdown()}
       >
@@ -44,7 +50,7 @@ export function WorkspaceContextMenu({ anchor, onClose }: Props) {
       <ContextMenuSeparator />
 
       <ContextMenuItem
-        icon={<Spellcheck className="icon-md" />}
+        icon={<Spellcheck className={CssClass.ICON_MD} />}
         checked={spellcheckEnabled}
         onSelect={toggleSpellcheck}
       >

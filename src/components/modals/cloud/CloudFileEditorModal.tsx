@@ -1,4 +1,5 @@
 import { CloudSyncConfig } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import {
   CodeModelScope,
   RUNBOOK_JSON_PLACEHOLDER,
@@ -7,9 +8,12 @@ import { CodeLanguage, PanelSide } from "@/common/enums";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { Spinner } from "@/components/common/Spinner";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
+import { classNames } from "@/utils/string";
+
 import { Modal } from "../Modal";
 import "./CloudFileEditorModal.css";
 
@@ -73,14 +77,21 @@ export function CloudFileEditorModal() {
       )}
 
       <div className="modal-actions">
-        <button className="btn btn-lg" onClick={() => void close()}>
+        <button
+          className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+          onClick={() => void close()}
+        >
           {t.common.cancel}
         </button>
 
-        <div className="vertical-divider" />
+        <VerticalDivider />
 
         <button
-          className="btn btn-lg btn-primary"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_PRIMARY,
+          )}
           onClick={() => void save()}
           disabled={busy || !dirty}
         >

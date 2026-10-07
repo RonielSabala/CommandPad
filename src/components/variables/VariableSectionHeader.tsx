@@ -45,7 +45,9 @@ export function VariableSectionHeader({
       {foldable && (
         <button
           className={classNames(
-            "btn btn-flat-icon variable-section-toggle",
+            "variable-section-toggle",
+            CssClass.BTN,
+            CssClass.BTN_FLAT_ICON,
             CssClass.SELECT_KEY_INERT,
           )}
           onClick={onToggle}
@@ -53,7 +55,13 @@ export function VariableSectionHeader({
           aria-label={toggleLabel}
           {...tooltip(toggleLabel)}
         >
-          <SidebarSectionChevronIcon className="variable-section-chevron icon-md icon-bold" />
+          <SidebarSectionChevronIcon
+            className={classNames(
+              "variable-section-chevron",
+              CssClass.ICON_MD,
+              CssClass.ICON_BOLD,
+            )}
+          />
         </button>
       )}
 
@@ -62,7 +70,8 @@ export function VariableSectionHeader({
       {foldable && (
         <button
           className={classNames(
-            "variable-section-count no-user-select",
+            "variable-section-count",
+            CssClass.NO_USER_SELECT,
             CssClass.SELECT_KEY_INERT,
           )}
           onClick={onToggle}

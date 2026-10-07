@@ -16,7 +16,16 @@ export function isConstantVariableKey(key: string): boolean {
   return trimmed === trimmed.toUpperCase() && trimmed !== trimmed.toLowerCase();
 }
 
-export function getVariableMap(variables: Variable[] = []): VariableMap {
+/** Another runbook's variables, read first by the values of `keys`. */
+export interface OuterScope {
+  keys: ReadonlySet<string>;
+  variableMap: VariableMap;
+}
+
+export function getVariableMap(
+  variables: Variable[] = [],
+  outer?: OuterScope,
+): VariableMap {
   const rawMap: Record<string, string> = {};
   const resolvedMap: VariableMap = {};
 
@@ -37,8 +46,13 @@ export function getVariableMap(variables: Variable[] = []): VariableMap {
     }
 
     let looped = false;
+    const outerMap = outer?.keys.has(key) ? outer.variableMap : undefined;
 
     function lookup(refKey: string): ResolvedValue | undefined {
+      if (outerMap && Object.hasOwn(outerMap, refKey)) {
+        return outerMap[refKey];
+      }
+
       if (!Object.hasOwn(rawMap, refKey)) {
         return undefined;
       }

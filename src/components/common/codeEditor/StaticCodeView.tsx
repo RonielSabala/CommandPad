@@ -70,7 +70,12 @@ export function StaticCodeView({
         </div>
       )}
 
-      <div className={`code-editor-surface ${CssClass.SELECT_KEY_INERT}`}>
+      <div
+        className={classNames(
+          CssClass.CODE_EDITOR_SURFACE,
+          CssClass.SELECT_KEY_INERT,
+        )}
+      >
         {gutter && (
           <div className="code-editor-static-gutter">
             {promptPrefix && (
@@ -90,7 +95,13 @@ export function StaticCodeView({
           </div>
         )}
 
-        <pre ref={textRef} className="code-editor-static-text no-ligatures">
+        <pre
+          ref={textRef}
+          className={classNames(
+            "code-editor-static-text",
+            CssClass.NO_LIGATURES,
+          )}
+        >
           {text || (
             <span className="code-editor-static-placeholder">
               {placeholder}

@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { classNames } from "@/utils/string";
 import { CheckCircleFill, Circle } from "react-bootstrap-icons";
@@ -19,9 +20,9 @@ export function CloudSelectCircle({ selected, title, onToggle }: Props) {
       onClick={onToggle}
     >
       {selected ? (
-        <CheckCircleFill className="icon-md" />
+        <CheckCircleFill className={CssClass.ICON_MD} />
       ) : (
-        <Circle className="icon-md" />
+        <Circle className={CssClass.ICON_MD} />
       )}
     </button>
   );

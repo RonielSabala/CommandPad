@@ -1,7 +1,9 @@
+import { CssClass } from "@/common/constants/css";
 import { AppRoute } from "@/common/constants/routes";
 import { AppMode, RunbookView, Theme } from "@/common/enums";
 import { asButton } from "@/components/common/asButton";
 import { tooltip } from "@/components/common/tooltip/tooltip";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import {
   BookIcon,
   ChevronsRightIcon,
@@ -13,6 +15,7 @@ import {
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, getRunbookView, useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -47,6 +50,7 @@ export function Header() {
   const toggleModeLabel = isRead
     ? t.header.switchToEdit
     : t.header.switchToRead;
+
   const toggleThemeLabel = isLight
     ? t.header.switchToDark
     : t.header.switchToLight;
@@ -54,7 +58,7 @@ export function Header() {
   return (
     <header className="header-bar">
       <span
-        className="logo no-user-select"
+        className={classNames("logo", CssClass.NO_USER_SELECT)}
         {...tooltip(t.header.reloadTitle)}
         {...asButton(() => location.reload())}
       >
@@ -66,22 +70,30 @@ export function Header() {
 
       <div className="header-actions">
         <button
-          className="btn btn-lg btn-flat-icon"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_FLAT_ICON,
+          )}
           onClick={toggleAppMode}
           aria-label={toggleModeLabel}
           {...tooltip(toggleModeLabel)}
         >
           {isRead ? (
-            <PencilIcon className="icon icon-bold" />
+            <PencilIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           ) : (
-            <PadlockIcon className="icon icon-bold" />
+            <PadlockIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           )}
         </button>
 
-        <div className="vertical-divider" />
+        <VerticalDivider />
 
         <button
-          className="btn btn-lg"
+          className={classNames(CssClass.BTN, CssClass.BTN_LG)}
           disabled={!canCollapse}
           onClick={toggleCollapseAll}
           {...tooltip(
@@ -90,7 +102,9 @@ export function Header() {
               : t.header.toggleEditorsTitle,
           )}
         >
-          <ChevronsRightIcon className="icon icon-bold" />
+          <ChevronsRightIcon
+            className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+          />
           {t.header.collapseAll}
         </button>
       </div>
@@ -99,37 +113,53 @@ export function Header() {
 
       <div className="header-actions">
         <button
-          className="btn btn-lg btn-flat-icon"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_FLAT_ICON,
+          )}
           onClick={toggleTheme}
           aria-label={toggleThemeLabel}
           {...tooltip(toggleThemeLabel)}
         >
           {isLight ? (
-            <MoonIcon className="icon icon-bold" />
+            <MoonIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           ) : (
-            <SunIcon className="icon icon-bold" />
+            <SunIcon
+              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+            />
           )}
         </button>
 
-        <div className="vertical-divider" />
+        <VerticalDivider />
 
         <LanguageSelect />
 
-        <div className="vertical-divider" />
+        <VerticalDivider />
 
         <Link
           to={AppRoute.DOCS}
-          className="btn btn-lg btn-flat-icon"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_FLAT_ICON,
+          )}
           aria-label={t.docs.meta.openDocs}
           {...tooltip(t.docs.meta.openDocs)}
         >
-          <BookIcon className="icon icon-bold" />
+          <BookIcon className={classNames(CssClass.ICON, CssClass.ICON_BOLD)} />
         </Link>
 
-        <div className="vertical-divider" />
+        <VerticalDivider />
 
         <button
-          className="btn btn-lg btn-danger"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_DANGER,
+          )}
           onClick={async () => {
             if (await clearAllData()) {
               navigate(AppRoute.HOME);
@@ -140,19 +170,25 @@ export function Header() {
         >
           <ArrowCounterclockwise
             id="reset-workspace-icon"
-            className="icon icon-semibold"
+            className={classNames(CssClass.ICON, CssClass.ICON_SEMIBOLD)}
           />
         </button>
 
-        <div className="vertical-divider" />
+        <VerticalDivider />
 
         <button
-          className="btn btn-lg btn-primary"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_PRIMARY,
+          )}
           disabled={isEmpty}
           onClick={openExportModal}
           {...tooltip(t.header.exportTitle)}
         >
-          <ExportIcon className="icon icon-bold" />
+          <ExportIcon
+            className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+          />
           {t.header.export}
         </button>
       </div>

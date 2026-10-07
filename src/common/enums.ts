@@ -277,6 +277,7 @@ export const CodeLanguage = {
   BASH: "shell",
   POWERSHELL: "powershell",
   JSON: "json",
+  SQL: "sql",
   XML: "xml",
   YAML: "yaml",
 } as const;

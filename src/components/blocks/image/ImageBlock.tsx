@@ -206,24 +206,32 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
               <div className="image-actions-group">
                 {!loadFailed && (
                   <button
-                    className="btn btn-icon btn-accent"
+                    className={classNames(
+                      CssClass.BTN,
+                      CssClass.BTN_ICON,
+                      CssClass.BTN_ACCENT,
+                    )}
                     aria-label={t.image.viewFullscreen}
                     {...tooltip(t.image.viewFullscreen)}
                     onClick={expand}
                   >
-                    <ArrowsFullscreen className="icon-md" />
+                    <ArrowsFullscreen className={CssClass.ICON_MD} />
                   </button>
                 )}
 
                 <ActionsMenu
                   className="image-actions-menu"
                   title={t.image.actions}
-                  triggerClassName="btn btn-icon btn-accent"
+                  triggerClassName={classNames(
+                    CssClass.BTN,
+                    CssClass.BTN_ICON,
+                    CssClass.BTN_ACCENT,
+                  )}
                   horizontal
                 >
                   {!loadFailed && (
                     <ContextMenuItem
-                      icon={<Download className="icon-md" />}
+                      icon={<Download className={CssClass.ICON_MD} />}
                       onSelect={() => void download()}
                     >
                       {t.image.download}
@@ -231,14 +239,28 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
                   )}
 
                   <ContextMenuItem
-                    icon={<ImportIcon className="icon-md icon-semibold" />}
+                    icon={
+                      <ImportIcon
+                        className={classNames(
+                          CssClass.ICON_MD,
+                          CssClass.ICON_SEMIBOLD,
+                        )}
+                      />
+                    }
                     onSelect={openFilePicker}
                   >
                     {t.image.replace}
                   </ContextMenuItem>
 
                   <ContextMenuItem
-                    icon={<TrashIcon className="icon-md icon-bold" />}
+                    icon={
+                      <TrashIcon
+                        className={classNames(
+                          CssClass.ICON_MD,
+                          CssClass.ICON_BOLD,
+                        )}
+                      />
+                    }
                     onSelect={clear}
                     danger
                   >
@@ -261,13 +283,16 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
 
           <p className="image-message">{t.image.dropHint}</p>
 
-          <button className="btn btn-lg" onClick={openFilePicker}>
+          <button
+            className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+            onClick={openFilePicker}
+          >
             {t.image.choose}
           </button>
 
           <div className="image-url-row">
             <input
-              className="image-url-input no-ligatures"
+              className={classNames("image-url-input", CssClass.NO_LIGATURES)}
               type="url"
               spellCheck={false}
               placeholder={t.image.urlPlaceholder}
@@ -281,7 +306,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
               }}
             />
             <button
-              className="btn"
+              className={CssClass.BTN}
               disabled={!urlDraft.trim()}
               onClick={() => void applyUrl(urlDraft)}
             >

@@ -1,10 +1,9 @@
 import { ReferenceSurface } from "@/common/enums";
 import type { Variable } from "@/common/types";
 
-import { resolveCommandToString } from "./command";
 import { getTokenKey, scanReferences } from "./token";
 import type { VariableMap } from "./types";
-import { getVariableKey } from "./variables";
+import { getVariableKey, type OuterScope } from "./variables";
 
 export type VariableOverrides = Readonly<Record<string, string>>;
 
@@ -20,11 +19,11 @@ function referencesSecret(text: string, secretKeys: Set<string>): boolean {
   );
 }
 
-/** The embedded runbook's variables with each override applied. */
+/** The embedded runbook's variables with each override's own text as its value. */
 export function applyOverrides(
   variables: Variable[],
   overrides: VariableOverrides | undefined,
-  host: OverrideHost,
+  hostSecretKeys: Set<string>,
 ): Variable[] {
   if (!overrides || Object.keys(overrides).length === 0) {
     return variables;
@@ -39,10 +38,32 @@ export function applyOverrides(
     const raw = overrides[key];
     return {
       ...variable,
-      value: resolveCommandToString(raw, host.variableMap),
-      secret: variable.secret || referencesSecret(raw, host.secretKeys),
+      value: raw,
+      secret: variable.secret || referencesSecret(raw, hostSecretKeys),
     };
   });
+}
+
+/** The host scope the overridden keys among `variables` resolve against. */
+export function overrideScope(
+  variables: Variable[],
+  overrides: VariableOverrides | undefined,
+  hostMap: VariableMap,
+): OuterScope | undefined {
+  if (!overrides) {
+    return undefined;
+  }
+
+  const keys = new Set<string>();
+
+  for (const variable of variables) {
+    const key = getVariableKey(variable);
+    if (Object.hasOwn(overrides, key)) {
+      keys.add(key);
+    }
+  }
+
+  return keys.size > 0 ? { keys, variableMap: hostMap } : undefined;
 }
 
 /**

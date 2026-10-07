@@ -1,12 +1,16 @@
+import { CssClass } from "@/common/constants/css";
 import {
   CodeModelScope,
   RUNBOOK_JSON_PLACEHOLDER,
 } from "@/common/editorConfig";
 import { CodeLanguage, PanelSide } from "@/common/enums";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
+import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { classNames } from "@/utils/string";
 import { useEffect, useState } from "react";
+
 import { Modal } from "./Modal";
 import "./PasteRunbookModal.css";
 
@@ -73,12 +77,21 @@ export function PasteRunbookModal() {
       {hasError && <p className="paste-runbook-error">{t.pasteModal.error}</p>}
 
       <div className="modal-actions">
-        <button className="btn btn-lg" onClick={onClose}>
+        <button
+          className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+          onClick={onClose}
+        >
           {t.common.cancel}
         </button>
-        <div className="vertical-divider" />
+
+        <VerticalDivider />
+
         <button
-          className="btn btn-lg btn-primary"
+          className={classNames(
+            CssClass.BTN,
+            CssClass.BTN_LG,
+            CssClass.BTN_PRIMARY,
+          )}
           onClick={() => void handleCreate()}
         >
           {t.common.create}

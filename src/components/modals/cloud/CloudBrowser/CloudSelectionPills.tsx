@@ -1,9 +1,11 @@
 import { CloudSyncConfig } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { XIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
+import { classNames } from "@/utils/string";
 import { FileEarmark, FolderFill } from "react-bootstrap-icons";
 
 import { TooltipVariant } from "@/common/enums";
@@ -42,7 +44,12 @@ export function CloudSelectionPills({ listedIds }: Props) {
               TooltipVariant.CODE,
             )}
           >
-            <EntryIcon className="icon-sm cloud-selection-pill-icon" />
+            <EntryIcon
+              className={classNames(
+                "cloud-selection-pill-icon",
+                CssClass.ICON_SM,
+              )}
+            />
 
             <span className="cloud-selection-pill-name">{entry.name}</span>
             <button
@@ -51,7 +58,9 @@ export function CloudSelectionPills({ listedIds }: Props) {
               aria-label={dropTitle}
               onClick={() => toggleCloudSelected(entry)}
             >
-              <XIcon className="icon-sm icon-bold" />
+              <XIcon
+                className={classNames(CssClass.ICON_SM, CssClass.ICON_BOLD)}
+              />
             </button>
           </span>
         );

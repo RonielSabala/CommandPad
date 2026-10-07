@@ -136,8 +136,8 @@ export function CommandPreview({
         ref={previewRef}
         className={classNames(
           "command-preview-text",
-          "no-ligatures",
           unresolved && "has-unresolved",
+          CssClass.NO_LIGATURES,
           clamp.clamped && CssClass.CLAMPED,
         )}
       >
@@ -164,16 +164,24 @@ export function CommandPreview({
         {actions}
 
         <button
-          className="btn"
+          className={CssClass.BTN}
           onClick={copy}
           disabled={!text}
           aria-label={t.command.copy}
           {...tooltip(t.command.copy)}
         >
           {copied ? (
-            <CheckIcon className="icon-md icon-bold copy-check-icon" />
+            <CheckIcon
+              className={classNames(
+                "copy-check-icon",
+                CssClass.ICON_MD,
+                CssClass.ICON_BOLD,
+              )}
+            />
           ) : (
-            <CopyIcon className="icon-md icon-bold" />
+            <CopyIcon
+              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+            />
           )}
         </button>
       </div>

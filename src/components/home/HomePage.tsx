@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { AppRoute } from "@/common/constants/routes";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { NoteText } from "@/components/blocks/note/NoteText";
@@ -13,6 +14,7 @@ import "@/components/site/SitePage.css";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { hasVisitedHome, markHomeVisited } from "@/utils/session";
+import { classNames } from "@/utils/string";
 import {
   Book,
   BoxArrowInRight,
@@ -24,6 +26,7 @@ import {
   type Icon,
 } from "react-bootstrap-icons";
 import { Link, Navigate } from "react-router-dom";
+
 import "./HomePage.css";
 import { SymbolField } from "./SymbolField";
 
@@ -53,7 +56,9 @@ export function HomePage() {
 
           <div className="home-intro-inner">
             <section className="home-hero">
-              <p className="home-eyebrow no-user-select">
+              <p
+                className={classNames("home-eyebrow", CssClass.NO_USER_SELECT)}
+              >
                 {t.home.hero.eyebrow}
               </p>
               <h1 className="home-title">{t.home.hero.title}</h1>
@@ -64,15 +69,29 @@ export function HomePage() {
               <div className="home-cta-row">
                 <Link
                   to={AppRoute.WORKSPACE}
-                  className="btn btn-lg btn-primary home-cta"
+                  className={classNames(
+                    "home-cta",
+                    CssClass.BTN,
+                    CssClass.BTN_LG,
+                    CssClass.BTN_PRIMARY,
+                  )}
                   onClick={markHomeVisited}
                 >
-                  <BoxArrowInRight className="icon" />
+                  <BoxArrowInRight className={CssClass.ICON} />
                   {t.home.hero.primaryCta}
                 </Link>
 
-                <Link to={AppRoute.DOCS} className="btn btn-lg home-cta">
-                  <BookIcon className="icon icon-bold" />
+                <Link
+                  to={AppRoute.DOCS}
+                  className={classNames(
+                    "home-cta",
+                    CssClass.BTN,
+                    CssClass.BTN_LG,
+                  )}
+                >
+                  <BookIcon
+                    className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
+                  />
                   {t.home.hero.secondaryCta}
                 </Link>
               </div>
@@ -136,10 +155,15 @@ export function HomePage() {
             <p className="home-closing-body">{t.home.closing.body}</p>
             <Link
               to={AppRoute.WORKSPACE}
-              className="btn btn-lg btn-primary home-cta"
+              className={classNames(
+                "home-cta",
+                CssClass.BTN,
+                CssClass.BTN_LG,
+                CssClass.BTN_PRIMARY,
+              )}
               onClick={markHomeVisited}
             >
-              <BoxArrowInRight className="icon" />
+              <BoxArrowInRight className={CssClass.ICON} />
               {t.home.closing.cta}
             </Link>
           </section>
