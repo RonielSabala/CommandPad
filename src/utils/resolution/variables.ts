@@ -96,7 +96,7 @@ export function getVariableMap(
       );
 
       spans.push(
-        ...(reference.resolved
+        ...(reference.isReference
           ? nestSpans(reference.spans)
           : flatSpans(reference.text, key)),
       );

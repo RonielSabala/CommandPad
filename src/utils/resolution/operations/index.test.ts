@@ -1,12 +1,16 @@
 import {
+  BooleanSyntax,
   CaseSyntax,
   OperationSyntax,
   SliceSyntax,
 } from "@/common/variableSyntax";
+import { RAW, checkResolution } from "@/test";
 import { describe, expect, it } from "vitest";
 
 import { applyOperations, getOperationKeywords } from ".";
 import type { OperationContext } from "./types";
+
+const { TRUE, FALSE } = BooleanSyntax;
 
 const CONTEXT: OperationContext = { key: "HOST" };
 
@@ -79,4 +83,36 @@ describe("applyOperations", () => {
       ok: false,
     });
   });
+});
+
+checkResolution("a leading ! flips a boolean operation's answer", {
+  variables: { PORT: "8080", FILE: "backup.tar.gz", EMPTY: "" },
+  cases: [
+    ["{EMPTY|!isempty}", FALSE],
+    ["{FILE|!isempty}", TRUE],
+    ["{PORT|!isdigit}", FALSE],
+    ["{FILE|!endswith(.zip)}", TRUE],
+    ["{FILE|!endswith(.zip; .tar.gz)}", FALSE],
+    ["{|!AND(true;false)}", TRUE],
+    ["{|!NOT(true)}", TRUE],
+    ["{|!EQUALS(prod;dev)}", TRUE],
+    // Whitespace around the keyword
+    ["{PORT| ! isdigit }", FALSE],
+    ["{FILE| !endswith( .zip ) }", TRUE],
+    // A reference that did not resolve still fails the call
+    ["{|!EQUALS({MISSING};dev)}", RAW],
+  ],
+});
+
+checkResolution("only a boolean operation may be negated", {
+  variables: { PORT: "8080" },
+  cases: [
+    ["{PORT|!uppercase}", RAW],
+    ["{PORT|!len}", RAW],
+    ["{PORT|!slice(0;2)}", RAW],
+    ["{|!IF(true;a;b)}", RAW],
+    ["{|!date()}", RAW],
+    ["{PORT|!nope}", RAW],
+    ["{PORT|!!isdigit}", RAW],
+  ],
 });

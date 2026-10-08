@@ -9,7 +9,8 @@ export { extractedVariableKey, uniqueVariableKey } from "./keys";
 export {
   applyOperations,
   getCaseOperationKeywords,
-  getOperationKeywords
+  getOperationKeywords,
+  readNegation
 } from "./operations";
 export type { OperationKeyword } from "./operations/types";
 export { applyOverrides, overrideScope, withOverride } from "./overrides";
@@ -21,7 +22,11 @@ export {
   renameCommandTokens,
   renameValueTokens
 } from "./rename";
-export { countCommandLines, isMaskedSegment } from "./segments";
+export {
+  countCommandLines,
+  hasUnresolvedSegments,
+  isMaskedSegment
+} from "./segments";
 export {
   braceToken,
   braceTokenKeyRange,

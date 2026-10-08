@@ -6,7 +6,13 @@ import { VariableSyntax } from "@/common/variableSyntax";
 import type { OperationChunk } from "./operations";
 import { applyOperations } from "./operations";
 import { applyTemplateParams, parseParam } from "./params";
-import { flatSpans, mergeSpans, nestSpans, spansText } from "./spans";
+import {
+  flatSpans,
+  mergeSpans,
+  nestSpans,
+  spansText,
+  unresolvedSpans,
+} from "./spans";
 import type { ReferenceBodyChunk } from "./token";
 import {
   replaceTemplateReferences,
@@ -16,10 +22,10 @@ import {
 } from "./token";
 import type { ResolvedValue, VariableLookup } from "./types";
 
-/** Whether an unfilled `{;name}` blank may pass through instead of leaving the reference unresolved. */
-const KEEPS_BLANKS: Record<ReferenceSurface, boolean> = {
-  [ReferenceSurface.COMMAND]: false,
-  [ReferenceSurface.VALUE]: true,
+/** Whether a `{;name}` blank reaches the end of the line on this surface. */
+const BLANKS_ARE_FINAL: Record<ReferenceSurface, boolean> = {
+  [ReferenceSurface.COMMAND]: true,
+  [ReferenceSurface.VALUE]: false,
 };
 
 /** Whether a variable left empty counts as unfilled. */
@@ -38,6 +44,11 @@ interface ResolvedReference {
   text: string;
   resolved: boolean;
   spans: ResolvedSpan[];
+  /**
+   * Whether the braces spell a reference at all. A template blank and a brace
+   * group carrying no operation do not.
+   */
+  isReference: boolean;
 }
 
 interface ResolvedChunk {
@@ -99,8 +110,6 @@ function resolveChunk(
 
     if (!reference.resolved) {
       fullyResolved = false;
-      spans.push(...flatSpans(reference.text, source));
-      continue;
     }
 
     spans.push(...nestSpans(reference.spans));
@@ -108,6 +117,43 @@ function resolveChunk(
 
   const merged = mergeSpans(spans);
   return { text: spansText(merged), spans: merged, fullyResolved };
+}
+
+/** Describes a reference that did not resolve. */
+function failedSpans(
+  token: string,
+  raw: string,
+  context: ReferenceContext,
+  depth: number,
+): ResolvedSpan[] {
+  if (!raw.includes(VariableSyntax.BRACE_OPEN)) {
+    return unresolvedSpans(token);
+  }
+
+  const spans = unresolvedSpans(VariableSyntax.BRACE_OPEN);
+
+  for (const part of splitReferenceParts(raw, context.surface)) {
+    if (!part.match) {
+      spans.push(...unresolvedSpans(part.text));
+      continue;
+    }
+
+    const nested = resolveReferenceAt(
+      part.match.token,
+      part.match.raw,
+      context,
+      depth,
+    );
+
+    spans.push(
+      ...(nested.isReference && !nested.resolved
+        ? nestSpans(nested.spans)
+        : unresolvedSpans(part.match.token)),
+    );
+  }
+
+  spans.push(...unresolvedSpans(VariableSyntax.BRACE_CLOSE));
+  return mergeSpans(spans);
 }
 
 /**
@@ -148,16 +194,20 @@ function resolveReferenceAt(
   const [keyChunk, ...rest] = splitReferenceBody(raw);
 
   const key = keyChunk.text.trim();
-  const unresolvedReference = (): ResolvedReference => ({
+  const rawReference = (isReference: boolean): ResolvedReference => ({
     key,
     text: token,
     resolved: false,
-    spans: flatSpans(token),
+    isReference,
+    spans: failedSpans(token, raw, context, depth),
   });
+  const unresolvedReference = (): ResolvedReference => rawReference(true);
 
   const value = key ? context.lookup(key) : unnamedValue(rest);
   if (value === undefined) {
-    return unresolvedReference();
+    // A key that resolved to nothing is a reference that failed; an empty key
+    // reaching here is a blank or a brace group, which is not a reference.
+    return rawReference(!!key);
   }
 
   const params: Record<string, string> = {};
@@ -167,13 +217,13 @@ function resolveReferenceAt(
     const isOperation = chunk.separator === VariableSyntax.OPERATION_SEPARATOR;
     const resolved = resolveChunk(chunk.text, context, key, depth, isOperation);
 
-    if (!resolved.fullyResolved) {
-      return unresolvedReference();
-    }
-
     if (isOperation) {
       operations.push({ text: resolved.text, spans: resolved.spans });
       continue;
+    }
+
+    if (!resolved.fullyResolved) {
+      return unresolvedReference();
     }
 
     const param = parseParam(resolved.text);
@@ -182,14 +232,16 @@ function resolveReferenceAt(
     }
   }
 
-  const template = applyTemplateParams(
-    value.text,
+  const final = BLANKS_ARE_FINAL[context.surface];
+  const template = applyTemplateParams(value.text, {
     params,
-    { key },
-    value.spans,
-  );
+    context: { key },
+    final,
+    spans: value.spans,
+  });
 
-  if (!template.fullyResolved && !KEEPS_BLANKS[context.surface]) {
+  // A transform over an unfilled blank would quietly produce nonsense
+  if (!template.fullyResolved && final && operations.length > 0) {
     return unresolvedReference();
   }
 
@@ -216,6 +268,7 @@ function resolveReferenceAt(
     key,
     text: applied.text,
     resolved: true,
+    isReference: true,
     spans:
       applied.spans ??
       (rewritten ? flatSpans(applied.text, key || undefined) : template.spans),

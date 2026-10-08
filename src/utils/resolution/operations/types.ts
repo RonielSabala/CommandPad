@@ -30,6 +30,7 @@ export interface OperationKeyword {
 
 export interface OperationDefinition {
   keywords: readonly OperationKeyword[];
+  negatable?: true;
   parse: (operation: OperationChunk) => OperationTransform | null;
 }
 

@@ -1,5 +1,12 @@
 import type { Variable } from "@/common/types";
-import { checkValues, runbook, secret, variableValues } from "@/test";
+import {
+  checkResolution,
+  checkValues,
+  partial,
+  runbook,
+  secret,
+  variableValues,
+} from "@/test";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -86,6 +93,19 @@ checkValues("a reference loop leaves every key in it raw", {
     B: "{A}",
     SAFE: "fine",
   },
+});
+
+checkResolution("a value holding a reference that did not resolve", {
+  variables: {
+    BROKEN: "hi {MISSING}",
+    SHELL: "find {} +",
+    LOOPED: "{LOOPED}",
+  },
+  cases: [
+    ["echo {BROKEN}", partial("echo hi {MISSING}")],
+    ["echo {LOOPED}", partial("echo {LOOPED}")],
+    ["echo {SHELL}", "echo find {} +"],
+  ],
 });
 
 describe("a key whose value looped is refused rather than transformed", () => {

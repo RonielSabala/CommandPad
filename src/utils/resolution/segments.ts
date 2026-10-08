@@ -2,6 +2,18 @@ import { CommandSegmentType } from "@/common/enums";
 import type { CommandSegment } from "@/common/types";
 import { countLines } from "@/utils/string";
 
+import { hasUnresolvedSpans } from "./spans";
+
+export function hasUnresolvedSegments(
+  segments: readonly CommandSegment[],
+): boolean {
+  return segments.some(
+    (segment) =>
+      segment.type === CommandSegmentType.UNRESOLVED ||
+      hasUnresolvedSpans(segment.spans),
+  );
+}
+
 export function isMaskedSegment(
   segment: CommandSegment,
   secretKeys: ReadonlySet<string>,

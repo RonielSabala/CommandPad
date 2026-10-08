@@ -130,6 +130,7 @@ export interface Messages {
     actions: string;
     duplicate: (count: number) => string;
     renameCase: string;
+    clearValues: (count: number) => string;
     remove: (count: number) => string;
     selected: (count: number) => string;
     dragResizeSplit: string;
@@ -538,6 +539,7 @@ export interface Messages {
       constantsDemoHint: string;
       enums: (variableActionsLabel: string, makeEnumLabel: string) => string;
       enumsDemoHint: string;
+      clearValues: (clearValuesLabel: string) => string;
     };
     variableReferences: {
       intro: string;
@@ -545,12 +547,15 @@ export interface Messages {
       shades: string;
       shadesDemoHint: string;
       shadesHover: string;
+      shadesUnresolved: string;
+      shadesUnresolvedDemoHint: string;
       circular: string;
     };
     parameterizedPlaceholders: {
       intro: string;
       fill: string;
       seeExample: string;
+      unfilled: string;
       multiple: string;
       nested: string;
       chained: string;
@@ -559,6 +564,11 @@ export interface Messages {
       intro: string;
       override: string;
       shared: string;
+    };
+    variableOperations: {
+      intro: string;
+      demoHint: string;
+      chaining: string;
     };
     variableSlicing: {
       intro: string;
@@ -664,6 +674,7 @@ export interface Messages {
       table: string;
       compare: string;
       compareTable: string;
+      negation: string;
       demoHint: string;
       booleans: string;
     };
@@ -671,6 +682,7 @@ export interface Messages {
       intro: string;
       table: string;
       demoHint: string;
+      partialBranch: string;
     };
     multilineReferences: {
       intro: string;

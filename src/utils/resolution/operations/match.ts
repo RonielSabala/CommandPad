@@ -20,6 +20,7 @@ function matchBuilder(matches: Matcher): CallBuilder {
 
 export const MATCH_OPERATION: OperationDefinition = defineCallOperation({
   arity: MatchSyntax.ARITY,
+  negatable: true,
   builders: {
     [MatchSyntax.STARTS_WITH]: matchBuilder((text, candidate) =>
       text.startsWith(candidate),

@@ -77,7 +77,12 @@ describe("applyOverrides", () => {
     expect(values).toEqual({ A: "" });
     expect(resolve("echo {A}")).toEqual([
       { text: "echo ", type: CommandSegmentType.LITERAL },
-      { key: "A", text: "{A}", type: CommandSegmentType.UNRESOLVED },
+      {
+        key: "A",
+        text: "{A}",
+        type: CommandSegmentType.UNRESOLVED,
+        spans: [{ text: "{A}", depth: 1, unresolved: true }],
+      },
     ]);
   });
 

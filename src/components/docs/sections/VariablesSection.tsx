@@ -1,6 +1,7 @@
 import { VaultPrompt } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
+
 import { demoCommand, demoVariable } from "../demos/demoSeeds";
 import { DemoVariableRows, DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
@@ -68,6 +69,7 @@ export function VariablesDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variables.clearValues(t.variables.clearValues(2))} />
       <Prose text={t.docs.variables.unresolved} />
       <Prose text={t.docs.variables.tooltip} />
       <Prose text={t.docs.variables.split} />
@@ -167,6 +169,22 @@ export function VariableReferencesDocs() {
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.variableReferences.shadesHover} />
+      <Prose text={t.docs.variableReferences.shadesUnresolved} />
+      <Prose text={t.docs.variableReferences.shadesUnresolvedDemoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [
+              demoVariable("REGION", "eu-west-1"),
+              demoVariable("BUCKET", "backups-{REGIN}"),
+            ],
+            blocks: [demoCommand("aws s3 ls s3://{BUCKET}/nightly")],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
       <Prose text={t.docs.variableReferences.circular} />
     </>
   );
@@ -191,6 +209,7 @@ export function ParameterizedPlaceholdersDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.parameterizedPlaceholders.unfilled} />
       <Prose text={t.docs.parameterizedPlaceholders.multiple} />
       <DemoWorkspace
         tabs={[
@@ -244,6 +263,33 @@ export function ParameterizedPlaceholdersDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+    </>
+  );
+}
+
+export function VariableOperationsDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableOperations.intro} />
+      <Prose text={t.docs.variableOperations.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("PROJECT", "My Photo Backup")],
+            blocks: [
+              demoCommand('echo "{PROJECT}"'),
+              demoCommand("mkdir {PROJECT|kebabcase}"),
+              demoCommand('echo "{PROJECT|kebabcase|uppercase}"'),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableOperations.chaining} />
     </>
   );
 }
@@ -813,6 +859,7 @@ export function VariableLogicDocs() {
       <Prose text={t.docs.variableLogic.table} />
       <Prose text={t.docs.variableLogic.compare} />
       <Prose text={t.docs.variableLogic.compareTable} />
+      <Prose text={t.docs.variableLogic.negation} />
       <Prose text={t.docs.variableLogic.demoHint} />
       <DemoWorkspace
         tabs={[
@@ -866,6 +913,7 @@ export function VariableConditionalDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.variableConditional.partialBranch} />
     </>
   );
 }

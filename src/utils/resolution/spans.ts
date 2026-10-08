@@ -5,6 +5,40 @@ export function flatSpans(text: string, source?: string): ResolvedSpan[] {
   return text ? [{ text, depth: 0, source }] : [];
 }
 
+export function unresolvedSpans(
+  text: string,
+  depth = 0,
+  source?: string,
+): ResolvedSpan[] {
+  return text ? [{ text, depth, source, unresolved: true }] : [];
+}
+
+export function hasUnresolvedSpans(
+  spans: readonly ResolvedSpan[] = [],
+): boolean {
+  return spans.some((span) => span.unresolved);
+}
+
+/** Whether an unresolved span falls outside `[start, end)` of the text `spans` describes. */
+export function hasUnresolvedOutside(
+  spans: readonly ResolvedSpan[],
+  start: number,
+  end: number,
+): boolean {
+  let at = 0;
+
+  for (const span of spans) {
+    const spanEnd = at + span.text.length;
+    if (span.unresolved && (at < start || spanEnd > end)) {
+      return true;
+    }
+
+    at = spanEnd;
+  }
+
+  return false;
+}
+
 export function nestSpans(spans: readonly ResolvedSpan[]): ResolvedSpan[] {
   return spans.map((span) => ({ ...span, depth: span.depth + 1 }));
 }
@@ -23,7 +57,12 @@ export function mergeSpans(spans: readonly ResolvedSpan[]): ResolvedSpan[] {
     }
 
     const last = merged[merged.length - 1];
-    if (last && last.depth === span.depth && last.source === span.source) {
+    if (
+      last &&
+      last.depth === span.depth &&
+      last.source === span.source &&
+      last.unresolved === span.unresolved
+    ) {
       last.text += span.text;
       continue;
     }
@@ -73,18 +112,21 @@ export function sliceSpans(
   return sliced;
 }
 
-/** The depth of the character at `index` in the text `spans` describes. */
-export function depthAt(spans: readonly ResolvedSpan[], index: number): number {
+/** The span covering the character at `index` in the text `spans` describes. */
+export function spanAt(
+  spans: readonly ResolvedSpan[],
+  index: number,
+): ResolvedSpan | undefined {
   let at = 0;
 
   for (const span of spans) {
     at += span.text.length;
     if (index < at) {
-      return span.depth;
+      return span;
     }
   }
 
-  return 0;
+  return undefined;
 }
 
 /** The spans of the trimmed text `spans` describes. */

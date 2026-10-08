@@ -87,8 +87,48 @@ describe("nesting depth", () => {
     ]);
   });
 
-  it("gives an unresolved reference no spans", () => {
-    expect(spans(book, "{MISSING}")).toEqual([]);
+  it("counts a reference that failed at its own level", () => {
+    expect(spans(book, "{MISSING}")).toEqual([
+      { text: "{MISSING}", depth: 1, unresolved: true },
+    ]);
+  });
+
+  it("paints a reference inside a failed one one level deeper", () => {
+    expect(spans(book, "{NAME|slice({MISSING};)}")).toEqual([
+      { text: "{NAME|slice(", depth: 1, unresolved: true },
+      { text: "{MISSING}", depth: 2, unresolved: true },
+      { text: ";)}", depth: 1, unresolved: true },
+    ]);
+  });
+
+  it("paints each argument of a failed call at its own level", () => {
+    expect(spans(book, "{|IF(\n\t{COND};\n\t{A};\n\t{B}\n)}")).toEqual([
+      { text: "{|IF(\n\t", depth: 1, unresolved: true },
+      { text: "{COND}", depth: 2, unresolved: true },
+      { text: ";\n\t", depth: 1, unresolved: true },
+      { text: "{A}", depth: 2, unresolved: true },
+      { text: ";\n\t", depth: 1, unresolved: true },
+      { text: "{B}", depth: 2, unresolved: true },
+      { text: "\n)}", depth: 1, unresolved: true },
+    ]);
+  });
+
+  it("keeps a resolved reference inside a failed one at its own level", () => {
+    expect(spans(book, "{|IF({MISSING};{NAME};x)}")).toEqual([
+      { text: "{|IF(", depth: 1, unresolved: true },
+      { text: "{MISSING}", depth: 2, unresolved: true },
+      { text: ";{NAME};x)}", depth: 1, unresolved: true },
+    ]);
+  });
+
+  it("keeps counting into a reference nested inside a failed argument", () => {
+    expect(spans(book, "{NAME|slice({MISSING|slice({DEEPER};)};)}")).toEqual([
+      { text: "{NAME|slice(", depth: 1, unresolved: true },
+      { text: "{MISSING|slice(", depth: 2, unresolved: true },
+      { text: "{DEEPER}", depth: 3, unresolved: true },
+      { text: ";)}", depth: 2, unresolved: true },
+      { text: ";)}", depth: 1, unresolved: true },
+    ]);
   });
 });
 
@@ -144,6 +184,59 @@ describe("nesting through an IF branch", () => {
   it("flattens a branch a later operation transformed", () => {
     expect(spans(book, "{|IF(true;{SERVICE};{NAME})|uppercase}")).toEqual([
       { text: "SVC-API", depth: 1 },
+    ]);
+  });
+
+  it("paints a reference the branch could not resolve on its own ramp", () => {
+    expect(spans(book, "{|IF(true;{NAME} {MISSING};x)}")).toEqual([
+      { text: "api", depth: 2, source: "NAME" },
+      { text: " ", depth: 1 },
+      { text: "{MISSING}", depth: 2, unresolved: true },
+    ]);
+  });
+});
+
+describe("nesting an unresolved reference", () => {
+  const book = runbook({
+    BROKEN: "hi {MISSING}",
+    SHELL: "find {} +",
+    BLANK: "hi {;name}",
+    PASSED: "{BLANK}",
+    INNER: "{MISSING}",
+    MID: "{INNER}",
+    DEEP: "{MID}",
+  });
+
+  it("puts a reference a value could not resolve one level under it", () => {
+    expect(spans(book, "{BROKEN}")).toEqual([
+      { text: "hi ", depth: 1, source: "BROKEN" },
+      { text: "{MISSING}", depth: 2, unresolved: true },
+    ]);
+  });
+
+  it("keeps braces that spell no reference as the value's own text", () => {
+    expect(spans(book, "{SHELL}")).toEqual([
+      { text: "find {} +", depth: 1, source: "SHELL" },
+    ]);
+  });
+
+  it("keeps the level a filled blank sits at", () => {
+    expect(spans(book, "{BLANK;name=Ada}")).toEqual([
+      { text: "hi ", depth: 1, source: "BLANK" },
+      { text: "Ada", depth: 2, source: "BLANK;name" },
+    ]);
+  });
+
+  it("names the blank's own variable when another value passed it along", () => {
+    expect(spans(book, "{PASSED}")).toEqual([
+      { text: "hi ", depth: 2, source: "BLANK" },
+      { text: "{;name}", depth: 3, source: "BLANK;name", unresolved: true },
+    ]);
+  });
+
+  it("clamps past the deepest level the palette colors", () => {
+    expect(spans(book, "{DEEP}")).toEqual([
+      { text: "{MISSING}", depth: 3, unresolved: true },
     ]);
   });
 });

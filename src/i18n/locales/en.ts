@@ -122,6 +122,7 @@ export const en: Messages = {
     duplicate: (count) =>
       count === 1 ? "Duplicate variable" : "Duplicate variables",
     renameCase: "Change key case",
+    clearValues: (count) => (count === 1 ? "Clear value" : "Clear values"),
     remove: (count) => (count === 1 ? "Remove variable" : "Remove variables"),
     selected: (count) =>
       count === 1 ? "1 variable selected" : `${count} variables selected`,
@@ -732,12 +733,13 @@ export const en: Messages = {
       [DocsSectionId.VARIABLE_REFERENCES]: "Variable references",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Parameterized placeholders",
       [DocsSectionId.PLACEHOLDER_DEFAULTS]: "Placeholder defaults",
+      [DocsSectionId.VARIABLE_OPERATIONS]: "Operations",
+      [DocsSectionId.VARIABLE_CASE]: "Changing case",
       [DocsSectionId.VARIABLE_SLICING]: "Slicing values",
       [DocsSectionId.VARIABLE_LEN]: "Character length",
       [DocsSectionId.VARIABLE_COUNT]: "Counting occurrences",
       [DocsSectionId.VARIABLE_KEY]: "Using the variable name",
       [DocsSectionId.VARIABLE_HASH]: "Hashing a value",
-      [DocsSectionId.VARIABLE_CASE]: "Changing case",
       [DocsSectionId.VARIABLE_STRIP]: "Trimming ends",
       [DocsSectionId.VARIABLE_FILL]: "Adding to the ends",
       [DocsSectionId.VARIABLE_REPLACE]: "Swapping text out",
@@ -934,6 +936,8 @@ If something goes wrong, undo it in this order:
         `A value can also be a fixed set of choices, like an environment or a region, instead of free text: pick **${makeEnumLabel}** from a variable's **${variableActionsLabel}** menu to turn its value into a combo box, where each choice can be removed and a box at the bottom adds a new one.`,
       enumsDemoHint:
         "Below, `env` can only be one of three clusters. Pick another one and the command follows, with no chance of a typo in the context name:",
+      clearValues: (clearValuesLabel) =>
+        `In the variables editor, a row's actions menu also offers **${clearValuesLabel}**, which empties the value and leaves the key.`,
     },
     variableReferences: {
       intro:
@@ -946,6 +950,10 @@ If something goes wrong, undo it in this order:
         "Here `HOST` is built from `SERVICE`, which is built from `NAME`, so the resolved command wears all three tints at once:",
       shadesHover:
         "When the tints alone are not enough, hover over any highlighted piece of a resolved command: it names the variable that wrote it.",
+      shadesUnresolved:
+        "A reference that does not resolve is counted the same way, in red instead of green: the rest of the command still resolves and only the broken part is marked, at the depth it sits at. So one glance also tells you how deep a problem is, not just that there is one.",
+      shadesUnresolvedDemoHint:
+        "Below, `BUCKET` references `{REGIN}`, a typo for `REGION`, which is the only part in red. Fix the typo in the value and watch it turn green:",
       circular:
         "Circular references are safe: if two variables reference each other, the app detects the loop and leaves the reference as plain text.",
     },
@@ -955,6 +963,8 @@ If something goes wrong, undo it in this order:
       fill: "Mark the blank with `{;param}` inside the variable's value. It works like a fill-in-the-blank sentence: the variable holds the fixed wording, and you drop in the missing word each time you use it. Wherever you reference that variable, fill the blank with `{key;param=param_value}`, and your value lands right where the blank sat.",
       seeExample:
         "If that sounds abstract, don't worry: it clicks the moment you see it. Take a look at the example below before reading on.",
+      unfilled:
+        "A blank nobody fills stays on screen exactly as you wrote it, marked in red, and the rest of the value still resolves around it. Delete `;name=commandpad` from the command above to see at a glance the missing part.",
       multiple:
         "A value can have several blanks. Give each one a different name, then fill them all in the same command, separated by semicolons:",
       nested:
@@ -970,13 +980,21 @@ If something goes wrong, undo it in this order:
       shared:
         "A default only has to be written once. When the same blank turns up several times in one value, they all share it.",
     },
+    variableOperations: {
+      intro:
+        "A reference can do more than hand a value over: an **operation** changes that value on its way into the command. Every operation is written the same way. Put a `|` after the key, then the operation's name, still inside the braces: `{KEY|operation}`.",
+      demoHint:
+        "Below, a project's name becomes a folder name. Don't worry about what each operation does yet, only about the shape:",
+      chaining:
+        "A reference can carry several operations, one `|` each, and they run left to right. That is the whole idea; the sections that follow take the operations one by one.",
+    },
     variableSlicing: {
       intro:
         "A variable holds one value, but a command does not always need all of it. For example, a commit hash is forty characters long when you check it out and seven when it goes in a tag. Slicing lets you keep **one** variable and take just the part you need.",
       demoHint:
         "The first command below uses the whole hash. The second takes only its first seven characters. Edit the variable and both stay in step:",
       howItWorks:
-        "Write a `|` after the key, then `slice(...)` with the piece you want, its numbers separated by semicolons. Counting starts at zero, and the second number marks where to **stop without including it**: `slice(;7)` is the first seven characters, and `slice(2;5)` is characters two, three, and four. Leave either number out to run from the very start, or all the way to the end.",
+        "`slice(...)` takes the piece you want, its numbers separated by semicolons. Counting starts at zero, and the second number marks where to **stop without including it**: `slice(;7)` is the first seven characters, and `slice(2;5)` is characters two, three, and four. Leave either number out to run from the very start, or all the way to the end.",
       positionsHint:
         "Negative numbers count back from the end, so `slice(-2;)` is the last two characters. A date shows the three forms side by side:",
       step: "A third number is the **step**: how many positions the slice skips between one character and the next. `slice(;;2)` takes one character out of every two and skips the rest, and a negative step walks backwards, so `slice(;;-1)` on its own reverses a value:",
@@ -987,22 +1005,21 @@ If something goes wrong, undo it in this order:
         "The way the numbers work comes from Python, if you are curious to read more about it: [string slicing in Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). You do not need to know Python to use it here.",
     },
     variableLen: {
-      intro:
-        "Write `len` after the `|` and you get **how many characters the value takes up**.",
+      intro: "`len` gives you **how many characters the value takes up**.",
       demoHint:
         "For example, a commit subject is supposed to stay under 50 characters, but nobody counts them by hand. Type into the message below and watch the number keep up:",
       chaining:
-        "Operations run left to right, so you can put `len` after a slice: `{commit|slice(;7)|len}` shortens the commit first, then counts what is left.",
+        "Chained after a slice, it measures what the slice left: `{commit|slice(;7)|len}` shortens the commit first, then counts what remains.",
     },
     variableCount: {
       intro:
-        "Write `count(x)` after the `|` and you get **how many times `x` appears** in the value.",
+        "`count(x)` gives you **how many times `x` appears** in the value.",
       demoHint:
         "Below, each `/` marks one directory level. Edit the path and the count keeps up:",
     },
     variableKey: {
       intro:
-        "Sometimes a command needs to say a variable's name as well as use its value. Write `key` after the `|` and you get **the name you gave the variable**, instead of what it holds.",
+        "Sometimes a command needs to say a variable's name as well as use its value. `key` gives you **the name you gave the variable**, instead of what it holds.",
       demoHint:
         "Try renaming the variable below and watch the command update itself, the name and the value never fall out of sync:",
       chaining:
@@ -1010,12 +1027,12 @@ If something goes wrong, undo it in this order:
     },
     variableHash: {
       intro:
-        "Write `hash` after the `|` to get the value's SHA-256 hash. The same value always gives the same hash, and changing one character changes all of it.",
+        "`hash` gives you the value's SHA-256 hash. The same value always gives the same hash, and changing one character changes all of it.",
       demoHint: "Change the config below and watch the tag change:",
     },
     variableCase: {
       intro:
-        "Write a case keyword after the `|` and the value is respelled on its way into the command. Each result below is written in the case it names:",
+        "A case keyword respells the value on its way into the command. Each result below is written in the case it names:",
       table: `| Operation | Result |
 | --- | --- |
 | \`snakecase\` | words\\_joined\\_by\\_underscores |
@@ -1094,12 +1111,12 @@ If something goes wrong, undo it in this order:
     },
     transformedPlaceholders: {
       intro:
-        "A parameterized placeholder's blank can transform whatever fills it, the same way a variable's own value does. Write a `|` and an operation right after the blank's name, `{;name|operation}`, and the value is respelled on its way in before it ever reaches the command.",
+        "A parameterized placeholder's blank can transform whatever fills it, the same way a variable's own value does. An operation can go right after the blank's name, `{;name|operation}`, and whatever fills the blank is respelled on its way in before it ever reaches the command.",
       demoHint: "This works with every operation from the sections above.",
     },
     unnamedReferences: {
       intro:
-        "A reference does not have to name a variable. Leave the name out, write only operations after the `|`, and the reference starts from an empty value: what you get back is whatever the operations make of it.",
+        "A reference does not have to name a variable. Leave the key out and write only operations, `{|operation}`, and the reference starts from an empty value: what you get back is whatever the operations make of it.",
       demoHint:
         "`{|len}` below has no variable behind it, so there is nothing to measure; it always resolves to `0`:",
       rule: "The braces have to hold at least one operation. Empty braces are left exactly as they are, so a command that writes `{}` itself keeps them.",
@@ -1108,7 +1125,7 @@ If something goes wrong, undo it in this order:
     },
     variableDate: {
       intro:
-        "Write `date` after the `|` and you get **the current date**, spelled `YYYY-MM-DD`. It replaces whatever it is handed, so it is normally written on its own.",
+        "`date` gives you **the current date**, spelled `YYYY-MM-DD`. It replaces whatever it is handed, so it is normally written on its own.",
       demoHint: "That is all it takes to put today's date in a name:",
       format:
         "Put a format in the parentheses to write the date some other way. Each placeholder below is filled in, and everything else is kept exactly as you typed it, so the separators are yours:",
@@ -1155,7 +1172,7 @@ If something goes wrong, undo it in this order:
     },
     variableBoolean: {
       intro:
-        "A boolean operation does not change a value, it **asks a question about it** and answers with `true` or `false`. These are the questions, each one written after a `|`:",
+        "A boolean operation does not change a value, it **asks a question about it** and answers with `true` or `false`. These are the questions:",
       table: `| Operation | Description |
 | --- | --- |
 | \`isdigit\` | Every character is a digit |
@@ -1193,6 +1210,8 @@ If something goes wrong, undo it in this order:
 | \`EQUALS(a; b)\` | True when the two texts are identical |
 | \`NOTEQUALS(a; b)\` | True when they differ |
 | \`EQUALSIGNORECASE(a; b)\` | True ignoring capitals, so \`PROD\` and \`prod\` count as the same |`,
+      negation:
+        "`NOT` is not the only way to flip an answer. A `!` right before any of these keywords does the same to whatever the call returns, so `{|!AND(a; b)}` and `{|NOT({|AND(a; b)})}` say the same thing with one reference instead of two.",
       demoHint:
         "Below, both checks have to pass \u2014 switch the branch, or put a letter in the port, and the line turns to `false`:",
       booleans:
@@ -1208,6 +1227,8 @@ If something goes wrong, undo it in this order:
 | \`else\` | The text used when it is false. Leave it out for nothing at all |`,
       demoHint:
         "Below, change `LEVEL` to make the first flag come and go, and put a letter in `RETRIES` to make the second one disappear:",
+      partialBranch:
+        "A branch is handed back as you wrote it, so a reference inside it that does not resolve is marked in red and the rest of the branch still resolves. The branch nobody took is never read at all, so a broken reference parked there costs nothing. The condition is the one part that must resolve: without an answer there is nothing to choose with, so the whole reference stays as written.",
     },
     multilineReferences: {
       intro:
@@ -1221,7 +1242,7 @@ If something goes wrong, undo it in this order:
       tryHint:
         "Try deleting the backslash in the command below and watch the literal braces turn into an active reference:",
       scope:
-        "Escaping applies inside command blocks, and inside the text a filled blank produces.",
+        "Escaping applies inside command blocks, inside a blank in a variable's value, and inside the text a filled blank produces.",
     },
     secretVariables: {
       intro: (actionsLabel, maskLabel) =>

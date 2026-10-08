@@ -3,6 +3,7 @@ import type { CommandSegment } from "@/common/types";
 
 import type { ReferenceContext } from "./reference";
 import { resolveReference } from "./reference";
+import { hasUnresolvedSegments } from "./segments";
 import { previewSpans } from "./spans";
 import { scanReferences, unescapeBraces } from "./token";
 import type { VariableMap } from "./types";
@@ -47,7 +48,7 @@ export function resolveCommandText(
       type: resolved
         ? CommandSegmentType.RESOLVED
         : CommandSegmentType.UNRESOLVED,
-      ...(resolved ? { spans: previewSpans(spans) } : {}),
+      spans: previewSpans(spans),
     });
 
     lastEnd = match.end;
@@ -71,7 +72,5 @@ export function hasUnresolvedTokens(
   rawText: string,
   variableMap: VariableMap,
 ): boolean {
-  return resolveCommandText(rawText, variableMap).some(
-    (segment) => segment.type === CommandSegmentType.UNRESOLVED,
-  );
+  return hasUnresolvedSegments(resolveCommandText(rawText, variableMap));
 }

@@ -3,6 +3,7 @@ import { CallGroup, OperationKeywordRegex } from "@/common/variableSyntax";
 import { isString } from "@/utils/typeGuards";
 
 import { spansText } from "../spans";
+import { negateTransform, readNegation } from "./boolean";
 import { CALC_OPERATION } from "./calc";
 import { CASE_OPERATION } from "./case";
 import { COMPARE_OPERATION } from "./compare";
@@ -56,6 +57,7 @@ const OPERATION_DEFINITIONS: readonly OperationDefinition[] = [
   IF_OPERATION,
 ];
 
+export { readNegation } from "./boolean";
 export type { OperationChunk } from "./types";
 
 export function getOperationKeywords(): readonly OperationKeyword[] {
@@ -78,13 +80,31 @@ const DEFINITIONS_BY_KEYWORD = new Map(
   ),
 );
 
+function withoutNegation(operation: OperationChunk): OperationChunk | null {
+  const negation = readNegation(operation.text);
+  if (!negation) {
+    return null;
+  }
+
+  const text =
+    " ".repeat(negation.length) + operation.text.slice(negation.length);
+  return { ...operation, text };
+}
+
 function parseOperation(operation: OperationChunk): OperationTransform | null {
-  const keyword = OperationKeywordRegex.exec(operation.text)?.groups?.[
+  const negated = withoutNegation(operation);
+  const chunk = negated ?? operation;
+  const keyword = OperationKeywordRegex.exec(chunk.text)?.groups?.[
     CallGroup.KEYWORD
   ];
 
   const definition = keyword && DEFINITIONS_BY_KEYWORD.get(keyword);
-  return definition ? definition.parse(operation) : null;
+  if (!definition || (negated && !definition.negatable)) {
+    return null;
+  }
+
+  const transform = definition.parse(chunk);
+  return transform && negated ? negateTransform(transform) : transform;
 }
 
 /** Runs a token's operations left to right. */

@@ -11,6 +11,7 @@ const OTHERWISE_INDEX = 2;
 
 export const IF_OPERATION: OperationDefinition = defineCallOperation({
   arity: IfSyntax.ARITY,
+  verbatimFrom: THEN_INDEX,
   builders: {
     [IfSyntax.KEYWORD]: (args, argumentSpans) => {
       const [condition = "", then = "", otherwise = ""] = args;

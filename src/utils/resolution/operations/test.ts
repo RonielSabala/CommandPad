@@ -40,6 +40,7 @@ function asTransform(test: StringTest): OperationTransform {
 
 export const TEST_OPERATION: OperationDefinition = {
   keywords: bareKeywords(Object.keys(TESTS)),
+  negatable: true,
   parse: (operation) => {
     const test = TESTS[operation.text.trim()];
     return test ? asTransform(test) : null;

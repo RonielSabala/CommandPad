@@ -88,7 +88,21 @@
 /* Token styles */
 
 .token-resolved {
+  --nesting-bg-1: var(--resolved-bg-1);
+  --nesting-bg-2: var(--resolved-bg-2);
+  --nesting-bg-3: var(--resolved-bg-3);
+
   color: var(--resolved-color);
+}
+
+.token-unresolved,
+.token-nesting-unresolved {
+  --nesting-bg-1: var(--unresolved-bg-1);
+  --nesting-bg-2: var(--unresolved-bg-2);
+  --nesting-bg-3: var(--unresolved-bg-3);
+
+  color: var(--unresolved-color);
+  font-weight: 600;
 }
 
 .token-nesting-1,
@@ -103,20 +117,15 @@
 }
 
 .token-nesting-1 {
-  background: var(--resolved-bg-1);
+  background: var(--nesting-bg-1);
 }
 
 .token-nesting-2 {
-  background: var(--resolved-bg-2);
+  background: var(--nesting-bg-2);
 }
 
 .token-nesting-3 {
-  background: var(--resolved-bg-3);
-}
-
-.token-unresolved {
-  color: var(--danger);
-  font-weight: 600;
+  background: var(--nesting-bg-3);
 }
 
 .token-literal {

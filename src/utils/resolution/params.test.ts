@@ -1,4 +1,4 @@
-import { RAW, checkResolution, checkValues } from "@/test";
+import { RAW, checkResolution, checkValues, partial } from "@/test";
 import { describe, expect, it } from "vitest";
 
 import { getTemplateParamNames } from "./params";
@@ -14,8 +14,11 @@ checkResolution("filling a template blank", {
     ["{GREETING;first=Ada;last=Lovelace}", "Hi Ada Lovelace"],
     ["{PROJECT;name={NAME}}", "projects/cp/src"],
     ["{PROJECT; name = two words }", "projects/two words/src"],
-    ["{PROJECT}", RAW],
-    ["{GREETING;first=Ada}", RAW],
+    // An unfilled blank is a hole, not a failure
+    ["{PROJECT}", partial("projects/{;name}/src")],
+    ["{GREETING;first=Ada}", partial("Hi Ada {;last}")],
+    // A transform over a value with a hole in it fails the reference
+    ["{PROJECT|uppercase}", RAW],
   ],
 });
 
@@ -36,7 +39,8 @@ checkResolution("a blank declares its own default", {
     ["{BRANCH}", "feature/none"],
     ["{BRANCH;name=Add Login}", "feature/add-login"],
     ["{NESTED;a=hi}", "hi HI"],
-    ["{SELF}", RAW],
+    // A default that reads itself resolves to nothing
+    ["{SELF}", partial("{;a={;a}}")],
   ],
 });
 
@@ -63,6 +67,34 @@ checkResolution("filling a blank resolves what the fill produced", {
     ["{OUTER;b_param=test}", "projects/test/src"],
     ["{ESCAPED;b_param=test}", "{TARGET;name=test}"],
   ],
+});
+
+checkResolution("a backslash makes a blank literal", {
+  variables: {
+    LITERAL: String.raw`a \{;b}`,
+    VIA: "{LITERAL}",
+    PLAIN: "a {;b}",
+    MIXED: String.raw`\{;a} {;a}`,
+  },
+  cases: [
+    ["{LITERAL}", "a {;b}"],
+    ["{VIA}", "a {;b}"],
+    ["{LITERAL;b=1}", "a {;b}"],
+    ["{PLAIN;b=1}", "a 1"],
+    ["{MIXED;a=1}", "{;a} 1"],
+    ["{MIXED}", partial("{;a} {;a}")],
+  ],
+});
+
+checkValues("an escaped blank keeps its backslash until a command reads it", {
+  variables: {
+    LITERAL: String.raw`a \{;b}`,
+    VIA: "{LITERAL}",
+  },
+  expected: {
+    LITERAL: String.raw`a \{;b}`,
+    VIA: String.raw`a \{;b}`,
+  },
 });
 
 checkValues("a blank stays a blank until something fills it", {
@@ -102,6 +134,10 @@ describe("getTemplateParamNames", () => {
     expect(getTemplateParamNames("{LOG_DIR;service={;service}}/log")).toEqual([
       "service",
     ]);
+  });
+
+  it("ignores an escaped blank", () => {
+    expect(getTemplateParamNames(String.raw`{;a} \{;b}`)).toEqual(["a"]);
   });
 
   it("ignores a brace group that is not a blank", () => {

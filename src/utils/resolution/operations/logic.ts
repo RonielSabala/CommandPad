@@ -19,6 +19,7 @@ function logicBuilder(combine: Combine, exactly?: number): CallBuilder {
 
 export const LOGIC_OPERATION: OperationDefinition = defineCallOperation({
   arity: LogicSyntax.ARITY,
+  negatable: true,
   builders: {
     [LogicSyntax.AND]: logicBuilder((values) => values.every(Boolean)),
     [LogicSyntax.OR]: logicBuilder((values) => values.some(Boolean)),

@@ -5,7 +5,7 @@ import {
   CallSyntax,
 } from "@/common/variableSyntax";
 
-import { sliceSpans } from "../spans";
+import { hasUnresolvedOutside, sliceSpans } from "../spans";
 import type { OperationDefinition, OperationTransform } from "./types";
 
 /** The spans of the argument at `index`. */
@@ -23,6 +23,14 @@ export type CallBuilder = (
 export interface CallOperationSpec {
   /** How many arguments the call takes. */
   arity: number;
+  /**
+   * The first argument handed back verbatim rather than read, so a reference
+   * that did not resolve inside it is content. Left out, every argument is read
+   * and one unresolved reference fails the call.
+   */
+  verbatimFrom?: number;
+  /** Whether a leading negation mark may flip the answer. */
+  negatable?: true;
   /** Every keyword the call answers to, mapped to what that spelling builds. */
   builders: Record<string, CallBuilder | undefined>;
 }
@@ -56,6 +64,7 @@ export function defineCallOperation(
       keyword,
       arity: spec.arity,
     })),
+    negatable: spec.negatable,
     parse: (operation) => {
       const groups = CallOperationRegex.exec(operation.text)?.groups;
       const build = groups && spec.builders[groups[CallGroup.KEYWORD]];
@@ -63,13 +72,25 @@ export function defineCallOperation(
         return null;
       }
 
-      const raw = groups[CallGroup.ARGUMENTS];
+      const raw = groups[CallGroup.ARGUMENTS] ?? "";
       const args = raw ? splitArguments(raw, spec.arity) : [];
+      const rawLength = raw.length;
 
+      const spans = operation.spans ?? [];
       const offset =
         operation.text.indexOf(CallSyntax.ARGUMENT_OPEN) +
         CallSyntax.ARGUMENT_OPEN.length;
-      const spans = operation.spans ?? [];
+
+      const verbatimStart =
+        spec.verbatimFrom === undefined
+          ? rawLength
+          : (args[spec.verbatimFrom]?.start ?? rawLength);
+
+      if (
+        hasUnresolvedOutside(spans, offset + verbatimStart, offset + rawLength)
+      ) {
+        return null;
+      }
 
       const argumentSpans: ArgumentSpans = (index) => {
         const arg = args[index];

@@ -122,6 +122,7 @@ export const es: Messages = {
     duplicate: (count) =>
       count === 1 ? "Duplicar variable" : "Duplicar variables",
     renameCase: "Cambiar capitalización de la clave",
+    clearValues: (count) => (count === 1 ? "Vaciar valor" : "Vaciar valores"),
     remove: (count) =>
       count === 1 ? "Eliminar variable" : "Eliminar variables",
     selected: (count) =>
@@ -750,12 +751,13 @@ export const es: Messages = {
       [DocsSectionId.VARIABLE_REFERENCES]: "Referencias de variables",
       [DocsSectionId.PARAMETERIZED_PLACEHOLDERS]: "Marcadores parametrizados",
       [DocsSectionId.PLACEHOLDER_DEFAULTS]: "Valores por defecto",
+      [DocsSectionId.VARIABLE_OPERATIONS]: "Operaciones",
+      [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
       [DocsSectionId.VARIABLE_SLICING]: "Recortar valores",
       [DocsSectionId.VARIABLE_LEN]: "Longitud en caracteres",
       [DocsSectionId.VARIABLE_COUNT]: "Contar apariciones",
       [DocsSectionId.VARIABLE_KEY]: "Usar el nombre de la variable",
       [DocsSectionId.VARIABLE_HASH]: "Calcular el hash de un valor",
-      [DocsSectionId.VARIABLE_CASE]: "Mayúsculas y minúsculas",
       [DocsSectionId.VARIABLE_STRIP]: "Limpiar extremos",
       [DocsSectionId.VARIABLE_FILL]: "Añadir a los extremos",
       [DocsSectionId.VARIABLE_REPLACE]: "Cambiar texto",
@@ -957,6 +959,8 @@ Si algo sale mal, deshazlo en este orden:
         `Un valor también puede ser un conjunto fijo de opciones, como un entorno o una región, en lugar de texto libre: elige **${makeEnumLabel}** en el menú de **${variableActionsLabel}** de una variable para convertir su valor en un combo box, donde cada opción puede quitarse y una casilla al final añade una nueva.`,
       enumsDemoHint:
         "Abajo, `env` solo puede ser uno de tres clústeres. Elige otro y el comando lo sigue, sin posibilidad de equivocarte al escribir el contexto:",
+      clearValues: (clearValuesLabel) =>
+        `En el editor de variables, el menú de acciones de una fila también ofrece **${clearValuesLabel}**, que vacía el valor y deja igual la clave.`,
     },
     variableReferences: {
       intro:
@@ -969,6 +973,10 @@ Si algo sale mal, deshazlo en este orden:
         "Aquí `HOST` se construye a partir de `SERVICE`, que a su vez se construye a partir de `NAME`, así que el comando resuelto luce los tres tonos a la vez:",
       shadesHover:
         "Cuando los tonos no bastan, pasa el cursor sobre cualquier fragmento resaltado de un comando resuelto: te dice la variable que lo escribió.",
+      shadesUnresolved:
+        "Una referencia que no se resuelve se cuenta igual, en rojo en vez de verde: el resto del comando sigue resolviéndose y solo se marca la parte rota, a la profundidad en la que está. Así un vistazo también te dice qué tan hondo está el problema, no solo que lo hay.",
+      shadesUnresolvedDemoHint:
+        "Debajo, `BUCKET` referencia `{REGIN}`, un error de tipeo de `REGION`, y es la única parte en rojo. Corrige el nombre en el valor y verás cómo pasa a verde:",
       circular:
         "Las referencias circulares son seguras: si dos variables se referencian entre sí, la app detecta el bucle y deja la referencia como texto plano.",
     },
@@ -978,6 +986,8 @@ Si algo sale mal, deshazlo en este orden:
       fill: "Marca el espacio en blanco con `{;param}` dentro del valor de la variable. Funciona como una frase para completar: la variable guarda el texto fijo, y tú pones la palabra que falta cada vez que la usas. Donde referencies esa variable, rellena el hueco con `{clave;param=valor_param}`, y tu valor cae justo donde estaba el espacio en blanco.",
       seeExample:
         "Si suena abstracto, no te preocupes: se entiende al instante en cuanto lo ves. Échale un vistazo al ejemplo de abajo antes de seguir leyendo.",
+      unfilled:
+        "Un hueco que nadie rellena se queda en pantalla tal como lo escribiste, marcado en rojo, y el resto del valor se sigue resolviendo a su alrededor. Borra `;name=commandpad` del comando de arriba para ver de un vistazo la parte falta.",
       multiple:
         "Un valor puede tener varios huecos. Dale a cada uno un nombre distinto y rellénalos todos en el mismo comando, separados por punto y coma:",
       nested:
@@ -993,13 +1003,21 @@ Si algo sale mal, deshazlo en este orden:
       shared:
         "Un valor por defecto solo hay que escribirlo una vez. Cuando el mismo hueco aparece varias veces en un mismo valor, todos lo comparten.",
     },
+    variableOperations: {
+      intro:
+        "Una referencia puede hacer algo más que entregar un valor: una **operación** lo transforma antes de que llegue al comando. Todas se escriben igual: pon un `|` después de la clave y luego el nombre de la operación, dentro de las llaves, `{CLAVE|operación}`.",
+      demoHint:
+        "Abajo, el nombre de un proyecto se convierte en el nombre de una carpeta. No te preocupes todavía por lo que hace cada operación, fíjate solo en la forma:",
+      chaining:
+        "Una referencia puede llevar varias operaciones, con un `|` cada una, y se aplican de izquierda a derecha. Esa es toda la idea; las secciones que siguen ven las operaciones una por una.",
+    },
     variableSlicing: {
       intro:
         "Una variable guarda un valor, pero no siempre se necesita entero. Por ejemplo, un hash de commit ocupa cuarenta caracteres al hacer checkout y solo siete en una etiqueta. Con el recorte mantienes **una única** variable y usas solo la parte que necesitas.",
       demoHint:
         "El primer comando usa el hash completo; el segundo, solo sus siete primeros caracteres. Edita la variable y verás cómo los dos se actualizan a la vez:",
       howItWorks:
-        "Escribe un `|` después de la clave y luego `slice(...)` con la parte que quieres, con sus números separados por punto y coma. Se cuenta desde cero, y el segundo número indica dónde **parar sin llegar a incluirlo**: `slice(;7)` son los siete primeros caracteres y `slice(2;5)` son el dos, el tres y el cuatro. Omite cualquiera de los dos números para llegar desde el mismísimo principio, o hasta el final.",
+        "`slice(...)` toma la parte que quieres, con sus números separados por punto y coma. Se cuenta desde cero, y el segundo número indica dónde **parar sin llegar a incluirlo**: `slice(;7)` son los siete primeros caracteres y `slice(2;5)` son el dos, el tres y el cuatro. Omite cualquiera de los dos números para llegar desde el mismísimo principio, o hasta el final.",
       positionsHint:
         "Los números negativos cuentan desde el final, así que `slice(-2;)` son los dos últimos caracteres. Con una fecha se ven las tres formas de un vistazo:",
       step: "Un tercer número es el **paso**: cuántas posiciones salta el recorte entre un carácter y el siguiente. `slice(;;2)` toma un carácter de cada dos y se salta el resto, y un paso negativo avanza hacia atrás, así que `slice(;;-1)` por sí solo invierte un valor:",
@@ -1010,22 +1028,20 @@ Si algo sale mal, deshazlo en este orden:
         "La forma de contar viene de Python, por si quieres leer más sobre ella: [recorte de cadenas en Python](https://www.geeksforgeeks.org/python/string-slicing-in-python/). No necesitas saber Python para usarla aquí.",
     },
     variableLen: {
-      intro:
-        "Escribe `len` después del `|` y obtienes **cuántos caracteres ocupa el valor**.",
+      intro: "`len` te da **cuántos caracteres ocupa el valor**.",
       demoHint:
         "Por ejemplo, el asunto de un commit debería quedarse por debajo de 50 caracteres, pero nadie los cuenta a mano. Escribe en el mensaje de abajo y mira cómo el número te sigue:",
       chaining:
-        "Las operaciones se aplican de izquierda a derecha, así que puedes poner `len` después de un recorte: `{commit|slice(;7)|len}` acorta el commit primero y luego cuenta lo que queda.",
+        "Encadenada después de un recorte, mide lo que el recorte ha dejado: `{commit|slice(;7)|len}` acorta primero el commit y luego cuenta lo que queda.",
     },
     variableCount: {
-      intro:
-        "Escribe `count(x)` después del `|` y obtienes **cuántas veces aparece `x`** en el valor.",
+      intro: "`count(x)` te da **cuántas veces aparece `x`** en el valor.",
       demoHint:
         "Debajo, cada `/` marca un nivel de carpeta. Cambia la ruta y el número te sigue:",
     },
     variableKey: {
       intro:
-        "A veces un comando necesita decir el nombre de una variable además de usar su valor. Escribe `key` después del `|` y obtienes **el nombre que le pusiste a la variable**, en vez de lo que guarda.",
+        "A veces un comando necesita decir el nombre de una variable además de usar su valor. `key` te da **el nombre que le pusiste a la variable**, en vez de lo que guarda.",
       demoHint:
         "Cambia el nombre de la variable de abajo y mira cómo el comando se actualiza solo, el nombre y el valor nunca se desincronizan:",
       chaining:
@@ -1033,13 +1049,13 @@ Si algo sale mal, deshazlo en este orden:
     },
     variableHash: {
       intro:
-        "Escribe `hash` después del `|` para obtener el hash SHA-256 del valor. El mismo valor da siempre el mismo hash, y cambiar un solo carácter lo cambia entero.",
+        "`hash` te da el hash SHA-256 del valor. El mismo valor da siempre el mismo hash, y cambiar un solo carácter lo cambia entero.",
       demoHint:
         "Cambia la configuración de abajo y mira cómo cambia la etiqueta:",
     },
     variableCase: {
       intro:
-        "Escribe una palabra clave después del `|` y el valor se reescribe antes de llegar al comando. Cada resultado de la tabla está escrito con el estilo que nombra:",
+        "Una palabra clave de estilo reescribe el valor antes de que llegue al comando. Cada resultado de la tabla está escrito con el estilo que nombra:",
       table: `| Operación | Resultado |
 | --- | --- |
 | \`snakecase\` | palabras\\_unidas\\_por\\_guiones\\_bajos |
@@ -1118,13 +1134,13 @@ Si algo sale mal, deshazlo en este orden:
     },
     transformedPlaceholders: {
       intro:
-        "El hueco de un marcador parametrizado puede transformar lo que lo rellena, igual que hace el propio valor de una variable. Escribe un `|` y una operación justo después del nombre del hueco, `{;nombre|operación}`, y el valor se reescribe al entrar, antes de llegar siquiera al comando.",
+        "El hueco de un marcador parametrizado puede transformar lo que lo rellena, igual que hace el propio valor de una variable. Una operación puede ir justo después del nombre del hueco, `{;nombre|operación}`, y lo que rellene el hueco se reescribe al entrar, antes de llegar siquiera al comando.",
       demoHint:
         "Esto funciona con todas las operaciones de las secciones anteriores.",
     },
     unnamedReferences: {
       intro:
-        "Una referencia no necesita nombrar ninguna variable. Omite el nombre, escribe solo operaciones después de `|`, y la referencia partirá de un valor vacío: el resultado será lo que esas operaciones produzcan.",
+        "Una referencia no necesita nombrar ninguna variable. Omite la clave y escribe solo operaciones, `{|operación}`, y la referencia partirá de un valor vacío: el resultado será lo que esas operaciones produzcan.",
       demoHint:
         "El `{|len}` de abajo no tiene ninguna variable detrás, así que no hay nada que medir y siempre da `0`:",
       rule: "Las llaves deben incluir al menos una operación. Unas llaves vacías se dejan tal cual, así que un comando que ya usa `{}` por su cuenta no se ve afectado.",
@@ -1133,7 +1149,7 @@ Si algo sale mal, deshazlo en este orden:
     },
     variableDate: {
       intro:
-        "Escribe `date` después de `|` y obtienes **la fecha actual**, con el formato `YYYY-MM-DD`. Sustituye lo que reciba, así que casi siempre se escribe sola, sin nada delante.",
+        "`date` te da **la fecha actual**, con el formato `YYYY-MM-DD`. Sustituye lo que reciba, así que casi siempre se escribe sola, sin nada delante.",
       demoHint: "Con eso ya tienes la fecha de hoy interpolada en un nombre:",
       format:
         "Escribe un formato entre paréntesis para dar la fecha de otra forma. Cada marcador de abajo se rellena con su valor y todo lo demás se deja tal cual lo escribas, así que los separadores los eliges tú:",
@@ -1180,7 +1196,7 @@ Si algo sale mal, deshazlo en este orden:
     },
     variableBoolean: {
       intro:
-        "Una operación booleana no cambia el valor: **hace una pregunta sobre él** y responde con `true` o `false`. Estas son las preguntas, y todas se escriben después de un `|`:",
+        "Una operación booleana no cambia el valor: **hace una pregunta sobre él** y responde con `true` o `false`. Estas son las preguntas:",
       table: `| Operación | Descripción |
 | --- | --- |
 | \`isdigit\` | Todos los caracteres son dígitos |
@@ -1218,6 +1234,8 @@ Si algo sale mal, deshazlo en este orden:
 | \`EQUALS(a; b)\` | Verdadero cuando los dos textos son idénticos |
 | \`NOTEQUALS(a; b)\` | Verdadero cuando son distintos |
 | \`EQUALSIGNORECASE(a; b)\` | Verdadero sin mirar mayúsculas, así \`PROD\` y \`prod\` cuentan como iguales |`,
+      negation:
+        "`NOT` no es la única forma de invertir una respuesta. Un `!` justo delante de cualquiera de estos nombres hace lo mismo con lo que devuelva la llamada, así que `{|!AND(a; b)}` y `{|NOT({|AND(a; b)})}` dicen lo mismo con una referencia en lugar de dos.",
       demoHint:
         "Debajo, las dos comprobaciones tienen que cumplirse: cambia la rama, o escribe una letra en el puerto, y la línea pasa a `false`:",
       booleans:
@@ -1233,6 +1251,8 @@ Si algo sale mal, deshazlo en este orden:
 | \`si_no\` | El texto que se usa cuando es falsa. Omítelo para no poner nada |`,
       demoHint:
         "Debajo, cambia `LEVEL` para que la primera opción aparezca y desaparezca, y escribe una letra en `RETRIES` para que la segunda desaparezca:",
+      partialBranch:
+        "Una rama se devuelve tal como la escribiste, así que una referencia dentro de ella que no se resuelva se marca en rojo y el resto de la rama sigue resolviéndose. La rama que nadie tomó no se lee nunca, así que una referencia rota ahí no cuesta nada. La condición es la única parte que debe resolverse: sin una respuesta no hay con qué elegir, así que toda la referencia se queda tal cual.",
     },
     multilineReferences: {
       intro:
@@ -1246,7 +1266,7 @@ Si algo sale mal, deshazlo en este orden:
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
       scope:
-        "El escape aplica dentro de los bloques de comando, y dentro del texto que produce un hueco rellenado.",
+        "El escape aplica dentro de los bloques de comando, dentro de un hueco en el valor de una variable, y dentro del texto que produce un hueco rellenado.",
     },
     secretVariables: {
       intro: (actionsLabel, maskLabel) =>
