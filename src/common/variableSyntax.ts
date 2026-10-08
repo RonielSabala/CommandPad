@@ -2,6 +2,7 @@ import {
   ANY,
   DIGIT,
   ESCAPE,
+  ESCAPE_CHAR,
   WHITESPACE,
   anchored,
   anyOf,
@@ -217,6 +218,8 @@ const Call = escapeSyntax(CallSyntax);
 const Operation = escapeSyntax(OperationSyntax);
 const DateTok = escapeSyntax(DateToken);
 const Calc = escapeSyntax(CalcSyntax);
+
+export const ESCAPED_BRACE_OPEN = `${ESCAPE_CHAR}${VariableSyntax.BRACE_OPEN}`;
 
 export const EscapedBraceOpenRegex = globalRegex(
   sequence(ESCAPE, Ref.BRACE_OPEN),

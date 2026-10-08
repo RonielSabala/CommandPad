@@ -1,5 +1,4 @@
-import { ESCAPE_CHAR } from "@/common/regex";
-import { VariableSyntax } from "@/common/variableSyntax";
+import { ESCAPED_BRACE_OPEN, VariableSyntax } from "@/common/variableSyntax";
 
 import promptSource from "./agentPrompt.md?raw";
 
@@ -9,5 +8,5 @@ export const AGENT_PROMPT = promptSource.trimEnd();
 /** The prompt as a command block holds it. */
 export const AGENT_PROMPT_BLOCK_TEXT = AGENT_PROMPT.replaceAll(
   VariableSyntax.BRACE_OPEN,
-  `${ESCAPE_CHAR}${VariableSyntax.BRACE_OPEN}`,
+  ESCAPED_BRACE_OPEN,
 );

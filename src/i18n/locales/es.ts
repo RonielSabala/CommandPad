@@ -1260,13 +1260,13 @@ Si algo sale mal, deshazlo en este orden:
     },
     escapingBraces: {
       intro:
-        "Antepón una barra invertida (`\\`) a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla.",
+        "Antepón una barra invertida (`\\`) a una referencia para mostrarla literalmente en vez de resolverla.",
       menu: (escapeLabel) =>
         `No hace falta escribir la barra invertida a mano. Pon el cursor dentro de una referencia (o selecciona una o varias), haz clic derecho y elige **${escapeLabel}**. Cada referencia que abarque recibe su barra invertida, incluidas las anidadas dentro de otra. Una barra invertida pegada a la llave de cierre se elimina.`,
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
       scope:
-        "El escape aplica dentro de los bloques de comando, dentro de un hueco en el valor de una variable, y dentro del texto que produce un hueco rellenado.",
+        "El escape aplica donde quiera que funcione una referencia: en un bloque de comando, en el valor de una variable y en el texto que produce un hueco rellenado. El valor lo vuelve a leer quien lo referencia, así que una barra invertida escrita ahí se queda en el valor, y el comando que finalmente lo muestra es el que la elimina.",
     },
     secretVariables: {
       intro: (actionsLabel, maskLabel) =>

@@ -959,8 +959,14 @@ export function EscapingBracesDocs() {
       <DemoWorkspace
         tabs={[
           {
-            variables: [demoVariable("user", "admin")],
-            blocks: [demoCommand('echo "\\{user} = {user}"')],
+            variables: [
+              demoVariable("user", "admin"),
+              demoVariable("label", 'the "\\{user}" placeholder'),
+            ],
+            blocks: [
+              demoCommand('echo "\\{user} = {user}"'),
+              demoCommand("echo {label}"),
+            ],
           },
         ]}
       >

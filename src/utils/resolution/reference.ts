@@ -18,6 +18,7 @@ import {
   replaceTemplateReferences,
   splitReferenceBody,
   splitReferenceParts,
+  unescapeBraceSpans,
   unescapeBraces,
 } from "./token";
 import type { ResolvedValue, VariableLookup } from "./types";
@@ -245,11 +246,17 @@ function resolveReferenceAt(
     return unresolvedReference();
   }
 
-  const filled = template.filled
+  // A refill drops the backslashes it carries on its way through
+  const refilled = template.filled
     ? resolveFilledTemplate(template.text, context, depth)
-    : template.text;
+    : null;
 
-  const applied = applyOperations(filled, operations, { key });
+  const output =
+    refilled === null
+      ? unescapeBraceSpans(template, context.surface)
+      : { text: refilled, spans: template.spans };
+
+  const applied = applyOperations(output.text, operations, { key });
   if (!applied.ok) {
     return unresolvedReference();
   }
@@ -263,7 +270,9 @@ function resolveReferenceAt(
     return unresolvedReference();
   }
 
-  const rewritten = operations.length > 0 || filled !== template.text;
+  const rewritten =
+    operations.length > 0 || (refilled !== null && refilled !== template.text);
+
   return {
     key,
     text: applied.text,
@@ -271,6 +280,6 @@ function resolveReferenceAt(
     isReference: true,
     spans:
       applied.spans ??
-      (rewritten ? flatSpans(applied.text, key || undefined) : template.spans),
+      (rewritten ? flatSpans(applied.text, key || undefined) : output.spans),
   };
 }

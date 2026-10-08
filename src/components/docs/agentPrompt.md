@@ -165,8 +165,9 @@ Rules:
 - References nest to any depth: `{A;b={C|uppercase}}` is valid.
 - A reference that cannot resolve is left on screen exactly as written, so never reference
   a variable you did not define, and never misspell an operation.
-- A backslash before the opening brace makes the reference, or a blank, literal. In JSON
-  that backslash is itself escaped, so it appears as two backslashes.
+- A backslash before the opening brace makes the reference, or a blank, literal. It works
+  in a command's text and in a variable's value alike. In JSON that backslash is itself
+  escaped, so it appears as two backslashes.
 
 ### Blanks
 

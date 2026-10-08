@@ -64,6 +64,39 @@ checkResolution("escaping a brace", {
   ],
 });
 
+checkResolution("escaping a brace inside a variable value", {
+  variables: {
+    ...HOSTS,
+    ESCAPED: String.raw`\{HOST}`,
+    LITERAL: String.raw`hello \{world}`,
+    VIA: "{LITERAL}",
+    SHELL: String.raw`echo \{a,b\}`,
+  },
+  cases: [
+    ["{ESCAPED}", "{HOST}"],
+    ["{LITERAL}", "hello {world}"],
+    ["{VIA}", "hello {world}"],
+    ["{SHELL}", String.raw`echo {a,b\}`],
+    ["{LITERAL|uppercase}", "HELLO {WORLD}"],
+    [String.raw`\{LITERAL}`, "{LITERAL}"],
+  ],
+});
+
+checkValues(
+  "an escaped reference keeps its backslash until a command reads it",
+  {
+    variables: {
+      ...HOSTS,
+      ESCAPED: String.raw`\{HOST}`,
+      VIA: "{ESCAPED}",
+    },
+    expected: {
+      ESCAPED: String.raw`\{HOST}`,
+      VIA: String.raw`\{HOST}`,
+    },
+  },
+);
+
 checkResolution("a shell's own braces are left alone", {
   variables: HOSTS,
   cases: [
@@ -104,15 +137,12 @@ describe("the known limitation: a literal pipe inside a param value", () => {
   });
 });
 
-checkValues("a value surface differs from a command surface in two ways", {
+checkValues("an empty variable is only unfilled on a command surface", {
   variables: {
-    HOST: "example.com",
-    ESCAPED: String.raw`\{HOST}`,
     EMPTY: "",
     GREETING: "hi{EMPTY}!",
   },
   expected: {
-    ESCAPED: String.raw`\example.com`,
     GREETING: "hi!",
   },
 });
