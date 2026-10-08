@@ -201,6 +201,7 @@ describe("nesting an unresolved reference", () => {
     BROKEN: "hi {MISSING}",
     SHELL: "find {} +",
     BLANK: "hi {;name}",
+    PASSED: "{BLANK}",
     INNER: "{MISSING}",
     MID: "{INNER}",
     DEEP: "{MID}",
@@ -223,6 +224,13 @@ describe("nesting an unresolved reference", () => {
     expect(spans(book, "{BLANK;name=Ada}")).toEqual([
       { text: "hi ", depth: 1, source: "BLANK" },
       { text: "Ada", depth: 2, source: "BLANK;name" },
+    ]);
+  });
+
+  it("names the blank's own variable when another value passed it along", () => {
+    expect(spans(book, "{PASSED}")).toEqual([
+      { text: "hi ", depth: 2, source: "BLANK" },
+      { text: "{;name}", depth: 3, source: "BLANK;name", unresolved: true },
     ]);
   });
 

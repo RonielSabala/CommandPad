@@ -962,6 +962,8 @@ If something goes wrong, undo it in this order:
       fill: "Mark the blank with `{;param}` inside the variable's value. It works like a fill-in-the-blank sentence: the variable holds the fixed wording, and you drop in the missing word each time you use it. Wherever you reference that variable, fill the blank with `{key;param=param_value}`, and your value lands right where the blank sat.",
       seeExample:
         "If that sounds abstract, don't worry: it clicks the moment you see it. Take a look at the example below before reading on.",
+      unfilled:
+        "A blank nobody fills stays on screen exactly as you wrote it, marked in red, and the rest of the value still resolves around it. Delete `;name=commandpad` from the command above to see at a glance the missing part.",
       multiple:
         "A value can have several blanks. Give each one a different name, then fill them all in the same command, separated by semicolons:",
       nested:
@@ -1232,7 +1234,7 @@ If something goes wrong, undo it in this order:
       tryHint:
         "Try deleting the backslash in the command below and watch the literal braces turn into an active reference:",
       scope:
-        "Escaping applies inside command blocks, and inside the text a filled blank produces.",
+        "Escaping applies inside command blocks, inside a blank in a variable's value, and inside the text a filled blank produces.",
     },
     secretVariables: {
       intro: (actionsLabel, maskLabel) =>

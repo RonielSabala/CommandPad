@@ -1,9 +1,16 @@
+import { ESCAPE_CHAR } from "@/common/regex";
 import type { ResolvedSpan } from "@/common/types";
 import { VariableSyntax } from "@/common/variableSyntax";
 
 import { applyOperations } from "./operations";
 import type { OperationChunk, OperationContext } from "./operations/types";
-import { depthAt, flatSpans, mergeSpans, sliceSpans } from "./spans";
+import {
+  flatSpans,
+  mergeSpans,
+  sliceSpans,
+  spanAt,
+  unresolvedSpans,
+} from "./spans";
 import { scanBraces, splitReferenceBody } from "./token";
 
 interface ReferenceParam {
@@ -70,6 +77,7 @@ function parseBlank(body: string): TemplateBlank | null {
   return { ...declaration, operations };
 }
 
+/** How a blank names itself, `key` being the variable whose value declares it. */
 function blankSource(key: string, name: string): string | undefined {
   return key ? `${key}${VariableSyntax.PARAM_SEPARATOR}${name}` : undefined;
 }
@@ -79,8 +87,21 @@ const BLANK_OPEN = `${VariableSyntax.BRACE_OPEN}${VariableSyntax.PARAM_SEPARATOR
 
 interface BlankMatch {
   blank: TemplateBlank;
+  escaped: boolean;
   start: number;
   end: number;
+}
+
+interface BlankScope {
+  params: Record<string, string>;
+  defaults: Record<string, string>;
+  context: OperationContext;
+  /** Whether a blank reaches the end of the line. */
+  final: boolean;
+  /** Each name's resolved value. */
+  cache: Map<string, string | undefined>;
+  /** The names being resolved. */
+  resolving: Set<string>;
 }
 
 /**
@@ -102,9 +123,11 @@ function collectBlanks(
       : null;
 
     if (blank) {
+      const escaped = text[match.start - 1] === ESCAPE_CHAR;
       blanks.push({
         blank,
-        start: offset + match.start,
+        escaped,
+        start: offset + match.start - (escaped ? 1 : 0),
         end: offset + match.end,
       });
       continue;
@@ -124,8 +147,8 @@ function readBlanks(template: string): BlankMatch[] {
 function collectBlankDefaults(blanks: BlankMatch[]): Record<string, string> {
   const defaults: Record<string, string> = {};
 
-  for (const { blank } of blanks) {
-    if (blank.fallback !== undefined && !(blank.name in defaults)) {
+  for (const { blank, escaped } of blanks) {
+    if (!escaped && blank.fallback !== undefined && !(blank.name in defaults)) {
       defaults[blank.name] = blank.fallback;
     }
   }
@@ -134,7 +157,11 @@ function collectBlankDefaults(blanks: BlankMatch[]): Record<string, string> {
 }
 
 function addBlankNames(template: string, names: Set<string>): void {
-  for (const { blank } of readBlanks(template)) {
+  for (const { blank, escaped } of readBlanks(template)) {
+    if (escaped) {
+      continue;
+    }
+
     names.add(blank.name);
 
     if (blank.fallback !== undefined) {
@@ -150,14 +177,9 @@ export function getTemplateParamNames(template: string): string[] {
 }
 
 /** A blank's value, resolved against `params` first and its declared default otherwise. */
-function blankValue(
-  name: string,
-  params: Record<string, string>,
-  defaults: Record<string, string>,
-  context: OperationContext,
-  cache: Map<string, string | undefined>,
-  resolving: Set<string>,
-): string | undefined {
+function blankValue(name: string, scope: BlankScope): string | undefined {
+  const { params, cache, resolving } = scope;
+
   if (cache.has(name)) {
     return cache.get(name);
   }
@@ -167,22 +189,14 @@ function blankValue(
     return params[name];
   }
 
-  const fallback = defaults[name];
+  const fallback = scope.defaults[name];
   if (fallback === undefined || resolving.has(name)) {
     cache.set(name, undefined);
     return undefined;
   }
 
   resolving.add(name);
-  const resolved = substituteBlanks(
-    fallback,
-    params,
-    defaults,
-    context,
-    cache,
-    resolving,
-  );
-
+  const resolved = substituteBlanks(fallback, scope);
   resolving.delete(name);
 
   const value = resolved.fullyResolved ? resolved.text : undefined;
@@ -192,33 +206,16 @@ function blankValue(
 
 function substituteBlanks(
   template: string,
-  params: Record<string, string>,
-  defaults: Record<string, string>,
-  context: OperationContext,
-  cache: Map<string, string | undefined>,
-  resolving: Set<string>,
+  scope: BlankScope,
 ): ResolvedTemplate {
-  return fillBlanks(
-    template,
-    flatSpans(template),
-    readBlanks(template),
-    params,
-    defaults,
-    context,
-    cache,
-    resolving,
-  );
+  return fillBlanks(template, flatSpans(template), readBlanks(template), scope);
 }
 
 function fillBlanks(
   template: string,
   spans: readonly ResolvedSpan[],
   blanks: BlankMatch[],
-  params: Record<string, string>,
-  defaults: Record<string, string>,
-  context: OperationContext,
-  cache: Map<string, string | undefined>,
-  resolving: Set<string>,
+  scope: BlankScope,
 ): ResolvedTemplate {
   if (blanks.length === 0) {
     return {
@@ -235,38 +232,45 @@ function fillBlanks(
   let lastEnd = 0;
   const pieces: ResolvedSpan[] = [];
 
-  for (const { blank, start, end } of blanks) {
+  for (const { blank, escaped, start, end } of blanks) {
     text += template.slice(lastEnd, start);
     pieces.push(...sliceSpans(spans, lastEnd, start));
     lastEnd = end;
 
-    const value = blankValue(
-      blank.name,
-      params,
-      defaults,
-      context,
-      cache,
-      resolving,
-    );
+    if (escaped) {
+      const from = scope.final ? start + 1 : start;
+      text += template.slice(from, end);
+      pieces.push(...sliceSpans(spans, from, end));
+      continue;
+    }
+
+    // How deep the blank sits and which variable declares it
+    const wrote = spanAt(spans, start);
+    const source = blankSource(wrote?.source ?? scope.context.key, blank.name);
+    const depth = (wrote?.depth ?? 0) + 1;
+
+    const value = blankValue(blank.name, scope);
     const applied =
       value === undefined
         ? null
-        : applyOperations(value, blank.operations, context);
+        : applyOperations(value, blank.operations, scope.context);
 
     if (!applied?.ok) {
+      const raw = template.slice(start, end);
       fullyResolved = false;
-      text += template.slice(start, end);
-      pieces.push(...sliceSpans(spans, start, end));
+      text += raw;
+      pieces.push(
+        ...(scope.final
+          ? unresolvedSpans(raw, depth, source)
+          : sliceSpans(spans, start, end)),
+      );
+
       continue;
     }
 
     filled = true;
     text += applied.text;
-    pieces.push({
-      text: applied.text,
-      depth: depthAt(spans, start) + 1,
-      source: blankSource(context.key, blank.name),
-    });
+    pieces.push({ text: applied.text, depth, source });
   }
 
   pieces.push(...sliceSpans(spans, lastEnd, template.length));
@@ -278,21 +282,25 @@ function fillBlanks(
   };
 }
 
+interface TemplateOptions {
+  params: Record<string, string>;
+  context: OperationContext;
+  final: boolean;
+  spans?: readonly ResolvedSpan[];
+}
+
 export function applyTemplateParams(
   template: string,
-  params: Record<string, string>,
-  context: OperationContext,
-  spans: readonly ResolvedSpan[] = flatSpans(template),
+  { params, context, final, spans = flatSpans(template) }: TemplateOptions,
 ): ResolvedTemplate {
   const blanks = readBlanks(template);
-  return fillBlanks(
-    template,
-    spans,
-    blanks,
+
+  return fillBlanks(template, spans, blanks, {
     params,
-    collectBlankDefaults(blanks),
+    defaults: collectBlankDefaults(blanks),
     context,
-    new Map(),
-    new Set(),
-  );
+    final,
+    cache: new Map(),
+    resolving: new Set(),
+  });
 }

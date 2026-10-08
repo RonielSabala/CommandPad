@@ -209,6 +209,7 @@ export function ParameterizedPlaceholdersDocs() {
         <DemoVariableRows />
         <BlocksList />
       </DemoWorkspace>
+      <Prose text={t.docs.parameterizedPlaceholders.unfilled} />
       <Prose text={t.docs.parameterizedPlaceholders.multiple} />
       <DemoWorkspace
         tabs={[

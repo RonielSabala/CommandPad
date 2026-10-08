@@ -985,6 +985,8 @@ Si algo sale mal, deshazlo en este orden:
       fill: "Marca el espacio en blanco con `{;param}` dentro del valor de la variable. Funciona como una frase para completar: la variable guarda el texto fijo, y tú pones la palabra que falta cada vez que la usas. Donde referencies esa variable, rellena el hueco con `{clave;param=valor_param}`, y tu valor cae justo donde estaba el espacio en blanco.",
       seeExample:
         "Si suena abstracto, no te preocupes: se entiende al instante en cuanto lo ves. Échale un vistazo al ejemplo de abajo antes de seguir leyendo.",
+      unfilled:
+        "Un hueco que nadie rellena se queda en pantalla tal como lo escribiste, marcado en rojo, y el resto del valor se sigue resolviendo a su alrededor. Borra `;name=commandpad` del comando de arriba para ver de un vistazo la parte falta.",
       multiple:
         "Un valor puede tener varios huecos. Dale a cada uno un nombre distinto y rellénalos todos en el mismo comando, separados por punto y coma:",
       nested:
@@ -1257,7 +1259,7 @@ Si algo sale mal, deshazlo en este orden:
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
       scope:
-        "El escape aplica dentro de los bloques de comando, y dentro del texto que produce un hueco rellenado.",
+        "El escape aplica dentro de los bloques de comando, dentro de un hueco en el valor de una variable, y dentro del texto que produce un hueco rellenado.",
     },
     secretVariables: {
       intro: (actionsLabel, maskLabel) =>

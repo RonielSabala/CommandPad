@@ -165,8 +165,8 @@ Rules:
 - References nest to any depth: `{A;b={C|uppercase}}` is valid.
 - A reference that cannot resolve is left on screen exactly as written, so never reference
   a variable you did not define, and never misspell an operation.
-- A backslash before the opening brace makes the reference literal. In JSON that backslash
-  is itself escaped, so it appears as two backslashes.
+- A backslash before the opening brace makes the reference, or a blank, literal. In JSON
+  that backslash is itself escaped, so it appears as two backslashes.
 
 ### Blanks
 
@@ -175,10 +175,16 @@ A variable's value may hold blanks that the reference fills:
 - `{;name}` a blank called `name`.
 - `{;name=default}` a blank with a default, used when nothing fills it.
 - `{;name|uppercase}` a blank that transforms whatever fills it.
+- `\{;name}` a literal blank: the braces are text, and nothing fills it.
 
 With `DEPLOY` = `deploy --env {;env} --tag {;tag=latest}`, the command `{DEPLOY;env=prod}`
 resolves to `deploy --env prod --tag latest`. Use blanks when one value is reused with
 small differences, instead of defining near-duplicate variables.
+
+A blank nobody fills is left on screen exactly as written and marked unresolved, so every
+blank a command reaches must either be filled or carry a default. A reference that leaves a
+blank unfilled and also carries a `|` operation stays as written in full, since there is no
+whole value for the operation to transform.
 
 ### Operations
 

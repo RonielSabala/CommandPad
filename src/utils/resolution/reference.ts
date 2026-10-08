@@ -22,10 +22,10 @@ import {
 } from "./token";
 import type { ResolvedValue, VariableLookup } from "./types";
 
-/** Whether an unfilled `{;name}` blank may pass through instead of leaving the reference unresolved. */
-const KEEPS_BLANKS: Record<ReferenceSurface, boolean> = {
-  [ReferenceSurface.COMMAND]: false,
-  [ReferenceSurface.VALUE]: true,
+/** Whether a `{;name}` blank reaches the end of the line on this surface. */
+const BLANKS_ARE_FINAL: Record<ReferenceSurface, boolean> = {
+  [ReferenceSurface.COMMAND]: true,
+  [ReferenceSurface.VALUE]: false,
 };
 
 /** Whether a variable left empty counts as unfilled. */
@@ -232,14 +232,16 @@ function resolveReferenceAt(
     }
   }
 
-  const template = applyTemplateParams(
-    value.text,
+  const final = BLANKS_ARE_FINAL[context.surface];
+  const template = applyTemplateParams(value.text, {
     params,
-    { key },
-    value.spans,
-  );
+    context: { key },
+    final,
+    spans: value.spans,
+  });
 
-  if (!template.fullyResolved && !KEEPS_BLANKS[context.surface]) {
+  // A transform over an unfilled blank would quietly produce nonsense
+  if (!template.fullyResolved && final && operations.length > 0) {
     return unresolvedReference();
   }
 

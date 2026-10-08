@@ -5,8 +5,12 @@ export function flatSpans(text: string, source?: string): ResolvedSpan[] {
   return text ? [{ text, depth: 0, source }] : [];
 }
 
-export function unresolvedSpans(text: string): ResolvedSpan[] {
-  return text ? [{ text, depth: 0, unresolved: true }] : [];
+export function unresolvedSpans(
+  text: string,
+  depth = 0,
+  source?: string,
+): ResolvedSpan[] {
+  return text ? [{ text, depth, source, unresolved: true }] : [];
 }
 
 export function hasUnresolvedSpans(
@@ -108,18 +112,21 @@ export function sliceSpans(
   return sliced;
 }
 
-/** The depth of the character at `index` in the text `spans` describes. */
-export function depthAt(spans: readonly ResolvedSpan[], index: number): number {
+/** The span covering the character at `index` in the text `spans` describes. */
+export function spanAt(
+  spans: readonly ResolvedSpan[],
+  index: number,
+): ResolvedSpan | undefined {
   let at = 0;
 
   for (const span of spans) {
     at += span.text.length;
     if (index < at) {
-      return span.depth;
+      return span;
     }
   }
 
-  return 0;
+  return undefined;
 }
 
 /** The spans of the trimmed text `spans` describes. */
