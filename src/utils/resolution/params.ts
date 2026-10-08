@@ -7,15 +7,19 @@ import type { OperationChunk, OperationContext } from "./operations/types";
 import {
   flatSpans,
   mergeSpans,
+  placeSpans,
   sliceSpans,
   spanAt,
+  spansText,
+  trimSpans,
   unresolvedSpans,
 } from "./spans";
 import { scanBraces, splitReferenceBody } from "./token";
+import type { ResolvedValue } from "./types";
 
 interface ReferenceParam {
   name: string;
-  value: string;
+  value: ResolvedValue;
 }
 
 interface TemplateBlank {
@@ -32,16 +36,17 @@ interface ResolvedTemplate {
   spans: ResolvedSpan[];
 }
 
-export function parseParam(chunk: string): ReferenceParam | null {
-  const at = chunk.indexOf(VariableSyntax.PARAM_ASSIGNMENT);
+export function parseParam(chunk: ResolvedValue): ReferenceParam | null {
+  const at = chunk.text.indexOf(VariableSyntax.PARAM_ASSIGNMENT);
   if (at === -1) {
     return null;
   }
 
-  const name = chunk.slice(0, at).trim();
-  const value = chunk.slice(at + 1).trim();
+  const name = chunk.text.slice(0, at).trim();
+  const spans = trimSpans(sliceSpans(chunk.spans, at + 1, chunk.text.length));
+  const text = spansText(spans);
 
-  return name && value ? { name, value } : null;
+  return name && text ? { name, value: { text, spans } } : null;
 }
 
 function parseBlankName(
@@ -93,13 +98,13 @@ interface BlankMatch {
 }
 
 interface BlankScope {
-  params: Record<string, string>;
+  params: Record<string, ResolvedValue>;
   defaults: Record<string, string>;
   context: OperationContext;
   /** Whether a blank reaches the end of the line. */
   final: boolean;
   /** Each name's resolved value. */
-  cache: Map<string, string | undefined>;
+  cache: Map<string, ResolvedValue | undefined>;
   /** The names being resolved. */
   resolving: Set<string>;
 }
@@ -177,7 +182,10 @@ export function getTemplateParamNames(template: string): string[] {
 }
 
 /** A blank's value, resolved against `params` first and its declared default otherwise. */
-function blankValue(name: string, scope: BlankScope): string | undefined {
+function blankValue(
+  name: string,
+  scope: BlankScope,
+): ResolvedValue | undefined {
   const { params, cache, resolving } = scope;
 
   if (cache.has(name)) {
@@ -199,7 +207,9 @@ function blankValue(name: string, scope: BlankScope): string | undefined {
   const resolved = substituteBlanks(fallback, scope);
   resolving.delete(name);
 
-  const value = resolved.fullyResolved ? resolved.text : undefined;
+  const value = resolved.fullyResolved
+    ? { text: resolved.text, spans: resolved.spans }
+    : undefined;
   cache.set(name, value);
   return value;
 }
@@ -253,7 +263,7 @@ function fillBlanks(
     const applied =
       value === undefined
         ? null
-        : applyOperations(value, blank.operations, scope.context);
+        : applyOperations(value.text, blank.operations, scope.context);
 
     if (!applied?.ok) {
       const raw = template.slice(start, end);
@@ -270,7 +280,16 @@ function fillBlanks(
 
     filled = true;
     text += applied.text;
-    pieces.push({ text: applied.text, depth, source });
+
+    // The filling text keeps its own nesting, unless an operation rewrote it
+    const produced =
+      applied.spans ?? (blank.operations.length > 0 ? undefined : value?.spans);
+
+    pieces.push(
+      ...(produced
+        ? placeSpans(produced, depth, source)
+        : [{ text: applied.text, depth, source }]),
+    );
   }
 
   pieces.push(...sliceSpans(spans, lastEnd, template.length));
@@ -283,7 +302,7 @@ function fillBlanks(
 }
 
 interface TemplateOptions {
-  params: Record<string, string>;
+  params: Record<string, ResolvedValue>;
   context: OperationContext;
   final: boolean;
   spans?: readonly ResolvedSpan[];

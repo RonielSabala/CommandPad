@@ -210,7 +210,7 @@ function resolveReferenceAt(
     return rawReference(!!key);
   }
 
-  const params: Record<string, string> = {};
+  const params: Record<string, ResolvedValue> = {};
   const operations: OperationChunk[] = [];
 
   for (const chunk of rest) {
@@ -226,7 +226,7 @@ function resolveReferenceAt(
       return unresolvedReference();
     }
 
-    const param = parseParam(resolved.text);
+    const param = parseParam(resolved);
     if (param) {
       params[param.name] = param.value;
     }

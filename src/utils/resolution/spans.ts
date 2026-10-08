@@ -137,3 +137,16 @@ export function trimSpans(spans: readonly ResolvedSpan[]): ResolvedSpan[] {
 
   return end > start ? sliceSpans(spans, start, end) : [];
 }
+
+/** Places `spans` under the span that wrote the blank they filled. */
+export function placeSpans(
+  spans: readonly ResolvedSpan[],
+  depth: number,
+  source: string | undefined,
+): ResolvedSpan[] {
+  return spans.map((span) => ({
+    ...span,
+    depth: span.depth + depth,
+    source: span.depth === 0 ? source : span.source,
+  }));
+}

@@ -75,6 +75,16 @@ describe("nesting depth", () => {
     ]);
   });
 
+  it("sinks a reference written inside a param one level further", () => {
+    expect(spans(book, "{ROUTE;route=v-{NAME}}")).toEqual([
+      { text: "my/", depth: 1, source: "ROUTE" },
+      { text: "v-", depth: 2, source: "ROUTE;route" },
+      { text: "api", depth: 3, source: "NAME" },
+      { text: "/path ", depth: 1, source: "ROUTE" },
+      { text: "api", depth: 2, source: "NAME" },
+    ]);
+  });
+
   it("flattens a reference an operation transformed", () => {
     expect(spans(book, "{SERVICE|uppercase}")).toEqual([
       { text: "SVC-API", depth: 1, source: "SERVICE" },
