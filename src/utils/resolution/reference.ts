@@ -126,6 +126,7 @@ function failedSpans(
   }
 
   const spans = unresolvedSpans(VariableSyntax.BRACE_OPEN);
+  const keyEnd = splitReferenceBody(raw)[0].text.length;
 
   for (const part of splitReferenceParts(raw, context.surface)) {
     if (!part.match) {
@@ -140,10 +141,11 @@ function failedSpans(
       depth,
     );
 
+    const shown =
+      nested.isReference && (part.match.start >= keyEnd || !nested.resolved);
+
     spans.push(
-      ...(nested.isReference && !nested.resolved
-        ? nestSpans(nested.spans)
-        : unresolvedSpans(part.match.token)),
+      ...(shown ? nestSpans(nested.spans) : unresolvedSpans(part.match.token)),
     );
   }
 
@@ -189,13 +191,10 @@ function resolveReferenceAt(
   const [keyChunk, ...rest] = splitReferenceBody(raw);
 
   const key = keyChunk.text.trim();
-  const rawReference = (isReference: boolean): ResolvedReference => ({
-    key,
-    text: token,
-    resolved: false,
-    isReference,
-    spans: failedSpans(token, raw, context, depth),
-  });
+  const rawReference = (isReference: boolean): ResolvedReference => {
+    const spans = failedSpans(token, raw, context, depth);
+    return { key, text: spansText(spans), resolved: false, isReference, spans };
+  };
   const unresolvedReference = (): ResolvedReference => rawReference(true);
 
   const value = key ? context.lookup(key) : unnamedValue(rest);

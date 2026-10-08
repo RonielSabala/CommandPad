@@ -123,11 +123,19 @@ describe("nesting depth", () => {
     ]);
   });
 
-  it("keeps a resolved reference inside a failed one at its own level", () => {
+  it("shows what a resolved reference inside a failed one resolved to", () => {
     expect(spans(book, "{|IF({MISSING};{NAME};x)}")).toEqual([
       { text: "{|IF(", depth: 1, unresolved: true },
       { text: "{MISSING}", depth: 2, unresolved: true },
-      { text: ";{NAME};x)}", depth: 1, unresolved: true },
+      { text: ";", depth: 1, unresolved: true },
+      { text: "api", depth: 2, source: "NAME" },
+      { text: ";x)}", depth: 1, unresolved: true },
+    ]);
+  });
+
+  it("keeps a reference written in a key as written", () => {
+    expect(spans(book, "{{NAME}}")).toEqual([
+      { text: "{{NAME}}", depth: 1, unresolved: true },
     ]);
   });
 

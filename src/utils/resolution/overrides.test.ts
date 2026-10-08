@@ -100,6 +100,39 @@ describe("applyOverrides", () => {
     ]);
   });
 
+  it("shows where an override broke a call that reads it", () => {
+    const [segment] = embed(
+      { condition: "0" },
+      { condition: "hi from {missing}" },
+    ).resolve("{|IF({condition}; x; y)}");
+
+    expect(segment.type).toBe(CommandSegmentType.UNRESOLVED);
+    expect(segment.text).toBe("{|IF(hi from {missing}; x; y)}");
+    expect(segment.spans).toEqual([
+      { text: "{|IF(", depth: 1, unresolved: true },
+      { text: "hi from ", depth: 2, source: "condition" },
+      { text: "{missing}", depth: 3, unresolved: true },
+      { text: "; x; y)}", depth: 1, unresolved: true },
+    ]);
+  });
+
+  it("shows what a call that failed was handed", () => {
+    const [segment] = embed(
+      { condition: "0" },
+      { condition: "hi from {missing}" },
+      { missing: "my app" },
+    ).resolve("{|IF({condition}; x; y)}");
+
+    expect(segment.type).toBe(CommandSegmentType.UNRESOLVED);
+    expect(segment.text).toBe("{|IF(hi from my app; x; y)}");
+    expect(segment.spans).toEqual([
+      { text: "{|IF(", depth: 1, unresolved: true },
+      { text: "hi from ", depth: 2, source: "condition" },
+      { text: "my app", depth: 3, source: "missing" },
+      { text: "; x; y)}", depth: 1, unresolved: true },
+    ]);
+  });
+
   it("still answers an operation over an empty host value", () => {
     expect(
       embed({ A: "" }, { A: "{B|isempty} {B|len}" }, { B: "" }).values,

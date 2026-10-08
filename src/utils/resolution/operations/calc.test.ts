@@ -1,4 +1,4 @@
-import { RAW, checkResolution } from "@/test";
+import { RAW, checkResolution, partial } from "@/test";
 
 checkResolution("calc", {
   variables: {
@@ -61,7 +61,7 @@ checkResolution("calc fails loudly", {
     ["{|calc(2 ** 3)}", RAW],
     ["{|calc(1; 2)}", RAW],
     ["{|calc(x + 1)}", RAW],
-    ["{|calc({NAME} + 1)}", RAW],
+    ["{|calc({NAME} + 1)}", partial("{|calc(api + 1)}")],
     ["{|calc({MISSING} + 1)}", RAW],
     ["{|calc(1.)}", RAW],
   ],

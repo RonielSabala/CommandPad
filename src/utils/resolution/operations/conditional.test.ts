@@ -36,8 +36,11 @@ checkResolution("IF branch references", {
     ["{|IF(true;{A};{MISSING})}", "1 x"],
     ["{|IF(false;{MISSING};{B})}", "2"],
     // The condition is read, so it still has to resolve
-    ["{|IF({MISSING};{A};{B})}", RAW],
-    ["{|IF({|EQUALS({MISSING};x)};{A};{B})}", RAW],
+    ["{|IF({MISSING};{A};{B})}", partial("{|IF({MISSING};1 x;2)}")],
+    [
+      "{|IF({|EQUALS({MISSING};x)};{A};{B})}",
+      partial("{|IF({|EQUALS({MISSING};x)};1 x;2)}"),
+    ],
   ],
 });
 

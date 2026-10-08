@@ -87,12 +87,14 @@
 
 /* Token styles */
 
-.token-resolved {
+.token-resolved,
+.token-nesting-resolved {
   --nesting-bg-1: var(--resolved-bg-1);
   --nesting-bg-2: var(--resolved-bg-2);
   --nesting-bg-3: var(--resolved-bg-3);
 
   color: var(--resolved-color);
+  font-weight: normal;
 }
 
 .token-unresolved,
