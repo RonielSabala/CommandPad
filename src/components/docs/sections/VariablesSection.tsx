@@ -267,6 +267,33 @@ export function ParameterizedPlaceholdersDocs() {
   );
 }
 
+export function VariableOperationsDocs() {
+  const t = useTranslation();
+
+  return (
+    <>
+      <Prose text={t.docs.variableOperations.intro} />
+      <Prose text={t.docs.variableOperations.demoHint} />
+      <DemoWorkspace
+        tabs={[
+          {
+            variables: [demoVariable("PROJECT", "My Photo Backup")],
+            blocks: [
+              demoCommand('echo "{PROJECT}"'),
+              demoCommand("mkdir {PROJECT|kebabcase}"),
+              demoCommand('echo "{PROJECT|kebabcase|uppercase}"'),
+            ],
+          },
+        ]}
+      >
+        <DemoVariableRows />
+        <BlocksList />
+      </DemoWorkspace>
+      <Prose text={t.docs.variableOperations.chaining} />
+    </>
+  );
+}
+
 export function VariableSlicingDocs() {
   const t = useTranslation();
 

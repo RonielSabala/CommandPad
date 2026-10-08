@@ -565,6 +565,11 @@ export interface Messages {
       override: string;
       shared: string;
     };
+    variableOperations: {
+      intro: string;
+      demoHint: string;
+      chaining: string;
+    };
     variableSlicing: {
       intro: string;
       demoHint: string;
