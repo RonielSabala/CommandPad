@@ -1,4 +1,4 @@
-import { RAW, checkResolution, checkValues, runbook } from "@/test";
+import { RAW, checkResolution, checkValues, partial, runbook } from "@/test";
 import { describe, expect, it } from "vitest";
 
 const HOSTS = {
@@ -137,12 +137,22 @@ describe("the known limitation: a literal pipe inside a param value", () => {
   });
 });
 
-checkValues("an empty variable is only unfilled on a command surface", {
+checkValues("an empty variable is unfilled inside a value too", {
+  variables: {
+    EMPTY: "",
+    GREETING: "hi{EMPTY}!",
+    ANSWERED: "{EMPTY|isempty} {EMPTY|len}",
+  },
+  expected: {
+    GREETING: "hi{EMPTY}!",
+    ANSWERED: "true 0",
+  },
+});
+
+checkResolution("a command shows an empty variable a value references", {
   variables: {
     EMPTY: "",
     GREETING: "hi{EMPTY}!",
   },
-  expected: {
-    GREETING: "hi!",
-  },
+  cases: [["echo {GREETING}", partial("echo hi{EMPTY}!")]],
 });

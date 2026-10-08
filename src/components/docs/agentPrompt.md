@@ -31,7 +31,8 @@ A variable is an object with these fields:
 - `value` (required, text): may be empty when the user is expected to fill it in. A
   command referencing an empty variable keeps the reference as written until it is
   filled, unless an operation still produces text from it (`{X|isempty}`, `{X|len}`). A
-  value may itself reference other variables.
+  value may itself reference other variables, and a reference to an empty variable inside
+  a value is kept as written too.
 - `secret` (optional, `true`): masks the value on screen. Use it for every password,
   token, key or connection string.
 - `language` (optional): one of `plaintext`, `shell`, `powershell`, `json`, `sql`, `xml`, `yaml`.

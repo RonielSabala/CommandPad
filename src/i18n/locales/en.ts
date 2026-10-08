@@ -921,7 +921,7 @@ If something goes wrong, undo it in this order:
       extract: (extractLabel) =>
         `You do not have to write a variable out by hand. Select any piece of a command in its editor, then right-click it (or press \`Ctrl+.\`) and pick **${extractLabel}**: the selected text becomes a new variable, and the command keeps a reference to it in its place. Its guessed name is selected right there in the editor, so just type over it to rename it. Try it on the demo above.`,
       unresolved:
-        "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**.",
+        "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**, even when the reference sits inside another variable's value.",
       tooltip:
         "If a key or value is too long to fit its box, hover over it to see the full text in a tooltip.",
       split:

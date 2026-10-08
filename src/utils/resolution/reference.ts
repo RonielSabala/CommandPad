@@ -29,12 +29,6 @@ const BLANKS_ARE_FINAL: Record<ReferenceSurface, boolean> = {
   [ReferenceSurface.VALUE]: false,
 };
 
-/** Whether a variable left empty counts as unfilled. */
-const EMPTY_IS_UNFILLED: Record<ReferenceSurface, boolean> = {
-  [ReferenceSurface.COMMAND]: true,
-  [ReferenceSurface.VALUE]: false,
-};
-
 export interface ReferenceContext {
   surface: ReferenceSurface;
   lookup: VariableLookup;
@@ -261,12 +255,7 @@ function resolveReferenceAt(
     return unresolvedReference();
   }
 
-  if (
-    key &&
-    !value.text &&
-    !applied.text &&
-    EMPTY_IS_UNFILLED[context.surface]
-  ) {
+  if (key && !value.text && !applied.text) {
     return unresolvedReference();
   }
 
