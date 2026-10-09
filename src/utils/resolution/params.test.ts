@@ -91,6 +91,28 @@ checkResolution("a fill that reaches its own variable again is a loop", {
   ],
 });
 
+checkResolution("only the variable that declares a blank can fill it", {
+  variables: {
+    TEMPLATE: "a {;x}",
+    WRAPPED: "{TEMPLATE}",
+    MIXED: "{TEMPLATE} {;y}",
+    DEFAULTED: "{;x=d}",
+    WRAPPED_DEFAULT: "{DEFAULTED}",
+    FORWARDED: "{TEMPLATE;x={;y}}",
+    SAME_NAME: "{TEMPLATE;x={;x}}",
+  },
+  cases: [
+    ["{TEMPLATE;x=z}", "a z"],
+    ["{WRAPPED;x=z}", partial("a {;x}")],
+    ["{WRAPPED}", partial("a {;x}")],
+    ["{WRAPPED;x=z|len}", RAW],
+    ["{MIXED;x=1;y=2}", partial("a {;x} 2")],
+    ["{WRAPPED_DEFAULT;x=z}", "d"],
+    ["{FORWARDED;y=z}", "a z"],
+    ["{SAME_NAME;x=z}", "a z"],
+  ],
+});
+
 checkResolution("a backslash makes a blank literal", {
   variables: {
     LITERAL: String.raw`a \{;b}`,

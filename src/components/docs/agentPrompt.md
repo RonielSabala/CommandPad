@@ -184,6 +184,10 @@ With `DEPLOY` = `deploy --env {;env} --tag {;tag=latest}`, the command `{DEPLOY;
 resolves to `deploy --env prod --tag latest`. Use blanks when one value is reused with
 small differences, instead of defining near-duplicate variables.
 
+A blank belongs to the variable whose value writes it. If `SITE` = `{URL}`, then
+`{SITE;name=docs}` cannot reach the blank inside `URL`. To pass it through, give `SITE` a
+blank of its own and forward it: `SITE` = `{URL;name={;name}}`.
+
 A blank nobody fills is left on screen exactly as written and marked unresolved, so every
 blank a command reaches must either be filled or carry a default. A reference that leaves a
 blank unfilled and also carries a `|` operation stays as written in full, since there is no

@@ -93,6 +93,8 @@ const BLANK_OPEN = `${VariableSyntax.BRACE_OPEN}${VariableSyntax.PARAM_SEPARATOR
 interface BlankMatch {
   blank: TemplateBlank;
   escaped: boolean;
+  /** Whether another variable declared it. */
+  foreign?: boolean;
   start: number;
   end: number;
 }
@@ -152,8 +154,13 @@ function readBlanks(template: string): BlankMatch[] {
 function collectBlankDefaults(blanks: BlankMatch[]): Record<string, string> {
   const defaults: Record<string, string> = {};
 
-  for (const { blank, escaped } of blanks) {
-    if (!escaped && blank.fallback !== undefined && !(blank.name in defaults)) {
+  for (const { blank, escaped, foreign } of blanks) {
+    if (
+      !escaped &&
+      !foreign &&
+      blank.fallback !== undefined &&
+      !(blank.name in defaults)
+    ) {
       defaults[blank.name] = blank.fallback;
     }
   }
@@ -242,7 +249,7 @@ function fillBlanks(
   let lastEnd = 0;
   const pieces: ResolvedSpan[] = [];
 
-  for (const { blank, escaped, start, end } of blanks) {
+  for (const { blank, escaped, foreign, start, end } of blanks) {
     text += template.slice(lastEnd, start);
     pieces.push(...sliceSpans(spans, lastEnd, start));
     lastEnd = end;
@@ -259,7 +266,7 @@ function fillBlanks(
     const source = blankSource(wrote?.source ?? scope.context.key, blank.name);
     const depth = (wrote?.depth ?? 0) + 1;
 
-    const value = blankValue(blank.name, scope);
+    const value = foreign ? undefined : blankValue(blank.name, scope);
     const applied =
       value === undefined
         ? null
@@ -312,7 +319,11 @@ export function applyTemplateParams(
   template: string,
   { params, context, final, spans = flatSpans(template) }: TemplateOptions,
 ): ResolvedTemplate {
-  const blanks = readBlanks(template);
+  const blanks = readBlanks(template).map((match) => ({
+    ...match,
+    foreign:
+      (spanAt(spans, match.start)?.source ?? context.key) !== context.key,
+  }));
 
   return fillBlanks(template, spans, blanks, {
     params,
