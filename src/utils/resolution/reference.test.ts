@@ -190,3 +190,41 @@ describe("an escaped reference in a value is data to an operation", () => {
     expect(book.hasUnresolved("{LITERAL|uppercase}")).toBe(false);
   });
 });
+
+const ESCAPED_IN_VALUES = {
+  ...HOSTS,
+  V: String.raw`\{A}`,
+  LENGTH: "{V|len}",
+  FIRST: "{V|slice(0)}",
+  LOWER: "{V|lowercase}",
+  SWAPPED: String.raw`{V|replace(\{A};<)}`,
+  RENAMED: "{V|replace(A;HOST)}",
+};
+
+checkResolution(
+  "an operation reads an escaped brace the same on every surface",
+  {
+    variables: ESCAPED_IN_VALUES,
+    cases: [
+      ["{V|len}", "3"],
+      ["{LENGTH}", "3"],
+      ["{FIRST}", "{"],
+      ["{LOWER}", "{a}"],
+      ["{LOWER|len}", "3"],
+      [String.raw`{V|replace(\{A};<)}`, "<"],
+      ["{SWAPPED}", "<"],
+      ["{RENAMED}", "{HOST}"],
+    ],
+  },
+);
+
+checkValues("an operation's output stays escaped inside a value", {
+  variables: ESCAPED_IN_VALUES,
+  expected: {
+    LENGTH: "3",
+    FIRST: String.raw`\{`,
+    LOWER: String.raw`\{a}`,
+    SWAPPED: "<",
+    RENAMED: String.raw`\{HOST}`,
+  },
+});

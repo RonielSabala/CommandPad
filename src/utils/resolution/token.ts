@@ -58,12 +58,9 @@ export function unescapeBraces(
   return CONSUMES_ESCAPES[surface] ? dropBraceEscapes(text) : text;
 }
 
-/** `unescapeBraces` over a resolved value, keeping its spans aligned. */
-export function unescapeBraceSpans(
-  value: ResolvedValue,
-  surface: ReferenceSurface,
-): ResolvedValue {
-  if (!CONSUMES_ESCAPES[surface] || !value.text.includes(ESCAPED_BRACE_OPEN)) {
+/** The text an operation reads. */
+export function literalBraceSpans(value: ResolvedValue): ResolvedValue {
+  if (!value.text.includes(ESCAPED_BRACE_OPEN)) {
     return value;
   }
 
@@ -79,6 +76,35 @@ export function unescapeBraceSpans(
   const spans = mergeSpans(kept);
 
   return { text: spansText(spans), spans };
+}
+
+/** `unescapeBraces` over a resolved value, keeping its spans aligned. */
+export function unescapeBraceSpans(
+  value: ResolvedValue,
+  surface: ReferenceSurface,
+): ResolvedValue {
+  return CONSUMES_ESCAPES[surface] ? literalBraceSpans(value) : value;
+}
+
+/** Writes an operation's output back for this surface where escapes are kept. */
+export function escapeLiteralBraceSpans(
+  value: ResolvedValue,
+  surface: ReferenceSurface,
+): ResolvedValue {
+  if (
+    CONSUMES_ESCAPES[surface] ||
+    !value.text.includes(VariableSyntax.BRACE_OPEN)
+  ) {
+    return value;
+  }
+
+  const escape = (text: string): string =>
+    text.replaceAll(VariableSyntax.BRACE_OPEN, ESCAPED_BRACE_OPEN);
+
+  return {
+    text: escape(value.text),
+    spans: value.spans.map((span) => ({ ...span, text: escape(span.text) })),
+  };
 }
 
 /** Escapes every reference in `text`, and normalizes the escaping it finds. */

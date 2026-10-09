@@ -16,6 +16,8 @@ import {
 } from "./spans";
 import type { ReferenceBodyChunk } from "./token";
 import {
+  escapeLiteralBraceSpans,
+  literalBraceSpans,
   splitReferenceBody,
   splitReferenceParts,
   splitTemplateParts,
@@ -262,7 +264,7 @@ function resolveReferenceAt(
     );
 
     if (isOperation) {
-      operations.push({ text: resolved.text, spans: resolved.spans });
+      operations.push(literalBraceSpans(resolved));
       continue;
     }
 
@@ -293,7 +295,9 @@ function resolveReferenceAt(
     return unresolvedReference();
   }
 
-  const applied = applyOperations(output.text, operations, { key });
+  const applied = applyOperations(literalBraceSpans(output).text, operations, {
+    key,
+  });
   if (!applied.ok) {
     return unresolvedReference();
   }
@@ -302,15 +306,17 @@ function resolveReferenceAt(
     return unresolvedReference();
   }
 
-  return {
-    key,
-    text: applied.text,
-    resolved: true,
-    isReference: true,
-    spans:
-      applied.spans ??
-      (operations.length > 0
-        ? flatSpans(applied.text, key || undefined)
-        : output.spans),
-  };
+  if (operations.length === 0) {
+    return { key, ...output, resolved: true, isReference: true };
+  }
+
+  const result = escapeLiteralBraceSpans(
+    {
+      text: applied.text,
+      spans: applied.spans ?? flatSpans(applied.text, key || undefined),
+    },
+    context.surface,
+  );
+
+  return { key, ...result, resolved: true, isReference: true };
 }

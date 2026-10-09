@@ -167,8 +167,9 @@ Rules:
 - A reference that cannot resolve is left on screen exactly as written, so never reference
   a variable you did not define, and never misspell an operation.
 - A backslash before the opening brace makes the reference, or a blank, literal. It works
-  in a command's text and in a variable's value alike. In JSON that backslash is itself
-  escaped, so it appears as two backslashes.
+  in a command's text and in a variable's value alike. An operation reads an escaped brace
+  as a plain one, so `{NAME|len}` gives the same answer in a command and in a value. In
+  JSON that backslash is itself escaped, so it appears as two backslashes.
 
 ### Blanks
 
