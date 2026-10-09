@@ -24,7 +24,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# Claude local guidance
-CLAUDE.md
-.claude

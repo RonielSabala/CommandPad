@@ -1,13 +1,24 @@
 import { ReferenceSurface } from "@/common/enums";
 import { ESCAPE_CHAR } from "@/common/regex";
+import type { ResolvedSpan } from "@/common/types";
 import {
   CallSyntax,
+  ESCAPED_BRACE_OPEN,
   EscapedBraceOpenRegex,
   VariableSyntax,
 } from "@/common/variableSyntax";
 
+import { mergeSpans, sliceSpans, spansText } from "./spans";
+import type { ResolvedValue } from "./types";
+
 /** Whether `\{` is a literal brace rather than the start of a reference. */
 const ESCAPES_REFERENCES: Record<ReferenceSurface, boolean> = {
+  [ReferenceSurface.COMMAND]: true,
+  [ReferenceSurface.VALUE]: true,
+};
+
+/** Whether the backslash itself is dropped here. */
+const CONSUMES_ESCAPES: Record<ReferenceSurface, boolean> = {
   [ReferenceSurface.COMMAND]: true,
   [ReferenceSurface.VALUE]: false,
 };
@@ -44,7 +55,56 @@ export function unescapeBraces(
   text: string,
   surface: ReferenceSurface,
 ): string {
-  return ESCAPES_REFERENCES[surface] ? dropBraceEscapes(text) : text;
+  return CONSUMES_ESCAPES[surface] ? dropBraceEscapes(text) : text;
+}
+
+/** The text an operation reads. */
+export function literalBraceSpans(value: ResolvedValue): ResolvedValue {
+  if (!value.text.includes(ESCAPED_BRACE_OPEN)) {
+    return value;
+  }
+
+  const kept: ResolvedSpan[] = [];
+  let lastEnd = 0;
+
+  for (const match of value.text.matchAll(EscapedBraceOpenRegex)) {
+    kept.push(...sliceSpans(value.spans, lastEnd, match.index));
+    lastEnd = match.index + ESCAPE_CHAR.length;
+  }
+
+  kept.push(...sliceSpans(value.spans, lastEnd, value.text.length));
+  const spans = mergeSpans(kept);
+
+  return { text: spansText(spans), spans };
+}
+
+/** `unescapeBraces` over a resolved value, keeping its spans aligned. */
+export function unescapeBraceSpans(
+  value: ResolvedValue,
+  surface: ReferenceSurface,
+): ResolvedValue {
+  return CONSUMES_ESCAPES[surface] ? literalBraceSpans(value) : value;
+}
+
+/** Writes an operation's output back for this surface where escapes are kept. */
+export function escapeLiteralBraceSpans(
+  value: ResolvedValue,
+  surface: ReferenceSurface,
+): ResolvedValue {
+  if (
+    CONSUMES_ESCAPES[surface] ||
+    !value.text.includes(VariableSyntax.BRACE_OPEN)
+  ) {
+    return value;
+  }
+
+  const escape = (text: string): string =>
+    text.replaceAll(VariableSyntax.BRACE_OPEN, ESCAPED_BRACE_OPEN);
+
+  return {
+    text: escape(value.text),
+    spans: value.spans.map((span) => ({ ...span, text: escape(span.text) })),
+  };
 }
 
 /** Escapes every reference in `text`, and normalizes the escaping it finds. */
@@ -278,17 +338,9 @@ export function replaceReferences(
   );
 }
 
-/** Rewrites every reference a filled template produced. */
-export function replaceTemplateReferences(
-  text: string,
-  replace: (match: ReferenceMatch) => string,
-): string {
-  return replaceMatches(
-    text,
-    scanBraces(text, true),
-    replace,
-    dropBraceEscapes,
-  );
+/** Splits a filled template into its literal runs. */
+export function splitTemplateParts(text: string): ReferencePart[] {
+  return splitMatches(text, scanBraces(text, true), dropBraceEscapes);
 }
 
 /** Splits a reference body into its key, its params and its operations. */

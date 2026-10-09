@@ -71,25 +71,84 @@ describe("applyOverrides", () => {
     ]);
   });
 
-  it("lets an empty host value leave the reference unresolved", () => {
+  it("leaves a reference to an empty host value unresolved", () => {
     const { values, resolve } = embed({ A: "dev" }, { A: "{B}" }, { B: "" });
 
-    expect(values).toEqual({ A: "" });
+    expect(values).toEqual({ A: "{B}" });
     expect(resolve("echo {A}")).toEqual([
       { text: "echo ", type: CommandSegmentType.LITERAL },
       {
         key: "A",
-        text: "{A}",
-        type: CommandSegmentType.UNRESOLVED,
-        spans: [{ text: "{A}", depth: 1, unresolved: true }],
+        text: "{B}",
+        type: CommandSegmentType.RESOLVED,
+        spans: [{ text: "{B}", depth: 2, unresolved: true }],
       },
     ]);
+  });
+
+  it("paints an empty host value inside the rest of the override", () => {
+    const { values, resolve } = embed(
+      { placeholder: "" },
+      { placeholder: "hello {world}" },
+      { world: "" },
+    );
+
+    expect(values).toEqual({ placeholder: "hello {world}" });
+    expect(resolve("{placeholder}")[0].spans).toEqual([
+      { text: "hello ", depth: 1, source: "placeholder" },
+      { text: "{world}", depth: 2, unresolved: true },
+    ]);
+  });
+
+  it("shows where an override broke a call that reads it", () => {
+    const [segment] = embed(
+      { condition: "0" },
+      { condition: "hi from {missing}" },
+    ).resolve("{|IF({condition}; x; y)}");
+
+    expect(segment.type).toBe(CommandSegmentType.UNRESOLVED);
+    expect(segment.text).toBe("{|IF(hi from {missing}; x; y)}");
+    expect(segment.spans).toEqual([
+      { text: "{|IF(", depth: 1, unresolved: true },
+      { text: "hi from ", depth: 2, source: "condition" },
+      { text: "{missing}", depth: 3, unresolved: true },
+      { text: "; x; y)}", depth: 1, unresolved: true },
+    ]);
+  });
+
+  it("shows what a call that failed was handed", () => {
+    const [segment] = embed(
+      { condition: "0" },
+      { condition: "hi from {missing}" },
+      { missing: "my app" },
+    ).resolve("{|IF({condition}; x; y)}");
+
+    expect(segment.type).toBe(CommandSegmentType.UNRESOLVED);
+    expect(segment.text).toBe("{|IF(hi from my app; x; y)}");
+    expect(segment.spans).toEqual([
+      { text: "{|IF(", depth: 1, unresolved: true },
+      { text: "hi from ", depth: 2, source: "condition" },
+      { text: "my app", depth: 3, source: "missing" },
+      { text: "; x; y)}", depth: 1, unresolved: true },
+    ]);
+  });
+
+  it("still answers an operation over an empty host value", () => {
+    expect(
+      embed({ A: "" }, { A: "{B|isempty} {B|len}" }, { B: "" }).values,
+    ).toEqual({ A: "true 0" });
   });
 
   it("reads an empty host value before the embedded runbook's own", () => {
     expect(
       embed({ A: "", B: "embedded" }, { A: "{B}" }, { B: "" }).values,
-    ).toEqual({ A: "", B: "embedded" });
+    ).toEqual({ A: "{B}", B: "embedded" });
+  });
+
+  it("leaves a reference to an empty embedded value unresolved", () => {
+    expect(
+      embed({ A: "", B: "" }, { A: "x{B}y" }, { C: "host" }).values,
+    ).toEqual({ A: "x{B}y", B: "" });
   });
 
   it("resolves the embedded runbook's own values without the host", () => {

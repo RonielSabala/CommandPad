@@ -58,8 +58,10 @@ describe("scanReferences", () => {
     expect(found(String.raw`\{A} {B}`)).toEqual(["{B}"]);
   });
 
-  it("still opens on an escaped brace inside a variable value", () => {
-    expect(found(String.raw`\{A}`, ReferenceSurface.VALUE)).toEqual(["{A}"]);
+  it("leaves an escaped brace unopened inside a variable value too", () => {
+    expect(found(String.raw`\{A} {B}`, ReferenceSurface.VALUE)).toEqual([
+      "{B}",
+    ]);
   });
 
   it("recovers the references around a brace that never closes", () => {

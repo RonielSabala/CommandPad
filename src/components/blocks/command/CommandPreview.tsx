@@ -81,7 +81,7 @@ function NestedText({ segment }: { segment: CommandSegment }) {
       text={span.text}
       className={classNames(
         `token-nesting-${span.depth}`,
-        span.unresolved && "token-nesting-unresolved",
+        span.unresolved ? "token-nesting-unresolved" : "token-nesting-resolved",
       )}
       title={span.source}
     />

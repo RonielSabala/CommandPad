@@ -18,6 +18,8 @@ describe("readNumberArgument", () => {
     ["10 / 2", 5],
     ["7 % 3", 1],
     ["1.5 * 2", 3],
+    ["1e2", 100],
+    ["2.5E1 * 2", 50],
   ])("%s -> %s", (raw, expected) => {
     expect(readNumberArgument(raw)).toBe(expected);
   });
@@ -35,6 +37,7 @@ describe("readNumberArgument", () => {
     ["1 / 0"],
     ["(1 + 2"],
     ["1 +"],
+    ["1e-2"],
   ])("rejects %s", (raw) => {
     expect(readNumberArgument(raw)).toBeUndefined();
   });

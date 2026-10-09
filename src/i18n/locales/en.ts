@@ -921,7 +921,7 @@ If something goes wrong, undo it in this order:
       extract: (extractLabel) =>
         `You do not have to write a variable out by hand. Select any piece of a command in its editor, then right-click it (or press \`Ctrl+.\`) and pick **${extractLabel}**: the selected text becomes a new variable, and the command keeps a reference to it in its place. Its guessed name is selected right there in the editor, so just type over it to rename it. Try it on the demo above.`,
       unresolved:
-        "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**.",
+        "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**, even when the reference sits inside another variable's value.",
       tooltip:
         "If a key or value is too long to fit its box, hover over it to see the full text in a tooltip.",
       split:
@@ -986,7 +986,7 @@ If something goes wrong, undo it in this order:
       demoHint:
         "Below, a project's name becomes a folder name. Don't worry about what each operation does yet, only about the shape:",
       chaining:
-        "A reference can carry several operations, one `|` each, and they run left to right. That is the whole idea; the sections that follow take the operations one by one.",
+        "A reference can carry several operations, one `|` each, and they run left to right. An operation only runs on a value that fully resolved: if the value still holds an unfilled blank or a reference that did not resolve, no operation runs: the reference shows the value as far as it resolved, followed by its operations as written, and is marked in red. When one operation fails after others applied, the reference shows what those produced and stays red from the one that failed. That is the whole idea; the sections that follow take the operations one by one.",
     },
     variableSlicing: {
       intro:
@@ -1155,7 +1155,7 @@ If something goes wrong, undo it in this order:
 | \`%\` | Remainder |
 | \`( )\` | Group, to work something out first |`,
       rules:
-        "Multiplying and dividing come before adding and subtracting, as usual. Division can give a decimal (`7 / 2` is `3.5`), and a remainder takes the sign of the number you divide by, so `-1 % 3` is `2`. Dividing by zero, or anything that is not a number, leaves the reference exactly as written.",
+        "Multiplying and dividing come before adding and subtracting, as usual. Division can give a decimal (`7 / 2` is `3.5`), and a remainder takes the sign of the number you divide by, so `-1 % 3` is `2`. Dividing by zero, or anything that is not a number, leaves the reference exactly as written. A number can also be written in scientific notation: `1e3` is `1000` and `2.5e-7` is `0.00000025`. A result that is very small or very large comes out that way too (`1 / 10000000` gives `1e-7`), and any operation that reads a number accept it.",
       rounding:
         "A division rarely lands on a whole number, and a command usually wants one. `round`, `floor` and `ceil` turn the value coming down the chain into a whole number: to the nearest one, always down, or always up.",
       roundingDemoHint:
@@ -1236,13 +1236,13 @@ If something goes wrong, undo it in this order:
     },
     escapingBraces: {
       intro:
-        "Prefix a reference with a backslash (`\\`) in a command block to output it literally instead of resolving it.",
+        "Prefix a reference with a backslash (`\\`) to output it literally instead of resolving it.",
       menu: (escapeLabel) =>
         `You do not have to type the backslash yourself. Put the caret inside a reference (or select one or more of them), right-click it and pick **${escapeLabel}**. Every reference it covers gets a backslash, including the ones nested inside another. A backslash left against the closing brace is dropped.`,
       tryHint:
         "Try deleting the backslash in the command below and watch the literal braces turn into an active reference:",
       scope:
-        "Escaping applies inside command blocks, inside a blank in a variable's value, and inside the text a filled blank produces.",
+        "Escaping applies wherever a reference does: in a command block, in a variable's value, and in the text a filled blank produces. A value is read again by whatever references it, so a backslash written there stays in the value, and the command that finally renders it is the one that drops it.",
     },
     secretVariables: {
       intro: (actionsLabel, maskLabel) =>

@@ -8,6 +8,7 @@ import { applyOperations } from "./operations";
 import { applyTemplateParams, parseParam } from "./params";
 import {
   flatSpans,
+  hasUnresolvedSpans,
   mergeSpans,
   nestSpans,
   spansText,
@@ -15,21 +16,18 @@ import {
 } from "./spans";
 import type { ReferenceBodyChunk } from "./token";
 import {
-  replaceTemplateReferences,
+  escapeLiteralBraceSpans,
+  literalBraceSpans,
   splitReferenceBody,
   splitReferenceParts,
+  splitTemplateParts,
+  unescapeBraceSpans,
   unescapeBraces,
 } from "./token";
 import type { ResolvedValue, VariableLookup } from "./types";
 
 /** Whether a `{;name}` blank reaches the end of the line on this surface. */
 const BLANKS_ARE_FINAL: Record<ReferenceSurface, boolean> = {
-  [ReferenceSurface.COMMAND]: true,
-  [ReferenceSurface.VALUE]: false,
-};
-
-/** Whether a variable left empty counts as unfilled. */
-const EMPTY_IS_UNFILLED: Record<ReferenceSurface, boolean> = {
   [ReferenceSurface.COMMAND]: true,
   [ReferenceSurface.VALUE]: false,
 };
@@ -81,7 +79,7 @@ function resolveChunk(
   text: string,
   context: ReferenceContext,
   key: string,
-  depth: number,
+  refilling: readonly string[],
   consumesEscapes: boolean,
 ): ResolvedChunk {
   let fullyResolved = true;
@@ -105,7 +103,7 @@ function resolveChunk(
       part.match.token,
       part.match.raw,
       context,
-      depth,
+      refilling,
     );
 
     if (!reference.resolved) {
@@ -124,13 +122,30 @@ function failedSpans(
   token: string,
   raw: string,
   context: ReferenceContext,
-  depth: number,
+  refilling: readonly string[],
 ): ResolvedSpan[] {
   if (!raw.includes(VariableSyntax.BRACE_OPEN)) {
     return unresolvedSpans(token);
   }
 
-  const spans = unresolvedSpans(VariableSyntax.BRACE_OPEN);
+  const keyEnd = splitReferenceBody(raw)[0].text.length;
+  return mergeSpans([
+    ...unresolvedSpans(VariableSyntax.BRACE_OPEN),
+    ...failedBodySpans(raw, keyEnd, context, refilling),
+    ...unresolvedSpans(VariableSyntax.BRACE_CLOSE),
+  ]);
+}
+
+/** Describes a reference body that did not resolve. Each reference written
+ * in it past `keyEnd` is shown resolved, one level deeper.
+ */
+function failedBodySpans(
+  raw: string,
+  keyEnd: number,
+  context: ReferenceContext,
+  refilling: readonly string[],
+): ResolvedSpan[] {
+  const spans: ResolvedSpan[] = [];
 
   for (const part of splitReferenceParts(raw, context.surface)) {
     if (!part.match) {
@@ -142,18 +157,18 @@ function failedSpans(
       part.match.token,
       part.match.raw,
       context,
-      depth,
+      refilling,
     );
 
+    const shown =
+      nested.isReference && (part.match.start >= keyEnd || !nested.resolved);
+
     spans.push(
-      ...(nested.isReference && !nested.resolved
-        ? nestSpans(nested.spans)
-        : unresolvedSpans(part.match.token)),
+      ...(shown ? nestSpans(nested.spans) : unresolvedSpans(part.match.token)),
     );
   }
 
-  spans.push(...unresolvedSpans(VariableSyntax.BRACE_CLOSE));
-  return mergeSpans(spans);
+  return spans;
 }
 
 /**
@@ -161,19 +176,57 @@ function failedSpans(
  * a template resolves rather than being emitted as literal text.
  */
 function resolveFilledTemplate(
-  text: string,
+  template: ResolvedValue,
   context: ReferenceContext,
-  depth: number,
-): string {
-  if (depth >= ReferenceConfig.MAX_TEMPLATE_DEPTH) {
-    return text;
+  key: string,
+  refilling: readonly string[],
+): ResolvedValue {
+  const source = key || undefined;
+
+  if (refilling.length >= ReferenceConfig.MAX_TEMPLATE_DEPTH) {
+    return {
+      text: template.text,
+      spans: unresolvedSpans(template.text, 0, source),
+    };
   }
 
-  return replaceTemplateReferences(
-    text,
-    (match) =>
-      resolveReferenceAt(match.token, match.raw, context, depth + 1).text,
-  );
+  const inner = [...refilling, key];
+  const spans: ResolvedSpan[] = [];
+  let fullyResolved = true;
+
+  for (const part of splitTemplateParts(template.text)) {
+    if (!part.match) {
+      spans.push(...flatSpans(part.text, source));
+      continue;
+    }
+
+    const reference = resolveReferenceAt(
+      part.match.token,
+      part.match.raw,
+      context,
+      inner,
+    );
+
+    // Braces that spell no reference are text the fill produced
+    if (!reference.isReference) {
+      spans.push(...flatSpans(reference.text, source));
+      continue;
+    }
+
+    if (!reference.resolved || hasUnresolvedSpans(reference.spans)) {
+      fullyResolved = false;
+    }
+
+    spans.push(...nestSpans(reference.spans));
+  }
+
+  const merged = mergeSpans(spans);
+  const text = spansText(merged);
+
+  // A fill that rewrote nothing keeps the nesting its blanks gave it
+  return fullyResolved && text === template.text
+    ? template
+    : { text, spans: merged };
 }
 
 /** Resolves one `{KEY;params|operations}` reference against `context.lookup`. */
@@ -182,26 +235,29 @@ export function resolveReference(
   raw: string,
   context: ReferenceContext,
 ): ResolvedReference {
-  return resolveReferenceAt(token, raw, context, 0);
+  return resolveReferenceAt(token, raw, context, []);
 }
 
 function resolveReferenceAt(
   token: string,
   raw: string,
   context: ReferenceContext,
-  depth: number,
+  refilling: readonly string[],
 ): ResolvedReference {
   const [keyChunk, ...rest] = splitReferenceBody(raw);
+  const keyText = keyChunk.text;
+  const key = keyText.trim();
 
-  const key = keyChunk.text.trim();
-  const rawReference = (isReference: boolean): ResolvedReference => ({
-    key,
-    text: token,
-    resolved: false,
-    isReference,
-    spans: failedSpans(token, raw, context, depth),
-  });
+  const rawReference = (isReference: boolean): ResolvedReference => {
+    const spans = failedSpans(token, raw, context, refilling);
+    return { key, text: spansText(spans), resolved: false, isReference, spans };
+  };
   const unresolvedReference = (): ResolvedReference => rawReference(true);
+
+  // Stop infinite nesting
+  if (key && refilling.includes(key)) {
+    return unresolvedReference();
+  }
 
   const value = key ? context.lookup(key) : unnamedValue(rest);
   if (value === undefined) {
@@ -210,15 +266,29 @@ function resolveReferenceAt(
     return rawReference(!!key);
   }
 
-  const params: Record<string, string> = {};
+  const params: Record<string, ResolvedValue> = {};
   const operations: OperationChunk[] = [];
+
+  // Where each operation's separator sits
+  const operationStarts: number[] = [];
+  let chunkStart = keyText.length;
 
   for (const chunk of rest) {
     const isOperation = chunk.separator === VariableSyntax.OPERATION_SEPARATOR;
-    const resolved = resolveChunk(chunk.text, context, key, depth, isOperation);
+    const resolved = resolveChunk(
+      chunk.text,
+      context,
+      key,
+      refilling,
+      isOperation,
+    );
+
+    const start = chunkStart;
+    chunkStart += chunk.separator.length + chunk.text.length;
 
     if (isOperation) {
-      operations.push({ text: resolved.text, spans: resolved.spans });
+      operations.push(literalBraceSpans(resolved));
+      operationStarts.push(start);
       continue;
     }
 
@@ -226,7 +296,7 @@ function resolveReferenceAt(
       return unresolvedReference();
     }
 
-    const param = parseParam(resolved.text);
+    const param = parseParam(resolved);
     if (param) {
       params[param.name] = param.value;
     }
@@ -240,37 +310,82 @@ function resolveReferenceAt(
     spans: value.spans,
   });
 
-  // A transform over an unfilled blank would quietly produce nonsense
-  if (!template.fullyResolved && final && operations.length > 0) {
-    return unresolvedReference();
-  }
+  // A refill drops the backslashes it carries on its way through
+  const output = template.filled
+    ? resolveFilledTemplate(template, context, key, refilling)
+    : unescapeBraceSpans(template, context.surface);
 
-  const filled = template.filled
-    ? resolveFilledTemplate(template.text, context, depth)
-    : template.text;
+  // A chain that broke shows `shown` in place of what precedes `restStart
+  const brokenChain = (
+    shown: readonly ResolvedSpan[],
+    restStart: number,
+  ): ResolvedReference => {
+    const spans = mergeSpans([
+      ...unresolvedSpans(VariableSyntax.BRACE_OPEN),
+      ...shown,
+      ...failedBodySpans(raw.slice(restStart), 0, context, refilling),
+      ...unresolvedSpans(VariableSyntax.BRACE_CLOSE),
+    ]);
 
-  const applied = applyOperations(filled, operations, { key });
-  if (!applied.ok) {
-    return unresolvedReference();
-  }
-
-  if (
-    key &&
-    !value.text &&
-    !applied.text &&
-    EMPTY_IS_UNFILLED[context.surface]
-  ) {
-    return unresolvedReference();
-  }
-
-  const rewritten = operations.length > 0 || filled !== template.text;
-  return {
-    key,
-    text: applied.text,
-    resolved: true,
-    isReference: true,
-    spans:
-      applied.spans ??
-      (rewritten ? flatSpans(applied.text, key || undefined) : template.spans),
+    return {
+      key,
+      text: spansText(spans),
+      resolved: false,
+      isReference: true,
+      spans,
+    };
   };
+
+  // An operation never reads a value that holds something unresolved
+  if (operations.length > 0 && hasUnresolvedSpans(output.spans)) {
+    return brokenChain(output.spans, operationStarts[0]);
+  }
+
+  const applied = applyOperations(literalBraceSpans(output).text, operations, {
+    key,
+  });
+  if (!applied.ok) {
+    if (applied.failedAt === 0) {
+      return unresolvedReference();
+    }
+
+    const produced = escapeLiteralBraceSpans(
+      {
+        text: applied.text,
+        spans: applied.spans ?? flatSpans(applied.text, key || undefined),
+      },
+      context.surface,
+    );
+
+    // A chain that produced nothing stays as written
+    const keepsBody = !!key && !produced.text;
+    const shown = !keepsBody
+      ? produced.spans
+      : value.text
+        ? nestSpans(flatSpans(keyText, key))
+        : unresolvedSpans(keyText, 1, key);
+
+    return brokenChain(
+      shown,
+      keepsBody ? keyText.length : operationStarts[applied.failedAt],
+    );
+  }
+
+  if (key && !value.text && !applied.text) {
+    return unresolvedReference();
+  }
+
+  if (operations.length === 0) {
+    return { key, ...output, resolved: true, isReference: true };
+  }
+
+  const result = escapeLiteralBraceSpans(
+    {
+      text: applied.text,
+      spans: applied.spans ?? flatSpans(applied.text, key || undefined),
+    },
+    context.surface,
+  );
+
+  return { key, ...result, resolved: true, isReference: true };
 }

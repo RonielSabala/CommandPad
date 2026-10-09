@@ -48,10 +48,10 @@ describe("renameCommandTokens", () => {
 });
 
 describe("renameValueTokens", () => {
-  it("renames an escaped reference too, since a value has no escaping", () => {
-    expect(renameValueTokens(String.raw`\{HOST}`, "HOST", "SERVER")).toBe(
-      String.raw`\{SERVER}`,
-    );
+  it("skips an escaped reference, which renders literally", () => {
+    expect(
+      renameValueTokens(String.raw`\{HOST} {HOST}`, "HOST", "SERVER"),
+    ).toBe(String.raw`\{HOST} {SERVER}`);
   });
 });
 

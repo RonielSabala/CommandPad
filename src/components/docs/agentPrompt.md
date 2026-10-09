@@ -31,7 +31,8 @@ A variable is an object with these fields:
 - `value` (required, text): may be empty when the user is expected to fill it in. A
   command referencing an empty variable keeps the reference as written until it is
   filled, unless an operation still produces text from it (`{X|isempty}`, `{X|len}`). A
-  value may itself reference other variables.
+  value may itself reference other variables, and a reference to an empty variable inside
+  a value is kept as written too.
 - `secret` (optional, `true`): masks the value on screen. Use it for every password,
   token, key or connection string.
 - `language` (optional): one of `plaintext`, `shell`, `powershell`, `json`, `sql`, `xml`, `yaml`.
@@ -164,9 +165,13 @@ Rules:
 - Whitespace around each part is ignored, so a long reference may span several lines.
 - References nest to any depth: `{A;b={C|uppercase}}` is valid.
 - A reference that cannot resolve is left on screen exactly as written, so never reference
-  a variable you did not define, and never misspell an operation.
-- A backslash before the opening brace makes the reference, or a blank, literal. In JSON
-  that backslash is itself escaped, so it appears as two backslashes.
+  a variable you did not define, and never misspell an operation. When an operation fails
+  after others applied, what those produced takes the place of the key and the operations
+  before it: `{|calc(1 + 2)|round(a)}` shows `{3|round(a)}`, still unresolved.
+- A backslash before the opening brace makes the reference, or a blank, literal. It works
+  in a command's text and in a variable's value alike. An operation reads an escaped brace
+  as a plain one, so `{NAME|len}` gives the same answer in a command and in a value. In
+  JSON that backslash is itself escaped, so it appears as two backslashes.
 
 ### Blanks
 
@@ -181,10 +186,17 @@ With `DEPLOY` = `deploy --env {;env} --tag {;tag=latest}`, the command `{DEPLOY;
 resolves to `deploy --env prod --tag latest`. Use blanks when one value is reused with
 small differences, instead of defining near-duplicate variables.
 
+A blank belongs to the variable whose value writes it. If `SITE` = `{URL}`, then
+`{SITE;name=docs}` cannot reach the blank inside `URL`. To pass it through, give `SITE` a
+blank of its own and forward it: `SITE` = `{URL;name={;name}}`.
+
 A blank nobody fills is left on screen exactly as written and marked unresolved, so every
 blank a command reaches must either be filled or carry a default. A reference that leaves a
-blank unfilled and also carries a `|` operation stays as written in full, since there is no
-whole value for the operation to transform.
+blank unfilled and also carries a `|` operation is not transformed, since there is no whole
+value for the operation to transform: it shows the value as far as it resolved, followed by
+its operations as written, still unresolved. The same holds when the value contains a
+reference that did not resolve: the operation never reads its braces as text. To hand an
+operation literal braces, escape them in the value (`\{NAME}`).
 
 ### Operations
 
@@ -225,7 +237,9 @@ Working on text:
   precedence and `(` `)` for grouping. It ignores the value it is handed, so it is written
   on a reference with no key, and references inside it are resolved first:
   `sleep {|calc({MINUTES} * 60)}`. `/` may give a decimal, `%` takes the divisor's sign,
-  and dividing by zero leaves the reference unresolved.
+  and dividing by zero leaves the reference unresolved. A number may be written in scientific
+  notation (`1e3`, `2.5E-7`), and a result too small or too large comes out that way
+  (`{|calc(1 / 10000000)}` gives `1e-7`), which every operation that reads a number accepts.
 - `round(digits)`, `floor(digits)`, `ceil(digits)` round the value, which must be a plain
   number, to the nearest, down or up. `digits` is how many decimals to keep, `0` when left
   out (`round` and `round()` are the same), and a negative one rounds to tens, hundreds...

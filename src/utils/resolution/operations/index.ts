@@ -68,11 +68,10 @@ export function getCaseOperationKeywords(): readonly string[] {
   return CASE_OPERATION.keywords.map((keyword) => keyword.keyword).sort();
 }
 
-interface AppliedOperations {
-  text: string;
-  ok: boolean;
-  spans?: ResolvedSpan[];
-}
+/** What a chain produced. */
+type AppliedOperations =
+  | { text: string; ok: true; spans?: ResolvedSpan[] }
+  | { text: string; ok: false; spans?: ResolvedSpan[]; failedAt: number };
 
 const DEFINITIONS_BY_KEYWORD = new Map(
   OPERATION_DEFINITIONS.flatMap((definition) =>
@@ -116,15 +115,11 @@ export function applyOperations(
   let result = text;
   let spans: ResolvedSpan[] | undefined;
 
-  for (const operation of operations) {
+  for (const [index, operation] of operations.entries()) {
     const transform = parseOperation(operation);
-    if (!transform) {
-      return { text, ok: false };
-    }
-
-    const output = transform(result, context);
+    const output = transform && transform(result, context);
     if (output === null) {
-      return { text, ok: false };
+      return { text: result, ok: false, spans, failedAt: index };
     }
 
     if (isString(output)) {

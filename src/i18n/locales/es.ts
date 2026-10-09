@@ -944,7 +944,7 @@ Si algo sale mal, deshazlo en este orden:
       extract: (extractLabel) =>
         `No hace falta escribir una variable a mano. Selecciona cualquier parte de un comando en su editor, haz clic derecho (o pulsa \`Ctrl+.\`) y elige **${extractLabel}**: el texto seleccionado se convierte en una variable nueva, y el comando conserva en su lugar una referencia a ella. Su nombre propuesto queda seleccionado ahí mismo en el editor, así que basta con escribir encima para renombrarla. Pruébalo en la demo de arriba.`,
       unresolved:
-        "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**.",
+        "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**, incluso cuando la referencia está dentro del valor de otra variable.",
       tooltip:
         "Si una clave o un valor no cabe en su casilla, pasa el cursor sobre ella para ver el texto completo en un tooltip.",
       split:
@@ -1009,7 +1009,7 @@ Si algo sale mal, deshazlo en este orden:
       demoHint:
         "Abajo, el nombre de un proyecto se convierte en el nombre de una carpeta. No te preocupes todavía por lo que hace cada operación, fíjate solo en la forma:",
       chaining:
-        "Una referencia puede llevar varias operaciones, con un `|` cada una, y se aplican de izquierda a derecha. Esa es toda la idea; las secciones que siguen ven las operaciones una por una.",
+        "Una referencia puede llevar varias operaciones, con un `|` cada una, y se aplican de izquierda a derecha. Una operación solo se aplica a un valor que se resolvió por completo: si el valor todavía tiene un hueco sin rellenar o una referencia que no se resolvió, no se aplica ninguna operación: la referencia muestra el valor hasta donde se resolvió, seguido de sus operaciones tal como las escribiste, y se marca en rojo. Cuando una operación falla después de que otras se aplicaron, la referencia muestra lo que estas produjeron y sigue en rojo desde la que falló. Esa es toda la idea; las secciones que siguen ven las operaciones una por una.",
     },
     variableSlicing: {
       intro:
@@ -1179,7 +1179,7 @@ Si algo sale mal, deshazlo en este orden:
 | \`%\` | Resto |
 | \`( )\` | Agrupar lo que quieras calcular primero |`,
       rules:
-        "Como en cualquier calculadora, las multiplicaciones y divisiones se hacen antes que las sumas y restas. Una división puede dar decimales (`7 / 2` da `3.5`), y el resto lleva el signo del divisor, por eso `-1 % 3` da `2`. Si divides entre cero o algo de la expresión no es un número, la referencia se queda tal cual la escribiste.",
+        "Como en cualquier calculadora, las multiplicaciones y divisiones se hacen antes que las sumas y restas. Una división puede dar decimales (`7 / 2` da `3.5`), y el resto lleva el signo del divisor, por eso `-1 % 3` da `2`. Si divides entre cero o algo de la expresión no es un número, la referencia se queda tal cual la escribiste. Un número también se puede escribir en notación científica: `1e3` es `1000` y `2.5e-7` es `0.00000025`. Un resultado muy pequeño o muy grande sale así también (`1 / 10000000` da `1e-7`), y cualquier operación que lea un número lo acepta.",
       rounding:
         "Una división casi nunca da un número entero, y un comando casi siempre quiere uno. `round`, `floor` y `ceil` convierten el valor que les llega en un entero: al más cercano, siempre hacia abajo o siempre hacia arriba.",
       roundingDemoHint:
@@ -1260,13 +1260,13 @@ Si algo sale mal, deshazlo en este orden:
     },
     escapingBraces: {
       intro:
-        "Antepón una barra invertida (`\\`) a una referencia en un bloque de comando para mostrarla literalmente en vez de resolverla.",
+        "Antepón una barra invertida (`\\`) a una referencia para mostrarla literalmente en vez de resolverla.",
       menu: (escapeLabel) =>
         `No hace falta escribir la barra invertida a mano. Pon el cursor dentro de una referencia (o selecciona una o varias), haz clic derecho y elige **${escapeLabel}**. Cada referencia que abarque recibe su barra invertida, incluidas las anidadas dentro de otra. Una barra invertida pegada a la llave de cierre se elimina.`,
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
       scope:
-        "El escape aplica dentro de los bloques de comando, dentro de un hueco en el valor de una variable, y dentro del texto que produce un hueco rellenado.",
+        "El escape aplica donde quiera que funcione una referencia: en un bloque de comando, en el valor de una variable y en el texto que produce un hueco rellenado. El valor lo vuelve a leer quien lo referencia, así que una barra invertida escrita ahí se queda en el valor, y el comando que finalmente lo muestra es el que la elimina.",
     },
     secretVariables: {
       intro: (actionsLabel, maskLabel) =>

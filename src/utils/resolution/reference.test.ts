@@ -1,4 +1,4 @@
-import { RAW, checkResolution, checkValues, runbook } from "@/test";
+import { RAW, checkResolution, checkValues, partial, runbook } from "@/test";
 import { describe, expect, it } from "vitest";
 
 const HOSTS = {
@@ -64,6 +64,39 @@ checkResolution("escaping a brace", {
   ],
 });
 
+checkResolution("escaping a brace inside a variable value", {
+  variables: {
+    ...HOSTS,
+    ESCAPED: String.raw`\{HOST}`,
+    LITERAL: String.raw`hello \{world}`,
+    VIA: "{LITERAL}",
+    SHELL: String.raw`echo \{a,b\}`,
+  },
+  cases: [
+    ["{ESCAPED}", "{HOST}"],
+    ["{LITERAL}", "hello {world}"],
+    ["{VIA}", "hello {world}"],
+    ["{SHELL}", String.raw`echo {a,b\}`],
+    ["{LITERAL|uppercase}", "HELLO {WORLD}"],
+    [String.raw`\{LITERAL}`, "{LITERAL}"],
+  ],
+});
+
+checkValues(
+  "an escaped reference keeps its backslash until a command reads it",
+  {
+    variables: {
+      ...HOSTS,
+      ESCAPED: String.raw`\{HOST}`,
+      VIA: "{ESCAPED}",
+    },
+    expected: {
+      ESCAPED: String.raw`\{HOST}`,
+      VIA: String.raw`\{HOST}`,
+    },
+  },
+);
+
 checkResolution("a shell's own braces are left alone", {
   variables: HOSTS,
   cases: [
@@ -104,15 +137,98 @@ describe("the known limitation: a literal pipe inside a param value", () => {
   });
 });
 
-checkValues("a value surface differs from a command surface in two ways", {
+checkValues("an empty variable is unfilled inside a value too", {
   variables: {
-    HOST: "example.com",
-    ESCAPED: String.raw`\{HOST}`,
+    EMPTY: "",
+    GREETING: "hi{EMPTY}!",
+    ANSWERED: "{EMPTY|isempty} {EMPTY|len}",
+  },
+  expected: {
+    GREETING: "hi{EMPTY}!",
+    ANSWERED: "true 0",
+  },
+});
+
+checkResolution("a command shows an empty variable a value references", {
+  variables: {
     EMPTY: "",
     GREETING: "hi{EMPTY}!",
   },
+  cases: [["echo {GREETING}", partial("echo hi{EMPTY}!")]],
+});
+
+checkResolution("an operation over an unresolved value fails", {
+  variables: {
+    EMPTY: "",
+    WRAPPED: "{EMPTY}",
+    MISSES: "{MISSING}",
+  },
+  cases: [
+    ["{WRAPPED}", partial("{EMPTY}")],
+    // The value shows as far as it resolved
+    ["{WRAPPED|isempty}", partial("{{EMPTY}|isempty}")],
+    [
+      "{|IF({WRAPPED|isempty};empty;filled)}",
+      partial("{|IF({{EMPTY}|isempty};empty;filled)}"),
+    ],
+    ["{MISSES|uppercase}", partial("{{MISSING}|uppercase}")],
+    ["{MISSES|len}", partial("{{MISSING}|len}")],
+  ],
+});
+
+checkValues("an operation over an unresolved value fails inside a value", {
+  variables: {
+    MISSES: "{MISSING}",
+    LENGTH: "{MISSES|len}",
+  },
   expected: {
-    ESCAPED: String.raw`\example.com`,
-    GREETING: "hi!",
+    LENGTH: "{{MISSING}|len}",
+  },
+});
+
+describe("an escaped reference in a value is data to an operation", () => {
+  const book = runbook({ LITERAL: String.raw`\{MISSING}` });
+
+  it("transforms it without flagging", () => {
+    expect(book.resolve("{LITERAL|uppercase}")).toBe("{MISSING}");
+    expect(book.hasUnresolved("{LITERAL|uppercase}")).toBe(false);
+  });
+});
+
+const ESCAPED_IN_VALUES = {
+  ...HOSTS,
+  V: String.raw`\{A}`,
+  LENGTH: "{V|len}",
+  FIRST: "{V|slice(0)}",
+  LOWER: "{V|lowercase}",
+  SWAPPED: String.raw`{V|replace(\{A};<)}`,
+  RENAMED: "{V|replace(A;HOST)}",
+};
+
+checkResolution(
+  "an operation reads an escaped brace the same on every surface",
+  {
+    variables: ESCAPED_IN_VALUES,
+    cases: [
+      ["{V|len}", "3"],
+      ["{LENGTH}", "3"],
+      ["{FIRST}", "{"],
+      ["{LOWER}", "{a}"],
+      ["{LOWER|len}", "3"],
+      [String.raw`{V|replace(\{A};<)}`, "<"],
+      ["{SWAPPED}", "<"],
+      ["{RENAMED}", "{HOST}"],
+    ],
+  },
+);
+
+checkValues("an operation's output stays escaped inside a value", {
+  variables: ESCAPED_IN_VALUES,
+  expected: {
+    LENGTH: "3",
+    FIRST: String.raw`\{`,
+    LOWER: String.raw`\{a}`,
+    SWAPPED: "<",
+    RENAMED: String.raw`\{HOST}`,
   },
 });

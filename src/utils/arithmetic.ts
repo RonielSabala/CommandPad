@@ -3,7 +3,6 @@ import {
   CalcSyntax,
   CalcTokenRegex,
   NumberValueRegex,
-  RoundSyntax,
 } from "@/common/variableSyntax";
 import { isNumber } from "@/utils/typeGuards";
 
@@ -131,9 +130,9 @@ export function parseNumber(text: string): number | undefined {
  * never multiplied.
  */
 function shiftDecimal(value: number, places: number): number {
-  const [mantissa, exponent = "0"] = String(value).split(RoundSyntax.EXPONENT);
+  const [mantissa, exponent = "0"] = String(value).split(CalcSyntax.EXPONENT);
   return Number(
-    `${mantissa}${RoundSyntax.EXPONENT}${Number(exponent) + places}`,
+    `${mantissa}${CalcSyntax.EXPONENT}${Number(exponent) + places}`,
   );
 }
 
