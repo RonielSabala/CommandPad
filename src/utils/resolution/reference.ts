@@ -245,8 +245,9 @@ function resolveReferenceAt(
   refilling: readonly string[],
 ): ResolvedReference {
   const [keyChunk, ...rest] = splitReferenceBody(raw);
+  const keyText = keyChunk.text;
+  const key = keyText.trim();
 
-  const key = keyChunk.text.trim();
   const rawReference = (isReference: boolean): ResolvedReference => {
     const spans = failedSpans(token, raw, context, refilling);
     return { key, text: spansText(spans), resolved: false, isReference, spans };
@@ -270,7 +271,7 @@ function resolveReferenceAt(
 
   // Where each operation's separator sits
   const operationStarts: number[] = [];
-  let chunkStart = keyChunk.text.length;
+  let chunkStart = keyText.length;
 
   for (const chunk of rest) {
     const isOperation = chunk.separator === VariableSyntax.OPERATION_SEPARATOR;
@@ -314,8 +315,30 @@ function resolveReferenceAt(
     ? resolveFilledTemplate(template, context, key, refilling)
     : unescapeBraceSpans(template, context.surface);
 
+  // A chain that broke shows `shown` in place of what precedes `restStart
+  const brokenChain = (
+    shown: readonly ResolvedSpan[],
+    restStart: number,
+  ): ResolvedReference => {
+    const spans = mergeSpans([
+      ...unresolvedSpans(VariableSyntax.BRACE_OPEN),
+      ...shown,
+      ...failedBodySpans(raw.slice(restStart), 0, context, refilling),
+      ...unresolvedSpans(VariableSyntax.BRACE_CLOSE),
+    ]);
+
+    return {
+      key,
+      text: spansText(spans),
+      resolved: false,
+      isReference: true,
+      spans,
+    };
+  };
+
+  // An operation never reads a value that holds something unresolved
   if (operations.length > 0 && hasUnresolvedSpans(output.spans)) {
-    return unresolvedReference();
+    return brokenChain(output.spans, operationStarts[0]);
   }
 
   const applied = applyOperations(literalBraceSpans(output).text, operations, {
@@ -334,25 +357,18 @@ function resolveReferenceAt(
       context.surface,
     );
 
-    const spans = mergeSpans([
-      ...unresolvedSpans(VariableSyntax.BRACE_OPEN),
-      ...produced.spans,
-      ...failedBodySpans(
-        raw.slice(operationStarts[applied.failedAt]),
-        0,
-        context,
-        refilling,
-      ),
-      ...unresolvedSpans(VariableSyntax.BRACE_CLOSE),
-    ]);
+    // A chain that produced nothing stays as written
+    const keepsBody = !!key && !produced.text;
+    const shown = !keepsBody
+      ? produced.spans
+      : value.text
+        ? nestSpans(flatSpans(keyText, key))
+        : unresolvedSpans(keyText, 1, key);
 
-    return {
-      key,
-      text: spansText(spans),
-      resolved: false,
-      isReference: true,
-      spans,
-    };
+    return brokenChain(
+      shown,
+      keepsBody ? keyText.length : operationStarts[applied.failedAt],
+    );
   }
 
   if (key && !value.text && !applied.text) {

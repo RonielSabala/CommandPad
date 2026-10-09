@@ -1,4 +1,4 @@
-import { RAW, checkResolution, checkValues, partial } from "@/test";
+import { checkResolution, checkValues, partial } from "@/test";
 import { describe, expect, it } from "vitest";
 
 import { getTemplateParamNames } from "./params";
@@ -17,8 +17,8 @@ checkResolution("filling a template blank", {
     // An unfilled blank is a hole, not a failure
     ["{PROJECT}", partial("projects/{;name}/src")],
     ["{GREETING;first=Ada}", partial("Hi Ada {;last}")],
-    // A transform over a value with a hole in it fails the reference
-    ["{PROJECT|uppercase}", RAW],
+    // A transform over a value with a hole in it fails, showing the value
+    ["{PROJECT|uppercase}", partial("{projects/{;name}/src|uppercase}")],
   ],
 });
 
@@ -84,9 +84,9 @@ checkResolution("a fill that reaches its own variable again is a loop", {
     ["{PREFIXED;p=ok}", "xok"],
     ["{BARE}", partial("{BARE}")],
     ["{PING}", partial("ab{PING}")],
-    ["{PING|len}", RAW],
+    ["{PING|len}", partial("{ab{PING}|len}")],
     ["{MISSES}", partial("{MISSING}")],
-    ["{MISSES|len}", RAW],
+    ["{MISSES|len}", partial("{{MISSING}|len}")],
     ["{FINE}", "cfine"],
   ],
 });
@@ -105,7 +105,7 @@ checkResolution("only the variable that declares a blank can fill it", {
     ["{TEMPLATE;x=z}", "a z"],
     ["{WRAPPED;x=z}", partial("a {;x}")],
     ["{WRAPPED}", partial("a {;x}")],
-    ["{WRAPPED;x=z|len}", RAW],
+    ["{WRAPPED;x=z|len}", partial("{a {;x}|len}")],
     ["{MIXED;x=1;y=2}", partial("a {;x} 2")],
     ["{WRAPPED_DEFAULT;x=z}", "d"],
     ["{FORWARDED;y=z}", "a z"],

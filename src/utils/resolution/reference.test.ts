@@ -165,10 +165,14 @@ checkResolution("an operation over an unresolved value fails", {
   },
   cases: [
     ["{WRAPPED}", partial("{EMPTY}")],
-    ["{WRAPPED|isempty}", RAW],
-    ["{|IF({WRAPPED|isempty};empty;filled)}", RAW],
-    ["{MISSES|uppercase}", RAW],
-    ["{MISSES|len}", RAW],
+    // The value shows as far as it resolved
+    ["{WRAPPED|isempty}", partial("{{EMPTY}|isempty}")],
+    [
+      "{|IF({WRAPPED|isempty};empty;filled)}",
+      partial("{|IF({{EMPTY}|isempty};empty;filled)}"),
+    ],
+    ["{MISSES|uppercase}", partial("{{MISSING}|uppercase}")],
+    ["{MISSES|len}", partial("{{MISSING}|len}")],
   ],
 });
 
@@ -178,7 +182,7 @@ checkValues("an operation over an unresolved value fails inside a value", {
     LENGTH: "{MISSES|len}",
   },
   expected: {
-    LENGTH: "{MISSES|len}",
+    LENGTH: "{{MISSING}|len}",
   },
 });
 

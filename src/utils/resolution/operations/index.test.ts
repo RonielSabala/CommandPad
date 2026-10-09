@@ -96,8 +96,10 @@ describe("applyOperations", () => {
 });
 
 checkResolution("a chain that breaks shows what applied before it", {
-  variables: { VAR: "HI", NAME: "api", ESCAPED: "\\{A}" },
+  variables: { VAR: "HI", NAME: "api", ESCAPED: "\\{A}", EMPTY: "" },
   cases: [
+    ["{EMPTY|uppercase|slice}", partial("{EMPTY|uppercase|slice}")],
+    ["{NAME|slice(0;0)|round(a)}", partial("{NAME|slice(0;0)|round(a)}")],
     ["{|calc(1 + 2)|round(a)}", partial("{3|round(a)}")],
     ["{VAR|snakecase|round(hi)}", partial("{hi|round(hi)}")],
     ["{VAR|lowercase|uppercase|nope|len}", partial("{HI|nope|len}")],

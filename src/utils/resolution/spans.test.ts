@@ -160,6 +160,35 @@ describe("nesting depth", () => {
     ]);
   });
 
+  it("keeps an empty variable's broken chain as written, its key red one level in", () => {
+    const empty = runbook({ NAME: "" });
+
+    expect(spans(empty, "{NAME|uppercase|slice}")).toEqual([
+      { text: "{", depth: 1, unresolved: true },
+      { text: "NAME", depth: 2, source: "NAME", unresolved: true },
+      { text: "|uppercase|slice}", depth: 1, unresolved: true },
+    ]);
+  });
+
+  it("keeps a chain that emptied the value as written, its key green one level in", () => {
+    expect(spans(book, "{NAME|slice(0;0)|round(a)}")).toEqual([
+      { text: "{", depth: 1, unresolved: true },
+      { text: "NAME", depth: 2, source: "NAME" },
+      { text: "|slice(0;0)|round(a)}", depth: 1, unresolved: true },
+    ]);
+  });
+
+  it("shows a value an operation could not read as far as it resolved", () => {
+    const holed = runbook({ NAME: "x{;param}" });
+
+    expect(spans(holed, "{NAME|uppercase}")).toEqual([
+      { text: "{", depth: 1, unresolved: true },
+      { text: "x", depth: 1, source: "NAME" },
+      { text: "{;param}", depth: 2, source: "NAME;param", unresolved: true },
+      { text: "|uppercase}", depth: 1, unresolved: true },
+    ]);
+  });
+
   it("keeps the nesting of a branch the chain took before failing", () => {
     expect(spans(book, "{|IF(true;{NAME};x)|round(a)}")).toEqual([
       { text: "{", depth: 1, unresolved: true },

@@ -192,8 +192,9 @@ blank of its own and forward it: `SITE` = `{URL;name={;name}}`.
 
 A blank nobody fills is left on screen exactly as written and marked unresolved, so every
 blank a command reaches must either be filled or carry a default. A reference that leaves a
-blank unfilled and also carries a `|` operation stays as written in full, since there is no
-whole value for the operation to transform. The same holds when the value contains a
+blank unfilled and also carries a `|` operation is not transformed, since there is no whole
+value for the operation to transform: it shows the value as far as it resolved, followed by
+its operations as written, still unresolved. The same holds when the value contains a
 reference that did not resolve: the operation never reads its braces as text. To hand an
 operation literal braces, escape them in the value (`\{NAME}`).
 
