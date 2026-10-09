@@ -1,6 +1,6 @@
 # CommandPad
 
-A lightweight, variable-aware command runbook tool. Define variables once, reference them across any number of command blocks, and copy fully resolved commands instantly. Designed for engineers who run the same sequences of commands repeatedly with different environments, credentials, or targets.
+A runbook editor for the commands you run again and again. Write your hosts, environments and credentials once as variables, use them in every command, and copy each command already filled in. It runs entirely in your browser.
 
 ![Hero](docs/screenshots/hero.jpg)
 
@@ -8,6 +8,7 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 
 ## Table of Contents
 
+- [Motivation](#motivation)
 - [Features](#features)
 - [Documentation](#documentation)
 - [Quick Start](#quick-start)
@@ -24,24 +25,25 @@ A lightweight, variable-aware command runbook tool. Define variables once, refer
 
 ---
 
+## Motivation
+
+Most engineers keep their operational commands somewhere: a text file, a wiki page, a pile of shell history. Running one means copying it and hand-editing the hostname, the namespace, the ticket number or the credentials before pressing Enter, and that last-second edit is where mistakes happen, like a command meant for staging run against production.
+
+CommandPad turns those notes into **runbooks**. Each value is written down once as a variable, every command references it by name, and what you copy is the finished command, already filled in. Switching environment means changing a value, not rewriting every line.
+
+It is also deliberately **local-first**: there is no backend and no account. Everything runs in the browser and stays on your machine unless you choose to export it or sync it to your own cloud storage.
+
+---
+
 ## Features
 
-- **Tabs**: open multiple runbooks simultaneously in separate tabs.
-- **Variables**: define named variables and reference them in any command block or other variable value.
-- **Live resolved preview**: every command block shows the fully resolved command in real time as you type.
-- **Four block types**: commands, notes, images, and dividers can be freely mixed to build structured, annotated runbooks.
-- **Rich note blocks**: notes support three text styles (heading, subheading, body), auto-detect URLs, and inline markdown: `**bold**`, `_italic_`, `` `code` ``.
-- **Image blocks**: drop, paste, browse for, or link a picture. Attached images are read in the browser and stored inside the runbook itself, so they work offline and travel with every export.
-- **Secret variables**: mark any variable as secret to mask its value in the sidebar and in command previews.
-- **Drag-and-drop reordering**: blocks, variables, and runbook library entries can each be reordered via their drag handles.
-- **Multi-block selection**: hold <kbd>Shift</kbd> and click or lasso-drag across blocks to build a selection. Move, duplicate, or delete the group at once.
-- **Read mode**: locks editing while still allowing variable values to change and runbooks to be switched.
-- **Light and dark theme**: toggle between dark and light mode.
-- **Multi-language UI**: switch between English and Spanish from the header.
-- **Adjustable sidebar**: collapse the sidebar to maximize workspace, or move it to the right side of the screen.
-- **Persistent state**: tabs, workspace content, sidebar state, and app mode are all saved locally and restored on reload.
-- **Export**: save the active workspace as `.json`, `.md`, or `.txt` via a native OS save dialog.
-- **Cloud sync (optional)**: export/import runbooks directly to OneDrive or Google Drive.
+- **Variables**: define a value once and reference it as `{NAME}` in any command, or inside another variable.
+- **Live resolved preview**: every command shows the fully resolved result as you type, ready to copy in one click.
+- **Inline transforms**: adjust a value where you use it, such as `{BRANCH|kebabcase}`, `{DATE|slice(;4)}` or `{|calc({MINUTES} * 60)}`.
+- **Mixed blocks**: combine commands, markdown notes, images, dividers and embedded runbooks into one annotated procedure.
+- **Secrets**: masked on screen and encrypted at rest with a passphrase of your choice.
+- **Runbook library and tabs**: keep many runbooks and work on several at once.
+- **Import and export**: JSON, Markdown or plain text, with optional sync to OneDrive or Google Drive.
 
 ---
 
