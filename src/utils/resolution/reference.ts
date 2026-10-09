@@ -193,16 +193,16 @@ function resolveFilledTemplate(
     );
 
     // Braces that spell no reference are text the fill produced
-    const clean =
-      !reference.isReference ||
-      (reference.resolved && !hasUnresolvedSpans(reference.spans));
-
-    if (clean) {
+    if (!reference.isReference) {
       spans.push(...flatSpans(reference.text, source));
-    } else {
-      fullyResolved = false;
-      spans.push(...reference.spans);
+      continue;
     }
+
+    if (!reference.resolved || hasUnresolvedSpans(reference.spans)) {
+      fullyResolved = false;
+    }
+
+    spans.push(...nestSpans(reference.spans));
   }
 
   const merged = mergeSpans(spans);

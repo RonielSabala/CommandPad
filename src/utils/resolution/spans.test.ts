@@ -85,6 +85,15 @@ describe("nesting depth", () => {
     ]);
   });
 
+  it("nests a template a forwarded blank filled like any value", () => {
+    const forwarding = runbook({ T: "a {;x}", B: "{T;x={;b}}" });
+
+    expect(spans(forwarding, "{B;b=z}")).toEqual([
+      { text: "a ", depth: 2, source: "T" },
+      { text: "z", depth: 3, source: "T;x" },
+    ]);
+  });
+
   it("flattens a reference an operation transformed", () => {
     expect(spans(book, "{SERVICE|uppercase}")).toEqual([
       { text: "SVC-API", depth: 1, source: "SERVICE" },
