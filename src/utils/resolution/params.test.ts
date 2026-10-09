@@ -69,6 +69,28 @@ checkResolution("filling a blank resolves what the fill produced", {
   ],
 });
 
+checkResolution("a fill that reaches its own variable again is a loop", {
+  variables: {
+    PREFIXED: "x{;p={PREFIXED}}",
+    BARE: "{;p={BARE}}",
+    PING: "a{;p={PONG}}",
+    PONG: "b{;q={PING}}",
+    MISSES: "{;p={MISSING}}",
+    FINE: "c{;p={OTHER}}",
+    OTHER: "fine",
+  },
+  cases: [
+    ["{PREFIXED}", partial("x{PREFIXED}")],
+    ["{PREFIXED;p=ok}", "xok"],
+    ["{BARE}", partial("{BARE}")],
+    ["{PING}", partial("ab{PING}")],
+    ["{PING|len}", RAW],
+    ["{MISSES}", partial("{MISSING}")],
+    ["{MISSES|len}", RAW],
+    ["{FINE}", "cfine"],
+  ],
+});
+
 checkResolution("a backslash makes a blank literal", {
   variables: {
     LITERAL: String.raw`a \{;b}`,

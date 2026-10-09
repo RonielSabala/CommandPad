@@ -312,17 +312,9 @@ export function replaceReferences(
   );
 }
 
-/** Rewrites every reference a filled template produced. */
-export function replaceTemplateReferences(
-  text: string,
-  replace: (match: ReferenceMatch) => string,
-): string {
-  return replaceMatches(
-    text,
-    scanBraces(text, true),
-    replace,
-    dropBraceEscapes,
-  );
+/** Splits a filled template into its literal runs. */
+export function splitTemplateParts(text: string): ReferencePart[] {
+  return splitMatches(text, scanBraces(text, true), dropBraceEscapes);
 }
 
 /** Splits a reference body into its key, its params and its operations. */

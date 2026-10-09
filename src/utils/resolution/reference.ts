@@ -16,9 +16,9 @@ import {
 } from "./spans";
 import type { ReferenceBodyChunk } from "./token";
 import {
-  replaceTemplateReferences,
   splitReferenceBody,
   splitReferenceParts,
+  splitTemplateParts,
   unescapeBraceSpans,
   unescapeBraces,
 } from "./token";
@@ -77,7 +77,7 @@ function resolveChunk(
   text: string,
   context: ReferenceContext,
   key: string,
-  depth: number,
+  refilling: readonly string[],
   consumesEscapes: boolean,
 ): ResolvedChunk {
   let fullyResolved = true;
@@ -101,7 +101,7 @@ function resolveChunk(
       part.match.token,
       part.match.raw,
       context,
-      depth,
+      refilling,
     );
 
     if (!reference.resolved) {
@@ -120,7 +120,7 @@ function failedSpans(
   token: string,
   raw: string,
   context: ReferenceContext,
-  depth: number,
+  refilling: readonly string[],
 ): ResolvedSpan[] {
   if (!raw.includes(VariableSyntax.BRACE_OPEN)) {
     return unresolvedSpans(token);
@@ -139,7 +139,7 @@ function failedSpans(
       part.match.token,
       part.match.raw,
       context,
-      depth,
+      refilling,
     );
 
     const shown =
@@ -159,19 +159,57 @@ function failedSpans(
  * a template resolves rather than being emitted as literal text.
  */
 function resolveFilledTemplate(
-  text: string,
+  template: ResolvedValue,
   context: ReferenceContext,
-  depth: number,
-): string {
-  if (depth >= ReferenceConfig.MAX_TEMPLATE_DEPTH) {
-    return text;
+  key: string,
+  refilling: readonly string[],
+): ResolvedValue {
+  const source = key || undefined;
+
+  if (refilling.length >= ReferenceConfig.MAX_TEMPLATE_DEPTH) {
+    return {
+      text: template.text,
+      spans: unresolvedSpans(template.text, 0, source),
+    };
   }
 
-  return replaceTemplateReferences(
-    text,
-    (match) =>
-      resolveReferenceAt(match.token, match.raw, context, depth + 1).text,
-  );
+  const inner = [...refilling, key];
+  const spans: ResolvedSpan[] = [];
+  let fullyResolved = true;
+
+  for (const part of splitTemplateParts(template.text)) {
+    if (!part.match) {
+      spans.push(...flatSpans(part.text, source));
+      continue;
+    }
+
+    const reference = resolveReferenceAt(
+      part.match.token,
+      part.match.raw,
+      context,
+      inner,
+    );
+
+    // Braces that spell no reference are text the fill produced
+    const clean =
+      !reference.isReference ||
+      (reference.resolved && !hasUnresolvedSpans(reference.spans));
+
+    if (clean) {
+      spans.push(...flatSpans(reference.text, source));
+    } else {
+      fullyResolved = false;
+      spans.push(...reference.spans);
+    }
+  }
+
+  const merged = mergeSpans(spans);
+  const text = spansText(merged);
+
+  // A fill that rewrote nothing keeps the nesting its blanks gave it
+  return fullyResolved && text === template.text
+    ? template
+    : { text, spans: merged };
 }
 
 /** Resolves one `{KEY;params|operations}` reference against `context.lookup`. */
@@ -180,23 +218,28 @@ export function resolveReference(
   raw: string,
   context: ReferenceContext,
 ): ResolvedReference {
-  return resolveReferenceAt(token, raw, context, 0);
+  return resolveReferenceAt(token, raw, context, []);
 }
 
 function resolveReferenceAt(
   token: string,
   raw: string,
   context: ReferenceContext,
-  depth: number,
+  refilling: readonly string[],
 ): ResolvedReference {
   const [keyChunk, ...rest] = splitReferenceBody(raw);
 
   const key = keyChunk.text.trim();
   const rawReference = (isReference: boolean): ResolvedReference => {
-    const spans = failedSpans(token, raw, context, depth);
+    const spans = failedSpans(token, raw, context, refilling);
     return { key, text: spansText(spans), resolved: false, isReference, spans };
   };
   const unresolvedReference = (): ResolvedReference => rawReference(true);
+
+  // Stop infinite nesting
+  if (key && refilling.includes(key)) {
+    return unresolvedReference();
+  }
 
   const value = key ? context.lookup(key) : unnamedValue(rest);
   if (value === undefined) {
@@ -210,7 +253,13 @@ function resolveReferenceAt(
 
   for (const chunk of rest) {
     const isOperation = chunk.separator === VariableSyntax.OPERATION_SEPARATOR;
-    const resolved = resolveChunk(chunk.text, context, key, depth, isOperation);
+    const resolved = resolveChunk(
+      chunk.text,
+      context,
+      key,
+      refilling,
+      isOperation,
+    );
 
     if (isOperation) {
       operations.push({ text: resolved.text, spans: resolved.spans });
@@ -235,19 +284,14 @@ function resolveReferenceAt(
     spans: value.spans,
   });
 
-  if (operations.length > 0 && hasUnresolvedSpans(template.spans)) {
+  // A refill drops the backslashes it carries on its way through
+  const output = template.filled
+    ? resolveFilledTemplate(template, context, key, refilling)
+    : unescapeBraceSpans(template, context.surface);
+
+  if (operations.length > 0 && hasUnresolvedSpans(output.spans)) {
     return unresolvedReference();
   }
-
-  // A refill drops the backslashes it carries on its way through
-  const refilled = template.filled
-    ? resolveFilledTemplate(template.text, context, depth)
-    : null;
-
-  const output =
-    refilled === null
-      ? unescapeBraceSpans(template, context.surface)
-      : { text: refilled, spans: template.spans };
 
   const applied = applyOperations(output.text, operations, { key });
   if (!applied.ok) {
@@ -258,9 +302,6 @@ function resolveReferenceAt(
     return unresolvedReference();
   }
 
-  const rewritten =
-    operations.length > 0 || (refilled !== null && refilled !== template.text);
-
   return {
     key,
     text: applied.text,
@@ -268,6 +309,8 @@ function resolveReferenceAt(
     isReference: true,
     spans:
       applied.spans ??
-      (rewritten ? flatSpans(applied.text, key || undefined) : output.spans),
+      (operations.length > 0
+        ? flatSpans(applied.text, key || undefined)
+        : output.spans),
   };
 }
