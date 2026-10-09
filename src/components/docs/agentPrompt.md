@@ -186,7 +186,9 @@ small differences, instead of defining near-duplicate variables.
 A blank nobody fills is left on screen exactly as written and marked unresolved, so every
 blank a command reaches must either be filled or carry a default. A reference that leaves a
 blank unfilled and also carries a `|` operation stays as written in full, since there is no
-whole value for the operation to transform.
+whole value for the operation to transform. The same holds when the value contains a
+reference that did not resolve: the operation never reads its braces as text. To hand an
+operation literal braces, escape them in the value (`\{NAME}`).
 
 ### Operations
 

@@ -156,3 +156,37 @@ checkResolution("a command shows an empty variable a value references", {
   },
   cases: [["echo {GREETING}", partial("echo hi{EMPTY}!")]],
 });
+
+checkResolution("an operation over an unresolved value fails", {
+  variables: {
+    EMPTY: "",
+    WRAPPED: "{EMPTY}",
+    MISSES: "{MISSING}",
+  },
+  cases: [
+    ["{WRAPPED}", partial("{EMPTY}")],
+    ["{WRAPPED|isempty}", RAW],
+    ["{|IF({WRAPPED|isempty};empty;filled)}", RAW],
+    ["{MISSES|uppercase}", RAW],
+    ["{MISSES|len}", RAW],
+  ],
+});
+
+checkValues("an operation over an unresolved value fails inside a value", {
+  variables: {
+    MISSES: "{MISSING}",
+    LENGTH: "{MISSES|len}",
+  },
+  expected: {
+    LENGTH: "{MISSES|len}",
+  },
+});
+
+describe("an escaped reference in a value is data to an operation", () => {
+  const book = runbook({ LITERAL: String.raw`\{MISSING}` });
+
+  it("transforms it without flagging", () => {
+    expect(book.resolve("{LITERAL|uppercase}")).toBe("{MISSING}");
+    expect(book.hasUnresolved("{LITERAL|uppercase}")).toBe(false);
+  });
+});

@@ -986,7 +986,7 @@ If something goes wrong, undo it in this order:
       demoHint:
         "Below, a project's name becomes a folder name. Don't worry about what each operation does yet, only about the shape:",
       chaining:
-        "A reference can carry several operations, one `|` each, and they run left to right. That is the whole idea; the sections that follow take the operations one by one.",
+        "A reference can carry several operations, one `|` each, and they run left to right. An operation only runs on a value that fully resolved: if the value still holds an unfilled blank or a reference that did not resolve, the whole reference stays as written and is marked in red. That is the whole idea; the sections that follow take the operations one by one.",
     },
     variableSlicing: {
       intro:

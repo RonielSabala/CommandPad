@@ -8,6 +8,7 @@ import { applyOperations } from "./operations";
 import { applyTemplateParams, parseParam } from "./params";
 import {
   flatSpans,
+  hasUnresolvedSpans,
   mergeSpans,
   nestSpans,
   spansText,
@@ -234,8 +235,7 @@ function resolveReferenceAt(
     spans: value.spans,
   });
 
-  // A transform over an unfilled blank would quietly produce nonsense
-  if (!template.fullyResolved && final && operations.length > 0) {
+  if (operations.length > 0 && hasUnresolvedSpans(template.spans)) {
     return unresolvedReference();
   }
 
