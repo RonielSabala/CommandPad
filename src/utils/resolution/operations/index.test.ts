@@ -4,7 +4,7 @@ import {
   OperationSyntax,
   SliceSyntax,
 } from "@/common/variableSyntax";
-import { RAW, checkResolution } from "@/test";
+import { RAW, checkResolution, checkValues, partial } from "@/test";
 import { describe, expect, it } from "vitest";
 
 import { applyOperations, getOperationKeywords } from ".";
@@ -66,12 +66,13 @@ describe("applyOperations", () => {
         CONTEXT,
       ),
     ).toEqual({
-      text: "abc",
+      text: "ABC",
       ok: false,
+      failedAt: 1,
     });
   });
 
-  it("returns the original text on failure, never a half-applied chain", () => {
+  it("reports what the operations before a failure produced", () => {
     expect(
       applyOperations(
         "abc",
@@ -79,10 +80,46 @@ describe("applyOperations", () => {
         CONTEXT,
       ),
     ).toEqual({
-      text: "abc",
+      text: "ABC",
       ok: false,
+      failedAt: 1,
     });
   });
+
+  it("reports the untouched text when the first operation fails", () => {
+    expect(applyOperations("abc", [{ text: "nope" }], CONTEXT)).toEqual({
+      text: "abc",
+      ok: false,
+      failedAt: 0,
+    });
+  });
+});
+
+checkResolution("a chain that breaks shows what applied before it", {
+  variables: { VAR: "HI", NAME: "api", ESCAPED: "\\{A}" },
+  cases: [
+    ["{|calc(1 + 2)|round(a)}", partial("{3|round(a)}")],
+    ["{VAR|snakecase|round(hi)}", partial("{hi|round(hi)}")],
+    ["{VAR|lowercase|uppercase|nope|len}", partial("{HI|nope|len}")],
+    ["{VAR|lowercase|slice({MISSING})}", partial("{hi|slice({MISSING})}")],
+    ["{VAR|lowercase|round({NAME})}", partial("{hi|round(api)}")],
+    ["{ESCAPED|lowercase|round(a)}", partial("{{a}|round(a)}")],
+    // Nothing applied
+    ["{VAR|round(a)}", RAW],
+    ["{|round(a)}", RAW],
+  ],
+});
+
+checkValues("a value whose chain breaks keeps what applied before it", {
+  variables: {
+    ESCAPED: "\\{A}",
+    SUM: "{|calc(1 + 2)|round(a)}",
+    LOWER: "{ESCAPED|lowercase|round(a)}",
+  },
+  expected: {
+    SUM: "{3|round(a)}",
+    LOWER: "{\\{a}|round(a)}",
+  },
 });
 
 checkResolution("a leading ! flips a boolean operation's answer", {

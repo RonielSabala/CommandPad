@@ -1,4 +1,4 @@
-import { RAW, checkResolution } from "@/test";
+import { RAW, checkResolution, partial } from "@/test";
 
 checkResolution("round, floor and ceil", {
   variables: {
@@ -65,6 +65,7 @@ checkResolution("round fails loudly", {
     ["{PRICE|round(x)}", RAW],
     ["{PRICE|round(13)}", RAW],
     ["{PRICE|ROUND}", RAW],
-    ["{NAME|uppercase|round}", RAW],
+    // What applied before the failure is shown resolved
+    ["{NAME|uppercase|round}", partial("{API|round}")],
   ],
 });

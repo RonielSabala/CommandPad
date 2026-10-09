@@ -1009,7 +1009,7 @@ Si algo sale mal, deshazlo en este orden:
       demoHint:
         "Abajo, el nombre de un proyecto se convierte en el nombre de una carpeta. No te preocupes todavía por lo que hace cada operación, fíjate solo en la forma:",
       chaining:
-        "Una referencia puede llevar varias operaciones, con un `|` cada una, y se aplican de izquierda a derecha. Una operación solo se aplica a un valor que se resolvió por completo: si el valor todavía tiene un hueco sin rellenar o una referencia que no se resolvió, la referencia entera se queda como la escribiste y se marca en rojo. Esa es toda la idea; las secciones que siguen ven las operaciones una por una.",
+        "Una referencia puede llevar varias operaciones, con un `|` cada una, y se aplican de izquierda a derecha. Una operación solo se aplica a un valor que se resolvió por completo: si el valor todavía tiene un hueco sin rellenar o una referencia que no se resolvió, la referencia entera se queda como la escribiste y se marca en rojo. Cuando una operación falla después de que otras se aplicaron, la referencia muestra lo que estas produjeron y sigue en rojo desde la que falló. Esa es toda la idea; las secciones que siguen ven las operaciones una por una.",
     },
     variableSlicing: {
       intro:

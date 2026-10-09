@@ -142,6 +142,42 @@ describe("nesting depth", () => {
     ]);
   });
 
+  it("shows what a chain produced before the operation that failed", () => {
+    expect(spans(book, "{|calc(1 + 2)|round(a)}")).toEqual([
+      { text: "{", depth: 1, unresolved: true },
+      { text: "3", depth: 1 },
+      { text: "|round(a)}", depth: 1, unresolved: true },
+    ]);
+  });
+
+  it("names the reference as the source of what its chain produced", () => {
+    const loud = runbook({ VAR: "HI" });
+
+    expect(spans(loud, "{VAR|snakecase|round(hi)}")).toEqual([
+      { text: "{", depth: 1, unresolved: true },
+      { text: "hi", depth: 1, source: "VAR" },
+      { text: "|round(hi)}", depth: 1, unresolved: true },
+    ]);
+  });
+
+  it("keeps the nesting of a branch the chain took before failing", () => {
+    expect(spans(book, "{|IF(true;{NAME};x)|round(a)}")).toEqual([
+      { text: "{", depth: 1, unresolved: true },
+      { text: "api", depth: 2, source: "NAME" },
+      { text: "|round(a)}", depth: 1, unresolved: true },
+    ]);
+  });
+
+  it("paints a reference inside the failed operation one level deeper", () => {
+    expect(spans(book, "{NAME|uppercase|slice({MISSING})}")).toEqual([
+      { text: "{", depth: 1, unresolved: true },
+      { text: "API", depth: 1, source: "NAME" },
+      { text: "|slice(", depth: 1, unresolved: true },
+      { text: "{MISSING}", depth: 2, unresolved: true },
+      { text: ")}", depth: 1, unresolved: true },
+    ]);
+  });
+
   it("keeps a reference written in a key as written", () => {
     expect(spans(book, "{{NAME}}")).toEqual([
       { text: "{{NAME}}", depth: 1, unresolved: true },

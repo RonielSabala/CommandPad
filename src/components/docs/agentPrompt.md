@@ -165,7 +165,9 @@ Rules:
 - Whitespace around each part is ignored, so a long reference may span several lines.
 - References nest to any depth: `{A;b={C|uppercase}}` is valid.
 - A reference that cannot resolve is left on screen exactly as written, so never reference
-  a variable you did not define, and never misspell an operation.
+  a variable you did not define, and never misspell an operation. When an operation fails
+  after others applied, what those produced takes the place of the key and the operations
+  before it: `{|calc(1 + 2)|round(a)}` shows `{3|round(a)}`, still unresolved.
 - A backslash before the opening brace makes the reference, or a blank, literal. It works
   in a command's text and in a variable's value alike. An operation reads an escaped brace
   as a plain one, so `{NAME|len}` gives the same answer in a command and in a value. In

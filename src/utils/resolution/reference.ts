@@ -128,8 +128,24 @@ function failedSpans(
     return unresolvedSpans(token);
   }
 
-  const spans = unresolvedSpans(VariableSyntax.BRACE_OPEN);
   const keyEnd = splitReferenceBody(raw)[0].text.length;
+  return mergeSpans([
+    ...unresolvedSpans(VariableSyntax.BRACE_OPEN),
+    ...failedBodySpans(raw, keyEnd, context, refilling),
+    ...unresolvedSpans(VariableSyntax.BRACE_CLOSE),
+  ]);
+}
+
+/** Describes a reference body that did not resolve. Each reference written
+ * in it past `keyEnd` is shown resolved, one level deeper.
+ */
+function failedBodySpans(
+  raw: string,
+  keyEnd: number,
+  context: ReferenceContext,
+  refilling: readonly string[],
+): ResolvedSpan[] {
+  const spans: ResolvedSpan[] = [];
 
   for (const part of splitReferenceParts(raw, context.surface)) {
     if (!part.match) {
@@ -152,8 +168,7 @@ function failedSpans(
     );
   }
 
-  spans.push(...unresolvedSpans(VariableSyntax.BRACE_CLOSE));
-  return mergeSpans(spans);
+  return spans;
 }
 
 /**
@@ -253,6 +268,10 @@ function resolveReferenceAt(
   const params: Record<string, ResolvedValue> = {};
   const operations: OperationChunk[] = [];
 
+  // Where each operation's separator sits
+  const operationStarts: number[] = [];
+  let chunkStart = keyChunk.text.length;
+
   for (const chunk of rest) {
     const isOperation = chunk.separator === VariableSyntax.OPERATION_SEPARATOR;
     const resolved = resolveChunk(
@@ -263,8 +282,12 @@ function resolveReferenceAt(
       isOperation,
     );
 
+    const start = chunkStart;
+    chunkStart += chunk.separator.length + chunk.text.length;
+
     if (isOperation) {
       operations.push(literalBraceSpans(resolved));
+      operationStarts.push(start);
       continue;
     }
 
@@ -299,7 +322,37 @@ function resolveReferenceAt(
     key,
   });
   if (!applied.ok) {
-    return unresolvedReference();
+    if (applied.failedAt === 0) {
+      return unresolvedReference();
+    }
+
+    const produced = escapeLiteralBraceSpans(
+      {
+        text: applied.text,
+        spans: applied.spans ?? flatSpans(applied.text, key || undefined),
+      },
+      context.surface,
+    );
+
+    const spans = mergeSpans([
+      ...unresolvedSpans(VariableSyntax.BRACE_OPEN),
+      ...produced.spans,
+      ...failedBodySpans(
+        raw.slice(operationStarts[applied.failedAt]),
+        0,
+        context,
+        refilling,
+      ),
+      ...unresolvedSpans(VariableSyntax.BRACE_CLOSE),
+    ]);
+
+    return {
+      key,
+      text: spansText(spans),
+      resolved: false,
+      isReference: true,
+      spans,
+    };
   }
 
   if (key && !value.text && !applied.text) {
