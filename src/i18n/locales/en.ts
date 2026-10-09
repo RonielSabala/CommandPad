@@ -1155,7 +1155,7 @@ If something goes wrong, undo it in this order:
 | \`%\` | Remainder |
 | \`( )\` | Group, to work something out first |`,
       rules:
-        "Multiplying and dividing come before adding and subtracting, as usual. Division can give a decimal (`7 / 2` is `3.5`), and a remainder takes the sign of the number you divide by, so `-1 % 3` is `2`. Dividing by zero, or anything that is not a number, leaves the reference exactly as written.",
+        "Multiplying and dividing come before adding and subtracting, as usual. Division can give a decimal (`7 / 2` is `3.5`), and a remainder takes the sign of the number you divide by, so `-1 % 3` is `2`. Dividing by zero, or anything that is not a number, leaves the reference exactly as written. A number can also be written in scientific notation: `1e3` is `1000` and `2.5e-7` is `0.00000025`. A result that is very small or very large comes out that way too (`1 / 10000000` gives `1e-7`), and any operation that reads a number accept it.",
       rounding:
         "A division rarely lands on a whole number, and a command usually wants one. `round`, `floor` and `ceil` turn the value coming down the chain into a whole number: to the nearest one, always down, or always up.",
       roundingDemoHint:

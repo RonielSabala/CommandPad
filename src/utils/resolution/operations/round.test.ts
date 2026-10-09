@@ -12,6 +12,8 @@ checkResolution("round, floor and ceil", {
     PADDED: " 7.5 ",
     SIGNED: "+1.5",
     DIGITS: "2",
+    SCIENTIFIC: "1.5e3",
+    TINY: "2.5E-7",
   },
   cases: [
     ["{PRICE|round}", "3"],
@@ -42,6 +44,13 @@ checkResolution("round, floor and ceil", {
     // Chained after calc
     ["{|calc({BYTES} / 1048576)|round(1)}", "5.5"],
     ["{|calc(0 - 0.4)|round}", "0"],
+    // Scientific notation
+    ["{SCIENTIFIC|round}", "1500"],
+    ["{TINY|round(7)}", "3e-7"],
+    ["{TINY|round(3)}", "0"],
+    ["{PRICE|round(2e0)}", "3.14"],
+    ["{|calc(1 / 10000000)|round(9)}", "1e-7"],
+    ["{|calc(1 / 10000000)|round(3)}", "0"],
   ],
 });
 

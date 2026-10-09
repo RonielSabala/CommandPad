@@ -234,7 +234,9 @@ Working on text:
   precedence and `(` `)` for grouping. It ignores the value it is handed, so it is written
   on a reference with no key, and references inside it are resolved first:
   `sleep {|calc({MINUTES} * 60)}`. `/` may give a decimal, `%` takes the divisor's sign,
-  and dividing by zero leaves the reference unresolved.
+  and dividing by zero leaves the reference unresolved. A number may be written in scientific
+  notation (`1e3`, `2.5E-7`), and a result too small or too large comes out that way
+  (`{|calc(1 / 10000000)}` gives `1e-7`), which every operation that reads a number accepts.
 - `round(digits)`, `floor(digits)`, `ceil(digits)` round the value, which must be a plain
   number, to the nearest, down or up. `digits` is how many decimals to keep, `0` when left
   out (`round` and `round()` are the same), and a negative one rounds to tens, hundreds...

@@ -173,7 +173,7 @@ Operation families (each in `operations/`, syntax in `variableSyntax.ts`):
 
 - `slice(start;stop;step)` — Python slicing over code points; a lone argument is one index; arguments arrive unpadded.
 - `len` (code-point length), `count(x)` (non-overlapping occurrences), `key` (the variable's own key), `hash` (SHA-256 hex via `@noble/hashes`, synchronous), `date(FORMAT)` (current local time, `DateToken` placeholders, default `YYYY-MM-DD`, read at transform time).
-- `calc(expr)` — `+ - * / %`, unary signs, parentheses; evaluated once at parse time (`utils/arithmetic.ts`); non-finite or malformed renders raw; no `**`.
+- `calc(expr)` — `+ - * / %`, unary signs, parentheses; evaluated once at parse time (`utils/arithmetic.ts`); non-finite or malformed renders raw; no `**`. A number may carry an exponent (`1e-7`, `CalcSyntax.EXPONENT`/`EXPONENT_ALT`), because `formatArithmetic` writes very small/large results that way and every number reader (`calc`, `parseNumber`, numeric arguments) shares `CALC_NUMBER`, so what `calc` writes is always readable back.
 - `round(n)` / `floor` / `ceil` — half away from zero, value must be a plain number (`parseNumber`); this introduced **apply-time failure** (a transform may return `null`).
 - Case: `snakecase`, `kebabcase`, `camelcase`, `pascalcase` (rebuild from words) and `capitalize`, `title`, `lowercase`, `uppercase`, `swapcase` (Python re-casing; `title` keeps inner apostrophes).
 - `strip(x)` / `lstrip` / `rstrip` (literal string, repeated; bare/empty trims whitespace), `fill(text; n)` / `lfill` / `rfill` (n copies), `just(text; width)` / `ljust` / `rjust` (pad to width), `replace(a;b)`, `remove(a)`, `index(x)` (code-point position or `-1`), `insert(text; pos)`.

@@ -133,6 +133,8 @@ export const CalcSyntax = {
   GROUP_OPEN: "(",
   GROUP_CLOSE: ")",
   DECIMAL_POINT: ".",
+  EXPONENT: "e",
+  EXPONENT_ALT: "E",
   PRECISION: 12,
 } as const;
 
@@ -143,7 +145,6 @@ export const RoundSyntax = {
   ARITY: 1,
   DEFAULT_DIGITS: 0,
   MAX_DIGITS: 12,
-  EXPONENT: "e",
 } as const;
 
 export const CalcGroup = {
@@ -258,6 +259,15 @@ export const CallOperationRegex = dotAllRegex(
 const CALC_NUMBER = sequence(
   oneOrMore(DIGIT),
   optional(group(sequence(Calc.DECIMAL_POINT, oneOrMore(DIGIT)))),
+  optional(
+    group(
+      sequence(
+        anyOf(Calc.EXPONENT, Calc.EXPONENT_ALT),
+        optional(anyOf(Calc.PLUS, Calc.MINUS)),
+        oneOrMore(DIGIT),
+      ),
+    ),
+  ),
 );
 
 export const CalcTokenRegex = globalRegex(

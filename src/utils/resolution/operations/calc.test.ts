@@ -32,6 +32,14 @@ checkResolution("calc", {
     ["{|calc(7 % 3)}", "1"],
     ["{|calc(-1 % 3)}", "2"],
     ["{|calc(1 % -3)}", "-2"],
+    // Scientific notation
+    ["{|calc(1e3 + 1)}", "1001"],
+    ["{|calc(2.5E-1 * 4)}", "1"],
+    ["{|calc(1e+2)}", "100"],
+    ["{|calc(-1e2)}", "-100"],
+    ["{|calc(1 / 10000000)}", "1e-7"],
+    ["{|calc({|calc(1 / 10000000)} * 10000000)}", "1"],
+    ["{|calc(1e21 * 10)}", "1e+22"],
     // Whitespace is free
     ["{|calc(1+2*3)}", "7"],
     ["{| calc( 1 +\n 2 ) }", "3"],
@@ -64,5 +72,9 @@ checkResolution("calc fails loudly", {
     ["{|calc({NAME} + 1)}", partial("{|calc(api + 1)}")],
     ["{|calc({MISSING} + 1)}", RAW],
     ["{|calc(1.)}", RAW],
+    ["{|calc(1e)}", RAW],
+    ["{|calc(e3)}", RAW],
+    ["{|calc(1e1.5)}", RAW],
+    ["{|calc(1e+)}", RAW],
   ],
 });

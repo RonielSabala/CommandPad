@@ -1179,7 +1179,7 @@ Si algo sale mal, deshazlo en este orden:
 | \`%\` | Resto |
 | \`( )\` | Agrupar lo que quieras calcular primero |`,
       rules:
-        "Como en cualquier calculadora, las multiplicaciones y divisiones se hacen antes que las sumas y restas. Una división puede dar decimales (`7 / 2` da `3.5`), y el resto lleva el signo del divisor, por eso `-1 % 3` da `2`. Si divides entre cero o algo de la expresión no es un número, la referencia se queda tal cual la escribiste.",
+        "Como en cualquier calculadora, las multiplicaciones y divisiones se hacen antes que las sumas y restas. Una división puede dar decimales (`7 / 2` da `3.5`), y el resto lleva el signo del divisor, por eso `-1 % 3` da `2`. Si divides entre cero o algo de la expresión no es un número, la referencia se queda tal cual la escribiste. Un número también se puede escribir en notación científica: `1e3` es `1000` y `2.5e-7` es `0.00000025`. Un resultado muy pequeño o muy grande sale así también (`1 / 10000000` da `1e-7`), y cualquier operación que lea un número lo acepta.",
       rounding:
         "Una división casi nunca da un número entero, y un comando casi siempre quiere uno. `round`, `floor` y `ceil` convierten el valor que les llega en un entero: al más cercano, siempre hacia abajo o siempre hacia arriba.",
       roundingDemoHint:
