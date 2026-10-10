@@ -44,7 +44,7 @@ export function BlocksList() {
     );
   }, [imageViewerBlockId]);
 
-  // Scroll to the block, then flash it once it stops moving
+  // Reveal block
   useEffect(() => {
     if (!pendingRevealBlockId) {
       return;

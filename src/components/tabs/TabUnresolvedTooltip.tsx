@@ -82,14 +82,23 @@ export function TabUnresolvedTooltip({ tab, hide }: Props) {
     () =>
       tab.blocks.flatMap((block, index) => {
         const text = unresolvedBlockText(block, variableMap);
-        return text !== null ||
-          (block.type === BlockType.RUNBOOK &&
-            isEmbedBlockUnresolved(block, library, embeddedRunbooks))
+        if (text !== null) {
+          return [
+            {
+              block,
+              number: index + 1,
+              excerpt: unresolvedExcerpt(text, variableMap, secretKeys),
+            },
+          ];
+        }
+
+        return block.type === BlockType.RUNBOOK &&
+          isEmbedBlockUnresolved(block, library, embeddedRunbooks)
           ? [
               {
                 block,
                 number: index + 1,
-                excerpt: unresolvedExcerpt(text, variableMap, secretKeys),
+                excerpt: block.cloud?.path || block.label || undefined,
               },
             ]
           : [];
