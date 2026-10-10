@@ -128,3 +128,7 @@
   border-bottom-color: var(--accent);
   color: var(--accent-text);
 }
+
+.tooltip-link.tooltip-link-plain {
+  border-bottom: none;
+}

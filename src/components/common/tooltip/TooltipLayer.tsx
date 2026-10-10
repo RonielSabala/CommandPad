@@ -286,6 +286,7 @@ export function TooltipLayer() {
 
   const shown = active ?? lastActiveRef.current;
   const shownRichId = shown?.richId ?? null;
+  const shownAnchor = shown?.element ?? null;
   const shownPlacement = placement ?? lastPlacementRef.current;
   const visible = Boolean(active && placement);
 
@@ -293,11 +294,11 @@ export function TooltipLayer() {
   useLayoutEffect(() => {
     const element = contentRef.current;
     publishRichTooltipSlot(
-      shownRichId && element
-        ? { id: shownRichId, element, hide: dismiss }
+      shownRichId && element && shownAnchor
+        ? { id: shownRichId, element, anchor: shownAnchor, hide: dismiss }
         : null,
     );
-  }, [shownRichId, dismiss]);
+  }, [shownRichId, shownAnchor, dismiss]);
 
   useEffect(() => () => publishRichTooltipSlot(null), []);
 

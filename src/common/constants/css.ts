@@ -14,7 +14,7 @@ export const CssClass = {
   DRAG_OVER: "drag-over",
   DROP_TARGET: "drop-target",
   DUPLICATE_FLASH: "duplicate-flash",
-  BLOCK_REVEAL: "block-reveal",
+  ROW_REVEAL: "row-reveal",
 
   CLAMPED: "clamped",
   CLAMP_SURFACE: "clamp-surface",
@@ -84,6 +84,7 @@ export const CssClass = {
 
   NOTE_LINK: "note-link",
   TOOLTIP_LINK: "tooltip-link",
+  TOOLTIP_LINK_PLAIN: "tooltip-link-plain",
   NOTE_EDITOR: "note-editor",
   NOTE_CODE_NEUTRAL: "note-code-neutral",
 
@@ -102,4 +103,8 @@ export const CssClass = {
   MINIMAP_LEFT: "minimap-left",
   MINIMAP_HOST: "minimap-host",
   MINIMAP_SCROLLER: "minimap-scroller",
+} as const;
+
+export const CssAnimation = {
+  SURFACE_REVEAL: "surface-reveal",
 } as const;

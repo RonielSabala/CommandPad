@@ -1,0 +1,6 @@
+.variable-source-tooltip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-4);
+}

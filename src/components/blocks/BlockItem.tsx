@@ -46,7 +46,7 @@ export const BlockItem = memo(function BlockItem({
         dragging && CssClass.DRAGGING,
         dragOver && CssClass.DRAG_OVER,
         isFlashing && CssClass.DUPLICATE_FLASH,
-        isRevealed && CssClass.BLOCK_REVEAL,
+        isRevealed && CssClass.ROW_REVEAL,
         isSelected && "block-selected",
       )}
       {...{ [DataAttr.BLOCK_ID]: block.id }}

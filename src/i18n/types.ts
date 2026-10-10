@@ -220,6 +220,7 @@ export interface Messages {
     placeholder: string;
     extractVariable: string;
     escapeVariable: string;
+    goToDefinition: string;
   };
   note: {
     styleLabel: Record<NoteStyle, string>;
@@ -548,7 +549,7 @@ export interface Messages {
       demoHint: string;
       shades: string;
       shadesDemoHint: string;
-      shadesHover: string;
+      shadesHover: (goToDefinition: string) => string;
       shadesUnresolved: string;
       shadesUnresolvedDemoHint: string;
       circular: string;

@@ -245,6 +245,7 @@ export const es: Messages = {
     placeholder: "ssh {USUARIO}@{HOST}",
     extractVariable: "Extraer en una variable",
     escapeVariable: "Escapar la referencia",
+    goToDefinition: "Ir a la definición",
   },
   note: {
     styleLabel: {
@@ -970,8 +971,8 @@ Si algo sale mal, deshazlo en este orden:
         "La vista previa resalta el texto resuelto según cuántos valores atravesó. El texto que escribió la variable a la que haces referencia lleva el tono más claro, el que escribió una referencia **dentro** de ese valor se apoya en uno más intenso, y todo lo que esté más adentro comparte el más intenso. Así, de un vistazo sabes qué parte del comando viene de dónde.",
       shadesDemoHint:
         "Aquí `HOST` se construye a partir de `SERVICE`, que a su vez se construye a partir de `NAME`, así que el comando resuelto luce los tres tonos a la vez:",
-      shadesHover:
-        "Cuando los tonos no bastan, pasa el cursor sobre cualquier fragmento resaltado de un comando resuelto: te dice la variable que lo escribió.",
+      shadesHover: (goToDefinition: string) =>
+        `Cuando los tonos no bastan, pasa el cursor sobre cualquier fragmento resaltado de un comando resuelto: te dice la variable que lo escribió, e **${goToDefinition}** te lleva a esa variable en la vista de variables.`,
       shadesUnresolved:
         "Una referencia que no se resuelve se cuenta igual, en rojo en vez de verde: el resto del comando sigue resolviéndose y solo se marca la parte rota, a la profundidad en la que está. Así un vistazo también te dice qué tan hondo está el problema, no solo que lo hay.",
       shadesUnresolvedDemoHint:

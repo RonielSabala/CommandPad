@@ -219,6 +219,11 @@ export interface CloudFileEditor {
   error: string | null;
 }
 
+interface VariableReveal {
+  id: string;
+  resolved: boolean;
+}
+
 export interface StoreState {
   // Data
   tabs: Tab[];
@@ -255,6 +260,8 @@ export interface StoreState {
   pendingFocusBlockId: string | null;
   pendingRevealBlockId: string | null;
   revealedBlockId: string | null;
+  pendingRevealVariable: VariableReveal | null;
+  revealedVariable: VariableReveal | null;
   pendingFocusVariableId: string | null;
   pendingFocusSectionId: string | null;
   imageViewerBlockId: string | null;
@@ -417,6 +424,9 @@ export interface StoreState {
   revealBlock: (tabId: string, blockId: string) => void;
   finishBlockReveal: () => void;
   clearBlockReveal: () => void;
+  revealVariable: (variableId: string, resolved: boolean) => void;
+  finishVariableReveal: () => void;
+  clearVariableReveal: () => void;
   toggleClampSurfaceExpanded: (id: string, surface: ClampSurface) => void;
   openImageViewer: (blockId: string, slides?: ImageBlock[] | null) => void;
   closeImageViewer: () => void;
@@ -1657,6 +1667,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       pendingFocusBlockId: null,
       pendingRevealBlockId: null,
       revealedBlockId: null,
+      pendingRevealVariable: null,
+      revealedVariable: null,
       pendingFocusVariableId: null,
       pendingFocusSectionId: null,
       imageViewerBlockId: null,
@@ -3544,6 +3556,47 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         ),
 
       clearBlockReveal: () => set({ revealedBlockId: null }),
+
+      revealVariable: (variableId, resolved) => {
+        if (getRunbookView(get()) !== RunbookView.VARIABLES) {
+          get().toggleRunbookView(RunbookView.VARIABLES);
+        }
+
+        // A folded section unfolds to show it
+        set((s) => {
+          const tab = getActiveTab(s);
+          const sections = tab
+            ? revealVariables(tab, new Set([variableId]))
+            : undefined;
+
+          const unfold =
+            tab && sections && sections !== tab.variableSections
+              ? withActiveTab(s, (active) => ({
+                  ...active,
+                  variableSections: sections,
+                }))
+              : {};
+
+          return {
+            ...unfold,
+            pendingRevealVariable: { id: variableId, resolved },
+          };
+        });
+
+        get().saveState();
+      },
+
+      finishVariableReveal: () =>
+        set((s) =>
+          s.pendingRevealVariable
+            ? {
+                pendingRevealVariable: null,
+                revealedVariable: s.pendingRevealVariable,
+              }
+            : {},
+        ),
+
+      clearVariableReveal: () => set({ revealedVariable: null }),
 
       toggleClampSurfaceExpanded: (id, surface) =>
         set((s) => {

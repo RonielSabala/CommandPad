@@ -1,8 +1,9 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr, ElementId, ScrollIntoView } from "@/common/constants/dom";
 import type { Block, Variable } from "@/common/types";
+import { useRowReveal } from "@/hooks/useRowReveal";
 import { getActiveTab, useStore } from "@/store/store";
-import { scrollRowIntoView, whenElementSettles } from "@/utils/dom";
+import { scrollRowIntoView } from "@/utils/dom";
 import { getSecretKeys, getVariableMap } from "@/utils/resolution";
 import { useEffect, useMemo, useRef } from "react";
 
@@ -44,41 +45,12 @@ export function BlocksList() {
     );
   }, [imageViewerBlockId]);
 
-  // Reveal block
-  useEffect(() => {
-    if (!pendingRevealBlockId) {
-      return;
-    }
-
-    let cancelSettle = () => {};
-    let frame = 0;
-
-    // A tab switch restores its saved scroll position in one
-    frame = requestAnimationFrame(() => {
-      frame = requestAnimationFrame(() => {
-        const row = listRef.current?.querySelector<HTMLElement>(
-          `[${DataAttr.BLOCK_ID}="${pendingRevealBlockId}"]`,
-        );
-
-        if (!row) {
-          finishBlockReveal();
-          return;
-        }
-
-        row.scrollIntoView({
-          block: ScrollIntoView.BLOCK_CENTER,
-          behavior: ScrollIntoView.BEHAVIOR_SMOOTH,
-        });
-
-        cancelSettle = whenElementSettles(row, finishBlockReveal);
-      });
-    });
-
-    return () => {
-      cancelAnimationFrame(frame);
-      cancelSettle();
-    };
-  }, [pendingRevealBlockId, finishBlockReveal]);
+  useRowReveal(
+    listRef,
+    DataAttr.BLOCK_ID,
+    pendingRevealBlockId,
+    finishBlockReveal,
+  );
 
   return (
     <div

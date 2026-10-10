@@ -2,6 +2,7 @@ import { NoteStyle, RunbookView } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { TabsBar } from "@/components/tabs/TabsBar";
 import { RunbookVariables } from "@/components/variables/RunbookVariables";
+import { VariablesViewContext } from "@/components/variables/variablesViewContext";
 import { RunbookSource } from "@/components/workspace/RunbookSource";
 import { useTranslation } from "@/i18n";
 import { getRunbookView, useStore } from "@/store/store";
@@ -30,7 +31,9 @@ export function DemoRunbookPanel() {
 
   return (
     <div id="docs-demo-tab-panel">
-      <View />
+      <VariablesViewContext.Provider value>
+        <View />
+      </VariablesViewContext.Provider>
     </div>
   );
 }

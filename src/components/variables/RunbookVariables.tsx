@@ -15,6 +15,7 @@ import { Minimap } from "@/components/workspace/minimap/Minimap";
 import { VariablesMirror } from "@/components/workspace/minimap/VariablesMirror";
 import { WorkspaceContextMenu } from "@/components/workspace/WorkspaceContextMenu";
 import { useLassoSelection } from "@/hooks/useLassoSelection";
+import { useRowReveal } from "@/hooks/useRowReveal";
 import { useScrollingClass } from "@/hooks/useScrollingClass";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
@@ -93,6 +94,10 @@ export function RunbookVariables() {
   const pendingFocusSectionId = useStore(
     (state) => state.pendingFocusSectionId,
   );
+  const pendingRevealVariableId = useStore(
+    (state) => state.pendingRevealVariable?.id ?? null,
+  );
+  const finishVariableReveal = useStore((state) => state.finishVariableReveal);
 
   const minimapEnabled = useStore((state) => state.minimapEnabled);
   const minimapOnLeft = useStore(
@@ -106,6 +111,12 @@ export function RunbookVariables() {
   useScrollingClass(scrollRef);
   useScrollPersistence(scrollRef, RunbookView.VARIABLES);
   useLassoSelection(root, SelectionGroup.VARIABLE);
+  useRowReveal(
+    listRef,
+    DataAttr.VARIABLE_ID,
+    pendingRevealVariableId,
+    finishVariableReveal,
+  );
 
   useEffect(() => {
     scrollRowIntoView(

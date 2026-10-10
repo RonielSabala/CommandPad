@@ -87,6 +87,12 @@ function blankSource(key: string, name: string): string | undefined {
   return key ? `${key}${VariableSyntax.PARAM_SEPARATOR}${name}` : undefined;
 }
 
+/** The variable a span's `source` names. */
+export function sourceKey(source: string): string {
+  const separator = source.indexOf(VariableSyntax.PARAM_SEPARATOR);
+  return separator === -1 ? source : source.slice(0, separator);
+}
+
 /** Every blank opens with this. */
 const BLANK_OPEN = `${VariableSyntax.BRACE_OPEN}${VariableSyntax.PARAM_SEPARATOR}`;
 

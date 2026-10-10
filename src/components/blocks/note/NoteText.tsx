@@ -56,7 +56,10 @@ function NoteLink({ segment, binding }: LinkProps) {
         <>
           <a
             href={href}
-            className={classNames(CssClass.TOOLTIP_LINK, "note-follow-link")}
+            className={classNames(
+              CssClass.TOOLTIP_LINK,
+              CssClass.TOOLTIP_LINK_PLAIN,
+            )}
             target={Anchor.TARGET_BLANK}
             rel={Anchor.REL}
             title={href}

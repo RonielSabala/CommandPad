@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 interface RichTooltipSlot {
   id: string;
   element: HTMLElement;
+  anchor: HTMLElement;
   hide: () => void;
 }
 
@@ -16,6 +17,7 @@ export function publishRichTooltipSlot(next: RichTooltipSlot | null): void {
   if (
     slot?.id === next?.id &&
     slot?.element === next?.element &&
+    slot?.anchor === next?.anchor &&
     slot?.hide === next?.hide
   ) {
     return;
@@ -43,7 +45,9 @@ export function useRichTooltip() {
 
   return {
     props: { [DataAttr.TOOLTIP_RICH]: id },
-    render: (content: (hide: () => void) => ReactNode) =>
-      shown ? createPortal(content(shown.hide), shown.element) : null,
+    render: (content: (hide: () => void, anchor: HTMLElement) => ReactNode) =>
+      shown
+        ? createPortal(content(shown.hide, shown.anchor), shown.element)
+        : null,
   };
 }

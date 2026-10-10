@@ -32,6 +32,18 @@ body.read-mode .variable-editor-secret-btn {
   display: none;
 }
 
+/* Variable reveal */
+
+.variable-reveal
+  :is(.variable-editor-key, .variable-editor-value, .variable-editor-options) {
+  animation: surface-reveal 1.2s ease-out;
+}
+
+.row-reveal-resolved {
+  --row-reveal-bg: var(--resolved-bg-2);
+  --row-reveal-edge: var(--resolved-edge);
+}
+
 /* Border overrides */
 
 :is(

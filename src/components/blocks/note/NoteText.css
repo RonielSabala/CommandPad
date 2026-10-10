@@ -42,10 +42,6 @@
   border-bottom-color: var(--accent);
 }
 
-.tooltip-link.note-follow-link {
-  border-bottom: none;
-}
-
 :is(body.link-key-held, body.read-mode) .note-link:hover {
   cursor: pointer;
   color: var(--accent-text);

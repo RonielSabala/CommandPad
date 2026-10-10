@@ -16,7 +16,7 @@ export {
 export type { OperationKeyword } from "./operations/types";
 export { applyOverrides, overrideScope, withOverride } from "./overrides";
 export type { OverrideHost } from "./overrides";
-export { getTemplateParamNames } from "./params";
+export { getTemplateParamNames, sourceKey } from "./params";
 export {
   renameAllCommandTokens,
   renameAllValueTokens,
