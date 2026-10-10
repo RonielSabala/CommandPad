@@ -750,6 +750,16 @@ export function countVariableTargets(
   };
 }
 
+export function hasValuesToClear(
+  state: StoreState,
+  variableId: string,
+): boolean {
+  const targets = targetVariableIds(state, variableId);
+  return !!getActiveTab(state)?.variables.some(
+    (variable) => targets.has(variable.id) && variable.value,
+  );
+}
+
 export function countSelectedSections(state: StoreState): number {
   return countSections(state, state.selectedVariableIds);
 }
