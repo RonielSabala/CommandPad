@@ -35,7 +35,7 @@ export function AddRow({ label, items }: Props) {
         <button
           key={key}
           className={CssClass.BTN}
-          onClick={onAdd}
+          onClick={() => onAdd()}
           {...tooltip(title)}
         >
           <Icon className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)} />

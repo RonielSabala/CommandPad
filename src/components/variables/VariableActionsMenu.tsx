@@ -1,5 +1,5 @@
 import { CssClass } from "@/common/constants/css";
-import { VariableEntryKind, VariableKind } from "@/common/enums";
+import { VariableEntryKind } from "@/common/enums";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
 import { EyeIcon } from "@/components/icons";
@@ -7,13 +7,7 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { getCaseOperationKeywords } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
-import {
-  AlphabetUppercase,
-  Collection,
-  CursorText,
-  Eraser,
-  ListUl,
-} from "react-bootstrap-icons";
+import { AlphabetUppercase, Collection, Eraser } from "react-bootstrap-icons";
 
 import {
   DuplicateItem,
@@ -41,7 +35,6 @@ export function VariableActionsMenu({
   sectioned,
 }: Props) {
   const t = useTranslation();
-  const setVariableKind = useStore((state) => state.setVariableKind);
   const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
   const applyVariableKeyCase = useStore((state) => state.applyVariableKeyCase);
   const addVariableSection = useStore((state) => state.addVariableSection);
@@ -57,24 +50,6 @@ export function VariableActionsMenu({
     >
       {(count) => (
         <>
-          <ContextMenuItem
-            icon={
-              isEnum ? (
-                <CursorText className={CssClass.ICON_MD} />
-              ) : (
-                <ListUl className={CssClass.ICON_MD} />
-              )
-            }
-            onSelect={() =>
-              setVariableKind(
-                variableId,
-                isEnum ? VariableKind.TEXT : VariableKind.ENUM,
-              )
-            }
-          >
-            {isEnum ? t.variables.makeText(count) : t.variables.makeEnum(count)}
-          </ContextMenuItem>
-
           {!isEnum && (
             <ContextMenuItem
               icon={

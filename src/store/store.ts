@@ -360,7 +360,7 @@ export interface StoreState {
   setRunbookFocus: (id: string | null) => void;
   navigateRunbookList: (direction: MoveDirection) => void;
 
-  addVariable: () => Promise<void>;
+  addVariable: (kind?: VariableKind) => Promise<void>;
   extractVariable: (value: string) => { id: string; key: string } | null;
   removeVariable: (variableId: string) => void;
   duplicateVariable: (variableId: string) => void;
@@ -370,7 +370,6 @@ export interface StoreState {
     value: string,
   ) => void;
   toggleVariableSecret: (variableId: string) => void;
-  setVariableKind: (variableId: string, kind: VariableKind) => void;
   addVariableOption: (variableId: string, option: string) => void;
   removeVariableOption: (variableId: string, option: string) => void;
   applyVariableKeyCase: (variableId: string, keyword: string) => void;
@@ -384,6 +383,7 @@ export interface StoreState {
     targetId: string,
     kind: VariableEntryKind,
     position: InsertPosition,
+    variableKind?: VariableKind,
   ) => void;
   renameVariableSection: (sectionId: string, name: string) => void;
   toggleVariableSection: (sectionId: string) => void;
@@ -663,6 +663,15 @@ function withActiveTab(
     return { tabs: state.tabs };
   }
   return { tabs: state.tabs.map((t) => (t.id === active.id ? mutate(t) : t)) };
+}
+
+/** A blank variable. */
+function createVariable(kind: VariableKind): Variable {
+  const variable = { id: generateId(), key: "", value: "" };
+
+  return kind === VariableKind.ENUM
+    ? { ...variable, options: [] }
+    : { ...variable, language: DEFAULT_VARIABLE_LANGUAGE };
 }
 
 /** Append a variable, expanding the section it lands in so it is on screen. */
@@ -2641,21 +2650,17 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       // --- Variables ---
 
-      addVariable: async () => {
+      addVariable: async (kind = VariableKind.TEXT) => {
         const state = get();
         if (state.mode === AppMode.READ) {
           return;
         }
+
         if (state.tabs.length === 0) {
           await get().createNewTab();
         }
 
-        const newVariable: Variable = {
-          id: generateId(),
-          key: "",
-          value: "",
-          language: DEFAULT_VARIABLE_LANGUAGE,
-        };
+        const newVariable = createVariable(kind);
         set((s) => ({
           ...withActiveTab(s, (tab) => appendVariable(tab, newVariable)),
           pendingFocusVariableId: newVariable.id,
@@ -2676,11 +2681,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           value,
           new Set(tab.variables.map((v) => getVariableKey(v))),
         );
-        const newVariable: Variable = {
-          id: generateId(),
+        const newVariable = {
+          ...createVariable(VariableKind.TEXT),
           key,
           value,
-          language: DEFAULT_VARIABLE_LANGUAGE,
         };
 
         set((s) => ({
@@ -2869,9 +2873,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           withActiveTab(s, (tab) => ({
             ...tab,
             variables: tab.variables.map((v) =>
-              targets.has(v.id) && !(marking && v.options)
-                ? { ...v, secret: marking }
-                : v,
+              targets.has(v.id) && !v.options ? { ...v, secret: marking } : v,
             ),
           })),
         );
@@ -2882,47 +2884,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         void ensureVaultForSecrets().then(() => get().saveState());
-      },
-
-      setVariableKind: (variableId, kind) => {
-        const state = get();
-        if (state.mode === AppMode.READ) {
-          return;
-        }
-
-        const targets = targetVariableIds(state, variableId);
-
-        set((s) =>
-          withActiveTab(s, (tab) => ({
-            ...tab,
-            variables: tab.variables.map((v) => {
-              if (!targets.has(v.id)) {
-                return v;
-              }
-
-              if (kind === VariableKind.TEXT) {
-                if (!v.options) {
-                  return v;
-                }
-
-                const text = { ...v };
-                delete text.options;
-                return text;
-              }
-
-              if (v.options) {
-                return v;
-              }
-
-              // The current value becomes the first choice
-              const choice = { ...v, options: v.value ? [v.value] : [] };
-              delete choice.secret;
-              return choice;
-            }),
-          })),
-        );
-
-        get().saveState();
       },
 
       addVariableOption: (variableId, option) => {
@@ -3100,7 +3061,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         get().saveState();
       },
 
-      insertVariableRow: (targetId, kind, position) => {
+      insertVariableRow: (
+        targetId,
+        kind,
+        position,
+        variableKind = VariableKind.TEXT,
+      ) => {
         const state = get();
         if (state.mode === AppMode.READ || !getActiveTab(state)) {
           return;
@@ -3114,12 +3080,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
               }
             : {
                 kind: VariableEntryKind.VARIABLE,
-                variable: {
-                  id: generateId(),
-                  key: "",
-                  value: "",
-                  language: DEFAULT_VARIABLE_LANGUAGE,
-                },
+                variable: createVariable(variableKind),
               };
 
         const id = entryId(entry);

@@ -286,7 +286,10 @@ The blocks view and the variables editor wear a miniature of their content in pl
 
 #### Enum variables
 
-A variable with an `options` array (even empty) is an enum; `value` stays the selected option, so nothing else changes. `VariableOptionsSelect` (the shared `Select` + `optionAction` remove `x` + `footer` add input) replaces the value field on both surfaces. Read mode locks the list but not the choice. `setVariableKind` is selection-aware; converting to enum seeds options with the value and drops `secret` (enums can't be secret). Removing the selected option falls back to the first; options are trimmed and deduped. Renaming a key rewrites references inside options.
+A variable with an `options` array (even empty) is an enum; `value` stays the selected option, so resolution sees no difference. `VariableOptionsSelect` (the shared `Select` + `optionAction` remove `x` + `footer` add input) replaces the value field on both surfaces. Read mode locks the list but not the choice. Removing the selected option falls back to the first; options are trimmed and deduped. Renaming a key rewrites references inside options.
+
+- **The kind is chosen at creation and never converted**: `VariableKind` is only an argument to `addVariable` / `insertVariableRow`, built by the store's one `createVariable(kind)`. Entry points: the NEW row, the Insert above/below submenus, and the sidebar footer's **Enum** button.
+- **An enum is only `key`, `value`, `options`** — never `secret` or `language`. Enforced at the JSON boundary both ways (`normalizeVariable` on parse, `buildRunbookSource` on write, and the `oneOf` text/enum schemas in `runbookSchema.ts`), and in the store (`toggleVariableSecret` skips enums). Menus offer text-only actions (mask) only to text variables.
 
 #### Variable sections
 
@@ -408,7 +411,7 @@ Runbooks can be exported to / imported from a provider's **app-scoped folder**, 
 
 ### The import/export JSON schema
 
-`RunbookContent` is `{ variables[], blocks[] }` (examples in `docs/examples/*.json`). `variables` may contain section markers `{ section, collapsed? }`. A variable is `{ key, value, secret?, language?, options? }` (`value` is a `cpv1.…` payload for a secret exported with an open vault). A block is `{ type, ... }`: `command` (`text`, `language?`, `editorCollapsed?`), `note` (`text`, `style?`), `image` (`src`, `alt?`), `runbook` (`label`, `cloud?`, `overrides?`, `collapsed?`), `divider`. **Ids are runtime-only**: omitted from exports, regenerated on import. Unknown block types are dropped by `normalizeBlock`.
+`RunbookContent` is `{ variables[], blocks[] }` (examples in `docs/examples/*.json`). `variables` may contain section markers `{ section, collapsed? }`. A variable is `{ key, value, secret?, language? }` or, as an enum, `{ key, value, options }` (`value` is a `cpv1.…` payload for a secret exported with an open vault). A block is `{ type, ... }`: `command` (`text`, `language?`, `editorCollapsed?`), `note` (`text`, `style?`), `image` (`src`, `alt?`), `runbook` (`label`, `cloud?`, `overrides?`, `collapsed?`), `divider`. **Ids are runtime-only**: omitted from exports, regenerated on import. Unknown block types are dropped by `normalizeBlock`.
 
 ### Internationalization (i18n)
 

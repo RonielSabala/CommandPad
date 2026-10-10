@@ -48,8 +48,8 @@ export function VariablesDocs() {
       </DemoWorkspace>
       <Prose
         text={t.docs.variables.enums(
-          t.variables.actions,
-          t.variables.makeEnum(1),
+          t.variables.enumLabel,
+          t.variables.newRowLabel,
         )}
       />
       <Prose text={t.docs.variables.enumsDemoHint} />

@@ -235,6 +235,15 @@ export function VariableIcon(props: IconProps) {
   );
 }
 
+export function EnumIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+      <rect x="1.5" y="4" width="13" height="8" rx="1.5" />
+      <polyline points="9.5,7 11,8.5 12.5,7" />
+    </svg>
+  );
+}
+
 export function SectionIcon(props: IconProps) {
   return (
     <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>

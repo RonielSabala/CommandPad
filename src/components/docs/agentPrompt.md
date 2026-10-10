@@ -39,8 +39,8 @@ A variable is an object with these fields:
   Highlighting for the value only; defaults to `plaintext`.
 - `options` (optional, array of text): makes the variable an **enum**, edited by picking
   from a list instead of typing. `value` must be one of the options. Use it when the value
-  is always one of a few known choices (environments, regions, log levels), and never
-  together with `secret`.
+  is always one of a few known choices (environments, regions, log levels). An enum is
+  only `key`, `value` and `options`: never give it `secret` or `language`.
 
 The `variables` array may also hold **sections**, which group the variables that follow
 them. A section is an object with exactly these fields, and never `key` or `value`:

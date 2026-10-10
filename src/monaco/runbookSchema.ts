@@ -7,18 +7,33 @@ import {
   VariableSectionField,
 } from "@/common/editorConfig";
 
-const VARIABLE_SCHEMA = {
+const VARIABLE_PROPERTIES = {
+  [VariableField.KEY]: { type: JsonSchemaType.STRING },
+  [VariableField.VALUE]: { type: JsonSchemaType.STRING },
+};
+
+const TEXT_VARIABLE_SCHEMA = {
   type: JsonSchemaType.OBJECT,
   required: [VariableField.KEY, VariableField.VALUE],
   properties: {
-    [VariableField.KEY]: { type: JsonSchemaType.STRING },
-    [VariableField.VALUE]: { type: JsonSchemaType.STRING },
+    ...VARIABLE_PROPERTIES,
     [VariableField.SECRET]: { type: JsonSchemaType.BOOLEAN },
     [VariableField.LANGUAGE]: { enum: [...COMMAND_LANGUAGE_ORDER] },
+    [VariableField.OPTIONS]: false,
+  },
+};
+
+const ENUM_VARIABLE_SCHEMA = {
+  type: JsonSchemaType.OBJECT,
+  required: [VariableField.KEY, VariableField.VALUE, VariableField.OPTIONS],
+  properties: {
+    ...VARIABLE_PROPERTIES,
     [VariableField.OPTIONS]: {
       type: JsonSchemaType.ARRAY,
       items: { type: JsonSchemaType.STRING },
     },
+    [VariableField.SECRET]: false,
+    [VariableField.LANGUAGE]: false,
   },
 };
 
@@ -38,7 +53,9 @@ export const RUNBOOK_JSON_SCHEMA = {
   properties: {
     [RunbookField.VARIABLES]: {
       type: JsonSchemaType.ARRAY,
-      items: { oneOf: [VARIABLE_SCHEMA, SECTION_SCHEMA] },
+      items: {
+        oneOf: [TEXT_VARIABLE_SCHEMA, ENUM_VARIABLE_SCHEMA, SECTION_SCHEMA],
+      },
     },
     [RunbookField.BLOCKS]: {
       type: JsonSchemaType.ARRAY,
