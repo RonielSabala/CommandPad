@@ -86,28 +86,32 @@ export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
 };
 
 const BINDING_SEPARATOR = "+";
+export const SPACED_BINDING_SEPARATOR = ` ${BINDING_SEPARATOR} `;
 const MODIFIER_KEYS = [Modifier.ALT, Modifier.CTRL, Modifier.SHIFT] as const;
 
 const KEY_ALIASES: Record<string, string> = { space: " " };
 const KEY_LABELS: Record<string, string> = { delete: "Del" };
 
-function titleCaseChord(chord: string): string {
+function titleCaseChord(chord: string, joiner: string): string {
   return chord
     .split(BINDING_SEPARATOR)
     .map((token) => KEY_LABELS[token] ?? upperFirst(token))
-    .join(BINDING_SEPARATOR);
+    .join(joiner);
 }
 
-export function formatBinding(binding: string): string {
+export function formatBinding(
+  binding: string,
+  joiner: string = BINDING_SEPARATOR,
+): string {
   if (!binding.includes(" ")) {
-    return titleCaseChord(binding);
+    return titleCaseChord(binding, joiner);
   }
 
   return binding
     .split(" ")
     .map((part) =>
       part.includes(BINDING_SEPARATOR) || /[a-z]/.test(part)
-        ? titleCaseChord(part)
+        ? titleCaseChord(part, joiner)
         : part,
     )
     .join(" ");

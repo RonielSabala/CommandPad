@@ -224,7 +224,8 @@ export interface Messages {
   note: {
     styleLabel: Record<NoteStyle, string>;
     stylePlaceholder: Record<NoteStyle, string>;
-    followLinkTooltip: (binding?: string) => string;
+    followLink: string;
+    followLinkBinding: (binding: string) => string;
   };
   image: {
     dropHint: string;

@@ -257,8 +257,8 @@ export const es: Messages = {
       [NoteStyle.SUBHEADING]: "Sección de subtítulo...",
       [NoteStyle.BODY]: "Sección de cuerpo...",
     },
-    followLinkTooltip: (binding?: string) =>
-      binding ? `Seguir enlace (${binding})` : "Seguir enlace",
+    followLink: "Seguir enlace",
+    followLinkBinding: (binding: string) => `(${binding})`,
   },
   image: {
     dropHint: "Suelta una imagen aquí, o pégala",
@@ -1332,7 +1332,7 @@ Si algo sale mal, deshazlo en este orden:
       noNesting:
         "Los estilos no se combinan: por ejemplo, negrita y cursiva no pueden mezclarse en las mismas palabras. Gana el estilo que empiece primero.",
       links:
-        "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables. Para abrir un enlace, mantén `Ctrl` y haz clic en él.",
+        "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables. Para abrir un enlace, mantén `Ctrl` y haz clic en él, o pasa el puntero por encima y haz clic en **Seguir enlace** en su tooltip.",
       wrapKeys:
         "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y `Ctrl+´` en comillas invertidas; escribir cualquier carácter de paréntesis (**(**, **[** o **{**) o comillas (**\"** o **'**) lo envuelve en ese par. Envolver en pares no es exclusivo de las notas: funciona igual en el editor de comandos.",
     },

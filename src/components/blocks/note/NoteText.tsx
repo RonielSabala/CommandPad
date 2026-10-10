@@ -1,7 +1,12 @@
 import { CssClass } from "@/common/constants/css";
 import { Anchor, DataAttr, HtmlTag } from "@/common/constants/dom";
 import { AppMode, NoteNodeType, NoteSegmentType } from "@/common/enums";
-import { formatBinding, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
+import {
+  formatBinding,
+  KeyBinding,
+  KEYBINDINGS,
+  SPACED_BINDING_SEPARATOR,
+} from "@/common/keybindings";
 import type {
   NoteList,
   NoteNode,
@@ -9,10 +14,11 @@ import type {
   NoteTable,
   NoteTableCell,
 } from "@/common/types";
-import { tooltip } from "@/components/common/tooltip/tooltip";
+import { useRichTooltip } from "@/components/common/tooltip/richTooltip";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { parseNoteNodes } from "@/utils/markdown";
+import { classNames } from "@/utils/string";
 
 import "./NoteText.css";
 
@@ -24,43 +30,75 @@ const SEGMENT_CLASS: Record<NoteSegmentType, string | undefined> = {
   [NoteSegmentType.LINK]: CssClass.NOTE_LINK,
 };
 
+interface LinkProps {
+  segment: NoteSegment;
+  binding?: string;
+}
+
+function NoteLink({ segment, binding }: LinkProps) {
+  const t = useTranslation();
+  const tip = useRichTooltip();
+  const href = segment.href ?? segment.text;
+
+  return (
+    <>
+      <a
+        href={href}
+        className={`${CssClass.NOTE_LINK} ${CssClass.SELECT_KEY_INERT}`}
+        target={Anchor.TARGET_BLANK}
+        rel={Anchor.REL}
+        {...tip.props}
+        {...{ [DataAttr.NOTE_OFFSET]: segment.start }}
+      >
+        {segment.text}
+      </a>
+      {tip.render((hide) => (
+        <>
+          <a
+            href={href}
+            className={classNames(CssClass.TOOLTIP_LINK, "note-follow-link")}
+            target={Anchor.TARGET_BLANK}
+            rel={Anchor.REL}
+            title={href}
+            onClick={hide}
+          >
+            {t.note.followLink}
+          </a>
+          {binding && <> {t.note.followLinkBinding(binding)}</>}
+        </>
+      ))}
+    </>
+  );
+}
+
 interface SegmentsProps {
   segments: NoteSegment[];
   requiresLinkModifier?: boolean;
 }
 
 function NoteSegments({ segments, requiresLinkModifier }: SegmentsProps) {
-  const t = useTranslation();
   const readMode = useStore((state) => state.mode === AppMode.READ);
-  const followLinkTooltip = t.note.followLinkTooltip(
+  const binding =
     requiresLinkModifier && !readMode
-      ? formatBinding(KEYBINDINGS[KeyBinding.OPEN_LINK].binding)
-      : undefined,
-  );
+      ? formatBinding(
+          KEYBINDINGS[KeyBinding.OPEN_LINK].binding,
+          SPACED_BINDING_SEPARATOR,
+        )
+      : undefined;
 
   return (
     <>
       {segments.map((segment, i) => {
-        const offset = { [DataAttr.NOTE_OFFSET]: segment.start };
-
         if (segment.type === NoteSegmentType.LINK) {
-          return (
-            <a
-              key={i}
-              href={segment.href ?? segment.text}
-              className={`${CssClass.NOTE_LINK} ${CssClass.SELECT_KEY_INERT}`}
-              target={Anchor.TARGET_BLANK}
-              rel={Anchor.REL}
-              {...tooltip(followLinkTooltip)}
-              {...offset}
-            >
-              {segment.text}
-            </a>
-          );
+          return <NoteLink key={i} segment={segment} binding={binding} />;
         }
 
         return (
-          <span key={i} className={SEGMENT_CLASS[segment.type]} {...offset}>
+          <span
+            key={i}
+            className={SEGMENT_CLASS[segment.type]}
+            {...{ [DataAttr.NOTE_OFFSET]: segment.start }}
+          >
             {segment.text}
           </span>
         );

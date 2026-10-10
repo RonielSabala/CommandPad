@@ -83,6 +83,7 @@ export const CssClass = {
   COMMAND_CARD: "command-card",
 
   NOTE_LINK: "note-link",
+  TOOLTIP_LINK: "tooltip-link",
   NOTE_EDITOR: "note-editor",
   NOTE_CODE_NEUTRAL: "note-code-neutral",
 

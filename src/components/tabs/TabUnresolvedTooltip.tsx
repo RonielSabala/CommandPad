@@ -1,4 +1,5 @@
 import { SECRET_MASK, TabUnresolvedConfig } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import { BlockType } from "@/common/enums";
 import type { Tab } from "@/common/types";
 import { getTabVariableMap } from "@/hooks/useTabUnresolved";
@@ -114,7 +115,7 @@ export function TabUnresolvedTooltip({ tab, hide }: Props) {
           <li key={block.id}>
             <button
               type="button"
-              className="tab-unresolved-link"
+              className={CssClass.TOOLTIP_LINK}
               title={excerpt}
               onClick={() => {
                 hide();

@@ -390,7 +390,7 @@ One app-wide layer replaces native `title`.
 - **All listeners passive** (`PASSIVE`/`PASSIVE_CAPTURE`); the idle `hide()` path is one comparison.
 - The bubble is shrunk to its longest line (`longestLineWidth` on `.tooltip-label`, never named `tooltip-text`) before pure placement (`tooltipPlacement.ts`, with `arrowX`). `is-unplaced` hides it for the measuring frame; on hide it keeps its last text and placement to fade in place.
 - `TooltipVariant.CODE` left-aligns data. `--tooltip-gap` comes from `TooltipConfig.GAP`. `--z-tooltip` is the top layer.
-- **Rich tooltips** (`useRichTooltip`) hold any React tree and take the pointer. Content is **portalled from the anchor's own tree** (it keeps the anchor's context, e.g. a demo store) and only mounts while shown; never render it in `TooltipLayer`.
+- **Rich tooltips** (`useRichTooltip`) hold any React tree and take the pointer. Content is **portalled from the anchor's own tree** (it keeps the anchor's context, e.g. a demo store) and only mounts while shown; never render it in `TooltipLayer`. Links in it use `CssClass.TOOLTIP_LINK`; a handler above the anchor that reacts to clicks must check `currentTarget.contains(target)`.
 - A rich bubble hides `HIDE_DELAY_MS` after the pointer leaves it, ignoring other tooltip targets crossed on the way. The content's `hide` is a dismissal (no warm window). Its content can't nest app tooltips, so it uses a native `title` (the one exception to the rule above).
 
 ### Cloud sync

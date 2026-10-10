@@ -54,6 +54,7 @@ export function NoteEditor({
     !focused &&
     !readMode &&
     previewRef.current !== null &&
+    event.currentTarget.contains(event.target as Node) &&
     !(event.target as Element | null)?.closest(`.${CssClass.NOTE_LINK}`);
 
   const handleMouseDown = (event: MouseEvent) => {

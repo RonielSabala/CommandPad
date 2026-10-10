@@ -246,8 +246,8 @@ export const en: Messages = {
       [NoteStyle.SUBHEADING]: "Section subheading...",
       [NoteStyle.BODY]: "Section body...",
     },
-    followLinkTooltip: (binding?: string) =>
-      binding ? `Follow link (${binding})` : "Follow link",
+    followLink: "Follow link",
+    followLinkBinding: (binding: string) => `(${binding})`,
   },
   image: {
     dropHint: "Drop an image here, or paste one",
@@ -1308,7 +1308,7 @@ If something goes wrong, undo it in this order:
       noNesting:
         "Styles do not combine: for example, bold and italics cannot be mixed on the same words. Whichever style starts first wins.",
       links:
-        "Bare URLs are detected automatically and become clickable links. To open a link, hold `Ctrl` and click it.",
+        "Bare URLs are detected automatically and become clickable links. To open a link, hold `Ctrl` and click it, or hover it and click **Follow link** in its tooltip.",
       wrapKeys:
         "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and `Ctrl+´` in backticks; typing any parenthesis character (**(**, **[**, or **{**) or quote (**\"** or **'**) wraps it in that pair. Pair wrapping is not exclusive to notes: it works the same way in the command editor.",
     },
