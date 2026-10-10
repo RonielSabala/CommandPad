@@ -201,7 +201,7 @@ export function Minimap({ scrollRef, listId, mirror: Mirror }: Props) {
       container.scrollTop += event.deltaY;
     };
 
-    host.addEventListener(EventType.WHEEL, onWheel, { passive: true });
+    host.addEventListener(EventType.WHEEL, onWheel, PASSIVE);
     return () => host.removeEventListener(EventType.WHEEL, onWheel);
   }, [scrollRef]);
 

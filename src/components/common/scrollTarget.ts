@@ -1,4 +1,4 @@
-import { EventType } from "@/common/constants/events";
+import { EventType, PASSIVE } from "@/common/constants/events";
 import { useMemo, type RefObject } from "react";
 
 /** A horizontally scrollable thing, whatever owns the scrolling. */
@@ -34,7 +34,7 @@ export function useDomScrollTarget(
           return NO_SUBSCRIPTION;
         }
 
-        element.addEventListener(EventType.SCROLL, listener, { passive: true });
+        element.addEventListener(EventType.SCROLL, listener, PASSIVE);
         return () => element.removeEventListener(EventType.SCROLL, listener);
       },
 

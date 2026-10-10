@@ -121,6 +121,11 @@ export const TooltipConfig = {
   ARROW_INSET: 14,
 } as const;
 
+export const StickyScrollbarConfig = {
+  /** Positions closer than this are the same. */
+  EPSILON_PX: 1,
+} as const;
+
 export const MinimapConfig = {
   SCALE: 0.12,
   OVERSCROLL_PROPERTY: "--minimap-overscroll",
