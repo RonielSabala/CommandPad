@@ -1,5 +1,9 @@
 import { CssClass } from "@/common/constants/css";
-import { InsertPosition, VariableEntryKind } from "@/common/enums";
+import {
+  InsertPosition,
+  VariableEntryKind,
+  VariableKind,
+} from "@/common/enums";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuItem,
@@ -8,6 +12,7 @@ import {
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
 import {
   DuplicateIcon,
+  EnumIcon,
   InsertAboveIcon,
   InsertBelowIcon,
   SectionIcon,
@@ -52,6 +57,25 @@ function InsertSubmenu({
       >
         {t.variables.variableLabel}
       </ContextMenuItem>
+
+      <ContextMenuItem
+        icon={
+          <EnumIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
+        onSelect={() =>
+          insertVariableRow(
+            targetId,
+            VariableEntryKind.VARIABLE,
+            position,
+            VariableKind.ENUM,
+          )
+        }
+      >
+        {t.variables.enumLabel}
+      </ContextMenuItem>
+
       <ContextMenuItem
         icon={
           <SectionIcon

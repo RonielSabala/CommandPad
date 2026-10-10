@@ -235,6 +235,16 @@ export function VariableIcon(props: IconProps) {
   );
 }
 
+export function EnumIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+      <path d="M5 2.5c-1.3 0-1.7.6-1.7 1.8V6c0 1-.5 2-1.3 2 .8 0 1.3 1 1.3 2v1.7c0 1.2.4 1.8 1.7 1.8" />
+      <path d="M11 2.5c1.3 0 1.7.6 1.7 1.8V6c0 1 .5 2 1.3 2-.8 0-1.3 1-1.3 2v1.7c0 1.2-.4 1.8-1.7 1.8" />
+      <polyline points="5.8,8.2 7.3,9.7 10.2,6.3" />
+    </svg>
+  );
+}
+
 export function SectionIcon(props: IconProps) {
   return (
     <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>

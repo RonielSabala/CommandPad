@@ -1,19 +1,14 @@
 import { CssClass } from "@/common/constants/css";
-import { VariableEntryKind, VariableKind } from "@/common/enums";
+import { VariableEntryKind } from "@/common/enums";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
 import { EyeIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { hasValuesToClear, useStore } from "@/store/store";
 import { getCaseOperationKeywords } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
-import {
-  AlphabetUppercase,
-  Collection,
-  CursorText,
-  Eraser,
-  ListUl,
-} from "react-bootstrap-icons";
+import type { ReactNode } from "react";
+import { AlphabetUppercase, Collection, Eraser } from "react-bootstrap-icons";
 
 import {
   DuplicateItem,
@@ -23,6 +18,30 @@ import {
 } from "./VariableRowMenuItems";
 
 const CASE_KEYWORDS = getCaseOperationKeywords();
+
+function ClearValuesItem({
+  variableId,
+  children,
+}: {
+  variableId: string;
+  children: ReactNode;
+}) {
+  const clearVariableValues = useStore((state) => state.clearVariableValues);
+  const hasValues = useStore((state) => hasValuesToClear(state, variableId));
+
+  if (!hasValues) {
+    return null;
+  }
+
+  return (
+    <ContextMenuItem
+      icon={<Eraser className={CssClass.ICON_MD} />}
+      onSelect={() => clearVariableValues(variableId)}
+    >
+      {children}
+    </ContextMenuItem>
+  );
+}
 
 interface Props {
   variableId: string;
@@ -41,11 +60,9 @@ export function VariableActionsMenu({
   sectioned,
 }: Props) {
   const t = useTranslation();
-  const setVariableKind = useStore((state) => state.setVariableKind);
   const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
   const applyVariableKeyCase = useStore((state) => state.applyVariableKeyCase);
   const addVariableSection = useStore((state) => state.addVariableSection);
-  const clearVariableValues = useStore((state) => state.clearVariableValues);
 
   return (
     <VariableRowMenu
@@ -57,24 +74,6 @@ export function VariableActionsMenu({
     >
       {(count) => (
         <>
-          <ContextMenuItem
-            icon={
-              isEnum ? (
-                <CursorText className={CssClass.ICON_MD} />
-              ) : (
-                <ListUl className={CssClass.ICON_MD} />
-              )
-            }
-            onSelect={() =>
-              setVariableKind(
-                variableId,
-                isEnum ? VariableKind.TEXT : VariableKind.ENUM,
-              )
-            }
-          >
-            {isEnum ? t.variables.makeText(count) : t.variables.makeEnum(count)}
-          </ContextMenuItem>
-
           {!isEnum && (
             <ContextMenuItem
               icon={
@@ -108,12 +107,9 @@ export function VariableActionsMenu({
             ))}
           </ContextMenuSubmenu>
 
-          <ContextMenuItem
-            icon={<Eraser className={CssClass.ICON_MD} />}
-            onSelect={() => clearVariableValues(variableId)}
-          >
+          <ClearValuesItem variableId={variableId}>
             {t.variables.clearValues(count)}
-          </ContextMenuItem>
+          </ClearValuesItem>
 
           {sectioned && (
             <ContextMenuItem

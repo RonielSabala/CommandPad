@@ -113,15 +113,14 @@ export interface Messages {
     empty: string;
     emptyTitle: string;
     emptyHint: string;
-    new: string;
     newTitle: string;
     openEditorTitle: string;
     keyPlaceholder: string;
     valuePlaceholder: string;
     reveal: (count: number) => string;
     mask: (count: number) => string;
-    makeEnum: (count: number) => string;
-    makeText: (count: number) => string;
+    enumLabel: string;
+    newEnumTitle: string;
     optionPlaceholder: string;
     noOptions: string;
     addOptionPlaceholder: string;
@@ -537,7 +536,7 @@ export interface Messages {
       demoHint: (variableActionsLabel: string) => string;
       constants: string;
       constantsDemoHint: string;
-      enums: (variableActionsLabel: string, makeEnumLabel: string) => string;
+      enums: (enumLabel: string, newRowLabel: string) => string;
       enumsDemoHint: string;
       clearValues: (clearValuesLabel: string) => string;
     };

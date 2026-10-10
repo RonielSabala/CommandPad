@@ -102,17 +102,14 @@ export const en: Messages = {
     empty: "No variables defined.",
     emptyTitle: "No variables yet.",
     emptyHint: "Add one below, then reference it anywhere.",
-    new: "New",
     newTitle: "New variable",
     openEditorTitle: "Open variables editor",
     keyPlaceholder: "key",
     valuePlaceholder: "value",
     reveal: (count) => (count === 1 ? "Reveal value" : "Reveal values"),
     mask: (count) => (count === 1 ? "Mask value" : "Mask values"),
-    makeEnum: (count) =>
-      count === 1 ? "Pick value from a list" : "Pick values from a list",
-    makeText: (count) =>
-      count === 1 ? "Type value freely" : "Type values freely",
+    enumLabel: "Enum",
+    newEnumTitle: "New enum variable",
     optionPlaceholder: "choose an option",
     noOptions: "No options yet",
     addOptionPlaceholder: "Add option…",
@@ -932,8 +929,8 @@ If something goes wrong, undo it in this order:
         "Not every variable changes for the same reason. Some are values you swap all the time, and some are **constants**: they stay the same for the whole life of the runbook, and they are only variables because the same value shows up in command after command. CommandPad tells them apart by naming convention: a key written entirely in **capitals** is treated as a _constant_, and any key with a **lowercase** letter in it is treated as a _variable_.",
       constantsDemoHint:
         "The convention is purely a naming one: constants resolve, get referenced and get renamed exactly like any other variable. Rename a key below from capitals to lowercase and back to see the color follow along.",
-      enums: (variableActionsLabel, makeEnumLabel) =>
-        `A value can also be a fixed set of choices, like an environment or a region, instead of free text: pick **${makeEnumLabel}** from a variable's **${variableActionsLabel}** menu to turn its value into a combo box, where each choice can be removed and a box at the bottom adds a new one.`,
+      enums: (enumLabel, newRowLabel) =>
+        `A value can also be a fixed set of choices, like an environment or a region, instead of free text. Add an **${enumLabel}** variable, from the **${newRowLabel}** row of the variables editor or the bottom of the sidebar list, and its value is a combo box: each choice can be removed and a box at the bottom adds a new one.`,
       enumsDemoHint:
         "Below, `env` can only be one of three clusters. Pick another one and the command follows, with no chance of a typo in the context name:",
       clearValues: (clearValuesLabel) =>

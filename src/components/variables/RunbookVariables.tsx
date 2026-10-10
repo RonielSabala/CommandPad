@@ -5,11 +5,12 @@ import {
   RunbookView,
   SelectionGroup,
   VariableEntryKind,
+  VariableKind,
 } from "@/common/enums";
 import type { Block, Variable, VariableSection } from "@/common/types";
 import { AddRow } from "@/components/common/AddRow";
 import { EmptyState } from "@/components/common/EmptyState";
-import { SectionIcon, VariableIcon } from "@/components/icons";
+import { EnumIcon, SectionIcon, VariableIcon } from "@/components/icons";
 import { Minimap } from "@/components/workspace/minimap/Minimap";
 import { VariablesMirror } from "@/components/workspace/minimap/VariablesMirror";
 import { WorkspaceContextMenu } from "@/components/workspace/WorkspaceContextMenu";
@@ -47,11 +48,18 @@ function AddVariableRow() {
       label={t.variables.newRowLabel}
       items={[
         {
-          key: VariableEntryKind.VARIABLE,
+          key: VariableKind.TEXT,
           icon: VariableIcon,
           label: t.variables.variableLabel,
           title: t.variables.newTitle,
-          onAdd: addVariable,
+          onAdd: () => void addVariable(),
+        },
+        {
+          key: VariableKind.ENUM,
+          icon: EnumIcon,
+          label: t.variables.enumLabel,
+          title: t.variables.newEnumTitle,
+          onAdd: () => void addVariable(VariableKind.ENUM),
         },
         {
           key: VariableEntryKind.SECTION,

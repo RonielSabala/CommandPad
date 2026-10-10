@@ -51,8 +51,13 @@ export function buildRunbookSource(content: RunbookContent): string {
         return serializeSection(entry.section);
       }
 
-      const { id, ...rest } = entry.variable;
-      return rest;
+      const { id, ...variable } = entry.variable;
+      if (!variable.options) {
+        return variable;
+      }
+
+      const { language, secret, ...choice } = variable;
+      return choice;
     }),
     blocks: (content.blocks ?? []).map(blockToJson),
   };
@@ -77,17 +82,25 @@ function normalizeVariable(
     return null;
   }
 
-  return {
+  const variable = {
     id: isString(raw.id) && raw.id ? raw.id : (carried ?? generateId()),
     key: isString(raw.key) ? raw.key : "",
     value: isString(raw.value) ? raw.value : "",
+  };
+
+  if (Array.isArray(raw.options)) {
+    return {
+      ...variable,
+      options: [...new Set(raw.options.filter(isString))],
+    };
+  }
+
+  return {
+    ...variable,
     language: isCommandLanguage(raw.language)
       ? raw.language
       : DEFAULT_VARIABLE_LANGUAGE,
     ...(raw.secret === true ? { secret: true } : {}),
-    ...(Array.isArray(raw.options)
-      ? { options: [...new Set(raw.options.filter(isString))] }
-      : {}),
   };
 }
 
