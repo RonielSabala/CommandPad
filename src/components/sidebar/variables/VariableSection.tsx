@@ -1,7 +1,7 @@
 import { VariableKind } from "@/common/enums";
 import type { Block, Variable } from "@/common/types";
 import { SearchInput } from "@/components/common/SearchInput";
-import { EnumIcon, PlusIcon } from "@/components/icons";
+import { EnumIcon, VariableIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { getUsedVariableKeys, isVariableUnused } from "@/utils/resolution";
@@ -66,8 +66,8 @@ export function VariableSection() {
       <SidebarSectionFooter
         onClick={() => void addVariable()}
         title={t.variables.newTitle}
-        label={t.variables.new}
-        icon={PlusIcon}
+        label={t.variables.variableLabel}
+        icon={VariableIcon}
         secondaryAction={{
           onClick: () => void addVariable(VariableKind.ENUM),
           title: t.variables.newEnumTitle,

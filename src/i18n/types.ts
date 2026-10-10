@@ -113,7 +113,6 @@ export interface Messages {
     empty: string;
     emptyTitle: string;
     emptyHint: string;
-    new: string;
     newTitle: string;
     openEditorTitle: string;
     keyPlaceholder: string;
