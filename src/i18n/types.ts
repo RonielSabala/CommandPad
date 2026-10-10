@@ -160,6 +160,8 @@ export interface Messages {
     closeOthers: string;
     closeAll: string;
     closeUnresolvedTab: string;
+    unresolvedTitle: string;
+    unresolvedBlock: (number: number, type: string) => string;
   };
   source: {
     openSource: string;

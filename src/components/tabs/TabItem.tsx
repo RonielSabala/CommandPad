@@ -3,6 +3,7 @@ import { CssClass } from "@/common/constants/css";
 import { DragEffect, MouseButton } from "@/common/constants/events";
 import { TabDropSide } from "@/common/enums";
 import type { Tab } from "@/common/types";
+import { useRichTooltip } from "@/components/common/tooltip/richTooltip";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CloseIcon } from "@/components/icons";
 import { blockDrag } from "@/hooks/blockDrag";
@@ -20,6 +21,7 @@ import {
 } from "react";
 
 import "./TabItem.css";
+import { TabUnresolvedTooltip } from "./TabUnresolvedTooltip";
 
 const tabDrag: { srcId: string | null } = { srcId: null };
 
@@ -40,6 +42,7 @@ export function TabItem({ tab, onOpenMenu }: Props) {
   const copyBlocksToTab = useStore((state) => state.copyBlocksToTab);
 
   const unresolved = useTabUnresolved(tab);
+  const unresolvedTip = useRichTooltip();
 
   const [dragging, setDragging] = useState(false);
   const [dropSide, setDropSide] = useState<TabDropSide | null>(null);
@@ -63,125 +66,132 @@ export function TabItem({ tab, onOpenMenu }: Props) {
 
   const closeLabel = unresolved ? t.tabs.closeUnresolvedTab : t.tabs.closeTab;
   return (
-    <div
-      className={classNames(
-        "tab",
-        isActive && "tab-active",
-        blockDropTarget && "block-drop-target",
-        dropSide === TabDropSide.LEFT && "drag-over-left",
-        dropSide === TabDropSide.RIGHT && "drag-over-right",
-        dragging && CssClass.DRAGGING,
-      )}
-      {...tooltip(tabLabel)}
-      draggable
-      onClick={() => switchTab(tabId)}
-      onMouseDown={(event) => {
-        if (event.button === MouseButton.MIDDLE) {
-          event.preventDefault();
-        }
-      }}
-      onContextMenu={(event) => onOpenMenu(event, tabId)}
-      onMouseUp={(event) => {
-        if (event.button === MouseButton.MIDDLE) {
-          event.preventDefault();
-          closeTab(tabId);
-        }
-      }}
-      onDragStart={(event) => {
-        tabDrag.srcId = tabId;
-        setDragging(true);
-        event.dataTransfer.effectAllowed = DragEffect.MOVE;
-      }}
-      onDragEnd={() => {
-        tabDrag.srcId = null;
-        setDragging(false);
-        setDropSide(null);
-      }}
-      onDragOver={(event) => {
-        // A block drag
-        if (blockDrag.srcId) {
-          if (isActive) {
+    <>
+      <div
+        className={classNames(
+          "tab",
+          isActive && "tab-active",
+          blockDropTarget && "block-drop-target",
+          dropSide === TabDropSide.LEFT && "drag-over-left",
+          dropSide === TabDropSide.RIGHT && "drag-over-right",
+          dragging && CssClass.DRAGGING,
+        )}
+        {...tooltip(tabLabel)}
+        draggable
+        onClick={() => switchTab(tabId)}
+        onMouseDown={(event) => {
+          if (event.button === MouseButton.MIDDLE) {
+            event.preventDefault();
+          }
+        }}
+        onContextMenu={(event) => onOpenMenu(event, tabId)}
+        onMouseUp={(event) => {
+          if (event.button === MouseButton.MIDDLE) {
+            event.preventDefault();
+            closeTab(tabId);
+          }
+        }}
+        onDragStart={(event) => {
+          tabDrag.srcId = tabId;
+          setDragging(true);
+          event.dataTransfer.effectAllowed = DragEffect.MOVE;
+        }}
+        onDragEnd={() => {
+          tabDrag.srcId = null;
+          setDragging(false);
+          setDropSide(null);
+        }}
+        onDragOver={(event) => {
+          // A block drag
+          if (blockDrag.srcId) {
+            if (isActive) {
+              return;
+            }
+
+            event.preventDefault();
+            event.dataTransfer.dropEffect = DragEffect.COPY;
+            setBlockDropTarget(true);
+
+            // Keep hovering to open the tab and drop at a specific spot
+            if (!hoverSwitchTimer.current) {
+              hoverSwitchTimer.current = setTimeout(() => {
+                hoverSwitchTimer.current = undefined;
+
+                if (blockDrag.srcId) {
+                  setBlockDropTarget(false);
+                  switchTab(tabId);
+                }
+              }, TAB_HOVER_SWITCH_MS);
+            }
+
+            return;
+          }
+
+          if (!tabDrag.srcId || tabDrag.srcId === tabId) {
             return;
           }
 
           event.preventDefault();
-          event.dataTransfer.dropEffect = DragEffect.COPY;
-          setBlockDropTarget(true);
-
-          // Keep hovering to open the tab and drop at a specific spot
-          if (!hoverSwitchTimer.current) {
-            hoverSwitchTimer.current = setTimeout(() => {
-              hoverSwitchTimer.current = undefined;
-
-              if (blockDrag.srcId) {
-                setBlockDropTarget(false);
-                switchTab(tabId);
-              }
-            }, TAB_HOVER_SWITCH_MS);
+          event.dataTransfer.dropEffect = DragEffect.MOVE;
+          setDropSide(isLeftHalf(event) ? TabDropSide.LEFT : TabDropSide.RIGHT);
+        }}
+        onDragLeave={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+            setDropSide(null);
+            setBlockDropTarget(false);
+            cancelHoverSwitch();
           }
-
-          return;
-        }
-
-        if (!tabDrag.srcId || tabDrag.srcId === tabId) {
-          return;
-        }
-
-        event.preventDefault();
-        event.dataTransfer.dropEffect = DragEffect.MOVE;
-        setDropSide(isLeftHalf(event) ? TabDropSide.LEFT : TabDropSide.RIGHT);
-      }}
-      onDragLeave={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+        }}
+        onDrop={(event) => {
+          event.preventDefault();
           setDropSide(null);
           setBlockDropTarget(false);
           cancelHoverSwitch();
-        }
-      }}
-      onDrop={(event) => {
-        event.preventDefault();
-        setDropSide(null);
-        setBlockDropTarget(false);
-        cancelHoverSwitch();
 
-        // Copy into this tab at the end
-        if (blockDrag.srcId) {
-          if (blockDrag.sourceTabId) {
-            copyBlocksToTab(blockDrag.sourceTabId, tabId, blockDrag.blockIds);
+          // Copy into this tab at the end
+          if (blockDrag.srcId) {
+            if (blockDrag.sourceTabId) {
+              copyBlocksToTab(blockDrag.sourceTabId, tabId, blockDrag.blockIds);
+            }
+
+            return;
           }
 
-          return;
-        }
+          const srcId = tabDrag.srcId;
+          if (!srcId || srcId === tabId) {
+            return;
+          }
 
-        const srcId = tabDrag.srcId;
-        if (!srcId || srcId === tabId) {
-          return;
-        }
-
-        reorderTabs(srcId, tabId, !isLeftHalf(event));
-      }}
-    >
-      <span className="tab-label">{tabLabel}</span>
-      <button
-        className={classNames(
-          "tab-close",
-          unresolved && CssClass.IS_UNRESOLVED,
-        )}
-        aria-label={closeLabel}
-        {...tooltip(closeLabel)}
-        onClick={(event) => {
-          event.stopPropagation();
-          closeTab(tabId);
+          reorderTabs(srcId, tabId, !isLeftHalf(event));
         }}
       >
-        <CloseIcon
+        <span className="tab-label">{tabLabel}</span>
+        <button
           className={classNames(
-            "tab-close-icon",
-            CssClass.ICON_SM,
-            CssClass.ICON_BOLD,
+            "tab-close",
+            unresolved && CssClass.IS_UNRESOLVED,
           )}
-        />
-      </button>
-    </div>
+          aria-label={closeLabel}
+          {...(unresolved ? unresolvedTip.props : tooltip(closeLabel))}
+          onClick={(event) => {
+            event.stopPropagation();
+            closeTab(tabId);
+          }}
+        >
+          <CloseIcon
+            className={classNames(
+              "tab-close-icon",
+              CssClass.ICON_SM,
+              CssClass.ICON_BOLD,
+            )}
+          />
+        </button>
+      </div>
+
+      {unresolved &&
+        unresolvedTip.render((hide) => (
+          <TabUnresolvedTooltip tab={tab} hide={hide} />
+        ))}
+    </>
   );
 }

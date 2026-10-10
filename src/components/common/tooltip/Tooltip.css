@@ -55,6 +55,7 @@
 /* Rich tooltip */
 
 .tooltip.is-interactive {
+  padding: var(--space-4) var(--space-4) var(--space-6) var(--space-6);
   text-align: left;
   white-space: normal;
 }

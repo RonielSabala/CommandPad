@@ -253,6 +253,8 @@ export interface StoreState {
   selectKeyHeld: boolean;
   linkKeyHeld: boolean;
   pendingFocusBlockId: string | null;
+  pendingRevealBlockId: string | null;
+  revealedBlockId: string | null;
   pendingFocusVariableId: string | null;
   pendingFocusSectionId: string | null;
   imageViewerBlockId: string | null;
@@ -412,6 +414,9 @@ export interface StoreState {
   ) => void;
   clearFlash: (blockId: string) => void;
   consumeBlockFocus: () => void;
+  revealBlock: (tabId: string, blockId: string) => void;
+  finishBlockReveal: () => void;
+  clearBlockReveal: () => void;
   toggleClampSurfaceExpanded: (id: string, surface: ClampSurface) => void;
   openImageViewer: (blockId: string, slides?: ImageBlock[] | null) => void;
   closeImageViewer: () => void;
@@ -1650,6 +1655,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       selectKeyHeld: false,
       linkKeyHeld: false,
       pendingFocusBlockId: null,
+      pendingRevealBlockId: null,
+      revealedBlockId: null,
       pendingFocusVariableId: null,
       pendingFocusSectionId: null,
       imageViewerBlockId: null,
@@ -3514,6 +3521,29 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }),
 
       consumeBlockFocus: () => set({ pendingFocusBlockId: null }),
+
+      revealBlock: (tabId, blockId) => {
+        get().switchTab(tabId);
+
+        const view = getRunbookView(get());
+        if (view !== RunbookView.PREVIEW) {
+          get().toggleRunbookView(view);
+        }
+
+        set({ pendingRevealBlockId: blockId });
+      },
+
+      finishBlockReveal: () =>
+        set((s) =>
+          s.pendingRevealBlockId
+            ? {
+                pendingRevealBlockId: null,
+                revealedBlockId: s.pendingRevealBlockId,
+              }
+            : {},
+        ),
+
+      clearBlockReveal: () => set({ revealedBlockId: null }),
 
       toggleClampSurfaceExpanded: (id, surface) =>
         set((s) => {

@@ -346,6 +346,35 @@ body {
   animation: duplicate-flash 0.5s ease-out forwards;
 }
 
+/* --- BLOCK REVEAL --- */
+
+@keyframes block-reveal {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.block-reveal::after {
+  content: "";
+  position: absolute;
+  z-index: var(--z-raised);
+  inset: 0;
+  border-radius: var(--radius-lg);
+  background: var(--unresolved-bg-2);
+  animation: block-reveal 1.2s ease-out forwards;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .block-reveal::after {
+    animation-duration: 0.01s;
+  }
+}
+
 /* --- SCROLLING SUPPRESSIONS --- */
 
 .is-scrolling > * {

@@ -32,6 +32,11 @@ interface ActiveTooltip {
   richId: string | null;
 }
 
+interface PointerPosition {
+  x: number;
+  y: number;
+}
+
 const FOCUS_VISIBLE = ":focus-visible";
 
 /** The width of the widest line box the text wrapped into. */
@@ -60,6 +65,9 @@ export function TooltipLayer() {
   const lastPlacementRef = useRef<TooltipPlacement | null>(null);
   const timerRef = useRef<number | null>(null);
   const warmUntilRef = useRef(0);
+  const nextRef = useRef<HTMLElement | null>(null);
+  const lastPointerDownRef = useRef<PointerPosition | null>(null);
+  const dismissedAtRef = useRef<PointerPosition | null>(null);
 
   const clearTimer = useCallback(() => {
     if (timerRef.current !== null) {
@@ -94,23 +102,6 @@ export function TooltipLayer() {
       focused.blur();
     }
   }, [clearTimer, insideBubble]);
-
-  /** The pointer left. */
-  const leave = useCallback(() => {
-    if (!activeRef.current?.richId) {
-      hide();
-      return;
-    }
-
-    if (timerRef.current !== null) {
-      return;
-    }
-
-    timerRef.current = window.setTimeout(() => {
-      timerRef.current = null;
-      hide();
-    }, TooltipConfig.HIDE_DELAY_MS);
-  }, [hide]);
 
   const show = useCallback(
     (element: HTMLElement) => {
@@ -161,6 +152,39 @@ export function TooltipLayer() {
     [clearTimer, hide],
   );
 
+  /** The pointer left, maybe for `next`. */
+  const leave = useCallback(
+    (next: HTMLElement | null = null) => {
+      if (!activeRef.current?.richId) {
+        hide();
+        return;
+      }
+
+      nextRef.current = next;
+      if (timerRef.current !== null) {
+        return;
+      }
+
+      timerRef.current = window.setTimeout(() => {
+        timerRef.current = null;
+        const pending = nextRef.current;
+
+        hide();
+        if (pending?.isConnected) {
+          show(pending);
+        }
+      }, TooltipConfig.HIDE_DELAY_MS);
+    },
+    [hide, show],
+  );
+
+  /** The content closed it. */
+  const dismiss = useCallback(() => {
+    hide();
+    warmUntilRef.current = 0;
+    dismissedAtRef.current = lastPointerDownRef.current;
+  }, [hide]);
+
   useEffect(() => {
     const onPointerOver = (event: PointerEvent) => {
       if (insideBubble(event.target)) {
@@ -168,14 +192,27 @@ export function TooltipLayer() {
         return;
       }
 
-      const element = tooltipTarget(event.target);
+      // The page under a dismissed bubble
+      const dismissedAt = dismissedAtRef.current;
+      if (dismissedAt) {
+        if (
+          event.clientX === dismissedAt.x &&
+          event.clientY === dismissedAt.y
+        ) {
+          return;
+        }
+        dismissedAtRef.current = null;
+      }
 
-      if (element) {
+      const element = tooltipTarget(event.target);
+      const rich = activeRef.current?.richId;
+
+      if (element && !(rich && activeRef.current?.element !== element)) {
         show(element);
         return;
       }
 
-      leave();
+      leave(element);
     };
 
     const onPointerOut = (event: PointerEvent) => {
@@ -203,6 +240,7 @@ export function TooltipLayer() {
     };
 
     const onPointerDown = (event: PointerEvent) => {
+      lastPointerDownRef.current = { x: event.clientX, y: event.clientY };
       if (!insideBubble(event.target)) {
         hide();
       }
@@ -255,9 +293,11 @@ export function TooltipLayer() {
   useLayoutEffect(() => {
     const element = contentRef.current;
     publishRichTooltipSlot(
-      shownRichId && element ? { id: shownRichId, element } : null,
+      shownRichId && element
+        ? { id: shownRichId, element, hide: dismiss }
+        : null,
     );
-  }, [shownRichId]);
+  }, [shownRichId, dismiss]);
 
   useEffect(() => () => publishRichTooltipSlot(null), []);
 

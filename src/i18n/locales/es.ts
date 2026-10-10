@@ -166,6 +166,8 @@ export const es: Messages = {
     closeOthers: "Cerrar las demás",
     closeAll: "Cerrar todas",
     closeUnresolvedTab: "Cerrar pestaña (este libro tiene partes sin resolver)",
+    unresolvedTitle: "Partes sin resolver en:",
+    unresolvedBlock: (number, type) => `Bloque ${number} · ${type}`,
   },
   source: {
     openSource: "Abrir archivo fuente",
@@ -900,7 +902,7 @@ Si algo sale mal, deshazlo en este orden:
       labelDemo:
         "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas, cierra alguna, y abre la fuente para ver el libro de una pestaña como JSON.",
       unresolvedMarker:
-        "Cuando el botón de cerrar de una pestaña es un punto rojo relleno, ese libro tiene partes sin resolver, así que un libro que no está listo para usarse se nota sin necesidad de abrirlo. Al pasar el puntero por el punto, vuelve a ser el botón de cerrar. La tercera pestaña de arriba lleva uno: abre sus variables y dale un valor a `HOST`, y el punto desaparece en cuanto todas las referencias resuelven.",
+        "Cuando el botón de cerrar de una pestaña es un punto rojo relleno, ese libro tiene partes sin resolver, así que un libro que no está listo para usarse se nota sin necesidad de abrirlo. Al pasar el puntero por el punto, vuelve a ser el botón de cerrar, con una lista de los bloques que no resuelven: pasa el puntero por uno para leer dónde deja de resolver, y haz clic en él para saltar directamente a él. La tercera pestaña de arriba lleva uno: abre sus variables y dale un valor a `HOST`, y el punto desaparece en cuanto todas las referencias resuelven.",
     },
     sidebar: {
       intro:

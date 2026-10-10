@@ -14,6 +14,7 @@ export const CssClass = {
   DRAG_OVER: "drag-over",
   DROP_TARGET: "drop-target",
   DUPLICATE_FLASH: "duplicate-flash",
+  BLOCK_REVEAL: "block-reveal",
 
   CLAMPED: "clamped",
   CLAMP_SURFACE: "clamp-surface",

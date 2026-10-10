@@ -2,9 +2,10 @@ import { CssClass } from "@/common/constants/css";
 import { DataAttr, ElementId, ScrollIntoView } from "@/common/constants/dom";
 import type { Block, Variable } from "@/common/types";
 import { getActiveTab, useStore } from "@/store/store";
-import { scrollRowIntoView } from "@/utils/dom";
+import { scrollRowIntoView, whenElementSettles } from "@/utils/dom";
 import { getSecretKeys, getVariableMap } from "@/utils/resolution";
 import { useEffect, useMemo, useRef } from "react";
+
 import { BlockItem } from "./BlockItem";
 import "./BlocksList.css";
 
@@ -17,6 +18,8 @@ export function BlocksList() {
   const variables = activeTab?.variables ?? EMPTY_VARIABLES;
   const pendingFocusBlockId = useStore((state) => state.pendingFocusBlockId);
   const imageViewerBlockId = useStore((state) => state.imageViewerBlockId);
+  const pendingRevealBlockId = useStore((state) => state.pendingRevealBlockId);
+  const finishBlockReveal = useStore((state) => state.finishBlockReveal);
 
   const variableMap = useMemo(() => getVariableMap(variables), [variables]);
   const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
@@ -40,6 +43,42 @@ export function BlocksList() {
       ScrollIntoView.BLOCK_START,
     );
   }, [imageViewerBlockId]);
+
+  // Scroll to the block, then flash it once it stops moving
+  useEffect(() => {
+    if (!pendingRevealBlockId) {
+      return;
+    }
+
+    let cancelSettle = () => {};
+    let frame = 0;
+
+    // A tab switch restores its saved scroll position in one
+    frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => {
+        const row = listRef.current?.querySelector<HTMLElement>(
+          `[${DataAttr.BLOCK_ID}="${pendingRevealBlockId}"]`,
+        );
+
+        if (!row) {
+          finishBlockReveal();
+          return;
+        }
+
+        row.scrollIntoView({
+          block: ScrollIntoView.BLOCK_CENTER,
+          behavior: ScrollIntoView.BEHAVIOR_SMOOTH,
+        });
+
+        cancelSettle = whenElementSettles(row, finishBlockReveal);
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(frame);
+      cancelSettle();
+    };
+  }, [pendingRevealBlockId, finishBlockReveal]);
 
   return (
     <div

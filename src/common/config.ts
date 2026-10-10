@@ -122,6 +122,11 @@ export const TooltipConfig = {
   ARROW_INSET: 14,
 } as const;
 
+export const TabUnresolvedConfig = {
+  EXCERPT_LENGTH: 48,
+  ELLIPSIS: "…",
+} as const;
+
 export const StickyScrollbarConfig = {
   /** Positions closer than this are the same. */
   EPSILON_PX: 1,

@@ -4,7 +4,7 @@ import type { CommandSegment } from "@/common/types";
 import type { ReferenceContext } from "./reference";
 import { resolveReference } from "./reference";
 import { hasUnresolvedSegments } from "./segments";
-import { previewSpans } from "./spans";
+import { hasUnresolvedSpans, previewSpans } from "./spans";
 import { scanReferences, unescapeBraces } from "./token";
 import type { VariableMap } from "./types";
 
@@ -16,25 +16,24 @@ function commandContext(variableMap: VariableMap): ReferenceContext {
   };
 }
 
-export function resolveCommandText(
+function literalSegment(text: string): CommandSegment {
+  return {
+    text: unescapeBraces(text, ReferenceSurface.COMMAND),
+    type: CommandSegmentType.LITERAL,
+  };
+}
+
+export function* resolveCommandSegments(
   rawText: string,
   variableMap: VariableMap,
-): CommandSegment[] {
+): Generator<CommandSegment> {
   const context = commandContext(variableMap);
-  const segments: CommandSegment[] = [];
   let lastEnd = 0;
 
-  function pushLiteral(text: string): void {
-    if (text) {
-      segments.push({
-        text: unescapeBraces(text, ReferenceSurface.COMMAND),
-        type: CommandSegmentType.LITERAL,
-      });
-    }
-  }
-
   for (const match of scanReferences(rawText, ReferenceSurface.COMMAND)) {
-    pushLiteral(rawText.slice(lastEnd, match.start));
+    if (match.start > lastEnd) {
+      yield literalSegment(rawText.slice(lastEnd, match.start));
+    }
 
     const { key, text, resolved, spans } = resolveReference(
       match.token,
@@ -42,21 +41,28 @@ export function resolveCommandText(
       context,
     );
 
-    segments.push({
+    yield {
       key,
       text,
       type: resolved
         ? CommandSegmentType.RESOLVED
         : CommandSegmentType.UNRESOLVED,
       spans: previewSpans(spans),
-    });
+    };
 
     lastEnd = match.end;
   }
 
-  pushLiteral(rawText.slice(lastEnd));
+  if (lastEnd < rawText.length) {
+    yield literalSegment(rawText.slice(lastEnd));
+  }
+}
 
-  return segments;
+export function resolveCommandText(
+  rawText: string,
+  variableMap: VariableMap,
+): CommandSegment[] {
+  return Array.from(resolveCommandSegments(rawText, variableMap));
 }
 
 export function resolveCommandToString(
@@ -73,4 +79,26 @@ export function hasUnresolvedTokens(
   variableMap: VariableMap,
 ): boolean {
   return hasUnresolvedSegments(resolveCommandText(rawText, variableMap));
+}
+
+/** Where the first reference that doesn't fully resolve starts. */
+export function findUnresolvedOffset(
+  rawText: string,
+  variableMap: VariableMap,
+): number {
+  const context = commandContext(variableMap);
+
+  for (const match of scanReferences(rawText, ReferenceSurface.COMMAND)) {
+    const { resolved, spans } = resolveReference(
+      match.token,
+      match.raw,
+      context,
+    );
+
+    if (!resolved || hasUnresolvedSpans(spans)) {
+      return match.start;
+    }
+  }
+
+  return -1;
 }

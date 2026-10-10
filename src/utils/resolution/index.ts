@@ -2,6 +2,7 @@ export { carryVariables, uniqueCopyKey } from "./carry";
 export type { CarriedVariables } from "./carry";
 export {
   hasUnresolvedTokens,
+  resolveCommandSegments,
   resolveCommandText,
   resolveCommandToString
 } from "./command";
@@ -38,7 +39,11 @@ export {
 } from "./token";
 export type { OpenReference, ReferenceMatch } from "./token";
 export type { ResolvedValue, VariableMap } from "./types";
-export { hasUnresolvedReferences } from "./unresolved";
+export {
+  hasUnresolvedBlockReferences,
+  hasUnresolvedReferences,
+  unresolvedBlockText
+} from "./unresolved";
 export { getUsedVariableKeys, isVariableUnused } from "./usage";
 export {
   getSecretKeys,
