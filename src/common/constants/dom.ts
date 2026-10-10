@@ -49,16 +49,25 @@ export const HtmlTag = {
 } as const;
 
 export const DataAttr = {
+  // Core
+
   BLOCK_ID: "data-block-id",
-  RUNBOOK_ID: "data-runbook-id",
   VARIABLE_ID: "data-variable-id",
+  RUNBOOK_ID: "data-runbook-id",
+
   NOTE_OFFSET: "data-note-offset",
   NOTE_ALIGN: "data-note-align",
+
   DRAG_IMAGE: "data-drag-image",
+
+  // Panels
   PANEL_SIDE: "data-panel-side",
   PANEL_COLLAPSED: "data-panel-collapsed",
+
+  // Tooltips
   TOOLTIP: "data-tooltip",
   TOOLTIP_VARIANT: "data-tooltip-variant",
+  TOOLTIP_RICH: "data-tooltip-rich",
   TOOLTIP_SIDE: "data-tooltip-side",
 } as const;
 

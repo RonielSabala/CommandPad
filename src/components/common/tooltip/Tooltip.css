@@ -52,6 +52,37 @@
   display: block;
 }
 
+/* Rich tooltip */
+
+.tooltip.is-interactive {
+  text-align: left;
+  white-space: normal;
+}
+
+.tooltip.is-interactive.is-visible {
+  pointer-events: auto;
+}
+
+.tooltip.is-interactive:focus {
+  outline: none;
+}
+
+.tooltip.is-interactive::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--tooltip-gap);
+}
+
+.tooltip.is-interactive[data-tooltip-side="bottom"]::before {
+  bottom: 100%;
+}
+
+.tooltip.is-interactive[data-tooltip-side="top"]::before {
+  top: 100%;
+}
+
 /* Tooltip arrow */
 
 .tooltip-arrow {

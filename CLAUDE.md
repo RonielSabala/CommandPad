@@ -389,6 +389,8 @@ One app-wide layer replaces native `title`.
 - **All listeners passive** (`PASSIVE`/`PASSIVE_CAPTURE`); the idle `hide()` path is one comparison.
 - The bubble is shrunk to its longest line (`longestLineWidth` on `.tooltip-label`, never named `tooltip-text`) before pure placement (`tooltipPlacement.ts`, with `arrowX`). `is-unplaced` hides it for the measuring frame; on hide it keeps its last text and placement to fade in place.
 - `TooltipVariant.CODE` left-aligns data. `--tooltip-gap` comes from `TooltipConfig.GAP`. `--z-tooltip` is the top layer.
+- **Rich tooltips** (`useRichTooltip`, `richTooltip.ts`) hold any React tree and take the pointer. The anchor spreads `tip.props` (`DataAttr.TOOLTIP_RICH`) and renders `tip.render(() => content)`, which **portals into the bubble from the anchor's own tree**, so the content keeps the anchor's context (its store inside docs demos). Never move content rendering into `TooltipLayer`. The layer publishes its content element through a module-level slot (`publishRichTooltipSlot`), and only the matching anchor renders into it.
+- A rich bubble is `is-interactive`: leaving the anchor hides it after `TooltipConfig.HIDE_DELAY_MS` (a `::before` bridges the gap), and pointer, focus, keys and scroll inside it don't hide it. Escape does, unless the content called `preventDefault`. Its content has no tooltips of its own. It is placed by a `ResizeObserver`, since its content renders after the bubble, and the lasso keeps the selection on clicks inside it.
 
 ### Cloud sync
 

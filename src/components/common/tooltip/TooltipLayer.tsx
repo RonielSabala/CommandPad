@@ -1,6 +1,12 @@
 import { TooltipConfig } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import { BodySelector, DataAttr } from "@/common/constants/dom";
-import { EventType, PASSIVE, PASSIVE_CAPTURE } from "@/common/constants/events";
+import {
+  EventType,
+  Key,
+  PASSIVE,
+  PASSIVE_CAPTURE,
+} from "@/common/constants/events";
 import type { TooltipVariant } from "@/common/enums";
 import { classNames } from "@/utils/string";
 import {
@@ -14,6 +20,7 @@ import {
 import { createPortal } from "react-dom";
 
 import "./Tooltip.css";
+import { publishRichTooltipSlot } from "./richTooltip";
 import { tooltipTarget } from "./tooltip";
 import { placeTooltip, type TooltipPlacement } from "./tooltipPlacement";
 
@@ -21,6 +28,8 @@ interface ActiveTooltip {
   element: HTMLElement;
   text: string;
   variant: TooltipVariant | null;
+  /** Set when the anchor renders its own content. */
+  richId: string | null;
 }
 
 const FOCUS_VISIBLE = ":focus-visible";
@@ -45,6 +54,7 @@ export function TooltipLayer() {
 
   const tooltipRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef<ActiveTooltip | null>(null);
   const lastActiveRef = useRef<ActiveTooltip | null>(null);
   const lastPlacementRef = useRef<TooltipPlacement | null>(null);
@@ -58,6 +68,12 @@ export function TooltipLayer() {
     }
   }, []);
 
+  const insideBubble = useCallback(
+    (target: EventTarget | null) =>
+      target instanceof Node && !!tooltipRef.current?.contains(target),
+    [],
+  );
+
   const hide = useCallback(() => {
     if (timerRef.current === null && activeRef.current === null) {
       return;
@@ -65,12 +81,36 @@ export function TooltipLayer() {
 
     clearTimer();
 
-    if (activeRef.current) {
-      warmUntilRef.current = Date.now() + TooltipConfig.WARM_WINDOW_MS;
-      activeRef.current = null;
-      setActive(null);
+    if (!activeRef.current) {
+      return;
     }
-  }, [clearTimer]);
+
+    warmUntilRef.current = Date.now() + TooltipConfig.WARM_WINDOW_MS;
+    activeRef.current = null;
+    setActive(null);
+
+    const focused = document.activeElement;
+    if (focused instanceof HTMLElement && insideBubble(focused)) {
+      focused.blur();
+    }
+  }, [clearTimer, insideBubble]);
+
+  /** The pointer left. */
+  const leave = useCallback(() => {
+    if (!activeRef.current?.richId) {
+      hide();
+      return;
+    }
+
+    if (timerRef.current !== null) {
+      return;
+    }
+
+    timerRef.current = window.setTimeout(() => {
+      timerRef.current = null;
+      hide();
+    }, TooltipConfig.HIDE_DELAY_MS);
+  }, [hide]);
 
   const show = useCallback(
     (element: HTMLElement) => {
@@ -80,13 +120,15 @@ export function TooltipLayer() {
       }
 
       if (activeRef.current?.element === element) {
+        clearTimer();
         return;
       }
 
       clearTimer();
 
-      const text = element.getAttribute(DataAttr.TOOLTIP);
-      if (!text) {
+      const text = element.getAttribute(DataAttr.TOOLTIP) ?? "";
+      const richId = element.getAttribute(DataAttr.TOOLTIP_RICH);
+      if (!text && !richId) {
         hide();
         return;
       }
@@ -108,6 +150,7 @@ export function TooltipLayer() {
           variant: element.getAttribute(
             DataAttr.TOOLTIP_VARIANT,
           ) as TooltipVariant | null,
+          richId,
         };
 
         activeRef.current = next;
@@ -120,6 +163,11 @@ export function TooltipLayer() {
 
   useEffect(() => {
     const onPointerOver = (event: PointerEvent) => {
+      if (insideBubble(event.target)) {
+        clearTimer();
+        return;
+      }
+
       const element = tooltipTarget(event.target);
 
       if (element) {
@@ -127,33 +175,61 @@ export function TooltipLayer() {
         return;
       }
 
-      if (activeRef.current) {
-        hide();
-      } else {
-        clearTimer();
-      }
+      leave();
     };
 
     const onPointerOut = (event: PointerEvent) => {
       if (!event.relatedTarget) {
-        hide();
+        leave();
       }
     };
 
     const onFocusIn = (event: FocusEvent) => {
+      if (insideBubble(event.target)) {
+        clearTimer();
+        return;
+      }
+
       const element = tooltipTarget(event.target);
       if (element?.matches(FOCUS_VISIBLE)) {
         show(element);
       }
     };
 
+    const onFocusOut = (event: FocusEvent) => {
+      if (!insideBubble(event.relatedTarget)) {
+        hide();
+      }
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (!insideBubble(event.target)) {
+        hide();
+      }
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (
+        !insideBubble(event.target) ||
+        (event.key === Key.ESCAPE && !event.defaultPrevented)
+      ) {
+        hide();
+      }
+    };
+
+    const onScroll = (event: Event) => {
+      if (!insideBubble(event.target)) {
+        hide();
+      }
+    };
+
     document.addEventListener(EventType.POINTER_OVER, onPointerOver, PASSIVE);
     document.addEventListener(EventType.POINTER_OUT, onPointerOut, PASSIVE);
     document.addEventListener(EventType.FOCUS_IN, onFocusIn, PASSIVE);
-    document.addEventListener(EventType.FOCUS_OUT, hide, PASSIVE);
-    document.addEventListener(EventType.POINTER_DOWN, hide, PASSIVE);
-    document.addEventListener(EventType.KEY_DOWN, hide, PASSIVE);
-    document.addEventListener(EventType.SCROLL, hide, PASSIVE_CAPTURE);
+    document.addEventListener(EventType.FOCUS_OUT, onFocusOut, PASSIVE);
+    document.addEventListener(EventType.POINTER_DOWN, onPointerDown, PASSIVE);
+    document.addEventListener(EventType.KEY_DOWN, onKeyDown, PASSIVE);
+    document.addEventListener(EventType.SCROLL, onScroll, PASSIVE_CAPTURE);
     window.addEventListener(EventType.RESIZE, hide, PASSIVE);
     window.addEventListener(EventType.BLUR, hide, PASSIVE);
 
@@ -161,21 +237,34 @@ export function TooltipLayer() {
       document.removeEventListener(EventType.POINTER_OVER, onPointerOver);
       document.removeEventListener(EventType.POINTER_OUT, onPointerOut);
       document.removeEventListener(EventType.FOCUS_IN, onFocusIn);
-      document.removeEventListener(EventType.FOCUS_OUT, hide);
-      document.removeEventListener(EventType.POINTER_DOWN, hide);
-      document.removeEventListener(EventType.KEY_DOWN, hide);
-      document.removeEventListener(EventType.SCROLL, hide, PASSIVE_CAPTURE);
+      document.removeEventListener(EventType.FOCUS_OUT, onFocusOut);
+      document.removeEventListener(EventType.POINTER_DOWN, onPointerDown);
+      document.removeEventListener(EventType.KEY_DOWN, onKeyDown);
+      document.removeEventListener(EventType.SCROLL, onScroll, PASSIVE_CAPTURE);
       window.removeEventListener(EventType.RESIZE, hide);
       window.removeEventListener(EventType.BLUR, hide);
     };
-  }, [clearTimer, hide, show]);
+  }, [clearTimer, hide, insideBubble, leave, show]);
 
-  // Shrink the rendered bubble to its text, then place it
+  const shown = active ?? lastActiveRef.current;
+  const shownRichId = shown?.richId ?? null;
+  const shownPlacement = placement ?? lastPlacementRef.current;
+  const visible = Boolean(active && placement);
+
+  // Hand the content element to the rich anchor
+  useLayoutEffect(() => {
+    const element = contentRef.current;
+    publishRichTooltipSlot(
+      shownRichId && element ? { id: shownRichId, element } : null,
+    );
+  }, [shownRichId]);
+
+  useEffect(() => () => publishRichTooltipSlot(null), []);
+
+  // Shrink the rendered bubble to its content, then place it
   useLayoutEffect(() => {
     const bubble = tooltipRef.current;
-    const text = textRef.current;
-
-    if (!active || !bubble || !text) {
+    if (!active || !bubble) {
       setPlacement(null);
       return;
     }
@@ -185,27 +274,41 @@ export function TooltipLayer() {
       return;
     }
 
-    text.style.width = "";
-    const longest = longestLineWidth(text);
-    if (longest > 0) {
-      text.style.width = `${longest}px`;
+    const place = () => {
+      const next = placeTooltip(
+        active.element.getBoundingClientRect(),
+        bubble.getBoundingClientRect(),
+        { width: window.innerWidth, height: window.innerHeight },
+      );
+
+      lastPlacementRef.current = next;
+      setPlacement(next);
+    };
+
+    // Rich content renders after the bubble
+    if (active.richId) {
+      setPlacement(null);
+
+      const observer = new ResizeObserver(place);
+      observer.observe(bubble);
+
+      return () => observer.disconnect();
     }
 
-    const next = placeTooltip(
-      active.element.getBoundingClientRect(),
-      bubble.getBoundingClientRect(),
-      { width: window.innerWidth, height: window.innerHeight },
-    );
+    const text = textRef.current;
+    if (text) {
+      text.style.width = "";
+      const longest = longestLineWidth(text);
 
-    lastPlacementRef.current = next;
-    setPlacement(next);
+      if (longest > 0) {
+        text.style.width = `${longest}px`;
+      }
+    }
+
+    place();
   }, [active, hide]);
 
   useEffect(() => clearTimer, [clearTimer]);
-
-  const shown = active ?? lastActiveRef.current;
-  const shownPlacement = placement ?? lastPlacementRef.current;
-  const visible = Boolean(active && placement);
 
   if (!shown) {
     return null;
@@ -215,13 +318,15 @@ export function TooltipLayer() {
     <div
       ref={tooltipRef}
       className={classNames(
-        "tooltip",
+        CssClass.TOOLTIP,
         visible && "is-visible",
+        shownRichId && "is-interactive",
         !shownPlacement && "is-unplaced",
-        shown?.variant && `tooltip-${shown.variant}`,
+        shown.variant && `tooltip-${shown.variant}`,
       )}
       role="tooltip"
-      aria-hidden
+      aria-hidden={!shownRichId}
+      tabIndex={shownRichId ? -1 : undefined}
       {...{ [DataAttr.TOOLTIP_SIDE]: shownPlacement?.side }}
       style={
         {
@@ -232,9 +337,13 @@ export function TooltipLayer() {
         } as CSSProperties
       }
     >
-      <span className="tooltip-label" ref={textRef}>
-        {shown?.text}
-      </span>
+      {shownRichId ? (
+        <div className="tooltip-content" ref={contentRef} />
+      ) : (
+        <span className="tooltip-label" ref={textRef}>
+          {shown.text}
+        </span>
+      )}
       <span className="tooltip-arrow" />
     </div>,
     document.body,
