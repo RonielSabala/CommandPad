@@ -117,6 +117,7 @@ export const TooltipConfig = {
   WARM_DELAY_MS: 90,
   WARM_WINDOW_MS: 500,
   HIDE_DELAY_MS: 250,
+  HANDOFF_DELAY_MS: 150,
   GAP: 8,
   VIEWPORT_MARGIN: 8,
   ARROW_INSET: 14,

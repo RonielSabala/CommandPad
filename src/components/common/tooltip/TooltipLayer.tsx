@@ -64,12 +64,13 @@ export function TooltipLayer() {
   const lastActiveRef = useRef<ActiveTooltip | null>(null);
   const lastPlacementRef = useRef<TooltipPlacement | null>(null);
   const timerRef = useRef<number | null>(null);
+  const handingOffRef = useRef(false);
   const warmUntilRef = useRef(0);
-  const nextRef = useRef<HTMLElement | null>(null);
   const lastPointerDownRef = useRef<PointerPosition | null>(null);
   const dismissedAtRef = useRef<PointerPosition | null>(null);
 
   const clearTimer = useCallback(() => {
+    handingOffRef.current = false;
     if (timerRef.current !== null) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
@@ -103,6 +104,21 @@ export function TooltipLayer() {
     }
   }, [clearTimer, insideBubble]);
 
+  const activate = useCallback((element: HTMLElement) => {
+    const next: ActiveTooltip = {
+      element,
+      text: element.getAttribute(DataAttr.TOOLTIP) ?? "",
+      variant: element.getAttribute(
+        DataAttr.TOOLTIP_VARIANT,
+      ) as TooltipVariant | null,
+      richId: element.getAttribute(DataAttr.TOOLTIP_RICH),
+    };
+
+    activeRef.current = next;
+    lastActiveRef.current = next;
+    setActive(next);
+  }, []);
+
   const show = useCallback(
     (element: HTMLElement) => {
       if (document.body.matches(BodySelector.RESIZING)) {
@@ -135,21 +151,10 @@ export function TooltipLayer() {
 
       timerRef.current = window.setTimeout(() => {
         timerRef.current = null;
-        const next: ActiveTooltip = {
-          element,
-          text,
-          variant: element.getAttribute(
-            DataAttr.TOOLTIP_VARIANT,
-          ) as TooltipVariant | null,
-          richId,
-        };
-
-        activeRef.current = next;
-        lastActiveRef.current = next;
-        setActive(next);
+        activate(element);
       }, delay);
     },
-    [clearTimer, hide],
+    [activate, clearTimer, hide],
   );
 
   /** The pointer left, maybe for `next`. */
@@ -160,22 +165,40 @@ export function TooltipLayer() {
         return;
       }
 
-      nextRef.current = next;
+      // Resting on another trigger swaps straight to it
+      if (next) {
+        clearTimer();
+        handingOffRef.current = true;
+
+        timerRef.current = window.setTimeout(() => {
+          timerRef.current = null;
+          handingOffRef.current = false;
+
+          if (next.isConnected) {
+            lastPlacementRef.current = null;
+            activate(next);
+          } else {
+            hide();
+          }
+        }, TooltipConfig.HANDOFF_DELAY_MS);
+
+        return;
+      }
+
+      // Off the trigger again before the swap, so back to hiding
+      if (handingOffRef.current) {
+        clearTimer();
+      }
       if (timerRef.current !== null) {
         return;
       }
 
       timerRef.current = window.setTimeout(() => {
         timerRef.current = null;
-        const pending = nextRef.current;
-
         hide();
-        if (pending?.isConnected) {
-          show(pending);
-        }
       }, TooltipConfig.HIDE_DELAY_MS);
     },
-    [hide, show],
+    [activate, clearTimer, hide],
   );
 
   /** The content closed it. */
