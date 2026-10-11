@@ -165,7 +165,6 @@ export type EditorLanguage =
 export const MonacoSuggest = {
   CONTROLLER_ID: "editor.contrib.suggestController",
   TRIGGER_ACTION_ID: "editor.action.triggerSuggest",
-  IDLE_STATE: 0,
 } as const;
 
 export const ChoiceConfig = {

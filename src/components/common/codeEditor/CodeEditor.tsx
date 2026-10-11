@@ -32,7 +32,7 @@ import { getCodeMetrics } from "@/monaco/metrics";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
 import { bindRevealScrolling } from "@/monaco/revealScroll";
 import { bindStickyWidgets } from "@/monaco/stickyWidgets";
-import { isSuggesting, triggerSuggest } from "@/monaco/suggest";
+import { hasFocusedSuggestion, triggerSuggest } from "@/monaco/suggest";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { validateModel } from "@/monaco/validation";
 import { useStore } from "@/store/store";
@@ -394,7 +394,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         if (
           singleLine &&
           event.browserEvent.key === Key.ENTER &&
-          !isSuggesting(instance)
+          !hasFocusedSuggestion(instance)
         ) {
           event.preventDefault();
           event.stopPropagation();

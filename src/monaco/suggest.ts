@@ -2,19 +2,19 @@ import { MonacoSuggest } from "@/common/editorConfig";
 import type { editor } from "monaco-editor";
 
 interface SuggestController extends editor.IEditorContribution {
-  readonly model: { readonly state: number };
+  readonly widget: {
+    readonly isInitialized: boolean;
+    readonly value: { getFocusedItem(): unknown };
+  };
 }
 
-/** Whether a suggestion session is running. */
-export function isSuggesting(instance: editor.ICodeEditor): boolean {
-  const controller = instance.getContribution<SuggestController>(
+/** Whether Enter would accept a suggestion. */
+export function hasFocusedSuggestion(instance: editor.ICodeEditor): boolean {
+  const widget = instance.getContribution<SuggestController>(
     MonacoSuggest.CONTROLLER_ID,
-  );
+  )?.widget;
 
-  return (
-    (controller?.model.state ?? MonacoSuggest.IDLE_STATE) !==
-    MonacoSuggest.IDLE_STATE
-  );
+  return !!widget?.isInitialized && !!widget.value.getFocusedItem();
 }
 
 export function triggerSuggest(instance: editor.ICodeEditor): void {
