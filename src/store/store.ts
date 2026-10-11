@@ -3247,13 +3247,18 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           ? new Set(state.selectedBlockIds)
           : new Set([blockId]);
 
-        set((s) => ({
-          ...withActiveTab(s, (tab) => ({
+        set((s) => {
+          const updated = withActiveTab(s, (tab) => ({
             ...tab,
             blocks: tab.blocks.filter((b) => !idsToRemove.has(b.id)),
-          })),
-          selectedBlockIds: isSelected ? new Set() : s.selectedBlockIds,
-        }));
+          }));
+
+          return {
+            ...updated,
+            ...relabelActive({ ...s, ...updated }),
+            selectedBlockIds: isSelected ? new Set() : s.selectedBlockIds,
+          };
+        });
         get().saveState();
       },
 
@@ -3510,20 +3515,25 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           .filter((b): b is Block => b !== undefined)
           .sort((a, b) => active.blocks.indexOf(a) - active.blocks.indexOf(b));
 
-        set((s) =>
-          withActiveTab(s, (tab) => {
+        set((s) => {
+          const updated = withActiveTab(s, (tab) => {
             const remaining = tab.blocks.filter(
               (b) => !movingIds.includes(b.id),
             );
             const newTargetIndex = remaining.findIndex(
               (b) => b.id === targetId,
             );
+
             const insertIndex =
               sourceIndex < targetIndex ? newTargetIndex + 1 : newTargetIndex;
             remaining.splice(insertIndex, 0, ...movingBlocks);
+
             return { ...tab, blocks: remaining };
-          }),
-        );
+          });
+
+          // A different block may now be the first one, which names the runbook
+          return { ...updated, ...relabelActive({ ...s, ...updated }) };
+        });
         get().saveState();
       },
 
