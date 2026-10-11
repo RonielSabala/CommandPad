@@ -425,6 +425,11 @@ export interface StoreState {
   finishBlockReveal: () => void;
   clearBlockReveal: () => void;
   revealVariable: (variableId: string, resolved: boolean) => void;
+  revealEmbeddedVariable: (
+    source: EmbedSource,
+    key: string,
+    resolved: boolean,
+  ) => Promise<void>;
   finishVariableReveal: () => void;
   clearVariableReveal: () => void;
   toggleClampSurfaceExpanded: (id: string, surface: ClampSurface) => void;
@@ -3584,6 +3589,23 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         });
 
         get().saveState();
+      },
+
+      revealEmbeddedVariable: async (source, key, resolved) => {
+        const before = get().activeTabId;
+        await get().openEmbeddedRunbook(source);
+
+        const state = get();
+        if (state.activeTabId === before) {
+          return;
+        }
+
+        const variable = getActiveTab(state)?.variables.find(
+          (v) => getVariableKey(v) === key,
+        );
+        if (variable) {
+          state.revealVariable(variable.id, resolved);
+        }
       },
 
       finishVariableReveal: () =>
