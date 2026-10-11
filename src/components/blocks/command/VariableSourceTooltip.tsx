@@ -2,6 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { getVariableKey, sourceKey } from "@/utils/resolution";
+import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { useContext } from "react";
 import { BoxArrowUpRight } from "react-bootstrap-icons";
@@ -35,6 +36,15 @@ export function VariableSourceTooltip({ source, resolved, hide }: Props) {
     ? embed.variables.some((v) => getVariableKey(v) === key)
     : !!hostVariableId;
 
+  const title = embed
+    ? t.command.goToEmbeddedDefinitionTitle(
+        key,
+        embed.source.local
+          ? displayLabel(embed.source.local.label, t)
+          : embed.source.cloud.path,
+      )
+    : t.command.goToDefinitionTitle(key);
+
   const goToDefinition = () => {
     hide();
     if (embed) {
@@ -55,6 +65,7 @@ export function VariableSourceTooltip({ source, resolved, hide }: Props) {
             CssClass.TOOLTIP_LINK,
             CssClass.TOOLTIP_LINK_PLAIN,
           )}
+          title={title}
           onClick={goToDefinition}
         >
           {t.command.goToDefinition}

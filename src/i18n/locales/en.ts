@@ -235,6 +235,10 @@ export const en: Messages = {
     extractVariable: "Extract into a variable",
     escapeVariable: "Escape the reference",
     goToDefinition: "Go to definition",
+    goToDefinitionTitle: (key) =>
+      `Switch to this runbook's variables view and highlight '${key}'.`,
+    goToEmbeddedDefinitionTitle: (key, runbook) =>
+      `Leave this tab for the '${runbook}' runbook, then highlight '${key}' in its variables view.`,
   },
   note: {
     styleLabel: {

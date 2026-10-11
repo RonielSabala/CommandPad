@@ -246,6 +246,10 @@ export const es: Messages = {
     extractVariable: "Extraer en una variable",
     escapeVariable: "Escapar la referencia",
     goToDefinition: "Ir a la definición",
+    goToDefinitionTitle: (key) =>
+      `Cambia a la vista de variables de este runbook y resalta '${key}'.`,
+    goToEmbeddedDefinitionTitle: (key, runbook) =>
+      `Sale de esta pestaña hacia el runbook '${runbook}' y resalta '${key}' en su vista de variables.`,
   },
   note: {
     styleLabel: {

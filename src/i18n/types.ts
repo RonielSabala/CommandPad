@@ -221,6 +221,8 @@ export interface Messages {
     extractVariable: string;
     escapeVariable: string;
     goToDefinition: string;
+    goToDefinitionTitle: (key: string) => string;
+    goToEmbeddedDefinitionTitle: (key: string, runbook: string) => string;
   };
   note: {
     styleLabel: Record<NoteStyle, string>;
