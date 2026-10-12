@@ -76,6 +76,11 @@
 
 /* Rich tooltip */
 
+.tooltip.is-pinned {
+  z-index: var(--z-dropdown);
+  max-width: none;
+}
+
 .tooltip.is-interactive {
   text-align: left;
   white-space: normal;

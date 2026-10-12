@@ -250,6 +250,9 @@ export const es: Messages = {
       `Cambia a la vista de variables de este runbook y resalta '${key}'.`,
     goToEmbeddedDefinitionTitle: (key, runbook) =>
       `Sale de esta pestaña hacia el runbook '${runbook}' y resalta '${key}' en su vista de variables.`,
+    editVariable: "Editar",
+    editVariableTitle: (key) => `Cambia la clave y el valor de '${key}'.`,
+    editValueTitle: (key) => `Cambia el valor de '${key}'.`,
   },
   note: {
     styleLabel: {
@@ -975,8 +978,8 @@ Si algo sale mal, deshazlo en este orden:
         "La vista previa resalta el texto resuelto según cuántos valores atravesó. El texto que escribió la variable a la que haces referencia lleva el tono más claro, el que escribió una referencia **dentro** de ese valor se apoya en uno más intenso, y todo lo que esté más adentro comparte el más intenso. Así, de un vistazo sabes qué parte del comando viene de dónde.",
       shadesDemoHint:
         "Aquí `HOST` se construye a partir de `SERVICE`, que a su vez se construye a partir de `NAME`, así que el comando resuelto luce los tres tonos a la vez:",
-      shadesHover: (goToDefinition: string) =>
-        `Cuando los tonos no bastan, pasa el cursor sobre cualquier fragmento resaltado de un comando resuelto: te dice la variable que lo escribió, e **${goToDefinition}** te lleva a esa variable en la vista de variables.`,
+      shadesHover: (goToDefinition: string, edit: string) =>
+        `Cuando los tonos no bastan, pasa el cursor sobre cualquier fragmento resaltado de un comando resuelto: te dice la variable que lo escribió, su botón de flecha (**${goToDefinition}**) te lleva a esa variable en la vista de variables, y **${edit}** abre su clave y su valor ahí mismo en el tooltip, para cambiarlos sin salir del comando.`,
       shadesUnresolved:
         "Una referencia que no se resuelve se cuenta igual, en rojo en vez de verde: el resto del comando sigue resolviéndose y solo se marca la parte rota, a la profundidad en la que está. Así un vistazo también te dice qué tan hondo está el problema, no solo que lo hay.",
       shadesUnresolvedDemoHint:

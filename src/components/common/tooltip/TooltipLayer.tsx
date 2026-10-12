@@ -1,6 +1,6 @@
 import { TooltipConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { BodySelector, DataAttr } from "@/common/constants/dom";
+import { BodySelector, DataAttr, PopupSelector } from "@/common/constants/dom";
 import {
   EventType,
   Key,
@@ -17,7 +17,7 @@ import {
   useState,
   type CSSProperties,
 } from "react";
-import { createPortal } from "react-dom";
+import { createPortal, flushSync } from "react-dom";
 
 import "./Tooltip.css";
 import { publishRichTooltipSlot } from "./richTooltip";
@@ -56,6 +56,7 @@ function longestLineWidth(text: HTMLElement): number {
 export function TooltipLayer() {
   const [active, setActive] = useState<ActiveTooltip | null>(null);
   const [placement, setPlacement] = useState<TooltipPlacement | null>(null);
+  const [pinned, setPinned] = useState(false);
 
   const tooltipRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
@@ -65,6 +66,7 @@ export function TooltipLayer() {
   const lastPlacementRef = useRef<TooltipPlacement | null>(null);
   const timerRef = useRef<number | null>(null);
   const handingOffRef = useRef(false);
+  const pinnedRef = useRef(false);
   const warmUntilRef = useRef(0);
   const lastPointerDownRef = useRef<PointerPosition | null>(null);
   const dismissedAtRef = useRef<PointerPosition | null>(null);
@@ -83,6 +85,15 @@ export function TooltipLayer() {
     [],
   );
 
+  const ownsTarget = useCallback(
+    (target: EventTarget | null) =>
+      insideBubble(target) ||
+      (pinnedRef.current &&
+        target instanceof Element &&
+        !!target.closest(PopupSelector.LAYERS)),
+    [insideBubble],
+  );
+
   const hide = useCallback(() => {
     if (timerRef.current === null && activeRef.current === null) {
       return;
@@ -96,6 +107,7 @@ export function TooltipLayer() {
 
     warmUntilRef.current = Date.now() + TooltipConfig.WARM_WINDOW_MS;
     activeRef.current = null;
+    pinnedRef.current = false;
     setActive(null);
 
     const focused = document.activeElement;
@@ -116,8 +128,22 @@ export function TooltipLayer() {
 
     activeRef.current = next;
     lastActiveRef.current = next;
+    pinnedRef.current = false;
+
     setActive(next);
+    setPinned(false);
   }, []);
+
+  /** The content is being edited. */
+  const pin = useCallback(() => {
+    if (!activeRef.current) {
+      return;
+    }
+
+    clearTimer();
+    pinnedRef.current = true;
+    setPinned(true);
+  }, [clearTimer]);
 
   const show = useCallback(
     (element: HTMLElement) => {
@@ -210,6 +236,10 @@ export function TooltipLayer() {
 
   useEffect(() => {
     const onPointerOver = (event: PointerEvent) => {
+      if (pinnedRef.current) {
+        return;
+      }
+
       if (insideBubble(event.target)) {
         clearTimer();
         return;
@@ -239,7 +269,7 @@ export function TooltipLayer() {
     };
 
     const onPointerOut = (event: PointerEvent) => {
-      if (!event.relatedTarget) {
+      if (!event.relatedTarget && !pinnedRef.current) {
         leave();
       }
     };
@@ -257,29 +287,31 @@ export function TooltipLayer() {
     };
 
     const onFocusOut = (event: FocusEvent) => {
-      if (!insideBubble(event.relatedTarget)) {
+      const next = event.relatedTarget;
+      if (!ownsTarget(next) && !(pinnedRef.current && !next)) {
         hide();
       }
     };
 
     const onPointerDown = (event: PointerEvent) => {
       lastPointerDownRef.current = { x: event.clientX, y: event.clientY };
-      if (!insideBubble(event.target)) {
+      if (!ownsTarget(event.target)) {
         hide();
       }
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (
-        !insideBubble(event.target) ||
-        (event.key === Key.ESCAPE && !event.defaultPrevented)
+        !ownsTarget(event.target) ||
+        (event.key === Key.ESCAPE &&
+          (pinnedRef.current || !event.defaultPrevented))
       ) {
         hide();
       }
     };
 
     const onScroll = (event: Event) => {
-      if (!insideBubble(event.target)) {
+      if (!ownsTarget(event.target)) {
         hide();
       }
     };
@@ -305,7 +337,7 @@ export function TooltipLayer() {
       window.removeEventListener(EventType.RESIZE, hide);
       window.removeEventListener(EventType.BLUR, hide);
     };
-  }, [clearTimer, hide, insideBubble, leave, show]);
+  }, [clearTimer, hide, insideBubble, leave, ownsTarget, show]);
 
   const shown = active ?? lastActiveRef.current;
   const shownRichId = shown?.richId ?? null;
@@ -318,10 +350,17 @@ export function TooltipLayer() {
     const element = contentRef.current;
     publishRichTooltipSlot(
       shownRichId && element && shownAnchor
-        ? { id: shownRichId, element, anchor: shownAnchor, hide: dismiss }
+        ? {
+            id: shownRichId,
+            element,
+            anchor: shownAnchor,
+            hide: dismiss,
+            pinned,
+            pin,
+          }
         : null,
     );
-  }, [shownRichId, shownAnchor, dismiss]);
+  }, [shownRichId, shownAnchor, dismiss, pinned, pin]);
 
   useEffect(() => () => publishRichTooltipSlot(null), []);
 
@@ -339,6 +378,10 @@ export function TooltipLayer() {
     }
 
     const place = () => {
+      if (!active.element.isConnected) {
+        return;
+      }
+
       const next = placeTooltip(
         active.element.getBoundingClientRect(),
         bubble.getBoundingClientRect(),
@@ -353,7 +396,7 @@ export function TooltipLayer() {
     if (active.richId) {
       setPlacement(null);
 
-      const observer = new ResizeObserver(place);
+      const observer = new ResizeObserver(() => flushSync(place));
       observer.observe(bubble);
 
       return () => observer.disconnect();
@@ -383,11 +426,17 @@ export function TooltipLayer() {
       ref={tooltipRef}
       className={classNames(
         CssClass.TOOLTIP,
+        pinned && "is-pinned",
         visible && "is-visible",
         shownRichId && "is-interactive",
         !shownPlacement && "is-unplaced",
         shown.variant && `tooltip-${shown.variant}`,
       )}
+      onTransitionEnd={(event) => {
+        if (event.target === event.currentTarget && !activeRef.current) {
+          setPinned(false);
+        }
+      }}
       role="tooltip"
       aria-hidden={!shownRichId}
       tabIndex={shownRichId ? -1 : undefined}

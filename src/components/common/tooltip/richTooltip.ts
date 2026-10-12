@@ -2,11 +2,17 @@ import { DataAttr } from "@/common/constants/dom";
 import { useId, useSyncExternalStore, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
-interface RichTooltipSlot {
-  id: string;
-  element: HTMLElement;
+export interface RichTooltipControls {
+  /** Kept open until dismissed. */
+  pinned: boolean;
   anchor: HTMLElement;
   hide: () => void;
+  pin: () => void;
+}
+
+interface RichTooltipSlot extends RichTooltipControls {
+  id: string;
+  element: HTMLElement;
 }
 
 let slot: RichTooltipSlot | null = null;
@@ -18,7 +24,9 @@ export function publishRichTooltipSlot(next: RichTooltipSlot | null): void {
     slot?.id === next?.id &&
     slot?.element === next?.element &&
     slot?.anchor === next?.anchor &&
-    slot?.hide === next?.hide
+    slot?.hide === next?.hide &&
+    slot?.pinned === next?.pinned &&
+    slot?.pin === next?.pin
   ) {
     return;
   }
@@ -45,9 +53,7 @@ export function useRichTooltip() {
 
   return {
     props: { [DataAttr.TOOLTIP_RICH]: id },
-    render: (content: (hide: () => void, anchor: HTMLElement) => ReactNode) =>
-      shown
-        ? createPortal(content(shown.hide, shown.anchor), shown.element)
-        : null,
+    render: (content: (tip: RichTooltipControls) => ReactNode) =>
+      shown ? createPortal(content(shown), shown.element) : null,
   };
 }

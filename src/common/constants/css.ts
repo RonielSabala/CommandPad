@@ -24,6 +24,7 @@ export const CssClass = {
 
   TOOLTIP: "tooltip",
   CONTEXT_MENU: "context-menu",
+  SELECT_MENU_PORTAL: "select-menu-portal",
   CODE_EDITOR_PROMPT: "code-editor-prompt",
   CODE_EDITOR_SURFACE: "code-editor-surface",
 

@@ -223,6 +223,9 @@ export interface Messages {
     goToDefinition: string;
     goToDefinitionTitle: (key: string) => string;
     goToEmbeddedDefinitionTitle: (key: string, runbook: string) => string;
+    editVariable: string;
+    editVariableTitle: (key: string) => string;
+    editValueTitle: (key: string) => string;
   };
   note: {
     styleLabel: Record<NoteStyle, string>;
@@ -551,7 +554,7 @@ export interface Messages {
       demoHint: string;
       shades: string;
       shadesDemoHint: string;
-      shadesHover: (goToDefinition: string) => string;
+      shadesHover: (goToDefinition: string, edit: string) => string;
       shadesUnresolved: string;
       shadesUnresolvedDemoHint: string;
       circular: string;

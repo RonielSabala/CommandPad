@@ -33,6 +33,7 @@ interface Props {
   completions: VariableCompletion[];
   keyRow: ReactNode;
   className?: string;
+  autoFocus?: boolean;
   onChange?: (value: string) => void;
 }
 
@@ -45,6 +46,7 @@ export function VariableValueField({
   completions,
   keyRow,
   className,
+  autoFocus,
   onChange,
 }: Props) {
   const t = useTranslation();
@@ -104,6 +106,7 @@ export function VariableValueField({
           value={value}
           language={language}
           onChange={handleChange}
+          autoFocus={autoFocus}
           onFocus={clamp.onFocus}
           onBlur={clamp.onBlur}
           placeholder={t.variables.valuePlaceholder}

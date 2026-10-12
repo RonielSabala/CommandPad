@@ -52,7 +52,8 @@ function NoteLink({ segment, binding }: LinkProps) {
       >
         {segment.text}
       </a>
-      {tip.render((hide) => (
+
+      {tip.render(({ hide }) => (
         <>
           <a
             href={href}
@@ -67,6 +68,7 @@ function NoteLink({ segment, binding }: LinkProps) {
           >
             {t.note.followLink}
           </a>
+
           {binding && <> {t.note.followLinkBinding(binding)}</>}
         </>
       ))}

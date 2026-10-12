@@ -169,7 +169,10 @@ export function VariableReferencesDocs() {
         <BlocksList />
       </DemoWorkspace>
       <Prose
-        text={t.docs.variableReferences.shadesHover(t.command.goToDefinition)}
+        text={t.docs.variableReferences.shadesHover(
+          t.command.goToDefinition,
+          t.command.editVariable,
+        )}
       />
       <Prose text={t.docs.variableReferences.shadesUnresolved} />
       <Prose text={t.docs.variableReferences.shadesUnresolvedDemoHint} />

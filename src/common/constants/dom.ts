@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { MonacoLayer } from "@/common/editorConfig";
 
 export const ElementId = {
   BLOCKS_LIST: "blocks-list",
@@ -12,6 +13,16 @@ export const MonacoSelector = {
   FIND_WIDGET: ".find-widget",
   CONTEXT_MENU: ".monaco-menu",
   MENU_ITEM: ".action-item:not(.disabled):not(.separator)",
+} as const;
+
+export const PopupSelector = {
+  LAYERS: [
+    MonacoLayer.OVERFLOW_ROOT_CLASS,
+    MonacoLayer.HOVER_ROOT_CLASS,
+    CssClass.SELECT_MENU_PORTAL,
+  ]
+    .map((className) => `.${className}`)
+    .join(", "),
 } as const;
 
 export const CodeSurfaceSelector = {

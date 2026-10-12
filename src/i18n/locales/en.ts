@@ -239,6 +239,9 @@ export const en: Messages = {
       `Switch to this runbook's variables view and highlight '${key}'.`,
     goToEmbeddedDefinitionTitle: (key, runbook) =>
       `Leave this tab for the '${runbook}' runbook, then highlight '${key}' in its variables view.`,
+    editVariable: "Edit",
+    editVariableTitle: (key) => `Change the key and value of '${key}'.`,
+    editValueTitle: (key) => `Change the value of '${key}'.`,
   },
   note: {
     styleLabel: {
@@ -952,8 +955,8 @@ If something goes wrong, undo it in this order:
         "The preview highlights resolved text by how far it was read through. Text the variable you referenced wrote takes the lightest tint, text a reference **inside** that value wrote sits on a deeper one, and anything further in shares the deepest. One glance then tells you which part of a command came from where.",
       shadesDemoHint:
         "Here `HOST` is built from `SERVICE`, which is built from `NAME`, so the resolved command wears all three tints at once:",
-      shadesHover: (goToDefinition: string) =>
-        `When the tints alone are not enough, hover over any highlighted piece of a resolved command: it names the variable that wrote it, and **${goToDefinition}** takes you to that variable in the variables view.`,
+      shadesHover: (goToDefinition: string, edit: string) =>
+        `When the tints alone are not enough, hover over any highlighted piece of a resolved command: it names the variable that wrote it, its arrow button (**${goToDefinition}**) takes you to that variable in the variables view, and **${edit}** opens its key and value right there in the tooltip, so you can change them without leaving the command.`,
       shadesUnresolved:
         "A reference that does not resolve is counted the same way, in red instead of green: the rest of the command still resolves and only the broken part is marked, at the depth it sits at. So one glance also tells you how deep a problem is, not just that there is one.",
       shadesUnresolvedDemoHint:

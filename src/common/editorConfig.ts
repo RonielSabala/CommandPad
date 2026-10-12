@@ -64,11 +64,12 @@ export const CodeModelConfig = {
 export const CodeModelScope = {
   COMMAND: "command",
   VARIABLE: "variable",
+  VARIABLE_TOOLTIP: "variable-tooltip",
   RUNBOOK_LABEL: "runbook-label",
   RUNBOOK_OVERRIDE: "runbook-override",
   PASTE_RUNBOOK: "runbook/paste",
-  CLOUD_FILE: "runbook/cloud",
   RUNBOOK_SOURCE: "runbook/source",
+  CLOUD_FILE: "runbook/cloud",
 } as const;
 export type CodeModelScope =
   (typeof CodeModelScope)[keyof typeof CodeModelScope];

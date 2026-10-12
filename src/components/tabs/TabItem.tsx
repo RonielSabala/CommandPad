@@ -189,7 +189,7 @@ export function TabItem({ tab, onOpenMenu }: Props) {
       </div>
 
       {unresolved &&
-        unresolvedTip.render((hide) => (
+        unresolvedTip.render(({ hide }) => (
           <TabUnresolvedTooltip tab={tab} hide={hide} />
         ))}
     </>

@@ -18,14 +18,18 @@ interface Props {
   variable: Variable;
   completions: VariableCompletion[];
   unused?: boolean;
+  autoFocus?: boolean;
   keyRef: RefObject<HTMLInputElement | null>;
+  scope?: CodeModelScope;
 }
 
 export function VariableEditor({
   variable,
   completions,
   unused,
+  autoFocus,
   keyRef,
+  scope = CodeModelScope.VARIABLE,
 }: Props) {
   const t = useTranslation();
   const variableId = variable.id;
@@ -56,7 +60,8 @@ export function VariableEditor({
     <VariableValueField
       variable={variable}
       value={variable.value}
-      scope={CodeModelScope.VARIABLE}
+      autoFocus={autoFocus}
+      scope={scope}
       surfaceId={variableId}
       completions={valueCompletions}
       className={classNames(

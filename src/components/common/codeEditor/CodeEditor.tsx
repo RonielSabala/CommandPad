@@ -481,6 +481,12 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         }
       });
 
+      // Ready to type on
+      const model = instance.getModel();
+      if (autoFocus && model) {
+        instance.setPosition(model.getFullModelRange().getEndPosition());
+      }
+
       if (autoFocus || pendingFocusRef.current) {
         pendingFocusRef.current = false;
         inputElement()?.focus({ preventScroll: true });

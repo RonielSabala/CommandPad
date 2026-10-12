@@ -229,11 +229,13 @@ export function CommandPreview({
       <StickyScrollbar target={previewScrollTarget} deps={[segments]} />
 
       {linkSources &&
-        sourceTip.render((hide, anchor) => (
+        sourceTip.render((tip) => (
           <VariableSourceTooltip
-            source={anchor.getAttribute(DataAttr.TOOLTIP) ?? ""}
-            resolved={!anchor.classList.contains("token-nesting-unresolved")}
-            hide={hide}
+            source={tip.anchor.getAttribute(DataAttr.TOOLTIP) ?? ""}
+            resolved={
+              !tip.anchor.classList.contains("token-nesting-unresolved")
+            }
+            tip={tip}
           />
         ))}
     </div>
