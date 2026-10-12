@@ -1,6 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { RunbookView } from "@/common/enums";
 import { RunbookVariables } from "@/components/variables/RunbookVariables";
+import { VariablesViewContext } from "@/components/variables/variablesViewContext";
 import { getRunbookView, useStore } from "@/store/store";
 import type { ComponentType } from "react";
 
@@ -22,7 +23,9 @@ export function MainPanel() {
   return (
     <main id="main-panel" className={CssClass.PANEL_CARD}>
       <TabsBar />
-      <View />
+      <VariablesViewContext.Provider value>
+        <View />
+      </VariablesViewContext.Provider>
     </main>
   );
 }

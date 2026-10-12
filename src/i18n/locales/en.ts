@@ -157,6 +157,8 @@ export const en: Messages = {
     closeOthers: "Close others",
     closeAll: "Close all",
     closeUnresolvedTab: "Close tab (this runbook has unresolved parts)",
+    unresolvedTitle: "Unresolved parts in:",
+    unresolvedBlock: (number, type) => `Block ${number} · ${type}`,
   },
   source: {
     openSource: "Open source file",
@@ -232,6 +234,14 @@ export const en: Messages = {
     placeholder: "ssh {USER}@{HOST}",
     extractVariable: "Extract into a variable",
     escapeVariable: "Escape the reference",
+    goToDefinition: "Go to definition",
+    goToDefinitionTitle: (key) =>
+      `Switch to this runbook's variables view and highlight '${key}'.`,
+    goToEmbeddedDefinitionTitle: (key, runbook) =>
+      `Leave this tab for the '${runbook}' runbook, then highlight '${key}' in its variables view.`,
+    editVariable: "Edit",
+    editVariableTitle: (key) => `Change the key and value of '${key}'.`,
+    editValueTitle: (key) => `Change the value of '${key}'.`,
   },
   note: {
     styleLabel: {
@@ -244,8 +254,8 @@ export const en: Messages = {
       [NoteStyle.SUBHEADING]: "Section subheading...",
       [NoteStyle.BODY]: "Section body...",
     },
-    followLinkTooltip: (binding?: string) =>
-      binding ? `Follow link (${binding})` : "Follow link",
+    followLink: "Follow link",
+    followLinkBinding: (binding: string) => `(${binding})`,
   },
   image: {
     dropHint: "Drop an image here, or paste one",
@@ -878,7 +888,7 @@ If something goes wrong, undo it in this order:
       labelDemo:
         "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, close one, and open the source file to see a tab's runbook as JSON.",
       unresolvedMarker:
-        "When a tab's close button is a solid red dot, that runbook has unresolved parts, so a runbook that isn't ready to run stands out without opening it. Point at the dot and it turns back into the close button. The third tab above wears one: open its variables and give `HOST` a value, and the dot goes as soon as every reference resolves.",
+        "When a tab's close button is a solid red dot, that runbook has unresolved parts, so a runbook that isn't ready to run stands out without opening it. Point at the dot and it turns back into the close button, with a list of the blocks that don't resolve: point at one to read where it stops resolving, and click it to jump straight to it. The third tab above wears one: open its variables and give `HOST` a value, and the dot goes as soon as every reference resolves.",
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",
@@ -945,8 +955,8 @@ If something goes wrong, undo it in this order:
         "The preview highlights resolved text by how far it was read through. Text the variable you referenced wrote takes the lightest tint, text a reference **inside** that value wrote sits on a deeper one, and anything further in shares the deepest. One glance then tells you which part of a command came from where.",
       shadesDemoHint:
         "Here `HOST` is built from `SERVICE`, which is built from `NAME`, so the resolved command wears all three tints at once:",
-      shadesHover:
-        "When the tints alone are not enough, hover over any highlighted piece of a resolved command: it names the variable that wrote it.",
+      shadesHover: (goToDefinition: string, edit: string) =>
+        `When the tints alone are not enough, hover over any highlighted piece of a resolved command: it names the variable that wrote it, its arrow button (**${goToDefinition}**) takes you to that variable in the variables view, and **${edit}** opens its key and value right there in the tooltip, so you can change them without leaving the command.`,
       shadesUnresolved:
         "A reference that does not resolve is counted the same way, in red instead of green: the rest of the command still resolves and only the broken part is marked, at the depth it sits at. So one glance also tells you how deep a problem is, not just that there is one.",
       shadesUnresolvedDemoHint:
@@ -1306,7 +1316,7 @@ If something goes wrong, undo it in this order:
       noNesting:
         "Styles do not combine: for example, bold and italics cannot be mixed on the same words. Whichever style starts first wins.",
       links:
-        "Bare URLs are detected automatically and become clickable links. To open a link, hold `Ctrl` and click it.",
+        "Bare URLs are detected automatically and become clickable links. To open a link, hold `Ctrl` and click it, or hover it and click **Follow link** in its tooltip.",
       wrapKeys:
         "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and `Ctrl+´` in backticks; typing any parenthesis character (**(**, **[**, or **{**) or quote (**\"** or **'**) wraps it in that pair. Pair wrapping is not exclusive to notes: it works the same way in the command editor.",
     },

@@ -166,6 +166,8 @@ export const es: Messages = {
     closeOthers: "Cerrar las demás",
     closeAll: "Cerrar todas",
     closeUnresolvedTab: "Cerrar pestaña (este libro tiene partes sin resolver)",
+    unresolvedTitle: "Partes sin resolver en:",
+    unresolvedBlock: (number, type) => `Bloque ${number} · ${type}`,
   },
   source: {
     openSource: "Abrir archivo fuente",
@@ -243,6 +245,14 @@ export const es: Messages = {
     placeholder: "ssh {USUARIO}@{HOST}",
     extractVariable: "Extraer en una variable",
     escapeVariable: "Escapar la referencia",
+    goToDefinition: "Ir a la definición",
+    goToDefinitionTitle: (key) =>
+      `Cambia a la vista de variables de este runbook y resalta '${key}'.`,
+    goToEmbeddedDefinitionTitle: (key, runbook) =>
+      `Sale de esta pestaña hacia el runbook '${runbook}' y resalta '${key}' en su vista de variables.`,
+    editVariable: "Editar",
+    editVariableTitle: (key) => `Cambia la clave y el valor de '${key}'.`,
+    editValueTitle: (key) => `Cambia el valor de '${key}'.`,
   },
   note: {
     styleLabel: {
@@ -255,8 +265,8 @@ export const es: Messages = {
       [NoteStyle.SUBHEADING]: "Sección de subtítulo...",
       [NoteStyle.BODY]: "Sección de cuerpo...",
     },
-    followLinkTooltip: (binding?: string) =>
-      binding ? `Seguir enlace (${binding})` : "Seguir enlace",
+    followLink: "Seguir enlace",
+    followLinkBinding: (binding: string) => `(${binding})`,
   },
   image: {
     dropHint: "Suelta una imagen aquí, o pégala",
@@ -900,7 +910,7 @@ Si algo sale mal, deshazlo en este orden:
       labelDemo:
         "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas, cierra alguna, y abre la fuente para ver el libro de una pestaña como JSON.",
       unresolvedMarker:
-        "Cuando el botón de cerrar de una pestaña es un punto rojo relleno, ese libro tiene partes sin resolver, así que un libro que no está listo para usarse se nota sin necesidad de abrirlo. Al pasar el puntero por el punto, vuelve a ser el botón de cerrar. La tercera pestaña de arriba lleva uno: abre sus variables y dale un valor a `HOST`, y el punto desaparece en cuanto todas las referencias resuelven.",
+        "Cuando el botón de cerrar de una pestaña es un punto rojo relleno, ese libro tiene partes sin resolver, así que un libro que no está listo para usarse se nota sin necesidad de abrirlo. Al pasar el puntero por el punto, vuelve a ser el botón de cerrar, con una lista de los bloques que no resuelven: pasa el puntero por uno para leer dónde deja de resolver, y haz clic en él para saltar directamente a él. La tercera pestaña de arriba lleva uno: abre sus variables y dale un valor a `HOST`, y el punto desaparece en cuanto todas las referencias resuelven.",
     },
     sidebar: {
       intro:
@@ -968,8 +978,8 @@ Si algo sale mal, deshazlo en este orden:
         "La vista previa resalta el texto resuelto según cuántos valores atravesó. El texto que escribió la variable a la que haces referencia lleva el tono más claro, el que escribió una referencia **dentro** de ese valor se apoya en uno más intenso, y todo lo que esté más adentro comparte el más intenso. Así, de un vistazo sabes qué parte del comando viene de dónde.",
       shadesDemoHint:
         "Aquí `HOST` se construye a partir de `SERVICE`, que a su vez se construye a partir de `NAME`, así que el comando resuelto luce los tres tonos a la vez:",
-      shadesHover:
-        "Cuando los tonos no bastan, pasa el cursor sobre cualquier fragmento resaltado de un comando resuelto: te dice la variable que lo escribió.",
+      shadesHover: (goToDefinition: string, edit: string) =>
+        `Cuando los tonos no bastan, pasa el cursor sobre cualquier fragmento resaltado de un comando resuelto: te dice la variable que lo escribió, su botón de flecha (**${goToDefinition}**) te lleva a esa variable en la vista de variables, y **${edit}** abre su clave y su valor ahí mismo en el tooltip, para cambiarlos sin salir del comando.`,
       shadesUnresolved:
         "Una referencia que no se resuelve se cuenta igual, en rojo en vez de verde: el resto del comando sigue resolviéndose y solo se marca la parte rota, a la profundidad en la que está. Así un vistazo también te dice qué tan hondo está el problema, no solo que lo hay.",
       shadesUnresolvedDemoHint:
@@ -1330,7 +1340,7 @@ Si algo sale mal, deshazlo en este orden:
       noNesting:
         "Los estilos no se combinan: por ejemplo, negrita y cursiva no pueden mezclarse en las mismas palabras. Gana el estilo que empiece primero.",
       links:
-        "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables. Para abrir un enlace, mantén `Ctrl` y haz clic en él.",
+        "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables. Para abrir un enlace, mantén `Ctrl` y haz clic en él, o pasa el puntero por encima y haz clic en **Seguir enlace** en su tooltip.",
       wrapKeys:
         "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y `Ctrl+´` en comillas invertidas; escribir cualquier carácter de paréntesis (**(**, **[** o **{**) o comillas (**\"** o **'**) lo envuelve en ese par. Envolver en pares no es exclusivo de las notas: funciona igual en el editor de comandos.",
     },

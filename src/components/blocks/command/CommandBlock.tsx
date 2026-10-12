@@ -12,6 +12,7 @@ import {
   type CodeEditorHandle,
 } from "@/components/common/codeEditor/CodeEditor";
 import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageSelect";
+import { VariablesViewContext } from "@/components/variables/variablesViewContext";
 import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
 import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
@@ -19,7 +20,7 @@ import { buildVariableCompletions } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
 import { classNames, countLines } from "@/utils/string";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 
 import { EditorToggle } from "../EditorToggle";
 import "./CommandBlock.css";
@@ -33,6 +34,7 @@ interface Props {
 
 export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const t = useTranslation();
+  const linkSources = useContext(VariablesViewContext);
   const blockId = block.id;
   const blockText = block.text;
   const isEditorCollapsed = block.editorCollapsed === true;
@@ -100,6 +102,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         variableMap={variableMap}
         secretKeys={secretKeys}
         surfaceRef={rootRef}
+        linkSources={linkSources}
         actions={
           <EditorToggle
             collapsed={isEditorCollapsed}

@@ -2,6 +2,7 @@ export { carryVariables, uniqueCopyKey } from "./carry";
 export type { CarriedVariables } from "./carry";
 export {
   hasUnresolvedTokens,
+  resolveCommandSegments,
   resolveCommandText,
   resolveCommandToString
 } from "./command";
@@ -15,7 +16,7 @@ export {
 export type { OperationKeyword } from "./operations/types";
 export { applyOverrides, overrideScope, withOverride } from "./overrides";
 export type { OverrideHost } from "./overrides";
-export { getTemplateParamNames } from "./params";
+export { getTemplateParamNames, sourceKey } from "./params";
 export {
   renameAllCommandTokens,
   renameAllValueTokens,
@@ -38,7 +39,11 @@ export {
 } from "./token";
 export type { OpenReference, ReferenceMatch } from "./token";
 export type { ResolvedValue, VariableMap } from "./types";
-export { hasUnresolvedReferences } from "./unresolved";
+export {
+  hasUnresolvedBlockReferences,
+  hasUnresolvedReferences,
+  unresolvedBlockText
+} from "./unresolved";
 export { getUsedVariableKeys, isVariableUnused } from "./usage";
 export {
   getSecretKeys,

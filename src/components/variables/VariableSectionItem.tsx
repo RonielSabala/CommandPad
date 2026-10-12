@@ -4,7 +4,7 @@ import type { VariableSection } from "@/common/types";
 import { NoteEditor } from "@/components/blocks/note/NoteEditor";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { classNames } from "@/utils/string";
+import { classNames, classSelector } from "@/utils/string";
 import { memo, useCallback, useRef, type MouseEvent } from "react";
 
 import { VariableRowFrame } from "./VariableRowFrame";
@@ -52,8 +52,8 @@ export const VariableSectionItem = memo(function VariableSectionItem({
     const target = event.target as Element;
     if (
       nameToggles &&
-      target.closest(`.${CssClass.VARIABLE_SECTION_NAME}`) &&
-      !target.closest(`.${CssClass.NOTE_LINK}`)
+      target.closest(classSelector(CssClass.VARIABLE_SECTION_NAME)) &&
+      !target.closest(classSelector(CssClass.NOTE_LINK))
     ) {
       event.preventDefault();
       toggle();

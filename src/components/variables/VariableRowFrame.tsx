@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssAnimation, CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { AppMode, DragGroup, LassoMode, SelectionGroup } from "@/common/enums";
 import { DragHandle } from "@/components/common/DragHandle";
@@ -32,6 +32,10 @@ export function VariableRowFrame({
   const isSelected = useStore((state) => state.selectedVariableIds.has(rowId));
   const isFlashing = useStore((state) => state.flashVariableIds.has(rowId));
   const clearVariableFlash = useStore((state) => state.clearVariableFlash);
+  const reveal = useStore((state) =>
+    state.revealedVariable?.id === rowId ? state.revealedVariable : null,
+  );
+  const clearVariableReveal = useStore((state) => state.clearVariableReveal);
   const setVariableSelected = useStore((state) => state.setVariableSelected);
   const reorderVariables = useStore((state) => state.reorderVariables);
 
@@ -50,8 +54,10 @@ export function VariableRowFrame({
         className,
         isDragging && CssClass.DRAGGING,
         isDragOver && CssClass.DRAG_OVER,
-        isSelected && "variable-item-selected",
         isFlashing && CssClass.DUPLICATE_FLASH,
+        isSelected && "variable-item-selected",
+        reveal && "variable-reveal",
+        reveal?.resolved && "row-reveal-resolved",
       )}
       {...{ [DataAttr.VARIABLE_ID]: rowId }}
       {...rowProps}
@@ -61,8 +67,12 @@ export function VariableRowFrame({
           setVariableSelected(rowId, drag.mode === LassoMode.SELECT);
         }
       }}
-      onAnimationEnd={() => {
-        if (isFlashing) {
+      onAnimationEnd={(event) => {
+        if (reveal && event.animationName === CssAnimation.SURFACE_REVEAL) {
+          clearVariableReveal();
+        }
+
+        if (isFlashing && event.target === event.currentTarget) {
           clearVariableFlash(rowId);
         }
       }}

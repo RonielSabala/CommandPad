@@ -160,6 +160,8 @@ export interface Messages {
     closeOthers: string;
     closeAll: string;
     closeUnresolvedTab: string;
+    unresolvedTitle: string;
+    unresolvedBlock: (number: number, type: string) => string;
   };
   source: {
     openSource: string;
@@ -218,11 +220,18 @@ export interface Messages {
     placeholder: string;
     extractVariable: string;
     escapeVariable: string;
+    goToDefinition: string;
+    goToDefinitionTitle: (key: string) => string;
+    goToEmbeddedDefinitionTitle: (key: string, runbook: string) => string;
+    editVariable: string;
+    editVariableTitle: (key: string) => string;
+    editValueTitle: (key: string) => string;
   };
   note: {
     styleLabel: Record<NoteStyle, string>;
     stylePlaceholder: Record<NoteStyle, string>;
-    followLinkTooltip: (binding?: string) => string;
+    followLink: string;
+    followLinkBinding: (binding: string) => string;
   };
   image: {
     dropHint: string;
@@ -545,7 +554,7 @@ export interface Messages {
       demoHint: string;
       shades: string;
       shadesDemoHint: string;
-      shadesHover: string;
+      shadesHover: (goToDefinition: string, edit: string) => string;
       shadesUnresolved: string;
       shadesUnresolvedDemoHint: string;
       circular: string;

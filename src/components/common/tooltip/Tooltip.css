@@ -73,3 +73,67 @@
   bottom: calc(var(--tooltip-gap) / -2);
   border-width: 0 1px 1px 0;
 }
+
+/* Rich tooltip */
+
+.tooltip.is-pinned {
+  z-index: var(--z-dropdown);
+  max-width: none;
+}
+
+.tooltip.is-interactive {
+  text-align: left;
+  white-space: normal;
+}
+
+.tooltip.is-interactive.is-visible {
+  pointer-events: auto;
+}
+
+.tooltip.is-interactive:focus {
+  outline: none;
+}
+
+.tooltip.is-interactive::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--tooltip-gap);
+}
+
+.tooltip.is-interactive[data-tooltip-side="bottom"]::before {
+  bottom: 100%;
+}
+
+.tooltip.is-interactive[data-tooltip-side="top"]::before {
+  top: 100%;
+}
+
+/* Tooltip link */
+
+.tooltip-link {
+  padding: 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--accent-dim);
+  border-radius: 0;
+  color: var(--accent);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.tooltip-link:hover,
+.tooltip-link:focus-visible {
+  border-bottom-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.tooltip-link.tooltip-link-plain {
+  border-bottom: none;
+}

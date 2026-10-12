@@ -11,6 +11,7 @@ import type { CommandSegment } from "@/common/types";
 import { ClampToggle } from "@/components/common/codeEditor/ClampToggle";
 import { useDomScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
+import { useRichTooltip } from "@/components/common/tooltip/richTooltip";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CheckIcon, CopyIcon } from "@/components/icons";
 import { useClampSurface } from "@/hooks/useClampSurface";
@@ -21,11 +22,13 @@ import {
   isMaskedSegment,
   resolveCommandText,
   resolveCommandToString,
+  sourceKey,
   type VariableMap,
 } from "@/utils/resolution";
 import { classNames, splitLines, stripEnd } from "@/utils/string";
 import {
   Fragment,
+  useCallback,
   useMemo,
   useRef,
   useState,
@@ -34,17 +37,24 @@ import {
 } from "react";
 
 import "./CommandPreview.css";
+import { VariableSourceTooltip } from "./VariableSourceTooltip";
 
 const SECRET_MASK = "******";
+
+/** The tooltip props for a span written by `source`. */
+type SourceProps = (source: string | undefined) => object;
+
+const plainSourceProps: SourceProps = (source) =>
+  tooltip(source, TooltipVariant.CODE);
 
 function HighlightedLines({
   text,
   className,
-  title,
+  props,
 }: {
   text: string;
   className: string;
-  title?: string;
+  props: object;
 }) {
   const lines = splitLines(text);
   const lastLineIdx = lines.length - 1;
@@ -59,7 +69,7 @@ function HighlightedLines({
         {(content !== "" || isBlank) && (
           <span
             className={classNames(className, isBlank && "token-nesting-blank")}
-            {...tooltip(title, TooltipVariant.CODE)}
+            {...props}
           >
             {isBlank ? NON_BREAKING_SPACE : content}
           </span>
@@ -69,7 +79,13 @@ function HighlightedLines({
   });
 }
 
-function NestedText({ segment }: { segment: CommandSegment }) {
+function NestedText({
+  segment,
+  sourceProps,
+}: {
+  segment: CommandSegment;
+  sourceProps: SourceProps;
+}) {
   const spans = segment.spans;
   if (!spans) {
     return segment.text;
@@ -83,7 +99,7 @@ function NestedText({ segment }: { segment: CommandSegment }) {
         `token-nesting-${span.depth}`,
         span.unresolved ? "token-nesting-unresolved" : "token-nesting-resolved",
       )}
-      title={span.source}
+      props={sourceProps(span.source ?? segment.key)}
     />
   ));
 }
@@ -95,6 +111,8 @@ interface Props {
   secretKeys: Set<string>;
   surfaceRef: RefObject<HTMLElement | null>;
   actions?: ReactNode;
+  /** Offer to jump to the variable behind a span. */
+  linkSources?: boolean;
 }
 
 export function CommandPreview({
@@ -104,11 +122,22 @@ export function CommandPreview({
   secretKeys,
   surfaceRef,
   actions,
+  linkSources,
 }: Props) {
   const t = useTranslation();
   const [copied, setCopied] = useState(false);
   const previewRef = useRef<HTMLSpanElement>(null);
   const previewScrollTarget = useDomScrollTarget(previewRef);
+
+  const sourceTip = useRichTooltip();
+  const sourceTipProps = sourceTip.props;
+  const sourceProps = useCallback<SourceProps>(
+    (source) =>
+      source && Object.hasOwn(variableMap, sourceKey(source))
+        ? { ...tooltip(source, TooltipVariant.CODE), ...sourceTipProps }
+        : plainSourceProps(source),
+    [variableMap, sourceTipProps],
+  );
 
   const segments = useMemo(
     () => resolveCommandText(text, variableMap),
@@ -153,7 +182,10 @@ export function CommandPreview({
               </span>
             ) : (
               <span key={i} className={`token-${seg.type}`}>
-                <NestedText segment={seg} />
+                <NestedText
+                  segment={seg}
+                  sourceProps={linkSources ? sourceProps : plainSourceProps}
+                />
               </span>
             ),
           )
@@ -195,6 +227,17 @@ export function CommandPreview({
       )}
 
       <StickyScrollbar target={previewScrollTarget} deps={[segments]} />
+
+      {linkSources &&
+        sourceTip.render((tip) => (
+          <VariableSourceTooltip
+            source={tip.anchor.getAttribute(DataAttr.TOOLTIP) ?? ""}
+            resolved={
+              !tip.anchor.classList.contains("token-nesting-unresolved")
+            }
+            tip={tip}
+          />
+        ))}
     </div>
   );
 }

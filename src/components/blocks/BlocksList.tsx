@@ -1,10 +1,12 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr, ElementId, ScrollIntoView } from "@/common/constants/dom";
 import type { Block, Variable } from "@/common/types";
+import { useRowReveal } from "@/hooks/useRowReveal";
 import { getActiveTab, useStore } from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
 import { getSecretKeys, getVariableMap } from "@/utils/resolution";
 import { useEffect, useMemo, useRef } from "react";
+
 import { BlockItem } from "./BlockItem";
 import "./BlocksList.css";
 
@@ -17,6 +19,8 @@ export function BlocksList() {
   const variables = activeTab?.variables ?? EMPTY_VARIABLES;
   const pendingFocusBlockId = useStore((state) => state.pendingFocusBlockId);
   const imageViewerBlockId = useStore((state) => state.imageViewerBlockId);
+  const pendingRevealBlockId = useStore((state) => state.pendingRevealBlockId);
+  const finishBlockReveal = useStore((state) => state.finishBlockReveal);
 
   const variableMap = useMemo(() => getVariableMap(variables), [variables]);
   const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
@@ -40,6 +44,13 @@ export function BlocksList() {
       ScrollIntoView.BLOCK_START,
     );
   }, [imageViewerBlockId]);
+
+  useRowReveal(
+    listRef,
+    DataAttr.BLOCK_ID,
+    pendingRevealBlockId,
+    finishBlockReveal,
+  );
 
   return (
     <div

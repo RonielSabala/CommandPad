@@ -1,4 +1,6 @@
 import { CssClass } from "@/common/constants/css";
+import { MonacoLayer } from "@/common/editorConfig";
+import { classSelector } from "@/utils/string";
 
 export const ElementId = {
   BLOCKS_LIST: "blocks-list",
@@ -12,6 +14,14 @@ export const MonacoSelector = {
   FIND_WIDGET: ".find-widget",
   CONTEXT_MENU: ".monaco-menu",
   MENU_ITEM: ".action-item:not(.disabled):not(.separator)",
+} as const;
+
+export const PopupSelector = {
+  LAYERS: classSelector(
+    CssClass.SELECT_MENU_PORTAL,
+    MonacoLayer.HOVER_ROOT_CLASS,
+    MonacoLayer.OVERFLOW_ROOT_CLASS,
+  ),
 } as const;
 
 export const CodeSurfaceSelector = {
@@ -34,7 +44,10 @@ export const ModalSelector = {
 } as const;
 
 export const BodySelector = {
-  RESIZING: `.${CssClass.PANEL_RESIZING}, .${CssClass.VARIABLE_SPLIT_RESIZING}`,
+  RESIZING: classSelector(
+    CssClass.PANEL_RESIZING,
+    CssClass.VARIABLE_SPLIT_RESIZING,
+  ),
 } as const;
 
 export const EditCommand = {
@@ -49,16 +62,25 @@ export const HtmlTag = {
 } as const;
 
 export const DataAttr = {
+  // Core
+
   BLOCK_ID: "data-block-id",
-  RUNBOOK_ID: "data-runbook-id",
   VARIABLE_ID: "data-variable-id",
+  RUNBOOK_ID: "data-runbook-id",
+
   NOTE_OFFSET: "data-note-offset",
   NOTE_ALIGN: "data-note-align",
+
   DRAG_IMAGE: "data-drag-image",
+
+  // Panels
   PANEL_SIDE: "data-panel-side",
   PANEL_COLLAPSED: "data-panel-collapsed",
+
+  // Tooltips
   TOOLTIP: "data-tooltip",
   TOOLTIP_VARIANT: "data-tooltip-variant",
+  TOOLTIP_RICH: "data-tooltip-rich",
   TOOLTIP_SIDE: "data-tooltip-side",
 } as const;
 

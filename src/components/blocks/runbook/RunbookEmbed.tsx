@@ -1,5 +1,7 @@
+import { CssClass } from "@/common/constants/css";
 import { AppMode, BlockType, EmbeddedRunbookStatus } from "@/common/enums";
 import type { Block, BlockOfType, RunbookBlock } from "@/common/types";
+import "@/components/blocks/BlocksList.css";
 import { Spinner } from "@/components/common/Spinner";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { RunbookIcon } from "@/components/icons";
@@ -17,8 +19,7 @@ import {
   ShieldExclamation,
 } from "react-bootstrap-icons";
 
-import { CssClass } from "@/common/constants/css";
-import "@/components/blocks/BlocksList.css";
+import { EmbedScopeContext } from "./embedContext";
 import {
   EmbeddedCommand,
   EmbeddedDivider,
@@ -220,6 +221,12 @@ export function EmbeddedBlocks({
 }) {
   const t = useTranslation();
   const blocks = embed.content?.blocks;
+  const { source, variables } = embed;
+
+  const scope = useMemo(
+    () => (source ? { source, variables } : null),
+    [source, variables],
+  );
   const images = useMemo(
     () =>
       (blocks ?? [])
@@ -233,25 +240,27 @@ export function EmbeddedBlocks({
   }
 
   return (
-    <div className={classNames(CssClass.BLOCKS_LIST, "runbook-embed-blocks")}>
-      {blocks.map((child) => {
-        const View = EMBEDDED_VIEWS[child.type] as ComponentType<
-          EmbeddedBlockProps<Block>
-        >;
+    <EmbedScopeContext.Provider value={scope}>
+      <div className={classNames(CssClass.BLOCKS_LIST, "runbook-embed-blocks")}>
+        {blocks.map((child) => {
+          const View = EMBEDDED_VIEWS[child.type] as ComponentType<
+            EmbeddedBlockProps<Block>
+          >;
 
-        return (
-          <View
-            key={child.id}
-            block={child}
-            variableMap={embed.variableMap}
-            secretKeys={embed.secretKeys}
-            scopeId={embedScopeId(scopeId, child.id)}
-            trail={embed.nestedTrail}
-            images={images}
-          />
-        );
-      })}
-    </div>
+          return (
+            <View
+              key={child.id}
+              block={child}
+              variableMap={embed.variableMap}
+              secretKeys={embed.secretKeys}
+              scopeId={embedScopeId(scopeId, child.id)}
+              trail={embed.nestedTrail}
+              images={images}
+            />
+          );
+        })}
+      </div>
+    </EmbedScopeContext.Provider>
   );
 }
 

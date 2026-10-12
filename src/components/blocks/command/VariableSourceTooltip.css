@@ -1,0 +1,28 @@
+.variable-source-tooltip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-4);
+}
+
+.variable-source-tooltip .tooltip-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Editing */
+
+.variable-source-tooltip.is-editing {
+  --block-backdrop: var(--color-surface);
+
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-3);
+  max-width: min(var(--tooltip-editor-max-width), 80vw);
+  padding-block: var(--space-3);
+}
+
+.variable-source-tooltip.is-editing > .tooltip-link {
+  align-self: flex-end;
+}

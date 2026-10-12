@@ -5,6 +5,7 @@ import { AppMode } from "@/common/enums";
 import { isModifierPressed, ModifierAction } from "@/common/keybindings";
 import { useStoreApi } from "@/store/store";
 import { getNoteCaretAtPoint } from "@/utils/dom";
+import { classSelector } from "@/utils/string";
 import { useEffect } from "react";
 
 export function useLinkActivation(root: Document | HTMLElement | null): void {
@@ -24,14 +25,14 @@ export function useLinkActivation(root: Document | HTMLElement | null): void {
 
     const linkForEvent = (event: MouseEvent): HTMLAnchorElement | undefined => {
       const target = event.target as Element | null;
-      if (!target?.closest(`.${CssClass.NOTE_EDITOR}`)) {
+      if (!target?.closest(classSelector(CssClass.NOTE_EDITOR))) {
         return undefined;
       }
 
       return document
         .elementsFromPoint(event.clientX, event.clientY)
         .find((element): element is HTMLAnchorElement =>
-          element.matches(`.${CssClass.NOTE_LINK}`),
+          element.matches(classSelector(CssClass.NOTE_LINK)),
         );
     };
 

@@ -116,9 +116,16 @@ export const TooltipConfig = {
   SHOW_DELAY_MS: 500,
   WARM_DELAY_MS: 90,
   WARM_WINDOW_MS: 500,
+  HIDE_DELAY_MS: 250,
+  HANDOFF_DELAY_MS: 150,
   GAP: 8,
   VIEWPORT_MARGIN: 8,
   ARROW_INSET: 14,
+} as const;
+
+export const TabUnresolvedConfig = {
+  EXCERPT_LENGTH: 48,
+  ELLIPSIS: "…",
 } as const;
 
 export const StickyScrollbarConfig = {

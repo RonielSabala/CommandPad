@@ -109,16 +109,24 @@ function cachedEmbedSource(
   return source;
 }
 
+export function isEmbedBlockUnresolved(
+  block: RunbookBlock,
+  library: readonly RunbookEntry[],
+  embeddedRunbooks: Readonly<Record<string, EmbeddedRunbook>>,
+): boolean {
+  const source = cachedEmbedSource(library, block);
+  const status = source ? embeddedRunbooks[source.key]?.status : undefined;
+  return isEmbedUnresolved(block, source, status);
+}
+
 export function hasUnresolvedEmbeds(
   blocks: readonly RunbookBlock[],
   library: readonly RunbookEntry[],
   embeddedRunbooks: Readonly<Record<string, EmbeddedRunbook>>,
 ): boolean {
-  return blocks.some((block) => {
-    const source = cachedEmbedSource(library, block);
-    const status = source ? embeddedRunbooks[source.key]?.status : undefined;
-    return isEmbedUnresolved(block, source, status);
-  });
+  return blocks.some((block) =>
+    isEmbedBlockUnresolved(block, library, embeddedRunbooks),
+  );
 }
 
 export function embedScopeId(scopeId: string, id: string): string {

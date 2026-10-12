@@ -219,6 +219,11 @@ export interface CloudFileEditor {
   error: string | null;
 }
 
+interface VariableReveal {
+  id: string;
+  resolved: boolean;
+}
+
 export interface StoreState {
   // Data
   tabs: Tab[];
@@ -253,6 +258,10 @@ export interface StoreState {
   selectKeyHeld: boolean;
   linkKeyHeld: boolean;
   pendingFocusBlockId: string | null;
+  pendingRevealBlockId: string | null;
+  revealedBlockId: string | null;
+  pendingRevealVariable: VariableReveal | null;
+  revealedVariable: VariableReveal | null;
   pendingFocusVariableId: string | null;
   pendingFocusSectionId: string | null;
   imageViewerBlockId: string | null;
@@ -412,6 +421,17 @@ export interface StoreState {
   ) => void;
   clearFlash: (blockId: string) => void;
   consumeBlockFocus: () => void;
+  revealBlock: (tabId: string, blockId: string) => void;
+  finishBlockReveal: () => void;
+  clearBlockReveal: () => void;
+  revealVariable: (variableId: string, resolved: boolean) => void;
+  revealEmbeddedVariable: (
+    source: EmbedSource,
+    key: string,
+    resolved: boolean,
+  ) => Promise<void>;
+  finishVariableReveal: () => void;
+  clearVariableReveal: () => void;
   toggleClampSurfaceExpanded: (id: string, surface: ClampSurface) => void;
   openImageViewer: (blockId: string, slides?: ImageBlock[] | null) => void;
   closeImageViewer: () => void;
@@ -1650,6 +1670,10 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       selectKeyHeld: false,
       linkKeyHeld: false,
       pendingFocusBlockId: null,
+      pendingRevealBlockId: null,
+      revealedBlockId: null,
+      pendingRevealVariable: null,
+      revealedVariable: null,
       pendingFocusVariableId: null,
       pendingFocusSectionId: null,
       imageViewerBlockId: null,
@@ -3223,13 +3247,18 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           ? new Set(state.selectedBlockIds)
           : new Set([blockId]);
 
-        set((s) => ({
-          ...withActiveTab(s, (tab) => ({
+        set((s) => {
+          const updated = withActiveTab(s, (tab) => ({
             ...tab,
             blocks: tab.blocks.filter((b) => !idsToRemove.has(b.id)),
-          })),
-          selectedBlockIds: isSelected ? new Set() : s.selectedBlockIds,
-        }));
+          }));
+
+          return {
+            ...updated,
+            ...relabelActive({ ...s, ...updated }),
+            selectedBlockIds: isSelected ? new Set() : s.selectedBlockIds,
+          };
+        });
         get().saveState();
       },
 
@@ -3486,20 +3515,25 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           .filter((b): b is Block => b !== undefined)
           .sort((a, b) => active.blocks.indexOf(a) - active.blocks.indexOf(b));
 
-        set((s) =>
-          withActiveTab(s, (tab) => {
+        set((s) => {
+          const updated = withActiveTab(s, (tab) => {
             const remaining = tab.blocks.filter(
               (b) => !movingIds.includes(b.id),
             );
             const newTargetIndex = remaining.findIndex(
               (b) => b.id === targetId,
             );
+
             const insertIndex =
               sourceIndex < targetIndex ? newTargetIndex + 1 : newTargetIndex;
             remaining.splice(insertIndex, 0, ...movingBlocks);
+
             return { ...tab, blocks: remaining };
-          }),
-        );
+          });
+
+          // A different block may now be the first one, which names the runbook
+          return { ...updated, ...relabelActive({ ...s, ...updated }) };
+        });
         get().saveState();
       },
 
@@ -3514,6 +3548,87 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }),
 
       consumeBlockFocus: () => set({ pendingFocusBlockId: null }),
+
+      revealBlock: (tabId, blockId) => {
+        get().switchTab(tabId);
+
+        const view = getRunbookView(get());
+        if (view !== RunbookView.PREVIEW) {
+          get().toggleRunbookView(view);
+        }
+
+        set({ pendingRevealBlockId: blockId });
+      },
+
+      finishBlockReveal: () =>
+        set((s) =>
+          s.pendingRevealBlockId
+            ? {
+                pendingRevealBlockId: null,
+                revealedBlockId: s.pendingRevealBlockId,
+              }
+            : {},
+        ),
+
+      clearBlockReveal: () => set({ revealedBlockId: null }),
+
+      revealVariable: (variableId, resolved) => {
+        if (getRunbookView(get()) !== RunbookView.VARIABLES) {
+          get().toggleRunbookView(RunbookView.VARIABLES);
+        }
+
+        // A folded section unfolds to show it
+        set((s) => {
+          const tab = getActiveTab(s);
+          const sections = tab
+            ? revealVariables(tab, new Set([variableId]))
+            : undefined;
+
+          const unfold =
+            tab && sections && sections !== tab.variableSections
+              ? withActiveTab(s, (active) => ({
+                  ...active,
+                  variableSections: sections,
+                }))
+              : {};
+
+          return {
+            ...unfold,
+            pendingRevealVariable: { id: variableId, resolved },
+          };
+        });
+
+        get().saveState();
+      },
+
+      revealEmbeddedVariable: async (source, key, resolved) => {
+        const before = get().activeTabId;
+        await get().openEmbeddedRunbook(source);
+
+        const state = get();
+        if (state.activeTabId === before) {
+          return;
+        }
+
+        const variable = getActiveTab(state)?.variables.find(
+          (v) => getVariableKey(v) === key,
+        );
+        if (variable) {
+          state.revealVariable(variable.id, resolved);
+        }
+      },
+
+      finishVariableReveal: () =>
+        set((s) =>
+          s.pendingRevealVariable
+            ? {
+                pendingRevealVariable: null,
+                revealedVariable: s.pendingRevealVariable,
+              }
+            : {},
+        ),
+
+      clearVariableReveal: () => set({ revealedVariable: null }),
 
       toggleClampSurfaceExpanded: (id, surface) =>
         set((s) => {

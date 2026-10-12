@@ -25,6 +25,8 @@ export const BlockItem = memo(function BlockItem({
   const isSelected = useStore((state) => state.selectedBlockIds.has(block.id));
   const isFlashing = useStore((state) => state.flashBlockIds.has(block.id));
   const clearFlash = useStore((state) => state.clearFlash);
+  const isRevealed = useStore((state) => state.revealedBlockId === block.id);
+  const clearBlockReveal = useStore((state) => state.clearBlockReveal);
   const reorderBlocks = useStore((state) => state.reorderBlocks);
   const setBlockSelected = useStore((state) => state.setBlockSelected);
 
@@ -44,6 +46,7 @@ export const BlockItem = memo(function BlockItem({
         dragging && CssClass.DRAGGING,
         dragOver && CssClass.DRAG_OVER,
         isFlashing && CssClass.DUPLICATE_FLASH,
+        isRevealed && CssClass.ROW_REVEAL,
         isSelected && "block-selected",
       )}
       {...{ [DataAttr.BLOCK_ID]: block.id }}
@@ -144,9 +147,17 @@ export const BlockItem = memo(function BlockItem({
           setBlockSelected(block.id, drag.mode === LassoMode.SELECT);
         }
       }}
-      onAnimationEnd={() => {
+      onAnimationEnd={(event) => {
+        if (event.target !== event.currentTarget) {
+          return;
+        }
+
         if (isFlashing) {
           clearFlash(block.id);
+        }
+
+        if (isRevealed) {
+          clearBlockReveal();
         }
       }}
     >

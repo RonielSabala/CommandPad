@@ -4,13 +4,17 @@ import { EventType, Key, MouseButton } from "@/common/constants/events";
 import { AppMode, LassoMode, type SelectionGroup } from "@/common/enums";
 import { isModifierPressed, ModifierAction } from "@/common/keybindings";
 import { useStoreApi } from "@/store/store";
+import { classSelector } from "@/utils/string";
 import { useEffect } from "react";
 
 import { lasso } from "./lasso";
 import { SELECTION_GROUPS } from "./selectionGroups";
 
 /** A click on one of these controls must not clear the selection. */
-const KEEP_SELECTION_SELECTOR = `.${CssClass.ITEM_CONTROL}`;
+const KEEP_SELECTION_SELECTOR = classSelector(
+  CssClass.TOOLTIP,
+  CssClass.ITEM_CONTROL,
+);
 
 export function useLassoSelection(
   root: Document | HTMLElement | null,
@@ -81,7 +85,7 @@ export function useLassoSelection(
       }
 
       const itemElement = (event.target as Element).closest(
-        `.${definition.itemClass}`,
+        classSelector(definition.itemClass),
       );
 
       if (itemElement) {

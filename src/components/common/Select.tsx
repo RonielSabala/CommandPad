@@ -187,8 +187,8 @@ export function Select<T extends string>({
       ref={menuRef}
       className={classNames(
         "select-menu",
-        portal ? "select-menu-portal" : `align-${align}`,
         scrollable && "is-scrollable",
+        portal ? CssClass.SELECT_MENU_PORTAL : `align-${align}`,
       )}
       style={portal ? menuStyle : undefined}
       role="listbox"

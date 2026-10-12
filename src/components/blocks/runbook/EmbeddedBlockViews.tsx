@@ -6,12 +6,13 @@ import type {
   ImageBlock,
   NoteBlock,
 } from "@/common/types";
+import { VariablesViewContext } from "@/components/variables/variablesViewContext";
 import { CLAMP_SURFACE_STYLE } from "@/hooks/useClampSurface";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 
 import { CommandPreview } from "../command/CommandPreview";
 import { DividerLine } from "../divider/DividerBlock";
@@ -36,6 +37,7 @@ export function EmbeddedCommand({
   scopeId,
 }: EmbeddedBlockProps<CommandBlock>) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const linkSources = useContext(VariablesViewContext);
 
   return (
     <div
@@ -49,6 +51,7 @@ export function EmbeddedCommand({
         variableMap={variableMap}
         secretKeys={secretKeys}
         surfaceRef={rootRef}
+        linkSources={linkSources}
       />
     </div>
   );
