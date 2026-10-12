@@ -1,5 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { MonacoLayer } from "@/common/editorConfig";
+import { classSelector } from "@/utils/string";
 
 export const ElementId = {
   BLOCKS_LIST: "blocks-list",
@@ -16,13 +17,11 @@ export const MonacoSelector = {
 } as const;
 
 export const PopupSelector = {
-  LAYERS: [
-    MonacoLayer.OVERFLOW_ROOT_CLASS,
-    MonacoLayer.HOVER_ROOT_CLASS,
+  LAYERS: classSelector(
     CssClass.SELECT_MENU_PORTAL,
-  ]
-    .map((className) => `.${className}`)
-    .join(", "),
+    MonacoLayer.HOVER_ROOT_CLASS,
+    MonacoLayer.OVERFLOW_ROOT_CLASS,
+  ),
 } as const;
 
 export const CodeSurfaceSelector = {
@@ -45,7 +44,10 @@ export const ModalSelector = {
 } as const;
 
 export const BodySelector = {
-  RESIZING: `.${CssClass.PANEL_RESIZING}, .${CssClass.VARIABLE_SPLIT_RESIZING}`,
+  RESIZING: classSelector(
+    CssClass.PANEL_RESIZING,
+    CssClass.VARIABLE_SPLIT_RESIZING,
+  ),
 } as const;
 
 export const EditCommand = {

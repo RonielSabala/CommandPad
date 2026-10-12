@@ -15,7 +15,7 @@ import {
   formatFileSize,
   formatTimestamp,
 } from "@/utils/format";
-import { classNames } from "@/utils/string";
+import { classNames, classSelector } from "@/utils/string";
 import { useState, type MouseEvent } from "react";
 import type { Icon } from "react-bootstrap-icons";
 
@@ -80,7 +80,7 @@ export function CloudEntryRow({
     }
 
     const plain = !event.shiftKey && !event.ctrlKey && !event.metaKey;
-    if (plain && target.closest(`.${NAME_CLASS}`)) {
+    if (plain && target.closest(classSelector(NAME_CLASS))) {
       onActivate();
       return;
     }

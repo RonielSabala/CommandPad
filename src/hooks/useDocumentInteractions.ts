@@ -2,6 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { EventType } from "@/common/constants/events";
 import { isModifierPressed, ModifierAction } from "@/common/keybindings";
 import { useStoreApi } from "@/store/store";
+import { classSelector } from "@/utils/string";
 import { useEffect } from "react";
 import { blockDrag, clearBlockDrag } from "./blockDrag";
 
@@ -27,7 +28,7 @@ export function useDocumentInteractions(): void {
       const target = event.target as Element;
       if (
         state.focusedRunbookId !== null &&
-        !target.closest(`.${CssClass.RUNBOOK_ITEM_BTN}`)
+        !target.closest(classSelector(CssClass.RUNBOOK_ITEM_BTN))
       ) {
         state.setRunbookFocus(null);
       }

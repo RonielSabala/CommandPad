@@ -1,6 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { InputSelector } from "@/common/constants/dom";
 import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
+import { classSelector } from "@/utils/string";
 import { useState, type MouseEvent } from "react";
 
 export function useWorkspaceContextMenu(itemClass: string) {
@@ -10,7 +11,7 @@ export function useWorkspaceContextMenu(itemClass: string) {
     const target = event.target as HTMLElement;
     if (
       target.closest(InputSelector.EDITABLE) ||
-      target.closest(`.${itemClass}`)
+      target.closest(classSelector(itemClass))
     ) {
       return;
     }
@@ -18,7 +19,7 @@ export function useWorkspaceContextMenu(itemClass: string) {
     event.preventDefault();
 
     // Right-clicking the open menu just closes it
-    if (target.closest(`.${CssClass.CONTEXT_MENU}`)) {
+    if (target.closest(classSelector(CssClass.CONTEXT_MENU))) {
       setMenuAnchor(null);
       return;
     }

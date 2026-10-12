@@ -5,7 +5,7 @@ import { useNoteFormatting } from "@/hooks/useNoteFormatting";
 import { useTabInsertion } from "@/hooks/useTabInsertion";
 import { useStore } from "@/store/store";
 import { getNoteCaretAtPoint } from "@/utils/dom";
-import { classNames } from "@/utils/string";
+import { classNames, classSelector } from "@/utils/string";
 import {
   useEffect,
   useRef,
@@ -55,7 +55,9 @@ export function NoteEditor({
     !readMode &&
     previewRef.current !== null &&
     event.currentTarget.contains(event.target as Node) &&
-    !(event.target as Element | null)?.closest(`.${CssClass.NOTE_LINK}`);
+    !(event.target as Element | null)?.closest(
+      classSelector(CssClass.NOTE_LINK),
+    );
 
   const handleMouseDown = (event: MouseEvent) => {
     if (placesCaret(event)) {
