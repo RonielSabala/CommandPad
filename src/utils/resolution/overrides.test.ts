@@ -81,7 +81,7 @@ describe("applyOverrides", () => {
         key: "A",
         text: "{B}",
         type: CommandSegmentType.RESOLVED,
-        spans: [{ text: "{B}", depth: 2, unresolved: true }],
+        spans: [{ text: "{B}", depth: 2, source: "B", unresolved: true }],
       },
     ]);
   });
@@ -96,7 +96,7 @@ describe("applyOverrides", () => {
     expect(values).toEqual({ placeholder: "hello {world}" });
     expect(resolve("{placeholder}")[0].spans).toEqual([
       { text: "hello ", depth: 1, source: "placeholder" },
-      { text: "{world}", depth: 2, unresolved: true },
+      { text: "{world}", depth: 2, source: "world", unresolved: true },
     ]);
   });
 
@@ -111,7 +111,7 @@ describe("applyOverrides", () => {
     expect(segment.spans).toEqual([
       { text: "{|IF(", depth: 1, unresolved: true },
       { text: "hi from ", depth: 2, source: "condition" },
-      { text: "{missing}", depth: 3, unresolved: true },
+      { text: "{missing}", depth: 3, source: "missing", unresolved: true },
       { text: "; x; y)}", depth: 1, unresolved: true },
     ]);
   });
