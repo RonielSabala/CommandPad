@@ -371,6 +371,7 @@ export interface StoreState {
 
   addVariable: (kind?: VariableKind) => Promise<void>;
   extractVariable: (value: string) => { id: string; key: string } | null;
+  defineVariable: (tabId: string, key: string) => void;
   removeVariable: (variableId: string) => void;
   duplicateVariable: (variableId: string) => void;
   updateVariable: (
@@ -2735,6 +2736,22 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         get().saveState();
         return { id: newVariable.id, key };
+      },
+
+      defineVariable: (tabId, key) => {
+        if (get().mode === AppMode.READ) {
+          return;
+        }
+
+        get().switchTab(tabId);
+
+        const newVariable = { ...createVariable(VariableKind.TEXT), key };
+        set((s) => ({
+          ...withActiveTab(s, (tab) => appendVariable(tab, newVariable)),
+          variableSearchQuery: "",
+        }));
+
+        get().revealVariable(newVariable.id, false);
       },
 
       removeVariable: (variableId) => {

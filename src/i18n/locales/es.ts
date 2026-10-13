@@ -5,6 +5,7 @@ import {
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  UnresolvedCause,
   VaultError,
   VaultField,
   VaultPrompt,
@@ -166,8 +167,20 @@ export const es: Messages = {
     closeOthers: "Cerrar las demás",
     closeAll: "Cerrar todas",
     closeUnresolvedTab: "Cerrar pestaña (este libro tiene partes sin resolver)",
-    unresolvedTitle: "Partes sin resolver en:",
-    unresolvedBlock: (number, type) => `Bloque ${number} · ${type}`,
+    unresolvedSummary: (problems, blocks) =>
+      `${problems} ${problems === 1 ? "problema" : "problemas"} en ${blocks} ${blocks === 1 ? "bloque" : "bloques"}`,
+    unresolvedCause: {
+      [UnresolvedCause.UNDEFINED]: "Variables sin definir",
+      [UnresolvedCause.EMPTY]: "Valores vacíos",
+      [UnresolvedCause.BLANK]: "Huecos sin rellenar",
+      [UnresolvedCause.FAILED]: "Referencias fallidas",
+      [UnresolvedCause.MISSING_RUNBOOK]: "Libros no encontrados",
+    },
+    unresolvedIn: (blocks) => (blocks === 1 ? "Bloque" : "Bloques"),
+    unresolvedBlock: (number, type) => `Bloque ${number} ${MIDDLE_DOT} ${type}`,
+    defineVariable: "Crear",
+    defineVariableTitle: (key) =>
+      `Agrega '${key}' a las variables de este libro.`,
   },
   source: {
     openSource: "Abrir archivo fuente",
@@ -909,8 +922,8 @@ Si algo sale mal, deshazlo en este orden:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:
         "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas, cierra alguna, y abre la fuente para ver el libro de una pestaña como JSON.",
-      unresolvedMarker:
-        "Cuando el botón de cerrar de una pestaña es un punto rojo relleno, ese libro tiene partes sin resolver, así que un libro que no está listo para usarse se nota sin necesidad de abrirlo. Al pasar el puntero por el punto, vuelve a ser el botón de cerrar, con una lista de los bloques que no resuelven: pasa el puntero por uno para leer dónde deja de resolver, y haz clic en él para saltar directamente a él. La tercera pestaña de arriba lleva uno: abre sus variables y dale un valor a `HOST`, y el punto desaparece en cuanto todas las referencias resuelven.",
+      unresolvedMarker: (create) =>
+        `Cuando el botón de cerrar de una pestaña es un punto rojo relleno, ese libro tiene partes sin resolver, así que un libro que no está listo para usarse se nota sin necesidad de abrirlo. Al pasar el puntero por el punto, vuelve a ser el botón de cerrar, con un resumen de lo que no resuelve: cuántos problemas hay y a cuántos bloques alcanzan, cada problema una sola vez bajo su causa, seguido de los bloques que rompe. Haz clic en un bloque para saltar directamente a él, usa la flecha para abrir la variable de la que viene un problema, o **${create}** para agregar una variable que todavía no existe. La tercera pestaña de arriba lleva uno: abre sus variables y dale un valor a \`HOST\`, y el punto desaparece en cuanto todas las referencias resuelven.`,
     },
     sidebar: {
       intro:

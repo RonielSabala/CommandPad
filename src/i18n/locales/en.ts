@@ -5,6 +5,7 @@ import {
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  UnresolvedCause,
   VaultError,
   VaultField,
   VaultPrompt,
@@ -157,8 +158,19 @@ export const en: Messages = {
     closeOthers: "Close others",
     closeAll: "Close all",
     closeUnresolvedTab: "Close tab (this runbook has unresolved parts)",
-    unresolvedTitle: "Unresolved parts in:",
-    unresolvedBlock: (number, type) => `Block ${number} · ${type}`,
+    unresolvedSummary: (problems, blocks) =>
+      `${problems} ${problems === 1 ? "problem" : "problems"} in ${blocks} ${blocks === 1 ? "block" : "blocks"}`,
+    unresolvedCause: {
+      [UnresolvedCause.UNDEFINED]: "Undefined variables",
+      [UnresolvedCause.EMPTY]: "Empty values",
+      [UnresolvedCause.BLANK]: "Unfilled placeholders",
+      [UnresolvedCause.FAILED]: "Failed references",
+      [UnresolvedCause.MISSING_RUNBOOK]: "Runbooks not found",
+    },
+    unresolvedIn: (blocks) => (blocks === 1 ? "Block" : "Blocks"),
+    unresolvedBlock: (number, type) => `Block ${number} ${MIDDLE_DOT} ${type}`,
+    defineVariable: "Create",
+    defineVariableTitle: (key) => `Add '${key}' to this runbook's variables.`,
   },
   source: {
     openSource: "Open source file",
@@ -887,8 +899,8 @@ If something goes wrong, undo it in this order:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
         "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, close one, and open the source file to see a tab's runbook as JSON.",
-      unresolvedMarker:
-        "When a tab's close button is a solid red dot, that runbook has unresolved parts, so a runbook that isn't ready to run stands out without opening it. Point at the dot and it turns back into the close button, with a list of the blocks that don't resolve: point at one to read where it stops resolving, and click it to jump straight to it. The third tab above wears one: open its variables and give `HOST` a value, and the dot goes as soon as every reference resolves.",
+      unresolvedMarker: (create) =>
+        `When a tab's close button is a solid red dot, that runbook has unresolved parts, so a runbook that isn't ready to run stands out without opening it. Point at the dot and it turns back into the close button, with a summary of what doesn't resolve: how many problems there are and how many blocks they reach, each problem listed once under its cause, followed by the blocks it breaks. Click a block to jump straight to it, use the arrow to open the variable a problem comes from, or **${create}** to add a variable that doesn't exist yet. The third tab above wears one: open its variables and give \`HOST\` a value, and the dot goes as soon as every reference resolves.`,
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",

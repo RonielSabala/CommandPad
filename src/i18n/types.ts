@@ -4,6 +4,7 @@ import type {
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  UnresolvedCause,
   VaultError,
   VaultField,
   VaultPrompt,
@@ -160,8 +161,12 @@ export interface Messages {
     closeOthers: string;
     closeAll: string;
     closeUnresolvedTab: string;
-    unresolvedTitle: string;
+    unresolvedSummary: (problems: number, blocks: number) => string;
+    unresolvedCause: Record<UnresolvedCause, string>;
+    unresolvedIn: (blocks: number) => string;
     unresolvedBlock: (number: number, type: string) => string;
+    defineVariable: string;
+    defineVariableTitle: (key: string) => string;
   };
   source: {
     openSource: string;
@@ -516,7 +521,7 @@ export interface Messages {
       ) => string;
       autoCreate: string;
       labelDemo: string;
-      unresolvedMarker: string;
+      unresolvedMarker: (create: string) => string;
     };
     sidebar: {
       intro: string;
