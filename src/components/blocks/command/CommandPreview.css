@@ -85,6 +85,15 @@
   color: var(--success);
 }
 
+.copy-warning {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--warning-dim);
+  color: var(--warning);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
 /* Token styles */
 
 .token-resolved,

@@ -44,7 +44,8 @@ export {
   hasUnresolvedReferences,
   unresolvedBlockParts,
   unresolvedBlockText,
-  unresolvedParts
+  unresolvedParts,
+  unresolvedSegmentParts
 } from "./unresolved";
 export type { UnresolvedPart } from "./unresolved";
 export { getUsedVariableKeys, isVariableUnused } from "./usage";

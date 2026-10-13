@@ -1,7 +1,7 @@
 import { getBlockCommandTexts } from "@/blocks";
 import { SECRET_MASK } from "@/common/config";
 import { CommandSegmentType, UnresolvedCause } from "@/common/enums";
-import type { Block, ResolvedSpan } from "@/common/types";
+import type { Block, CommandSegment, ResolvedSpan } from "@/common/types";
 
 import { findUnresolvedOffset, resolveCommandSegments } from "./command";
 import { sourceKey } from "./params";
@@ -137,9 +137,22 @@ export function unresolvedParts(
   variableMap: VariableMap,
   secretKeys: ReadonlySet<string>,
 ): UnresolvedPart[] {
+  return unresolvedSegmentParts(
+    resolveCommandSegments(rawText, variableMap),
+    variableMap,
+    secretKeys,
+  );
+}
+
+/** {@link unresolvedParts} over segments already resolved. */
+export function unresolvedSegmentParts(
+  segments: Iterable<CommandSegment>,
+  variableMap: VariableMap,
+  secretKeys: ReadonlySet<string>,
+): UnresolvedPart[] {
   const parts: UnresolvedPart[] = [];
 
-  for (const segment of resolveCommandSegments(rawText, variableMap)) {
+  for (const segment of segments) {
     const failures = hasUnresolvedSpans(segment.spans)
       ? spanFailures(segment.spans ?? [], secretKeys)
       : segment.type === CommandSegmentType.UNRESOLVED

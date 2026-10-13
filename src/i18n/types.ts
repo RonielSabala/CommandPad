@@ -222,6 +222,8 @@ export interface Messages {
     showMoreLines: string;
     showFewerLines: string;
     copy: string;
+    copyUnresolved: (parts: number) => string;
+    copiedUnresolved: (parts: number) => string;
     placeholder: string;
     extractVariable: string;
     escapeVariable: string;

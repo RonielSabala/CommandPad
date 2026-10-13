@@ -243,6 +243,10 @@ export const en: Messages = {
     showMoreLines: "Show more lines",
     showFewerLines: "Show less",
     copy: "Copy command",
+    copyUnresolved: (parts) =>
+      `Copy command (${parts} unresolved ${parts === 1 ? "part" : "parts"})`,
+    copiedUnresolved: (parts) =>
+      `Copied with ${parts} unresolved ${parts === 1 ? "part" : "parts"}`,
     placeholder: "ssh {USER}@{HOST}",
     extractVariable: "Extract into a variable",
     escapeVariable: "Escape the reference",
