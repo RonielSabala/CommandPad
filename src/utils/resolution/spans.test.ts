@@ -108,26 +108,26 @@ describe("nesting depth", () => {
 
   it("counts a reference that failed at its own level", () => {
     expect(spans(book, "{MISSING}")).toEqual([
-      { text: "{MISSING}", depth: 1, unresolved: true },
+      { text: "{MISSING}", depth: 1, source: "MISSING", unresolved: true },
     ]);
   });
 
   it("paints a reference inside a failed one one level deeper", () => {
     expect(spans(book, "{NAME|slice({MISSING};)}")).toEqual([
-      { text: "{NAME|slice(", depth: 1, unresolved: true },
-      { text: "{MISSING}", depth: 2, unresolved: true },
-      { text: ";)}", depth: 1, unresolved: true },
+      { text: "{NAME|slice(", depth: 1, source: "NAME", unresolved: true },
+      { text: "{MISSING}", depth: 2, source: "MISSING", unresolved: true },
+      { text: ";)}", depth: 1, source: "NAME", unresolved: true },
     ]);
   });
 
   it("paints each argument of a failed call at its own level", () => {
     expect(spans(book, "{|IF(\n\t{COND};\n\t{A};\n\t{B}\n)}")).toEqual([
       { text: "{|IF(\n\t", depth: 1, unresolved: true },
-      { text: "{COND}", depth: 2, unresolved: true },
+      { text: "{COND}", depth: 2, source: "COND", unresolved: true },
       { text: ";\n\t", depth: 1, unresolved: true },
-      { text: "{A}", depth: 2, unresolved: true },
+      { text: "{A}", depth: 2, source: "A", unresolved: true },
       { text: ";\n\t", depth: 1, unresolved: true },
-      { text: "{B}", depth: 2, unresolved: true },
+      { text: "{B}", depth: 2, source: "B", unresolved: true },
       { text: "\n)}", depth: 1, unresolved: true },
     ]);
   });
@@ -135,7 +135,7 @@ describe("nesting depth", () => {
   it("shows what a resolved reference inside a failed one resolved to", () => {
     expect(spans(book, "{|IF({MISSING};{NAME};x)}")).toEqual([
       { text: "{|IF(", depth: 1, unresolved: true },
-      { text: "{MISSING}", depth: 2, unresolved: true },
+      { text: "{MISSING}", depth: 2, source: "MISSING", unresolved: true },
       { text: ";", depth: 1, unresolved: true },
       { text: "api", depth: 2, source: "NAME" },
       { text: ";x)}", depth: 1, unresolved: true },
@@ -154,9 +154,9 @@ describe("nesting depth", () => {
     const loud = runbook({ VAR: "HI" });
 
     expect(spans(loud, "{VAR|snakecase|round(hi)}")).toEqual([
-      { text: "{", depth: 1, unresolved: true },
+      { text: "{", depth: 1, source: "VAR", unresolved: true },
       { text: "hi", depth: 1, source: "VAR" },
-      { text: "|round(hi)}", depth: 1, unresolved: true },
+      { text: "|round(hi)}", depth: 1, source: "VAR", unresolved: true },
     ]);
   });
 
@@ -164,17 +164,22 @@ describe("nesting depth", () => {
     const empty = runbook({ NAME: "" });
 
     expect(spans(empty, "{NAME|uppercase|slice}")).toEqual([
-      { text: "{", depth: 1, unresolved: true },
+      { text: "{", depth: 1, source: "NAME", unresolved: true },
       { text: "NAME", depth: 2, source: "NAME", unresolved: true },
-      { text: "|uppercase|slice}", depth: 1, unresolved: true },
+      { text: "|uppercase|slice}", depth: 1, source: "NAME", unresolved: true },
     ]);
   });
 
   it("keeps a chain that emptied the value as written, its key green one level in", () => {
     expect(spans(book, "{NAME|slice(0;0)|round(a)}")).toEqual([
-      { text: "{", depth: 1, unresolved: true },
+      { text: "{", depth: 1, source: "NAME", unresolved: true },
       { text: "NAME", depth: 2, source: "NAME" },
-      { text: "|slice(0;0)|round(a)}", depth: 1, unresolved: true },
+      {
+        text: "|slice(0;0)|round(a)}",
+        depth: 1,
+        source: "NAME",
+        unresolved: true,
+      },
     ]);
   });
 
@@ -182,10 +187,10 @@ describe("nesting depth", () => {
     const holed = runbook({ NAME: "x{;param}" });
 
     expect(spans(holed, "{NAME|uppercase}")).toEqual([
-      { text: "{", depth: 1, unresolved: true },
+      { text: "{", depth: 1, source: "NAME", unresolved: true },
       { text: "x", depth: 1, source: "NAME" },
       { text: "{;param}", depth: 2, source: "NAME;param", unresolved: true },
-      { text: "|uppercase}", depth: 1, unresolved: true },
+      { text: "|uppercase}", depth: 1, source: "NAME", unresolved: true },
     ]);
   });
 
@@ -199,27 +204,40 @@ describe("nesting depth", () => {
 
   it("paints a reference inside the failed operation one level deeper", () => {
     expect(spans(book, "{NAME|uppercase|slice({MISSING})}")).toEqual([
-      { text: "{", depth: 1, unresolved: true },
+      { text: "{", depth: 1, source: "NAME", unresolved: true },
       { text: "API", depth: 1, source: "NAME" },
-      { text: "|slice(", depth: 1, unresolved: true },
-      { text: "{MISSING}", depth: 2, unresolved: true },
-      { text: ")}", depth: 1, unresolved: true },
+      { text: "|slice(", depth: 1, source: "NAME", unresolved: true },
+      { text: "{MISSING}", depth: 2, source: "MISSING", unresolved: true },
+      { text: ")}", depth: 1, source: "NAME", unresolved: true },
+    ]);
+  });
+
+  it("leaves a blank inside a failed reference to whoever wrote it", () => {
+    expect(spans(book, "{MISSING;x={;p}}")).toEqual([
+      { text: "{MISSING;x=", depth: 1, source: "MISSING", unresolved: true },
+      { text: "{;p}", depth: 1, unresolved: true },
+      { text: "}", depth: 1, source: "MISSING", unresolved: true },
     ]);
   });
 
   it("keeps a reference written in a key as written", () => {
     expect(spans(book, "{{NAME}}")).toEqual([
-      { text: "{{NAME}}", depth: 1, unresolved: true },
+      { text: "{{NAME}}", depth: 1, source: "{NAME}", unresolved: true },
     ]);
   });
 
   it("keeps counting into a reference nested inside a failed argument", () => {
     expect(spans(book, "{NAME|slice({MISSING|slice({DEEPER};)};)}")).toEqual([
-      { text: "{NAME|slice(", depth: 1, unresolved: true },
-      { text: "{MISSING|slice(", depth: 2, unresolved: true },
-      { text: "{DEEPER}", depth: 3, unresolved: true },
-      { text: ";)}", depth: 2, unresolved: true },
-      { text: ";)}", depth: 1, unresolved: true },
+      { text: "{NAME|slice(", depth: 1, source: "NAME", unresolved: true },
+      {
+        text: "{MISSING|slice(",
+        depth: 2,
+        source: "MISSING",
+        unresolved: true,
+      },
+      { text: "{DEEPER}", depth: 3, source: "DEEPER", unresolved: true },
+      { text: ";)}", depth: 2, source: "MISSING", unresolved: true },
+      { text: ";)}", depth: 1, source: "NAME", unresolved: true },
     ]);
   });
 });
@@ -283,7 +301,13 @@ describe("nesting through an IF branch", () => {
     expect(spans(book, "{|IF(true;{NAME} {MISSING};x)}")).toEqual([
       { text: "api", depth: 2, source: "NAME" },
       { text: " ", depth: 1 },
-      { text: "{MISSING}", depth: 2, unresolved: true },
+      { text: "{MISSING}", depth: 2, source: "MISSING", unresolved: true },
+    ]);
+  });
+
+  it("names the variable behind a reference the branch broke", () => {
+    expect(spans(book, "{|IF(true;{NAME|round};x)}")).toEqual([
+      { text: "{NAME|round}", depth: 2, source: "NAME", unresolved: true },
     ]);
   });
 });
@@ -302,7 +326,7 @@ describe("nesting an unresolved reference", () => {
   it("puts a reference a value could not resolve one level under it", () => {
     expect(spans(book, "{BROKEN}")).toEqual([
       { text: "hi ", depth: 1, source: "BROKEN" },
-      { text: "{MISSING}", depth: 2, unresolved: true },
+      { text: "{MISSING}", depth: 2, source: "MISSING", unresolved: true },
     ]);
   });
 
@@ -328,7 +352,7 @@ describe("nesting an unresolved reference", () => {
 
   it("clamps past the deepest level the palette colors", () => {
     expect(spans(book, "{DEEP}")).toEqual([
-      { text: "{MISSING}", depth: 3, unresolved: true },
+      { text: "{MISSING}", depth: 3, source: "MISSING", unresolved: true },
     ]);
   });
 });

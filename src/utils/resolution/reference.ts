@@ -123,16 +123,17 @@ function failedSpans(
   raw: string,
   context: ReferenceContext,
   refilling: readonly string[],
+  source: string | undefined,
 ): ResolvedSpan[] {
   if (!raw.includes(VariableSyntax.BRACE_OPEN)) {
-    return unresolvedSpans(token);
+    return unresolvedSpans(token, 0, source);
   }
 
   const keyEnd = splitReferenceBody(raw)[0].text.length;
   return mergeSpans([
-    ...unresolvedSpans(VariableSyntax.BRACE_OPEN),
-    ...failedBodySpans(raw, keyEnd, context, refilling),
-    ...unresolvedSpans(VariableSyntax.BRACE_CLOSE),
+    ...unresolvedSpans(VariableSyntax.BRACE_OPEN, 0, source),
+    ...failedBodySpans(raw, keyEnd, context, refilling, source),
+    ...unresolvedSpans(VariableSyntax.BRACE_CLOSE, 0, source),
   ]);
 }
 
@@ -144,12 +145,13 @@ function failedBodySpans(
   keyEnd: number,
   context: ReferenceContext,
   refilling: readonly string[],
+  source: string | undefined,
 ): ResolvedSpan[] {
   const spans: ResolvedSpan[] = [];
 
   for (const part of splitReferenceParts(raw, context.surface)) {
     if (!part.match) {
-      spans.push(...unresolvedSpans(part.text));
+      spans.push(...unresolvedSpans(part.text, 0, source));
       continue;
     }
 
@@ -164,7 +166,13 @@ function failedBodySpans(
       nested.isReference && (part.match.start >= keyEnd || !nested.resolved);
 
     spans.push(
-      ...(shown ? nestSpans(nested.spans) : unresolvedSpans(part.match.token)),
+      ...(shown
+        ? nestSpans(nested.spans)
+        : unresolvedSpans(
+            part.match.token,
+            0,
+            nested.isReference ? source : undefined,
+          )),
     );
   }
 
@@ -247,9 +255,10 @@ function resolveReferenceAt(
   const [keyChunk, ...rest] = splitReferenceBody(raw);
   const keyText = keyChunk.text;
   const key = keyText.trim();
+  const source = key || undefined;
 
   const rawReference = (isReference: boolean): ResolvedReference => {
-    const spans = failedSpans(token, raw, context, refilling);
+    const spans = failedSpans(token, raw, context, refilling, source);
     return { key, text: spansText(spans), resolved: false, isReference, spans };
   };
   const unresolvedReference = (): ResolvedReference => rawReference(true);
@@ -321,10 +330,10 @@ function resolveReferenceAt(
     restStart: number,
   ): ResolvedReference => {
     const spans = mergeSpans([
-      ...unresolvedSpans(VariableSyntax.BRACE_OPEN),
+      ...unresolvedSpans(VariableSyntax.BRACE_OPEN, 0, source),
       ...shown,
-      ...failedBodySpans(raw.slice(restStart), 0, context, refilling),
-      ...unresolvedSpans(VariableSyntax.BRACE_CLOSE),
+      ...failedBodySpans(raw.slice(restStart), 0, context, refilling, source),
+      ...unresolvedSpans(VariableSyntax.BRACE_CLOSE, 0, source),
     ]);
 
     return {
@@ -352,7 +361,7 @@ function resolveReferenceAt(
     const produced = escapeLiteralBraceSpans(
       {
         text: applied.text,
-        spans: applied.spans ?? flatSpans(applied.text, key || undefined),
+        spans: applied.spans ?? flatSpans(applied.text, source),
       },
       context.surface,
     );
@@ -382,7 +391,7 @@ function resolveReferenceAt(
   const result = escapeLiteralBraceSpans(
     {
       text: applied.text,
-      spans: applied.spans ?? flatSpans(applied.text, key || undefined),
+      spans: applied.spans ?? flatSpans(applied.text, source),
     },
     context.surface,
   );

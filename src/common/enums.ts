@@ -124,6 +124,16 @@ export const CommandSegmentType = {
 export type CommandSegmentType =
   (typeof CommandSegmentType)[keyof typeof CommandSegmentType];
 
+export const UnresolvedCause = {
+  UNDEFINED: "undefined",
+  EMPTY: "empty",
+  BLANK: "blank",
+  FAILED: "failed",
+  MISSING_RUNBOOK: "missingRunbook",
+} as const;
+export type UnresolvedCause =
+  (typeof UnresolvedCause)[keyof typeof UnresolvedCause];
+
 export const NoteSegmentType = {
   TEXT: "text",
   BOLD: "bold",

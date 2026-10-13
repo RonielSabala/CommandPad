@@ -1,4 +1,12 @@
-import { DuplicateNameConfig, LINE_BREAK, Utf8Config } from "@/common/config";
+import {
+  DuplicateNameConfig,
+  ELLIPSIS,
+  LINE_BREAK,
+  Utf8Config,
+} from "@/common/config";
+import { globalRegex, oneOrMore, WHITESPACE } from "@/common/regex";
+
+const WHITESPACE_RUN = globalRegex(oneOrMore(WHITESPACE));
 
 export function splitLines(text: string): string[] {
   return text.split(LINE_BREAK);
@@ -43,6 +51,13 @@ export function buildDuplicateName(
 
 export function countCharacters(text: string): number {
   return Array.from(text).length;
+}
+
+export function abbreviate(text: string, max: number): string {
+  const chars = Array.from(text.replace(WHITESPACE_RUN, " ").trim());
+  return chars.length > max
+    ? chars.slice(0, max - 1).join("") + ELLIPSIS
+    : chars.join("");
 }
 
 export function countOccurrences(text: string, needle: string): number {

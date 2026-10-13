@@ -42,8 +42,12 @@ export type { ResolvedValue, VariableMap } from "./types";
 export {
   hasUnresolvedBlockReferences,
   hasUnresolvedReferences,
-  unresolvedBlockText
+  unresolvedBlockParts,
+  unresolvedBlockText,
+  unresolvedParts,
+  unresolvedSegmentParts
 } from "./unresolved";
+export type { UnresolvedPart } from "./unresolved";
 export { getUsedVariableKeys, isVariableUnused } from "./usage";
 export {
   getSecretKeys,

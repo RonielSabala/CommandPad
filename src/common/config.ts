@@ -103,6 +103,7 @@ export const DEBOUNCE_SAVE_MS = 150;
 export const SCROLL_IDLE_MS = 150;
 export const DEBOUNCE_CLOUD_SYNC_MS = 1000;
 export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
+export const COPY_WARNING_TIMEOUT_MS = 2000;
 export const EXPORT_SUCCESS_TIMEOUT_MS = 1000;
 export const TAB_HOVER_SWITCH_MS = 300;
 export const SECTION_ANIMATION_FALLBACK_MS = 250;
@@ -124,8 +125,7 @@ export const TooltipConfig = {
 } as const;
 
 export const TabUnresolvedConfig = {
-  EXCERPT_LENGTH: 48,
-  ELLIPSIS: "…",
+  MAX_LABEL_LENGTH: 120,
 } as const;
 
 export const StickyScrollbarConfig = {
@@ -149,6 +149,7 @@ export const WrapPairs = {
 export const LINE_BREAK = "\n";
 export const CARRIAGE_RETURN = "\r";
 export const NON_BREAKING_SPACE = "\u00A0";
+export const ELLIPSIS = "\u2026";
 
 export const MIDDLE_DOT = "·";
 export const SECRET_MASK = "•".repeat(8);

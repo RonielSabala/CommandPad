@@ -53,6 +53,7 @@ export function useRichTooltip() {
 
   return {
     props: { [DataAttr.TOOLTIP_RICH]: id },
+    pinned: shown?.pinned ?? false,
     render: (content: (tip: RichTooltipControls) => ReactNode) =>
       shown ? createPortal(content(shown), shown.element) : null,
   };

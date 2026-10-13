@@ -1,6 +1,7 @@
 import {
   CARRIAGE_RETURN,
   COPY_FEEDBACK_TIMEOUT_MS,
+  COPY_WARNING_TIMEOUT_MS,
   LINE_BREAK,
   NON_BREAKING_SPACE,
 } from "@/common/config";
@@ -23,12 +24,14 @@ import {
   resolveCommandText,
   resolveCommandToString,
   sourceKey,
+  unresolvedSegmentParts,
   type VariableMap,
 } from "@/utils/resolution";
 import { classNames, splitLines, stripEnd } from "@/utils/string";
 import {
   Fragment,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -125,7 +128,8 @@ export function CommandPreview({
   linkSources,
 }: Props) {
   const t = useTranslation();
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<number | null>(null);
+  const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const previewRef = useRef<HTMLSpanElement>(null);
   const previewScrollTarget = useDomScrollTarget(previewRef);
 
@@ -147,7 +151,13 @@ export function CommandPreview({
     () => countCommandLines(segments, secretKeys),
     [segments, secretKeys],
   );
-  const unresolved = useMemo(() => hasUnresolvedSegments(segments), [segments]);
+  const unresolvedCount = useMemo(
+    () =>
+      hasUnresolvedSegments(segments)
+        ? unresolvedSegmentParts(segments, variableMap, secretKeys).length
+        : 0,
+    [segments, variableMap, secretKeys],
+  );
   const clamp = useClampSurface(
     clampId,
     ClampSurface.PREVIEW,
@@ -155,13 +165,25 @@ export function CommandPreview({
     surfaceRef,
   );
 
+  useEffect(() => () => clearTimeout(copiedTimer.current), []);
+
   const copy = () => {
     const resolved = resolveCommandToString(text, variableMap);
+    const parts = unresolvedCount;
     void navigator.clipboard.writeText(resolved).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), COPY_FEEDBACK_TIMEOUT_MS);
+      clearTimeout(copiedTimer.current);
+      setCopied(parts);
+      copiedTimer.current = setTimeout(
+        () => setCopied(null),
+        parts > 0 ? COPY_WARNING_TIMEOUT_MS : COPY_FEEDBACK_TIMEOUT_MS,
+      );
     });
   };
+
+  const copyLabel =
+    unresolvedCount > 0
+      ? t.command.copyUnresolved(unresolvedCount)
+      : t.command.copy;
 
   return (
     <div className="command-preview" {...{ [DataAttr.DRAG_IMAGE]: "" }}>
@@ -169,7 +191,7 @@ export function CommandPreview({
         ref={previewRef}
         className={classNames(
           "command-preview-text",
-          unresolved && "has-unresolved",
+          unresolvedCount > 0 && "has-unresolved",
           CssClass.NO_LIGATURES,
           clamp.clamped && CssClass.CLAMPED,
         )}
@@ -199,14 +221,20 @@ export function CommandPreview({
       <div className={`command-preview-actions ${CssClass.SELECT_KEY_HIDDEN}`}>
         {actions}
 
+        {!!copied && (
+          <span className="copy-warning" role="status">
+            {t.command.copiedUnresolved(copied)}
+          </span>
+        )}
+
         <button
           className={CssClass.BTN}
           onClick={copy}
           disabled={!text}
-          aria-label={t.command.copy}
-          {...tooltip(t.command.copy)}
+          aria-label={copyLabel}
+          {...tooltip(copyLabel)}
         >
-          {copied ? (
+          {copied !== null ? (
             <CheckIcon
               className={classNames(
                 "copy-check-icon",

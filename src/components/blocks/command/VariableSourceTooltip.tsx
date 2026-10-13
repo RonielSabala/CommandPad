@@ -1,24 +1,20 @@
 import { CssClass } from "@/common/constants/css";
 import { AppMode } from "@/common/enums";
 import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
+import {
+  LazyVariableTooltipEditor,
+  preloadVariableTooltipEditor,
+} from "@/components/variables/lazyVariableTooltipEditor";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { getVariableKey, sourceKey } from "@/utils/resolution";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
-import { lazy, startTransition, Suspense, useContext, useState } from "react";
+import { startTransition, Suspense, useContext, useState } from "react";
 import { BoxArrowUpRight } from "react-bootstrap-icons";
 
 import { EmbedScopeContext } from "../runbook/embedContext";
 import "./VariableSourceTooltip.css";
-
-const loadEditor = () => import("./VariableTooltipEditor");
-
-const VariableTooltipEditor = lazy(async () => ({
-  default: (await loadEditor()).VariableTooltipEditor,
-}));
-
-const preloadEditor = () => void loadEditor();
 
 const LINK_CLASS = classNames(
   CssClass.TOOLTIP_LINK,
@@ -107,10 +103,7 @@ export function VariableSourceTooltip({ source, resolved, tip }: Props) {
   return (
     <Suspense>
       {editedId ? (
-        <div className="variable-source-tooltip is-editing">
-          {goToText}
-          <VariableTooltipEditor variableId={editedId} />
-        </div>
+        <LazyVariableTooltipEditor variableId={editedId} header={goToText} />
       ) : (
         <div className="variable-source-tooltip">
           <span>{source}</span>
@@ -124,8 +117,8 @@ export function VariableSourceTooltip({ source, resolved, tip }: Props) {
                   ? t.command.editValueTitle(key)
                   : t.command.editVariableTitle(key)
               }
-              onPointerEnter={preloadEditor}
-              onFocus={preloadEditor}
+              onPointerEnter={preloadVariableTooltipEditor}
+              onFocus={preloadVariableTooltipEditor}
               onClick={edit}
             >
               {t.command.editVariable}

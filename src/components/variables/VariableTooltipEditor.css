@@ -1,0 +1,16 @@
+.variable-tooltip-editor {
+  --block-backdrop: var(--color-surface);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: min(var(--tooltip-editor-max-width), 80vw);
+  padding-block: var(--space-3);
+}
+
+.variable-tooltip-editor > .tooltip-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  align-self: flex-end;
+}
