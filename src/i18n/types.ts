@@ -523,7 +523,7 @@ export interface Messages {
       ) => string;
       autoCreate: string;
       labelDemo: string;
-      unresolvedMarker: (create: string) => string;
+      unresolvedMarker: (create: string, edit: string) => string;
     };
     sidebar: {
       intro: string;

@@ -2,9 +2,14 @@ import { TabUnresolvedConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { AppMode, BlockType, UnresolvedCause } from "@/common/enums";
 import type { Block, Tab } from "@/common/types";
+import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
+import {
+  LazyVariableTooltipEditor,
+  preloadVariableTooltipEditor,
+} from "@/components/variables/lazyVariableTooltipEditor";
 import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { getActiveTab, useStore } from "@/store/store";
 import { isEmbedBlockUnresolved } from "@/utils/embeddedRunbook";
 import {
   getSecretKeys,
@@ -14,12 +19,22 @@ import {
   type UnresolvedPart,
 } from "@/utils/resolution";
 import { abbreviate, classNames } from "@/utils/string";
-import { useMemo } from "react";
+import { startTransition, Suspense, useMemo, useState } from "react";
 import { BoxArrowUpRight } from "react-bootstrap-icons";
 
 import "./TabUnresolvedTooltip.css";
 
 const CAUSE_ORDER = Object.values(UnresolvedCause);
+
+const EDITABLE_CAUSES: ReadonlySet<UnresolvedCause> = new Set([
+  UnresolvedCause.EMPTY,
+  UnresolvedCause.BLANK,
+]);
+
+const LINK_CLASS = classNames(
+  CssClass.TOOLTIP_LINK,
+  CssClass.TOOLTIP_LINK_PLAIN,
+);
 
 interface Problem {
   cause: UnresolvedCause;
@@ -35,12 +50,14 @@ function partLabel(part: UnresolvedPart): string {
 
 interface Props {
   tab: Tab;
-  hide: () => void;
+  tip: RichTooltipControls;
 }
 
-export function TabUnresolvedTooltip({ tab, hide }: Props) {
+export function TabUnresolvedTooltip({ tab, tip }: Props) {
   const t = useTranslation();
+  const { hide } = tip;
   const readMode = useStore((state) => state.mode === AppMode.READ);
+  const isActive = useStore((state) => getActiveTab(state)?.id === tab.id);
   const library = useStore((state) => state.runbookLibrary);
   const embeddedRunbooks = useStore((state) => state.embeddedRunbooks);
   const revealBlock = useStore((state) => state.revealBlock);
@@ -140,10 +157,19 @@ export function TabUnresolvedTooltip({ tab, hide }: Props) {
     [tab.variables],
   );
 
+  // Pinned while editing
+  const [editing, setEditing] = useState<{ id: string; key: string }>();
+  const edited = tip.pinned ? editing : undefined;
+
   const goToVariable = (variableId: string) => {
     hide();
     switchTab(tab.id);
     revealVariable(variableId, false);
+  };
+
+  const edit = (id: string, key: string) => {
+    tip.pin();
+    startTransition(() => setEditing({ id, key }));
   };
 
   const action = ({ cause, key }: Problem) => {
@@ -156,10 +182,7 @@ export function TabUnresolvedTooltip({ tab, hide }: Props) {
         !readMode && (
           <button
             type="button"
-            className={classNames(
-              CssClass.TOOLTIP_LINK,
-              CssClass.TOOLTIP_LINK_PLAIN,
-            )}
+            className={LINK_CLASS}
             title={t.tabs.defineVariableTitle(key)}
             onClick={() => {
               hide();
@@ -175,18 +198,57 @@ export function TabUnresolvedTooltip({ tab, hide }: Props) {
     const variableId = variableIds.get(key);
     return (
       variableId && (
-        <button
-          type="button"
-          className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
-          aria-label={t.command.goToDefinition}
-          title={t.command.goToDefinitionTitle(key)}
-          onClick={() => goToVariable(variableId)}
-        >
-          <BoxArrowUpRight className={CssClass.ICON_SM} />
-        </button>
+        <>
+          {isActive && EDITABLE_CAUSES.has(cause) && (
+            <button
+              type="button"
+              className={LINK_CLASS}
+              title={
+                readMode
+                  ? t.command.editValueTitle(key)
+                  : t.command.editVariableTitle(key)
+              }
+              onPointerEnter={preloadVariableTooltipEditor}
+              onFocus={preloadVariableTooltipEditor}
+              onClick={() => edit(variableId, key)}
+            >
+              {t.command.editVariable}
+            </button>
+          )}
+          <button
+            type="button"
+            className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
+            aria-label={t.command.goToDefinition}
+            title={t.command.goToDefinitionTitle(key)}
+            onClick={() => goToVariable(variableId)}
+          >
+            <BoxArrowUpRight className={CssClass.ICON_SM} />
+          </button>
+        </>
       )
     );
   };
+
+  if (edited) {
+    return (
+      <Suspense>
+        <LazyVariableTooltipEditor
+          variableId={edited.id}
+          header={
+            <button
+              type="button"
+              className={LINK_CLASS}
+              title={t.command.goToDefinitionTitle(edited.key)}
+              onClick={() => goToVariable(edited.id)}
+            >
+              {t.command.goToDefinition}
+              <BoxArrowUpRight className={CssClass.ICON_SM} />
+            </button>
+          }
+        />
+      </Suspense>
+    );
+  }
 
   return (
     <div className="tab-unresolved-tooltip">

@@ -104,7 +104,12 @@ export function TabsDocs() {
         <DemoRunbookPanel />
       </DemoWorkspace>
 
-      <Prose text={t.docs.tabs.unresolvedMarker(t.tabs.defineVariable)} />
+      <Prose
+        text={t.docs.tabs.unresolvedMarker(
+          t.tabs.defineVariable,
+          t.command.editVariable,
+        )}
+      />
     </>
   );
 }

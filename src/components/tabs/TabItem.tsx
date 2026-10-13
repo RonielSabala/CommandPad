@@ -43,6 +43,7 @@ export function TabItem({ tab, onOpenMenu }: Props) {
 
   const unresolved = useTabUnresolved(tab);
   const unresolvedTip = useRichTooltip();
+  const showsUnresolvedTip = unresolved || unresolvedTip.pinned;
 
   const [dragging, setDragging] = useState(false);
   const [dropSide, setDropSide] = useState<TabDropSide | null>(null);
@@ -172,7 +173,7 @@ export function TabItem({ tab, onOpenMenu }: Props) {
             unresolved && CssClass.IS_UNRESOLVED,
           )}
           aria-label={closeLabel}
-          {...(unresolved ? unresolvedTip.props : tooltip(closeLabel))}
+          {...(showsUnresolvedTip ? unresolvedTip.props : tooltip(closeLabel))}
           onClick={(event) => {
             event.stopPropagation();
             closeTab(tabId);
@@ -188,9 +189,9 @@ export function TabItem({ tab, onOpenMenu }: Props) {
         </button>
       </div>
 
-      {unresolved &&
-        unresolvedTip.render(({ hide }) => (
-          <TabUnresolvedTooltip tab={tab} hide={hide} />
+      {showsUnresolvedTip &&
+        unresolvedTip.render((tip) => (
+          <TabUnresolvedTooltip tab={tab} tip={tip} />
         ))}
     </>
   );
