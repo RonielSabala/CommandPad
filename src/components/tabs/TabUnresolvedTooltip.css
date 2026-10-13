@@ -1,3 +1,7 @@
+.tooltip:has(.tab-unresolved-tooltip) {
+  --tooltip-max-width: min(var(--tab-unresolved-max-width), 80vw);
+}
+
 .tab-unresolved-tooltip {
   display: flex;
   flex-direction: column;

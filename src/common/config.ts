@@ -123,6 +123,10 @@ export const TooltipConfig = {
   ARROW_INSET: 14,
 } as const;
 
+export const TabUnresolvedConfig = {
+  MAX_LABEL_LENGTH: 120,
+} as const;
+
 export const StickyScrollbarConfig = {
   /** Positions closer than this are the same. */
   EPSILON_PX: 1,
@@ -144,6 +148,7 @@ export const WrapPairs = {
 export const LINE_BREAK = "\n";
 export const CARRIAGE_RETURN = "\r";
 export const NON_BREAKING_SPACE = "\u00A0";
+export const ELLIPSIS = "\u2026";
 
 export const MIDDLE_DOT = "·";
 export const SECRET_MASK = "•".repeat(8);

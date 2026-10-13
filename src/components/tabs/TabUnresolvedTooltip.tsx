@@ -1,3 +1,4 @@
+import { TabUnresolvedConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { AppMode, BlockType, UnresolvedCause } from "@/common/enums";
 import type { Block, Tab } from "@/common/types";
@@ -12,7 +13,7 @@ import {
   unresolvedBlockParts,
   type UnresolvedPart,
 } from "@/utils/resolution";
-import { classNames } from "@/utils/string";
+import { abbreviate, classNames } from "@/utils/string";
 import { useMemo } from "react";
 import { BoxArrowUpRight } from "react-bootstrap-icons";
 
@@ -23,6 +24,7 @@ const CAUSE_ORDER = Object.values(UnresolvedCause);
 interface Problem {
   cause: UnresolvedCause;
   label: string;
+  shortLabel: string;
   key?: string;
   blocks: { block: Block; number: number }[];
 }
@@ -68,7 +70,13 @@ export function TabUnresolvedTooltip({ tab, hide }: Props) {
       let problem = found.get(id);
 
       if (!problem) {
-        problem = { cause, label, key, blocks: [] };
+        problem = {
+          cause,
+          label,
+          shortLabel: abbreviate(label, TabUnresolvedConfig.MAX_LABEL_LENGTH),
+          key,
+          blocks: [],
+        };
         found.set(id, problem);
 
         const group = byCause.get(cause) ?? [];
@@ -197,8 +205,15 @@ export function TabUnresolvedTooltip({ tab, hide }: Props) {
               {problems.map((problem) => (
                 <li key={problem.label} className="tab-unresolved-row">
                   <div className="tab-unresolved-problem">
-                    <code className="tab-unresolved-label">
-                      {problem.label}
+                    <code
+                      className="tab-unresolved-label"
+                      title={
+                        problem.shortLabel === problem.label
+                          ? undefined
+                          : problem.label
+                      }
+                    >
+                      {problem.shortLabel}
                     </code>
                     {action(problem)}
                   </div>
