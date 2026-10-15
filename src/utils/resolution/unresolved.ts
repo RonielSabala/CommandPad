@@ -43,15 +43,6 @@ export function hasUnresolvedBlockReferences(
   return unresolvedBlockText(block, variableMap) !== null;
 }
 
-export function hasUnresolvedReferences(
-  blocks: readonly Block[],
-  variableMap: VariableMap,
-): boolean {
-  return blocks.some((block) =>
-    hasUnresolvedBlockReferences(block, variableMap),
-  );
-}
-
 export interface UnresolvedPart {
   cause: Exclude<UnresolvedCause, typeof UnresolvedCause.MISSING_RUNBOOK>;
   source: string;

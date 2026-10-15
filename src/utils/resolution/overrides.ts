@@ -3,7 +3,7 @@ import type { Variable } from "@/common/types";
 
 import { getTokenKey, scanReferences } from "./token";
 import type { VariableMap } from "./types";
-import { getVariableKey, type OuterScope } from "./variables";
+import { getVariableKey, getVariableMap, type OuterScope } from "./variables";
 
 export type VariableOverrides = Readonly<Record<string, string>>;
 
@@ -39,7 +39,9 @@ export function applyOverrides(
     return {
       ...variable,
       value: raw,
-      secret: variable.secret || referencesSecret(raw, hostSecretKeys),
+      secret:
+        variable.secret ||
+        (hostSecretKeys.size > 0 && referencesSecret(raw, hostSecretKeys)),
     };
   });
 }
@@ -64,6 +66,61 @@ export function overrideScope(
   }
 
   return keys.size > 0 ? { keys, variableMap: hostMap } : undefined;
+}
+
+const NO_SECRETS: Set<string> = new Set();
+
+interface OverriddenMaps {
+  variables: Variable[];
+  hostMap: VariableMap;
+  embedded: VariableMap;
+  lookup?: VariableMap;
+}
+
+const overriddenMaps = new WeakMap<VariableOverrides, OverriddenMaps>();
+
+function getOverriddenMaps(
+  variables: Variable[],
+  overrides: VariableOverrides,
+  hostMap: VariableMap,
+): OverriddenMaps {
+  const cached = overriddenMaps.get(overrides);
+  if (cached?.variables === variables && cached.hostMap === hostMap) {
+    return cached;
+  }
+
+  const overridden = applyOverrides(variables, overrides, NO_SECRETS);
+  const maps: OverriddenMaps = {
+    variables,
+    hostMap,
+    embedded: getVariableMap(
+      overridden,
+      overrideScope(overridden, overrides, hostMap),
+    ),
+  };
+
+  overriddenMaps.set(overrides, maps);
+  return maps;
+}
+
+/** The embedded runbook's map once `overrides` are applied from `hostMap`. */
+export function getOverriddenVariableMap(
+  variables: Variable[],
+  overrides: VariableOverrides,
+  hostMap: VariableMap,
+): VariableMap {
+  return getOverriddenMaps(variables, overrides, hostMap).embedded;
+}
+
+/** The host's variables, then the embedded runbook's own (overrides applied). */
+export function overrideLookupMap(
+  variables: Variable[],
+  overrides: VariableOverrides,
+  hostMap: VariableMap,
+): VariableMap {
+  const maps = getOverriddenMaps(variables, overrides, hostMap);
+  maps.lookup ??= { ...maps.embedded, ...hostMap };
+  return maps.lookup;
 }
 
 /**

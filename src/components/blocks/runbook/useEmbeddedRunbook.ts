@@ -1,14 +1,14 @@
 import { RunbookBlockConfig } from "@/common/config";
 import type { EmbeddedRunbookStatus } from "@/common/enums";
 import type { RunbookBlock, RunbookContent, Variable } from "@/common/types";
+import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { hasEncryptedSecrets } from "@/services/vault";
 import { tabContent, useStore } from "@/store/store";
 import { resolveEmbedSource, type EmbedSource } from "@/utils/embeddedRunbook";
 import {
   applyOverrides,
+  getOverriddenVariableMap,
   getSecretKeys,
-  getVariableMap,
-  overrideScope,
   type OverrideHost,
   type VariableMap,
 } from "@/utils/resolution";
@@ -79,18 +79,10 @@ export function useEmbeddedRunbook(
     [content, overrides, secretKeys],
   );
 
-  // Only an override reads the host
-  const overrideHost = overrides ? variableMap : null;
-  const embeddedMap = useMemo(
-    () =>
-      getVariableMap(
-        variables,
-        overrideHost
-          ? overrideScope(variables, overrides, overrideHost)
-          : undefined,
-      ),
-    [variables, overrides, overrideHost],
-  );
+  const ownVariables = content?.variables ?? NO_VARIABLES;
+  const embeddedMap = overrides
+    ? getOverriddenVariableMap(ownVariables, overrides, variableMap)
+    : getTabVariableMap(ownVariables);
   const embeddedSecrets = useMemo(() => getSecretKeys(variables), [variables]);
 
   const locked = useMemo(

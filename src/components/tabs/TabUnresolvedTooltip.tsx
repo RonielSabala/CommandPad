@@ -7,7 +7,7 @@ import {
   LazyVariableTooltipEditor,
   preloadVariableTooltipEditor,
 } from "@/components/variables/lazyVariableTooltipEditor";
-import { getTabVariableMap } from "@/hooks/useTabUnresolved";
+import { getBlockLookupMap, getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { isEmbedBlockUnresolved } from "@/utils/embeddedRunbook";
@@ -60,6 +60,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
   const isActive = useStore((state) => getActiveTab(state)?.id === tab.id);
   const library = useStore((state) => state.runbookLibrary);
   const embeddedRunbooks = useStore((state) => state.embeddedRunbooks);
+  const tabs = useStore((state) => state.tabs);
   const revealBlock = useStore((state) => state.revealBlock);
   const switchTab = useStore((state) => state.switchTab);
   const revealVariable = useStore((state) => state.revealVariable);
@@ -74,6 +75,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
   const { groups, problemCount, blockCount } = useMemo(() => {
     const found = new Map<string, Problem>();
     const byCause = new Map<UnresolvedCause, Problem[]>();
+    const embedLookup = { runbookLibrary: library, embeddedRunbooks, tabs };
     let blockCount = 0;
 
     const report = (
@@ -109,7 +111,10 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
 
     tab.blocks.forEach((block, index) => {
       const number = index + 1;
-      const parts = unresolvedBlockParts(block, variableMap, secretKeys);
+      const lookupMap = getBlockLookupMap(block, variableMap, embedLookup);
+      const parts = lookupMap
+        ? unresolvedBlockParts(block, lookupMap, secretKeys)
+        : [];
 
       for (const part of parts) {
         report(
@@ -144,7 +149,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
     );
 
     return { groups, problemCount: found.size, blockCount };
-  }, [tab.blocks, variableMap, secretKeys, library, embeddedRunbooks]);
+  }, [tab.blocks, variableMap, secretKeys, library, embeddedRunbooks, tabs]);
 
   const variableIds = useMemo(
     () =>

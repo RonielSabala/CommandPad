@@ -1,10 +1,16 @@
-import { CommandSegmentType } from "@/common/enums";
+import { CommandSegmentType, UnresolvedCause } from "@/common/enums";
 import type { VariableSpec } from "@/test";
 import { buildVariables, runbook, secret, variableValues } from "@/test";
 import { describe, expect, it } from "vitest";
 
 import { resolveCommandText } from "./command";
-import { applyOverrides, overrideScope, withOverride } from "./overrides";
+import {
+  applyOverrides,
+  overrideLookupMap,
+  overrideScope,
+  withOverride,
+} from "./overrides";
+import { unresolvedParts } from "./unresolved";
 import { getSecretKeys, getVariableMap } from "./variables";
 
 /** The embedded runbook's resolved values once `overrides` are applied from `host`. */
@@ -195,6 +201,54 @@ describe("applyOverrides", () => {
 
     expect(overrideScope(variables, undefined, {})).toBeUndefined();
     expect(overrideScope(variables, { REGION: "eu" }, {})).toBeUndefined();
+  });
+});
+
+describe("overrideLookupMap", () => {
+  /** The causes an override's text reports. */
+  function causesOf(
+    embedded: VariableSpec,
+    overrides: Record<string, string>,
+    host: VariableSpec = {},
+  ) {
+    const map = overrideLookupMap(
+      buildVariables(embedded),
+      overrides,
+      getVariableMap(buildVariables(host)),
+    );
+
+    return Object.values(overrides).flatMap((text) =>
+      unresolvedParts(text, map, new Set()).map(({ cause, source }) => [
+        cause,
+        source,
+      ]),
+    );
+  }
+
+  it("reads a key the embedded runbook defines", () => {
+    expect(causesOf({ a: "1", b: "test" }, { a: "{b}" })).toEqual([]);
+  });
+
+  it("reads the host first", () => {
+    const map = overrideLookupMap(
+      buildVariables({ a: "1", b: "embedded" }),
+      { a: "{b}" },
+      getVariableMap(buildVariables({ b: "host" })),
+    );
+
+    expect(variableValues(map)).toMatchObject({ a: "host", b: "host" });
+  });
+
+  it("reads the embedded runbook with its overrides applied", () => {
+    expect(causesOf({ a: "1", b: "{NOPE}" }, { a: "{b}", b: "fine" })).toEqual(
+      [],
+    );
+  });
+
+  it("still reports a key neither runbook defines", () => {
+    expect(causesOf({ a: "1" }, { a: "{NOPE}" })).toEqual([
+      [UnresolvedCause.UNDEFINED, "NOPE"],
+    ]);
   });
 });
 

@@ -14,7 +14,13 @@ export {
   readNegation
 } from "./operations";
 export type { OperationKeyword } from "./operations/types";
-export { applyOverrides, overrideScope, withOverride } from "./overrides";
+export {
+  applyOverrides,
+  getOverriddenVariableMap,
+  overrideLookupMap,
+  overrideScope,
+  withOverride
+} from "./overrides";
 export type { OverrideHost } from "./overrides";
 export { getTemplateParamNames, sourceKey } from "./params";
 export {
@@ -41,7 +47,6 @@ export type { OpenReference, ReferenceMatch } from "./token";
 export type { ResolvedValue, VariableMap } from "./types";
 export {
   hasUnresolvedBlockReferences,
-  hasUnresolvedReferences,
   unresolvedBlockParts,
   unresolvedBlockText,
   unresolvedParts,

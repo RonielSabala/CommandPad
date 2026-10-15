@@ -1,10 +1,15 @@
 import { BlockType } from "@/common/enums";
 import type { Block, RunbookBlock, Tab, Variable } from "@/common/types";
 import { useStore, type StoreState } from "@/store/store";
-import { hasUnresolvedEmbeds } from "@/utils/embeddedRunbook";
+import {
+  embeddedVariables,
+  hasUnresolvedEmbeds,
+  type EmbedLookup,
+} from "@/utils/embeddedRunbook";
 import {
   getVariableMap,
-  hasUnresolvedReferences,
+  hasUnresolvedBlockReferences,
+  overrideLookupMap,
   type VariableMap,
 } from "@/utils/resolution";
 import { useCallback, useMemo } from "react";
@@ -23,6 +28,20 @@ export function getTabVariableMap(variables: Variable[]): VariableMap {
   return map;
 }
 
+/** The map a block's references resolve against. */
+export function getBlockLookupMap(
+  block: Block,
+  hostMap: VariableMap,
+  lookup: EmbedLookup,
+): VariableMap | null {
+  if (block.type !== BlockType.RUNBOOK || !block.overrides) {
+    return hostMap;
+  }
+
+  const variables = embeddedVariables(block, lookup);
+  return variables && overrideLookupMap(variables, block.overrides, hostMap);
+}
+
 function isRunbookBlock(block: Block): block is RunbookBlock {
   return block.type === BlockType.RUNBOOK;
 }
@@ -30,7 +49,12 @@ function isRunbookBlock(block: Block): block is RunbookBlock {
 export function useTabUnresolved(tab: Tab): boolean {
   const variableMap = getTabVariableMap(tab.variables);
   const references = useMemo(
-    () => hasUnresolvedReferences(tab.blocks, variableMap),
+    () =>
+      tab.blocks.some(
+        (block) =>
+          !isRunbookBlock(block) &&
+          hasUnresolvedBlockReferences(block, variableMap),
+      ),
     [tab.blocks, variableMap],
   );
   const runbookBlocks = useMemo(() => {
@@ -43,12 +67,16 @@ export function useTabUnresolved(tab: Tab): boolean {
       (state: StoreState) =>
         !references &&
         runbookBlocks.length > 0 &&
-        hasUnresolvedEmbeds(
+        (hasUnresolvedEmbeds(
           runbookBlocks,
           state.runbookLibrary,
           state.embeddedRunbooks,
-        ),
-      [references, runbookBlocks],
+        ) ||
+          runbookBlocks.some((block) => {
+            const map = getBlockLookupMap(block, variableMap, state);
+            return !!map && hasUnresolvedBlockReferences(block, map);
+          })),
+      [references, runbookBlocks, variableMap],
     ),
   );
 
