@@ -1,5 +1,9 @@
 import { DataAttr, ScrollIntoView, ScrollSettle } from "@/common/constants/dom";
 
+export function toPx(pixels: number): string {
+  return `${pixels}px`;
+}
+
 /** Bring the row carrying `rowId` into view, scoped to the list it belongs to. */
 export function scrollRowIntoView(
   list: HTMLElement | null,

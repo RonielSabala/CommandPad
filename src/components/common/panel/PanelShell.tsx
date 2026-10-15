@@ -2,6 +2,7 @@ import { PANEL_DEFINITIONS } from "@/common/config";
 import { DataAttr } from "@/common/constants/dom";
 import { PanelId } from "@/common/enums";
 import { useStore } from "@/store/store";
+import { toPx } from "@/utils/dom";
 import { classNames } from "@/utils/string";
 import type { CSSProperties, ReactNode } from "react";
 import "./PanelShell.css";
@@ -28,7 +29,7 @@ export function PanelShell({ panelId, id, className, children }: Props) {
       {...{ [DataAttr.PANEL_COLLAPSED]: collapsed }}
       style={
         {
-          "--panel-width": `${width}px`,
+          "--panel-width": toPx(width),
           "--panel-max-width": maxWidth,
         } as CSSProperties
       }

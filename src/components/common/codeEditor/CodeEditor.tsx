@@ -36,7 +36,7 @@ import { hasFocusedSuggestion, triggerSuggest } from "@/monaco/suggest";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { validateModel } from "@/monaco/validation";
 import { useStore } from "@/store/store";
-import { whenElementSettles } from "@/utils/dom";
+import { toPx, whenElementSettles } from "@/utils/dom";
 import { classNames, countLines, joinLines } from "@/utils/string";
 import Editor, {
   type BeforeMount,
@@ -327,7 +327,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
 
       rootRef.current?.style.setProperty(
         CodeEditorProperty.GUTTER_WIDTH,
-        `${width}px`,
+        toPx(width),
       );
     };
 

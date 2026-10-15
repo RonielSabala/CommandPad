@@ -5,6 +5,7 @@ import { EventType, Key } from "@/common/constants/events";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import { useStore } from "@/store/store";
+import { toPx } from "@/utils/dom";
 import { classNames } from "@/utils/string";
 import {
   useEffect,
@@ -155,7 +156,7 @@ export function Select<T extends string>({
       rows[rows.length - 1].getBoundingClientRect().bottom -
       lastVisible.getBoundingClientRect().bottom;
 
-    menu.style.maxHeight = `${menu.offsetHeight - clipped}px`;
+    menu.style.maxHeight = toPx(menu.offsetHeight - clipped);
     menu.scrollTop = grew ? menu.scrollHeight : scrollTop;
   }, [open, scrollable, options]);
 

@@ -13,6 +13,7 @@ import {
   PASSIVE_CAPTURE,
 } from "@/common/constants/events";
 import type { TooltipVariant } from "@/common/enums";
+import { toPx } from "@/utils/dom";
 import { classNames } from "@/utils/string";
 import {
   useCallback,
@@ -413,7 +414,7 @@ export function TooltipLayer() {
       const longest = longestLineWidth(text);
 
       if (longest > 0) {
-        text.style.width = `${longest}px`;
+        text.style.width = toPx(longest);
       }
     }
 
@@ -450,8 +451,8 @@ export function TooltipLayer() {
         {
           left: shownPlacement?.x ?? 0,
           top: shownPlacement?.y ?? 0,
-          "--tooltip-gap": `${TooltipConfig.GAP}px`,
-          "--tooltip-arrow-x": `${shownPlacement?.arrowX ?? 0}px`,
+          "--tooltip-gap": toPx(TooltipConfig.GAP),
+          "--tooltip-arrow-x": toPx(shownPlacement?.arrowX ?? 0),
         } as CSSProperties
       }
     >
