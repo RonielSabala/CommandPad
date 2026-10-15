@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { ButtonType, InputType } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
@@ -41,7 +42,7 @@ export function PassphraseField({
         <input
           id={inputId}
           className="passphrase-input"
-          type={revealed ? "text" : "password"}
+          type={revealed ? InputType.TEXT : InputType.PASSWORD}
           value={value}
           disabled={disabled}
           spellCheck={false}
@@ -61,7 +62,7 @@ export function PassphraseField({
             CssClass.BTN,
             CssClass.BTN_FLAT_ICON,
           )}
-          type="button"
+          type={ButtonType.BUTTON}
           onClick={() => setRevealed((shown) => !shown)}
           disabled={disabled}
           {...tooltip(toggleLabel)}

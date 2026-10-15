@@ -1,6 +1,6 @@
 import { SECRET_MASK } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { DataAttr } from "@/common/constants/dom";
+import { DataAttr, InputType } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import {
   AppMode,
@@ -136,7 +136,7 @@ export const VariableRow = memo(function VariableRow({
                 "variable-value-input",
                 CssClass.NO_LIGATURES,
               )}
-              type="text"
+              type={InputType.TEXT}
               placeholder={t.variables.valuePlaceholder}
               value={variableValue}
               spellCheck={false}

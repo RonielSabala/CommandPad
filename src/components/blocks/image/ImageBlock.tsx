@@ -1,5 +1,6 @@
 import { ImageBlockConfig, MimeType } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
+import { InputType } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { AppMode, BlockType, DialogTone } from "@/common/enums";
 import type { ImageBlock as ImageBlockData } from "@/common/types";
@@ -174,7 +175,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
       <input
         ref={fileInputRef}
         className="image-file-input"
-        type="file"
+        type={InputType.FILE}
         accept={ImageBlockConfig.ACCEPT}
         onChange={(event) => {
           void attachFile(event.target.files?.[0]);
@@ -293,7 +294,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
           <div className="image-url-row">
             <input
               className={classNames("image-url-input", CssClass.NO_LIGATURES)}
-              type="url"
+              type={InputType.URL}
               spellCheck={false}
               placeholder={t.image.urlPlaceholder}
               value={urlDraft}

@@ -1,5 +1,6 @@
 import { TabUnresolvedConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
+import { ButtonType } from "@/common/constants/dom";
 import { AppMode, BlockType, UnresolvedCause } from "@/common/enums";
 import type { Block, Tab } from "@/common/types";
 import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
@@ -186,7 +187,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
       return (
         !readMode && (
           <button
-            type="button"
+            type={ButtonType.BUTTON}
             className={LINK_CLASS}
             title={t.tabs.defineVariableTitle(key)}
             onPointerEnter={preloadVariableTooltipEditor}
@@ -216,7 +217,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
         <>
           {isActive && EDITABLE_CAUSES.has(cause) && (
             <button
-              type="button"
+              type={ButtonType.BUTTON}
               className={LINK_CLASS}
               title={
                 readMode
@@ -231,7 +232,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
             </button>
           )}
           <button
-            type="button"
+            type={ButtonType.BUTTON}
             className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
             aria-label={t.command.goToDefinition}
             title={t.command.goToDefinitionTitle(key)}
@@ -251,7 +252,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
           variableId={edited.id}
           header={
             <button
-              type="button"
+              type={ButtonType.BUTTON}
               className={LINK_CLASS}
               title={t.command.goToDefinitionTitle(edited.key)}
               onClick={() => goToVariable(edited.id)}
@@ -300,7 +301,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
                     {problem.blocks.map(({ block, number }) => (
                       <button
                         key={block.id}
-                        type="button"
+                        type={ButtonType.BUTTON}
                         className={CssClass.TOOLTIP_LINK}
                         title={t.tabs.unresolvedBlock(
                           number,

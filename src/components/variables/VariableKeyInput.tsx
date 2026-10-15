@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { InputType } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { AppMode, TooltipVariant, VariableField } from "@/common/enums";
 import { useDomScrollTarget } from "@/components/common/scrollTarget";
@@ -53,7 +54,7 @@ export function VariableKeyInput({
           CssClass.NO_LIGATURES,
           isConstantVariableKey(variableKey) && CssClass.IS_CONSTANT,
         )}
-        type="text"
+        type={InputType.TEXT}
         placeholder={t.variables.keyPlaceholder}
         value={variableKey}
         readOnly={readMode}

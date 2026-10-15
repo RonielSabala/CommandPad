@@ -1,3 +1,4 @@
+import { InputType } from "@/common/constants/dom";
 import { useStore } from "@/store/store";
 import { registerImportTrigger } from "@/utils/importTrigger";
 import { useEffect, useRef } from "react";
@@ -15,7 +16,7 @@ export function RunbookImportInput() {
     <input
       ref={ref}
       id="runbook-import-input"
-      type="file"
+      type={InputType.FILE}
       accept=".json"
       multiple
       onChange={(event) => {

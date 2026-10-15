@@ -61,6 +61,17 @@ export const HtmlTag = {
   DIV: "div",
 } as const;
 
+export const ButtonType = {
+  BUTTON: "button",
+} as const;
+
+export const InputType = {
+  TEXT: "text",
+  PASSWORD: "password",
+  URL: "url",
+  FILE: "file",
+} as const;
+
 export const DataAttr = {
   // Core
 
