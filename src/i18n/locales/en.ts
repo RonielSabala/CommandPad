@@ -250,6 +250,7 @@ export const en: Messages = {
     placeholder: "ssh {USER}@{HOST}",
     extractVariable: "Extract into a variable",
     escapeVariable: "Escape the reference",
+    unescapeVariable: "Unescape the reference",
     goToDefinition: "Go to definition",
     goToDefinitionTitle: (key) =>
       `Switch to this runbook's variables view and highlight '${key}'.`,
@@ -1260,8 +1261,8 @@ If something goes wrong, undo it in this order:
     escapingBraces: {
       intro:
         "Prefix a reference with a backslash (`\\`) to output it literally instead of resolving it.",
-      menu: (escapeLabel) =>
-        `You do not have to type the backslash yourself. Put the caret inside a reference (or select one or more of them), right-click it and pick **${escapeLabel}**. Every reference it covers gets a backslash, including the ones nested inside another. A backslash left against the closing brace is dropped.`,
+      menu: (escapeLabel, unescapeLabel) =>
+        `You do not have to type the backslash yourself. Put the caret inside a reference (or select one or more of them), right-click it and pick **${escapeLabel}**. Every reference it covers gets a backslash, including the ones nested inside another. A backslash left against the closing brace is dropped. On an escaped reference, **${unescapeLabel}** removes the backslashes again. Each option only shows up when there is something for it to change.`,
       tryHint:
         "Try deleting the backslash in the command below and watch the literal braces turn into an active reference:",
       scope:

@@ -6,6 +6,7 @@ import { useStore } from "@/store/store";
 import {
   braceToken,
   braceTokenKeyRange,
+  dropBraceEscapes,
   escapableReferenceAt,
   escapeBraces,
 } from "@/utils/resolution";
@@ -44,6 +45,19 @@ export function useEditorActions(): EditorAction[] {
           const escaped = escapeBraces(text);
           if (escaped !== text) {
             replace(escaped);
+          }
+        },
+      },
+      {
+        id: EditorActionId.UNESCAPE_VARIABLE,
+        label: t.command.unescapeVariable,
+        order: EditorActionOrder.UNESCAPE_VARIABLE,
+        caretRange: escapableReferenceAt,
+        isAvailable: (text) => dropBraceEscapes(text) !== text,
+        run: ({ text, replace }) => {
+          const unescaped = dropBraceEscapes(text);
+          if (unescaped !== text) {
+            replace(unescaped);
           }
         },
       },

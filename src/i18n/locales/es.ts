@@ -262,6 +262,7 @@ export const es: Messages = {
     placeholder: "ssh {USUARIO}@{HOST}",
     extractVariable: "Extraer en una variable",
     escapeVariable: "Escapar la referencia",
+    unescapeVariable: "Quitar el escape de la referencia",
     goToDefinition: "Ir a la definición",
     goToDefinitionTitle: (key) =>
       `Cambia a la vista de variables de este runbook y resalta '${key}'.`,
@@ -1285,8 +1286,8 @@ Si algo sale mal, deshazlo en este orden:
     escapingBraces: {
       intro:
         "Antepón una barra invertida (`\\`) a una referencia para mostrarla literalmente en vez de resolverla.",
-      menu: (escapeLabel) =>
-        `No hace falta escribir la barra invertida a mano. Pon el cursor dentro de una referencia (o selecciona una o varias), haz clic derecho y elige **${escapeLabel}**. Cada referencia que abarque recibe su barra invertida, incluidas las anidadas dentro de otra. Una barra invertida pegada a la llave de cierre se elimina.`,
+      menu: (escapeLabel, unescapeLabel) =>
+        `No hace falta escribir la barra invertida a mano. Pon el cursor dentro de una referencia (o selecciona una o varias), haz clic derecho y elige **${escapeLabel}**. Cada referencia que abarque recibe su barra invertida, incluidas las anidadas dentro de otra. Una barra invertida pegada a la llave de cierre se elimina. Sobre una referencia escapada, **${unescapeLabel}** vuelve a quitar las barras invertidas. Cada opción solo aparece cuando hay algo que cambiar.`,
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
       scope:

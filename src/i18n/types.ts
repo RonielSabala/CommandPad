@@ -227,6 +227,7 @@ export interface Messages {
     placeholder: string;
     extractVariable: string;
     escapeVariable: string;
+    unescapeVariable: string;
     goToDefinition: string;
     goToDefinitionTitle: (key: string) => string;
     goToEmbeddedDefinitionTitle: (key: string, runbook: string) => string;
@@ -708,7 +709,7 @@ export interface Messages {
     };
     escapingBraces: {
       intro: string;
-      menu: (escapeLabel: string) => string;
+      menu: (escapeLabel: string, unescapeLabel: string) => string;
       tryHint: string;
       scope: string;
     };

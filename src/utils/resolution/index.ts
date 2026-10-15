@@ -37,6 +37,7 @@ export {
 export {
   braceToken,
   braceTokenKeyRange,
+  dropBraceEscapes,
   escapableReferenceAt,
   escapeBraces,
   getTokenKey,

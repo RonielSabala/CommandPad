@@ -960,7 +960,12 @@ export function EscapingBracesDocs() {
   return (
     <>
       <Prose text={t.docs.escapingBraces.intro} />
-      <Prose text={t.docs.escapingBraces.menu(t.command.escapeVariable)} />
+      <Prose
+        text={t.docs.escapingBraces.menu(
+          t.command.escapeVariable,
+          t.command.unescapeVariable,
+        )}
+      />
       <Prose text={t.docs.escapingBraces.tryHint} />
       <DemoWorkspace
         tabs={[
