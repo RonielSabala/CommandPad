@@ -194,6 +194,7 @@ export const VariableCompletionConfig = {
 
 export const MonacoContextMenu = {
   GROUP: "1_commandpad",
+  CONTROLLER_ID: "editor.contrib.contextmenu",
   AVAILABLE_KEY_SUFFIX: ".available",
   OPEN_WAIT_FRAMES: 10,
   SHOW_ACTION: "editor.action.showContextMenu",

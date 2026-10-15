@@ -9,12 +9,27 @@ import { scanReferences, splitReferenceBody } from "./token";
 import type { VariableMap } from "./types";
 import { getVariableKey, getVariableMap } from "./variables";
 
+/** Computes `compute` on the first call and hands back the same value after. */
+function lazy<T>(compute: () => T): () => T {
+  let computed = false;
+  let value: T;
+
+  return () => {
+    if (!computed) {
+      value = compute();
+      computed = true;
+    }
+
+    return value;
+  };
+}
+
 interface InlineScope {
-  variableMap: VariableMap;
-  /** The same without secrets. */
-  visibleMap: VariableMap;
+  variableMap: () => VariableMap;
+  /** The variable map without secrets. */
+  visibleMap: () => VariableMap;
   /** The raw values of the variables that aren't secret. */
-  rawValues: Map<string, string>;
+  rawValues: () => Map<string, string>;
 }
 
 const SCOPES = new WeakMap<Variable[], InlineScope>();
@@ -25,12 +40,18 @@ function inlineScope(variables: Variable[]): InlineScope {
     return scope;
   }
 
-  const visible = variables.filter((variable) => !variable.secret);
+  const visible = lazy(() => variables.filter((variable) => !variable.secret));
   scope = {
-    variableMap: getVariableMap(variables),
-    visibleMap: getVariableMap(visible),
-    rawValues: new Map(
-      visible.map((variable) => [getVariableKey(variable), variable.value]),
+    variableMap: lazy(() => getVariableMap(variables)),
+    visibleMap: lazy(() => getVariableMap(visible())),
+    rawValues: lazy(
+      () =>
+        new Map(
+          visible().map((variable) => [
+            getVariableKey(variable),
+            variable.value,
+          ]),
+        ),
     ),
   };
 
@@ -57,23 +78,23 @@ function resolvedText(
 
 /** Replaces every named reference in `text` that fully resolves with its content. */
 export function inlineReferences(text: string, variables: Variable[]): string {
-  const { variableMap, visibleMap, rawValues } = inlineScope(variables);
+  const scope = inlineScope(variables);
   let result = "";
   let lastEnd = 0;
 
   for (const match of scanReferences(text, ReferenceSurface.COMMAND)) {
-    if (resolvedText(match, variableMap) === null) {
+    if (resolvedText(match, scope.variableMap()) === null) {
       continue;
     }
 
     const [keyChunk, ...rest] = splitReferenceBody(match.raw);
-    const raw = rawValues.get(keyChunk.text.trim());
+    const raw = scope.rawValues().get(keyChunk.text.trim());
     const content =
       raw !== undefined &&
       rest.length === 0 &&
       getTemplateParamNames(raw).length === 0
         ? raw
-        : resolvedText(match, visibleMap);
+        : resolvedText(match, scope.visibleMap());
 
     if (content !== null) {
       result += text.slice(lastEnd, match.start) + content;

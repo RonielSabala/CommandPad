@@ -87,55 +87,75 @@ function runAction(action: EditorAction, instance: editor.ICodeEditor): void {
   });
 }
 
-/** Keeps a context key telling whether `isAvailable` accepts the action's text. */
-function bindAvailability(
-  instance: editor.IStandaloneCodeEditor,
-  action: EditorAction,
-  isAvailable: (text: string) => boolean,
-  contextKey: string,
-): IDisposable[] {
-  const available = instance.createContextKey<boolean>(contextKey, false);
-  const update = () => {
-    const model = instance.getModel();
-    const range = model && actionRange(action, instance, model);
-    available.set(!!range && isAvailable(model.getValueInRange(range)));
+interface ContextMenuController extends editor.IEditorContribution {
+  showContextMenu(anchor?: unknown): void;
+}
+
+/** Runs `beforeShow` every time the editor's context menu is about to open. */
+function beforeContextMenu(
+  instance: editor.ICodeEditor,
+  beforeShow: () => void,
+): IDisposable {
+  const controller = instance.getContribution<ContextMenuController>(
+    MonacoContextMenu.CONTROLLER_ID,
+  );
+
+  if (!controller) {
+    return { dispose: () => {} };
+  }
+
+  const show = controller.showContextMenu;
+  controller.showContextMenu = (anchor) => {
+    beforeShow();
+    show.call(controller, anchor);
   };
 
-  update();
-  return [
-    instance.onDidChangeCursorSelection(update),
-    instance.onDidChangeModelContent(update),
-    instance.onDidChangeModel(update),
-    { dispose: () => available.reset() },
-  ];
+  return { dispose: () => (controller.showContextMenu = show) };
+}
+
+function isActionAvailable(
+  action: EditorAction,
+  instance: editor.ICodeEditor,
+): boolean {
+  const model = instance.getModel();
+  const range = model && actionRange(action, instance, model);
+  return (
+    !!range && (action.isAvailable?.(model.getValueInRange(range)) ?? true)
+  );
 }
 
 export function registerEditorActions(
   instance: editor.IStandaloneCodeEditor,
   actions: EditorAction[],
 ): IDisposable[] {
-  return actions.flatMap((action) => {
-    const disposables: IDisposable[] = [];
+  const refreshes: (() => void)[] = [];
+
+  const disposables = actions.map((action) => {
     let precondition: string | undefined;
 
     if (action.isAvailable) {
       precondition = action.id + MonacoContextMenu.AVAILABLE_KEY_SUFFIX;
-      disposables.push(
-        ...bindAvailability(instance, action, action.isAvailable, precondition),
-      );
+      const available = instance.createContextKey<boolean>(precondition, false);
+      refreshes.push(() => available.set(isActionAvailable(action, instance)));
     }
 
-    disposables.push(
-      instance.addAction({
-        id: action.id,
-        label: action.label,
-        contextMenuGroupId: MonacoContextMenu.GROUP,
-        contextMenuOrder: action.order,
-        precondition,
-        run: (target) => runAction(action, target),
-      }),
-    );
-
-    return disposables;
+    return instance.addAction({
+      id: action.id,
+      label: action.label,
+      contextMenuGroupId: MonacoContextMenu.GROUP,
+      contextMenuOrder: action.order,
+      precondition,
+      run: (target) => runAction(action, target),
+    });
   });
+
+  if (refreshes.length > 0) {
+    disposables.push(
+      beforeContextMenu(instance, () =>
+        refreshes.forEach((refresh) => refresh()),
+      ),
+    );
+  }
+
+  return disposables;
 }
