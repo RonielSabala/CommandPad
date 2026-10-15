@@ -51,7 +51,7 @@ export function DialogModal({
       animated={false}
     >
       <header className="dialog-header">
-        <ToneIcon className="dialog-icon" aria-hidden="true" />
+        <ToneIcon className="dialog-icon" aria-hidden={true} />
         <p className="dialog-title">{title}</p>
       </header>
       <div className={classNames("dialog-message", CssClass.NOTE_CODE_NEUTRAL)}>

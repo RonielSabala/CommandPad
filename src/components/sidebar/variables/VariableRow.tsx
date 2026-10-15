@@ -160,7 +160,7 @@ export const VariableRow = memo(function VariableRow({
             />
 
             {isSecret && variableValue && (
-              <div className="variable-value-mask" aria-hidden="true">
+              <div className="variable-value-mask" aria-hidden={true}>
                 {SECRET_MASK}
               </div>
             )}
@@ -200,7 +200,7 @@ export const VariableRow = memo(function VariableRow({
             CssClass.BTN,
             CssClass.BTN_ICON,
           )}
-          aria-hidden="true"
+          aria-hidden={true}
         >
           <EyeIcon
             slashed

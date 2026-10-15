@@ -86,7 +86,7 @@ export function SymbolField() {
   );
 
   return (
-    <div className="home-symbol-field" aria-hidden="true">
+    <div className="home-symbol-field" aria-hidden={true}>
       {columns.map((column, i) => (
         <pre
           key={i}

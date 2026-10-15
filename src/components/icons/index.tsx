@@ -4,7 +4,7 @@ type IconProps = SVGProps<SVGSVGElement>;
 
 export function DragIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" fill="currentColor" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" fill="currentColor" {...props}>
       <circle cx="5" cy="4" r="1" />
       <circle cx="11" cy="4" r="1" />
       <circle cx="5" cy="8" r="1" />
@@ -17,7 +17,7 @@ export function DragIcon(props: IconProps) {
 
 export function CloseIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M4 4l8 8M12 4l-8 8" />
     </svg>
   );
@@ -25,7 +25,7 @@ export function CloseIcon(props: IconProps) {
 
 export function XIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M3 3l10 10M13 3L3 13" />
     </svg>
   );
@@ -33,7 +33,7 @@ export function XIcon(props: IconProps) {
 
 export function PlusIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M8 3v10M3 8h10" />
     </svg>
   );
@@ -41,7 +41,7 @@ export function PlusIcon(props: IconProps) {
 
 export function PanelCollapseIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <polyline points="10,4 4,8 10,12" />
     </svg>
   );
@@ -52,7 +52,7 @@ export function PanelSideIcon({
   ...props
 }: IconProps & { mirrored?: boolean }) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <rect x="1" y="2" width="14" height="12" rx="1" />
       <line
         x1={mirrored ? "5" : "11"}
@@ -66,7 +66,7 @@ export function PanelSideIcon({
 
 export function SidebarSectionChevronIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <polyline points="4,6 8,10 12,6" />
     </svg>
   );
@@ -74,7 +74,7 @@ export function SidebarSectionChevronIcon(props: IconProps) {
 
 export function SearchIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <circle cx="6.5" cy="6.5" r="4" />
       <line x1="10" y1="10" x2="14" y2="14" />
     </svg>
@@ -83,7 +83,7 @@ export function SearchIcon(props: IconProps) {
 
 export function MoonIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M13.5 9.2A5.5 5.5 0 0 1 6.8 2.5a5.5 5.5 0 1 0 6.7 6.7z" />
     </svg>
   );
@@ -91,7 +91,7 @@ export function MoonIcon(props: IconProps) {
 
 export function SunIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <circle cx="8" cy="8" r="3.25" />
       <line x1="8" y1="1" x2="8" y2="2.5" />
       <line x1="8" y1="13.5" x2="8" y2="15" />
@@ -107,7 +107,7 @@ export function SunIcon(props: IconProps) {
 
 export function PencilIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M13 1l2 2L5 13l-3 1 1-3L13 1z" />
     </svg>
   );
@@ -115,7 +115,7 @@ export function PencilIcon(props: IconProps) {
 
 export function PadlockIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M5 7V5a3 3 0 0 1 6 0v2M3 7h10v7H3zM8 11v-1" />
     </svg>
   );
@@ -123,7 +123,7 @@ export function PadlockIcon(props: IconProps) {
 
 export function ChevronsRightIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M2 4l6 4-6 4M8 4l6 4-6 4" strokeWidth="1.5" />
     </svg>
   );
@@ -131,7 +131,7 @@ export function ChevronsRightIcon(props: IconProps) {
 
 export function ExportIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M8 2v8M5 7l3 3 3-3M3 11v2h10v-2" />
     </svg>
   );
@@ -139,7 +139,7 @@ export function ExportIcon(props: IconProps) {
 
 export function ImportIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M8 11V3M5 6l3-3 3 3M3 11v2h10v-2" />
     </svg>
   );
@@ -147,7 +147,7 @@ export function ImportIcon(props: IconProps) {
 
 export function ClipIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M9.5 3.5L4.5 8.5a2 2 0 002.83 2.83l5-5A3.33 3.33 0 007.5 1.5l-5 5a4.67 4.67 0 006.6 6.6l4.9-4.9" />
     </svg>
   );
@@ -155,7 +155,7 @@ export function ClipIcon(props: IconProps) {
 
 export function TrashIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5l.5-9" />
     </svg>
   );
@@ -166,7 +166,7 @@ export function EyeIcon({
   ...props
 }: IconProps & { slashed?: boolean }) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" />
       <circle
         cx="8"
@@ -181,7 +181,7 @@ export function EyeIcon({
 
 export function NoteIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M3 3h10v8l-3 3H3z" />
       <path d="M13 11h-3v3" />
     </svg>
@@ -190,7 +190,7 @@ export function NoteIcon(props: IconProps) {
 
 export function CommandIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <line x1="2" y1="4.5" x2="5.5" y2="4.5" />
       <line x1="2" y1="8" x2="8.5" y2="8" />
       <polyline points="9,3.5 14,8 9,12.5" />
@@ -200,7 +200,7 @@ export function CommandIcon(props: IconProps) {
 
 export function ImageIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <rect x="2" y="3" width="12" height="10" rx="2" />
       <circle cx="10.5" cy="6.5" r="1" />
       <path d="M2.5 12.5L6 8.5l4.5 4" />
@@ -210,7 +210,7 @@ export function ImageIcon(props: IconProps) {
 
 export function RunbookIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M2.5 11.5V1.5h7.5" />
       <path d="M5.5 4.5h5l3 3v7h-8z" />
       <path d="M10.5 4.5v3h3" />
@@ -220,7 +220,7 @@ export function RunbookIcon(props: IconProps) {
 
 export function DividerIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M1 8 C3 5, 5 11, 7 8 S11 5, 13 8 S15 5, 15 8" />
     </svg>
   );
@@ -228,7 +228,7 @@ export function DividerIcon(props: IconProps) {
 
 export function VariableIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M6 2.5c-1.5 0-2 .7-2 2V6c0 1-.6 2-1.5 2 .9 0 1.5 1 1.5 2v1.5c0 1.3.5 2 2 2" />
       <path d="M10 2.5c1.5 0 2 .7 2 2V6c0 1 .6 2 1.5 2-.9 0-1.5 1-1.5 2v1.5c0 1.3-.5 2-2 2" />
     </svg>
@@ -237,7 +237,7 @@ export function VariableIcon(props: IconProps) {
 
 export function EnumIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M5 2.5c-1.3 0-1.7.6-1.7 1.8V6c0 1-.5 2-1.3 2 .8 0 1.3 1 1.3 2v1.7c0 1.2.4 1.8 1.7 1.8" />
       <path d="M11 2.5c1.3 0 1.7.6 1.7 1.8V6c0 1 .5 2 1.3 2-.8 0-1.3 1-1.3 2v1.7c0 1.2-.4 1.8-1.7 1.8" />
       <polyline points="5.8,8.2 7.3,9.7 10.2,6.3" />
@@ -247,7 +247,7 @@ export function EnumIcon(props: IconProps) {
 
 export function SectionIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M2 3.5h12" />
       <path d="M5 8h9M5 12.5h9" />
     </svg>
@@ -256,7 +256,7 @@ export function SectionIcon(props: IconProps) {
 
 export function EditorToggleChevronIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 12 12" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 12 12" {...props}>
       <polyline points="2,4 6,8 10,4" />
     </svg>
   );
@@ -264,7 +264,7 @@ export function EditorToggleChevronIcon(props: IconProps) {
 
 export function CheckIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <polyline points="2.5,8.5 6,12 13.5,3.5" />
     </svg>
   );
@@ -272,7 +272,7 @@ export function CheckIcon(props: IconProps) {
 
 export function CopyIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <rect x="5" y="5" width="9" height="9" rx="1" />
       <path d="M3 11V2h9" />
     </svg>
@@ -281,7 +281,7 @@ export function CopyIcon(props: IconProps) {
 
 export function DuplicateIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M2 2H9V6L6 9H2Z" />
       <path d="M12 9v6M9 12h6" />
     </svg>
@@ -290,7 +290,7 @@ export function DuplicateIcon(props: IconProps) {
 
 export function InsertAboveIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M8 8V2M5 5l3-3 3 3" />
       <line x1="2" y1="12" x2="14" y2="12" />
     </svg>
@@ -299,7 +299,7 @@ export function InsertAboveIcon(props: IconProps) {
 
 export function InsertBelowIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M8 8v6M5 11l3 3 3-3" />
       <line x1="2" y1="4" x2="14" y2="4" />
     </svg>
@@ -308,7 +308,7 @@ export function InsertBelowIcon(props: IconProps) {
 
 export function BookIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M8 3.5C6.8 2.3 5 2 3 2v11c2 0 3.8.3 5 1.5 1.2-1.2 3-1.5 5-1.5V2c-2 0-3.8.3-5 1.5z" />
       <path d="M8 3.5v11" />
     </svg>
@@ -317,7 +317,7 @@ export function BookIcon(props: IconProps) {
 
 export function EmptyStateIcon(props: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 40 40" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 40 40" {...props}>
       <rect x="4" y="6" width="32" height="28" rx="3" />
       <path d="M10 14l6 6-6 6M18 26h12" />
     </svg>

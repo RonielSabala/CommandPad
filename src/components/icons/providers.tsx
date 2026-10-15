@@ -8,7 +8,7 @@ export function GoogleDriveIcon(props: ProviderIconProps) {
   const cId = `${uid}-c`;
 
   return (
-    <svg aria-hidden="true" viewBox="0 0 512 512" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 512 512" {...props}>
       <g fill="#2684fc">
         <path id={bId} d="M337 301l53 96q-3 2-10 2h-247.6 q-6 0-10-2l55-95" />
       </g>
@@ -29,7 +29,7 @@ export function GoogleDriveIcon(props: ProviderIconProps) {
 
 export function OneDriveIcon(props: ProviderIconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" {...props}>
+    <svg aria-hidden={true} viewBox="0 0 24 24" fill="none" {...props}>
       <path
         fill="#0364b8"
         d="m14.4475 14.6323 4.8507 -4.63885c-1.007575 -3.92885 -5.00935 -6.297 -8.938225 -5.289425 -1.769275 0.45375 -3.305975 1.55055 -4.310175 3.076275 0.0751 -0.0019 8.3977 6.852 8.3977 6.852Z"

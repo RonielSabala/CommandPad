@@ -91,7 +91,7 @@ export function StickyScrollbar({ target, deps }: Props) {
   }
 
   return (
-    <div className="sticky-scrollbar" ref={proxyRef} aria-hidden="true">
+    <div className="sticky-scrollbar" ref={proxyRef} aria-hidden={true}>
       <div
         className="sticky-scrollbar-track"
         style={{ width: `calc(100% + ${scrollRange}px)` }}

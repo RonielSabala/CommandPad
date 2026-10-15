@@ -575,7 +575,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
           />
 
           {showMask && (
-            <div className="code-editor-mask" aria-hidden="true">
+            <div className="code-editor-mask" aria-hidden={true}>
               {joinLines(
                 Array.from({ length: countLines(value) }, () => SECRET_MASK),
               )}

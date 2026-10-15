@@ -43,7 +43,7 @@ export function FooterLegalLinks() {
       <Link className="footer-legal-link" to={AppRoute.PRIVACY}>
         {t.footer.privacy}
       </Link>
-      <span className="footer-legal-sep" aria-hidden="true">
+      <span className="footer-legal-sep" aria-hidden={true}>
         {MIDDLE_DOT}
       </span>
       <Link className="footer-legal-link" to={AppRoute.TERMS}>

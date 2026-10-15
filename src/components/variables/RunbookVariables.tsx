@@ -168,7 +168,7 @@ export function RunbookVariables() {
         {isEmpty && (
           <EmptyState
             icon={
-              <span className="empty-state-glyph" aria-hidden="true">
+              <span className="empty-state-glyph" aria-hidden={true}>
                 {"{}"}
               </span>
             }
