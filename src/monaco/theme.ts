@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { HtmlTag } from "@/common/constants/dom";
 import {
   ColorToken,
   MonacoTheme,
@@ -18,7 +19,7 @@ let probe: HTMLElement | null = null;
 /** Resolve a color token to literal hex, scaling alpha by `opacity`. */
 function resolveColor(token: string, opacity: number = OPAQUE): string {
   if (!probe) {
-    probe = document.createElement("span");
+    probe = document.createElement(HtmlTag.SPAN);
     probe.style.display = "none";
     document.body.appendChild(probe);
   }

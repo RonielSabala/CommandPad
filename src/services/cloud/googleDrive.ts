@@ -6,6 +6,7 @@ import {
   MimeType,
   StorageKey,
 } from "@/common/config";
+import { HtmlTag } from "@/common/constants/dom";
 import { CloudProvider, HttpMethod } from "@/common/enums";
 import { isBrowsableEntry } from "./entries";
 import type { CloudClient, CloudEntry } from "./types";
@@ -118,7 +119,7 @@ function loadScript(): Promise<void> {
         return;
       }
 
-      const script = document.createElement("script");
+      const script = document.createElement(HtmlTag.SCRIPT);
       script.src = GIS_SCRIPT_URL;
       script.async = true;
       script.defer = true;

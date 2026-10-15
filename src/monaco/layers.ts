@@ -1,7 +1,8 @@
+import { HtmlTag } from "@/common/constants/dom";
 import { MonacoLayer } from "@/common/editorConfig";
 
 function createLayer(className: string): HTMLElement {
-  const layer = document.createElement("div");
+  const layer = document.createElement(HtmlTag.DIV);
 
   layer.classList.add(MonacoLayer.EDITOR_CLASS, className);
   document.body.appendChild(layer);

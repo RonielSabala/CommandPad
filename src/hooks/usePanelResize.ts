@@ -1,6 +1,6 @@
 import { PANEL_DEFINITIONS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { Cursor } from "@/common/constants/dom";
+import { Cursor, HtmlTag } from "@/common/constants/dom";
 import { EventType, MouseButton } from "@/common/constants/events";
 import { PanelId, PanelSide } from "@/common/enums";
 import { useStore, useStoreApi } from "@/store/store";
@@ -25,7 +25,7 @@ export function usePanelResize(
       // Ignore action buttons riding on the handle
       if (
         event.button !== MouseButton.LEFT ||
-        (event.target as HTMLElement).closest("button")
+        (event.target as HTMLElement).closest(HtmlTag.BUTTON)
       ) {
         return;
       }
@@ -66,7 +66,7 @@ export function usePanelResize(
 
   const onDoubleClick = useCallback(
     (event: ReactMouseEvent<HTMLDivElement>) => {
-      if ((event.target as HTMLElement).closest("button")) {
+      if ((event.target as HTMLElement).closest(HtmlTag.BUTTON)) {
         return;
       }
 

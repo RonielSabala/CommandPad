@@ -69,10 +69,15 @@ export const EditCommand = {
 } as const;
 
 export const HtmlTag = {
-  TABLE_HEADER_CELL: "th",
-  TABLE_CELL: "td",
-  PARAGRAPH: "p",
   DIV: "div",
+  SPAN: "span",
+  ANCHOR: "a",
+  PARAGRAPH: "p",
+  LABEL: "label",
+  BUTTON: "button",
+  SCRIPT: "script",
+  TABLE_CELL: "td",
+  TABLE_HEADER_CELL: "th",
 } as const;
 
 export const ButtonType = {
