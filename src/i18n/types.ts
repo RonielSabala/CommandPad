@@ -226,6 +226,7 @@ export interface Messages {
     copiedUnresolved: (parts: number) => string;
     placeholder: string;
     extractVariable: string;
+    inlineVariable: string;
     escapeVariable: string;
     unescapeVariable: string;
     goToDefinition: string;
@@ -547,6 +548,7 @@ export interface Messages {
       intro: string;
       usage: string;
       extract: (extractLabel: string) => string;
+      inline: (inlineLabel: string) => string;
       unresolved: string;
       tooltip: string;
       split: string;

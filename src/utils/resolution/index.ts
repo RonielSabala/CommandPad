@@ -6,6 +6,7 @@ export {
   resolveCommandText,
   resolveCommandToString
 } from "./command";
+export { inlineReferences } from "./inline";
 export { extractedVariableKey, uniqueVariableKey } from "./keys";
 export {
   applyOperations,

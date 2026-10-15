@@ -249,6 +249,7 @@ export const en: Messages = {
       `Copied with ${parts} unresolved ${parts === 1 ? "part" : "parts"}`,
     placeholder: "ssh {USER}@{HOST}",
     extractVariable: "Extract into a variable",
+    inlineVariable: "Inline the variable",
     escapeVariable: "Escape the reference",
     unescapeVariable: "Unescape the reference",
     goToDefinition: "Go to definition",
@@ -944,6 +945,8 @@ If something goes wrong, undo it in this order:
         "Use a variable in any command by wrapping its key in curly braces, e.g. `{KEY}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
       extract: (extractLabel) =>
         `You do not have to write a variable out by hand. Select any piece of a command in its editor, then right-click it (or press \`Ctrl+.\`) and pick **${extractLabel}**: the selected text becomes a new variable, and the command keeps a reference to it in its place. Its guessed name is selected right there in the editor, so just type over it to rename it. Try it on the demo above.`,
+      inline: (inlineLabel) =>
+        `The opposite works too: put the caret on a reference and pick **${inlineLabel}** to write the variable's content in its place. The variable itself is kept. Secret values are never written out, and the option only shows up when there is a reference that fully resolves.`,
       unresolved:
         "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**, even when the reference sits inside another variable's value.",
       tooltip:

@@ -261,6 +261,7 @@ export const es: Messages = {
       `Copiado con ${parts} ${parts === 1 ? "parte sin resolver" : "partes sin resolver"}`,
     placeholder: "ssh {USUARIO}@{HOST}",
     extractVariable: "Extraer en una variable",
+    inlineVariable: "Insertar el valor de la variable",
     escapeVariable: "Escapar la referencia",
     unescapeVariable: "Quitar el escape de la referencia",
     goToDefinition: "Ir a la definición",
@@ -968,6 +969,8 @@ Si algo sale mal, deshazlo en este orden:
         "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{CLAVE}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
       extract: (extractLabel) =>
         `No hace falta escribir una variable a mano. Selecciona cualquier parte de un comando en su editor, haz clic derecho (o pulsa \`Ctrl+.\`) y elige **${extractLabel}**: el texto seleccionado se convierte en una variable nueva, y el comando conserva en su lugar una referencia a ella. Su nombre propuesto queda seleccionado ahí mismo en el editor, así que basta con escribir encima para renombrarla. Pruébalo en la demo de arriba.`,
+      inline: (inlineLabel) =>
+        `También funciona al revés: pon el cursor sobre una referencia y elige **${inlineLabel}** para escribir el contenido de la variable en su lugar. La variable se conserva. Los valores secretos nunca se escriben, y la opción solo aparece cuando hay una referencia que se resuelve por completo.`,
       unresolved:
         "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**, incluso cuando la referencia está dentro del valor de otra variable.",
       tooltip:

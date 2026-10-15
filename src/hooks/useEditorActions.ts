@@ -1,24 +1,35 @@
 import { EditorActionId, EditorActionOrder } from "@/common/editorConfig";
 import { VariableField } from "@/common/enums";
+import type { Variable } from "@/common/types";
 import { useTranslation } from "@/i18n";
 import type { EditorAction } from "@/monaco/actions";
-import { useStore } from "@/store/store";
+import { getActiveTab, useStore, useStoreApi } from "@/store/store";
 import {
   braceToken,
   braceTokenKeyRange,
   dropBraceEscapes,
   escapableReferenceAt,
   escapeBraces,
+  inlineReferences,
 } from "@/utils/resolution";
 import { useMemo } from "react";
 
+const NO_VARIABLES: Variable[] = [];
+
 export function useEditorActions(): EditorAction[] {
   const t = useTranslation();
+  const store = useStoreApi();
   const extractVariable = useStore((state) => state.extractVariable);
   const updateVariable = useStore((state) => state.updateVariable);
 
-  return useMemo(
-    () => [
+  return useMemo(() => {
+    const inlineVariables = (text: string) =>
+      inlineReferences(
+        text,
+        getActiveTab(store.getState())?.variables ?? NO_VARIABLES,
+      );
+
+    return [
       {
         id: EditorActionId.EXTRACT_VARIABLE,
         label: t.command.extractVariable,
@@ -33,6 +44,19 @@ export function useEditorActions(): EditorAction[] {
           rename(braceToken(key), braceTokenKeyRange(key), (newKey) =>
             updateVariable(id, VariableField.KEY, newKey),
           );
+        },
+      },
+      {
+        id: EditorActionId.INLINE_VARIABLE,
+        label: t.command.inlineVariable,
+        order: EditorActionOrder.INLINE_VARIABLE,
+        caretRange: escapableReferenceAt,
+        isAvailable: (text) => inlineVariables(text) !== text,
+        run: ({ text, replace }) => {
+          const inlined = inlineVariables(text);
+          if (inlined !== text) {
+            replace(inlined);
+          }
         },
       },
       {
@@ -61,7 +85,6 @@ export function useEditorActions(): EditorAction[] {
           }
         },
       },
-    ],
-    [t, extractVariable, updateVariable],
-  );
+    ];
+  }, [t, store, extractVariable, updateVariable]);
 }
