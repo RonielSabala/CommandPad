@@ -23,7 +23,6 @@ import {
   isMaskedSegment,
   resolveCommandText,
   resolveCommandToString,
-  sourceKey,
   unresolvedSegmentParts,
   type VariableMap,
 } from "@/utils/resolution";
@@ -137,10 +136,10 @@ export function CommandPreview({
   const sourceTipProps = sourceTip.props;
   const sourceProps = useCallback<SourceProps>(
     (source) =>
-      source && Object.hasOwn(variableMap, sourceKey(source))
+      source
         ? { ...tooltip(source, TooltipVariant.CODE), ...sourceTipProps }
         : plainSourceProps(source),
-    [variableMap, sourceTipProps],
+    [sourceTipProps],
   );
 
   const segments = useMemo(

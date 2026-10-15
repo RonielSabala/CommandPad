@@ -971,8 +971,8 @@ If something goes wrong, undo it in this order:
         "The preview highlights resolved text by how far it was read through. Text the variable you referenced wrote takes the lightest tint, text a reference **inside** that value wrote sits on a deeper one, and anything further in shares the deepest. One glance then tells you which part of a command came from where.",
       shadesDemoHint:
         "Here `HOST` is built from `SERVICE`, which is built from `NAME`, so the resolved command wears all three tints at once:",
-      shadesHover: (goToDefinition: string, edit: string) =>
-        `When the tints alone are not enough, hover over any highlighted piece of a resolved command: it names the variable that wrote it, its arrow button (**${goToDefinition}**) takes you to that variable in the variables view, and **${edit}** opens its key and value right there in the tooltip, so you can change them without leaving the command.`,
+      shadesHover: (goToDefinition: string, edit: string, create: string) =>
+        `When the tints alone are not enough, hover over any highlighted piece of a resolved command: it names the variable that wrote it, its arrow button (**${goToDefinition}**) takes you to that variable in the variables view, and **${edit}** opens its key and value right there in the tooltip, so you can change them without leaving the command. A reference to a variable that doesn't exist yet offers **${create}** instead, which adds it and opens the same editor with its value ready to type.`,
       shadesUnresolved:
         "A reference that does not resolve is counted the same way, in red instead of green: the rest of the command still resolves and only the broken part is marked, at the depth it sits at. So one glance also tells you how deep a problem is, not just that there is one.",
       shadesUnresolvedDemoHint:

@@ -172,6 +172,7 @@ export function VariableReferencesDocs() {
         text={t.docs.variableReferences.shadesHover(
           t.command.goToDefinition,
           t.command.editVariable,
+          t.tabs.defineVariable,
         )}
       />
       <Prose text={t.docs.variableReferences.shadesUnresolved} />

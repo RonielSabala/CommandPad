@@ -561,7 +561,11 @@ export interface Messages {
       demoHint: string;
       shades: string;
       shadesDemoHint: string;
-      shadesHover: (goToDefinition: string, edit: string) => string;
+      shadesHover: (
+        goToDefinition: string,
+        edit: string,
+        create: string,
+      ) => string;
       shadesUnresolved: string;
       shadesUnresolvedDemoHint: string;
       circular: string;
