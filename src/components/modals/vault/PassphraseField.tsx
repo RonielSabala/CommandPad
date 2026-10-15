@@ -1,5 +1,5 @@
 import { CssClass } from "@/common/constants/css";
-import { ButtonType, InputType } from "@/common/constants/dom";
+import { AutoComplete, ButtonType, InputType } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
@@ -47,7 +47,7 @@ export function PassphraseField({
           disabled={disabled}
           spellCheck={false}
           autoFocus={autoFocus}
-          autoComplete="off"
+          autoComplete={AutoComplete.OFF}
           onChange={(event) => onChange(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === Key.ENTER) {

@@ -91,6 +91,10 @@ export const InputType = {
   FILE: "file",
 } as const;
 
+export const AutoComplete = {
+  OFF: "off",
+} as const;
+
 export const DataAttr = {
   // Core
 

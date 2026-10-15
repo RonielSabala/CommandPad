@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { AutoComplete } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { classNames } from "@/utils/string";
 import "./FilenameInput.css";
@@ -40,7 +41,7 @@ export function FilenameInput({
         className={classNames("filename-input-field", CssClass.NO_LIGATURES)}
         value={value}
         spellCheck={false}
-        autoComplete="off"
+        autoComplete={AutoComplete.OFF}
         autoFocus={autoFocus}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}

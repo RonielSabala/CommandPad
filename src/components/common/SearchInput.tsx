@@ -1,5 +1,5 @@
 import { CssClass } from "@/common/constants/css";
-import { InputType } from "@/common/constants/dom";
+import { AutoComplete, InputType } from "@/common/constants/dom";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SearchIcon, XIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
@@ -28,7 +28,7 @@ export function SearchInput({
         type={InputType.TEXT}
         placeholder={placeholder}
         spellCheck={false}
-        autoComplete="off"
+        autoComplete={AutoComplete.OFF}
         value={value}
         onChange={(event) => onChange(event.target.value)}
       />

@@ -1,5 +1,5 @@
 import { CssClass } from "@/common/constants/css";
-import { InputType } from "@/common/constants/dom";
+import { AutoComplete, InputType } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { AppMode, TooltipVariant, VariableField } from "@/common/enums";
 import { useDomScrollTarget } from "@/components/common/scrollTarget";
@@ -60,7 +60,7 @@ export function VariableKeyInput({
         readOnly={readMode}
         tabIndex={readMode ? -1 : undefined}
         spellCheck={false}
-        autoComplete="off"
+        autoComplete={AutoComplete.OFF}
         onChange={(event) =>
           updateVariable(variableId, VariableField.KEY, event.target.value)
         }

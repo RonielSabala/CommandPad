@@ -1,6 +1,6 @@
 import { SECRET_MASK } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { DataAttr, InputType } from "@/common/constants/dom";
+import { AutoComplete, DataAttr, InputType } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import {
   AppMode,
@@ -140,7 +140,7 @@ export const VariableRow = memo(function VariableRow({
               placeholder={t.variables.valuePlaceholder}
               value={variableValue}
               spellCheck={false}
-              autoComplete="off"
+              autoComplete={AutoComplete.OFF}
               onChange={(event) =>
                 updateVariable(
                   variableId,
