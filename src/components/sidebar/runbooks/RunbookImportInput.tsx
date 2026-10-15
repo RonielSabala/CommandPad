@@ -1,3 +1,4 @@
+import { JSON_EXTENSION } from "@/common/config";
 import { InputType } from "@/common/constants/dom";
 import { useStore } from "@/store/store";
 import { registerImportTrigger } from "@/utils/importTrigger";
@@ -17,7 +18,7 @@ export function RunbookImportInput() {
       ref={ref}
       id="runbook-import-input"
       type={InputType.FILE}
-      accept=".json"
+      accept={JSON_EXTENSION}
       multiple
       onChange={(event) => {
         const files = Array.from(event.target.files ?? []);
