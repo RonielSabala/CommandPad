@@ -22,6 +22,7 @@ export interface EditorAction {
     line: string,
     offset: number,
   ) => { start: number; end: number } | null;
+  isAvailable?: (text: string) => boolean;
   run: (context: EditorActionContext) => void;
 }
 
@@ -86,17 +87,55 @@ function runAction(action: EditorAction, instance: editor.ICodeEditor): void {
   });
 }
 
+/** Keeps a context key telling whether `isAvailable` accepts the action's text. */
+function bindAvailability(
+  instance: editor.IStandaloneCodeEditor,
+  action: EditorAction,
+  isAvailable: (text: string) => boolean,
+  contextKey: string,
+): IDisposable[] {
+  const available = instance.createContextKey<boolean>(contextKey, false);
+  const update = () => {
+    const model = instance.getModel();
+    const range = model && actionRange(action, instance, model);
+    available.set(!!range && isAvailable(model.getValueInRange(range)));
+  };
+
+  update();
+  return [
+    instance.onDidChangeCursorSelection(update),
+    instance.onDidChangeModelContent(update),
+    instance.onDidChangeModel(update),
+    { dispose: () => available.reset() },
+  ];
+}
+
 export function registerEditorActions(
   instance: editor.IStandaloneCodeEditor,
   actions: EditorAction[],
 ): IDisposable[] {
-  return actions.map((action) =>
-    instance.addAction({
-      id: action.id,
-      label: action.label,
-      contextMenuGroupId: MonacoContextMenu.GROUP,
-      contextMenuOrder: action.order,
-      run: (target) => runAction(action, target),
-    }),
-  );
+  return actions.flatMap((action) => {
+    const disposables: IDisposable[] = [];
+    let precondition: string | undefined;
+
+    if (action.isAvailable) {
+      precondition = action.id + MonacoContextMenu.AVAILABLE_KEY_SUFFIX;
+      disposables.push(
+        ...bindAvailability(instance, action, action.isAvailable, precondition),
+      );
+    }
+
+    disposables.push(
+      instance.addAction({
+        id: action.id,
+        label: action.label,
+        contextMenuGroupId: MonacoContextMenu.GROUP,
+        contextMenuOrder: action.order,
+        precondition,
+        run: (target) => runAction(action, target),
+      }),
+    );
+
+    return disposables;
+  });
 }

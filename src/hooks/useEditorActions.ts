@@ -39,6 +39,7 @@ export function useEditorActions(): EditorAction[] {
         label: t.command.escapeVariable,
         order: EditorActionOrder.ESCAPE_VARIABLE,
         caretRange: escapableReferenceAt,
+        isAvailable: (text) => escapeBraces(text) !== text,
         run: ({ text, replace }) => {
           const escaped = escapeBraces(text);
           if (escaped !== text) {
