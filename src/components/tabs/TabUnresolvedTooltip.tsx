@@ -189,9 +189,19 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
             type="button"
             className={LINK_CLASS}
             title={t.tabs.defineVariableTitle(key)}
+            onPointerEnter={preloadVariableTooltipEditor}
+            onFocus={preloadVariableTooltipEditor}
             onClick={() => {
-              hide();
-              defineVariable(tab.id, key);
+              const variableId = defineVariable(tab.id, key);
+              if (!variableId) {
+                return;
+              }
+
+              if (isActive) {
+                edit(variableId, key);
+              } else {
+                goToVariable(variableId);
+              }
             }}
           >
             {t.tabs.defineVariable}
