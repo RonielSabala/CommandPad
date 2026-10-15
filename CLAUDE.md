@@ -159,7 +159,7 @@ Embeds **another runbook**, read-only, resolving against its own variables.
 - Unlock once, reuse everywhere: a cloud file's vault scope is its source key; every unlock decrypts already-loaded embeds (`decryptLoadedEmbeds`).
 - **Embedded rendering is `EMBEDDED_VIEWS`** (`EmbeddedBlockViews.tsx`/`RunbookEmbed.tsx`), a complete `Record` that reuses each block's rendering half (`CommandPreview` in `.command-card`, `NotePreview`, `DividerLine`, `ImageView`). **No embedded copy carries `block-surface`** or any class host rules key off. Cycles stop via a `trail` of source keys; depth via `RunbookBlockConfig.MAX_DEPTH`.
 - The drag image is a static off-screen stand-in (`DataAttr.DRAG_IMAGE`), not the header: rasterizing Monaco is too slow.
-- Read mode shrinks the header to the view toggle and Open; the view itself is unchanged.
+- Read mode shrinks the header to the view toggle, Open and Unlock (unlocking is never read-gated); the view itself is unchanged.
 - Markdown export inlines embeds up front (`renderMarkdownBlocks` + an `EmbeddedReader` from the store), each level resolved and encrypted under its own scope; unreadable/cyclic embeds fall back to `MarkdownSyntax.RUNBOOK_REFERENCE`.
 - `.blocks-list` is the shared list geometry for the real list, the minimap mirror and embeds; `--block-row-gutter` is the one knob. Divider stretch rules use child combinators on purpose.
 

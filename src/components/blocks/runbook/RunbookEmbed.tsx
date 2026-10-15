@@ -58,13 +58,12 @@ export function EmbedNotice({ children, error }: NoticeProps) {
 
 export function EmbedUnlock({ embed }: { embed: EmbeddedRunbookState }) {
   const t = useTranslation();
-  const readMode = useStore((state) => state.mode === AppMode.READ);
   const unlockEmbeddedRunbook = useStore(
     (state) => state.unlockEmbeddedRunbook,
   );
 
   const { source } = embed;
-  if (readMode || !source || !embed.locked) {
+  if (!source || !embed.locked) {
     return null;
   }
 
