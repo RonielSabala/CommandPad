@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { AriaRole } from "@/common/constants/dom";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CloseIcon } from "@/components/icons";
 import { useModalDismiss } from "@/hooks/useModalDismiss";
@@ -36,7 +37,7 @@ export function Modal({
         !animated && "modal-no-animation",
         noBackdrop && "modal-backdrop-transparent",
       )}
-      role="dialog"
+      role={AriaRole.DIALOG}
       aria-modal="true"
       aria-hidden={!open}
       inert={!open}

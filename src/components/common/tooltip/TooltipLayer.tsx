@@ -1,6 +1,11 @@
 import { TooltipConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { BodySelector, DataAttr, PopupSelector } from "@/common/constants/dom";
+import {
+  AriaRole,
+  BodySelector,
+  DataAttr,
+  PopupSelector,
+} from "@/common/constants/dom";
 import {
   EventType,
   Key,
@@ -437,7 +442,7 @@ export function TooltipLayer() {
           setPinned(false);
         }
       }}
-      role="tooltip"
+      role={AriaRole.TOOLTIP}
       aria-hidden={!shownRichId}
       tabIndex={shownRichId ? -1 : undefined}
       {...{ [DataAttr.TOOLTIP_SIDE]: shownPlacement?.side }}

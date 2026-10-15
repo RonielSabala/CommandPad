@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { AriaRole } from "@/common/constants/dom";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { classNames } from "@/utils/string";
 import { useRef, useState, type ReactNode } from "react";
@@ -56,7 +57,7 @@ export function ActionsMenu({
         onClick={toggle}
         aria-label={title}
         {...tooltip(title)}
-        aria-haspopup="menu"
+        aria-haspopup={AriaRole.MENU}
         aria-expanded={anchor !== null}
       >
         {horizontal ? (

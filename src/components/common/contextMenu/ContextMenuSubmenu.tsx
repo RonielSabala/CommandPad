@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { AriaRole } from "@/common/constants/dom";
 import { classNames } from "@/utils/string";
 import {
   useContext,
@@ -69,8 +70,8 @@ export function ContextMenuSubmenu({
     >
       <button
         className="context-menu-item"
-        role="menuitem"
-        aria-haspopup="menu"
+        role={AriaRole.MENU_ITEM}
+        aria-haspopup={AriaRole.MENU}
         aria-expanded={open}
         onClick={() => {
           submenuActivation?.setActiveId(id);
@@ -91,7 +92,7 @@ export function ContextMenuSubmenu({
             flipped.y && "is-flipped-y",
           )}
           ref={panelRef}
-          role="menu"
+          role={AriaRole.MENU}
         >
           <SubmenuActivationContext.Provider value={null}>
             {children}

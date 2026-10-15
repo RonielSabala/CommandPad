@@ -34,8 +34,22 @@ export const InputSelector = {
   CODE: `${MonacoSelector.INPUT}, ${MonacoSelector.EDIT_CONTEXT}`,
 } as const;
 
+export const AriaRole = {
+  STATUS: "status",
+  TOOLTIP: "tooltip",
+  OPTION: "option",
+  DIALOG: "dialog",
+  LISTBOX: "listbox",
+  CHECKBOX: "checkbox",
+  MENU: "menu",
+  MENU_ITEM: "menuitem",
+  MENU_ITEM_CHECKBOX: "menuitemcheckbox",
+  PROGRESSBAR: "progressbar",
+  SEPARATOR: "separator",
+} as const;
+
 export const SelectSelector = {
-  OPTION: '[role="option"]',
+  OPTION: `[role="${AriaRole.OPTION}"]`,
   SELECTED_OPTION: ".select-option.is-selected",
 } as const;
 

@@ -6,7 +6,7 @@ import {
   NON_BREAKING_SPACE,
 } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { DataAttr } from "@/common/constants/dom";
+import { AriaRole, DataAttr } from "@/common/constants/dom";
 import { ClampSurface, TooltipVariant } from "@/common/enums";
 import type { CommandSegment } from "@/common/types";
 import { ClampToggle } from "@/components/common/codeEditor/ClampToggle";
@@ -221,7 +221,7 @@ export function CommandPreview({
         {actions}
 
         {!!copied && (
-          <span className="copy-warning" role="status">
+          <span className="copy-warning" role={AriaRole.STATUS}>
             {t.command.copiedUnresolved(copied)}
           </span>
         )}

@@ -1,5 +1,6 @@
 import { EXPORT_SUCCESS_TIMEOUT_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
+import { AriaRole } from "@/common/constants/dom";
 import {
   CloudExportStatus,
   ExportFormat,
@@ -60,7 +61,7 @@ function CloudExportStatusView({ onDone }: { onDone: () => void }) {
   return (
     <div
       className={classNames("cloud-export-status", `is-${status}`)}
-      role="status"
+      role={AriaRole.STATUS}
       aria-live="polite"
     >
       {status === CloudExportStatus.UPLOADING && (
