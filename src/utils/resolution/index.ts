@@ -18,9 +18,10 @@ export type { OperationKeyword } from "./operations/types";
 export {
   applyOverrides,
   getOverriddenVariableMap,
+  hasUnresolvedOverrides,
   overriddenSecretKeys,
-  overrideLookupMap,
   overrideScope,
+  unresolvedOverrideParts,
   withOverride
 } from "./overrides";
 export type { OverrideHost } from "./overrides";

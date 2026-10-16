@@ -9,7 +9,10 @@ import {
 import {
   getVariableMap,
   hasUnresolvedBlockReferences,
-  overrideLookupMap,
+  hasUnresolvedOverrides,
+  unresolvedBlockParts,
+  unresolvedOverrideParts,
+  type UnresolvedPart,
   type VariableMap,
 } from "@/utils/resolution";
 import { useCallback, useMemo } from "react";
@@ -28,22 +31,42 @@ export function getTabVariableMap(variables: Variable[]): VariableMap {
   return map;
 }
 
-/** The map a block's references resolve against. */
-export function getBlockLookupMap(
-  block: Block,
-  hostMap: VariableMap,
-  lookup: EmbedLookup,
-): VariableMap | null {
-  if (block.type !== BlockType.RUNBOOK || !block.overrides) {
-    return hostMap;
-  }
-
-  const variables = embeddedVariables(block, lookup);
-  return variables && overrideLookupMap(variables, block.overrides, hostMap);
-}
+const NO_PARTS: UnresolvedPart[] = [];
 
 function isRunbookBlock(block: Block): block is RunbookBlock {
   return block.type === BlockType.RUNBOOK;
+}
+
+/** The failing parts of a block's references. */
+export function getBlockUnresolvedParts(
+  block: Block,
+  hostMap: VariableMap,
+  secretKeys: ReadonlySet<string>,
+  lookup: EmbedLookup,
+): UnresolvedPart[] {
+  if (!isRunbookBlock(block)) {
+    return unresolvedBlockParts(block, hostMap, secretKeys);
+  }
+
+  const { overrides } = block;
+  const variables = overrides && embeddedVariables(block, lookup);
+  return overrides && variables
+    ? unresolvedOverrideParts(variables, overrides, hostMap, secretKeys)
+    : NO_PARTS;
+}
+
+function hasUnresolvedBlockOverrides(
+  block: RunbookBlock,
+  hostMap: VariableMap,
+  lookup: EmbedLookup,
+): boolean {
+  const { overrides } = block;
+  const variables = overrides && embeddedVariables(block, lookup);
+  return (
+    !!overrides &&
+    !!variables &&
+    hasUnresolvedOverrides(variables, overrides, hostMap)
+  );
 }
 
 export function useTabUnresolved(tab: Tab): boolean {
@@ -72,10 +95,9 @@ export function useTabUnresolved(tab: Tab): boolean {
           state.runbookLibrary,
           state.embeddedRunbooks,
         ) ||
-          runbookBlocks.some((block) => {
-            const map = getBlockLookupMap(block, variableMap, state);
-            return !!map && hasUnresolvedBlockReferences(block, map);
-          })),
+          runbookBlocks.some((block) =>
+            hasUnresolvedBlockOverrides(block, variableMap, state),
+          )),
       [references, runbookBlocks, variableMap],
     ),
   );

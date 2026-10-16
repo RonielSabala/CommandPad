@@ -1,9 +1,11 @@
-import { ReferenceSurface } from "@/common/enums";
+import { CommandSegmentType, ReferenceSurface } from "@/common/enums";
 import type { Variable } from "@/common/types";
 
 import { sourceKey } from "./params";
+import { hasUnresolvedSpans } from "./spans";
 import { getTokenKey, scanReferences } from "./token";
-import type { VariableMap } from "./types";
+import type { ResolvedValue, VariableMap } from "./types";
+import { unresolvedSegmentParts, type UnresolvedPart } from "./unresolved";
 import {
   getSecretKeys,
   getVariableKey,
@@ -14,6 +16,7 @@ import {
 export type VariableOverrides = Readonly<Record<string, string>>;
 
 const NO_SECRETS: Set<string> = new Set();
+const NO_PARTS: UnresolvedPart[] = [];
 
 export interface OverrideHost {
   variableMap: VariableMap;
@@ -115,6 +118,7 @@ interface OverriddenMaps {
   hostMap: VariableMap;
   embedded: VariableMap;
   lookup?: VariableMap;
+  failing?: ResolvedValue[];
 }
 
 const overriddenMaps = new WeakMap<VariableOverrides, OverriddenMaps>();
@@ -161,6 +165,57 @@ export function overrideLookupMap(
   const maps = getOverriddenMaps(variables, overrides, hostMap);
   maps.lookup ??= { ...maps.embedded, ...hostMap };
   return maps.lookup;
+}
+
+/** The overrides that fail as the value they give their key */
+function failingOverrides(
+  variables: Variable[],
+  overrides: VariableOverrides,
+  hostMap: VariableMap,
+): ResolvedValue[] {
+  const maps = getOverriddenMaps(variables, overrides, hostMap);
+  maps.failing ??= Object.keys(overrides).flatMap((key) =>
+    Object.hasOwn(maps.embedded, key) &&
+    hasUnresolvedSpans(maps.embedded[key].spans)
+      ? [maps.embedded[key]]
+      : [],
+  );
+
+  return maps.failing;
+}
+
+export function hasUnresolvedOverrides(
+  variables: Variable[],
+  overrides: VariableOverrides,
+  hostMap: VariableMap,
+): boolean {
+  return failingOverrides(variables, overrides, hostMap).length > 0;
+}
+
+/** The failing parts of each override. */
+export function unresolvedOverrideParts(
+  variables: Variable[],
+  overrides: VariableOverrides,
+  hostMap: VariableMap,
+  hostSecretKeys: ReadonlySet<string>,
+): UnresolvedPart[] {
+  const failing = failingOverrides(variables, overrides, hostMap);
+  if (failing.length === 0) {
+    return NO_PARTS;
+  }
+
+  const secretKeys = getSecretKeys(variables);
+  hostSecretKeys.forEach((key) => secretKeys.add(key));
+
+  return unresolvedSegmentParts(
+    failing.map(({ text, spans }) => ({
+      text,
+      spans,
+      type: CommandSegmentType.RESOLVED,
+    })),
+    overrideLookupMap(variables, overrides, hostMap),
+    secretKeys,
+  );
 }
 
 /**

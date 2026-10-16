@@ -10,10 +10,10 @@ import {
   overriddenSecretKeys,
   overrideLookupMap,
   overrideScope,
+  unresolvedOverrideParts,
   withOverride,
 } from "./overrides";
 import { maskedText } from "./segments";
-import { unresolvedParts } from "./unresolved";
 import { getVariableMap } from "./variables";
 
 /** The embedded runbook's resolved values once `overrides` are applied from `host`. */
@@ -228,30 +228,6 @@ describe("applyOverrides", () => {
 });
 
 describe("overrideLookupMap", () => {
-  /** The causes an override's text reports. */
-  function causesOf(
-    embedded: VariableSpec,
-    overrides: Record<string, string>,
-    host: VariableSpec = {},
-  ) {
-    const map = overrideLookupMap(
-      buildVariables(embedded),
-      overrides,
-      getVariableMap(buildVariables(host)),
-    );
-
-    return Object.values(overrides).flatMap((text) =>
-      unresolvedParts(text, map, new Set()).map(({ cause, source }) => [
-        cause,
-        source,
-      ]),
-    );
-  }
-
-  it("reads a key the embedded runbook defines", () => {
-    expect(causesOf({ a: "1", b: "test" }, { a: "{b}" })).toEqual([]);
-  });
-
   it("reads the host first", () => {
     const map = overrideLookupMap(
       buildVariables({ a: "1", b: "embedded" }),
@@ -260,6 +236,26 @@ describe("overrideLookupMap", () => {
     );
 
     expect(variableValues(map)).toMatchObject({ a: "host", b: "host" });
+  });
+});
+
+describe("unresolvedOverrideParts", () => {
+  /** The causes the overrides report. */
+  function causesOf(
+    embedded: VariableSpec,
+    overrides: Record<string, string>,
+    host: VariableSpec = {},
+  ) {
+    return unresolvedOverrideParts(
+      buildVariables(embedded),
+      overrides,
+      getVariableMap(buildVariables(host)),
+      new Set(),
+    ).map(({ cause, source }) => [cause, source]);
+  }
+
+  it("reads a key the embedded runbook defines", () => {
+    expect(causesOf({ a: "1", b: "test" }, { a: "{b}" })).toEqual([]);
   });
 
   it("reads the embedded runbook with its overrides applied", () => {
@@ -272,6 +268,17 @@ describe("overrideLookupMap", () => {
     expect(causesOf({ a: "1" }, { a: "{NOPE}" })).toEqual([
       [UnresolvedCause.UNDEFINED, "NOPE"],
     ]);
+  });
+
+  it("leaves a blank for whoever references the key to fill", () => {
+    expect(
+      causesOf({ a: "1", secret: secret("123") }, { a: "b{;b={secret}}b" }),
+    ).toEqual([]);
+    expect(causesOf({ a: "1" }, { a: "b{;b}b" })).toEqual([]);
+  });
+
+  it("ignores an override of a key the embedded runbook dropped", () => {
+    expect(causesOf({ a: "1" }, { gone: "{NOPE}" })).toEqual([]);
   });
 });
 
