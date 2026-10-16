@@ -96,7 +96,7 @@ describe("nesting depth", () => {
 
   it("flattens a reference an operation transformed", () => {
     expect(spans(book, "{SERVICE|uppercase}")).toEqual([
-      { text: "SVC-API", depth: 1, source: "SERVICE" },
+      { text: "SVC-API", depth: 1, source: "SERVICE", derivedFrom: ["NAME"] },
     ]);
   });
 
@@ -293,7 +293,7 @@ describe("nesting through an IF branch", () => {
 
   it("flattens a branch a later operation transformed", () => {
     expect(spans(book, "{|IF(true;{SERVICE};{NAME})|uppercase}")).toEqual([
-      { text: "SVC-API", depth: 1 },
+      { text: "SVC-API", depth: 1, derivedFrom: ["SERVICE", "NAME"] },
     ]);
   });
 

@@ -18,6 +18,7 @@ export type { OperationKeyword } from "./operations/types";
 export {
   applyOverrides,
   getOverriddenVariableMap,
+  overriddenSecretKeys,
   overrideLookupMap,
   overrideScope,
   withOverride
@@ -33,7 +34,9 @@ export {
 export {
   countCommandLines,
   hasUnresolvedSegments,
-  isMaskedSegment
+  isMaskedSegment,
+  maskedText,
+  maskSpans
 } from "./segments";
 export {
   braceToken,

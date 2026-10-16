@@ -8,7 +8,7 @@ import { resolveEmbedSource, type EmbedSource } from "@/utils/embeddedRunbook";
 import {
   applyOverrides,
   getOverriddenVariableMap,
-  getSecretKeys,
+  overriddenSecretKeys,
   type OverrideHost,
   type VariableMap,
 } from "@/utils/resolution";
@@ -73,22 +73,26 @@ export function useEmbeddedRunbook(
   );
   const variables = useMemo(
     () =>
-      content
-        ? applyOverrides(content.variables, overrides, secretKeys)
-        : NO_VARIABLES,
-    [content, overrides, secretKeys],
+      content ? applyOverrides(content.variables, overrides) : NO_VARIABLES,
+    [content, overrides],
   );
 
   const ownVariables = content?.variables ?? NO_VARIABLES;
   const embeddedMap = overrides
     ? getOverriddenVariableMap(ownVariables, overrides, variableMap)
     : getTabVariableMap(ownVariables);
-  const embeddedSecrets = useMemo(() => getSecretKeys(variables), [variables]);
+
+  const embeddedSecrets = useMemo(
+    () =>
+      overriddenSecretKeys(ownVariables, overrides, embeddedMap, secretKeys),
+    [ownVariables, overrides, embeddedMap, secretKeys],
+  );
 
   const locked = useMemo(
     () => !!content && hasEncryptedSecrets(content),
     [content],
   );
+
   const nestedTrail = useMemo(
     () => (key ? [...trail, key] : trail),
     [trail, key],

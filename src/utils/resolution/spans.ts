@@ -5,6 +5,18 @@ export function flatSpans(text: string, source?: string): ResolvedSpan[] {
   return text ? [{ text, depth: 0, source }] : [];
 }
 
+/** The spans of braces that spell no reference as literal text `source` wrote. */
+export function literalGroupSpans(
+  spans: readonly ResolvedSpan[],
+  source?: string,
+): ResolvedSpan[] {
+  return spans.map((span) =>
+    span.depth === 0 || span.unresolved
+      ? { text: span.text, depth: 0, source }
+      : span,
+  );
+}
+
 export function unresolvedSpans(
   text: string,
   depth = 0,
@@ -61,7 +73,8 @@ export function mergeSpans(spans: readonly ResolvedSpan[]): ResolvedSpan[] {
       last &&
       last.depth === span.depth &&
       last.source === span.source &&
-      last.unresolved === span.unresolved
+      last.unresolved === span.unresolved &&
+      last.derivedFrom === span.derivedFrom
     ) {
       last.text += span.text;
       continue;

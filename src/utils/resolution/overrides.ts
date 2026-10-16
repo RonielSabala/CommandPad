@@ -1,11 +1,19 @@
 import { ReferenceSurface } from "@/common/enums";
 import type { Variable } from "@/common/types";
 
+import { sourceKey } from "./params";
 import { getTokenKey, scanReferences } from "./token";
 import type { VariableMap } from "./types";
-import { getVariableKey, getVariableMap, type OuterScope } from "./variables";
+import {
+  getSecretKeys,
+  getVariableKey,
+  getVariableMap,
+  type OuterScope,
+} from "./variables";
 
 export type VariableOverrides = Readonly<Record<string, string>>;
+
+const NO_SECRETS: Set<string> = new Set();
 
 export interface OverrideHost {
   variableMap: VariableMap;
@@ -23,7 +31,7 @@ function referencesSecret(text: string, secretKeys: Set<string>): boolean {
 export function applyOverrides(
   variables: Variable[],
   overrides: VariableOverrides | undefined,
-  hostSecretKeys: Set<string>,
+  hostSecretKeys: Set<string> = NO_SECRETS,
 ): Variable[] {
   if (!overrides || Object.keys(overrides).length === 0) {
     return variables;
@@ -44,6 +52,40 @@ export function applyOverrides(
         (hostSecretKeys.size > 0 && referencesSecret(raw, hostSecretKeys)),
     };
   });
+}
+
+/**
+ * The embedded runbook's secret keys, plus each host secret an override
+ * carried into `embedded`.
+ */
+export function overriddenSecretKeys(
+  variables: Variable[],
+  overrides: VariableOverrides | undefined,
+  embedded: VariableMap,
+  hostSecretKeys: Set<string>,
+): Set<string> {
+  const keys = getSecretKeys(variables);
+  if (!overrides || hostSecretKeys.size === 0) {
+    return keys;
+  }
+
+  const reach = (from: string) => {
+    if (hostSecretKeys.has(from)) {
+      keys.add(from);
+    }
+  };
+
+  for (const key of Object.keys(overrides)) {
+    for (const { source, derivedFrom } of embedded[key]?.spans ?? []) {
+      if (source) {
+        reach(sourceKey(source));
+      }
+
+      derivedFrom?.forEach(reach);
+    }
+  }
+
+  return keys;
 }
 
 /** The host scope the overridden keys among `variables` resolve against. */
@@ -68,8 +110,6 @@ export function overrideScope(
   return keys.size > 0 ? { keys, variableMap: hostMap } : undefined;
 }
 
-const NO_SECRETS: Set<string> = new Set();
-
 interface OverriddenMaps {
   variables: Variable[];
   hostMap: VariableMap;
@@ -89,7 +129,7 @@ function getOverriddenMaps(
     return cached;
   }
 
-  const overridden = applyOverrides(variables, overrides, NO_SECRETS);
+  const overridden = applyOverrides(variables, overrides);
   const maps: OverriddenMaps = {
     variables,
     hostMap,

@@ -1,3 +1,4 @@
+import { SECRET_MASK } from "@/common/config";
 import { CommandSegmentType, UnresolvedCause } from "@/common/enums";
 import type { VariableSpec } from "@/test";
 import { buildVariables, runbook, secret, variableValues } from "@/test";
@@ -6,12 +7,14 @@ import { describe, expect, it } from "vitest";
 import { resolveCommandText } from "./command";
 import {
   applyOverrides,
+  overriddenSecretKeys,
   overrideLookupMap,
   overrideScope,
   withOverride,
 } from "./overrides";
+import { maskedText } from "./segments";
 import { unresolvedParts } from "./unresolved";
-import { getSecretKeys, getVariableMap } from "./variables";
+import { getVariableMap } from "./variables";
 
 /** The embedded runbook's resolved values once `overrides` are applied from `host`. */
 function embed(
@@ -20,20 +23,30 @@ function embed(
   host: VariableSpec = {},
 ) {
   const book = runbook(host);
-  const variables = applyOverrides(
-    buildVariables(embedded),
-    overrides,
-    book.secrets,
-  );
+  const own = buildVariables(embedded);
+  const variables = applyOverrides(own, overrides);
+
   const variableMap = getVariableMap(
     variables,
     overrideScope(variables, overrides, getVariableMap(book.variables)),
   );
+  const secretKeys = overriddenSecretKeys(
+    own,
+    overrides,
+    variableMap,
+    book.secrets,
+  );
+
+  const resolve = (command: string) => resolveCommandText(command, variableMap);
 
   return {
     values: variableValues(variableMap),
-    secretKeys: getSecretKeys(variables),
-    resolve: (command: string) => resolveCommandText(command, variableMap),
+    secretKeys,
+    resolve,
+    shown: (command: string) =>
+      resolve(command)
+        .map((segment) => maskedText(segment, secretKeys))
+        .join(""),
   };
 }
 
@@ -175,17 +188,27 @@ describe("applyOverrides", () => {
     ).toEqual(new Set(["TOKEN"]));
   });
 
-  it("masks an override built from a host secret, at any depth", () => {
-    const host = { PASSWORD: secret("hunter2") };
+  it.each([
+    ["{PASSWORD}", SECRET_MASK],
+    ["Bearer {PASSWORD}!", `Bearer ${SECRET_MASK}!`],
+    ["1{;a={PASSWORD}}1", `1${SECRET_MASK}1`],
+    ["{|IF(true;{PASSWORD};x)}", SECRET_MASK],
+    ["{PASSWORD|uppercase}", SECRET_MASK],
+    ["{WRAPPED}", `[${SECRET_MASK}]`],
+  ])("masks only the host secret inside the override %s", (override, shown) => {
+    const host = { PASSWORD: secret("hunter2"), WRAPPED: "[{PASSWORD}]" };
 
-    expect(
-      embed({ AUTH: "" }, { AUTH: "{PASSWORD}" }, host).secretKeys,
-    ).toEqual(new Set(["AUTH"]));
+    expect(embed({ AUTH: "" }, { AUTH: override }, host).shown("{AUTH}")).toBe(
+      shown,
+    );
+  });
 
-    expect(
-      embed({ AUTH: "" }, { AUTH: "{|IF(true;{PASSWORD};x)}" }, host)
-        .secretKeys,
-    ).toEqual(new Set(["AUTH"]));
+  it("masks nothing an override does not carry in from a host secret", () => {
+    const host = { PASSWORD: secret("hunter2"), USER: "admin" };
+
+    expect(embed({ AUTH: "" }, { AUTH: "{USER}" }, host).secretKeys).toEqual(
+      new Set(),
+    );
   });
 
   it("returns the same variables when there is nothing to apply", () => {

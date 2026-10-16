@@ -21,6 +21,7 @@ import {
   countCommandLines,
   hasUnresolvedSegments,
   isMaskedSegment,
+  maskSpans,
   resolveCommandText,
   resolveCommandToString,
   unresolvedSegmentParts,
@@ -81,11 +82,17 @@ function HighlightedLines({
   });
 }
 
+function SecretMask() {
+  return <span className="token-secret">{SECRET_MASK}</span>;
+}
+
 function NestedText({
   segment,
+  secretKeys,
   sourceProps,
 }: {
   segment: CommandSegment;
+  secretKeys: ReadonlySet<string>;
   sourceProps: SourceProps;
 }) {
   const spans = segment.spans;
@@ -93,17 +100,23 @@ function NestedText({
     return segment.text;
   }
 
-  return spans.map((span, i) => (
-    <HighlightedLines
-      key={i}
-      text={span.text}
-      className={classNames(
-        `token-nesting-${span.depth}`,
-        span.unresolved ? "token-nesting-unresolved" : "token-nesting-resolved",
-      )}
-      props={sourceProps(span.source ?? segment.key)}
-    />
-  ));
+  return maskSpans(spans, secretKeys).map((span, i) =>
+    !span ? (
+      <SecretMask key={i} />
+    ) : (
+      <HighlightedLines
+        key={i}
+        text={span.text}
+        className={classNames(
+          `token-nesting-${span.depth}`,
+          span.unresolved
+            ? "token-nesting-unresolved"
+            : "token-nesting-resolved",
+        )}
+        props={sourceProps(span.source ?? segment.key)}
+      />
+    ),
+  );
 }
 
 interface Props {
@@ -198,13 +211,12 @@ export function CommandPreview({
         {text ? (
           segments.map((seg, i) =>
             isMaskedSegment(seg, secretKeys) ? (
-              <span key={i} className="token-secret">
-                {SECRET_MASK}
-              </span>
+              <SecretMask key={i} />
             ) : (
               <span key={i} className={`token-${seg.type}`}>
                 <NestedText
                   segment={seg}
+                  secretKeys={secretKeys}
                   sourceProps={linkSources ? sourceProps : plainSourceProps}
                 />
               </span>

@@ -25,6 +25,7 @@ interface ReferenceParam {
 interface TemplateBlank {
   name: string;
   fallback?: string;
+  fallbackAt?: number;
   operations: OperationChunk[];
 }
 
@@ -51,7 +52,7 @@ export function parseParam(chunk: ResolvedValue): ReferenceParam | null {
 
 function parseBlankName(
   chunk: string,
-): Pick<TemplateBlank, "name" | "fallback"> | null {
+): Pick<TemplateBlank, "name" | "fallback" | "fallbackAt"> | null {
   const at = chunk.indexOf(VariableSyntax.PARAM_ASSIGNMENT);
   if (at === -1) {
     const name = chunk.trim();
@@ -59,7 +60,14 @@ function parseBlankName(
   }
 
   const name = chunk.slice(0, at).trim();
-  return name ? { name, fallback: chunk.slice(at + 1).trim() } : null;
+  const fallback = chunk.slice(at + 1).trimStart();
+  return name
+    ? {
+        name,
+        fallback: fallback.trimEnd(),
+        fallbackAt: chunk.length - fallback.length,
+      }
+    : null;
 }
 
 function parseBlank(body: string): TemplateBlank | null {
@@ -99,6 +107,8 @@ const BLANK_OPEN = `${VariableSyntax.BRACE_OPEN}${VariableSyntax.PARAM_SEPARATOR
 interface BlankMatch {
   blank: TemplateBlank;
   escaped: boolean;
+  /** Where the blank's body starts in the template. */
+  bodyStart: number;
   /** Whether another variable declared it. */
   foreign?: boolean;
   start: number;
@@ -107,7 +117,7 @@ interface BlankMatch {
 
 interface BlankScope {
   params: Record<string, ResolvedValue>;
-  defaults: Record<string, string>;
+  defaults: Record<string, ResolvedValue>;
   context: OperationContext;
   /** Whether a blank reaches the end of the line. */
   final: boolean;
@@ -140,9 +150,11 @@ function collectBlanks(
       blanks.push({
         blank,
         escaped,
+        bodyStart: offset + match.start + BLANK_OPEN.length,
         start: offset + match.start - (escaped ? 1 : 0),
         end: offset + match.end,
       });
+
       continue;
     }
 
@@ -157,17 +169,22 @@ function readBlanks(template: string): BlankMatch[] {
   return blanks;
 }
 
-function collectBlankDefaults(blanks: BlankMatch[]): Record<string, string> {
-  const defaults: Record<string, string> = {};
+/** Each name's first default, with the spans the template gives it. */
+function collectBlankDefaults(
+  blanks: BlankMatch[],
+  spans: readonly ResolvedSpan[],
+): Record<string, ResolvedValue> {
+  const defaults: Record<string, ResolvedValue> = {};
 
-  for (const { blank, escaped, foreign } of blanks) {
-    if (
-      !escaped &&
-      !foreign &&
-      blank.fallback !== undefined &&
-      !(blank.name in defaults)
-    ) {
-      defaults[blank.name] = blank.fallback;
+  for (const { blank, escaped, foreign, bodyStart } of blanks) {
+    const { name, fallback, fallbackAt = 0 } = blank;
+
+    if (!escaped && !foreign && fallback !== undefined && !(name in defaults)) {
+      const start = bodyStart + fallbackAt;
+      defaults[name] = {
+        text: fallback,
+        spans: sliceSpans(spans, start, start + fallback.length),
+      };
     }
   }
 
@@ -217,7 +234,12 @@ function blankValue(
   }
 
   resolving.add(name);
-  const resolved = substituteBlanks(fallback, scope);
+  const resolved = fillBlanks(
+    fallback.text,
+    fallback.spans,
+    readBlanks(fallback.text),
+    scope,
+  );
   resolving.delete(name);
 
   const value = resolved.fullyResolved
@@ -225,13 +247,6 @@ function blankValue(
     : undefined;
   cache.set(name, value);
   return value;
-}
-
-function substituteBlanks(
-  template: string,
-  scope: BlankScope,
-): ResolvedTemplate {
-  return fillBlanks(template, flatSpans(template), readBlanks(template), scope);
 }
 
 function fillBlanks(
@@ -333,7 +348,7 @@ export function applyTemplateParams(
 
   return fillBlanks(template, spans, blanks, {
     params,
-    defaults: collectBlankDefaults(blanks),
+    defaults: collectBlankDefaults(blanks, spans),
     context,
     final,
     cache: new Map(),

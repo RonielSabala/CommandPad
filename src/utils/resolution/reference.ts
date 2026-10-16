@@ -5,10 +5,11 @@ import { VariableSyntax } from "@/common/variableSyntax";
 
 import type { OperationChunk } from "./operations";
 import { applyOperations } from "./operations";
-import { applyTemplateParams, parseParam } from "./params";
+import { applyTemplateParams, parseParam, sourceKey } from "./params";
 import {
   flatSpans,
   hasUnresolvedSpans,
+  literalGroupSpans,
   mergeSpans,
   nestSpans,
   spansText,
@@ -117,6 +118,43 @@ function resolveChunk(
   return { text: spansText(merged), spans: merged, fullyResolved };
 }
 
+/** The span of an operation's output. */
+function derivedSpans(
+  text: string,
+  source: string | undefined,
+  inputs: readonly OperationChunk[],
+): ResolvedSpan[] {
+  if (!text) {
+    return [];
+  }
+
+  const keys = new Set<string>();
+
+  for (const { spans = [] } of inputs) {
+    for (const span of spans) {
+      if (span.unresolved) {
+        continue;
+      }
+
+      if (span.source) {
+        keys.add(sourceKey(span.source));
+      }
+
+      span.derivedFrom?.forEach((key) => keys.add(key));
+    }
+  }
+
+  if (source) {
+    keys.delete(source);
+  }
+
+  return [
+    keys.size > 0
+      ? { text, depth: 0, source, derivedFrom: [...keys] }
+      : { text, depth: 0, source },
+  ];
+}
+
 /** Describes a reference that did not resolve. */
 function failedSpans(
   token: string,
@@ -217,7 +255,7 @@ function resolveFilledTemplate(
 
     // Braces that spell no reference are text the fill produced
     if (!reference.isReference) {
-      spans.push(...flatSpans(reference.text, source));
+      spans.push(...literalGroupSpans(reference.spans, source));
       continue;
     }
 
@@ -361,7 +399,12 @@ function resolveReferenceAt(
     const produced = escapeLiteralBraceSpans(
       {
         text: applied.text,
-        spans: applied.spans ?? flatSpans(applied.text, source),
+        spans:
+          applied.spans ??
+          derivedSpans(applied.text, source, [
+            output,
+            ...operations.slice(0, applied.failedAt),
+          ]),
       },
       context.surface,
     );
@@ -391,7 +434,9 @@ function resolveReferenceAt(
   const result = escapeLiteralBraceSpans(
     {
       text: applied.text,
-      spans: applied.spans ?? flatSpans(applied.text, source),
+      spans:
+        applied.spans ??
+        derivedSpans(applied.text, source, [output, ...operations]),
     },
     context.surface,
   );

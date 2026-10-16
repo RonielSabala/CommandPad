@@ -154,6 +154,8 @@ export interface ResolvedSpan {
   depth: number;
   source?: string;
   unresolved?: boolean;
+  /** The other keys whose text an operation worked this span out from. */
+  derivedFrom?: readonly string[];
 }
 
 export interface CommandSegment {

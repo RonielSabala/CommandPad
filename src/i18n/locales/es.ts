@@ -1300,7 +1300,7 @@ Si algo sale mal, deshazlo en este orden:
       intro: (actionsLabel, maskLabel) =>
         `Abre el menú **${actionsLabel}** de una variable y elige **${maskLabel}** para marcarla como **secreta**. Aparecerá entonces un **icono de ojo** en la fila que puedes pulsar para volver a mostrarla.`,
       copyNote:
-        "El enmascarado es puramente visual: el botón **Copiar** siempre pone el valor **real** en tu portapapeles, así que tus comandos siguen funcionando. Pruébalo abajo, y haz clic en el icono de ojo para mostrar el valor.",
+        "El enmascarado acompaña al valor dondequiera que acabe. Es puramente visual: el botón **Copiar** siempre pone el valor **real** en tu portapapeles, así que tus comandos siguen funcionando. Pruébalo abajo, y haz clic en el icono de ojo para mostrar el valor.",
     },
     secretEncryption: {
       intro:

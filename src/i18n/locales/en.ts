@@ -1275,7 +1275,7 @@ If something goes wrong, undo it in this order:
       intro: (actionsLabel, maskLabel) =>
         `Open a variable's **${actionsLabel}** menu and choose **${maskLabel}** to mark it as **secret**. An **eye icon** then appears on the row you can click to reveal it again.`,
       copyNote:
-        "The mask is purely visual: the **Copy** button always puts the **real** value on your clipboard, so your commands keep working. Try it below, and click the eye icon to reveal the value.",
+        "The mask follows the value wherever it ends up. It is purely visual: the **Copy** button always puts the **real** value on your clipboard, so your commands keep working. Try it below, and click the eye icon to reveal the value.",
     },
     secretEncryption: {
       intro:
