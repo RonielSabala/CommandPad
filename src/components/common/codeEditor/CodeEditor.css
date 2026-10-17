@@ -164,6 +164,20 @@
   z-index: var(--z-popover);
 }
 
+/* Signature label */
+
+.monaco-overflow-widgets .suggest-widget .signature-label {
+  margin-left: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+.monaco-overflow-widgets
+  .suggest-widget
+  .monaco-list-row:not(.focused)
+  .signature-label {
+  display: none;
+}
+
 /* --- Editor overrides --- */
 
 .code-editor

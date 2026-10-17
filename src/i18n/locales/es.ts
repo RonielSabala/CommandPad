@@ -1396,7 +1396,7 @@ Si algo sale mal, deshazlo en este orden:
       demoHint: (showVariables) =>
         `La primera pestaña es un runbook de versión que incrusta el runbook de despliegue de la segunda. Pulsa **${showVariables}** en la cabecera del bloque, cambia \`ENV\` de \`prod\` a \`dev\` y vuelve: los comandos incrustados lo siguen. Después edita un comando en la pestaña de despliegue y regresa a la primera. El cambio ya está ahí.`,
       overrides:
-        "Un valor que fijas en el bloque es una sobrescritura. Pertenece a este bloque y nunca cambia el runbook incrustado, así que cada runbook que lo incrusta indica solo lo que cambia. Puede referenciar las variables de este runbook, y la flecha a su lado la descarta.",
+        "Un valor que fijas en el bloque es una sobrescritura. Pertenece a este bloque y nunca cambia el runbook incrustado, así que cada runbook que lo incrusta indica solo lo que cambia. Puede referenciar las variables de este runbook o las del runbook incrustado, y la flecha a su lado la descarta. Mientras escribes una referencia, las sugerencias muestran primero las variables de este runbook y después las incrustadas, y la seleccionada indica el runbook del que viene.",
       readOnly: (open) =>
         `Los bloques incrustados son de solo lectura: puedes copiar un comando o ver una imagen, pero no editarlos. Para cambiar el propio runbook, pulsa **${open}**. Todos los runbooks que lo incrustan recogen el cambio, y renombrarlo no rompe el enlace.`,
       cloud: (local, signIn, refresh) =>

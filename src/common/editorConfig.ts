@@ -190,6 +190,11 @@ export const VariableCompletionConfig = {
   SNIPPET_CARET: "$0",
   /** How far back a reference laid out over several lines is read. */
   MAX_REFERENCE_LINES: 20,
+  /** How much of a runbook's name a suggestion shows. */
+  MAX_ORIGIN_LENGTH: 16,
+  /** Sort groups. */
+  HOST_GROUP: 0,
+  EMBEDDED_GROUP: 1,
 } as const;
 
 export const MonacoContextMenu = {

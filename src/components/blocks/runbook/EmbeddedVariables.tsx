@@ -5,13 +5,18 @@ import type { RunbookBlock, Variable, VariableSection } from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { VariableSectionHeader } from "@/components/variables/VariableSectionHeader";
 import { VariableValueField } from "@/components/variables/VariableValueField";
-import { useTranslation } from "@/i18n";
+import { useTranslation, type Messages } from "@/i18n";
 import {
   buildVariableCompletions,
   type VariableCompletion,
 } from "@/monaco/completions";
-import { useStore } from "@/store/store";
-import { embedScopeId } from "@/utils/embeddedRunbook";
+import { getActiveTab, useStore } from "@/store/store";
+import {
+  cloudPathSegments,
+  embedScopeId,
+  type EmbedSource,
+} from "@/utils/embeddedRunbook";
+import { stripJsonExtension } from "@/utils/export";
 import {
   getUsedVariableKeys,
   getVariableKey,
@@ -20,6 +25,7 @@ import {
   withOverride,
   type OverrideHost,
 } from "@/utils/resolution";
+import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { buildVariableLayout } from "@/utils/variableSections";
 import { useCallback, useMemo } from "react";
@@ -30,6 +36,21 @@ import { NotePreview } from "../note/NotePreview";
 import "./EmbeddedVariables.css";
 import { EmbedNotice } from "./RunbookEmbed";
 import type { EmbeddedRunbookState } from "./useEmbeddedRunbook";
+
+/** What a suggestion calls the runbook a variable comes from. */
+function embedSourceName(
+  block: RunbookBlock,
+  source: EmbedSource | null,
+  t: Messages,
+): string {
+  if (block.cloud) {
+    const cloudPath = block.cloud.path;
+    const filename = cloudPathSegments(cloudPath).at(-1);
+    return filename ? stripJsonExtension(filename) : cloudPath;
+  }
+
+  return displayLabel(source?.local?.label ?? block.label, t);
+}
 
 interface Props {
   block: RunbookBlock;
@@ -43,6 +64,7 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
   const { id: blockId, overrides } = block;
   const { variableMap, secretKeys } = host;
 
+  const hostLabel = useStore((state) => getActiveTab(state)?.label ?? "");
   const folds = useStore((state) => state.embeddedSectionFolds);
   const setRunbookOverrides = useStore((state) => state.setRunbookOverrides);
   const setEmbeddedSectionFolded = useStore(
@@ -66,17 +88,31 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
     [embed.content, embed.variables],
   );
 
-  // Completions
+  // Completions, each labeled with its runbook
+  const hostName = displayLabel(hostLabel, t);
+  const embedName = embedSourceName(block, embed.source, t);
+
   const hostCompletions = useMemo(
-    () => buildVariableCompletions(variableMap, secretKeys),
-    [variableMap, secretKeys],
-  );
-  const embeddedCompletions = useMemo(
     () =>
-      buildVariableCompletions(embed.variableMap, embed.secretKeys).filter(
-        (entry) => !(entry.key in variableMap),
-      ),
-    [embed.variableMap, embed.secretKeys, variableMap],
+      buildVariableCompletions(variableMap, secretKeys, {
+        name: hostName,
+        embedded: false,
+      }),
+    [variableMap, secretKeys, hostName],
+  );
+
+  const allEmbeddedCompletions = useMemo(
+    () =>
+      buildVariableCompletions(embed.variableMap, embed.secretKeys, {
+        name: embedName,
+        embedded: true,
+      }),
+    [embed.variableMap, embed.secretKeys, embedName],
+  );
+
+  const embeddedCompletions = useMemo(
+    () => allEmbeddedCompletions.filter((entry) => !(entry.key in variableMap)),
+    [allEmbeddedCompletions, variableMap],
   );
 
   const setOverride = useCallback(

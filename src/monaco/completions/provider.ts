@@ -48,7 +48,13 @@ function provideCompletionItems(
 
   return {
     suggestions: buildSuggestions(context, completions).map((suggestion) => ({
-      label: suggestion.label,
+      label: suggestion.origin
+        ? {
+            label: suggestion.label,
+            detail: suggestion.origin,
+            description: suggestion.detail,
+          }
+        : suggestion.label,
       detail: suggestion.detail,
       kind: suggestion.kind,
       insertText: suggestion.insertText,
@@ -56,7 +62,7 @@ function provideCompletionItems(
         ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
         : undefined,
       filterText: suggestion.label,
-      sortText: suggestion.label,
+      sortText: `${suggestion.group ?? VariableCompletionConfig.HOST_GROUP}${suggestion.label}`,
       range,
     })),
   };

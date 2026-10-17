@@ -1,9 +1,15 @@
 import { monaco } from "../setup";
 
+export interface VariableOrigin {
+  name: string;
+  embedded: boolean;
+}
+
 export interface VariableCompletion {
   key: string;
   detail: string;
   params: string[];
+  origin?: VariableOrigin;
 }
 
 /** What each editor offers, keyed by its model. */

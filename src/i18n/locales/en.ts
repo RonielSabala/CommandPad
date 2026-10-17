@@ -1371,7 +1371,7 @@ If something goes wrong, undo it in this order:
       demoHint: (showVariables) =>
         `The first tab is a release runbook that embeds the deploy runbook from the second tab. Press **${showVariables}** in the block's header, change \`ENV\` from \`prod\` to \`dev\` and switch back: the embedded commands follow. Then edit a command in the deploy tab and come back to the first one. The change is already there.`,
       overrides:
-        "A value you set on the block is an override. It belongs to this block and never changes the embedded runbook, so each runbook that embeds it only states what differs. It can reference this runbook's own variables, and the arrow beside it drops it again.",
+        "A value you set on the block is an override. It belongs to this block and never changes the embedded runbook, so each runbook that embeds it only states what differs. It can reference this runbook's own variables or the embedded runbook's, and the arrow beside it drops it again. While you type a reference, the suggestions list this runbook's variables first and the embedded ones after them, and the selected one names the runbook it comes from.",
       readOnly: (open) =>
         `Embedded blocks are read-only: you can copy a command or view an image, but not edit them. To change the runbook itself, press **${open}**. Every runbook that embeds it picks up the edit, and renaming it doesn't break the link.`,
       cloud: (local, signIn, refresh) =>
