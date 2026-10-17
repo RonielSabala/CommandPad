@@ -8,6 +8,7 @@ import "@/components/sidebar/shared/SidebarSectionList.css";
 import { VariableRow } from "@/components/sidebar/variables/VariableRow";
 import { useSelectModeBodyClass } from "@/hooks/useBodyClasses";
 import { useLassoSelection } from "@/hooks/useLassoSelection";
+import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import {
   createAppStore,
   getActiveTab,
@@ -15,10 +16,9 @@ import {
   useStore,
   useStoreApi,
 } from "@/store/store";
-import { getUsedVariableKeys, isVariableUnused } from "@/utils/resolution";
+import { isVariableUnused } from "@/utils/resolution";
 import {
   useLayoutEffect,
-  useMemo,
   useState,
   type KeyboardEvent,
   type ReactNode,
@@ -110,10 +110,7 @@ export function DemoVariableRows() {
   const activeTab = useStore(getActiveTab);
   const variables = activeTab?.variables ?? EMPTY_VARIABLES;
   const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
-  const usedKeys = useMemo(
-    () => getUsedVariableKeys(blocks, variables),
-    [blocks, variables],
-  );
+  const usedKeys = useUsedVariableKeys(blocks, variables);
 
   if (variables.length === 0) {
     return null;

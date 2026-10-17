@@ -10,6 +10,7 @@ export interface VariableCompletion {
   detail: string;
   params: string[];
   origin?: VariableOrigin;
+  unused?: boolean;
 }
 
 /** What each editor offers, keyed by its model. */

@@ -178,6 +178,33 @@
   display: none;
 }
 
+/* Unused variable */
+
+.monaco-editor.monaco-overflow-widgets
+  .suggest-widget
+  .monaco-list
+  .monaco-list-row:has(.monaco-icon-label.deprecated)
+  .contents {
+  opacity: 0.5;
+}
+
+.monaco-editor.monaco-overflow-widgets
+  .suggest-widget
+  .monaco-list
+  .monaco-list-row
+  .monaco-icon-label.deprecated {
+  opacity: 1;
+}
+
+.monaco-editor.monaco-overflow-widgets
+  .suggest-widget
+  .monaco-list
+  .monaco-list-row
+  .monaco-icon-label.deprecated
+  .monaco-icon-name-container {
+  text-decoration: none;
+}
+
 /* --- Editor overrides --- */
 
 .code-editor

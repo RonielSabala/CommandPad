@@ -14,6 +14,7 @@ export interface Suggestion {
   origin?: string;
   /** Rows sort by group first. */
   group?: number;
+  unused?: boolean;
   insertText: string;
   kind: languages.CompletionItemKind;
   snippet?: boolean;
@@ -26,9 +27,10 @@ type SuggestionBuilder = (
 
 const BUILDERS: Record<ReferenceChunk, SuggestionBuilder> = {
   [ReferenceChunk.KEY]: (_context, completions) =>
-    completions.map(({ key, detail, origin }) => ({
+    completions.map(({ key, detail, origin, unused }) => ({
       label: key,
       detail,
+      unused,
       origin: origin?.name,
       group: origin?.embedded
         ? VariableCompletionConfig.EMBEDDED_GROUP

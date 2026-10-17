@@ -10,6 +10,8 @@ import { readCompletionContext } from "./context";
 import { modelCompletions } from "./registry";
 import { buildSuggestions } from "./suggestions";
 
+const UNUSED_TAGS = [monaco.languages.CompletionItemTag.Deprecated];
+
 function provideCompletionItems(
   model: editor.ITextModel,
   position: Position,
@@ -58,6 +60,7 @@ function provideCompletionItems(
             },
       detail: suggestion.detail,
       kind: suggestion.kind,
+      tags: suggestion.unused ? UNUSED_TAGS : undefined,
       insertText: suggestion.insertText,
       insertTextRules: suggestion.snippet
         ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet

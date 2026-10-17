@@ -966,7 +966,7 @@ Si algo sale mal, deshazlo en este orden:
       intro:
         "Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas. Si dos variables comparten la misma clave, gana la definida en último lugar.",
       usage:
-        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{CLAVE}`. Mientras escribes, las sugerencias muestran cada variable con su valor al lado. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
+        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{CLAVE}`. Mientras escribes, las sugerencias muestran cada variable con su valor al lado, y las que ningún comando usa aparecen atenuadas. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
       extract: (extractLabel) =>
         `No hace falta escribir una variable a mano. Selecciona cualquier parte de un comando en su editor, haz clic derecho (o pulsa \`Ctrl+.\`) y elige **${extractLabel}**: el texto seleccionado se convierte en una variable nueva, y el comando conserva en su lugar una referencia a ella. Su nombre propuesto queda seleccionado ahí mismo en el editor, así que basta con escribir encima para renombrarla. Pruébalo en la demo de arriba.`,
       inline: (inlineLabel) =>

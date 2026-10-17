@@ -12,19 +12,27 @@ import type { VariableCompletion, VariableOrigin } from "./registry";
 export function buildVariableCompletions(
   variableMap: VariableMap,
   secretKeys: Set<string>,
-  origin?: VariableOrigin,
+  usedKeys?: Set<string>,
 ): VariableCompletion[] {
-  const shownOrigin = origin && {
-    ...origin,
-    name: abbreviate(origin.name, VariableCompletionConfig.MAX_ORIGIN_LENGTH),
-  };
-
   return Object.keys(variableMap).map((key) => ({
     key,
     detail: secretKeys.has(key)
       ? SECRET_MASK
       : maskedText(variableMap[key], secretKeys),
     params: getTemplateParamNames(variableMap[key].text),
-    origin: shownOrigin,
+    unused: !!usedKeys && !usedKeys.has(key),
   }));
+}
+
+/** The same entries, each naming the runbook they come from. */
+export function withOrigin(
+  completions: VariableCompletion[],
+  origin: VariableOrigin,
+): VariableCompletion[] {
+  const shownOrigin = {
+    ...origin,
+    name: abbreviate(origin.name, VariableCompletionConfig.MAX_ORIGIN_LENGTH),
+  };
+
+  return completions.map((entry) => ({ ...entry, origin: shownOrigin }));
 }

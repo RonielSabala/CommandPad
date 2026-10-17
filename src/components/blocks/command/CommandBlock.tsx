@@ -16,13 +16,13 @@ import { VariablesViewContext } from "@/components/variables/variablesViewContex
 import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
 import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
-import { buildVariableCompletions } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
 import { classNames, countLines } from "@/utils/string";
 import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 
 import { EditorToggle } from "../EditorToggle";
+import { CompletionsContext } from "../listContext";
 import "./CommandBlock.css";
 import { CommandPreview } from "./CommandPreview";
 
@@ -50,16 +50,9 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
 
   const rootRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<CodeEditorHandle>(null);
-
-  const completions = useMemo(
-    () => buildVariableCompletions(variableMap, secretKeys),
-    [variableMap, secretKeys],
-  );
-
+  const completions = useContext(CompletionsContext);
   const actions = useEditorActions();
-
   const editorLines = useMemo(() => countLines(blockText), [blockText]);
-
   const editor = useClampSurface(
     blockId,
     ClampSurface.EDITOR,

@@ -1,13 +1,20 @@
 import { CssClass } from "@/common/constants/css";
 import { CodeModelScope } from "@/common/editorConfig";
 import { TooltipVariant, VariableEntryKind } from "@/common/enums";
-import type { RunbookBlock, Variable, VariableSection } from "@/common/types";
+import type {
+  Block,
+  RunbookBlock,
+  Variable,
+  VariableSection,
+} from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { VariableSectionHeader } from "@/components/variables/VariableSectionHeader";
 import { VariableValueField } from "@/components/variables/VariableValueField";
+import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { useTranslation, type Messages } from "@/i18n";
 import {
   buildVariableCompletions,
+  withOrigin,
   type VariableCompletion,
 } from "@/monaco/completions";
 import { getActiveTab, useStore } from "@/store/store";
@@ -18,7 +25,6 @@ import {
 } from "@/utils/embeddedRunbook";
 import { stripJsonExtension } from "@/utils/export";
 import {
-  getUsedVariableKeys,
   getVariableKey,
   isConstantVariableKey,
   isVariableUnused,
@@ -28,10 +34,11 @@ import {
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { buildVariableLayout } from "@/utils/variableSections";
-import { useCallback, useMemo } from "react";
+import { useCallback, useContext, useMemo } from "react";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 
 import "@/components/variables/VariablesList.css";
+import { CompletionsContext } from "../listContext";
 import { NotePreview } from "../note/NotePreview";
 import "./EmbeddedVariables.css";
 import { EmbedNotice } from "./RunbookEmbed";
@@ -52,6 +59,9 @@ function embedSourceName(
   return displayLabel(source?.local?.label ?? block.label, t);
 }
 
+const EMPTY_BLOCKS: Block[] = [];
+const EMPTY_VARIABLES: Variable[] = [];
+
 interface Props {
   block: RunbookBlock;
   embed: EmbeddedRunbookState;
@@ -62,7 +72,7 @@ interface Props {
 export function EmbeddedVariables({ block, embed, host }: Props) {
   const t = useTranslation();
   const { id: blockId, overrides } = block;
-  const { variableMap, secretKeys } = host;
+  const { variableMap } = host;
 
   const hostLabel = useStore((state) => getActiveTab(state)?.label ?? "");
   const folds = useStore((state) => state.embeddedSectionFolds);
@@ -83,36 +93,34 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
     return buildVariableLayout(variables ?? [], sections);
   }, [variables, variableSections, folds, blockId]);
 
-  const usedKeys = useMemo(
-    () => getUsedVariableKeys(embed.content?.blocks, embed.variables),
-    [embed.content, embed.variables],
+  const usedKeys = useUsedVariableKeys(
+    embed.content?.blocks ?? EMPTY_BLOCKS,
+    embed.variables ?? EMPTY_VARIABLES,
   );
 
   // Completions, each labeled with its runbook
   const hostName = displayLabel(hostLabel, t);
   const embedName = embedSourceName(block, embed.source, t);
 
+  const listCompletions = useContext(CompletionsContext);
   const hostCompletions = useMemo(
-    () =>
-      buildVariableCompletions(variableMap, secretKeys, {
-        name: hostName,
-        embedded: false,
-      }),
-    [variableMap, secretKeys, hostName],
+    () => withOrigin(listCompletions, { name: hostName, embedded: false }),
+    [listCompletions, hostName],
   );
 
   const allEmbeddedCompletions = useMemo(
     () =>
-      buildVariableCompletions(embed.variableMap, embed.secretKeys, {
-        name: embedName,
-        embedded: true,
-      }),
-    [embed.variableMap, embed.secretKeys, embedName],
+      buildVariableCompletions(embed.variableMap, embed.secretKeys, usedKeys),
+    [embed.variableMap, embed.secretKeys, usedKeys],
   );
 
   const embeddedCompletions = useMemo(
-    () => allEmbeddedCompletions.filter((entry) => !(entry.key in variableMap)),
-    [allEmbeddedCompletions, variableMap],
+    () =>
+      withOrigin(
+        allEmbeddedCompletions.filter((entry) => !(entry.key in variableMap)),
+        { name: embedName, embedded: true },
+      ),
+    [allEmbeddedCompletions, variableMap, embedName],
   );
 
   const setOverride = useCallback(
