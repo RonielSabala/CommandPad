@@ -48,13 +48,14 @@ function provideCompletionItems(
 
   return {
     suggestions: buildSuggestions(context, completions).map((suggestion) => ({
-      label: suggestion.origin
-        ? {
-            label: suggestion.label,
-            detail: suggestion.origin,
-            description: suggestion.detail,
-          }
-        : suggestion.label,
+      label:
+        suggestion.detail === undefined
+          ? suggestion.label
+          : {
+              label: suggestion.label,
+              detail: suggestion.origin,
+              description: suggestion.detail,
+            },
       detail: suggestion.detail,
       kind: suggestion.kind,
       insertText: suggestion.insertText,
