@@ -93,7 +93,8 @@ export const es: Messages = {
         `No se pudo guardar en ${provider} ${MIDDLE_DOT} haz clic para reintentar`,
     },
     saveNotice: {
-      [SaveOutcome.LOCAL]: () => "Todos los cambios guardados",
+      [SaveOutcome.LOCAL]: () =>
+        "Los cambios se guardan automáticamente en este navegador",
       [SaveOutcome.SAVING]: (provider) => `Guardando en ${provider}…`,
       [SaveOutcome.SAVED]: (provider) => `Guardado en ${provider}`,
       [SaveOutcome.UP_TO_DATE]: () => "Ya está al día",
