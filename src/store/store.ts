@@ -1725,6 +1725,40 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       });
     };
 
+    const saveLinkedRunbook = async (id: string, link: RunbookSync) => {
+      if (isDemo || savingRunbooks.has(id)) {
+        return;
+      }
+
+      savingRunbooks.add(id);
+      setSyncStatus(id, RunbookSyncStatus.SYNCING);
+      showSaveNotice(SaveOutcome.SAVING, link.provider);
+      const client = getCloudClient(link.provider);
+
+      try {
+        try {
+          await ensureSignedIn(client);
+        } catch (error) {
+          console.error("Cloud save sign-in failed", error);
+          setSyncStatus(id, RunbookSyncStatus.SIGNED_OUT);
+          showSaveNotice(SaveOutcome.SIGNED_OUT, link.provider);
+          return;
+        }
+
+        const outcome = await reconcileLinkedRunbook(client, id, link);
+        clearSyncStatus(id);
+        if (outcome) {
+          showSaveNotice(outcome, link.provider);
+        }
+      } catch (error) {
+        console.error("Cloud save failed", error);
+        setSyncStatus(id, RunbookSyncStatus.ERROR);
+        showSaveNotice(SaveOutcome.FAILED, link.provider);
+      } finally {
+        savingRunbooks.delete(id);
+      }
+    };
+
     let cloudRequestId = 0;
     const startCloudRequest = () => ++cloudRequestId;
     const isCurrentCloudRequest = (id: number) => cloudRequestId === id;
@@ -2469,8 +2503,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         get().saveState();
 
         const runbookId = getActiveTab(get())?.runbookId;
-        if (runbookId && getSyncLink(runbookId)) {
-          await get().saveRunbookToCloud(runbookId);
+        const link = runbookId && getSyncLink(runbookId);
+        if (link) {
+          await saveLinkedRunbook(runbookId, link);
         } else {
           showSaveNotice(SaveOutcome.LOCAL, null);
         }
@@ -2478,36 +2513,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       saveRunbookToCloud: async (id) => {
         const link = getSyncLink(id);
-        if (isDemo || !link || savingRunbooks.has(id)) {
-          return;
-        }
-
-        savingRunbooks.add(id);
-        setSyncStatus(id, RunbookSyncStatus.SYNCING);
-        showSaveNotice(SaveOutcome.SAVING, link.provider);
-        const client = getCloudClient(link.provider);
-
-        try {
-          try {
-            await ensureSignedIn(client);
-          } catch (error) {
-            console.error("Cloud save sign-in failed", error);
-            setSyncStatus(id, RunbookSyncStatus.SIGNED_OUT);
-            showSaveNotice(SaveOutcome.SIGNED_OUT, link.provider);
-            return;
-          }
-
-          const outcome = await reconcileLinkedRunbook(client, id, link);
-          clearSyncStatus(id);
-          if (outcome) {
-            showSaveNotice(outcome, link.provider);
-          }
-        } catch (error) {
-          console.error("Cloud save failed", error);
-          setSyncStatus(id, RunbookSyncStatus.ERROR);
-          showSaveNotice(SaveOutcome.FAILED, link.provider);
-        } finally {
-          savingRunbooks.delete(id);
+        if (link) {
+          await saveLinkedRunbook(id, link);
         }
       },
 
