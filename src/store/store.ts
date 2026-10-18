@@ -944,19 +944,28 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
     const getSyncLink = (runbookId: string): RunbookSync | undefined =>
       get().runbookLibrary.find((item) => item.id === runbookId)?.sync;
 
-    /** Rewrites a link that still exists. */
-    const setSyncLink = (runbookId: string, sync: RunbookSync) => {
+    /** Rewrites a link that still exists, or creates one when `linking`. */
+    const setSyncLink = (
+      runbookId: string,
+      sync: RunbookSync,
+      linking = false,
+    ) => {
       set((s) => ({
         runbookLibrary: s.runbookLibrary.map((item) =>
-          item.id === runbookId && item.sync ? { ...item, sync } : item,
+          item.id === runbookId && (linking || item.sync)
+            ? { ...item, sync }
+            : item,
         ),
       }));
 
       persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
     };
 
-    const setSyncPending = (runbookId: string, pending: boolean) => {
-      const link = getSyncLink(runbookId);
+    const setSyncPending = (
+      runbookId: string,
+      pending: boolean,
+      link = getSyncLink(runbookId),
+    ) => {
       if (link && (link.pending ?? false) !== pending) {
         setSyncLink(runbookId, { ...link, pending });
       }
@@ -982,7 +991,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         return;
       }
 
-      setSyncPending(runbookId, json !== synced);
+      setSyncPending(runbookId, json !== synced, link);
     };
 
     const flagUnsavedCloudChanges = (runbookId: string) => {
@@ -995,14 +1004,21 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       runbookId: string,
       content: RunbookContent,
       sync: RunbookSync,
+      linking = false,
     ) => {
       syncedContent.set(runbookId, runbookJson(content));
-      setSyncLink(runbookId, { ...sync, pending: false });
+      setSyncLink(runbookId, { ...sync, pending: false }, linking);
       clearSyncStatus(runbookId);
 
       // An edit made while the cloud was being reached is still unsaved
       const openTab = get().tabs.find((t) => t.runbookId === runbookId);
-      if (openTab) {
+      const tabMoved =
+        openTab &&
+        (openTab.blocks !== content.blocks ||
+          openTab.variables !== content.variables ||
+          openTab.variableSections !== content.variableSections);
+
+      if (tabMoved) {
         trackCloudChanges(runbookId, tabContent(openTab));
       }
     };
@@ -1012,15 +1028,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       runbookId: string,
       sync: RunbookSync,
       content: RunbookContent,
-    ) => {
-      set((s) => ({
-        runbookLibrary: s.runbookLibrary.map((item) =>
-          item.id === runbookId ? { ...item, sync } : item,
-        ),
-      }));
-
-      markRunbookSynced(runbookId, content, sync);
-    };
+    ) => markRunbookSynced(runbookId, content, sync, true);
 
     // --- Secret encryption ---
 
@@ -3614,15 +3622,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           };
         });
 
-        // The target may not be the active tab, so persist its content explicitly
+        // saveState only persists the active tab, so another target is written here
         const updated = get().tabs.find((t) => t.id === targetTabId);
-        if (updated?.runbookId) {
+        if (updated?.runbookId && updated.id !== getActiveTab(get())?.id) {
           const content = tabContent(updated);
-          contentDb
-            .put(updated.runbookId, content)
-            .catch((error) =>
-              console.warn("Failed to persist runbook content:", error),
-            );
+          writeRunbookContent(updated.runbookId, content).catch((error) =>
+            console.warn("Failed to persist runbook content:", error),
+          );
 
           trackCloudChanges(updated.runbookId, content);
         }
