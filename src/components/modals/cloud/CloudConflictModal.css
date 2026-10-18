@@ -49,6 +49,13 @@
   display: none;
 }
 
+body.read-mode .cloud-conflict-monaco textarea {
+  pointer-events: auto;
+  visibility: visible;
+  user-select: text;
+  cursor: text;
+}
+
 .cloud-conflict-error {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
