@@ -54,7 +54,7 @@ export const SelectSelector = {
 } as const;
 
 export const ModalSelector = {
-  OPEN: ".modal-backdrop.modal-visible",
+  OPEN: `.${CssClass.MODAL_BACKDROP}.${CssClass.MODAL_VISIBLE}`,
 } as const;
 
 export const BodySelector = {

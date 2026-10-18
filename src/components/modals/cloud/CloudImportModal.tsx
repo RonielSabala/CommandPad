@@ -4,7 +4,7 @@ import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { ArrowLeft } from "react-bootstrap-icons";
 
-import { Modal } from "../Modal";
+import { Modal, ModalActions } from "../Modal";
 import { CloudBrowser } from "./CloudBrowser";
 import { CloudModalTitle } from "./CloudModalTitle";
 
@@ -24,7 +24,7 @@ export function CloudImportModal() {
     <Modal
       open={isOpen}
       onClose={closeCloudImportModal}
-      className="modal-cloud"
+      className={CssClass.MODAL_CLOUD}
     >
       <CloudModalTitle
         message={t.cloudModal.importTitle}
@@ -34,7 +34,7 @@ export function CloudImportModal() {
 
       <CloudBrowser showFiles />
 
-      <div className="modal-actions">
+      <ModalActions>
         <button
           className={classNames(CssClass.BTN, CssClass.BTN_LG)}
           onClick={returnToDestinationModal}
@@ -51,7 +51,7 @@ export function CloudImportModal() {
         >
           {t.common.close}
         </button>
-      </div>
+      </ModalActions>
     </Modal>
   );
 }

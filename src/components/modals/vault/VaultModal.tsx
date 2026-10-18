@@ -10,7 +10,7 @@ import { classNames } from "@/utils/string";
 import { useEffect, useRef, useState } from "react";
 import { ShieldLock } from "react-bootstrap-icons";
 
-import { Modal } from "../Modal";
+import { Modal, ModalActions, ModalTitle } from "../Modal";
 import { PassphraseField } from "./PassphraseField";
 import "./VaultModal.css";
 
@@ -72,9 +72,9 @@ export function VaultModal() {
         </span>
 
         <div className="vault-heading">
-          <p className="modal-title vault-title">
+          <ModalTitle className="vault-title">
             {t.vaultModal.title[prompt]}
-          </p>
+          </ModalTitle>
           <div className="vault-message">
             <NoteText text={message} />
           </div>
@@ -99,7 +99,7 @@ export function VaultModal() {
 
       {error && <p className="vault-error">{t.vaultModal.errors[error]}</p>}
 
-      <div className="modal-actions">
+      <ModalActions>
         <button
           className={classNames(CssClass.BTN, CssClass.BTN_LG)}
           onClick={dismiss}
@@ -128,7 +128,7 @@ export function VaultModal() {
             t.vaultModal.submit[prompt]
           )}
         </button>
-      </div>
+      </ModalActions>
     </Modal>
   );
 }

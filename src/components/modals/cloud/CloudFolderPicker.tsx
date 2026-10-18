@@ -7,6 +7,7 @@ import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useEffect } from "react";
 
+import { ModalActions } from "../Modal";
 import { CloudBrowser } from "./CloudBrowser";
 
 interface CloudFolderPickerProps {
@@ -36,7 +37,7 @@ export function CloudFolderPicker({
     <>
       <CloudBrowser />
 
-      <div className="modal-actions">
+      <ModalActions>
         <button
           className={classNames(CssClass.BTN, CssClass.BTN_LG)}
           onClick={onCancel}
@@ -57,7 +58,7 @@ export function CloudFolderPicker({
         >
           {t.exportModal.selectFolder}
         </button>
-      </div>
+      </ModalActions>
     </>
   );
 }

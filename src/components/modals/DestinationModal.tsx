@@ -11,7 +11,7 @@ import {
   PROVIDERS,
 } from "./cloud/cloudProviders";
 import "./DestinationModal.css";
-import { Modal } from "./Modal";
+import { Modal, ModalActions, ModalMessage, ModalTitle } from "./Modal";
 
 export function DestinationModal() {
   const t = useTranslation();
@@ -23,8 +23,8 @@ export function DestinationModal() {
 
   return (
     <Modal open={isOpen} onClose={closeDestinationModal}>
-      <p className="modal-title">{t.destinationModal.title}</p>
-      <p className="modal-message">{t.destinationModal.message}</p>
+      <ModalTitle>{t.destinationModal.title}</ModalTitle>
+      <ModalMessage>{t.destinationModal.message}</ModalMessage>
 
       <div className="destination-modal-options">
         <button
@@ -50,14 +50,14 @@ export function DestinationModal() {
         })}
       </div>
 
-      <div className="modal-actions">
+      <ModalActions>
         <button
           className={classNames(CssClass.BTN, CssClass.BTN_LG)}
           onClick={closeDestinationModal}
         >
           {t.common.cancel}
         </button>
-      </div>
+      </ModalActions>
     </Modal>
   );
 }

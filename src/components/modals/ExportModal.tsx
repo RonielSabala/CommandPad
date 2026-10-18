@@ -30,7 +30,7 @@ import {
   PROVIDERS,
 } from "./cloud/cloudProviders";
 import "./ExportModal.css";
-import { Modal } from "./Modal";
+import { Modal, ModalActions, ModalTitle } from "./Modal";
 
 const FORMATS: readonly ExportFormat[] = [
   ExportFormat.JSON,
@@ -95,7 +95,7 @@ function CloudExportStatusView({ onDone }: { onDone: () => void }) {
           <p className="cloud-export-status-text">
             {t.exportModal.exportError}
           </p>
-          <div className="modal-actions">
+          <ModalActions>
             <button
               className={classNames(CssClass.BTN, CssClass.BTN_LG)}
               onClick={closeExportModal}
@@ -112,7 +112,7 @@ function CloudExportStatusView({ onDone }: { onDone: () => void }) {
             >
               {t.exportModal.tryAgain}
             </button>
-          </div>
+          </ModalActions>
         </>
       )}
     </div>
@@ -167,7 +167,7 @@ export function ExportModal() {
     <Modal
       open={isOpen}
       onClose={onClose}
-      className={classNames(isBrowsingCloud && "modal-cloud")}
+      className={classNames(isBrowsingCloud && CssClass.MODAL_CLOUD)}
     >
       {isBrowsingCloud ? (
         <CloudModalTitle
@@ -176,7 +176,7 @@ export function ExportModal() {
           onChange={setExportDestination}
         />
       ) : (
-        <p className="modal-title">{t.exportModal.title}</p>
+        <ModalTitle>{t.exportModal.title}</ModalTitle>
       )}
 
       {isExporting && <CloudExportStatusView onDone={onClose} />}
@@ -282,7 +282,7 @@ export function ExportModal() {
             />
           </div>
 
-          <div className="modal-actions">
+          <ModalActions>
             <button
               className={classNames(CssClass.BTN, CssClass.BTN_LG)}
               onClick={onClose}
@@ -303,7 +303,7 @@ export function ExportModal() {
             >
               {t.exportModal.confirm}
             </button>
-          </div>
+          </ModalActions>
         </>
       )}
     </Modal>

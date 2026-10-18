@@ -1,5 +1,6 @@
 import type { SyncDestination } from "@/common/enums";
 import { MessageSlot, splitAtSlot } from "@/i18n";
+import { ModalTitle } from "../Modal";
 import { ProviderSelect } from "./ProviderSelect";
 
 interface CloudModalTitleProps {
@@ -16,10 +17,10 @@ export function CloudModalTitle({
   const [before, after] = splitAtSlot(message, MessageSlot.PROVIDER);
 
   return (
-    <div className="modal-title">
+    <ModalTitle>
       {before}
       <ProviderSelect provider={provider} onChange={onChange} />
       {after}
-    </div>
+    </ModalTitle>
   );
 }

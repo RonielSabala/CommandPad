@@ -104,6 +104,14 @@ export const CssClass = {
   MINIMAP_LEFT: "minimap-left",
   MINIMAP_HOST: "minimap-host",
   MINIMAP_SCROLLER: "minimap-scroller",
+
+  // Modal
+  MODAL_CLOUD: "modal-cloud",
+  MODAL_VISIBLE: "modal-visible",
+  MODAL_NO_ANIMATION: "modal-no-animation",
+  MODAL_SCROLLABLE_BODY: "modal-scrollable-body",
+  MODAL_BACKDROP: "modal-backdrop",
+  MODAL_BACKDROP_TRANSPARENT: "modal-backdrop-transparent",
 } as const;
 
 export const CssAnimation = {

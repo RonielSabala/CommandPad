@@ -11,7 +11,7 @@ import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useEffect, useState } from "react";
 
-import { Modal } from "./Modal";
+import { Modal, ModalActions, ModalMessage, ModalTitle } from "./Modal";
 import "./PasteRunbookModal.css";
 
 export function PasteRunbookModal() {
@@ -51,8 +51,8 @@ export function PasteRunbookModal() {
 
   return (
     <Modal open={isOpen} onClose={onClose} className="modal-paste-runbook">
-      <p className="modal-title">{t.pasteModal.title}</p>
-      <p className="modal-message">{t.pasteModal.message}</p>
+      <ModalTitle>{t.pasteModal.title}</ModalTitle>
+      <ModalMessage>{t.pasteModal.message}</ModalMessage>
 
       {hasOpened && (
         <CodeEditor
@@ -76,7 +76,7 @@ export function PasteRunbookModal() {
 
       {hasError && <p className="paste-runbook-error">{t.pasteModal.error}</p>}
 
-      <div className="modal-actions">
+      <ModalActions>
         <button
           className={classNames(CssClass.BTN, CssClass.BTN_LG)}
           onClick={onClose}
@@ -96,7 +96,7 @@ export function PasteRunbookModal() {
         >
           {t.common.create}
         </button>
-      </div>
+      </ModalActions>
     </Modal>
   );
 }

@@ -14,7 +14,7 @@ import { useStore } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
 import { classNames } from "@/utils/string";
 
-import { Modal } from "../Modal";
+import { Modal, ModalActions, ModalMessage, ModalTitle } from "../Modal";
 import "./CloudFileEditorModal.css";
 
 export function CloudFileEditorModal() {
@@ -40,10 +40,10 @@ export function CloudFileEditorModal() {
       animated={false}
       noBackdrop
     >
-      <p className="modal-title">
+      <ModalTitle>
         <NoteText text={t.cloudModal.editTitle(filePath)} />
-      </p>
-      <p className="modal-message">{t.cloudModal.editHint}</p>
+      </ModalTitle>
+      <ModalMessage>{t.cloudModal.editHint}</ModalMessage>
 
       {editor?.loading ? (
         <p className="cloud-file-editor-status">
@@ -76,7 +76,7 @@ export function CloudFileEditorModal() {
         <p className="cloud-file-editor-error">{editor.error}</p>
       )}
 
-      <div className="modal-actions">
+      <ModalActions>
         <button
           className={classNames(CssClass.BTN, CssClass.BTN_LG)}
           onClick={() => void close()}
@@ -97,7 +97,7 @@ export function CloudFileEditorModal() {
         >
           {t.common.save}
         </button>
-      </div>
+      </ModalActions>
     </Modal>
   );
 }

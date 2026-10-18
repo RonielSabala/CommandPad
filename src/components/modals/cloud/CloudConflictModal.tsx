@@ -21,7 +21,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 
-import { Modal } from "../Modal";
+import { Modal, ModalActions, ModalMessage, ModalTitle } from "../Modal";
 import "./CloudConflictModal.css";
 import { PROVIDER_NAME } from "./cloudProviders";
 
@@ -62,12 +62,12 @@ export function CloudConflictModal() {
       animated={false}
     >
       <div className="cloud-conflict-content" onKeyDown={handleKeyDown}>
-        <p className="modal-title">
+        <ModalTitle>
           {conflict && (
             <NoteText text={t.cloudConflict.title(conflict.filename)} />
           )}
-        </p>
-        <p className="modal-message">{t.cloudConflict.message(provider)}</p>
+        </ModalTitle>
+        <ModalMessage>{t.cloudConflict.message(provider)}</ModalMessage>
 
         <div
           className={classNames(
@@ -108,7 +108,7 @@ export function CloudConflictModal() {
           <p className="cloud-conflict-error">{conflict.error}</p>
         )}
 
-        <div className="modal-actions">
+        <ModalActions>
           <button
             className={classNames(CssClass.BTN, CssClass.BTN_LG)}
             onClick={() => resolve(null)}
@@ -135,7 +135,7 @@ export function CloudConflictModal() {
           >
             {t.cloudConflict.keepMine}
           </button>
-        </div>
+        </ModalActions>
       </div>
     </Modal>
   );
