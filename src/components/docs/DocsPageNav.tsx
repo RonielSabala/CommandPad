@@ -1,5 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import type { DocsSectionId } from "@/common/constants/docs";
+import { AriaRole } from "@/common/constants/dom";
 import { useTranslation } from "@/i18n";
 import type { CSSProperties } from "react";
 
@@ -30,7 +31,7 @@ export function DocsPageNav({
       <div
         className="docs-page-progress"
         style={{ "--docs-page-progress": progress } as CSSProperties}
-        role="progressbar"
+        role={AriaRole.PROGRESSBAR}
         aria-valuenow={position}
         aria-valuemin={1}
         aria-valuemax={total}

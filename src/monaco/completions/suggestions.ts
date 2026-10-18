@@ -10,6 +10,11 @@ import type { VariableCompletion } from "./registry";
 export interface Suggestion {
   label: string;
   detail?: string;
+  /** The runbook it comes from. */
+  origin?: string;
+  /** Rows sort by group first. */
+  group?: number;
+  unused?: boolean;
   insertText: string;
   kind: languages.CompletionItemKind;
   snippet?: boolean;
@@ -22,11 +27,18 @@ type SuggestionBuilder = (
 
 const BUILDERS: Record<ReferenceChunk, SuggestionBuilder> = {
   [ReferenceChunk.KEY]: (_context, completions) =>
-    completions.map((completion) => ({
-      label: completion.key,
-      detail: completion.detail,
-      kind: monaco.languages.CompletionItemKind.Variable,
-      insertText: completion.key,
+    completions.map(({ key, detail, origin, unused }) => ({
+      label: key,
+      detail,
+      unused,
+      origin: origin?.name,
+      group: origin?.embedded
+        ? VariableCompletionConfig.EMBEDDED_GROUP
+        : VariableCompletionConfig.HOST_GROUP,
+      kind: origin?.embedded
+        ? monaco.languages.CompletionItemKind.Module
+        : monaco.languages.CompletionItemKind.Variable,
+      insertText: key,
     })),
 
   [ReferenceChunk.PARAM]: (context, completions) => {

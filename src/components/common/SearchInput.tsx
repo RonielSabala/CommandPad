@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { AutoComplete, InputType } from "@/common/constants/dom";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SearchIcon, XIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
@@ -24,10 +25,10 @@ export function SearchInput({
     <div className={classNames("search-input-wrapper", className)}>
       <input
         className={classNames("search-input", CssClass.NO_LIGATURES)}
-        type="text"
+        type={InputType.TEXT}
         placeholder={placeholder}
         spellCheck={false}
-        autoComplete="off"
+        autoComplete={AutoComplete.OFF}
         value={value}
         onChange={(event) => onChange(event.target.value)}
       />

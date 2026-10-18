@@ -260,6 +260,7 @@ export type CloudExportStatus =
 
 export const RunbookSyncStatus = {
   SYNCED: "synced",
+  UNSAVED: "unsaved",
   SYNCING: "syncing",
   SIGNED_OUT: "signed-out",
   ERROR: "error",
@@ -328,6 +329,17 @@ export const VaultError = {
   WRONG_PASSPHRASE: "wrong-passphrase",
 } as const;
 export type VaultError = (typeof VaultError)[keyof typeof VaultError];
+
+export const SaveOutcome = {
+  LOCAL: "local",
+  SAVING: "saving",
+  SAVED: "saved",
+  UP_TO_DATE: "up-to-date",
+  UPDATED: "updated",
+  SIGNED_OUT: "signed-out",
+  FAILED: "failed",
+} as const;
+export type SaveOutcome = (typeof SaveOutcome)[keyof typeof SaveOutcome];
 
 export const DialogTone = {
   DANGER: "danger",

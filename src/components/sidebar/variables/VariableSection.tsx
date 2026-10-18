@@ -2,11 +2,12 @@ import { VariableKind } from "@/common/enums";
 import type { Block, Variable } from "@/common/types";
 import { SearchInput } from "@/components/common/SearchInput";
 import { EnumIcon, VariableIcon } from "@/components/icons";
+import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
-import { getUsedVariableKeys, isVariableUnused } from "@/utils/resolution";
+import { isVariableUnused } from "@/utils/resolution";
 import { matchesQuery } from "@/utils/string";
-import { useMemo } from "react";
+
 import { SidebarSection } from "../shared/SidebarSection";
 import { SidebarSectionFooter } from "../shared/SidebarSectionFooter";
 import { SidebarSectionList } from "../shared/SidebarSectionList";
@@ -22,10 +23,7 @@ export function VariableSection() {
   const activeTab = useStore(getActiveTab);
   const variables = activeTab?.variables ?? EMPTY_VARIABLES;
   const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
-  const usedKeys = useMemo(
-    () => getUsedVariableKeys(blocks, variables),
-    [blocks, variables],
-  );
+  const usedKeys = useUsedVariableKeys(blocks, variables);
   const query = useStore((state) => state.variableSearchQuery);
   const setQuery = useStore((state) => state.setVariableSearchQuery);
   const addVariable = useStore((state) => state.addVariable);

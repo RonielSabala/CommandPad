@@ -6,7 +6,6 @@ import {
 import { EventType } from "@/common/constants/events";
 import { PanelId } from "@/common/enums";
 import { PanelShell } from "@/components/common/panel/PanelShell";
-import { usePanelKeybindings } from "@/hooks/usePanelKeybindings";
 import { useTranslation } from "@/i18n";
 import { useEffect, useRef } from "react";
 
@@ -33,8 +32,6 @@ export function DocsPage() {
   const { id, level } = entry;
 
   const Content = DOCS_SECTION_CONTENT[id];
-
-  usePanelKeybindings(PanelId.DOCS_TOC);
 
   useEffect(() => {
     const followHash = () => {

@@ -23,8 +23,7 @@ export function isModifierPressed(
 export const KeyBinding = {
   TOGGLE_MODE: "TOGGLE_MODE",
   ESCAPE: "ESCAPE",
-  TOGGLE_SIDEBAR: "TOGGLE_SIDEBAR",
-  MOVE_SIDEBAR: "MOVE_SIDEBAR",
+  SAVE_RUNBOOK: "SAVE_RUNBOOK",
   NEW_TAB: "NEW_TAB",
   CLOSE_TAB: "CLOSE_TAB",
   FOCUS_RUNBOOK: "FOCUS_RUNBOOK",
@@ -54,8 +53,7 @@ interface KeybindingDef {
 export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
   [KeyBinding.TOGGLE_MODE]: { binding: "ctrl+e" },
   [KeyBinding.ESCAPE]: { binding: "escape" },
-  [KeyBinding.TOGGLE_SIDEBAR]: { binding: "ctrl+s" },
-  [KeyBinding.MOVE_SIDEBAR]: { binding: "ctrl+shift+s" },
+  [KeyBinding.SAVE_RUNBOOK]: { binding: "ctrl+s" },
   [KeyBinding.NEW_TAB]: { binding: "ctrl+alt+n" },
   [KeyBinding.CLOSE_TAB]: { binding: "ctrl+alt+w" },
   [KeyBinding.FOCUS_RUNBOOK]: { binding: "tab" },

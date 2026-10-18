@@ -30,6 +30,7 @@ export function VariablesDocs() {
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.variables.extract(t.command.extractVariable)} />
+      <Prose text={t.docs.variables.inline(t.command.inlineVariable)} />
       <Prose text={t.docs.variables.constants} />
       <Prose text={t.docs.variables.constantsDemoHint} />
       <DemoWorkspace
@@ -172,6 +173,7 @@ export function VariableReferencesDocs() {
         text={t.docs.variableReferences.shadesHover(
           t.command.goToDefinition,
           t.command.editVariable,
+          t.tabs.defineVariable,
         )}
       />
       <Prose text={t.docs.variableReferences.shadesUnresolved} />
@@ -959,7 +961,12 @@ export function EscapingBracesDocs() {
   return (
     <>
       <Prose text={t.docs.escapingBraces.intro} />
-      <Prose text={t.docs.escapingBraces.menu(t.command.escapeVariable)} />
+      <Prose
+        text={t.docs.escapingBraces.menu(
+          t.command.escapeVariable,
+          t.command.unescapeVariable,
+        )}
+      />
       <Prose text={t.docs.escapingBraces.tryHint} />
       <DemoWorkspace
         tabs={[

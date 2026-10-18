@@ -22,6 +22,7 @@ export interface EditorAction {
     line: string,
     offset: number,
   ) => { start: number; end: number } | null;
+  isAvailable?: (text: string) => boolean;
   run: (context: EditorActionContext) => void;
 }
 
@@ -86,17 +87,75 @@ function runAction(action: EditorAction, instance: editor.ICodeEditor): void {
   });
 }
 
+interface ContextMenuController extends editor.IEditorContribution {
+  showContextMenu(anchor?: unknown): void;
+}
+
+/** Runs `beforeShow` every time the editor's context menu is about to open. */
+function beforeContextMenu(
+  instance: editor.ICodeEditor,
+  beforeShow: () => void,
+): IDisposable {
+  const controller = instance.getContribution<ContextMenuController>(
+    MonacoContextMenu.CONTROLLER_ID,
+  );
+
+  if (!controller) {
+    return { dispose: () => {} };
+  }
+
+  const show = controller.showContextMenu;
+  controller.showContextMenu = (anchor) => {
+    beforeShow();
+    show.call(controller, anchor);
+  };
+
+  return { dispose: () => (controller.showContextMenu = show) };
+}
+
+function isActionAvailable(
+  action: EditorAction,
+  instance: editor.ICodeEditor,
+): boolean {
+  const model = instance.getModel();
+  const range = model && actionRange(action, instance, model);
+  return (
+    !!range && (action.isAvailable?.(model.getValueInRange(range)) ?? true)
+  );
+}
+
 export function registerEditorActions(
   instance: editor.IStandaloneCodeEditor,
   actions: EditorAction[],
 ): IDisposable[] {
-  return actions.map((action) =>
-    instance.addAction({
+  const refreshes: (() => void)[] = [];
+
+  const disposables = actions.map((action) => {
+    let precondition: string | undefined;
+
+    if (action.isAvailable) {
+      precondition = action.id + MonacoContextMenu.AVAILABLE_KEY_SUFFIX;
+      const available = instance.createContextKey<boolean>(precondition, false);
+      refreshes.push(() => available.set(isActionAvailable(action, instance)));
+    }
+
+    return instance.addAction({
       id: action.id,
       label: action.label,
       contextMenuGroupId: MonacoContextMenu.GROUP,
       contextMenuOrder: action.order,
+      precondition,
       run: (target) => runAction(action, target),
-    }),
-  );
+    });
+  });
+
+  if (refreshes.length > 0) {
+    disposables.push(
+      beforeContextMenu(instance, () =>
+        refreshes.forEach((refresh) => refresh()),
+      ),
+    );
+  }
+
+  return disposables;
 }

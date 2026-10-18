@@ -2,13 +2,17 @@ import { CssClass } from "@/common/constants/css";
 import { DataAttr, ElementId, ScrollIntoView } from "@/common/constants/dom";
 import type { Block, Variable } from "@/common/types";
 import { useRowReveal } from "@/hooks/useRowReveal";
+import { getTabVariableMap } from "@/hooks/useTabUnresolved";
+import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
+import { buildVariableCompletions } from "@/monaco/completions";
 import { getActiveTab, useStore } from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
-import { getSecretKeys, getVariableMap } from "@/utils/resolution";
+import { getSecretKeys } from "@/utils/resolution";
 import { useEffect, useMemo, useRef } from "react";
 
 import { BlockItem } from "./BlockItem";
 import "./BlocksList.css";
+import { CompletionsContext } from "./listContext";
 
 const EMPTY_BLOCKS: Block[] = [];
 const EMPTY_VARIABLES: Variable[] = [];
@@ -22,10 +26,14 @@ export function BlocksList() {
   const pendingRevealBlockId = useStore((state) => state.pendingRevealBlockId);
   const finishBlockReveal = useStore((state) => state.finishBlockReveal);
 
-  const variableMap = useMemo(() => getVariableMap(variables), [variables]);
-  const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
-
   const listRef = useRef<HTMLDivElement>(null);
+  const variableMap = getTabVariableMap(variables);
+  const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
+  const usedKeys = useUsedVariableKeys(blocks, variables);
+  const completions = useMemo(
+    () => buildVariableCompletions(variableMap, secretKeys, usedKeys),
+    [variableMap, secretKeys, usedKeys],
+  );
 
   useEffect(() => {
     scrollRowIntoView(
@@ -53,19 +61,21 @@ export function BlocksList() {
   );
 
   return (
-    <div
-      id={ElementId.BLOCKS_LIST}
-      className={CssClass.BLOCKS_LIST}
-      ref={listRef}
-    >
-      {blocks.map((block) => (
-        <BlockItem
-          key={block.id}
-          block={block}
-          variableMap={variableMap}
-          secretKeys={secretKeys}
-        />
-      ))}
-    </div>
+    <CompletionsContext.Provider value={completions}>
+      <div
+        id={ElementId.BLOCKS_LIST}
+        className={CssClass.BLOCKS_LIST}
+        ref={listRef}
+      >
+        {blocks.map((block) => (
+          <BlockItem
+            key={block.id}
+            block={block}
+            variableMap={variableMap}
+            secretKeys={secretKeys}
+          />
+        ))}
+      </div>
+    </CompletionsContext.Provider>
   );
 }

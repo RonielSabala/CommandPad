@@ -6,7 +6,7 @@ import {
   NON_BREAKING_SPACE,
 } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { DataAttr } from "@/common/constants/dom";
+import { AriaRole, DataAttr } from "@/common/constants/dom";
 import { ClampSurface, TooltipVariant } from "@/common/enums";
 import type { CommandSegment } from "@/common/types";
 import { ClampToggle } from "@/components/common/codeEditor/ClampToggle";
@@ -21,9 +21,9 @@ import {
   countCommandLines,
   hasUnresolvedSegments,
   isMaskedSegment,
+  maskSpans,
   resolveCommandText,
   resolveCommandToString,
-  sourceKey,
   unresolvedSegmentParts,
   type VariableMap,
 } from "@/utils/resolution";
@@ -82,11 +82,17 @@ function HighlightedLines({
   });
 }
 
+function SecretMask() {
+  return <span className="token-secret">{SECRET_MASK}</span>;
+}
+
 function NestedText({
   segment,
+  secretKeys,
   sourceProps,
 }: {
   segment: CommandSegment;
+  secretKeys: ReadonlySet<string>;
   sourceProps: SourceProps;
 }) {
   const spans = segment.spans;
@@ -94,17 +100,23 @@ function NestedText({
     return segment.text;
   }
 
-  return spans.map((span, i) => (
-    <HighlightedLines
-      key={i}
-      text={span.text}
-      className={classNames(
-        `token-nesting-${span.depth}`,
-        span.unresolved ? "token-nesting-unresolved" : "token-nesting-resolved",
-      )}
-      props={sourceProps(span.source ?? segment.key)}
-    />
-  ));
+  return maskSpans(spans, secretKeys).map((span, i) =>
+    !span ? (
+      <SecretMask key={i} />
+    ) : (
+      <HighlightedLines
+        key={i}
+        text={span.text}
+        className={classNames(
+          `token-nesting-${span.depth}`,
+          span.unresolved
+            ? "token-nesting-unresolved"
+            : "token-nesting-resolved",
+        )}
+        props={sourceProps(span.source ?? segment.key)}
+      />
+    ),
+  );
 }
 
 interface Props {
@@ -137,10 +149,10 @@ export function CommandPreview({
   const sourceTipProps = sourceTip.props;
   const sourceProps = useCallback<SourceProps>(
     (source) =>
-      source && Object.hasOwn(variableMap, sourceKey(source))
+      source
         ? { ...tooltip(source, TooltipVariant.CODE), ...sourceTipProps }
         : plainSourceProps(source),
-    [variableMap, sourceTipProps],
+    [sourceTipProps],
   );
 
   const segments = useMemo(
@@ -199,13 +211,12 @@ export function CommandPreview({
         {text ? (
           segments.map((seg, i) =>
             isMaskedSegment(seg, secretKeys) ? (
-              <span key={i} className="token-secret">
-                {SECRET_MASK}
-              </span>
+              <SecretMask key={i} />
             ) : (
               <span key={i} className={`token-${seg.type}`}>
                 <NestedText
                   segment={seg}
+                  secretKeys={secretKeys}
                   sourceProps={linkSources ? sourceProps : plainSourceProps}
                 />
               </span>
@@ -222,7 +233,7 @@ export function CommandPreview({
         {actions}
 
         {!!copied && (
-          <span className="copy-warning" role="status">
+          <span className="copy-warning" role={AriaRole.STATUS}>
             {t.command.copiedUnresolved(copied)}
           </span>
         )}

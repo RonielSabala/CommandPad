@@ -5,6 +5,7 @@ import {
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  SaveOutcome,
   UnresolvedCause,
   VaultError,
   VaultField,
@@ -82,12 +83,24 @@ export const es: Messages = {
     clearLibraryTitle: "Eliminar todos los libros de la biblioteca",
     stopSyncing: "Dejar de sincronizar",
     syncStatus: {
-      [RunbookSyncStatus.SYNCED]: (provider) => `Sincronizado con ${provider}`,
+      [RunbookSyncStatus.SYNCED]: (provider) => `Guardado en ${provider}`,
+      [RunbookSyncStatus.UNSAVED]: (provider, shortcut) =>
+        `Cambios sin guardar ${MIDDLE_DOT} haz clic o pulsa ${shortcut} para guardar en ${provider}`,
       [RunbookSyncStatus.SYNCING]: (provider) => `Guardando en ${provider}…`,
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
-        `Inicia sesión en ${provider} para seguir sincronizando`,
+        `Sesión cerrada en ${provider} ${MIDDLE_DOT} haz clic para iniciar sesión y guardar`,
       [RunbookSyncStatus.ERROR]: (provider) =>
         `No se pudo guardar en ${provider} ${MIDDLE_DOT} haz clic para reintentar`,
+    },
+    saveNotice: {
+      [SaveOutcome.LOCAL]: () =>
+        "Los cambios se guardan automáticamente en este navegador",
+      [SaveOutcome.SAVING]: (provider) => `Guardando en ${provider}…`,
+      [SaveOutcome.SAVED]: (provider) => `Guardado en ${provider}`,
+      [SaveOutcome.UP_TO_DATE]: () => "Ya está al día",
+      [SaveOutcome.UPDATED]: (provider) => `Actualizado desde ${provider}`,
+      [SaveOutcome.SIGNED_OUT]: (provider) => `Sesión cerrada en ${provider}`,
+      [SaveOutcome.FAILED]: (provider) => `No se pudo guardar en ${provider}`,
     },
     secretStatus: {
       [VaultStatus.UNLOCKED]: `Los secretos están cifrados ${MIDDLE_DOT} haz clic para cambiar la frase de contraseña`,
@@ -261,7 +274,9 @@ export const es: Messages = {
       `Copiado con ${parts} ${parts === 1 ? "parte sin resolver" : "partes sin resolver"}`,
     placeholder: "ssh {USUARIO}@{HOST}",
     extractVariable: "Extraer en una variable",
+    inlineVariable: "Insertar el valor de la variable",
     escapeVariable: "Escapar la referencia",
+    unescapeVariable: "Quitar el escape de la referencia",
     goToDefinition: "Ir a la definición",
     goToDefinitionTitle: (key) =>
       `Cambia a la vista de variables de este runbook y resalta '${key}'.`,
@@ -459,6 +474,17 @@ export const es: Messages = {
   confirm: {
     defaultTitle: "Confirmar",
   },
+  cloudConflict: {
+    title: (filename) => `\`${filename}\` cambió en la nube`,
+    message: (provider) =>
+      `Alguien guardó este libro en ${provider} después de la última vez que lo hiciste tú. A la izquierda está la copia de ${provider} y a la derecha la tuya: edítala para quedarte con lo que quieras de ambas (la flecha junto a un cambio toma el lado de ${provider}) y luego guarda.`,
+    cloudSide: (provider) => `En ${provider}`,
+    localSide: "La tuya",
+    useCloud: (provider) => `Usar la versión de ${provider}`,
+    keepMine: "Guardar la mía",
+    invalidError:
+      "Esto no es un JSON de libro válido, así que todavía no se puede guardar.",
+  },
   dialogs: {
     overwriteTitle: "Sobrescribir Libro",
     overwriteConfirm: "Sobrescribir",
@@ -486,6 +512,8 @@ export const es: Messages = {
     deleteRunbookConfirm: "Eliminar",
     deleteRunbookMessage: (label) =>
       `¿Eliminar \`${label}\`? **Esto no se puede deshacer.**`,
+    deleteUnsavedRunbookMessage: (label) =>
+      `\`${label}\` tiene cambios que nunca se guardaron en la nube. ¿Eliminarlo de todos modos? **Esos cambios no se pueden recuperar.**`,
     deleteCloudFileTitle: "Eliminar Libro de la Nube",
     deleteCloudFileConfirm: "Eliminar",
     deleteCloudFileMessage: (filename) =>
@@ -526,8 +554,8 @@ export const es: Messages = {
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Alternar modo lectura / edición",
     [KeyBinding.ESCAPE]: "Limpiar selección de bloques / cerrar diálogos",
-    [KeyBinding.TOGGLE_SIDEBAR]: "Contraer / expandir el panel lateral",
-    [KeyBinding.MOVE_SIDEBAR]: "Mover el panel lateral a izquierda / derecha",
+    [KeyBinding.SAVE_RUNBOOK]:
+      "Guardar el libro en el archivo de la nube al que está vinculado",
     [KeyBinding.NEW_TAB]: "Abrir una nueva pestaña",
     [KeyBinding.CLOSE_TAB]: "Cerrar la pestaña activa",
     [KeyBinding.FOCUS_RUNBOOK]: "Seleccionar libro activo",
@@ -927,7 +955,7 @@ Si algo sale mal, deshazlo en este orden:
       labelDemo:
         "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas, cierra alguna, y abre la fuente para ver el libro de una pestaña como JSON.",
       unresolvedMarker: (create, edit) =>
-        `Cuando el botón de cerrar de una pestaña es un punto rojo relleno, ese libro tiene partes sin resolver, así que un libro que no está listo para usarse se nota sin necesidad de abrirlo. Al pasar el puntero por el punto, vuelve a ser el botón de cerrar, con un resumen de lo que no resuelve: cuántos problemas hay y a cuántos bloques alcanzan, cada problema una sola vez bajo su causa, seguido de los bloques que rompe. Haz clic en un bloque para saltar directamente a él, usa la flecha para abrir la variable de la que viene un problema, o **${create}** para agregar una variable que todavía no existe. En la pestaña abierta, un valor vacío o un hueco sin rellenar también ofrece **${edit}**, que abre el editor de la variable dentro del propio resumen para que escribas el valor sin salir de la pestaña. La tercera pestaña de arriba lleva uno: abre sus variables y dale un valor a \`HOST\`, y el punto desaparece en cuanto todas las referencias resuelven.`,
+        `Cuando el botón de cerrar de una pestaña es un punto rojo relleno, ese libro tiene partes sin resolver, así que un libro que no está listo para usarse se nota sin necesidad de abrirlo. Al pasar el puntero por el punto, vuelve a ser el botón de cerrar, con un resumen de lo que no resuelve: cuántos problemas hay y a cuántos bloques alcanzan, cada problema una sola vez bajo su causa, seguido de los bloques que rompe. Haz clic en un bloque para saltar directamente a él, usa la flecha para abrir la variable de la que viene un problema, o **${create}** para agregar una variable que todavía no existe. En la pestaña abierta, un valor vacío o un hueco sin rellenar también ofrece **${edit}**. Ambos abren el editor de la variable dentro del propio resumen, listo para que escribas el valor sin salir de la pestaña. La tercera pestaña de arriba lleva uno: abre sus variables y dale un valor a \`HOST\`, y el punto desaparece en cuanto todas las referencias resuelven.`,
     },
     sidebar: {
       intro:
@@ -964,9 +992,11 @@ Si algo sale mal, deshazlo en este orden:
       intro:
         "Cada variable tiene una **clave** y un **valor**. Las claves distinguen mayúsculas de minúsculas. Si dos variables comparten la misma clave, gana la definida en último lugar.",
       usage:
-        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{CLAVE}`. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
+        "Usa una variable en cualquier comando envolviendo su clave en llaves, p. ej. `{CLAVE}`. Mientras escribes, las sugerencias muestran cada variable con su valor al lado, y las que ningún comando usa aparecen atenuadas. Renombrar una clave actualiza todos los comandos que la usan, y las variables que ningún comando usa se atenúan para que detectes las que ya no necesitas.",
       extract: (extractLabel) =>
         `No hace falta escribir una variable a mano. Selecciona cualquier parte de un comando en su editor, haz clic derecho (o pulsa \`Ctrl+.\`) y elige **${extractLabel}**: el texto seleccionado se convierte en una variable nueva, y el comando conserva en su lugar una referencia a ella. Su nombre propuesto queda seleccionado ahí mismo en el editor, así que basta con escribir encima para renombrarla. Pruébalo en la demo de arriba.`,
+      inline: (inlineLabel) =>
+        `También funciona al revés: pon el cursor sobre una referencia y elige **${inlineLabel}** para escribir el contenido de la variable en su lugar. La variable se conserva. Los valores secretos nunca se escriben, y la opción solo aparece cuando hay una referencia que se resuelve por completo.`,
       unresolved:
         "Si un comando referencia una clave que no existe, o una variable con valor vacío, esa parte se resalta como **sin resolver**, incluso cuando la referencia está dentro del valor de otra variable.",
       tooltip:
@@ -995,8 +1025,8 @@ Si algo sale mal, deshazlo en este orden:
         "La vista previa resalta el texto resuelto según cuántos valores atravesó. El texto que escribió la variable a la que haces referencia lleva el tono más claro, el que escribió una referencia **dentro** de ese valor se apoya en uno más intenso, y todo lo que esté más adentro comparte el más intenso. Así, de un vistazo sabes qué parte del comando viene de dónde.",
       shadesDemoHint:
         "Aquí `HOST` se construye a partir de `SERVICE`, que a su vez se construye a partir de `NAME`, así que el comando resuelto luce los tres tonos a la vez:",
-      shadesHover: (goToDefinition: string, edit: string) =>
-        `Cuando los tonos no bastan, pasa el cursor sobre cualquier fragmento resaltado de un comando resuelto: te dice la variable que lo escribió, su botón de flecha (**${goToDefinition}**) te lleva a esa variable en la vista de variables, y **${edit}** abre su clave y su valor ahí mismo en el tooltip, para cambiarlos sin salir del comando.`,
+      shadesHover: (goToDefinition: string, edit: string, create: string) =>
+        `Cuando los tonos no bastan, pasa el cursor sobre cualquier fragmento resaltado de un comando resuelto: te dice la variable que lo escribió, su botón de flecha (**${goToDefinition}**) te lleva a esa variable en la vista de variables, y **${edit}** abre su clave y su valor ahí mismo en el tooltip, para cambiarlos sin salir del comando. Una referencia a una variable que todavía no existe ofrece **${create}** en su lugar, que la agrega y abre el mismo editor con su valor listo para escribir.`,
       shadesUnresolved:
         "Una referencia que no se resuelve se cuenta igual, en rojo en vez de verde: el resto del comando sigue resolviéndose y solo se marca la parte rota, a la profundidad en la que está. Así un vistazo también te dice qué tan hondo está el problema, no solo que lo hay.",
       shadesUnresolvedDemoHint:
@@ -1285,8 +1315,8 @@ Si algo sale mal, deshazlo en este orden:
     escapingBraces: {
       intro:
         "Antepón una barra invertida (`\\`) a una referencia para mostrarla literalmente en vez de resolverla.",
-      menu: (escapeLabel) =>
-        `No hace falta escribir la barra invertida a mano. Pon el cursor dentro de una referencia (o selecciona una o varias), haz clic derecho y elige **${escapeLabel}**. Cada referencia que abarque recibe su barra invertida, incluidas las anidadas dentro de otra. Una barra invertida pegada a la llave de cierre se elimina.`,
+      menu: (escapeLabel, unescapeLabel) =>
+        `No hace falta escribir la barra invertida a mano. Pon el cursor dentro de una referencia (o selecciona una o varias), haz clic derecho y elige **${escapeLabel}**. Cada referencia que abarque recibe su barra invertida, incluidas las anidadas dentro de otra. Una barra invertida pegada a la llave de cierre se elimina. Sobre una referencia escapada, **${unescapeLabel}** vuelve a quitar las barras invertidas. Cada opción solo aparece cuando hay algo que cambiar.`,
       tryHint:
         "Prueba a borrar la barra invertida del comando de abajo y mira cómo las llaves literales se convierten en una referencia activa:",
       scope:
@@ -1296,7 +1326,7 @@ Si algo sale mal, deshazlo en este orden:
       intro: (actionsLabel, maskLabel) =>
         `Abre el menú **${actionsLabel}** de una variable y elige **${maskLabel}** para marcarla como **secreta**. Aparecerá entonces un **icono de ojo** en la fila que puedes pulsar para volver a mostrarla.`,
       copyNote:
-        "El enmascarado es puramente visual: el botón **Copiar** siempre pone el valor **real** en tu portapapeles, así que tus comandos siguen funcionando. Pruébalo abajo, y haz clic en el icono de ojo para mostrar el valor.",
+        "El enmascarado acompaña al valor dondequiera que acabe. Es puramente visual: el botón **Copiar** siempre pone el valor **real** en tu portapapeles, así que tus comandos siguen funcionando. Pruébalo abajo, y haz clic en el icono de ojo para mostrar el valor.",
     },
     secretEncryption: {
       intro:
@@ -1392,7 +1422,7 @@ Si algo sale mal, deshazlo en este orden:
       demoHint: (showVariables) =>
         `La primera pestaña es un runbook de versión que incrusta el runbook de despliegue de la segunda. Pulsa **${showVariables}** en la cabecera del bloque, cambia \`ENV\` de \`prod\` a \`dev\` y vuelve: los comandos incrustados lo siguen. Después edita un comando en la pestaña de despliegue y regresa a la primera. El cambio ya está ahí.`,
       overrides:
-        "Un valor que fijas en el bloque es una sobrescritura. Pertenece a este bloque y nunca cambia el runbook incrustado, así que cada runbook que lo incrusta indica solo lo que cambia. Puede referenciar las variables de este runbook, y la flecha a su lado la descarta.",
+        "Un valor que fijas en el bloque es una sobrescritura. Pertenece a este bloque y nunca cambia el runbook incrustado, así que cada runbook que lo incrusta indica solo lo que cambia. Puede referenciar las variables de este runbook o las del runbook incrustado, y la flecha a su lado la descarta. Mientras escribes una referencia, las sugerencias muestran primero las variables de este runbook y después las incrustadas, y la seleccionada indica el runbook del que viene.",
       readOnly: (open) =>
         `Los bloques incrustados son de solo lectura: puedes copiar un comando o ver una imagen, pero no editarlos. Para cambiar el propio runbook, pulsa **${open}**. Todos los runbooks que lo incrustan recogen el cambio, y renombrarlo no rompe el enlace.`,
       cloud: (local, signIn, refresh) =>
@@ -1450,12 +1480,16 @@ Si algo sale mal, deshazlo en este orden:
         "Si la carpeta de destino ya tiene un archivo con el mismo nombre, la exportación se detiene y te pide confirmación antes de reemplazarlo.",
     },
     cloudLinkedSync: {
-      intro:
-        "Un libro que importas desde la nube queda **sincronizado** con el archivo del que vino: cada edición se escribe de vuelta en ese archivo, así que nunca tienes que volver a exportarlo para guardarlo. Exportar un libro como **JSON** lo vincula igual.",
+      intro: (shortcut) =>
+        `Un libro que importas desde la nube queda **vinculado** al archivo del que vino. Tus ediciones se guardan en el navegador mientras escribes y llegan al archivo de la nube solo cuando guardas: pulsa \`${shortcut}\` o haz clic en el **icono de la nube** junto al libro. Así, quienes trabajan en el mismo archivo nunca ven los cambios a medio escribir de los demás. Exportar un libro como **JSON** lo vincula igual.`,
+      localSave: (shortcut) =>
+        `Un libro sin vincular siempre está guardado en el navegador, así que \`${shortcut}\` solo confirma que no queda nada por guardar.`,
       syncBadge: (runbooksTitle) =>
-        `Un libro sincronizado muestra un **icono de sincronización** junto a su nombre en la lista de **${runbooksTitle}**: gira mientras una edición va en camino, y se convierte en una nube tachada si el guardado falló. Haz clic en él para volver a iniciar sesión o reintentar.`,
+        `El icono de la nube junto a un libro vinculado en la lista de **${runbooksTitle}** muestra cómo está: una marca cuando el archivo de la nube está al día, una flecha hacia arriba cuando hay cambios sin guardar, un indicador giratorio mientras guarda y una nube tachada si cerraste sesión. Haz clic en él para guardar, iniciar sesión o reintentar.`,
+      conflicts: (keepMine) =>
+        `Al guardar, primero se lee el archivo de la nube. Si nadie más lo guardó desde la última vez que lo hiciste tú, se escriben tus cambios. Si solo cambió la copia de la nube, se trae esa. Si cambiaron las dos, se abre una **comparación lado a lado** con la copia de la nube a la izquierda y la tuya a la derecha. Edita tu lado para quedarte con lo que quieras de ambas (la flecha junto a un cambio copia la versión de la nube) y haz clic en **${keepMine}**, o quédate con la versión de la nube y descarta la tuya.`,
       stopSyncing: (stopSyncingLabel) =>
-        `**${stopSyncingLabel}** (en el menú de tres puntos del libro) rompe el vínculo sin tocar ninguna de las dos copias. La sincronización solo sube tus ediciones locales, nunca baja los cambios remotos.`,
+        `**${stopSyncingLabel}** (en el menú de tres puntos del libro) rompe el vínculo sin tocar ninguna de las dos copias.`,
     },
     cloudFileManagement: {
       folders:

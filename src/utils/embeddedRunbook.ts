@@ -5,6 +5,8 @@ import type {
   EmbeddedRunbook,
   RunbookBlock,
   RunbookEntry,
+  Tab,
+  Variable,
 } from "@/common/types";
 
 import { isEnumValue, isObject, isString } from "./typeGuards";
@@ -127,6 +129,31 @@ export function hasUnresolvedEmbeds(
   return blocks.some((block) =>
     isEmbedBlockUnresolved(block, library, embeddedRunbooks),
   );
+}
+
+export interface EmbedLookup {
+  runbookLibrary: readonly RunbookEntry[];
+  embeddedRunbooks: Readonly<Record<string, EmbeddedRunbook>>;
+  tabs: readonly Tab[];
+}
+
+/** The embedded runbook's variables. */
+export function embeddedVariables(
+  block: RunbookBlock,
+  { runbookLibrary, embeddedRunbooks, tabs }: EmbedLookup,
+): Variable[] | null {
+  const source = cachedEmbedSource(runbookLibrary, block);
+  if (!source) {
+    return null;
+  }
+
+  const entry = embeddedRunbooks[source.key];
+  const runbookId = source.local?.id ?? entry?.runbookId;
+  const openTab = runbookId
+    ? tabs.find((tab) => tab.runbookId === runbookId)
+    : undefined;
+
+  return openTab?.variables ?? entry?.content?.variables ?? null;
 }
 
 export function embedScopeId(scopeId: string, id: string): string {

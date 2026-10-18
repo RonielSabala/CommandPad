@@ -1,6 +1,6 @@
 import { SECRET_MASK } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { DataAttr } from "@/common/constants/dom";
+import { AutoComplete, DataAttr, InputType } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import {
   AppMode,
@@ -136,11 +136,11 @@ export const VariableRow = memo(function VariableRow({
                 "variable-value-input",
                 CssClass.NO_LIGATURES,
               )}
-              type="text"
+              type={InputType.TEXT}
               placeholder={t.variables.valuePlaceholder}
               value={variableValue}
               spellCheck={false}
-              autoComplete="off"
+              autoComplete={AutoComplete.OFF}
               onChange={(event) =>
                 updateVariable(
                   variableId,
@@ -160,7 +160,7 @@ export const VariableRow = memo(function VariableRow({
             />
 
             {isSecret && variableValue && (
-              <div className="variable-value-mask" aria-hidden="true">
+              <div className="variable-value-mask" aria-hidden={true}>
                 {SECRET_MASK}
               </div>
             )}
@@ -200,7 +200,7 @@ export const VariableRow = memo(function VariableRow({
             CssClass.BTN,
             CssClass.BTN_ICON,
           )}
-          aria-hidden="true"
+          aria-hidden={true}
         >
           <EyeIcon
             slashed

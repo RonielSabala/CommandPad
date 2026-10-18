@@ -10,7 +10,6 @@ import {
   CloudSyncConfig,
   createDefaultPanels,
   createDefaultScrollTop,
-  DEBOUNCE_CLOUD_SYNC_MS,
   DEBOUNCE_SAVE_MS,
   DEFAULT_TAB_LABEL,
   FilePickerConfig,
@@ -41,6 +40,7 @@ import {
   RunbookEmbedView,
   RunbookSyncStatus,
   RunbookView,
+  SaveOutcome,
   SortDirection,
   SyncDestination,
   Theme,
@@ -124,6 +124,7 @@ import {
   withJsonExtension,
   type EmbeddedReader,
 } from "@/utils/export";
+import { sha256 } from "@/utils/hash";
 import { generateId } from "@/utils/id";
 import { openImportDialog } from "@/utils/importTrigger";
 import { clamp } from "@/utils/number";
@@ -199,7 +200,7 @@ interface ConfirmOptions extends AlertOptions {
 
 export type VaultPassphrases = Record<VaultField, string>;
 
-export interface VaultDialog {
+interface VaultDialog {
   prompt: VaultPrompt;
   filename: string | null;
   error: VaultError | null;
@@ -208,7 +209,7 @@ export interface VaultDialog {
   resolve: (unlocked: boolean) => void;
 }
 
-export interface CloudFileEditor {
+interface CloudFileEditor {
   file: CloudEntry;
   folderPath: CloudFolderRef[];
   folderId: string | null;
@@ -217,6 +218,23 @@ export interface CloudFileEditor {
   loading: boolean;
   saving: boolean;
   error: string | null;
+}
+
+interface CloudConflict {
+  runbookId: string;
+  provider: CloudProvider;
+  filename: string;
+  cloudText: string;
+  localText: string;
+  local: RunbookContent;
+  error: string | null;
+  resolve: (kept: RunbookContent | null) => void;
+}
+
+interface SaveNotice {
+  id: number;
+  outcome: SaveOutcome;
+  provider: CloudProvider | null;
 }
 
 interface VariableReveal {
@@ -231,9 +249,7 @@ export interface StoreState {
   runbookLibrary: RunbookEntry[];
   activeRunbookId: string | null;
   runbookSyncStatus: Record<string, RunbookSyncStatus>;
-  /** Runbooks embedded by runbook blocks, by source key.*/
   embeddedRunbooks: Record<string, EmbeddedRunbook>;
-  /** Sections folded or unfolded inside an embed, by the embed's scope and section id. */
   embeddedSectionFolds: Record<string, boolean>;
 
   // UI
@@ -294,6 +310,8 @@ export interface StoreState {
   cloudError: string | null;
   cloudFileEditor: CloudFileEditor | null;
   cloudSelectedEntries: Map<string, PlacedCloudEntry>;
+  cloudConflict: CloudConflict | null;
+  saveNotice: SaveNotice | null;
 
   // Cloud folder navigation
   cloudPath: CloudFolderRef[];
@@ -320,6 +338,7 @@ export interface StoreState {
   initialized: boolean;
 
   // Actions
+
   bootstrap: () => Promise<void>;
   saveState: () => void;
 
@@ -347,7 +366,10 @@ export interface StoreState {
     openInTab?: boolean,
     vault?: { record: VaultRecord; passphrase: string | null },
   ) => Promise<boolean>;
-  syncRunbookNow: (id: string) => Promise<void>;
+  saveActiveRunbook: () => Promise<void>;
+  saveRunbookToCloud: (id: string) => Promise<void>;
+  resolveCloudConflict: (text: string | null) => void;
+  dismissSaveNotice: (id: number) => void;
   unlinkRunbookSync: (id: string) => void;
 
   readRunbookStats: (runbookId: string) => Promise<RunbookStats | null>;
@@ -371,7 +393,7 @@ export interface StoreState {
 
   addVariable: (kind?: VariableKind) => Promise<void>;
   extractVariable: (value: string) => { id: string; key: string } | null;
-  defineVariable: (tabId: string, key: string) => void;
+  defineVariable: (tabId: string, key: string) => string | null;
   removeVariable: (variableId: string) => void;
   duplicateVariable: (variableId: string) => void;
   updateVariable: (
@@ -564,7 +586,7 @@ function parentFolderPath(
   );
 }
 
-/** The folder holding `entry`, whether it was listed or found by search. */
+/** The folder holding `entry`. */
 function parentFolderId(state: StoreState, entry: CloudEntry): string | null {
   return currentFolderId(parentFolderPath(state, entry));
 }
@@ -586,7 +608,6 @@ function siblingEntries(state: StoreState, entry: CloudEntry): CloudEntry[] {
     : (getCachedCloudEntries(state.cloudProvider, folderId) ?? []);
 }
 
-/** Resolve the active tab, mirroring the original `activeTab()` fallback. */
 export function getActiveTab(state: StoreState): Tab | null {
   return (
     state.tabs.find((t) => t.id === state.activeTabId) ?? state.tabs[0] ?? null
@@ -722,10 +743,7 @@ function withVariableSection(
   }));
 }
 
-/**
- * What a variable action acts on: the whole selection when the clicked row is
- * part of it, that row alone otherwise. The same rule block actions follow.
- */
+/** What a variable action acts on. */
 function targetVariableIds(
   state: StoreState,
   variableId: string,
@@ -787,8 +805,7 @@ export function countSelectedSections(state: StoreState): number {
 
 /**
  * Recompute a tab's label from its blocks and mirror it into the runbook
- * library entry. Returns the same references when nothing changed so the
- * tabs bar / runbook list don't re-render needlessly.
+ * library entry.
  */
 function relabelTab(
   state: StoreState,
@@ -810,6 +827,7 @@ function relabelTab(
     tab.blocks,
     entry.filename || RunbookConfig.DEFAULT_LABEL,
   );
+
   if (newLabel === entry.label && newLabel === tab.label) {
     return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
   }
@@ -833,7 +851,7 @@ function relabelActive(state: StoreState): {
 
 export type AppStoreApi = StoreApi<StoreState>;
 
-export interface AppStoreOptions {
+interface AppStoreOptions {
   isDemo?: boolean;
   /** Pre-seeded runbook content for demo stores, keyed by runbook id */
   contentSeed?: Record<string, RunbookContent>;
@@ -899,125 +917,110 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
     // --- Cloud sync ---
 
-    const queuedSyncContent = new Map<
-      string,
-      { json: string; content: RunbookContent }
-    >();
-    const pushedSyncContent = new Map<string, string>();
+    // What each linked runbook held when it last met its cloud file
+    const syncedContent = new Map<string, string>();
 
     const setSyncStatus = (runbookId: string, status: RunbookSyncStatus) =>
       set((s) => ({
         runbookSyncStatus: { ...s.runbookSyncStatus, [runbookId]: status },
       }));
 
-    const forgetSyncState = (runbookId: string) => {
-      queuedSyncContent.delete(runbookId);
-      pushedSyncContent.delete(runbookId);
+    const clearSyncStatus = (runbookId: string) =>
       set((s) => {
         if (!(runbookId in s.runbookSyncStatus)) {
           return {};
         }
+
         const runbookSyncStatus = { ...s.runbookSyncStatus };
         delete runbookSyncStatus[runbookId];
         return { runbookSyncStatus };
       });
+
+    const forgetSyncState = (runbookId: string) => {
+      syncedContent.delete(runbookId);
+      clearSyncStatus(runbookId);
     };
 
     const getSyncLink = (runbookId: string): RunbookSync | undefined =>
       get().runbookLibrary.find((item) => item.id === runbookId)?.sync;
 
+    /** Rewrites a link that still exists, or creates one when `linking`. */
+    const setSyncLink = (
+      runbookId: string,
+      sync: RunbookSync,
+      linking = false,
+    ) => {
+      set((s) => ({
+        runbookLibrary: s.runbookLibrary.map((item) =>
+          item.id === runbookId && (linking || item.sync)
+            ? { ...item, sync }
+            : item,
+        ),
+      }));
+
+      persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+    };
+
+    const setSyncPending = (
+      runbookId: string,
+      pending: boolean,
+      link = getSyncLink(runbookId),
+    ) => {
+      if (link && (link.pending ?? false) !== pending) {
+        setSyncLink(runbookId, { ...link, pending });
+      }
+    };
+
     const runbookJson = (content: RunbookContent) =>
       buildRunbookSource(content);
 
-    /** Records content the cloud already holds, so nothing is pushed back. */
-    const markRunbookSynced = (runbookId: string, content: RunbookContent) => {
-      queuedSyncContent.delete(runbookId);
-      pushedSyncContent.set(runbookId, runbookJson(content));
-      setSyncStatus(runbookId, RunbookSyncStatus.SYNCED);
-    };
-
-    /**
-     * Writes everything queued, one file at a time. Two passes never overlap,
-     * so concurrent writes can't land on the same file out of order; whatever
-     * gets queued mid-pass is picked up before the pass ends. Never signs in on
-     * its own.
-     */
-    let syncPassRunning = false;
-    const flushQueuedSyncs = async () => {
-      if (syncPassRunning) {
-        return;
-      }
-      syncPassRunning = true;
-
-      try {
-        while (queuedSyncContent.size > 0) {
-          const [runbookId, { json, content }] = [...queuedSyncContent][0];
-          queuedSyncContent.delete(runbookId);
-
-          const link = getSyncLink(runbookId);
-          if (!link) {
-            continue;
-          }
-
-          const client = getCloudClient(link.provider);
-          try {
-            await client.init();
-            if (!client.isSignedIn()) {
-              setSyncStatus(runbookId, RunbookSyncStatus.SIGNED_OUT);
-              continue;
-            }
-
-            // Encrypted here, not when queued, so the queue stays comparable
-            await client.writeFile(
-              link.filename,
-              await buildSecuredRunbookExportContent(
-                ExportFormat.JSON,
-                runbookId,
-                content,
-                readEmbeddedForExport,
-              ),
-              MimeType.JSON,
-              link.folderId,
-            );
-          } catch (error) {
-            console.error("Cloud sync failed", error);
-            setSyncStatus(runbookId, RunbookSyncStatus.ERROR);
-            continue;
-          }
-
-          pushedSyncContent.set(runbookId, json);
-          // The file's size and modified date just changed under any cached listing
-          clearCachedCloudEntries(link.provider);
-          setSyncStatus(runbookId, RunbookSyncStatus.SYNCED);
-        }
-      } finally {
-        syncPassRunning = false;
-      }
-    };
-
-    const debouncedFlushSyncs = debounce(
-      () => void flushQueuedSyncs(),
-      DEBOUNCE_CLOUD_SYNC_MS,
-    );
-
-    /**
-     * Schedules a push for a linked runbook whose content actually moved.
-     * Called from every path that persists content, so linked runbooks stay
-     * current without an explicit export.
-     */
-    const queueCloudSync = (runbookId: string, content: RunbookContent) => {
-      if (isDemo || !getSyncLink(runbookId)) {
+    /** Flags a linked runbook whose content moved away from what its cloud file holds. */
+    const trackCloudChanges = (runbookId: string, content: RunbookContent) => {
+      const link = getSyncLink(runbookId);
+      if (isDemo || !link) {
         return;
       }
 
       const json = runbookJson(content);
-      if (pushedSyncContent.get(runbookId) === json) {
+      const synced = syncedContent.get(runbookId);
+      if (synced === undefined) {
+        if (!link.pending) {
+          syncedContent.set(runbookId, json);
+        }
+
         return;
       }
 
-      queuedSyncContent.set(runbookId, { json, content });
-      setSyncStatus(runbookId, RunbookSyncStatus.SYNCING);
-      debouncedFlushSyncs();
+      setSyncPending(runbookId, json !== synced, link);
+    };
+
+    const flagUnsavedCloudChanges = (runbookId: string) => {
+      syncedContent.delete(runbookId);
+      setSyncPending(runbookId, true);
+    };
+
+    /** Records that the cloud file holds `content`, as `sync` describes it. */
+    const markRunbookSynced = (
+      runbookId: string,
+      content: RunbookContent,
+      sync: RunbookSync,
+      linking = false,
+    ) => {
+      syncedContent.set(runbookId, runbookJson(content));
+      setSyncLink(runbookId, { ...sync, pending: false }, linking);
+      clearSyncStatus(runbookId);
+
+      // An edit made while the cloud was being reached is still unsaved
+      const openTab = get().tabs.find((t) => t.runbookId === runbookId);
+      const tabMoved =
+        openTab &&
+        (openTab.blocks !== content.blocks ||
+          openTab.variables !== content.variables ||
+          openTab.variableSections !== content.variableSections);
+
+      if (tabMoved) {
+        trackCloudChanges(runbookId, tabContent(openTab));
+      }
     };
 
     /** Points a runbook at a cloud file it was just written to or read from. */
@@ -1025,16 +1028,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       runbookId: string,
       sync: RunbookSync,
       content: RunbookContent,
-    ) => {
-      set((s) => ({
-        runbookLibrary: s.runbookLibrary.map((item) =>
-          item.id === runbookId ? { ...item, sync } : item,
-        ),
-      }));
-
-      markRunbookSynced(runbookId, content);
-      persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
-    };
+    ) => markRunbookSynced(runbookId, content, sync, true);
 
     // --- Secret encryption ---
 
@@ -1144,19 +1138,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       }
     };
 
-    const requeueLinkedRunbook = async (runbookId: string) => {
-      const entry = get().runbookLibrary.find((item) => item.id === runbookId);
-      if (!entry?.sync) {
-        return;
-      }
-
-      pushedSyncContent.delete(runbookId);
-      const content = await readRunbookContent(runbookId);
-      if (content) {
-        queueCloudSync(runbookId, content);
-      }
-    };
-
     const createVaultWith =
       (runbookId: string) => async (passphrases: VaultPassphrases) => {
         setVaultRecord(
@@ -1165,7 +1146,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         );
 
         await encryptStoredRunbook(runbookId);
-        await requeueLinkedRunbook(runbookId);
+        flagUnsavedCloudChanges(runbookId);
         return true;
       };
 
@@ -1230,7 +1211,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           }
         }
 
-        await requeueLinkedRunbook(runbookId);
+        flagUnsavedCloudChanges(runbookId);
         return true;
       };
 
@@ -1427,8 +1408,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
     /** Empties the workspace, after its stored runbooks are gone. */
     const resetWorkspace = () => {
-      queuedSyncContent.clear();
-      pushedSyncContent.clear();
+      syncedContent.clear();
       declinedVaultSetup.clear();
       embedRequests.clear();
 
@@ -1554,6 +1534,236 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       await client.init();
       if (!client.isSignedIn()) {
         await client.signIn();
+      }
+    };
+
+    // --- Saving to the cloud ---
+
+    let saveNoticeId = 0;
+
+    const showSaveNotice = (
+      outcome: SaveOutcome,
+      provider: CloudProvider | null,
+    ) => set({ saveNotice: { id: ++saveNoticeId, outcome, provider } });
+
+    const savingRunbooks = new Set<string>();
+
+    /** Replaces a runbook's content with what it settled on with the cloud. */
+    const replaceRunbookContent = async (
+      runbookId: string,
+      content: RunbookContent,
+    ) => {
+      await writeRunbookContent(runbookId, content);
+
+      set((s) => {
+        const tab = s.tabs.find((t) => t.runbookId === runbookId);
+        if (tab) {
+          const replaced = { ...tab, ...contentFields(content) };
+          return relabelTab(
+            { ...s, tabs: s.tabs.map((t) => (t.id === tab.id ? replaced : t)) },
+            replaced,
+          );
+        }
+
+        return {
+          runbookLibrary: s.runbookLibrary.map((item) =>
+            item.id === runbookId
+              ? {
+                  ...item,
+                  label: getRunbookLabel(
+                    content.blocks,
+                    item.filename || RunbookConfig.DEFAULT_LABEL,
+                  ),
+                }
+              : item,
+          ),
+        };
+      });
+
+      persist.saveTabsMeta(get().tabs, get().activeTabId);
+      persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+    };
+
+    /** The linked file's text and revision. */
+    const readLinkedFile = async (client: CloudClient, link: RunbookSync) => {
+      const file = (await client.listEntries(link.folderId)).find(
+        (entry) => !entry.isFolder && entry.name === link.filename,
+      );
+
+      if (!file) {
+        return null;
+      }
+
+      const text = await client.readFile(file);
+      return { text, revision: sha256(text) };
+    };
+
+    const pushLinkedRunbook = async (
+      client: CloudClient,
+      runbookId: string,
+      link: RunbookSync,
+      content: RunbookContent,
+    ) => {
+      const text = await buildSecuredRunbookExportContent(
+        ExportFormat.JSON,
+        runbookId,
+        content,
+        readEmbeddedForExport,
+      );
+
+      await client.writeFile(link.filename, text, MimeType.JSON, link.folderId);
+      clearCachedCloudEntries(link.provider);
+      markRunbookSynced(runbookId, content, {
+        ...link,
+        revision: sha256(text),
+      });
+
+      return SaveOutcome.SAVED;
+    };
+
+    const promptCloudConflict = (
+      conflict: Omit<CloudConflict, "error" | "resolve">,
+    ) =>
+      new Promise<RunbookContent | null>((resolve) =>
+        set({
+          cloudConflict: { ...conflict, error: null, resolve },
+          saveNotice: null,
+        }),
+      );
+
+    /**
+     * Pushes local edits when nobody else saved since the two last met,
+     * pulls the file when only it moved, and asks when both did. Null
+     * when the user backed out.
+     */
+    const reconcileLinkedRunbook = async (
+      client: CloudClient,
+      runbookId: string,
+      link: RunbookSync,
+    ): Promise<SaveOutcome | null> => {
+      const local = await readRunbookContent(runbookId);
+      if (!local) {
+        return null;
+      }
+
+      const remote = await readLinkedFile(client, link);
+      if (!remote) {
+        return pushLinkedRunbook(client, runbookId, link, local);
+      }
+
+      const synced: RunbookSync = { ...link, revision: remote.revision };
+      const fileMoved = remote.revision !== link.revision;
+
+      let cloud: RunbookContent | null = null;
+      let cloudText = remote.text;
+
+      if (fileMoved) {
+        try {
+          cloud = parseRunbookSource(remote.text, local);
+        } catch {
+          // Only the local copy can be kept
+        }
+
+        // A locked copy is compared as ciphertext
+        if (cloud && !hasEncryptedSecrets(local)) {
+          cloud = (await decryptImportedContent(cloud, link.filename)).content;
+        }
+
+        if (cloud) {
+          cloudText = runbookJson(cloud);
+        }
+      }
+
+      if (!fileMoved || cloudText === syncedContent.get(runbookId)) {
+        if (link.pending) {
+          return pushLinkedRunbook(client, runbookId, synced, local);
+        }
+
+        if (fileMoved) {
+          markRunbookSynced(runbookId, local, synced);
+        }
+
+        return SaveOutcome.UP_TO_DATE;
+      }
+
+      const localText = runbookJson(local);
+      if (cloud && cloudText === localText) {
+        markRunbookSynced(runbookId, local, synced);
+        return SaveOutcome.UP_TO_DATE;
+      }
+
+      const knowsSyncedState =
+        link.revision !== undefined || syncedContent.has(runbookId);
+
+      if (cloud && !link.pending && knowsSyncedState) {
+        await replaceRunbookContent(runbookId, cloud);
+        markRunbookSynced(runbookId, cloud, synced);
+
+        return SaveOutcome.UPDATED;
+      }
+
+      const kept = await promptCloudConflict({
+        runbookId,
+        provider: link.provider,
+        filename: link.filename,
+        cloudText,
+        localText,
+        local,
+      });
+
+      if (!kept) {
+        return null;
+      }
+
+      showSaveNotice(SaveOutcome.SAVING, link.provider);
+
+      const keptText = runbookJson(kept);
+      if (keptText !== localText) {
+        await replaceRunbookContent(runbookId, kept);
+      }
+
+      if (cloud && keptText === cloudText) {
+        markRunbookSynced(runbookId, kept, synced);
+        return SaveOutcome.UPDATED;
+      }
+
+      return reconcileLinkedRunbook(client, runbookId, {
+        ...synced,
+        pending: true,
+      });
+    };
+
+    const saveLinkedRunbook = async (id: string, link: RunbookSync) => {
+      if (isDemo || savingRunbooks.has(id)) {
+        return;
+      }
+
+      savingRunbooks.add(id);
+      setSyncStatus(id, RunbookSyncStatus.SYNCING);
+      showSaveNotice(SaveOutcome.SAVING, link.provider);
+      const client = getCloudClient(link.provider);
+
+      try {
+        try {
+          await ensureSignedIn(client);
+        } catch (error) {
+          console.error("Cloud save sign-in failed", error);
+          setSyncStatus(id, RunbookSyncStatus.SIGNED_OUT);
+          showSaveNotice(SaveOutcome.SIGNED_OUT, link.provider);
+          return;
+        }
+
+        const outcome = await reconcileLinkedRunbook(client, id, link);
+        clearSyncStatus(id);
+        if (outcome) {
+          showSaveNotice(outcome, link.provider);
+        }
+      } catch (error) {
+        console.error("Cloud save failed", error);
+        setSyncStatus(id, RunbookSyncStatus.ERROR);
+        showSaveNotice(SaveOutcome.FAILED, link.provider);
+      } finally {
+        savingRunbooks.delete(id);
       }
     };
 
@@ -1702,6 +1912,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       cloudLoading: false,
       cloudError: null,
       cloudFileEditor: null,
+      cloudConflict: null,
+      saveNotice: null,
       cloudSelectedEntries: new Map(),
 
       cloudPath: ROOT_CLOUD_PATH,
@@ -1742,7 +1954,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             console.warn("Failed to persist runbook content:", error),
           );
 
-          queueCloudSync(active.runbookId, content);
+          trackCloudChanges(active.runbookId, content);
         }
       },
 
@@ -1827,11 +2039,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         refreshVaultStatus();
         await promptUnlockForActiveTab();
 
-        // An edit made just before the last close may never have reached the
-        // cloud, so every linked tab gets one catch-up push on load
         for (const tab of get().tabs) {
           if (tab.runbookId) {
-            queueCloudSync(tab.runbookId, tabContent(tab));
+            trackCloudChanges(tab.runbookId, tabContent(tab));
           }
         }
       },
@@ -2003,6 +2213,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           activeRunbookId: runbookId,
         }));
 
+        trackCloudChanges(runbookId, tabContent(tab));
         persist.saveTabsMeta(get().tabs, get().activeTabId);
         persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
       },
@@ -2021,13 +2232,16 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
         const runbook = state.runbookLibrary.find((item) => item.id === id);
 
-        // A synced runbook still exists in the cloud, so removing it loses nothing
-        if (!isEmpty && !runbook?.sync) {
+        // A saved runbook still exists in the cloud, so removing it loses nothing
+        const sync = runbook?.sync;
+        if (!isEmpty && (!sync || sync.pending)) {
           const t = getMessages(get().language);
+          const name = displayLabel(runbook?.label ?? "", t);
+
           const confirmed = await get().confirm(
-            t.dialogs.deleteRunbookMessage(
-              displayLabel(runbook?.label ?? "", t),
-            ),
+            sync
+              ? t.dialogs.deleteUnsavedRunbookMessage(name)
+              : t.dialogs.deleteRunbookMessage(name),
             {
               title: t.dialogs.deleteRunbookTitle,
               confirmLabel: t.dialogs.deleteRunbookConfirm,
@@ -2038,12 +2252,6 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           if (!confirmed) {
             return;
           }
-        }
-
-        // Removing the entry leans on the cloud copy being current, so let any
-        // edit still waiting on the debounce land before the local copy goes
-        if (queuedSyncContent.has(id)) {
-          await flushQueuedSyncs();
         }
 
         await contentDb.delete(id);
@@ -2188,9 +2396,9 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
          */
         const settleSync = (runbookId: string) => {
           if (sync) {
-            markRunbookSynced(runbookId, content);
+            markRunbookSynced(runbookId, content, sync);
           } else {
-            queueCloudSync(runbookId, content);
+            flagUnsavedCloudChanges(runbookId);
           }
         };
 
@@ -2299,31 +2507,56 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         return true;
       },
 
-      syncRunbookNow: async (id) => {
+      saveActiveRunbook: async () => {
+        get().saveState();
+
+        const runbookId = getActiveTab(get())?.runbookId;
+        const link = runbookId && getSyncLink(runbookId);
+        if (link) {
+          await saveLinkedRunbook(runbookId, link);
+        } else {
+          showSaveNotice(SaveOutcome.LOCAL, null);
+        }
+      },
+
+      saveRunbookToCloud: async (id) => {
         const link = getSyncLink(id);
-        if (!link) {
+        if (link) {
+          await saveLinkedRunbook(id, link);
+        }
+      },
+
+      resolveCloudConflict: (text) => {
+        const conflict = get().cloudConflict;
+        if (!conflict) {
           return;
         }
 
-        const content = await readRunbookContent(id);
-        if (!content) {
-          return;
+        let kept: RunbookContent | null = null;
+        if (text !== null) {
+          try {
+            kept = parseRunbookSource(text, conflict.local);
+          } catch {
+            const t = getMessages(get().language);
+            set({
+              cloudConflict: {
+                ...conflict,
+                error: t.cloudConflict.invalidError,
+              },
+            });
+
+            return;
+          }
         }
 
-        const client = getCloudClient(link.provider);
-        setSyncStatus(id, RunbookSyncStatus.SYNCING);
+        set({ cloudConflict: null });
+        conflict.resolve(kept);
+      },
 
-        // Retrying is a click, so a sign-in popup here is expected rather than ambushing
-        try {
-          await ensureSignedIn(client);
-        } catch (error) {
-          console.error("Cloud sync sign-in failed", error);
-          setSyncStatus(id, RunbookSyncStatus.SIGNED_OUT);
-          return;
+      dismissSaveNotice: (id) => {
+        if (get().saveNotice?.id === id) {
+          set({ saveNotice: null });
         }
-
-        queuedSyncContent.set(id, { json: runbookJson(content), content });
-        await flushQueuedSyncs();
       },
 
       readRunbookStats: (runbookId) => {
@@ -2427,16 +2660,14 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
           // The ids the embed already holds
           const previous = get().embeddedRunbooks[key]?.content ?? undefined;
-          const content = parseRunbookSource(
-            await client.readFile(located.file),
-            previous,
-          );
-
+          const text = await client.readFile(located.file);
+          const content = parseRunbookSource(text, previous);
           const opened = await addCloudRunbook(
             located.file.name,
             await readImportedContent(content),
-            link,
+            { ...link, revision: sha256(text) },
           );
+
           if (!opened) {
             return;
           }
@@ -2740,7 +2971,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
 
       defineVariable: (tabId, key) => {
         if (get().mode === AppMode.READ) {
-          return;
+          return null;
         }
 
         get().switchTab(tabId);
@@ -2751,7 +2982,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           variableSearchQuery: "",
         }));
 
-        get().revealVariable(newVariable.id, false);
+        get().saveState();
+        return newVariable.id;
       },
 
       removeVariable: (variableId) => {
@@ -3390,17 +3622,15 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           };
         });
 
-        // The target may not be the active tab, so persist its content explicitly
+        // saveState only persists the active tab, so another target is written here
         const updated = get().tabs.find((t) => t.id === targetTabId);
-        if (updated?.runbookId) {
+        if (updated?.runbookId && updated.id !== getActiveTab(get())?.id) {
           const content = tabContent(updated);
-          contentDb
-            .put(updated.runbookId, content)
-            .catch((error) =>
-              console.warn("Failed to persist runbook content:", error),
-            );
+          writeRunbookContent(updated.runbookId, content).catch((error) =>
+            console.warn("Failed to persist runbook content:", error),
+          );
 
-          queueCloudSync(updated.runbookId, content);
+          trackCloudChanges(updated.runbookId, content);
         }
 
         get().saveState();
@@ -4030,23 +4260,29 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
             set({ cloudExportStatus: CloudExportStatus.UPLOADING });
           }
 
+          const written = await buildSecuredRunbookExportContent(
+            format,
+            scope,
+            content,
+            readEmbeddedForExport,
+          );
           await client.writeFile(
             fullName,
-            await buildSecuredRunbookExportContent(
-              format,
-              scope,
-              content,
-              readEmbeddedForExport,
-            ),
+            written,
             FilePickerConfig[format].mimeType,
             folderId,
           );
 
-          // JSON is the only round-trippable format, so it is the only one worth linking
+          // JSON is the only worth linking format
           if (format === ExportFormat.JSON && active?.runbookId) {
             linkRunbookToCloud(
               active.runbookId,
-              { provider: destination, filename: fullName, folderId },
+              {
+                provider: destination,
+                filename: fullName,
+                folderId,
+                revision: sha256(written),
+              },
               content,
             );
           }
@@ -4411,7 +4647,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         }
 
         // Every file is read before the first one is added
-        const pending: { file: CloudEntry; content: RunbookContent }[] = [];
+
+        const pending: {
+          file: CloudEntry;
+          content: RunbookContent;
+          revision: string;
+        }[] = [];
+
         const syncs = new Map<string, RunbookSync>(
           files.map((file) => [
             file.id,
@@ -4437,7 +4679,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           }
 
           try {
-            pending.push({ file, content: parseRunbookSource(text) });
+            pending.push({
+              file,
+              content: parseRunbookSource(text),
+              revision: sha256(text),
+            });
           } catch {
             failure = t.cloudModal.invalidFileError;
           }
@@ -4446,9 +4692,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
         set({ cloudLoading: false, cloudError: failure });
 
         let added = 0;
-        for (const { file, content } of pending) {
+        for (const { file, content, revision } of pending) {
           const decrypted = await decryptImportedContent(content, file.name);
-          if (await addCloudRunbook(file.name, decrypted, syncs.get(file.id))) {
+          const sync = syncs.get(file.id);
+          const linked = sync && { ...sync, revision };
+
+          if (await addCloudRunbook(file.name, decrypted, linked)) {
             added++;
           }
         }
@@ -5006,7 +5255,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
   });
 }
 
-export const appStore = createAppStore();
+const appStore = createAppStore();
 
 const StoreContext = createContext<AppStoreApi>(appStore);
 

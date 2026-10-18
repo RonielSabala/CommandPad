@@ -20,7 +20,7 @@ interface FlagCircleProps {
 
 function FlagCircle({ language }: FlagCircleProps) {
   return (
-    <span className="language-flag" aria-hidden="true">
+    <span className="language-flag" aria-hidden={true}>
       <LanguageFlag language={language} />
     </span>
   );

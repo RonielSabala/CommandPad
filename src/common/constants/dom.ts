@@ -34,13 +34,27 @@ export const InputSelector = {
   CODE: `${MonacoSelector.INPUT}, ${MonacoSelector.EDIT_CONTEXT}`,
 } as const;
 
+export const AriaRole = {
+  STATUS: "status",
+  TOOLTIP: "tooltip",
+  OPTION: "option",
+  DIALOG: "dialog",
+  LISTBOX: "listbox",
+  CHECKBOX: "checkbox",
+  MENU: "menu",
+  MENU_ITEM: "menuitem",
+  MENU_ITEM_CHECKBOX: "menuitemcheckbox",
+  PROGRESSBAR: "progressbar",
+  SEPARATOR: "separator",
+} as const;
+
 export const SelectSelector = {
-  OPTION: '[role="option"]',
+  OPTION: `[role="${AriaRole.OPTION}"]`,
   SELECTED_OPTION: ".select-option.is-selected",
 } as const;
 
 export const ModalSelector = {
-  OPEN: ".modal-backdrop.modal-visible",
+  OPEN: `.${CssClass.MODAL_BACKDROP}.${CssClass.MODAL_VISIBLE}`,
 } as const;
 
 export const BodySelector = {
@@ -55,10 +69,30 @@ export const EditCommand = {
 } as const;
 
 export const HtmlTag = {
-  TABLE_HEADER_CELL: "th",
-  TABLE_CELL: "td",
-  PARAGRAPH: "p",
   DIV: "div",
+  SPAN: "span",
+  ANCHOR: "a",
+  PARAGRAPH: "p",
+  LABEL: "label",
+  BUTTON: "button",
+  SCRIPT: "script",
+  TABLE_CELL: "td",
+  TABLE_HEADER_CELL: "th",
+} as const;
+
+export const ButtonType = {
+  BUTTON: "button",
+} as const;
+
+export const InputType = {
+  TEXT: "text",
+  PASSWORD: "password",
+  URL: "url",
+  FILE: "file",
+} as const;
+
+export const AutoComplete = {
+  OFF: "off",
 } as const;
 
 export const DataAttr = {

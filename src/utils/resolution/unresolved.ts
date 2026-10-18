@@ -1,11 +1,11 @@
 import { getBlockCommandTexts } from "@/blocks";
-import { SECRET_MASK } from "@/common/config";
 import { CommandSegmentType, UnresolvedCause } from "@/common/enums";
 import type { Block, CommandSegment, ResolvedSpan } from "@/common/types";
 
 import { findUnresolvedOffset, resolveCommandSegments } from "./command";
 import { sourceKey } from "./params";
-import { hasUnresolvedSpans } from "./spans";
+import { maskedText } from "./segments";
+import { hasUnresolvedSpans, spansText } from "./spans";
 import type { VariableMap } from "./types";
 
 const blockResults = new WeakMap<
@@ -41,15 +41,6 @@ export function hasUnresolvedBlockReferences(
   variableMap: VariableMap,
 ): boolean {
   return unresolvedBlockText(block, variableMap) !== null;
-}
-
-export function hasUnresolvedReferences(
-  blocks: readonly Block[],
-  variableMap: VariableMap,
-): boolean {
-  return blocks.some((block) =>
-    hasUnresolvedBlockReferences(block, variableMap),
-  );
 }
 
 export interface UnresolvedPart {
@@ -89,11 +80,6 @@ function* spanFailures(
   spans: readonly ResolvedSpan[],
   secretKeys: ReadonlySet<string>,
 ): Generator<Failure> {
-  const shown = (span: ResolvedSpan) =>
-    !span.unresolved && span.source && secretKeys.has(sourceKey(span.source))
-      ? SECRET_MASK
-      : span.text;
-
   const pieces = new Set<number>();
 
   for (const [start, span] of spans.entries()) {
@@ -121,7 +107,10 @@ function* spanFailures(
 
       const inner = spans.slice(end + 1, next);
       wraps ||= hasUnresolvedSpans(inner);
-      text += inner.map(shown).join("") + candidate.text;
+      text +=
+        maskedText({ text: spansText(inner), spans: inner }, secretKeys) +
+        candidate.text;
+
       pieces.add(next);
       end = next;
     }

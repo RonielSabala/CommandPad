@@ -9,6 +9,7 @@ export const CssClass = {
 
   ACTIVE: "active",
   COLLAPSED: "collapsed",
+  HAS_ERROR: "has-error",
   ANIMATING: "animating",
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",
@@ -27,6 +28,7 @@ export const CssClass = {
   SELECT_MENU_PORTAL: "select-menu-portal",
   CODE_EDITOR_PROMPT: "code-editor-prompt",
   CODE_EDITOR_SURFACE: "code-editor-surface",
+  CODE_EDITOR_BOUNDED: "code-editor-bounded",
 
   // Buttons
 
@@ -104,6 +106,14 @@ export const CssClass = {
   MINIMAP_LEFT: "minimap-left",
   MINIMAP_HOST: "minimap-host",
   MINIMAP_SCROLLER: "minimap-scroller",
+
+  // Modal
+  MODAL_CLOUD: "modal-cloud",
+  MODAL_VISIBLE: "modal-visible",
+  MODAL_NO_ANIMATION: "modal-no-animation",
+  MODAL_SCROLLABLE_BODY: "modal-scrollable-body",
+  MODAL_BACKDROP: "modal-backdrop",
+  MODAL_BACKDROP_TRANSPARENT: "modal-backdrop-transparent",
 } as const;
 
 export const CssAnimation = {

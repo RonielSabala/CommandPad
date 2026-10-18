@@ -1,5 +1,5 @@
 import { CssClass } from "@/common/constants/css";
-import { Anchor, Cursor } from "@/common/constants/dom";
+import { Anchor, Cursor, HtmlTag } from "@/common/constants/dom";
 import { EventType } from "@/common/constants/events";
 import { AppMode } from "@/common/enums";
 import { isModifierPressed, ModifierAction } from "@/common/keybindings";
@@ -16,7 +16,7 @@ export function useLinkActivation(root: Document | HTMLElement | null): void {
       return;
     }
 
-    // A scoped (element) root only arms while the pointer is over it
+    // A scoped root only arms while the pointer is over it
     const scoped = root !== document;
     let pointerInside = !scoped;
 
@@ -90,8 +90,7 @@ export function useLinkActivation(root: Document | HTMLElement | null): void {
 
       // Focus the note, putting the caret on the character that was clicked
       const caret = getNoteCaretAtPoint(link, event.clientX, event.clientY);
-      const control = (link.closest("label") as HTMLLabelElement | null)
-        ?.control;
+      const control = link.closest(HtmlTag.LABEL)?.control;
       control?.focus();
 
       if (caret !== undefined && control instanceof HTMLTextAreaElement) {

@@ -222,10 +222,11 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
             <div className="cloud-browser-list">
               <div
                 className={classNames(
-                  "cloud-browser-entries modal-scrollable-body",
-                  !showFiles && "is-folders-only",
+                  "cloud-browser-entries",
                   busy && "is-busy",
+                  !showFiles && "is-folders-only",
                   selectedEntries.size > 0 && "has-selection",
+                  CssClass.MODAL_SCROLLABLE_BODY,
                 )}
                 onClick={clearOnBackdrop}
               >

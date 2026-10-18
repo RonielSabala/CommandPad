@@ -1,6 +1,11 @@
 import { TooltipConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { BodySelector, DataAttr, PopupSelector } from "@/common/constants/dom";
+import {
+  AriaRole,
+  BodySelector,
+  DataAttr,
+  PopupSelector,
+} from "@/common/constants/dom";
 import {
   EventType,
   Key,
@@ -8,6 +13,7 @@ import {
   PASSIVE_CAPTURE,
 } from "@/common/constants/events";
 import type { TooltipVariant } from "@/common/enums";
+import { toPx } from "@/utils/dom";
 import { classNames } from "@/utils/string";
 import {
   useCallback,
@@ -408,7 +414,7 @@ export function TooltipLayer() {
       const longest = longestLineWidth(text);
 
       if (longest > 0) {
-        text.style.width = `${longest}px`;
+        text.style.width = toPx(longest);
       }
     }
 
@@ -437,7 +443,7 @@ export function TooltipLayer() {
           setPinned(false);
         }
       }}
-      role="tooltip"
+      role={AriaRole.TOOLTIP}
       aria-hidden={!shownRichId}
       tabIndex={shownRichId ? -1 : undefined}
       {...{ [DataAttr.TOOLTIP_SIDE]: shownPlacement?.side }}
@@ -445,8 +451,8 @@ export function TooltipLayer() {
         {
           left: shownPlacement?.x ?? 0,
           top: shownPlacement?.y ?? 0,
-          "--tooltip-gap": `${TooltipConfig.GAP}px`,
-          "--tooltip-arrow-x": `${shownPlacement?.arrowX ?? 0}px`,
+          "--tooltip-gap": toPx(TooltipConfig.GAP),
+          "--tooltip-arrow-x": toPx(shownPlacement?.arrowX ?? 0),
         } as CSSProperties
       }
     >

@@ -1,10 +1,11 @@
 import { SelectConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { SelectSelector } from "@/common/constants/dom";
+import { AriaRole, SelectSelector } from "@/common/constants/dom";
 import { EventType, Key } from "@/common/constants/events";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import { useStore } from "@/store/store";
+import { toPx } from "@/utils/dom";
 import { classNames } from "@/utils/string";
 import {
   useEffect,
@@ -155,7 +156,7 @@ export function Select<T extends string>({
       rows[rows.length - 1].getBoundingClientRect().bottom -
       lastVisible.getBoundingClientRect().bottom;
 
-    menu.style.maxHeight = `${menu.offsetHeight - clipped}px`;
+    menu.style.maxHeight = toPx(menu.offsetHeight - clipped);
     menu.scrollTop = grew ? menu.scrollHeight : scrollTop;
   }, [open, scrollable, options]);
 
@@ -191,7 +192,7 @@ export function Select<T extends string>({
         portal ? CssClass.SELECT_MENU_PORTAL : `align-${align}`,
       )}
       style={portal ? menuStyle : undefined}
-      role="listbox"
+      role={AriaRole.LISTBOX}
     >
       {options.length === 0 && empty && (
         <li className={classNames("select-empty", CssClass.NO_USER_SELECT)}>
@@ -206,7 +207,7 @@ export function Select<T extends string>({
             CssClass.NO_USER_SELECT,
             optionAction && "select-option-row",
           )}
-          role="option"
+          role={AriaRole.OPTION}
           aria-selected={option.value === value}
         >
           <button
@@ -232,7 +233,7 @@ export function Select<T extends string>({
       <button
         className={triggerClassName}
         {...tooltip(title)}
-        aria-haspopup="listbox"
+        aria-haspopup={AriaRole.LISTBOX}
         aria-expanded={open}
         onClick={() => setOpen((isOpen) => !isOpen)}
       >

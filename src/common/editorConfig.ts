@@ -70,15 +70,23 @@ export const CodeModelScope = {
   PASTE_RUNBOOK: "runbook/paste",
   RUNBOOK_SOURCE: "runbook/source",
   CLOUD_FILE: "runbook/cloud",
+  CLOUD_CONFLICT: "runbook/conflict",
 } as const;
 export type CodeModelScope =
   (typeof CodeModelScope)[keyof typeof CodeModelScope];
 
 export const RUNBOOK_JSON_SCOPES: readonly string[] = [
   CodeModelScope.PASTE_RUNBOOK,
-  CodeModelScope.CLOUD_FILE,
   CodeModelScope.RUNBOOK_SOURCE,
+  CodeModelScope.CLOUD_FILE,
+  CodeModelScope.CLOUD_CONFLICT,
 ];
+
+export const ConflictSide = {
+  CLOUD: "cloud",
+  LOCAL: "local",
+} as const;
+export type ConflictSide = (typeof ConflictSide)[keyof typeof ConflictSide];
 
 export const MonacoMinimap = {
   showSlider: "mouseover",
@@ -100,6 +108,8 @@ export const MonacoTheme = {
   SLIDER_OPACITY: 0.07,
   SLIDER_HOVER_OPACITY: 0.1,
   SLIDER_ACTIVE_OPACITY: 0.15,
+  DIFF_LINE_OPACITY: 0.12,
+  DIFF_TEXT_OPACITY: 0.28,
   BASE_STRING_DARK: "#ce9178",
   BASE_STRING_LIGHT: "#a31515",
 } as const;
@@ -143,6 +153,7 @@ export const MonacoLayout = {
   FIRST_LINE: 1,
   FIRST_COLUMN: 1,
   LINE_NUMBER_MIN_CHARS: 1,
+  FULL_HEIGHT: "100%",
 } as const;
 
 export const DragScrollConfig = {
@@ -190,10 +201,17 @@ export const VariableCompletionConfig = {
   SNIPPET_CARET: "$0",
   /** How far back a reference laid out over several lines is read. */
   MAX_REFERENCE_LINES: 20,
+  /** How much of a runbook's name a suggestion shows. */
+  MAX_ORIGIN_LENGTH: 16,
+  /** Sort groups. */
+  HOST_GROUP: 0,
+  EMBEDDED_GROUP: 1,
 } as const;
 
 export const MonacoContextMenu = {
   GROUP: "1_commandpad",
+  CONTROLLER_ID: "editor.contrib.contextmenu",
+  AVAILABLE_KEY_SUFFIX: ".available",
   OPEN_WAIT_FRAMES: 10,
   SHOW_ACTION: "editor.action.showContextMenu",
   TRIGGER_SOURCE: "commandpad",
@@ -201,12 +219,16 @@ export const MonacoContextMenu = {
 
 export const EditorActionId = {
   EXTRACT_VARIABLE: "commandpad.extractVariable",
+  INLINE_VARIABLE: "commandpad.inlineVariable",
   ESCAPE_VARIABLE: "commandpad.escapeVariable",
+  UNESCAPE_VARIABLE: "commandpad.unescapeVariable",
 } as const;
 
 export const EditorActionOrder = {
   EXTRACT_VARIABLE: 1,
-  ESCAPE_VARIABLE: 2,
+  INLINE_VARIABLE: 2,
+  ESCAPE_VARIABLE: 3,
+  UNESCAPE_VARIABLE: 4,
 } as const;
 
 /** The body-level nodes Monaco renders out of the editor into. */

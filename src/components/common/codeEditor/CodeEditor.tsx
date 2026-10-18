@@ -4,10 +4,8 @@ import { MonacoSelector } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import {
   CodeEditorProperty,
-  CodeModelConfig,
   EditorLanguage,
   MonacoLayout,
-  RUNBOOK_JSON_SCOPES,
 } from "@/common/editorConfig";
 import { CodeLanguage, CodeRendering, PanelSide } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
@@ -29,6 +27,7 @@ import {
 import { bindDragScrolling } from "@/monaco/dragScroll";
 import { getFindController, isFindRevealed } from "@/monaco/findWidget";
 import { getCodeMetrics } from "@/monaco/metrics";
+import { modelPath } from "@/monaco/modelPath";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
 import { bindRevealScrolling } from "@/monaco/revealScroll";
 import { bindStickyWidgets } from "@/monaco/stickyWidgets";
@@ -36,7 +35,7 @@ import { hasFocusedSuggestion, triggerSuggest } from "@/monaco/suggest";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { validateModel } from "@/monaco/validation";
 import { useStore } from "@/store/store";
-import { whenElementSettles } from "@/utils/dom";
+import { toPx, whenElementSettles } from "@/utils/dom";
 import { classNames, countLines, joinLines } from "@/utils/string";
 import Editor, {
   type BeforeMount,
@@ -98,8 +97,6 @@ interface Props {
   onScrollChange?: (scrollTop: number) => void;
 }
 
-const FULL_HEIGHT = "100%";
-
 function estimateContentHeight(value: string, compact: boolean): number {
   const { lineHeightBase, lineHeightMedium } = getCodeMetrics();
   return countLines(value) * (compact ? lineHeightMedium : lineHeightBase);
@@ -138,14 +135,6 @@ function gutterOptions(
 
 function toSingleLine(text: string): string {
   return text.replaceAll(CARRIAGE_RETURN, "").replaceAll(LINE_BREAK, "");
-}
-
-function modelPath(modelId: string): string {
-  const suffix = RUNBOOK_JSON_SCOPES.some((scope) => modelId.startsWith(scope))
-    ? CodeModelConfig.RUNBOOK_SUFFIX
-    : CodeModelConfig.PLAIN_SUFFIX;
-
-  return `${CodeModelConfig.SCHEME}://${modelId}${suffix}`;
 }
 
 /** Files `entries` under the editor's model for as long as it is mounted. */
@@ -327,7 +316,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
 
       rootRef.current?.style.setProperty(
         CodeEditorProperty.GUTTER_WIDTH,
-        `${width}px`,
+        toPx(width),
       );
     };
 
@@ -566,7 +555,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
             onChange={(next) =>
               onChange(singleLine ? toSingleLine(next ?? "") : (next ?? ""))
             }
-            height={bounded ? FULL_HEIGHT : contentHeight}
+            height={bounded ? MonacoLayout.FULL_HEIGHT : contentHeight}
             options={options}
             beforeMount={handleBeforeMount}
             onMount={handleMount}
@@ -575,7 +564,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
           />
 
           {showMask && (
-            <div className="code-editor-mask" aria-hidden="true">
+            <div className="code-editor-mask" aria-hidden={true}>
               {joinLines(
                 Array.from({ length: countLines(value) }, () => SECRET_MASK),
               )}
@@ -596,9 +585,9 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     return (
       <div
         className={classNames(
-          "code-editor-bounded",
-          hasError && "has-error",
           className,
+          CssClass.CODE_EDITOR_BOUNDED,
+          hasError && CssClass.HAS_ERROR,
         )}
       >
         {editor}

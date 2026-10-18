@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { ButtonType } from "@/common/constants/dom";
 import { AppMode } from "@/common/enums";
 import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
 import {
@@ -35,6 +36,8 @@ export function VariableSourceTooltip({ source, resolved, tip }: Props) {
   const revealEmbeddedVariable = useStore(
     (state) => state.revealEmbeddedVariable,
   );
+  const activeTabId = useStore((state) => getActiveTab(state)?.id);
+  const defineVariable = useStore((state) => state.defineVariable);
 
   // Pinned while editing
   const [editingId, setEditingId] = useState<string>();
@@ -69,14 +72,21 @@ export function VariableSourceTooltip({ source, resolved, tip }: Props) {
     }
   };
 
-  const edit = () => {
+  const edit = (variableId: string | undefined) => {
     tip.pin();
-    startTransition(() => setEditingId(hostVariable?.id));
+    startTransition(() => setEditingId(variableId));
+  };
+
+  const create = () => {
+    const variableId = activeTabId && defineVariable(activeTabId, key);
+    if (variableId) {
+      edit(variableId);
+    }
   };
 
   const goToText = defined && (
     <button
-      type="button"
+      type={ButtonType.BUTTON}
       className={LINK_CLASS}
       title={title}
       onClick={goToDefinition}
@@ -90,7 +100,7 @@ export function VariableSourceTooltip({ source, resolved, tip }: Props) {
     ? goToText
     : defined && (
         <button
-          type="button"
+          type={ButtonType.BUTTON}
           className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
           aria-label={t.command.goToDefinition}
           title={title}
@@ -110,7 +120,7 @@ export function VariableSourceTooltip({ source, resolved, tip }: Props) {
 
           {hostVariable && (
             <button
-              type="button"
+              type={ButtonType.BUTTON}
               className={LINK_CLASS}
               title={
                 readMode
@@ -119,9 +129,22 @@ export function VariableSourceTooltip({ source, resolved, tip }: Props) {
               }
               onPointerEnter={preloadVariableTooltipEditor}
               onFocus={preloadVariableTooltipEditor}
-              onClick={edit}
+              onClick={() => edit(hostVariable.id)}
             >
               {t.command.editVariable}
+            </button>
+          )}
+
+          {!embed && !hostVariable && !readMode && (
+            <button
+              type={ButtonType.BUTTON}
+              className={LINK_CLASS}
+              title={t.tabs.defineVariableTitle(key)}
+              onPointerEnter={preloadVariableTooltipEditor}
+              onFocus={preloadVariableTooltipEditor}
+              onClick={create}
+            >
+              {t.tabs.defineVariable}
             </button>
           )}
 

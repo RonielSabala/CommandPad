@@ -2,6 +2,7 @@ import { MinimapConfig } from "@/common/config";
 import { EventType, MouseButton, PASSIVE } from "@/common/constants/events";
 import { CodeRendering } from "@/common/enums";
 import { CodeRenderingProvider } from "@/components/common/codeEditor/codeRendering";
+import { toPx } from "@/utils/dom";
 import { classNames } from "@/utils/string";
 import {
   useCallback,
@@ -94,9 +95,9 @@ export function Minimap({ scrollRef, listId, mirror: Mirror }: Props) {
     const offset =
       maxScroll > 0 ? (container.scrollTop / maxScroll) * overflow : 0;
 
-    content.style.transform = `translateY(${-offset}px) scale(${scale})`;
-    viewport.style.height = `${clientHeight * scale}px`;
-    viewport.style.transform = `translateY(${container.scrollTop * scale - offset}px)`;
+    content.style.transform = `translateY(${toPx(-offset)}) scale(${scale})`;
+    viewport.style.height = toPx(clientHeight * scale);
+    viewport.style.transform = `translateY(${toPx(container.scrollTop * scale - offset)})`;
   }, [scrollRef]);
 
   const measure = useCallback(() => {
@@ -130,7 +131,7 @@ export function Minimap({ scrollRef, listId, mirror: Mirror }: Props) {
       overscrollRef.current = reserve;
       container.style.setProperty(
         MinimapConfig.OVERSCROLL_PROPERTY,
-        `${reserve}px`,
+        toPx(reserve),
       );
     }
 
@@ -251,7 +252,7 @@ export function Minimap({ scrollRef, listId, mirror: Mirror }: Props) {
     <div
       className="minimap"
       ref={hostRef}
-      aria-hidden="true"
+      aria-hidden={true}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
     >

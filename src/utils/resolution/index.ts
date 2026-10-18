@@ -6,6 +6,7 @@ export {
   resolveCommandText,
   resolveCommandToString
 } from "./command";
+export { inlineReferences } from "./inline";
 export { extractedVariableKey, uniqueVariableKey } from "./keys";
 export {
   applyOperations,
@@ -14,7 +15,15 @@ export {
   readNegation
 } from "./operations";
 export type { OperationKeyword } from "./operations/types";
-export { applyOverrides, overrideScope, withOverride } from "./overrides";
+export {
+  applyOverrides,
+  getOverriddenVariableMap,
+  hasUnresolvedOverrides,
+  overriddenSecretKeys,
+  overrideScope,
+  unresolvedOverrideParts,
+  withOverride
+} from "./overrides";
 export type { OverrideHost } from "./overrides";
 export { getTemplateParamNames, sourceKey } from "./params";
 export {
@@ -26,11 +35,14 @@ export {
 export {
   countCommandLines,
   hasUnresolvedSegments,
-  isMaskedSegment
+  isMaskedSegment,
+  maskedText,
+  maskSpans
 } from "./segments";
 export {
   braceToken,
   braceTokenKeyRange,
+  dropBraceEscapes,
   escapableReferenceAt,
   escapeBraces,
   getTokenKey,
@@ -41,7 +53,6 @@ export type { OpenReference, ReferenceMatch } from "./token";
 export type { ResolvedValue, VariableMap } from "./types";
 export {
   hasUnresolvedBlockReferences,
-  hasUnresolvedReferences,
   unresolvedBlockParts,
   unresolvedBlockText,
   unresolvedParts,

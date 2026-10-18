@@ -1,3 +1,4 @@
+import { AriaRole } from "@/common/constants/dom";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
 import "./PageSpinner.css";
@@ -13,7 +14,7 @@ export function PageSpinner({ className }: Props) {
   return (
     <div
       className={classNames("page-spinner", className)}
-      role="status"
+      role={AriaRole.STATUS}
       aria-label={t.common.loading}
     >
       <Spinner />

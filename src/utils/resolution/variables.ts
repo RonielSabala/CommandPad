@@ -3,7 +3,13 @@ import type { ResolvedSpan, Variable } from "@/common/types";
 
 import type { ReferenceContext } from "./reference";
 import { resolveReference } from "./reference";
-import { flatSpans, mergeSpans, nestSpans, spansText } from "./spans";
+import {
+  flatSpans,
+  literalGroupSpans,
+  mergeSpans,
+  nestSpans,
+  spansText,
+} from "./spans";
 import { splitReferenceParts } from "./token";
 import type { ResolvedValue, VariableMap } from "./types";
 
@@ -98,7 +104,7 @@ export function getVariableMap(
       spans.push(
         ...(reference.isReference
           ? nestSpans(reference.spans)
-          : flatSpans(reference.text, key)),
+          : literalGroupSpans(reference.spans, key)),
       );
     }
 

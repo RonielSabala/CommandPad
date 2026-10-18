@@ -5,6 +5,7 @@ import {
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  SaveOutcome,
   UnresolvedCause,
   VaultError,
   VaultField,
@@ -82,12 +83,23 @@ export const en: Messages = {
     clearLibraryTitle: "Delete all runbooks from the library",
     stopSyncing: "Stop syncing",
     syncStatus: {
-      [RunbookSyncStatus.SYNCED]: (provider) => `Synced with ${provider}`,
+      [RunbookSyncStatus.SYNCED]: (provider) => `Saved to ${provider}`,
+      [RunbookSyncStatus.UNSAVED]: (provider, shortcut) =>
+        `Unsaved changes ${MIDDLE_DOT} click or press ${shortcut} to save to ${provider}`,
       [RunbookSyncStatus.SYNCING]: (provider) => `Saving to ${provider}…`,
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
-        `Sign in to ${provider} to keep syncing`,
+        `Signed out of ${provider} ${MIDDLE_DOT} click to sign in and save`,
       [RunbookSyncStatus.ERROR]: (provider) =>
         `Could not save to ${provider} ${MIDDLE_DOT} click to retry`,
+    },
+    saveNotice: {
+      [SaveOutcome.LOCAL]: () => "Changes save automatically in this browser",
+      [SaveOutcome.SAVING]: (provider) => `Saving to ${provider}…`,
+      [SaveOutcome.SAVED]: (provider) => `Saved to ${provider}`,
+      [SaveOutcome.UP_TO_DATE]: () => "Already up to date",
+      [SaveOutcome.UPDATED]: (provider) => `Updated from ${provider}`,
+      [SaveOutcome.SIGNED_OUT]: (provider) => `Signed out of ${provider}`,
+      [SaveOutcome.FAILED]: (provider) => `Couldn't save to ${provider}`,
     },
     secretStatus: {
       [VaultStatus.UNLOCKED]: `Secrets are encrypted ${MIDDLE_DOT} click to change the passphrase`,
@@ -249,7 +261,9 @@ export const en: Messages = {
       `Copied with ${parts} unresolved ${parts === 1 ? "part" : "parts"}`,
     placeholder: "ssh {USER}@{HOST}",
     extractVariable: "Extract into a variable",
+    inlineVariable: "Inline the variable",
     escapeVariable: "Escape the reference",
+    unescapeVariable: "Unescape the reference",
     goToDefinition: "Go to definition",
     goToDefinitionTitle: (key) =>
       `Switch to this runbook's variables view and highlight '${key}'.`,
@@ -443,6 +457,16 @@ export const en: Messages = {
   confirm: {
     defaultTitle: "Confirm",
   },
+  cloudConflict: {
+    title: (filename) => `\`${filename}\` changed in the cloud`,
+    message: (provider) =>
+      `Someone saved this runbook to ${provider} after you last did. The left side is the copy in ${provider}, the right side is yours: edit it to keep what you want from both (the arrow beside a change takes the ${provider} side of it), then save.`,
+    cloudSide: (provider) => `In ${provider}`,
+    localSide: "Yours",
+    useCloud: (provider) => `Use ${provider} Version`,
+    keepMine: "Save Mine",
+    invalidError: "That isn't valid runbook JSON, so it can't be saved yet.",
+  },
   dialogs: {
     overwriteTitle: "Overwrite Runbook",
     overwriteConfirm: "Overwrite",
@@ -470,6 +494,8 @@ export const en: Messages = {
     deleteRunbookConfirm: "Delete",
     deleteRunbookMessage: (label) =>
       `Delete \`${label}\`? **This cannot be undone.**`,
+    deleteUnsavedRunbookMessage: (label) =>
+      `\`${label}\` has changes that were never saved to the cloud. Delete it anyway? **Those changes cannot be recovered.**`,
     deleteCloudFileTitle: "Delete Cloud Runbook",
     deleteCloudFileConfirm: "Delete",
     deleteCloudFileMessage: (filename) =>
@@ -510,8 +536,8 @@ export const en: Messages = {
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Toggle read / edit mode",
     [KeyBinding.ESCAPE]: "Clear block selection / close modals",
-    [KeyBinding.TOGGLE_SIDEBAR]: "Collapse / expand the side panel",
-    [KeyBinding.MOVE_SIDEBAR]: "Move the side panel to left / right",
+    [KeyBinding.SAVE_RUNBOOK]:
+      "Save the runbook to the cloud file it is linked to",
     [KeyBinding.NEW_TAB]: "Open a new tab",
     [KeyBinding.CLOSE_TAB]: "Close the active tab",
     [KeyBinding.FOCUS_RUNBOOK]: "Select active runbook",
@@ -904,7 +930,7 @@ If something goes wrong, undo it in this order:
       labelDemo:
         "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, close one, and open the source file to see a tab's runbook as JSON.",
       unresolvedMarker: (create, edit) =>
-        `When a tab's close button is a solid red dot, that runbook has unresolved parts, so a runbook that isn't ready to run stands out without opening it. Point at the dot and it turns back into the close button, with a summary of what doesn't resolve: how many problems there are and how many blocks they reach, each problem listed once under its cause, followed by the blocks it breaks. Click a block to jump straight to it, use the arrow to open the variable a problem comes from, or **${create}** to add a variable that doesn't exist yet. On the open tab, an empty value or an unfilled placeholder also offers **${edit}**, which opens the variable's editor right in the summary so you can type the value without leaving the tab. The third tab above wears one: open its variables and give \`HOST\` a value, and the dot goes as soon as every reference resolves.`,
+        `When a tab's close button is a solid red dot, that runbook has unresolved parts, so a runbook that isn't ready to run stands out without opening it. Point at the dot and it turns back into the close button, with a summary of what doesn't resolve: how many problems there are and how many blocks they reach, each problem listed once under its cause, followed by the blocks it breaks. Click a block to jump straight to it, use the arrow to open the variable a problem comes from, or **${create}** to add a variable that doesn't exist yet. On the open tab, an empty value or an unfilled placeholder also offers **${edit}**. Both open the variable's editor right in the summary, ready to type the value without leaving the tab. The third tab above wears one: open its variables and give \`HOST\` a value, and the dot goes as soon as every reference resolves.`,
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",
@@ -940,9 +966,11 @@ If something goes wrong, undo it in this order:
       intro:
         "Each variable has a **key** and a **value**. Keys are case-sensitive. If two variables share the same key, the one defined last wins.",
       usage:
-        "Use a variable in any command by wrapping its key in curly braces, e.g. `{KEY}`. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
+        "Use a variable in any command by wrapping its key in curly braces, e.g. `{KEY}`. As you type, the suggestions list every variable with its value beside it, and the ones no command uses are dimmed. Renaming a key updates every command that uses it, and variables no command uses are dimmed so you can spot the ones you no longer need.",
       extract: (extractLabel) =>
         `You do not have to write a variable out by hand. Select any piece of a command in its editor, then right-click it (or press \`Ctrl+.\`) and pick **${extractLabel}**: the selected text becomes a new variable, and the command keeps a reference to it in its place. Its guessed name is selected right there in the editor, so just type over it to rename it. Try it on the demo above.`,
+      inline: (inlineLabel) =>
+        `The opposite works too: put the caret on a reference and pick **${inlineLabel}** to write the variable's content in its place. The variable itself is kept. Secret values are never written out, and the option only shows up when there is a reference that fully resolves.`,
       unresolved:
         "If a command references a key that does not exist, or a variable with an empty value, that part is highlighted as **unresolved**, even when the reference sits inside another variable's value.",
       tooltip:
@@ -971,8 +999,8 @@ If something goes wrong, undo it in this order:
         "The preview highlights resolved text by how far it was read through. Text the variable you referenced wrote takes the lightest tint, text a reference **inside** that value wrote sits on a deeper one, and anything further in shares the deepest. One glance then tells you which part of a command came from where.",
       shadesDemoHint:
         "Here `HOST` is built from `SERVICE`, which is built from `NAME`, so the resolved command wears all three tints at once:",
-      shadesHover: (goToDefinition: string, edit: string) =>
-        `When the tints alone are not enough, hover over any highlighted piece of a resolved command: it names the variable that wrote it, its arrow button (**${goToDefinition}**) takes you to that variable in the variables view, and **${edit}** opens its key and value right there in the tooltip, so you can change them without leaving the command.`,
+      shadesHover: (goToDefinition: string, edit: string, create: string) =>
+        `When the tints alone are not enough, hover over any highlighted piece of a resolved command: it names the variable that wrote it, its arrow button (**${goToDefinition}**) takes you to that variable in the variables view, and **${edit}** opens its key and value right there in the tooltip, so you can change them without leaving the command. A reference to a variable that doesn't exist yet offers **${create}** instead, which adds it and opens the same editor with its value ready to type.`,
       shadesUnresolved:
         "A reference that does not resolve is counted the same way, in red instead of green: the rest of the command still resolves and only the broken part is marked, at the depth it sits at. So one glance also tells you how deep a problem is, not just that there is one.",
       shadesUnresolvedDemoHint:
@@ -1260,8 +1288,8 @@ If something goes wrong, undo it in this order:
     escapingBraces: {
       intro:
         "Prefix a reference with a backslash (`\\`) to output it literally instead of resolving it.",
-      menu: (escapeLabel) =>
-        `You do not have to type the backslash yourself. Put the caret inside a reference (or select one or more of them), right-click it and pick **${escapeLabel}**. Every reference it covers gets a backslash, including the ones nested inside another. A backslash left against the closing brace is dropped.`,
+      menu: (escapeLabel, unescapeLabel) =>
+        `You do not have to type the backslash yourself. Put the caret inside a reference (or select one or more of them), right-click it and pick **${escapeLabel}**. Every reference it covers gets a backslash, including the ones nested inside another. A backslash left against the closing brace is dropped. On an escaped reference, **${unescapeLabel}** removes the backslashes again. Each option only shows up when there is something for it to change.`,
       tryHint:
         "Try deleting the backslash in the command below and watch the literal braces turn into an active reference:",
       scope:
@@ -1271,7 +1299,7 @@ If something goes wrong, undo it in this order:
       intro: (actionsLabel, maskLabel) =>
         `Open a variable's **${actionsLabel}** menu and choose **${maskLabel}** to mark it as **secret**. An **eye icon** then appears on the row you can click to reveal it again.`,
       copyNote:
-        "The mask is purely visual: the **Copy** button always puts the **real** value on your clipboard, so your commands keep working. Try it below, and click the eye icon to reveal the value.",
+        "The mask follows the value wherever it ends up. It is purely visual: the **Copy** button always puts the **real** value on your clipboard, so your commands keep working. Try it below, and click the eye icon to reveal the value.",
     },
     secretEncryption: {
       intro:
@@ -1367,7 +1395,7 @@ If something goes wrong, undo it in this order:
       demoHint: (showVariables) =>
         `The first tab is a release runbook that embeds the deploy runbook from the second tab. Press **${showVariables}** in the block's header, change \`ENV\` from \`prod\` to \`dev\` and switch back: the embedded commands follow. Then edit a command in the deploy tab and come back to the first one. The change is already there.`,
       overrides:
-        "A value you set on the block is an override. It belongs to this block and never changes the embedded runbook, so each runbook that embeds it only states what differs. It can reference this runbook's own variables, and the arrow beside it drops it again.",
+        "A value you set on the block is an override. It belongs to this block and never changes the embedded runbook, so each runbook that embeds it only states what differs. It can reference this runbook's own variables or the embedded runbook's, and the arrow beside it drops it again. While you type a reference, the suggestions list this runbook's variables first and the embedded ones after them, and the selected one names the runbook it comes from.",
       readOnly: (open) =>
         `Embedded blocks are read-only: you can copy a command or view an image, but not edit them. To change the runbook itself, press **${open}**. Every runbook that embeds it picks up the edit, and renaming it doesn't break the link.`,
       cloud: (local, signIn, refresh) =>
@@ -1425,12 +1453,16 @@ If something goes wrong, undo it in this order:
         "If the destination folder already holds a file with the same name, the export stops and asks you to confirm before replacing it.",
     },
     cloudLinkedSync: {
-      intro:
-        "A runbook you import from the cloud stays **in sync** with the file it came from: every edit is written back to that file, so you never have to export it again to save it. Exporting a runbook as **JSON** links it the same way.",
+      intro: (shortcut) =>
+        `A runbook you import from the cloud stays **linked** to the file it came from. Your edits are kept in the browser as you type and reach the cloud file only when you save: press \`${shortcut}\` or click the **cloud icon** next to the runbook. That way, people working on the same file never see each other's half typed changes. Exporting a runbook as **JSON** links it the same way.`,
+      localSave: (shortcut) =>
+        `A runbook that isn't linked is always saved in the browser, so \`${shortcut}\` only confirms there is nothing left to save.`,
       syncBadge: (runbooksTitle) =>
-        `A synced runbook shows a **sync icon** next to its name in the **${runbooksTitle}** list: a spinner while an edit is on its way up, a crossed out cloud if the save failed. Click it to sign in again or retry.`,
+        `The cloud icon next to a linked runbook in the **${runbooksTitle}** list shows where it stands: a check when the cloud file is current, an arrow pointing up when there are unsaved changes, a spinner while saving, and a crossed out cloud when you're signed out. Click it to save, sign in or retry.`,
+      conflicts: (keepMine) =>
+        `Saving reads the cloud file first. If nobody else saved it since you last did, your changes are written. If only the cloud copy changed, it is brought down instead. If both changed, a **side by side comparison** opens with the cloud copy on the left and yours on the right. Edit your side to keep what you want from both (the arrow beside a change copies the cloud's version of it), then click **${keepMine}**, or keep the cloud version and drop yours.`,
       stopSyncing: (stopSyncingLabel) =>
-        `**${stopSyncingLabel}** (in the runbook's three dots menu) breaks the link without touching either copy. Sync only pushes local edits up, it never pulls remote changes back down.`,
+        `**${stopSyncingLabel}** (in the runbook's three dots menu) breaks the link without touching either copy.`,
     },
     cloudFileManagement: {
       folders:

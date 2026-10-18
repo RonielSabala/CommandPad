@@ -3,6 +3,7 @@ import {
   CodeToken,
   MonacoLayout,
 } from "@/common/editorConfig";
+import { toPx } from "@/utils/dom";
 
 export interface CodeMetrics {
   fontFamily: string;
@@ -53,15 +54,15 @@ export function publishCodeMetrics(): CodeMetrics {
 
   root.style.setProperty(
     CodeMetricProperty.LINE_HEIGHT_BASE,
-    `${metrics.lineHeightBase}px`,
+    toPx(metrics.lineHeightBase),
   );
   root.style.setProperty(
     CodeMetricProperty.LINE_HEIGHT_MEDIUM,
-    `${metrics.lineHeightMedium}px`,
+    toPx(metrics.lineHeightMedium),
   );
   root.style.setProperty(
     CodeMetricProperty.LINE_HEIGHT_SMALL,
-    `${metrics.lineHeightSmall}px`,
+    toPx(metrics.lineHeightSmall),
   );
   root.style.setProperty(
     CodeMetricProperty.LINE_NUMBER_CHARS,
@@ -69,11 +70,11 @@ export function publishCodeMetrics(): CodeMetrics {
   );
   root.style.setProperty(
     CodeMetricProperty.GUTTER_PAD_START,
-    `${metrics.gutterPadStart}px`,
+    toPx(metrics.gutterPadStart),
   );
   root.style.setProperty(
     CodeMetricProperty.GUTTER_GAP_BEFORE,
-    `${metrics.gutterGapBefore}px`,
+    toPx(metrics.gutterGapBefore),
   );
 
   return metrics;

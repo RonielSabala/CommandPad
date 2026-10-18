@@ -1,3 +1,4 @@
+import { AriaRole } from "@/common/constants/dom";
 import { useTranslation } from "@/i18n/useTranslation";
 import { countSelectedSections, useStore } from "@/store/store";
 
@@ -26,7 +27,7 @@ export function SelectionCount() {
   }
 
   return (
-    <div className="selection-count" role="status">
+    <div className="selection-count" role={AriaRole.STATUS}>
       {label}
     </div>
   );

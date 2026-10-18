@@ -10,6 +10,8 @@ import { readCompletionContext } from "./context";
 import { modelCompletions } from "./registry";
 import { buildSuggestions } from "./suggestions";
 
+const UNUSED_TAGS = [monaco.languages.CompletionItemTag.Deprecated];
+
 function provideCompletionItems(
   model: editor.ITextModel,
   position: Position,
@@ -48,15 +50,23 @@ function provideCompletionItems(
 
   return {
     suggestions: buildSuggestions(context, completions).map((suggestion) => ({
-      label: suggestion.label,
+      label:
+        suggestion.detail === undefined
+          ? suggestion.label
+          : {
+              label: suggestion.label,
+              detail: suggestion.origin,
+              description: suggestion.detail,
+            },
       detail: suggestion.detail,
       kind: suggestion.kind,
+      tags: suggestion.unused ? UNUSED_TAGS : undefined,
       insertText: suggestion.insertText,
       insertTextRules: suggestion.snippet
         ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
         : undefined,
       filterText: suggestion.label,
-      sortText: suggestion.label,
+      sortText: `${suggestion.group ?? VariableCompletionConfig.HOST_GROUP}${suggestion.label}`,
       range,
     })),
   };

@@ -1,11 +1,20 @@
-import { CommandSegmentType } from "@/common/enums";
+import { SECRET_MASK } from "@/common/config";
+import { CommandSegmentType, UnresolvedCause } from "@/common/enums";
 import type { VariableSpec } from "@/test";
 import { buildVariables, runbook, secret, variableValues } from "@/test";
 import { describe, expect, it } from "vitest";
 
 import { resolveCommandText } from "./command";
-import { applyOverrides, overrideScope, withOverride } from "./overrides";
-import { getSecretKeys, getVariableMap } from "./variables";
+import {
+  applyOverrides,
+  overriddenSecretKeys,
+  overrideLookupMap,
+  overrideScope,
+  unresolvedOverrideParts,
+  withOverride,
+} from "./overrides";
+import { maskedText } from "./segments";
+import { getVariableMap } from "./variables";
 
 /** The embedded runbook's resolved values once `overrides` are applied from `host`. */
 function embed(
@@ -14,20 +23,30 @@ function embed(
   host: VariableSpec = {},
 ) {
   const book = runbook(host);
-  const variables = applyOverrides(
-    buildVariables(embedded),
-    overrides,
-    book.secrets,
-  );
+  const own = buildVariables(embedded);
+  const variables = applyOverrides(own, overrides);
+
   const variableMap = getVariableMap(
     variables,
     overrideScope(variables, overrides, getVariableMap(book.variables)),
   );
+  const secretKeys = overriddenSecretKeys(
+    own,
+    overrides,
+    variableMap,
+    book.secrets,
+  );
+
+  const resolve = (command: string) => resolveCommandText(command, variableMap);
 
   return {
     values: variableValues(variableMap),
-    secretKeys: getSecretKeys(variables),
-    resolve: (command: string) => resolveCommandText(command, variableMap),
+    secretKeys,
+    resolve,
+    shown: (command: string) =>
+      resolve(command)
+        .map((segment) => maskedText(segment, secretKeys))
+        .join(""),
   };
 }
 
@@ -169,17 +188,27 @@ describe("applyOverrides", () => {
     ).toEqual(new Set(["TOKEN"]));
   });
 
-  it("masks an override built from a host secret, at any depth", () => {
-    const host = { PASSWORD: secret("hunter2") };
+  it.each([
+    ["{PASSWORD}", SECRET_MASK],
+    ["Bearer {PASSWORD}!", `Bearer ${SECRET_MASK}!`],
+    ["1{;a={PASSWORD}}1", `1${SECRET_MASK}1`],
+    ["{|IF(true;{PASSWORD};x)}", SECRET_MASK],
+    ["{PASSWORD|uppercase}", SECRET_MASK],
+    ["{WRAPPED}", `[${SECRET_MASK}]`],
+  ])("masks only the host secret inside the override %s", (override, shown) => {
+    const host = { PASSWORD: secret("hunter2"), WRAPPED: "[{PASSWORD}]" };
 
-    expect(
-      embed({ AUTH: "" }, { AUTH: "{PASSWORD}" }, host).secretKeys,
-    ).toEqual(new Set(["AUTH"]));
+    expect(embed({ AUTH: "" }, { AUTH: override }, host).shown("{AUTH}")).toBe(
+      shown,
+    );
+  });
 
-    expect(
-      embed({ AUTH: "" }, { AUTH: "{|IF(true;{PASSWORD};x)}" }, host)
-        .secretKeys,
-    ).toEqual(new Set(["AUTH"]));
+  it("masks nothing an override does not carry in from a host secret", () => {
+    const host = { PASSWORD: secret("hunter2"), USER: "admin" };
+
+    expect(embed({ AUTH: "" }, { AUTH: "{USER}" }, host).secretKeys).toEqual(
+      new Set(),
+    );
   });
 
   it("returns the same variables when there is nothing to apply", () => {
@@ -195,6 +224,61 @@ describe("applyOverrides", () => {
 
     expect(overrideScope(variables, undefined, {})).toBeUndefined();
     expect(overrideScope(variables, { REGION: "eu" }, {})).toBeUndefined();
+  });
+});
+
+describe("overrideLookupMap", () => {
+  it("reads the host first", () => {
+    const map = overrideLookupMap(
+      buildVariables({ a: "1", b: "embedded" }),
+      { a: "{b}" },
+      getVariableMap(buildVariables({ b: "host" })),
+    );
+
+    expect(variableValues(map)).toMatchObject({ a: "host", b: "host" });
+  });
+});
+
+describe("unresolvedOverrideParts", () => {
+  /** The causes the overrides report. */
+  function causesOf(
+    embedded: VariableSpec,
+    overrides: Record<string, string>,
+    host: VariableSpec = {},
+  ) {
+    return unresolvedOverrideParts(
+      buildVariables(embedded),
+      overrides,
+      getVariableMap(buildVariables(host)),
+      new Set(),
+    ).map(({ cause, source }) => [cause, source]);
+  }
+
+  it("reads a key the embedded runbook defines", () => {
+    expect(causesOf({ a: "1", b: "test" }, { a: "{b}" })).toEqual([]);
+  });
+
+  it("reads the embedded runbook with its overrides applied", () => {
+    expect(causesOf({ a: "1", b: "{NOPE}" }, { a: "{b}", b: "fine" })).toEqual(
+      [],
+    );
+  });
+
+  it("still reports a key neither runbook defines", () => {
+    expect(causesOf({ a: "1" }, { a: "{NOPE}" })).toEqual([
+      [UnresolvedCause.UNDEFINED, "NOPE"],
+    ]);
+  });
+
+  it("leaves a blank for whoever references the key to fill", () => {
+    expect(
+      causesOf({ a: "1", secret: secret("123") }, { a: "b{;b={secret}}b" }),
+    ).toEqual([]);
+    expect(causesOf({ a: "1" }, { a: "b{;b}b" })).toEqual([]);
+  });
+
+  it("ignores an override of a key the embedded runbook dropped", () => {
+    expect(causesOf({ a: "1" }, { gone: "{NOPE}" })).toEqual([]);
   });
 });
 

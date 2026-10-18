@@ -1,5 +1,6 @@
 import { StickyScrollbarConfig } from "@/common/config";
 import { EventType, PASSIVE } from "@/common/constants/events";
+import { toPx } from "@/utils/dom";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ScrollTarget } from "./scrollTarget";
 import "./StickyScrollbar.css";
@@ -91,10 +92,10 @@ export function StickyScrollbar({ target, deps }: Props) {
   }
 
   return (
-    <div className="sticky-scrollbar" ref={proxyRef} aria-hidden="true">
+    <div className="sticky-scrollbar" ref={proxyRef} aria-hidden={true}>
       <div
         className="sticky-scrollbar-track"
-        style={{ width: `calc(100% + ${scrollRange}px)` }}
+        style={{ width: `calc(100% + ${toPx(scrollRange)})` }}
       />
     </div>
   );

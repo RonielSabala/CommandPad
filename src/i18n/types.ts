@@ -4,6 +4,7 @@ import type {
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  SaveOutcome,
   UnresolvedCause,
   VaultError,
   VaultField,
@@ -105,7 +106,11 @@ export interface Messages {
     clearLibrary: string;
     clearLibraryTitle: string;
     stopSyncing: string;
-    syncStatus: Record<RunbookSyncStatus, (provider: string) => string>;
+    syncStatus: Record<
+      RunbookSyncStatus,
+      (provider: string, shortcut: string) => string
+    >;
+    saveNotice: Record<SaveOutcome, (provider: string) => string>;
     secretStatus: Record<VaultStatus, string>;
   };
   variables: {
@@ -226,7 +231,9 @@ export interface Messages {
     copiedUnresolved: (parts: number) => string;
     placeholder: string;
     extractVariable: string;
+    inlineVariable: string;
     escapeVariable: string;
+    unescapeVariable: string;
     goToDefinition: string;
     goToDefinitionTitle: (key: string) => string;
     goToEmbeddedDefinitionTitle: (key: string, runbook: string) => string;
@@ -369,6 +376,15 @@ export interface Messages {
   confirm: {
     defaultTitle: string;
   };
+  cloudConflict: {
+    title: (filename: string) => string;
+    message: (provider: string) => string;
+    cloudSide: (provider: string) => string;
+    localSide: string;
+    useCloud: (provider: string) => string;
+    keepMine: string;
+    invalidError: string;
+  };
   dialogs: {
     overwriteTitle: string;
     overwriteConfirm: string;
@@ -388,6 +404,7 @@ export interface Messages {
     deleteRunbookTitle: string;
     deleteRunbookConfirm: string;
     deleteRunbookMessage: (label: string) => string;
+    deleteUnsavedRunbookMessage: (label: string) => string;
     deleteCloudFileTitle: string;
     deleteCloudFileConfirm: string;
     deleteCloudFileMessage: (filename: string) => string;
@@ -546,6 +563,7 @@ export interface Messages {
       intro: string;
       usage: string;
       extract: (extractLabel: string) => string;
+      inline: (inlineLabel: string) => string;
       unresolved: string;
       tooltip: string;
       split: string;
@@ -561,7 +579,11 @@ export interface Messages {
       demoHint: string;
       shades: string;
       shadesDemoHint: string;
-      shadesHover: (goToDefinition: string, edit: string) => string;
+      shadesHover: (
+        goToDefinition: string,
+        edit: string,
+        create: string,
+      ) => string;
       shadesUnresolved: string;
       shadesUnresolvedDemoHint: string;
       circular: string;
@@ -704,7 +726,7 @@ export interface Messages {
     };
     escapingBraces: {
       intro: string;
-      menu: (escapeLabel: string) => string;
+      menu: (escapeLabel: string, unescapeLabel: string) => string;
       tryHint: string;
       scope: string;
     };
@@ -799,8 +821,10 @@ export interface Messages {
       overwrite: string;
     };
     cloudLinkedSync: {
-      intro: string;
+      intro: (shortcut: string) => string;
+      localSave: (shortcut: string) => string;
       syncBadge: (runbooksTitle: string) => string;
+      conflicts: (keepMine: string) => string;
       stopSyncing: (stopSyncingLabel: string) => string;
     };
     cloudFileManagement: {

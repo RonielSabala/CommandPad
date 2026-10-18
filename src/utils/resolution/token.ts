@@ -41,7 +41,7 @@ export interface OpenReference {
 }
 
 /** Drops every backslash that escapes a brace. */
-function dropBraceEscapes(text: string): string {
+export function dropBraceEscapes(text: string): string {
   return text.replace(EscapedBraceOpenRegex, VariableSyntax.BRACE_OPEN);
 }
 
@@ -223,17 +223,15 @@ export function escapableReferenceAt(
   text: string,
   index: number,
 ): { start: number; end: number } | null {
+  const escapedStart = (start: number) =>
+    text[start - 1] === ESCAPE_CHAR ? start - 1 : start;
+
   const match = scanBraces(text, false).find(
-    (reference) => index >= reference.start && index <= reference.end,
+    (reference) =>
+      index >= escapedStart(reference.start) && index <= reference.end,
   );
 
-  if (!match) {
-    return null;
-  }
-
-  const start = match.start;
-  const escaped = text[start - 1] === ESCAPE_CHAR;
-  return { start: escaped ? start - 1 : start, end: match.end };
+  return match ? { start: escapedStart(match.start), end: match.end } : null;
 }
 
 /** The innermost reference still open at `index`, `null` when there is none. */

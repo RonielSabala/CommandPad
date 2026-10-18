@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { AriaRole } from "@/common/constants/dom";
 import { EventType, Key } from "@/common/constants/events";
 import { CheckIcon } from "@/components/icons";
 import { classNames } from "@/utils/string";
@@ -103,7 +104,7 @@ export function ContextMenu({
         <div
           className={classNames(CssClass.CONTEXT_MENU, CssClass.NO_USER_SELECT)}
           ref={menuRef}
-          role="menu"
+          role={AriaRole.MENU}
           style={{ left: position.x, top: position.y }}
         >
           {children}
@@ -137,7 +138,7 @@ export function ContextMenuItem({
   return (
     <button
       className={classNames("context-menu-item", danger && "is-danger")}
-      role={isCheckbox ? "menuitemcheckbox" : "menuitem"}
+      role={isCheckbox ? AriaRole.MENU_ITEM_CHECKBOX : AriaRole.MENU_ITEM}
       aria-checked={checked}
       disabled={disabled}
       onClick={() => {
@@ -160,5 +161,5 @@ export function ContextMenuItem({
 }
 
 export function ContextMenuSeparator() {
-  return <div className="context-menu-separator" role="separator" />;
+  return <div className="context-menu-separator" role={AriaRole.SEPARATOR} />;
 }

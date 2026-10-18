@@ -136,7 +136,7 @@ export function HomePage() {
 
                 return (
                   <div key={feature.title} className="home-feature">
-                    <div className="home-feature-icon" aria-hidden="true">
+                    <div className="home-feature-icon" aria-hidden={true}>
                       <FeatureIcon />
                     </div>
 

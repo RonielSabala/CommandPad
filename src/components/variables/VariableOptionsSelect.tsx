@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { AutoComplete, InputType } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { AppMode, VariableField } from "@/common/enums";
 import { Select, SelectAlign } from "@/components/common/Select";
@@ -91,11 +92,11 @@ export function VariableOptionsSelect({
                 "variable-option-add",
                 CssClass.NO_LIGATURES,
               )}
-              type="text"
+              type={InputType.TEXT}
               placeholder={t.variables.addOptionPlaceholder}
               value={draft}
               spellCheck={false}
-              autoComplete="off"
+              autoComplete={AutoComplete.OFF}
               onChange={(event) => setDraft(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === Key.ENTER) {

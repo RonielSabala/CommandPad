@@ -1,5 +1,6 @@
 import { TabUnresolvedConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
+import { ButtonType } from "@/common/constants/dom";
 import { AppMode, BlockType, UnresolvedCause } from "@/common/enums";
 import type { Block, Tab } from "@/common/types";
 import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
@@ -7,7 +8,10 @@ import {
   LazyVariableTooltipEditor,
   preloadVariableTooltipEditor,
 } from "@/components/variables/lazyVariableTooltipEditor";
-import { getTabVariableMap } from "@/hooks/useTabUnresolved";
+import {
+  getBlockUnresolvedParts,
+  getTabVariableMap,
+} from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { isEmbedBlockUnresolved } from "@/utils/embeddedRunbook";
@@ -15,7 +19,6 @@ import {
   getSecretKeys,
   getVariableKey,
   sourceKey,
-  unresolvedBlockParts,
   type UnresolvedPart,
 } from "@/utils/resolution";
 import { abbreviate, classNames } from "@/utils/string";
@@ -60,6 +63,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
   const isActive = useStore((state) => getActiveTab(state)?.id === tab.id);
   const library = useStore((state) => state.runbookLibrary);
   const embeddedRunbooks = useStore((state) => state.embeddedRunbooks);
+  const tabs = useStore((state) => state.tabs);
   const revealBlock = useStore((state) => state.revealBlock);
   const switchTab = useStore((state) => state.switchTab);
   const revealVariable = useStore((state) => state.revealVariable);
@@ -74,6 +78,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
   const { groups, problemCount, blockCount } = useMemo(() => {
     const found = new Map<string, Problem>();
     const byCause = new Map<UnresolvedCause, Problem[]>();
+    const embedLookup = { runbookLibrary: library, embeddedRunbooks, tabs };
     let blockCount = 0;
 
     const report = (
@@ -109,7 +114,12 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
 
     tab.blocks.forEach((block, index) => {
       const number = index + 1;
-      const parts = unresolvedBlockParts(block, variableMap, secretKeys);
+      const parts = getBlockUnresolvedParts(
+        block,
+        variableMap,
+        secretKeys,
+        embedLookup,
+      );
 
       for (const part of parts) {
         report(
@@ -144,7 +154,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
     );
 
     return { groups, problemCount: found.size, blockCount };
-  }, [tab.blocks, variableMap, secretKeys, library, embeddedRunbooks]);
+  }, [tab.blocks, variableMap, secretKeys, library, embeddedRunbooks, tabs]);
 
   const variableIds = useMemo(
     () =>
@@ -181,12 +191,22 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
       return (
         !readMode && (
           <button
-            type="button"
+            type={ButtonType.BUTTON}
             className={LINK_CLASS}
             title={t.tabs.defineVariableTitle(key)}
+            onPointerEnter={preloadVariableTooltipEditor}
+            onFocus={preloadVariableTooltipEditor}
             onClick={() => {
-              hide();
-              defineVariable(tab.id, key);
+              const variableId = defineVariable(tab.id, key);
+              if (!variableId) {
+                return;
+              }
+
+              if (isActive) {
+                edit(variableId, key);
+              } else {
+                goToVariable(variableId);
+              }
             }}
           >
             {t.tabs.defineVariable}
@@ -201,7 +221,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
         <>
           {isActive && EDITABLE_CAUSES.has(cause) && (
             <button
-              type="button"
+              type={ButtonType.BUTTON}
               className={LINK_CLASS}
               title={
                 readMode
@@ -216,7 +236,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
             </button>
           )}
           <button
-            type="button"
+            type={ButtonType.BUTTON}
             className={classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON)}
             aria-label={t.command.goToDefinition}
             title={t.command.goToDefinitionTitle(key)}
@@ -236,7 +256,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
           variableId={edited.id}
           header={
             <button
-              type="button"
+              type={ButtonType.BUTTON}
               className={LINK_CLASS}
               title={t.command.goToDefinitionTitle(edited.key)}
               onClick={() => goToVariable(edited.id)}
@@ -285,7 +305,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
                     {problem.blocks.map(({ block, number }) => (
                       <button
                         key={block.id}
-                        type="button"
+                        type={ButtonType.BUTTON}
                         className={CssClass.TOOLTIP_LINK}
                         title={t.tabs.unresolvedBlock(
                           number,

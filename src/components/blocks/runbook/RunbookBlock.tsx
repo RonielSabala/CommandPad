@@ -295,7 +295,7 @@ export function RunbookBlock({
         {dragImageLabel}
       </div>
 
-      {(!readMode || canSwitchView || !!local) && (
+      {(!readMode || canSwitchView || !!local || embed.locked) && (
         <div
           className={classNames(
             "runbook-block-header",

@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { HtmlTag } from "@/common/constants/dom";
 import {
   ColorToken,
   MonacoTheme,
@@ -18,7 +19,7 @@ let probe: HTMLElement | null = null;
 /** Resolve a color token to literal hex, scaling alpha by `opacity`. */
 function resolveColor(token: string, opacity: number = OPAQUE): string {
   if (!probe) {
-    probe = document.createElement("span");
+    probe = document.createElement(HtmlTag.SPAN);
     probe.style.display = "none";
     document.body.appendChild(probe);
   }
@@ -61,6 +62,22 @@ function resolveThemeColors() {
     borderFocus: resolveColor(ColorToken.BORDER_FOCUS),
     constantText: resolveColor(ColorToken.CONSTANT_TEXT),
     danger: resolveColor(ColorToken.DANGER),
+    diffInsertedLine: resolveColor(
+      ColorToken.SUCCESS,
+      MonacoTheme.DIFF_LINE_OPACITY,
+    ),
+    diffInsertedText: resolveColor(
+      ColorToken.SUCCESS,
+      MonacoTheme.DIFF_TEXT_OPACITY,
+    ),
+    diffRemovedLine: resolveColor(
+      ColorToken.DANGER,
+      MonacoTheme.DIFF_LINE_OPACITY,
+    ),
+    diffRemovedText: resolveColor(
+      ColorToken.DANGER,
+      MonacoTheme.DIFF_TEXT_OPACITY,
+    ),
     flagText: resolveColor(ColorToken.FLAG_TEXT),
     scrollbarThumb: resolveColor(ColorToken.SCROLLBAR_THUMB),
     scrollbarThumbHover: resolveColor(ColorToken.SCROLLBAR_THUMB_HOVER),
@@ -165,6 +182,15 @@ function buildTheme(theme: Theme): monaco.editor.IStandaloneThemeData {
       "editorBracketMatch.border": c.textMuted,
       "editorWhitespace.foreground": c.textMuted,
       "editorOverviewRuler.border": MonacoTheme.TRANSPARENT,
+
+      "diffEditor.insertedLineBackground": c.diffInsertedLine,
+      "diffEditor.insertedTextBackground": c.diffInsertedText,
+      "diffEditor.removedLineBackground": c.diffRemovedLine,
+      "diffEditor.removedTextBackground": c.diffRemovedText,
+      "diffEditor.border": c.border,
+      "diffEditor.diagonalFill": c.textMutedDim,
+      "diffEditor.unchangedRegionBackground": c.surfaceAlt,
+      "diffEditor.unchangedRegionForeground": c.textSecondary,
 
       "editorError.foreground": c.danger,
       "editorWarning.foreground": c.warning,

@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { AriaRole } from "@/common/constants/dom";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CloseIcon } from "@/components/icons";
 import { useModalDismiss } from "@/hooks/useModalDismiss";
@@ -31,12 +32,12 @@ export function Modal({
   return (
     <div
       className={classNames(
-        "modal-backdrop",
-        open && "modal-visible",
-        !animated && "modal-no-animation",
-        noBackdrop && "modal-backdrop-transparent",
+        CssClass.MODAL_BACKDROP,
+        open && CssClass.MODAL_VISIBLE,
+        !animated && CssClass.MODAL_NO_ANIMATION,
+        noBackdrop && CssClass.MODAL_BACKDROP_TRANSPARENT,
       )}
-      role="dialog"
+      role={AriaRole.DIALOG}
       aria-modal="true"
       aria-hidden={!open}
       inert={!open}
@@ -62,5 +63,24 @@ export function Modal({
         {children}
       </div>
     </div>
+  );
+}
+
+interface PartProps {
+  className?: string;
+  children: ReactNode;
+}
+
+export function ModalTitle({ className, children }: PartProps) {
+  return <div className={classNames("modal-title", className)}>{children}</div>;
+}
+
+export function ModalMessage({ className, children }: PartProps) {
+  return <p className={classNames("modal-message", className)}>{children}</p>;
+}
+
+export function ModalActions({ className, children }: PartProps) {
+  return (
+    <div className={classNames("modal-actions", className)}>{children}</div>
   );
 }

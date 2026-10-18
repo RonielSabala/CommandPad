@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import {
   braceToken,
   braceTokenKeyRange,
+  dropBraceEscapes,
   escapableReferenceAt,
   escapeBraces,
   getTokenKey,
@@ -204,7 +205,32 @@ describe("escapableReferenceAt", () => {
     expect(spanAt(String.raw`x \{A}`, 4)).toBe(String.raw`\{A}`);
   });
 
+  it("holds left of the backslash escaping it", () => {
+    expect(spanAt(String.raw`x \{A}`, 2)).toBe(String.raw`\{A}`);
+  });
+
   it("is null outside every reference", () => {
     expect(spanAt("ssh {USER}@{HOST}", 2)).toBeNull();
+  });
+});
+
+describe("dropBraceEscapes", () => {
+  it("drops the backslash before an escaped reference", () => {
+    expect(dropBraceEscapes(String.raw`ping \{HOST}`)).toBe("ping {HOST}");
+  });
+
+  it("unescapes every level of a nested reference", () => {
+    expect(dropBraceEscapes(String.raw`\{A;b=\{C}}`)).toBe("{A;b={C}}");
+  });
+
+  it("leaves unescaped references and other backslashes alone", () => {
+    expect(dropBraceEscapes(String.raw`{A} a\b \}`)).toBe(
+      String.raw`{A} a\b \}`,
+    );
+  });
+
+  it("undoes escapeBraces", () => {
+    const text = "{A;b={C;d={E}}} and {|date()}";
+    expect(dropBraceEscapes(escapeBraces(text))).toBe(text);
   });
 });

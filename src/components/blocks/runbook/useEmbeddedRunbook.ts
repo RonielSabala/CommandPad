@@ -1,14 +1,14 @@
 import { RunbookBlockConfig } from "@/common/config";
 import type { EmbeddedRunbookStatus } from "@/common/enums";
 import type { RunbookBlock, RunbookContent, Variable } from "@/common/types";
+import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { hasEncryptedSecrets } from "@/services/vault";
 import { tabContent, useStore } from "@/store/store";
 import { resolveEmbedSource, type EmbedSource } from "@/utils/embeddedRunbook";
 import {
   applyOverrides,
-  getSecretKeys,
-  getVariableMap,
-  overrideScope,
+  getOverriddenVariableMap,
+  overriddenSecretKeys,
   type OverrideHost,
   type VariableMap,
 } from "@/utils/resolution";
@@ -73,30 +73,26 @@ export function useEmbeddedRunbook(
   );
   const variables = useMemo(
     () =>
-      content
-        ? applyOverrides(content.variables, overrides, secretKeys)
-        : NO_VARIABLES,
-    [content, overrides, secretKeys],
+      content ? applyOverrides(content.variables, overrides) : NO_VARIABLES,
+    [content, overrides],
   );
 
-  // Only an override reads the host
-  const overrideHost = overrides ? variableMap : null;
-  const embeddedMap = useMemo(
+  const ownVariables = content?.variables ?? NO_VARIABLES;
+  const embeddedMap = overrides
+    ? getOverriddenVariableMap(ownVariables, overrides, variableMap)
+    : getTabVariableMap(ownVariables);
+
+  const embeddedSecrets = useMemo(
     () =>
-      getVariableMap(
-        variables,
-        overrideHost
-          ? overrideScope(variables, overrides, overrideHost)
-          : undefined,
-      ),
-    [variables, overrides, overrideHost],
+      overriddenSecretKeys(ownVariables, overrides, embeddedMap, secretKeys),
+    [ownVariables, overrides, embeddedMap, secretKeys],
   );
-  const embeddedSecrets = useMemo(() => getSecretKeys(variables), [variables]);
 
   const locked = useMemo(
     () => !!content && hasEncryptedSecrets(content),
     [content],
   );
+
   const nestedTrail = useMemo(
     () => (key ? [...trail, key] : trail),
     [trail, key],

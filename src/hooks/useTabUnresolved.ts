@@ -1,10 +1,18 @@
 import { BlockType } from "@/common/enums";
 import type { Block, RunbookBlock, Tab, Variable } from "@/common/types";
 import { useStore, type StoreState } from "@/store/store";
-import { hasUnresolvedEmbeds } from "@/utils/embeddedRunbook";
+import {
+  embeddedVariables,
+  hasUnresolvedEmbeds,
+  type EmbedLookup,
+} from "@/utils/embeddedRunbook";
 import {
   getVariableMap,
-  hasUnresolvedReferences,
+  hasUnresolvedBlockReferences,
+  hasUnresolvedOverrides,
+  unresolvedBlockParts,
+  unresolvedOverrideParts,
+  type UnresolvedPart,
   type VariableMap,
 } from "@/utils/resolution";
 import { useCallback, useMemo } from "react";
@@ -23,14 +31,53 @@ export function getTabVariableMap(variables: Variable[]): VariableMap {
   return map;
 }
 
+const NO_PARTS: UnresolvedPart[] = [];
+
 function isRunbookBlock(block: Block): block is RunbookBlock {
   return block.type === BlockType.RUNBOOK;
+}
+
+/** The failing parts of a block's references. */
+export function getBlockUnresolvedParts(
+  block: Block,
+  hostMap: VariableMap,
+  secretKeys: ReadonlySet<string>,
+  lookup: EmbedLookup,
+): UnresolvedPart[] {
+  if (!isRunbookBlock(block)) {
+    return unresolvedBlockParts(block, hostMap, secretKeys);
+  }
+
+  const { overrides } = block;
+  const variables = overrides && embeddedVariables(block, lookup);
+  return overrides && variables
+    ? unresolvedOverrideParts(variables, overrides, hostMap, secretKeys)
+    : NO_PARTS;
+}
+
+function hasUnresolvedBlockOverrides(
+  block: RunbookBlock,
+  hostMap: VariableMap,
+  lookup: EmbedLookup,
+): boolean {
+  const { overrides } = block;
+  const variables = overrides && embeddedVariables(block, lookup);
+  return (
+    !!overrides &&
+    !!variables &&
+    hasUnresolvedOverrides(variables, overrides, hostMap)
+  );
 }
 
 export function useTabUnresolved(tab: Tab): boolean {
   const variableMap = getTabVariableMap(tab.variables);
   const references = useMemo(
-    () => hasUnresolvedReferences(tab.blocks, variableMap),
+    () =>
+      tab.blocks.some(
+        (block) =>
+          !isRunbookBlock(block) &&
+          hasUnresolvedBlockReferences(block, variableMap),
+      ),
     [tab.blocks, variableMap],
   );
   const runbookBlocks = useMemo(() => {
@@ -43,12 +90,15 @@ export function useTabUnresolved(tab: Tab): boolean {
       (state: StoreState) =>
         !references &&
         runbookBlocks.length > 0 &&
-        hasUnresolvedEmbeds(
+        (hasUnresolvedEmbeds(
           runbookBlocks,
           state.runbookLibrary,
           state.embeddedRunbooks,
-        ),
-      [references, runbookBlocks],
+        ) ||
+          runbookBlocks.some((block) =>
+            hasUnresolvedBlockOverrides(block, variableMap, state),
+          )),
+      [references, runbookBlocks, variableMap],
     ),
   );
 

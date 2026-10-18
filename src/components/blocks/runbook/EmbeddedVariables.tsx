@@ -1,35 +1,66 @@
 import { CssClass } from "@/common/constants/css";
 import { CodeModelScope } from "@/common/editorConfig";
 import { TooltipVariant, VariableEntryKind } from "@/common/enums";
-import type { RunbookBlock, Variable, VariableSection } from "@/common/types";
+import type {
+  Block,
+  RunbookBlock,
+  Variable,
+  VariableSection,
+} from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { VariableSectionHeader } from "@/components/variables/VariableSectionHeader";
 import { VariableValueField } from "@/components/variables/VariableValueField";
-import { useTranslation } from "@/i18n";
+import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
+import { useTranslation, type Messages } from "@/i18n";
 import {
   buildVariableCompletions,
+  withOrigin,
   type VariableCompletion,
 } from "@/monaco/completions";
-import { useStore } from "@/store/store";
-import { embedScopeId } from "@/utils/embeddedRunbook";
+import { getActiveTab, useStore } from "@/store/store";
 import {
-  getUsedVariableKeys,
+  cloudPathSegments,
+  embedScopeId,
+  type EmbedSource,
+} from "@/utils/embeddedRunbook";
+import { stripJsonExtension } from "@/utils/export";
+import {
   getVariableKey,
   isConstantVariableKey,
   isVariableUnused,
   withOverride,
   type OverrideHost,
 } from "@/utils/resolution";
+import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { buildVariableLayout } from "@/utils/variableSections";
-import { useCallback, useMemo } from "react";
+import { useCallback, useContext, useMemo } from "react";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 
 import "@/components/variables/VariablesList.css";
+import { CompletionsContext } from "../listContext";
 import { NotePreview } from "../note/NotePreview";
 import "./EmbeddedVariables.css";
 import { EmbedNotice } from "./RunbookEmbed";
 import type { EmbeddedRunbookState } from "./useEmbeddedRunbook";
+
+/** What a suggestion calls the runbook a variable comes from. */
+function embedSourceName(
+  block: RunbookBlock,
+  source: EmbedSource | null,
+  t: Messages,
+): string {
+  if (block.cloud) {
+    const cloudPath = block.cloud.path;
+    const filename = cloudPathSegments(cloudPath).at(-1);
+    return filename ? stripJsonExtension(filename) : cloudPath;
+  }
+
+  return displayLabel(source?.local?.label ?? block.label, t);
+}
+
+const EMPTY_BLOCKS: Block[] = [];
+const EMPTY_VARIABLES: Variable[] = [];
 
 interface Props {
   block: RunbookBlock;
@@ -41,8 +72,9 @@ interface Props {
 export function EmbeddedVariables({ block, embed, host }: Props) {
   const t = useTranslation();
   const { id: blockId, overrides } = block;
-  const { variableMap, secretKeys } = host;
+  const { variableMap } = host;
 
+  const hostLabel = useStore((state) => getActiveTab(state)?.label ?? "");
   const folds = useStore((state) => state.embeddedSectionFolds);
   const setRunbookOverrides = useStore((state) => state.setRunbookOverrides);
   const setEmbeddedSectionFolded = useStore(
@@ -61,22 +93,34 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
     return buildVariableLayout(variables ?? [], sections);
   }, [variables, variableSections, folds, blockId]);
 
-  const usedKeys = useMemo(
-    () => getUsedVariableKeys(embed.content?.blocks, embed.variables),
-    [embed.content, embed.variables],
+  const usedKeys = useUsedVariableKeys(
+    embed.content?.blocks ?? EMPTY_BLOCKS,
+    embed.variables ?? EMPTY_VARIABLES,
   );
 
-  // Completions
+  // Completions, each labeled with its runbook
+  const hostName = displayLabel(hostLabel, t);
+  const embedName = embedSourceName(block, embed.source, t);
+
+  const listCompletions = useContext(CompletionsContext);
   const hostCompletions = useMemo(
-    () => buildVariableCompletions(variableMap, secretKeys),
-    [variableMap, secretKeys],
+    () => withOrigin(listCompletions, { name: hostName, embedded: false }),
+    [listCompletions, hostName],
   );
+
+  const allEmbeddedCompletions = useMemo(
+    () =>
+      buildVariableCompletions(embed.variableMap, embed.secretKeys, usedKeys),
+    [embed.variableMap, embed.secretKeys, usedKeys],
+  );
+
   const embeddedCompletions = useMemo(
     () =>
-      buildVariableCompletions(embed.variableMap, embed.secretKeys).filter(
-        (entry) => !(entry.key in variableMap),
+      withOrigin(
+        allEmbeddedCompletions.filter((entry) => !(entry.key in variableMap)),
+        { name: embedName, embedded: true },
       ),
-    [embed.variableMap, embed.secretKeys, variableMap],
+    [allEmbeddedCompletions, variableMap, embedName],
   );
 
   const setOverride = useCallback(

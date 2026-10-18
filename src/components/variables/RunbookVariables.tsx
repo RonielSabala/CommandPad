@@ -18,16 +18,14 @@ import { useLassoSelection } from "@/hooks/useLassoSelection";
 import { useRowReveal } from "@/hooks/useRowReveal";
 import { useScrollingClass } from "@/hooks/useScrollingClass";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
+import { getTabVariableMap } from "@/hooks/useTabUnresolved";
+import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
 import { buildVariableCompletions } from "@/monaco/completions";
 import { getActiveTab, useStore } from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
-import {
-  getSecretKeys,
-  getUsedVariableKeys,
-  getVariableMap,
-} from "@/utils/resolution";
+import { getSecretKeys } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -136,15 +134,12 @@ export function RunbookVariables() {
     );
   }, [pendingFocusSectionId]);
 
-  const variableMap = useMemo(() => getVariableMap(variables), [variables]);
+  const variableMap = getTabVariableMap(variables);
   const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
-  const usedKeys = useMemo(
-    () => getUsedVariableKeys(blocks, variables),
-    [blocks, variables],
-  );
+  const usedKeys = useUsedVariableKeys(blocks, variables);
   const completions = useMemo(
-    () => buildVariableCompletions(variableMap, secretKeys),
-    [variableMap, secretKeys],
+    () => buildVariableCompletions(variableMap, secretKeys, usedKeys),
+    [variableMap, secretKeys, usedKeys],
   );
 
   return (
@@ -168,7 +163,7 @@ export function RunbookVariables() {
         {isEmpty && (
           <EmptyState
             icon={
-              <span className="empty-state-glyph" aria-hidden="true">
+              <span className="empty-state-glyph" aria-hidden={true}>
                 {"{}"}
               </span>
             }

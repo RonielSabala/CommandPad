@@ -1,14 +1,21 @@
+import { SECRET_MASK } from "@/common/config";
 import { CommandSegmentType } from "@/common/enums";
 import type { CommandSegment } from "@/common/types";
 import { runbook, secret } from "@/test";
 import { describe, expect, it } from "vitest";
 
-import { countCommandLines, isMaskedSegment } from "./segments";
+import { countCommandLines, isMaskedSegment, maskedText } from "./segments";
 
 const book = runbook({
   HOST: "example.com",
   TOKEN: secret("s3cr3t"),
   LINES: "one\ntwo\nthree",
+  AUTH: "Bearer {TOKEN}!",
+  WRAPPED: "[{AUTH}]",
+  MULTI: secret("a{HOST}\nb"),
+  URL: "https://{;host}/x",
+  DEFAULTED: "https://{;host=api.{TOKEN}}/x",
+  VIA_DEFAULT: "<{DEFAULTED}>",
 });
 
 describe("resolveCommandText", () => {
@@ -55,6 +62,47 @@ describe("isMaskedSegment", () => {
   it("never masks an unresolved segment, which shows the reference itself", () => {
     const [segment] = book.segments("{MISSING}");
     expect(isMaskedSegment(segment, book.secrets)).toBe(false);
+  });
+});
+
+describe("maskedText", () => {
+  const MASK = SECRET_MASK;
+
+  function shown(command: string): string {
+    return book
+      .segments(command)
+      .map((segment) => maskedText(segment, book.secrets))
+      .join("");
+  }
+
+  it.each([
+    ["{AUTH}", `Bearer ${MASK}!`],
+    ["{WRAPPED}", `[Bearer ${MASK}!]`],
+    ["{URL;host={TOKEN}}", `https://${MASK}/x`],
+    ["{URL;host=api.{TOKEN}}", `https://api.${MASK}/x`],
+    ["{AUTH|uppercase}", MASK],
+    ["{AUTH|slice(0;6)}", MASK],
+    ["{HOST|replace(example;{TOKEN})}", MASK],
+    ["{|calc({TOKEN|len} + 1)}", MASK],
+    ["{URL;host={AUTH|lowercase}}", `https://${MASK}/x`],
+    ["{|IF(true;{AUTH};no)}", `Bearer ${MASK}!`],
+    ["{DEFAULTED}", `https://api.${MASK}/x`],
+    ["{VIA_DEFAULT}", `<https://api.${MASK}/x>`],
+    ["{DEFAULTED|uppercase}", MASK],
+    ["{DEFAULTED;host=example.com}", "https://example.com/x"],
+    ["{HOST|uppercase}", "EXAMPLE.COM"],
+  ])("masks the secret inside %s", (command, expected) => {
+    expect(shown(command)).toBe(expected);
+  });
+
+  it("folds a secret and what it nests into one mask", () => {
+    const [segment] = runbook({
+      HOST: "example.com",
+      INNER: secret("a{HOST}b"),
+      OUTER: "<{INNER}>",
+    }).segments("{OUTER}");
+
+    expect(maskedText(segment, new Set(["INNER"]))).toBe(`<${MASK}>`);
   });
 });
 

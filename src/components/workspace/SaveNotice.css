@@ -1,0 +1,118 @@
+.save-notice {
+  --save-notice-min-width: 14rem;
+  --save-notice-progress-height: var(--space-1);
+  --save-notice-progress-inset: var(--space-2);
+
+  position: fixed;
+  bottom: var(--space-16);
+  left: 50%;
+  z-index: var(--z-popover);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: min(var(--save-notice-min-width), 100vw - var(--space-16));
+  max-width: calc(100vw - var(--space-16));
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
+  overflow: hidden;
+  border: var(--border-standard);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow:
+    0 var(--space-1) var(--space-3) var(--shadow-color-float),
+    0 var(--space-2) var(--space-8) var(--shadow-color-float);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, var(--space-3));
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base);
+}
+
+.save-notice.is-visible {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.save-notice.is-instant {
+  transition: none;
+}
+
+.save-notice.is-saving {
+  padding-bottom: calc(
+    var(--space-4) + var(--save-notice-progress-height) +
+      var(--save-notice-progress-inset)
+  );
+}
+
+.save-notice-progress {
+  position: absolute;
+  right: var(--save-notice-progress-inset);
+  bottom: var(--save-notice-progress-inset);
+  left: var(--save-notice-progress-inset);
+  height: var(--save-notice-progress-height);
+  overflow: hidden;
+  background: var(--accent-dim);
+}
+
+.save-notice-progress::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 50%;
+  background: var(--color-text-primary);
+  animation: save-notice-progress 1.5s ease-in-out infinite;
+}
+
+@keyframes save-notice-progress {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+.save-notice-icon {
+  flex-shrink: 0;
+  color: var(--success);
+}
+
+.save-notice-icon.spinner {
+  border-top-color: var(--color-text-primary);
+}
+
+.save-notice.is-warning .save-notice-icon {
+  color: var(--warning);
+}
+
+.save-notice-text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.save-notice-close {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.save-notice-close:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+}
