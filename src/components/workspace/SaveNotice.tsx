@@ -42,8 +42,10 @@ export function SaveNotice() {
   const dismiss = useStore((state) => state.dismissSaveNotice);
 
   const [shown, setShown] = useState(notice);
+  const [closedByHand, setClosedByHand] = useState(false);
   if (notice && notice !== shown) {
     setShown(notice);
+    setClosedByHand(false);
   }
 
   useEffect(() => {
@@ -59,12 +61,15 @@ export function SaveNotice() {
   }, [notice, dismiss]);
 
   const Icon = shown && OUTCOME_ICON[shown.outcome];
+  const saving = shown?.outcome === SaveOutcome.SAVING;
 
   return (
     <div
       className={classNames(
         "save-notice",
+        saving && "is-saving",
         notice && "is-visible",
+        closedByHand && "is-instant",
         shown && WARNING_OUTCOMES.has(shown.outcome) && "is-warning",
       )}
       role={AriaRole.STATUS}
@@ -72,25 +77,34 @@ export function SaveNotice() {
     >
       {shown && Icon && (
         <>
-          <Icon className={classNames("save-notice-icon", CssClass.ICON_MD)} />
+          <Icon className={classNames("save-notice-icon", CssClass.ICON)} />
           <span className="save-notice-text">
             {t.runbooks.saveNotice[shown.outcome](
               shown.provider ? PROVIDER_NAME[shown.provider] : "",
             )}
           </span>
 
-          <button
-            type={ButtonType.BUTTON}
-            className="save-notice-close"
-            {...tooltip(t.common.close)}
-            aria-label={t.common.close}
-            tabIndex={notice ? undefined : -1}
-            onClick={() => dismiss(shown.id)}
-          >
-            <XIcon
-              className={classNames(CssClass.ICON_SM, CssClass.ICON_BOLD)}
-            />
-          </button>
+          {!saving && (
+            <button
+              type={ButtonType.BUTTON}
+              className="save-notice-close"
+              {...tooltip(t.common.close)}
+              aria-label={t.common.close}
+              tabIndex={notice ? undefined : -1}
+              onClick={() => {
+                setClosedByHand(true);
+                dismiss(shown.id);
+              }}
+            >
+              <XIcon
+                className={classNames(CssClass.ICON_SM, CssClass.ICON_BOLD)}
+              />
+            </button>
+          )}
+
+          {saving && (
+            <span className="save-notice-progress" aria-hidden={true} />
+          )}
         </>
       )}
     </div>
