@@ -5,6 +5,7 @@ import {
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  SaveOutcome,
   UnresolvedCause,
   VaultError,
   VaultField,
@@ -82,12 +83,23 @@ export const en: Messages = {
     clearLibraryTitle: "Delete all runbooks from the library",
     stopSyncing: "Stop syncing",
     syncStatus: {
-      [RunbookSyncStatus.SYNCED]: (provider) => `Synced with ${provider}`,
+      [RunbookSyncStatus.SYNCED]: (provider) => `Saved to ${provider}`,
+      [RunbookSyncStatus.UNSAVED]: (provider, shortcut) =>
+        `Unsaved changes ${MIDDLE_DOT} click or press ${shortcut} to save to ${provider}`,
       [RunbookSyncStatus.SYNCING]: (provider) => `Saving to ${provider}…`,
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
-        `Sign in to ${provider} to keep syncing`,
+        `Signed out of ${provider} ${MIDDLE_DOT} click to sign in and save`,
       [RunbookSyncStatus.ERROR]: (provider) =>
         `Could not save to ${provider} ${MIDDLE_DOT} click to retry`,
+    },
+    saveNotice: {
+      [SaveOutcome.LOCAL]: () => "All changes saved",
+      [SaveOutcome.SAVING]: (provider) => `Saving to ${provider}…`,
+      [SaveOutcome.SAVED]: (provider) => `Saved to ${provider}`,
+      [SaveOutcome.UP_TO_DATE]: () => "Already up to date",
+      [SaveOutcome.UPDATED]: (provider) => `Updated from ${provider}`,
+      [SaveOutcome.SIGNED_OUT]: (provider) => `Signed out of ${provider}`,
+      [SaveOutcome.FAILED]: (provider) => `Couldn't save to ${provider}`,
     },
     secretStatus: {
       [VaultStatus.UNLOCKED]: `Secrets are encrypted ${MIDDLE_DOT} click to change the passphrase`,
@@ -445,6 +457,16 @@ export const en: Messages = {
   confirm: {
     defaultTitle: "Confirm",
   },
+  cloudConflict: {
+    title: (filename) => `\`${filename}\` changed in the cloud`,
+    message: (provider) =>
+      `Someone saved this runbook to ${provider} after you last did. The left side is the copy in ${provider}, the right side is yours: edit it to keep what you want from both (the arrow beside a change takes the ${provider} side of it), then save.`,
+    cloudSide: (provider) => `In ${provider}`,
+    localSide: "Yours",
+    useCloud: (provider) => `Use ${provider} Version`,
+    keepMine: "Save Mine",
+    invalidError: "That isn't valid runbook JSON, so it can't be saved yet.",
+  },
   dialogs: {
     overwriteTitle: "Overwrite Runbook",
     overwriteConfirm: "Overwrite",
@@ -472,6 +494,8 @@ export const en: Messages = {
     deleteRunbookConfirm: "Delete",
     deleteRunbookMessage: (label) =>
       `Delete \`${label}\`? **This cannot be undone.**`,
+    deleteUnsavedRunbookMessage: (label) =>
+      `\`${label}\` has changes that were never saved to the cloud. Delete it anyway? **Those changes cannot be recovered.**`,
     deleteCloudFileTitle: "Delete Cloud Runbook",
     deleteCloudFileConfirm: "Delete",
     deleteCloudFileMessage: (filename) =>
@@ -512,8 +536,8 @@ export const en: Messages = {
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Toggle read / edit mode",
     [KeyBinding.ESCAPE]: "Clear block selection / close modals",
-    [KeyBinding.TOGGLE_SIDEBAR]: "Collapse / expand the side panel",
-    [KeyBinding.MOVE_SIDEBAR]: "Move the side panel to left / right",
+    [KeyBinding.SAVE_RUNBOOK]:
+      "Save the runbook to the cloud file it is linked to",
     [KeyBinding.NEW_TAB]: "Open a new tab",
     [KeyBinding.CLOSE_TAB]: "Close the active tab",
     [KeyBinding.FOCUS_RUNBOOK]: "Select active runbook",
@@ -1429,12 +1453,16 @@ If something goes wrong, undo it in this order:
         "If the destination folder already holds a file with the same name, the export stops and asks you to confirm before replacing it.",
     },
     cloudLinkedSync: {
-      intro:
-        "A runbook you import from the cloud stays **in sync** with the file it came from: every edit is written back to that file, so you never have to export it again to save it. Exporting a runbook as **JSON** links it the same way.",
+      intro: (shortcut) =>
+        `A runbook you import from the cloud stays **linked** to the file it came from. Your edits are kept in the browser as you type and reach the cloud file only when you save: press \`${shortcut}\` or click the **cloud icon** next to the runbook. That way, people working on the same file never see each other's half typed changes. Exporting a runbook as **JSON** links it the same way.`,
+      localSave: (shortcut) =>
+        `A runbook that isn't linked is always saved in the browser, so \`${shortcut}\` only confirms there is nothing left to save.`,
       syncBadge: (runbooksTitle) =>
-        `A synced runbook shows a **sync icon** next to its name in the **${runbooksTitle}** list: a spinner while an edit is on its way up, a crossed out cloud if the save failed. Click it to sign in again or retry.`,
+        `The cloud icon next to a linked runbook in the **${runbooksTitle}** list shows where it stands: a check when the cloud file is current, an arrow pointing up when there are unsaved changes, a spinner while saving, and a crossed out cloud when you're signed out. Click it to save, sign in or retry.`,
+      conflicts: (keepMine) =>
+        `Saving reads the cloud file first. If nobody else saved it since you last did, your changes are written. If only the cloud copy changed, it is brought down instead. If both changed, a **side by side comparison** opens with the cloud copy on the left and yours on the right. Edit your side to keep what you want from both (the arrow beside a change copies the cloud's version of it), then click **${keepMine}**, or keep the cloud version and drop yours.`,
       stopSyncing: (stopSyncingLabel) =>
-        `**${stopSyncingLabel}** (in the runbook's three dots menu) breaks the link without touching either copy. Sync only pushes local edits up, it never pulls remote changes back down.`,
+        `**${stopSyncingLabel}** (in the runbook's three dots menu) breaks the link without touching either copy.`,
     },
     cloudFileManagement: {
       folders:

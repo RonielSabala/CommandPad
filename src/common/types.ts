@@ -110,6 +110,10 @@ export interface RunbookSync {
   provider: CloudProvider;
   filename: string;
   folderId: string | null;
+  /** SHA-256 of the file text last read from or written to the cloud. */
+  revision?: string;
+  /** Local edits the cloud file doesn't have yet. */
+  pending?: boolean;
 }
 
 export interface VaultRecord {

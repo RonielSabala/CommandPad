@@ -4,10 +4,8 @@ import { MonacoSelector } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import {
   CodeEditorProperty,
-  CodeModelConfig,
   EditorLanguage,
   MonacoLayout,
-  RUNBOOK_JSON_SCOPES,
 } from "@/common/editorConfig";
 import { CodeLanguage, CodeRendering, PanelSide } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
@@ -29,6 +27,7 @@ import {
 import { bindDragScrolling } from "@/monaco/dragScroll";
 import { getFindController, isFindRevealed } from "@/monaco/findWidget";
 import { getCodeMetrics } from "@/monaco/metrics";
+import { modelPath } from "@/monaco/modelPath";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
 import { bindRevealScrolling } from "@/monaco/revealScroll";
 import { bindStickyWidgets } from "@/monaco/stickyWidgets";
@@ -138,14 +137,6 @@ function gutterOptions(
 
 function toSingleLine(text: string): string {
   return text.replaceAll(CARRIAGE_RETURN, "").replaceAll(LINE_BREAK, "");
-}
-
-function modelPath(modelId: string): string {
-  const suffix = RUNBOOK_JSON_SCOPES.some((scope) => modelId.startsWith(scope))
-    ? CodeModelConfig.RUNBOOK_SUFFIX
-    : CodeModelConfig.PLAIN_SUFFIX;
-
-  return `${CodeModelConfig.SCHEME}://${modelId}${suffix}`;
 }
 
 /** Files `entries` under the editor's model for as long as it is mounted. */

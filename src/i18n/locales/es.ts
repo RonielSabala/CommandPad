@@ -5,6 +5,7 @@ import {
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  SaveOutcome,
   UnresolvedCause,
   VaultError,
   VaultField,
@@ -82,12 +83,23 @@ export const es: Messages = {
     clearLibraryTitle: "Eliminar todos los libros de la biblioteca",
     stopSyncing: "Dejar de sincronizar",
     syncStatus: {
-      [RunbookSyncStatus.SYNCED]: (provider) => `Sincronizado con ${provider}`,
+      [RunbookSyncStatus.SYNCED]: (provider) => `Guardado en ${provider}`,
+      [RunbookSyncStatus.UNSAVED]: (provider, shortcut) =>
+        `Cambios sin guardar ${MIDDLE_DOT} haz clic o pulsa ${shortcut} para guardar en ${provider}`,
       [RunbookSyncStatus.SYNCING]: (provider) => `Guardando en ${provider}…`,
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
-        `Inicia sesión en ${provider} para seguir sincronizando`,
+        `Sesión cerrada en ${provider} ${MIDDLE_DOT} haz clic para iniciar sesión y guardar`,
       [RunbookSyncStatus.ERROR]: (provider) =>
         `No se pudo guardar en ${provider} ${MIDDLE_DOT} haz clic para reintentar`,
+    },
+    saveNotice: {
+      [SaveOutcome.LOCAL]: () => "Todos los cambios guardados",
+      [SaveOutcome.SAVING]: (provider) => `Guardando en ${provider}…`,
+      [SaveOutcome.SAVED]: (provider) => `Guardado en ${provider}`,
+      [SaveOutcome.UP_TO_DATE]: () => "Ya está al día",
+      [SaveOutcome.UPDATED]: (provider) => `Actualizado desde ${provider}`,
+      [SaveOutcome.SIGNED_OUT]: (provider) => `Sesión cerrada en ${provider}`,
+      [SaveOutcome.FAILED]: (provider) => `No se pudo guardar en ${provider}`,
     },
     secretStatus: {
       [VaultStatus.UNLOCKED]: `Los secretos están cifrados ${MIDDLE_DOT} haz clic para cambiar la frase de contraseña`,
@@ -461,6 +473,17 @@ export const es: Messages = {
   confirm: {
     defaultTitle: "Confirmar",
   },
+  cloudConflict: {
+    title: (filename) => `\`${filename}\` cambió en la nube`,
+    message: (provider) =>
+      `Alguien guardó este libro en ${provider} después de la última vez que lo hiciste tú. A la izquierda está la copia de ${provider} y a la derecha la tuya: edítala para quedarte con lo que quieras de ambas (la flecha junto a un cambio toma el lado de ${provider}) y luego guarda.`,
+    cloudSide: (provider) => `En ${provider}`,
+    localSide: "La tuya",
+    useCloud: (provider) => `Usar la versión de ${provider}`,
+    keepMine: "Guardar la mía",
+    invalidError:
+      "Esto no es un JSON de libro válido, así que todavía no se puede guardar.",
+  },
   dialogs: {
     overwriteTitle: "Sobrescribir Libro",
     overwriteConfirm: "Sobrescribir",
@@ -488,6 +511,8 @@ export const es: Messages = {
     deleteRunbookConfirm: "Eliminar",
     deleteRunbookMessage: (label) =>
       `¿Eliminar \`${label}\`? **Esto no se puede deshacer.**`,
+    deleteUnsavedRunbookMessage: (label) =>
+      `\`${label}\` tiene cambios que nunca se guardaron en la nube. ¿Eliminarlo de todos modos? **Esos cambios no se pueden recuperar.**`,
     deleteCloudFileTitle: "Eliminar Libro de la Nube",
     deleteCloudFileConfirm: "Eliminar",
     deleteCloudFileMessage: (filename) =>
@@ -528,8 +553,8 @@ export const es: Messages = {
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Alternar modo lectura / edición",
     [KeyBinding.ESCAPE]: "Limpiar selección de bloques / cerrar diálogos",
-    [KeyBinding.TOGGLE_SIDEBAR]: "Contraer / expandir el panel lateral",
-    [KeyBinding.MOVE_SIDEBAR]: "Mover el panel lateral a izquierda / derecha",
+    [KeyBinding.SAVE_RUNBOOK]:
+      "Guardar el libro en el archivo de la nube al que está vinculado",
     [KeyBinding.NEW_TAB]: "Abrir una nueva pestaña",
     [KeyBinding.CLOSE_TAB]: "Cerrar la pestaña activa",
     [KeyBinding.FOCUS_RUNBOOK]: "Seleccionar libro activo",
@@ -1454,12 +1479,16 @@ Si algo sale mal, deshazlo en este orden:
         "Si la carpeta de destino ya tiene un archivo con el mismo nombre, la exportación se detiene y te pide confirmación antes de reemplazarlo.",
     },
     cloudLinkedSync: {
-      intro:
-        "Un libro que importas desde la nube queda **sincronizado** con el archivo del que vino: cada edición se escribe de vuelta en ese archivo, así que nunca tienes que volver a exportarlo para guardarlo. Exportar un libro como **JSON** lo vincula igual.",
+      intro: (shortcut) =>
+        `Un libro que importas desde la nube queda **vinculado** al archivo del que vino. Tus ediciones se guardan en el navegador mientras escribes y llegan al archivo de la nube solo cuando guardas: pulsa \`${shortcut}\` o haz clic en el **icono de la nube** junto al libro. Así, quienes trabajan en el mismo archivo nunca ven los cambios a medio escribir de los demás. Exportar un libro como **JSON** lo vincula igual.`,
+      localSave: (shortcut) =>
+        `Un libro sin vincular siempre está guardado en el navegador, así que \`${shortcut}\` solo confirma que no queda nada por guardar.`,
       syncBadge: (runbooksTitle) =>
-        `Un libro sincronizado muestra un **icono de sincronización** junto a su nombre en la lista de **${runbooksTitle}**: gira mientras una edición va en camino, y se convierte en una nube tachada si el guardado falló. Haz clic en él para volver a iniciar sesión o reintentar.`,
+        `El icono de la nube junto a un libro vinculado en la lista de **${runbooksTitle}** muestra cómo está: una marca cuando el archivo de la nube está al día, una flecha hacia arriba cuando hay cambios sin guardar, un indicador giratorio mientras guarda y una nube tachada si cerraste sesión. Haz clic en él para guardar, iniciar sesión o reintentar.`,
+      conflicts: (keepMine) =>
+        `Al guardar, primero se lee el archivo de la nube. Si nadie más lo guardó desde la última vez que lo hiciste tú, se escriben tus cambios. Si solo cambió la copia de la nube, se trae esa. Si cambiaron las dos, se abre una **comparación lado a lado** con la copia de la nube a la izquierda y la tuya a la derecha. Edita tu lado para quedarte con lo que quieras de ambas (la flecha junto a un cambio copia la versión de la nube) y haz clic en **${keepMine}**, o quédate con la versión de la nube y descarta la tuya.`,
       stopSyncing: (stopSyncingLabel) =>
-        `**${stopSyncingLabel}** (en el menú de tres puntos del libro) rompe el vínculo sin tocar ninguna de las dos copias. La sincronización solo sube tus ediciones locales, nunca baja los cambios remotos.`,
+        `**${stopSyncingLabel}** (en el menú de tres puntos del libro) rompe el vínculo sin tocar ninguna de las dos copias.`,
     },
     cloudFileManagement: {
       folders:

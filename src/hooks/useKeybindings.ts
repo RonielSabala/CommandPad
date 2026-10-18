@@ -23,6 +23,12 @@ export function useKeybindings(): void {
         return;
       }
 
+      if (matchesKeybinding(event, KeyBinding.SAVE_RUNBOOK)) {
+        event.preventDefault();
+        void state.saveActiveRunbook();
+        return;
+      }
+
       if (matchesKeybinding(event, KeyBinding.CLOSE_TAB)) {
         event.preventDefault();
         if (state.activeTabId) {

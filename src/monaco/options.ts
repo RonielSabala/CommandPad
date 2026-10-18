@@ -116,3 +116,15 @@ export function boundedEditorOptions(
     wordBasedSuggestions: "off",
   };
 }
+
+export function conflictDiffOptions(): editor.IStandaloneDiffEditorConstructionOptions {
+  return {
+    ...boundedEditorOptions(true, null),
+    renderSideBySide: true,
+    originalEditable: false,
+    renderMarginRevertIcon: true,
+    ignoreTrimWhitespace: false,
+    renderOverviewRuler: false,
+    hideUnchangedRegions: { enabled: true },
+  };
+}

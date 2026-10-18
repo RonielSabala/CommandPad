@@ -279,13 +279,28 @@ const isRunbookSync = (value: unknown): value is RunbookSync =>
   isString(value.filename) &&
   (isString(value.folderId) || value.folderId === null);
 
+function restoreRunbookSync(value: unknown): RunbookSync | undefined {
+  if (!isRunbookSync(value)) {
+    return undefined;
+  }
+
+  const { provider, filename, folderId, revision, pending } = value;
+  return {
+    provider,
+    filename,
+    folderId,
+    ...(isString(revision) ? { revision } : {}),
+    ...(pending === true ? { pending } : {}),
+  };
+}
+
 const isVaultRecord = (value: unknown): value is VaultRecord =>
   isObject(value) && isString(value.salt) && isString(value.verifier);
 
 function restoreRunbookEntry(entry: RunbookEntry): RunbookEntry {
   return {
     ...entry,
-    sync: isRunbookSync(entry.sync) ? entry.sync : undefined,
+    sync: restoreRunbookSync(entry.sync),
     secured: entry.secured === true,
     vault: isVaultRecord(entry.vault) ? entry.vault : undefined,
   };

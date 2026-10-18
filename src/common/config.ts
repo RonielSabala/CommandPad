@@ -97,11 +97,11 @@ export const VariableSplit = {
   DEFAULT: 0.5,
 } as const;
 
-// Timeout durations
+// Timeouts
 export const DRAG_TIMEOUT_MS = 50;
 export const DEBOUNCE_SAVE_MS = 150;
 export const SCROLL_IDLE_MS = 150;
-export const DEBOUNCE_CLOUD_SYNC_MS = 1000;
+export const SAVE_NOTICE_TIMEOUT_MS = 3000;
 export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
 export const COPY_WARNING_TIMEOUT_MS = 2000;
 export const EXPORT_SUCCESS_TIMEOUT_MS = 1000;

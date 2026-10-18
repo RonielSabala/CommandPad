@@ -156,6 +156,7 @@
   --modal-max-width: 30rem;
   --modal-cloud-width: 50vw;
   --modal-cloud-height: 75vh;
+  --modal-conflict-width: 80vw;
   --modal-cloud-padding-x: var(--space-12);
   --modal-cloud-padding-y: var(--space-10);
 

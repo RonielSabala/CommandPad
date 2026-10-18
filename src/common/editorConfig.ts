@@ -70,15 +70,23 @@ export const CodeModelScope = {
   PASTE_RUNBOOK: "runbook/paste",
   RUNBOOK_SOURCE: "runbook/source",
   CLOUD_FILE: "runbook/cloud",
+  CLOUD_CONFLICT: "runbook/conflict",
 } as const;
 export type CodeModelScope =
   (typeof CodeModelScope)[keyof typeof CodeModelScope];
 
 export const RUNBOOK_JSON_SCOPES: readonly string[] = [
   CodeModelScope.PASTE_RUNBOOK,
-  CodeModelScope.CLOUD_FILE,
   CodeModelScope.RUNBOOK_SOURCE,
+  CodeModelScope.CLOUD_FILE,
+  CodeModelScope.CLOUD_CONFLICT,
 ];
+
+export const ConflictSide = {
+  CLOUD: "cloud",
+  LOCAL: "local",
+} as const;
+export type ConflictSide = (typeof ConflictSide)[keyof typeof ConflictSide];
 
 export const MonacoMinimap = {
   showSlider: "mouseover",
@@ -100,6 +108,8 @@ export const MonacoTheme = {
   SLIDER_OPACITY: 0.07,
   SLIDER_HOVER_OPACITY: 0.1,
   SLIDER_ACTIVE_OPACITY: 0.15,
+  DIFF_LINE_OPACITY: 0.12,
+  DIFF_TEXT_OPACITY: 0.28,
   BASE_STRING_DARK: "#ce9178",
   BASE_STRING_LIGHT: "#a31515",
 } as const;

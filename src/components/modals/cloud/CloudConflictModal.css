@@ -1,0 +1,56 @@
+.modal.modal-cloud-conflict {
+  width: var(--modal-conflict-width);
+  height: var(--modal-cloud-height);
+  max-width: none;
+  padding: var(--modal-cloud-padding-y) var(--modal-cloud-padding-x);
+}
+
+.cloud-conflict-content {
+  display: contents;
+}
+
+.modal-cloud-conflict .modal-title .note-code {
+  word-break: break-all;
+}
+
+.cloud-conflict-frame {
+  flex: 1;
+  min-height: 0;
+  background: var(--color-bg);
+}
+
+.cloud-conflict-sides {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: var(--space-2) var(--space-4);
+  border-bottom: var(--border-standard);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.cloud-conflict-diff {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.cloud-conflict-monaco {
+  position: absolute;
+  inset: 0;
+}
+
+.cloud-conflict-monaco .monaco-scrollable-element > .scrollbar {
+  z-index: var(--z-raised);
+}
+
+.cloud-conflict-monaco .monaco-diff-editor .gutter .gutterItem .background {
+  display: none;
+}
+
+.cloud-conflict-error {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--danger);
+}

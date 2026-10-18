@@ -4,6 +4,7 @@ import type {
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
+  SaveOutcome,
   UnresolvedCause,
   VaultError,
   VaultField,
@@ -105,7 +106,11 @@ export interface Messages {
     clearLibrary: string;
     clearLibraryTitle: string;
     stopSyncing: string;
-    syncStatus: Record<RunbookSyncStatus, (provider: string) => string>;
+    syncStatus: Record<
+      RunbookSyncStatus,
+      (provider: string, shortcut: string) => string
+    >;
+    saveNotice: Record<SaveOutcome, (provider: string) => string>;
     secretStatus: Record<VaultStatus, string>;
   };
   variables: {
@@ -371,6 +376,15 @@ export interface Messages {
   confirm: {
     defaultTitle: string;
   };
+  cloudConflict: {
+    title: (filename: string) => string;
+    message: (provider: string) => string;
+    cloudSide: (provider: string) => string;
+    localSide: string;
+    useCloud: (provider: string) => string;
+    keepMine: string;
+    invalidError: string;
+  };
   dialogs: {
     overwriteTitle: string;
     overwriteConfirm: string;
@@ -390,6 +404,7 @@ export interface Messages {
     deleteRunbookTitle: string;
     deleteRunbookConfirm: string;
     deleteRunbookMessage: (label: string) => string;
+    deleteUnsavedRunbookMessage: (label: string) => string;
     deleteCloudFileTitle: string;
     deleteCloudFileConfirm: string;
     deleteCloudFileMessage: (filename: string) => string;
@@ -806,8 +821,10 @@ export interface Messages {
       overwrite: string;
     };
     cloudLinkedSync: {
-      intro: string;
+      intro: (shortcut: string) => string;
+      localSave: (shortcut: string) => string;
       syncBadge: (runbooksTitle: string) => string;
+      conflicts: (keepMine: string) => string;
       stopSyncing: (stopSyncingLabel: string) => string;
     };
     cloudFileManagement: {

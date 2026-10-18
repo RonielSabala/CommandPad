@@ -18,5 +18,5 @@
   "[yaml]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
   },
-  "cSpell.words": ["monaco"]
+  "cSpell.words": ["ciphertext", "monaco", "ONEDRIVE"]
 }

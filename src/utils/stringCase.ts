@@ -19,7 +19,7 @@ import {
 
 const Case = escapeSyntax(StringCaseConfig);
 
-/** Where one word ends and the next begins */
+/** Where one word ends and the next begins. */
 const WordBoundaryRegex = globalUnicodeRegex(
   either(
     oneOrMore(noneOf(LETTER, NUMBER)),
