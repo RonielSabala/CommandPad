@@ -97,8 +97,6 @@ interface Props {
   onScrollChange?: (scrollTop: number) => void;
 }
 
-const FULL_HEIGHT = "100%";
-
 function estimateContentHeight(value: string, compact: boolean): number {
   const { lineHeightBase, lineHeightMedium } = getCodeMetrics();
   return countLines(value) * (compact ? lineHeightMedium : lineHeightBase);
@@ -557,7 +555,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
             onChange={(next) =>
               onChange(singleLine ? toSingleLine(next ?? "") : (next ?? ""))
             }
-            height={bounded ? FULL_HEIGHT : contentHeight}
+            height={bounded ? MonacoLayout.FULL_HEIGHT : contentHeight}
             options={options}
             beforeMount={handleBeforeMount}
             onMount={handleMount}

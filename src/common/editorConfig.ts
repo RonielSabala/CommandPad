@@ -153,6 +153,7 @@ export const MonacoLayout = {
   FIRST_LINE: 1,
   FIRST_COLUMN: 1,
   LINE_NUMBER_MIN_CHARS: 1,
+  FULL_HEIGHT: "100%",
 } as const;
 
 export const DragScrollConfig = {

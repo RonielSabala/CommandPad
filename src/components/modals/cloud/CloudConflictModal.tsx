@@ -1,5 +1,9 @@
 import { CssClass } from "@/common/constants/css";
-import { CodeModelScope, ConflictSide } from "@/common/editorConfig";
+import {
+  CodeModelScope,
+  ConflictSide,
+  MonacoLayout,
+} from "@/common/editorConfig";
 import { CodeLanguage } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import { NoteText } from "@/components/blocks/note/NoteText";
@@ -20,8 +24,6 @@ import {
 import { Modal } from "../Modal";
 import "./CloudConflictModal.css";
 import { PROVIDER_NAME } from "./cloudProviders";
-
-const FULL_HEIGHT = "100%";
 
 export function CloudConflictModal() {
   const t = useTranslation();
@@ -89,7 +91,7 @@ export function CloudConflictModal() {
                 modifiedModelPath={sidePath(ConflictSide.LOCAL)}
                 theme={monacoThemeName(theme)}
                 options={options}
-                height={FULL_HEIGHT}
+                height={MonacoLayout.FULL_HEIGHT}
                 beforeMount={() => void ensureMonacoTheme(theme)}
                 onMount={(instance) => {
                   diffRef.current = instance;
