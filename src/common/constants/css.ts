@@ -9,6 +9,7 @@ export const CssClass = {
 
   ACTIVE: "active",
   COLLAPSED: "collapsed",
+  HAS_ERROR: "has-error",
   ANIMATING: "animating",
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",
@@ -27,6 +28,7 @@ export const CssClass = {
   SELECT_MENU_PORTAL: "select-menu-portal",
   CODE_EDITOR_PROMPT: "code-editor-prompt",
   CODE_EDITOR_SURFACE: "code-editor-surface",
+  CODE_EDITOR_BOUNDED: "code-editor-bounded",
 
   // Buttons
 

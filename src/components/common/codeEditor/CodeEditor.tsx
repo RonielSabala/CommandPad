@@ -585,9 +585,9 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     return (
       <div
         className={classNames(
-          "code-editor-bounded",
-          hasError && "has-error",
           className,
+          CssClass.CODE_EDITOR_BOUNDED,
+          hasError && CssClass.HAS_ERROR,
         )}
       >
         {editor}

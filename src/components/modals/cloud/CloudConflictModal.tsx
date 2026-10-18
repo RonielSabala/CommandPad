@@ -71,9 +71,9 @@ export function CloudConflictModal() {
 
         <div
           className={classNames(
-            "code-editor-bounded",
             "cloud-conflict-frame",
-            conflict?.error && "has-error",
+            CssClass.CODE_EDITOR_BOUNDED,
+            conflict?.error && CssClass.HAS_ERROR,
           )}
         >
           <div className="cloud-conflict-sides">

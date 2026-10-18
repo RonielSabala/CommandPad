@@ -123,9 +123,9 @@ export function StaticCodeView({
   return (
     <div
       className={classNames(
-        "code-editor-bounded",
-        hasError && "has-error",
         className,
+        CssClass.CODE_EDITOR_BOUNDED,
+        hasError && CssClass.HAS_ERROR,
       )}
     >
       {view}
