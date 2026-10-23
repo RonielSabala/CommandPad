@@ -1,8 +1,6 @@
 import { PanelId, SelectionGroup } from "@/common/enums";
 import { PanelShell } from "@/components/common/panel/PanelShell";
 import { useWorkspaceBodyClasses } from "@/hooks/useBodyClasses";
-import { useDocumentInteractions } from "@/hooks/useDocumentInteractions";
-import { useKeybindings } from "@/hooks/useKeybindings";
 import { useLassoSelection } from "@/hooks/useLassoSelection";
 import { useLinkActivation } from "@/hooks/useLinkActivation";
 
@@ -22,6 +20,8 @@ import { Sidebar } from "../sidebar/Sidebar";
 import { MainPanel } from "./MainPanel";
 import { SaveNotice } from "./SaveNotice";
 import { SelectionCount } from "./SelectionCount";
+import { useDocumentInteractions } from "./useDocumentInteractions";
+import { useKeybindings } from "./useKeybindings";
 
 export function WorkspacePage() {
   useWorkspaceBodyClasses();

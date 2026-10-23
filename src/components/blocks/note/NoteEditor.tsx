@@ -1,8 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { AppMode } from "@/common/enums";
-import { useNoteFormatting } from "@/hooks/useNoteFormatting";
-import { useTabInsertion } from "@/hooks/useTabInsertion";
 import { useStore } from "@/store/store";
 import { getNoteCaretAtPoint } from "@/utils/dom";
 import { classNames, classSelector } from "@/utils/string";
@@ -16,6 +14,8 @@ import {
 
 import "./NoteEditor.css";
 import { NotePreview } from "./NotePreview";
+import { useNoteFormatting } from "./useNoteFormatting";
+import { useTabInsertion } from "./useTabInsertion";
 
 interface Props {
   value: string;

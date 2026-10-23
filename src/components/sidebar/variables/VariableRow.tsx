@@ -18,12 +18,12 @@ import { VariableKeyInput } from "@/components/variables/VariableKeyInput";
 import { VariableOptionsSelect } from "@/components/variables/VariableOptionsSelect";
 import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useRowReorder } from "@/hooks/useRowReorder";
-import { useVariableSplitResize } from "@/hooks/useVariableSplitResize";
 import { useTranslation } from "@/i18n";
 import { getRunbookView, useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { memo, useEffect, useRef, type CSSProperties } from "react";
 
+import { useVariableSplitResize } from "./useVariableSplitResize";
 import "./VariableRow.css";
 
 interface Props {

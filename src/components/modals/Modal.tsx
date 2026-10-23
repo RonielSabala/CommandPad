@@ -2,12 +2,12 @@ import { CssClass } from "@/common/constants/css";
 import { AriaRole } from "@/common/constants/dom";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CloseIcon } from "@/components/icons";
-import { useModalDismiss } from "@/hooks/useModalDismiss";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
 import type { ReactNode } from "react";
 
 import "./Modal.css";
+import { useModalDismiss } from "./useModalDismiss";
 
 interface Props {
   open: boolean;
