@@ -1,16 +1,22 @@
-import { DEFAULT_TAB_LABEL, RunbookConfig } from "@/common/config";
+import { DEFAULT_TAB_LABEL } from "@/common/config";
 import { AppMode, DialogTone, MoveDirection } from "@/common/enums";
 import type { RunbookContent } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { adoptOpenVault, holdsSecrets, unlockVault } from "@/services/vault";
+import { stripJsonExtension } from "@/utils/export";
 import { generateId } from "@/utils/id";
 import { displayLabel, getRunbookLabel } from "@/utils/runbook";
 import { parseRunbookSource } from "@/utils/runbookSource";
 import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
 
 import type { StoreKit } from "@/store/kit";
+import { withLibraryEntry } from "@/store/libraryState";
+import { getLibraryEntry, getRunbookTab } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
-import type { ImportedVaultResult } from "@/store/services/vault";
+import {
+  importedVault,
+  type ImportedVaultResult,
+} from "@/store/services/vault";
 import { contentFields, createTabObject, tabContent } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
 
@@ -31,7 +37,7 @@ export function createLibrarySlice(
   kit: StoreKit,
   services: StoreServices,
 ): LibraryActions {
-  const { set, get, persist, contentDb } = kit;
+  const { set, get, contentDb, saveTabs, saveLibrary } = kit;
   const {
     forgetSyncState,
     trackCloudChanges,
@@ -40,6 +46,7 @@ export function createLibrarySlice(
     refreshVaultStatus,
     setVaultRecord,
     writeRunbookContent,
+    readRunbookContent,
     encryptStoredRunbook,
     decryptImportedContent,
   } = services;
@@ -52,13 +59,13 @@ export function createLibrarySlice(
       }
 
       const state = get();
-      const existingTab = state.tabs.find((t) => t.runbookId === runbookId);
+      const existingTab = getRunbookTab(state, runbookId);
       if (existingTab) {
         get().switchTab(existingTab.id);
         return;
       }
 
-      const runbook = state.runbookLibrary.find((r) => r.id === runbookId);
+      const runbook = getLibraryEntry(state, runbookId);
       const label = runbook?.label ?? DEFAULT_TAB_LABEL;
       const tab = {
         ...createTabObject(label, runbookId),
@@ -72,8 +79,8 @@ export function createLibrarySlice(
       }));
 
       trackCloudChanges(runbookId, tabContent(tab));
-      persist.saveTabsMeta(get().tabs, get().activeTabId);
-      persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+      saveTabs();
+      saveLibrary();
     },
 
     removeRunbookFromLibrary: async (id) => {
@@ -82,13 +89,12 @@ export function createLibrarySlice(
         return;
       }
 
-      const openTab = state.tabs.find((t) => t.runbookId === id);
-      const content = openTab ?? (await contentDb.get(id));
+      const content = await readRunbookContent(id);
       const isEmpty =
         (content?.blocks.length ?? 0) === 0 &&
         (content?.variables.length ?? 0) === 0;
 
-      const runbook = state.runbookLibrary.find((item) => item.id === id);
+      const runbook = getLibraryEntry(state, id);
 
       // A saved runbook still exists in the cloud, so removing it loses nothing
       const sync = runbook?.sync;
@@ -158,8 +164,8 @@ export function createLibrarySlice(
         runbookLibrary,
         focusedRunbookId,
       });
-      persist.saveTabsMeta(tabs, activeTabId);
-      persist.saveRunbookLibrary(runbookLibrary, activeRunbookId);
+      saveTabs();
+      saveLibrary();
     },
 
     duplicateRunbook: async (id) => {
@@ -177,9 +183,7 @@ export function createLibrarySlice(
       }
 
       const source = state.runbookLibrary[sourceIndex];
-      const openTab = state.tabs.find((t) => t.runbookId === id);
-      const stored = openTab ? tabContent(openTab) : await contentDb.get(id);
-
+      const stored = await readRunbookContent(id);
       if (!stored) {
         return;
       }
@@ -231,7 +235,7 @@ export function createLibrarySlice(
         return { runbookLibrary };
       });
 
-      persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+      saveLibrary();
     },
 
     addRunbookToLibrary: async (
@@ -242,10 +246,7 @@ export function createLibrarySlice(
       openInTab = true,
       vault,
     ) => {
-      const label = getRunbookLabel(
-        content.blocks,
-        filename || RunbookConfig.DEFAULT_LABEL,
-      );
+      const label = getRunbookLabel(content.blocks, filename);
 
       /**
        * Content that just came down from the cloud is already in sync;
@@ -301,27 +302,24 @@ export function createLibrarySlice(
 
         await writeRunbookContent(existing.id, content);
         set((s) => ({
-          runbookLibrary: s.runbookLibrary.map((item) =>
-            item.id === existing.id
-              ? {
-                  ...item,
-                  label,
-                  filename: filename || "",
-                  secured: holdsSecrets(content),
-                  // An import keeps the entry's existing link unless it brings its own
-                  ...(sync ? { sync } : {}),
-                }
-              : item,
-          ),
+          ...withLibraryEntry(s, existing.id, (item) => ({
+            ...item,
+            label,
+            filename: filename || "",
+            secured: holdsSecrets(content),
+            // An import keeps the entry's existing link unless it brings its own
+            ...(sync ? { sync } : {}),
+          })),
           tabs: s.tabs.map((t) =>
             t.runbookId === existing.id
               ? { ...t, ...contentFields(content) }
               : t,
           ),
         }));
-        persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+
+        saveLibrary();
         if (existing.id === get().activeRunbookId) {
-          persist.saveTabsMeta(get().tabs, get().activeTabId);
+          saveTabs();
         }
 
         if (!existing.vault) {
@@ -350,7 +348,7 @@ export function createLibrarySlice(
       settleSync(newId);
 
       if (!openInTab) {
-        persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+        saveLibrary();
         return true;
       }
 
@@ -371,28 +369,27 @@ export function createLibrarySlice(
                 parseRunbookSource(String(loadEvent.target?.result)),
                 file.name,
               );
+
               await get().addRunbookToLibrary(
                 decrypted.content,
-                file.name.replace(/\.json$/i, ""),
+                stripJsonExtension(file.name),
                 file.name,
                 undefined,
                 openInTab,
-                decrypted.vault
-                  ? {
-                      record: decrypted.vault,
-                      passphrase: decrypted.passphrase,
-                    }
-                  : undefined,
+                importedVault(decrypted),
               );
             } catch {
               failedCount += 1;
             }
+
             resolve();
           };
+
           reader.onerror = () => {
             failedCount += 1;
             resolve();
           };
+
           reader.readAsText(file);
         });
 
@@ -423,9 +420,7 @@ export function createLibrarySlice(
         getMessages(get().language).dialogs.pastedRunbook,
         undefined,
         undefined,
-        decrypted.vault
-          ? { record: decrypted.vault, passphrase: decrypted.passphrase }
-          : undefined,
+        importedVault(decrypted),
       );
     },
 
@@ -441,7 +436,7 @@ export function createLibrarySlice(
       items.splice(targetIndex, 0, removed);
 
       set({ runbookLibrary: items });
-      persist.saveRunbookLibrary(items, get().activeRunbookId);
+      saveLibrary();
     },
 
     setRunbookFocus: (id) => set({ focusedRunbookId: id }),

@@ -6,6 +6,7 @@ import {
   VariableField,
   VariableKind,
 } from "@/common/enums";
+import { withSetMember } from "@/utils/collections";
 import { generateId } from "@/utils/id";
 import {
   applyOperations,
@@ -34,7 +35,7 @@ import {
 import type { StoreServices } from "@/store/services";
 import { withActiveTab } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
-import { appendVariable, createVariable } from "@/store/variableState";
+import { createVariable, withNewVariable } from "@/store/variableState";
 
 type VariablesActions = Pick<
   StoreState,
@@ -74,9 +75,8 @@ export function createVariablesSlice(
 
       const newVariable = createVariable(kind);
       set((s) => ({
-        ...withActiveTab(s, (tab) => appendVariable(tab, newVariable)),
+        ...withNewVariable(s, newVariable),
         pendingFocusVariableId: newVariable.id,
-        variableSearchQuery: "",
       }));
       get().saveState();
     },
@@ -99,10 +99,7 @@ export function createVariablesSlice(
         value,
       };
 
-      set((s) => ({
-        ...withActiveTab(s, (t) => appendVariable(t, newVariable)),
-        variableSearchQuery: "",
-      }));
+      set((s) => withNewVariable(s, newVariable));
 
       if (
         get().variablesSectionCollapsed &&
@@ -123,10 +120,7 @@ export function createVariablesSlice(
       get().switchTab(tabId);
 
       const newVariable = { ...createVariable(VariableKind.TEXT), key };
-      set((s) => ({
-        ...withActiveTab(s, (tab) => appendVariable(tab, newVariable)),
-        variableSearchQuery: "",
-      }));
+      set((s) => withNewVariable(s, newVariable));
 
       get().saveState();
       return newVariable.id;
@@ -426,15 +420,17 @@ export function createVariablesSlice(
     },
 
     clearVariableFlash: (variableId) =>
-      set((s) => {
-        if (!s.flashVariableIds.has(variableId)) {
-          return {};
-        }
-
-        const flashVariableIds = new Set(s.flashVariableIds);
-        flashVariableIds.delete(variableId);
-        return { flashVariableIds };
-      }),
+      set((s) =>
+        s.flashVariableIds.has(variableId)
+          ? {
+              flashVariableIds: withSetMember(
+                s.flashVariableIds,
+                variableId,
+                false,
+              ),
+            }
+          : {},
+      ),
 
     consumeVariableFocus: () => set({ pendingFocusVariableId: null }),
   };

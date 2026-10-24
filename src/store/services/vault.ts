@@ -17,7 +17,8 @@ import {
 import { stripJsonExtension } from "@/utils/export";
 
 import type { StoreKit } from "@/store/kit";
-import { getActiveTab } from "@/store/selectors";
+import { withLibraryEntry } from "@/store/libraryState";
+import { getActiveTab, getLibraryEntry } from "@/store/selectors";
 import { tabContent } from "@/store/tabState";
 import type { VaultPassphrases } from "@/store/types";
 import type { ContentService } from "./content";
@@ -30,14 +31,15 @@ export interface ImportedVaultResult {
   passphrase: string | null;
 }
 
+export function importedVault({ vault, passphrase }: ImportedVaultResult) {
+  return vault ? { record: vault, passphrase } : undefined;
+}
+
 export function createVaultRecords(kit: StoreKit) {
-  const { set, get, isDemo, persist } = kit;
+  const { set, get, isDemo, saveLibrary } = kit;
 
   const getVaultRecord = (runbookId: string) =>
-    (isDemo
-      ? null
-      : get().runbookLibrary.find((entry) => entry.id === runbookId)?.vault) ??
-    null;
+    (isDemo ? null : getLibraryEntry(get(), runbookId)?.vault) ?? null;
 
   const refreshVaultStatus = () =>
     set((s) => ({
@@ -50,20 +52,19 @@ export function createVaultRecords(kit: StoreKit) {
     }));
 
   const setVaultRecord = (runbookId: string, record: VaultRecord | null) => {
-    set((s) => ({
-      runbookLibrary: s.runbookLibrary.map((entry) =>
-        entry.id === runbookId
-          ? { ...entry, vault: record ?? undefined }
-          : entry,
-      ),
-    }));
+    set((s) =>
+      withLibraryEntry(s, runbookId, (entry) => ({
+        ...entry,
+        vault: record ?? undefined,
+      })),
+    );
 
-    persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+    saveLibrary();
     refreshVaultStatus();
   };
 
   const markRunbookSecured = (runbookId: string, secured: boolean) => {
-    const entry = get().runbookLibrary.find((item) => item.id === runbookId);
+    const entry = getLibraryEntry(get(), runbookId);
     if (!entry) {
       return;
     }
@@ -77,13 +78,11 @@ export function createVaultRecords(kit: StoreKit) {
       return;
     }
 
-    set((s) => ({
-      runbookLibrary: s.runbookLibrary.map((item) =>
-        item.id === runbookId ? { ...item, secured } : item,
-      ),
-    }));
+    set((s) =>
+      withLibraryEntry(s, runbookId, (item) => ({ ...item, secured })),
+    );
 
-    persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+    saveLibrary();
   };
 
   return {
@@ -343,16 +342,16 @@ export function createVaultFlows(
   /** Adds a runbook read out of a cloud file, linked to the file it came from. */
   const addCloudRunbook = (
     filename: string,
-    { content, vault, passphrase }: ImportedVaultResult,
+    imported: ImportedVaultResult,
     sync: RunbookSync | undefined,
   ) =>
     get().addRunbookToLibrary(
-      content,
+      imported.content,
       stripJsonExtension(filename),
       filename,
       sync,
       undefined,
-      vault ? { record: vault, passphrase } : undefined,
+      importedVault(imported),
     );
 
   return {

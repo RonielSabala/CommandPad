@@ -10,7 +10,6 @@ import { getActiveTab } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import { contentFields, tabContent } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
-import { uiStateSnapshot } from "@/store/uiState";
 
 type LifecycleActions = Pick<
   StoreState,
@@ -21,11 +20,11 @@ export function createLifecycleSlice(
   kit: StoreKit,
   services: StoreServices,
 ): LifecycleActions {
-  const { set, get, isDemo, persist, contentDb } = kit;
+  const { set, get, isDemo, contentDb, saveTabs, saveLibrary, saveUi } = kit;
   const {
     trackCloudChanges,
     refreshVaultStatus,
-    writeRunbookContent,
+    persistTabContent,
     promptUnlockForActiveTab,
     resetWorkspace,
   } = services;
@@ -39,18 +38,13 @@ export function createLifecycleSlice(
         return;
       }
 
-      persist.saveTabsMeta(state.tabs, state.activeTabId);
-      persist.saveRunbookLibrary(state.runbookLibrary, state.activeRunbookId);
-      persist.saveUiState(uiStateSnapshot(state));
+      saveTabs();
+      saveLibrary();
+      saveUi();
 
       const active = getActiveTab(state);
       if (active?.runbookId) {
-        const content = tabContent(active);
-        writeRunbookContent(active.runbookId, content).catch((error) =>
-          console.warn("Failed to persist runbook content:", error),
-        );
-
-        trackCloudChanges(active.runbookId, content);
+        persistTabContent(active.runbookId, active);
       }
     },
 

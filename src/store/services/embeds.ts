@@ -1,4 +1,4 @@
-import { EmbeddedRunbookStatus } from "@/common/enums";
+import { CloudProvider, EmbeddedRunbookStatus } from "@/common/enums";
 import type {
   CloudRunbookRef,
   EmbeddedRunbook,
@@ -9,6 +9,7 @@ import {
   decryptContentWithOpenVaults,
   hasEncryptedSecrets,
 } from "@/services/vault";
+import { withoutKey } from "@/utils/collections";
 import { localSourceKey, resolveEmbedSource } from "@/utils/embeddedRunbook";
 import type { EmbeddedReader } from "@/utils/export";
 import { parseRunbookSource } from "@/utils/runbookSource";
@@ -30,14 +31,11 @@ export function createEmbedState(kit: StoreKit) {
         return {};
       }
 
-      const embeddedRunbooks = { ...s.embeddedRunbooks };
-      if (entry) {
-        embeddedRunbooks[key] = entry;
-      } else {
-        delete embeddedRunbooks[key];
-      }
-
-      return { embeddedRunbooks };
+      return {
+        embeddedRunbooks: entry
+          ? { ...s.embeddedRunbooks, [key]: entry }
+          : withoutKey(s.embeddedRunbooks, key),
+      };
     });
 
   /** Every embed reading a runbook. */
@@ -89,6 +87,12 @@ export function createEmbedLoading(kit: StoreKit, deps: ContentService) {
     content: null,
   });
 
+  /** The provider's client, unless this store can't reach the cloud. */
+  const reachableCloudClient = (provider: CloudProvider) => {
+    const client = getCloudClient(provider);
+    return isDemo || !client.isConfigured() ? null : client;
+  };
+
   const fetchLocalEmbed = async (runbookId: string) => {
     const content = await readRunbookContent(runbookId);
     return content
@@ -100,8 +104,8 @@ export function createEmbedLoading(kit: StoreKit, deps: ContentService) {
     ref: CloudRunbookRef,
     previous: RunbookContent | null,
   ) => {
-    const client = getCloudClient(ref.provider);
-    if (isDemo || !client.isConfigured()) {
+    const client = reachableCloudClient(ref.provider);
+    if (!client) {
       return emptyEmbed(EmbeddedRunbookStatus.ERROR);
     }
 
@@ -156,6 +160,7 @@ export function createEmbedLoading(kit: StoreKit, deps: ContentService) {
   return {
     readyEmbed,
     emptyEmbed,
+    reachableCloudClient,
     fetchLocalEmbed,
     fetchCloudEmbed,
     readEmbeddedForExport,

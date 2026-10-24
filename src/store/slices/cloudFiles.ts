@@ -8,6 +8,7 @@ import {
   buildDuplicateName,
   copyCloudEntry,
   getCloudClient,
+  type CloudClient,
   type CloudEntry,
 } from "@/services/cloud";
 import { downloadBlob } from "@/utils/download";
@@ -50,6 +51,59 @@ export function createCloudFilesSlice(
   const { decryptImportedContent, addCloudRunbook, emptyCloudSelection } =
     services;
 
+  /** Runs one change against the open provider, then relists the folder. */
+  const changeCloud = async (
+    change: (client: CloudClient) => Promise<unknown>,
+    log: string,
+    failure: string,
+  ) => {
+    const client = getCloudClient(get().cloudProvider);
+    set({ cloudLoading: true, cloudError: null });
+
+    try {
+      await change(client);
+    } catch (error) {
+      console.error(log, error);
+      set({ cloudLoading: false, cloudError: failure });
+      return;
+    }
+
+    set({ cloudLoading: false });
+    await get().refreshCloudEntries();
+  };
+
+  /** Changes each entry until one fails, then clears the selection and relists. */
+  const changeEachCloudEntry = async (
+    entries: CloudEntry[],
+    change: (client: CloudClient, entry: CloudEntry) => Promise<unknown>,
+    log: string,
+    failure: (entry: CloudEntry) => string,
+  ) => {
+    const client = getCloudClient(get().cloudProvider);
+    set({ cloudLoading: true, cloudError: null });
+
+    for (const entry of entries) {
+      try {
+        await change(client, entry);
+      } catch (error) {
+        console.error(log, error);
+        set({ cloudError: failure(entry) });
+        break;
+      }
+    }
+
+    set({
+      cloudLoading: false,
+      cloudSelectedEntries: emptyCloudSelection(),
+    });
+
+    await get().refreshCloudEntries();
+  };
+
+  const patchCloudFileEditor = (
+    patch: Partial<NonNullable<StoreState["cloudFileEditor"]>>,
+  ) => set({ cloudFileEditor: { ...get().cloudFileEditor!, ...patch } });
+
   return {
     createCloudFolder: async (name) => {
       const trimmed = name.trim();
@@ -67,21 +121,12 @@ export function createCloudFilesSlice(
         return;
       }
 
-      const client = getCloudClient(get().cloudProvider);
-      set({ cloudLoading: true, cloudError: null });
-      try {
-        await client.createFolder(trimmed, currentFolderId(get().cloudPath));
-      } catch (error) {
-        console.error("Cloud folder creation failed", error);
-        set({
-          cloudLoading: false,
-          cloudError: t.cloudModal.createFolderError,
-        });
-        return;
-      }
-
-      set({ cloudLoading: false });
-      await get().refreshCloudEntries();
+      await changeCloud(
+        (client) =>
+          client.createFolder(trimmed, currentFolderId(get().cloudPath)),
+        "Cloud folder creation failed",
+        t.cloudModal.createFolderError,
+      );
     },
 
     setCloudSelection: (entries) =>
@@ -219,23 +264,13 @@ export function createCloudFilesSlice(
         return;
       }
 
-      const client = getCloudClient(get().cloudProvider);
-      set({ cloudLoading: true, cloudError: null });
-      try {
-        await client.renameEntry(entry, name);
-      } catch (error) {
-        console.error("Cloud entry rename failed", error);
-        set({
-          cloudLoading: false,
-          cloudError: entry.isFolder
-            ? t.cloudModal.renameFolderError
-            : t.cloudModal.renameError,
-        });
-        return;
-      }
-
-      set({ cloudLoading: false });
-      await get().refreshCloudEntries();
+      await changeCloud(
+        (client) => client.renameEntry(entry, name),
+        "Cloud entry rename failed",
+        entry.isFolder
+          ? t.cloudModal.renameFolderError
+          : t.cloudModal.renameError,
+      );
     },
 
     openCloudFileEditor: async (file) => {
@@ -264,12 +299,9 @@ export function createCloudFilesSlice(
         console.error("Cloud file read failed", error);
 
         if (isCurrentEditor()) {
-          set({
-            cloudFileEditor: {
-              ...get().cloudFileEditor!,
-              loading: false,
-              error: t.cloudModal.readError,
-            },
+          patchCloudFileEditor({
+            loading: false,
+            error: t.cloudModal.readError,
           });
         }
 
@@ -277,14 +309,7 @@ export function createCloudFilesSlice(
       }
 
       if (isCurrentEditor()) {
-        set({
-          cloudFileEditor: {
-            ...get().cloudFileEditor!,
-            original: text,
-            text,
-            loading: false,
-          },
-        });
+        patchCloudFileEditor({ original: text, text, loading: false });
       }
     },
 
@@ -330,14 +355,7 @@ export function createCloudFilesSlice(
         );
       } catch (error) {
         console.error("Cloud file save failed", error);
-        set({
-          cloudFileEditor: {
-            ...get().cloudFileEditor!,
-            saving: false,
-            error: t.cloudModal.saveError,
-          },
-        });
-
+        patchCloudFileEditor({ saving: false, error: t.cloudModal.saveError });
         return;
       }
 
@@ -396,37 +414,25 @@ export function createCloudFilesSlice(
         }
       }
 
-      const client = getCloudClient(get().cloudProvider);
-      set({ cloudLoading: true, cloudError: null });
+      await changeEachCloudEntry(
+        entries,
+        (client, entry) => {
+          const parentId = parentFolderId(get(), entry);
+          const taken = siblingEntries(get(), entry).map((other) => other.name);
 
-      for (const entry of entries) {
-        const parentId = parentFolderId(get(), entry);
-        const taken = siblingEntries(get(), entry).map((other) => other.name);
-
-        try {
-          await copyCloudEntry(
+          return copyCloudEntry(
             client,
             entry,
             parentId,
             buildDuplicateName(entry, taken),
           );
-        } catch (error) {
-          console.error("Cloud entry duplicate failed", error);
-          set({
-            cloudError: entry.isFolder
-              ? t.cloudModal.duplicateFolderError
-              : t.cloudModal.duplicateError,
-          });
-
-          break;
-        }
-      }
-
-      set({
-        cloudLoading: false,
-        cloudSelectedEntries: emptyCloudSelection(),
-      });
-      await get().refreshCloudEntries();
+        },
+        "Cloud entry duplicate failed",
+        (entry) =>
+          entry.isFolder
+            ? t.cloudModal.duplicateFolderError
+            : t.cloudModal.duplicateError,
+      );
     },
 
     downloadCloudEntries: async (entries) => {
@@ -525,30 +531,15 @@ export function createCloudFilesSlice(
         return;
       }
 
-      const client = getCloudClient(get().cloudProvider);
-      set({ cloudLoading: true, cloudError: null });
-
-      for (const entry of entries) {
-        try {
-          await client.deleteEntry(entry);
-        } catch (error) {
-          console.error("Cloud entry delete failed", error);
-          set({
-            cloudError: entry.isFolder
-              ? t.cloudModal.deleteFolderError
-              : t.cloudModal.deleteError,
-          });
-
-          break;
-        }
-      }
-
-      set({
-        cloudLoading: false,
-        cloudSelectedEntries: emptyCloudSelection(),
-      });
-
-      await get().refreshCloudEntries();
+      await changeEachCloudEntry(
+        entries,
+        (client, entry) => client.deleteEntry(entry),
+        "Cloud entry delete failed",
+        (entry) =>
+          entry.isFolder
+            ? t.cloudModal.deleteFolderError
+            : t.cloudModal.deleteError,
+      );
     },
   };
 }

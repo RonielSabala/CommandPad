@@ -13,18 +13,23 @@ import {
   RunbookView,
 } from "@/common/enums";
 import type { Block } from "@/common/types";
+import { withSetMember } from "@/utils/collections";
 import { generateId } from "@/utils/id";
 import { carryVariables, renameAllCommandTokens } from "@/utils/resolution";
 import { toggleAllSections } from "@/utils/variableSections";
 
 import type { StoreKit } from "@/store/kit";
-import { getActiveTab, getRunbookView } from "@/store/selectors";
+import {
+  actsOnBlockSelection,
+  getActiveTab,
+  getRunbookView,
+} from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import {
   relabelActive,
   relabelTab,
-  tabContent,
   withActiveTab,
+  withActiveTabRelabeled,
 } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
 
@@ -48,7 +53,7 @@ export function createBlocksSlice(
   services: StoreServices,
 ): BlocksActions {
   const { set, get, debouncedSaveState } = kit;
-  const { trackCloudChanges, writeRunbookContent } = services;
+  const { persistTabContent } = services;
 
   return {
     addBlock: async (blockType, anchor) => {
@@ -90,25 +95,19 @@ export function createBlocksSlice(
         return;
       }
 
-      const isSelected =
-        state.selectedBlockIds.size > 0 && state.selectedBlockIds.has(blockId);
-
+      const isSelected = actsOnBlockSelection(state, blockId);
       const idsToRemove = isSelected
         ? new Set(state.selectedBlockIds)
         : new Set([blockId]);
 
-      set((s) => {
-        const updated = withActiveTab(s, (tab) => ({
+      set((s) => ({
+        ...withActiveTabRelabeled(s, (tab) => ({
           ...tab,
           blocks: tab.blocks.filter((b) => !idsToRemove.has(b.id)),
-        }));
+        })),
+        selectedBlockIds: isSelected ? new Set() : s.selectedBlockIds,
+      }));
 
-        return {
-          ...updated,
-          ...relabelActive({ ...s, ...updated }),
-          selectedBlockIds: isSelected ? new Set() : s.selectedBlockIds,
-        };
-      });
       get().saveState();
     },
 
@@ -123,9 +122,7 @@ export function createBlocksSlice(
         return;
       }
 
-      const isFromSelection =
-        state.selectedBlockIds.size > 0 && state.selectedBlockIds.has(blockId);
-
+      const isFromSelection = actsOnBlockSelection(state, blockId);
       const idsToDuplicate = isFromSelection
         ? [...state.selectedBlockIds].sort(
             (a, b) =>
@@ -225,12 +222,7 @@ export function createBlocksSlice(
       // saveState only persists the active tab, so another target is written here
       const updated = get().tabs.find((t) => t.id === targetTabId);
       if (updated?.runbookId && updated.id !== getActiveTab(get())?.id) {
-        const content = tabContent(updated);
-        writeRunbookContent(updated.runbookId, content).catch((error) =>
-          console.warn("Failed to persist runbook content:", error),
-        );
-
-        trackCloudChanges(updated.runbookId, content);
+        persistTabContent(updated.runbookId, updated);
       }
 
       get().saveState();
@@ -343,10 +335,9 @@ export function createBlocksSlice(
         return;
       }
 
-      const movingIds =
-        state.selectedBlockIds.size > 0 && state.selectedBlockIds.has(sourceId)
-          ? [...state.selectedBlockIds]
-          : [sourceId];
+      const movingIds = actsOnBlockSelection(state, sourceId)
+        ? [...state.selectedBlockIds]
+        : [sourceId];
 
       const targetIndex = active.blocks.findIndex((b) => b.id === targetId);
       const sourceIndex = active.blocks.findIndex((b) => b.id === sourceId);
@@ -359,8 +350,9 @@ export function createBlocksSlice(
         .filter((b): b is Block => b !== undefined)
         .sort((a, b) => active.blocks.indexOf(a) - active.blocks.indexOf(b));
 
-      set((s) => {
-        const updated = withActiveTab(s, (tab) => {
+      // A different block may now be the first one, which names the runbook
+      set((s) =>
+        withActiveTabRelabeled(s, (tab) => {
           const remaining = tab.blocks.filter((b) => !movingIds.includes(b.id));
           const newTargetIndex = remaining.findIndex((b) => b.id === targetId);
 
@@ -369,23 +361,17 @@ export function createBlocksSlice(
           remaining.splice(insertIndex, 0, ...movingBlocks);
 
           return { ...tab, blocks: remaining };
-        });
-
-        // A different block may now be the first one, which names the runbook
-        return { ...updated, ...relabelActive({ ...s, ...updated }) };
-      });
+        }),
+      );
       get().saveState();
     },
 
     clearFlash: (blockId) =>
-      set((s) => {
-        if (!s.flashBlockIds.has(blockId)) {
-          return {};
-        }
-        const flashBlockIds = new Set(s.flashBlockIds);
-        flashBlockIds.delete(blockId);
-        return { flashBlockIds };
-      }),
+      set((s) =>
+        s.flashBlockIds.has(blockId)
+          ? { flashBlockIds: withSetMember(s.flashBlockIds, blockId, false) }
+          : {},
+      ),
 
     consumeBlockFocus: () => set({ pendingFocusBlockId: null }),
   };

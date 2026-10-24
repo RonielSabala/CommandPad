@@ -1,12 +1,15 @@
 import { RunbookSyncStatus } from "@/common/enums";
 import type { RunbookContent, RunbookSync } from "@/common/types";
+import { withoutKey } from "@/utils/collections";
 import { buildRunbookSource } from "@/utils/runbookSource";
 
 import type { StoreKit } from "@/store/kit";
+import { withLibraryEntry } from "@/store/libraryState";
+import { getLibraryEntry, getRunbookTab } from "@/store/selectors";
 import { tabContent } from "@/store/tabState";
 
 export function createSyncService(kit: StoreKit) {
-  const { set, get, isDemo, persist } = kit;
+  const { set, get, isDemo, saveLibrary } = kit;
 
   // What each linked runbook held when it last met its cloud file
   const syncedContent = new Map<string, string>();
@@ -17,15 +20,11 @@ export function createSyncService(kit: StoreKit) {
     }));
 
   const clearSyncStatus = (runbookId: string) =>
-    set((s) => {
-      if (!(runbookId in s.runbookSyncStatus)) {
-        return {};
-      }
-
-      const runbookSyncStatus = { ...s.runbookSyncStatus };
-      delete runbookSyncStatus[runbookId];
-      return { runbookSyncStatus };
-    });
+    set((s) =>
+      runbookId in s.runbookSyncStatus
+        ? { runbookSyncStatus: withoutKey(s.runbookSyncStatus, runbookId) }
+        : {},
+    );
 
   const forgetSyncState = (runbookId: string) => {
     syncedContent.delete(runbookId);
@@ -33,7 +32,7 @@ export function createSyncService(kit: StoreKit) {
   };
 
   const getSyncLink = (runbookId: string): RunbookSync | undefined =>
-    get().runbookLibrary.find((item) => item.id === runbookId)?.sync;
+    getLibraryEntry(get(), runbookId)?.sync;
 
   /** Rewrites a link that still exists, or creates one when `linking`. */
   const setSyncLink = (
@@ -41,15 +40,13 @@ export function createSyncService(kit: StoreKit) {
     sync: RunbookSync,
     linking = false,
   ) => {
-    set((s) => ({
-      runbookLibrary: s.runbookLibrary.map((item) =>
-        item.id === runbookId && (linking || item.sync)
-          ? { ...item, sync }
-          : item,
+    set((s) =>
+      withLibraryEntry(s, runbookId, (item) =>
+        linking || item.sync ? { ...item, sync } : item,
       ),
-    }));
+    );
 
-    persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+    saveLibrary();
   };
 
   const setSyncPending = (
@@ -101,7 +98,7 @@ export function createSyncService(kit: StoreKit) {
     clearSyncStatus(runbookId);
 
     // An edit made while the cloud was being reached is still unsaved
-    const openTab = get().tabs.find((t) => t.runbookId === runbookId);
+    const openTab = getRunbookTab(get(), runbookId);
     const tabMoved =
       openTab &&
       (openTab.blocks !== content.blocks ||

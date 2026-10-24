@@ -1,4 +1,4 @@
-import { MimeType, RunbookConfig } from "@/common/config";
+import { MimeType } from "@/common/config";
 import {
   CloudProvider,
   ExportFormat,
@@ -18,6 +18,8 @@ import { getRunbookLabel } from "@/utils/runbook";
 import { parseRunbookSource } from "@/utils/runbookSource";
 
 import type { StoreKit } from "@/store/kit";
+import { withLibraryEntry } from "@/store/libraryState";
+import { getRunbookTab } from "@/store/selectors";
 import { contentFields, relabelTab } from "@/store/tabState";
 import type { CloudConflict } from "@/store/types";
 import type { ContentService } from "./content";
@@ -29,7 +31,7 @@ export function createCloudSave(
   kit: StoreKit,
   deps: SyncService & ContentService & VaultFlows & EmbedLoading,
 ) {
-  const { set, get, isDemo, persist } = kit;
+  const { set, isDemo, saveTabs, saveLibrary } = kit;
   const {
     syncedContent,
     setSyncStatus,
@@ -67,7 +69,7 @@ export function createCloudSave(
     await writeRunbookContent(runbookId, content);
 
     set((s) => {
-      const tab = s.tabs.find((t) => t.runbookId === runbookId);
+      const tab = getRunbookTab(s, runbookId);
       if (tab) {
         const replaced = { ...tab, ...contentFields(content) };
         return relabelTab(
@@ -76,23 +78,14 @@ export function createCloudSave(
         );
       }
 
-      return {
-        runbookLibrary: s.runbookLibrary.map((item) =>
-          item.id === runbookId
-            ? {
-                ...item,
-                label: getRunbookLabel(
-                  content.blocks,
-                  item.filename || RunbookConfig.DEFAULT_LABEL,
-                ),
-              }
-            : item,
-        ),
-      };
+      return withLibraryEntry(s, runbookId, (item) => ({
+        ...item,
+        label: getRunbookLabel(content.blocks, item.filename),
+      }));
     });
 
-    persist.saveTabsMeta(get().tabs, get().activeTabId);
-    persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+    saveTabs();
+    saveLibrary();
   };
 
   /** The linked file's text and revision. */

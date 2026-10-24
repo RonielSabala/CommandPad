@@ -4,7 +4,7 @@ import type { RunbookEntry } from "@/common/types";
 import { generateId } from "@/utils/id";
 
 import type { StoreKit } from "@/store/kit";
-import { getActiveTab } from "@/store/selectors";
+import { getActiveTab, getRunbookTab } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import { createTabObject, tabContent } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
@@ -18,7 +18,7 @@ export function createTabsSlice(
   kit: StoreKit,
   services: StoreServices,
 ): TabsActions {
-  const { set, get, persist } = kit;
+  const { set, get, saveTabs, saveLibrary } = kit;
   const {
     embedRequests,
     setEmbeddedRunbook,
@@ -35,7 +35,7 @@ export function createTabsSlice(
       }
 
       if (runbookId) {
-        const existingTab = state.tabs.find((t) => t.runbookId === runbookId);
+        const existingTab = getRunbookTab(state, runbookId);
         if (existingTab) {
           get().switchTab(existingTab.id);
           return existingTab;
@@ -63,7 +63,7 @@ export function createTabsSlice(
         }));
 
         await writeRunbookContent(newRunbookId, tabContent(null));
-        persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId);
+        saveLibrary();
       } else {
         set((s) => ({
           tabs: [...s.tabs, tab],
@@ -72,7 +72,7 @@ export function createTabsSlice(
         }));
       }
 
-      persist.saveTabsMeta(get().tabs, get().activeTabId);
+      saveTabs();
       return tab;
     },
 
@@ -80,13 +80,15 @@ export function createTabsSlice(
       if (get().activeTabId === tabId) {
         return;
       }
+
       set((s) => ({
         activeTabId: tabId,
         activeRunbookId:
           getActiveTab({ ...s, activeTabId: tabId })?.runbookId ?? null,
         selectKeyHeld: false,
       }));
-      persist.saveTabsMeta(get().tabs, get().activeTabId);
+
+      saveTabs();
     },
 
     closeTab: (tabId) => {
@@ -137,8 +139,9 @@ export function createTabsSlice(
 
       const activeRunbookId =
         tabs.find((t) => t.id === activeTabId)?.runbookId ?? null;
+
       set({ tabs, activeTabId, activeRunbookId });
-      persist.saveTabsMeta(tabs, activeTabId);
+      saveTabs();
     },
 
     reorderTabs: (sourceId, targetId, insertAfter) => {
@@ -153,10 +156,11 @@ export function createTabsSlice(
       if (insertAfter) {
         dstIdx++;
       }
+
       tabs.splice(dstIdx, 0, dragged);
 
       set({ tabs });
-      persist.saveTabsMeta(tabs, get().activeTabId);
+      saveTabs();
     },
   };
 }

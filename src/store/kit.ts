@@ -67,4 +67,7 @@ export interface StoreKit {
   persist: PersistenceWrites;
   contentDb: ContentDb;
   debouncedSaveState: () => void;
+  saveTabs: () => void;
+  saveLibrary: () => void;
+  saveUi: () => void;
 }

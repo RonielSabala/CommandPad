@@ -29,6 +29,7 @@ import { createVariableSectionsSlice } from "./slices/variableSections";
 import { createVariablesSlice } from "./slices/variables";
 import { createVaultSlice } from "./slices/vault";
 import type { AppStoreApi, StoreState } from "./types";
+import { uiStateSnapshot } from "./uiState";
 
 export {
   countSelectedSections,
@@ -61,9 +62,13 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       persist,
       contentDb,
       debouncedSaveState,
+      saveTabs: () => persist.saveTabsMeta(get().tabs, get().activeTabId),
+      saveLibrary: () =>
+        persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId),
+      saveUi: () => persist.saveUiState(uiStateSnapshot(get())),
     };
-    const services = createStoreServices(kit);
 
+    const services = createStoreServices(kit);
     return {
       ...createInitialState(),
       ...createLifecycleSlice(kit, services),

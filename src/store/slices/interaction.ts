@@ -1,4 +1,5 @@
 import { RunbookView } from "@/common/enums";
+import { withSetMember } from "@/utils/collections";
 import { getVariableKey } from "@/utils/resolution";
 import { revealVariables } from "@/utils/variableSections";
 
@@ -32,7 +33,7 @@ type InteractionActions = Pick<
 >;
 
 export function createInteractionSlice(kit: StoreKit): InteractionActions {
-  const { set, get, persist } = kit;
+  const { set, get, saveTabs } = kit;
 
   return {
     revealBlock: (tabId, blockId) => {
@@ -99,6 +100,7 @@ export function createInteractionSlice(kit: StoreKit): InteractionActions {
       const variable = getActiveTab(state)?.variables.find(
         (v) => getVariableKey(v) === key,
       );
+
       if (variable) {
         state.revealVariable(variable.id, resolved);
       }
@@ -118,17 +120,11 @@ export function createInteractionSlice(kit: StoreKit): InteractionActions {
 
     toggleClampSurfaceExpanded: (id, surface) =>
       set((s) => {
-        const ids = new Set(s.expandedClampSurfaces[surface]);
-        if (ids.has(id)) {
-          ids.delete(id);
-        } else {
-          ids.add(id);
-        }
-
+        const ids = s.expandedClampSurfaces[surface];
         return {
           expandedClampSurfaces: {
             ...s.expandedClampSurfaces,
-            [surface]: ids,
+            [surface]: withSetMember(ids, id, !ids.has(id)),
           },
         };
       }),
@@ -140,15 +136,9 @@ export function createInteractionSlice(kit: StoreKit): InteractionActions {
       set({ imageViewerBlockId: null, imageViewerSlides: null }),
 
     setBlockSelected: (blockId, selected) =>
-      set((s) => {
-        const selectedBlockIds = new Set(s.selectedBlockIds);
-        if (selected) {
-          selectedBlockIds.add(blockId);
-        } else {
-          selectedBlockIds.delete(blockId);
-        }
-        return { selectedBlockIds };
-      }),
+      set((s) => ({
+        selectedBlockIds: withSetMember(s.selectedBlockIds, blockId, selected),
+      })),
 
     toggleBlockSelection: (blockId) =>
       get().setBlockSelected(blockId, !get().selectedBlockIds.has(blockId)),
@@ -157,20 +147,18 @@ export function createInteractionSlice(kit: StoreKit): InteractionActions {
       if (get().selectedBlockIds.size === 0) {
         return;
       }
+
       set({ selectedBlockIds: new Set() });
     },
 
     setVariableSelected: (variableId, selected) =>
-      set((s) => {
-        const selectedVariableIds = new Set(s.selectedVariableIds);
-        if (selected) {
-          selectedVariableIds.add(variableId);
-        } else {
-          selectedVariableIds.delete(variableId);
-        }
-
-        return { selectedVariableIds };
-      }),
+      set((s) => ({
+        selectedVariableIds: withSetMember(
+          s.selectedVariableIds,
+          variableId,
+          selected,
+        ),
+      })),
 
     toggleVariableSelection: (variableId) =>
       get().setVariableSelected(
@@ -195,7 +183,8 @@ export function createInteractionSlice(kit: StoreKit): InteractionActions {
           scrollTop: { ...tab.scrollTop, [view]: scrollTop },
         })),
       );
-      persist.saveTabsMeta(get().tabs, get().activeTabId);
+
+      saveTabs();
     },
 
     clearUserInteraction: () =>

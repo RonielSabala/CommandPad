@@ -15,8 +15,7 @@ export function createVariable(kind: VariableKind): Variable {
     : { ...variable, language: DEFAULT_VARIABLE_LANGUAGE };
 }
 
-/** Append a variable, expanding the section it lands in. */
-export function appendVariable(tab: Tab, variable: Variable): Tab {
+function appendVariable(tab: Tab, variable: Variable): Tab {
   const variables = [...tab.variables, variable];
   return {
     ...tab,
@@ -25,6 +24,17 @@ export function appendVariable(tab: Tab, variable: Variable): Tab {
       { variables, variableSections: tab.variableSections },
       new Set([variable.id]),
     ),
+  };
+}
+
+/** Add a variable to the active tab. */
+export function withNewVariable(
+  state: StoreState,
+  variable: Variable,
+): Pick<StoreState, "tabs" | "variableSearchQuery"> {
+  return {
+    ...withActiveTab(state, (tab) => appendVariable(tab, variable)),
+    variableSearchQuery: "",
   };
 }
 

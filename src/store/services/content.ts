@@ -10,16 +10,18 @@ import { holdsSecrets } from "@/services/vault";
 import { localSourceKey } from "@/utils/embeddedRunbook";
 
 import type { StoreKit } from "@/store/kit";
+import { getRunbookTab } from "@/store/selectors";
 import { tabContent } from "@/store/tabState";
 import type { EmbedState } from "./embeds";
+import type { SyncService } from "./sync";
 import type { VaultRecords } from "./vault";
 
 export function createContentService(
   kit: StoreKit,
-  deps: EmbedState & VaultRecords,
+  deps: SyncService & EmbedState & VaultRecords,
 ) {
   const { get, contentDb } = kit;
-  const { invalidateEmbed, markRunbookSecured } = deps;
+  const { trackCloudChanges, invalidateEmbed, markRunbookSecured } = deps;
 
   const storedStats = new Map<string, Promise<RunbookStats | null>>();
   const tabStats = new WeakMap<Tab, RunbookStats>();
@@ -49,14 +51,25 @@ export function createContentService(
 
   /** The runbook's content as the tab holds it, else as the DB holds it. */
   const readRunbookContent = async (runbookId: string) => {
-    const openTab = get().tabs.find((t) => t.runbookId === runbookId);
+    const openTab = getRunbookTab(get(), runbookId);
     return openTab ? tabContent(openTab) : await contentDb.get(runbookId);
+  };
+
+  /** Writes a tab's content outside the debounced save, in the background. */
+  const persistTabContent = (runbookId: string, tab: Tab) => {
+    const content = tabContent(tab);
+    writeRunbookContent(runbookId, content).catch((error) =>
+      console.warn("Failed to persist runbook content:", error),
+    );
+
+    trackCloudChanges(runbookId, content);
   };
 
   return {
     storedStats,
     tabStats,
     writeRunbookContent,
+    persistTabContent,
     cloudFileSync,
     runbookLinkedTo,
     readRunbookContent,

@@ -23,7 +23,6 @@ import { getActiveTab } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import { tabContent } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
-import { uiStateSnapshot } from "@/store/uiState";
 
 type TransferActions = Pick<
   StoreState,
@@ -48,7 +47,7 @@ export function createTransferSlice(
   kit: StoreKit,
   services: StoreServices,
 ): TransferActions {
-  const { set, get, persist, debouncedSaveState } = kit;
+  const { set, get, debouncedSaveState, saveUi } = kit;
   const { linkRunbookToCloud, readEmbeddedForExport, ensureSignedIn } =
     services;
 
@@ -78,22 +77,24 @@ export function createTransferSlice(
         lastExportDestination: destination,
         lastExportFolderPath: ROOT_CLOUD_PATH,
       });
-      persist.saveUiState(uiStateSnapshot(get()));
+
+      saveUi();
     },
     setExportFormat: (format) => {
       set({ lastExportFormat: format });
-      persist.saveUiState(uiStateSnapshot(get()));
+      saveUi();
     },
     setExportFilename: (filename) => {
       set({
         lastExportFilename: filename,
         lastExportFilenameTabId: getActiveTab(get())?.id ?? null,
       });
+
       debouncedSaveState();
     },
     setExportFolderPath: (path) => {
       set({ lastExportFolderPath: path });
-      persist.saveUiState(uiStateSnapshot(get()));
+      saveUi();
     },
 
     openPasteRunbookModal: () => set({ pasteRunbookModalOpen: true }),
@@ -220,7 +221,8 @@ export function createTransferSlice(
         cloudImportModalOpen: false,
         lastImportSource: destination,
       });
-      persist.saveUiState(uiStateSnapshot(get()));
+
+      saveUi();
 
       if (destination === SyncDestination.LOCAL) {
         openImportDialog();

@@ -11,7 +11,11 @@ export function createStoreServices(kit: StoreKit) {
   const sync = createSyncService(kit);
   const embedState = createEmbedState(kit);
   const vaultRecords = createVaultRecords(kit);
-  const content = createContentService(kit, { ...embedState, ...vaultRecords });
+  const content = createContentService(kit, {
+    ...sync,
+    ...embedState,
+    ...vaultRecords,
+  });
   const vaultFlows = createVaultFlows(kit, {
     ...sync,
     ...embedState,

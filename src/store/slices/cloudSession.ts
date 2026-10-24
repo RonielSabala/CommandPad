@@ -10,6 +10,7 @@ import {
   clearCachedCloudEntries,
   getCloudClient,
   walkCloudTree,
+  type CloudFolderRef,
 } from "@/services/cloud";
 
 import { ROOT_CLOUD_PATH } from "@/store/cloudPaths";
@@ -50,23 +51,49 @@ export function createCloudSessionSlice(
     loadCloudEntries,
   } = services;
 
+  /** Drops the listing and the account, landing on `path`. */
+  const resetCloudSession = (path: CloudFolderRef[]) => {
+    startCloudRequest();
+    return {
+      ...clearedCloudListing(),
+      cloudEntries: [],
+      cloudError: null,
+      cloudSignedIn: false,
+      cloudAccountLabel: null,
+      cloudFileEditor: null,
+      cloudPath: path,
+      cloudHistory: [path],
+      cloudHistoryIndex: 0,
+    };
+  };
+
+  /** Opens `path` and lists it. */
+  const browseCloudPath = (
+    path: CloudFolderRef[],
+    history: Partial<Pick<StoreState, "cloudHistory" | "cloudHistoryIndex">>,
+  ) => {
+    lastBrowsedCloudPath.set(get().cloudProvider, path);
+
+    set({
+      // Opening a folder from a search result lands you in that folder
+      ...clearedCloudSearch(),
+      ...history,
+      cloudPath: path,
+      cloudError: null,
+      cloudEntries: [],
+    });
+
+    void loadCloudEntries();
+  };
+
   return {
     startCloudBrowse: async (provider, path = ROOT_CLOUD_PATH) => {
       const startPath = lastBrowsedCloudPath.get(provider) ?? path;
 
-      startCloudRequest();
       set({
-        ...clearedCloudListing(),
+        ...resetCloudSession(startPath),
         cloudProvider: provider,
-        cloudError: null,
-        cloudEntries: [],
-        cloudSignedIn: false,
-        cloudAccountLabel: null,
-        cloudFileEditor: null,
         cloudLoading: true,
-        cloudPath: startPath,
-        cloudHistory: [startPath],
-        cloudHistoryIndex: 0,
       });
 
       const client = getCloudClient(provider);
@@ -139,9 +166,8 @@ export function createCloudSessionSlice(
       // Nothing walked under this account survives into the next one
       clearCachedCloudEntries(get().cloudProvider);
       lastBrowsedCloudPath.delete(get().cloudProvider);
-      startCloudRequest();
       set((s) => ({
-        ...clearedCloudListing(),
+        ...resetCloudSession(ROOT_CLOUD_PATH),
         runbookSyncStatus: {
           ...s.runbookSyncStatus,
           // Linked runbooks can no longer reach this provider until a new sign-in
@@ -151,14 +177,6 @@ export function createCloudSessionSlice(
               .map((item) => [item.id, RunbookSyncStatus.SIGNED_OUT]),
           ),
         },
-        cloudEntries: [],
-        cloudError: null,
-        cloudSignedIn: false,
-        cloudAccountLabel: null,
-        cloudFileEditor: null,
-        cloudPath: ROOT_CLOUD_PATH,
-        cloudHistory: [ROOT_CLOUD_PATH],
-        cloudHistoryIndex: 0,
       }));
     },
 
@@ -180,19 +198,10 @@ export function createCloudSessionSlice(
       // Browsing away from a history entry drops everything ahead of it
       const history = get().cloudHistory.slice(0, get().cloudHistoryIndex + 1);
 
-      lastBrowsedCloudPath.set(get().cloudProvider, path);
-
-      set({
-        // Opening a folder from a search result lands you in that folder
-        ...clearedCloudSearch(),
-        cloudPath: path,
+      browseCloudPath(path, {
         cloudHistory: [...history, path],
         cloudHistoryIndex: history.length,
-        cloudError: null,
-        cloudEntries: [],
       });
-
-      void loadCloudEntries();
     },
 
     navigateCloudHistory: (direction) => {
@@ -204,16 +213,7 @@ export function createCloudSessionSlice(
         return;
       }
 
-      lastBrowsedCloudPath.set(get().cloudProvider, path);
-
-      set({
-        ...clearedCloudSearch(),
-        cloudPath: path,
-        cloudHistoryIndex: index,
-        cloudError: null,
-        cloudEntries: [],
-      });
-      void loadCloudEntries();
+      browseCloudPath(path, { cloudHistoryIndex: index });
     },
 
     setCloudSearchQuery: (query) => {

@@ -3,7 +3,7 @@ import {
   RunbookView,
   VariableEntryKind,
 } from "@/common/enums";
-import type { Tab } from "@/common/types";
+import type { RunbookEntry, Tab } from "@/common/types";
 
 import type { StoreState } from "./types";
 
@@ -11,6 +11,20 @@ export function getActiveTab(state: StoreState): Tab | null {
   return (
     state.tabs.find((t) => t.id === state.activeTabId) ?? state.tabs[0] ?? null
   );
+}
+
+export function getRunbookTab(
+  state: StoreState,
+  runbookId: string,
+): Tab | undefined {
+  return state.tabs.find((t) => t.runbookId === runbookId);
+}
+
+export function getLibraryEntry(
+  state: StoreState,
+  runbookId: string,
+): RunbookEntry | undefined {
+  return state.runbookLibrary.find((entry) => entry.id === runbookId);
 }
 
 export function getRunbookView(state: StoreState): RunbookView {
@@ -22,6 +36,14 @@ export function getRunbookEmbedView(
   blockId: string,
 ): RunbookEmbedView {
   return tab?.embedViews?.[blockId] ?? RunbookEmbedView.BLOCKS;
+}
+
+/** Whether a block action acts on the whole block selection. */
+export function actsOnBlockSelection(
+  state: StoreState,
+  blockId: string,
+): boolean {
+  return state.selectedBlockIds.has(blockId);
 }
 
 /** What a variable action acts on. */

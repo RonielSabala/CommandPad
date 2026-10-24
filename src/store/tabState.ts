@@ -1,8 +1,4 @@
-import {
-  createDefaultScrollTop,
-  DEFAULT_TAB_LABEL,
-  RunbookConfig,
-} from "@/common/config";
+import { createDefaultScrollTop, DEFAULT_TAB_LABEL } from "@/common/config";
 import { RunbookView } from "@/common/enums";
 import type { RunbookContent, RunbookEntry, Tab } from "@/common/types";
 import { generateId } from "@/utils/id";
@@ -81,11 +77,7 @@ export function relabelTab(
     return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
   }
 
-  const newLabel = getRunbookLabel(
-    tab.blocks,
-    entry.filename || RunbookConfig.DEFAULT_LABEL,
-  );
-
+  const newLabel = getRunbookLabel(tab.blocks, entry.filename);
   if (newLabel === entry.label && newLabel === tab.label) {
     return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
   }
@@ -105,4 +97,16 @@ export function relabelActive(state: StoreState): {
   runbookLibrary: RunbookEntry[];
 } {
   return relabelTab(state, getActiveTab(state));
+}
+
+/** `withActiveTab`, then relabel, since the edit may change the first block. */
+export function withActiveTabRelabeled(
+  state: StoreState,
+  mutate: (tab: Tab) => Tab,
+): {
+  tabs: Tab[];
+  runbookLibrary: RunbookEntry[];
+} {
+  const updated = withActiveTab(state, mutate);
+  return { ...updated, ...relabelActive({ ...state, ...updated }) };
 }

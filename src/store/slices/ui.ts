@@ -1,14 +1,22 @@
 import { PANEL_DEFINITIONS, VariableSplit } from "@/common/config";
-import { AppMode, PanelSide, RunbookView, Theme } from "@/common/enums";
+import { AppMode, RunbookView, Theme } from "@/common/enums";
 import type { RunbookContent } from "@/common/types";
 import { clamp } from "@/utils/number";
 import { buildRunbookSource, parseRunbookSource } from "@/utils/runbookSource";
 
 import type { StoreKit } from "@/store/kit";
 import { getActiveTab } from "@/store/selectors";
-import { relabelActive, tabContent, withActiveTab } from "@/store/tabState";
+import {
+  tabContent,
+  withActiveTab,
+  withActiveTabRelabeled,
+} from "@/store/tabState";
 import type { StoreState } from "@/store/types";
-import { uiStateSnapshot, withPanel } from "@/store/uiState";
+import {
+  oppositeSide,
+  sidebarSectionsSnapshot,
+  withPanel,
+} from "@/store/uiState";
 
 type UiActions = Pick<
   StoreState,
@@ -34,7 +42,7 @@ type UiActions = Pick<
 >;
 
 export function createUiSlice(kit: StoreKit): UiActions {
-  const { set, get, persist, debouncedSaveState } = kit;
+  const { set, get, persist, debouncedSaveState, saveTabs, saveUi } = kit;
 
   return {
     setAppMode: (mode) => {
@@ -47,6 +55,7 @@ export function createUiSlice(kit: StoreKit): UiActions {
       if (!wasRead) {
         get().clearUserInteraction();
       }
+
       get().setAppMode(wasRead ? AppMode.EDIT : AppMode.READ);
     },
 
@@ -63,7 +72,7 @@ export function createUiSlice(kit: StoreKit): UiActions {
         })),
       );
 
-      persist.saveTabsMeta(get().tabs, get().activeTabId);
+      saveTabs();
     },
 
     applyRunbookSource: (text) => {
@@ -80,11 +89,7 @@ export function createUiSlice(kit: StoreKit): UiActions {
         return null;
       }
 
-      set((s) => {
-        const updated = withActiveTab(s, (tab) => ({ ...tab, ...content }));
-        return { ...updated, ...relabelActive({ ...s, ...updated }) };
-      });
-
+      set((s) => withActiveTabRelabeled(s, (tab) => ({ ...tab, ...content })));
       debouncedSaveState();
       return buildRunbookSource(content);
     },
@@ -94,12 +99,12 @@ export function createUiSlice(kit: StoreKit): UiActions {
         theme: s.theme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT,
       }));
 
-      persist.saveUiState(uiStateSnapshot(get()));
+      saveUi();
     },
 
     toggleSpellcheck: () => {
       set((s) => ({ spellcheckEnabled: !s.spellcheckEnabled }));
-      persist.saveUiState(uiStateSnapshot(get()));
+      saveUi();
     },
 
     setLanguage: (language) => {
@@ -108,7 +113,7 @@ export function createUiSlice(kit: StoreKit): UiActions {
       }
 
       set({ language });
-      persist.saveUiState(uiStateSnapshot(get()));
+      saveUi();
     },
 
     toggleMinimap: () => {
@@ -117,12 +122,7 @@ export function createUiSlice(kit: StoreKit): UiActions {
     },
 
     toggleMinimapPosition: () => {
-      set((s) => ({
-        minimapPosition:
-          s.minimapPosition === PanelSide.RIGHT
-            ? PanelSide.LEFT
-            : PanelSide.RIGHT,
-      }));
+      set((s) => ({ minimapPosition: oppositeSide(s.minimapPosition) }));
       get().saveState();
     },
 
@@ -142,12 +142,7 @@ export function createUiSlice(kit: StoreKit): UiActions {
 
     togglePanelSide: (panelId) => {
       set((s) =>
-        withPanel(s, panelId, {
-          side:
-            s.panels[panelId].side === PanelSide.RIGHT
-              ? PanelSide.LEFT
-              : PanelSide.RIGHT,
-        }),
+        withPanel(s, panelId, { side: oppositeSide(s.panels[panelId].side) }),
       );
 
       get().saveState();
@@ -194,22 +189,14 @@ export function createUiSlice(kit: StoreKit): UiActions {
 
     toggleRunbookSection: () => {
       set((s) => ({ runbookSectionCollapsed: !s.runbookSectionCollapsed }));
-      const state = get();
-      persist.saveSidebarSections({
-        runbookSectionCollapsed: state.runbookSectionCollapsed,
-        variablesSectionCollapsed: state.variablesSectionCollapsed,
-      });
+      persist.saveSidebarSections(sidebarSectionsSnapshot(get()));
     },
 
     toggleVariablesSection: () => {
       set((s) => ({
         variablesSectionCollapsed: !s.variablesSectionCollapsed,
       }));
-      const state = get();
-      persist.saveSidebarSections({
-        runbookSectionCollapsed: state.runbookSectionCollapsed,
-        variablesSectionCollapsed: state.variablesSectionCollapsed,
-      });
+      persist.saveSidebarSections(sidebarSectionsSnapshot(get()));
     },
 
     setRunbookSearchQuery: (query) => set({ runbookSearchQuery: query }),

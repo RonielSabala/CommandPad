@@ -11,7 +11,11 @@ import { sha256 } from "@/utils/hash";
 import { getRunbookStats, parseRunbookSource } from "@/utils/runbookSource";
 
 import type { StoreKit } from "@/store/kit";
-import { getActiveTab, getRunbookEmbedView } from "@/store/selectors";
+import {
+  getActiveTab,
+  getRunbookEmbedView,
+  getRunbookTab,
+} from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import { tabContent, withActiveTab } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
@@ -33,7 +37,7 @@ export function createEmbedsSlice(
   kit: StoreKit,
   services: StoreServices,
 ): EmbedsActions {
-  const { set, get, isDemo, persist, contentDb } = kit;
+  const { set, get, contentDb, saveTabs } = kit;
   const {
     embedRequests,
     nextEmbedRequestId,
@@ -50,6 +54,7 @@ export function createEmbedsSlice(
     readImportedContent,
     addCloudRunbook,
     emptyEmbed,
+    reachableCloudClient,
     fetchLocalEmbed,
     fetchCloudEmbed,
     ensureSignedIn,
@@ -57,7 +62,7 @@ export function createEmbedsSlice(
 
   return {
     readRunbookStats: (runbookId) => {
-      const openTab = get().tabs.find((t) => t.runbookId === runbookId);
+      const openTab = getRunbookTab(get(), runbookId);
       if (openTab) {
         let stats = tabStats.get(openTab);
         if (!stats) {
@@ -134,8 +139,8 @@ export function createEmbedsSlice(
       }
 
       const { key, cloud } = source;
-      const client = getCloudClient(cloud.provider);
-      if (isDemo || !client.isConfigured()) {
+      const client = reachableCloudClient(cloud.provider);
+      if (!client) {
         return;
       }
 
@@ -198,7 +203,7 @@ export function createEmbedsSlice(
         })),
       );
 
-      persist.saveTabsMeta(get().tabs, get().activeTabId);
+      saveTabs();
     },
 
     setEmbeddedSectionFolded: (foldKey, folded) =>
@@ -258,8 +263,8 @@ export function createEmbedsSlice(
     },
 
     listEmbeddableCloudFolder: async (provider, path) => {
-      const client = getCloudClient(provider);
-      if (isDemo || !client.isConfigured()) {
+      const client = reachableCloudClient(provider);
+      if (!client) {
         return null;
       }
 

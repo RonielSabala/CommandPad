@@ -1,7 +1,11 @@
-import { PanelId } from "@/common/enums";
+import { PanelId, PanelSide } from "@/common/enums";
 import type { PanelState } from "@/common/types";
 
 import type { StoreState } from "./types";
+
+export function oppositeSide(side: PanelSide): PanelSide {
+  return side === PanelSide.RIGHT ? PanelSide.LEFT : PanelSide.RIGHT;
+}
 
 /** Replace one panel's state. */
 export function withPanel(
@@ -33,5 +37,12 @@ export function uiStateSnapshot(state: StoreState) {
     lastExportFilenameTabId: state.lastExportFilenameTabId,
     lastExportFolderPath: state.lastExportFolderPath,
     lastImportSource: state.lastImportSource,
+  };
+}
+
+export function sidebarSectionsSnapshot(state: StoreState) {
+  return {
+    runbookSectionCollapsed: state.runbookSectionCollapsed,
+    variablesSectionCollapsed: state.variablesSectionCollapsed,
   };
 }
