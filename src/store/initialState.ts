@@ -17,15 +17,10 @@ import type { StoreData } from "./types";
 
 export function createInitialState(): StoreData {
   return {
-    tabs: [],
-    activeTabId: null,
-    runbookLibrary: [],
-    activeRunbookId: null,
-    runbookSyncStatus: {},
+    // Bootstrap
+    initialized: false,
 
-    embeddedRunbooks: {},
-    embeddedSectionFolds: {},
-
+    // UI
     mode: AppMode.EDIT,
     theme: Theme.LIGHT,
     language: detectLanguage(),
@@ -37,6 +32,20 @@ export function createInitialState(): StoreData {
     runbookSectionCollapsed: false,
     variablesSectionCollapsed: false,
 
+    // Search
+    runbookSearchQuery: "",
+    variableSearchQuery: "",
+
+    // Data
+    tabs: [],
+    activeTabId: null,
+    runbookLibrary: [],
+    activeRunbookId: null,
+    runbookSyncStatus: {},
+    embeddedRunbooks: {},
+    embeddedSectionFolds: {},
+
+    // Interaction / selection
     focusedRunbookId: null,
     selectedBlockIds: new Set(),
     flashBlockIds: new Set(),
@@ -59,9 +68,7 @@ export function createInitialState(): StoreData {
     imageViewerBlockId: null,
     imageViewerSlides: null,
 
-    runbookSearchQuery: "",
-    variableSearchQuery: "",
-
+    // Modals / dialogs
     exportModalOpen: false,
     cloudExportStatus: CloudExportStatus.IDLE,
     cloudExportProvider: null,
@@ -69,9 +76,11 @@ export function createInitialState(): StoreData {
     confirmDialog: null,
     alertDialog: null,
 
+    // Secret encryption
     vaultStatus: {},
     vaultDialog: null,
 
+    // Cloud sync
     destinationModalOpen: false,
     cloudImportModalOpen: false,
     cloudProvider: CloudProvider.ONEDRIVE,
@@ -81,27 +90,29 @@ export function createInitialState(): StoreData {
     cloudLoading: false,
     cloudError: null,
     cloudFileEditor: null,
+    cloudSelectedEntries: new Map(),
     cloudConflict: null,
     saveNotice: null,
-    cloudSelectedEntries: new Map(),
 
+    // Cloud folder navigation
     cloudPath: ROOT_CLOUD_PATH,
     cloudHistory: [ROOT_CLOUD_PATH],
     cloudHistoryIndex: 0,
 
+    // Cloud search
     cloudSearchQuery: "",
     cloudSearchEntries: [],
     cloudSearchLoading: false,
 
+    // Cloud list sorting
     cloudSort: DEFAULT_CLOUD_SORT,
 
+    // Remembered cloud-sync choices
     lastExportDestination: SyncDestination.LOCAL,
     lastExportFormat: ExportFormat.JSON,
     lastExportFilename: "",
     lastExportFilenameTabId: null,
     lastExportFolderPath: ROOT_CLOUD_PATH,
     lastImportSource: SyncDestination.LOCAL,
-
-    initialized: false,
   };
 }

@@ -49,9 +49,23 @@ import type {
 import type { EmbedSource } from "@/utils/embeddedRunbook";
 import type { StoreApi } from "zustand";
 
+// --- Interaction state ---
+
+interface VariableReveal {
+  id: string;
+  resolved: boolean;
+}
+
+// --- Dialogs ---
+
 interface Dialog<T> {
   message: string;
   resolve: (value: T) => void;
+}
+
+interface AlertOptions {
+  title?: string;
+  tone?: DialogTone;
 }
 
 interface AlertDialog extends Dialog<void> {
@@ -59,9 +73,8 @@ interface AlertDialog extends Dialog<void> {
   tone: DialogTone;
 }
 
-interface AlertOptions {
-  title?: string;
-  tone?: DialogTone;
+interface ConfirmOptions extends AlertOptions {
+  confirmLabel?: string;
 }
 
 interface ConfirmDialog extends Dialog<boolean> {
@@ -70,9 +83,7 @@ interface ConfirmDialog extends Dialog<boolean> {
   tone: DialogTone;
 }
 
-interface ConfirmOptions extends AlertOptions {
-  confirmLabel?: string;
-}
+// --- Vault ---
 
 export type VaultPassphrases = Record<VaultField, string>;
 
@@ -83,6 +94,14 @@ interface VaultDialog {
   busy: boolean;
   verify: (passphrases: VaultPassphrases) => Promise<boolean>;
   resolve: (unlocked: boolean) => void;
+}
+
+// --- Cloud ---
+
+interface SaveNotice {
+  id: number;
+  outcome: SaveOutcome;
+  provider: CloudProvider | null;
 }
 
 interface CloudFileEditor {
@@ -107,26 +126,13 @@ export interface CloudConflict {
   resolve: (kept: RunbookContent | null) => void;
 }
 
-interface SaveNotice {
-  id: number;
-  outcome: SaveOutcome;
-  provider: CloudProvider | null;
-}
-
-interface VariableReveal {
-  id: string;
-  resolved: boolean;
-}
+// --- The store ---
 
 export interface StoreState {
-  // Data
-  tabs: Tab[];
-  activeTabId: string | null;
-  runbookLibrary: RunbookEntry[];
-  activeRunbookId: string | null;
-  runbookSyncStatus: Record<string, RunbookSyncStatus>;
-  embeddedRunbooks: Record<string, EmbeddedRunbook>;
-  embeddedSectionFolds: Record<string, boolean>;
+  // === State ===
+
+  // Bootstrap
+  initialized: boolean;
 
   // UI
   mode: AppMode;
@@ -139,6 +145,19 @@ export interface StoreState {
   minimapPosition: PanelSide;
   runbookSectionCollapsed: boolean;
   variablesSectionCollapsed: boolean;
+
+  // Search
+  runbookSearchQuery: string;
+  variableSearchQuery: string;
+
+  // Data
+  tabs: Tab[];
+  activeTabId: string | null;
+  runbookLibrary: RunbookEntry[];
+  activeRunbookId: string | null;
+  runbookSyncStatus: Record<string, RunbookSyncStatus>;
+  embeddedRunbooks: Record<string, EmbeddedRunbook>;
+  embeddedSectionFolds: Record<string, boolean>;
 
   // Interaction / selection
   focusedRunbookId: string | null;
@@ -158,10 +177,6 @@ export interface StoreState {
   pendingFocusSectionId: string | null;
   imageViewerBlockId: string | null;
   imageViewerSlides: ImageBlock[] | null;
-
-  // Search
-  runbookSearchQuery: string;
-  variableSearchQuery: string;
 
   // Modals / dialogs
   exportModalOpen: boolean;
@@ -210,14 +225,38 @@ export interface StoreState {
   lastExportFolderPath: CloudFolderRef[];
   lastImportSource: SyncDestination;
 
-  // Bootstrap
-  initialized: boolean;
+  // === Actions ===
 
-  // Actions
-
+  // Lifecycle
   bootstrap: () => Promise<void>;
   saveState: () => void;
+  clearRunbookLibrary: () => Promise<void>;
+  clearAllData: () => Promise<boolean>;
 
+  // UI
+  setAppMode: (mode: AppMode) => void;
+  toggleAppMode: () => void;
+  toggleRunbookView: (view: RunbookView) => void;
+  applyRunbookSource: (text: string) => string | null;
+  toggleTheme: () => void;
+  toggleSpellcheck: () => void;
+  setLanguage: (language: Language) => void;
+  toggleMinimap: () => void;
+  toggleMinimapPosition: () => void;
+  togglePanel: (panelId: PanelId) => void;
+  togglePanelSide: (panelId: PanelId) => void;
+  setPanelWidth: (panelId: PanelId, width: number) => void;
+  resetPanelWidth: (panelId: PanelId) => void;
+  setVariableKeyRatio: (ratio: number) => void;
+  resetVariableKeyRatio: () => void;
+  toggleRunbookSection: () => void;
+  toggleVariablesSection: () => void;
+
+  // Search
+  setRunbookSearchQuery: (query: string) => void;
+  setVariableSearchQuery: (query: string) => void;
+
+  // Tabs
   createNewTab: (
     label?: string,
     runbookId?: string | null,
@@ -231,6 +270,7 @@ export interface StoreState {
     insertAfter: boolean,
   ) => void;
 
+  // Runbook library
   loadRunbookFromLibrary: (runbookId: string) => Promise<void>;
   removeRunbookFromLibrary: (id: string) => Promise<void>;
   duplicateRunbook: (id: string) => Promise<void>;
@@ -242,31 +282,13 @@ export interface StoreState {
     openInTab?: boolean,
     vault?: { record: VaultRecord; passphrase: string | null },
   ) => Promise<boolean>;
-  saveActiveRunbook: () => Promise<void>;
-  saveRunbookToCloud: (id: string) => Promise<void>;
-  resolveCloudConflict: (text: string | null) => void;
-  dismissSaveNotice: (id: number) => void;
-  unlinkRunbookSync: (id: string) => void;
-
-  readRunbookStats: (runbookId: string) => Promise<RunbookStats | null>;
-  loadEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
-  refreshEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
-  openEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
-  setRunbookEmbedView: (blockId: string, view: RunbookEmbedView) => void;
-  setEmbeddedSectionFolded: (foldKey: string, folded: boolean) => void;
-  unlockEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
-  signInForEmbeddedRunbooks: (provider: CloudProvider) => Promise<void>;
-  listEmbeddableCloudFolder: (
-    provider: CloudProvider,
-    path: string,
-  ) => Promise<CloudEntry[] | null>;
-
   importRunbooks: (files: File[]) => Promise<void>;
   importRunbookFromText: (text: string) => Promise<boolean>;
   reorderRunbooks: (sourceId: string, targetId: string) => void;
   setRunbookFocus: (id: string | null) => void;
   navigateRunbookList: (direction: MoveDirection) => void;
 
+  // Variables
   addVariable: (kind?: VariableKind) => Promise<void>;
   extractVariable: (value: string) => { id: string; key: string } | null;
   defineVariable: (tabId: string, key: string) => string | null;
@@ -286,6 +308,7 @@ export interface StoreState {
   clearVariableFlash: (variableId: string) => void;
   consumeVariableFocus: () => void;
 
+  // Variable sections
   addVariableSection: (variableId?: string) => void;
   insertVariableRow: (
     targetId: string,
@@ -297,6 +320,7 @@ export interface StoreState {
   toggleVariableSection: (sectionId: string) => void;
   consumeSectionFocus: () => void;
 
+  // Blocks
   addBlock: (blockType: BlockType, anchor?: BlockInsertAnchor) => Promise<void>;
   removeBlock: (blockId: string) => void;
   duplicateBlock: (blockId: string) => void;
@@ -320,6 +344,25 @@ export interface StoreState {
   ) => void;
   clearFlash: (blockId: string) => void;
   consumeBlockFocus: () => void;
+
+  // Selection
+  setBlockSelected: (blockId: string, selected: boolean) => void;
+  toggleBlockSelection: (blockId: string) => void;
+  clearBlockSelection: () => void;
+  setVariableSelected: (variableId: string, selected: boolean) => void;
+  toggleVariableSelection: (variableId: string) => void;
+  clearVariableSelection: () => void;
+
+  // Interaction
+  setSelectKeyHeld: (held: boolean) => void;
+  setLinkKeyHeld: (held: boolean) => void;
+  setScrollTop: (view: RunbookView, scrollTop: number) => void;
+  clearUserInteraction: () => void;
+  toggleClampSurfaceExpanded: (id: string, surface: ClampSurface) => void;
+  openImageViewer: (blockId: string, slides?: ImageBlock[] | null) => void;
+  closeImageViewer: () => void;
+
+  // Reveals
   revealBlock: (tabId: string, blockId: string) => void;
   finishBlockReveal: () => void;
   clearBlockReveal: () => void;
@@ -331,43 +374,34 @@ export interface StoreState {
   ) => Promise<void>;
   finishVariableReveal: () => void;
   clearVariableReveal: () => void;
-  toggleClampSurfaceExpanded: (id: string, surface: ClampSurface) => void;
-  openImageViewer: (blockId: string, slides?: ImageBlock[] | null) => void;
-  closeImageViewer: () => void;
 
-  setBlockSelected: (blockId: string, selected: boolean) => void;
-  toggleBlockSelection: (blockId: string) => void;
-  clearBlockSelection: () => void;
-  setVariableSelected: (variableId: string, selected: boolean) => void;
-  toggleVariableSelection: (variableId: string) => void;
-  clearVariableSelection: () => void;
+  // Embedded runbooks
+  readRunbookStats: (runbookId: string) => Promise<RunbookStats | null>;
+  loadEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
+  refreshEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
+  openEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
+  setRunbookEmbedView: (blockId: string, view: RunbookEmbedView) => void;
+  setEmbeddedSectionFolded: (foldKey: string, folded: boolean) => void;
+  unlockEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
+  signInForEmbeddedRunbooks: (provider: CloudProvider) => Promise<void>;
+  listEmbeddableCloudFolder: (
+    provider: CloudProvider,
+    path: string,
+  ) => Promise<CloudEntry[] | null>;
 
-  setAppMode: (mode: AppMode) => void;
-  toggleAppMode: () => void;
-  toggleRunbookView: (view: RunbookView) => void;
-  applyRunbookSource: (text: string) => string | null;
-  toggleTheme: () => void;
-  toggleSpellcheck: () => void;
-  setLanguage: (language: Language) => void;
-  toggleMinimap: () => void;
-  toggleMinimapPosition: () => void;
-  togglePanel: (panelId: PanelId) => void;
-  togglePanelSide: (panelId: PanelId) => void;
-  setPanelWidth: (panelId: PanelId, width: number) => void;
-  resetPanelWidth: (panelId: PanelId) => void;
-  setVariableKeyRatio: (ratio: number) => void;
-  resetVariableKeyRatio: () => void;
-  toggleRunbookSection: () => void;
-  toggleVariablesSection: () => void;
+  // Dialogs
+  confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
+  resolveConfirm: (result: boolean) => void;
+  alert: (message: string, options?: AlertOptions) => Promise<void>;
+  resolveAlert: () => void;
 
-  setRunbookSearchQuery: (query: string) => void;
-  setVariableSearchQuery: (query: string) => void;
+  // Vault
+  requestVaultUnlock: (runbookId: string) => Promise<boolean>;
+  changeVaultPassphrase: (runbookId: string) => Promise<boolean>;
+  submitVaultPassphrase: (passphrases: VaultPassphrases) => Promise<void>;
+  dismissVaultDialog: () => void;
 
-  setSelectKeyHeld: (held: boolean) => void;
-  setLinkKeyHeld: (held: boolean) => void;
-  setScrollTop: (view: RunbookView, scrollTop: number) => void;
-  clearUserInteraction: () => void;
-
+  // Import / export
   openExportModal: () => void;
   closeExportModal: () => void;
   resetCloudExportStatus: () => void;
@@ -384,11 +418,19 @@ export interface StoreState {
     folderId: string | null,
   ) => Promise<void>;
   copyRunbookMarkdown: () => Promise<void>;
-
   beginImport: () => void;
   openDestinationModal: () => void;
   closeDestinationModal: () => void;
   chooseDestination: (destination: SyncDestination) => void;
+
+  // Cloud sync
+  saveActiveRunbook: () => Promise<void>;
+  saveRunbookToCloud: (id: string) => Promise<void>;
+  resolveCloudConflict: (text: string | null) => void;
+  dismissSaveNotice: (id: number) => void;
+  unlinkRunbookSync: (id: string) => void;
+
+  // Cloud session and browsing
   startCloudBrowse: (
     provider: CloudProvider,
     path?: CloudFolderRef[],
@@ -406,6 +448,8 @@ export interface StoreState {
   setCloudSearchQuery: (query: string) => void;
   toggleCloudSort: (column: CloudSortColumn) => void;
   refreshCloudSearchEntries: () => Promise<void>;
+
+  // Cloud files
   createCloudFolder: (name: string) => Promise<void>;
   setCloudSelection: (entries: CloudEntry[]) => void;
   toggleCloudSelected: (entry: CloudEntry) => void;
@@ -419,19 +463,9 @@ export interface StoreState {
   duplicateCloudEntries: (entries: CloudEntry[]) => Promise<void>;
   downloadCloudEntries: (entries: CloudEntry[]) => Promise<void>;
   deleteCloudEntries: (entries: CloudEntry[]) => Promise<void>;
-
-  requestVaultUnlock: (runbookId: string) => Promise<boolean>;
-  changeVaultPassphrase: (runbookId: string) => Promise<boolean>;
-  submitVaultPassphrase: (passphrases: VaultPassphrases) => Promise<void>;
-  dismissVaultDialog: () => void;
-
-  confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
-  resolveConfirm: (result: boolean) => void;
-  alert: (message: string, options?: AlertOptions) => Promise<void>;
-  resolveAlert: () => void;
-  clearRunbookLibrary: () => Promise<void>;
-  clearAllData: () => Promise<boolean>;
 }
+
+// --- Derived types ---
 
 export type AppStoreApi = StoreApi<StoreState>;
 
