@@ -1,10 +1,10 @@
 import { CssClass } from "@/common/constants/css";
 import { EventType } from "@/common/constants/events";
 import { isModifierPressed, ModifierAction } from "@/common/keybindings";
+import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { useStoreApi } from "@/store/store";
 import { classSelector } from "@/utils/string";
 import { useEffect } from "react";
-import { blockDrag, clearBlockDrag } from "./blockDrag";
 
 export function useDocumentInteractions(): void {
   const store = useStoreApi();

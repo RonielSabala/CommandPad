@@ -93,7 +93,7 @@ export const en: Messages = {
         `Could not save to ${provider} ${MIDDLE_DOT} click to retry`,
     },
     saveNotice: {
-      [SaveOutcome.LOCAL]: () => "Changes save automatically in this browser",
+      [SaveOutcome.LOCAL]: () => "CommandPad saves as you go.",
       [SaveOutcome.SAVING]: (provider) => `Saving to ${provider}…`,
       [SaveOutcome.SAVED]: (provider) => `Saved to ${provider}`,
       [SaveOutcome.UP_TO_DATE]: () => "Already up to date",

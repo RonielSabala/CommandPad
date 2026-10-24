@@ -4,12 +4,13 @@ import {
   CodeEditor,
   type CodeEditorHandle,
 } from "@/components/common/codeEditor/CodeEditor";
-import { useMonacoScrollPersistence } from "@/hooks/useMonacoScrollPersistence";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { buildRunbookSource } from "@/utils/runbookSource";
 import { useMemo, useRef, useState } from "react";
+
 import "./RunbookSource.css";
+import { useMonacoScrollPersistence } from "./useMonacoScrollPersistence";
 
 export function RunbookSource() {
   const t = useTranslation();
