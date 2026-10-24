@@ -138,6 +138,7 @@ export const NoteSegmentType = {
   TEXT: "text",
   BOLD: "bold",
   ITALIC: "italic",
+  STRIKETHROUGH: "strikethrough",
   CODE: "code",
   LINK: "link",
 } as const;

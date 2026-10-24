@@ -26,6 +26,7 @@ const SEGMENT_CLASS: Record<NoteSegmentType, string | undefined> = {
   [NoteSegmentType.TEXT]: undefined,
   [NoteSegmentType.BOLD]: "note-bold",
   [NoteSegmentType.ITALIC]: "note-italic",
+  [NoteSegmentType.STRIKETHROUGH]: "note-strikethrough",
   [NoteSegmentType.CODE]: "note-code",
   [NoteSegmentType.LINK]: CssClass.NOTE_LINK,
 };

@@ -4,9 +4,10 @@ import type { NoteSegment } from "@/common/types";
 
 const NOTE_TOKEN_REGEX = new RegExp(
   [
-    MarkdownToken.CODE_REGEX.source,
     MarkdownToken.BOLD_REGEX.source,
     MarkdownToken.ITALIC_REGEX.source,
+    MarkdownToken.STRIKETHROUGH_REGEX.source,
+    MarkdownToken.CODE_REGEX.source,
     MarkdownToken.LINK_REGEX.source,
     MarkdownToken.URL_REGEX.source,
   ].join("|"),
@@ -39,9 +40,10 @@ export function parseNoteText(text: string, offset = 0): NoteSegment[] {
     }
 
     const groups = match.groups;
-    const code = groups?.code;
     const bold = groups?.bold;
     const italic = groups?.italicAlt ?? groups?.italic;
+    const strikethrough = groups?.strikethroughAlt ?? groups?.strikethrough;
+    const code = groups?.code;
     const linkLabel = groups?.linkLabel;
     const linkHref = groups?.linkHref;
     const url = groups?.url;
@@ -66,6 +68,12 @@ export function parseNoteText(text: string, offset = 0): NoteSegment[] {
         type: NoteSegmentType.ITALIC,
         text: unescape(italic),
         start: startOf(italic),
+      });
+    } else if (strikethrough !== undefined) {
+      segments.push({
+        type: NoteSegmentType.STRIKETHROUGH,
+        text: unescape(strikethrough),
+        start: startOf(strikethrough),
       });
     } else if (linkLabel !== undefined && linkHref !== undefined) {
       segments.push({

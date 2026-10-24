@@ -1,5 +1,6 @@
 .note-bold,
 .note-italic,
+.note-strikethrough,
 .note-code,
 .note-link {
   line-height: 0;
@@ -11,6 +12,10 @@
 
 .note-italic {
   font-style: italic;
+}
+
+.note-strikethrough {
+  text-decoration: line-through;
 }
 
 .note-code {

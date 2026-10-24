@@ -846,7 +846,7 @@ export const en: Messages = {
       folderName: "   Sales Reports   ",
       ticketTitle: "fix login timeout",
       noteSample:
-        "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link: https://example.com. Click away to see it rendered again.",
+        "Click this note to see its raw text: it mixes **bold**, _italic_, ~strikethrough~, `code`, and a link: https://example.com. Click away to see it rendered again.",
       tableSample: `| Exit code | Meaning | Action |
 | :---: | --- | --- |
 | 126 | Permission denied | \`chmod +x\` the script |
@@ -1347,6 +1347,7 @@ If something goes wrong, undo it in this order:
 | --- | --- |
 | \\**bold-text\\** | **bold-text** |
 | \\_italic-text\\_ | _italic-text_ |
+| \\~struck-text\\~ | ~struck-text~ |
 | \\\`code-text\\\` | \`code-text\` |
 | \\[labelled-link](\\https://example.com) | [labelled-link](https://example.com) |`,
       escapes:

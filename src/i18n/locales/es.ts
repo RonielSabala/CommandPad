@@ -870,7 +870,7 @@ export const es: Messages = {
       folderName: "   Informes de ventas   ",
       ticketTitle: "arreglar caducidad de sesión",
       noteSample:
-        "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace: https://example.com. Haz clic fuera para verla renderizada de nuevo.",
+        "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, ~tachado~, `código` y un enlace: https://example.com. Haz clic fuera para verla renderizada de nuevo.",
       tableSample: `| Código de salida | Significado | Acción |
 | :---: | --- | --- |
 | 126 | Permiso denegado | Dale permisos con \`chmod +x\` |
@@ -1373,6 +1373,7 @@ Si algo sale mal, deshazlo en este orden:
 | --- | --- |
 | \\**texto-en-negrita\\** | **texto-en-negrita** |
 | \\_texto-en-cursiva\\_ | _texto-en-cursiva_ |
+| \\~texto-tachado\\~ | ~texto-tachado~ |
 | \\\`texto-de-código\\\` | \`texto-de-código\` |
 | \\[enlace-con-etiqueta](\\https://example.com) | [enlace-con-etiqueta](https://example.com) |`,
       escapes:

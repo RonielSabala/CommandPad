@@ -130,10 +130,10 @@ Free-form text rendered as markdown (`utils/markdown/`). Two parsing levels, onl
 - **Every segment's `start` is an index into the raw note**, including inside table cells, which is what the click → caret mapping needs.
 - **Click → caret** (`NoteEditor`): the preview is `pointer-events: none` over the textarea. While the note is unfocused (and not in read mode, not on a link), mousedown is prevented and the click maps the point to a raw-text offset via `getNoteCaretAtPoint` (measures per character with a `Range`; each segment carries `DataAttr.NOTE_OFFSET`), then focuses and places the caret.
 - `NotePreview` is the rendered half alone; `standalone` (embedded note, embedded section name) restores pointer events/selection. `NotePreview.css` owns the shared text metrics for preview, textarea and the width ghost, so they can't disagree. `NoteEditor` is reused for variable section names.
-- Inline tokens are named captures (`MarkdownToken`), the code span closes with a backreference so `` `x´ `` isn't code; second spellings use `_ALT`.
+- Inline tokens are named captures (`MarkdownToken`), the code span closes with a backreference so `` `x´ `` isn't code; second spellings use `_ALT`. Strikethrough (`~`/`~~`) is flanked: its text can't start or end with whitespace, so `~` paths stay literal.
 - **Tables** (line-based, parsed before inline): header row + delimiter row (alignment via `:`), rectangular; `\|` escapes a bar in a cell before inline parsing.
 - **Lists** (line-based): `*`/`-`/`1.`; one line per item, indent nests via a stack (tab = `MarkdownList.TAB_WIDTH`), switching marker kind starts a new list; ordered lists keep `start`.
-- **Escapes**: a leading backslash escapes an opening mark (`*`, `_`, a backtick, `´`, `[`, `|`, or `http(s)://`); nothing is unescaped inside a code span.
+- **Escapes**: a leading backslash escapes an opening mark (`*`, `_`, `~`, a backtick, `´`, `[`, `|`, or `http(s)://`); nothing is unescaped inside a code span.
 - One table style `.note-table`, one list style `.note-list` (`NoteText.css`), reused by the docs. Don't add a second.
 - Spell check: `spellcheckEnabled` (persisted, default on, toggled from `WorkspaceContextMenu`) binds **only** the note textarea, with `lang={language}`. Every other field is `spellCheck={false}`.
 - Textarea keys: `useTabInsertion` (Tab inserts a tab), `useNoteFormatting` (Ctrl+B/I/backtick wrap the selection, pair wrapping).
