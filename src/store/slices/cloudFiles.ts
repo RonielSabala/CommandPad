@@ -17,8 +17,8 @@ import { parseRunbookSource } from "@/utils/runbookSource";
 
 import {
   currentFolderId,
-  parentFolderPath,
   parentFolderId,
+  parentFolderPath,
   siblingEntries,
 } from "@/store/cloudPaths";
 import type { StoreKit } from "@/store/kit";
@@ -547,6 +547,7 @@ export function createCloudFilesSlice(
         cloudLoading: false,
         cloudSelectedEntries: emptyCloudSelection(),
       });
+
       await get().refreshCloudEntries();
     },
   };

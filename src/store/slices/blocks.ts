@@ -21,10 +21,10 @@ import type { StoreKit } from "@/store/kit";
 import { getActiveTab, getRunbookView } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import {
+  relabelActive,
+  relabelTab,
   tabContent,
   withActiveTab,
-  relabelTab,
-  relabelActive,
 } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
 

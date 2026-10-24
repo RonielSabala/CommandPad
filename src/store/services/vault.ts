@@ -16,13 +16,13 @@ import {
 } from "@/services/vault";
 import { stripJsonExtension } from "@/utils/export";
 
-import type { ContentService } from "./content";
-import type { EmbedState } from "./embeds";
-import type { SyncService } from "./sync";
 import type { StoreKit } from "@/store/kit";
 import { getActiveTab } from "@/store/selectors";
 import { tabContent } from "@/store/tabState";
 import type { VaultPassphrases } from "@/store/types";
+import type { ContentService } from "./content";
+import type { EmbedState } from "./embeds";
+import type { SyncService } from "./sync";
 
 export interface ImportedVaultResult {
   content: RunbookContent;

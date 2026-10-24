@@ -437,9 +437,7 @@ export type AppStoreApi = StoreApi<StoreState>;
 
 /** The state fields, without the actions. */
 export type StoreData = {
-  [
-    K in keyof StoreState as StoreState[K] extends (...args: never[]) => unknown
-      ? never
-      : K
-  ]: StoreState[K];
+  [K in keyof StoreState as StoreState[K] extends (...args: never[]) => unknown
+    ? never
+    : K]: StoreState[K];
 };

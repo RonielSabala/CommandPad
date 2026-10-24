@@ -17,13 +17,13 @@ import { sha256 } from "@/utils/hash";
 import { getRunbookLabel } from "@/utils/runbook";
 import { parseRunbookSource } from "@/utils/runbookSource";
 
+import type { StoreKit } from "@/store/kit";
+import { contentFields, relabelTab } from "@/store/tabState";
+import type { CloudConflict } from "@/store/types";
 import type { ContentService } from "./content";
 import type { EmbedLoading } from "./embeds";
 import type { SyncService } from "./sync";
 import type { VaultFlows } from "./vault";
-import type { StoreKit } from "@/store/kit";
-import { contentFields, relabelTab } from "@/store/tabState";
-import type { CloudConflict } from "@/store/types";
 
 export function createCloudSave(
   kit: StoreKit,

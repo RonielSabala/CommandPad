@@ -6,9 +6,9 @@ import { buildRunbookSource, parseRunbookSource } from "@/utils/runbookSource";
 
 import type { StoreKit } from "@/store/kit";
 import { getActiveTab } from "@/store/selectors";
-import { tabContent, withActiveTab, relabelActive } from "@/store/tabState";
+import { relabelActive, tabContent, withActiveTab } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
-import { withPanel, uiStateSnapshot } from "@/store/uiState";
+import { uiStateSnapshot, withPanel } from "@/store/uiState";
 
 type UiActions = Pick<
   StoreState,

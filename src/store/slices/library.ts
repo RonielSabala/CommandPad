@@ -11,7 +11,7 @@ import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
 import type { StoreKit } from "@/store/kit";
 import type { StoreServices } from "@/store/services";
 import type { ImportedVaultResult } from "@/store/services/vault";
-import { createTabObject, tabContent, contentFields } from "@/store/tabState";
+import { contentFields, createTabObject, tabContent } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
 
 type LibraryActions = Pick<

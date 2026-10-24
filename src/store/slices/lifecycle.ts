@@ -8,7 +8,7 @@ import * as persistence from "@/store/persistence";
 import { deleteRunbookDb } from "@/store/runbookDb";
 import { getActiveTab } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
-import { tabContent, contentFields } from "@/store/tabState";
+import { contentFields, tabContent } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
 import { uiStateSnapshot } from "@/store/uiState";
 
@@ -186,6 +186,7 @@ export function createLifecycleSlice(
         await deleteRunbookDb();
         localStorage.clear();
         sessionStorage.clear();
+
         lockVault();
         set({ vaultStatus: {} });
       }

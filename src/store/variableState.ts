@@ -7,7 +7,6 @@ import { revealVariables } from "@/utils/variableSections";
 import { withActiveTab } from "./tabState";
 import type { StoreState } from "./types";
 
-/** A blank variable. */
 export function createVariable(kind: VariableKind): Variable {
   const variable = { id: generateId(), key: "", value: "" };
 
@@ -16,7 +15,7 @@ export function createVariable(kind: VariableKind): Variable {
     : { ...variable, language: DEFAULT_VARIABLE_LANGUAGE };
 }
 
-/** Append a variable, expanding the section it lands in so it is on screen. */
+/** Append a variable, expanding the section it lands in. */
 export function appendVariable(tab: Tab, variable: Variable): Tab {
   const variables = [...tab.variables, variable];
   return {

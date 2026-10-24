@@ -9,10 +9,10 @@ import type { CloudFileLocation } from "@/services/cloud";
 import { holdsSecrets } from "@/services/vault";
 import { localSourceKey } from "@/utils/embeddedRunbook";
 
-import type { EmbedState } from "./embeds";
-import type { VaultRecords } from "./vault";
 import type { StoreKit } from "@/store/kit";
 import { tabContent } from "@/store/tabState";
+import type { EmbedState } from "./embeds";
+import type { VaultRecords } from "./vault";
 
 export function createContentService(
   kit: StoreKit,

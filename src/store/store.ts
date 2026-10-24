@@ -36,7 +36,7 @@ export {
   getActiveTab,
   getRunbookEmbedView,
   getRunbookView,
-  hasValuesToClear,
+  hasValuesToClear
 } from "./selectors";
 export { tabContent } from "./tabState";
 export type { AppStoreApi, StoreState, VaultPassphrases } from "./types";

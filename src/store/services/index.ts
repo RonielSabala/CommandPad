@@ -1,10 +1,10 @@
+import type { StoreKit } from "@/store/kit";
 import { createCloudBrowse } from "./cloudBrowse";
 import { createCloudSave } from "./cloudSave";
 import { createContentService } from "./content";
-import { createEmbedState, createEmbedLoading } from "./embeds";
+import { createEmbedLoading, createEmbedState } from "./embeds";
 import { createSyncService } from "./sync";
-import { createVaultRecords, createVaultFlows } from "./vault";
-import type { StoreKit } from "@/store/kit";
+import { createVaultFlows, createVaultRecords } from "./vault";
 
 /** Every private helper the slices share, built in dependency order. */
 export function createStoreServices(kit: StoreKit) {

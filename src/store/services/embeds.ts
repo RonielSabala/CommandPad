@@ -13,8 +13,8 @@ import { localSourceKey, resolveEmbedSource } from "@/utils/embeddedRunbook";
 import type { EmbeddedReader } from "@/utils/export";
 import { parseRunbookSource } from "@/utils/runbookSource";
 
-import type { ContentService } from "./content";
 import type { StoreKit } from "@/store/kit";
+import type { ContentService } from "./content";
 
 export function createEmbedState(kit: StoreKit) {
   const { set, get } = kit;

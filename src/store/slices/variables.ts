@@ -34,7 +34,7 @@ import {
 import type { StoreServices } from "@/store/services";
 import { withActiveTab } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
-import { createVariable, appendVariable } from "@/store/variableState";
+import { appendVariable, createVariable } from "@/store/variableState";
 
 type VariablesActions = Pick<
   StoreState,
