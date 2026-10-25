@@ -197,6 +197,10 @@ export interface NoteList {
 }
 
 export type NoteNode =
-  | { type: typeof NoteNodeType.TEXT; segments: NoteSegment[] }
+  | {
+      type: typeof NoteNodeType.TEXT;
+      segments: NoteSegment[];
+      emptyLastLine?: number;
+    }
   | { type: typeof NoteNodeType.TABLE; table: NoteTable }
   | { type: typeof NoteNodeType.LIST; list: NoteList };

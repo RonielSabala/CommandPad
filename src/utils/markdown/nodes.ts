@@ -23,14 +23,13 @@ export function parseNoteNodes(text: string): NoteNode[] {
     }
 
     const from = starts[runStart];
-    const to = starts[runEnd - 1] + lines[runEnd - 1].length;
-    if (to <= from) {
-      return;
-    }
+    const lastLine = starts[runEnd - 1];
+    const to = lastLine + lines[runEnd - 1].length;
 
     nodes.push({
       type: NoteNodeType.TEXT,
-      segments: parseNoteText(text.slice(from, to), from),
+      segments: to > from ? parseNoteText(text.slice(from, to), from) : [],
+      emptyLastLine: to === lastLine ? to : undefined,
     });
   };
 

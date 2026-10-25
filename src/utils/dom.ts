@@ -1,4 +1,4 @@
-import { LINE_BREAK } from "@/common/config";
+import { LINE_BREAK, LINE_FILLER } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import {
   DataAttr,
@@ -111,7 +111,8 @@ function* characterBoxes(
       range.setEnd(node, i + 1);
 
       const from = start + i;
-      const to = text[i] === LINE_BREAK ? from : from + 1;
+      const to =
+        text[i] === LINE_BREAK || text[i] === LINE_FILLER ? from : from + 1;
 
       for (const rect of range.getClientRects()) {
         yield { from, to, rect };
@@ -143,6 +144,10 @@ function nearestCaret(
     bestVertical = vertical;
     bestHorizontal = horizontal;
     caret = x < (rect.left + rect.right) / 2 ? from : to;
+
+    if (vertical === 0 && horizontal === 0) {
+      break;
+    }
   }
 
   return caret;
@@ -254,7 +259,7 @@ export function locateTextareaCarets(
   textarea: HTMLTextAreaElement,
 ): CaretLocator {
   const { value } = textarea;
-  const text = document.createTextNode(value + " ");
+  const text = document.createTextNode(value + LINE_FILLER);
   const mirror = mountTextareaMirror(textarea, text);
   const origin = textarea.getBoundingClientRect();
   const boxes = Array.from(characterBoxes([[text, 0]]));
@@ -262,12 +267,6 @@ export function locateTextareaCarets(
   mirror.remove();
   return (x, y) => {
     const { top, left } = textarea.getBoundingClientRect();
-    const caret = nearestCaret(
-      boxes,
-      x - left + origin.left,
-      y - top + origin.top,
-    );
-
-    return caret === undefined ? undefined : Math.min(caret, value.length);
+    return nearestCaret(boxes, x - left + origin.left, y - top + origin.top);
   };
 }

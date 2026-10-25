@@ -36,7 +36,11 @@ export function NotePreview({
       )}
     >
       {text ? (
-        <NoteText text={text} requiresLinkModifier={requiresLinkModifier} />
+        <NoteText
+          text={text}
+          requiresLinkModifier={requiresLinkModifier}
+          fillEmptyLines
+        />
       ) : (
         placeholder && (
           <span className="note-preview-placeholder">{placeholder}</span>

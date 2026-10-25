@@ -30,5 +30,6 @@ export function noteToPlainText(text: string): string {
         ? listText(node.list)
         : segmentsText(node.segments);
     })
+    .filter(Boolean)
     .join(" ");
 }
