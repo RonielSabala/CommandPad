@@ -1,4 +1,4 @@
-/** `value` kept within `min`..`max`; `min` wins when they cross. */
+/** `value` kept within `min`..`max`. */
 export function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(value, max));
 }

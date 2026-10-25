@@ -319,6 +319,46 @@ export function indentNoteLines(
   };
 }
 
+/** Drops one leading `indent` from every line the selection touches. */
+export function outdentNoteLines(
+  text: string,
+  selection: NoteRange,
+  indent: string,
+): NoteEdit | null {
+  const lines = lineRange(text, selection);
+  const removedAt: number[] = [];
+  let lineStart = lines.from;
+
+  const rows = splitLines(text.slice(lines.from, lines.to)).map((line) => {
+    const outdented = line.startsWith(indent)
+      ? line.slice(indent.length)
+      : line;
+
+    if (outdented !== line) {
+      removedAt.push(lineStart);
+    }
+
+    lineStart += line.length + LINE_BREAK.length;
+    return outdented;
+  });
+
+  if (removedAt.length === 0) {
+    return null;
+  }
+
+  const shift = (offset: number) =>
+    removedAt.reduce(
+      (shifted, at) => shifted - clamp(offset - at, 0, indent.length),
+      offset,
+    );
+
+  return {
+    ...lines,
+    text: joinLines(rows),
+    selection: { from: shift(selection.from), to: shift(selection.to) },
+  };
+}
+
 // --- Plan formats ---
 
 /** What every format would do to the `selection` of a raw note. */

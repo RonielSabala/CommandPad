@@ -1,5 +1,6 @@
 export {
   indentNoteLines,
+  outdentNoteLines,
   planNoteFormats,
   type NoteEdit,
   type NoteFormatPlan,

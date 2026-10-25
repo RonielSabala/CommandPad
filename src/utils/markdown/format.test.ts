@@ -2,7 +2,12 @@ import { TAB_CHARACTER } from "@/common/constants/events";
 import { NoteFormat, NoteFormatState } from "@/common/enums";
 import { describe, expect, it } from "vitest";
 
-import { indentNoteLines, planNoteFormats, type NoteRange } from "./format";
+import {
+  indentNoteLines,
+  outdentNoteLines,
+  planNoteFormats,
+  type NoteRange,
+} from "./format";
 
 const OPEN = "«";
 const CLOSE = "»";
@@ -56,6 +61,16 @@ const INDENT_CASES: [string, string | null][] = [
   ["a «b» c", null],
 ];
 
+const OUTDENT_CASES: [string, string | null][] = [
+  ["«\ta\n\tb»", "«a\nb»"],
+  ["\t«a\n\tb»", "«a\nb»"],
+  ["\t\ta«»", "\ta«»"],
+  ["«\ta\nb\n\t\tc»", "«a\nb\n\tc»"],
+  ["x\n\to«ne\n\ttw»o\n\ty", "x\no«ne\ntw»o\n\ty"],
+  ["«\ta\n»\tb", "«a\n»\tb"],
+  ["  «a\nb»", null],
+];
+
 function mark(text: string, { from, to }: NoteRange): string {
   return (
     text.slice(0, from) + OPEN + text.slice(from, to) + CLOSE + text.slice(to)
@@ -93,6 +108,21 @@ describe("indentNoteLines", () => {
   it.each(INDENT_CASES)("%j", (marked, expected) => {
     const { text, selection } = unmark(marked);
     const edit = indentNoteLines(text, selection, TAB_CHARACTER);
+
+    expect(
+      edit &&
+        mark(
+          text.slice(0, edit.from) + edit.text + text.slice(edit.to),
+          edit.selection,
+        ),
+    ).toBe(expected);
+  });
+});
+
+describe("outdentNoteLines", () => {
+  it.each(OUTDENT_CASES)("%j", (marked, expected) => {
+    const { text, selection } = unmark(marked);
+    const edit = outdentNoteLines(text, selection, TAB_CHARACTER);
 
     expect(
       edit &&
