@@ -137,7 +137,7 @@ Free-form text rendered as markdown (`utils/markdown/`). Two parsing levels, onl
 - One table style `.note-table`, one list style `.note-list` (`NoteText.css`), reused by the docs. Don't add a second.
 - Spell check: `spellcheckEnabled` (persisted, default on, toggled from `WorkspaceContextMenu`) binds **only** the note textarea, with `lang={language}`. Every other field is `spellCheck={false}`.
 - Textarea keys: `useTabInsertion` (Tab inserts a tab), `useNoteFormatting` (format shortcuts, pair wrapping).
-- **Formatting** (shortcuts and the portalled `NoteFormatToolbar` over a selection) all goes through `planNoteFormats` (`utils/markdown/format.ts`), which gives each `NoteFormat` a state (on inside one token of its kind, disabled when touching any other token, since marks don't nest) and a lazy edit applied through `insertText` for undo. It reads each segment's raw `from`/`to` extent.
+- **Formatting** (shortcuts and the portalled `NoteFormatToolbar` over a selection) all goes through `planNoteFormats` (`utils/markdown/format.ts`), which gives each `NoteFormat` a state (inline marks are planned per selected line and never span a line break; on inside one token of its kind, disabled when touching any other token, since marks don't nest) and a lazy edit applied through `insertText` for undo. It reads each segment's raw `from`/`to` extent.
 
 #### The image block
 

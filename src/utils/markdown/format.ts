@@ -94,106 +94,190 @@ function lineRange(text: string, { from, to }: NoteRange): NoteRange {
 
 // --- Inline formats ---
 
-interface InlineTarget {
-  text: string;
-  selection: NoteRange;
+interface InlinePiece {
   range: NoteRange;
-  selected: string;
   /** The tokens the range overlaps. */
   touched: NoteSegment[];
 }
 
-function planInline(
-  { text, selection, range, selected, touched }: InlineTarget,
-  format: InlineFormat,
-): NoteFormatPlan {
-  const { mark, type } = INLINE_FORMATS[format];
+interface InlineTarget {
+  text: string;
+  selection: NoteRange;
+  pieces: InlinePiece[];
+}
 
-  if (touched.length === 0) {
-    return {
-      state: NoteFormatState.OFF,
-      apply: () => ({
-        ...range,
-        text: mark + selected + mark,
-        selection: {
-          from: range.from + mark.length,
-          to: range.to + mark.length,
-        },
-      }),
-    };
+interface NoteSplice extends NoteRange {
+  text: string;
+}
+
+/** Joins splices, in order, into one edit. */
+function joinSplices(
+  text: string,
+  splices: NoteSplice[],
+): NoteRange & { text: string; starts: number[] } {
+  const parts: string[] = [];
+  const starts: number[] = [];
+  let cursor = splices[0].from;
+  let delta = 0;
+
+  for (const { text: spliceText, from, to } of splices) {
+    parts.push(text.slice(cursor, from), spliceText);
+    starts.push(from + delta);
+
+    delta += spliceText.length - (to - from);
+    cursor = to;
   }
 
-  const [token] = touched;
-  if (
-    touched.length > 1 ||
-    token.type !== type ||
-    range.from < token.from ||
-    range.to > token.to
-  ) {
-    return DISABLED;
-  }
+  return { from: splices[0].from, to: cursor, text: parts.join(""), starts };
+}
+
+function wrapPieces(
+  { text, pieces }: InlineTarget,
+  bare: NoteRange[],
+  mark: string,
+): NoteEdit {
+  const { starts, ...edit } = joinSplices(
+    text,
+    bare.map((range) => ({
+      ...range,
+      text: mark + text.slice(range.from, range.to) + mark,
+    })),
+  );
+
+  // The selection spans the content of the first and last pieces
+  const first = pieces[0].range;
+  const last = pieces[pieces.length - 1].range;
+  const lastBare = bare[bare.length - 1] === last;
 
   return {
-    state: NoteFormatState.ON,
-    apply: () => {
-      const tokenStart = token.start;
-      const tokenFrom = token.from;
-      const tokenTo = token.to;
-
-      const content = text.slice(tokenStart, tokenFrom + tokenTo - tokenStart);
-      const keep = (offset: number) =>
-        clamp(
-          tokenFrom + offset - tokenStart,
-          tokenFrom,
-          tokenFrom + content.length,
-        );
-
-      return {
-        from: tokenFrom,
-        to: tokenTo,
-        text: content,
-        selection: { from: keep(selection.from), to: keep(selection.to) },
-      };
+    ...edit,
+    selection: {
+      from: bare[0] === first ? starts[0] + mark.length : first.from,
+      to: lastBare
+        ? starts[starts.length - 1] + mark.length + last.to - last.from
+        : last.to + edit.text.length - (edit.to - edit.from),
     },
   };
 }
 
-/** The part of the selection a mark may wrap. */
-function wrappableRange(text: string, selection: NoteRange): NoteRange {
-  const selectionFrom = selection.from;
-  const line = lineRange(text, { from: selectionFrom, to: selectionFrom });
-  const item = MarkdownList.ITEM_REGEX.exec(text.slice(line.from, line.to));
+function unwrapTokens(
+  { text, selection }: InlineTarget,
+  tokens: NoteSegment[],
+): NoteEdit {
+  const contents = tokens.map(({ start, from, to }) =>
+    text.slice(start, to - (start - from)),
+  );
 
-  const from = Math.max(selectionFrom, line.from + (item?.[0].length ?? 0));
-  const to = Math.max(from, selection.to);
+  const { starts, ...edit } = joinSplices(
+    text,
+    tokens.map(({ from, to }, index) => ({ from, to, text: contents[index] })),
+  );
 
-  const selected = text.slice(from, to);
-  const start = from + trimmedStart(selected);
+  const keep = (offset: number, index: number) =>
+    clamp(
+      starts[index] + offset - tokens[index].start,
+      starts[index],
+      starts[index] + contents[index].length,
+    );
 
-  return { from: start, to: Math.max(start, from + selected.trimEnd().length) };
+  return {
+    ...edit,
+    selection: {
+      from: keep(selection.from, 0),
+      to: keep(selection.to, tokens.length - 1),
+    },
+  };
 }
 
-function inlineTarget(text: string, selection: NoteRange): InlineTarget | null {
-  const { from, to } = wrappableRange(text, selection);
-  const selected = text.slice(from, to);
+function planInline(
+  target: InlineTarget,
+  format: InlineFormat,
+): NoteFormatPlan {
+  const bare: NoteRange[] = [];
+  const tokens = new Set<NoteSegment>();
+  const { mark, type } = INLINE_FORMATS[format];
 
-  if (
-    selected.includes(LINE_BREAK) ||
-    (from === to && selection.from !== selection.to)
-  ) {
+  for (const { range, touched } of target.pieces) {
+    if (touched.length === 0) {
+      bare.push(range);
+      continue;
+    }
+
+    const [token] = touched;
+    if (
+      touched.length > 1 ||
+      token.type !== type ||
+      range.from < token.from ||
+      range.to > token.to
+    ) {
+      return DISABLED;
+    }
+
+    tokens.add(token);
+  }
+
+  // Lines already in the style keep it while the rest join them
+  if (bare.length > 0) {
+    return {
+      state: NoteFormatState.OFF,
+      apply: () => wrapPieces(target, bare, mark),
+    };
+  }
+
+  return {
+    state: NoteFormatState.ON,
+    apply: () => unwrapTokens(target, [...tokens]),
+  };
+}
+
+/** The part of each selected line a mark may wrap, past any list marker. */
+function wrappableRanges(
+  text: string,
+  { selection, lines, rows }: ListTarget,
+): NoteRange[] {
+  const collapsed = selection.from === selection.to;
+  let lineStart = lines.from;
+
+  return rows.flatMap(({ line, item }) => {
+    const start = lineStart;
+    lineStart += line.length + LINE_BREAK.length;
+
+    const from = Math.max(selection.from, start + (item?.[0].length ?? 0));
+    const to = Math.max(from, Math.min(selection.to, start + line.length));
+
+    const selected = text.slice(from, to);
+    const trimmedFrom = from + trimmedStart(selected);
+    const trimmedTo = Math.max(trimmedFrom, from + selected.trimEnd().length);
+
+    return trimmedFrom === trimmedTo && !collapsed
+      ? []
+      : [{ from: trimmedFrom, to: trimmedTo }];
+  });
+}
+
+function inlineTarget(text: string, list: ListTarget): InlineTarget | null {
+  const ranges = wrappableRanges(text, list);
+  if (ranges.length === 0) {
     return null;
   }
 
-  const touched = parseNoteNodes(text)
+  const overlaps = (token: NoteSegment, { from, to }: NoteRange) =>
+    token.from < to && token.to > from;
+
+  // Only the tokens inside the selection are matched against each line
+  const span = { from: ranges[0].from, to: ranges[ranges.length - 1].to };
+  const tokens = parseNoteNodes(text)
     .flatMap(nodeSegments)
     .filter(
-      (segment) =>
-        segment.type !== NoteSegmentType.TEXT &&
-        segment.from < to &&
-        segment.to > from,
+      (token) => token.type !== NoteSegmentType.TEXT && overlaps(token, span),
     );
 
-  return { text, selection, range: { from, to }, selected, touched };
+  const pieces = ranges.map((range) => ({
+    range,
+    touched: tokens.filter((token) => overlaps(token, range)),
+  }));
+
+  return { text, selection: list.selection, pieces };
 }
 
 // --- List formats ---
@@ -367,8 +451,8 @@ export function planNoteFormats(
   text: string,
   selection: NoteRange,
 ): Record<NoteFormat, NoteFormatPlan> {
-  const inline = inlineTarget(text, selection);
   const list = listTarget(text, selection);
+  const inline = inlineTarget(text, list);
 
   const planInlineFormat = (format: InlineFormat) =>
     inline ? planInline(inline, format) : DISABLED;

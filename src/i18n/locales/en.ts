@@ -1379,7 +1379,7 @@ If something goes wrong, undo it in this order:
       links:
         "Bare URLs are detected automatically and become clickable links. To open a link, hold `Ctrl` and click it, or hover it and click **Follow link** in its tooltip.",
       wrapKeys:
-        "Select text in a note or in a variable section name and a formatting toolbar appears above it, with bold, italics, strikethrough, inline code, and numbered or bulleted lists. Hover a button to see its shortcut. A button is highlighted when the selection already has that style, and clicking it removes the style; it is disabled when the selection only partly covers styled text, since styles don't combine. Typing any parenthesis character (**(**, **[**, or **{**) or quote (**\"** or **'**) wraps it in that pair.",
+        "Select text in a note or in a variable section name and a formatting toolbar appears above it, with bold, italics, strikethrough, inline code, and numbered or bulleted lists. Hover a button to see its shortcut. A button is highlighted when the selection already has that style, and clicking it removes the style; it is disabled when the selection only partly covers styled text, since styles don't combine. With several lines selected, each line gets its own style. Typing any parenthesis character (**(**, **[**, or **{**) or quote (**\"** or **'**) wraps it in that pair.",
     },
     imageBlock: {
       intro:
