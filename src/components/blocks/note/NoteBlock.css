@@ -49,7 +49,7 @@ body.read-mode .note-style-row {
 }
 
 .note-style-btn:hover {
-  background: var(--color-surface-alt);
+  background: var(--color-surface-hover-bg);
   color: var(--color-text-secondary);
 }
 

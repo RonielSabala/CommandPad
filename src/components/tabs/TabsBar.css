@@ -76,7 +76,7 @@
 }
 
 #add-tab-btn:hover::before {
-  background: var(--color-surface-alt);
+  background: var(--color-surface-hover-bg);
 }
 
 body.read-mode #add-tab-btn {

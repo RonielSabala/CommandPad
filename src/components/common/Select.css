@@ -69,7 +69,7 @@
 }
 
 .select-option:hover {
-  background: var(--color-surface-alt);
+  background: var(--color-surface-hover-bg);
   color: var(--color-text-primary);
 }
 

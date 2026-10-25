@@ -28,7 +28,7 @@
 }
 
 .context-menu-item:hover {
-  background: var(--color-surface-alt);
+  background: var(--color-surface-hover-bg);
 }
 
 .context-menu-item:disabled {

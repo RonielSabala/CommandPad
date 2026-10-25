@@ -143,7 +143,7 @@ body {
   opacity: 0.4;
   cursor: not-allowed;
   color: var(--color-text-secondary);
-  background: var(--color-surface-alt);
+  background: var(--color-surface-hover-bg);
   border-color: var(--color-border);
 }
 
@@ -179,9 +179,9 @@ body {
 }
 
 .btn-soft-icon:hover {
-  background: var(--color-surface-alt);
-  border-color: transparent;
   color: var(--color-text-primary);
+  background: var(--color-surface-hover-bg);
+  border-color: transparent;
 }
 
 .btn-primary {

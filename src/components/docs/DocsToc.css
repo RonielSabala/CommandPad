@@ -29,7 +29,7 @@
 }
 
 #docs-toc-header:hover {
-  background: var(--color-surface-alt);
+  background: var(--color-surface-hover-bg);
 }
 
 #docs-toc-header:hover #docs-toc-title,
@@ -53,7 +53,7 @@
 
 .docs-toc-item:hover {
   color: var(--color-text-primary);
-  background: var(--color-surface-alt);
+  background: var(--color-surface-hover-bg);
 }
 
 .docs-toc-sub {

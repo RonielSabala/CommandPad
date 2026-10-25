@@ -22,7 +22,6 @@
 
 .search-input:focus {
   border-color: var(--color-border-focus);
-  background: var(--color-surface-alt);
 }
 
 .search-input::placeholder {

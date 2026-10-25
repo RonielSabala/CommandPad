@@ -34,8 +34,7 @@
 }
 
 .runbook-item-btn:hover {
-  background: var(--color-surface-alt);
-  border-color: var(--color-border);
+  background: var(--color-surface-hover-bg);
   color: var(--color-text-primary);
 }
 
