@@ -101,6 +101,13 @@ body {
   white-space: nowrap;
 }
 
+.text-mirror {
+  position: fixed;
+  visibility: hidden;
+  pointer-events: none;
+  overflow: hidden;
+}
+
 /* --- BUTTONS --- */
 
 .btn {

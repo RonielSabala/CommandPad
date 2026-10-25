@@ -1,4 +1,10 @@
-import { DataAttr, ScrollIntoView, ScrollSettle } from "@/common/constants/dom";
+import { CssClass } from "@/common/constants/css";
+import {
+  DataAttr,
+  HtmlTag,
+  ScrollIntoView,
+  ScrollSettle,
+} from "@/common/constants/dom";
 
 export function toPx(pixels: number): string {
   return `${pixels}px`;
@@ -110,4 +116,68 @@ export function getNoteCaretAtPoint(
   }
 
   return caret;
+}
+
+const TEXT_LAYOUT_STYLES = [
+  "box-sizing",
+  "width",
+  "padding-top",
+  "padding-right",
+  "padding-bottom",
+  "padding-left",
+  "border-top-width",
+  "border-right-width",
+  "border-bottom-width",
+  "border-left-width",
+  "border-style",
+  "font-family",
+  "font-size",
+  "font-style",
+  "font-weight",
+  "font-variant",
+  "font-feature-settings",
+  "line-height",
+  "letter-spacing",
+  "word-spacing",
+  "tab-size",
+  "text-indent",
+  "text-transform",
+  "text-align",
+  "white-space",
+  "overflow-wrap",
+  "word-break",
+  "direction",
+] as const;
+
+/** Viewport boxes of `from`..`to` in a textarea. */
+export function getTextareaRangeRects(
+  textarea: HTMLTextAreaElement,
+  from: number,
+  to: number,
+): DOMRect[] {
+  const computed = getComputedStyle(textarea);
+  const { top, left } = textarea.getBoundingClientRect();
+  const { value } = textarea;
+
+  const range = document.createElement(HtmlTag.SPAN);
+  const mirror = document.createElement(HtmlTag.DIV);
+  mirror.className = CssClass.TEXT_MIRROR;
+
+  for (const property of TEXT_LAYOUT_STYLES) {
+    mirror.style.setProperty(property, computed.getPropertyValue(property));
+  }
+
+  mirror.style.top = toPx(top);
+  mirror.style.left = toPx(left);
+
+  range.textContent = value.slice(from, to);
+  mirror.append(value.slice(0, from), range, value.slice(to));
+  document.body.appendChild(mirror);
+
+  const rects = Array.from(range.getClientRects()).filter(
+    (rect) => rect.width > 0,
+  );
+
+  mirror.remove();
+  return rects;
 }

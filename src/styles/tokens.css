@@ -32,6 +32,7 @@
   --color-bg: #0b0e12;
   --color-surface: #21262d;
   --color-surface-alt: #2d333b;
+  --color-surface-hover-bg: rgba(99, 110, 123, 0.32);
   --color-border: #373e47;
   --color-border-focus: #4493f8;
   --block-backdrop: var(--color-bg);
@@ -240,6 +241,7 @@
   --color-bg: #f6f8fa;
   --color-surface: #ffffff;
   --color-surface-alt: #eaeef2;
+  --color-surface-hover-bg: rgba(175, 184, 193, 0.32);
   --color-border: #d0d7de;
   --color-border-focus: #0969da;
 

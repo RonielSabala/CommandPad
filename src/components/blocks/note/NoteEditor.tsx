@@ -1,8 +1,9 @@
 import { CssClass } from "@/common/constants/css";
-import { Key } from "@/common/constants/events";
+import { EventType, Key, PASSIVE } from "@/common/constants/events";
 import { AppMode } from "@/common/enums";
 import { useStore } from "@/store/store";
 import { getNoteCaretAtPoint } from "@/utils/dom";
+import type { NoteRange } from "@/utils/markdown";
 import { classNames, classSelector } from "@/utils/string";
 import {
   useEffect,
@@ -13,6 +14,7 @@ import {
 } from "react";
 
 import "./NoteEditor.css";
+import { NoteFormatToolbar } from "./NoteFormatToolbar";
 import { NotePreview } from "./NotePreview";
 import { useNoteFormatting } from "./useNoteFormatting";
 import { useTabInsertion } from "./useTabInsertion";
@@ -44,8 +46,10 @@ export function NoteEditor({
   const spellcheck = useStore((state) => state.spellcheckEnabled);
 
   const [focused, setFocused] = useState(false);
+  const [selection, setSelection] = useState<NoteRange | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+  const pressedRange = useRef<NoteRange | null>(null);
 
   const handleTabKey = useTabInsertion(onChange);
   const handleFormatKey = useNoteFormatting(onChange);
@@ -82,6 +86,37 @@ export function NoteEditor({
       textarea?.setSelectionRange(caret, caret);
     }
   };
+
+  const readSelection = ({
+    selectionStart: from,
+    selectionEnd: to,
+  }: HTMLTextAreaElement) =>
+    setSelection((current) =>
+      current?.from === from && current.to === to ? current : { from, to },
+    );
+
+  // A click inside the selection collapses it only after the click
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) {
+      return;
+    }
+
+    const handleChange = () => {
+      const { selectionStart: from, selectionEnd: to } = textarea;
+      if (from === to) {
+        setSelection(null);
+      }
+    };
+
+    textarea.addEventListener(
+      EventType.SELECTION_CHANGE,
+      handleChange,
+      PASSIVE,
+    );
+    return () =>
+      textarea.removeEventListener(EventType.SELECTION_CHANGE, handleChange);
+  }, []);
 
   useEffect(() => {
     if (focusRequested) {
@@ -131,8 +166,30 @@ export function NoteEditor({
             handleFormatKey(event);
             handleTabKey(event);
           }}
+          onSelect={(event) => readSelection(event.currentTarget)}
+          onMouseDown={({ currentTarget }) => {
+            pressedRange.current = {
+              from: currentTarget.selectionStart,
+              to: currentTarget.selectionEnd,
+            };
+
+            setSelection(null);
+          }}
+          onMouseUp={({ currentTarget }) => {
+            const { from, to } = pressedRange.current ?? {};
+            const { selectionStart, selectionEnd } = currentTarget;
+
+            if (from !== to && from === selectionStart && to === selectionEnd) {
+              return;
+            }
+
+            readSelection(currentTarget);
+          }}
           onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onBlur={() => {
+            setFocused(false);
+            setSelection(null);
+          }}
         />
         <NotePreview
           ref={previewRef}
@@ -142,6 +199,15 @@ export function NoteEditor({
           requiresLinkModifier
         />
       </label>
+
+      {focused && !readMode && selection && selection.from !== selection.to && (
+        <NoteFormatToolbar
+          textareaRef={textareaRef}
+          value={value}
+          selection={selection}
+          onChange={onChange}
+        />
+      )}
     </div>
   );
 }

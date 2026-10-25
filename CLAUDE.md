@@ -136,7 +136,8 @@ Free-form text rendered as markdown (`utils/markdown/`). Two parsing levels, onl
 - **Escapes**: a leading backslash escapes an opening mark (`*`, `_`, `~`, a backtick, `´`, `[`, `|`, or `http(s)://`); nothing is unescaped inside a code span.
 - One table style `.note-table`, one list style `.note-list` (`NoteText.css`), reused by the docs. Don't add a second.
 - Spell check: `spellcheckEnabled` (persisted, default on, toggled from `WorkspaceContextMenu`) binds **only** the note textarea, with `lang={language}`. Every other field is `spellCheck={false}`.
-- Textarea keys: `useTabInsertion` (Tab inserts a tab), `useNoteFormatting` (Ctrl+B/I/backtick wrap the selection, pair wrapping).
+- Textarea keys: `useTabInsertion` (Tab inserts a tab), `useNoteFormatting` (format shortcuts, pair wrapping).
+- **Formatting** (shortcuts and the portalled `NoteFormatToolbar` over a selection) all goes through `planNoteFormats` (`utils/markdown/format.ts`), which gives each `NoteFormat` a state (on inside one token of its kind, disabled when touching any other token, since marks don't nest) and a lazy edit applied through `insertText` for undo. It reads each segment's raw `from`/`to` extent.
 
 #### The image block
 
@@ -337,7 +338,7 @@ Every code surface is **Monaco, bundled locally** (never a CDN). `src/monaco/` i
 
 ### Testing
 
-`pnpm test` runs Vitest (`environment: "node"`, `src/**/*.test.ts`). The suite covers the **variable engine** (`utils/resolution/`), plus `utils/embeddedRunbook.test.ts` and `components/docs/agentPrompt.test.ts`. There are no component/DOM/browser tests; don't pull a DOM implementation in.
+`pnpm test` runs Vitest (`environment: "node"`, `src/**/*.test.ts`). The suite covers the **variable engine** (`utils/resolution/`), plus `utils/embeddedRunbook.test.ts`, `utils/markdown/format.test.ts` and `components/docs/agentPrompt.test.ts`. There are no component/DOM/browser tests; don't pull a DOM implementation in.
 
 - Tests sit beside their module (`<module>.test.ts`) and are typechecked by `tsc -b`.
 - Primitives (`string.ts`, `stringCase.ts`, `stringTest.ts`, `hash.ts`) are tested **through the operation that exposes them**, not separately.

@@ -2,6 +2,7 @@ import { MIDDLE_DOT, VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
+  NoteFormat,
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
@@ -298,6 +299,16 @@ export const es: Messages = {
     },
     followLink: "Seguir enlace",
     followLinkBinding: (binding: string) => `(${binding})`,
+    formatToolbar: "Formato",
+    format: {
+      [NoteFormat.BOLD]: "Negrita",
+      [NoteFormat.ITALIC]: "Cursiva",
+      [NoteFormat.STRIKETHROUGH]: "Tachado",
+      [NoteFormat.CODE]: "Código en línea",
+      [NoteFormat.NUMBERED_LIST]: "Lista numerada",
+      [NoteFormat.BULLETED_LIST]: "Lista con viñetas",
+    },
+    formatHint: (label: string, binding: string) => `${label} (${binding})`,
   },
   image: {
     dropHint: "Suelta una imagen aquí, o pégala",
@@ -574,8 +585,14 @@ export const es: Messages = {
       "Poner en negrita el texto seleccionado (bloque de nota)",
     [KeyBinding.NOTE_ITALIC]:
       "Poner en cursiva el texto seleccionado (bloque de nota)",
+    [KeyBinding.NOTE_STRIKETHROUGH]:
+      "Tachar el texto seleccionado (bloque de nota)",
     [KeyBinding.NOTE_CODE]:
       "Envolver el texto seleccionado en comillas invertidas (bloque de nota)",
+    [KeyBinding.NOTE_NUMBERED_LIST]:
+      "Convertir las líneas seleccionadas en una lista numerada (bloque de nota)",
+    [KeyBinding.NOTE_BULLETED_LIST]:
+      "Convertir las líneas seleccionadas en una lista con viñetas (bloque de nota)",
     [KeyBinding.WRAP_SELECTION]:
       "Envolver el texto seleccionado en el par escrito (cualquier campo de texto)",
     [KeyBinding.SUBMIT_EDITOR]: "Guardar / crear desde un editor de código",
@@ -1389,7 +1406,7 @@ Si algo sale mal, deshazlo en este orden:
       links:
         "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables. Para abrir un enlace, mantén `Ctrl` y haz clic en él, o pasa el puntero por encima y haz clic en **Seguir enlace** en su tooltip.",
       wrapKeys:
-        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y `Ctrl+´` en comillas invertidas; escribir cualquier carácter de paréntesis (**(**, **[** o **{**) o comillas (**\"** o **'**) lo envuelve en ese par. Envolver en pares no es exclusivo de las notas: funciona igual en el editor de comandos.",
+        "Selecciona texto en una nota o en el nombre de una sección de variables y aparece encima una barra de formato, con negrita, cursiva, tachado, código en línea y listas numeradas o con viñetas. Pasa el puntero por un botón para ver su atajo. Un botón se resalta cuando la selección ya tiene ese estilo, y al pulsarlo se quita; se desactiva cuando la selección cubre solo parte de un texto con estilo, porque los estilos no se combinan. Escribir cualquier carácter de paréntesis (**(**, **[** o **{**) o comillas (**\"** o **'**) lo envuelve en ese par.",
     },
     imageBlock: {
       intro:

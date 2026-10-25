@@ -2,6 +2,7 @@ import { MIDDLE_DOT, VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
+  NoteFormat,
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
@@ -286,6 +287,16 @@ export const en: Messages = {
     },
     followLink: "Follow link",
     followLinkBinding: (binding: string) => `(${binding})`,
+    formatToolbar: "Formatting",
+    format: {
+      [NoteFormat.BOLD]: "Bold",
+      [NoteFormat.ITALIC]: "Italic",
+      [NoteFormat.STRIKETHROUGH]: "Strikethrough",
+      [NoteFormat.CODE]: "Inline code",
+      [NoteFormat.NUMBERED_LIST]: "Numbered list",
+      [NoteFormat.BULLETED_LIST]: "Bulleted list",
+    },
+    formatHint: (label: string, binding: string) => `${label} (${binding})`,
   },
   image: {
     dropHint: "Drop an image here, or paste one",
@@ -555,7 +566,13 @@ export const en: Messages = {
     [KeyBinding.OPEN_LINK]: "Open note link in new tab",
     [KeyBinding.NOTE_BOLD]: "Bold selected text (note block)",
     [KeyBinding.NOTE_ITALIC]: "Italicize selected text (note block)",
+    [KeyBinding.NOTE_STRIKETHROUGH]:
+      "Strike through selected text (note block)",
     [KeyBinding.NOTE_CODE]: "Wrap selected text in backticks (note block)",
+    [KeyBinding.NOTE_NUMBERED_LIST]:
+      "Turn selected lines into a numbered list (note block)",
+    [KeyBinding.NOTE_BULLETED_LIST]:
+      "Turn selected lines into a bulleted list (note block)",
     [KeyBinding.WRAP_SELECTION]:
       "Wrap selected text in the typed pair (any text field)",
     [KeyBinding.SUBMIT_EDITOR]: "Save / create from a code editor",
@@ -1363,7 +1380,7 @@ If something goes wrong, undo it in this order:
       links:
         "Bare URLs are detected automatically and become clickable links. To open a link, hold `Ctrl` and click it, or hover it and click **Follow link** in its tooltip.",
       wrapKeys:
-        "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and `Ctrl+´` in backticks; typing any parenthesis character (**(**, **[**, or **{**) or quote (**\"** or **'**) wraps it in that pair. Pair wrapping is not exclusive to notes: it works the same way in the command editor.",
+        "Select text in a note or in a variable section name and a formatting toolbar appears above it, with bold, italics, strikethrough, inline code, and numbered or bulleted lists. Hover a button to see its shortcut. A button is highlighted when the selection already has that style, and clicking it removes the style; it is disabled when the selection only partly covers styled text, since styles don't combine. Typing any parenthesis character (**(**, **[**, or **{**) or quote (**\"** or **'**) wraps it in that pair.",
     },
     imageBlock: {
       intro:

@@ -20,6 +20,7 @@ export const EventType = {
   SCROLL: "scroll",
   WHEEL: "wheel",
   BLUR: "blur",
+  SELECTION_CHANGE: "selectionchange",
   DRAG_START: "dragstart",
   DRAG_END: "dragend",
 } as const;

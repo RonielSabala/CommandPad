@@ -37,6 +37,7 @@ export const InputSelector = {
 export const AriaRole = {
   STATUS: "status",
   TOOLTIP: "tooltip",
+  TOOLBAR: "toolbar",
   OPTION: "option",
   DIALOG: "dialog",
   LISTBOX: "listbox",
@@ -127,6 +128,10 @@ export const Cursor = {
 export const Anchor = {
   TARGET_BLANK: "_blank",
   REL: "noopener,noreferrer",
+} as const;
+
+export const SelectionDirection = {
+  BACKWARD: "backward",
 } as const;
 
 export const ScrollIntoView = {
