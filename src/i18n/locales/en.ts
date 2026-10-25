@@ -564,15 +564,14 @@ export const en: Messages = {
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicate selected blocks",
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
     [KeyBinding.OPEN_LINK]: "Open note link in new tab",
-    [KeyBinding.NOTE_BOLD]: "Bold selected text (note block)",
-    [KeyBinding.NOTE_ITALIC]: "Italicize selected text (note block)",
-    [KeyBinding.NOTE_STRIKETHROUGH]:
-      "Strike through selected text (note block)",
-    [KeyBinding.NOTE_CODE]: "Wrap selected text in backticks (note block)",
+    [KeyBinding.NOTE_BOLD]: "Bold selected text (note text)",
+    [KeyBinding.NOTE_ITALIC]: "Italicize selected text (note text)",
+    [KeyBinding.NOTE_STRIKETHROUGH]: "Strike through selected text (note text)",
+    [KeyBinding.NOTE_CODE]: "Wrap selected text in backticks (note text)",
     [KeyBinding.NOTE_NUMBERED_LIST]:
-      "Turn selected lines into a numbered list (note block)",
+      "Turn selected lines into a numbered list (note text)",
     [KeyBinding.NOTE_BULLETED_LIST]:
-      "Turn selected lines into a bulleted list (note block)",
+      "Turn selected lines into a bulleted list (note text)",
     [KeyBinding.WRAP_SELECTION]:
       "Wrap selected text in the typed pair (any text field)",
     [KeyBinding.SUBMIT_EDITOR]: "Save / create from a code editor",

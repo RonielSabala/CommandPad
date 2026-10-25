@@ -582,17 +582,17 @@ export const es: Messages = {
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
     [KeyBinding.OPEN_LINK]: "Abrir enlace de nota en una pestaña nueva",
     [KeyBinding.NOTE_BOLD]:
-      "Poner en negrita el texto seleccionado (bloque de nota)",
+      "Poner en negrita el texto seleccionado (texto de nota)",
     [KeyBinding.NOTE_ITALIC]:
-      "Poner en cursiva el texto seleccionado (bloque de nota)",
+      "Poner en cursiva el texto seleccionado (texto de nota)",
     [KeyBinding.NOTE_STRIKETHROUGH]:
-      "Tachar el texto seleccionado (bloque de nota)",
+      "Tachar el texto seleccionado (texto de nota)",
     [KeyBinding.NOTE_CODE]:
-      "Envolver el texto seleccionado en comillas invertidas (bloque de nota)",
+      "Envolver el texto seleccionado en comillas invertidas (texto de nota)",
     [KeyBinding.NOTE_NUMBERED_LIST]:
-      "Convertir las líneas seleccionadas en una lista numerada (bloque de nota)",
+      "Convertir las líneas seleccionadas en una lista numerada (texto de nota)",
     [KeyBinding.NOTE_BULLETED_LIST]:
-      "Convertir las líneas seleccionadas en una lista con viñetas (bloque de nota)",
+      "Convertir las líneas seleccionadas en una lista con viñetas (texto de nota)",
     [KeyBinding.WRAP_SELECTION]:
       "Envolver el texto seleccionado en el par escrito (cualquier campo de texto)",
     [KeyBinding.SUBMIT_EDITOR]: "Guardar / crear desde un editor de código",
