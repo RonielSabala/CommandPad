@@ -7,6 +7,7 @@ import {
   readNegation,
   splitReferenceBody,
 } from "@/utils/resolution";
+import { trimmedStart } from "@/utils/string";
 
 /** The chunk each separator opens. */
 const CHUNK_BY_SEPARATOR: Record<string, ReferenceChunk | undefined> = {
@@ -23,10 +24,6 @@ const COMPLETABLE: Record<ReferenceChunk, (typed: string) => boolean> = {
   [ReferenceChunk.OPERATION]: (typed) =>
     !typed.includes(CallSyntax.ARGUMENT_OPEN),
 };
-
-function trimmedStart(typed: string): number {
-  return typed.length - typed.trimStart().length;
-}
 
 /** Where the name an editor completes begins inside the chunk being typed. */
 const NAME_START: Record<ReferenceChunk, (typed: string) => number> = {

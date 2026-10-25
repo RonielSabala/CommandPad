@@ -1,5 +1,6 @@
 import { ReferenceConfig } from "@/common/config";
 import type { ResolvedSpan } from "@/common/types";
+import { trimmedStart } from "@/utils/string";
 
 export function flatSpans(text: string, source?: string): ResolvedSpan[] {
   return text ? [{ text, depth: 0, source }] : [];
@@ -145,7 +146,7 @@ export function spanAt(
 /** The spans of the trimmed text `spans` describes. */
 export function trimSpans(spans: readonly ResolvedSpan[]): ResolvedSpan[] {
   const text = spansText(spans);
-  const start = text.length - text.trimStart().length;
+  const start = trimmedStart(text);
   const end = text.trimEnd().length;
 
   return end > start ? sliceSpans(spans, start, end) : [];

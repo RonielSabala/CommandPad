@@ -2,6 +2,7 @@ import { NoteTableAlign } from "@/common/enums";
 import { MarkdownDelimiter, MarkdownTable } from "@/common/markdownSyntax";
 import type { NoteTable, NoteTableCell } from "@/common/types";
 
+import { trimmedStart } from "../string";
 import { parseNoteText } from "./inline";
 
 const SEPARATOR = MarkdownDelimiter.TABLE_SEPARATOR;
@@ -21,7 +22,7 @@ function splitRowCells(line: string, lineStart: number): RawCell[] {
 
   let offset = lineStart;
   for (const part of line.split(MarkdownTable.SEPARATOR_REGEX)) {
-    const leading = part.length - part.trimStart().length;
+    const leading = trimmedStart(part);
     const text = part
       .trim()
       .replace(MarkdownTable.ESCAPED_SEPARATOR_REGEX, SEPARATOR);

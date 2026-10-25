@@ -9,7 +9,7 @@ import { MarkdownDelimiter, MarkdownList } from "@/common/markdownSyntax";
 import type { NoteList, NoteNode, NoteSegment } from "@/common/types";
 
 import { clamp } from "../number";
-import { joinLines, splitLines } from "../string";
+import { joinLines, splitLines, trimmedStart } from "../string";
 import { parseNoteNodes } from "./nodes";
 
 export interface NoteRange {
@@ -81,9 +81,6 @@ function nodeSegments(node: NoteNode): NoteSegment[] {
       return listSegments(node.list);
   }
 }
-
-const leadingWhitespace = (line: string) =>
-  line.slice(0, line.length - line.trimStart().length);
 
 function lineRange(text: string, { from, to }: NoteRange): NoteRange {
   const end = to > from && text[to - 1] === LINE_BREAK ? to - 1 : to;
@@ -171,7 +168,7 @@ function wrappableRange(text: string, selection: NoteRange): NoteRange {
   const to = Math.max(from, selection.to);
 
   const selected = text.slice(from, to);
-  const start = from + selected.length - selected.trimStart().length;
+  const start = from + trimmedStart(selected);
 
   return { from: start, to: Math.max(start, from + selected.trimEnd().length) };
 }
@@ -250,7 +247,7 @@ function planList(
         return line;
       }
 
-      const indent = item?.groups?.indent ?? leadingWhitespace(line);
+      const indent = item?.groups?.indent ?? line.slice(0, trimmedStart(line));
       const indentLength = indent.length;
 
       const body = line.slice(item ? item[0].length : indentLength);

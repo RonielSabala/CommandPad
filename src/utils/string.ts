@@ -20,6 +20,11 @@ export function joinLines(lines: string[]): string {
   return lines.join(LINE_BREAK);
 }
 
+/** Where `text` starts once its leading whitespace is trimmed. */
+export function trimmedStart(text: string): number {
+  return text.length - text.trimStart().length;
+}
+
 export function matchesQuery(
   query: string,
   ...fields: (string | undefined)[]
