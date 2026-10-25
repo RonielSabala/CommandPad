@@ -149,9 +149,14 @@ export function NoteFormatToolbar({
       return anchorRef.current;
     };
 
+    const isCurrent = () =>
+      textarea.selectionStart === from && textarea.selectionEnd === to;
+
+    const kept = anchorRef.current;
     let offset =
-      keepAnchorRef.current && anchorRef.current
-        ? anchorRef.current
+      keepAnchorRef.current &&
+      kept?.width === textarea.getBoundingClientRect().width
+        ? kept
         : measure();
     const scroller = findScrollContainer(textarea);
     const size = toolbar.getBoundingClientRect();
@@ -176,7 +181,7 @@ export function NoteFormatToolbar({
     // Resizing a panel moves or rewraps the field without a window event
     const observer = new ResizeObserver(() => {
       const field = textarea.getBoundingClientRect();
-      if (field.width !== offset.width) {
+      if (field.width !== offset.width && isCurrent()) {
         offset = measure();
       }
 
@@ -192,7 +197,7 @@ export function NoteFormatToolbar({
       window.removeEventListener(EventType.SCROLL, place, PASSIVE_CAPTURE);
       window.removeEventListener(EventType.RESIZE, place);
     };
-  }, [textareaRef, value, from, to]);
+  }, [textareaRef, from, to]);
 
   useLayoutEffect(() => {
     const textarea = textareaRef.current;
