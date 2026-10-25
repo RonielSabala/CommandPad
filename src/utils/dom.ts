@@ -1,3 +1,4 @@
+import { LINE_BREAK } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import {
   DataAttr,
@@ -92,8 +93,8 @@ function segmentStart(node: Node): number | undefined {
 }
 
 interface CharacterBox {
-  /** The character's offset in the raw text. */
-  offset: number;
+  from: number;
+  to: number;
   rect: DOMRect;
 }
 
@@ -103,14 +104,17 @@ function* characterBoxes(
   const range = document.createRange();
 
   for (const [node, start] of texts) {
-    const length = node.textContent?.length ?? 0;
+    const text = node.textContent ?? "";
 
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < text.length; i++) {
       range.setStart(node, i);
       range.setEnd(node, i + 1);
 
+      const from = start + i;
+      const to = text[i] === LINE_BREAK ? from : from + 1;
+
       for (const rect of range.getClientRects()) {
-        yield { offset: start + i, rect };
+        yield { from, to, rect };
       }
     }
   }
@@ -126,7 +130,7 @@ function nearestCaret(
   let bestVertical = Infinity;
   let bestHorizontal = Infinity;
 
-  for (const { offset, rect } of boxes) {
+  for (const { from, to, rect } of boxes) {
     const vertical = distanceToRange(y, rect.top, rect.bottom);
     const horizontal = distanceToRange(x, rect.left, rect.right);
     if (
@@ -138,7 +142,7 @@ function nearestCaret(
 
     bestVertical = vertical;
     bestHorizontal = horizontal;
-    caret = offset + (x < (rect.left + rect.right) / 2 ? 0 : 1);
+    caret = x < (rect.left + rect.right) / 2 ? from : to;
   }
 
   return caret;
