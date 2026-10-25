@@ -252,6 +252,21 @@ export function getTextareaRangeRects(
   return rects;
 }
 
+/** Whether a viewport point falls on `from`..`to` in a textarea. */
+export function textareaRangeContains(
+  textarea: HTMLTextAreaElement,
+  from: number,
+  to: number,
+  x: number,
+  y: number,
+): boolean {
+  return getTextareaRangeRects(textarea, from, to).some(
+    (rect) =>
+      distanceToRange(x, rect.left, rect.right) === 0 &&
+      distanceToRange(y, rect.top, rect.bottom) === 0,
+  );
+}
+
 export type CaretLocator = (x: number, y: number) => number | undefined;
 
 /** Finds carets in a textarea under viewport points. */

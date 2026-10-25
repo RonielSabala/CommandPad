@@ -1,6 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { SelectionDirection } from "@/common/constants/dom";
 import {
+  ClickCount,
   EventType,
   Key,
   MouseButton,
@@ -11,6 +12,7 @@ import { useStore } from "@/store/store";
 import {
   getNoteCaretAtPoint,
   locateTextareaCarets,
+  textareaRangeContains,
   type CaretLocator,
 } from "@/utils/dom";
 import type { NoteRange } from "@/utils/markdown";
@@ -45,8 +47,8 @@ function selectOnDrag(
   textarea: HTMLTextAreaElement,
   anchor: number,
   onEnd: () => void,
+  caretAt?: CaretLocator,
 ): void {
-  let caretAt: CaretLocator | undefined;
   let focus = anchor;
 
   const onMove = ({ clientX, clientY }: globalThis.MouseEvent) => {
@@ -220,13 +222,43 @@ export function NoteEditor({
             handleTabKey(event);
           }}
           onSelect={(event) => readSelection(event.currentTarget)}
-          onMouseDown={({ currentTarget }) => {
-            pressedRange.current = {
-              from: currentTarget.selectionStart,
-              to: currentTarget.selectionEnd,
-            };
-
+          onMouseDown={(event) => {
+            const { currentTarget: textarea } = event;
+            const { selectionStart: from, selectionEnd: to } = textarea;
+            pressedRange.current = { from, to };
             setSelection(null);
+
+            if (
+              from === to ||
+              event.button !== MouseButton.LEFT ||
+              event.detail !== ClickCount.SINGLE ||
+              event.shiftKey ||
+              !textareaRangeContains(
+                textarea,
+                from,
+                to,
+                event.clientX,
+                event.clientY,
+              )
+            ) {
+              return;
+            }
+
+            const caretAt = locateTextareaCarets(textarea);
+            const caret = caretAt(event.clientX, event.clientY);
+            if (caret === undefined) {
+              return;
+            }
+
+            event.preventDefault();
+            pressedRange.current = null;
+            textarea.setSelectionRange(caret, caret);
+            selectOnDrag(
+              textarea,
+              caret,
+              () => readSelection(textarea),
+              caretAt,
+            );
           }}
           onMouseUp={({ currentTarget }) => {
             const { from, to } = pressedRange.current ?? {};

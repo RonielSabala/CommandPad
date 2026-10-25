@@ -65,6 +65,11 @@ export const MouseButton = {
   MIDDLE: 1,
 } as const;
 
+/** The `detail` of a mouse event. */
+export const ClickCount = {
+  SINGLE: 1,
+} as const;
+
 /** The `buttons` bitmask. */
 export const MouseButtons = {
   LEFT: 1,
