@@ -70,6 +70,10 @@ interface ToolbarAnchor {
   caret: number;
 }
 
+interface ToolbarOffset extends ToolbarAnchor {
+  width: number;
+}
+
 function placeAbove(
   anchor: ToolbarAnchor,
   size: { width: number; height: number },
@@ -110,7 +114,7 @@ export function NoteFormatToolbar({
   const t = useTranslation();
   const keepAnchorRef = useRef(false);
   const toolbarRef = useRef<HTMLDivElement>(null);
-  const anchorRef = useRef<ToolbarAnchor | null>(null);
+  const anchorRef = useRef<ToolbarOffset | null>(null);
 
   const { from, to } = selection;
   const plans = useMemo(
@@ -125,8 +129,8 @@ export function NoteFormatToolbar({
       return;
     }
 
-    // Measured once against the field
-    if (!keepAnchorRef.current || !anchorRef.current) {
+    // Measured against the field
+    const measure = () => {
       const field = textarea.getBoundingClientRect();
       const lines = getTextareaRangeRects(textarea, from, to);
       const first = lines[0] ?? field;
@@ -139,10 +143,16 @@ export function NoteFormatToolbar({
         top: first.top - field.top,
         bottom: first.bottom - field.top,
         caret: caret - field.left,
+        width: field.width,
       };
-    }
 
-    const offset = anchorRef.current;
+      return anchorRef.current;
+    };
+
+    let offset =
+      keepAnchorRef.current && anchorRef.current
+        ? anchorRef.current
+        : measure();
     const scroller = findScrollContainer(textarea);
     const size = toolbar.getBoundingClientRect();
 
@@ -162,10 +172,22 @@ export function NoteFormatToolbar({
       toolbar.style.top = toPx(y);
     };
 
+    // Resizing a panel moves or rewraps the field without a window event
+    const observer = new ResizeObserver(() => {
+      if (textarea.getBoundingClientRect().width !== offset.width) {
+        offset = measure();
+      }
+
+      place();
+    });
+
     place();
+    observer.observe(textarea);
+    observer.observe(scroller);
     window.addEventListener(EventType.SCROLL, place, PASSIVE_CAPTURE);
     window.addEventListener(EventType.RESIZE, place, PASSIVE);
     return () => {
+      observer.disconnect();
       window.removeEventListener(EventType.SCROLL, place, PASSIVE_CAPTURE);
       window.removeEventListener(EventType.RESIZE, place);
     };
