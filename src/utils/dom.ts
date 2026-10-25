@@ -91,28 +91,19 @@ function segmentStart(node: Node): number | undefined {
   return start === null || start === undefined ? undefined : Number(start);
 }
 
-/**
- * Caret position in a note's **raw** text for a viewport point over its
- * rendered preview.
- */
-export function getNoteCaretAtPoint(
-  root: Element,
+/** Offset of the character edge nearest the point, across `texts`. */
+function nearestCaret(
+  texts: Iterable<[Node, number]>,
   x: number,
   y: number,
 ): number | undefined {
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   const range = document.createRange();
 
   let caret: number | undefined;
   let bestVertical = Infinity;
   let bestHorizontal = Infinity;
 
-  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-    const start = segmentStart(node);
-    if (start === undefined) {
-      continue;
-    }
-
+  for (const [node, start] of texts) {
     const length = node.textContent?.length ?? 0;
 
     for (let i = 0; i < length; i++) {
@@ -120,7 +111,6 @@ export function getNoteCaretAtPoint(
       range.setEnd(node, i + 1);
 
       for (const rect of range.getClientRects()) {
-        // Vertical distance decides first, so a click stays on the line it hit
         const vertical = distanceToRange(y, rect.top, rect.bottom);
         const horizontal = distanceToRange(x, rect.left, rect.right);
         if (
@@ -138,6 +128,26 @@ export function getNoteCaretAtPoint(
   }
 
   return caret;
+}
+
+function* noteTexts(root: Element): Generator<[Node, number]> {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const start = segmentStart(node);
+    if (start !== undefined) {
+      yield [node, start];
+    }
+  }
+}
+
+/** Caret position in a note's raw text for a viewport point. */
+export function getNoteCaretAtPoint(
+  root: Element,
+  x: number,
+  y: number,
+): number | undefined {
+  return nearestCaret(noteTexts(root), x, y);
 }
 
 const TEXT_LAYOUT_STYLES = [
@@ -171,17 +181,14 @@ const TEXT_LAYOUT_STYLES = [
   "direction",
 ] as const;
 
-/** Viewport boxes of `from`..`to` in a textarea. */
-export function getTextareaRangeRects(
+/** An invisible copy of the textarea's text layout. */
+function mountTextareaMirror(
   textarea: HTMLTextAreaElement,
-  from: number,
-  to: number,
-): DOMRect[] {
+  ...content: (string | Node)[]
+): HTMLDivElement {
   const computed = getComputedStyle(textarea);
   const { top, left } = textarea.getBoundingClientRect();
-  const { value } = textarea;
 
-  const range = document.createElement(HtmlTag.SPAN);
   const mirror = document.createElement(HtmlTag.DIV);
   mirror.className = CssClass.TEXT_MIRROR;
 
@@ -191,10 +198,28 @@ export function getTextareaRangeRects(
 
   mirror.style.top = toPx(top);
   mirror.style.left = toPx(left);
+  mirror.append(...content);
 
-  range.textContent = value.slice(from, to);
-  mirror.append(value.slice(0, from), range, value.slice(to));
   document.body.appendChild(mirror);
+  return mirror;
+}
+
+/** Viewport boxes of `from`..`to` in a textarea. */
+export function getTextareaRangeRects(
+  textarea: HTMLTextAreaElement,
+  from: number,
+  to: number,
+): DOMRect[] {
+  const { value } = textarea;
+  const range = document.createElement(HtmlTag.SPAN);
+  range.textContent = value.slice(from, to);
+
+  const mirror = mountTextareaMirror(
+    textarea,
+    value.slice(0, from),
+    range,
+    value.slice(to),
+  );
 
   const rects = Array.from(range.getClientRects()).filter(
     (rect) => rect.width > 0,
@@ -202,4 +227,36 @@ export function getTextareaRangeRects(
 
   mirror.remove();
   return rects;
+}
+
+export interface TextareaCaretLocator {
+  caretAt: (x: number, y: number) => number | undefined;
+  dispose: () => void;
+}
+
+/**
+ * Finds carets in a textarea under viewport points through one mirror, kept
+ * until `dispose`.
+ */
+export function locateTextareaCarets(
+  textarea: HTMLTextAreaElement,
+): TextareaCaretLocator {
+  const { value } = textarea;
+  const text = document.createTextNode(value + " ");
+  const mirror = mountTextareaMirror(textarea, text);
+  const origin = textarea.getBoundingClientRect();
+
+  return {
+    caretAt: (x, y) => {
+      const { top, left } = textarea.getBoundingClientRect();
+      const caret = nearestCaret(
+        [[text, 0]],
+        x - left + origin.left,
+        y - top + origin.top,
+      );
+
+      return caret === undefined ? undefined : Math.min(caret, value.length);
+    },
+    dispose: () => mirror.remove(),
+  };
 }

@@ -1,8 +1,18 @@
 import { CssClass } from "@/common/constants/css";
-import { EventType, Key, PASSIVE } from "@/common/constants/events";
+import { SelectionDirection } from "@/common/constants/dom";
+import {
+  EventType,
+  Key,
+  MouseButton,
+  PASSIVE,
+} from "@/common/constants/events";
 import { AppMode } from "@/common/enums";
 import { useStore } from "@/store/store";
-import { getNoteCaretAtPoint } from "@/utils/dom";
+import {
+  getNoteCaretAtPoint,
+  locateTextareaCarets,
+  type TextareaCaretLocator,
+} from "@/utils/dom";
 import type { NoteRange } from "@/utils/markdown";
 import { classNames, classSelector } from "@/utils/string";
 import {
@@ -28,6 +38,39 @@ interface Props {
   header?: ReactNode;
   focusRequested?: boolean;
   onFocusHandled?: () => void;
+}
+
+/** Extends the selection from `anchor` until the button is released. */
+function selectOnDrag(
+  textarea: HTMLTextAreaElement,
+  anchor: number,
+  onEnd: () => void,
+): void {
+  let locator: TextareaCaretLocator | undefined;
+
+  const onMove = ({ clientX, clientY }: globalThis.MouseEvent) => {
+    locator ??= locateTextareaCarets(textarea);
+    const caret = locator.caretAt(clientX, clientY);
+    if (caret === undefined) {
+      return;
+    }
+
+    textarea.setSelectionRange(
+      Math.min(anchor, caret),
+      Math.max(anchor, caret),
+      caret < anchor ? SelectionDirection.BACKWARD : SelectionDirection.FORWARD,
+    );
+  };
+
+  const onUp = () => {
+    locator?.dispose();
+    window.removeEventListener(EventType.MOUSE_MOVE, onMove);
+    window.removeEventListener(EventType.MOUSE_UP, onUp);
+    onEnd();
+  };
+
+  window.addEventListener(EventType.MOUSE_MOVE, onMove, PASSIVE);
+  window.addEventListener(EventType.MOUSE_UP, onUp);
 }
 
 /** Markdown text edited in place. */
@@ -63,14 +106,16 @@ export function NoteEditor({
       classSelector(CssClass.NOTE_LINK),
     );
 
+  // The press places the caret where the preview shows it
   const handleMouseDown = (event: MouseEvent) => {
-    if (placesCaret(event)) {
-      event.preventDefault();
+    if (!placesCaret(event)) {
+      return;
     }
-  };
 
-  const handleClick = (event: MouseEvent) => {
-    if (!placesCaret(event) || !previewRef.current) {
+    event.preventDefault();
+
+    const textarea = textareaRef.current;
+    if (event.button !== MouseButton.LEFT || !previewRef.current || !textarea) {
       return;
     }
 
@@ -80,10 +125,10 @@ export function NoteEditor({
       event.clientY,
     );
 
-    const textarea = textareaRef.current;
-    textarea?.focus();
+    textarea.focus();
     if (caret !== undefined) {
-      textarea?.setSelectionRange(caret, caret);
+      textarea.setSelectionRange(caret, caret);
+      selectOnDrag(textarea, caret, () => readSelection(textarea));
     }
   };
 
@@ -149,7 +194,6 @@ export function NoteEditor({
         )}
         data-value={value || placeholder}
         onMouseDown={handleMouseDown}
-        onClick={handleClick}
       >
         <textarea
           ref={textareaRef}

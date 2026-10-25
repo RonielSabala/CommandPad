@@ -131,6 +131,7 @@ export const Anchor = {
 } as const;
 
 export const SelectionDirection = {
+  FORWARD: "forward",
   BACKWARD: "backward",
 } as const;
 
