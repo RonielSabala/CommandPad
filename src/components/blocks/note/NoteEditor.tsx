@@ -11,7 +11,7 @@ import { useStore } from "@/store/store";
 import {
   getNoteCaretAtPoint,
   locateTextareaCarets,
-  type TextareaCaretLocator,
+  type CaretLocator,
 } from "@/utils/dom";
 import type { NoteRange } from "@/utils/markdown";
 import { classNames, classSelector } from "@/utils/string";
@@ -46,15 +46,18 @@ function selectOnDrag(
   anchor: number,
   onEnd: () => void,
 ): void {
-  let locator: TextareaCaretLocator | undefined;
+  let caretAt: CaretLocator | undefined;
+  let focus = anchor;
 
   const onMove = ({ clientX, clientY }: globalThis.MouseEvent) => {
-    locator ??= locateTextareaCarets(textarea);
-    const caret = locator.caretAt(clientX, clientY);
-    if (caret === undefined) {
+    // Measured on the first move
+    caretAt ??= locateTextareaCarets(textarea);
+    const caret = caretAt(clientX, clientY);
+    if (caret === undefined || caret === focus) {
       return;
     }
 
+    focus = caret;
     textarea.setSelectionRange(
       Math.min(anchor, caret),
       Math.max(anchor, caret),
@@ -63,7 +66,6 @@ function selectOnDrag(
   };
 
   const onUp = () => {
-    locator?.dispose();
     window.removeEventListener(EventType.MOUSE_MOVE, onMove);
     window.removeEventListener(EventType.MOUSE_UP, onUp);
     onEnd();

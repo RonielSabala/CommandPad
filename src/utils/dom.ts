@@ -91,17 +91,16 @@ function segmentStart(node: Node): number | undefined {
   return start === null || start === undefined ? undefined : Number(start);
 }
 
-/** Offset of the character edge nearest the point, across `texts`. */
-function nearestCaret(
-  texts: Iterable<[Node, number]>,
-  x: number,
-  y: number,
-): number | undefined {
-  const range = document.createRange();
+interface CharacterBox {
+  /** The character's offset in the raw text. */
+  offset: number;
+  rect: DOMRect;
+}
 
-  let caret: number | undefined;
-  let bestVertical = Infinity;
-  let bestHorizontal = Infinity;
+function* characterBoxes(
+  texts: Iterable<[Node, number]>,
+): Generator<CharacterBox> {
+  const range = document.createRange();
 
   for (const [node, start] of texts) {
     const length = node.textContent?.length ?? 0;
@@ -111,20 +110,35 @@ function nearestCaret(
       range.setEnd(node, i + 1);
 
       for (const rect of range.getClientRects()) {
-        const vertical = distanceToRange(y, rect.top, rect.bottom);
-        const horizontal = distanceToRange(x, rect.left, rect.right);
-        if (
-          vertical > bestVertical ||
-          (vertical === bestVertical && horizontal >= bestHorizontal)
-        ) {
-          continue;
-        }
-
-        bestVertical = vertical;
-        bestHorizontal = horizontal;
-        caret = start + i + (x < (rect.left + rect.right) / 2 ? 0 : 1);
+        yield { offset: start + i, rect };
       }
     }
+  }
+}
+
+/** Offset of the character edge nearest the point. */
+function nearestCaret(
+  boxes: Iterable<CharacterBox>,
+  x: number,
+  y: number,
+): number | undefined {
+  let caret: number | undefined;
+  let bestVertical = Infinity;
+  let bestHorizontal = Infinity;
+
+  for (const { offset, rect } of boxes) {
+    const vertical = distanceToRange(y, rect.top, rect.bottom);
+    const horizontal = distanceToRange(x, rect.left, rect.right);
+    if (
+      vertical > bestVertical ||
+      (vertical === bestVertical && horizontal >= bestHorizontal)
+    ) {
+      continue;
+    }
+
+    bestVertical = vertical;
+    bestHorizontal = horizontal;
+    caret = offset + (x < (rect.left + rect.right) / 2 ? 0 : 1);
   }
 
   return caret;
@@ -147,7 +161,7 @@ export function getNoteCaretAtPoint(
   x: number,
   y: number,
 ): number | undefined {
-  return nearestCaret(noteTexts(root), x, y);
+  return nearestCaret(characterBoxes(noteTexts(root)), x, y);
 }
 
 const TEXT_LAYOUT_STYLES = [
@@ -229,34 +243,27 @@ export function getTextareaRangeRects(
   return rects;
 }
 
-export interface TextareaCaretLocator {
-  caretAt: (x: number, y: number) => number | undefined;
-  dispose: () => void;
-}
+export type CaretLocator = (x: number, y: number) => number | undefined;
 
-/**
- * Finds carets in a textarea under viewport points through one mirror, kept
- * until `dispose`.
- */
+/** Finds carets in a textarea under viewport points. */
 export function locateTextareaCarets(
   textarea: HTMLTextAreaElement,
-): TextareaCaretLocator {
+): CaretLocator {
   const { value } = textarea;
   const text = document.createTextNode(value + " ");
   const mirror = mountTextareaMirror(textarea, text);
   const origin = textarea.getBoundingClientRect();
+  const boxes = Array.from(characterBoxes([[text, 0]]));
 
-  return {
-    caretAt: (x, y) => {
-      const { top, left } = textarea.getBoundingClientRect();
-      const caret = nearestCaret(
-        [[text, 0]],
-        x - left + origin.left,
-        y - top + origin.top,
-      );
+  mirror.remove();
+  return (x, y) => {
+    const { top, left } = textarea.getBoundingClientRect();
+    const caret = nearestCaret(
+      boxes,
+      x - left + origin.left,
+      y - top + origin.top,
+    );
 
-      return caret === undefined ? undefined : Math.min(caret, value.length);
-    },
-    dispose: () => mirror.remove(),
+    return caret === undefined ? undefined : Math.min(caret, value.length);
   };
 }
