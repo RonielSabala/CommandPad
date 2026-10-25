@@ -106,7 +106,14 @@ export function NoteEditor({
       const { selectionStart: from, selectionEnd: to } = textarea;
       if (from === to) {
         setSelection(null);
+        return;
       }
+
+      setSelection((current) =>
+        !current || (current.from === from && current.to === to)
+          ? current
+          : { from, to },
+      );
     };
 
     textarea.addEventListener(
