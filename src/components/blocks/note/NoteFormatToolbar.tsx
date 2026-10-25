@@ -156,8 +156,7 @@ export function NoteFormatToolbar({
     const scroller = findScrollContainer(textarea);
     const size = toolbar.getBoundingClientRect();
 
-    const place = () => {
-      const { left, top } = textarea.getBoundingClientRect();
+    const placeAt = ({ left, top }: DOMRect) => {
       const { x, y } = placeAbove(
         {
           top: top + offset.top,
@@ -172,16 +171,18 @@ export function NoteFormatToolbar({
       toolbar.style.top = toPx(y);
     };
 
+    const place = () => placeAt(textarea.getBoundingClientRect());
+
     // Resizing a panel moves or rewraps the field without a window event
     const observer = new ResizeObserver(() => {
-      if (textarea.getBoundingClientRect().width !== offset.width) {
+      const field = textarea.getBoundingClientRect();
+      if (field.width !== offset.width) {
         offset = measure();
       }
 
-      place();
+      placeAt(field);
     });
 
-    place();
     observer.observe(textarea);
     observer.observe(scroller);
     window.addEventListener(EventType.SCROLL, place, PASSIVE_CAPTURE);

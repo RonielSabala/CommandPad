@@ -298,7 +298,8 @@ export function indentNoteLines(
   selection: NoteRange,
   indent: string,
 ): NoteEdit | null {
-  if (!text.slice(selection.from, selection.to).includes(LINE_BREAK)) {
+  const lineBreak = text.indexOf(LINE_BREAK, selection.from);
+  if (lineBreak === -1 || lineBreak >= selection.to) {
     return null;
   }
 
