@@ -1,5 +1,5 @@
-import { EditCommand } from "@/common/constants/dom";
 import { Key, TAB_CHARACTER } from "@/common/constants/events";
+import { replaceSelection } from "@/utils/dom";
 import { useCallback, type KeyboardEvent } from "react";
 
 export function useTabInsertion(
@@ -14,20 +14,12 @@ export function useTabInsertion(
       event.preventDefault();
 
       const textarea = event.currentTarget;
-      const { selectionStart, selectionEnd, value } = textarea;
+      const nextCaret = textarea.selectionStart + TAB_CHARACTER.length;
 
-      if (document.execCommand(EditCommand.INSERT_TEXT, false, TAB_CHARACTER)) {
+      if (replaceSelection(textarea, TAB_CHARACTER, onChange)) {
         return;
       }
 
-      const nextValue =
-        value.slice(0, selectionStart) +
-        TAB_CHARACTER +
-        value.slice(selectionEnd);
-
-      const nextCaret = selectionStart + TAB_CHARACTER.length;
-
-      onChange(nextValue);
       queueMicrotask(() => {
         textarea.selectionStart = textarea.selectionEnd = nextCaret;
       });

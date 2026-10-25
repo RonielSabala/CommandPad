@@ -1,8 +1,8 @@
-import { EditCommand } from "@/common/constants/dom";
 import { NoteFormat } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
 import { MarkdownDelimiter } from "@/common/markdownSyntax";
 import { usePairWrapping } from "@/hooks/usePairWrapping";
+import { replaceSelection } from "@/utils/dom";
 import { planNoteFormats, type NoteEdit } from "@/utils/markdown";
 import { useCallback, type KeyboardEvent } from "react";
 
@@ -34,12 +34,8 @@ function applyNoteEdit(
   edit: NoteEdit,
   onChange: (value: string) => void,
 ): void {
-  const { value } = textarea;
   textarea.setSelectionRange(edit.from, edit.to);
-
-  if (!document.execCommand(EditCommand.INSERT_TEXT, false, edit.text)) {
-    onChange(value.slice(0, edit.from) + edit.text + value.slice(edit.to));
-  }
+  replaceSelection(textarea, edit.text, onChange);
 
   queueMicrotask(() => {
     textarea.setSelectionRange(edit.selection.from, edit.selection.to);

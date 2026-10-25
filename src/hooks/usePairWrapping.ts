@@ -1,5 +1,5 @@
 import { WrapPairs } from "@/common/config";
-import { EditCommand } from "@/common/constants/dom";
+import { replaceSelection } from "@/utils/dom";
 import { useCallback, type KeyboardEvent } from "react";
 
 type WrappableElement = HTMLTextAreaElement | HTMLInputElement;
@@ -16,22 +16,7 @@ export function wrapSelection(
   }
 
   const selected = value.slice(selectionStart, selectionEnd);
-
-  if (
-    !document.execCommand(
-      EditCommand.INSERT_TEXT,
-      false,
-      open + selected + close,
-    )
-  ) {
-    onChange(
-      value.slice(0, selectionStart) +
-        open +
-        selected +
-        close +
-        value.slice(selectionEnd),
-    );
-  }
+  replaceSelection(element, open + selected + close, onChange);
 
   const nextStart = selectionStart + open.length;
   queueMicrotask(() => {

@@ -1,6 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import {
   DataAttr,
+  EditCommand,
   HtmlTag,
   ScrollIntoView,
   ScrollSettle,
@@ -8,6 +9,27 @@ import {
 
 export function toPx(pixels: number): string {
   return `${pixels}px`;
+}
+
+/**
+ * Replaces the field's selection with `text` through the editing command, so
+ * the change joins the undo history.
+ */
+export function replaceSelection(
+  field: HTMLTextAreaElement | HTMLInputElement,
+  text: string,
+  onChange: (value: string) => void,
+): boolean {
+  const { value } = field;
+  const from = field.selectionStart ?? 0;
+  const to = field.selectionEnd ?? from;
+
+  if (document.execCommand(EditCommand.INSERT_TEXT, false, text)) {
+    return true;
+  }
+
+  onChange(value.slice(0, from) + text + value.slice(to));
+  return false;
 }
 
 /** Bring the row carrying `rowId` into view, scoped to the list it belongs to. */
