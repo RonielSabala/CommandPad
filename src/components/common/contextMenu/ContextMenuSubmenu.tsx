@@ -69,7 +69,7 @@ export function ContextMenuSubmenu({
       onMouseLeave={() => setHovered(false)}
     >
       <button
-        className="context-menu-item"
+        className={CssClass.CONTEXT_MENU_ITEM}
         role={AriaRole.MENU_ITEM}
         aria-haspopup={AriaRole.MENU}
         aria-expanded={open}
@@ -78,7 +78,7 @@ export function ContextMenuSubmenu({
           setPinned((value) => !value);
         }}
       >
-        <span className="context-menu-icon">{icon}</span>
+        <span className={CssClass.CONTEXT_MENU_ICON}>{icon}</span>
         {label}
       </button>
 

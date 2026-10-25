@@ -138,7 +138,7 @@ export function ContextMenuItem({
 
   return (
     <button
-      className={classNames("context-menu-item", danger && "is-danger")}
+      className={classNames(CssClass.CONTEXT_MENU_ITEM, danger && "is-danger")}
       role={isCheckbox ? AriaRole.MENU_ITEM_CHECKBOX : AriaRole.MENU_ITEM}
       aria-checked={checked}
       disabled={disabled}
@@ -147,7 +147,7 @@ export function ContextMenuItem({
         close?.();
       }}
     >
-      <span className="context-menu-icon">
+      <span className={CssClass.CONTEXT_MENU_ICON}>
         {isCheckbox && checked ? (
           <CheckIcon
             className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
