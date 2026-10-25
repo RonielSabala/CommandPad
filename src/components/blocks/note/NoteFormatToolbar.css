@@ -48,10 +48,10 @@
   color: var(--color-text-primary);
 }
 
-.note-format-button:disabled,
-.note-format-button:disabled:hover {
+.note-format-button[aria-disabled="true"],
+.note-format-button[aria-disabled="true"]:hover {
   opacity: 0.4;
-  cursor: default;
+  cursor: not-allowed;
   background: transparent;
   border-color: transparent;
   color: var(--color-text-primary);

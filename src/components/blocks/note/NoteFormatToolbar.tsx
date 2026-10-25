@@ -256,9 +256,9 @@ export function NoteFormatToolbar({
                 )}
                 aria-label={label}
                 aria-pressed={state === NoteFormatState.ON}
-                disabled={disabled}
+                aria-disabled={disabled}
                 tabIndex={-1}
-                onClick={() => apply(format)}
+                onClick={disabled ? undefined : () => apply(format)}
                 {...tooltip(
                   disabled ? null : t.note.formatHint(label, binding),
                 )}
