@@ -1373,7 +1373,7 @@ If something goes wrong, undo it in this order:
       tables:
         "Notes also support [GitHub-flavored markdown tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): cells separated by `|` bars, with a row of dashes under the header. Click the note below to see the raw syntax.",
       lists:
-        "Lists work the same way: start a line with `*` or `-` for a bullet, or with a number and a dot for a numbered step. Indent a line to nest it under the item above it. Every item is one line long, so the list ends at the first line that does not start with a marker.",
+        "Lists work the same way: start a line with `*` or `-` for a bullet, or with a number and a dot for a numbered step. Indent a line to nest it under the item above it; with several lines selected, Tab indents each of them. Every item is one line long, so the list ends at the first line that does not start with a marker.",
       noNesting:
         "Styles do not combine: for example, bold and italics cannot be mixed on the same words. Whichever style starts first wins.",
       links:

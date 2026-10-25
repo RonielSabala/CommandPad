@@ -29,7 +29,7 @@ const SHIFTED_FORMAT_BY_CODE: Record<string, NoteFormat> = {
   Digit8: NoteFormat.BULLETED_LIST,
 };
 
-function applyNoteEdit(
+export function applyNoteEdit(
   textarea: HTMLTextAreaElement,
   edit: NoteEdit,
   onChange: (value: string) => void,

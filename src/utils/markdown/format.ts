@@ -290,6 +290,35 @@ function planList(
   };
 }
 
+// --- Indentation ---
+
+/** Prefixes every non-empty line the selection spans with `indent`. */
+export function indentNoteLines(
+  text: string,
+  selection: NoteRange,
+  indent: string,
+): NoteEdit | null {
+  if (!text.slice(selection.from, selection.to).includes(LINE_BREAK)) {
+    return null;
+  }
+
+  const lines = lineRange(text, selection);
+  const rows = splitLines(text.slice(lines.from, lines.to));
+  const replaced = joinLines(rows.map((line) => line && indent + line));
+
+  // A selection starting at its line keeps the new indent inside it
+  const firstShift = rows[0] && selection.from > lines.from ? indent.length : 0;
+
+  return {
+    ...lines,
+    text: replaced,
+    selection: {
+      from: selection.from + firstShift,
+      to: selection.to + replaced.length - (lines.to - lines.from),
+    },
+  };
+}
+
 // --- Plan formats ---
 
 /** What every format would do to the `selection` of a raw note. */

@@ -1400,7 +1400,7 @@ Si algo sale mal, deshazlo en este orden:
       tables:
         "Las notas también soportan [tablas markdown al estilo GitHub](https://docs.github.com/es/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): celdas separadas por barras `|`, con una fila de guiones debajo del encabezado. Haz clic en la nota de abajo para ver la sintaxis en bruto.",
       lists:
-        "Las listas funcionan igual: empieza una línea con `*` o `-` para una viñeta, o con un número y un punto para un paso numerado. Sangra una línea para anidarla bajo el elemento anterior. Cada elemento ocupa una sola línea, así que la lista termina en la primera línea que no empiece por un marcador.",
+        "Las listas funcionan igual: empieza una línea con `*` o `-` para una viñeta, o con un número y un punto para un paso numerado. Sangra una línea para anidarla bajo el elemento anterior; con varias líneas seleccionadas, Tab las sangra todas. Cada elemento ocupa una sola línea, así que la lista termina en la primera línea que no empiece por un marcador.",
       noNesting:
         "Los estilos no se combinan: por ejemplo, negrita y cursiva no pueden mezclarse en las mismas palabras. Gana el estilo que empiece primero.",
       links:
