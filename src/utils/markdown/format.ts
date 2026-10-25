@@ -8,6 +8,7 @@ import {
 import { MarkdownDelimiter, MarkdownList } from "@/common/markdownSyntax";
 import type { NoteList, NoteNode, NoteSegment } from "@/common/types";
 
+import { clamp } from "../number";
 import { joinLines, splitLines } from "../string";
 import { parseNoteNodes } from "./nodes";
 
@@ -60,9 +61,6 @@ const LIST_FORMATS = {
 type ListFormat = keyof typeof LIST_FORMATS;
 
 // --- Helpers ---
-
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(Math.max(value, min), max);
 
 function listSegments(list: NoteList): NoteSegment[] {
   return list.items.flatMap((item) => [

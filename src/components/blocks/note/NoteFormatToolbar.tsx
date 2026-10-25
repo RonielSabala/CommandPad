@@ -16,6 +16,7 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
 import { getTextareaRangeRects, toPx } from "@/utils/dom";
 import { planNoteFormats, type NoteRange } from "@/utils/markdown";
+import { clamp } from "@/utils/number";
 import { findScrollContainer, scrollParentBox } from "@/utils/scrollParent";
 import { classNames } from "@/utils/string";
 import {
@@ -88,8 +89,8 @@ function placeAbove(
     Math.min(bounds.right, window.innerWidth) - VIEWPORT_MARGIN - size.width;
 
   return {
-    x: Math.round(Math.max(minX, Math.min(anchor.caret, maxX))),
-    y: Math.round(Math.max(minY, Math.min(y, maxY))),
+    x: Math.round(clamp(anchor.caret, minX, maxX)),
+    y: Math.round(clamp(y, minY, maxY)),
   };
 }
 

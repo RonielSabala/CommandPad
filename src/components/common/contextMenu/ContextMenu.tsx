@@ -2,6 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { AriaRole } from "@/common/constants/dom";
 import { EventType, Key } from "@/common/constants/events";
 import { CheckIcon } from "@/components/icons";
+import { clamp } from "@/utils/number";
 import { classNames } from "@/utils/string";
 import {
   createContext,
@@ -63,8 +64,8 @@ export function ContextMenu({
     const maxY = window.innerHeight - menu.offsetHeight;
 
     setPosition({
-      x: Math.max(0, Math.min(x, maxX)),
-      y: Math.max(0, Math.min(anchor.y, maxY)),
+      x: clamp(x, 0, maxX),
+      y: clamp(anchor.y, 0, maxY),
     });
   }, [anchor.x, anchor.y, align]);
 

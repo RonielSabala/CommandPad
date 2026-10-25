@@ -1,5 +1,6 @@
 import { InsertPosition, VariableEntryKind } from "@/common/enums";
 import type { Variable, VariableSection } from "@/common/types";
+import { clamp } from "./number";
 
 interface VariableLayout {
   variables: Variable[];
@@ -113,7 +114,7 @@ export function normalizeVariableSections(
   let floor = 0;
 
   return (sections ?? []).map((section) => {
-    const start = Math.min(Math.max(section.start, floor), count);
+    const start = clamp(section.start, floor, count);
     floor = start;
     return start === section.start ? section : { ...section, start };
   });

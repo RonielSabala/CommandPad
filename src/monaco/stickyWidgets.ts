@@ -2,6 +2,7 @@ import { CodeSurfaceSelector, MonacoSelector } from "@/common/constants/dom";
 import { EventType, PASSIVE, PASSIVE_CAPTURE } from "@/common/constants/events";
 import { CodeEditorProperty } from "@/common/editorConfig";
 import { toPx } from "@/utils/dom";
+import { clamp } from "@/utils/number";
 import type { editor } from "monaco-editor";
 
 import { findScrollParent, scrollParentBox } from "@/utils/scrollParent";
@@ -35,7 +36,7 @@ export function bindStickyWidgets(
     const clear = Math.max(top, header?.getBoundingClientRect().bottom ?? top);
 
     const travel = Math.max(box.height - widget.offsetHeight, 0);
-    const offset = Math.min(Math.max(clear - box.top, 0), travel);
+    const offset = clamp(clear - box.top, 0, travel);
 
     node.style.setProperty(CodeEditorProperty.WIDGET_OFFSET, toPx(offset));
   };
