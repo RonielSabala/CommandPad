@@ -20,6 +20,18 @@ export function joinLines(lines: string[]): string {
   return lines.join(LINE_BREAK);
 }
 
+/** Where each of `lines` starts, the first one at `offset`. */
+export function lineStarts(lines: string[], offset = 0): number[] {
+  const starts: number[] = [];
+
+  for (const line of lines) {
+    starts.push(offset);
+    offset += line.length + LINE_BREAK.length;
+  }
+
+  return starts;
+}
+
 /** Where `text` starts once its leading whitespace is trimmed. */
 export function trimmedStart(text: string): number {
   return text.length - text.trimStart().length;

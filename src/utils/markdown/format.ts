@@ -9,7 +9,7 @@ import { MarkdownDelimiter, MarkdownList } from "@/common/markdownSyntax";
 import type { NoteList, NoteNode, NoteSegment } from "@/common/types";
 
 import { clamp } from "../number";
-import { joinLines, splitLines, trimmedStart } from "../string";
+import { joinLines, lineStarts, splitLines, trimmedStart } from "../string";
 import { parseNoteNodes } from "./nodes";
 
 export interface NoteRange {
@@ -92,6 +92,31 @@ function lineRange(text: string, { from, to }: NoteRange): NoteRange {
   };
 }
 
+interface NoteLine {
+  line: string;
+  start: number;
+}
+
+/** The lines `selection` touches. */
+function selectedLines(
+  text: string,
+  selection: NoteRange,
+): { lines: NoteRange; rows: NoteLine[] } {
+  const lines = lineRange(text, selection);
+  const rows = splitLines(text.slice(lines.from, lines.to));
+  const starts = lineStarts(rows, lines.from);
+
+  return {
+    lines,
+    rows: rows.map((line, index) => ({ line, start: starts[index] })),
+  };
+}
+
+/** The text between a token's marks. */
+function tokenContent({ start, from, to }: NoteSegment): NoteRange {
+  return { from: start, to: to - (start - from) };
+}
+
 // --- Inline formats ---
 
 interface InlinePiece {
@@ -139,6 +164,29 @@ function shiftPast(removed: NoteRange[], offset: number): number {
   );
 }
 
+/** Cuts every range in `removed` out. */
+function removeRanges(
+  text: string,
+  removed: NoteRange[],
+  selection: NoteRange,
+): NoteEdit {
+  const sorted = [...removed].sort((a, b) => a.from - b.from);
+  const edit = joinSplices(
+    text,
+    sorted.map((range) => ({ ...range, text: "" })),
+  );
+
+  return {
+    from: edit.from,
+    to: edit.to,
+    text: edit.text,
+    selection: {
+      from: shiftPast(sorted, selection.from),
+      to: shiftPast(sorted, selection.to),
+    },
+  };
+}
+
 function wrapPieces(
   { text, pieces }: InlineTarget,
   bare: NoteRange[],
@@ -172,9 +220,10 @@ function unwrapTokens(
   { text, selection }: InlineTarget,
   tokens: NoteSegment[],
 ): NoteEdit {
-  const contents = tokens.map(({ start, from, to }) =>
-    text.slice(start, to - (start - from)),
-  );
+  const contents = tokens.map((token) => {
+    const { from, to } = tokenContent(token);
+    return text.slice(from, to);
+  });
 
   const { starts, ...edit } = joinSplices(
     text,
@@ -241,15 +290,11 @@ function planInline(
 /** The part of each selected line a mark may wrap, past any list marker. */
 function wrappableRanges(
   text: string,
-  { selection, lines, rows }: ListTarget,
+  { selection, rows }: ListTarget,
 ): NoteRange[] {
   const collapsed = selection.from === selection.to;
-  let lineStart = lines.from;
 
-  return rows.flatMap(({ line, item }) => {
-    const start = lineStart;
-    lineStart += line.length + LINE_BREAK.length;
-
+  return rows.flatMap(({ line, item, start }) => {
     const from = Math.max(selection.from, start + (item?.[0].length ?? 0));
     const to = Math.max(from, Math.min(selection.to, start + line.length));
 
@@ -290,8 +335,7 @@ function inlineTarget(text: string, list: ListTarget): InlineTarget | null {
 
 // --- List formats ---
 
-interface ListRow {
-  line: string;
+interface ListRow extends NoteLine {
   item: RegExpExecArray | null;
 }
 
@@ -304,10 +348,10 @@ interface ListTarget {
 }
 
 function listTarget(text: string, selection: NoteRange): ListTarget {
-  const lines = lineRange(text, selection);
-  const rows = splitLines(text.slice(lines.from, lines.to)).map((line) => ({
-    line,
-    item: MarkdownList.ITEM_REGEX.exec(line),
+  const { lines, rows: plain } = selectedLines(text, selection);
+  const rows = plain.map((row) => ({
+    ...row,
+    item: MarkdownList.ITEM_REGEX.exec(row.line),
   }));
 
   return {
@@ -316,6 +360,11 @@ function listTarget(text: string, selection: NoteRange): ListTarget {
     rows,
     filled: rows.filter(({ line }) => line.trim()),
   };
+}
+
+/** A row's leading whitespace. */
+function rowIndent({ line, item }: ListRow): string {
+  return item?.groups?.indent ?? line.slice(0, trimmedStart(line));
 }
 
 function planList(
@@ -334,12 +383,13 @@ function planList(
   const rewrite = () => {
     const ordinals = new Map<number, number>();
 
-    return rows.map(({ line, item }) => {
+    return rows.map((row) => {
+      const { line, item } = row;
       if (!line.trim()) {
         return line;
       }
 
-      const indent = item?.groups?.indent ?? line.slice(0, trimmedStart(line));
+      const indent = rowIndent(row);
       const indentLength = indent.length;
 
       const body = line.slice(item ? item[0].length : indentLength);
@@ -418,35 +468,14 @@ export function outdentNoteLines(
   selection: NoteRange,
   indent: string,
 ): NoteEdit | null {
-  const lines = lineRange(text, selection);
-  const removed: NoteRange[] = [];
-  let lineStart = lines.from;
+  const removed = selectedLines(text, selection).rows.flatMap(
+    ({ line, start }) =>
+      line.startsWith(indent)
+        ? [{ from: start, to: start + indent.length }]
+        : [],
+  );
 
-  const rows = splitLines(text.slice(lines.from, lines.to)).map((line) => {
-    const outdented = line.startsWith(indent)
-      ? line.slice(indent.length)
-      : line;
-
-    if (outdented !== line) {
-      removed.push({ from: lineStart, to: lineStart + indent.length });
-    }
-
-    lineStart += line.length + LINE_BREAK.length;
-    return outdented;
-  });
-
-  if (removed.length === 0) {
-    return null;
-  }
-
-  return {
-    ...lines,
-    text: joinLines(rows),
-    selection: {
-      from: shiftPast(removed, selection.from),
-      to: shiftPast(removed, selection.to),
-    },
-  };
+  return removed.length > 0 ? removeRanges(text, removed, selection) : null;
 }
 
 // --- Clear formatting ---
@@ -454,32 +483,34 @@ export function outdentNoteLines(
 /** Drops every mark and list marker the selection touches. */
 function planClear(
   text: string,
-  { selection, lines, rows }: ListTarget,
+  { selection, rows }: ListTarget,
   inline: InlineTarget | null,
 ): NoteFormatPlan {
   const removed: NoteRange[] = [];
-  let lineStart = lines.from;
 
-  for (const { line, item } of rows) {
-    if (item) {
-      const indent = item.groups?.indent ?? "";
-      removed.push({
-        from: lineStart + indent.length,
-        to: lineStart + item[0].length,
-      });
+  for (const row of rows) {
+    if (!row.item) {
+      continue;
     }
 
-    lineStart += line.length + LINE_BREAK.length;
+    removed.push({
+      from: row.start + rowIndent(row).length,
+      to: row.start + row.item[0].length,
+    });
   }
 
   const tokens = new Set(inline?.pieces.flatMap(({ touched }) => touched));
 
-  for (const { type, start, from, to } of tokens) {
-    if (type === NoteSegmentType.LINK) {
+  for (const token of tokens) {
+    if (token.type === NoteSegmentType.LINK) {
       continue;
     }
 
-    removed.push({ from, to: start }, { from: to - (start - from), to });
+    const content = tokenContent(token);
+    removed.push(
+      { from: token.from, to: content.from },
+      { from: content.to, to: token.to },
+    );
   }
 
   if (removed.length === 0) {
@@ -488,23 +519,7 @@ function planClear(
 
   return {
     state: NoteFormatState.OFF,
-    apply: () => {
-      removed.sort((a, b) => a.from - b.from);
-      const edit = joinSplices(
-        text,
-        removed.map((range) => ({ ...range, text: "" })),
-      );
-
-      return {
-        from: edit.from,
-        to: edit.to,
-        text: edit.text,
-        selection: {
-          from: shiftPast(removed, selection.from),
-          to: shiftPast(removed, selection.to),
-        },
-      };
-    },
+    apply: () => removeRanges(text, removed, selection),
   };
 }
 
