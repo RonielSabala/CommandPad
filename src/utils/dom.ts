@@ -244,12 +244,11 @@ export function getTextareaRangeRects(
     value.slice(to),
   );
 
-  const rects = Array.from(range.getClientRects()).filter(
-    (rect) => rect.width > 0,
-  );
+  const rects = Array.from(range.getClientRects());
+  const drawn = rects.filter((rect) => rect.width > 0);
 
   mirror.remove();
-  return rects;
+  return drawn.length > 0 ? drawn : rects.slice(0, 1);
 }
 
 /** Whether a viewport point falls on `from`..`to` in a textarea. */
