@@ -30,6 +30,8 @@ export const MarkdownDelimiter = {
   BOLD: "**",
   ITALIC: "_",
   ITALIC_ALT: "*",
+  STRIKETHROUGH: "~",
+  STRIKETHROUGH_ALT: "~~",
   CODE: "`",
   CODE_ALT: "´",
   LINK_LABEL_OPEN: "[",
@@ -77,21 +79,42 @@ export const MarkdownSyntax = {
 /** The shortest run of text a pair of marks can wrap. */
 const MARK_CONTENT = oneOrMoreLazy(ANY);
 
-/** `<mark>text<mark>`, capturing the text as `name`. */
-const wrapped = (mark: string, name: string) =>
-  sequence(mark, named(name, MARK_CONTENT), mark);
-
-const LONE_ITALIC_ALT = sequence(
-  notAfter(Mark.ITALIC_ALT),
-  Mark.ITALIC_ALT,
-  notBefore(Mark.ITALIC_ALT),
+/** Mark content that neither starts nor ends with whitespace. */
+const FLANKED_CONTENT = sequence(
+  notBefore(WHITESPACE),
+  MARK_CONTENT,
+  notAfter(WHITESPACE),
 );
+
+/** `<mark>text<mark>`, capturing the text as `name`. */
+const wrapped = (mark: string, name: string, content = MARK_CONTENT) =>
+  sequence(mark, named(name, content), mark);
+
+/** A one-character mark that isn't half of its doubled spelling. */
+const lone = (mark: string) => sequence(notAfter(mark), mark, notBefore(mark));
 
 const URL_PROTOCOL = String.raw`https?:\/\/`;
 const URL_EXCLUDED = '\\s<>"{}|\\\\^`[\\]';
 const URL_EXCLUDED_END = `${URL_EXCLUDED}.,;:!?()-`;
 
 export const MarkdownToken = {
+  BOLD_REGEX: globalRegex(unescaped(wrapped(Mark.BOLD, "bold"))),
+  ITALIC_REGEX: globalRegex(
+    either(
+      unescaped(wrapped(lone(Mark.ITALIC_ALT), "italicAlt")),
+      unescaped(wrapped(Mark.ITALIC, "italic")),
+    ),
+  ),
+  STRIKETHROUGH_REGEX: globalRegex(
+    either(
+      unescaped(
+        wrapped(Mark.STRIKETHROUGH_ALT, "strikethroughAlt", FLANKED_CONTENT),
+      ),
+      unescaped(
+        wrapped(lone(Mark.STRIKETHROUGH), "strikethrough", FLANKED_CONTENT),
+      ),
+    ),
+  ),
   CODE_REGEX: globalRegex(
     unescaped(
       sequence(
@@ -99,13 +122,6 @@ export const MarkdownToken = {
         named("code", MARK_CONTENT),
         backreference("codeFence"),
       ),
-    ),
-  ),
-  BOLD_REGEX: globalRegex(unescaped(wrapped(Mark.BOLD, "bold"))),
-  ITALIC_REGEX: globalRegex(
-    either(
-      unescaped(wrapped(LONE_ITALIC_ALT, "italicAlt")),
-      unescaped(wrapped(Mark.ITALIC, "italic")),
     ),
   ),
   LINK_REGEX: globalRegex(
@@ -142,8 +158,9 @@ export const MarkdownToken = {
 
 /** What a leading backslash can escape. */
 const ESCAPABLE_MARKS = [
-  Mark.ITALIC_ALT,
   Mark.ITALIC,
+  Mark.ITALIC_ALT,
+  Mark.STRIKETHROUGH,
   Mark.CODE,
   Mark.CODE_ALT,
   Mark.LINK_LABEL_OPEN,

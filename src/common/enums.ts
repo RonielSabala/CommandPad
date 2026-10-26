@@ -138,11 +138,31 @@ export const NoteSegmentType = {
   TEXT: "text",
   BOLD: "bold",
   ITALIC: "italic",
+  STRIKETHROUGH: "strikethrough",
   CODE: "code",
   LINK: "link",
 } as const;
 export type NoteSegmentType =
   (typeof NoteSegmentType)[keyof typeof NoteSegmentType];
+
+export const NoteFormat = {
+  BOLD: "bold",
+  ITALIC: "italic",
+  STRIKETHROUGH: "strikethrough",
+  CODE: "code",
+  NUMBERED_LIST: "numberedList",
+  BULLETED_LIST: "bulletedList",
+  CLEAR: "clear",
+} as const;
+export type NoteFormat = (typeof NoteFormat)[keyof typeof NoteFormat];
+
+export const NoteFormatState = {
+  OFF: "off",
+  ON: "on",
+  DISABLED: "disabled",
+} as const;
+export type NoteFormatState =
+  (typeof NoteFormatState)[keyof typeof NoteFormatState];
 
 export const NoteNodeType = {
   TEXT: "text",

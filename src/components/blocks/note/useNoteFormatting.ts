@@ -1,14 +1,63 @@
+import { NoteFormat } from "@/common/enums";
+import { KeyBinding } from "@/common/keybindings";
 import { MarkdownDelimiter } from "@/common/markdownSyntax";
-import { usePairWrapping, wrapSelection } from "@/hooks/usePairWrapping";
+import { usePairWrapping } from "@/hooks/usePairWrapping";
+import { replaceSelection } from "@/utils/dom";
+import { planNoteFormats, type NoteEdit } from "@/utils/markdown";
 import { useCallback, type KeyboardEvent } from "react";
 
-const WRAP_BY_KEY: Record<string, string> = {
-  b: MarkdownDelimiter.BOLD,
-  i: MarkdownDelimiter.ITALIC,
-  dead: MarkdownDelimiter.CODE,
-  [MarkdownDelimiter.CODE]: MarkdownDelimiter.CODE,
-  [MarkdownDelimiter.CODE_ALT]: MarkdownDelimiter.CODE,
+export const NOTE_FORMAT_BINDINGS: Partial<Record<NoteFormat, KeyBinding>> = {
+  [NoteFormat.BOLD]: KeyBinding.NOTE_BOLD,
+  [NoteFormat.ITALIC]: KeyBinding.NOTE_ITALIC,
+  [NoteFormat.STRIKETHROUGH]: KeyBinding.NOTE_STRIKETHROUGH,
+  [NoteFormat.CODE]: KeyBinding.NOTE_CODE,
+  [NoteFormat.NUMBERED_LIST]: KeyBinding.NOTE_NUMBERED_LIST,
+  [NoteFormat.BULLETED_LIST]: KeyBinding.NOTE_BULLETED_LIST,
 };
+
+const FORMAT_BY_KEY: Record<string, NoteFormat> = {
+  b: NoteFormat.BOLD,
+  i: NoteFormat.ITALIC,
+  dead: NoteFormat.CODE,
+  [MarkdownDelimiter.CODE]: NoteFormat.CODE,
+  [MarkdownDelimiter.CODE_ALT]: NoteFormat.CODE,
+};
+
+const SHIFTED_FORMAT_BY_CODE: Record<string, NoteFormat> = {
+  KeyX: NoteFormat.STRIKETHROUGH,
+  Digit7: NoteFormat.NUMBERED_LIST,
+  Digit8: NoteFormat.BULLETED_LIST,
+};
+
+export function applyNoteEdit(
+  textarea: HTMLTextAreaElement,
+  edit: NoteEdit,
+  onChange: (value: string) => void,
+): void {
+  textarea.setSelectionRange(edit.from, edit.to);
+  replaceSelection(textarea, edit.text, onChange);
+
+  queueMicrotask(() => {
+    textarea.setSelectionRange(edit.selection.from, edit.selection.to);
+  });
+}
+
+/** Toggles `format` on the textarea's selection. */
+export function formatNoteSelection(
+  textarea: HTMLTextAreaElement,
+  format: NoteFormat,
+  onChange: (value: string) => void,
+): void {
+  const { value, selectionStart, selectionEnd } = textarea;
+  const edit = planNoteFormats(value, {
+    from: selectionStart,
+    to: selectionEnd,
+  })[format].apply();
+
+  if (edit) {
+    applyNoteEdit(textarea, edit, onChange);
+  }
+}
 
 export function useNoteFormatting(
   onChange: (value: string) => void,
@@ -21,12 +70,14 @@ export function useNoteFormatting(
         return;
       }
 
-      // bold / italic / code
       if (event.ctrlKey || event.metaKey) {
-        const wrap = WRAP_BY_KEY[event.key.toLowerCase()];
-        if (wrap) {
+        const format =
+          (event.shiftKey && SHIFTED_FORMAT_BY_CODE[event.code]) ||
+          FORMAT_BY_KEY[event.key.toLowerCase()];
+
+        if (format) {
           event.preventDefault();
-          wrapSelection(event.currentTarget, wrap, wrap, onChange);
+          formatNoteSelection(event.currentTarget, format, onChange);
         }
 
         return;

@@ -25,6 +25,8 @@ export const CssClass = {
 
   TOOLTIP: "tooltip",
   CONTEXT_MENU: "context-menu",
+  CONTEXT_MENU_ITEM: "context-menu-item",
+  CONTEXT_MENU_ICON: "context-menu-icon",
   SELECT_MENU_PORTAL: "select-menu-portal",
   CODE_EDITOR_PROMPT: "code-editor-prompt",
   CODE_EDITOR_SURFACE: "code-editor-surface",
@@ -89,6 +91,7 @@ export const CssClass = {
   TOOLTIP_LINK: "tooltip-link",
   TOOLTIP_LINK_PLAIN: "tooltip-link-plain",
   NOTE_EDITOR: "note-editor",
+  TEXT_MIRROR: "text-mirror",
   NOTE_CODE_NEUTRAL: "note-code-neutral",
 
   // Controls beside a block/variable item

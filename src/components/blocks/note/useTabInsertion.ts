@@ -1,33 +1,43 @@
-import { EditCommand } from "@/common/constants/dom";
 import { Key, TAB_CHARACTER } from "@/common/constants/events";
+import { replaceSelection } from "@/utils/dom";
+import { indentNoteLines, outdentNoteLines } from "@/utils/markdown";
 import { useCallback, type KeyboardEvent } from "react";
+
+import { applyNoteEdit } from "./useNoteFormatting";
 
 export function useTabInsertion(
   onChange: (value: string) => void,
 ): (event: KeyboardEvent<HTMLTextAreaElement>) => void {
   return useCallback(
     (event) => {
-      if (event.key !== Key.TAB || event.shiftKey) {
+      if (event.key !== Key.TAB) {
         return;
       }
 
       event.preventDefault();
 
       const textarea = event.currentTarget;
-      const { selectionStart, selectionEnd, value } = textarea;
+      const { value, selectionStart, selectionEnd } = textarea;
 
-      if (document.execCommand(EditCommand.INSERT_TEXT, false, TAB_CHARACTER)) {
+      const selection = { from: selectionStart, to: selectionEnd };
+      const edit = event.shiftKey
+        ? outdentNoteLines(value, selection, TAB_CHARACTER)
+        : indentNoteLines(value, selection, TAB_CHARACTER);
+
+      if (edit) {
+        applyNoteEdit(textarea, edit, onChange);
         return;
       }
 
-      const nextValue =
-        value.slice(0, selectionStart) +
-        TAB_CHARACTER +
-        value.slice(selectionEnd);
+      if (event.shiftKey) {
+        return;
+      }
 
       const nextCaret = selectionStart + TAB_CHARACTER.length;
+      if (replaceSelection(textarea, TAB_CHARACTER, onChange)) {
+        return;
+      }
 
-      onChange(nextValue);
       queueMicrotask(() => {
         textarea.selectionStart = textarea.selectionEnd = nextCaret;
       });

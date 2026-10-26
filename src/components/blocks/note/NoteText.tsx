@@ -1,3 +1,4 @@
+import { LINE_FILLER } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { Anchor, DataAttr, HtmlTag } from "@/common/constants/dom";
 import { AppMode, NoteNodeType, NoteSegmentType } from "@/common/enums";
@@ -19,6 +20,7 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { parseNoteNodes } from "@/utils/markdown";
 import { classNames } from "@/utils/string";
+import { Fragment } from "react";
 
 import "./NoteText.css";
 
@@ -26,6 +28,7 @@ const SEGMENT_CLASS: Record<NoteSegmentType, string | undefined> = {
   [NoteSegmentType.TEXT]: undefined,
   [NoteSegmentType.BOLD]: "note-bold",
   [NoteSegmentType.ITALIC]: "note-italic",
+  [NoteSegmentType.STRIKETHROUGH]: "note-strikethrough",
   [NoteSegmentType.CODE]: "note-code",
   [NoteSegmentType.LINK]: CssClass.NOTE_LINK,
 };
@@ -201,9 +204,15 @@ function NoteListView({
 interface NoteNodesProps {
   nodes: NoteNode[];
   requiresLinkModifier?: boolean;
+  /** Draws a run's empty last line. */
+  fillEmptyLines?: boolean;
 }
 
-export function NoteNodes({ nodes, requiresLinkModifier }: NoteNodesProps) {
+export function NoteNodes({
+  nodes,
+  requiresLinkModifier,
+  fillEmptyLines,
+}: NoteNodesProps) {
   return (
     <>
       {nodes.map((node, i) => {
@@ -228,11 +237,20 @@ export function NoteNodes({ nodes, requiresLinkModifier }: NoteNodesProps) {
         }
 
         return (
-          <NoteSegments
-            key={i}
-            segments={node.segments}
-            requiresLinkModifier={requiresLinkModifier}
-          />
+          <Fragment key={i}>
+            <NoteSegments
+              segments={node.segments}
+              requiresLinkModifier={requiresLinkModifier}
+            />
+            {fillEmptyLines && node.emptyLastLine !== undefined && (
+              <span
+                aria-hidden
+                {...{ [DataAttr.NOTE_OFFSET]: node.emptyLastLine }}
+              >
+                {LINE_FILLER}
+              </span>
+            )}
+          </Fragment>
         );
       })}
     </>
@@ -242,13 +260,19 @@ export function NoteNodes({ nodes, requiresLinkModifier }: NoteNodesProps) {
 interface NoteTextProps {
   text: string;
   requiresLinkModifier?: boolean;
+  fillEmptyLines?: boolean;
 }
 
-export function NoteText({ text, requiresLinkModifier }: NoteTextProps) {
+export function NoteText({
+  text,
+  requiresLinkModifier,
+  fillEmptyLines,
+}: NoteTextProps) {
   return (
     <NoteNodes
       nodes={parseNoteNodes(text)}
       requiresLinkModifier={requiresLinkModifier}
+      fillEmptyLines={fillEmptyLines}
     />
   );
 }

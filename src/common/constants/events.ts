@@ -20,6 +20,7 @@ export const EventType = {
   SCROLL: "scroll",
   WHEEL: "wheel",
   BLUR: "blur",
+  SELECTION_CHANGE: "selectionchange",
   DRAG_START: "dragstart",
   DRAG_END: "dragend",
 } as const;
@@ -62,6 +63,11 @@ export const ModifierKeyName: Record<Modifier, string> = {
 export const MouseButton = {
   LEFT: 0,
   MIDDLE: 1,
+} as const;
+
+/** The `detail` of a mouse event. */
+export const ClickCount = {
+  SINGLE: 1,
 } as const;
 
 /** The `buttons` bitmask. */

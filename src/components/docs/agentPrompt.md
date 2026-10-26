@@ -140,8 +140,9 @@ The first note block names the runbook, so always open with a `heading` note.
 
 ## Note markdown
 
-- `**bold**`, `_italic_` or `*italic*`, backticks around `code`, and
-  `[label](https://example.com)`.
+- `**bold**`, `_italic_` or `*italic*`, `~strikethrough~` or `~~strikethrough~~`, backticks
+  around `code`, and `[label](https://example.com)`. A strikethrough's text can't start or
+  end with a space.
 - Tables: a header row, a row of `---` cells, then body rows, all separated by `|`. A
   delimiter cell may carry `:` on either side to align that column.
 - Lists: lines opening with `*`, `-` or `1.`; indent to nest. One item is one line.

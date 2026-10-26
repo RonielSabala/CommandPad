@@ -1,21 +1,15 @@
 import { NoteNodeType } from "@/common/enums";
 import type { NoteNode } from "@/common/types";
-import { splitLines } from "../string";
+import { lineStarts, splitLines } from "../string";
 
 import { parseNoteText } from "./inline";
 import { readList } from "./list";
 import { readTable } from "./table";
 
 export function parseNoteNodes(text: string): NoteNode[] {
-  const lines = splitLines(text);
   const nodes: NoteNode[] = [];
-
-  const starts: number[] = [];
-  let cursor = 0;
-  for (const line of lines) {
-    starts.push(cursor);
-    cursor += line.length + 1;
-  }
+  const lines = splitLines(text);
+  const starts = lineStarts(lines);
 
   const flushText = (runStart: number, runEnd: number) => {
     if (runEnd <= runStart) {
@@ -23,14 +17,13 @@ export function parseNoteNodes(text: string): NoteNode[] {
     }
 
     const from = starts[runStart];
-    const to = starts[runEnd - 1] + lines[runEnd - 1].length;
-    if (to <= from) {
-      return;
-    }
+    const lastLine = starts[runEnd - 1];
+    const to = lastLine + lines[runEnd - 1].length;
 
     nodes.push({
       type: NoteNodeType.TEXT,
-      segments: parseNoteText(text.slice(from, to), from),
+      segments: to > from ? parseNoteText(text.slice(from, to), from) : [],
+      emptyLastLine: to === lastLine ? to : undefined,
     });
   };
 

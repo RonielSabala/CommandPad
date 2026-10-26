@@ -128,15 +128,16 @@ The split is forced by the import graph: the model must be reachable from the st
 Free-form text rendered as markdown (`utils/markdown/`). Two parsing levels, only the outer is public: `parseNoteNodes(text)` splits into block nodes (table, list, inline run); the private `parseNoteText(run, offset)` tokenizes inline marks. Use `parseNoteNodes` (or `noteToPlainText`) everywhere.
 
 - **Every segment's `start` is an index into the raw note**, including inside table cells, which is what the click → caret mapping needs.
-- **Click → caret** (`NoteEditor`): the preview is `pointer-events: none` over the textarea. While the note is unfocused (and not in read mode, not on a link), mousedown is prevented and the click maps the point to a raw-text offset via `getNoteCaretAtPoint` (measures per character with a `Range`; each segment carries `DataAttr.NOTE_OFFSET`), then focuses and places the caret.
+- **Click → caret** (`NoteEditor`): the preview is `pointer-events: none` over the textarea. While the note is unfocused (and not in read mode, not on a link), mousedown is prevented, maps the point to a raw-text offset via `getNoteCaretAtPoint` (measures per character with a `Range`; each segment carries `DataAttr.NOTE_OFFSET`), focuses and places the caret; a drag from there extends the selection through `locateTextareaCarets` (a mirror of the raw text, since focus swaps the preview out). A press inside a focused selection takes the same path, or the browser would drag the selected text. **Every raw line must have a box**: pre-wrap draws none for an empty last line, so a text node whose last line is empty (a lone blank line between blocks included) carries `emptyLastLine` and the preview draws a `LINE_FILLER` there; a line break or filler never offers the caret after it.
 - `NotePreview` is the rendered half alone; `standalone` (embedded note, embedded section name) restores pointer events/selection. `NotePreview.css` owns the shared text metrics for preview, textarea and the width ghost, so they can't disagree. `NoteEditor` is reused for variable section names.
-- Inline tokens are named captures (`MarkdownToken`), the code span closes with a backreference so `` `x´ `` isn't code; second spellings use `_ALT`.
+- Inline tokens are named captures (`MarkdownToken`), the code span closes with a backreference so `` `x´ `` isn't code; second spellings use `_ALT`. Strikethrough (`~`/`~~`) is flanked: its text can't start or end with whitespace, so `~` paths stay literal.
 - **Tables** (line-based, parsed before inline): header row + delimiter row (alignment via `:`), rectangular; `\|` escapes a bar in a cell before inline parsing.
 - **Lists** (line-based): `*`/`-`/`1.`; one line per item, indent nests via a stack (tab = `MarkdownList.TAB_WIDTH`), switching marker kind starts a new list; ordered lists keep `start`.
-- **Escapes**: a leading backslash escapes an opening mark (`*`, `_`, a backtick, `´`, `[`, `|`, or `http(s)://`); nothing is unescaped inside a code span.
+- **Escapes**: a leading backslash escapes an opening mark (`*`, `_`, `~`, a backtick, `´`, `[`, `|`, or `http(s)://`); nothing is unescaped inside a code span.
 - One table style `.note-table`, one list style `.note-list` (`NoteText.css`), reused by the docs. Don't add a second.
 - Spell check: `spellcheckEnabled` (persisted, default on, toggled from `WorkspaceContextMenu`) binds **only** the note textarea, with `lang={language}`. Every other field is `spellCheck={false}`.
-- Textarea keys: `useTabInsertion` (Tab inserts a tab), `useNoteFormatting` (Ctrl+B/I/backtick wrap the selection, pair wrapping).
+- Textarea keys: `useTabInsertion` (Tab inserts a tab), `useNoteFormatting` (format shortcuts, pair wrapping).
+- **Formatting** (shortcuts and the portalled `NoteFormatToolbar` over a selection) all goes through `planNoteFormats` (`utils/markdown/format.ts`), which gives each `NoteFormat` a state (inline marks are planned per selected line and never span a line break; on inside one token of its kind, disabled when touching any other token, since marks don't nest) and a lazy edit applied through `insertText` for undo; `CLEAR` is an action, never on, and drops every mark and list marker touched but never a link. It reads each segment's raw `from`/`to` extent.
 
 #### The image block
 
@@ -337,7 +338,7 @@ Every code surface is **Monaco, bundled locally** (never a CDN). `src/monaco/` i
 
 ### Testing
 
-`pnpm test` runs Vitest (`environment: "node"`, `src/**/*.test.ts`). The suite covers the **variable engine** (`utils/resolution/`), plus `utils/embeddedRunbook.test.ts` and `components/docs/agentPrompt.test.ts`. There are no component/DOM/browser tests; don't pull a DOM implementation in.
+`pnpm test` runs Vitest (`environment: "node"`, `src/**/*.test.ts`). The suite covers the **variable engine** (`utils/resolution/`), plus `utils/embeddedRunbook.test.ts`, `utils/markdown/format.test.ts` and `components/docs/agentPrompt.test.ts`. There are no component/DOM/browser tests; don't pull a DOM implementation in.
 
 - Tests sit beside their module (`<module>.test.ts`) and are typechecked by `tsc -b`.
 - Primitives (`string.ts`, `stringCase.ts`, `stringTest.ts`, `hash.ts`) are tested **through the operation that exposes them**, not separately.
@@ -350,7 +351,7 @@ Every code surface is **Monaco, bundled locally** (never a CDN). `src/monaco/` i
 ### Conventions to follow
 
 - **No magic values.** Strings/numbers go in frozen `as const` objects in `common/`; regex characters go in syntax tables.
-- **Icons**: `react-bootstrap-icons` named imports (solid glyphs, size via CSS `width`/`height`/`color`); no hand-written `<svg>` except flags/favicons.
+- **Icons**: `react-bootstrap-icons` named imports (solid glyphs, size via CSS `width`/`height`/`color`); no hand-written `<svg>` except flags/favicons and the icons in `components/icons/index.tsx` (glyphs Bootstrap lacks).
 - **Theming touches only `styles/tokens.css`**; components use CSS variables, never hardcoded colors (except `data:` URI SVGs).
 - **Every color is a published GitHub Primer value**, never a hand-mixed hex (the one exception is the hand-tuned dark main card `#0b0e12`). Surfaces (dark): `--color-bg` `#0b0e12` (main card, wells, deepest), `--color-app-bg` `#161b22` (frame), `--color-surface` `#22272e` (cards), `--color-surface-alt` `#2d333b` (fills/hover), border `#373e47`. Light: frame `#eaeef2`, main `#f6f8fa`, cards white, fills `#eaeef2`, border `#d0d7de`. Text uses Primer `fg` steps; accents/semantic colors are Primer `fg`, `-solid` fills are `emphasis` values (use `-solid` for filled surfaces, never derive a fill from a text token). Neutral gray and slate were both rejected.
 - **Stacking goes through the elevation scale** (`--z-behind`, `--z-base`, `--z-raised`, `--z-sticky`, `--z-docked`, `--z-dropdown`, `--z-modal`, `--z-popover`, `--z-tooltip`), never a raw `z-index`; insert a named layer if needed.

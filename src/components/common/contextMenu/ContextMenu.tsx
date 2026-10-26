@@ -2,6 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { AriaRole } from "@/common/constants/dom";
 import { EventType, Key } from "@/common/constants/events";
 import { CheckIcon } from "@/components/icons";
+import { clamp } from "@/utils/number";
 import { classNames } from "@/utils/string";
 import {
   createContext,
@@ -63,8 +64,8 @@ export function ContextMenu({
     const maxY = window.innerHeight - menu.offsetHeight;
 
     setPosition({
-      x: Math.max(0, Math.min(x, maxX)),
-      y: Math.max(0, Math.min(anchor.y, maxY)),
+      x: clamp(x, 0, maxX),
+      y: clamp(anchor.y, 0, maxY),
     });
   }, [anchor.x, anchor.y, align]);
 
@@ -137,7 +138,7 @@ export function ContextMenuItem({
 
   return (
     <button
-      className={classNames("context-menu-item", danger && "is-danger")}
+      className={classNames(CssClass.CONTEXT_MENU_ITEM, danger && "is-danger")}
       role={isCheckbox ? AriaRole.MENU_ITEM_CHECKBOX : AriaRole.MENU_ITEM}
       aria-checked={checked}
       disabled={disabled}
@@ -146,7 +147,7 @@ export function ContextMenuItem({
         close?.();
       }}
     >
-      <span className="context-menu-icon">
+      <span className={CssClass.CONTEXT_MENU_ICON}>
         {isCheckbox && checked ? (
           <CheckIcon
             className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}

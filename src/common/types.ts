@@ -88,7 +88,6 @@ export interface Variable {
 export interface VariableSection {
   id: string;
   name: string;
-  /** Index of the section's first variable */
   start: number;
   collapsed?: boolean;
 }
@@ -126,9 +125,7 @@ export interface RunbookEntry {
   label: string;
   filename: string;
   sync?: RunbookSync;
-  /** Whether the runbook holds secret variables */
   secured?: boolean;
-  /**  This runbook's passphrase. */
   vault?: VaultRecord;
 }
 
@@ -174,6 +171,8 @@ export interface NoteSegment {
   type: NoteSegmentType;
   href?: string;
   start: number;
+  from: number;
+  to: number;
 }
 
 export interface NoteTableCell {
@@ -198,6 +197,10 @@ export interface NoteList {
 }
 
 export type NoteNode =
-  | { type: typeof NoteNodeType.TEXT; segments: NoteSegment[] }
+  | {
+      type: typeof NoteNodeType.TEXT;
+      segments: NoteSegment[];
+      emptyLastLine?: number;
+    }
   | { type: typeof NoteNodeType.TABLE; table: NoteTable }
   | { type: typeof NoteNodeType.LIST; list: NoteList };

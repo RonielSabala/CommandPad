@@ -84,7 +84,7 @@
 
 .cloud-browser-row:hover::before,
 .cloud-browser-row:has(:focus-visible)::before {
-  background: var(--color-surface-alt);
+  background: var(--color-surface-hover-bg);
 }
 
 .cloud-browser-row.is-selected::before {

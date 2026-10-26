@@ -1,5 +1,6 @@
 import { TooltipConfig } from "@/common/config";
 import { TooltipSide } from "@/common/enums";
+import { clamp } from "@/utils/number";
 
 export interface TooltipPlacement {
   x: number;
@@ -22,11 +23,12 @@ export function placeTooltip(
 
   const centered = anchor.left + anchor.width / 2 - size.width / 2;
   const maxX = viewport.width - VIEWPORT_MARGIN - size.width;
-  const x = Math.max(VIEWPORT_MARGIN, Math.min(centered, maxX));
+  const x = clamp(centered, VIEWPORT_MARGIN, maxX);
 
-  const arrowX = Math.max(
+  const arrowX = clamp(
+    anchor.left + anchor.width / 2 - x,
     ARROW_INSET,
-    Math.min(anchor.left + anchor.width / 2 - x, size.width - ARROW_INSET),
+    size.width - ARROW_INSET,
   );
 
   return {

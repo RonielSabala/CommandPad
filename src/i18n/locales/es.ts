@@ -2,6 +2,7 @@ import { MIDDLE_DOT, VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
+  NoteFormat,
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
@@ -298,6 +299,17 @@ export const es: Messages = {
     },
     followLink: "Seguir enlace",
     followLinkBinding: (binding: string) => `(${binding})`,
+    formatToolbar: "Formato",
+    format: {
+      [NoteFormat.BOLD]: "Negrita",
+      [NoteFormat.ITALIC]: "Cursiva",
+      [NoteFormat.STRIKETHROUGH]: "Tachado",
+      [NoteFormat.CODE]: "Código en línea",
+      [NoteFormat.NUMBERED_LIST]: "Lista numerada",
+      [NoteFormat.BULLETED_LIST]: "Lista con viñetas",
+      [NoteFormat.CLEAR]: "Borrar formato",
+    },
+    formatHint: (label: string, binding: string) => `${label} (${binding})`,
   },
   image: {
     dropHint: "Suelta una imagen aquí, o pégala",
@@ -571,11 +583,17 @@ export const es: Messages = {
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
     [KeyBinding.OPEN_LINK]: "Abrir enlace de nota en una pestaña nueva",
     [KeyBinding.NOTE_BOLD]:
-      "Poner en negrita el texto seleccionado (bloque de nota)",
+      "Poner en negrita el texto seleccionado (texto de nota)",
     [KeyBinding.NOTE_ITALIC]:
-      "Poner en cursiva el texto seleccionado (bloque de nota)",
+      "Poner en cursiva el texto seleccionado (texto de nota)",
+    [KeyBinding.NOTE_STRIKETHROUGH]:
+      "Tachar el texto seleccionado (texto de nota)",
     [KeyBinding.NOTE_CODE]:
-      "Envolver el texto seleccionado en comillas invertidas (bloque de nota)",
+      "Envolver el texto seleccionado en comillas invertidas (texto de nota)",
+    [KeyBinding.NOTE_NUMBERED_LIST]:
+      "Convertir las líneas seleccionadas en una lista numerada (texto de nota)",
+    [KeyBinding.NOTE_BULLETED_LIST]:
+      "Convertir las líneas seleccionadas en una lista con viñetas (texto de nota)",
     [KeyBinding.WRAP_SELECTION]:
       "Envolver el texto seleccionado en el par escrito (cualquier campo de texto)",
     [KeyBinding.SUBMIT_EDITOR]: "Guardar / crear desde un editor de código",
@@ -870,7 +888,7 @@ export const es: Messages = {
       folderName: "   Informes de ventas   ",
       ticketTitle: "arreglar caducidad de sesión",
       noteSample:
-        "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, `código` y un enlace: https://example.com. Haz clic fuera para verla renderizada de nuevo.",
+        "Haz clic en esta nota para ver su texto en bruto: mezcla **negrita**, _cursiva_, ~tachado~, `código` y un enlace: https://example.com. Haz clic fuera para verla renderizada de nuevo.",
       tableSample: `| Código de salida | Significado | Acción |
 | :---: | --- | --- |
 | 126 | Permiso denegado | Dale permisos con \`chmod +x\` |
@@ -883,8 +901,8 @@ export const es: Messages = {
 Si algo sale mal, deshazlo en este orden:
 1. Detén lo que estabas haciendo
 2. Restaura la copia de seguridad
-    1. Cópiala encima del original
-    2. Ábrela para comprobar que está bien
+\t1. Cópiala encima del original
+\t2. Ábrela para comprobar que está bien
 3. Avisa a tu equipo de lo ocurrido`,
     },
     gettingStarted: {
@@ -1373,6 +1391,7 @@ Si algo sale mal, deshazlo en este orden:
 | --- | --- |
 | \\**texto-en-negrita\\** | **texto-en-negrita** |
 | \\_texto-en-cursiva\\_ | _texto-en-cursiva_ |
+| \\~texto-tachado\\~ | ~texto-tachado~ |
 | \\\`texto-de-código\\\` | \`texto-de-código\` |
 | \\[enlace-con-etiqueta](\\https://example.com) | [enlace-con-etiqueta](https://example.com) |`,
       escapes:
@@ -1382,13 +1401,13 @@ Si algo sale mal, deshazlo en este orden:
       tables:
         "Las notas también soportan [tablas markdown al estilo GitHub](https://docs.github.com/es/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): celdas separadas por barras `|`, con una fila de guiones debajo del encabezado. Haz clic en la nota de abajo para ver la sintaxis en bruto.",
       lists:
-        "Las listas funcionan igual: empieza una línea con `*` o `-` para una viñeta, o con un número y un punto para un paso numerado. Sangra una línea para anidarla bajo el elemento anterior. Cada elemento ocupa una sola línea, así que la lista termina en la primera línea que no empiece por un marcador.",
+        "Las listas funcionan igual: empieza una línea con `*` o `-` para una viñeta, o con un número y un punto para un paso numerado. Sangra una línea para anidarla bajo el elemento anterior: Tab sangra cada línea seleccionada y Shift+Tab le quita un nivel. Cada elemento ocupa una sola línea, así que la lista termina en la primera línea que no empiece por un marcador.",
       noNesting:
         "Los estilos no se combinan: por ejemplo, negrita y cursiva no pueden mezclarse en las mismas palabras. Gana el estilo que empiece primero.",
       links:
         "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables. Para abrir un enlace, mantén `Ctrl` y haz clic en él, o pasa el puntero por encima y haz clic en **Seguir enlace** en su tooltip.",
       wrapKeys:
-        "Con texto seleccionado en una nota, `Ctrl+B` lo envuelve en negrita, `Ctrl+I` en cursiva y `Ctrl+´` en comillas invertidas; escribir cualquier carácter de paréntesis (**(**, **[** o **{**) o comillas (**\"** o **'**) lo envuelve en ese par. Envolver en pares no es exclusivo de las notas: funciona igual en el editor de comandos.",
+        "Selecciona texto en una nota o en el nombre de una sección de variables y aparece encima una barra de formato, con negrita, cursiva, tachado, código en línea y listas numeradas o con viñetas, y un botón al final que borra todos los estilos de la selección. Pasa el puntero por un botón para ver su atajo. Un botón se resalta cuando la selección ya tiene ese estilo, y al pulsarlo se quita; se desactiva cuando la selección cubre solo parte de un texto con estilo, porque los estilos no se combinan. Con varias líneas seleccionadas, cada línea recibe su propio estilo. Escribir cualquier carácter de paréntesis (**(**, **[** o **{**) o comillas (**\"** o **'**) lo envuelve en ese par.",
     },
     imageBlock: {
       intro:

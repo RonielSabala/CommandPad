@@ -41,7 +41,7 @@
 }
 
 .sidebar-section-header:hover {
-  background: var(--color-surface-alt);
+  background: var(--color-surface-hover-bg);
 }
 
 .sidebar-section-header:hover .section-title {

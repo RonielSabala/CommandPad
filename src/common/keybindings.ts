@@ -39,7 +39,10 @@ export const KeyBinding = {
   OPEN_LINK: "OPEN_LINK",
   NOTE_BOLD: "NOTE_BOLD",
   NOTE_ITALIC: "NOTE_ITALIC",
+  NOTE_STRIKETHROUGH: "NOTE_STRIKETHROUGH",
   NOTE_CODE: "NOTE_CODE",
+  NOTE_NUMBERED_LIST: "NOTE_NUMBERED_LIST",
+  NOTE_BULLETED_LIST: "NOTE_BULLETED_LIST",
   WRAP_SELECTION: "WRAP_SELECTION",
   SUBMIT_EDITOR: "SUBMIT_EDITOR",
 } as const;
@@ -75,7 +78,19 @@ export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
   },
   [KeyBinding.NOTE_BOLD]: { binding: "ctrl+b", keyboard: false },
   [KeyBinding.NOTE_ITALIC]: { binding: "ctrl+i", keyboard: false },
+  [KeyBinding.NOTE_STRIKETHROUGH]: {
+    binding: "ctrl+shift+x",
+    keyboard: false,
+  },
   [KeyBinding.NOTE_CODE]: { binding: "ctrl+´", keyboard: false },
+  [KeyBinding.NOTE_NUMBERED_LIST]: {
+    binding: "ctrl+shift+7",
+    keyboard: false,
+  },
+  [KeyBinding.NOTE_BULLETED_LIST]: {
+    binding: "ctrl+shift+8",
+    keyboard: false,
+  },
   [KeyBinding.WRAP_SELECTION]: {
     binding: `( [ { " '`,
     keyboard: false,

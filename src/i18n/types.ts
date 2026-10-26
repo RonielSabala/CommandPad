@@ -1,6 +1,7 @@
 import type { DocsSectionId } from "@/common/constants/docs";
 import type {
   BlockType,
+  NoteFormat,
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
@@ -246,6 +247,9 @@ export interface Messages {
     stylePlaceholder: Record<NoteStyle, string>;
     followLink: string;
     followLinkBinding: (binding: string) => string;
+    formatToolbar: string;
+    format: Record<NoteFormat, string>;
+    formatHint: (label: string, binding: string) => string;
   };
   image: {
     dropHint: string;

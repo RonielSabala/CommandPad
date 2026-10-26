@@ -2,6 +2,7 @@ import { MIDDLE_DOT, VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
+  NoteFormat,
   NoteStyle,
   PanelId,
   RunbookSyncStatus,
@@ -286,6 +287,17 @@ export const en: Messages = {
     },
     followLink: "Follow link",
     followLinkBinding: (binding: string) => `(${binding})`,
+    formatToolbar: "Formatting",
+    format: {
+      [NoteFormat.BOLD]: "Bold",
+      [NoteFormat.ITALIC]: "Italic",
+      [NoteFormat.STRIKETHROUGH]: "Strikethrough",
+      [NoteFormat.CODE]: "Inline code",
+      [NoteFormat.NUMBERED_LIST]: "Numbered list",
+      [NoteFormat.BULLETED_LIST]: "Bulleted list",
+      [NoteFormat.CLEAR]: "Clear formatting",
+    },
+    formatHint: (label: string, binding: string) => `${label} (${binding})`,
   },
   image: {
     dropHint: "Drop an image here, or paste one",
@@ -553,9 +565,14 @@ export const en: Messages = {
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicate selected blocks",
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
     [KeyBinding.OPEN_LINK]: "Open note link in new tab",
-    [KeyBinding.NOTE_BOLD]: "Bold selected text (note block)",
-    [KeyBinding.NOTE_ITALIC]: "Italicize selected text (note block)",
-    [KeyBinding.NOTE_CODE]: "Wrap selected text in backticks (note block)",
+    [KeyBinding.NOTE_BOLD]: "Bold selected text (note text)",
+    [KeyBinding.NOTE_ITALIC]: "Italicize selected text (note text)",
+    [KeyBinding.NOTE_STRIKETHROUGH]: "Strike through selected text (note text)",
+    [KeyBinding.NOTE_CODE]: "Wrap selected text in backticks (note text)",
+    [KeyBinding.NOTE_NUMBERED_LIST]:
+      "Turn selected lines into a numbered list (note text)",
+    [KeyBinding.NOTE_BULLETED_LIST]:
+      "Turn selected lines into a bulleted list (note text)",
     [KeyBinding.WRAP_SELECTION]:
       "Wrap selected text in the typed pair (any text field)",
     [KeyBinding.SUBMIT_EDITOR]: "Save / create from a code editor",
@@ -846,7 +863,7 @@ export const en: Messages = {
       folderName: "   Sales Reports   ",
       ticketTitle: "fix login timeout",
       noteSample:
-        "Click this note to see its raw text: it mixes **bold**, _italic_, `code`, and a link: https://example.com. Click away to see it rendered again.",
+        "Click this note to see its raw text: it mixes **bold**, _italic_, ~strikethrough~, `code`, and a link: https://example.com. Click away to see it rendered again.",
       tableSample: `| Exit code | Meaning | Action |
 | :---: | --- | --- |
 | 126 | Permission denied | \`chmod +x\` the script |
@@ -859,8 +876,8 @@ export const en: Messages = {
 If something goes wrong, undo it in this order:
 1. Stop what you're doing
 2. Put the backup back
-    1. Copy it over the original
-    2. Open it to make sure it looks right
+\t1. Copy it over the original
+\t2. Open it to make sure it looks right
 3. Let your team know what happened`,
     },
     gettingStarted: {
@@ -1347,6 +1364,7 @@ If something goes wrong, undo it in this order:
 | --- | --- |
 | \\**bold-text\\** | **bold-text** |
 | \\_italic-text\\_ | _italic-text_ |
+| \\~struck-text\\~ | ~struck-text~ |
 | \\\`code-text\\\` | \`code-text\` |
 | \\[labelled-link](\\https://example.com) | [labelled-link](https://example.com) |`,
       escapes:
@@ -1356,13 +1374,13 @@ If something goes wrong, undo it in this order:
       tables:
         "Notes also support [GitHub-flavored markdown tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables): cells separated by `|` bars, with a row of dashes under the header. Click the note below to see the raw syntax.",
       lists:
-        "Lists work the same way: start a line with `*` or `-` for a bullet, or with a number and a dot for a numbered step. Indent a line to nest it under the item above it. Every item is one line long, so the list ends at the first line that does not start with a marker.",
+        "Lists work the same way: start a line with `*` or `-` for a bullet, or with a number and a dot for a numbered step. Indent a line to nest it under the item above it: Tab indents every selected line and Shift+Tab removes one level. Every item is one line long, so the list ends at the first line that does not start with a marker.",
       noNesting:
         "Styles do not combine: for example, bold and italics cannot be mixed on the same words. Whichever style starts first wins.",
       links:
         "Bare URLs are detected automatically and become clickable links. To open a link, hold `Ctrl` and click it, or hover it and click **Follow link** in its tooltip.",
       wrapKeys:
-        "With text selected in a note, `Ctrl+B` wraps it in bold, `Ctrl+I` in italics, and `Ctrl+´` in backticks; typing any parenthesis character (**(**, **[**, or **{**) or quote (**\"** or **'**) wraps it in that pair. Pair wrapping is not exclusive to notes: it works the same way in the command editor.",
+        "Select text in a note or in a variable section name and a formatting toolbar appears above it, with bold, italics, strikethrough, inline code, and numbered or bulleted lists, plus a button at the end that clears every style from the selection. Hover a button to see its shortcut. A button is highlighted when the selection already has that style, and clicking it removes the style; it is disabled when the selection only partly covers styled text, since styles don't combine. With several lines selected, each line gets its own style. Typing any parenthesis character (**(**, **[**, or **{**) or quote (**\"** or **'**) wraps it in that pair.",
     },
     imageBlock: {
       intro:

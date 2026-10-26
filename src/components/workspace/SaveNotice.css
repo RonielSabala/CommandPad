@@ -113,6 +113,6 @@
 }
 
 .save-notice-close:hover {
-  background: var(--color-surface-alt);
   color: var(--color-text-primary);
+  background: var(--color-surface-hover-bg);
 }

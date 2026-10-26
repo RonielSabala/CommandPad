@@ -32,7 +32,7 @@
   content: "";
   position: absolute;
   inset: 1px;
-  background: var(--color-surface-alt);
+  background: var(--color-surface-hover-bg);
   border: var(--border-standard);
   border-radius: var(--radius-lg);
   z-index: var(--z-base);
@@ -165,7 +165,7 @@
 }
 
 .tab-close:hover::before {
-  background: var(--white-a10);
+  background: var(--color-surface-hover-bg);
 }
 
 .tab-close .tab-close-icon {

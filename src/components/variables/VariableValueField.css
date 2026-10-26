@@ -85,7 +85,7 @@ body.read-mode .variable-editor-value textarea {
 }
 
 .variable-editor-options:hover {
-  background: var(--color-surface-alt);
+  background: var(--color-surface-hover-bg);
 }
 
 /* Unused variable */
