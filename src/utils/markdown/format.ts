@@ -92,24 +92,15 @@ function lineRange(text: string, { from, to }: NoteRange): NoteRange {
   };
 }
 
-interface NoteLine {
-  line: string;
-  start: number;
-}
-
 /** The lines `selection` touches. */
 function selectedLines(
   text: string,
   selection: NoteRange,
-): { lines: NoteRange; rows: NoteLine[] } {
+): { lines: NoteRange; texts: string[]; starts: number[] } {
   const lines = lineRange(text, selection);
-  const rows = splitLines(text.slice(lines.from, lines.to));
-  const starts = lineStarts(rows, lines.from);
+  const texts = splitLines(text.slice(lines.from, lines.to));
 
-  return {
-    lines,
-    rows: rows.map((line, index) => ({ line, start: starts[index] })),
-  };
+  return { lines, texts, starts: lineStarts(texts, lines.from) };
 }
 
 /** The text between a token's marks. */
@@ -335,7 +326,9 @@ function inlineTarget(text: string, list: ListTarget): InlineTarget | null {
 
 // --- List formats ---
 
-interface ListRow extends NoteLine {
+interface ListRow {
+  line: string;
+  start: number;
   item: RegExpExecArray | null;
 }
 
@@ -348,10 +341,11 @@ interface ListTarget {
 }
 
 function listTarget(text: string, selection: NoteRange): ListTarget {
-  const { lines, rows: plain } = selectedLines(text, selection);
-  const rows = plain.map((row) => ({
-    ...row,
-    item: MarkdownList.ITEM_REGEX.exec(row.line),
+  const { lines, texts, starts } = selectedLines(text, selection);
+  const rows = texts.map((line, index) => ({
+    line,
+    start: starts[index],
+    item: MarkdownList.ITEM_REGEX.exec(line),
   }));
 
   return {
@@ -468,11 +462,11 @@ export function outdentNoteLines(
   selection: NoteRange,
   indent: string,
 ): NoteEdit | null {
-  const removed = selectedLines(text, selection).rows.flatMap(
-    ({ line, start }) =>
-      line.startsWith(indent)
-        ? [{ from: start, to: start + indent.length }]
-        : [],
+  const { texts, starts } = selectedLines(text, selection);
+  const removed = texts.flatMap((line, index) =>
+    line.startsWith(indent)
+      ? [{ from: starts[index], to: starts[index] + indent.length }]
+      : [],
   );
 
   return removed.length > 0 ? removeRanges(text, removed, selection) : null;
