@@ -140,16 +140,16 @@ export function NoteFormatToolbar({
     const measure = () => {
       const field = textarea.getBoundingClientRect();
       const lines = getTextareaRangeRects(textarea, from, to);
-      const first = lines[0] ?? field;
-      const caret =
-        textarea.selectionDirection === SelectionDirection.BACKWARD
-          ? first.left
-          : (lines[lines.length - 1] ?? field).right;
+      const backward =
+        textarea.selectionDirection === SelectionDirection.BACKWARD;
+
+      // The caret's line places it on both axes
+      const line = (backward ? lines[0] : lines[lines.length - 1]) ?? field;
 
       anchorRef.current = {
-        top: first.top - field.top,
-        bottom: first.bottom - field.top,
-        caret: caret - field.left,
+        top: line.top - field.top,
+        bottom: line.bottom - field.top,
+        caret: (backward ? line.left : line.right) - field.left,
         width: field.width,
       };
 
