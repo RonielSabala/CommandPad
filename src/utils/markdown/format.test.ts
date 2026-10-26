@@ -60,6 +60,17 @@ const CASES: Case[] = [
   ],
   [NoteFormat.NUMBERED_LIST, "x\no«»ne", OFF, "x\n1. one«»"],
   [NoteFormat.BULLETED_LIST, "«- a\n  * b»", ON, "«a\n  b»"],
+  [NoteFormat.CLEAR, "«**a** _b_ c»", OFF, "«a b c»"],
+  [NoteFormat.CLEAR, "x **a«b**» y", OFF, "x a«b» y"],
+  [NoteFormat.CLEAR, "«1. **a**\n  * ~~b~~»", OFF, "«a\n  b»"],
+  [
+    NoteFormat.CLEAR,
+    "«see [docs](https://x.y) `ls`»",
+    OFF,
+    "«see [docs](https://x.y) ls»",
+  ],
+  [NoteFormat.CLEAR, "«plain [docs](https://x.y)»", DISABLED, null],
+  [NoteFormat.CLEAR, "«  »", DISABLED, null],
 ];
 
 const INDENT_CASES: [string, string | null][] = [

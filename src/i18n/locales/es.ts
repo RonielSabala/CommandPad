@@ -307,6 +307,7 @@ export const es: Messages = {
       [NoteFormat.CODE]: "Código en línea",
       [NoteFormat.NUMBERED_LIST]: "Lista numerada",
       [NoteFormat.BULLETED_LIST]: "Lista con viñetas",
+      [NoteFormat.CLEAR]: "Borrar formato",
     },
     formatHint: (label: string, binding: string) => `${label} (${binding})`,
   },
@@ -1406,7 +1407,7 @@ Si algo sale mal, deshazlo en este orden:
       links:
         "Las URLs sueltas se detectan automáticamente y se convierten en enlaces clicables. Para abrir un enlace, mantén `Ctrl` y haz clic en él, o pasa el puntero por encima y haz clic en **Seguir enlace** en su tooltip.",
       wrapKeys:
-        "Selecciona texto en una nota o en el nombre de una sección de variables y aparece encima una barra de formato, con negrita, cursiva, tachado, código en línea y listas numeradas o con viñetas. Pasa el puntero por un botón para ver su atajo. Un botón se resalta cuando la selección ya tiene ese estilo, y al pulsarlo se quita; se desactiva cuando la selección cubre solo parte de un texto con estilo, porque los estilos no se combinan. Con varias líneas seleccionadas, cada línea recibe su propio estilo. Escribir cualquier carácter de paréntesis (**(**, **[** o **{**) o comillas (**\"** o **'**) lo envuelve en ese par.",
+        "Selecciona texto en una nota o en el nombre de una sección de variables y aparece encima una barra de formato, con negrita, cursiva, tachado, código en línea y listas numeradas o con viñetas, y un botón al final que borra todos los estilos de la selección. Pasa el puntero por un botón para ver su atajo. Un botón se resalta cuando la selección ya tiene ese estilo, y al pulsarlo se quita; se desactiva cuando la selección cubre solo parte de un texto con estilo, porque los estilos no se combinan. Con varias líneas seleccionadas, cada línea recibe su propio estilo. Escribir cualquier carácter de paréntesis (**(**, **[** o **{**) o comillas (**\"** o **'**) lo envuelve en ese par.",
     },
     imageBlock: {
       intro:

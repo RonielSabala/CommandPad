@@ -6,7 +6,7 @@ import { replaceSelection } from "@/utils/dom";
 import { planNoteFormats, type NoteEdit } from "@/utils/markdown";
 import { useCallback, type KeyboardEvent } from "react";
 
-export const NOTE_FORMAT_BINDINGS: Record<NoteFormat, KeyBinding> = {
+export const NOTE_FORMAT_BINDINGS: Partial<Record<NoteFormat, KeyBinding>> = {
   [NoteFormat.BOLD]: KeyBinding.NOTE_BOLD,
   [NoteFormat.ITALIC]: KeyBinding.NOTE_ITALIC,
   [NoteFormat.STRIKETHROUGH]: KeyBinding.NOTE_STRIKETHROUGH,

@@ -152,6 +152,7 @@ export const NoteFormat = {
   CODE: "code",
   NUMBERED_LIST: "numberedList",
   BULLETED_LIST: "bulletedList",
+  CLEAR: "clear",
 } as const;
 export type NoteFormat = (typeof NoteFormat)[keyof typeof NoteFormat];
 

@@ -137,7 +137,7 @@ Free-form text rendered as markdown (`utils/markdown/`). Two parsing levels, onl
 - One table style `.note-table`, one list style `.note-list` (`NoteText.css`), reused by the docs. Don't add a second.
 - Spell check: `spellcheckEnabled` (persisted, default on, toggled from `WorkspaceContextMenu`) binds **only** the note textarea, with `lang={language}`. Every other field is `spellCheck={false}`.
 - Textarea keys: `useTabInsertion` (Tab inserts a tab), `useNoteFormatting` (format shortcuts, pair wrapping).
-- **Formatting** (shortcuts and the portalled `NoteFormatToolbar` over a selection) all goes through `planNoteFormats` (`utils/markdown/format.ts`), which gives each `NoteFormat` a state (inline marks are planned per selected line and never span a line break; on inside one token of its kind, disabled when touching any other token, since marks don't nest) and a lazy edit applied through `insertText` for undo. It reads each segment's raw `from`/`to` extent.
+- **Formatting** (shortcuts and the portalled `NoteFormatToolbar` over a selection) all goes through `planNoteFormats` (`utils/markdown/format.ts`), which gives each `NoteFormat` a state (inline marks are planned per selected line and never span a line break; on inside one token of its kind, disabled when touching any other token, since marks don't nest) and a lazy edit applied through `insertText` for undo; `CLEAR` is an action, never on, and drops every mark and list marker touched but never a link. It reads each segment's raw `from`/`to` extent.
 
 #### The image block
 
@@ -351,7 +351,7 @@ Every code surface is **Monaco, bundled locally** (never a CDN). `src/monaco/` i
 ### Conventions to follow
 
 - **No magic values.** Strings/numbers go in frozen `as const` objects in `common/`; regex characters go in syntax tables.
-- **Icons**: `react-bootstrap-icons` named imports (solid glyphs, size via CSS `width`/`height`/`color`); no hand-written `<svg>` except flags/favicons.
+- **Icons**: `react-bootstrap-icons` named imports (solid glyphs, size via CSS `width`/`height`/`color`); no hand-written `<svg>` except flags/favicons and the icons in `components/icons/index.tsx` (glyphs Bootstrap lacks).
 - **Theming touches only `styles/tokens.css`**; components use CSS variables, never hardcoded colors (except `data:` URI SVGs).
 - **Every color is a published GitHub Primer value**, never a hand-mixed hex (the one exception is the hand-tuned dark main card `#0b0e12`). Surfaces (dark): `--color-bg` `#0b0e12` (main card, wells, deepest), `--color-app-bg` `#161b22` (frame), `--color-surface` `#22272e` (cards), `--color-surface-alt` `#2d333b` (fills/hover), border `#373e47`. Light: frame `#eaeef2`, main `#f6f8fa`, cards white, fills `#eaeef2`, border `#d0d7de`. Text uses Primer `fg` steps; accents/semantic colors are Primer `fg`, `-solid` fills are `emphasis` values (use `-solid` for filled surfaces, never derive a fill from a text token). Neutral gray and slate were both rejected.
 - **Stacking goes through the elevation scale** (`--z-behind`, `--z-base`, `--z-raised`, `--z-sticky`, `--z-docked`, `--z-dropdown`, `--z-modal`, `--z-popover`, `--z-tooltip`), never a raw `z-index`; insert a named layer if needed.

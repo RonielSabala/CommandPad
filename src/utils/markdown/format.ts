@@ -131,6 +131,14 @@ function joinSplices(
   return { from: splices[0].from, to: cursor, text: parts.join(""), starts };
 }
 
+/** Where `offset` lands once every range in `removed` is cut out. */
+function shiftPast(removed: NoteRange[], offset: number): number {
+  return removed.reduce(
+    (shifted, { from, to }) => shifted - clamp(offset - from, 0, to - from),
+    offset,
+  );
+}
+
 function wrapPieces(
   { text, pieces }: InlineTarget,
   bare: NoteRange[],
@@ -411,7 +419,7 @@ export function outdentNoteLines(
   indent: string,
 ): NoteEdit | null {
   const lines = lineRange(text, selection);
-  const removedAt: number[] = [];
+  const removed: NoteRange[] = [];
   let lineStart = lines.from;
 
   const rows = splitLines(text.slice(lines.from, lines.to)).map((line) => {
@@ -420,27 +428,83 @@ export function outdentNoteLines(
       : line;
 
     if (outdented !== line) {
-      removedAt.push(lineStart);
+      removed.push({ from: lineStart, to: lineStart + indent.length });
     }
 
     lineStart += line.length + LINE_BREAK.length;
     return outdented;
   });
 
-  if (removedAt.length === 0) {
+  if (removed.length === 0) {
     return null;
   }
-
-  const shift = (offset: number) =>
-    removedAt.reduce(
-      (shifted, at) => shifted - clamp(offset - at, 0, indent.length),
-      offset,
-    );
 
   return {
     ...lines,
     text: joinLines(rows),
-    selection: { from: shift(selection.from), to: shift(selection.to) },
+    selection: {
+      from: shiftPast(removed, selection.from),
+      to: shiftPast(removed, selection.to),
+    },
+  };
+}
+
+// --- Clear formatting ---
+
+/** Drops every mark and list marker the selection touches. */
+function planClear(
+  text: string,
+  { selection, lines, rows }: ListTarget,
+  inline: InlineTarget | null,
+): NoteFormatPlan {
+  const removed: NoteRange[] = [];
+  let lineStart = lines.from;
+
+  for (const { line, item } of rows) {
+    if (item) {
+      const indent = item.groups?.indent ?? "";
+      removed.push({
+        from: lineStart + indent.length,
+        to: lineStart + item[0].length,
+      });
+    }
+
+    lineStart += line.length + LINE_BREAK.length;
+  }
+
+  const tokens = new Set(inline?.pieces.flatMap(({ touched }) => touched));
+
+  for (const { type, start, from, to } of tokens) {
+    if (type === NoteSegmentType.LINK) {
+      continue;
+    }
+
+    removed.push({ from, to: start }, { from: to - (start - from), to });
+  }
+
+  if (removed.length === 0) {
+    return DISABLED;
+  }
+
+  return {
+    state: NoteFormatState.OFF,
+    apply: () => {
+      removed.sort((a, b) => a.from - b.from);
+      const edit = joinSplices(
+        text,
+        removed.map((range) => ({ ...range, text: "" })),
+      );
+
+      return {
+        from: edit.from,
+        to: edit.to,
+        text: edit.text,
+        selection: {
+          from: shiftPast(removed, selection.from),
+          to: shiftPast(removed, selection.to),
+        },
+      };
+    },
   };
 }
 
@@ -464,5 +528,6 @@ export function planNoteFormats(
     [NoteFormat.CODE]: planInlineFormat(NoteFormat.CODE),
     [NoteFormat.NUMBERED_LIST]: planList(list, NoteFormat.NUMBERED_LIST),
     [NoteFormat.BULLETED_LIST]: planList(list, NoteFormat.BULLETED_LIST),
+    [NoteFormat.CLEAR]: planClear(text, list, inline),
   };
 }

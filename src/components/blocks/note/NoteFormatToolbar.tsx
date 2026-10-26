@@ -13,6 +13,7 @@ import {
   SPACED_BINDING_SEPARATOR,
 } from "@/common/keybindings";
 import { tooltip } from "@/components/common/tooltip/tooltip";
+import { ClearFormattingIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { getTextareaRangeRects, toPx } from "@/utils/dom";
 import { planNoteFormats, type NoteRange } from "@/utils/markdown";
@@ -24,6 +25,7 @@ import {
   useLayoutEffect,
   useMemo,
   useRef,
+  type ComponentType,
   type RefObject,
 } from "react";
 import {
@@ -33,24 +35,28 @@ import {
   TypeBold,
   TypeItalic,
   TypeStrikethrough,
-  type Icon,
 } from "react-bootstrap-icons";
 import { createPortal } from "react-dom";
 
 import "./NoteFormatToolbar.css";
 import { formatNoteSelection, NOTE_FORMAT_BINDINGS } from "./useNoteFormatting";
 
-const FORMAT_ICONS: Record<NoteFormat, Icon> = {
+const FORMAT_ICONS: Record<NoteFormat, ComponentType<{ className: string }>> = {
   [NoteFormat.BOLD]: TypeBold,
   [NoteFormat.ITALIC]: TypeItalic,
   [NoteFormat.STRIKETHROUGH]: TypeStrikethrough,
   [NoteFormat.CODE]: Code,
   [NoteFormat.NUMBERED_LIST]: ListOl,
   [NoteFormat.BULLETED_LIST]: ListUl,
+  [NoteFormat.CLEAR]: ClearFormattingIcon,
 };
 
 /** Buttons in order, a separator between groups. */
-const FORMAT_GROUPS: { formats: NoteFormat[]; boldIcons?: boolean }[] = [
+const FORMAT_GROUPS: {
+  formats: NoteFormat[];
+  boldIcons?: boolean;
+  action?: boolean;
+}[] = [
   {
     formats: [
       NoteFormat.BOLD,
@@ -61,6 +67,7 @@ const FORMAT_GROUPS: { formats: NoteFormat[]; boldIcons?: boolean }[] = [
     boldIcons: true,
   },
   { formats: [NoteFormat.NUMBERED_LIST, NoteFormat.BULLETED_LIST] },
+  { formats: [NoteFormat.CLEAR], action: true },
 ];
 
 interface ToolbarAnchor {
@@ -233,7 +240,7 @@ export function NoteFormatToolbar({
       }}
       onClick={(event) => event.stopPropagation()}
     >
-      {FORMAT_GROUPS.map(({ formats, boldIcons }, index) => (
+      {FORMAT_GROUPS.map(({ formats, boldIcons, action }, index) => (
         <Fragment key={index}>
           {index > 0 && (
             <span className="note-format-separator" role={AriaRole.SEPARATOR} />
@@ -243,10 +250,16 @@ export function NoteFormatToolbar({
             const Icon = FORMAT_ICONS[format];
             const label = t.note.format[format];
             const disabled = state === NoteFormatState.DISABLED;
-            const binding = formatBinding(
-              KEYBINDINGS[NOTE_FORMAT_BINDINGS[format]].binding,
-              SPACED_BINDING_SEPARATOR,
-            );
+            const bindingId = NOTE_FORMAT_BINDINGS[format];
+            const hint = bindingId
+              ? t.note.formatHint(
+                  label,
+                  formatBinding(
+                    KEYBINDINGS[bindingId].binding,
+                    SPACED_BINDING_SEPARATOR,
+                  ),
+                )
+              : label;
 
             return (
               <button
@@ -260,13 +273,11 @@ export function NoteFormatToolbar({
                   CssClass.BTN_SOFT_ICON,
                 )}
                 aria-label={label}
-                aria-pressed={state === NoteFormatState.ON}
+                aria-pressed={action ? undefined : state === NoteFormatState.ON}
                 aria-disabled={disabled}
                 tabIndex={-1}
                 onClick={disabled ? undefined : () => apply(format)}
-                {...tooltip(
-                  disabled ? null : t.note.formatHint(label, binding),
-                )}
+                {...tooltip(disabled ? null : hint)}
               >
                 <Icon className={CssClass.ICON} />
               </button>
