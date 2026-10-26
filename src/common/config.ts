@@ -147,7 +147,7 @@ export const WrapPairs = {
 } as const;
 
 export const LINE_BREAK = "\n";
-export const LINE_FILLER = "​";
+export const LINE_FILLER = "\u200B";
 export const CARRIAGE_RETURN = "\r";
 export const NON_BREAKING_SPACE = "\u00A0";
 export const ELLIPSIS = "\u2026";
