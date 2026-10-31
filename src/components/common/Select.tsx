@@ -87,7 +87,7 @@ export function Select<T extends string>({
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
-  const optionCountRef = useRef(options.length);
+  const previousOptionsRef = useRef(options);
   const searchable =
     !!searchPlaceholder && options.length > SelectConfig.MAX_VISIBLE_OPTIONS;
   const shownOptions = searchable
@@ -179,8 +179,12 @@ export function Select<T extends string>({
   // Clamp the option list
   useLayoutEffect(() => {
     const list = listRef.current;
-    const grew = options.length > optionCountRef.current;
-    optionCountRef.current = options.length;
+    const previous = previousOptionsRef.current;
+    previousOptionsRef.current = options;
+
+    const added = shownOptions.findIndex(
+      (option) => !previous.some((entry) => entry.value === option.value),
+    );
 
     if (!list) {
       return;
@@ -200,7 +204,17 @@ export function Select<T extends string>({
       lastVisible.getBoundingClientRect().bottom;
 
     list.style.maxHeight = toPx(list.offsetHeight - clipped);
-    list.scrollTop = grew ? list.scrollHeight : scrollTop;
+    list.scrollTop = scrollTop;
+
+    // Reveal a new option only as far as needed
+    if (added >= 0) {
+      const row = rows[added].getBoundingClientRect();
+      const bounds = list.getBoundingClientRect();
+
+      list.scrollTop +=
+        Math.max(row.bottom - bounds.bottom, 0) +
+        Math.min(row.top - bounds.top, 0);
+    }
   }, [open, scrollable, options, shownOptions]);
 
   // Open on the current value when it sits past the fold
