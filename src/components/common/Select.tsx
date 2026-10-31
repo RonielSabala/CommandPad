@@ -6,7 +6,8 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import { useStore } from "@/store/store";
 import { toPx } from "@/utils/dom";
-import { classNames } from "@/utils/string";
+import { abbreviate, classNames, countCharacters } from "@/utils/string";
+import { isString } from "@/utils/typeGuards";
 import {
   useEffect,
   useLayoutEffect,
@@ -233,8 +234,16 @@ export function Select<T extends string>({
                 option.value === value && CssClass.IS_SELECTED,
               )}
               onClick={() => select(option.value)}
+              {...tooltip(
+                isString(option.label) &&
+                  countCharacters(option.label) > SelectConfig.MAX_OPTION_CHARS
+                  ? option.label
+                  : null,
+              )}
             >
-              {option.label}
+              {isString(option.label)
+                ? abbreviate(option.label, SelectConfig.MAX_OPTION_CHARS)
+                : option.label}
             </button>
           );
 
