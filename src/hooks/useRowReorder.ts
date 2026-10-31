@@ -50,6 +50,8 @@ export function useRowReorder(
     rowProps: {
       draggable,
       onDragStart: (event) => {
+        event.stopPropagation();
+
         dragGroups[group] = id;
         event.dataTransfer.effectAllowed = DragEffect.MOVE;
         setIsDragging(true);
