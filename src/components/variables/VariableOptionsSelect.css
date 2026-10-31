@@ -13,13 +13,14 @@
   outline: none;
 }
 
-.variable-option-remove {
-  flex-shrink: 0;
+.variable-option-target {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
-.variable-option-remove:hover {
-  background: transparent;
-  color: var(--danger);
+.variable-option-actions {
+  flex-shrink: 0;
 }
 
 .variable-option-add-row {
@@ -28,7 +29,7 @@
   gap: var(--space-2);
 }
 
-.variable-option-add {
+.variable-option-input {
   flex: 1 1 auto;
   min-width: 0;
   font-family: var(--font-mono);
@@ -41,11 +42,11 @@
   outline: none;
 }
 
-.variable-option-add:focus {
+.variable-option-input:focus {
   border-color: var(--color-border-focus);
 }
 
-.variable-option-add::placeholder {
+.variable-option-input::placeholder {
   color: var(--color-text-muted);
 }
 

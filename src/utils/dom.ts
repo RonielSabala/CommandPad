@@ -12,6 +12,43 @@ export function toPx(pixels: number): string {
   return `${pixels}px`;
 }
 
+/** Drags the row's `DataAttr.DRAG_IMAGE` element instead of the whole row. */
+export function applyDragImage(event: {
+  currentTarget: Element;
+  clientX: number;
+  clientY: number;
+  dataTransfer: DataTransfer;
+}): boolean {
+  const found = event.currentTarget.querySelector<HTMLElement>(
+    `[${DataAttr.DRAG_IMAGE}]`,
+  );
+  if (!found) {
+    return false;
+  }
+
+  const isStandIn = found.classList.contains(CssClass.DRAG_IMAGE);
+  const dragImage = isStandIn
+    ? document.body.appendChild(found.cloneNode(true) as HTMLElement)
+    : found;
+
+  const rect = dragImage.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  const underPointer = x >= 0 && x <= rect.width && y >= 0 && y <= rect.height;
+
+  event.dataTransfer.setDragImage(
+    dragImage,
+    underPointer ? x : 0,
+    underPointer ? y : rect.height,
+  );
+
+  if (isStandIn) {
+    requestAnimationFrame(() => dragImage.remove());
+  }
+
+  return true;
+}
+
 /**
  * Replaces the field's selection with `text` through the editing command, so
  * the change joins the undo history.

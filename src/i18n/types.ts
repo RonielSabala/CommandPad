@@ -132,7 +132,9 @@ export interface Messages {
     noOptions: string;
     addOptionPlaceholder: string;
     addOption: string;
-    removeOption: (option: string) => string;
+    optionActions: string;
+    editOption: string;
+    removeOption: string;
     actions: string;
     duplicate: (count: number) => string;
     renameCase: string;
@@ -574,7 +576,12 @@ export interface Messages {
       demoHint: (variableActionsLabel: string) => string;
       constants: string;
       constantsDemoHint: string;
-      enums: (enumLabel: string, newRowLabel: string) => string;
+      enums: (
+        enumLabel: string,
+        newRowLabel: string,
+        editOptionLabel: string,
+        removeOptionLabel: string,
+      ) => string;
       enumsDemoHint: string;
       clearValues: (clearValuesLabel: string) => string;
     };

@@ -128,7 +128,9 @@ export const en: Messages = {
     noOptions: "No options yet",
     addOptionPlaceholder: "Add option…",
     addOption: "Add option",
-    removeOption: (option) => `Remove ${option}`,
+    optionActions: "Option actions",
+    editOption: "Edit option",
+    removeOption: "Remove option",
     actions: "Variable actions",
     duplicate: (count) =>
       count === 1 ? "Duplicate variable" : "Duplicate variables",
@@ -1000,8 +1002,8 @@ If something goes wrong, undo it in this order:
         "Not every variable changes for the same reason. Some are values you swap all the time, and some are **constants**: they stay the same for the whole life of the runbook, and they are only variables because the same value shows up in command after command. CommandPad tells them apart by naming convention: a key written entirely in **capitals** is treated as a _constant_, and any key with a **lowercase** letter in it is treated as a _variable_.",
       constantsDemoHint:
         "The convention is purely a naming one: constants resolve, get referenced and get renamed exactly like any other variable. Rename a key below from capitals to lowercase and back to see the color follow along.",
-      enums: (enumLabel, newRowLabel) =>
-        `A value can also be a fixed set of choices, like an environment or a region, instead of free text. Add an **${enumLabel}** variable, from the **${newRowLabel}** row of the variables editor or the bottom of the sidebar list, and its value is a combo box: each choice can be removed and a box at the bottom adds a new one.`,
+      enums: (enumLabel, newRowLabel, editOptionLabel, removeOptionLabel) =>
+        `A value can also be a fixed set of choices, like an environment or a region, instead of free text. Add an **${enumLabel}** variable, from the **${newRowLabel}** row of the variables editor or the bottom of the sidebar list, and its value is a combo box with a box at the bottom that adds a new choice. Drag a choice by its handle to reorder it, or open its **three dots** menu to **${editOptionLabel}** or **${removeOptionLabel}**.`,
       enumsDemoHint:
         "Below, `env` can only be one of three clusters. Pick another one and the command follows, with no chance of a typo in the context name:",
       clearValues: (clearValuesLabel) =>

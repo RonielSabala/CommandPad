@@ -1,6 +1,6 @@
 import { RunbookBlockConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
+import { ScrollIntoView } from "@/common/constants/dom";
 import { CodeModelScope, EditorLanguage } from "@/common/editorConfig";
 import {
   AppMode,
@@ -15,6 +15,7 @@ import {
   type CodeEditorHandle,
 } from "@/components/common/codeEditor/CodeEditor";
 import { useCodeRendering } from "@/components/common/codeEditor/codeRendering";
+import { DragImage } from "@/components/common/DragImage";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { RunbookIcon } from "@/components/icons";
 import { ProviderSelect } from "@/components/modals/cloud/ProviderSelect";
@@ -284,16 +285,12 @@ export function RunbookBlock({
         CssClass.BLOCK_SURFACE,
       )}
     >
-      <div
-        className="runbook-block-drag-image"
-        aria-hidden
-        {...{ [DataAttr.DRAG_IMAGE]: "" }}
-      >
+      <DragImage>
         <RunbookIcon
           className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
         />
         {dragImageLabel}
-      </div>
+      </DragImage>
 
       {(!readMode || canSwitchView || !!local || embed.locked) && (
         <div

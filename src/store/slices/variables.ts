@@ -48,6 +48,8 @@ type VariablesActions = Pick<
   | "toggleVariableSecret"
   | "addVariableOption"
   | "removeVariableOption"
+  | "renameVariableOption"
+  | "reorderVariableOptions"
   | "applyVariableKeyCase"
   | "clearVariableValues"
   | "reorderVariables"
@@ -345,6 +347,60 @@ export function createVariablesSlice(
             const options = v.options.filter((entry) => entry !== option);
             const value = v.value === option ? (options[0] ?? "") : v.value;
             return { ...v, options, value };
+          }),
+        })),
+      );
+
+      get().saveState();
+    },
+
+    renameVariableOption: (variableId, option, next) => {
+      const trimmed = next.trim();
+      if (get().mode === AppMode.READ || !trimmed || trimmed === option) {
+        return;
+      }
+
+      set((s) =>
+        withActiveTab(s, (tab) => ({
+          ...tab,
+          variables: tab.variables.map((v) =>
+            v.id !== variableId ||
+            !v.options?.includes(option) ||
+            v.options.includes(trimmed)
+              ? v
+              : {
+                  ...v,
+                  options: v.options.map((entry) =>
+                    entry === option ? trimmed : entry,
+                  ),
+                  value: v.value === option ? trimmed : v.value,
+                },
+          ),
+        })),
+      );
+
+      get().saveState();
+    },
+
+    reorderVariableOptions: (variableId, sourceOption, targetOption) => {
+      if (get().mode === AppMode.READ || sourceOption === targetOption) {
+        return;
+      }
+
+      set((s) =>
+        withActiveTab(s, (tab) => ({
+          ...tab,
+          variables: tab.variables.map((v) => {
+            const from = v.options?.indexOf(sourceOption) ?? -1;
+            const to = v.options?.indexOf(targetOption) ?? -1;
+
+            if (v.id !== variableId || !v.options || from < 0 || to < 0) {
+              return v;
+            }
+
+            const options = [...v.options];
+            options.splice(to, 0, ...options.splice(from, 1));
+            return { ...v, options };
           }),
         })),
       );

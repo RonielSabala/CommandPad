@@ -50,8 +50,10 @@ export const AriaRole = {
 } as const;
 
 export const SelectSelector = {
+  MENU: classSelector(CssClass.SELECT_MENU),
   OPTION: `[role="${AriaRole.OPTION}"]`,
   SELECTED_OPTION: ".select-option.is-selected",
+  NESTED_POPUP: classSelector(CssClass.CONTEXT_MENU),
 } as const;
 
 export const ModalSelector = {

@@ -51,6 +51,8 @@ export function VariablesDocs() {
         text={t.docs.variables.enums(
           t.variables.enumLabel,
           t.variables.newRowLabel,
+          t.variables.editOption,
+          t.variables.removeOption,
         )}
       />
       <Prose text={t.docs.variables.enumsDemoHint} />

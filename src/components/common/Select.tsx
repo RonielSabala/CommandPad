@@ -12,7 +12,9 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type ComponentType,
   type CSSProperties,
+  type LiHTMLAttributes,
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
@@ -30,6 +32,12 @@ export interface SelectOption<T extends string> {
   label: ReactNode;
 }
 
+export interface SelectOptionRowProps<T extends string> {
+  value: T;
+  rowProps: LiHTMLAttributes<HTMLLIElement>;
+  children: ReactNode;
+}
+
 interface SelectProps<T extends string> {
   value: T;
   options: readonly SelectOption<T>[];
@@ -40,7 +48,7 @@ interface SelectProps<T extends string> {
   align?: SelectAlign;
   title?: string;
   portal?: boolean;
-  optionAction?: (value: T) => ReactNode;
+  optionRow?: ComponentType<SelectOptionRowProps<T>>;
   empty?: ReactNode;
   footer?: ReactNode;
 }
@@ -55,7 +63,7 @@ export function Select<T extends string>({
   align = SelectAlign.END,
   title,
   portal = false,
-  optionAction,
+  optionRow: OptionRow,
   empty,
   footer,
 }: SelectProps<T>) {
@@ -63,7 +71,8 @@ export function Select<T extends string>({
   const [menuStyle, setMenuStyle] = useState<CSSProperties>();
   const mode = useStore((state) => state.mode);
   const rootRef = useRef<HTMLDivElement>(null);
-  const menuRef = useRef<HTMLUListElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
   const optionCountRef = useRef(options.length);
   const scrollable = options.length > SelectConfig.MAX_VISIBLE_OPTIONS;
 
@@ -80,14 +89,18 @@ export function Select<T extends string>({
       const target = event.target as Node;
       if (
         !rootRef.current?.contains(target) &&
-        !menuRef.current?.contains(target)
+        !menuRef.current?.contains(target) &&
+        !(target as Element).closest?.(SelectSelector.NESTED_POPUP)
       ) {
         setOpen(false);
       }
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === Key.ESCAPE) {
+      if (
+        event.key === Key.ESCAPE &&
+        !document.querySelector(SelectSelector.NESTED_POPUP)
+      ) {
         setOpen(false);
       }
     };
@@ -133,48 +146,48 @@ export function Select<T extends string>({
     }
   }, [open, portal, align]);
 
-  // Clamp the menu
+  // Clamp the option list
   useLayoutEffect(() => {
-    const menu = menuRef.current;
+    const list = listRef.current;
     const grew = options.length > optionCountRef.current;
     optionCountRef.current = options.length;
 
-    if (!menu) {
+    if (!list) {
       return;
     }
 
-    const { scrollTop } = menu;
-    menu.style.maxHeight = "";
+    const { scrollTop } = list;
+    list.style.maxHeight = "";
 
     if (!scrollable) {
       return;
     }
 
-    const rows = menu.querySelectorAll<HTMLElement>(SelectSelector.OPTION);
+    const rows = list.querySelectorAll<HTMLElement>(SelectSelector.OPTION);
     const lastVisible = rows[SelectConfig.MAX_VISIBLE_OPTIONS - 1];
     const clipped =
       rows[rows.length - 1].getBoundingClientRect().bottom -
       lastVisible.getBoundingClientRect().bottom;
 
-    menu.style.maxHeight = toPx(menu.offsetHeight - clipped);
-    menu.scrollTop = grew ? menu.scrollHeight : scrollTop;
+    list.style.maxHeight = toPx(list.offsetHeight - clipped);
+    list.scrollTop = grew ? list.scrollHeight : scrollTop;
   }, [open, scrollable, options]);
 
   // Open on the current value when it sits past the fold
   useLayoutEffect(() => {
-    const menu = menuRef.current;
-    if (!open || !menu) {
+    const list = listRef.current;
+    if (!open || !list) {
       return;
     }
 
-    const selected = menu.querySelector<HTMLElement>(
+    const selected = list.querySelector<HTMLElement>(
       SelectSelector.SELECTED_OPTION,
     );
     if (
       selected &&
-      selected.offsetTop + selected.offsetHeight > menu.clientHeight
+      selected.offsetTop + selected.offsetHeight > list.clientHeight
     ) {
-      menu.scrollTop = selected.offsetTop;
+      list.scrollTop = selected.offsetTop;
     }
   }, [open]);
 
@@ -184,48 +197,65 @@ export function Select<T extends string>({
   };
 
   const menu = open && (
-    <ul
+    <div
       ref={menuRef}
       className={classNames(
-        "select-menu",
-        scrollable && "is-scrollable",
+        CssClass.SELECT_MENU,
         portal ? CssClass.SELECT_MENU_PORTAL : `align-${align}`,
       )}
       style={portal ? menuStyle : undefined}
-      role={AriaRole.LISTBOX}
     >
-      {options.length === 0 && empty && (
-        <li className={classNames("select-empty", CssClass.NO_USER_SELECT)}>
-          {empty}
-        </li>
-      )}
+      <ul
+        ref={listRef}
+        className={classNames("select-list", scrollable && "is-scrollable")}
+        role={AriaRole.LISTBOX}
+      >
+        {options.length === 0 && empty && (
+          <li className={classNames("select-empty", CssClass.NO_USER_SELECT)}>
+            {empty}
+          </li>
+        )}
 
-      {options.map((option) => (
-        <li
-          key={option.value}
-          className={classNames(
-            CssClass.NO_USER_SELECT,
-            optionAction && "select-option-row",
-          )}
-          role={AriaRole.OPTION}
-          aria-selected={option.value === value}
-        >
-          <button
-            className={classNames(
-              "select-option",
-              option.value === value && "is-selected",
-            )}
-            onClick={() => select(option.value)}
-          >
-            {option.label}
-          </button>
+        {options.map((option) => {
+          const rowProps: LiHTMLAttributes<HTMLLIElement> = {
+            className: classNames(
+              CssClass.NO_USER_SELECT,
+              OptionRow && "select-option-row",
+            ),
+            role: AriaRole.OPTION,
+            "aria-selected": option.value === value,
+          };
 
-          {optionAction?.(option.value)}
-        </li>
-      ))}
+          const button = (
+            <button
+              className={classNames(
+                "select-option",
+                option.value === value && "is-selected",
+              )}
+              onClick={() => select(option.value)}
+            >
+              {option.label}
+            </button>
+          );
 
-      {footer && <li className="select-footer">{footer}</li>}
-    </ul>
+          return OptionRow ? (
+            <OptionRow
+              key={option.value}
+              value={option.value}
+              rowProps={rowProps}
+            >
+              {button}
+            </OptionRow>
+          ) : (
+            <li key={option.value} {...rowProps}>
+              {button}
+            </li>
+          );
+        })}
+      </ul>
+
+      {footer && <div className="select-footer">{footer}</div>}
+    </div>
   );
 
   return (

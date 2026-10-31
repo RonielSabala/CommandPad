@@ -1,6 +1,7 @@
 import { DRAG_TIMEOUT_MS } from "@/common/config";
 import { DragEffect } from "@/common/constants/events";
 import type { DragGroup } from "@/common/enums";
+import { applyDragImage } from "@/utils/dom";
 import { clamp } from "@/utils/number";
 import { useRef, useState, type DragEvent, type RefObject } from "react";
 
@@ -54,7 +55,9 @@ export function useRowReorder(
         setIsDragging(true);
 
         const dragImage = dragImageRef?.current;
-        if (dragImage) {
+        if (!dragImage) {
+          applyDragImage(event);
+        } else {
           const rect = dragImage.getBoundingClientRect();
           event.dataTransfer.setDragImage(
             dragImage,
