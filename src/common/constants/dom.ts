@@ -1,6 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { MonacoLayer } from "@/common/editorConfig";
-import { classSelector } from "@/utils/string";
+import { classSelector, compoundSelector } from "@/utils/string";
 
 export const ElementId = {
   BLOCKS_LIST: "blocks-list",
@@ -9,10 +9,10 @@ export const ElementId = {
 
 export const MonacoSelector = {
   INPUT: "textarea.inputarea",
-  EDIT_CONTEXT: ".native-edit-context",
-  VIEW_LINES: ".view-lines",
-  FIND_WIDGET: ".find-widget",
-  CONTEXT_MENU: ".monaco-menu",
+  EDIT_CONTEXT: classSelector("native-edit-context"),
+  VIEW_LINES: classSelector("view-lines"),
+  FIND_WIDGET: classSelector("find-widget"),
+  CONTEXT_MENU: classSelector("monaco-menu"),
   MENU_ITEM: ".action-item:not(.disabled):not(.separator)",
 } as const;
 
@@ -25,8 +25,8 @@ export const PopupSelector = {
 } as const;
 
 export const CodeSurfaceSelector = {
-  ROOT: ".code-editor",
-  HEADER: ".code-editor-header",
+  ROOT: classSelector(CssClass.CODE_EDITOR),
+  HEADER: classSelector(CssClass.CODE_EDITOR_HEADER),
 } as const;
 
 export const InputSelector = {
@@ -52,12 +52,15 @@ export const AriaRole = {
 export const SelectSelector = {
   MENU: classSelector(CssClass.SELECT_MENU),
   OPTION: `[role="${AriaRole.OPTION}"]`,
-  SELECTED_OPTION: ".select-option.is-selected",
+  SELECTED_OPTION: compoundSelector(
+    CssClass.SELECT_OPTION,
+    CssClass.IS_SELECTED,
+  ),
   NESTED_POPUP: classSelector(CssClass.CONTEXT_MENU),
 } as const;
 
 export const ModalSelector = {
-  OPEN: `.${CssClass.MODAL_BACKDROP}.${CssClass.MODAL_VISIBLE}`,
+  OPEN: compoundSelector(CssClass.MODAL_BACKDROP, CssClass.MODAL_VISIBLE),
 } as const;
 
 export const BodySelector = {

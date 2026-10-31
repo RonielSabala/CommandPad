@@ -229,8 +229,8 @@ export function Select<T extends string>({
           const button = (
             <button
               className={classNames(
-                "select-option",
-                option.value === value && "is-selected",
+                CssClass.SELECT_OPTION,
+                option.value === value && CssClass.IS_SELECTED,
               )}
               onClick={() => select(option.value)}
             >
