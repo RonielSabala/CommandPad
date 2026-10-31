@@ -1,9 +1,10 @@
 import {
   RunbookEmbedView,
   RunbookView,
+  SortDirection,
   VariableEntryKind,
 } from "@/common/enums";
-import type { RunbookEntry, Tab } from "@/common/types";
+import type { RunbookEntry, Tab, Variable } from "@/common/types";
 
 import type { StoreState } from "./types";
 
@@ -92,14 +93,80 @@ export function countVariableTargets(
   };
 }
 
+/** Whether any variable a row action on `variableId` targets passes `test`. */
+function someTargetVariable(
+  state: StoreState,
+  variableId: string,
+  test: (variable: Variable) => unknown,
+): boolean {
+  const targets = targetVariableIds(state, variableId);
+  return !!getActiveTab(state)?.variables.some(
+    (variable) => targets.has(variable.id) && test(variable),
+  );
+}
+
 export function hasValuesToClear(
   state: StoreState,
   variableId: string,
 ): boolean {
-  const targets = targetVariableIds(state, variableId);
-  return !!getActiveTab(state)?.variables.some(
-    (variable) => targets.has(variable.id) && variable.value,
+  return someTargetVariable(state, variableId, (variable) => variable.value);
+}
+
+const OPTION_ORDER = new Intl.Collator(undefined, { numeric: true });
+const OPTION_SIGN = {
+  [SortDirection.ASC]: 1,
+  [SortDirection.DESC]: -1,
+} as const;
+
+function compareOptions(
+  a: string,
+  b: string,
+  direction: SortDirection,
+): number {
+  return OPTION_SIGN[direction] * OPTION_ORDER.compare(a, b);
+}
+
+/** Whether an enum's options are out of `direction` order. */
+function isOutOfOrder(variable: Variable, direction: SortDirection): boolean {
+  const { options } = variable;
+  return !!options?.some(
+    (option, index) =>
+      index > 0 && compareOptions(options[index - 1], option, direction) > 0,
   );
+}
+
+export function sortedOptions(
+  variable: Variable,
+  direction: SortDirection,
+): string[] | null {
+  return variable.options && isOutOfOrder(variable, direction)
+    ? [...variable.options].sort((a, b) => compareOptions(a, b, direction))
+    : null;
+}
+
+/** Only an enum's selected option. */
+export function selectedOptionOnly(variable: Variable): string[] | null {
+  const { options, value } = variable;
+  return options && options.length > 1 && options.includes(value)
+    ? [value]
+    : null;
+}
+
+export function hasOptionsToSort(
+  state: StoreState,
+  variableId: string,
+  direction: SortDirection,
+): boolean {
+  return someTargetVariable(state, variableId, (variable) =>
+    isOutOfOrder(variable, direction),
+  );
+}
+
+export function hasOtherOptions(
+  state: StoreState,
+  variableId: string,
+): boolean {
+  return someTargetVariable(state, variableId, selectedOptionOnly);
 }
 
 export function countSelectedSections(state: StoreState): number {

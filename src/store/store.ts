@@ -37,6 +37,8 @@ export {
   getActiveTab,
   getRunbookEmbedView,
   getRunbookView,
+  hasOptionsToSort,
+  hasOtherOptions,
   hasValuesToClear
 } from "./selectors";
 export { tabContent } from "./tabState";

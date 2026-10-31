@@ -7,6 +7,7 @@ import {
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
+  SortDirection,
   UnresolvedCause,
   VaultError,
   VaultField,
@@ -136,6 +137,11 @@ export const es: Messages = {
     moveOptionToTop: "Mover al principio",
     moveOptionToBottom: "Mover al final",
     removeOption: "Eliminar opción",
+    sortOptions: {
+      [SortDirection.ASC]: "Ordenar opciones de forma ascendente",
+      [SortDirection.DESC]: "Ordenar opciones de forma descendente",
+    },
+    removeOtherOptions: "Eliminar las demás opciones",
     actions: "Acciones de la variable",
     duplicate: (count) =>
       count === 1 ? "Duplicar variable" : "Duplicar variables",
@@ -1048,8 +1054,11 @@ Si algo sale mal, deshazlo en este orden:
         moveToTopLabel,
         moveToBottomLabel,
         removeOptionLabel,
+        sortAscendingLabel,
+        sortDescendingLabel,
+        removeOtherOptionsLabel,
       ) =>
-        `Un valor también puede ser un conjunto fijo de opciones, como un entorno o una región, en lugar de texto libre. Agrega una variable **${enumLabel}**, desde la fila **${newRowLabel}** del editor de variables o al final de la lista de la barra lateral, y su valor será un combo box con una casilla al final que añade una opción nueva. Arrastra una opción por su asa para reordenarla, o abre su menú de **tres puntos** para **${editOptionLabel}**, **${duplicateOptionLabel}**, **${copyOptionLabel}**, **${moveToTopLabel}** o **${moveToBottomLabel}**, o **${removeOptionLabel}**. Una lista larga tiene una casilla de búsqueda arriba: escribe para filtrar las opciones, y **Enter** elige la primera coincidencia.`,
+        `Un valor también puede ser un conjunto fijo de opciones, como un entorno o una región, en lugar de texto libre. Agrega una variable **${enumLabel}**, desde la fila **${newRowLabel}** del editor de variables o al final de la lista de la barra lateral, y su valor será un combo box con una casilla al final que añade una opción nueva. Arrastra una opción por su asa para reordenarla, o abre su menú de **tres puntos** para **${editOptionLabel}**, **${duplicateOptionLabel}**, **${copyOptionLabel}**, **${moveToTopLabel}** o **${moveToBottomLabel}**, o **${removeOptionLabel}**. Una lista larga tiene una casilla de búsqueda arriba: escribe para filtrar las opciones, y **Enter** elige la primera coincidencia. El menú de acciones de la propia variable actúa sobre toda la lista: **${sortAscendingLabel}** u **${sortDescendingLabel}**, o **${removeOtherOptionsLabel}** para quedarte solo con la opción seleccionada.`,
       enumsDemoHint:
         "Abajo, `env` solo puede ser uno de tres clústeres. Elige otro y el comando lo sigue, sin posibilidad de equivocarte al escribir el contexto:",
       clearValues: (clearValuesLabel) =>

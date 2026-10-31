@@ -16,6 +16,7 @@ import {
   RunbookSyncStatus,
   RunbookView,
   SaveOutcome,
+  SortDirection,
   SyncDestination,
   Theme,
   VariableEntryKind,
@@ -313,6 +314,8 @@ export interface StoreState {
     sourceOption: string,
     targetOption: string,
   ) => void;
+  sortVariableOptions: (variableId: string, direction: SortDirection) => void;
+  removeOtherVariableOptions: (variableId: string) => void;
   applyVariableKeyCase: (variableId: string, keyword: string) => void;
   clearVariableValues: (variableId: string) => void;
   reorderVariables: (sourceId: string, targetId: string) => void;

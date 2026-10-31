@@ -7,6 +7,7 @@ import {
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
+  SortDirection,
   UnresolvedCause,
   VaultError,
   VaultField,
@@ -136,6 +137,11 @@ export const en: Messages = {
     moveOptionToTop: "Move to top",
     moveOptionToBottom: "Move to bottom",
     removeOption: "Remove option",
+    sortOptions: {
+      [SortDirection.ASC]: "Sort options ascending",
+      [SortDirection.DESC]: "Sort options descending",
+    },
+    removeOtherOptions: "Remove other options",
     actions: "Variable actions",
     duplicate: (count) =>
       count === 1 ? "Duplicate variable" : "Duplicate variables",
@@ -1022,8 +1028,11 @@ If something goes wrong, undo it in this order:
         moveToTopLabel,
         moveToBottomLabel,
         removeOptionLabel,
+        sortAscendingLabel,
+        sortDescendingLabel,
+        removeOtherOptionsLabel,
       ) =>
-        `A value can also be a fixed set of choices, like an environment or a region, instead of free text. Add an **${enumLabel}** variable, from the **${newRowLabel}** row of the variables editor or the bottom of the sidebar list, and its value is a combo box with a box at the bottom that adds a new choice. Drag a choice by its handle to reorder it, or open its **three dots** menu to **${editOptionLabel}**, **${duplicateOptionLabel}**, **${copyOptionLabel}**, **${moveToTopLabel}** or **${moveToBottomLabel}**, or **${removeOptionLabel}**. A long list gets a search box at the top: type to filter the choices, and **Enter** picks the first match.`,
+        `A value can also be a fixed set of choices, like an environment or a region, instead of free text. Add an **${enumLabel}** variable, from the **${newRowLabel}** row of the variables editor or the bottom of the sidebar list, and its value is a combo box with a box at the bottom that adds a new choice. Drag a choice by its handle to reorder it, or open its **three dots** menu to **${editOptionLabel}**, **${duplicateOptionLabel}**, **${copyOptionLabel}**, **${moveToTopLabel}** or **${moveToBottomLabel}**, or **${removeOptionLabel}**. A long list gets a search box at the top: type to filter the choices, and **Enter** picks the first match. The variable's own actions menu works on the whole list: **${sortAscendingLabel}** or **${sortDescendingLabel}**, or **${removeOtherOptionsLabel}** to keep only the selected choice.`,
       enumsDemoHint:
         "Below, `env` can only be one of three clusters. Pick another one and the command follows, with no chance of a typo in the context name:",
       clearValues: (clearValuesLabel) =>

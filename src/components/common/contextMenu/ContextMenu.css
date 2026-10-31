@@ -41,7 +41,7 @@
   color: var(--danger);
 }
 
-.context-menu-item.is-danger:hover {
+.context-menu-item.is-danger:hover:not(:disabled) {
   background: var(--danger-dim);
 }
 

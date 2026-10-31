@@ -6,6 +6,7 @@ import type {
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
+  SortDirection,
   UnresolvedCause,
   VaultError,
   VaultField,
@@ -140,6 +141,8 @@ export interface Messages {
     moveOptionToTop: string;
     moveOptionToBottom: string;
     removeOption: string;
+    sortOptions: Record<SortDirection, string>;
+    removeOtherOptions: string;
     actions: string;
     duplicate: (count: number) => string;
     renameCase: string;
@@ -592,6 +595,9 @@ export interface Messages {
         moveToTopLabel: string,
         moveToBottomLabel: string,
         removeOptionLabel: string,
+        sortAscendingLabel: string,
+        sortDescendingLabel: string,
+        removeOtherOptionsLabel: string,
       ) => string;
       enumsDemoHint: string;
       clearValues: (clearValuesLabel: string) => string;

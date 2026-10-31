@@ -1,4 +1,4 @@
-import { VaultPrompt } from "@/common/enums";
+import { SortDirection, VaultPrompt } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { useTranslation } from "@/i18n";
 
@@ -57,6 +57,9 @@ export function VariablesDocs() {
           t.variables.moveOptionToTop,
           t.variables.moveOptionToBottom,
           t.variables.removeOption,
+          t.variables.sortOptions[SortDirection.ASC],
+          t.variables.sortOptions[SortDirection.DESC],
+          t.variables.removeOtherOptions,
         )}
       />
       <Prose text={t.docs.variables.enumsDemoHint} />

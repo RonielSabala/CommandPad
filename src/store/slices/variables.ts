@@ -6,6 +6,7 @@ import {
   VariableField,
   VariableKind,
 } from "@/common/enums";
+import type { Variable } from "@/common/types";
 import { withSetMember } from "@/utils/collections";
 import { generateId } from "@/utils/id";
 import {
@@ -31,6 +32,8 @@ import type { StoreKit } from "@/store/kit";
 import {
   getActiveTab,
   getRunbookView,
+  selectedOptionOnly,
+  sortedOptions,
   targetVariableIds,
 } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
@@ -52,6 +55,8 @@ type VariablesActions = Pick<
   | "duplicateVariableOption"
   | "renameVariableOption"
   | "reorderVariableOptions"
+  | "sortVariableOptions"
+  | "removeOtherVariableOptions"
   | "applyVariableKeyCase"
   | "clearVariableValues"
   | "reorderVariables"
@@ -65,6 +70,31 @@ export function createVariablesSlice(
 ): VariablesActions {
   const { set, get, debouncedSaveState } = kit;
   const { ensureVaultForSecrets } = services;
+
+  /** Replace the options of every enum a row action on `variableId` targets. */
+  const updateTargetOptions = (
+    variableId: string,
+    next: (variable: Variable) => string[] | null,
+  ) => {
+    const state = get();
+    if (state.mode === AppMode.READ) {
+      return;
+    }
+
+    const targets = targetVariableIds(state, variableId);
+
+    set((s) =>
+      withActiveTab(s, (tab) => ({
+        ...tab,
+        variables: tab.variables.map((v) => {
+          const options = targets.has(v.id) ? next(v) : null;
+          return options ? { ...v, options } : v;
+        }),
+      })),
+    );
+
+    get().saveState();
+  };
 
   return {
     addVariable: async (kind = VariableKind.TEXT) => {
@@ -365,8 +395,12 @@ export function createVariablesSlice(
         withActiveTab(s, (tab) => ({
           ...tab,
           variables: tab.variables.map((v) => {
-            const index = v.options?.indexOf(option) ?? -1;
-            if (v.id !== variableId || !v.options || index < 0) {
+            if (v.id !== variableId || !v.options) {
+              return v;
+            }
+
+            const index = v.options.indexOf(option);
+            if (index < 0) {
               return v;
             }
 
@@ -438,6 +472,14 @@ export function createVariablesSlice(
 
       get().saveState();
     },
+
+    sortVariableOptions: (variableId, direction) =>
+      updateTargetOptions(variableId, (variable) =>
+        sortedOptions(variable, direction),
+      ),
+
+    removeOtherVariableOptions: (variableId) =>
+      updateTargetOptions(variableId, selectedOptionOnly),
 
     applyVariableKeyCase: (variableId, keyword) => {
       const state = get();

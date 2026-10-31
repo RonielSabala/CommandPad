@@ -182,9 +182,11 @@ export function Select<T extends string>({
     const previous = previousOptionsRef.current;
     previousOptionsRef.current = options;
 
-    const added = shownOptions.findIndex(
-      (option) => !previous.some((entry) => entry.value === option.value),
-    );
+    const previousValues =
+      previous !== options && new Set(previous.map((entry) => entry.value));
+    const added = previousValues
+      ? shownOptions.findIndex((option) => !previousValues.has(option.value))
+      : -1;
 
     if (!list) {
       return;
