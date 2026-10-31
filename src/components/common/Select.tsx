@@ -168,7 +168,9 @@ export function Select<T extends string>({
     if (rect) {
       setMenuStyle({
         top: rect.bottom,
-        minWidth: matchTriggerWidth ? rect.width : undefined,
+        minWidth: matchTriggerWidth
+          ? `max(var(--select-menu-min-width), ${toPx(rect.width)})`
+          : undefined,
         ...(align === SelectAlign.END
           ? { right: window.innerWidth - rect.right }
           : { left: rect.left }),

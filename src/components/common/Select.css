@@ -14,6 +14,7 @@
   position: absolute;
   top: calc(100% + var(--space-2));
   z-index: var(--z-dropdown);
+  min-width: var(--select-menu-min-width);
   padding: var(--space-2);
   display: flex;
   flex-direction: column;
@@ -25,7 +26,7 @@
 }
 
 .select-menu.match-trigger-width {
-  min-width: 100%;
+  min-width: max(var(--select-menu-min-width), 100%);
 }
 
 .select-list {
