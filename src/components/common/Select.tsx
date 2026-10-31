@@ -217,21 +217,21 @@ export function Select<T extends string>({
     }
   }, [open, scrollable, options, shownOptions]);
 
-  // Open on the current value when it sits past the fold
+  // Open with the current value centered
   useLayoutEffect(() => {
     const list = listRef.current;
     if (!open || !list) {
       return;
     }
 
-    const selected = list.querySelector<HTMLElement>(
-      SelectSelector.SELECTED_OPTION,
-    );
-    if (
-      selected &&
-      selected.offsetTop + selected.offsetHeight > list.clientHeight
-    ) {
-      list.scrollTop = selected.offsetTop;
+    const selected = list
+      .querySelector(SelectSelector.SELECTED_OPTION)
+      ?.getBoundingClientRect();
+
+    if (selected) {
+      const bounds = list.getBoundingClientRect();
+      list.scrollTop +=
+        (selected.top + selected.bottom - bounds.top - bounds.bottom) / 2;
     }
   }, [open]);
 
