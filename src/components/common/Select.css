@@ -104,6 +104,7 @@
 .select-search .search-input {
   font-size: var(--text-sm);
   padding-block: var(--space-3);
+  border-radius: var(--radius-sm);
 }
 
 .select-footer {
