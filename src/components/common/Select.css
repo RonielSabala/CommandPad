@@ -101,6 +101,11 @@
   flex: 1 1 auto;
 }
 
+.select-search .search-input {
+  font-size: var(--text-sm);
+  padding-block: var(--space-3);
+}
+
 .select-footer {
   padding-top: var(--space-2);
   border-top: var(--border-standard);

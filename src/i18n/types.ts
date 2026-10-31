@@ -130,6 +130,7 @@ export interface Messages {
     newEnumTitle: string;
     optionPlaceholder: string;
     noOptions: string;
+    searchOptionsPlaceholder: string;
     addOptionPlaceholder: string;
     addOption: string;
     optionActions: string;

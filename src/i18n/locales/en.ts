@@ -126,6 +126,7 @@ export const en: Messages = {
     newEnumTitle: "New enum variable",
     optionPlaceholder: "choose an option",
     noOptions: "No options yet",
+    searchOptionsPlaceholder: "Search options…",
     addOptionPlaceholder: "Add option…",
     addOption: "Add option",
     optionActions: "Option actions",
@@ -1009,7 +1010,7 @@ If something goes wrong, undo it in this order:
       constantsDemoHint:
         "The convention is purely a naming one: constants resolve, get referenced and get renamed exactly like any other variable. Rename a key below from capitals to lowercase and back to see the color follow along.",
       enums: (enumLabel, newRowLabel, editOptionLabel, removeOptionLabel) =>
-        `A value can also be a fixed set of choices, like an environment or a region, instead of free text. Add an **${enumLabel}** variable, from the **${newRowLabel}** row of the variables editor or the bottom of the sidebar list, and its value is a combo box with a box at the bottom that adds a new choice. Drag a choice by its handle to reorder it, or open its **three dots** menu to **${editOptionLabel}** or **${removeOptionLabel}**.`,
+        `A value can also be a fixed set of choices, like an environment or a region, instead of free text. Add an **${enumLabel}** variable, from the **${newRowLabel}** row of the variables editor or the bottom of the sidebar list, and its value is a combo box with a box at the bottom that adds a new choice. Drag a choice by its handle to reorder it, or open its **three dots** menu to **${editOptionLabel}** or **${removeOptionLabel}**. A long list gets a search box at the top: type to filter the choices, and **Enter** picks the first match.`,
       enumsDemoHint:
         "Below, `env` can only be one of three clusters. Pick another one and the command follows, with no chance of a typo in the context name:",
       clearValues: (clearValuesLabel) =>

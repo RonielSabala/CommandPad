@@ -12,6 +12,7 @@ interface Props {
   placeholder: string;
   onChange: (value: string) => void;
   className?: string;
+  autoFocus?: boolean;
 }
 
 export function SearchInput({
@@ -19,6 +20,7 @@ export function SearchInput({
   placeholder,
   onChange,
   className,
+  autoFocus,
 }: Props) {
   const t = useTranslation();
   return (
@@ -30,6 +32,7 @@ export function SearchInput({
         spellCheck={false}
         autoComplete={AutoComplete.OFF}
         value={value}
+        autoFocus={autoFocus}
         onChange={(event) => onChange(event.target.value)}
       />
       <SearchIcon

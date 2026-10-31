@@ -2,11 +2,18 @@ import { SelectConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { AriaRole, SelectSelector } from "@/common/constants/dom";
 import { EventType, Key } from "@/common/constants/events";
+import { SearchInput } from "@/components/common/SearchInput";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SidebarSectionChevronIcon } from "@/components/icons";
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { toPx } from "@/utils/dom";
-import { abbreviate, classNames, countCharacters } from "@/utils/string";
+import {
+  abbreviate,
+  classNames,
+  countCharacters,
+  matchesQuery,
+} from "@/utils/string";
 import { isString } from "@/utils/typeGuards";
 import {
   useEffect,
@@ -50,6 +57,7 @@ interface SelectProps<T extends string> {
   title?: string;
   portal?: boolean;
   matchTriggerWidth?: boolean;
+  searchPlaceholder?: string;
   optionRow?: ComponentType<SelectOptionRowProps<T>>;
   empty?: ReactNode;
   footer?: ReactNode;
@@ -66,18 +74,37 @@ export function Select<T extends string>({
   title,
   portal = false,
   matchTriggerWidth = true,
+  searchPlaceholder,
   optionRow: OptionRow,
   empty,
   footer,
 }: SelectProps<T>) {
+  const t = useTranslation();
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const [menuStyle, setMenuStyle] = useState<CSSProperties>();
   const mode = useStore((state) => state.mode);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const optionCountRef = useRef(options.length);
-  const scrollable = options.length > SelectConfig.MAX_VISIBLE_OPTIONS;
+  const searchable =
+    !!searchPlaceholder && options.length > SelectConfig.MAX_VISIBLE_OPTIONS;
+  const shownOptions = searchable
+    ? options.filter((option) =>
+        matchesQuery(
+          query,
+          isString(option.label) ? option.label : option.value,
+        ),
+      )
+    : options;
+
+  const scrollable = shownOptions.length > SelectConfig.MAX_VISIBLE_OPTIONS;
+
+  // A closed menu forgets its search
+  if (!open && query) {
+    setQuery("");
+  }
 
   useEffect(() => {
     setOpen(false);
@@ -174,7 +201,7 @@ export function Select<T extends string>({
 
     list.style.maxHeight = toPx(list.offsetHeight - clipped);
     list.scrollTop = grew ? list.scrollHeight : scrollTop;
-  }, [open, scrollable, options]);
+  }, [open, scrollable, options, shownOptions]);
 
   // Open on the current value when it sits past the fold
   useLayoutEffect(() => {
@@ -209,18 +236,37 @@ export function Select<T extends string>({
       )}
       style={portal ? menuStyle : undefined}
     >
+      {searchable && (
+        <div
+          className="select-search"
+          onKeyDown={(event) => {
+            if (event.key === Key.ENTER && shownOptions.length > 0) {
+              event.preventDefault();
+              select(shownOptions[0].value);
+            }
+          }}
+        >
+          <SearchInput
+            value={query}
+            placeholder={searchPlaceholder}
+            onChange={setQuery}
+            autoFocus
+          />
+        </div>
+      )}
+
       <ul
         ref={listRef}
         className={classNames("select-list", scrollable && "is-scrollable")}
         role={AriaRole.LISTBOX}
       >
-        {options.length === 0 && empty && (
+        {shownOptions.length === 0 && (query || empty) && (
           <li className={classNames("select-empty", CssClass.NO_USER_SELECT)}>
-            {empty}
+            {query ? t.common.noMatches : empty}
           </li>
         )}
 
-        {options.map((option) => {
+        {shownOptions.map((option) => {
           const rowProps: LiHTMLAttributes<HTMLLIElement> = {
             className: classNames(
               CssClass.NO_USER_SELECT,

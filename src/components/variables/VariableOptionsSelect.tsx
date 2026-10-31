@@ -196,6 +196,7 @@ export function VariableOptionsSelect({
         empty={t.variables.noOptions}
         portal
         matchTriggerWidth={false}
+        searchPlaceholder={t.variables.searchOptionsPlaceholder}
         optionRow={editable ? VariableOptionRow : undefined}
         footer={
           editable && (

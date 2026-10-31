@@ -126,6 +126,7 @@ export const es: Messages = {
     newEnumTitle: "Nueva variable enum",
     optionPlaceholder: "elige una opción",
     noOptions: "Aún no hay opciones",
+    searchOptionsPlaceholder: "Buscar opciones…",
     addOptionPlaceholder: "Agregar opción…",
     addOption: "Agregar opción",
     optionActions: "Acciones de la opción",
@@ -1035,7 +1036,7 @@ Si algo sale mal, deshazlo en este orden:
       constantsDemoHint:
         "La convención es solo de nombres: las constantes se resuelven, se referencian y se renombran igual que cualquier otra variable. Renombra abajo una clave de mayúsculas a minúsculas y al revés para ver cómo el color la sigue.",
       enums: (enumLabel, newRowLabel, editOptionLabel, removeOptionLabel) =>
-        `Un valor también puede ser un conjunto fijo de opciones, como un entorno o una región, en lugar de texto libre. Agrega una variable **${enumLabel}**, desde la fila **${newRowLabel}** del editor de variables o al final de la lista de la barra lateral, y su valor será un combo box con una casilla al final que añade una opción nueva. Arrastra una opción por su asa para reordenarla, o abre su menú de **tres puntos** para **${editOptionLabel}** o **${removeOptionLabel}**.`,
+        `Un valor también puede ser un conjunto fijo de opciones, como un entorno o una región, en lugar de texto libre. Agrega una variable **${enumLabel}**, desde la fila **${newRowLabel}** del editor de variables o al final de la lista de la barra lateral, y su valor será un combo box con una casilla al final que añade una opción nueva. Arrastra una opción por su asa para reordenarla, o abre su menú de **tres puntos** para **${editOptionLabel}** o **${removeOptionLabel}**. Una lista larga tiene una casilla de búsqueda arriba: escribe para filtrar las opciones, y **Enter** elige la primera coincidencia.`,
       enumsDemoHint:
         "Abajo, `env` solo puede ser uno de tres clústeres. Elige otro y el comando lo sigue, sin posibilidad de equivocarte al escribir el contexto:",
       clearValues: (clearValuesLabel) =>
