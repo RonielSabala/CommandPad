@@ -1,4 +1,5 @@
 import { NoteStyle, RunbookView } from "@/common/enums";
+import { formatBinding, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { TabsBar } from "@/components/tabs/TabsBar";
 import { RunbookVariables } from "@/components/variables/RunbookVariables";
@@ -50,6 +51,8 @@ export function TabsDocs() {
           t.source.openSource,
           t.source.openPreview,
           t.variables.openEditorTitle,
+          formatBinding(KEYBINDINGS[KeyBinding.TOGGLE_SOURCE_VIEW].binding),
+          formatBinding(KEYBINDINGS[KeyBinding.TOGGLE_VARIABLES_VIEW].binding),
           t.tabs.close,
           t.tabs.closeOthers,
           t.tabs.closeAll,

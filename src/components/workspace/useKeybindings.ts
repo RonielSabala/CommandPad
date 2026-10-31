@@ -1,6 +1,6 @@
 import { InputSelector } from "@/common/constants/dom";
 import { EventType, Key, Modifier } from "@/common/constants/events";
-import { MoveDirection } from "@/common/enums";
+import { MoveDirection, RunbookView } from "@/common/enums";
 import {
   isModifierPressed,
   KeyBinding,
@@ -128,6 +128,12 @@ export function useKeybindings(): void {
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.TOGGLE_EDITORS)) {
         state.toggleCollapseAll();
+        hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.TOGGLE_VARIABLES_VIEW)) {
+        state.toggleRunbookView(RunbookView.VARIABLES);
+        hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.TOGGLE_SOURCE_VIEW)) {
+        state.toggleRunbookView(RunbookView.SOURCE);
         hit = true;
       }
 

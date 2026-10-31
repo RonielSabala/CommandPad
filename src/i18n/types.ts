@@ -534,6 +534,8 @@ export interface Messages {
         openSourceLabel: string,
         openPreviewLabel: string,
         openEditorLabel: string,
+        openSourceShortcut: string,
+        openEditorShortcut: string,
         closeLabel: string,
         closeOthersLabel: string,
         closeAllLabel: string,

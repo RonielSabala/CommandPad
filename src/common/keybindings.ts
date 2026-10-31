@@ -33,6 +33,8 @@ export const KeyBinding = {
   DELETE_RUNBOOK: "DELETE_RUNBOOK",
   CLEAR_LIBRARY: "CLEAR_LIBRARY",
   TOGGLE_EDITORS: "TOGGLE_EDITORS",
+  TOGGLE_VARIABLES_VIEW: "TOGGLE_VARIABLES_VIEW",
+  TOGGLE_SOURCE_VIEW: "TOGGLE_SOURCE_VIEW",
   MULTISELECT_BLOCKS: "MULTISELECT_BLOCKS",
   DUPLICATE_BLOCK: "DUPLICATE_BLOCK",
   DELETE_BLOCK: "DELETE_BLOCK",
@@ -66,6 +68,8 @@ export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
   [KeyBinding.DELETE_RUNBOOK]: { binding: "ctrl+shift+d" },
   [KeyBinding.CLEAR_LIBRARY]: { binding: "ctrl+shift+backspace" },
   [KeyBinding.TOGGLE_EDITORS]: { binding: "ctrl+g" },
+  [KeyBinding.TOGGLE_VARIABLES_VIEW]: { binding: "ctrl+shift+v" },
+  [KeyBinding.TOGGLE_SOURCE_VIEW]: { binding: "ctrl+shift+c" },
   [KeyBinding.MULTISELECT_BLOCKS]: {
     binding: `${ModifierAction.SELECT_BLOCKS}+click / drag`,
     keyboard: false,

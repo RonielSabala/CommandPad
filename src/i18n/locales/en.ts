@@ -563,6 +563,10 @@ export const en: Messages = {
     [KeyBinding.CLEAR_LIBRARY]: "Open delete all runbooks dialog",
     [KeyBinding.TOGGLE_EDITORS]:
       "Toggle all blocks, or all sections in the variables editor",
+    [KeyBinding.TOGGLE_VARIABLES_VIEW]:
+      "Switch between the blocks and the variables editor",
+    [KeyBinding.TOGGLE_SOURCE_VIEW]:
+      "Switch between the blocks and the runbook's source file",
     [KeyBinding.MULTISELECT_BLOCKS]: "Multi-select blocks",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicate selected blocks",
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
@@ -929,6 +933,8 @@ If something goes wrong, undo it in this order:
         openSourceLabel,
         openPreviewLabel,
         openEditorLabel,
+        openSourceShortcut,
+        openEditorShortcut,
         closeLabel,
         closeOthersLabel,
         closeAllLabel,
@@ -937,8 +943,8 @@ If something goes wrong, undo it in this order:
 * **Middle-click** a tab to close it.
 * **Right-click** a tab for **${closeLabel}**, **${closeOthersLabel}** and **${closeAllLabel}**.
 * **Click** the **+** at the end of the tabs bar to open a new tab.
-* **${openSourceLabel}**, at the far end of the tabs bar, swaps the blocks below for the runbook's raw JSON.
-* **${openEditorLabel}**, beside it, swaps them for the runbook's variables instead.
+* **${openSourceLabel}**, at the far end of the tabs bar, swaps the blocks below for the runbook's raw JSON (**${openSourceShortcut}**).
+* **${openEditorLabel}**, beside it, swaps them for the runbook's variables instead (**${openEditorShortcut}**).
 * **${openPreviewLabel}** brings the blocks back.`,
       variablesEditorNote:
         "The variables editor works just like the block editor above, one row per variable instead of per block, down to the language selector on each value: a value starts as plain text, and picking a language only changes how it is highlighted and checked. Try it below.",

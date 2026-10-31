@@ -580,6 +580,10 @@ export const es: Messages = {
     [KeyBinding.CLEAR_LIBRARY]: "Abrir el diálogo de eliminar todos los libros",
     [KeyBinding.TOGGLE_EDITORS]:
       "Alternar todos los bloques, o todas las secciones en el editor de variables",
+    [KeyBinding.TOGGLE_VARIABLES_VIEW]:
+      "Cambiar entre los bloques y el editor de variables",
+    [KeyBinding.TOGGLE_SOURCE_VIEW]:
+      "Cambiar entre los bloques y el archivo fuente del libro",
     [KeyBinding.MULTISELECT_BLOCKS]: "Selección múltiple de bloques",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicar bloques seleccionados",
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
@@ -954,6 +958,8 @@ Si algo sale mal, deshazlo en este orden:
         openSourceLabel,
         openPreviewLabel,
         openEditorLabel,
+        openSourceShortcut,
+        openEditorShortcut,
         closeLabel,
         closeOthersLabel,
         closeAllLabel,
@@ -962,8 +968,8 @@ Si algo sale mal, deshazlo en este orden:
 * **Clic con la rueda** del ratón en una pestaña para cerrarla.
 * **Clic derecho** en una pestaña para **${closeLabel}**, **${closeOthersLabel}** y **${closeAllLabel}**.
 * **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.
-* **${openSourceLabel}**, al final de la barra de pestañas, cambia los bloques de abajo por el JSON del libro.
-* **${openEditorLabel}**, a su lado, los cambia por las variables del libro.
+* **${openSourceLabel}**, al final de la barra de pestañas, cambia los bloques de abajo por el JSON del libro (**${openSourceShortcut}**).
+* **${openEditorLabel}**, a su lado, los cambia por las variables del libro (**${openEditorShortcut}**).
 * **${openPreviewLabel}** devuelve los bloques.`,
       variablesEditorNote:
         "El editor de variables funciona igual que el editor de bloques de arriba, una fila por variable en vez de por bloque, incluido el selector de lenguaje de cada valor: un valor empieza como texto plano, y elegir un lenguaje solo cambia cómo se resalta y se revisa. Pruébalo abajo.",
