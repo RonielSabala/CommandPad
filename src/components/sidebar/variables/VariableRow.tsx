@@ -11,6 +11,7 @@ import {
 } from "@/common/enums";
 import type { Variable } from "@/common/types";
 import { DragHandle } from "@/components/common/DragHandle";
+import { DragImage } from "@/components/common/DragImage";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
 import { VariableActionsMenu } from "@/components/variables/VariableActionsMenu";
@@ -90,6 +91,7 @@ export const VariableRow = memo(function VariableRow({
       {...{ [DataAttr.VARIABLE_ID]: variableId }}
       {...rowProps}
     >
+      <DragImage>{variableKey || t.variables.keyPlaceholder}</DragImage>
       <DragHandle handleProps={handleProps} />
 
       <div

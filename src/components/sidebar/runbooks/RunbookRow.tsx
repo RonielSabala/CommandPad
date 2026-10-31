@@ -5,6 +5,7 @@ import type { RunbookEntry } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { DragHandle } from "@/components/common/DragHandle";
+import { DragImage } from "@/components/common/DragImage";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { DuplicateIcon, TrashIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
@@ -62,6 +63,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
       {...{ [DataAttr.RUNBOOK_ID]: runbookId }}
       {...rowProps}
     >
+      <DragImage>{runbookLabel}</DragImage>
       <DragHandle handleProps={handleProps} />
 
       <div className="runbook-row-main">

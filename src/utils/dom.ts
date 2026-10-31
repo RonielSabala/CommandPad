@@ -18,12 +18,12 @@ export function applyDragImage(event: {
   clientX: number;
   clientY: number;
   dataTransfer: DataTransfer;
-}): boolean {
+}): void {
   const found = event.currentTarget.querySelector<HTMLElement>(
     `[${DataAttr.DRAG_IMAGE}]`,
   );
   if (!found) {
-    return false;
+    return;
   }
 
   const isStandIn = found.classList.contains(CssClass.DRAG_IMAGE);
@@ -45,8 +45,6 @@ export function applyDragImage(event: {
   if (isStandIn) {
     requestAnimationFrame(() => dragImage.remove());
   }
-
-  return true;
 }
 
 /**
