@@ -23,6 +23,18 @@
   flex-shrink: 0;
 }
 
+.select-option-row > :is(.drag-handle, .variable-option-actions) {
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.select-option-row:hover > :is(.drag-handle, .variable-option-actions),
+.select-option-row > :is(.drag-handle, .variable-option-actions):focus-within,
+.select-option-row > .drag-handle:focus-visible,
+.variable-option-actions.menu-open {
+  opacity: 1;
+}
+
 .variable-option-add-row {
   display: flex;
   align-items: center;
