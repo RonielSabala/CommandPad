@@ -195,6 +195,7 @@ export function VariableOptionsSelect({
         align={SelectAlign.START}
         empty={t.variables.noOptions}
         portal
+        matchTriggerWidth={false}
         optionRow={editable ? VariableOptionRow : undefined}
         footer={
           editable && (

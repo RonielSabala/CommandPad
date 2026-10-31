@@ -49,6 +49,7 @@ interface SelectProps<T extends string> {
   align?: SelectAlign;
   title?: string;
   portal?: boolean;
+  matchTriggerWidth?: boolean;
   optionRow?: ComponentType<SelectOptionRowProps<T>>;
   empty?: ReactNode;
   footer?: ReactNode;
@@ -64,6 +65,7 @@ export function Select<T extends string>({
   align = SelectAlign.END,
   title,
   portal = false,
+  matchTriggerWidth = true,
   optionRow: OptionRow,
   empty,
   footer,
@@ -139,13 +141,13 @@ export function Select<T extends string>({
     if (rect) {
       setMenuStyle({
         top: rect.bottom,
-        minWidth: rect.width,
+        minWidth: matchTriggerWidth ? rect.width : undefined,
         ...(align === SelectAlign.END
           ? { right: window.innerWidth - rect.right }
           : { left: rect.left }),
       });
     }
-  }, [open, portal, align]);
+  }, [open, portal, align, matchTriggerWidth]);
 
   // Clamp the option list
   useLayoutEffect(() => {
@@ -203,6 +205,7 @@ export function Select<T extends string>({
       className={classNames(
         CssClass.SELECT_MENU,
         portal ? CssClass.SELECT_MENU_PORTAL : `align-${align}`,
+        matchTriggerWidth && "match-trigger-width",
       )}
       style={portal ? menuStyle : undefined}
     >
