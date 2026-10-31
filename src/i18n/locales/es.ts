@@ -131,6 +131,10 @@ export const es: Messages = {
     addOption: "Agregar opción",
     optionActions: "Acciones de la opción",
     editOption: "Editar opción",
+    duplicateOption: "Duplicar opción",
+    copyOption: "Copiar opción",
+    moveOptionToTop: "Mover al principio",
+    moveOptionToBottom: "Mover al final",
     removeOption: "Eliminar opción",
     actions: "Acciones de la variable",
     duplicate: (count) =>
@@ -1035,8 +1039,17 @@ Si algo sale mal, deshazlo en este orden:
         "No todas las variables cambian por el mismo motivo. Unas son valores que cambias a cada rato y otras son **constantes**: se mantienen igual durante toda la vida del libro, y solo son variables porque ese mismo valor aparece en comando tras comando. CommandPad las distingue por convención de nombres: una clave escrita entera en **mayúsculas** se considera una _constante_ y cualquier clave con alguna **minúscula** se considera _variable_.",
       constantsDemoHint:
         "La convención es solo de nombres: las constantes se resuelven, se referencian y se renombran igual que cualquier otra variable. Renombra abajo una clave de mayúsculas a minúsculas y al revés para ver cómo el color la sigue.",
-      enums: (enumLabel, newRowLabel, editOptionLabel, removeOptionLabel) =>
-        `Un valor también puede ser un conjunto fijo de opciones, como un entorno o una región, en lugar de texto libre. Agrega una variable **${enumLabel}**, desde la fila **${newRowLabel}** del editor de variables o al final de la lista de la barra lateral, y su valor será un combo box con una casilla al final que añade una opción nueva. Arrastra una opción por su asa para reordenarla, o abre su menú de **tres puntos** para **${editOptionLabel}** o **${removeOptionLabel}**. Una lista larga tiene una casilla de búsqueda arriba: escribe para filtrar las opciones, y **Enter** elige la primera coincidencia.`,
+      enums: (
+        enumLabel,
+        newRowLabel,
+        editOptionLabel,
+        duplicateOptionLabel,
+        copyOptionLabel,
+        moveToTopLabel,
+        moveToBottomLabel,
+        removeOptionLabel,
+      ) =>
+        `Un valor también puede ser un conjunto fijo de opciones, como un entorno o una región, en lugar de texto libre. Agrega una variable **${enumLabel}**, desde la fila **${newRowLabel}** del editor de variables o al final de la lista de la barra lateral, y su valor será un combo box con una casilla al final que añade una opción nueva. Arrastra una opción por su asa para reordenarla, o abre su menú de **tres puntos** para **${editOptionLabel}**, **${duplicateOptionLabel}**, **${copyOptionLabel}**, **${moveToTopLabel}** o **${moveToBottomLabel}**, o **${removeOptionLabel}**. Una lista larga tiene una casilla de búsqueda arriba: escribe para filtrar las opciones, y **Enter** elige la primera coincidencia.`,
       enumsDemoHint:
         "Abajo, `env` solo puede ser uno de tres clústeres. Elige otro y el comando lo sigue, sin posibilidad de equivocarte al escribir el contexto:",
       clearValues: (clearValuesLabel) =>

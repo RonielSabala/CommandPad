@@ -52,6 +52,10 @@ export function VariablesDocs() {
           t.variables.enumLabel,
           t.variables.newRowLabel,
           t.variables.editOption,
+          t.variables.duplicateOption,
+          t.variables.copyOption,
+          t.variables.moveOptionToTop,
+          t.variables.moveOptionToBottom,
           t.variables.removeOption,
         )}
       />

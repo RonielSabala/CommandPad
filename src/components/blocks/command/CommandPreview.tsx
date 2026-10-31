@@ -182,6 +182,7 @@ export function CommandPreview({
   const copy = () => {
     const resolved = resolveCommandToString(text, variableMap);
     const parts = unresolvedCount;
+
     void navigator.clipboard.writeText(resolved).then(() => {
       clearTimeout(copiedTimer.current);
       setCopied(parts);

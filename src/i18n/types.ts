@@ -135,6 +135,10 @@ export interface Messages {
     addOption: string;
     optionActions: string;
     editOption: string;
+    duplicateOption: string;
+    copyOption: string;
+    moveOptionToTop: string;
+    moveOptionToBottom: string;
     removeOption: string;
     actions: string;
     duplicate: (count: number) => string;
@@ -583,6 +587,10 @@ export interface Messages {
         enumLabel: string,
         newRowLabel: string,
         editOptionLabel: string,
+        duplicateOptionLabel: string,
+        copyOptionLabel: string,
+        moveToTopLabel: string,
+        moveToBottomLabel: string,
         removeOptionLabel: string,
       ) => string;
       enumsDemoHint: string;

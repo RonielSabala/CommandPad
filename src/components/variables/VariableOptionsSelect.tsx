@@ -7,7 +7,10 @@ import {
 import { Key } from "@/common/constants/events";
 import { AppMode, DragGroup, VariableField } from "@/common/enums";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
-import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
+import {
+  ContextMenuItem,
+  ContextMenuSeparator,
+} from "@/components/common/contextMenu/ContextMenu";
 import { DragHandle } from "@/components/common/DragHandle";
 import { DragImage } from "@/components/common/DragImage";
 import {
@@ -16,7 +19,13 @@ import {
   type SelectOptionRowProps,
 } from "@/components/common/Select";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { PencilIcon, PlusIcon, TrashIcon } from "@/components/icons";
+import {
+  CopyIcon,
+  DuplicateIcon,
+  PencilIcon,
+  PlusIcon,
+  TrashIcon,
+} from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -29,10 +38,19 @@ import {
   useRef,
   useState,
 } from "react";
+import { ArrowBarDown, ArrowBarUp } from "react-bootstrap-icons";
 
 import "./VariableOptionsSelect.css";
 
-const OptionVariableContext = createContext("");
+interface OptionVariable {
+  variableId: string;
+  options: readonly string[];
+}
+
+const OptionVariableContext = createContext<OptionVariable>({
+  variableId: "",
+  options: [],
+});
 
 function VariableOptionRow({
   value: option,
@@ -40,9 +58,12 @@ function VariableOptionRow({
   children,
 }: SelectOptionRowProps<string>) {
   const t = useTranslation();
-  const variableId = useContext(OptionVariableContext);
+  const { variableId, options } = useContext(OptionVariableContext);
   const renameVariableOption = useStore((state) => state.renameVariableOption);
   const removeVariableOption = useStore((state) => state.removeVariableOption);
+  const duplicateVariableOption = useStore(
+    (state) => state.duplicateVariableOption,
+  );
   const reorderVariableOptions = useStore(
     (state) => state.reorderVariableOptions,
   );
@@ -129,6 +150,60 @@ function VariableOptionRow({
 
         <ContextMenuItem
           icon={
+            <DuplicateIcon
+              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+            />
+          }
+          onSelect={() => duplicateVariableOption(variableId, option)}
+        >
+          {t.variables.duplicateOption}
+        </ContextMenuItem>
+
+        <ContextMenuItem
+          icon={
+            <CopyIcon
+              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+            />
+          }
+          onSelect={() => void navigator.clipboard.writeText(option)}
+        >
+          {t.variables.copyOption}
+        </ContextMenuItem>
+
+        <ContextMenuSeparator />
+
+        <ContextMenuItem
+          icon={
+            <ArrowBarUp
+              className={(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
+            />
+          }
+          onSelect={() =>
+            reorderVariableOptions(variableId, option, options[0] ?? option)
+          }
+          disabled={options[0] === option}
+        >
+          {t.variables.moveOptionToTop}
+        </ContextMenuItem>
+
+        <ContextMenuItem
+          icon={
+            <ArrowBarDown
+              className={(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
+            />
+          }
+          onSelect={() =>
+            reorderVariableOptions(variableId, option, options.at(-1) ?? option)
+          }
+          disabled={options.at(-1) === option}
+        >
+          {t.variables.moveOptionToBottom}
+        </ContextMenuItem>
+
+        <ContextMenuSeparator />
+
+        <ContextMenuItem
+          icon={
             <TrashIcon
               className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
             />
@@ -165,6 +240,10 @@ export function VariableOptionsSelect({
   const updateVariable = useStore((state) => state.updateVariable);
   const addVariableOption = useStore((state) => state.addVariableOption);
   const [draft, setDraft] = useState("");
+  const optionVariable = useMemo(
+    () => ({ variableId, options }),
+    [variableId, options],
+  );
 
   const editable = !readMode && !onChange;
   const selectOptions = useMemo(
@@ -178,7 +257,7 @@ export function VariableOptionsSelect({
   };
 
   return (
-    <OptionVariableContext.Provider value={variableId}>
+    <OptionVariableContext.Provider value={optionVariable}>
       <Select
         value={value}
         options={selectOptions}

@@ -16,6 +16,7 @@ import {
   renameValueTokens,
   uniqueCopyKey,
 } from "@/utils/resolution";
+import { buildDuplicateName } from "@/utils/string";
 import {
   entryId,
   fromVariableEntries,
@@ -48,6 +49,7 @@ type VariablesActions = Pick<
   | "toggleVariableSecret"
   | "addVariableOption"
   | "removeVariableOption"
+  | "duplicateVariableOption"
   | "renameVariableOption"
   | "reorderVariableOptions"
   | "applyVariableKeyCase"
@@ -347,6 +349,35 @@ export function createVariablesSlice(
             const options = v.options.filter((entry) => entry !== option);
             const value = v.value === option ? (options[0] ?? "") : v.value;
             return { ...v, options, value };
+          }),
+        })),
+      );
+
+      get().saveState();
+    },
+
+    duplicateVariableOption: (variableId, option) => {
+      if (get().mode === AppMode.READ) {
+        return;
+      }
+
+      set((s) =>
+        withActiveTab(s, (tab) => ({
+          ...tab,
+          variables: tab.variables.map((v) => {
+            const index = v.options?.indexOf(option) ?? -1;
+            if (v.id !== variableId || !v.options || index < 0) {
+              return v;
+            }
+
+            const options = [...v.options];
+            options.splice(
+              index + 1,
+              0,
+              buildDuplicateName(option, (name) => options.includes(name)),
+            );
+
+            return { ...v, options };
           }),
         })),
       );

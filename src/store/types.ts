@@ -302,6 +302,7 @@ export interface StoreState {
   toggleVariableSecret: (variableId: string) => void;
   addVariableOption: (variableId: string, option: string) => void;
   removeVariableOption: (variableId: string, option: string) => void;
+  duplicateVariableOption: (variableId: string, option: string) => void;
   renameVariableOption: (
     variableId: string,
     option: string,
