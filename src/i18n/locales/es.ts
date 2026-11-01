@@ -285,6 +285,12 @@ export const es: Messages = {
       `Copiar comando (${parts} ${parts === 1 ? "parte sin resolver" : "partes sin resolver"})`,
     copiedUnresolved: (parts) =>
       `Copiado con ${parts} ${parts === 1 ? "parte sin resolver" : "partes sin resolver"}`,
+    copyEncrypted: (values) =>
+      `Copiar comando (${values} ${values === 1 ? "valor cifrado" : "valores cifrados"}: desbloquea el libro primero)`,
+    copyUnresolvedEncrypted: (parts, values) =>
+      `Copiar comando (${parts} ${parts === 1 ? "parte sin resolver" : "partes sin resolver"}, ${values} ${values === 1 ? "valor cifrado" : "valores cifrados"})`,
+    copiedEncrypted: (values) =>
+      `Copiado con ${values} ${values === 1 ? "valor cifrado" : "valores cifrados"}`,
     placeholder: "ssh {USUARIO}@{HOST}",
     extractVariable: "Extraer en una variable",
     inlineVariable: "Insertar el valor de la variable",
@@ -1384,7 +1390,7 @@ Si algo sale mal, deshazlo en este orden:
       covered:
         "Solo se cifran los valores secretos; el resto sigue en texto plano, así que un libro exportado se puede seguir leyendo y comparando. En el disco, un secreto se ve como `cpv1.<sal>.<iv>.<cifrado>`: una etiqueta más todo lo necesario para descifrarlo salvo tu frase de contraseña, por eso el archivo se abre en cualquier máquina que la tenga.",
       unlocking:
-        "Volver a abrir la pestaña bloquea todos los libros de nuevo, pero solo el que tienes delante te pide desbloquearlo; los demás esperan a que los abras. Un escudo junto al nombre del libro muestra su estado: verde y cerrado si está desbloqueado, neutro si está bloqueado, tachado si nada lo protege. Haz clic para desbloquearlo o para ponerle una frase de contraseña.",
+        "Volver a abrir la pestaña bloquea todos los libros de nuevo, pero solo el que tienes delante te pide desbloquearlo; los demás esperan a que los abras. Un escudo junto al nombre del libro muestra su estado: verde y cerrado si está desbloqueado, neutro si está bloqueado, tachado si nada lo protege. Haz clic para desbloquearlo o para ponerle una frase de contraseña. Copiar un comando de un libro bloqueado sigue funcionando, pero sus secretos salen cifrados, así que la copia te avisa de cuántos valores siguen cifrados.",
       importing:
         "Importar un `.json` con secretos funciona igual, con un atajo: si algún libro que ya desbloqueaste en esta sesión usa la frase de contraseña con la que se cifró ese archivo, se abre sin volver a pedírtela.",
       changing: (changeLabel) =>

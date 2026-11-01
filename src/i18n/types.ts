@@ -240,6 +240,9 @@ export interface Messages {
     copy: string;
     copyUnresolved: (parts: number) => string;
     copiedUnresolved: (parts: number) => string;
+    copyEncrypted: (values: number) => string;
+    copyUnresolvedEncrypted: (parts: number, values: number) => string;
+    copiedEncrypted: (values: number) => string;
     placeholder: string;
     extractVariable: string;
     inlineVariable: string;

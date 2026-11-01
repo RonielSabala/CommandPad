@@ -273,6 +273,12 @@ export const en: Messages = {
       `Copy command (${parts} unresolved ${parts === 1 ? "part" : "parts"})`,
     copiedUnresolved: (parts) =>
       `Copied with ${parts} unresolved ${parts === 1 ? "part" : "parts"}`,
+    copyEncrypted: (values) =>
+      `Copy command (${values} encrypted ${values === 1 ? "value" : "values"}: unlock the runbook first)`,
+    copyUnresolvedEncrypted: (parts, values) =>
+      `Copy command (${parts} unresolved ${parts === 1 ? "part" : "parts"}, ${values} encrypted ${values === 1 ? "value" : "values"})`,
+    copiedEncrypted: (values) =>
+      `Copied with ${values} encrypted ${values === 1 ? "value" : "values"}`,
     placeholder: "ssh {USER}@{HOST}",
     extractVariable: "Extract into a variable",
     inlineVariable: "Inline the variable",
@@ -1357,7 +1363,7 @@ If something goes wrong, undo it in this order:
       covered:
         "Only secret values are encrypted; everything else stays plain text, so an exported runbook is still readable and diffable. On disk a secret looks like `cpv1.<salt>.<iv>.<ciphertext>`: a label plus everything needed to decrypt it except your passphrase, which is why the file opens on any machine that has it.",
       unlocking:
-        "Reopening the tab locks every runbook again, but only the one in front of you asks to unlock; the rest wait until you open them. A shield by a runbook's name shows its state: green and closed when unlocked, plain when locked, crossed out when nothing protects it. Click it to unlock, or to set a passphrase.",
+        "Reopening the tab locks every runbook again, but only the one in front of you asks to unlock; the rest wait until you open them. A shield by a runbook's name shows its state: green and closed when unlocked, plain when locked, crossed out when nothing protects it. Click it to unlock, or to set a passphrase. Copying a command from a locked runbook still works, but its secrets come out as ciphertext, so the copy warns you how many values are still encrypted.",
       importing:
         "Importing a `.json` that holds secrets is the same story, with one shortcut: if any runbook you already unlocked this session uses the passphrase that file was encrypted with, it opens without asking you for it again.",
       changing: (changeLabel) =>

@@ -37,7 +37,8 @@ export {
   hasUnresolvedSegments,
   isMaskedSegment,
   maskedText,
-  maskSpans
+  maskSpans,
+  resolvedSegmentKeys
 } from "./segments";
 export {
   braceToken,

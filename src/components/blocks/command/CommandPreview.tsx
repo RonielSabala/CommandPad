@@ -17,6 +17,7 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CheckIcon, CopyIcon } from "@/components/icons";
 import { useClampSurface } from "@/hooks/useClampSurface";
 import { useTranslation } from "@/i18n";
+import { isEncryptedValue } from "@/services/vault";
 import {
   countCommandLines,
   hasUnresolvedSegments,
@@ -24,6 +25,7 @@ import {
   maskSpans,
   resolveCommandText,
   resolveCommandToString,
+  resolvedSegmentKeys,
   unresolvedSegmentParts,
   type VariableMap,
 } from "@/utils/resolution";
@@ -119,6 +121,11 @@ function NestedText({
   );
 }
 
+interface CopyWarnings {
+  unresolved: number;
+  encrypted: number;
+}
+
 interface Props {
   clampId: string;
   text: string;
@@ -140,7 +147,7 @@ export function CommandPreview({
   linkSources,
 }: Props) {
   const t = useTranslation();
-  const [copied, setCopied] = useState<number | null>(null);
+  const [copied, setCopied] = useState<CopyWarnings | null>(null);
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const previewRef = useRef<HTMLSpanElement>(null);
   const previewScrollTarget = useDomScrollTarget(previewRef);
@@ -170,6 +177,20 @@ export function CommandPreview({
         : 0,
     [segments, variableMap, secretKeys],
   );
+
+  const encryptedCount = useMemo(() => {
+    const payloads = new Set<string>();
+    for (const key of resolvedSegmentKeys(segments)) {
+      const value = variableMap[key]?.text;
+
+      if (value && isEncryptedValue(value)) {
+        payloads.add(value);
+      }
+    }
+
+    return payloads.size;
+  }, [segments, variableMap]);
+
   const clamp = useClampSurface(
     clampId,
     ClampSurface.PREVIEW,
@@ -181,22 +202,32 @@ export function CommandPreview({
 
   const copy = () => {
     const resolved = resolveCommandToString(text, variableMap);
-    const parts = unresolvedCount;
+    const warnings = {
+      unresolved: unresolvedCount,
+      encrypted: encryptedCount,
+    };
 
     void navigator.clipboard.writeText(resolved).then(() => {
       clearTimeout(copiedTimer.current);
-      setCopied(parts);
+      setCopied(warnings);
+
       copiedTimer.current = setTimeout(
         () => setCopied(null),
-        parts > 0 ? COPY_WARNING_TIMEOUT_MS : COPY_FEEDBACK_TIMEOUT_MS,
+        warnings.unresolved > 0 || warnings.encrypted > 0
+          ? COPY_WARNING_TIMEOUT_MS
+          : COPY_FEEDBACK_TIMEOUT_MS,
       );
     });
   };
 
   const copyLabel =
-    unresolvedCount > 0
-      ? t.command.copyUnresolved(unresolvedCount)
-      : t.command.copy;
+    unresolvedCount > 0 && encryptedCount > 0
+      ? t.command.copyUnresolvedEncrypted(unresolvedCount, encryptedCount)
+      : unresolvedCount > 0
+        ? t.command.copyUnresolved(unresolvedCount)
+        : encryptedCount > 0
+          ? t.command.copyEncrypted(encryptedCount)
+          : t.command.copy;
 
   return (
     <div className="command-preview" {...{ [DataAttr.DRAG_IMAGE]: "" }}>
@@ -233,9 +264,18 @@ export function CommandPreview({
       <div className={`command-preview-actions ${CssClass.SELECT_KEY_HIDDEN}`}>
         {actions}
 
-        {!!copied && (
+        {!!copied?.unresolved && (
           <span className="copy-warning" role={AriaRole.STATUS}>
-            {t.command.copiedUnresolved(copied)}
+            {t.command.copiedUnresolved(copied.unresolved)}
+          </span>
+        )}
+
+        {!!copied?.encrypted && (
+          <span
+            className="copy-warning copy-warning-encrypted"
+            role={AriaRole.STATUS}
+          >
+            {t.command.copiedEncrypted(copied.encrypted)}
           </span>
         )}
 
