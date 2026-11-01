@@ -11,7 +11,7 @@ export function bindRevealScrolling(
     return;
   }
 
-  const reveal = (event: editor.ICursorPositionChangedEvent) => {
+  instance.onDidChangeCursorPosition((event) => {
     if (event.source === MonacoCursorSource.MOUSE) {
       return;
     }
@@ -52,21 +52,5 @@ export function bindRevealScrolling(
     } else {
       scroller.scrollTop -= above;
     }
-  };
-
-  let pending: editor.ICursorPositionChangedEvent | null = null;
-
-  instance.onDidChangeCursorPosition((event) => {
-    if (!pending) {
-      requestAnimationFrame(() => {
-        const latest = pending;
-        pending = null;
-        if (latest) {
-          reveal(latest);
-        }
-      });
-    }
-
-    pending = event;
   });
 }
