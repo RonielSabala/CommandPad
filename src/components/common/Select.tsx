@@ -38,6 +38,7 @@ export type SelectAlign = (typeof SelectAlign)[keyof typeof SelectAlign];
 export interface SelectOption<T extends string> {
   value: T;
   label: ReactNode;
+  hint?: ReactNode;
 }
 
 export interface SelectOptionRowProps<T extends string> {
@@ -311,6 +312,8 @@ export function Select<T extends string>({
               {isString(option.label)
                 ? abbreviate(option.label, SelectConfig.MAX_OPTION_CHARS)
                 : option.label}
+
+              {option.hint}
             </button>
           );
 

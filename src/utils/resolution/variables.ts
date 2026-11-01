@@ -11,7 +11,7 @@ import {
   spansText,
 } from "./spans";
 import { splitReferenceParts } from "./token";
-import type { ResolvedValue, VariableMap } from "./types";
+import type { ResolvedValue, VariableLookup, VariableMap } from "./types";
 
 export function getVariableKey(variable: Variable): string {
   return variable.key.trim();
@@ -26,6 +26,37 @@ export function isConstantVariableKey(key: string): boolean {
 export interface OuterScope {
   keys: ReadonlySet<string>;
   variableMap: VariableMap;
+}
+
+/** `raw` resolved as `key`'s value. */
+function resolveValueText(
+  raw: string,
+  key: string,
+  context: ReferenceContext,
+): ResolvedValue {
+  const spans: ResolvedSpan[] = [];
+
+  for (const part of splitReferenceParts(raw, ReferenceSurface.VALUE)) {
+    if (!part.match) {
+      spans.push(...flatSpans(part.text, key));
+      continue;
+    }
+
+    const reference = resolveReference(
+      part.match.token,
+      part.match.raw,
+      context,
+    );
+
+    spans.push(
+      ...(reference.isReference
+        ? nestSpans(reference.spans)
+        : literalGroupSpans(reference.spans, key)),
+    );
+  }
+
+  const merged = mergeSpans(spans);
+  return { text: spansText(merged), spans: merged };
 }
 
 export function getVariableMap(
@@ -80,40 +111,14 @@ export function getVariableMap(
       return value;
     }
 
-    const spans: ResolvedSpan[] = [];
-    const context: ReferenceContext = {
+    const resolved = resolveValueText(rawMap[key] ?? "", key, {
       surface: ReferenceSurface.VALUE,
       lookup,
-    };
-
-    for (const part of splitReferenceParts(
-      rawMap[key] ?? "",
-      ReferenceSurface.VALUE,
-    )) {
-      if (!part.match) {
-        spans.push(...flatSpans(part.text, key));
-        continue;
-      }
-
-      const reference = resolveReference(
-        part.match.token,
-        part.match.raw,
-        context,
-      );
-
-      spans.push(
-        ...(reference.isReference
-          ? nestSpans(reference.spans)
-          : literalGroupSpans(reference.spans, key)),
-      );
-    }
+    });
 
     if (looped) {
       loopedKeys.add(key);
     }
-
-    const merged = mergeSpans(spans);
-    const resolved: ResolvedValue = { text: spansText(merged), spans: merged };
 
     resolvedMap[key] = resolved;
     return resolved;
@@ -124,6 +129,18 @@ export function getVariableMap(
   }
 
   return resolvedMap;
+}
+
+/** What `option` resolves to once chosen as `key`'s value. */
+export function resolveOptionValue(
+  option: string,
+  key: string,
+  lookup: VariableLookup,
+): ResolvedValue {
+  return resolveValueText(option, key, {
+    surface: ReferenceSurface.VALUE,
+    lookup: (refKey) => (refKey === key ? undefined : lookup(refKey)),
+  });
 }
 
 export function getSecretKeys(variables: Variable[] = []): Set<string> {

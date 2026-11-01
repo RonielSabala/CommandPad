@@ -72,3 +72,10 @@
 .variable-options-value.is-placeholder {
   color: var(--color-text-muted);
 }
+
+.variable-option-hint {
+  margin-left: auto;
+  padding-left: var(--space-2);
+  color: var(--color-text-muted);
+  font-weight: 400;
+}

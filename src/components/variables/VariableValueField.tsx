@@ -93,9 +93,8 @@ export function VariableValueField({
 
       {variable.options ? (
         <VariableOptionsSelect
-          variableId={variableId}
+          variable={variable}
           value={value}
-          options={variable.options}
           triggerClassName="variable-editor-options"
           onChange={onChange}
         />

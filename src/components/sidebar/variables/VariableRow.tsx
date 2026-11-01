@@ -126,9 +126,8 @@ export const VariableRow = memo(function VariableRow({
 
         {variable.options ? (
           <VariableOptionsSelect
-            variableId={variableId}
+            variable={variable}
             value={variableValue}
-            options={variable.options}
             triggerClassName="variable-value-input"
           />
         ) : (

@@ -50,7 +50,7 @@ export {
   splitReferenceBody
 } from "./token";
 export type { OpenReference, ReferenceMatch } from "./token";
-export type { ResolvedValue, VariableMap } from "./types";
+export type { ResolvedValue, VariableLookup, VariableMap } from "./types";
 export {
   hasUnresolvedBlockReferences,
   unresolvedBlockParts,
@@ -64,5 +64,6 @@ export {
   getSecretKeys,
   getVariableKey,
   getVariableMap,
-  isConstantVariableKey
+  isConstantVariableKey,
+  resolveOptionValue
 } from "./variables";

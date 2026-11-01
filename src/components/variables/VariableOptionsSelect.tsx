@@ -1,3 +1,4 @@
+import { SelectConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import {
   AutoComplete,
@@ -5,7 +6,14 @@ import {
   SelectSelector,
 } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
-import { AppMode, DragGroup, VariableField } from "@/common/enums";
+import {
+  AppMode,
+  DragGroup,
+  TooltipVariant,
+  VariableField,
+} from "@/common/enums";
+import type { Variable } from "@/common/types";
+import { VariableSyntax } from "@/common/variableSyntax";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuItem,
@@ -27,9 +35,17 @@ import {
   TrashIcon,
 } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
+import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
-import { classNames } from "@/utils/string";
+import { getActiveTab, useStore } from "@/store/store";
+import {
+  getSecretKeys,
+  getVariableKey,
+  maskedText,
+  resolveOptionValue,
+  type VariableMap,
+} from "@/utils/resolution";
+import { abbreviate, classNames, countCharacters } from "@/utils/string";
 import {
   createContext,
   useContext,
@@ -40,17 +56,82 @@ import {
 } from "react";
 import { ArrowBarDown, ArrowBarUp } from "react-bootstrap-icons";
 
+import { OptionScopeContext } from "./optionScopeContext";
 import "./VariableOptionsSelect.css";
 
 interface OptionVariable {
   variableId: string;
+  variableKey: string;
   options: readonly string[];
 }
 
 const OptionVariableContext = createContext<OptionVariable>({
   variableId: "",
+  variableKey: "",
   options: [],
 });
+
+const NO_VARIABLES: Variable[] = [];
+const NO_OPTIONS: string[] = [];
+
+const tabScopes = new WeakMap<
+  readonly Variable[],
+  { variableMaps: VariableMap[]; secretKeys: Set<string> }
+>();
+
+/** The active tab's option scope. */
+function tabOptionScope(variables: Variable[]) {
+  let scope = tabScopes.get(variables);
+  if (!scope) {
+    scope = {
+      variableMaps: [getTabVariableMap(variables)],
+      secretKeys: getSecretKeys(variables),
+    };
+
+    tabScopes.set(variables, scope);
+  }
+
+  return scope;
+}
+
+/** What an option resolves to. */
+function OptionHint({ option }: { option: string }) {
+  const { variableKey } = useContext(OptionVariableContext);
+  const embedScope = useContext(OptionScopeContext);
+  const variables = useStore((state) =>
+    embedScope
+      ? NO_VARIABLES
+      : (getActiveTab(state)?.variables ?? NO_VARIABLES),
+  );
+
+  const scope = embedScope ?? tabOptionScope(variables);
+  const hint = useMemo(() => {
+    const { variableMaps, secretKeys } = scope;
+    const resolved = resolveOptionValue(
+      option,
+      variableKey,
+      (key) => variableMaps.find((map) => Object.hasOwn(map, key))?.[key],
+    );
+
+    return resolved.text === option ? null : maskedText(resolved, secretKeys);
+  }, [option, variableKey, scope]);
+
+  if (hint === null) {
+    return null;
+  }
+
+  return (
+    <span
+      className="variable-option-hint"
+      {...tooltip(
+        countCharacters(hint) > SelectConfig.MAX_OPTION_CHARS ? hint : null,
+        TooltipVariant.CODE,
+      )}
+    >
+      {abbreviate(hint, SelectConfig.MAX_OPTION_CHARS)}
+    </span>
+  );
+}
 
 function VariableOptionRow({
   value: option,
@@ -219,18 +300,16 @@ function VariableOptionRow({
 }
 
 interface Props {
-  variableId: string;
+  variable: Variable;
   value: string;
-  options: readonly string[];
   className?: string;
   triggerClassName: string;
   onChange?: (value: string) => void;
 }
 
 export function VariableOptionsSelect({
-  variableId,
+  variable,
   value,
-  options,
   className,
   triggerClassName,
   onChange,
@@ -240,14 +319,25 @@ export function VariableOptionsSelect({
   const updateVariable = useStore((state) => state.updateVariable);
   const addVariableOption = useStore((state) => state.addVariableOption);
   const [draft, setDraft] = useState("");
+
+  const variableId = variable.id;
+  const variableKey = getVariableKey(variable);
+  const options = variable.options ?? NO_OPTIONS;
   const optionVariable = useMemo(
-    () => ({ variableId, options }),
-    [variableId, options],
+    () => ({ variableId, variableKey, options }),
+    [variableId, variableKey, options],
   );
 
   const editable = !readMode && !onChange;
   const selectOptions = useMemo(
-    () => options.map((option) => ({ value: option, label: option })),
+    () =>
+      options.map((option) => ({
+        value: option,
+        label: option,
+        hint: option.includes(VariableSyntax.BRACE_OPEN) && (
+          <OptionHint option={option} />
+        ),
+      })),
     [options],
   );
 
