@@ -1,5 +1,5 @@
 import { BLOCK_TYPE_ORDER } from "@/blocks";
-import { AddRow } from "@/components/common/AddRow";
+import { AddRow } from "@/components/common/addRow/AddRow";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 
@@ -19,6 +19,7 @@ export function AddBlockRow() {
           icon: getBlockIcon(type),
           label,
           title: t.blocks.typeTitle(label),
+          info: t.blocks.typeInfo[type],
           onAdd: () => void addBlock(type),
         };
       })}

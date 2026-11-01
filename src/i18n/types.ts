@@ -63,6 +63,8 @@ export interface Messages {
     noMatches: string;
     untitledTab: string;
     untitledRunbook: string;
+    showDescription: string;
+    hideDescription: string;
   };
   header: {
     reloadTitle: string;
@@ -130,6 +132,9 @@ export interface Messages {
     mask: (count: number) => string;
     enumLabel: string;
     newEnumTitle: string;
+    variableInfo: string;
+    enumInfo: string;
+    sectionInfo: string;
     optionPlaceholder: string;
     noOptions: string;
     searchOptionsPlaceholder: string;
@@ -152,7 +157,9 @@ export interface Messages {
     selected: (count: number) => string;
     dragResizeSplit: string;
     unusedTitle: (key: string) => string;
-    newSection: string;
+    variableTitle: string;
+    enumTitle: string;
+    sectionTitle: string;
     newRowLabel: string;
     variableLabel: string;
     sectionLabel: string;
@@ -196,6 +203,7 @@ export interface Messages {
     newBlockLabel: string;
     typeLabel: Record<BlockType, string>;
     typeTitle: (label: string) => string;
+    typeInfo: Record<BlockType, string>;
     actions: string;
     insertAbove: string;
     insertBelow: string;

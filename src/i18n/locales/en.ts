@@ -36,6 +36,8 @@ export const en: Messages = {
     noMatches: "No matches.",
     untitledTab: "Untitled",
     untitledRunbook: "Untitled runbook",
+    showDescription: "Show description",
+    hideDescription: "Hide description",
   },
   header: {
     reloadTitle: "Reload CommandPad",
@@ -126,6 +128,12 @@ export const en: Messages = {
     mask: (count) => (count === 1 ? "Mask value" : "Mask values"),
     enumLabel: "Enum",
     newEnumTitle: "New enum variable",
+    variableInfo:
+      "Holds a value you write once and reference anywhere as {KEY}, like a host, a path or a token. Mask it to hide secrets on screen.",
+    enumInfo:
+      "A variable whose value is picked from a fixed list of choices, like an environment or a region. References see the selected choice.",
+    sectionInfo:
+      "A named, collapsible group for the variables below it, to tuck away the ones you rarely touch. Only the variables editor shows sections.",
     optionPlaceholder: "choose an option",
     noOptions: "No options yet",
     searchOptionsPlaceholder: "Search options…",
@@ -153,7 +161,9 @@ export const en: Messages = {
       count === 1 ? "1 variable selected" : `${count} variables selected`,
     dragResizeSplit: `Drag to resize key and value ${MIDDLE_DOT} double-click to even out`,
     unusedTitle: (key) => `${key} (unused)`,
-    newSection: "New section",
+    variableTitle: "Variable",
+    enumTitle: "Enumerated variable",
+    sectionTitle: "Variable section",
     newRowLabel: "NEW",
     variableLabel: "Variable",
     sectionLabel: "Section",
@@ -223,6 +233,18 @@ export const en: Messages = {
       [BlockType.DIVIDER]: "Divider",
     },
     typeTitle: (label) => `${label} block`,
+    typeInfo: {
+      [BlockType.COMMAND]:
+        "A command to run. Its {KEY} references resolve against your variables, so copying it gives you the finished command.",
+      [BlockType.NOTE]:
+        "Free text with markdown: explain a step, leave a warning or link to more information.",
+      [BlockType.IMAGE]:
+        "A picture, attached or linked, like a diagram or a screenshot of the expected output.",
+      [BlockType.RUNBOOK]:
+        "Embeds another runbook, read-only, from your library or the cloud. Override its variables without touching the original.",
+      [BlockType.DIVIDER]:
+        "A horizontal line that splits the runbook into parts.",
+    },
     actions: "Block actions",
     insertAbove: "Insert block above",
     insertBelow: "Insert block below",

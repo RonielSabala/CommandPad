@@ -36,6 +36,8 @@ export const es: Messages = {
     noMatches: "Sin coincidencias.",
     untitledTab: "Sin título",
     untitledRunbook: "Libro sin título",
+    showDescription: "Mostrar descripción",
+    hideDescription: "Ocultar descripción",
   },
   header: {
     reloadTitle: "Recargar CommandPad",
@@ -126,6 +128,12 @@ export const es: Messages = {
     mask: (count) => (count === 1 ? "Ocultar valor" : "Ocultar valores"),
     enumLabel: "Enum",
     newEnumTitle: "Nueva variable enum",
+    variableInfo:
+      "Guarda un valor que escribes una vez y referencias en cualquier parte como {CLAVE}, como un host, una ruta o un token. Enmascárala para ocultar secretos en pantalla.",
+    enumInfo:
+      "Una variable cuyo valor se elige de una lista fija de opciones, como un entorno o una región. Las referencias ven la opción seleccionada.",
+    sectionInfo:
+      "Un grupo con nombre y plegable para las variables que tiene debajo, para apartar las que casi no tocas. Solo el editor de variables muestra secciones.",
     optionPlaceholder: "elige una opción",
     noOptions: "Aún no hay opciones",
     searchOptionsPlaceholder: "Buscar opciones…",
@@ -156,7 +164,9 @@ export const es: Messages = {
         : `${count} variables seleccionadas`,
     dragResizeSplit: `Arrastra para redimensionar clave y valor ${MIDDLE_DOT} doble clic para igualarlos`,
     unusedTitle: (key) => `${key} (sin usar)`,
-    newSection: "Nueva sección",
+    variableTitle: "Variable",
+    enumTitle: "Variable enumerada",
+    sectionTitle: "Sección de variables",
     newRowLabel: "NUEVA",
     variableLabel: "Variable",
     sectionLabel: "Sección",
@@ -233,6 +243,18 @@ export const es: Messages = {
       [BlockType.DIVIDER]: "Divisor",
     },
     typeTitle: (label) => `Bloque de ${label.toLowerCase()}`,
+    typeInfo: {
+      [BlockType.COMMAND]:
+        "Un comando para ejecutar. Sus referencias {CLAVE} se resuelven con tus variables, así que al copiarlo obtienes el comando terminado.",
+      [BlockType.NOTE]:
+        "Texto libre con markdown: explica un paso, deja una advertencia o enlaza a más información.",
+      [BlockType.IMAGE]:
+        "Una imagen, adjunta o enlazada, como un diagrama o una captura de la salida esperada.",
+      [BlockType.RUNBOOK]:
+        "Incrusta otro runbook, de solo lectura, desde tu biblioteca o la nube. Sobrescribe sus variables sin tocar el original.",
+      [BlockType.DIVIDER]:
+        "Una línea horizontal que divide el runbook en partes.",
+    },
     actions: "Acciones del bloque",
     insertAbove: "Insertar bloque arriba",
     insertBelow: "Insertar bloque abajo",

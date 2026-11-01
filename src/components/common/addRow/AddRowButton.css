@@ -1,0 +1,46 @@
+.add-row-tip.is-open {
+  width: 16rem;
+}
+
+.add-row-tip-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.add-row-tip-title {
+  flex: 1;
+  font-weight: 600;
+}
+
+.add-row-tip-toggle {
+  display: inline-flex;
+  flex: none;
+  padding: var(--space-2);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition:
+    color var(--transition-base),
+    background-color var(--transition-base);
+}
+
+.add-row-tip-toggle:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+}
+
+.add-row-tip.is-open .add-row-tip-toggle {
+  color: var(--accent);
+}
+
+.add-row-tip-info {
+  padding-top: var(--space-4);
+  margin: var(--space-3) 0 0;
+  border-top: var(--border-standard);
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  line-height: 1.5;
+}

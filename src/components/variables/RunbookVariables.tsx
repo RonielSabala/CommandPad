@@ -8,7 +8,7 @@ import {
   VariableKind,
 } from "@/common/enums";
 import type { Block, Variable, VariableSection } from "@/common/types";
-import { AddRow } from "@/components/common/AddRow";
+import { AddRow } from "@/components/common/addRow/AddRow";
 import { EmptyState } from "@/components/common/EmptyState";
 import { EnumIcon, SectionIcon, VariableIcon } from "@/components/icons";
 import { Minimap } from "@/components/workspace/minimap/Minimap";
@@ -50,21 +50,24 @@ function AddVariableRow() {
           key: VariableKind.TEXT,
           icon: VariableIcon,
           label: t.variables.variableLabel,
-          title: t.variables.newTitle,
+          title: t.variables.variableTitle,
+          info: t.variables.variableInfo,
           onAdd: () => void addVariable(),
         },
         {
           key: VariableKind.ENUM,
           icon: EnumIcon,
           label: t.variables.enumLabel,
-          title: t.variables.newEnumTitle,
+          title: t.variables.enumTitle,
+          info: t.variables.enumInfo,
           onAdd: () => void addVariable(VariableKind.ENUM),
         },
         {
           key: VariableEntryKind.SECTION,
           icon: SectionIcon,
           label: t.variables.sectionLabel,
-          title: t.variables.newSection,
+          title: t.variables.sectionTitle,
+          info: t.variables.sectionInfo,
           onAdd: addVariableSection,
         },
       ]}
