@@ -1,5 +1,6 @@
 import type { Variable } from "@/common/types";
 import { DragImage } from "@/components/common/DragImage";
+import { EnumIcon, VariableIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import type { VariableCompletion } from "@/monaco/completions";
 import { memo, useRef } from "react";
@@ -35,7 +36,9 @@ export const VariableItem = memo(function VariableItem({
         />
       )}
     >
-      <DragImage>{variable.key || t.variables.keyPlaceholder}</DragImage>
+      <DragImage icon={variable.options ? EnumIcon : VariableIcon}>
+        {variable.key || t.variables.keyPlaceholder}
+      </DragImage>
       <VariableEditor
         variable={variable}
         completions={completions}

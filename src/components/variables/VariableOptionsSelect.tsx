@@ -28,6 +28,7 @@ import {
 } from "@/components/common/Select";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import {
+  CheckIcon,
   CopyIcon,
   DuplicateIcon,
   PencilIcon,
@@ -175,7 +176,7 @@ function VariableOptionRow({
         isDragging && CssClass.DRAGGING,
       )}
     >
-      <DragImage>{option}</DragImage>
+      <DragImage icon={CheckIcon}>{option}</DragImage>
       <DragHandle handleProps={handleProps} />
 
       <div
