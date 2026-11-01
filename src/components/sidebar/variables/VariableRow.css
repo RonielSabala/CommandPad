@@ -47,11 +47,11 @@ body.variable-split-resizing
   opacity: 0;
 }
 
-/* Hovering or dragging one segment lights that list's whole line */
-:has(> .sidebar-section-list-row .variable-split-handle:active)
+/* Hovering or dragging one segment lights that list's whole line. */
+.sidebar-section-list:has(.variable-split-handle:active)
   .variable-split-handle::before,
 body:not(.variable-split-resizing)
-  :has(> .sidebar-section-list-row .variable-split-handle:hover)
+  .sidebar-section-list:has(.variable-split-handle:hover)
   .variable-split-handle::before {
   width: var(--space-2);
   background: var(--accent);
