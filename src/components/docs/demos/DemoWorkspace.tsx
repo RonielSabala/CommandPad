@@ -40,6 +40,8 @@ interface DemoWorkspaceProps {
   tabs?: DemoContent[];
   library?: DemoContent[];
   className?: string;
+  /** Multi-select, off where it isn't explained yet. */
+  selectable?: boolean;
   children: ReactNode;
 }
 
@@ -50,6 +52,7 @@ export function DemoWorkspace({
   tabs = EMPTY_CONTENT,
   library = EMPTY_CONTENT,
   className,
+  selectable = true,
   children,
 }: DemoWorkspaceProps) {
   const language = useStore((state) => state.language);
@@ -95,9 +98,13 @@ export function DemoWorkspace({
   return (
     <StoreProvider value={store}>
       <DocsDemo onReset={reset} className={className}>
-        <SelectionActionsContext.Provider value={false}>
+        <SelectionActionsContext.Provider value={selectable}>
           <div key={version} className="docs-demo-content">
-            {children}
+            {selectable ? (
+              <DemoSelectionArea>{children}</DemoSelectionArea>
+            ) : (
+              children
+            )}
           </div>
         </SelectionActionsContext.Provider>
       </DocsDemo>
@@ -148,7 +155,7 @@ export function DemoRunbookList() {
 }
 
 /** Multi-select for a demo. */
-export function DemoSelectionArea({ children }: { children: ReactNode }) {
+function DemoSelectionArea({ children }: { children: ReactNode }) {
   const store = useStoreApi();
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
 
@@ -185,9 +192,7 @@ export function DemoSelectionArea({ children }: { children: ReactNode }) {
       tabIndex={0}
       onKeyDown={onKeyDown}
     >
-      <SelectionActionsContext.Provider value>
-        {children}
-      </SelectionActionsContext.Provider>
+      {children}
     </div>
   );
 }

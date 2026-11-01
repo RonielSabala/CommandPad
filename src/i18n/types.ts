@@ -562,6 +562,8 @@ export interface Messages {
       ) => string;
       autoCreate: string;
       labelDemo: string;
+      copyBlocks: string;
+      dragToTabDelay: string;
       unresolvedMarker: (create: string, edit: string) => string;
     };
     sidebar: {
@@ -837,7 +839,6 @@ export interface Messages {
       menuAction: (selectLabel: string) => string;
       actions: string;
       clear: string;
-      dragToTabDelay: string;
     };
     readMode: {
       intro: string;

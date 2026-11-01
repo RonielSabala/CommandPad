@@ -85,6 +85,7 @@ export function CommandBlockDocs() {
       <Prose text={t.docs.commandBlock.intro} />
       <Prose text={t.docs.commandBlock.parts} />
       <DemoWorkspace
+        selectable={false}
         tabs={[{ blocks: [demoCommand("ls -ltr ~/Documents/reports")] }]}
       >
         <BlocksList />
@@ -93,7 +94,10 @@ export function CommandBlockDocs() {
       <Prose text={t.docs.commandBlock.editorFeatures} />
       <Prose text={t.docs.commandBlock.language(COMMAND_LANGUAGE_NAMES)} />
       <Prose text={t.docs.commandBlock.longCommands(t.command.showMoreLines)} />
-      <DemoWorkspace tabs={[{ blocks: [demoCommand(LONG_COMMAND)] }]}>
+      <DemoWorkspace
+        selectable={false}
+        tabs={[{ blocks: [demoCommand(LONG_COMMAND)] }]}
+      >
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.commandBlock.variablesTeaser} />
@@ -119,7 +123,10 @@ export function NoteBlockDocs() {
       <Prose text={t.docs.noteBlock.escapes} />
       <Prose text={t.docs.noteBlock.links} />
 
-      <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.noteSample)] }]}>
+      <DemoWorkspace
+        selectable={false}
+        tabs={[{ blocks: [demoNote(t.docs.demo.noteSample)] }]}
+      >
         <BlocksList />
       </DemoWorkspace>
 
@@ -130,13 +137,19 @@ export function NoteBlockDocs() {
 
       <Prose text={t.docs.noteBlock.tables} />
 
-      <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.tableSample)] }]}>
+      <DemoWorkspace
+        selectable={false}
+        tabs={[{ blocks: [demoNote(t.docs.demo.tableSample)] }]}
+      >
         <BlocksList />
       </DemoWorkspace>
 
       <Prose text={t.docs.noteBlock.lists} />
 
-      <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.listSample)] }]}>
+      <DemoWorkspace
+        selectable={false}
+        tabs={[{ blocks: [demoNote(t.docs.demo.listSample)] }]}
+      >
         <BlocksList />
       </DemoWorkspace>
     </>
@@ -161,6 +174,7 @@ export function ImageBlockDocs() {
         )}
       />
       <DemoWorkspace
+        selectable={false}
         tabs={[
           {
             blocks: [
@@ -187,6 +201,7 @@ export function DividerBlockDocs() {
     <>
       <Prose text={t.docs.dividerBlock.intro} />
       <DemoWorkspace
+        selectable={false}
         tabs={[
           { blocks: [demoNote(t.docs.dividerBlock.demoNote), demoDivider()] },
         ]}

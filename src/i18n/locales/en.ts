@@ -977,6 +977,10 @@ If something goes wrong, undo it in this order:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
         "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, close one, and open the source file to see a tab's runbook as JSON.",
+      copyBlocks:
+        "To copy blocks into another tab, select them and drag any selected block's handle onto that tab in the tabs bar. Referenced variables travel with the blocks; if the target tab already defines one of them with a different value, the copy is added under a new name and the copied blocks are rewritten to reference it, so neither tab's values are touched.",
+      dragToTabDelay:
+        "While dragging blocks over the tabs bar, hover a tab for a moment to switch to it, then drop.",
       unresolvedMarker: (create, edit) =>
         `When a tab's close button is a solid red dot, that runbook has unresolved parts, so a runbook that isn't ready to run stands out without opening it. Point at the dot and it turns back into the close button, with a summary of what doesn't resolve: how many problems there are and how many blocks they reach, each problem listed once under its cause, followed by the blocks it breaks. Click a block to jump straight to it, use the arrow to open the variable a problem comes from, or **${create}** to add a variable that doesn't exist yet. On the open tab, an empty value or an unfilled placeholder also offers **${edit}**. Both open the variable's editor right in the summary, ready to type the value without leaving the tab. The third tab above wears one: open its variables and give \`HOST\` a value, and the dot goes as soon as every reference resolves.`,
     },
@@ -1477,12 +1481,9 @@ If something goes wrong, undo it in this order:
         `Without the keyboard, pick **${selectLabel}** in a block's actions menu to add it to the selection, and pick it again to drop it.`,
       actions: `* **Drag** any selected block's handle to move all selected blocks together, preserving relative order.
 * **Duplicate**: \`Ctrl+D\` duplicates the entire group, inserted after the last selected block.
-* **Delete**: \`Del\` deletes the entire group.
-* **Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab. Referenced variables travel with the blocks; if the target tab already defines one of them with a different value, the copy is added under a new name and the copied blocks are rewritten to reference it, so neither tab's values are touched.`,
+* **Delete**: \`Del\` deletes the entire group.`,
       clear:
         "Press `Escape` or click outside block controls to clear the selection.",
-      dragToTabDelay:
-        "While dragging blocks over the tabs bar, hover a tab for a moment to switch to it, then drop.",
     },
     readMode: {
       intro:

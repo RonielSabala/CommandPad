@@ -1002,6 +1002,10 @@ Si algo sale mal, deshazlo en este orden:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:
         "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas, cierra alguna, y abre la fuente para ver el libro de una pestaña como JSON.",
+      copyBlocks:
+        "Para copiar bloques a otra pestaña, selecciónalos y arrastra el control de cualquier bloque seleccionado sobre esa pestaña en la barra de pestañas. Las variables referenciadas viajan con los bloques; si la pestaña de destino ya define alguna con un valor distinto, la copia se añade con un nuevo nombre y los bloques copiados se reescriben para referenciarla, de modo que no se tocan los valores de ninguna pestaña.",
+      dragToTabDelay:
+        "Mientras arrastras bloques sobre la barra de pestañas, mantén el cursor un momento sobre una pestaña para cambiar a ella, y luego suelta.",
       unresolvedMarker: (create, edit) =>
         `Cuando el botón de cerrar de una pestaña es un punto rojo relleno, ese libro tiene partes sin resolver, así que un libro que no está listo para usarse se nota sin necesidad de abrirlo. Al pasar el puntero por el punto, vuelve a ser el botón de cerrar, con un resumen de lo que no resuelve: cuántos problemas hay y a cuántos bloques alcanzan, cada problema una sola vez bajo su causa, seguido de los bloques que rompe. Haz clic en un bloque para saltar directamente a él, usa la flecha para abrir la variable de la que viene un problema, o **${create}** para agregar una variable que todavía no existe. En la pestaña abierta, un valor vacío o un hueco sin rellenar también ofrece **${edit}**. Ambos abren el editor de la variable dentro del propio resumen, listo para que escribas el valor sin salir de la pestaña. La tercera pestaña de arriba lleva uno: abre sus variables y dale un valor a \`HOST\`, y el punto desaparece en cuanto todas las referencias resuelven.`,
     },
@@ -1504,12 +1508,9 @@ Si algo sale mal, deshazlo en este orden:
         `Sin el teclado, elige **${selectLabel}** en el menú de acciones de un bloque para añadirlo a la selección, y vuelve a elegirlo para quitarlo.`,
       actions: `* **Arrastra** el control de cualquier bloque seleccionado para mover todos los bloques seleccionados juntos, conservando el orden relativo.
 * **Duplicar**: \`Ctrl+D\` duplica el grupo completo, insertado después del último bloque seleccionado.
-* **Eliminar**: \`Del\` elimina el grupo completo.
-* **Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella. Las variables referenciadas viajan con los bloques; si la pestaña de destino ya define alguna con un valor distinto, la copia se añade con un nuevo nombre y los bloques copiados se reescriben para referenciarla, de modo que no se tocan los valores de ninguna pestaña.`,
+* **Eliminar**: \`Del\` elimina el grupo completo.`,
       clear:
         "Pulsa `Escape` o haz clic fuera de los controles de bloque para limpiar la selección.",
-      dragToTabDelay:
-        "Mientras arrastras bloques sobre la barra de pestañas, mantén el cursor un momento sobre una pestaña para cambiar a ella, y luego suelta.",
     },
     readMode: {
       intro:
