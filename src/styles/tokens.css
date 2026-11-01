@@ -179,6 +179,8 @@
   --context-menu-min-width: 10rem;
   --context-menu-min-height: 3rem;
 
+  --select-menu-min-width: 10rem;
+
   --docs-max-width: 52rem;
   --docs-heading-lg: 1.75rem;
   --docs-toc-size: 0.9375rem;

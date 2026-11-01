@@ -27,6 +27,33 @@ export function isMaskedSegment(
   );
 }
 
+/** The keys whose resolved text shows somewhere in `segments`. */
+export function resolvedSegmentKeys(
+  segments: readonly CommandSegment[],
+): Set<string> {
+  const keys = new Set<string>();
+
+  for (const segment of segments) {
+    if (segment.type === CommandSegmentType.RESOLVED && segment.key) {
+      keys.add(segment.key);
+    }
+
+    for (const span of segment.spans ?? []) {
+      if (span.unresolved) {
+        continue;
+      }
+
+      if (span.source) {
+        keys.add(sourceKey(span.source));
+      }
+
+      span.derivedFrom?.forEach((key) => keys.add(key));
+    }
+  }
+
+  return keys;
+}
+
 /** Whether a span shows a secret's text. */
 function isSecretSpan(
   span: ResolvedSpan,

@@ -94,6 +94,11 @@
   white-space: nowrap;
 }
 
+.copy-warning-encrypted {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
 /* Token styles */
 
 .token-resolved,

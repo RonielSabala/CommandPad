@@ -6,6 +6,7 @@ import {
   VariableField,
   VariableKind,
 } from "@/common/enums";
+import type { Variable } from "@/common/types";
 import { withSetMember } from "@/utils/collections";
 import { generateId } from "@/utils/id";
 import {
@@ -16,6 +17,7 @@ import {
   renameValueTokens,
   uniqueCopyKey,
 } from "@/utils/resolution";
+import { buildDuplicateName } from "@/utils/string";
 import {
   entryId,
   fromVariableEntries,
@@ -30,6 +32,8 @@ import type { StoreKit } from "@/store/kit";
 import {
   getActiveTab,
   getRunbookView,
+  selectedOptionOnly,
+  sortedOptions,
   targetVariableIds,
 } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
@@ -48,6 +52,11 @@ type VariablesActions = Pick<
   | "toggleVariableSecret"
   | "addVariableOption"
   | "removeVariableOption"
+  | "duplicateVariableOption"
+  | "renameVariableOption"
+  | "reorderVariableOptions"
+  | "sortVariableOptions"
+  | "removeOtherVariableOptions"
   | "applyVariableKeyCase"
   | "clearVariableValues"
   | "reorderVariables"
@@ -61,6 +70,31 @@ export function createVariablesSlice(
 ): VariablesActions {
   const { set, get, debouncedSaveState } = kit;
   const { ensureVaultForSecrets } = services;
+
+  /** Replace the options of every enum a row action on `variableId` targets. */
+  const updateTargetOptions = (
+    variableId: string,
+    next: (variable: Variable) => string[] | null,
+  ) => {
+    const state = get();
+    if (state.mode === AppMode.READ) {
+      return;
+    }
+
+    const targets = targetVariableIds(state, variableId);
+
+    set((s) =>
+      withActiveTab(s, (tab) => ({
+        ...tab,
+        variables: tab.variables.map((v) => {
+          const options = targets.has(v.id) ? next(v) : null;
+          return options ? { ...v, options } : v;
+        }),
+      })),
+    );
+
+    get().saveState();
+  };
 
   return {
     addVariable: async (kind = VariableKind.TEXT) => {
@@ -351,6 +385,101 @@ export function createVariablesSlice(
 
       get().saveState();
     },
+
+    duplicateVariableOption: (variableId, option) => {
+      if (get().mode === AppMode.READ) {
+        return;
+      }
+
+      set((s) =>
+        withActiveTab(s, (tab) => ({
+          ...tab,
+          variables: tab.variables.map((v) => {
+            if (v.id !== variableId || !v.options) {
+              return v;
+            }
+
+            const index = v.options.indexOf(option);
+            if (index < 0) {
+              return v;
+            }
+
+            const options = [...v.options];
+            options.splice(
+              index + 1,
+              0,
+              buildDuplicateName(option, (name) => options.includes(name)),
+            );
+
+            return { ...v, options };
+          }),
+        })),
+      );
+
+      get().saveState();
+    },
+
+    renameVariableOption: (variableId, option, next) => {
+      const trimmed = next.trim();
+      if (get().mode === AppMode.READ || !trimmed || trimmed === option) {
+        return;
+      }
+
+      set((s) =>
+        withActiveTab(s, (tab) => ({
+          ...tab,
+          variables: tab.variables.map((v) =>
+            v.id !== variableId ||
+            !v.options?.includes(option) ||
+            v.options.includes(trimmed)
+              ? v
+              : {
+                  ...v,
+                  options: v.options.map((entry) =>
+                    entry === option ? trimmed : entry,
+                  ),
+                  value: v.value === option ? trimmed : v.value,
+                },
+          ),
+        })),
+      );
+
+      get().saveState();
+    },
+
+    reorderVariableOptions: (variableId, sourceOption, targetOption) => {
+      if (get().mode === AppMode.READ || sourceOption === targetOption) {
+        return;
+      }
+
+      set((s) =>
+        withActiveTab(s, (tab) => ({
+          ...tab,
+          variables: tab.variables.map((v) => {
+            const from = v.options?.indexOf(sourceOption) ?? -1;
+            const to = v.options?.indexOf(targetOption) ?? -1;
+
+            if (v.id !== variableId || !v.options || from < 0 || to < 0) {
+              return v;
+            }
+
+            const options = [...v.options];
+            options.splice(to, 0, ...options.splice(from, 1));
+            return { ...v, options };
+          }),
+        })),
+      );
+
+      get().saveState();
+    },
+
+    sortVariableOptions: (variableId, direction) =>
+      updateTargetOptions(variableId, (variable) =>
+        sortedOptions(variable, direction),
+      ),
+
+    removeOtherVariableOptions: (variableId) =>
+      updateTargetOptions(variableId, selectedOptionOnly),
 
     applyVariableKeyCase: (variableId, keyword) => {
       const state = get();

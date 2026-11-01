@@ -6,6 +6,7 @@ import type {
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
+  SortDirection,
   UnresolvedCause,
   VaultError,
   VaultField,
@@ -130,9 +131,18 @@ export interface Messages {
     newEnumTitle: string;
     optionPlaceholder: string;
     noOptions: string;
+    searchOptionsPlaceholder: string;
     addOptionPlaceholder: string;
     addOption: string;
-    removeOption: (option: string) => string;
+    optionActions: string;
+    editOption: string;
+    duplicateOption: string;
+    copyOption: string;
+    moveOptionToTop: string;
+    moveOptionToBottom: string;
+    removeOption: string;
+    sortOptions: Record<SortDirection, string>;
+    removeOtherOptions: string;
     actions: string;
     duplicate: (count: number) => string;
     renameCase: string;
@@ -228,8 +238,8 @@ export interface Messages {
     showMoreLines: string;
     showFewerLines: string;
     copy: string;
-    copyUnresolved: (parts: number) => string;
     copiedUnresolved: (parts: number) => string;
+    copiedEncrypted: (values: number) => string;
     placeholder: string;
     extractVariable: string;
     inlineVariable: string;
@@ -532,6 +542,8 @@ export interface Messages {
         openSourceLabel: string,
         openPreviewLabel: string,
         openEditorLabel: string,
+        openSourceShortcut: string,
+        openEditorShortcut: string,
         closeLabel: string,
         closeOthersLabel: string,
         closeAllLabel: string,
@@ -574,7 +586,19 @@ export interface Messages {
       demoHint: (variableActionsLabel: string) => string;
       constants: string;
       constantsDemoHint: string;
-      enums: (enumLabel: string, newRowLabel: string) => string;
+      enums: (
+        enumLabel: string,
+        newRowLabel: string,
+        editOptionLabel: string,
+        duplicateOptionLabel: string,
+        copyOptionLabel: string,
+        moveToTopLabel: string,
+        moveToBottomLabel: string,
+        removeOptionLabel: string,
+        sortAscendingLabel: string,
+        sortDescendingLabel: string,
+        removeOtherOptionsLabel: string,
+      ) => string;
       enumsDemoHint: string;
       clearValues: (clearValuesLabel: string) => string;
     };

@@ -51,7 +51,7 @@ export function StaticCodeView({
   const view = (
     <div
       className={classNames(
-        "code-editor",
+        CssClass.CODE_EDITOR,
         "code-editor-static",
         !gutter && "no-gutter",
         singleLine && "code-editor-single-line",
@@ -64,7 +64,7 @@ export function StaticCodeView({
     >
       {header && (
         <div
-          className={`code-editor-header ${CssClass.SELECT_KEY_INERT_CHILDREN}`}
+          className={`${CssClass.CODE_EDITOR_HEADER} ${CssClass.SELECT_KEY_INERT_CHILDREN}`}
         >
           {header}
         </div>

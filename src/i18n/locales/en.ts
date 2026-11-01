@@ -7,6 +7,7 @@ import {
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
+  SortDirection,
   UnresolvedCause,
   VaultError,
   VaultField,
@@ -126,9 +127,21 @@ export const en: Messages = {
     newEnumTitle: "New enum variable",
     optionPlaceholder: "choose an option",
     noOptions: "No options yet",
+    searchOptionsPlaceholder: "Search options…",
     addOptionPlaceholder: "Add option…",
     addOption: "Add option",
-    removeOption: (option) => `Remove ${option}`,
+    optionActions: "Option actions",
+    editOption: "Edit option",
+    duplicateOption: "Duplicate option",
+    copyOption: "Copy option",
+    moveOptionToTop: "Move to top",
+    moveOptionToBottom: "Move to bottom",
+    removeOption: "Remove option",
+    sortOptions: {
+      [SortDirection.ASC]: "Sort options ascending",
+      [SortDirection.DESC]: "Sort options descending",
+    },
+    removeOtherOptions: "Remove other options",
     actions: "Variable actions",
     duplicate: (count) =>
       count === 1 ? "Duplicate variable" : "Duplicate variables",
@@ -256,10 +269,10 @@ export const en: Messages = {
     showMoreLines: "Show more lines",
     showFewerLines: "Show less",
     copy: "Copy command",
-    copyUnresolved: (parts) =>
-      `Copy command (${parts} unresolved ${parts === 1 ? "part" : "parts"})`,
     copiedUnresolved: (parts) =>
       `Copied with ${parts} unresolved ${parts === 1 ? "part" : "parts"}`,
+    copiedEncrypted: (values) =>
+      `Copied with ${values} encrypted ${values === 1 ? "value" : "values"}`,
     placeholder: "ssh {USER}@{HOST}",
     extractVariable: "Extract into a variable",
     inlineVariable: "Inline the variable",
@@ -561,6 +574,10 @@ export const en: Messages = {
     [KeyBinding.CLEAR_LIBRARY]: "Open delete all runbooks dialog",
     [KeyBinding.TOGGLE_EDITORS]:
       "Toggle all blocks, or all sections in the variables editor",
+    [KeyBinding.TOGGLE_VARIABLES_VIEW]:
+      "Switch between the blocks and the variables editor",
+    [KeyBinding.TOGGLE_SOURCE_VIEW]:
+      "Switch between the blocks and the runbook's source file",
     [KeyBinding.MULTISELECT_BLOCKS]: "Multi-select blocks",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicate selected blocks",
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
@@ -927,6 +944,8 @@ If something goes wrong, undo it in this order:
         openSourceLabel,
         openPreviewLabel,
         openEditorLabel,
+        openSourceShortcut,
+        openEditorShortcut,
         closeLabel,
         closeOthersLabel,
         closeAllLabel,
@@ -935,8 +954,8 @@ If something goes wrong, undo it in this order:
 * **Middle-click** a tab to close it.
 * **Right-click** a tab for **${closeLabel}**, **${closeOthersLabel}** and **${closeAllLabel}**.
 * **Click** the **+** at the end of the tabs bar to open a new tab.
-* **${openSourceLabel}**, at the far end of the tabs bar, swaps the blocks below for the runbook's raw JSON.
-* **${openEditorLabel}**, beside it, swaps them for the runbook's variables instead.
+* **${openSourceLabel}**, at the far end of the tabs bar, swaps the blocks below for the runbook's raw JSON (**${openSourceShortcut}**).
+* **${openEditorLabel}**, beside it, swaps them for the runbook's variables instead (**${openEditorShortcut}**).
 * **${openPreviewLabel}** brings the blocks back.`,
       variablesEditorNote:
         "The variables editor works just like the block editor above, one row per variable instead of per block, down to the language selector on each value: a value starts as plain text, and picking a language only changes how it is highlighted and checked. Try it below.",
@@ -1000,8 +1019,20 @@ If something goes wrong, undo it in this order:
         "Not every variable changes for the same reason. Some are values you swap all the time, and some are **constants**: they stay the same for the whole life of the runbook, and they are only variables because the same value shows up in command after command. CommandPad tells them apart by naming convention: a key written entirely in **capitals** is treated as a _constant_, and any key with a **lowercase** letter in it is treated as a _variable_.",
       constantsDemoHint:
         "The convention is purely a naming one: constants resolve, get referenced and get renamed exactly like any other variable. Rename a key below from capitals to lowercase and back to see the color follow along.",
-      enums: (enumLabel, newRowLabel) =>
-        `A value can also be a fixed set of choices, like an environment or a region, instead of free text. Add an **${enumLabel}** variable, from the **${newRowLabel}** row of the variables editor or the bottom of the sidebar list, and its value is a combo box: each choice can be removed and a box at the bottom adds a new one.`,
+      enums: (
+        enumLabel,
+        newRowLabel,
+        editOptionLabel,
+        duplicateOptionLabel,
+        copyOptionLabel,
+        moveToTopLabel,
+        moveToBottomLabel,
+        removeOptionLabel,
+        sortAscendingLabel,
+        sortDescendingLabel,
+        removeOtherOptionsLabel,
+      ) =>
+        `A value can also be a fixed set of choices, like an environment or a region, instead of free text. Add an **${enumLabel}** variable, from the **${newRowLabel}** row of the variables editor or the bottom of the sidebar list, and its value is a combo box with a box at the bottom that adds a new choice. Drag a choice by its handle to reorder it, or open its **three dots** menu to **${editOptionLabel}**, **${duplicateOptionLabel}**, **${copyOptionLabel}**, **${moveToTopLabel}** or **${moveToBottomLabel}**, or **${removeOptionLabel}**. A long list gets a search box at the top: type to filter the choices, and **Enter** picks the first match. The variable's own actions menu works on the whole list: **${sortAscendingLabel}** or **${sortDescendingLabel}**, or **${removeOtherOptionsLabel}** to keep only the selected choice. A choice can hold references too: the list shows what it resolves to in a dimmed hint beside it, with secrets masked.`,
       enumsDemoHint:
         "Below, `env` can only be one of three clusters. Pick another one and the command follows, with no chance of a typo in the context name:",
       clearValues: (clearValuesLabel) =>
@@ -1326,7 +1357,7 @@ If something goes wrong, undo it in this order:
       covered:
         "Only secret values are encrypted; everything else stays plain text, so an exported runbook is still readable and diffable. On disk a secret looks like `cpv1.<salt>.<iv>.<ciphertext>`: a label plus everything needed to decrypt it except your passphrase, which is why the file opens on any machine that has it.",
       unlocking:
-        "Reopening the tab locks every runbook again, but only the one in front of you asks to unlock; the rest wait until you open them. A shield by a runbook's name shows its state: green and closed when unlocked, plain when locked, crossed out when nothing protects it. Click it to unlock, or to set a passphrase.",
+        "Reopening the tab locks every runbook again, but only the one in front of you asks to unlock; the rest wait until you open them. A shield by a runbook's name shows its state: green and closed when unlocked, plain when locked, crossed out when nothing protects it. Click it to unlock, or to set a passphrase. Copying a command from a locked runbook still works, but its secrets come out as ciphertext, so the copy warns you how many values are still encrypted.",
       importing:
         "Importing a `.json` that holds secrets is the same story, with one shortcut: if any runbook you already unlocked this session uses the passphrase that file was encrypted with, it opens without asking you for it again.",
       changing: (changeLabel) =>

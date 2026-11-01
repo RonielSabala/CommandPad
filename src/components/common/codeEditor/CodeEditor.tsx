@@ -521,20 +521,20 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     const editor = (
       <div
         className={classNames(
-          "code-editor",
+          CssClass.CODE_EDITOR,
           "code-editor-live",
           !gutter && "no-gutter",
+          showMask && "is-masked",
           singleLine && "code-editor-single-line",
           !bounded && className,
           clamped && CssClass.CLAMPED,
-          showMask && "is-masked",
         )}
         onKeyDown={handleKeyDown}
         ref={rootRef}
       >
         {header && (
           <div
-            className={`code-editor-header ${CssClass.SELECT_KEY_INERT_CHILDREN}`}
+            className={`${CssClass.CODE_EDITOR_HEADER} ${CssClass.SELECT_KEY_INERT_CHILDREN}`}
           >
             {header}
           </div>

@@ -2,17 +2,27 @@ import { SelectConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { AriaRole, SelectSelector } from "@/common/constants/dom";
 import { EventType, Key } from "@/common/constants/events";
+import { SearchInput } from "@/components/common/SearchInput";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SidebarSectionChevronIcon } from "@/components/icons";
+import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { toPx } from "@/utils/dom";
-import { classNames } from "@/utils/string";
+import {
+  abbreviate,
+  classNames,
+  countCharacters,
+  matchesQuery,
+} from "@/utils/string";
+import { isString } from "@/utils/typeGuards";
 import {
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
+  type ComponentType,
   type CSSProperties,
+  type LiHTMLAttributes,
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
@@ -28,6 +38,14 @@ export type SelectAlign = (typeof SelectAlign)[keyof typeof SelectAlign];
 export interface SelectOption<T extends string> {
   value: T;
   label: ReactNode;
+  hint?: ReactNode;
+}
+
+export interface SelectOptionRowProps<T extends string> {
+  value: T;
+  selected: boolean;
+  rowProps: LiHTMLAttributes<HTMLLIElement>;
+  children: ReactNode;
 }
 
 interface SelectProps<T extends string> {
@@ -40,7 +58,9 @@ interface SelectProps<T extends string> {
   align?: SelectAlign;
   title?: string;
   portal?: boolean;
-  optionAction?: (value: T) => ReactNode;
+  matchTriggerWidth?: boolean;
+  searchPlaceholder?: string;
+  optionRow?: ComponentType<SelectOptionRowProps<T>>;
   empty?: ReactNode;
   footer?: ReactNode;
 }
@@ -55,17 +75,38 @@ export function Select<T extends string>({
   align = SelectAlign.END,
   title,
   portal = false,
-  optionAction,
+  matchTriggerWidth = true,
+  searchPlaceholder,
+  optionRow: OptionRow,
   empty,
   footer,
 }: SelectProps<T>) {
+  const t = useTranslation();
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const [menuStyle, setMenuStyle] = useState<CSSProperties>();
   const mode = useStore((state) => state.mode);
   const rootRef = useRef<HTMLDivElement>(null);
-  const menuRef = useRef<HTMLUListElement>(null);
-  const optionCountRef = useRef(options.length);
-  const scrollable = options.length > SelectConfig.MAX_VISIBLE_OPTIONS;
+  const menuRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const previousOptionsRef = useRef(options);
+  const searchable =
+    !!searchPlaceholder && options.length > SelectConfig.MAX_VISIBLE_OPTIONS;
+  const shownOptions = searchable
+    ? options.filter((option) =>
+        matchesQuery(
+          query,
+          isString(option.label) ? option.label : option.value,
+        ),
+      )
+    : options;
+
+  const scrollable = shownOptions.length > SelectConfig.MAX_VISIBLE_OPTIONS;
+
+  // A closed menu forgets its search
+  if (!open && query) {
+    setQuery("");
+  }
 
   useEffect(() => {
     setOpen(false);
@@ -80,14 +121,18 @@ export function Select<T extends string>({
       const target = event.target as Node;
       if (
         !rootRef.current?.contains(target) &&
-        !menuRef.current?.contains(target)
+        !menuRef.current?.contains(target) &&
+        !(target as Element).closest?.(SelectSelector.NESTED_POPUP)
       ) {
         setOpen(false);
       }
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === Key.ESCAPE) {
+      if (
+        event.key === Key.ESCAPE &&
+        !document.querySelector(SelectSelector.NESTED_POPUP)
+      ) {
         setOpen(false);
       }
     };
@@ -125,56 +170,74 @@ export function Select<T extends string>({
     if (rect) {
       setMenuStyle({
         top: rect.bottom,
-        minWidth: rect.width,
+        minWidth: matchTriggerWidth
+          ? `max(var(--select-menu-min-width), ${toPx(rect.width)})`
+          : undefined,
         ...(align === SelectAlign.END
           ? { right: window.innerWidth - rect.right }
           : { left: rect.left }),
       });
     }
-  }, [open, portal, align]);
+  }, [open, portal, align, matchTriggerWidth]);
 
-  // Clamp the menu
+  // Clamp the option list
   useLayoutEffect(() => {
-    const menu = menuRef.current;
-    const grew = options.length > optionCountRef.current;
-    optionCountRef.current = options.length;
+    const list = listRef.current;
+    const previous = previousOptionsRef.current;
+    previousOptionsRef.current = options;
 
-    if (!menu) {
+    const previousValues =
+      previous !== options && new Set(previous.map((entry) => entry.value));
+    const added = previousValues
+      ? shownOptions.findIndex((option) => !previousValues.has(option.value))
+      : -1;
+
+    if (!list) {
       return;
     }
 
-    const { scrollTop } = menu;
-    menu.style.maxHeight = "";
+    const { scrollTop } = list;
+    list.style.maxHeight = "";
 
     if (!scrollable) {
       return;
     }
 
-    const rows = menu.querySelectorAll<HTMLElement>(SelectSelector.OPTION);
+    const rows = list.querySelectorAll<HTMLElement>(SelectSelector.OPTION);
     const lastVisible = rows[SelectConfig.MAX_VISIBLE_OPTIONS - 1];
     const clipped =
       rows[rows.length - 1].getBoundingClientRect().bottom -
       lastVisible.getBoundingClientRect().bottom;
 
-    menu.style.maxHeight = toPx(menu.offsetHeight - clipped);
-    menu.scrollTop = grew ? menu.scrollHeight : scrollTop;
-  }, [open, scrollable, options]);
+    list.style.maxHeight = toPx(list.offsetHeight - clipped);
+    list.scrollTop = scrollTop;
 
-  // Open on the current value when it sits past the fold
+    // Reveal a new option only as far as needed
+    if (added >= 0) {
+      const row = rows[added].getBoundingClientRect();
+      const bounds = list.getBoundingClientRect();
+
+      list.scrollTop +=
+        Math.max(row.bottom - bounds.bottom, 0) +
+        Math.min(row.top - bounds.top, 0);
+    }
+  }, [open, scrollable, options, shownOptions]);
+
+  // Open with the current value centered
   useLayoutEffect(() => {
-    const menu = menuRef.current;
-    if (!open || !menu) {
+    const list = listRef.current;
+    if (!open || !list) {
       return;
     }
 
-    const selected = menu.querySelector<HTMLElement>(
-      SelectSelector.SELECTED_OPTION,
-    );
-    if (
-      selected &&
-      selected.offsetTop + selected.offsetHeight > menu.clientHeight
-    ) {
-      menu.scrollTop = selected.offsetTop;
+    const selected = list
+      .querySelector(SelectSelector.SELECTED_OPTION)
+      ?.getBoundingClientRect();
+
+    if (selected) {
+      const bounds = list.getBoundingClientRect();
+      list.scrollTop +=
+        (selected.top + selected.bottom - bounds.top - bounds.bottom) / 2;
     }
   }, [open]);
 
@@ -184,48 +247,96 @@ export function Select<T extends string>({
   };
 
   const menu = open && (
-    <ul
+    <div
       ref={menuRef}
       className={classNames(
-        "select-menu",
-        scrollable && "is-scrollable",
+        CssClass.SELECT_MENU,
         portal ? CssClass.SELECT_MENU_PORTAL : `align-${align}`,
+        matchTriggerWidth && "match-trigger-width",
       )}
       style={portal ? menuStyle : undefined}
-      role={AriaRole.LISTBOX}
     >
-      {options.length === 0 && empty && (
-        <li className={classNames("select-empty", CssClass.NO_USER_SELECT)}>
-          {empty}
-        </li>
+      {searchable && (
+        <div
+          className="select-search"
+          onKeyDown={(event) => {
+            if (event.key === Key.ENTER && shownOptions.length > 0) {
+              event.preventDefault();
+              select(shownOptions[0].value);
+            }
+          }}
+        >
+          <SearchInput
+            value={query}
+            placeholder={searchPlaceholder}
+            onChange={setQuery}
+            autoFocus
+          />
+        </div>
       )}
 
-      {options.map((option) => (
-        <li
-          key={option.value}
-          className={classNames(
-            CssClass.NO_USER_SELECT,
-            optionAction && "select-option-row",
-          )}
-          role={AriaRole.OPTION}
-          aria-selected={option.value === value}
-        >
-          <button
-            className={classNames(
-              "select-option",
-              option.value === value && "is-selected",
-            )}
-            onClick={() => select(option.value)}
-          >
-            {option.label}
-          </button>
+      <ul
+        ref={listRef}
+        className={classNames("select-list", scrollable && "is-scrollable")}
+        role={AriaRole.LISTBOX}
+      >
+        {shownOptions.length === 0 && (query || empty) && (
+          <li className={classNames("select-empty", CssClass.NO_USER_SELECT)}>
+            {query ? t.common.noMatches : empty}
+          </li>
+        )}
 
-          {optionAction?.(option.value)}
-        </li>
-      ))}
+        {shownOptions.map((option) => {
+          const rowProps: LiHTMLAttributes<HTMLLIElement> = {
+            className: classNames(
+              CssClass.NO_USER_SELECT,
+              OptionRow && "select-option-row",
+            ),
+            role: AriaRole.OPTION,
+            "aria-selected": option.value === value,
+          };
 
-      {footer && <li className="select-footer">{footer}</li>}
-    </ul>
+          const button = (
+            <button
+              className={classNames(
+                CssClass.SELECT_OPTION,
+                option.value === value && CssClass.IS_SELECTED,
+              )}
+              onClick={() => select(option.value)}
+              {...tooltip(
+                isString(option.label) &&
+                  countCharacters(option.label) > SelectConfig.MAX_OPTION_CHARS
+                  ? option.label
+                  : null,
+              )}
+            >
+              {isString(option.label)
+                ? abbreviate(option.label, SelectConfig.MAX_OPTION_CHARS)
+                : option.label}
+
+              {option.hint}
+            </button>
+          );
+
+          return OptionRow ? (
+            <OptionRow
+              key={option.value}
+              value={option.value}
+              selected={option.value === value}
+              rowProps={rowProps}
+            >
+              {button}
+            </OptionRow>
+          ) : (
+            <li key={option.value} {...rowProps}>
+              {button}
+            </li>
+          );
+        })}
+      </ul>
+
+      {footer && <div className="select-footer">{footer}</div>}
+    </div>
   );
 
   return (

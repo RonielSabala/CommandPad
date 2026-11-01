@@ -234,6 +234,10 @@ export function classSelector(...classes: string[]): string {
   return classes.map((className) => `.${className}`).join(", ");
 }
 
+export function compoundSelector(...classes: string[]): string {
+  return classes.map((className) => `.${className}`).join("");
+}
+
 /** The text's size in UTF-8 bytes. */
 export function utf8ByteLength(text: string): number {
   let bytes = 0;

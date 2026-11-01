@@ -111,6 +111,7 @@ export const ROUTE_PREFETCH_TIMEOUT_MS = 2000;
 
 export const SelectConfig = {
   MAX_VISIBLE_OPTIONS: 6,
+  MAX_OPTION_CHARS: 40,
 } as const;
 
 export const TooltipConfig = {

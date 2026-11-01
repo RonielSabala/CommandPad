@@ -11,8 +11,9 @@ import {
 } from "@/common/enums";
 import type { Variable } from "@/common/types";
 import { DragHandle } from "@/components/common/DragHandle";
+import { DragImage } from "@/components/common/DragImage";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { EyeIcon } from "@/components/icons";
+import { EnumIcon, EyeIcon, VariableIcon } from "@/components/icons";
 import { VariableActionsMenu } from "@/components/variables/VariableActionsMenu";
 import { VariableKeyInput } from "@/components/variables/VariableKeyInput";
 import { VariableOptionsSelect } from "@/components/variables/VariableOptionsSelect";
@@ -90,6 +91,9 @@ export const VariableRow = memo(function VariableRow({
       {...{ [DataAttr.VARIABLE_ID]: variableId }}
       {...rowProps}
     >
+      <DragImage icon={variable.options ? EnumIcon : VariableIcon}>
+        {variableKey || t.variables.keyPlaceholder}
+      </DragImage>
       <DragHandle handleProps={handleProps} />
 
       <div
@@ -124,9 +128,8 @@ export const VariableRow = memo(function VariableRow({
 
         {variable.options ? (
           <VariableOptionsSelect
-            variableId={variableId}
+            variable={variable}
             value={variableValue}
-            options={variable.options}
             triggerClassName="variable-value-input"
           />
         ) : (

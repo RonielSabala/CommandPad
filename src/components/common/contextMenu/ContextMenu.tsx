@@ -28,6 +28,7 @@ export type ContextMenuAlign =
 export interface ContextMenuAnchor {
   x: number;
   y: number;
+  flipX?: number;
 }
 
 interface ContextMenuProps {
@@ -58,16 +59,20 @@ export function ContextMenu({
       return;
     }
 
-    const x =
-      align === ContextMenuAlign.END ? anchor.x - menu.offsetWidth : anchor.x;
     const maxX = window.innerWidth - menu.offsetWidth;
     const maxY = window.innerHeight - menu.offsetHeight;
+    let x =
+      align === ContextMenuAlign.END ? anchor.x - menu.offsetWidth : anchor.x;
+
+    if (anchor.flipX !== undefined && x > maxX) {
+      x = anchor.flipX - menu.offsetWidth;
+    }
 
     setPosition({
       x: clamp(x, 0, maxX),
       y: clamp(anchor.y, 0, maxY),
     });
-  }, [anchor.x, anchor.y, align]);
+  }, [anchor.x, anchor.y, anchor.flipX, align]);
 
   useEffect(() => {
     const onPointerDown = (event: PointerEvent) => {

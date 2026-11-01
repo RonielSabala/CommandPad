@@ -8,6 +8,7 @@ import type {
   VariableSection,
 } from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
+import { OptionScopeContext } from "@/components/variables/optionScopeContext";
 import { VariableSectionHeader } from "@/components/variables/VariableSectionHeader";
 import { VariableValueField } from "@/components/variables/VariableValueField";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
@@ -137,52 +138,68 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
     [setRunbookOverrides, blockId, overrides],
   );
 
+  const optionScope = useMemo(
+    () => ({
+      variableMaps: [variableMap, embed.variableMap],
+      secretKeys:
+        host.secretKeys.size === 0
+          ? embed.secretKeys
+          : new Set([...host.secretKeys, ...embed.secretKeys]),
+    }),
+    [variableMap, embed.variableMap, host.secretKeys, embed.secretKeys],
+  );
+
   if (rows.length === 0) {
     return <EmbedNotice>{t.runbookBlock.noVariables}</EmbedNotice>;
   }
 
   return (
-    <div
-      className={classNames(CssClass.VARIABLES_LIST, "runbook-embed-variables")}
-    >
-      {rows.map((row) => {
-        if (row.kind === VariableEntryKind.SECTION) {
-          const { section } = row;
+    <OptionScopeContext.Provider value={optionScope}>
+      <div
+        className={classNames(
+          CssClass.VARIABLES_LIST,
+          "runbook-embed-variables",
+        )}
+      >
+        {rows.map((row) => {
+          if (row.kind === VariableEntryKind.SECTION) {
+            const { section } = row;
+            return (
+              <EmbeddedSection
+                key={section.id}
+                section={section}
+                count={row.count}
+                onToggle={() =>
+                  setEmbeddedSectionFolded(
+                    embedScopeId(blockId, section.id),
+                    !section.collapsed,
+                  )
+                }
+              />
+            );
+          }
+
+          const { variable } = row;
+          const key = getVariableKey(variable);
           return (
-            <EmbeddedSection
-              key={section.id}
-              section={section}
-              count={row.count}
-              onToggle={() =>
-                setEmbeddedSectionFolded(
-                  embedScopeId(blockId, section.id),
-                  !section.collapsed,
-                )
+            <EmbeddedVariable
+              key={variable.id}
+              variable={variable}
+              override={
+                overrides && Object.hasOwn(overrides, key)
+                  ? overrides[key]
+                  : undefined
               }
+              scopedId={embedScopeId(blockId, variable.id)}
+              unused={isVariableUnused(variable, usedKeys)}
+              hostCompletions={hostCompletions}
+              embeddedCompletions={embeddedCompletions}
+              onChange={setOverride}
             />
           );
-        }
-
-        const { variable } = row;
-        const key = getVariableKey(variable);
-        return (
-          <EmbeddedVariable
-            key={variable.id}
-            variable={variable}
-            override={
-              overrides && Object.hasOwn(overrides, key)
-                ? overrides[key]
-                : undefined
-            }
-            scopedId={embedScopeId(blockId, variable.id)}
-            unused={isVariableUnused(variable, usedKeys)}
-            hostCompletions={hostCompletions}
-            embeddedCompletions={embeddedCompletions}
-            onChange={setOverride}
-          />
-        );
-      })}
-    </div>
+        })}
+      </div>
+    </OptionScopeContext.Provider>
   );
 }
 

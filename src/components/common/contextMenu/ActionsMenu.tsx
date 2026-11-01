@@ -18,6 +18,8 @@ interface Props {
   align?: ContextMenuAlign;
   triggerClassName?: string;
   horizontal?: boolean;
+  /** Opens beside the trigger's closest match instead of below the trigger. */
+  besideSelector?: string;
 }
 
 export function ActionsMenu({
@@ -27,6 +29,7 @@ export function ActionsMenu({
   align = ContextMenuAlign.START,
   triggerClassName = classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON),
   horizontal = false,
+  besideSelector,
 }: Props) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [anchor, setAnchor] = useState<ContextMenuAnchor | null>(null);
@@ -40,6 +43,13 @@ export function ActionsMenu({
     }
 
     const rect = trigger.getBoundingClientRect();
+    const container = besideSelector && trigger.closest(besideSelector);
+    if (container) {
+      const box = container.getBoundingClientRect();
+      setAnchor({ x: box.right, y: rect.top, flipX: box.left });
+      return;
+    }
+
     setAnchor({
       x: align === ContextMenuAlign.END ? rect.right : rect.left,
       y: rect.bottom,

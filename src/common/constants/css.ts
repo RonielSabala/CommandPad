@@ -13,6 +13,7 @@ export const CssClass = {
   ANIMATING: "animating",
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",
+  DRAG_IMAGE: "drag-image",
   DROP_TARGET: "drop-target",
   DUPLICATE_FLASH: "duplicate-flash",
   ROW_REVEAL: "row-reveal",
@@ -27,7 +28,11 @@ export const CssClass = {
   CONTEXT_MENU: "context-menu",
   CONTEXT_MENU_ITEM: "context-menu-item",
   CONTEXT_MENU_ICON: "context-menu-icon",
+  SELECT_MENU: "select-menu",
   SELECT_MENU_PORTAL: "select-menu-portal",
+  SELECT_OPTION: "select-option",
+  CODE_EDITOR: "code-editor",
+  CODE_EDITOR_HEADER: "code-editor-header",
   CODE_EDITOR_PROMPT: "code-editor-prompt",
   CODE_EDITOR_SURFACE: "code-editor-surface",
   CODE_EDITOR_BOUNDED: "code-editor-bounded",
@@ -54,6 +59,7 @@ export const CssClass = {
   ICON_BOLD: "icon-bold",
 
   // Action states
+  IS_SELECTED: "is-selected",
   IS_SCROLLING: "is-scrolling",
   ROW_DRAGGING: "row-dragging",
   PANEL_RESIZING: "panel-resizing",

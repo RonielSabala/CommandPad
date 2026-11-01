@@ -13,13 +13,26 @@
   outline: none;
 }
 
-.variable-option-remove {
+.variable-option-target {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.variable-option-actions {
   flex-shrink: 0;
 }
 
-.variable-option-remove:hover {
-  background: transparent;
-  color: var(--danger);
+.select-option-row > :is(.drag-handle, .variable-option-actions) {
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.select-option-row:hover > :is(.drag-handle, .variable-option-actions),
+.select-option-row > :is(.drag-handle, .variable-option-actions):focus-within,
+.select-option-row > .drag-handle:focus-visible,
+.variable-option-actions.menu-open {
+  opacity: 1;
 }
 
 .variable-option-add-row {
@@ -28,7 +41,7 @@
   gap: var(--space-2);
 }
 
-.variable-option-add {
+.variable-option-input {
   flex: 1 1 auto;
   min-width: 0;
   font-family: var(--font-mono);
@@ -41,11 +54,11 @@
   outline: none;
 }
 
-.variable-option-add:focus {
+.variable-option-input:focus {
   border-color: var(--color-border-focus);
 }
 
-.variable-option-add::placeholder {
+.variable-option-input::placeholder {
   color: var(--color-text-muted);
 }
 
@@ -58,4 +71,11 @@
 
 .variable-options-value.is-placeholder {
   color: var(--color-text-muted);
+}
+
+.variable-option-hint {
+  margin-left: auto;
+  padding-left: var(--space-2);
+  color: var(--color-text-muted);
+  font-weight: 400;
 }

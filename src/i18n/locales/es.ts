@@ -7,6 +7,7 @@ import {
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
+  SortDirection,
   UnresolvedCause,
   VaultError,
   VaultField,
@@ -126,9 +127,21 @@ export const es: Messages = {
     newEnumTitle: "Nueva variable enum",
     optionPlaceholder: "elige una opción",
     noOptions: "Aún no hay opciones",
+    searchOptionsPlaceholder: "Buscar opciones…",
     addOptionPlaceholder: "Agregar opción…",
     addOption: "Agregar opción",
-    removeOption: (option) => `Eliminar ${option}`,
+    optionActions: "Acciones de la opción",
+    editOption: "Editar opción",
+    duplicateOption: "Duplicar opción",
+    copyOption: "Copiar opción",
+    moveOptionToTop: "Mover al principio",
+    moveOptionToBottom: "Mover al final",
+    removeOption: "Eliminar opción",
+    sortOptions: {
+      [SortDirection.ASC]: "Ordenar opciones de forma ascendente",
+      [SortDirection.DESC]: "Ordenar opciones de forma descendente",
+    },
+    removeOtherOptions: "Eliminar las demás opciones",
     actions: "Acciones de la variable",
     duplicate: (count) =>
       count === 1 ? "Duplicar variable" : "Duplicar variables",
@@ -268,10 +281,10 @@ export const es: Messages = {
     showMoreLines: "Mostrar más líneas",
     showFewerLines: "Mostrar menos",
     copy: "Copiar comando",
-    copyUnresolved: (parts) =>
-      `Copiar comando (${parts} ${parts === 1 ? "parte sin resolver" : "partes sin resolver"})`,
     copiedUnresolved: (parts) =>
       `Copiado con ${parts} ${parts === 1 ? "parte sin resolver" : "partes sin resolver"}`,
+    copiedEncrypted: (values) =>
+      `Copiado con ${values} ${values === 1 ? "valor cifrado" : "valores cifrados"}`,
     placeholder: "ssh {USUARIO}@{HOST}",
     extractVariable: "Extraer en una variable",
     inlineVariable: "Insertar el valor de la variable",
@@ -578,6 +591,10 @@ export const es: Messages = {
     [KeyBinding.CLEAR_LIBRARY]: "Abrir el diálogo de eliminar todos los libros",
     [KeyBinding.TOGGLE_EDITORS]:
       "Alternar todos los bloques, o todas las secciones en el editor de variables",
+    [KeyBinding.TOGGLE_VARIABLES_VIEW]:
+      "Cambiar entre los bloques y el editor de variables",
+    [KeyBinding.TOGGLE_SOURCE_VIEW]:
+      "Cambiar entre los bloques y el archivo fuente del libro",
     [KeyBinding.MULTISELECT_BLOCKS]: "Selección múltiple de bloques",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicar bloques seleccionados",
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
@@ -952,6 +969,8 @@ Si algo sale mal, deshazlo en este orden:
         openSourceLabel,
         openPreviewLabel,
         openEditorLabel,
+        openSourceShortcut,
+        openEditorShortcut,
         closeLabel,
         closeOthersLabel,
         closeAllLabel,
@@ -960,8 +979,8 @@ Si algo sale mal, deshazlo en este orden:
 * **Clic con la rueda** del ratón en una pestaña para cerrarla.
 * **Clic derecho** en una pestaña para **${closeLabel}**, **${closeOthersLabel}** y **${closeAllLabel}**.
 * **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.
-* **${openSourceLabel}**, al final de la barra de pestañas, cambia los bloques de abajo por el JSON del libro.
-* **${openEditorLabel}**, a su lado, los cambia por las variables del libro.
+* **${openSourceLabel}**, al final de la barra de pestañas, cambia los bloques de abajo por el JSON del libro (**${openSourceShortcut}**).
+* **${openEditorLabel}**, a su lado, los cambia por las variables del libro (**${openEditorShortcut}**).
 * **${openPreviewLabel}** devuelve los bloques.`,
       variablesEditorNote:
         "El editor de variables funciona igual que el editor de bloques de arriba, una fila por variable en vez de por bloque, incluido el selector de lenguaje de cada valor: un valor empieza como texto plano, y elegir un lenguaje solo cambia cómo se resalta y se revisa. Pruébalo abajo.",
@@ -1026,8 +1045,20 @@ Si algo sale mal, deshazlo en este orden:
         "No todas las variables cambian por el mismo motivo. Unas son valores que cambias a cada rato y otras son **constantes**: se mantienen igual durante toda la vida del libro, y solo son variables porque ese mismo valor aparece en comando tras comando. CommandPad las distingue por convención de nombres: una clave escrita entera en **mayúsculas** se considera una _constante_ y cualquier clave con alguna **minúscula** se considera _variable_.",
       constantsDemoHint:
         "La convención es solo de nombres: las constantes se resuelven, se referencian y se renombran igual que cualquier otra variable. Renombra abajo una clave de mayúsculas a minúsculas y al revés para ver cómo el color la sigue.",
-      enums: (enumLabel, newRowLabel) =>
-        `Un valor también puede ser un conjunto fijo de opciones, como un entorno o una región, en lugar de texto libre. Agrega una variable **${enumLabel}**, desde la fila **${newRowLabel}** del editor de variables o al final de la lista de la barra lateral, y su valor será un combo box: cada opción puede quitarse y una casilla al final añade una nueva.`,
+      enums: (
+        enumLabel,
+        newRowLabel,
+        editOptionLabel,
+        duplicateOptionLabel,
+        copyOptionLabel,
+        moveToTopLabel,
+        moveToBottomLabel,
+        removeOptionLabel,
+        sortAscendingLabel,
+        sortDescendingLabel,
+        removeOtherOptionsLabel,
+      ) =>
+        `Un valor también puede ser un conjunto fijo de opciones, como un entorno o una región, en lugar de texto libre. Agrega una variable **${enumLabel}**, desde la fila **${newRowLabel}** del editor de variables o al final de la lista de la barra lateral, y su valor será un combo box con una casilla al final que añade una opción nueva. Arrastra una opción por su asa para reordenarla, o abre su menú de **tres puntos** para **${editOptionLabel}**, **${duplicateOptionLabel}**, **${copyOptionLabel}**, **${moveToTopLabel}** o **${moveToBottomLabel}**, o **${removeOptionLabel}**. Una lista larga tiene una casilla de búsqueda arriba: escribe para filtrar las opciones, y **Enter** elige la primera coincidencia. El menú de acciones de la propia variable actúa sobre toda la lista: **${sortAscendingLabel}** u **${sortDescendingLabel}**, o **${removeOtherOptionsLabel}** para quedarte solo con la opción seleccionada. Una opción también puede contener referencias: la lista muestra en qué se resuelve con una pista atenuada a su lado, con los secretos enmascarados.`,
       enumsDemoHint:
         "Abajo, `env` solo puede ser uno de tres clústeres. Elige otro y el comando lo sigue, sin posibilidad de equivocarte al escribir el contexto:",
       clearValues: (clearValuesLabel) =>
@@ -1353,7 +1384,7 @@ Si algo sale mal, deshazlo en este orden:
       covered:
         "Solo se cifran los valores secretos; el resto sigue en texto plano, así que un libro exportado se puede seguir leyendo y comparando. En el disco, un secreto se ve como `cpv1.<sal>.<iv>.<cifrado>`: una etiqueta más todo lo necesario para descifrarlo salvo tu frase de contraseña, por eso el archivo se abre en cualquier máquina que la tenga.",
       unlocking:
-        "Volver a abrir la pestaña bloquea todos los libros de nuevo, pero solo el que tienes delante te pide desbloquearlo; los demás esperan a que los abras. Un escudo junto al nombre del libro muestra su estado: verde y cerrado si está desbloqueado, neutro si está bloqueado, tachado si nada lo protege. Haz clic para desbloquearlo o para ponerle una frase de contraseña.",
+        "Volver a abrir la pestaña bloquea todos los libros de nuevo, pero solo el que tienes delante te pide desbloquearlo; los demás esperan a que los abras. Un escudo junto al nombre del libro muestra su estado: verde y cerrado si está desbloqueado, neutro si está bloqueado, tachado si nada lo protege. Haz clic para desbloquearlo o para ponerle una frase de contraseña. Copiar un comando de un libro bloqueado sigue funcionando, pero sus secretos salen cifrados, así que la copia te avisa de cuántos valores siguen cifrados.",
       importing:
         "Importar un `.json` con secretos funciona igual, con un atajo: si algún libro que ya desbloqueaste en esta sesión usa la frase de contraseña con la que se cifró ese archivo, se abre sin volver a pedírtela.",
       changing: (changeLabel) =>

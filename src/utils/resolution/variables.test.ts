@@ -14,6 +14,7 @@ import {
   getVariableKey,
   getVariableMap,
   isConstantVariableKey,
+  resolveOptionValue,
 } from "./variables";
 
 function variable(key: string, value: string): Variable {
@@ -135,5 +136,26 @@ describe("getSecretKeys", () => {
 
   it("defaults to an empty set", () => {
     expect(getSecretKeys()).toEqual(new Set());
+  });
+});
+
+describe("resolveOptionValue", () => {
+  const map = getVariableMap([
+    variable("REGION", "eu-west-1"),
+    variable("ENV", "{REGION}-dev"),
+  ]);
+  const lookup = (key: string) => map[key];
+
+  it.each([
+    ["{REGION}-prod", "eu-west-1-prod"],
+    ["staging", "staging"],
+    ["{MISSING}-prod", "{MISSING}-prod"],
+    ["\\{REGION}-prod", "\\{REGION}-prod"],
+  ])("%s -> %s", (option, expected) => {
+    expect(resolveOptionValue(option, "ENV", lookup).text).toBe(expected);
+  });
+
+  it("never reads the variable's own value", () => {
+    expect(resolveOptionValue("{ENV}-x", "ENV", lookup).text).toBe("{ENV}-x");
   });
 });
