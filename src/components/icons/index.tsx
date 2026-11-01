@@ -270,6 +270,14 @@ export function CheckIcon(props: IconProps) {
   );
 }
 
+export function OptionIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
+      <circle cx="8" cy="8" r="4.5" />
+    </svg>
+  );
+}
+
 export function CopyIcon(props: IconProps) {
   return (
     <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>

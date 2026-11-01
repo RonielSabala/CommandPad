@@ -31,6 +31,7 @@ import {
   CheckIcon,
   CopyIcon,
   DuplicateIcon,
+  OptionIcon,
   PencilIcon,
   PlusIcon,
   TrashIcon,
@@ -136,6 +137,7 @@ function OptionHint({ option }: { option: string }) {
 
 function VariableOptionRow({
   value: option,
+  selected,
   rowProps,
   children,
 }: SelectOptionRowProps<string>) {
@@ -176,7 +178,7 @@ function VariableOptionRow({
         isDragging && CssClass.DRAGGING,
       )}
     >
-      <DragImage icon={CheckIcon}>{option}</DragImage>
+      <DragImage icon={selected ? CheckIcon : OptionIcon}>{option}</DragImage>
       <DragHandle handleProps={handleProps} />
 
       <div

@@ -43,6 +43,7 @@ export interface SelectOption<T extends string> {
 
 export interface SelectOptionRowProps<T extends string> {
   value: T;
+  selected: boolean;
   rowProps: LiHTMLAttributes<HTMLLIElement>;
   children: ReactNode;
 }
@@ -321,6 +322,7 @@ export function Select<T extends string>({
             <OptionRow
               key={option.value}
               value={option.value}
+              selected={option.value === value}
               rowProps={rowProps}
             >
               {button}
