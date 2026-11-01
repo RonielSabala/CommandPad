@@ -13,15 +13,23 @@ export function toPx(pixels: number): string {
 }
 
 /** Drags the row's `DataAttr.DRAG_IMAGE` element instead of the whole row. */
-export function applyDragImage(event: {
-  currentTarget: Element;
-  clientX: number;
-  clientY: number;
-  dataTransfer: DataTransfer;
-}): void {
-  const found = event.currentTarget.querySelector<HTMLElement>(
-    `[${DataAttr.DRAG_IMAGE}]`,
-  );
+export function applyDragImage(
+  event: {
+    currentTarget: Element;
+    clientX: number;
+    clientY: number;
+    dataTransfer: DataTransfer;
+  },
+  fallback?: string,
+): void {
+  const found =
+    event.currentTarget.querySelector<HTMLElement>(
+      `[${DataAttr.DRAG_IMAGE}]`,
+    ) ??
+    (fallback
+      ? event.currentTarget.querySelector<HTMLElement>(fallback)
+      : null);
+
   if (!found) {
     return;
   }

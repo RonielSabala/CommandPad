@@ -8,7 +8,7 @@ import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
 import { getActiveTab, useStore, useStoreApi } from "@/store/store";
 import { applyDragImage } from "@/utils/dom";
-import { classNames } from "@/utils/string";
+import { classNames, classSelector } from "@/utils/string";
 import { memo, useRef, useState } from "react";
 
 import { BlockActionsMenu } from "./BlockActionsMenu";
@@ -71,7 +71,8 @@ export const BlockItem = memo(function BlockItem({
         // Move within the list, copy when dropped onto another tab
         event.dataTransfer.effectAllowed = DragEffect.COPY_MOVE;
 
-        applyDragImage(event);
+        // Blocks without a drag image drag their surface
+        applyDragImage(event, classSelector(CssClass.BLOCK_SURFACE));
       }}
       onDragEnd={() => {
         clearBlockDrag();
