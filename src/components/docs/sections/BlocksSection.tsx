@@ -125,6 +125,7 @@ export function NoteBlockDocs() {
 
       <Prose text={t.docs.noteBlock.noNesting} />
       <Prose text={t.docs.noteBlock.wrapKeys} />
+      <Prose text={t.docs.noteBlock.copy(t.blocks.copyNote)} />
       <Prose text={t.docs.noteBlock.spellcheck(t.contextMenu.spellcheck)} />
 
       <Prose text={t.docs.noteBlock.tables} />

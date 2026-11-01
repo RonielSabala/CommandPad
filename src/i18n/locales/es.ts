@@ -227,6 +227,7 @@ export const es: Messages = {
     actions: "Acciones del bloque",
     insertAbove: "Insertar bloque arriba",
     insertBelow: "Insertar bloque abajo",
+    copyNote: "Copiar nota",
     duplicate: (count) =>
       count === 1 ? "Duplicar bloque" : "Duplicar bloques",
     delete: (count) => (count === 1 ? "Eliminar bloque" : "Eliminar bloques"),
@@ -1415,6 +1416,8 @@ Si algo sale mal, deshazlo en este orden:
     noteBlock: {
       intro:
         "Es un bloque de texto libre. Las notas se expanden a lo alto y a lo ancho mientras escribes.",
+      copy: (copyNoteLabel) =>
+        `Para copiar el texto de una nota tal como está escrito abre su menú de acciones del bloque y elige **${copyNoteLabel}**.`,
       styles: (heading, subheading, body) =>
         `Hay tres estilos de texto seleccionables al pasar el cursor: **${heading}** (grande, en negrita), **${subheading}** (mediano, acentuado) y **${body}** (la prosa por defecto).`,
       markdown: "Las notas soportan formato markdown:",

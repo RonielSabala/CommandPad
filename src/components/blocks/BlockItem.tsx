@@ -168,7 +168,7 @@ export const BlockItem = memo(function BlockItem({
         />
       </div>
 
-      <BlockActionsMenu blockId={block.id} />
+      <BlockActionsMenu block={block} />
     </div>
   );
 });

@@ -1,6 +1,7 @@
 import { BLOCK_TYPE_ORDER } from "@/blocks";
 import { CssClass } from "@/common/constants/css";
-import { InsertPosition } from "@/common/enums";
+import { BlockType, InsertPosition } from "@/common/enums";
+import type { Block } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuItem,
@@ -8,6 +9,7 @@ import {
 } from "@/components/common/contextMenu/ContextMenu";
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
 import {
+  CopyIcon,
   DuplicateIcon,
   InsertAboveIcon,
   InsertBelowIcon,
@@ -20,7 +22,7 @@ import type { ReactNode } from "react";
 import { getBlockIcon } from "./blockViews";
 
 interface Props {
-  blockId: string;
+  block: Block;
 }
 
 interface InsertSubmenuProps {
@@ -56,8 +58,9 @@ function InsertSubmenu({ blockId, position, label, icon }: InsertSubmenuProps) {
   );
 }
 
-export function BlockActionsMenu({ blockId }: Props) {
+export function BlockActionsMenu({ block }: Props) {
   const t = useTranslation();
+  const blockId = block.id;
   const duplicateBlock = useStore((state) => state.duplicateBlock);
   const removeBlock = useStore((state) => state.removeBlock);
   const selectionCount = useStore((state) =>
@@ -69,6 +72,24 @@ export function BlockActionsMenu({ blockId }: Props) {
       className={classNames(CssClass.ITEM_CONTROL, CssClass.ITEM_ACTIONS)}
       title={t.blocks.actions}
     >
+      {block.type === BlockType.NOTE && (
+        <>
+          <ContextMenuItem
+            icon={
+              <CopyIcon
+                className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+              />
+            }
+            onSelect={() => void navigator.clipboard.writeText(block.text)}
+            disabled={!block.text.trim()}
+          >
+            {t.blocks.copyNote}
+          </ContextMenuItem>
+
+          <ContextMenuSeparator />
+        </>
+      )}
+
       <ContextMenuItem
         icon={
           <DuplicateIcon

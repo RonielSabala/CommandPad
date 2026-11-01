@@ -196,6 +196,7 @@ export interface Messages {
     actions: string;
     insertAbove: string;
     insertBelow: string;
+    copyNote: string;
     duplicate: (count: number) => string;
     delete: (count: number) => string;
     selected: (count: number) => string;
@@ -785,6 +786,7 @@ export interface Messages {
     };
     noteBlock: {
       intro: string;
+      copy: (copyNoteLabel: string) => string;
       styles: (heading: string, subheading: string, body: string) => string;
       markdown: string;
       markdownTable: string;

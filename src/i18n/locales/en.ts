@@ -217,6 +217,7 @@ export const en: Messages = {
     actions: "Block actions",
     insertAbove: "Insert block above",
     insertBelow: "Insert block below",
+    copyNote: "Copy note",
     duplicate: (count) =>
       count === 1 ? "Duplicate block" : "Duplicate blocks",
     delete: (count) => (count === 1 ? "Delete block" : "Delete blocks"),
@@ -1388,6 +1389,8 @@ If something goes wrong, undo it in this order:
     noteBlock: {
       intro:
         "It's a free-form text block. Notes grow wider and taller as you type.",
+      copy: (copyNoteLabel) =>
+        `To grab a note's text as written open its block actions menu and pick **${copyNoteLabel}**.`,
       styles: (heading, subheading, body) =>
         `Three text styles are selectable on hover: **${heading}** (large, bold), **${subheading}** (medium, accented), and **${body}** (the default prose).`,
       markdown: "Notes support markdown formatting:",
