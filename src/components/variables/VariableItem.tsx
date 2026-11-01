@@ -1,4 +1,6 @@
 import type { Variable } from "@/common/types";
+import { DragImage } from "@/components/common/DragImage";
+import { useTranslation } from "@/i18n";
 import type { VariableCompletion } from "@/monaco/completions";
 import { memo, useRef } from "react";
 
@@ -17,12 +19,12 @@ export const VariableItem = memo(function VariableItem({
   completions,
   unused,
 }: Props) {
+  const t = useTranslation();
   const keyRef = useRef<HTMLInputElement>(null);
 
   return (
     <VariableRowFrame
       rowId={variable.id}
-      dragImageRef={keyRef}
       menu={(className) => (
         <VariableActionsMenu
           variableId={variable.id}
@@ -33,6 +35,7 @@ export const VariableItem = memo(function VariableItem({
         />
       )}
     >
+      <DragImage>{variable.key || t.variables.keyPlaceholder}</DragImage>
       <VariableEditor
         variable={variable}
         completions={completions}

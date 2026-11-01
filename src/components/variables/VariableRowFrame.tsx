@@ -14,7 +14,7 @@ interface Props {
   rowId: string;
   className?: string;
   /** What the pointer carries while the row is dragged. */
-  dragImageRef: RefObject<HTMLElement | null>;
+  dragImageRef?: RefObject<HTMLElement | null>;
   menu: (className: string) => ReactNode;
   children: ReactNode;
 }
