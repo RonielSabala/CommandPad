@@ -14,6 +14,7 @@ import { SELECTION_GROUPS } from "./selectionGroups";
 const KEEP_SELECTION_SELECTOR = classSelector(
   CssClass.TOOLTIP,
   CssClass.ITEM_CONTROL,
+  CssClass.CONTEXT_MENU,
 );
 
 export function useLassoSelection(

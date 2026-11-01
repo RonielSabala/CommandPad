@@ -10,6 +10,8 @@ import {
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
+import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
+import { SelectionToggleItem } from "@/components/common/contextMenu/SelectionToggleItem";
 import {
   DuplicateIcon,
   EnumIcon,
@@ -22,7 +24,7 @@ import {
 import { useTranslation } from "@/i18n";
 import { countVariableTargets, useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
-import type { ReactNode } from "react";
+import { useContext, type ReactNode } from "react";
 
 interface Props {
   targetId: string;
@@ -201,6 +203,13 @@ export function VariableRowMenu({
   children,
 }: MenuProps) {
   const t = useTranslation();
+  const canSelect = useContext(SelectionActionsContext);
+  const toggleVariableSelection = useStore(
+    (state) => state.toggleVariableSelection,
+  );
+  const isSelected = useStore((state) =>
+    state.selectedVariableIds.has(targetId),
+  );
   const count = useStore((state) => {
     const targets = countVariableTargets(state, targetId);
 
@@ -212,6 +221,19 @@ export function VariableRowMenu({
 
   return (
     <ActionsMenu className={className} title={title}>
+      {sectioned && canSelect && (
+        <>
+          <SelectionToggleItem
+            selected={isSelected}
+            onToggle={() => toggleVariableSelection(targetId)}
+            selectLabel={t.variables.selectRow[kind]}
+            deselectLabel={t.variables.deselectRow[kind]}
+          />
+
+          <ContextMenuSeparator />
+        </>
+      )}
+
       {count === null ? (
         <BasicRowItems
           targetId={targetId}

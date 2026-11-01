@@ -8,6 +8,7 @@ import type {
   SaveOutcome,
   SortDirection,
   UnresolvedCause,
+  VariableEntryKind,
   VaultError,
   VaultField,
   VaultPrompt,
@@ -158,6 +159,8 @@ export interface Messages {
     moveToNewSection: (count: number) => string;
     sectionPlaceholder: string;
     sectionActions: string;
+    selectRow: Record<VariableEntryKind, string>;
+    deselectRow: Record<VariableEntryKind, string>;
     duplicateSection: (count: number) => string;
     removeSection: (count: number) => string;
     duplicateItems: string;
@@ -196,6 +199,8 @@ export interface Messages {
     actions: string;
     insertAbove: string;
     insertBelow: string;
+    select: string;
+    deselect: string;
     copyNote: string;
     duplicate: (count: number) => string;
     delete: (count: number) => string;
@@ -829,6 +834,7 @@ export interface Messages {
     };
     multiSelect: {
       intro: string;
+      menuAction: (selectLabel: string) => string;
       actions: string;
       clear: string;
       dragToTabDelay: string;

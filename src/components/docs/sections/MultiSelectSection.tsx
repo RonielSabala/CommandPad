@@ -10,6 +10,7 @@ export function MultiSelectDocs() {
   return (
     <>
       <Prose text={t.docs.multiSelect.intro} />
+      <Prose text={t.docs.multiSelect.menuAction(t.blocks.select)} />
       <Prose text={t.docs.multiSelect.actions} />
       <Prose text={t.docs.multiSelect.dragToTabDelay} />
       <Prose text={t.docs.multiSelect.clear} />

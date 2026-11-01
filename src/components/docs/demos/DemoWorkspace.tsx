@@ -3,6 +3,7 @@ import { SelectionGroup } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import type { Block, Variable } from "@/common/types";
 import { ImageLightbox } from "@/components/blocks/image/ImageLightbox";
+import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
 import { RunbookRow } from "@/components/sidebar/runbooks/RunbookRow";
 import "@/components/sidebar/shared/SidebarSectionList.css";
 import { VariableRow } from "@/components/sidebar/variables/VariableRow";
@@ -94,9 +95,11 @@ export function DemoWorkspace({
   return (
     <StoreProvider value={store}>
       <DocsDemo onReset={reset} className={className}>
-        <div key={version} className="docs-demo-content">
-          {children}
-        </div>
+        <SelectionActionsContext.Provider value={false}>
+          <div key={version} className="docs-demo-content">
+            {children}
+          </div>
+        </SelectionActionsContext.Provider>
       </DocsDemo>
       <ImageLightbox />
     </StoreProvider>
@@ -182,7 +185,9 @@ export function DemoSelectionArea({ children }: { children: ReactNode }) {
       tabIndex={0}
       onKeyDown={onKeyDown}
     >
-      {children}
+      <SelectionActionsContext.Provider value>
+        {children}
+      </SelectionActionsContext.Provider>
     </div>
   );
 }

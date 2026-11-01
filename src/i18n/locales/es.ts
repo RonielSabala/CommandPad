@@ -9,6 +9,7 @@ import {
   SaveOutcome,
   SortDirection,
   UnresolvedCause,
+  VariableEntryKind,
   VaultError,
   VaultField,
   VaultPrompt,
@@ -165,6 +166,14 @@ export const es: Messages = {
         : "Mover variables a una nueva sección",
     sectionPlaceholder: "Nombre de la sección",
     sectionActions: "Acciones de la sección",
+    selectRow: {
+      [VariableEntryKind.VARIABLE]: "Seleccionar variable",
+      [VariableEntryKind.SECTION]: "Seleccionar sección",
+    },
+    deselectRow: {
+      [VariableEntryKind.VARIABLE]: "Deseleccionar variable",
+      [VariableEntryKind.SECTION]: "Deseleccionar sección",
+    },
     duplicateSection: (count) =>
       count === 1 ? "Duplicar sección" : "Duplicar secciones",
     removeSection: (count) =>
@@ -227,6 +236,8 @@ export const es: Messages = {
     actions: "Acciones del bloque",
     insertAbove: "Insertar bloque arriba",
     insertBelow: "Insertar bloque abajo",
+    select: "Seleccionar bloque",
+    deselect: "Deseleccionar bloque",
     copyNote: "Copiar nota",
     duplicate: (count) =>
       count === 1 ? "Duplicar bloque" : "Duplicar bloques",
@@ -1489,6 +1500,8 @@ Si algo sale mal, deshazlo en este orden:
     multiSelect: {
       intro:
         "Mantén `Shift` y haz clic en bloques para construir una selección. También puedes mantener `Shift` y arrastrar el ratón sobre los bloques para seleccionarlos con un lazo. Lazar bloques ya seleccionados los deselecciona.",
+      menuAction: (selectLabel) =>
+        `Sin el teclado, elige **${selectLabel}** en el menú de acciones de un bloque para añadirlo a la selección, y vuelve a elegirlo para quitarlo.`,
       actions: `* **Arrastra** el control de cualquier bloque seleccionado para mover todos los bloques seleccionados juntos, conservando el orden relativo.
 * **Duplicar**: \`Ctrl+D\` duplica el grupo completo, insertado después del último bloque seleccionado.
 * **Eliminar**: \`Del\` elimina el grupo completo.

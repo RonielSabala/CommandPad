@@ -8,6 +8,8 @@ import {
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
+import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
+import { SelectionToggleItem } from "@/components/common/contextMenu/SelectionToggleItem";
 import {
   CopyIcon,
   DuplicateIcon,
@@ -18,7 +20,7 @@ import {
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
-import type { ReactNode } from "react";
+import { useContext, type ReactNode } from "react";
 import { getBlockIcon } from "./blockViews";
 
 interface Props {
@@ -61,8 +63,12 @@ function InsertSubmenu({ blockId, position, label, icon }: InsertSubmenuProps) {
 export function BlockActionsMenu({ block }: Props) {
   const t = useTranslation();
   const blockId = block.id;
+  const isNote = block.type === BlockType.NOTE;
   const duplicateBlock = useStore((state) => state.duplicateBlock);
   const removeBlock = useStore((state) => state.removeBlock);
+  const toggleBlockSelection = useStore((state) => state.toggleBlockSelection);
+  const isSelected = useStore((state) => state.selectedBlockIds.has(blockId));
+  const canSelect = useContext(SelectionActionsContext);
   const selectionCount = useStore((state) =>
     state.selectedBlockIds.has(blockId) ? state.selectedBlockIds.size : 1,
   );
@@ -72,23 +78,30 @@ export function BlockActionsMenu({ block }: Props) {
       className={classNames(CssClass.ITEM_CONTROL, CssClass.ITEM_ACTIONS)}
       title={t.blocks.actions}
     >
-      {block.type === BlockType.NOTE && (
-        <>
-          <ContextMenuItem
-            icon={
-              <CopyIcon
-                className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-              />
-            }
-            onSelect={() => void navigator.clipboard.writeText(block.text)}
-            disabled={!block.text.trim()}
-          >
-            {t.blocks.copyNote}
-          </ContextMenuItem>
-
-          <ContextMenuSeparator />
-        </>
+      {canSelect && (
+        <SelectionToggleItem
+          selected={isSelected}
+          onToggle={() => toggleBlockSelection(blockId)}
+          selectLabel={t.blocks.select}
+          deselectLabel={t.blocks.deselect}
+        />
       )}
+
+      {isNote && (
+        <ContextMenuItem
+          icon={
+            <CopyIcon
+              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+            />
+          }
+          onSelect={() => void navigator.clipboard.writeText(block.text)}
+          disabled={!block.text.trim()}
+        >
+          {t.blocks.copyNote}
+        </ContextMenuItem>
+      )}
+
+      {(canSelect || isNote) && <ContextMenuSeparator />}
 
       <ContextMenuItem
         icon={

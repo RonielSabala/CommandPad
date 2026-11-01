@@ -9,6 +9,7 @@ import {
   SaveOutcome,
   SortDirection,
   UnresolvedCause,
+  VariableEntryKind,
   VaultError,
   VaultField,
   VaultPrompt,
@@ -160,6 +161,14 @@ export const en: Messages = {
       count === 1 ? "Move to a new section" : "Move variables to a new section",
     sectionPlaceholder: "Section name",
     sectionActions: "Section actions",
+    selectRow: {
+      [VariableEntryKind.VARIABLE]: "Select variable",
+      [VariableEntryKind.SECTION]: "Select section",
+    },
+    deselectRow: {
+      [VariableEntryKind.VARIABLE]: "Deselect variable",
+      [VariableEntryKind.SECTION]: "Deselect section",
+    },
     duplicateSection: (count) =>
       count === 1 ? "Duplicate section" : "Duplicate sections",
     removeSection: (count) =>
@@ -217,6 +226,8 @@ export const en: Messages = {
     actions: "Block actions",
     insertAbove: "Insert block above",
     insertBelow: "Insert block below",
+    select: "Select block",
+    deselect: "Deselect block",
     copyNote: "Copy note",
     duplicate: (count) =>
       count === 1 ? "Duplicate block" : "Duplicate blocks",
@@ -1462,6 +1473,8 @@ If something goes wrong, undo it in this order:
     multiSelect: {
       intro:
         "Hold `Shift` and click blocks to build a selection. You can also hold `Shift` and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.",
+      menuAction: (selectLabel) =>
+        `Without the keyboard, pick **${selectLabel}** in a block's actions menu to add it to the selection, and pick it again to drop it.`,
       actions: `* **Drag** any selected block's handle to move all selected blocks together, preserving relative order.
 * **Duplicate**: \`Ctrl+D\` duplicates the entire group, inserted after the last selected block.
 * **Delete**: \`Del\` deletes the entire group.
