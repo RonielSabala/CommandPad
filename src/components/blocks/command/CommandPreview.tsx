@@ -220,15 +220,6 @@ export function CommandPreview({
     });
   };
 
-  const copyLabel =
-    unresolvedCount > 0 && encryptedCount > 0
-      ? t.command.copyUnresolvedEncrypted(unresolvedCount, encryptedCount)
-      : unresolvedCount > 0
-        ? t.command.copyUnresolved(unresolvedCount)
-        : encryptedCount > 0
-          ? t.command.copyEncrypted(encryptedCount)
-          : t.command.copy;
-
   return (
     <div className="command-preview" {...{ [DataAttr.DRAG_IMAGE]: "" }}>
       <span
@@ -283,8 +274,8 @@ export function CommandPreview({
           className={CssClass.BTN}
           onClick={copy}
           disabled={!text}
-          aria-label={copyLabel}
-          {...tooltip(copyLabel)}
+          aria-label={t.command.copy}
+          {...tooltip(t.command.copy)}
         >
           {copied !== null ? (
             <CheckIcon

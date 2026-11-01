@@ -269,14 +269,8 @@ export const en: Messages = {
     showMoreLines: "Show more lines",
     showFewerLines: "Show less",
     copy: "Copy command",
-    copyUnresolved: (parts) =>
-      `Copy command (${parts} unresolved ${parts === 1 ? "part" : "parts"})`,
     copiedUnresolved: (parts) =>
       `Copied with ${parts} unresolved ${parts === 1 ? "part" : "parts"}`,
-    copyEncrypted: (values) =>
-      `Copy command (${values} encrypted ${values === 1 ? "value" : "values"}: unlock the runbook first)`,
-    copyUnresolvedEncrypted: (parts, values) =>
-      `Copy command (${parts} unresolved ${parts === 1 ? "part" : "parts"}, ${values} encrypted ${values === 1 ? "value" : "values"})`,
     copiedEncrypted: (values) =>
       `Copied with ${values} encrypted ${values === 1 ? "value" : "values"}`,
     placeholder: "ssh {USER}@{HOST}",

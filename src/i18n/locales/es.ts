@@ -281,14 +281,8 @@ export const es: Messages = {
     showMoreLines: "Mostrar más líneas",
     showFewerLines: "Mostrar menos",
     copy: "Copiar comando",
-    copyUnresolved: (parts) =>
-      `Copiar comando (${parts} ${parts === 1 ? "parte sin resolver" : "partes sin resolver"})`,
     copiedUnresolved: (parts) =>
       `Copiado con ${parts} ${parts === 1 ? "parte sin resolver" : "partes sin resolver"}`,
-    copyEncrypted: (values) =>
-      `Copiar comando (${values} ${values === 1 ? "valor cifrado" : "valores cifrados"}: desbloquea el libro primero)`,
-    copyUnresolvedEncrypted: (parts, values) =>
-      `Copiar comando (${parts} ${parts === 1 ? "parte sin resolver" : "partes sin resolver"}, ${values} ${values === 1 ? "valor cifrado" : "valores cifrados"})`,
     copiedEncrypted: (values) =>
       `Copiado con ${values} ${values === 1 ? "valor cifrado" : "valores cifrados"}`,
     placeholder: "ssh {USUARIO}@{HOST}",
