@@ -121,6 +121,22 @@ function NestedText({
   );
 }
 
+function countEncryptedValues(
+  segments: readonly CommandSegment[],
+  variableMap: VariableMap,
+): number {
+  const payloads = new Set<string>();
+
+  for (const key of resolvedSegmentKeys(segments)) {
+    const value = variableMap[key]?.text;
+    if (value && isEncryptedValue(value)) {
+      payloads.add(value);
+    }
+  }
+
+  return payloads.size;
+}
+
 interface CopyWarnings {
   unresolved: number;
   encrypted: number;
@@ -170,26 +186,10 @@ export function CommandPreview({
     () => countCommandLines(segments, secretKeys),
     [segments, secretKeys],
   );
-  const unresolvedCount = useMemo(
-    () =>
-      hasUnresolvedSegments(segments)
-        ? unresolvedSegmentParts(segments, variableMap, secretKeys).length
-        : 0,
-    [segments, variableMap, secretKeys],
+  const hasUnresolved = useMemo(
+    () => hasUnresolvedSegments(segments),
+    [segments],
   );
-
-  const encryptedCount = useMemo(() => {
-    const payloads = new Set<string>();
-    for (const key of resolvedSegmentKeys(segments)) {
-      const value = variableMap[key]?.text;
-
-      if (value && isEncryptedValue(value)) {
-        payloads.add(value);
-      }
-    }
-
-    return payloads.size;
-  }, [segments, variableMap]);
 
   const clamp = useClampSurface(
     clampId,
@@ -203,8 +203,10 @@ export function CommandPreview({
   const copy = () => {
     const resolved = resolveCommandToString(text, variableMap);
     const warnings = {
-      unresolved: unresolvedCount,
-      encrypted: encryptedCount,
+      unresolved: hasUnresolved
+        ? unresolvedSegmentParts(segments, variableMap, secretKeys).length
+        : 0,
+      encrypted: countEncryptedValues(segments, variableMap),
     };
 
     void navigator.clipboard.writeText(resolved).then(() => {
@@ -226,7 +228,7 @@ export function CommandPreview({
         ref={previewRef}
         className={classNames(
           "command-preview-text",
-          unresolvedCount > 0 && "has-unresolved",
+          hasUnresolved && "has-unresolved",
           CssClass.NO_LIGATURES,
           clamp.clamped && CssClass.CLAMPED,
         )}
