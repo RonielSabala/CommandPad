@@ -25,12 +25,14 @@ export const CssClass = {
   SECTION_TITLE: "section-title",
 
   TOOLTIP: "tooltip",
+  MENU_OPEN: "menu-open",
   CONTEXT_MENU: "context-menu",
   CONTEXT_MENU_ITEM: "context-menu-item",
   CONTEXT_MENU_ICON: "context-menu-icon",
   SELECT_MENU: "select-menu",
   SELECT_MENU_PORTAL: "select-menu-portal",
   SELECT_OPTION: "select-option",
+
   CODE_EDITOR: "code-editor",
   CODE_EDITOR_HEADER: "code-editor-header",
   CODE_EDITOR_PROMPT: "code-editor-prompt",

@@ -1,5 +1,7 @@
+import { getBlockCommandTexts } from "@/blocks";
 import { CommandSegmentType, ReferenceSurface } from "@/common/enums";
-import type { CommandSegment } from "@/common/types";
+import type { Block, CommandSegment } from "@/common/types";
+import { utf8ByteLength } from "@/utils/string";
 
 import type { ReferenceContext } from "./reference";
 import { resolveReference } from "./reference";
@@ -72,6 +74,22 @@ export function resolveCommandToString(
   return resolveCommandText(rawText, variableMap)
     .map((segment) => segment.text)
     .join("");
+}
+
+/** The UTF-8 size of everything `blocks` resolve to. */
+export function resolvedBlocksByteLength(
+  blocks: readonly Block[],
+  variableMap: VariableMap,
+): number {
+  return blocks.reduce(
+    (bytes, block) =>
+      getBlockCommandTexts(block).reduce(
+        (sum, text) =>
+          sum + utf8ByteLength(resolveCommandToString(text, variableMap)),
+        bytes,
+      ),
+    0,
+  );
 }
 
 export function hasUnresolvedTokens(

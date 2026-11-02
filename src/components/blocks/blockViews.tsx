@@ -16,6 +16,12 @@ import { ImageBlock } from "./image/ImageBlock";
 import { NoteBlock } from "./note/NoteBlock";
 import { RunbookBlock } from "./runbook/RunbookBlock";
 
+import { CommandInfo } from "./info/CommandInfo";
+import { DividerInfo } from "./info/DividerInfo";
+import { ImageInfo } from "./info/ImageInfo";
+import { NoteInfo } from "./info/NoteInfo";
+import { RunbookInfo } from "./info/RunbookInfo";
+
 export interface BlockViewProps<T extends Block = Block> {
   block: T;
   variableMap: VariableMap;
@@ -27,14 +33,35 @@ export type BlockIcon = ComponentType<{ className?: string }>;
 interface BlockView<T extends BlockType> {
   icon: BlockIcon;
   Component: ComponentType<BlockViewProps<BlockOfType<T>>>;
+  Info: ComponentType<BlockViewProps<BlockOfType<T>>>;
 }
 
 export const BLOCK_VIEWS: { [T in BlockType]: BlockView<T> } = {
-  [BlockType.COMMAND]: { icon: CommandIcon, Component: memo(CommandBlock) },
-  [BlockType.NOTE]: { icon: NoteIcon, Component: memo(NoteBlock) },
-  [BlockType.IMAGE]: { icon: ImageIcon, Component: memo(ImageBlock) },
-  [BlockType.RUNBOOK]: { icon: RunbookIcon, Component: memo(RunbookBlock) },
-  [BlockType.DIVIDER]: { icon: DividerIcon, Component: memo(DividerBlock) },
+  [BlockType.COMMAND]: {
+    icon: CommandIcon,
+    Component: memo(CommandBlock),
+    Info: CommandInfo,
+  },
+  [BlockType.NOTE]: {
+    icon: NoteIcon,
+    Component: memo(NoteBlock),
+    Info: NoteInfo,
+  },
+  [BlockType.IMAGE]: {
+    icon: ImageIcon,
+    Component: memo(ImageBlock),
+    Info: ImageInfo,
+  },
+  [BlockType.RUNBOOK]: {
+    icon: RunbookIcon,
+    Component: memo(RunbookBlock),
+    Info: RunbookInfo,
+  },
+  [BlockType.DIVIDER]: {
+    icon: DividerIcon,
+    Component: memo(DividerBlock),
+    Info: DividerInfo,
+  },
 };
 
 export function getBlockIcon(type: BlockType): BlockIcon {
@@ -45,4 +72,8 @@ export function getBlockComponent(
   type: BlockType,
 ): ComponentType<BlockViewProps> {
   return BLOCK_VIEWS[type].Component as ComponentType<BlockViewProps>;
+}
+
+export function getBlockInfo(type: BlockType): ComponentType<BlockViewProps> {
+  return BLOCK_VIEWS[type].Info as ComponentType<BlockViewProps>;
 }

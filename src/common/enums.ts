@@ -223,6 +223,7 @@ export type DragGroup = (typeof DragGroup)[keyof typeof DragGroup];
 
 export const HttpMethod = {
   GET: "GET",
+  HEAD: "HEAD",
   POST: "POST",
   PUT: "PUT",
   PATCH: "PATCH",

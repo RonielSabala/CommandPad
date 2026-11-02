@@ -114,6 +114,18 @@ export const SelectConfig = {
   MAX_OPTION_CHARS: 40,
 } as const;
 
+export const InfoConfig = {
+  UNAVAILABLE: "—",
+  WORDS_PER_MINUTE: 200,
+  LIST_SEPARATOR: ", ",
+  PLUS: "+",
+  MINUS: "−",
+  DIMENSION_SEPARATOR: " × ",
+  RATIO_SEPARATOR: ":",
+  MAX_RATIO_TERM: 32,
+  RATIO_DECIMALS: 2,
+} as const;
+
 export const TooltipConfig = {
   SHOW_DELAY_MS: 500,
   WARM_DELAY_MS: 90,
@@ -214,16 +226,28 @@ export const RunbookBlockConfig = {
 } as const;
 
 export const ImageBlockConfig = {
+  MAX_BYTES: 5 * 1024 * 1024,
   ACCEPT: "image/*",
   MIME_PREFIX: "image/",
-  MAX_BYTES: 5 * 1024 * 1024,
-  DATA_IMAGE_PREFIX: "data:image/",
-  HTTP_PROTOCOLS: ["http:", "https:"],
   DEFAULT_DOWNLOAD_NAME: "image",
+
+  DATA_PREFIX: "data:",
+  DATA_IMAGE_PREFIX: "data:image/",
+
+  HTTP_PROTOCOLS: ["http:", "https:"],
+  CONTENT_TYPE_HEADER: "content-type",
+  CONTENT_LENGTH_HEADER: "content-length",
+
+  DATA_SEPARATOR: ",",
   PATH_SEPARATOR: "/",
   EXTENSION_SEPARATOR: ".",
-  MIME_SUFFIX_SEPARATOR: "+",
   MIME_PARAM_SEPARATOR: ";",
+  MIME_SUFFIX_SEPARATOR: "+",
+
+  BASE64_MARKER: ";base64",
+  BASE64_PADDING: "=",
+  BASE64_GROUP_CHARS: 4,
+  BASE64_GROUP_BYTES: 3,
 } as const;
 
 // Supported file types

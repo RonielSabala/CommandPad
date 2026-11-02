@@ -3,7 +3,11 @@ import { UnresolvedCause } from "@/common/enums";
 import { buildVariables, secret, type VariableSpec } from "@/test";
 import { describe, expect, it } from "vitest";
 
-import { unresolvedParts, type UnresolvedPart } from "./unresolved";
+import {
+  unresolvedParts,
+  unresolvedVariableParts,
+  type UnresolvedPart,
+} from "./unresolved";
 import { getSecretKeys, getVariableMap } from "./variables";
 
 function partsOf(spec: VariableSpec, command: string): UnresolvedPart[] {
@@ -95,5 +99,39 @@ describe("unresolvedParts", () => {
         text: `{${SECRET_MASK}|round(a)}`,
       },
     ]);
+  });
+});
+
+describe("unresolvedVariableParts", () => {
+  const variables = buildVariables({
+    ...SPEC,
+    FORWARD: "{TEMPLATE}",
+  });
+
+  const causes = (key: string) =>
+    unresolvedVariableParts(
+      key,
+      getVariableMap(variables),
+      getSecretKeys(variables),
+    ).map((part) => part.cause);
+
+  it("is empty for a value that resolves", () => {
+    expect(causes("HOST")).toEqual([]);
+  });
+
+  it("reports what fails inside the value", () => {
+    expect(causes("INNER")).toEqual([UnresolvedCause.UNDEFINED]);
+  });
+
+  it("reports an empty value", () => {
+    expect(causes("EMPTY")).toEqual([UnresolvedCause.EMPTY]);
+  });
+
+  it("leaves the variable's own template blanks out", () => {
+    expect(causes("TEMPLATE")).toEqual([]);
+  });
+
+  it("keeps a blank another variable left open", () => {
+    expect(causes("FORWARD")).toEqual([UnresolvedCause.BLANK]);
   });
 });

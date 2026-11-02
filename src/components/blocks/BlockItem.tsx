@@ -168,7 +168,11 @@ export const BlockItem = memo(function BlockItem({
         />
       </div>
 
-      <BlockActionsMenu block={block} />
+      <BlockActionsMenu
+        block={block}
+        variableMap={variableMap}
+        secretKeys={secretKeys}
+      />
     </div>
   );
 });

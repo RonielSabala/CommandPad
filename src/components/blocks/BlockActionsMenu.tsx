@@ -1,7 +1,6 @@
 import { BLOCK_TYPE_ORDER } from "@/blocks";
 import { CssClass } from "@/common/constants/css";
 import { BlockType, InsertPosition } from "@/common/enums";
-import type { Block } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuItem,
@@ -10,6 +9,8 @@ import {
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
 import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
 import { SelectionToggleItem } from "@/components/common/contextMenu/SelectionToggleItem";
+import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
+import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import {
   CopyIcon,
   DuplicateIcon,
@@ -21,11 +22,10 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useContext, type ReactNode } from "react";
-import { getBlockIcon } from "./blockViews";
 
-interface Props {
-  block: Block;
-}
+import { getBlockIcon, getBlockInfo, type BlockViewProps } from "./blockViews";
+
+type Props = BlockViewProps;
 
 interface InsertSubmenuProps {
   blockId: string;
@@ -60,8 +60,10 @@ function InsertSubmenu({ blockId, position, label, icon }: InsertSubmenuProps) {
   );
 }
 
-export function BlockActionsMenu({ block }: Props) {
+export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
   const t = useTranslation();
+  const info = useInfoTooltip();
+  const Info = getBlockInfo(block.type);
   const blockId = block.id;
   const isNote = block.type === BlockType.NOTE;
   const duplicateBlock = useStore((state) => state.duplicateBlock);
@@ -74,83 +76,96 @@ export function BlockActionsMenu({ block }: Props) {
   );
 
   return (
-    <ActionsMenu
-      className={classNames(CssClass.ITEM_CONTROL, CssClass.ITEM_ACTIONS)}
-      title={t.blocks.actions}
-    >
-      {canSelect && (
-        <SelectionToggleItem
-          selected={isSelected}
-          onToggle={() => toggleBlockSelection(blockId)}
-          selectLabel={t.blocks.select}
-          deselectLabel={t.blocks.deselect}
-        />
-      )}
+    <>
+      <ActionsMenu
+        className={classNames(
+          CssClass.ITEM_CONTROL,
+          CssClass.ITEM_ACTIONS,
+          info.shown && CssClass.MENU_OPEN,
+        )}
+        title={t.blocks.actions}
+        triggerRef={info.triggerRef}
+      >
+        <InfoMenuItem onSelect={info.open} />
 
-      {isNote && (
+        {canSelect && (
+          <SelectionToggleItem
+            selected={isSelected}
+            onToggle={() => toggleBlockSelection(blockId)}
+            selectLabel={t.blocks.select}
+            deselectLabel={t.blocks.deselect}
+          />
+        )}
+
+        {isNote && (
+          <ContextMenuItem
+            icon={
+              <CopyIcon
+                className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+              />
+            }
+            onSelect={() => void navigator.clipboard.writeText(block.text)}
+            disabled={!block.text.trim()}
+          >
+            {t.blocks.copyNote}
+          </ContextMenuItem>
+        )}
+
+        <ContextMenuSeparator />
+
         <ContextMenuItem
           icon={
-            <CopyIcon
+            <DuplicateIcon
               className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
             />
           }
-          onSelect={() => void navigator.clipboard.writeText(block.text)}
-          disabled={!block.text.trim()}
+          onSelect={() => duplicateBlock(blockId)}
         >
-          {t.blocks.copyNote}
+          {t.blocks.duplicate(selectionCount)}
         </ContextMenuItem>
-      )}
 
-      {(canSelect || isNote) && <ContextMenuSeparator />}
+        <ContextMenuSeparator />
 
-      <ContextMenuItem
-        icon={
-          <DuplicateIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-        onSelect={() => duplicateBlock(blockId)}
-      >
-        {t.blocks.duplicate(selectionCount)}
-      </ContextMenuItem>
+        <InsertSubmenu
+          blockId={blockId}
+          position={InsertPosition.ABOVE}
+          label={t.blocks.insertAbove}
+          icon={
+            <InsertAboveIcon
+              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+            />
+          }
+        />
 
-      <ContextMenuSeparator />
+        <InsertSubmenu
+          blockId={blockId}
+          position={InsertPosition.BELOW}
+          label={t.blocks.insertBelow}
+          icon={
+            <InsertBelowIcon
+              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+            />
+          }
+        />
 
-      <InsertSubmenu
-        blockId={blockId}
-        position={InsertPosition.ABOVE}
-        label={t.blocks.insertAbove}
-        icon={
-          <InsertAboveIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-      />
+        <ContextMenuSeparator />
 
-      <InsertSubmenu
-        blockId={blockId}
-        position={InsertPosition.BELOW}
-        label={t.blocks.insertBelow}
-        icon={
-          <InsertBelowIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-      />
+        <ContextMenuItem
+          icon={
+            <TrashIcon
+              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+            />
+          }
+          onSelect={() => removeBlock(blockId)}
+          danger
+        >
+          {t.blocks.delete(selectionCount)}
+        </ContextMenuItem>
+      </ActionsMenu>
 
-      <ContextMenuSeparator />
-
-      <ContextMenuItem
-        icon={
-          <TrashIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-        onSelect={() => removeBlock(blockId)}
-        danger
-      >
-        {t.blocks.delete(selectionCount)}
-      </ContextMenuItem>
-    </ActionsMenu>
+      {info.render(() => (
+        <Info block={block} variableMap={variableMap} secretKeys={secretKeys} />
+      ))}
+    </>
   );
 }

@@ -12,6 +12,8 @@ import {
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
 import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
 import { SelectionToggleItem } from "@/components/common/contextMenu/SelectionToggleItem";
+import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
+import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import {
   DuplicateIcon,
   EnumIcon,
@@ -25,6 +27,8 @@ import { useTranslation } from "@/i18n";
 import { countVariableTargets, useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useContext, type ReactNode } from "react";
+
+import { VariableRowInfo } from "./info/VariableRowInfo";
 
 interface Props {
   targetId: string;
@@ -203,6 +207,7 @@ export function VariableRowMenu({
   children,
 }: MenuProps) {
   const t = useTranslation();
+  const info = useInfoTooltip();
   const canSelect = useContext(SelectionActionsContext);
   const toggleVariableSelection = useStore(
     (state) => state.toggleVariableSelection,
@@ -220,30 +225,40 @@ export function VariableRowMenu({
   });
 
   return (
-    <ActionsMenu className={className} title={title}>
-      {sectioned && canSelect && (
-        <>
+    <>
+      <ActionsMenu
+        className={classNames(className, info.shown && CssClass.MENU_OPEN)}
+        title={title}
+        triggerRef={info.triggerRef}
+      >
+        <InfoMenuItem onSelect={info.open} />
+
+        {sectioned && canSelect && (
           <SelectionToggleItem
             selected={isSelected}
             onToggle={() => toggleVariableSelection(targetId)}
             selectLabel={t.variables.selectRow[kind]}
             deselectLabel={t.variables.deselectRow[kind]}
           />
+        )}
 
-          <ContextMenuSeparator />
-        </>
-      )}
+        <ContextMenuSeparator />
 
-      {count === null ? (
-        <BasicRowItems
-          targetId={targetId}
-          sectioned={sectioned}
-          duplicateLabel={t.variables.duplicateItems}
-          removeLabel={t.variables.removeItems}
-        />
-      ) : (
-        children(count)
-      )}
-    </ActionsMenu>
+        {count === null ? (
+          <BasicRowItems
+            targetId={targetId}
+            sectioned={sectioned}
+            duplicateLabel={t.variables.duplicateItems}
+            removeLabel={t.variables.removeItems}
+          />
+        ) : (
+          children(count)
+        )}
+      </ActionsMenu>
+
+      {info.render(() => (
+        <VariableRowInfo targetId={targetId} kind={kind} />
+      ))}
+    </>
   );
 }

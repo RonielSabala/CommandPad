@@ -1,7 +1,13 @@
+import { ReferenceSurface } from "@/common/enums";
 import { buildVariables, commandBlock, dividerBlock, noteBlock } from "@/test";
 import { describe, expect, it } from "vitest";
 
-import { getUsedVariableKeys, isVariableUnused } from "./usage";
+import {
+  countReferencesTo,
+  getReferencedKeys,
+  getUsedVariableKeys,
+  isVariableUnused,
+} from "./usage";
 
 const variables = buildVariables({
   HOST: "example.com",
@@ -77,5 +83,53 @@ describe("isVariableUnused", () => {
 
   it("is false for a variable with no key, which cannot be referenced", () => {
     expect(isVariableUnused(blank, new Set())).toBe(false);
+  });
+});
+
+describe("getReferencedKeys", () => {
+  it("collects each key once, nested references included", () => {
+    expect([
+      ...getReferencedKeys(
+        "{HOST} {A;x={HOST}} {|IF({B};y)}",
+        ReferenceSurface.COMMAND,
+      ),
+    ]).toEqual(["HOST", "A", "B"]);
+  });
+
+  it("skips an escaped reference on the command surface", () => {
+    expect(
+      getReferencedKeys(String.raw`\{HOST}`, ReferenceSurface.COMMAND),
+    ).toEqual(new Set());
+  });
+});
+
+describe("countReferencesTo", () => {
+  const blocks = [
+    commandBlock("curl {HOST}"),
+    commandBlock("ping {ORIGIN|slice({HOST|len})}"),
+    commandBlock("echo {DEEP}"),
+    noteBlock("{HOST}"),
+  ];
+
+  const withOption = [
+    ...variables,
+    ...buildVariables({ PICK: "a" }).map((variable) => ({
+      ...variable,
+      options: ["a", "{HOST}/b"],
+    })),
+  ];
+
+  it("counts the blocks and values that reference a key themselves", () => {
+    expect(countReferencesTo("HOST", blocks, withOption)).toEqual({
+      blocks: 2,
+      variables: 2,
+    });
+  });
+
+  it("does not follow a reference through another value", () => {
+    expect(countReferencesTo("ORPHAN", blocks, variables)).toEqual({
+      blocks: 0,
+      variables: 1,
+    });
   });
 });

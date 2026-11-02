@@ -114,14 +114,14 @@ One mechanism for every side panel (the workspace **sidebar** and the `/docs` **
 A block type is **data in two complete `Record`s over `BlockType`**, never a scattered `switch`:
 
 - **Model** — `src/blocks/`, one `BlockDefinition` per type: `create(id)`, `normalize(block)` (coerce untrusted data or return `null` to drop it), `toMarkdown(block, context)`, `jsonSchema` (required), and optionally `commandTexts` (which fields hold variable references → usage scanning + key renaming), `getLabelText`, `folding`, `runtimeFields` (machine-local fields excluded from JSON). `index.ts` exposes the lookups (`createBlock`, `normalizeBlock`, `blockToJson`, `blockToMarkdown`, `getBlockCommandTexts`, `mapBlockCommandTexts`, `getBlockJsonSchemas`, `isBlockFoldable`, …) and `BLOCK_TYPE_ORDER` (Command / Note / Image / Runbook / Divider).
-- **View** — `components/blocks/blockViews.tsx`, `{ icon, Component }` per type (`getBlockComponent`, `getBlockIcon`). Every view is registered **memoized**; all take `BlockViewProps` (`block`, `variableMap`, `secretKeys`).
+- **View** — `components/blocks/blockViews.tsx`, `{ icon, Component, Info }` per type (`getBlockComponent`, `getBlockIcon`, `getBlockInfo`). Every view is registered **memoized**; all take `BlockViewProps` (`block`, `variableMap`, `secretKeys`). `Info` (`components/blocks/info/`) is the table the block's **Info** action shows; it mounts only while shown, so it computes on demand.
 
 The split is forced by the import graph: the model must be reachable from the store and `utils/`, the view imports the store. **A definition never imports `utils/resolution`**; the caller supplies the grammar.
 
 - Editing goes through one generic `updateBlock(blockId, type, patch)` (type-safe patch). Folding all goes through `toggleAllBlocksFolded`.
 - CSS: every block's root carries `block-surface` (selection outlines); a bordered card block (command, runbook) also carries `block-card`, whose rules let the selection outline replace the border. Both rules live in `BlockItem.css`.
 
-**Adding a block type**: `BlockType` + `Block` union member, a definition (+ `BLOCK_DEFINITIONS`, `BLOCK_TYPE_ORDER`, `jsonSchema`), a view + icon in `BLOCK_VIEWS`, `blocks.typeLabel[type]` in both locales, a `/docs` subsection, and the agent prompt.
+**Adding a block type**: `BlockType` + `Block` union member, a definition (+ `BLOCK_DEFINITIONS`, `BLOCK_TYPE_ORDER`, `jsonSchema`), a view + icon + `Info` in `BLOCK_VIEWS`, `blocks.typeLabel[type]` in both locales, a `/docs` subsection, and the agent prompt.
 
 #### The note block
 
@@ -134,7 +134,7 @@ Free-form text rendered as markdown (`utils/markdown/`). Two parsing levels, onl
 - **Tables** (line-based, parsed before inline): header row + delimiter row (alignment via `:`), rectangular; `\|` escapes a bar in a cell before inline parsing.
 - **Lists** (line-based): `*`/`-`/`1.`; one line per item, indent nests via a stack (tab = `MarkdownList.TAB_WIDTH`), switching marker kind starts a new list; ordered lists keep `start`.
 - **Escapes**: a leading backslash escapes an opening mark (`*`, `_`, `~`, a backtick, `´`, `[`, `|`, or `http(s)://`); nothing is unescaped inside a code span.
-- One table style `.note-table`, one list style `.note-list` (`NoteText.css`), reused by the docs. Don't add a second.
+- One table style `.note-table`, one list style `.note-list` (`NoteText.css`), reused by the docs and `InfoTable`. Don't add a second.
 - Spell check: `spellcheckEnabled` (persisted, default on, toggled from `WorkspaceContextMenu`) binds **only** the note textarea, with `lang={language}`. Every other field is `spellCheck={false}`.
 - Textarea keys: `useTabInsertion` (Tab inserts a tab), `useNoteFormatting` (format shortcuts, pair wrapping).
 - **Formatting** (shortcuts and the portalled `NoteFormatToolbar` over a selection) all goes through `planNoteFormats` (`utils/markdown/format.ts`), which gives each `NoteFormat` a state (inline marks are planned per selected line and never span a line break; on inside one token of its kind, disabled when touching any other token, since marks don't nest) and a lazy edit applied through `insertText` for undo; `CLEAR` is an action, never on, and drops every mark and list marker touched but never a link. It reads each segment's raw `from`/`to` extent.
@@ -396,6 +396,7 @@ One app-wide layer replaces native `title`.
 - The bubble is shrunk to its longest line (`longestLineWidth` on `.tooltip-label`, never named `tooltip-text`) before pure placement (`tooltipPlacement.ts`, with `arrowX`). `is-unplaced` hides it for the measuring frame; on hide it keeps its last text and placement to fade in place.
 - `TooltipVariant.CODE` left-aligns data. `--tooltip-gap` comes from `TooltipConfig.GAP`. `--z-tooltip` is the top layer.
 - **Rich tooltips** (`useRichTooltip`) hold any React tree and take the pointer. Content is **portalled from the anchor's own tree** (it keeps the anchor's context, e.g. a demo store) and only mounts while shown; never render it in `TooltipLayer`. Links in it use `CssClass.TOOLTIP_LINK`; a handler above the anchor that reacts to clicks must check `currentTarget.contains(target)`.
+- **Info actions**: `useRichTooltip().open(anchor)` opens a bubble on `anchor` at once, pinned. `useInfoTooltip` + `InfoMenuItem` + `InfoTable` (`components/common/info/`) anchor it on an `ActionsMenu` trigger (`triggerRef`); the hook lives in the component that owns the menu, since the menu unmounts as it closes. Blocks get it in `BlockActionsMenu`, variables/enums/sections once in `VariableRowMenu`. A value that can't be worked out is `null` and renders `InfoConfig.UNAVAILABLE`.
 - A rich bubble hides `HIDE_DELAY_MS` after the pointer leaves it; resting `HANDOFF_DELAY_MS` on another trigger swaps straight to it (each target crossed restarts that wait, so reaching the bubble still works). The content's `hide` is a dismissal (no warm window). Content being edited calls `pin()`: the bubble then ignores the pointer and closes only on a click outside, Escape, scroll or a dismissal; body-level popups count as inside it (`PopupSelector.LAYERS`; a new portalled popup must join it), and it drops below them (`--z-dropdown`). Its content can't nest app tooltips, so it uses a native `title` (the one exception to the rule above).
 
 ### Cloud sync

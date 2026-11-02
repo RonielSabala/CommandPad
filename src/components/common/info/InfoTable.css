@@ -1,0 +1,28 @@
+.info-table {
+  max-width: var(--info-table-max-width);
+  padding: var(--space-2) 0;
+}
+
+.info-table-title {
+  font-weight: 600;
+}
+
+.info-table-rows {
+  max-height: var(--info-table-max-height);
+  overflow-y: auto;
+}
+
+.info-table .note-table {
+  margin-bottom: 0;
+}
+
+.info-table .note-table th {
+  font-size: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.info-table .note-table tr:last-child :is(th, td) {
+  border-bottom: none;
+}

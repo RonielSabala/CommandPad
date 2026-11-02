@@ -37,6 +37,22 @@ export function publishRichTooltipSlot(next: RichTooltipSlot | null): void {
   }
 }
 
+type RichTooltipRequest = (anchor: HTMLElement, id: string) => void;
+
+let requestListener: RichTooltipRequest | null = null;
+
+/** Lets the layer open a bubble on request. */
+export function subscribeRichTooltipRequests(
+  listener: RichTooltipRequest,
+): () => void {
+  requestListener = listener;
+  return () => {
+    if (requestListener === listener) {
+      requestListener = null;
+    }
+  };
+}
+
 function subscribe(listener: () => void): () => void {
   listeners.add(listener);
   return () => {
@@ -54,6 +70,7 @@ export function useRichTooltip() {
   return {
     props: { [DataAttr.TOOLTIP_RICH]: id },
     pinned: shown?.pinned ?? false,
+    open: (anchor: HTMLElement) => requestListener?.(anchor, id),
     render: (content: (tip: RichTooltipControls) => ReactNode) =>
       shown ? createPortal(content(shown), shown.element) : null,
   };

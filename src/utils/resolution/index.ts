@@ -4,7 +4,8 @@ export {
   hasUnresolvedTokens,
   resolveCommandSegments,
   resolveCommandText,
-  resolveCommandToString
+  resolveCommandToString,
+  resolvedBlocksByteLength
 } from "./command";
 export { inlineReferences } from "./inline";
 export { extractedVariableKey, uniqueVariableKey } from "./keys";
@@ -57,10 +58,16 @@ export {
   unresolvedBlockParts,
   unresolvedBlockText,
   unresolvedParts,
-  unresolvedSegmentParts
+  unresolvedSegmentParts,
+  unresolvedVariableParts
 } from "./unresolved";
 export type { UnresolvedPart } from "./unresolved";
-export { getUsedVariableKeys, isVariableUnused } from "./usage";
+export {
+  countReferencesTo,
+  getReferencedKeys,
+  getUsedVariableKeys,
+  isVariableUnused
+} from "./usage";
 export {
   getSecretKeys,
   getVariableKey,

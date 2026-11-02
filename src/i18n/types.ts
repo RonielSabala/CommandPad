@@ -1,6 +1,7 @@
 import type { DocsSectionId } from "@/common/constants/docs";
 import type {
   BlockType,
+  EmbeddedRunbookStatus,
   NoteFormat,
   NoteStyle,
   PanelId,
@@ -215,6 +216,91 @@ export interface Messages {
     selected: (count: number) => string;
     emptyTitle: string;
     emptyHint: string;
+  };
+  info: {
+    action: string;
+    blockTitle: (type: string) => string;
+    variableTitle: string;
+    enumTitle: string;
+    sectionTitle: string;
+    position: (index: number, total: number) => string;
+    usedBy: (blocks: number, variables: number) => string;
+    unused: string;
+    none: string;
+    yes: string;
+    no: string;
+    readingTime: (minutes: number) => string;
+    attached: string;
+    linked: string;
+    library: string;
+    textKind: string;
+    secretKind: string;
+    embedStatus: Record<EmbeddedRunbookStatus, string>;
+    embedNoSource: string;
+    embedCircular: string;
+    embedTooDeep: string;
+    embedLocked: string;
+    rows: {
+      type: string;
+      position: string;
+      language: string;
+      editorSize: string;
+      previewSize: string;
+      editorCharacters: string;
+      previewCharacters: string;
+      editorLines: string;
+      previewLines: string;
+      references: string;
+      nestedReferences: string;
+      secretsUsed: string;
+      unresolved: string;
+      style: string;
+      lines: string;
+      paragraphs: string;
+      words: string;
+      characters: string;
+      nonSpaceCharacters: string;
+      links: string;
+      tables: string;
+      listItems: string;
+      readingTime: string;
+      source: string;
+      format: string;
+      size: string;
+      resolution: string;
+      aspectRatio: string;
+      alt: string;
+      link: string;
+      runbook: string;
+      cloudPath: string;
+      status: string;
+      blocks: string;
+      variables: string;
+      nestedRunbooks: string;
+      overrides: string;
+      outputSize: string;
+      overriddenOutputSize: string;
+      sizeDifference: string;
+      blocksInSection: string;
+      key: string;
+      kind: string;
+      valueSize: string;
+      resolvedSize: string;
+      blanks: string;
+      usedBy: string;
+      options: string;
+      selected: string;
+      longestOption: string;
+      optionsSize: string;
+      optionsWithReferences: string;
+      name: string;
+      enums: string;
+      secrets: string;
+      unusedVariables: string;
+      emptyOrUnresolved: string;
+      valuesSize: string;
+      collapsed: string;
+    };
   };
   runbookBlock: {
     changeSource: string;
@@ -789,6 +875,7 @@ export interface Messages {
     };
     blocks: {
       intro: (blockActionsLabel: string) => string;
+      info: (infoLabel: string) => string;
     };
     commandBlock: {
       intro: string;

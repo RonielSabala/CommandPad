@@ -173,6 +173,8 @@
   --minimap-width: 7rem;
   --tooltip-max-width: 18rem;
   --tooltip-editor-max-width: 40rem;
+  --info-table-max-width: 28rem;
+  --info-table-max-height: 20rem;
   --tab-unresolved-max-width: 32rem;
   --tab-unresolved-max-height: 22rem;
 

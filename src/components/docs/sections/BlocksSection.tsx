@@ -73,6 +73,7 @@ export function BlocksDocs() {
   return (
     <>
       <Prose text={t.docs.blocks.intro(t.blocks.actions)} />
+      <Prose text={t.docs.blocks.info(t.info.action)} />
     </>
   );
 }

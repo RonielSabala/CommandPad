@@ -31,12 +31,7 @@ export function MainPanelDocs() {
 
   return (
     <>
-      <Prose
-        text={t.docs.mainPanel.intro(
-          t.blocks.newBlockLabel,
-          t.variables.newRowLabel,
-        )}
-      />
+      <Prose text={t.docs.mainPanel.intro(t.blocks.newBlockLabel)} />
       <Prose text={t.docs.mainPanel.minimap} />
     </>
   );

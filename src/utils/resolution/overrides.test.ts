@@ -1,12 +1,20 @@
 import { SECRET_MASK } from "@/common/config";
 import { CommandSegmentType, UnresolvedCause } from "@/common/enums";
 import type { VariableSpec } from "@/test";
-import { buildVariables, runbook, secret, variableValues } from "@/test";
+import {
+  buildVariables,
+  commandBlock,
+  noteBlock,
+  runbook,
+  secret,
+  variableValues,
+} from "@/test";
 import { describe, expect, it } from "vitest";
 
-import { resolveCommandText } from "./command";
+import { resolveCommandText, resolvedBlocksByteLength } from "./command";
 import {
   applyOverrides,
+  getOverriddenVariableMap,
   overriddenSecretKeys,
   overrideLookupMap,
   overrideScope,
@@ -294,5 +302,34 @@ describe("withOverride", () => {
   it("is undefined once nothing is overridden", () => {
     expect(withOverride({ B: "2" }, "B", "0", "0")).toBeUndefined();
     expect(withOverride(undefined, "B", "0", "0")).toBeUndefined();
+  });
+});
+
+describe("resolvedBlocksByteLength", () => {
+  const own = buildVariables({ HOST: "a.io", PORT: "80" });
+  const blocks = [
+    commandBlock("curl {HOST}:{PORT}"),
+    noteBlock("{HOST} is not a command"),
+    commandBlock("ping {HOST}"),
+  ];
+
+  it("sums the resolved commands, UTF-8", () => {
+    expect(resolvedBlocksByteLength(blocks, getVariableMap(own))).toBe(
+      "curl a.io:80".length + "ping a.io".length,
+    );
+  });
+
+  it("measures what overrides change", () => {
+    const host = getVariableMap(buildVariables({ ZONE: "é" }));
+    const overridden = getOverriddenVariableMap(
+      own,
+      { HOST: "{ZONE}.example.com" },
+      host,
+    );
+
+    expect(
+      resolvedBlocksByteLength(blocks, overridden) -
+        resolvedBlocksByteLength(blocks, getVariableMap(own)),
+    ).toBe(2 * ("é.example.com".length + 1 - "a.io".length));
   });
 });
