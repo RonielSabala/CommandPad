@@ -1,15 +1,15 @@
 import { CssClass } from "@/common/constants/css";
 import {
-  InsertPosition,
   VariableEntryKind,
   VariableKind,
+  type InsertPosition,
 } from "@/common/enums";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
-import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
+import { InsertSubmenus } from "@/components/common/contextMenu/InsertSubmenus";
 import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
 import { SelectionToggleItem } from "@/components/common/contextMenu/SelectionToggleItem";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
@@ -17,8 +17,6 @@ import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import {
   DuplicateIcon,
   EnumIcon,
-  InsertAboveIcon,
-  InsertBelowIcon,
   SectionIcon,
   TrashIcon,
   VariableIcon,
@@ -34,23 +32,16 @@ interface Props {
   targetId: string;
 }
 
-interface InsertSubmenuProps extends Props {
+interface InsertItemsProps extends Props {
   position: InsertPosition;
-  label: string;
-  icon: ReactNode;
 }
 
-function InsertSubmenu({
-  targetId,
-  position,
-  label,
-  icon,
-}: InsertSubmenuProps) {
+function InsertItems({ targetId, position }: InsertItemsProps) {
   const t = useTranslation();
   const insertVariableRow = useStore((state) => state.insertVariableRow);
 
   return (
-    <ContextMenuSubmenu icon={icon} label={label}>
+    <>
       <ContextMenuItem
         icon={
           <VariableIcon
@@ -94,7 +85,7 @@ function InsertSubmenu({
       >
         {t.variables.sectionLabel}
       </ContextMenuItem>
-    </ContextMenuSubmenu>
+    </>
   );
 }
 
@@ -104,26 +95,12 @@ export function VariableInsertItems({ targetId }: Props) {
   return (
     <>
       <ContextMenuSeparator />
-      <InsertSubmenu
-        targetId={targetId}
-        position={InsertPosition.ABOVE}
-        label={t.variables.insertAbove}
-        icon={
-          <InsertAboveIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-      />
-      <InsertSubmenu
-        targetId={targetId}
-        position={InsertPosition.BELOW}
-        label={t.variables.insertBelow}
-        icon={
-          <InsertBelowIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-      />
+      <InsertSubmenus
+        aboveLabel={t.variables.insertAbove}
+        belowLabel={t.variables.insertBelow}
+      >
+        {(position) => <InsertItems targetId={targetId} position={position} />}
+      </InsertSubmenus>
       <ContextMenuSeparator />
     </>
   );

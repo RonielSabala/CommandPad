@@ -1,63 +1,49 @@
 import { BLOCK_TYPE_ORDER } from "@/blocks";
 import { CssClass } from "@/common/constants/css";
-import { BlockType, InsertPosition } from "@/common/enums";
+import { BlockType, type InsertPosition } from "@/common/enums";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
-import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
+import { InsertSubmenus } from "@/components/common/contextMenu/InsertSubmenus";
 import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
 import { SelectionToggleItem } from "@/components/common/contextMenu/SelectionToggleItem";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
-import {
-  CopyIcon,
-  DuplicateIcon,
-  InsertAboveIcon,
-  InsertBelowIcon,
-  TrashIcon,
-} from "@/components/icons";
+import { CopyIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
-import { useContext, type ReactNode } from "react";
+import { useContext } from "react";
 
 import { getBlockIcon, getBlockInfo, type BlockViewProps } from "./blockViews";
 
 type Props = BlockViewProps;
 
-interface InsertSubmenuProps {
+interface InsertItemsProps {
   blockId: string;
   position: InsertPosition;
-  label: string;
-  icon: ReactNode;
 }
 
-function InsertSubmenu({ blockId, position, label, icon }: InsertSubmenuProps) {
+function InsertItems({ blockId, position }: InsertItemsProps) {
   const t = useTranslation();
   const addBlock = useStore((state) => state.addBlock);
 
-  return (
-    <ContextMenuSubmenu icon={icon} label={label}>
-      {BLOCK_TYPE_ORDER.map((type) => {
-        const Icon = getBlockIcon(type);
-        return (
-          <ContextMenuItem
-            key={type}
-            icon={
-              <Icon
-                className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-              />
-            }
-            onSelect={() => void addBlock(type, { blockId, position })}
-          >
-            {t.blocks.typeLabel[type]}
-          </ContextMenuItem>
-        );
-      })}
-    </ContextMenuSubmenu>
-  );
+  return BLOCK_TYPE_ORDER.map((type) => {
+    const Icon = getBlockIcon(type);
+    return (
+      <ContextMenuItem
+        key={type}
+        icon={
+          <Icon className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)} />
+        }
+        onSelect={() => void addBlock(type, { blockId, position })}
+      >
+        {t.blocks.typeLabel[type]}
+      </ContextMenuItem>
+    );
+  });
 }
 
 export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
@@ -126,27 +112,12 @@ export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
 
         <ContextMenuSeparator />
 
-        <InsertSubmenu
-          blockId={blockId}
-          position={InsertPosition.ABOVE}
-          label={t.blocks.insertAbove}
-          icon={
-            <InsertAboveIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
-        />
-
-        <InsertSubmenu
-          blockId={blockId}
-          position={InsertPosition.BELOW}
-          label={t.blocks.insertBelow}
-          icon={
-            <InsertBelowIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
-        />
+        <InsertSubmenus
+          aboveLabel={t.blocks.insertAbove}
+          belowLabel={t.blocks.insertBelow}
+        >
+          {(position) => <InsertItems blockId={blockId} position={position} />}
+        </InsertSubmenus>
 
         <ContextMenuSeparator />
 
