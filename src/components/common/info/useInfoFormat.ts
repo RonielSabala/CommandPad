@@ -17,12 +17,16 @@ export function useInfoFormat() {
     const decimals = new Intl.NumberFormat(language, {
       maximumFractionDigits: InfoConfig.RATIO_DECIMALS,
     });
+    const minutes = new Intl.NumberFormat(language, {
+      maximumFractionDigits: InfoConfig.READING_TIME_DECIMALS,
+    });
 
     const size = (bytes: number) => formatFileSize(bytes, language);
 
     return {
       count: orUnknown((value) => numbers.format(value)),
       decimal: (value: number) => decimals.format(value),
+      minutes: (value: number) => minutes.format(value),
       size: orUnknown(size),
       sizeDelta: (bytes: number) =>
         bytes === 0

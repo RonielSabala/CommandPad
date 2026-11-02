@@ -99,6 +99,6 @@ export function noteStats(text: string, language: Language): NoteStats {
     links,
     tables,
     listItems,
-    readingMinutes: Math.ceil(words / InfoConfig.WORDS_PER_MINUTE),
+    readingMinutes: words / InfoConfig.WORDS_PER_MINUTE,
   };
 }

@@ -1,3 +1,4 @@
+import { InfoConfig } from "@/common/config";
 import { Language } from "@/i18n/types";
 import { describe, expect, it } from "vitest";
 
@@ -32,7 +33,7 @@ describe("noteStats", () => {
       words: 4,
       characters: 17,
       nonSpaceCharacters: 15,
-      readingMinutes: 1,
+      readingMinutes: 4 / InfoConfig.WORDS_PER_MINUTE,
     });
   });
 

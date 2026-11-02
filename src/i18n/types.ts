@@ -229,7 +229,7 @@ export interface Messages {
     none: string;
     yes: string;
     no: string;
-    readingTime: (minutes: number) => string;
+    readingTime: (minutes: string) => string;
     attached: string;
     linked: string;
     library: string;

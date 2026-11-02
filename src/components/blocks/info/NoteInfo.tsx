@@ -40,7 +40,7 @@ export function NoteInfo({ block }: BlockViewProps<NoteBlock>) {
         { label: rows.listItems, value: format.count(stats.listItems) },
         {
           label: rows.readingTime,
-          value: t.info.readingTime(stats.readingMinutes),
+          value: t.info.readingTime(format.minutes(stats.readingMinutes)),
         },
       ]}
     />

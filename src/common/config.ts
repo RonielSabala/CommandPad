@@ -124,6 +124,7 @@ export const InfoConfig = {
   RATIO_SEPARATOR: ":",
   MAX_RATIO_TERM: 32,
   RATIO_DECIMALS: 2,
+  READING_TIME_DECIMALS: 1,
 } as const;
 
 export const TooltipConfig = {
