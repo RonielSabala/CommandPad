@@ -4,14 +4,36 @@ import {
   SortDirection,
   VariableEntryKind,
 } from "@/common/enums";
-import type { RunbookEntry, Tab, Variable } from "@/common/types";
+import type {
+  Block,
+  RunbookEntry,
+  Tab,
+  Variable,
+  VariableSection,
+} from "@/common/types";
 
 import type { StoreState } from "./types";
+
+export const EMPTY_BLOCKS: Block[] = [];
+export const EMPTY_VARIABLES: Variable[] = [];
+export const EMPTY_SECTIONS: VariableSection[] = [];
 
 export function getActiveTab(state: StoreState): Tab | null {
   return (
     state.tabs.find((t) => t.id === state.activeTabId) ?? state.tabs[0] ?? null
   );
+}
+
+export function getActiveBlocks(state: StoreState): Block[] {
+  return getActiveTab(state)?.blocks ?? EMPTY_BLOCKS;
+}
+
+export function getActiveVariables(state: StoreState): Variable[] {
+  return getActiveTab(state)?.variables ?? EMPTY_VARIABLES;
+}
+
+export function getActiveRunbookId(state: StoreState): string | null {
+  return getActiveTab(state)?.runbookId ?? null;
 }
 
 export function getRunbookTab(

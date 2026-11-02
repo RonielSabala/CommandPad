@@ -7,7 +7,6 @@ import {
   VariableEntryKind,
   VariableKind,
 } from "@/common/enums";
-import type { Block, Variable, VariableSection } from "@/common/types";
 import { AddRow } from "@/components/common/addRow/AddRow";
 import { EmptyState } from "@/components/common/EmptyState";
 import { EnumIcon, SectionIcon, VariableIcon } from "@/components/icons";
@@ -23,7 +22,13 @@ import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
 import { buildVariableCompletions } from "@/monaco/completions";
-import { getActiveTab, useStore } from "@/store/store";
+import {
+  EMPTY_BLOCKS,
+  EMPTY_SECTIONS,
+  EMPTY_VARIABLES,
+  getActiveTab,
+  useStore,
+} from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
 import { getSecretKeys } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
@@ -32,10 +37,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import "./RunbookVariables.css";
 import { VariableRows } from "./VariableRows";
 import "./VariablesList.css";
-
-const EMPTY_BLOCKS: Block[] = [];
-const EMPTY_VARIABLES: Variable[] = [];
-const EMPTY_SECTIONS: VariableSection[] = [];
 
 function AddVariableRow() {
   const t = useTranslation();

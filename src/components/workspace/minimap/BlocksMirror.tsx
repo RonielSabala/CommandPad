@@ -1,15 +1,16 @@
 import { CssClass } from "@/common/constants/css";
-import type { Block, Variable } from "@/common/types";
 import { BlockItem } from "@/components/blocks/BlockItem";
 import "@/components/blocks/BlocksList.css";
-import { getActiveTab, useStore } from "@/store/store";
+import {
+  EMPTY_BLOCKS,
+  EMPTY_VARIABLES,
+  getActiveTab,
+  useStore,
+} from "@/store/store";
 import { getSecretKeys, getVariableMap } from "@/utils/resolution";
 import { memo, useMemo } from "react";
 
 import { MinimapMirror } from "./Minimap";
-
-const EMPTY_BLOCKS: Block[] = [];
-const EMPTY_VARIABLES: Variable[] = [];
 
 export const BlocksMirror = memo(function BlocksMirror({
   width,

@@ -1,11 +1,15 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr, ElementId, ScrollIntoView } from "@/common/constants/dom";
-import type { Block, Variable } from "@/common/types";
 import { useRowReveal } from "@/hooks/useRowReveal";
 import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { buildVariableCompletions } from "@/monaco/completions";
-import { getActiveTab, useStore } from "@/store/store";
+import {
+  EMPTY_BLOCKS,
+  EMPTY_VARIABLES,
+  getActiveTab,
+  useStore,
+} from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
 import { getSecretKeys } from "@/utils/resolution";
 import { useEffect, useMemo, useRef } from "react";
@@ -13,9 +17,6 @@ import { useEffect, useMemo, useRef } from "react";
 import { BlockItem } from "./BlockItem";
 import "./BlocksList.css";
 import { CompletionsContext } from "./listContext";
-
-const EMPTY_BLOCKS: Block[] = [];
-const EMPTY_VARIABLES: Variable[] = [];
 
 export function BlocksList() {
   const activeTab = useStore(getActiveTab);

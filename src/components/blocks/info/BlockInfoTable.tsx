@@ -1,9 +1,7 @@
 import type { Block } from "@/common/types";
 import { InfoTable, type InfoRow } from "@/components/common/info/InfoTable";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
-
-const NO_BLOCKS: Block[] = [];
+import { getActiveBlocks, useStore } from "@/store/store";
 
 interface Props {
   block: Block;
@@ -12,7 +10,7 @@ interface Props {
 
 export function BlockInfoTable({ block, rows }: Props) {
   const t = useTranslation();
-  const blocks = useStore((state) => getActiveTab(state)?.blocks ?? NO_BLOCKS);
+  const blocks = useStore(getActiveBlocks);
   const blockId = block.id;
   const type = t.blocks.typeLabel[block.type];
 

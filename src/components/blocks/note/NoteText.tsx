@@ -29,7 +29,7 @@ const SEGMENT_CLASS: Record<NoteSegmentType, string | undefined> = {
   [NoteSegmentType.BOLD]: "note-bold",
   [NoteSegmentType.ITALIC]: "note-italic",
   [NoteSegmentType.STRIKETHROUGH]: "note-strikethrough",
-  [NoteSegmentType.CODE]: "note-code",
+  [NoteSegmentType.CODE]: CssClass.NOTE_CODE,
   [NoteSegmentType.LINK]: CssClass.NOTE_LINK,
 };
 
@@ -148,7 +148,7 @@ function NoteTableView({
   requiresLinkModifier?: boolean;
 }) {
   return (
-    <table className="note-table">
+    <table className={CssClass.NOTE_TABLE}>
       <thead>
         <NoteTableRow
           cells={table.head}

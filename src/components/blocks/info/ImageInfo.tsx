@@ -80,14 +80,12 @@ export function ImageInfo({ block }: BlockViewProps<ImageBlock>) {
 
     const { width, height } = dimensions;
     const divisor = greatestCommonDivisor(width, height);
+    const terms =
+      height / divisor > InfoConfig.MAX_RATIO_TERM
+        ? [format.decimal(width / height), 1]
+        : [width / divisor, height / divisor];
 
-    if (height / divisor > InfoConfig.MAX_RATIO_TERM) {
-      return [format.decimal(width / height), 1].join(
-        InfoConfig.RATIO_SEPARATOR,
-      );
-    }
-
-    return [width / divisor, height / divisor].join(InfoConfig.RATIO_SEPARATOR);
+    return terms.join(InfoConfig.RATIO_SEPARATOR);
   }, [dimensions, format]);
 
   const { rows } = t.info;
@@ -108,7 +106,7 @@ export function ImageInfo({ block }: BlockViewProps<ImageBlock>) {
           label: rows.format,
           value: filled ? (mimeFormat ?? imageFormat(src)) : null,
         },
-        { label: rows.size, value: bytes === null ? null : format.size(bytes) },
+        { label: rows.size, value: format.size(bytes) },
         {
           label: rows.resolution,
           value: dimensions

@@ -1,4 +1,6 @@
 import { InfoConfig } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
+import { useTranslation } from "@/i18n";
 import type { ReactNode } from "react";
 
 import "@/components/blocks/note/NoteText.css";
@@ -20,7 +22,7 @@ export function InfoTable({ title, rows }: Props) {
       <div className="info-table-title">{title}</div>
 
       <div className="info-table-rows">
-        <table className="note-table">
+        <table className={CssClass.NOTE_TABLE}>
           <tbody>
             {rows.map(({ label, value }) => (
               <tr key={label}>
@@ -36,10 +38,15 @@ export function InfoTable({ title, rows }: Props) {
 }
 
 export function InfoCodeList({ items }: { items: readonly string[] }) {
+  const t = useTranslation();
+  if (items.length === 0) {
+    return t.info.none;
+  }
+
   return items.map((item, index) => (
     <span key={item}>
       {index > 0 && InfoConfig.LIST_SEPARATOR}
-      <code className="note-code">{item}</code>
+      <code className={CssClass.NOTE_CODE}>{item}</code>
     </span>
   ));
 }

@@ -2,13 +2,11 @@ import { BlockType } from "@/common/enums";
 import type { Block, DividerBlock } from "@/common/types";
 import { useInfoFormat } from "@/components/common/info/useInfoFormat";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import { getActiveBlocks, useStore } from "@/store/store";
 import { useMemo } from "react";
 
 import type { BlockViewProps } from "../blockViews";
 import { BlockInfoTable } from "./BlockInfoTable";
-
-const NO_BLOCKS: Block[] = [];
 
 /** The blocks between `dividerId` and the next divider. */
 function countSectionBlocks(blocks: Block[], dividerId: string): number | null {
@@ -32,9 +30,9 @@ function countSectionBlocks(blocks: Block[], dividerId: string): number | null {
 export function DividerInfo({ block }: BlockViewProps<DividerBlock>) {
   const t = useTranslation();
   const format = useInfoFormat();
+  const blocks = useStore(getActiveBlocks);
   const blockId = block.id;
 
-  const blocks = useStore((state) => getActiveTab(state)?.blocks ?? NO_BLOCKS);
   const sectionLength = useMemo(
     () => countSectionBlocks(blocks, blockId),
     [blocks, blockId],
@@ -46,7 +44,7 @@ export function DividerInfo({ block }: BlockViewProps<DividerBlock>) {
       rows={[
         {
           label: t.info.rows.blocksInSection,
-          value: sectionLength === null ? null : format.count(sectionLength),
+          value: format.count(sectionLength),
         },
       ]}
     />

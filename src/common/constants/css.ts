@@ -100,7 +100,9 @@ export const CssClass = {
   TOOLTIP_LINK_PLAIN: "tooltip-link-plain",
   NOTE_EDITOR: "note-editor",
   TEXT_MIRROR: "text-mirror",
+  NOTE_CODE: "note-code",
   NOTE_CODE_NEUTRAL: "note-code-neutral",
+  NOTE_TABLE: "note-table",
 
   // Controls beside a block/variable item
 

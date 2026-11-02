@@ -1,10 +1,10 @@
 import { CssClass } from "@/common/constants/css";
 import { EventType, Key } from "@/common/constants/events";
-import type { Block, ImageBlock } from "@/common/types";
+import type { ImageBlock } from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { Modal } from "@/components/modals/Modal";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import { EMPTY_BLOCKS, getActiveTab, useStore } from "@/store/store";
 import { isFilledImage } from "@/utils/image";
 import { classNames } from "@/utils/string";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -12,8 +12,6 @@ import { ChevronLeft, ChevronRight } from "react-bootstrap-icons";
 
 import "./ImageLightbox.css";
 import { ImagePlaceholderBadge } from "./ImagePlaceholderBadge";
-
-const EMPTY_BLOCKS: Block[] = [];
 
 interface Slide {
   block: ImageBlock;

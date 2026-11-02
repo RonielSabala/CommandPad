@@ -1,10 +1,9 @@
 import { InfoConfig, LINE_BREAK } from "@/common/config";
 import { NoteNodeType, NoteSegmentType } from "@/common/enums";
-import type { NoteList, NoteNode, NoteSegment } from "@/common/types";
 import type { Language } from "@/i18n";
 import { splitLines } from "@/utils/string";
 
-import { parseNoteNodes } from "./nodes";
+import { nodeRuns, parseNoteNodes } from "./nodes";
 
 export interface NoteStats {
   lines: number;
@@ -16,41 +15,6 @@ export interface NoteStats {
   tables: number;
   listItems: number;
   readingMinutes: number;
-}
-
-function* listSegments(list: NoteList): Generator<NoteSegment[]> {
-  for (const item of list.items) {
-    yield item.segments;
-
-    for (const nested of item.lists) {
-      yield* listSegments(nested);
-    }
-  }
-}
-
-function* nodeSegments(nodes: NoteNode[]): Generator<NoteSegment[]> {
-  for (const node of nodes) {
-    if (node.type === NoteNodeType.TABLE) {
-      for (const row of [node.table.head, ...node.table.rows]) {
-        yield* row.map((cell) => cell.segments);
-      }
-    } else if (node.type === NoteNodeType.LIST) {
-      yield* listSegments(node.list);
-    } else {
-      yield node.segments;
-    }
-  }
-}
-
-function countListItems(list: NoteList): number {
-  let count = list.items.length;
-  for (const item of list.items) {
-    for (const nested of item.lists) {
-      count += countListItems(nested);
-    }
-  }
-
-  return count;
 }
 
 function countLinesAndParagraphs(text: string) {
@@ -75,33 +39,32 @@ function countLinesAndParagraphs(text: string) {
 }
 
 export function noteStats(text: string, language: Language): NoteStats {
-  const nodes = parseNoteNodes(text);
-
   let tables = 0;
   let listItems = 0;
-
-  for (const node of nodes) {
-    if (node.type === NoteNodeType.TABLE) {
-      tables++;
-    } else if (node.type === NoteNodeType.LIST) {
-      listItems += countListItems(node.list);
-    }
-  }
-
   let links = 0;
   const runs: string[] = [];
 
-  for (const segments of nodeSegments(nodes)) {
-    let run = "";
-    for (const segment of segments) {
-      run += segment.text;
-
-      if (segment.type === NoteSegmentType.LINK) {
-        links++;
-      }
+  for (const node of parseNoteNodes(text)) {
+    if (node.type === NoteNodeType.TABLE) {
+      tables++;
     }
 
-    runs.push(run);
+    for (const segments of nodeRuns(node)) {
+      if (node.type === NoteNodeType.LIST) {
+        listItems++;
+      }
+
+      let run = "";
+      for (const segment of segments) {
+        run += segment.text;
+
+        if (segment.type === NoteSegmentType.LINK) {
+          links++;
+        }
+      }
+
+      runs.push(run);
+    }
   }
 
   const rendered = runs.join(LINE_BREAK);

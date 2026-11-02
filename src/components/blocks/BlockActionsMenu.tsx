@@ -81,7 +81,7 @@ export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
         className={classNames(
           CssClass.ITEM_CONTROL,
           CssClass.ITEM_ACTIONS,
-          info.shown && CssClass.MENU_OPEN,
+          info.menuClassName,
         )}
         title={t.blocks.actions}
         triggerRef={info.triggerRef}

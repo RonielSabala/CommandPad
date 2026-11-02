@@ -1,4 +1,3 @@
-import { CloudSyncConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import {
   CodeModelScope,
@@ -27,9 +26,7 @@ export function CloudFileEditorModal() {
   const busy = editor !== null && (editor.loading || editor.saving);
   const dirty = editor !== null && editor.text !== editor.original;
   const filePath = editor
-    ? [formatCloudPath(editor.folderPath), editor.file.name].join(
-        CloudSyncConfig.PATH_SEPARATOR,
-      )
+    ? formatCloudPath(editor.folderPath, editor.file.name)
     : "";
 
   return (

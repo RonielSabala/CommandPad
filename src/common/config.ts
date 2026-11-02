@@ -167,6 +167,7 @@ export const ELLIPSIS = "\u2026";
 
 export const MIDDLE_DOT = "·";
 export const SECRET_MASK = "•".repeat(8);
+export const PREVIEW_SECRET_MASK = "*".repeat(6);
 
 export const VaultConfig = {
   PREFIX: "cpv1",

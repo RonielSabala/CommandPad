@@ -3,6 +3,11 @@ import { useStore } from "@/store/store";
 import { formatFileSize } from "@/utils/format";
 import { useMemo } from "react";
 
+/** `format` over a value that may be unknown. */
+function orUnknown(format: (value: number) => string) {
+  return (value: number | null) => (value === null ? null : format(value));
+}
+
 /** Counts and sizes in the UI language. */
 export function useInfoFormat() {
   const language = useStore((state) => state.language);
@@ -16,9 +21,9 @@ export function useInfoFormat() {
     const size = (bytes: number) => formatFileSize(bytes, language);
 
     return {
-      count: (value: number) => numbers.format(value),
+      count: orUnknown((value) => numbers.format(value)),
       decimal: (value: number) => decimals.format(value),
-      size,
+      size: orUnknown(size),
       sizeDelta: (bytes: number) =>
         bytes === 0
           ? size(0)

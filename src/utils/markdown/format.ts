@@ -1,16 +1,11 @@
 import { LINE_BREAK } from "@/common/config";
-import {
-  NoteFormat,
-  NoteFormatState,
-  NoteNodeType,
-  NoteSegmentType,
-} from "@/common/enums";
+import { NoteFormat, NoteFormatState, NoteSegmentType } from "@/common/enums";
 import { MarkdownDelimiter, MarkdownList } from "@/common/markdownSyntax";
-import type { NoteList, NoteNode, NoteSegment } from "@/common/types";
+import type { NoteSegment } from "@/common/types";
 
 import { clamp } from "../number";
 import { joinLines, lineStarts, splitLines, trimmedStart } from "../string";
-import { parseNoteNodes } from "./nodes";
+import { nodeRuns, parseNoteNodes } from "./nodes";
 
 export interface NoteRange {
   from: number;
@@ -61,26 +56,6 @@ const LIST_FORMATS = {
 type ListFormat = keyof typeof LIST_FORMATS;
 
 // --- Helpers ---
-
-function listSegments(list: NoteList): NoteSegment[] {
-  return list.items.flatMap((item) => [
-    ...item.segments,
-    ...item.lists.flatMap(listSegments),
-  ]);
-}
-
-function nodeSegments(node: NoteNode): NoteSegment[] {
-  switch (node.type) {
-    case NoteNodeType.TEXT:
-      return node.segments;
-    case NoteNodeType.TABLE:
-      return [...node.table.head, ...node.table.rows.flat()].flatMap(
-        (cell) => cell.segments,
-      );
-    case NoteNodeType.LIST:
-      return listSegments(node.list);
-  }
-}
 
 function lineRange(text: string, { from, to }: NoteRange): NoteRange {
   const end = to > from && text[to - 1] === LINE_BREAK ? to - 1 : to;
@@ -311,7 +286,7 @@ function inlineTarget(text: string, list: ListTarget): InlineTarget | null {
   // Only the tokens inside the selection are matched against each line
   const span = { from: ranges[0].from, to: ranges[ranges.length - 1].to };
   const tokens = parseNoteNodes(text)
-    .flatMap(nodeSegments)
+    .flatMap((node) => [...nodeRuns(node)].flat())
     .filter(
       (token) => token.type !== NoteSegmentType.TEXT && overlaps(token, span),
     );

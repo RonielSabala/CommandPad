@@ -23,12 +23,13 @@ import { useKeepInView } from "@/hooks/useKeepInView";
 import { useTranslation } from "@/i18n";
 import type { ChoiceSource, EditorChoice } from "@/monaco/completions";
 import type { CloudEntry } from "@/services/cloud";
-import { getActiveTab, getRunbookEmbedView, useStore } from "@/store/store";
 import {
-  cloudPathSegments,
-  isEmbedUnresolved,
-  localSourceKey,
-} from "@/utils/embeddedRunbook";
+  getActiveRunbookId,
+  getActiveTab,
+  getRunbookEmbedView,
+  useStore,
+} from "@/store/store";
+import { cloudPathSegments, isEmbedUnresolved } from "@/utils/embeddedRunbook";
 import { formatFileSize } from "@/utils/format";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
@@ -45,9 +46,7 @@ import {
   EmbeddedBlocks,
   EmbedUnlock,
 } from "./RunbookEmbed";
-import { useEmbeddedRunbook } from "./useEmbeddedRunbook";
-
-const NO_TRAIL: readonly string[] = [];
+import { useTabEmbed } from "./useEmbeddedRunbook";
 
 export function RunbookBlock({
   block,
@@ -64,9 +63,7 @@ export function RunbookBlock({
   } = block;
 
   const cloudPath = cloud?.path ?? "";
-  const hostRunbookId = useStore(
-    (state) => getActiveTab(state)?.runbookId ?? null,
-  );
+  const hostRunbookId = useStore(getActiveRunbookId);
 
   const library = useStore((state) => state.runbookLibrary);
   const readRunbookStats = useStore((state) => state.readRunbookStats);
@@ -88,16 +85,7 @@ export function RunbookBlock({
     (state) => state.pendingFocusBlockId === blockId,
   );
 
-  const host = useMemo(
-    () => ({ variableMap, secretKeys }),
-    [variableMap, secretKeys],
-  );
-  const trail = useMemo(
-    () => (hostRunbookId ? [localSourceKey(hostRunbookId)] : NO_TRAIL),
-    [hostRunbookId],
-  );
-
-  const embed = useEmbeddedRunbook(block, host, trail);
+  const { host, embed } = useTabEmbed(block, variableMap, secretKeys);
   const local = embed.source?.local ?? null;
 
   // A path is only looked up once it's committed

@@ -1,10 +1,14 @@
 import { VariableKind } from "@/common/enums";
-import type { Block, Variable } from "@/common/types";
 import { SearchInput } from "@/components/common/SearchInput";
 import { EnumIcon, VariableIcon } from "@/components/icons";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import {
+  EMPTY_BLOCKS,
+  EMPTY_VARIABLES,
+  getActiveTab,
+  useStore,
+} from "@/store/store";
 import { isVariableUnused } from "@/utils/resolution";
 import { matchesQuery } from "@/utils/string";
 
@@ -12,9 +16,6 @@ import { SidebarSection } from "../shared/SidebarSection";
 import { SidebarSectionFooter } from "../shared/SidebarSectionFooter";
 import { SidebarSectionList } from "../shared/SidebarSectionList";
 import { VariableRow } from "./VariableRow";
-
-const EMPTY_VARIABLES: Variable[] = [];
-const EMPTY_BLOCKS: Block[] = [];
 
 export function VariableSection() {
   const t = useTranslation();

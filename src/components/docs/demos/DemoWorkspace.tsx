@@ -1,7 +1,6 @@
 import { InputSelector } from "@/common/constants/dom";
 import { SelectionGroup } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
-import type { Block, Variable } from "@/common/types";
 import { ImageLightbox } from "@/components/blocks/image/ImageLightbox";
 import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
 import { RunbookRow } from "@/components/sidebar/runbooks/RunbookRow";
@@ -12,6 +11,8 @@ import { useLassoSelection } from "@/hooks/useLassoSelection";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import {
   createAppStore,
+  EMPTY_BLOCKS,
+  EMPTY_VARIABLES,
   getActiveTab,
   StoreProvider,
   useStore,
@@ -112,9 +113,6 @@ export function DemoWorkspace({
     </StoreProvider>
   );
 }
-
-const EMPTY_VARIABLES: Variable[] = [];
-const EMPTY_BLOCKS: Block[] = [];
 
 export function DemoVariableRows() {
   const activeTab = useStore(getActiveTab);

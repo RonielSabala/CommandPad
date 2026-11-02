@@ -8,17 +8,15 @@ import { InfoCodeList, InfoTable } from "@/components/common/info/InfoTable";
 import { useInfoFormat } from "@/components/common/info/useInfoFormat";
 import { useTranslation } from "@/i18n";
 import {
-  countReferencesTo,
   getReferencedKeys,
   getTemplateParamNames,
-  getVariableKey,
   unresolvedVariableParts,
 } from "@/utils/resolution";
 import { countCharacters, countLines, utf8ByteLength } from "@/utils/string";
 import { useMemo } from "react";
 
-import { useUsedByLabel } from "./useUsedByLabel";
 import type { VariableInfoScope } from "./useVariableInfoScope";
+import { useVariableKeyRows } from "./useVariableKeyRows";
 
 interface Props {
   variable: Variable;
@@ -28,28 +26,25 @@ interface Props {
 export function VariableInfo({ variable, scope }: Props) {
   const t = useTranslation();
   const format = useInfoFormat();
-  const usedBy = useUsedByLabel();
-  const { tab, variableMap, secretKeys } = scope;
+  const { variableMap, secretKeys } = scope;
+  const { key, keyRow, usedByRow } = useVariableKeyRows(variable, scope.tab);
 
   const stats = useMemo(() => {
-    const key = getVariableKey(variable);
     const { value } = variable;
     const resolved = key ? variableMap[key] : undefined;
 
     return {
-      key,
       bytes: utf8ByteLength(value),
       characters: countCharacters(value),
       lines: countLines(value),
       resolvedBytes: resolved ? utf8ByteLength(resolved.text) : null,
       references: getReferencedKeys(value, ReferenceSurface.VALUE).size,
       blanks: getTemplateParamNames(value),
-      usedBy: key ? countReferencesTo(key, tab.blocks, tab.variables) : null,
       unresolved: key
         ? unresolvedVariableParts(key, variableMap, secretKeys).length
         : null,
     };
-  }, [variable, variableMap, secretKeys, tab]);
+  }, [variable, key, variableMap, secretKeys]);
 
   const { rows } = t.info;
 
@@ -57,10 +52,7 @@ export function VariableInfo({ variable, scope }: Props) {
     <InfoTable
       title={t.info.variableTitle}
       rows={[
-        {
-          label: rows.key,
-          value: stats.key ? <InfoCodeList items={[stats.key]} /> : null,
-        },
+        keyRow,
         {
           label: rows.kind,
           value: variable.secret ? t.info.secretKind : t.info.textKind,
@@ -73,28 +65,19 @@ export function VariableInfo({ variable, scope }: Props) {
         { label: rows.valueSize, value: format.size(stats.bytes) },
         {
           label: rows.resolvedSize,
-          value:
-            stats.resolvedBytes === null
-              ? null
-              : format.size(stats.resolvedBytes),
+          value: format.size(stats.resolvedBytes),
         },
         { label: rows.characters, value: format.count(stats.characters) },
         { label: rows.lines, value: format.count(stats.lines) },
         { label: rows.references, value: format.count(stats.references) },
         {
           label: rows.blanks,
-          value:
-            stats.blanks.length > 0 ? (
-              <InfoCodeList items={stats.blanks} />
-            ) : (
-              t.info.none
-            ),
+          value: <InfoCodeList items={stats.blanks} />,
         },
-        { label: rows.usedBy, value: stats.usedBy && usedBy(stats.usedBy) },
+        usedByRow,
         {
           label: rows.unresolved,
-          value:
-            stats.unresolved === null ? null : format.count(stats.unresolved),
+          value: format.count(stats.unresolved),
         },
       ]}
     />

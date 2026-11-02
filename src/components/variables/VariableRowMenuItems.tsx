@@ -227,7 +227,7 @@ export function VariableRowMenu({
   return (
     <>
       <ActionsMenu
-        className={classNames(className, info.shown && CssClass.MENU_OPEN)}
+        className={classNames(className, info.menuClassName)}
         title={title}
         triggerRef={info.triggerRef}
       >

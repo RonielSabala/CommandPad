@@ -1,12 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { CodeModelScope } from "@/common/editorConfig";
 import { TooltipVariant, VariableEntryKind } from "@/common/enums";
-import type {
-  Block,
-  RunbookBlock,
-  Variable,
-  VariableSection,
-} from "@/common/types";
+import type { RunbookBlock, Variable, VariableSection } from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { OptionScopeContext } from "@/components/variables/optionScopeContext";
 import { VariableSectionHeader } from "@/components/variables/VariableSectionHeader";
@@ -18,7 +13,12 @@ import {
   withOrigin,
   type VariableCompletion,
 } from "@/monaco/completions";
-import { getActiveTab, useStore } from "@/store/store";
+import {
+  EMPTY_BLOCKS,
+  EMPTY_VARIABLES,
+  getActiveTab,
+  useStore,
+} from "@/store/store";
 import {
   cloudPathSegments,
   embedScopeId,
@@ -59,9 +59,6 @@ function embedSourceName(
 
   return displayLabel(source?.local?.label ?? block.label, t);
 }
-
-const EMPTY_BLOCKS: Block[] = [];
-const EMPTY_VARIABLES: Variable[] = [];
 
 interface Props {
   block: RunbookBlock;

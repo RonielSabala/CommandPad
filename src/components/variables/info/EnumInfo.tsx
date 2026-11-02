@@ -1,18 +1,14 @@
 import { ReferenceSurface } from "@/common/enums";
 import type { Variable } from "@/common/types";
-import { InfoCodeList, InfoTable } from "@/components/common/info/InfoTable";
+import { InfoTable } from "@/components/common/info/InfoTable";
 import { useInfoFormat } from "@/components/common/info/useInfoFormat";
 import { useTranslation } from "@/i18n";
-import {
-  countReferencesTo,
-  getVariableKey,
-  hasReferencedKeys,
-} from "@/utils/resolution";
+import { hasReferencedKeys } from "@/utils/resolution";
 import { countCharacters, utf8ByteLength } from "@/utils/string";
 import { useMemo } from "react";
 
-import { useUsedByLabel } from "./useUsedByLabel";
 import type { VariableInfoScope } from "./useVariableInfoScope";
+import { useVariableKeyRows } from "./useVariableKeyRows";
 
 interface Props {
   variable: Variable;
@@ -22,11 +18,9 @@ interface Props {
 export function EnumInfo({ variable, scope }: Props) {
   const t = useTranslation();
   const format = useInfoFormat();
-  const usedBy = useUsedByLabel();
-  const { tab } = scope;
+  const { keyRow, usedByRow } = useVariableKeyRows(variable, scope.tab);
 
   const stats = useMemo(() => {
-    const key = getVariableKey(variable);
     const options = variable.options ?? [];
 
     let longest = 0;
@@ -43,15 +37,13 @@ export function EnumInfo({ variable, scope }: Props) {
     }
 
     return {
-      key,
       options: options.length,
       selected: options.indexOf(variable.value),
       longest,
       bytes,
       withReferences,
-      usedBy: key ? countReferencesTo(key, tab.blocks, tab.variables) : null,
     };
-  }, [variable, tab]);
+  }, [variable]);
 
   const { rows } = t.info;
 
@@ -59,10 +51,7 @@ export function EnumInfo({ variable, scope }: Props) {
     <InfoTable
       title={t.info.enumTitle}
       rows={[
-        {
-          label: rows.key,
-          value: stats.key ? <InfoCodeList items={[stats.key]} /> : null,
-        },
+        keyRow,
         { label: rows.options, value: format.count(stats.options) },
         {
           label: rows.selected,
@@ -77,7 +66,7 @@ export function EnumInfo({ variable, scope }: Props) {
           label: rows.optionsWithReferences,
           value: format.count(stats.withReferences),
         },
-        { label: rows.usedBy, value: stats.usedBy && usedBy(stats.usedBy) },
+        usedByRow,
       ]}
     />
   );

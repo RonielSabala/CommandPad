@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { useRichTooltip } from "@/components/common/tooltip/richTooltip";
 import { useRef, type ReactNode } from "react";
 
@@ -8,7 +9,7 @@ export function useInfoTooltip() {
 
   return {
     triggerRef,
-    shown: tip.pinned,
+    menuClassName: tip.pinned ? CssClass.MENU_OPEN : undefined,
     open: () => {
       if (triggerRef.current) {
         tip.open(triggerRef.current);

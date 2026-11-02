@@ -39,7 +39,7 @@ import {
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import { EMPTY_VARIABLES, getActiveVariables, useStore } from "@/store/store";
 import {
   getSecretKeys,
   getVariableKey,
@@ -73,7 +73,6 @@ const OptionVariableContext = createContext<OptionVariable>({
   options: [],
 });
 
-const NO_VARIABLES: Variable[] = [];
 const NO_OPTIONS: string[] = [];
 
 const tabScopes = new WeakMap<
@@ -101,9 +100,7 @@ function OptionHint({ option }: { option: string }) {
   const { variableKey } = useContext(OptionVariableContext);
   const embedScope = useContext(OptionScopeContext);
   const variables = useStore((state) =>
-    embedScope
-      ? NO_VARIABLES
-      : (getActiveTab(state)?.variables ?? NO_VARIABLES),
+    embedScope ? EMPTY_VARIABLES : getActiveVariables(state),
   );
 
   const scope = embedScope ?? tabOptionScope(variables);

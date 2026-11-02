@@ -1,4 +1,3 @@
-import { CloudSyncConfig } from "@/common/config";
 import { BlockType, EmbeddedRunbookStatus } from "@/common/enums";
 import type { RunbookBlock } from "@/common/types";
 import { InfoCodeList, type InfoRow } from "@/components/common/info/InfoTable";
@@ -6,8 +5,7 @@ import { useInfoFormat } from "@/components/common/info/useInfoFormat";
 import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
 import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
-import { localSourceKey } from "@/utils/embeddedRunbook";
+import { formatCloudPath } from "@/utils/format";
 import {
   resolvedBlocksByteLength,
   unresolvedBlockParts,
@@ -17,10 +15,8 @@ import { getRunbookStats } from "@/utils/runbookSource";
 import { useMemo } from "react";
 
 import type { BlockViewProps } from "../blockViews";
-import { useEmbeddedRunbook } from "../runbook/useEmbeddedRunbook";
+import { useTabEmbed } from "../runbook/useEmbeddedRunbook";
 import { BlockInfoTable } from "./BlockInfoTable";
-
-const NO_TRAIL: readonly string[] = [];
 
 export function RunbookInfo({
   block,
@@ -29,19 +25,7 @@ export function RunbookInfo({
 }: BlockViewProps<RunbookBlock>) {
   const t = useTranslation();
   const format = useInfoFormat();
-  const hostRunbookId = useStore(
-    (state) => getActiveTab(state)?.runbookId ?? null,
-  );
-
-  const host = useMemo(
-    () => ({ variableMap, secretKeys }),
-    [variableMap, secretKeys],
-  );
-  const trail = useMemo(
-    () => (hostRunbookId ? [localSourceKey(hostRunbookId)] : NO_TRAIL),
-    [hostRunbookId],
-  );
-  const embed = useEmbeddedRunbook(block, host, trail);
+  const { embed } = useTabEmbed(block, variableMap, secretKeys);
 
   const { cloud } = block;
   const overrideKeys = Object.keys(block.overrides ?? {});
@@ -105,11 +89,7 @@ export function RunbookInfo({
         { label: rows.source, value: PROVIDER_NAME[cloud.provider] },
         {
           label: rows.cloudPath,
-          value: cloud.path
-            ? [CloudSyncConfig.APP_FOLDER_NAME, cloud.path].join(
-                CloudSyncConfig.PATH_SEPARATOR,
-              )
-            : null,
+          value: cloud.path ? formatCloudPath([], cloud.path) : null,
         },
       ]
     : [
@@ -143,12 +123,7 @@ export function RunbookInfo({
         },
         {
           label: rows.overrides,
-          value:
-            overrideKeys.length > 0 ? (
-              <InfoCodeList items={overrideKeys} />
-            ) : (
-              t.info.none
-            ),
+          value: <InfoCodeList items={overrideKeys} />,
         },
         { label: rows.outputSize, value: stats && format.size(stats.own) },
         {

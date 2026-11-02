@@ -1,13 +1,13 @@
-import { SECRET_MASK } from "@/common/config";
+import { PREVIEW_SECRET_MASK } from "@/common/config";
 import {
   CODE_LANGUAGE_LABEL,
   DEFAULT_COMMAND_LANGUAGE,
 } from "@/common/editorConfig";
 import { ReferenceSurface } from "@/common/enums";
-import type { CommandBlock, Variable } from "@/common/types";
+import type { CommandBlock } from "@/common/types";
 import { useInfoFormat } from "@/components/common/info/useInfoFormat";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import { getActiveVariables, useStore } from "@/store/store";
 import {
   countCommandLines,
   getReferencedKeys,
@@ -23,8 +23,6 @@ import { useMemo } from "react";
 import type { BlockViewProps } from "../blockViews";
 import { BlockInfoTable } from "./BlockInfoTable";
 
-const NO_VARIABLES: Variable[] = [];
-
 export function CommandInfo({
   block,
   variableMap,
@@ -32,9 +30,7 @@ export function CommandInfo({
 }: BlockViewProps<CommandBlock>) {
   const t = useTranslation();
   const format = useInfoFormat();
-  const variables = useStore(
-    (state) => getActiveTab(state)?.variables ?? NO_VARIABLES,
-  );
+  const variables = useStore(getActiveVariables);
 
   const stats = useMemo(() => {
     const { text } = block;
@@ -44,8 +40,8 @@ export function CommandInfo({
     const preview = segments
       .map((segment) =>
         isMaskedSegment(segment, secretKeys)
-          ? SECRET_MASK
-          : maskedText(segment, secretKeys),
+          ? PREVIEW_SECRET_MASK
+          : maskedText(segment, secretKeys, PREVIEW_SECRET_MASK),
       )
       .join("");
 

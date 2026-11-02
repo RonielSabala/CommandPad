@@ -34,7 +34,13 @@ import { uiStateSnapshot } from "./uiState";
 export {
   countSelectedSections,
   countVariableTargets,
+  EMPTY_BLOCKS,
+  EMPTY_SECTIONS,
+  EMPTY_VARIABLES,
+  getActiveBlocks,
+  getActiveRunbookId,
   getActiveTab,
+  getActiveVariables,
   getRunbookEmbedView,
   getRunbookView,
   hasOptionsToSort,
