@@ -84,6 +84,7 @@ export function Select<T extends string>({
   const t = useTranslation();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [focusSearch, setFocusSearch] = useState(false);
   const [menuStyle, setMenuStyle] = useState<CSSProperties>();
   const mode = useStore((state) => state.mode);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -270,7 +271,7 @@ export function Select<T extends string>({
             value={query}
             placeholder={searchPlaceholder}
             onChange={setQuery}
-            autoFocus
+            autoFocus={focusSearch}
           />
         </div>
       )}
@@ -346,7 +347,10 @@ export function Select<T extends string>({
         {...tooltip(title)}
         aria-haspopup={AriaRole.LISTBOX}
         aria-expanded={open}
-        onClick={() => setOpen((isOpen) => !isOpen)}
+        onClick={() => {
+          setOpen((isOpen) => !isOpen);
+          setFocusSearch(searchable);
+        }}
       >
         {children}
         <SidebarSectionChevronIcon
