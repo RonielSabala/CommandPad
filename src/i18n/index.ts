@@ -7,4 +7,4 @@ export {
   LANGUAGE_ORDER,
   type Messages
 } from "./types";
-export { useTranslation } from "./useTranslation";
+export { useLanguage, useTranslation } from "./useTranslation";

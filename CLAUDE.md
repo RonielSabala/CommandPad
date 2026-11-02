@@ -428,7 +428,7 @@ Runbooks can be exported to / imported from a provider's **app-scoped folder**, 
 English and Spanish; adding a language is data-only.
 
 - `i18n/types.ts`: `Language`, `LANGUAGE_ORDER`, `LANGUAGE_LABELS`, `LANGUAGE_NAMES`, and the `Messages` interface (every string). `locales/en.ts`, `es.ts` implement it, so the compiler flags missing keys.
-- `messages.ts`: `MESSAGES`, `detectLanguage()`, `isLanguage()`, `getMessages(language)`. Components use `useTranslation()`; outside React use `getMessages(get().language)`.
+- `messages.ts`: `MESSAGES`, `detectLanguage()`, `isLanguage()`, `getMessages(language)`. Components use `useTranslation()` (and `useLanguage()` for the code itself); outside React use `getMessages(get().language)`.
 - **Adding a string**: key in `Messages`, then every locale. **Adding a language**: a locale file, `MESSAGES`, the `LANGUAGE_*` maps, and a flag in `components/icons/flags.tsx`.
 - No inline ternaries over translated fragments: one key per full phrase. Interpolated strings are functions (type-checked params, per-locale pluralization). Sentences wrapping an element use slots (`i18n/slots.ts`, `splitAtSlot`).
 - Language is persisted UI state. "Untitled" sentinels stay language-neutral in storage and are localized at render (`displayLabel`).

@@ -1,8 +1,7 @@
 import { NoteStyle } from "@/common/enums";
 import type { NoteBlock } from "@/common/types";
 import { useInfoFormat } from "@/components/common/info/useInfoFormat";
-import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useLanguage, useTranslation } from "@/i18n";
 import { noteStats } from "@/utils/markdown";
 import { useMemo } from "react";
 
@@ -12,7 +11,7 @@ import { BlockInfoTable } from "./BlockInfoTable";
 export function NoteInfo({ block }: BlockViewProps<NoteBlock>) {
   const t = useTranslation();
   const format = useInfoFormat();
-  const language = useStore((state) => state.language);
+  const language = useLanguage();
   const stats = useMemo(
     () => noteStats(block.text, language),
     [block.text, language],

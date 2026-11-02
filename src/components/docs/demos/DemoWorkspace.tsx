@@ -9,6 +9,7 @@ import { VariableRow } from "@/components/sidebar/variables/VariableRow";
 import { useSelectModeBodyClass } from "@/hooks/useBodyClasses";
 import { useLassoSelection } from "@/hooks/useLassoSelection";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
+import { useLanguage } from "@/i18n";
 import {
   createAppStore,
   EMPTY_BLOCKS,
@@ -56,7 +57,7 @@ export function DemoWorkspace({
   selectable = true,
   children,
 }: DemoWorkspaceProps) {
-  const language = useStore((state) => state.language);
+  const language = useLanguage();
   const theme = useStore((state) => state.theme);
 
   const buildDemo = (

@@ -20,7 +20,7 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { RunbookIcon } from "@/components/icons";
 import { ProviderSelect } from "@/components/modals/cloud/ProviderSelect";
 import { useKeepInView } from "@/hooks/useKeepInView";
-import { useTranslation } from "@/i18n";
+import { useLanguage, useTranslation } from "@/i18n";
 import type { ChoiceSource, EditorChoice } from "@/monaco/completions";
 import type { CloudEntry } from "@/services/cloud";
 import {
@@ -65,9 +65,9 @@ export function RunbookBlock({
   const cloudPath = cloud?.path ?? "";
   const hostRunbookId = useStore(getActiveRunbookId);
 
+  const language = useLanguage();
   const library = useStore((state) => state.runbookLibrary);
   const readRunbookStats = useStore((state) => state.readRunbookStats);
-  const language = useStore((state) => state.language);
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const isMirror = useCodeRendering() === CodeRendering.STATIC;
 

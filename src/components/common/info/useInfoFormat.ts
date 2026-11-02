@@ -1,5 +1,5 @@
 import { InfoConfig } from "@/common/config";
-import { useStore } from "@/store/store";
+import { useLanguage } from "@/i18n";
 import { formatFileSize } from "@/utils/format";
 import { useMemo } from "react";
 
@@ -10,7 +10,7 @@ function orUnknown(format: (value: number) => string) {
 
 /** Counts and sizes in the UI language. */
 export function useInfoFormat() {
-  const language = useStore((state) => state.language);
+  const language = useLanguage();
 
   return useMemo(() => {
     const numbers = new Intl.NumberFormat(language);

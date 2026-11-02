@@ -11,8 +11,7 @@ import { BookIcon } from "@/components/icons";
 import { PageFooter } from "@/components/sidebar/Footer";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import "@/components/site/SitePage.css";
-import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useLanguage, useTranslation } from "@/i18n";
 import { hasVisitedHome, markHomeVisited } from "@/utils/session";
 import { classNames } from "@/utils/string";
 import {
@@ -41,7 +40,7 @@ const FEATURE_ICONS: Icon[] = [
 
 export function HomePage() {
   const t = useTranslation();
-  const language = useStore((state) => state.language);
+  const language = useLanguage();
 
   if (hasVisitedHome()) {
     return <Navigate to={AppRoute.WORKSPACE} replace />;

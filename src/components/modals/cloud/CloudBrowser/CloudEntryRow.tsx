@@ -6,7 +6,7 @@ import {
   FilenameInputSize,
 } from "@/components/common/FilenameInput";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { useTranslation } from "@/i18n";
+import { useLanguage, useTranslation } from "@/i18n";
 import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
 import { useStore } from "@/store/store";
 import { stripJsonExtension } from "@/utils/export";
@@ -46,7 +46,7 @@ export function CloudEntryRow({
   path,
 }: CloudEntryRowProps) {
   const t = useTranslation();
-  const language = useStore((state) => state.language);
+  const language = useLanguage();
   const renameCloudEntry = useStore((state) => state.renameCloudEntry);
   const importRunbooksFromCloud = useStore(
     (state) => state.importRunbooksFromCloud,

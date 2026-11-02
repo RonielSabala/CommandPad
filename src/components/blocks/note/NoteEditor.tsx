@@ -8,6 +8,7 @@ import {
   PASSIVE,
 } from "@/common/constants/events";
 import { AppMode } from "@/common/enums";
+import { useLanguage } from "@/i18n";
 import { useStore } from "@/store/store";
 import {
   getNoteCaretAtPoint,
@@ -88,8 +89,8 @@ export function NoteEditor({
   focusRequested,
   onFocusHandled,
 }: Props) {
+  const language = useLanguage();
   const readMode = useStore((state) => state.mode === AppMode.READ);
-  const language = useStore((state) => state.language);
   const spellcheck = useStore((state) => state.spellcheckEnabled);
 
   const [focused, setFocused] = useState(false);

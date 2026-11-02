@@ -5,8 +5,7 @@ import {
 } from "@/common/editorConfig";
 import { NoteStyle } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
-import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useLanguage, useTranslation } from "@/i18n";
 import { formatFileSize } from "@/utils/format";
 import { joinLines } from "@/utils/string";
 import {
@@ -159,7 +158,7 @@ export function NoteBlockDocs() {
 
 export function ImageBlockDocs() {
   const t = useTranslation();
-  const language = useStore((state) => state.language);
+  const language = useLanguage();
   const limit = formatFileSize(ImageBlockConfig.MAX_BYTES, language);
 
   return (
