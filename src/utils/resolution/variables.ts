@@ -155,3 +155,26 @@ export function getSecretKeys(variables: Variable[] = []): Set<string> {
 
   return keys;
 }
+
+/** `compute`, worked out once per variables array. */
+function cachedPerVariables<T>(compute: (variables: Variable[]) => T) {
+  const cache = new WeakMap<readonly Variable[], T>();
+
+  return (variables: Variable[]): T => {
+    let value = cache.get(variables);
+    if (value === undefined) {
+      value = compute(variables);
+      cache.set(variables, value);
+    }
+
+    return value;
+  };
+}
+
+export const getTabVariableMap = cachedPerVariables<VariableMap>((variables) =>
+  getVariableMap(variables),
+);
+
+export const getTabSecretKeys = cachedPerVariables<ReadonlySet<string>>(
+  (variables) => getSecretKeys(variables),
+);

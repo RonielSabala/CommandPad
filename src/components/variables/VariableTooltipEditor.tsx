@@ -1,9 +1,8 @@
 import { CodeModelScope } from "@/common/editorConfig";
-import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { buildVariableCompletions } from "@/monaco/completions";
 import { getActiveBlocks, getActiveVariables, useStore } from "@/store/store";
-import { getSecretKeys } from "@/utils/resolution";
+import { getTabSecretKeys, getTabVariableMap } from "@/utils/resolution";
 import { useMemo, useRef, type ReactNode } from "react";
 
 import { VariableEditor } from "./VariableEditor";
@@ -25,7 +24,7 @@ export function VariableTooltipEditor({ variableId, header }: Props) {
     () =>
       buildVariableCompletions(
         getTabVariableMap(variables),
-        getSecretKeys(variables),
+        getTabSecretKeys(variables),
         usedKeys,
       ),
     [variables, usedKeys],

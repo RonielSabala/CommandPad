@@ -1,7 +1,6 @@
 import { RunbookBlockConfig } from "@/common/config";
 import type { EmbeddedRunbookStatus } from "@/common/enums";
 import type { RunbookBlock, RunbookContent, Variable } from "@/common/types";
-import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { hasEncryptedSecrets } from "@/services/vault";
 import {
   EMPTY_VARIABLES,
@@ -17,6 +16,7 @@ import {
 import {
   applyOverrides,
   getOverriddenVariableMap,
+  getTabVariableMap,
   overriddenSecretKeys,
   type OverrideHost,
   type VariableMap,
@@ -31,7 +31,7 @@ export interface EmbeddedRunbookState {
   content: RunbookContent | null;
   variables: Variable[];
   variableMap: VariableMap;
-  secretKeys: Set<string>;
+  secretKeys: ReadonlySet<string>;
   locked: boolean;
   circular: boolean;
   tooDeep: boolean;
@@ -127,7 +127,7 @@ export function useEmbeddedRunbook(
 export function useTabEmbed(
   block: RunbookBlock,
   variableMap: VariableMap,
-  secretKeys: Set<string>,
+  secretKeys: ReadonlySet<string>,
 ): { host: OverrideHost; embed: EmbeddedRunbookState } {
   const hostRunbookId = useStore(getActiveRunbookId);
 

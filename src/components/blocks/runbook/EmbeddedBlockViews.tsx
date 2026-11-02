@@ -23,7 +23,7 @@ import { NotePreview } from "../note/NotePreview";
 export interface EmbeddedBlockProps<T extends Block = Block> {
   block: T;
   variableMap: VariableMap;
-  secretKeys: Set<string>;
+  secretKeys: ReadonlySet<string>;
   scopeId: string;
   /** The source keys of the embeds this one sits in, outermost first. */
   trail: readonly string[];

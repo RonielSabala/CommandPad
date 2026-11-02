@@ -37,11 +37,11 @@ import {
   TrashIcon,
 } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
-import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
 import { EMPTY_VARIABLES, getActiveVariables, useStore } from "@/store/store";
 import {
-  getSecretKeys,
+  getTabSecretKeys,
+  getTabVariableMap,
   getVariableKey,
   maskedText,
   resolveOptionValue,
@@ -77,7 +77,7 @@ const NO_OPTIONS: string[] = [];
 
 const tabScopes = new WeakMap<
   readonly Variable[],
-  { variableMaps: VariableMap[]; secretKeys: Set<string> }
+  { variableMaps: VariableMap[]; secretKeys: ReadonlySet<string> }
 >();
 
 /** The active tab's option scope. */
@@ -86,7 +86,7 @@ function tabOptionScope(variables: Variable[]) {
   if (!scope) {
     scope = {
       variableMaps: [getTabVariableMap(variables)],
-      secretKeys: getSecretKeys(variables),
+      secretKeys: getTabSecretKeys(variables),
     };
 
     tabScopes.set(variables, scope);

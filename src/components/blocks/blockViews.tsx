@@ -25,7 +25,7 @@ import { RunbookInfo } from "./info/RunbookInfo";
 export interface BlockViewProps<T extends Block = Block> {
   block: T;
   variableMap: VariableMap;
-  secretKeys: Set<string>;
+  secretKeys: ReadonlySet<string>;
 }
 
 export type BlockIcon = ComponentType<{ className?: string }>;

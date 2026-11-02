@@ -15,15 +15,18 @@ import {
 
 export type VariableOverrides = Readonly<Record<string, string>>;
 
-const NO_SECRETS: Set<string> = new Set();
+const NO_SECRETS: ReadonlySet<string> = new Set();
 const NO_PARTS: UnresolvedPart[] = [];
 
 export interface OverrideHost {
   variableMap: VariableMap;
-  secretKeys: Set<string>;
+  secretKeys: ReadonlySet<string>;
 }
 
-function referencesSecret(text: string, secretKeys: Set<string>): boolean {
+function referencesSecret(
+  text: string,
+  secretKeys: ReadonlySet<string>,
+): boolean {
   return scanReferences(text, ReferenceSurface.COMMAND).some(
     ({ raw }) =>
       secretKeys.has(getTokenKey(raw)) || referencesSecret(raw, secretKeys),
@@ -34,7 +37,7 @@ function referencesSecret(text: string, secretKeys: Set<string>): boolean {
 export function applyOverrides(
   variables: Variable[],
   overrides: VariableOverrides | undefined,
-  hostSecretKeys: Set<string> = NO_SECRETS,
+  hostSecretKeys: ReadonlySet<string> = NO_SECRETS,
 ): Variable[] {
   if (!overrides || Object.keys(overrides).length === 0) {
     return variables;
@@ -65,7 +68,7 @@ export function overriddenSecretKeys(
   variables: Variable[],
   overrides: VariableOverrides | undefined,
   embedded: VariableMap,
-  hostSecretKeys: Set<string>,
+  hostSecretKeys: ReadonlySet<string>,
 ): Set<string> {
   const keys = getSecretKeys(variables);
   if (!overrides || hostSecretKeys.size === 0) {

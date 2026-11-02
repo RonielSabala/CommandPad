@@ -17,7 +17,6 @@ import { useLassoSelection } from "@/hooks/useLassoSelection";
 import { useRowReveal } from "@/hooks/useRowReveal";
 import { useScrollingClass } from "@/hooks/useScrollingClass";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
-import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
@@ -30,7 +29,7 @@ import {
   useStore,
 } from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
-import { getSecretKeys } from "@/utils/resolution";
+import { getTabSecretKeys, getTabVariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -139,7 +138,7 @@ export function RunbookVariables() {
   }, [pendingFocusSectionId]);
 
   const variableMap = getTabVariableMap(variables);
-  const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
+  const secretKeys = getTabSecretKeys(variables);
   const usedKeys = useUsedVariableKeys(blocks, variables);
   const completions = useMemo(
     () => buildVariableCompletions(variableMap, secretKeys, usedKeys),

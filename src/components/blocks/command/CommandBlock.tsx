@@ -29,7 +29,7 @@ import { CommandPreview } from "./CommandPreview";
 interface Props {
   block: CommandBlockData;
   variableMap: VariableMap;
-  secretKeys: Set<string>;
+  secretKeys: ReadonlySet<string>;
 }
 
 export function CommandBlock({ block, variableMap, secretKeys }: Props) {

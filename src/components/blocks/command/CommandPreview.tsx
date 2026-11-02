@@ -145,7 +145,7 @@ interface Props {
   clampId: string;
   text: string;
   variableMap: VariableMap;
-  secretKeys: Set<string>;
+  secretKeys: ReadonlySet<string>;
   surfaceRef: RefObject<HTMLElement | null>;
   actions?: ReactNode;
   /** Offer to jump to the variable behind a span. */

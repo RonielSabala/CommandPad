@@ -94,7 +94,7 @@ A `secret` variable is masked on screen; the **vault** protects its value **at r
 
 ### Rendering & derived state
 
-Previews are **derived, not pushed**: command previews recompute from `block.text` + a per-render `variableMap` (`useMemo` in `BlocksList`, threaded as props). `getVariableMap`/`getSecretKeys` are expensive: compute once per render, never per block. Everything renders parsed segments as real elements — no `innerHTML`.
+Previews are **derived, not pushed**: command previews recompute from `block.text` + a per-render `variableMap` (`useMemo` in `BlocksList`, threaded as props). `getVariableMap`/`getSecretKeys` are expensive: read a tab's through `getTabVariableMap`/`getTabSecretKeys` (cached per variables array, shared, so the secret set is a `ReadonlySet`), never per block. Everything renders parsed segments as real elements — no `innerHTML`.
 
 ### Collapsible / resizable panels
 

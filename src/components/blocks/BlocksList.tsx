@@ -1,7 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr, ElementId, ScrollIntoView } from "@/common/constants/dom";
 import { useRowReveal } from "@/hooks/useRowReveal";
-import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { buildVariableCompletions } from "@/monaco/completions";
 import {
@@ -11,7 +10,7 @@ import {
   useStore,
 } from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
-import { getSecretKeys } from "@/utils/resolution";
+import { getTabSecretKeys, getTabVariableMap } from "@/utils/resolution";
 import { useEffect, useMemo, useRef } from "react";
 
 import { BlockItem } from "./BlockItem";
@@ -29,7 +28,7 @@ export function BlocksList() {
 
   const listRef = useRef<HTMLDivElement>(null);
   const variableMap = getTabVariableMap(variables);
-  const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
+  const secretKeys = getTabSecretKeys(variables);
   const usedKeys = useUsedVariableKeys(blocks, variables);
   const completions = useMemo(
     () => buildVariableCompletions(variableMap, secretKeys, usedKeys),

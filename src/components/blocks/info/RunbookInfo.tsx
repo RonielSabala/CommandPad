@@ -3,10 +3,10 @@ import type { RunbookBlock } from "@/common/types";
 import { InfoCodeList, type InfoRow } from "@/components/common/info/InfoTable";
 import { useInfoFormat } from "@/components/common/info/useInfoFormat";
 import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
-import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
 import { formatCloudPath } from "@/utils/format";
 import {
+  getTabVariableMap,
   resolvedBlocksByteLength,
   unresolvedBlockParts,
 } from "@/utils/resolution";

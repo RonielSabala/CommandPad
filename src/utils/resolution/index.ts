@@ -71,6 +71,8 @@ export {
 } from "./usage";
 export {
   getSecretKeys,
+  getTabSecretKeys,
+  getTabVariableMap,
   getVariableKey,
   getVariableMap,
   isConstantVariableKey,

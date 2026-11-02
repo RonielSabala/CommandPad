@@ -11,7 +11,7 @@ import type { VariableCompletion, VariableOrigin } from "./registry";
 /** The entries an editor offers for one runbook's variables. */
 export function buildVariableCompletions(
   variableMap: VariableMap,
-  secretKeys: Set<string>,
+  secretKeys: ReadonlySet<string>,
   usedKeys?: Set<string>,
 ): VariableCompletion[] {
   return Object.keys(variableMap).map((key) => ({

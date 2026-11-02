@@ -8,15 +8,13 @@ import {
   LazyVariableTooltipEditor,
   preloadVariableTooltipEditor,
 } from "@/components/variables/lazyVariableTooltipEditor";
-import {
-  getBlockUnresolvedParts,
-  getTabVariableMap,
-} from "@/hooks/useTabUnresolved";
+import { getBlockUnresolvedParts } from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { isEmbedBlockUnresolved } from "@/utils/embeddedRunbook";
 import {
-  getSecretKeys,
+  getTabSecretKeys,
+  getTabVariableMap,
   getVariableKey,
   sourceKey,
   type UnresolvedPart,
@@ -70,10 +68,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
   const defineVariable = useStore((state) => state.defineVariable);
 
   const variableMap = getTabVariableMap(tab.variables);
-  const secretKeys = useMemo(
-    () => getSecretKeys(tab.variables),
-    [tab.variables],
-  );
+  const secretKeys = getTabSecretKeys(tab.variables);
 
   const { groups, problemCount, blockCount } = useMemo(() => {
     const found = new Map<string, Problem>();
