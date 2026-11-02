@@ -148,6 +148,7 @@ export function RemoveItem({ targetId, children }: ItemProps) {
 interface BasicItemsProps extends Props {
   /** Whether this surface shows sections. */
   sectioned?: boolean;
+  selectItem: ReactNode;
   duplicateLabel: string;
   removeLabel: string;
 }
@@ -155,13 +156,17 @@ interface BasicItemsProps extends Props {
 export function BasicRowItems({
   targetId,
   sectioned,
+  selectItem,
   duplicateLabel,
   removeLabel,
 }: BasicItemsProps) {
   return (
     <>
+      {selectItem}
       <DuplicateItem targetId={targetId}>{duplicateLabel}</DuplicateItem>
+
       {sectioned && <VariableInsertItems targetId={targetId} />}
+
       <RemoveItem targetId={targetId}>{removeLabel}</RemoveItem>
     </>
   );
@@ -172,7 +177,7 @@ interface MenuProps extends Props {
   title: string;
   className: string;
   sectioned?: boolean;
-  children: (count: number) => ReactNode;
+  children: (count: number, selectItem: ReactNode) => ReactNode;
 }
 
 export function VariableRowMenu({
@@ -201,6 +206,15 @@ export function VariableRowMenu({
       : targets[kind];
   });
 
+  const selectItem = sectioned && canSelect && (
+    <SelectionToggleItem
+      selected={isSelected}
+      onToggle={() => toggleVariableSelection(targetId)}
+      selectLabel={t.variables.selectRow[kind]}
+      deselectLabel={t.variables.deselectRow[kind]}
+    />
+  );
+
   return (
     <>
       <ActionsMenu
@@ -210,26 +224,18 @@ export function VariableRowMenu({
       >
         <InfoMenuItem onSelect={info.open} />
 
-        {sectioned && canSelect && (
-          <SelectionToggleItem
-            selected={isSelected}
-            onToggle={() => toggleVariableSelection(targetId)}
-            selectLabel={t.variables.selectRow[kind]}
-            deselectLabel={t.variables.deselectRow[kind]}
-          />
-        )}
-
         <ContextMenuSeparator />
 
         {count === null ? (
           <BasicRowItems
             targetId={targetId}
             sectioned={sectioned}
+            selectItem={selectItem}
             duplicateLabel={t.variables.duplicateItems}
             removeLabel={t.variables.removeItems}
           />
         ) : (
-          children(count)
+          children(count, selectItem)
         )}
       </ActionsMenu>
 

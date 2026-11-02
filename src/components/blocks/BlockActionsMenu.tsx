@@ -74,15 +74,6 @@ export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
       >
         <InfoMenuItem onSelect={info.open} />
 
-        {canSelect && (
-          <SelectionToggleItem
-            selected={isSelected}
-            onToggle={() => toggleBlockSelection(blockId)}
-            selectLabel={t.blocks.select}
-            deselectLabel={t.blocks.deselect}
-          />
-        )}
-
         {isNote && (
           <ContextMenuItem
             icon={
@@ -98,6 +89,15 @@ export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
         )}
 
         <ContextMenuSeparator />
+
+        {canSelect && (
+          <SelectionToggleItem
+            selected={isSelected}
+            onToggle={() => toggleBlockSelection(blockId)}
+            selectLabel={t.blocks.select}
+            deselectLabel={t.blocks.deselect}
+          />
+        )}
 
         <ContextMenuItem
           icon={

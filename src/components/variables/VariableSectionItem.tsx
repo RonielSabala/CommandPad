@@ -75,10 +75,11 @@ export const VariableSectionItem = memo(function VariableSectionItem({
           className={className}
           sectioned
         >
-          {(targets) => (
+          {(targets, selectItem) => (
             <BasicRowItems
               targetId={sectionId}
               sectioned
+              selectItem={selectItem}
               duplicateLabel={t.variables.duplicateSection(targets)}
               removeLabel={t.variables.removeSection(targets)}
             />
