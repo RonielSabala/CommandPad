@@ -2,7 +2,7 @@ import { InfoConfig, LINE_BREAK } from "@/common/config";
 import { NoteNodeType, NoteSegmentType } from "@/common/enums";
 import type { NoteList, NoteNode, NoteSegment } from "@/common/types";
 import type { Language } from "@/i18n";
-import { countLines, splitLines } from "@/utils/string";
+import { splitLines } from "@/utils/string";
 
 import { parseNoteNodes } from "./nodes";
 
@@ -53,11 +53,16 @@ function countListItems(list: NoteList): number {
   return count;
 }
 
-function countParagraphs(text: string): number {
+function countLinesAndParagraphs(text: string) {
+  if (!text) {
+    return { lines: 0, paragraphs: 0 };
+  }
+
+  const lines = splitLines(text);
   let paragraphs = 0;
   let inParagraph = false;
 
-  for (const line of splitLines(text)) {
+  for (const line of lines) {
     const blank = !line.trim();
     if (!blank && !inParagraph) {
       paragraphs++;
@@ -66,25 +71,53 @@ function countParagraphs(text: string): number {
     inParagraph = !blank;
   }
 
-  return paragraphs;
+  return { lines: lines.length, paragraphs };
 }
 
 export function noteStats(text: string, language: Language): NoteStats {
   const nodes = parseNoteNodes(text);
 
+  let tables = 0;
+  let listItems = 0;
+
+  for (const node of nodes) {
+    if (node.type === NoteNodeType.TABLE) {
+      tables++;
+    } else if (node.type === NoteNodeType.LIST) {
+      listItems += countListItems(node.list);
+    }
+  }
+
   let links = 0;
   const runs: string[] = [];
 
   for (const segments of nodeSegments(nodes)) {
-    runs.push(segments.map((segment) => segment.text).join(""));
+    let run = "";
+    for (const segment of segments) {
+      run += segment.text;
 
-    links += segments.filter(
-      (segment) => segment.type === NoteSegmentType.LINK,
-    ).length;
+      if (segment.type === NoteSegmentType.LINK) {
+        links++;
+      }
+    }
+
+    runs.push(run);
   }
 
   const rendered = runs.join(LINE_BREAK);
-  const characters = Array.from(rendered);
+
+  let characters = 0;
+  let nonSpaceCharacters = 0;
+
+  for (const char of rendered) {
+    if (char !== LINE_BREAK) {
+      characters++;
+    }
+
+    if (char.trim()) {
+      nonSpaceCharacters++;
+    }
+  }
 
   let words = 0;
   const segmenter = new Intl.Segmenter(language, { granularity: "word" });
@@ -96,20 +129,13 @@ export function noteStats(text: string, language: Language): NoteStats {
   }
 
   return {
-    lines: text ? countLines(text) : 0,
-    paragraphs: countParagraphs(text),
+    ...countLinesAndParagraphs(text),
     words,
-    characters: characters.filter((char) => char !== LINE_BREAK).length,
-    nonSpaceCharacters: characters.filter((char) => char.trim()).length,
+    characters,
+    nonSpaceCharacters,
     links,
-    tables: nodes.filter((node) => node.type === NoteNodeType.TABLE).length,
-    listItems: nodes.reduce(
-      (count, node) =>
-        node.type === NoteNodeType.LIST
-          ? count + countListItems(node.list)
-          : count,
-      0,
-    ),
+    tables,
+    listItems,
     readingMinutes: Math.ceil(words / InfoConfig.WORDS_PER_MINUTE),
   };
 }

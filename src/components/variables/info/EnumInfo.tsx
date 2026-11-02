@@ -5,8 +5,8 @@ import { useInfoFormat } from "@/components/common/info/useInfoFormat";
 import { useTranslation } from "@/i18n";
 import {
   countReferencesTo,
-  getReferencedKeys,
   getVariableKey,
+  hasReferencedKeys,
 } from "@/utils/resolution";
 import { countCharacters, utf8ByteLength } from "@/utils/string";
 import { useMemo } from "react";
@@ -29,15 +29,26 @@ export function EnumInfo({ variable, scope }: Props) {
     const key = getVariableKey(variable);
     const options = variable.options ?? [];
 
+    let longest = 0;
+    let bytes = 0;
+    let withReferences = 0;
+
+    for (const option of options) {
+      longest = Math.max(longest, countCharacters(option));
+      bytes += utf8ByteLength(option);
+
+      if (hasReferencedKeys(option, ReferenceSurface.VALUE)) {
+        withReferences++;
+      }
+    }
+
     return {
       key,
       options: options.length,
       selected: options.indexOf(variable.value),
-      longest: Math.max(0, ...options.map(countCharacters)),
-      bytes: options.reduce((sum, option) => sum + utf8ByteLength(option), 0),
-      withReferences: options.filter(
-        (option) => getReferencedKeys(option, ReferenceSurface.VALUE).size > 0,
-      ).length,
+      longest,
+      bytes,
+      withReferences,
       usedBy: key ? countReferencesTo(key, tab.blocks, tab.variables) : null,
     };
   }, [variable, tab]);

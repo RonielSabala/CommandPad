@@ -66,6 +66,7 @@ export {
   countReferencesTo,
   getReferencedKeys,
   getUsedVariableKeys,
+  hasReferencedKeys,
   isVariableUnused
 } from "./usage";
 export {

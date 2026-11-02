@@ -6,6 +6,7 @@ import {
   countReferencesTo,
   getReferencedKeys,
   getUsedVariableKeys,
+  hasReferencedKeys,
   isVariableUnused,
 } from "./usage";
 
@@ -100,6 +101,17 @@ describe("getReferencedKeys", () => {
     expect(
       getReferencedKeys(String.raw`\{HOST}`, ReferenceSurface.COMMAND),
     ).toEqual(new Set());
+  });
+});
+
+describe("hasReferencedKeys", () => {
+  it("answers whether a text references any key", () => {
+    expect(hasReferencedKeys("ssh {HOST}", ReferenceSurface.VALUE)).toBe(true);
+    expect(hasReferencedKeys("{|IF({B};y)}", ReferenceSurface.VALUE)).toBe(
+      true,
+    );
+    expect(hasReferencedKeys("{|date()}", ReferenceSurface.VALUE)).toBe(false);
+    expect(hasReferencedKeys("plain", ReferenceSurface.VALUE)).toBe(false);
   });
 });
 

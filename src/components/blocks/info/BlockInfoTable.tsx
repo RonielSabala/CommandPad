@@ -3,6 +3,8 @@ import { InfoTable, type InfoRow } from "@/components/common/info/InfoTable";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 
+const NO_BLOCKS: Block[] = [];
+
 interface Props {
   block: Block;
   rows: InfoRow[];
@@ -10,14 +12,11 @@ interface Props {
 
 export function BlockInfoTable({ block, rows }: Props) {
   const t = useTranslation();
+  const blocks = useStore((state) => getActiveTab(state)?.blocks ?? NO_BLOCKS);
   const blockId = block.id;
   const type = t.blocks.typeLabel[block.type];
 
-  const total = useStore((state) => getActiveTab(state)?.blocks.length ?? 0);
-  const index = useStore(
-    (state) =>
-      getActiveTab(state)?.blocks.findIndex(({ id }) => id === blockId) ?? -1,
-  );
+  const index = blocks.findIndex(({ id }) => id === blockId);
 
   return (
     <InfoTable
@@ -26,7 +25,8 @@ export function BlockInfoTable({ block, rows }: Props) {
         { label: t.info.rows.type, value: type },
         {
           label: t.info.rows.position,
-          value: index === -1 ? null : t.info.position(index + 1, total),
+          value:
+            index === -1 ? null : t.info.position(index + 1, blocks.length),
         },
         ...rows,
       ]}

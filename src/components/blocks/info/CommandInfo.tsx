@@ -51,6 +51,13 @@ export function CommandInfo({
 
     const used = getUsedVariableKeys([block], variables);
 
+    let secrets = 0;
+    for (const key of used) {
+      if (secretKeys.has(key)) {
+        secrets++;
+      }
+    }
+
     return {
       editorBytes: utf8ByteLength(text),
       previewBytes: utf8ByteLength(preview),
@@ -60,7 +67,7 @@ export function CommandInfo({
       previewLines: countCommandLines(segments, secretKeys),
       references: getReferencedKeys(text, ReferenceSurface.COMMAND).size,
       nestedReferences: used.size,
-      secrets: [...used].filter((key) => secretKeys.has(key)).length,
+      secrets,
       unresolved: unresolvedSegmentParts(segments, variableMap, secretKeys)
         .length,
     };

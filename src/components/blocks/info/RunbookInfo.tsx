@@ -61,15 +61,27 @@ export function RunbookInfo({
       embed.variableMap,
     );
 
+    let nested = 0;
+    let unresolved = 0;
+
+    for (const embedded of content.blocks) {
+      if (embedded.type === BlockType.RUNBOOK) {
+        nested++;
+      }
+
+      unresolved += unresolvedBlockParts(
+        embedded,
+        embed.variableMap,
+        embed.secretKeys,
+      ).length;
+    }
+
     return {
       ...getRunbookStats(content),
-      nested: content.blocks.filter(({ type }) => type === BlockType.RUNBOOK)
-        .length,
+      nested,
       own,
       overridden,
-      unresolved: content.blocks.flatMap((embedded) =>
-        unresolvedBlockParts(embedded, embed.variableMap, embed.secretKeys),
-      ).length,
+      unresolved,
     };
   }, [content, embed.variableMap, embed.secretKeys]);
 

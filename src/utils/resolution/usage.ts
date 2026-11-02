@@ -28,10 +28,26 @@ export function getReferencedKeys(
   return new Set(referencedKeys(text, surface));
 }
 
-function blockReferences(block: Block, key: string): boolean {
-  return getBlockCommandTexts(block).some((text) =>
-    getReferencedKeys(text, ReferenceSurface.COMMAND).has(key),
-  );
+/** Whether `text` references any key. */
+export function hasReferencedKeys(
+  text: string,
+  surface: ReferenceSurface,
+): boolean {
+  return !referencedKeys(text, surface).next().done;
+}
+
+function referencesKey(
+  text: string,
+  surface: ReferenceSurface,
+  key: string,
+): boolean {
+  for (const referenced of referencedKeys(text, surface)) {
+    if (referenced === key) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 /** How many blocks and variable values reference `key` themselves. */
@@ -40,14 +56,28 @@ export function countReferencesTo(
   blocks: Block[],
   variables: Variable[],
 ): { blocks: number; variables: number } {
-  return {
-    blocks: blocks.filter((block) => blockReferences(block, key)).length,
-    variables: variables.filter((variable) =>
-      [variable.value, ...(variable.options ?? [])].some((text) =>
-        getReferencedKeys(text, ReferenceSurface.VALUE).has(key),
-      ),
-    ).length,
-  };
+  const valueReferences = (text: string) =>
+    referencesKey(text, ReferenceSurface.VALUE, key);
+
+  const counts = { blocks: 0, variables: 0 };
+
+  for (const block of blocks) {
+    if (
+      getBlockCommandTexts(block).some((text) =>
+        referencesKey(text, ReferenceSurface.COMMAND, key),
+      )
+    ) {
+      counts.blocks++;
+    }
+  }
+
+  for (const { value, options } of variables) {
+    if (valueReferences(value) || options?.some(valueReferences)) {
+      counts.variables++;
+    }
+  }
+
+  return counts;
 }
 
 export function getUsedVariableKeys(
