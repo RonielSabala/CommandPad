@@ -311,7 +311,7 @@ export const en: Messages = {
       editorLines: "Lines (editor)",
       previewLines: "Lines (preview)",
       references: "Variables referenced",
-      nestedReferences: "Including nested",
+      nestedReferences: "All variables needed",
       secretsUsed: "Secrets used",
       unresolved: "Unresolved references",
       style: "Style",
