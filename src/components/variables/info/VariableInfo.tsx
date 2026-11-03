@@ -77,7 +77,7 @@ export function VariableInfo({ variable, scope }: Props) {
         usedByRow,
         {
           label: rows.unresolved,
-          value: format.count(stats.unresolved),
+          value: format.exactCount(stats.unresolved),
         },
       ]}
     />

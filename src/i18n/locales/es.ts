@@ -286,7 +286,6 @@ export const es: Messages = {
         .filter(Boolean)
         .join(", "),
     unused: "Sin usar",
-    none: "Ninguna",
     yes: "Sí",
     no: "No",
     readingTime: (minutes) => `${minutes} min`,
@@ -1533,7 +1532,7 @@ Si algo sale mal, deshazlo en este orden:
       intro: (blockActionsLabel) =>
         `Los bloques son el contenido principal de un libro. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **${blockActionsLabel}** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo. Cada bloque tiene una anchura mínima que le impide encogerse hasta volverse ilegible.`,
       info: (infoLabel) =>
-        `Elige **${infoLabel}** en ese menú para ver lo que contiene un bloque, calculado en el momento en que lo pides. Un valor que no se puede calcular en ese momento muestra un guion. Haz clic en cualquier otro sitio o pulsa **Escape** para cerrarlo.`,
+        `Elige **${infoLabel}** en ese menú para ver lo que contiene un bloque, calculado en el momento en que lo pides. Un valor que es cero, está vacío o no se puede calcular en ese momento muestra un guion, salvo los recuentos de problemas, donde 0 es la buena noticia. Haz clic en cualquier otro sitio o pulsa **Escape** para cerrarlo.`,
     },
     commandBlock: {
       intro:

@@ -115,7 +115,7 @@ export const SelectConfig = {
 } as const;
 
 export const InfoConfig = {
-  UNAVAILABLE: "—",
+  EMPTY: "—",
   WORDS_PER_MINUTE: 200,
   LIST_SEPARATOR: ", ",
   PLUS: "+",

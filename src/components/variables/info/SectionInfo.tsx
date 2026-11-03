@@ -75,8 +75,11 @@ export function SectionInfo({ section, scope }: Props) {
         { label: rows.variables, value: format.count(stats.variables) },
         { label: rows.enums, value: format.count(stats.enums) },
         { label: rows.secrets, value: format.count(stats.secrets) },
-        { label: rows.unusedVariables, value: format.count(stats.unused) },
-        { label: rows.emptyOrUnresolved, value: format.count(stats.problems) },
+        { label: rows.unusedVariables, value: format.exactCount(stats.unused) },
+        {
+          label: rows.emptyOrUnresolved,
+          value: format.exactCount(stats.problems),
+        },
         { label: rows.valuesSize, value: format.size(stats.bytes) },
         {
           label: rows.collapsed,

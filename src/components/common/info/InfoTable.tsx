@@ -1,6 +1,5 @@
 import { InfoConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { useTranslation } from "@/i18n";
 import type { ReactNode } from "react";
 
 import "@/components/blocks/note/NoteText.css";
@@ -27,7 +26,7 @@ export function InfoTable({ title, rows }: Props) {
             {rows.map(({ label, value }) => (
               <tr key={label}>
                 <th scope="row">{label}</th>
-                <td>{value ?? InfoConfig.UNAVAILABLE}</td>
+                <td>{value ?? InfoConfig.EMPTY}</td>
               </tr>
             ))}
           </tbody>
@@ -38,9 +37,8 @@ export function InfoTable({ title, rows }: Props) {
 }
 
 export function InfoCodeList({ items }: { items: readonly string[] }) {
-  const t = useTranslation();
   if (items.length === 0) {
-    return t.info.none;
+    return InfoConfig.EMPTY;
   }
 
   return items.map((item, index) => (

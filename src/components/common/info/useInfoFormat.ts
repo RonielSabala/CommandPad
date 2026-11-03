@@ -8,6 +8,11 @@ function orUnknown(format: (value: number) => string) {
   return (value: number | null) => (value === null ? null : format(value));
 }
 
+/** `format` over a value that may be unknown, showing zero as empty. */
+function orEmpty(format: (value: number) => string) {
+  return (value: number | null) => (value ? format(value) : null);
+}
+
 /** Counts and sizes in the UI language. */
 export function useInfoFormat() {
   const language = useLanguage();
@@ -24,10 +29,12 @@ export function useInfoFormat() {
     const size = (bytes: number) => formatFileSize(bytes, language);
 
     return {
-      count: orUnknown((value) => numbers.format(value)),
+      count: orEmpty((value) => numbers.format(value)),
+      /** A count whose zero is the answer. */
+      exactCount: orUnknown((value) => numbers.format(value)),
       decimal: (value: number) => decimals.format(value),
       minutes: (value: number) => minutes.format(value),
-      size: orUnknown(size),
+      size: orEmpty(size),
       sizeDelta: (bytes: number) =>
         bytes === 0
           ? size(0)

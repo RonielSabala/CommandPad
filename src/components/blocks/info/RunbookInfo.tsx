@@ -136,7 +136,7 @@ export function RunbookInfo({
         },
         {
           label: rows.unresolved,
-          value: stats && format.count(stats.unresolved),
+          value: stats && format.exactCount(stats.unresolved),
         },
       ]}
     />

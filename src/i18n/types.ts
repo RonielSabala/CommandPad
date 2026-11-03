@@ -226,7 +226,6 @@ export interface Messages {
     position: (index: number, total: number) => string;
     usedBy: (blocks: number, variables: number) => string;
     unused: string;
-    none: string;
     yes: string;
     no: string;
     readingTime: (minutes: string) => string;

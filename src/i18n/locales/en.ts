@@ -276,7 +276,6 @@ export const en: Messages = {
         .filter(Boolean)
         .join(", "),
     unused: "Unused",
-    none: "None",
     yes: "Yes",
     no: "No",
     readingTime: (minutes) => `${minutes} min`,
@@ -1506,7 +1505,7 @@ If something goes wrong, undo it in this order:
       intro: (blockActionsLabel) =>
         `Blocks are the main content of a runbook. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or open the **${blockActionsLabel}** menu on the right to insert a new block above or below it, duplicate it, or delete it. Every block has a minimum width that keeps it from shrinking into something unreadable.`,
       info: (infoLabel) =>
-        `Pick **${infoLabel}** in that menu to see what a block holds, worked out the moment you ask. A value that can't be worked out right now shows a dash. Click anywhere else or press **Escape** to close it.`,
+        `Pick **${infoLabel}** in that menu to see what a block holds, worked out the moment you ask. A value that is zero, empty or can't be worked out right now shows a dash, except the counts of problems, where 0 is the good news. Click anywhere else or press **Escape** to close it.`,
     },
     commandBlock: {
       intro:

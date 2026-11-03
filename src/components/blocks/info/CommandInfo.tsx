@@ -98,7 +98,7 @@ export function CommandInfo({
           value: format.count(stats.nestedReferences),
         },
         { label: rows.secretsUsed, value: format.count(stats.secrets) },
-        { label: rows.unresolved, value: format.count(stats.unresolved) },
+        { label: rows.unresolved, value: format.exactCount(stats.unresolved) },
       ]}
     />
   );
