@@ -7,6 +7,7 @@ import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { positionsIn } from "@/utils/collections";
 import { getVariableKey } from "@/utils/resolution";
+import { classNames } from "@/utils/string";
 import { useContext, useState, type ReactNode } from "react";
 
 import "./InfoReferences.css";
@@ -46,12 +47,14 @@ export function InfoReferences({
     <div className="info-references">
       <button
         type={ButtonType.BUTTON}
-        className={CssClass.TOOLTIP_LINK}
+        className={classNames(
+          CssClass.TOOLTIP_LINK,
+          CssClass.TOOLTIP_LINK_PLAIN,
+        )}
         aria-expanded={expanded}
         onClick={() => setExpanded(!expanded)}
       >
-        {summary}
-
+        {summary}{" "}
         <span className="info-references-hint">
           {expanded ? t.info.seeLess : t.info.seeMore}
         </span>
