@@ -1,6 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { ButtonType } from "@/common/constants/dom";
-import { AppMode } from "@/common/enums";
+import { AppMode, RevealTone } from "@/common/enums";
 import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
 import {
   LazyVariableTooltipEditor,
@@ -64,11 +64,12 @@ export function VariableSourceTooltip({ source, resolved, tip }: Props) {
     : t.command.goToDefinitionTitle(key);
 
   const goToDefinition = () => {
+    const tone = resolved ? RevealTone.RESOLVED : RevealTone.UNRESOLVED;
     tip.hide();
     if (embed) {
-      void revealEmbeddedVariable(embed.source, key, resolved);
+      void revealEmbeddedVariable(embed.source, key, tone);
     } else if (hostVariable) {
-      revealVariable(hostVariable.id, resolved);
+      revealVariable(hostVariable.id, tone);
     }
   };
 

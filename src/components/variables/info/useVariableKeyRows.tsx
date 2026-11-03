@@ -1,7 +1,8 @@
 import type { Tab, Variable } from "@/common/types";
+import { InfoReferences } from "@/components/common/info/InfoReferences";
 import { InfoCodeList, type InfoRow } from "@/components/common/info/InfoTable";
 import { useTranslation } from "@/i18n";
-import { countReferencesTo, getVariableKey } from "@/utils/resolution";
+import { findReferencesTo, getVariableKey } from "@/utils/resolution";
 import { useMemo } from "react";
 
 interface VariableKeyRows {
@@ -18,9 +19,12 @@ export function useVariableKeyRows(
   const t = useTranslation();
   const key = getVariableKey(variable);
   const usedBy = useMemo(
-    () => (key ? countReferencesTo(key, blocks, variables) : null),
+    () => (key ? findReferencesTo(key, blocks, variables) : null),
     [key, blocks, variables],
   );
+
+  const usedByBlocks = usedBy?.blocks;
+  const usedByVariables = usedBy?.variables;
 
   return {
     key,
@@ -31,10 +35,17 @@ export function useVariableKeyRows(
     usedByRow: {
       label: t.info.rows.usedBy,
       value:
-        usedBy &&
-        (usedBy.blocks + usedBy.variables > 0
-          ? t.info.usedBy(usedBy.blocks, usedBy.variables)
-          : t.info.unused),
+        usedByBlocks &&
+        usedByVariables &&
+        usedByBlocks.length + usedByVariables.length > 0 ? (
+          <InfoReferences
+            summary={t.info.usedBy(usedByBlocks.length, usedByVariables.length)}
+            blocks={usedByBlocks}
+            variables={usedByVariables}
+          />
+        ) : (
+          t.info.unused
+        ),
     },
   };
 }

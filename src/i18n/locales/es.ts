@@ -286,6 +286,11 @@ export const es: Messages = {
         .filter(Boolean)
         .join(", "),
     unused: "Sin usar",
+    variablesIn: (variables) => (variables === 1 ? "Variable" : "Variables"),
+    variableLink: (number, key) => `Variable ${number} ${MIDDLE_DOT} ${key}`,
+    undefinedKey: "Ninguna variable define esta clave",
+    seeMore: "(ver más)",
+    seeLess: "(ver menos)",
     yes: "Sí",
     no: "No",
     readingTime: (minutes) => `${minutes} min`,
@@ -1532,7 +1537,7 @@ Si algo sale mal, deshazlo en este orden:
       intro: (blockActionsLabel) =>
         `Los bloques son el contenido principal de un libro. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **${blockActionsLabel}** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo. Cada bloque tiene una anchura mínima que le impide encogerse hasta volverse ilegible.`,
       info: (infoLabel) =>
-        `Elige **${infoLabel}** en ese menú para ver lo que contiene un bloque, calculado en el momento en que lo pides. Un valor que es cero, está vacío o no se puede calcular en ese momento muestra un guion, salvo los recuentos de problemas, donde 0 es la buena noticia. Haz clic en cualquier otro sitio o pulsa **Escape** para cerrarlo.`,
+        `Elige **${infoLabel}** en ese menú para ver lo que contiene un bloque, calculado en el momento en que lo pides. Un valor que es cero, está vacío o no se puede calcular en ese momento muestra un guion, salvo los recuentos de problemas, donde 0 es la buena noticia. Haz clic en un recuento de referencias para ver cada bloque o variable que cuenta, y luego en un número para saltar allí. Haz clic en cualquier otro sitio o pulsa **Escape** para cerrarlo.`,
     },
     commandBlock: {
       intro:

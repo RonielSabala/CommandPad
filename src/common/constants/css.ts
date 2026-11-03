@@ -1,3 +1,5 @@
+import { RevealTone } from "@/common/enums";
+
 export const CssClass = {
   // Core
 
@@ -128,6 +130,12 @@ export const CssClass = {
   MODAL_BACKDROP: "modal-backdrop",
   MODAL_BACKDROP_TRANSPARENT: "modal-backdrop-transparent",
 } as const;
+
+export const REVEAL_TONE_CLASS: Record<RevealTone, string | undefined> = {
+  [RevealTone.NEUTRAL]: "row-reveal-neutral",
+  [RevealTone.RESOLVED]: "row-reveal-resolved",
+  [RevealTone.UNRESOLVED]: undefined,
+};
 
 export const CssAnimation = {
   SURFACE_REVEAL: "surface-reveal",

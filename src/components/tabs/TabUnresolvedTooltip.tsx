@@ -1,7 +1,12 @@
 import { TabUnresolvedConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { ButtonType } from "@/common/constants/dom";
-import { AppMode, BlockType, UnresolvedCause } from "@/common/enums";
+import {
+  AppMode,
+  BlockType,
+  RevealTone,
+  UnresolvedCause,
+} from "@/common/enums";
 import type { Block, Tab } from "@/common/types";
 import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
 import {
@@ -169,7 +174,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
   const goToVariable = (variableId: string) => {
     hide();
     switchTab(tab.id);
-    revealVariable(variableId, false);
+    revealVariable(variableId, RevealTone.UNRESOLVED);
   };
 
   const edit = (id: string, key: string) => {
@@ -308,7 +313,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
                         )}
                         onClick={() => {
                           hide();
-                          revealBlock(tab.id, block.id);
+                          revealBlock(tab.id, block.id, RevealTone.UNRESOLVED);
                         }}
                       >
                         {number}

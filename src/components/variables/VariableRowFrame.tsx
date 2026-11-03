@@ -1,4 +1,8 @@
-import { CssAnimation, CssClass } from "@/common/constants/css";
+import {
+  CssAnimation,
+  CssClass,
+  REVEAL_TONE_CLASS,
+} from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { AppMode, DragGroup, LassoMode, SelectionGroup } from "@/common/enums";
 import { DragHandle } from "@/components/common/DragHandle";
@@ -57,7 +61,7 @@ export function VariableRowFrame({
         isFlashing && CssClass.DUPLICATE_FLASH,
         isSelected && "variable-item-selected",
         reveal && "variable-reveal",
-        reveal?.resolved && "row-reveal-resolved",
+        reveal && REVEAL_TONE_CLASS[reveal.tone],
       )}
       {...{ [DataAttr.VARIABLE_ID]: rowId }}
       {...rowProps}

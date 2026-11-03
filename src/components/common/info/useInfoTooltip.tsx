@@ -2,6 +2,8 @@ import { CssClass } from "@/common/constants/css";
 import { useRichTooltip } from "@/components/common/tooltip/richTooltip";
 import { useRef, type ReactNode } from "react";
 
+import { InfoDismissContext } from "./infoTooltipContext";
+
 /** An info bubble pinned on an actions menu's trigger. */
 export function useInfoTooltip() {
   const tip = useRichTooltip();
@@ -15,6 +17,11 @@ export function useInfoTooltip() {
         tip.open(triggerRef.current);
       }
     },
-    render: (content: () => ReactNode) => tip.render(content),
+    render: (content: () => ReactNode) =>
+      tip.render(({ hide }) => (
+        <InfoDismissContext.Provider value={hide}>
+          {content()}
+        </InfoDismissContext.Provider>
+      )),
   };
 }

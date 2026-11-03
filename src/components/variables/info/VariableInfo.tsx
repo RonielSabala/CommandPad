@@ -4,12 +4,14 @@ import {
 } from "@/common/editorConfig";
 import { ReferenceSurface } from "@/common/enums";
 import type { Variable } from "@/common/types";
+import { keyReferencesRow } from "@/components/common/info/infoRows";
 import { InfoCodeList, InfoTable } from "@/components/common/info/InfoTable";
 import { useInfoFormat } from "@/components/common/info/useInfoFormat";
 import { useTranslation } from "@/i18n";
 import {
   getReferencedKeys,
   getTemplateParamNames,
+  lookupVariables,
   unresolvedVariableParts,
 } from "@/utils/resolution";
 import { countCharacters, countLines, utf8ByteLength } from "@/utils/string";
@@ -38,13 +40,16 @@ export function VariableInfo({ variable, scope }: Props) {
       characters: countCharacters(value),
       lines: countLines(value),
       resolvedBytes: resolved ? utf8ByteLength(resolved.text) : null,
-      references: getReferencedKeys(value, ReferenceSurface.VALUE).size,
+      references: lookupVariables(
+        getReferencedKeys(value, ReferenceSurface.VALUE),
+        scope.tab.variables,
+      ),
       blanks: getTemplateParamNames(value),
       unresolved: key
         ? unresolvedVariableParts(key, variableMap, secretKeys).length
         : null,
     };
-  }, [variable, key, variableMap, secretKeys]);
+  }, [variable, key, variableMap, secretKeys, scope.tab.variables]);
 
   const { rows } = t.info;
 
@@ -69,7 +74,7 @@ export function VariableInfo({ variable, scope }: Props) {
         },
         { label: rows.characters, value: format.count(stats.characters) },
         { label: rows.lines, value: format.count(stats.lines) },
-        { label: rows.references, value: format.count(stats.references) },
+        keyReferencesRow(rows.references, stats.references, format),
         {
           label: rows.blanks,
           value: <InfoCodeList items={stats.blanks} />,

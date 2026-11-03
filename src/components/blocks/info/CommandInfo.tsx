@@ -5,6 +5,7 @@ import {
 } from "@/common/editorConfig";
 import { ReferenceSurface } from "@/common/enums";
 import type { CommandBlock } from "@/common/types";
+import { keyReferencesRow } from "@/components/common/info/infoRows";
 import { useInfoFormat } from "@/components/common/info/useInfoFormat";
 import { useTranslation } from "@/i18n";
 import { getActiveVariables, useStore } from "@/store/store";
@@ -13,6 +14,7 @@ import {
   getReferencedKeys,
   getUsedVariableKeys,
   isMaskedSegment,
+  lookupVariables,
   maskedText,
   resolveCommandText,
   unresolvedSegmentParts,
@@ -61,8 +63,11 @@ export function CommandInfo({
       previewCharacters: countCharacters(preview),
       editorLines: countLines(text),
       previewLines: countCommandLines(segments, secretKeys),
-      references: getReferencedKeys(text, ReferenceSurface.COMMAND).size,
-      nestedReferences: used.size,
+      references: lookupVariables(
+        getReferencedKeys(text, ReferenceSurface.COMMAND),
+        variables,
+      ),
+      nestedReferences: lookupVariables(used, variables),
       secrets,
       unresolved: unresolvedSegmentParts(segments, variableMap, secretKeys)
         .length,
@@ -92,11 +97,8 @@ export function CommandInfo({
         },
         { label: rows.editorLines, value: format.count(stats.editorLines) },
         { label: rows.previewLines, value: format.count(stats.previewLines) },
-        { label: rows.references, value: format.count(stats.references) },
-        {
-          label: rows.nestedReferences,
-          value: format.count(stats.nestedReferences),
-        },
+        keyReferencesRow(rows.references, stats.references, format),
+        keyReferencesRow(rows.nestedReferences, stats.nestedReferences, format),
         { label: rows.secretsUsed, value: format.count(stats.secrets) },
         { label: rows.unresolved, value: format.exactCount(stats.unresolved) },
       ]}

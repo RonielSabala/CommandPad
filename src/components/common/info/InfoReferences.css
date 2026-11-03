@@ -1,0 +1,18 @@
+.info-references {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.info-references-hint {
+  margin-left: var(--space-1);
+  color: var(--color-text-secondary);
+}
+
+.info-references-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  color: var(--color-text-muted);
+}

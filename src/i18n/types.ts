@@ -226,6 +226,11 @@ export interface Messages {
     position: (index: number, total: number) => string;
     usedBy: (blocks: number, variables: number) => string;
     unused: string;
+    variablesIn: (variables: number) => string;
+    variableLink: (number: number, key: string) => string;
+    undefinedKey: string;
+    seeMore: string;
+    seeLess: string;
     yes: string;
     no: string;
     readingTime: (minutes: string) => string;

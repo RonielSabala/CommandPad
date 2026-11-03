@@ -1,5 +1,5 @@
 import { DRAG_TIMEOUT_MS } from "@/common/config";
-import { CssClass } from "@/common/constants/css";
+import { CssClass, REVEAL_TONE_CLASS } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
 import { AppMode, LassoMode, SelectionGroup } from "@/common/enums";
@@ -26,7 +26,9 @@ export const BlockItem = memo(function BlockItem({
   const isSelected = useStore((state) => state.selectedBlockIds.has(block.id));
   const isFlashing = useStore((state) => state.flashBlockIds.has(block.id));
   const clearFlash = useStore((state) => state.clearFlash);
-  const isRevealed = useStore((state) => state.revealedBlockId === block.id);
+  const revealTone = useStore((state) =>
+    state.revealedBlockId === block.id ? state.blockRevealTone : null,
+  );
   const clearBlockReveal = useStore((state) => state.clearBlockReveal);
   const reorderBlocks = useStore((state) => state.reorderBlocks);
   const setBlockSelected = useStore((state) => state.setBlockSelected);
@@ -47,7 +49,8 @@ export const BlockItem = memo(function BlockItem({
         dragging && CssClass.DRAGGING,
         dragOver && CssClass.DRAG_OVER,
         isFlashing && CssClass.DUPLICATE_FLASH,
-        isRevealed && CssClass.ROW_REVEAL,
+        revealTone && CssClass.ROW_REVEAL,
+        revealTone && REVEAL_TONE_CLASS[revealTone],
         isSelected && "block-selected",
       )}
       {...{ [DataAttr.BLOCK_ID]: block.id }}
@@ -140,7 +143,7 @@ export const BlockItem = memo(function BlockItem({
           clearFlash(block.id);
         }
 
-        if (isRevealed) {
+        if (revealTone) {
           clearBlockReveal();
         }
       }}

@@ -13,6 +13,8 @@ function orEmpty(format: (value: number) => string) {
   return (value: number | null) => (value ? format(value) : null);
 }
 
+export type InfoFormat = ReturnType<typeof useInfoFormat>;
+
 /** Counts and sizes in the UI language. */
 export function useInfoFormat() {
   const language = useLanguage();

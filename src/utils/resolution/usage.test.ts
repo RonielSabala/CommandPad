@@ -3,11 +3,12 @@ import { buildVariables, commandBlock, dividerBlock, noteBlock } from "@/test";
 import { describe, expect, it } from "vitest";
 
 import {
-  countReferencesTo,
+  findReferencesTo,
   getReferencedKeys,
   getUsedVariableKeys,
   hasReferencedKeys,
   isVariableUnused,
+  lookupVariables,
 } from "./usage";
 
 const variables = buildVariables({
@@ -115,7 +116,7 @@ describe("hasReferencedKeys", () => {
   });
 });
 
-describe("countReferencesTo", () => {
+describe("findReferencesTo", () => {
   const blocks = [
     commandBlock("curl {HOST}"),
     commandBlock("ping {ORIGIN|slice({HOST|len})}"),
@@ -131,17 +132,26 @@ describe("countReferencesTo", () => {
     })),
   ];
 
-  it("counts the blocks and values that reference a key themselves", () => {
-    expect(countReferencesTo("HOST", blocks, withOption)).toEqual({
-      blocks: 2,
-      variables: 2,
-    });
+  it("finds the blocks and values that reference a key themselves", () => {
+    const found = findReferencesTo("HOST", blocks, withOption);
+
+    expect(found.blocks).toEqual([blocks[0], blocks[1]]);
+    expect(found.variables.map(({ key }) => key)).toEqual(["ORIGIN", "PICK"]);
   });
 
   it("does not follow a reference through another value", () => {
-    expect(countReferencesTo("ORPHAN", blocks, variables)).toEqual({
-      blocks: 0,
-      variables: 1,
-    });
+    const found = findReferencesTo("ORPHAN", blocks, variables);
+
+    expect(found.blocks).toEqual([]);
+    expect(found.variables.map(({ key }) => key)).toEqual(["DEEP"]);
+  });
+});
+
+describe("lookupVariables", () => {
+  it("returns the defined keys in list order and the undefined ones", () => {
+    const found = lookupVariables(new Set(["DEEP", "NOPE", "HOST"]), variables);
+
+    expect(found.variables.map(({ key }) => key)).toEqual(["HOST", "DEEP"]);
+    expect(found.missing).toEqual(["NOPE"]);
   });
 });

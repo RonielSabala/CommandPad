@@ -63,12 +63,14 @@ export {
 } from "./unresolved";
 export type { UnresolvedPart } from "./unresolved";
 export {
-  countReferencesTo,
+  findReferencesTo,
   getReferencedKeys,
   getUsedVariableKeys,
   hasReferencedKeys,
-  isVariableUnused
+  isVariableUnused,
+  lookupVariables
 } from "./usage";
+export type { DefinedKeys } from "./usage";
 export {
   getSecretKeys,
   getTabSecretKeys,

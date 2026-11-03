@@ -50,34 +50,58 @@ function referencesKey(
   return false;
 }
 
-/** How many blocks and variable values reference `key` themselves. */
-export function countReferencesTo(
+interface References {
+  blocks: Block[];
+  variables: Variable[];
+}
+
+/** The blocks and variable values that reference `key` themselves. */
+export function findReferencesTo(
   key: string,
   blocks: Block[],
   variables: Variable[],
-): { blocks: number; variables: number } {
+): References {
   const valueReferences = (text: string) =>
     referencesKey(text, ReferenceSurface.VALUE, key);
 
-  const counts = { blocks: 0, variables: 0 };
-
-  for (const block of blocks) {
-    if (
+  return {
+    blocks: blocks.filter((block) =>
       getBlockCommandTexts(block).some((text) =>
         referencesKey(text, ReferenceSurface.COMMAND, key),
-      )
-    ) {
-      counts.blocks++;
-    }
-  }
+      ),
+    ),
+    variables: variables.filter(
+      ({ value, options }) =>
+        valueReferences(value) || options?.some(valueReferences),
+    ),
+  };
+}
 
-  for (const { value, options } of variables) {
-    if (valueReferences(value) || options?.some(valueReferences)) {
-      counts.variables++;
-    }
-  }
+export interface DefinedKeys {
+  variables: Variable[];
+  missing: string[];
+}
 
-  return counts;
+/** The variables defining `keys`, and the keys none defines. */
+export function lookupVariables(
+  keys: ReadonlySet<string>,
+  variables: Variable[],
+): DefinedKeys {
+  const defined = new Set<string>();
+  const found = variables.filter((variable) => {
+    const key = getVariableKey(variable);
+    if (!keys.has(key) || defined.has(key)) {
+      return false;
+    }
+
+    defined.add(key);
+    return true;
+  });
+
+  return {
+    variables: found,
+    missing: [...keys].filter((key) => !defined.has(key)),
+  };
 }
 
 export function getUsedVariableKeys(
