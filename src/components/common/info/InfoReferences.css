@@ -7,6 +7,11 @@
 
 .info-references-hint {
   color: var(--color-text-muted);
+  transition: var(--transition-fast) color;
+}
+
+.tooltip-link:is(:hover, :focus-visible) > .info-references-hint {
+  color: var(--color-text-secondary);
 }
 
 .info-references-line {
