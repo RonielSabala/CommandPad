@@ -5,6 +5,7 @@ import type { Block, Variable } from "@/common/types";
 import { VariablesViewContext } from "@/components/variables/variablesViewContext";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
+import { positionsIn } from "@/utils/collections";
 import { getVariableKey } from "@/utils/resolution";
 import { useContext, useState, type ReactNode } from "react";
 
@@ -38,6 +39,8 @@ export function InfoReferences({
   }
 
   const variableCount = variables.length + missingKeys.length;
+  const blockNumbers = expanded ? positionsIn(tab.blocks) : null;
+  const variableNumbers = expanded ? positionsIn(tab.variables) : null;
 
   return (
     <div className="info-references">
@@ -54,12 +57,12 @@ export function InfoReferences({
         </span>
       </button>
 
-      {expanded && blocks.length > 0 && (
+      {blockNumbers && blocks.length > 0 && (
         <div className="info-references-line">
           <span>{t.tabs.unresolvedIn(blocks.length)}</span>
 
           {blocks.map((block) => {
-            const number = tab.blocks.indexOf(block) + 1;
+            const number = blockNumbers.get(block) ?? 0;
 
             return (
               <button
@@ -82,12 +85,12 @@ export function InfoReferences({
         </div>
       )}
 
-      {expanded && variableCount > 0 && (
+      {variableNumbers && variableCount > 0 && (
         <div className="info-references-line">
           <span>{t.info.variablesIn(variableCount)}</span>
 
           {variables.map((variable) => {
-            const number = tab.variables.indexOf(variable) + 1;
+            const number = variableNumbers.get(variable) ?? 0;
             const title = t.info.variableLink(number, getVariableKey(variable));
 
             return canRevealVariables ? (
