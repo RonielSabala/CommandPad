@@ -387,7 +387,7 @@ export const es: Messages = {
     labelPlaceholder: "Etiqueta del runbook",
     pathPlaceholder: "carpeta/runbook.json",
     parentFolder: "Volver a la carpeta anterior",
-    unresolvedLabel: "Ningún runbook de tu biblioteca tiene esta etiqueta.",
+    unresolvedLabel: `Ningún runbook de tu biblioteca tiene la etiqueta ${MessageSlot.LABEL}.`,
     emptyLabel: "Escribe la etiqueta de un runbook de tu biblioteca.",
     emptyPath: "Escribe la ruta de un runbook en la nube.",
     choiceStats: (size, blocks, variables) =>

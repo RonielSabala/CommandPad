@@ -377,7 +377,7 @@ export const en: Messages = {
     labelPlaceholder: "Runbook label",
     pathPlaceholder: "folder/runbook.json",
     parentFolder: "Back to the previous folder",
-    unresolvedLabel: "No runbook in your library has this label.",
+    unresolvedLabel: `No runbook in your library is labeled ${MessageSlot.LABEL}.`,
     emptyLabel: "Type the label of a runbook in your library.",
     emptyPath: "Type the path of a runbook in the cloud.",
     choiceStats: (size, blocks, variables) =>
