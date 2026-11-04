@@ -52,6 +52,7 @@ export function EnumInfo({ variable, scope }: Props) {
       title={t.info.enumTitle}
       sections={[
         {
+          title: sections.overview,
           rows: [
             keyRow,
             {

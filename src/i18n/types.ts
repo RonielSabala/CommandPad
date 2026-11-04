@@ -237,14 +237,17 @@ export interface Messages {
     attached: string;
     linked: string;
     library: string;
-    textKind: string;
-    secretKind: string;
+    visibleValue: string;
+    maskedValue: string;
     embedStatus: Record<EmbeddedRunbookStatus, string>;
     embedNoSource: string;
     embedCircular: string;
     embedTooDeep: string;
     embedLocked: string;
     sections: {
+      overview: string;
+      file: string;
+      reading: string;
       size: string;
       variables: string;
       text: string;
@@ -263,6 +266,9 @@ export interface Messages {
       preview: string;
     };
     rows: {
+      visibility: string;
+      valueReferences: string;
+      sectionVariables: string;
       language: string;
       references: string;
       nestedReferences: string;
@@ -297,7 +303,6 @@ export interface Messages {
       sizeDifference: string;
       blocksInSection: string;
       key: string;
-      kind: string;
       valueSize: string;
       resolvedSize: string;
       blanks: string;

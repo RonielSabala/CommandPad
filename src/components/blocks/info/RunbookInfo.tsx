@@ -107,6 +107,7 @@ export function RunbookInfo({
       block={block}
       sections={[
         {
+          title: sections.overview,
           rows: [
             { label: rows.status, value: status },
             ...sourceRows,

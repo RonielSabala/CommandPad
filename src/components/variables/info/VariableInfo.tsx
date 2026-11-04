@@ -58,11 +58,12 @@ export function VariableInfo({ variable, scope }: Props) {
       title={t.info.variableTitle}
       sections={[
         {
+          title: sections.overview,
           rows: [
             keyRow,
             {
-              label: rows.kind,
-              value: variable.secret ? t.info.secretKind : t.info.textKind,
+              label: rows.visibility,
+              value: variable.secret ? t.info.maskedValue : t.info.visibleValue,
             },
             {
               label: rows.unresolved,
@@ -74,7 +75,7 @@ export function VariableInfo({ variable, scope }: Props) {
         {
           title: sections.references,
           rows: [
-            keyReferencesRow(rows.references, stats.references, format),
+            keyReferencesRow(rows.valueReferences, stats.references, format),
             usedByRow,
             {
               label: rows.blanks,

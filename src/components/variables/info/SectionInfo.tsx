@@ -69,9 +69,13 @@ export function SectionInfo({ section, scope }: Props) {
       meta={t.info.position(stats.position, tab.variableSections.length)}
       sections={[
         {
+          title: sections.overview,
           rows: [
             { label: rows.name, value: stats.name || null },
-            { label: rows.variables, value: format.count(stats.variables) },
+            {
+              label: rows.sectionVariables,
+              value: format.count(stats.variables),
+            },
             {
               label: rows.collapsed,
               value: section.collapsed ? t.info.yes : t.info.no,

@@ -43,10 +43,11 @@ export function DividerInfo({ block }: BlockViewProps<DividerBlock>) {
       block={block}
       sections={[
         {
+          title: t.info.sections.overview,
           rows: [
             {
               label: t.info.rows.blocksInSection,
-              value: format.count(sectionLength),
+              value: format.exactCount(sectionLength),
             },
           ],
         },

@@ -16,7 +16,7 @@ export interface InfoRow {
 }
 
 export interface InfoSection {
-  title?: string;
+  title: string;
   columns?: readonly string[];
   rows: InfoRow[];
 }
@@ -53,8 +53,8 @@ export function InfoTable({ title, meta, sections }: Props) {
           CssClass.TOOLTIP_SCROLL,
         )}
       >
-        {sections.map((section, index) => (
-          <InfoTableSection key={section.title ?? index} {...section} />
+        {sections.map((section) => (
+          <InfoTableSection key={section.title} {...section} />
         ))}
       </div>
     </div>

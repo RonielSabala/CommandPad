@@ -113,6 +113,7 @@ export function ImageInfo({ block }: BlockViewProps<ImageBlock>) {
           ],
         },
         {
+          title: sections.file,
           rows: [
             {
               label: rows.source,

@@ -36,6 +36,7 @@ export function NoteInfo({ block }: BlockViewProps<NoteBlock>) {
           ],
         },
         {
+          title: sections.reading,
           rows: [
             {
               label: rows.style,

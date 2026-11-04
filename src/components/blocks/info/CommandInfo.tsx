@@ -81,6 +81,7 @@ export function CommandInfo({
       block={block}
       sections={[
         {
+          title: sections.overview,
           rows: [
             {
               label: rows.language,
