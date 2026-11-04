@@ -1,5 +1,8 @@
 import { InfoConfig } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
+import { Anchor } from "@/common/constants/dom";
 import type { ImageBlock } from "@/common/types";
+import { InfoDismissContext } from "@/components/common/info/infoTooltipContext";
 import { useInfoFormat } from "@/components/common/info/useInfoFormat";
 import { useTranslation } from "@/i18n";
 import {
@@ -11,10 +14,26 @@ import {
   type LinkedImageHead,
 } from "@/utils/image";
 import { greatestCommonDivisor } from "@/utils/number";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 
 import type { BlockViewProps } from "../blockViews";
 import { BlockInfoTable } from "./BlockInfoTable";
+
+function ImageLink({ src }: { src: string }) {
+  const dismiss = useContext(InfoDismissContext);
+
+  return (
+    <a
+      href={src}
+      className={CssClass.TOOLTIP_LINK}
+      target={Anchor.TARGET_BLANK}
+      rel={Anchor.REL}
+      onClick={dismiss}
+    >
+      {src}
+    </a>
+  );
+}
 
 interface Dimensions {
   width: number;
@@ -134,7 +153,9 @@ export function ImageInfo({ block }: BlockViewProps<ImageBlock>) {
           title: sections.details,
           rows: [
             { label: rows.alt, value: block.alt?.trim() || null },
-            ...(filled && !attached ? [{ label: rows.link, value: src }] : []),
+            ...(filled && !attached
+              ? [{ label: rows.link, value: <ImageLink src={src} /> }]
+              : []),
           ],
         },
       ]}
