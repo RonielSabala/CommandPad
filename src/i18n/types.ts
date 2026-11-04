@@ -112,6 +112,8 @@ export interface Messages {
     clearLibrary: string;
     clearLibraryTitle: string;
     stopSyncing: string;
+    rename: string;
+    resetName: string;
     openInTab: string;
     syncStatus: Record<
       RunbookSyncStatus,
@@ -693,6 +695,7 @@ export interface Messages {
         runbookActionsLabel: string,
       ) => string;
       autoLabel: string;
+      manualName: (renameLabel: string, resetNameLabel: string) => string;
       labelDetails: string;
       autoSave: string;
     };

@@ -1,11 +1,12 @@
 import { createDefaultScrollTop, DEFAULT_TAB_LABEL } from "@/common/config";
 import { RunbookView } from "@/common/enums";
-import type { RunbookContent, RunbookEntry, Tab } from "@/common/types";
+import type { Block, RunbookContent, RunbookEntry, Tab } from "@/common/types";
 import { generateId } from "@/utils/id";
 import { getRunbookLabel } from "@/utils/runbook";
 import { normalizeVariableSections } from "@/utils/variableSections";
 
-import { getActiveTab } from "./selectors";
+import { withLibraryEntry } from "./libraryState";
+import { getActiveTab, getLibraryEntry, getRunbookTab } from "./selectors";
 import type { StoreState } from "./types";
 
 export function createTabObject(
@@ -57,6 +58,42 @@ export function withActiveTab(
   return { tabs: state.tabs.map((t) => (t.id === active.id ? mutate(t) : t)) };
 }
 
+/** The label an entry shows. */
+export function entryLabel(
+  entry: RunbookEntry,
+  blocks: Block[] | undefined,
+): string {
+  return entry.named ? entry.label : getRunbookLabel(blocks, entry.filename);
+}
+
+/** Give a runbook `label` on its library entry and its tab. */
+export function labelRunbook(
+  state: StoreState,
+  runbookId: string,
+  label: string,
+  named: boolean,
+): Pick<StoreState, "tabs" | "runbookLibrary"> {
+  const { tabs, runbookLibrary } = state;
+  const pinned = named || undefined;
+  const entry = getLibraryEntry(state, runbookId);
+  const tab = getRunbookTab(state, runbookId);
+
+  return {
+    tabs:
+      tab && tab.label !== label
+        ? tabs.map((t) => (t === tab ? { ...t, label } : t))
+        : tabs,
+    runbookLibrary:
+      entry && (entry.label !== label || entry.named !== pinned)
+        ? withLibraryEntry(state, runbookId, (item) => ({
+            ...item,
+            label,
+            named: pinned,
+          })).runbookLibrary
+        : runbookLibrary,
+  };
+}
+
 /**
  * Recompute a tab's label from its blocks and mirror it into the runbook
  * library entry.
@@ -77,7 +114,7 @@ export function relabelTab(
     return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
   }
 
-  const newLabel = getRunbookLabel(tab.blocks, entry.filename);
+  const newLabel = entryLabel(entry, tab.blocks);
   if (newLabel === entry.label && newLabel === tab.label) {
     return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
   }

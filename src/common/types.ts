@@ -124,6 +124,8 @@ export interface RunbookEntry {
   id: string;
   label: string;
   filename: string;
+  /** A label set by hand. */
+  named?: boolean;
   sync?: RunbookSync;
   secured?: boolean;
   vault?: VaultRecord;

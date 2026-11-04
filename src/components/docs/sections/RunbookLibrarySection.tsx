@@ -25,6 +25,12 @@ export function RunbookLibraryDocs() {
         <DemoRunbookList />
       </DemoWorkspace>
       <Prose text={t.docs.runbookLibrary.autoLabel} />
+      <Prose
+        text={t.docs.runbookLibrary.manualName(
+          t.runbooks.rename,
+          t.runbooks.resetName,
+        )}
+      />
       <Prose text={t.docs.runbookLibrary.labelDetails} />
       <Prose text={t.docs.runbookLibrary.autoSave} />
     </>

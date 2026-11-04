@@ -88,6 +88,8 @@ export const en: Messages = {
     clearLibrary: "Delete All",
     clearLibraryTitle: "Delete all runbooks from the library",
     stopSyncing: "Stop syncing",
+    rename: "Rename",
+    resetName: "Reset name",
     openInTab: "Open in a tab",
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Saved to ${provider}`,
@@ -1149,6 +1151,8 @@ If something goes wrong, undo it in this order:
 * Use the **search bar** to filter runbooks by label or filename.`,
       autoLabel:
         "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label. Otherwise the imported filename is used as the fallback.",
+      manualName: (renameLabel, resetNameLabel) =>
+        `**Naming it yourself:** double-click a runbook in the list above or its tab, or pick **${renameLabel}** from either menu, then press Enter or Escape to keep the name. A name you choose stays put while you edit the runbook; **${resetNameLabel}** goes back to auto-labelling.`,
       labelDetails:
         "Labels are normalized: markdown formatting is stripped and they are trimmed to 60 characters.",
       autoSave:

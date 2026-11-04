@@ -147,7 +147,7 @@ export function DemoRunbookList() {
   return (
     <div className="docs-demo-sidebar-frame">
       {library.map((runbook) => (
-        <RunbookRow key={runbook.id} runbook={runbook} />
+        <RunbookRow key={runbook.id} runbook={runbook} marksOpenTabs={false} />
       ))}
     </div>
   );

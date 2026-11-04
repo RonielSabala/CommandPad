@@ -14,13 +14,12 @@ import {
 import { hasEncryptedSecrets } from "@/services/vault";
 import { buildSecuredRunbookExportContent } from "@/utils/export";
 import { sha256 } from "@/utils/hash";
-import { getRunbookLabel } from "@/utils/runbook";
 import { parseRunbookSource } from "@/utils/runbookSource";
 
 import type { StoreKit } from "@/store/kit";
 import { withLibraryEntry } from "@/store/libraryState";
 import { getRunbookTab } from "@/store/selectors";
-import { contentFields, relabelTab } from "@/store/tabState";
+import { contentFields, entryLabel, relabelTab } from "@/store/tabState";
 import type { CloudConflict } from "@/store/types";
 import type { ContentService } from "./content";
 import type { EmbedLoading } from "./embeds";
@@ -80,7 +79,7 @@ export function createCloudSave(
 
       return withLibraryEntry(s, runbookId, (item) => ({
         ...item,
-        label: getRunbookLabel(content.blocks, item.filename),
+        label: entryLabel(item, content.blocks),
       }));
     });
 

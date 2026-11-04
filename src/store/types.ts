@@ -277,6 +277,8 @@ export interface StoreState {
   loadRunbookFromLibrary: (runbookId: string) => Promise<void>;
   removeRunbookFromLibrary: (id: string) => Promise<void>;
   duplicateRunbook: (id: string) => Promise<void>;
+  renameRunbook: (id: string, name: string) => void;
+  resetRunbookName: (id: string) => Promise<void>;
   addRunbookToLibrary: (
     content: RunbookContent,
     filename: string,

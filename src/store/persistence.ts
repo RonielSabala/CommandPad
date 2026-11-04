@@ -300,6 +300,7 @@ const isVaultRecord = (value: unknown): value is VaultRecord =>
 function restoreRunbookEntry(entry: RunbookEntry): RunbookEntry {
   return {
     ...entry,
+    named: entry.named === true || undefined,
     sync: restoreRunbookSync(entry.sync),
     secured: entry.secured === true,
     vault: isVaultRecord(entry.vault) ? entry.vault : undefined,

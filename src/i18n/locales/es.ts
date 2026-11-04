@@ -88,6 +88,8 @@ export const es: Messages = {
     clearLibrary: "Eliminar todo",
     clearLibraryTitle: "Eliminar todos los libros de la biblioteca",
     stopSyncing: "Dejar de sincronizar",
+    rename: "Renombrar",
+    resetName: "Restablecer nombre",
     openInTab: "Abierto en una pestaña",
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Guardado en ${provider}`,
@@ -1175,6 +1177,8 @@ Si algo sale mal, deshazlo en este orden:
 * Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.`,
       autoLabel:
         "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca. En caso contrario se usa el nombre del archivo importado.",
+      manualName: (renameLabel, resetNameLabel) =>
+        `**Ponerle nombre tú mismo:** haz doble clic en un libro de la lista de arriba o en su pestaña, o elige **${renameLabel}** en cualquiera de sus menús, y pulsa Enter o Escape para conservar el nombre. Un nombre que eliges se mantiene mientras editas el libro; **${resetNameLabel}** vuelve al etiquetado automático.`,
       labelDetails:
         "Las etiquetas se normalizan: se limpia el formato markdown y se recorta hasta 60 caracteres.",
       autoSave:

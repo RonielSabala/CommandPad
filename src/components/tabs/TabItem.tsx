@@ -1,8 +1,9 @@
-import { TAB_HOVER_SWITCH_MS } from "@/common/config";
+import { RunbookConfig, TAB_HOVER_SWITCH_MS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DragEffect, MouseButton } from "@/common/constants/events";
-import { TabDropSide } from "@/common/enums";
+import { AppMode, TabDropSide } from "@/common/enums";
 import type { Tab } from "@/common/types";
+import { RenameInput } from "@/components/common/RenameInput";
 import { useRichTooltip } from "@/components/common/tooltip/richTooltip";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CloseIcon } from "@/components/icons";
@@ -27,10 +28,19 @@ const tabDrag: { srcId: string | null } = { srcId: null };
 
 interface Props {
   tab: Tab;
+  renaming: boolean;
   onOpenMenu: (event: MouseEvent, tabId: string) => void;
+  onRename: (tabId: string) => void;
+  onRenameEnd: () => void;
 }
 
-export function TabItem({ tab, onOpenMenu }: Props) {
+export function TabItem({
+  tab,
+  renaming,
+  onOpenMenu,
+  onRename,
+  onRenameEnd,
+}: Props) {
   const t = useTranslation();
   const tabId = tab.id;
   const tabLabel = displayLabel(tab.label || t.common.untitledTab, t);
@@ -40,6 +50,8 @@ export function TabItem({ tab, onOpenMenu }: Props) {
   const closeTab = useStore((state) => state.closeTab);
   const reorderTabs = useStore((state) => state.reorderTabs);
   const copyBlocksToTab = useStore((state) => state.copyBlocksToTab);
+  const renameRunbook = useStore((state) => state.renameRunbook);
+  const readMode = useStore((state) => state.mode === AppMode.READ);
 
   const unresolved = useTabUnresolved(tab);
   const unresolvedTip = useRichTooltip();
@@ -77,8 +89,8 @@ export function TabItem({ tab, onOpenMenu }: Props) {
           dropSide === TabDropSide.RIGHT && "drag-over-right",
           dragging && CssClass.DRAGGING,
         )}
-        {...tooltip(tabLabel)}
-        draggable
+        {...(renaming ? {} : tooltip(tabLabel))}
+        draggable={!renaming}
         onClick={() => switchTab(tabId)}
         onMouseDown={(event) => {
           if (event.button === MouseButton.MIDDLE) {
@@ -166,7 +178,28 @@ export function TabItem({ tab, onOpenMenu }: Props) {
           reorderTabs(srcId, tabId, !isLeftHalf(event));
         }}
       >
-        <span className="tab-label">{tabLabel}</span>
+        {renaming ? (
+          <RenameInput
+            className="tab-rename-input"
+            value={tabLabel}
+            maxLength={RunbookConfig.LABEL_MAX_LENGTH}
+            onCommit={(name) => {
+              if (tab.runbookId) {
+                renameRunbook(tab.runbookId, name);
+              }
+
+              onRenameEnd();
+            }}
+            onCancel={onRenameEnd}
+          />
+        ) : (
+          <span
+            className="tab-label"
+            onDoubleClick={() => !readMode && onRename(tabId)}
+          >
+            {tabLabel}
+          </span>
+        )}
         <button
           className={classNames(
             "tab-close",

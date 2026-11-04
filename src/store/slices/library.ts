@@ -1,4 +1,4 @@
-import { DEFAULT_TAB_LABEL } from "@/common/config";
+import { DEFAULT_TAB_LABEL, RunbookConfig } from "@/common/config";
 import { AppMode, DialogTone, MoveDirection } from "@/common/enums";
 import type { RunbookContent } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
@@ -17,7 +17,12 @@ import {
   importedVault,
   type ImportedVaultResult,
 } from "@/store/services/vault";
-import { contentFields, createTabObject, tabContent } from "@/store/tabState";
+import {
+  contentFields,
+  createTabObject,
+  labelRunbook,
+  tabContent,
+} from "@/store/tabState";
 import type { StoreState } from "@/store/types";
 
 type LibraryActions = Pick<
@@ -25,6 +30,8 @@ type LibraryActions = Pick<
   | "loadRunbookFromLibrary"
   | "removeRunbookFromLibrary"
   | "duplicateRunbook"
+  | "renameRunbook"
+  | "resetRunbookName"
   | "addRunbookToLibrary"
   | "importRunbooks"
   | "importRunbookFromText"
@@ -229,12 +236,55 @@ export function createLibrarySlice(
           id: newId,
           label,
           filename,
+          named: source.named,
           secured: holdsSecrets(copy),
         });
 
         return { runbookLibrary };
       });
 
+      saveLibrary();
+    },
+
+    renameRunbook: (id, name) => {
+      const state = get();
+      if (state.mode === AppMode.READ) {
+        return;
+      }
+
+      const label = name.trim().slice(0, RunbookConfig.LABEL_MAX_LENGTH);
+      if (!label || !getLibraryEntry(state, id)) {
+        return;
+      }
+
+      set((s) => labelRunbook(s, id, label, true));
+      saveTabs();
+      saveLibrary();
+    },
+
+    resetRunbookName: async (id) => {
+      const state = get();
+      if (state.mode === AppMode.READ) {
+        return;
+      }
+
+      if (!getLibraryEntry(state, id)?.named) {
+        return;
+      }
+
+      const stored = getRunbookTab(state, id) ? null : await contentDb.get(id);
+      set((s) => {
+        const entry = getLibraryEntry(s, id);
+        if (!entry?.named) {
+          return s;
+        }
+
+        const blocks = getRunbookTab(s, id)?.blocks ?? stored?.blocks;
+        const label = getRunbookLabel(blocks, entry.filename);
+        return labelRunbook(s, id, label, false);
+      });
+
+      saveTabs();
       saveLibrary();
     },
 
@@ -304,7 +354,7 @@ export function createLibrarySlice(
         set((s) => ({
           ...withLibraryEntry(s, existing.id, (item) => ({
             ...item,
-            label,
+            label: item.named ? item.label : label,
             filename: filename || "",
             secured: holdsSecrets(content),
             // An import keeps the entry's existing link unless it brings its own

@@ -25,6 +25,9 @@ export function TabsBar() {
     anchor: ContextMenuAnchor;
   } | null>(null);
 
+  const [renamingTabId, setRenamingTabId] = useState<string | null>(null);
+  const endRename = useCallback(() => setRenamingTabId(null), []);
+
   const closeMenu = useCallback(() => setMenu(null), []);
   const onOpenMenu = useCallback((event: MouseEvent, tabId: string) => {
     event.preventDefault();
@@ -45,7 +48,14 @@ export function TabsBar() {
     <div id="tabs-bar">
       <div id="tabs-strip">
         {tabs.map((tab) => (
-          <TabItem key={tab.id} tab={tab} onOpenMenu={onOpenMenu} />
+          <TabItem
+            key={tab.id}
+            tab={tab}
+            renaming={tab.id === renamingTabId}
+            onOpenMenu={onOpenMenu}
+            onRename={setRenamingTabId}
+            onRenameEnd={endRename}
+          />
         ))}
       </div>
       <button
@@ -104,6 +114,7 @@ export function TabsBar() {
           tabId={menu.tabId}
           anchor={menu.anchor}
           onClose={closeMenu}
+          onRename={setRenamingTabId}
         />
       )}
     </div>

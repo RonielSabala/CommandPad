@@ -41,6 +41,7 @@ export {
   getActiveRunbookId,
   getActiveTab,
   getActiveVariables,
+  getLibraryEntry,
   getRunbookEmbedView,
   getRunbookView,
   hasOptionsToSort,

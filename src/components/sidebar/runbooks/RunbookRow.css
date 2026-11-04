@@ -10,19 +10,23 @@
   min-width: 0;
 }
 
+.runbook-label {
+  max-width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: normal;
+}
+
 .runbook-item-btn {
   display: block;
   width: fit-content;
   min-width: 0;
-  max-width: 100%;
   text-align: left;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
   color: var(--color-text-secondary);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  padding: var(--space-3) var(--space-4);
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -60,17 +64,20 @@
   box-shadow: 0 0 0 var(--space-2) var(--accent-dim);
 }
 
-/* Open-in-a-tab ring */
+.runbook-rename-input {
+  field-sizing: content;
+  min-width: var(--space-8);
+}
+
+/* Status badges */
 
 .runbook-open-dot {
   flex-shrink: 0;
   width: var(--space-4);
   height: var(--space-4);
-  border: var(--space-1) solid var(--accent);
+  border: var(--space-1) solid var(--accent-text);
   border-radius: 50%;
 }
-
-/* Status badges */
 
 .runbook-badge {
   display: flex;
