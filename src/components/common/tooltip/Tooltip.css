@@ -3,7 +3,7 @@
   z-index: var(--z-tooltip);
   width: max-content;
   max-width: var(--tooltip-max-width);
-  padding: var(--space-2) var(--space-5);
+  padding: var(--space-2) var(--tooltip-padding-x);
   background: var(--color-surface);
   border: var(--border-standard);
   border-radius: var(--radius-md);
