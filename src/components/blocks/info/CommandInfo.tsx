@@ -74,33 +74,71 @@ export function CommandInfo({
     };
   }, [block, variableMap, secretKeys, variables]);
 
-  const { rows } = t.info;
+  const { rows, sections, columns } = t.info;
 
   return (
     <BlockInfoTable
       block={block}
-      rows={[
+      sections={[
         {
-          label: rows.language,
-          value:
-            CODE_LANGUAGE_LABEL[block.language ?? DEFAULT_COMMAND_LANGUAGE],
+          rows: [
+            {
+              label: rows.language,
+              value:
+                CODE_LANGUAGE_LABEL[block.language ?? DEFAULT_COMMAND_LANGUAGE],
+            },
+            {
+              label: rows.unresolved,
+              value: format.exactCount(stats.unresolved),
+              alert: stats.unresolved > 0,
+            },
+          ],
         },
-        { label: rows.editorSize, value: format.size(stats.editorBytes) },
-        { label: rows.previewSize, value: format.size(stats.previewBytes) },
         {
-          label: rows.editorCharacters,
-          value: format.count(stats.editorCharacters),
+          title: sections.variables,
+          rows: [
+            keyReferencesRow(rows.references, stats.references, format),
+            keyReferencesRow(
+              rows.nestedReferences,
+              stats.nestedReferences,
+              format,
+            ),
+            { label: rows.secretsUsed, value: format.count(stats.secrets) },
+          ],
         },
         {
-          label: rows.previewCharacters,
-          value: format.count(stats.previewCharacters),
+          title: sections.size,
+          columns: [columns.editor, columns.preview],
+          rows: [
+            {
+              label: rows.size,
+              value: {
+                columns: [
+                  format.size(stats.editorBytes),
+                  format.size(stats.previewBytes),
+                ],
+              },
+            },
+            {
+              label: rows.characters,
+              value: {
+                columns: [
+                  format.count(stats.editorCharacters),
+                  format.count(stats.previewCharacters),
+                ],
+              },
+            },
+            {
+              label: rows.lines,
+              value: {
+                columns: [
+                  format.count(stats.editorLines),
+                  format.count(stats.previewLines),
+                ],
+              },
+            },
+          ],
         },
-        { label: rows.editorLines, value: format.count(stats.editorLines) },
-        { label: rows.previewLines, value: format.count(stats.previewLines) },
-        keyReferencesRow(rows.references, stats.references, format),
-        keyReferencesRow(rows.nestedReferences, stats.nestedReferences, format),
-        { label: rows.secretsUsed, value: format.count(stats.secrets) },
-        { label: rows.unresolved, value: format.exactCount(stats.unresolved) },
       ]}
     />
   );

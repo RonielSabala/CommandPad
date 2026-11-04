@@ -51,38 +51,55 @@ export function VariableInfo({ variable, scope }: Props) {
     };
   }, [variable, key, variableMap, secretKeys, scope.tab.variables]);
 
-  const { rows } = t.info;
+  const { rows, sections } = t.info;
 
   return (
     <InfoTable
       title={t.info.variableTitle}
-      rows={[
-        keyRow,
+      sections={[
         {
-          label: rows.kind,
-          value: variable.secret ? t.info.secretKind : t.info.textKind,
+          rows: [
+            keyRow,
+            {
+              label: rows.kind,
+              value: variable.secret ? t.info.secretKind : t.info.textKind,
+            },
+            {
+              label: rows.unresolved,
+              value: format.exactCount(stats.unresolved),
+              alert: !!stats.unresolved,
+            },
+          ],
         },
         {
-          label: rows.language,
-          value:
-            CODE_LANGUAGE_LABEL[variable.language ?? DEFAULT_VARIABLE_LANGUAGE],
+          title: sections.references,
+          rows: [
+            keyReferencesRow(rows.references, stats.references, format),
+            usedByRow,
+            {
+              label: rows.blanks,
+              value: <InfoCodeList items={stats.blanks} />,
+            },
+          ],
         },
-        { label: rows.valueSize, value: format.size(stats.bytes) },
         {
-          label: rows.resolvedSize,
-          value: format.size(stats.resolvedBytes),
-        },
-        { label: rows.characters, value: format.count(stats.characters) },
-        { label: rows.lines, value: format.count(stats.lines) },
-        keyReferencesRow(rows.references, stats.references, format),
-        {
-          label: rows.blanks,
-          value: <InfoCodeList items={stats.blanks} />,
-        },
-        usedByRow,
-        {
-          label: rows.unresolved,
-          value: format.exactCount(stats.unresolved),
+          title: sections.value,
+          rows: [
+            {
+              label: rows.language,
+              value:
+                CODE_LANGUAGE_LABEL[
+                  variable.language ?? DEFAULT_VARIABLE_LANGUAGE
+                ],
+            },
+            { label: rows.valueSize, value: format.size(stats.bytes) },
+            {
+              label: rows.resolvedSize,
+              value: format.size(stats.resolvedBytes),
+            },
+            { label: rows.characters, value: format.count(stats.characters) },
+            { label: rows.lines, value: format.count(stats.lines) },
+          ],
         },
       ]}
     />

@@ -83,7 +83,7 @@ export function RunbookInfo({
                 : (embed.status ?? EmbeddedRunbookStatus.LOADING)
             ];
 
-  const { rows } = t.info;
+  const { rows, sections } = t.info;
   const sourceRows: InfoRow[] = cloud
     ? [
         { label: rows.source, value: PROVIDER_NAME[cloud.provider] },
@@ -105,38 +105,50 @@ export function RunbookInfo({
   return (
     <BlockInfoTable
       block={block}
-      rows={[
-        ...sourceRows,
-        { label: rows.status, value: status },
+      sections={[
         {
-          label: rows.size,
-          value: stats && format.size(stats.bytes),
-        },
-        { label: rows.blocks, value: stats && format.count(stats.blocks) },
-        {
-          label: rows.variables,
-          value: stats && format.count(stats.variables),
-        },
-        {
-          label: rows.nestedRunbooks,
-          value: stats && format.count(stats.nested),
+          rows: [
+            { label: rows.status, value: status },
+            ...sourceRows,
+            {
+              label: rows.unresolved,
+              value: stats && format.exactCount(stats.unresolved),
+              alert: !!stats?.unresolved,
+            },
+          ],
         },
         {
-          label: rows.overrides,
-          value: <InfoCodeList items={overrideKeys} />,
+          title: sections.overrides,
+          rows: [
+            {
+              label: rows.overrides,
+              value: <InfoCodeList items={overrideKeys} />,
+            },
+            { label: rows.outputSize, value: stats && format.size(stats.own) },
+            {
+              label: rows.overriddenOutputSize,
+              value: stats && format.size(stats.overridden),
+            },
+            {
+              label: rows.sizeDifference,
+              value: stats && format.sizeDelta(stats.overridden - stats.own),
+            },
+          ],
         },
-        { label: rows.outputSize, value: stats && format.size(stats.own) },
         {
-          label: rows.overriddenOutputSize,
-          value: stats && format.size(stats.overridden),
-        },
-        {
-          label: rows.sizeDifference,
-          value: stats && format.sizeDelta(stats.overridden - stats.own),
-        },
-        {
-          label: rows.unresolved,
-          value: stats && format.exactCount(stats.unresolved),
+          title: sections.content,
+          rows: [
+            { label: rows.size, value: stats && format.size(stats.bytes) },
+            { label: rows.blocks, value: stats && format.count(stats.blocks) },
+            {
+              label: rows.variables,
+              value: stats && format.count(stats.variables),
+            },
+            {
+              label: rows.nestedRunbooks,
+              value: stats && format.count(stats.nested),
+            },
+          ],
         },
       ]}
     />

@@ -61,29 +61,44 @@ export function SectionInfo({ section, scope }: Props) {
     };
   }, [section, tab, usedKeys, variableMap, secretKeys]);
 
-  const { rows } = t.info;
+  const { rows, sections } = t.info;
 
   return (
     <InfoTable
       title={t.info.sectionTitle}
-      rows={[
-        { label: rows.name, value: stats.name || null },
+      meta={t.info.position(stats.position, tab.variableSections.length)}
+      sections={[
         {
-          label: rows.position,
-          value: t.info.position(stats.position, tab.variableSections.length),
+          rows: [
+            { label: rows.name, value: stats.name || null },
+            { label: rows.variables, value: format.count(stats.variables) },
+            {
+              label: rows.collapsed,
+              value: section.collapsed ? t.info.yes : t.info.no,
+            },
+          ],
         },
-        { label: rows.variables, value: format.count(stats.variables) },
-        { label: rows.enums, value: format.count(stats.enums) },
-        { label: rows.secrets, value: format.count(stats.secrets) },
-        { label: rows.unusedVariables, value: format.exactCount(stats.unused) },
         {
-          label: rows.emptyOrUnresolved,
-          value: format.exactCount(stats.problems),
+          title: sections.status,
+          rows: [
+            {
+              label: rows.unusedVariables,
+              value: format.exactCount(stats.unused),
+            },
+            {
+              label: rows.emptyOrUnresolved,
+              value: format.exactCount(stats.problems),
+              alert: stats.problems > 0,
+            },
+          ],
         },
-        { label: rows.valuesSize, value: format.size(stats.bytes) },
         {
-          label: rows.collapsed,
-          value: section.collapsed ? t.info.yes : t.info.no,
+          title: sections.breakdown,
+          rows: [
+            { label: rows.enums, value: format.count(stats.enums) },
+            { label: rows.secrets, value: format.count(stats.secrets) },
+            { label: rows.valuesSize, value: format.size(stats.bytes) },
+          ],
         },
       ]}
     />

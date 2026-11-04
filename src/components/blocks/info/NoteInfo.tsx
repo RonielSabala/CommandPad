@@ -17,33 +17,47 @@ export function NoteInfo({ block }: BlockViewProps<NoteBlock>) {
     [block.text, language],
   );
 
-  const { rows } = t.info;
+  const { rows, sections } = t.info;
 
   return (
     <BlockInfoTable
       block={block}
-      rows={[
+      sections={[
         {
-          label: rows.style,
-          value: t.note.styleLabel[block.style ?? NoteStyle.BODY],
+          title: sections.text,
+          rows: [
+            { label: rows.characters, value: format.count(stats.characters) },
+            {
+              label: rows.nonSpaceCharacters,
+              value: format.count(stats.nonSpaceCharacters),
+            },
+            { label: rows.lines, value: format.count(stats.lines) },
+            { label: rows.paragraphs, value: format.count(stats.paragraphs) },
+          ],
         },
-        { label: rows.lines, value: format.count(stats.lines) },
-        { label: rows.paragraphs, value: format.count(stats.paragraphs) },
-        { label: rows.words, value: format.count(stats.words) },
-        { label: rows.characters, value: format.count(stats.characters) },
         {
-          label: rows.nonSpaceCharacters,
-          value: format.count(stats.nonSpaceCharacters),
+          rows: [
+            {
+              label: rows.style,
+              value: t.note.styleLabel[block.style ?? NoteStyle.BODY],
+            },
+            {
+              label: rows.readingTime,
+              value:
+                stats.readingMinutes > 0
+                  ? t.info.readingTime(format.minutes(stats.readingMinutes))
+                  : null,
+            },
+            { label: rows.words, value: format.count(stats.words) },
+          ],
         },
-        { label: rows.links, value: format.count(stats.links) },
-        { label: rows.tables, value: format.count(stats.tables) },
-        { label: rows.listItems, value: format.count(stats.listItems) },
         {
-          label: rows.readingTime,
-          value:
-            stats.readingMinutes > 0
-              ? t.info.readingTime(format.minutes(stats.readingMinutes))
-              : null,
+          title: sections.content,
+          rows: [
+            { label: rows.links, value: format.count(stats.links) },
+            { label: rows.tables, value: format.count(stats.tables) },
+            { label: rows.listItems, value: format.count(stats.listItems) },
+          ],
         },
       ]}
     />

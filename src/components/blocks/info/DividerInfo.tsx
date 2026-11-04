@@ -41,10 +41,14 @@ export function DividerInfo({ block }: BlockViewProps<DividerBlock>) {
   return (
     <BlockInfoTable
       block={block}
-      rows={[
+      sections={[
         {
-          label: t.info.rows.blocksInSection,
-          value: format.count(sectionLength),
+          rows: [
+            {
+              label: t.info.rows.blocksInSection,
+              value: format.count(sectionLength),
+            },
+          ],
         },
       ]}
     />

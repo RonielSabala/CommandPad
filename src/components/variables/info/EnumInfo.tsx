@@ -45,28 +45,37 @@ export function EnumInfo({ variable, scope }: Props) {
     };
   }, [variable]);
 
-  const { rows } = t.info;
+  const { rows, sections } = t.info;
 
   return (
     <InfoTable
       title={t.info.enumTitle}
-      rows={[
-        keyRow,
-        { label: rows.options, value: format.count(stats.options) },
+      sections={[
         {
-          label: rows.selected,
-          value:
-            stats.selected === -1
-              ? null
-              : t.info.position(stats.selected + 1, stats.options),
+          rows: [
+            keyRow,
+            {
+              label: rows.selected,
+              value:
+                stats.selected === -1
+                  ? null
+                  : t.info.position(stats.selected + 1, stats.options),
+            },
+            usedByRow,
+          ],
         },
-        { label: rows.longestOption, value: format.count(stats.longest) },
-        { label: rows.optionsSize, value: format.size(stats.bytes) },
         {
-          label: rows.optionsWithReferences,
-          value: format.count(stats.withReferences),
+          title: sections.options,
+          rows: [
+            { label: rows.options, value: format.count(stats.options) },
+            { label: rows.longestOption, value: format.count(stats.longest) },
+            { label: rows.optionsSize, value: format.size(stats.bytes) },
+            {
+              label: rows.optionsWithReferences,
+              value: format.count(stats.withReferences),
+            },
+          ],
         },
-        usedByRow,
       ]}
     />
   );

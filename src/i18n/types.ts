@@ -244,16 +244,26 @@ export interface Messages {
     embedCircular: string;
     embedTooDeep: string;
     embedLocked: string;
+    sections: {
+      size: string;
+      variables: string;
+      text: string;
+      content: string;
+      dimensions: string;
+      details: string;
+      overrides: string;
+      value: string;
+      references: string;
+      options: string;
+      breakdown: string;
+      status: string;
+    };
+    columns: {
+      editor: string;
+      preview: string;
+    };
     rows: {
-      type: string;
-      position: string;
       language: string;
-      editorSize: string;
-      previewSize: string;
-      editorCharacters: string;
-      previewCharacters: string;
-      editorLines: string;
-      previewLines: string;
       references: string;
       nestedReferences: string;
       secretsUsed: string;

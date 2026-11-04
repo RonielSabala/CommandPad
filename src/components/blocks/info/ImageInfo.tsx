@@ -88,7 +88,7 @@ export function ImageInfo({ block }: BlockViewProps<ImageBlock>) {
     return terms.join(InfoConfig.RATIO_SEPARATOR);
   }, [dimensions, format]);
 
-  const { rows } = t.info;
+  const { rows, sections } = t.info;
   const filled = !!src;
   const mimeFormat = head?.mimeType
     ? imageFormatOfMimeType(head.mimeType)
@@ -97,27 +97,45 @@ export function ImageInfo({ block }: BlockViewProps<ImageBlock>) {
   return (
     <BlockInfoTable
       block={block}
-      rows={[
+      sections={[
         {
-          label: rows.source,
-          value: filled ? (attached ? t.info.attached : t.info.linked) : null,
+          title: sections.dimensions,
+          rows: [
+            {
+              label: rows.resolution,
+              value: dimensions
+                ? [dimensions.width, dimensions.height]
+                    .map(format.count)
+                    .join(InfoConfig.DIMENSION_SEPARATOR)
+                : null,
+            },
+            { label: rows.aspectRatio, value: ratio },
+          ],
         },
         {
-          label: rows.format,
-          value: filled ? (mimeFormat ?? imageFormat(src)) : null,
+          rows: [
+            {
+              label: rows.source,
+              value: filled
+                ? attached
+                  ? t.info.attached
+                  : t.info.linked
+                : null,
+            },
+            {
+              label: rows.format,
+              value: filled ? (mimeFormat ?? imageFormat(src)) : null,
+            },
+            { label: rows.size, value: format.size(bytes) },
+          ],
         },
-        { label: rows.size, value: format.size(bytes) },
         {
-          label: rows.resolution,
-          value: dimensions
-            ? [dimensions.width, dimensions.height]
-                .map(format.count)
-                .join(InfoConfig.DIMENSION_SEPARATOR)
-            : null,
+          title: sections.details,
+          rows: [
+            { label: rows.alt, value: block.alt?.trim() || null },
+            ...(filled && !attached ? [{ label: rows.link, value: src }] : []),
+          ],
         },
-        { label: rows.aspectRatio, value: ratio },
-        { label: rows.alt, value: block.alt?.trim() || null },
-        ...(filled && !attached ? [{ label: rows.link, value: src }] : []),
       ]}
     />
   );
