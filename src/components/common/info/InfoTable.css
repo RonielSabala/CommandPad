@@ -25,9 +25,6 @@
 
 .info-table-rows {
   max-height: var(--info-table-max-height);
-  overflow-y: auto;
-  margin-right: calc(-1 * var(--tooltip-padding-x));
-  padding-right: var(--tooltip-padding-x);
 }
 
 .info-table table {

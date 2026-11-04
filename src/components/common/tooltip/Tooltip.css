@@ -110,6 +110,12 @@
   top: 100%;
 }
 
+.tooltip-scroll {
+  overflow-y: auto;
+  margin-right: calc(-1 * var(--tooltip-padding-x));
+  padding-right: var(--tooltip-padding-x);
+}
+
 /* Tooltip link */
 
 .tooltip-link {

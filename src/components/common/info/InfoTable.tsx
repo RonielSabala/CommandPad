@@ -49,7 +49,7 @@ export function InfoTable({ title, meta, sections }: Props) {
         {meta && <span className="info-table-meta">{meta}</span>}
       </div>
 
-      <div className="info-table-rows">
+      <div className={classNames("info-table-rows", CssClass.TOOLTIP_SCROLL)}>
         <table>
           {sections.map(({ title: heading, columns, rows }, index) => (
             <tbody key={heading ?? index}>

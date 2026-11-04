@@ -100,6 +100,7 @@ export const CssClass = {
   NOTE_LINK: "note-link",
   TOOLTIP_LINK: "tooltip-link",
   TOOLTIP_LINK_PLAIN: "tooltip-link-plain",
+  TOOLTIP_SCROLL: "tooltip-scroll",
   NOTE_EDITOR: "note-editor",
   TEXT_MIRROR: "text-mirror",
   NOTE_CODE: "note-code",

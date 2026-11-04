@@ -276,7 +276,9 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
         {t.tabs.unresolvedSummary(problemCount, blockCount)}
       </p>
 
-      <div className="tab-unresolved-list">
+      <div
+        className={classNames("tab-unresolved-list", CssClass.TOOLTIP_SCROLL)}
+      >
         {groups.map(([cause, problems]) => (
           <section key={cause}>
             <p className="tab-unresolved-cause">
