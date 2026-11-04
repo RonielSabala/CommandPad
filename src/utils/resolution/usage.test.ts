@@ -148,10 +148,13 @@ describe("findReferencesTo", () => {
 });
 
 describe("lookupVariables", () => {
-  it("returns the defined keys in list order and the undefined ones", () => {
-    const found = lookupVariables(new Set(["DEEP", "NOPE", "HOST"]), variables);
+  it("returns the defined keys in list order and the undefined ones sorted", () => {
+    const found = lookupVariables(
+      new Set(["DEEP", "NOPE", "HOST", "GONE"]),
+      variables,
+    );
 
     expect(found.variables.map(({ key }) => key)).toEqual(["HOST", "DEEP"]);
-    expect(found.missing).toEqual(["NOPE"]);
+    expect(found.missing).toEqual(["GONE", "NOPE"]);
   });
 });

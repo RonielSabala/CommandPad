@@ -117,13 +117,11 @@ export function InfoReferences({
           })}
 
           {missingKeys.map((key) => (
-            <code
-              key={key}
-              className={CssClass.NOTE_CODE}
-              title={t.info.undefinedKey}
-            >
-              {key}
-            </code>
+            <span key={key}>
+              <code className={CssClass.NOTE_CODE} title={t.info.undefinedKey}>
+                {key}
+              </code>
+            </span>
           ))}
         </div>
       )}

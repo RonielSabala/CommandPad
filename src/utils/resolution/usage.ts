@@ -82,7 +82,7 @@ export interface DefinedKeys {
   missing: string[];
 }
 
-/** The variables defining `keys`, and the keys none defines. */
+/** The variables defining `keys` and the keys none defines. */
 export function lookupVariables(
   keys: ReadonlySet<string>,
   variables: Variable[],
@@ -100,7 +100,7 @@ export function lookupVariables(
 
   return {
     variables: found,
-    missing: [...keys].filter((key) => !defined.has(key)),
+    missing: [...keys].filter((key) => !defined.has(key)).sort(),
   };
 }
 
