@@ -60,6 +60,16 @@
   box-shadow: 0 0 0 var(--space-2) var(--accent-dim);
 }
 
+/* Open-in-a-tab ring */
+
+.runbook-open-dot {
+  flex-shrink: 0;
+  width: var(--space-4);
+  height: var(--space-4);
+  border: var(--space-1) solid var(--accent);
+  border-radius: 50%;
+}
+
 /* Status badges */
 
 .runbook-badge {

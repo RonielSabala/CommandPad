@@ -88,6 +88,7 @@ export const es: Messages = {
     clearLibrary: "Eliminar todo",
     clearLibraryTitle: "Eliminar todos los libros de la biblioteca",
     stopSyncing: "Dejar de sincronizar",
+    openInTab: "Abierto en una pestaña",
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Guardado en ${provider}`,
       [RunbookSyncStatus.UNSAVED]: (provider, shortcut) =>

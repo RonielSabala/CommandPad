@@ -112,6 +112,7 @@ export interface Messages {
     clearLibrary: string;
     clearLibraryTitle: string;
     stopSyncing: string;
+    openInTab: string;
     syncStatus: Record<
       RunbookSyncStatus,
       (provider: string, shortcut: string) => string

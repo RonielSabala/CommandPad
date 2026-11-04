@@ -43,6 +43,23 @@ export function getRunbookTab(
   return state.tabs.find((t) => t.runbookId === runbookId);
 }
 
+const openRunbookIds = new WeakMap<
+  readonly Tab[],
+  ReadonlySet<string | null>
+>();
+
+/** Whether a tab shows `runbookId`. */
+export function isRunbookOpen(state: StoreState, runbookId: string): boolean {
+  const tabs = state.tabs;
+  let ids = openRunbookIds.get(tabs);
+  if (!ids) {
+    ids = new Set(tabs.map((tab) => tab.runbookId));
+    openRunbookIds.set(tabs, ids);
+  }
+
+  return ids.has(runbookId);
+}
+
 export function getLibraryEntry(
   state: StoreState,
   runbookId: string,

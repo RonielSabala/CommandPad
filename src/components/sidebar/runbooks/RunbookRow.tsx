@@ -10,7 +10,7 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { DuplicateIcon, RunbookIcon, TrashIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { isRunbookOpen, useStore } from "@/store/store";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { memo } from "react";
@@ -31,6 +31,7 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
 
   const isActive = useStore((state) => state.activeRunbookId === runbookId);
   const isFocused = useStore((state) => state.focusedRunbookId === runbookId);
+  const isOpen = useStore((state) => isRunbookOpen(state, runbookId));
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const setRunbookFocus = useStore((state) => state.setRunbookFocus);
   const reorderRunbooks = useStore((state) => state.reorderRunbooks);
@@ -83,6 +84,13 @@ export const RunbookRow = memo(function RunbookRow({ runbook }: Props) {
         >
           {runbookLabel}
         </button>
+
+        {isOpen && (
+          <span
+            className="runbook-open-dot"
+            {...tooltip(t.runbooks.openInTab)}
+          />
+        )}
 
         {runbook.secured && <RunbookSecretBadge runbookId={runbookId} />}
 
