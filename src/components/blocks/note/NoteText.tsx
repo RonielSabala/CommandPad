@@ -16,10 +16,10 @@ import type {
   NoteTableCell,
 } from "@/common/types";
 import { useRichTooltip } from "@/components/common/tooltip/richTooltip";
+import { PLAIN_TOOLTIP_LINK } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { parseNoteNodes } from "@/utils/markdown";
-import { classNames } from "@/utils/string";
 import { Fragment } from "react";
 
 import "./NoteText.css";
@@ -60,10 +60,7 @@ function NoteLink({ segment, binding }: LinkProps) {
         <>
           <a
             href={href}
-            className={classNames(
-              CssClass.TOOLTIP_LINK,
-              CssClass.TOOLTIP_LINK_PLAIN,
-            )}
+            className={PLAIN_TOOLTIP_LINK}
             target={Anchor.TARGET_BLANK}
             rel={Anchor.REL}
             title={href}

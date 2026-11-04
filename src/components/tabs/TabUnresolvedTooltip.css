@@ -51,7 +51,3 @@
 .tab-unresolved-problem .btn-flat-icon:focus-visible {
   color: var(--accent-text);
 }
-
-.tab-unresolved-blocks {
-  color: var(--color-text-secondary);
-}

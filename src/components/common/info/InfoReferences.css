@@ -13,7 +13,3 @@
 .tooltip-link:is(:hover, :focus-visible) > .info-references-hint {
   color: var(--color-text-secondary);
 }
-
-.info-references-line {
-  color: var(--color-text-primary);
-}

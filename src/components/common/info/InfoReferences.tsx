@@ -3,12 +3,12 @@ import { ButtonType } from "@/common/constants/dom";
 import { RevealTone } from "@/common/enums";
 import type { Block, Variable } from "@/common/types";
 import { BlockLinks } from "@/components/common/tooltip/BlockLinks";
+import { PLAIN_TOOLTIP_LINK } from "@/components/common/tooltip/tooltip";
 import { VariablesViewContext } from "@/components/variables/variablesViewContext";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { positionsIn } from "@/utils/collections";
 import { getVariableKey } from "@/utils/resolution";
-import { classNames } from "@/utils/string";
 import { useContext, useState, type ReactNode } from "react";
 
 import "./InfoReferences.css";
@@ -47,10 +47,7 @@ export function InfoReferences({
     <div className="info-references">
       <button
         type={ButtonType.BUTTON}
-        className={classNames(
-          CssClass.TOOLTIP_LINK,
-          CssClass.TOOLTIP_LINK_PLAIN,
-        )}
+        className={PLAIN_TOOLTIP_LINK}
         aria-expanded={expanded}
         onClick={() => setExpanded(!expanded)}
       >
@@ -62,7 +59,6 @@ export function InfoReferences({
 
       {blockNumbers && blocks.length > 0 && (
         <BlockLinks
-          className="info-references-line"
           tabId={tab.id}
           blocks={blocks.map((block) => ({
             block,
@@ -74,9 +70,7 @@ export function InfoReferences({
       )}
 
       {variableNumbers && variableCount > 0 && (
-        <div
-          className={classNames(CssClass.TOOLTIP_LINKS, "info-references-line")}
-        >
+        <div className={CssClass.TOOLTIP_LINKS}>
           <span>{t.info.variablesIn(variableCount)}</span>
 
           {variables.map((variable) => {

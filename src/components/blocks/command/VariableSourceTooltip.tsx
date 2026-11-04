@@ -2,6 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { ButtonType } from "@/common/constants/dom";
 import { AppMode, RevealTone } from "@/common/enums";
 import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
+import { PLAIN_TOOLTIP_LINK } from "@/components/common/tooltip/tooltip";
 import {
   LazyVariableTooltipEditor,
   preloadVariableTooltipEditor,
@@ -16,11 +17,6 @@ import { BoxArrowUpRight } from "react-bootstrap-icons";
 
 import { EmbedScopeContext } from "../runbook/embedContext";
 import "./VariableSourceTooltip.css";
-
-const LINK_CLASS = classNames(
-  CssClass.TOOLTIP_LINK,
-  CssClass.TOOLTIP_LINK_PLAIN,
-);
 
 interface Props {
   source: string;
@@ -88,7 +84,7 @@ export function VariableSourceTooltip({ source, resolved, tip }: Props) {
   const goToText = defined && (
     <button
       type={ButtonType.BUTTON}
-      className={LINK_CLASS}
+      className={PLAIN_TOOLTIP_LINK}
       title={title}
       onClick={goToDefinition}
     >
@@ -122,7 +118,7 @@ export function VariableSourceTooltip({ source, resolved, tip }: Props) {
           {hostVariable && (
             <button
               type={ButtonType.BUTTON}
-              className={LINK_CLASS}
+              className={PLAIN_TOOLTIP_LINK}
               title={
                 readMode
                   ? t.command.editValueTitle(key)
@@ -139,7 +135,7 @@ export function VariableSourceTooltip({ source, resolved, tip }: Props) {
           {!embed && !hostVariable && !readMode && (
             <button
               type={ButtonType.BUTTON}
-              className={LINK_CLASS}
+              className={PLAIN_TOOLTIP_LINK}
               title={t.tabs.defineVariableTitle(key)}
               onPointerEnter={preloadVariableTooltipEditor}
               onFocus={preloadVariableTooltipEditor}

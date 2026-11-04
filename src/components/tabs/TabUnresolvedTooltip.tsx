@@ -11,6 +11,7 @@ import type { Block, Tab } from "@/common/types";
 import { FramedSection } from "@/components/common/FramedSection";
 import { BlockLinks } from "@/components/common/tooltip/BlockLinks";
 import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
+import { PLAIN_TOOLTIP_LINK } from "@/components/common/tooltip/tooltip";
 import {
   LazyVariableTooltipEditor,
   preloadVariableTooltipEditor,
@@ -38,11 +39,6 @@ const EDITABLE_CAUSES: ReadonlySet<UnresolvedCause> = new Set([
   UnresolvedCause.EMPTY,
   UnresolvedCause.BLANK,
 ]);
-
-const LINK_CLASS = classNames(
-  CssClass.TOOLTIP_LINK,
-  CssClass.TOOLTIP_LINK_PLAIN,
-);
 
 interface Problem {
   cause: UnresolvedCause;
@@ -193,7 +189,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
         !readMode && (
           <button
             type={ButtonType.BUTTON}
-            className={LINK_CLASS}
+            className={PLAIN_TOOLTIP_LINK}
             title={t.tabs.defineVariableTitle(key)}
             onPointerEnter={preloadVariableTooltipEditor}
             onFocus={preloadVariableTooltipEditor}
@@ -223,7 +219,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
           {isActive && EDITABLE_CAUSES.has(cause) && (
             <button
               type={ButtonType.BUTTON}
-              className={LINK_CLASS}
+              className={PLAIN_TOOLTIP_LINK}
               title={
                 readMode
                   ? t.command.editValueTitle(key)
@@ -258,7 +254,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
           header={
             <button
               type={ButtonType.BUTTON}
-              className={LINK_CLASS}
+              className={PLAIN_TOOLTIP_LINK}
               title={t.command.goToDefinitionTitle(edited.key)}
               onClick={() => goToVariable(edited.id)}
             >
@@ -316,7 +312,6 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
                   </div>
 
                   <BlockLinks
-                    className="tab-unresolved-blocks"
                     tabId={tab.id}
                     blocks={problem.blocks}
                     tone={RevealTone.UNRESOLVED}

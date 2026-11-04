@@ -99,7 +99,6 @@ export const CssClass = {
 
   NOTE_LINK: "note-link",
   TOOLTIP_LINK: "tooltip-link",
-  TOOLTIP_LINK_PLAIN: "tooltip-link-plain",
   TOOLTIP_LINKS: "tooltip-links",
   TOOLTIP_PANEL: "tooltip-panel",
   TOOLTIP_TITLE: "tooltip-title",

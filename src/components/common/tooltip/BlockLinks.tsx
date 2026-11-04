@@ -4,7 +4,6 @@ import type { RevealTone } from "@/common/enums";
 import type { Block } from "@/common/types";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { classNames } from "@/utils/string";
 
 interface NumberedBlock {
   block: Block;
@@ -16,21 +15,14 @@ interface Props {
   blocks: readonly NumberedBlock[];
   tone: RevealTone;
   onReveal: () => void;
-  className?: string;
 }
 
-export function BlockLinks({
-  tabId,
-  blocks,
-  tone,
-  onReveal,
-  className,
-}: Props) {
+export function BlockLinks({ tabId, blocks, tone, onReveal }: Props) {
   const t = useTranslation();
   const revealBlock = useStore((state) => state.revealBlock);
 
   return (
-    <div className={classNames(CssClass.TOOLTIP_LINKS, className)}>
+    <div className={CssClass.TOOLTIP_LINKS}>
       <span>{t.tabs.unresolvedIn(blocks.length)}</span>
 
       {blocks.map(({ block, number }) => (
