@@ -106,6 +106,7 @@ describe("unresolvedVariableParts", () => {
   const variables = buildVariables({
     ...SPEC,
     FORWARD: "{TEMPLATE}",
+    ALIAS: "{EMPTY}",
   });
 
   const causes = (key: string) =>
@@ -123,8 +124,12 @@ describe("unresolvedVariableParts", () => {
     expect(causes("INNER")).toEqual([UnresolvedCause.UNDEFINED]);
   });
 
-  it("reports an empty value", () => {
-    expect(causes("EMPTY")).toEqual([UnresolvedCause.EMPTY]);
+  it("leaves the variable's own empty value out", () => {
+    expect(causes("EMPTY")).toEqual([]);
+  });
+
+  it("keeps an empty variable the value references", () => {
+    expect(causes("ALIAS")).toEqual([UnresolvedCause.EMPTY]);
   });
 
   it("leaves the variable's own template blanks out", () => {
