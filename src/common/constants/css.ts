@@ -105,6 +105,7 @@ export const CssClass = {
   TOOLTIP_SCROLL: "tooltip-scroll",
 
   FRAMED_ROW: "framed-section-row",
+  FRAMED_CELLS: "framed-section-cells",
   FRAMED_SECTIONS: "framed-sections",
 
   TEXT_MIRROR: "text-mirror",

@@ -2,7 +2,7 @@ import { InfoConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { FramedSection } from "@/components/common/FramedSection";
 import { classNames } from "@/utils/string";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 import "@/components/blocks/note/NoteText.css";
 import "./InfoTable.css";
@@ -52,6 +52,11 @@ export function InfoTable({ title, meta, sections }: Props) {
           CssClass.FRAMED_SECTIONS,
           CssClass.TOOLTIP_SCROLL,
         )}
+        style={
+          {
+            "--info-value-columns": Math.max(...sections.map(valueColumnCount)),
+          } as CSSProperties
+        }
       >
         {sections.map((section) => (
           <InfoTableSection key={section.title} {...section} />
@@ -61,59 +66,58 @@ export function InfoTable({ title, meta, sections }: Props) {
   );
 }
 
-function InfoTableSection({ title, columns, rows }: InfoSection) {
-  const valueColumns =
+function valueColumnCount({ columns, rows }: InfoSection) {
+  return (
     columns?.length ??
     Math.max(
       ...rows.map(({ value }) => (isColumns(value) ? value.columns.length : 1)),
-    );
+    )
+  );
+}
 
+const CELL_ROW = classNames(CssClass.FRAMED_ROW, CssClass.FRAMED_CELLS);
+
+function InfoTableSection({ title, columns, rows }: InfoSection) {
   return (
     <FramedSection title={title}>
-      <table>
+      <div className="info-table-grid" role="table" aria-label={title}>
         {columns && (
-          <thead>
-            <tr className={CssClass.FRAMED_ROW}>
-              <td />
-              {columns.map((column) => (
-                <th key={column} scope="col">
-                  {column}
-                </th>
-              ))}
-            </tr>
-          </thead>
+          <div className={classNames(CELL_ROW, "info-table-row")} role="row">
+            <span />
+            {columns.map((column) => (
+              <span
+                key={column}
+                className="info-table-column"
+                role="columnheader"
+              >
+                {column}
+              </span>
+            ))}
+          </div>
         )}
 
-        <tbody>
-          {rows.map(({ label, value, alert }) => {
-            const values = isColumns(value) ? value.columns : [value];
+        {rows.map(({ label, value, alert }) => (
+          <div
+            key={label}
+            className={classNames(
+              CELL_ROW,
+              "info-table-row",
+              alert && "info-table-alert",
+            )}
+            role="row"
+          >
+            <span className="info-table-label" role="rowheader">
+              {label}
+            </span>
 
-            return (
-              <tr
-                key={label}
-                className={classNames(
-                  CssClass.FRAMED_ROW,
-                  alert && "info-table-alert",
-                )}
-              >
-                <th scope="row">{label}</th>
-                {values.map((cell, at) => (
-                  <td
-                    key={at}
-                    colSpan={
-                      at === values.length - 1
-                        ? valueColumns - values.length + 1
-                        : 1
-                    }
-                  >
-                    {cell ?? <InfoEmpty />}
-                  </td>
-                ))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            {(isColumns(value) ? value.columns : [value]).map((cell, at) => (
+              <span key={at} className="info-table-value" role="cell">
+                {cell ?? <InfoEmpty />}
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
     </FramedSection>
   );
 }
