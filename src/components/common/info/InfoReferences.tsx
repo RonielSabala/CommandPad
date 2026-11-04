@@ -2,6 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { ButtonType } from "@/common/constants/dom";
 import { RevealTone } from "@/common/enums";
 import type { Block, Variable } from "@/common/types";
+import { BlockLinks } from "@/components/common/tooltip/BlockLinks";
 import { VariablesViewContext } from "@/components/variables/variablesViewContext";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
@@ -31,7 +32,6 @@ export function InfoReferences({
   const dismiss = useContext(InfoDismissContext);
   const canRevealVariables = useContext(VariablesViewContext);
   const tab = useStore(getActiveTab);
-  const revealBlock = useStore((state) => state.revealBlock);
   const revealVariable = useStore((state) => state.revealVariable);
   const [expanded, setExpanded] = useState(false);
 
@@ -61,35 +61,22 @@ export function InfoReferences({
       </button>
 
       {blockNumbers && blocks.length > 0 && (
-        <div className="info-references-line">
-          <span>{t.tabs.unresolvedIn(blocks.length)}</span>
-
-          {blocks.map((block) => {
-            const number = blockNumbers.get(block) ?? 0;
-
-            return (
-              <button
-                key={block.id}
-                type={ButtonType.BUTTON}
-                className={CssClass.TOOLTIP_LINK}
-                title={t.tabs.unresolvedBlock(
-                  number,
-                  t.blocks.typeLabel[block.type],
-                )}
-                onClick={() => {
-                  dismiss();
-                  revealBlock(tab.id, block.id, RevealTone.NEUTRAL);
-                }}
-              >
-                {number}
-              </button>
-            );
-          })}
-        </div>
+        <BlockLinks
+          className="info-references-line"
+          tabId={tab.id}
+          blocks={blocks.map((block) => ({
+            block,
+            number: blockNumbers.get(block) ?? 0,
+          }))}
+          tone={RevealTone.NEUTRAL}
+          onReveal={dismiss}
+        />
       )}
 
       {variableNumbers && variableCount > 0 && (
-        <div className="info-references-line">
+        <div
+          className={classNames(CssClass.TOOLTIP_LINKS, "info-references-line")}
+        >
           <span>{t.info.variablesIn(variableCount)}</span>
 
           {variables.map((variable) => {

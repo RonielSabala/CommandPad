@@ -100,9 +100,17 @@ export const CssClass = {
   NOTE_LINK: "note-link",
   TOOLTIP_LINK: "tooltip-link",
   TOOLTIP_LINK_PLAIN: "tooltip-link-plain",
+  TOOLTIP_LINKS: "tooltip-links",
+  TOOLTIP_PANEL: "tooltip-panel",
+  TOOLTIP_TITLE: "tooltip-title",
   TOOLTIP_SCROLL: "tooltip-scroll",
-  NOTE_EDITOR: "note-editor",
+
+  FRAMED_ROW: "framed-section-row",
+  FRAMED_SECTIONS: "framed-sections",
+
   TEXT_MIRROR: "text-mirror",
+  NOTE_EDITOR: "note-editor",
+
   NOTE_CODE: "note-code",
   NOTE_CODE_NEUTRAL: "note-code-neutral",
   NOTE_TABLE: "note-table",

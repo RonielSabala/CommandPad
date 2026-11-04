@@ -8,6 +8,8 @@ import {
   UnresolvedCause,
 } from "@/common/enums";
 import type { Block, Tab } from "@/common/types";
+import { FramedSection } from "@/components/common/FramedSection";
+import { BlockLinks } from "@/components/common/tooltip/BlockLinks";
 import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
 import {
   LazyVariableTooltipEditor,
@@ -67,7 +69,6 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
   const library = useStore((state) => state.runbookLibrary);
   const embeddedRunbooks = useStore((state) => state.embeddedRunbooks);
   const tabs = useStore((state) => state.tabs);
-  const revealBlock = useStore((state) => state.revealBlock);
   const switchTab = useStore((state) => state.switchTab);
   const revealVariable = useStore((state) => state.revealVariable);
   const defineVariable = useStore((state) => state.defineVariable);
@@ -271,23 +272,35 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
   }
 
   return (
-    <div className="tab-unresolved-tooltip">
-      <p className="tab-unresolved-title">
+    <div
+      className={classNames(CssClass.TOOLTIP_PANEL, "tab-unresolved-tooltip")}
+    >
+      <p className={CssClass.TOOLTIP_TITLE}>
         {t.tabs.unresolvedSummary(problemCount, blockCount)}
       </p>
 
       <div
-        className={classNames("tab-unresolved-list", CssClass.TOOLTIP_SCROLL)}
+        className={classNames(
+          "tab-unresolved-list",
+          CssClass.FRAMED_SECTIONS,
+          CssClass.TOOLTIP_SCROLL,
+        )}
       >
         {groups.map(([cause, problems]) => (
-          <section key={cause}>
-            <p className="tab-unresolved-cause">
-              {t.tabs.unresolvedCause[cause]}
-            </p>
-
+          <FramedSection
+            key={cause}
+            title={t.tabs.unresolvedCause[cause]}
+            striped
+          >
             <ul className="tab-unresolved-table">
               {problems.map((problem) => (
-                <li key={problem.label} className="tab-unresolved-row">
+                <li
+                  key={problem.label}
+                  className={classNames(
+                    "tab-unresolved-row",
+                    CssClass.FRAMED_ROW,
+                  )}
+                >
                   <div className="tab-unresolved-problem">
                     <code
                       className="tab-unresolved-label"
@@ -302,30 +315,17 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
                     {action(problem)}
                   </div>
 
-                  <div className="tab-unresolved-blocks">
-                    <span>{t.tabs.unresolvedIn(problem.blocks.length)}</span>
-                    {problem.blocks.map(({ block, number }) => (
-                      <button
-                        key={block.id}
-                        type={ButtonType.BUTTON}
-                        className={CssClass.TOOLTIP_LINK}
-                        title={t.tabs.unresolvedBlock(
-                          number,
-                          t.blocks.typeLabel[block.type],
-                        )}
-                        onClick={() => {
-                          hide();
-                          revealBlock(tab.id, block.id, RevealTone.UNRESOLVED);
-                        }}
-                      >
-                        {number}
-                      </button>
-                    ))}
-                  </div>
+                  <BlockLinks
+                    className="tab-unresolved-blocks"
+                    tabId={tab.id}
+                    blocks={problem.blocks}
+                    tone={RevealTone.UNRESOLVED}
+                    onReveal={hide}
+                  />
                 </li>
               ))}
             </ul>
-          </section>
+          </FramedSection>
         ))}
       </div>
     </div>

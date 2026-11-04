@@ -1,5 +1,6 @@
 import { InfoConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
+import { FramedSection } from "@/components/common/FramedSection";
 import { classNames } from "@/utils/string";
 import type { ReactNode } from "react";
 
@@ -38,75 +39,82 @@ export function InfoEmpty() {
 }
 
 export function InfoTable({ title, meta, sections }: Props) {
-  const valueColumns = Math.max(
-    ...sections.map(({ columns }) => columns?.length ?? 1),
-  );
-
   return (
-    <div className="info-table">
+    <div className={classNames(CssClass.TOOLTIP_PANEL, "info-table")}>
       <div className="info-table-header">
-        <span className="info-table-title">{title}</span>
+        <span className={CssClass.TOOLTIP_TITLE}>{title}</span>
         {meta && <span className="info-table-meta">{meta}</span>}
       </div>
 
-      <div className={classNames("info-table-rows", CssClass.TOOLTIP_SCROLL)}>
-        <table>
-          {sections.map(({ title: heading, columns, rows }, index) => (
-            <tbody key={heading ?? index}>
-              {(heading || columns) && (
-                <tr className="info-table-heading">
-                  <th
-                    scope={columns ? undefined : "colgroup"}
-                    colSpan={columns ? 1 : valueColumns + 1}
-                  >
-                    {heading}
-                  </th>
-
-                  {columns?.map((column, at) => (
-                    <th
-                      key={column}
-                      scope="col"
-                      colSpan={
-                        at === columns.length - 1
-                          ? valueColumns - columns.length + 1
-                          : 1
-                      }
-                    >
-                      {column}
-                    </th>
-                  ))}
-                </tr>
-              )}
-
-              {rows.map(({ label, value, alert }) => {
-                const values = isColumns(value) ? value.columns : [value];
-
-                return (
-                  <tr
-                    key={label}
-                    className={classNames(alert && "info-table-alert")}
-                  >
-                    <th scope="row">{label}</th>
-                    {values.map((cell, at) => (
-                      <td
-                        key={at}
-                        colSpan={
-                          at === values.length - 1
-                            ? valueColumns - values.length + 1
-                            : 1
-                        }
-                      >
-                        {cell ?? <InfoEmpty />}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          ))}
-        </table>
+      <div
+        className={classNames(
+          "info-table-sections",
+          CssClass.FRAMED_SECTIONS,
+          CssClass.TOOLTIP_SCROLL,
+        )}
+      >
+        {sections.map((section, index) => (
+          <InfoTableSection key={section.title ?? index} {...section} />
+        ))}
       </div>
     </div>
+  );
+}
+
+function InfoTableSection({ title, columns, rows }: InfoSection) {
+  const valueColumns =
+    columns?.length ??
+    Math.max(
+      ...rows.map(({ value }) => (isColumns(value) ? value.columns.length : 1)),
+    );
+
+  return (
+    <FramedSection title={title}>
+      <table>
+        {columns && (
+          <thead>
+            <tr className={CssClass.FRAMED_ROW}>
+              <td />
+              {columns.map((column) => (
+                <th key={column} scope="col">
+                  {column}
+                </th>
+              ))}
+            </tr>
+          </thead>
+        )}
+
+        <tbody>
+          {rows.map(({ label, value, alert }) => {
+            const values = isColumns(value) ? value.columns : [value];
+
+            return (
+              <tr
+                key={label}
+                className={classNames(
+                  CssClass.FRAMED_ROW,
+                  alert && "info-table-alert",
+                )}
+              >
+                <th scope="row">{label}</th>
+                {values.map((cell, at) => (
+                  <td
+                    key={at}
+                    colSpan={
+                      at === values.length - 1
+                        ? valueColumns - values.length + 1
+                        : 1
+                    }
+                  >
+                    {cell ?? <InfoEmpty />}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </FramedSection>
   );
 }
 
