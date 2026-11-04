@@ -12,6 +12,7 @@ import {
   MoveDirection,
   PanelId,
   PanelSide,
+  RevealTone,
   RunbookEmbedView,
   RunbookSyncStatus,
   RunbookView,
@@ -54,7 +55,7 @@ import type { StoreApi } from "zustand";
 
 interface VariableReveal {
   id: string;
-  resolved: boolean;
+  tone: RevealTone;
 }
 
 // --- Dialogs ---
@@ -172,6 +173,7 @@ export interface StoreState {
   pendingFocusBlockId: string | null;
   pendingRevealBlockId: string | null;
   revealedBlockId: string | null;
+  blockRevealTone: RevealTone;
   pendingRevealVariable: VariableReveal | null;
   revealedVariable: VariableReveal | null;
   pendingFocusVariableId: string | null;
@@ -377,14 +379,14 @@ export interface StoreState {
   closeImageViewer: () => void;
 
   // Reveals
-  revealBlock: (tabId: string, blockId: string) => void;
+  revealBlock: (tabId: string, blockId: string, tone: RevealTone) => void;
   finishBlockReveal: () => void;
   clearBlockReveal: () => void;
-  revealVariable: (variableId: string, resolved: boolean) => void;
+  revealVariable: (variableId: string, tone: RevealTone) => void;
   revealEmbeddedVariable: (
     source: EmbedSource,
     key: string,
-    resolved: boolean,
+    tone: RevealTone,
   ) => Promise<void>;
   finishVariableReveal: () => void;
   clearVariableReveal: () => void;

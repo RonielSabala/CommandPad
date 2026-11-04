@@ -1,9 +1,8 @@
 import { EditorActionId, EditorActionOrder } from "@/common/editorConfig";
 import { VariableField } from "@/common/enums";
-import type { Variable } from "@/common/types";
 import { useTranslation } from "@/i18n";
 import type { EditorAction } from "@/monaco/actions";
-import { getActiveTab, useStore, useStoreApi } from "@/store/store";
+import { getActiveVariables, useStore, useStoreApi } from "@/store/store";
 import {
   braceToken,
   braceTokenKeyRange,
@@ -14,8 +13,6 @@ import {
 } from "@/utils/resolution";
 import { useMemo } from "react";
 
-const NO_VARIABLES: Variable[] = [];
-
 export function useEditorActions(): EditorAction[] {
   const t = useTranslation();
   const store = useStoreApi();
@@ -24,10 +21,7 @@ export function useEditorActions(): EditorAction[] {
 
   return useMemo(() => {
     const inlineVariables = (text: string) =>
-      inlineReferences(
-        text,
-        getActiveTab(store.getState())?.variables ?? NO_VARIABLES,
-      );
+      inlineReferences(text, getActiveVariables(store.getState()));
 
     return [
       {

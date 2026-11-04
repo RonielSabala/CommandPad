@@ -6,6 +6,7 @@ import {
   CloudProvider,
   ExportFormat,
   PanelSide,
+  RevealTone,
   SyncDestination,
   Theme,
 } from "@/common/enums";
@@ -61,6 +62,7 @@ export function createInitialState(): StoreData {
     pendingFocusBlockId: null,
     pendingRevealBlockId: null,
     revealedBlockId: null,
+    blockRevealTone: RevealTone.UNRESOLVED,
     pendingRevealVariable: null,
     revealedVariable: null,
     pendingFocusVariableId: null,

@@ -2,6 +2,7 @@ import { MIDDLE_DOT, VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
+  EmbeddedRunbookStatus,
   NoteFormat,
   NoteStyle,
   PanelId,
@@ -9,6 +10,7 @@ import {
   SaveOutcome,
   SortDirection,
   UnresolvedCause,
+  VariableEntryKind,
   VaultError,
   VaultField,
   VaultPrompt,
@@ -35,6 +37,8 @@ export const en: Messages = {
     noMatches: "No matches.",
     untitledTab: "Untitled",
     untitledRunbook: "Untitled runbook",
+    showDescription: "Show description",
+    hideDescription: "Hide description",
   },
   header: {
     reloadTitle: "Reload CommandPad",
@@ -125,6 +129,12 @@ export const en: Messages = {
     mask: (count) => (count === 1 ? "Mask value" : "Mask values"),
     enumLabel: "Enum",
     newEnumTitle: "New enum variable",
+    variableInfo:
+      "Holds a value you write once and reference anywhere as {KEY}, like a host, a path or a token. Mask it to hide secrets on screen.",
+    enumInfo:
+      "A variable whose value is picked from a fixed list of choices, like an environment or a region. References see the selected choice.",
+    sectionInfo:
+      "A named, collapsible group for the variables below it, to tuck away the ones you rarely touch. Only the variables editor shows sections.",
     optionPlaceholder: "choose an option",
     noOptions: "No options yet",
     searchOptionsPlaceholder: "Search options…",
@@ -152,7 +162,9 @@ export const en: Messages = {
       count === 1 ? "1 variable selected" : `${count} variables selected`,
     dragResizeSplit: `Drag to resize key and value ${MIDDLE_DOT} double-click to even out`,
     unusedTitle: (key) => `${key} (unused)`,
-    newSection: "New section",
+    variableTitle: "Variable",
+    enumTitle: "Enumerated variable",
+    sectionTitle: "Variable section",
     newRowLabel: "NEW",
     variableLabel: "Variable",
     sectionLabel: "Section",
@@ -160,6 +172,14 @@ export const en: Messages = {
       count === 1 ? "Move to a new section" : "Move variables to a new section",
     sectionPlaceholder: "Section name",
     sectionActions: "Section actions",
+    selectRow: {
+      [VariableEntryKind.VARIABLE]: "Select variable",
+      [VariableEntryKind.SECTION]: "Select section",
+    },
+    deselectRow: {
+      [VariableEntryKind.VARIABLE]: "Deselect variable",
+      [VariableEntryKind.SECTION]: "Deselect section",
+    },
     duplicateSection: (count) =>
       count === 1 ? "Duplicate section" : "Duplicate sections",
     removeSection: (count) =>
@@ -214,9 +234,24 @@ export const en: Messages = {
       [BlockType.DIVIDER]: "Divider",
     },
     typeTitle: (label) => `${label} block`,
+    typeInfo: {
+      [BlockType.COMMAND]:
+        "A command to run. Its {KEY} references resolve against your variables, so copying it gives you the finished command.",
+      [BlockType.NOTE]:
+        "Free text with markdown: explain a step, leave a warning or link to more information.",
+      [BlockType.IMAGE]:
+        "A picture, attached or linked, like a diagram or a screenshot of the expected output.",
+      [BlockType.RUNBOOK]:
+        "Embeds another runbook, read-only, from your library or the cloud. Override its variables without touching the original.",
+      [BlockType.DIVIDER]:
+        "A horizontal line that splits the runbook into parts.",
+    },
     actions: "Block actions",
     insertAbove: "Insert block above",
     insertBelow: "Insert block below",
+    select: "Select block",
+    deselect: "Deselect block",
+    copyNote: "Copy note",
     duplicate: (count) =>
       count === 1 ? "Duplicate block" : "Duplicate blocks",
     delete: (count) => (count === 1 ? "Delete block" : "Delete blocks"),
@@ -225,12 +260,129 @@ export const en: Messages = {
     emptyTitle: "No blocks yet.",
     emptyHint: "Add a command or note below.",
   },
+  info: {
+    action: "Info",
+    blockTitle: (type) => `${type} block info`,
+    variableTitle: "Variable info",
+    enumTitle: "Enum info",
+    sectionTitle: "Section info",
+    position: (index, total) => `${index} of ${total}`,
+    usedBy: (blocks, variables) =>
+      [
+        blocks > 0 && `${blocks} ${blocks === 1 ? "block" : "blocks"}`,
+        variables > 0 &&
+          `${variables} ${variables === 1 ? "variable" : "variables"}`,
+      ]
+        .filter(Boolean)
+        .join(", "),
+    unused: "Unused",
+    variablesIn: (variables) => (variables === 1 ? "Variable" : "Variables"),
+    variableLink: (number, key) => `Variable ${number} ${MIDDLE_DOT} ${key}`,
+    undefinedKey: "No variable defines this key",
+    seeMore: "(see more)",
+    seeLess: "(see less)",
+    yes: "Yes",
+    no: "No",
+    readingTime: (minutes) => `${minutes} min`,
+    attached: "Attached",
+    linked: "Linked",
+    library: "Library",
+    visibleValue: "Visible",
+    maskedValue: "Masked",
+    embedStatus: {
+      [EmbeddedRunbookStatus.ERROR]: "Couldn't load",
+      [EmbeddedRunbookStatus.MISSING]: "Not found",
+      [EmbeddedRunbookStatus.SIGNED_OUT]: "Signed out",
+      [EmbeddedRunbookStatus.LOADING]: "Loading",
+      [EmbeddedRunbookStatus.READY]: "Loaded",
+    },
+    embedNoSource: "No runbook chosen",
+    embedCircular: "Embeds itself",
+    embedTooDeep: "Nested too deeply",
+    embedLocked: "Locked",
+    sections: {
+      overview: "Overview",
+      file: "File",
+      reading: "Reading",
+      size: "Size",
+      variables: "Variables",
+      text: "Text",
+      content: "Content",
+      dimensions: "Dimensions",
+      details: "Details",
+      overrides: "Overrides",
+      value: "Value format",
+      references: "Relations",
+      options: "Options",
+      breakdown: "Contents",
+      status: "Problems",
+    },
+    columns: {
+      editor: "Editor",
+      preview: "Preview",
+    },
+    rows: {
+      visibility: "Visibility",
+      valueReferences: "Uses",
+      sectionVariables: "Variables",
+      language: "Highlighting",
+      references: "Variables referenced",
+      nestedReferences: "All variables needed",
+      secretsUsed: "Secrets used",
+      unresolved: "Unresolved references",
+      style: "Style",
+      lines: "Lines",
+      paragraphs: "Paragraphs",
+      words: "Words",
+      characters: "Characters",
+      nonSpaceCharacters: "Characters without spaces",
+      links: "Links",
+      tables: "Tables",
+      listItems: "List items",
+      readingTime: "Reading time",
+      source: "Source",
+      format: "Format",
+      size: "Size",
+      resolution: "Resolution",
+      aspectRatio: "Aspect ratio",
+      alt: "Alt text",
+      link: "Link",
+      runbook: "Runbook",
+      cloudPath: "Cloud path",
+      status: "Status",
+      blocks: "Blocks",
+      variables: "Variables",
+      nestedRunbooks: "Embedded runbooks",
+      overrides: "Overridden variables",
+      outputSize: "Output size (own values)",
+      overriddenOutputSize: "Output size (overridden)",
+      sizeDifference: "Difference",
+      blocksInSection: "Blocks until the next divider",
+      key: "Key",
+      valueSize: "Written size",
+      resolvedSize: "Resolved size",
+      blanks: "Blanks to fill",
+      usedBy: "Used by",
+      options: "Count",
+      selected: "Selected",
+      longestOption: "Max length",
+      optionsSize: "Total size",
+      optionsWithReferences: "With references",
+      name: "Name",
+      enums: "Enums",
+      secrets: "Secrets",
+      unusedVariables: "Unused",
+      emptyOrUnresolved: "Empty or unresolved",
+      valuesSize: "Total size",
+      collapsed: "Folded",
+    },
+  },
   runbookBlock: {
     changeSource: "Where the runbook lives",
     labelPlaceholder: "Runbook label",
     pathPlaceholder: "folder/runbook.json",
     parentFolder: "Back to the previous folder",
-    unresolvedLabel: "No runbook in your library has this label.",
+    unresolvedLabel: `No runbook in your library is labeled ${MessageSlot.LABEL}.`,
     emptyLabel: "Type the label of a runbook in your library.",
     emptyPath: "Type the path of a runbook in the cloud.",
     choiceStats: (size, blocks, variables) =>
@@ -965,6 +1117,10 @@ If something goes wrong, undo it in this order:
         "If no tabs are open and you add a block or a variable, a new untitled tab is created automatically.",
       labelDemo:
         "A tab takes its name from the first note block of its runbook. Watch it live below: the note belongs to the active tab, and editing it renames the tab as you type. Try it all here: add a tab with the **+**, drag them around, switch between them, close one, and open the source file to see a tab's runbook as JSON.",
+      copyBlocks:
+        "To copy blocks into another tab, select them and drag any selected block's handle onto that tab in the tabs bar. Referenced variables travel with the blocks; if the target tab already defines one of them with a different value, the copy is added under a new name and the copied blocks are rewritten to reference it, so neither tab's values are touched.",
+      dragToTabDelay:
+        "While dragging blocks over the tabs bar, hover a tab for a moment to switch to it, then drop.",
       unresolvedMarker: (create, edit) =>
         `When a tab's close button is a solid red dot, that runbook has unresolved parts, so a runbook that isn't ready to run stands out without opening it. Point at the dot and it turns back into the close button, with a summary of what doesn't resolve: how many problems there are and how many blocks they reach, each problem listed once under its cause, followed by the blocks it breaks. Click a block to jump straight to it, use the arrow to open the variable a problem comes from, or **${create}** to add a variable that doesn't exist yet. On the open tab, an empty value or an unfilled placeholder also offers **${edit}**. Both open the variable's editor right in the summary, ready to type the value without leaving the tab. The third tab above wears one: open its variables and give \`HOST\` a value, and the dot goes as soon as every reference resolves.`,
     },
@@ -1368,6 +1524,8 @@ If something goes wrong, undo it in this order:
     blocks: {
       intro: (blockActionsLabel) =>
         `Blocks are the main content of a runbook. Hover over any block to reveal its controls: grab the handle on the left to drag it into a new spot, or open the **${blockActionsLabel}** menu on the right to insert a new block above or below it, duplicate it, or delete it. Every block has a minimum width that keeps it from shrinking into something unreadable.`,
+      info: (infoLabel) =>
+        `Pick **${infoLabel}** in that menu to see what a block holds, worked out the moment you ask. A value that is zero, empty or can't be worked out right now shows a dash, except the counts of problems, where 0 is the good news. Click a count of references to list each block or variable behind it, then click a number to jump there. Click anywhere else or press **Escape** to close it.`,
     },
     commandBlock: {
       intro:
@@ -1388,6 +1546,8 @@ If something goes wrong, undo it in this order:
     noteBlock: {
       intro:
         "It's a free-form text block. Notes grow wider and taller as you type.",
+      copy: (copyNoteLabel) =>
+        `To grab a note's text as written open its block actions menu and pick **${copyNoteLabel}**.`,
       styles: (heading, subheading, body) =>
         `Three text styles are selectable on hover: **${heading}** (large, bold), **${subheading}** (medium, accented), and **${body}** (the default prose).`,
       markdown: "Notes support markdown formatting:",
@@ -1459,14 +1619,13 @@ If something goes wrong, undo it in this order:
     multiSelect: {
       intro:
         "Hold `Shift` and click blocks to build a selection. You can also hold `Shift` and drag the mouse across blocks to lasso-select them. Lassoing already-selected blocks deselects them.",
+      menuAction: (selectLabel) =>
+        `Without the keyboard, pick **${selectLabel}** in a block's actions menu to add it to the selection, and pick it again to drop it.`,
       actions: `* **Drag** any selected block's handle to move all selected blocks together, preserving relative order.
 * **Duplicate**: \`Ctrl+D\` duplicates the entire group, inserted after the last selected block.
-* **Delete**: \`Del\` deletes the entire group.
-* **Copy to another tab**: drag any selected block's handle onto a tab in the tabs bar to copy the whole selection into that tab. Referenced variables travel with the blocks; if the target tab already defines one of them with a different value, the copy is added under a new name and the copied blocks are rewritten to reference it, so neither tab's values are touched.`,
+* **Delete**: \`Del\` deletes the entire group.`,
       clear:
         "Press `Escape` or click outside block controls to clear the selection.",
-      dragToTabDelay:
-        "While dragging blocks over the tabs bar, hover a tab for a moment to switch to it, then drop.",
     },
     readMode: {
       intro:

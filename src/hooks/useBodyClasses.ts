@@ -1,6 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { Cursor } from "@/common/constants/dom";
 import { AppMode, Theme } from "@/common/enums";
+import { useLanguage } from "@/i18n";
 import { useStore } from "@/store/store";
 import { useEffect, useLayoutEffect } from "react";
 
@@ -19,8 +20,7 @@ export function useThemeClass(): void {
 }
 
 export function useDocumentLanguage(): void {
-  const language = useStore((state) => state.language);
-
+  const language = useLanguage();
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);

@@ -1,13 +1,22 @@
 import { RunbookBlockConfig } from "@/common/config";
 import type { EmbeddedRunbookStatus } from "@/common/enums";
 import type { RunbookBlock, RunbookContent, Variable } from "@/common/types";
-import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { hasEncryptedSecrets } from "@/services/vault";
-import { tabContent, useStore } from "@/store/store";
-import { resolveEmbedSource, type EmbedSource } from "@/utils/embeddedRunbook";
+import {
+  EMPTY_VARIABLES,
+  getActiveRunbookId,
+  tabContent,
+  useStore,
+} from "@/store/store";
+import {
+  localSourceKey,
+  resolveEmbedSource,
+  type EmbedSource,
+} from "@/utils/embeddedRunbook";
 import {
   applyOverrides,
   getOverriddenVariableMap,
+  getTabVariableMap,
   overriddenSecretKeys,
   type OverrideHost,
   type VariableMap,
@@ -22,7 +31,7 @@ export interface EmbeddedRunbookState {
   content: RunbookContent | null;
   variables: Variable[];
   variableMap: VariableMap;
-  secretKeys: Set<string>;
+  secretKeys: ReadonlySet<string>;
   locked: boolean;
   circular: boolean;
   tooDeep: boolean;
@@ -30,7 +39,7 @@ export interface EmbeddedRunbookState {
   nestedTrail: readonly string[];
 }
 
-const NO_VARIABLES: Variable[] = [];
+const NO_TRAIL: readonly string[] = [];
 
 export function useEmbeddedRunbook(
   block: RunbookBlock,
@@ -73,11 +82,11 @@ export function useEmbeddedRunbook(
   );
   const variables = useMemo(
     () =>
-      content ? applyOverrides(content.variables, overrides) : NO_VARIABLES,
+      content ? applyOverrides(content.variables, overrides) : EMPTY_VARIABLES,
     [content, overrides],
   );
 
-  const ownVariables = content?.variables ?? NO_VARIABLES;
+  const ownVariables = content?.variables ?? EMPTY_VARIABLES;
   const embeddedMap = overrides
     ? getOverriddenVariableMap(ownVariables, overrides, variableMap)
     : getTabVariableMap(ownVariables);
@@ -112,4 +121,24 @@ export function useEmbeddedRunbook(
     refreshing: !openTab && !!entry?.stale,
     nestedTrail,
   };
+}
+
+/** What a runbook block in the active tab embeds. */
+export function useTabEmbed(
+  block: RunbookBlock,
+  variableMap: VariableMap,
+  secretKeys: ReadonlySet<string>,
+): { host: OverrideHost; embed: EmbeddedRunbookState } {
+  const hostRunbookId = useStore(getActiveRunbookId);
+
+  const host = useMemo(
+    () => ({ variableMap, secretKeys }),
+    [variableMap, secretKeys],
+  );
+  const trail = useMemo(
+    () => (hostRunbookId ? [localSourceKey(hostRunbookId)] : NO_TRAIL),
+    [hostRunbookId],
+  );
+
+  return { host, embed: useEmbeddedRunbook(block, host, trail) };
 }

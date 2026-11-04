@@ -37,11 +37,11 @@ import {
   TrashIcon,
 } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
-import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import { EMPTY_VARIABLES, getActiveVariables, useStore } from "@/store/store";
 import {
-  getSecretKeys,
+  getTabSecretKeys,
+  getTabVariableMap,
   getVariableKey,
   maskedText,
   resolveOptionValue,
@@ -73,12 +73,11 @@ const OptionVariableContext = createContext<OptionVariable>({
   options: [],
 });
 
-const NO_VARIABLES: Variable[] = [];
 const NO_OPTIONS: string[] = [];
 
 const tabScopes = new WeakMap<
   readonly Variable[],
-  { variableMaps: VariableMap[]; secretKeys: Set<string> }
+  { variableMaps: VariableMap[]; secretKeys: ReadonlySet<string> }
 >();
 
 /** The active tab's option scope. */
@@ -87,7 +86,7 @@ function tabOptionScope(variables: Variable[]) {
   if (!scope) {
     scope = {
       variableMaps: [getTabVariableMap(variables)],
-      secretKeys: getSecretKeys(variables),
+      secretKeys: getTabSecretKeys(variables),
     };
 
     tabScopes.set(variables, scope);
@@ -101,9 +100,7 @@ function OptionHint({ option }: { option: string }) {
   const { variableKey } = useContext(OptionVariableContext);
   const embedScope = useContext(OptionScopeContext);
   const variables = useStore((state) =>
-    embedScope
-      ? NO_VARIABLES
-      : (getActiveTab(state)?.variables ?? NO_VARIABLES),
+    embedScope ? EMPTY_VARIABLES : getActiveVariables(state),
   );
 
   const scope = embedScope ?? tabOptionScope(variables);

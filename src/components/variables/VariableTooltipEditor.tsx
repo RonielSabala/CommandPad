@@ -1,17 +1,12 @@
 import { CodeModelScope } from "@/common/editorConfig";
-import type { Block, Variable } from "@/common/types";
-import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { buildVariableCompletions } from "@/monaco/completions";
-import { getActiveTab, useStore } from "@/store/store";
-import { getSecretKeys } from "@/utils/resolution";
+import { getActiveBlocks, getActiveVariables, useStore } from "@/store/store";
+import { getTabSecretKeys, getTabVariableMap } from "@/utils/resolution";
 import { useMemo, useRef, type ReactNode } from "react";
 
 import { VariableEditor } from "./VariableEditor";
 import "./VariableTooltipEditor.css";
-
-const EMPTY_BLOCKS: Block[] = [];
-const EMPTY_VARIABLES: Variable[] = [];
 
 interface Props {
   variableId: string;
@@ -19,12 +14,8 @@ interface Props {
 }
 
 export function VariableTooltipEditor({ variableId, header }: Props) {
-  const blocks = useStore(
-    (state) => getActiveTab(state)?.blocks ?? EMPTY_BLOCKS,
-  );
-  const variables = useStore(
-    (state) => getActiveTab(state)?.variables ?? EMPTY_VARIABLES,
-  );
+  const blocks = useStore(getActiveBlocks);
+  const variables = useStore(getActiveVariables);
   const usedKeys = useUsedVariableKeys(blocks, variables);
   const variable = variables.find((entry) => entry.id === variableId);
   const keyRef = useRef<HTMLInputElement>(null);
@@ -33,7 +24,7 @@ export function VariableTooltipEditor({ variableId, header }: Props) {
     () =>
       buildVariableCompletions(
         getTabVariableMap(variables),
-        getSecretKeys(variables),
+        getTabSecretKeys(variables),
         usedKeys,
       ),
     [variables, usedKeys],

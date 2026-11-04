@@ -2,7 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { AriaRole } from "@/common/constants/dom";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { classNames } from "@/utils/string";
-import { useRef, useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode, type RefObject } from "react";
 import { ThreeDots, ThreeDotsVertical } from "react-bootstrap-icons";
 
 import {
@@ -20,6 +20,8 @@ interface Props {
   horizontal?: boolean;
   /** Opens beside the trigger's closest match instead of below the trigger. */
   besideSelector?: string;
+  /** Lets the owner anchor something else on the trigger. */
+  triggerRef?: RefObject<HTMLButtonElement | null>;
 }
 
 export function ActionsMenu({
@@ -30,8 +32,10 @@ export function ActionsMenu({
   triggerClassName = classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON),
   horizontal = false,
   besideSelector,
+  triggerRef: ownerTriggerRef,
 }: Props) {
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const ownTriggerRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = ownerTriggerRef ?? ownTriggerRef;
   const [anchor, setAnchor] = useState<ContextMenuAnchor | null>(null);
 
   const toggle = () => {
@@ -58,7 +62,7 @@ export function ActionsMenu({
 
   return (
     <div
-      className={classNames(className, anchor && "menu-open")}
+      className={classNames(className, anchor && CssClass.MENU_OPEN)}
       onMouseDown={(event) => event.preventDefault()}
     >
       <button

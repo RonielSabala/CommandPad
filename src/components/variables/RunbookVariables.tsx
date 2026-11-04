@@ -7,8 +7,7 @@ import {
   VariableEntryKind,
   VariableKind,
 } from "@/common/enums";
-import type { Block, Variable, VariableSection } from "@/common/types";
-import { AddRow } from "@/components/common/AddRow";
+import { AddRow } from "@/components/common/addRow/AddRow";
 import { EmptyState } from "@/components/common/EmptyState";
 import { EnumIcon, SectionIcon, VariableIcon } from "@/components/icons";
 import { Minimap } from "@/components/workspace/minimap/Minimap";
@@ -18,24 +17,25 @@ import { useLassoSelection } from "@/hooks/useLassoSelection";
 import { useRowReveal } from "@/hooks/useRowReveal";
 import { useScrollingClass } from "@/hooks/useScrollingClass";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
-import { getTabVariableMap } from "@/hooks/useTabUnresolved";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
 import { buildVariableCompletions } from "@/monaco/completions";
-import { getActiveTab, useStore } from "@/store/store";
+import {
+  EMPTY_BLOCKS,
+  EMPTY_SECTIONS,
+  EMPTY_VARIABLES,
+  getActiveTab,
+  useStore,
+} from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
-import { getSecretKeys } from "@/utils/resolution";
+import { getTabSecretKeys, getTabVariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import "./RunbookVariables.css";
 import { VariableRows } from "./VariableRows";
 import "./VariablesList.css";
-
-const EMPTY_BLOCKS: Block[] = [];
-const EMPTY_VARIABLES: Variable[] = [];
-const EMPTY_SECTIONS: VariableSection[] = [];
 
 function AddVariableRow() {
   const t = useTranslation();
@@ -50,21 +50,24 @@ function AddVariableRow() {
           key: VariableKind.TEXT,
           icon: VariableIcon,
           label: t.variables.variableLabel,
-          title: t.variables.newTitle,
+          title: t.variables.variableTitle,
+          info: t.variables.variableInfo,
           onAdd: () => void addVariable(),
         },
         {
           key: VariableKind.ENUM,
           icon: EnumIcon,
           label: t.variables.enumLabel,
-          title: t.variables.newEnumTitle,
+          title: t.variables.enumTitle,
+          info: t.variables.enumInfo,
           onAdd: () => void addVariable(VariableKind.ENUM),
         },
         {
           key: VariableEntryKind.SECTION,
           icon: SectionIcon,
           label: t.variables.sectionLabel,
-          title: t.variables.newSection,
+          title: t.variables.sectionTitle,
+          info: t.variables.sectionInfo,
           onAdd: addVariableSection,
         },
       ]}
@@ -135,7 +138,7 @@ export function RunbookVariables() {
   }, [pendingFocusSectionId]);
 
   const variableMap = getTabVariableMap(variables);
-  const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
+  const secretKeys = getTabSecretKeys(variables);
   const usedKeys = useUsedVariableKeys(blocks, variables);
   const completions = useMemo(
     () => buildVariableCompletions(variableMap, secretKeys, usedKeys),

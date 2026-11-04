@@ -23,3 +23,8 @@ export function withoutKey<V>(
   delete next[key];
   return next;
 }
+
+/** Each item's 1-based position in `list`. */
+export function positionsIn<T>(list: readonly T[]): Map<T, number> {
+  return new Map(list.map((item, index) => [item, index + 1]));
+}

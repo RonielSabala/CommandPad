@@ -223,6 +223,7 @@ export type DragGroup = (typeof DragGroup)[keyof typeof DragGroup];
 
 export const HttpMethod = {
   GET: "GET",
+  HEAD: "HEAD",
   POST: "POST",
   PUT: "PUT",
   PATCH: "PATCH",
@@ -368,3 +369,11 @@ export const DialogTone = {
   INFO: "info",
 } as const;
 export type DialogTone = (typeof DialogTone)[keyof typeof DialogTone];
+
+/** The tint a revealed row flashes in. */
+export const RevealTone = {
+  NEUTRAL: "neutral",
+  RESOLVED: "resolved",
+  UNRESOLVED: "unresolved",
+} as const;
+export type RevealTone = (typeof RevealTone)[keyof typeof RevealTone];

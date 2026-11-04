@@ -26,7 +26,10 @@ import {
 import { createPortal, flushSync } from "react-dom";
 
 import "./Tooltip.css";
-import { publishRichTooltipSlot } from "./richTooltip";
+import {
+  publishRichTooltipSlot,
+  subscribeRichTooltipRequests,
+} from "./richTooltip";
 import { tooltipTarget } from "./tooltip";
 import { placeTooltip, type TooltipPlacement } from "./tooltipPlacement";
 
@@ -122,23 +125,29 @@ export function TooltipLayer() {
     }
   }, [clearTimer, insideBubble]);
 
-  const activate = useCallback((element: HTMLElement) => {
-    const next: ActiveTooltip = {
-      element,
-      text: element.getAttribute(DataAttr.TOOLTIP) ?? "",
-      variant: element.getAttribute(
-        DataAttr.TOOLTIP_VARIANT,
-      ) as TooltipVariant | null,
-      richId: element.getAttribute(DataAttr.TOOLTIP_RICH),
-    };
+  const activate = useCallback(
+    (
+      element: HTMLElement,
+      richId = element.getAttribute(DataAttr.TOOLTIP_RICH),
+    ) => {
+      const next: ActiveTooltip = {
+        element,
+        text: element.getAttribute(DataAttr.TOOLTIP) ?? "",
+        variant: element.getAttribute(
+          DataAttr.TOOLTIP_VARIANT,
+        ) as TooltipVariant | null,
+        richId,
+      };
 
-    activeRef.current = next;
-    lastActiveRef.current = next;
-    pinnedRef.current = false;
+      activeRef.current = next;
+      lastActiveRef.current = next;
+      pinnedRef.current = false;
 
-    setActive(next);
-    setPinned(false);
-  }, []);
+      setActive(next);
+      setPinned(false);
+    },
+    [],
+  );
 
   /** The content is being edited. */
   const pin = useCallback(() => {
@@ -239,6 +248,20 @@ export function TooltipLayer() {
     warmUntilRef.current = 0;
     dismissedAtRef.current = lastPointerDownRef.current;
   }, [hide]);
+
+  // A bubble opened from code, already pinned
+  useEffect(
+    () =>
+      subscribeRichTooltipRequests((anchor, id) => {
+        hide();
+
+        lastPlacementRef.current = null;
+        activate(anchor, id);
+
+        pin();
+      }),
+    [activate, hide, pin],
+  );
 
   useEffect(() => {
     const onPointerOver = (event: PointerEvent) => {

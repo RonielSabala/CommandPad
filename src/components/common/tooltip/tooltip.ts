@@ -1,7 +1,14 @@
+import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { TooltipVariant } from "@/common/enums";
+import { classNames } from "@/utils/string";
 
 const TOOLTIP_SELECTOR = `[${DataAttr.TOOLTIP}], [${DataAttr.TOOLTIP_RICH}]`;
+
+export const PLAIN_TOOLTIP_LINK = classNames(
+  CssClass.TOOLTIP_LINK,
+  "tooltip-link-plain",
+);
 
 /** The props that give an element a tooltip. */
 export function tooltip(

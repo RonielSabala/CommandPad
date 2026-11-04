@@ -36,7 +36,7 @@ export function createInteractionSlice(kit: StoreKit): InteractionActions {
   const { set, get, saveTabs } = kit;
 
   return {
-    revealBlock: (tabId, blockId) => {
+    revealBlock: (tabId, blockId, tone) => {
       get().switchTab(tabId);
 
       const view = getRunbookView(get());
@@ -44,7 +44,7 @@ export function createInteractionSlice(kit: StoreKit): InteractionActions {
         get().toggleRunbookView(view);
       }
 
-      set({ pendingRevealBlockId: blockId });
+      set({ pendingRevealBlockId: blockId, blockRevealTone: tone });
     },
 
     finishBlockReveal: () =>
@@ -59,7 +59,7 @@ export function createInteractionSlice(kit: StoreKit): InteractionActions {
 
     clearBlockReveal: () => set({ revealedBlockId: null }),
 
-    revealVariable: (variableId, resolved) => {
+    revealVariable: (variableId, tone) => {
       if (getRunbookView(get()) !== RunbookView.VARIABLES) {
         get().toggleRunbookView(RunbookView.VARIABLES);
       }
@@ -81,14 +81,14 @@ export function createInteractionSlice(kit: StoreKit): InteractionActions {
 
         return {
           ...unfold,
-          pendingRevealVariable: { id: variableId, resolved },
+          pendingRevealVariable: { id: variableId, tone },
         };
       });
 
       get().saveState();
     },
 
-    revealEmbeddedVariable: async (source, key, resolved) => {
+    revealEmbeddedVariable: async (source, key, tone) => {
       const before = get().activeTabId;
       await get().openEmbeddedRunbook(source);
 
@@ -102,7 +102,7 @@ export function createInteractionSlice(kit: StoreKit): InteractionActions {
       );
 
       if (variable) {
-        state.revealVariable(variable.id, resolved);
+        state.revealVariable(variable.id, tone);
       }
     },
 

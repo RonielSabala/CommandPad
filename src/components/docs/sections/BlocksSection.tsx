@@ -5,8 +5,7 @@ import {
 } from "@/common/editorConfig";
 import { NoteStyle } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
-import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useLanguage, useTranslation } from "@/i18n";
 import { formatFileSize } from "@/utils/format";
 import { joinLines } from "@/utils/string";
 import {
@@ -73,6 +72,7 @@ export function BlocksDocs() {
   return (
     <>
       <Prose text={t.docs.blocks.intro(t.blocks.actions)} />
+      <Prose text={t.docs.blocks.info(t.info.action)} />
     </>
   );
 }
@@ -85,6 +85,7 @@ export function CommandBlockDocs() {
       <Prose text={t.docs.commandBlock.intro} />
       <Prose text={t.docs.commandBlock.parts} />
       <DemoWorkspace
+        selectable={false}
         tabs={[{ blocks: [demoCommand("ls -ltr ~/Documents/reports")] }]}
       >
         <BlocksList />
@@ -93,7 +94,10 @@ export function CommandBlockDocs() {
       <Prose text={t.docs.commandBlock.editorFeatures} />
       <Prose text={t.docs.commandBlock.language(COMMAND_LANGUAGE_NAMES)} />
       <Prose text={t.docs.commandBlock.longCommands(t.command.showMoreLines)} />
-      <DemoWorkspace tabs={[{ blocks: [demoCommand(LONG_COMMAND)] }]}>
+      <DemoWorkspace
+        selectable={false}
+        tabs={[{ blocks: [demoCommand(LONG_COMMAND)] }]}
+      >
         <BlocksList />
       </DemoWorkspace>
       <Prose text={t.docs.commandBlock.variablesTeaser} />
@@ -119,23 +123,33 @@ export function NoteBlockDocs() {
       <Prose text={t.docs.noteBlock.escapes} />
       <Prose text={t.docs.noteBlock.links} />
 
-      <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.noteSample)] }]}>
+      <DemoWorkspace
+        selectable={false}
+        tabs={[{ blocks: [demoNote(t.docs.demo.noteSample)] }]}
+      >
         <BlocksList />
       </DemoWorkspace>
 
       <Prose text={t.docs.noteBlock.noNesting} />
       <Prose text={t.docs.noteBlock.wrapKeys} />
+      <Prose text={t.docs.noteBlock.copy(t.blocks.copyNote)} />
       <Prose text={t.docs.noteBlock.spellcheck(t.contextMenu.spellcheck)} />
 
       <Prose text={t.docs.noteBlock.tables} />
 
-      <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.tableSample)] }]}>
+      <DemoWorkspace
+        selectable={false}
+        tabs={[{ blocks: [demoNote(t.docs.demo.tableSample)] }]}
+      >
         <BlocksList />
       </DemoWorkspace>
 
       <Prose text={t.docs.noteBlock.lists} />
 
-      <DemoWorkspace tabs={[{ blocks: [demoNote(t.docs.demo.listSample)] }]}>
+      <DemoWorkspace
+        selectable={false}
+        tabs={[{ blocks: [demoNote(t.docs.demo.listSample)] }]}
+      >
         <BlocksList />
       </DemoWorkspace>
     </>
@@ -144,7 +158,7 @@ export function NoteBlockDocs() {
 
 export function ImageBlockDocs() {
   const t = useTranslation();
-  const language = useStore((state) => state.language);
+  const language = useLanguage();
   const limit = formatFileSize(ImageBlockConfig.MAX_BYTES, language);
 
   return (
@@ -160,6 +174,7 @@ export function ImageBlockDocs() {
         )}
       />
       <DemoWorkspace
+        selectable={false}
         tabs={[
           {
             blocks: [
@@ -186,6 +201,7 @@ export function DividerBlockDocs() {
     <>
       <Prose text={t.docs.dividerBlock.intro} />
       <DemoWorkspace
+        selectable={false}
         tabs={[
           { blocks: [demoNote(t.docs.dividerBlock.demoNote), demoDivider()] },
         ]}

@@ -6,6 +6,7 @@ import { findUnresolvedOffset, resolveCommandSegments } from "./command";
 import { sourceKey } from "./params";
 import { maskedText } from "./segments";
 import { hasUnresolvedSpans, spansText } from "./spans";
+import { braceToken } from "./token";
 import type { VariableMap } from "./types";
 
 const blockResults = new WeakMap<
@@ -163,5 +164,16 @@ export function unresolvedBlockParts(
 ): UnresolvedPart[] {
   return getBlockCommandTexts(block).flatMap((command) =>
     unresolvedParts(command, variableMap, secretKeys),
+  );
+}
+
+export function unresolvedVariableParts(
+  key: string,
+  variableMap: VariableMap,
+  secretKeys: ReadonlySet<string>,
+): UnresolvedPart[] {
+  return unresolvedParts(braceToken(key), variableMap, secretKeys).filter(
+    (part) =>
+      part.cause !== UnresolvedCause.BLANK || sourceKey(part.source) !== key,
   );
 }

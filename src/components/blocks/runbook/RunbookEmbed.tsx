@@ -2,11 +2,12 @@ import { CssClass } from "@/common/constants/css";
 import { AppMode, BlockType, EmbeddedRunbookStatus } from "@/common/enums";
 import type { Block, BlockOfType, RunbookBlock } from "@/common/types";
 import "@/components/blocks/BlocksList.css";
+import "@/components/blocks/note/NoteText.css";
 import { Spinner } from "@/components/common/Spinner";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { RunbookIcon } from "@/components/icons";
 import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
-import { useTranslation } from "@/i18n";
+import { MessageSlot, splitAtSlot, useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { embedScopeId } from "@/utils/embeddedRunbook";
 import { isFilledImage } from "@/utils/image";
@@ -152,7 +153,20 @@ export function EmbedBody({
   if (!source) {
     const label = block.label.trim();
     if (!block.cloud && label) {
-      return <EmbedNotice error>{t.runbookBlock.unresolvedLabel}</EmbedNotice>;
+      const [before, after] = splitAtSlot(
+        t.runbookBlock.unresolvedLabel,
+        MessageSlot.LABEL,
+      );
+
+      return (
+        <EmbedNotice error>
+          <span className={CssClass.NOTE_CODE_NEUTRAL}>
+            {before}
+            <code className={CssClass.NOTE_CODE}>{label}</code>
+            {after}
+          </span>
+        </EmbedNotice>
+      );
     }
 
     return (

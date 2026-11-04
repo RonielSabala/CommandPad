@@ -1,22 +1,28 @@
 import { TabUnresolvedConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { ButtonType } from "@/common/constants/dom";
-import { AppMode, BlockType, UnresolvedCause } from "@/common/enums";
+import {
+  AppMode,
+  BlockType,
+  RevealTone,
+  UnresolvedCause,
+} from "@/common/enums";
 import type { Block, Tab } from "@/common/types";
+import { FramedSection } from "@/components/common/FramedSection";
+import { BlockLinks } from "@/components/common/tooltip/BlockLinks";
 import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
+import { PLAIN_TOOLTIP_LINK } from "@/components/common/tooltip/tooltip";
 import {
   LazyVariableTooltipEditor,
   preloadVariableTooltipEditor,
 } from "@/components/variables/lazyVariableTooltipEditor";
-import {
-  getBlockUnresolvedParts,
-  getTabVariableMap,
-} from "@/hooks/useTabUnresolved";
+import { getBlockUnresolvedParts } from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, useStore } from "@/store/store";
 import { isEmbedBlockUnresolved } from "@/utils/embeddedRunbook";
 import {
-  getSecretKeys,
+  getTabSecretKeys,
+  getTabVariableMap,
   getVariableKey,
   sourceKey,
   type UnresolvedPart,
@@ -33,11 +39,6 @@ const EDITABLE_CAUSES: ReadonlySet<UnresolvedCause> = new Set([
   UnresolvedCause.EMPTY,
   UnresolvedCause.BLANK,
 ]);
-
-const LINK_CLASS = classNames(
-  CssClass.TOOLTIP_LINK,
-  CssClass.TOOLTIP_LINK_PLAIN,
-);
 
 interface Problem {
   cause: UnresolvedCause;
@@ -64,16 +65,12 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
   const library = useStore((state) => state.runbookLibrary);
   const embeddedRunbooks = useStore((state) => state.embeddedRunbooks);
   const tabs = useStore((state) => state.tabs);
-  const revealBlock = useStore((state) => state.revealBlock);
   const switchTab = useStore((state) => state.switchTab);
   const revealVariable = useStore((state) => state.revealVariable);
   const defineVariable = useStore((state) => state.defineVariable);
 
   const variableMap = getTabVariableMap(tab.variables);
-  const secretKeys = useMemo(
-    () => getSecretKeys(tab.variables),
-    [tab.variables],
-  );
+  const secretKeys = getTabSecretKeys(tab.variables);
 
   const { groups, problemCount, blockCount } = useMemo(() => {
     const found = new Map<string, Problem>();
@@ -174,7 +171,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
   const goToVariable = (variableId: string) => {
     hide();
     switchTab(tab.id);
-    revealVariable(variableId, false);
+    revealVariable(variableId, RevealTone.UNRESOLVED);
   };
 
   const edit = (id: string, key: string) => {
@@ -192,7 +189,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
         !readMode && (
           <button
             type={ButtonType.BUTTON}
-            className={LINK_CLASS}
+            className={PLAIN_TOOLTIP_LINK}
             title={t.tabs.defineVariableTitle(key)}
             onPointerEnter={preloadVariableTooltipEditor}
             onFocus={preloadVariableTooltipEditor}
@@ -222,7 +219,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
           {isActive && EDITABLE_CAUSES.has(cause) && (
             <button
               type={ButtonType.BUTTON}
-              className={LINK_CLASS}
+              className={PLAIN_TOOLTIP_LINK}
               title={
                 readMode
                   ? t.command.editValueTitle(key)
@@ -257,7 +254,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
           header={
             <button
               type={ButtonType.BUTTON}
-              className={LINK_CLASS}
+              className={PLAIN_TOOLTIP_LINK}
               title={t.command.goToDefinitionTitle(edited.key)}
               onClick={() => goToVariable(edited.id)}
             >
@@ -271,21 +268,35 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
   }
 
   return (
-    <div className="tab-unresolved-tooltip">
-      <p className="tab-unresolved-title">
+    <div
+      className={classNames(CssClass.TOOLTIP_PANEL, "tab-unresolved-tooltip")}
+    >
+      <p className={CssClass.TOOLTIP_TITLE}>
         {t.tabs.unresolvedSummary(problemCount, blockCount)}
       </p>
 
-      <div className="tab-unresolved-list">
+      <div
+        className={classNames(
+          "tab-unresolved-list",
+          CssClass.FRAMED_SECTIONS,
+          CssClass.TOOLTIP_SCROLL,
+        )}
+      >
         {groups.map(([cause, problems]) => (
-          <section key={cause}>
-            <p className="tab-unresolved-cause">
-              {t.tabs.unresolvedCause[cause]}
-            </p>
-
+          <FramedSection
+            key={cause}
+            title={t.tabs.unresolvedCause[cause]}
+            striped
+          >
             <ul className="tab-unresolved-table">
               {problems.map((problem) => (
-                <li key={problem.label} className="tab-unresolved-row">
+                <li
+                  key={problem.label}
+                  className={classNames(
+                    "tab-unresolved-row",
+                    CssClass.FRAMED_ROW,
+                  )}
+                >
                   <div className="tab-unresolved-problem">
                     <code
                       className="tab-unresolved-label"
@@ -300,30 +311,16 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
                     {action(problem)}
                   </div>
 
-                  <div className="tab-unresolved-blocks">
-                    <span>{t.tabs.unresolvedIn(problem.blocks.length)}</span>
-                    {problem.blocks.map(({ block, number }) => (
-                      <button
-                        key={block.id}
-                        type={ButtonType.BUTTON}
-                        className={CssClass.TOOLTIP_LINK}
-                        title={t.tabs.unresolvedBlock(
-                          number,
-                          t.blocks.typeLabel[block.type],
-                        )}
-                        onClick={() => {
-                          hide();
-                          revealBlock(tab.id, block.id);
-                        }}
-                      >
-                        {number}
-                      </button>
-                    ))}
-                  </div>
+                  <BlockLinks
+                    tabId={tab.id}
+                    blocks={problem.blocks}
+                    tone={RevealTone.UNRESOLVED}
+                    onReveal={hide}
+                  />
                 </li>
               ))}
             </ul>
-          </section>
+          </FramedSection>
         ))}
       </div>
     </div>

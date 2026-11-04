@@ -5,6 +5,7 @@ import {
   LANGUAGE_LABELS,
   LANGUAGE_NAMES,
   LANGUAGE_ORDER,
+  useLanguage,
   useTranslation,
   type Language,
 } from "@/i18n";
@@ -40,7 +41,7 @@ const LANGUAGE_OPTIONS: readonly SelectOption<Language>[] = LANGUAGE_ORDER.map(
 
 export function LanguageSelect() {
   const t = useTranslation();
-  const language = useStore((state) => state.language);
+  const language = useLanguage();
   const setLanguage = useStore((state) => state.setLanguage);
 
   return (

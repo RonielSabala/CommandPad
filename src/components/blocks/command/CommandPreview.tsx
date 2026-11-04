@@ -4,6 +4,7 @@ import {
   COPY_WARNING_TIMEOUT_MS,
   LINE_BREAK,
   NON_BREAKING_SPACE,
+  PREVIEW_SECRET_MASK,
 } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { AriaRole, DataAttr } from "@/common/constants/dom";
@@ -44,8 +45,6 @@ import {
 import "./CommandPreview.css";
 import { VariableSourceTooltip } from "./VariableSourceTooltip";
 
-const SECRET_MASK = "******";
-
 /** The tooltip props for a span written by `source`. */
 type SourceProps = (source: string | undefined) => object;
 
@@ -85,7 +84,7 @@ function HighlightedLines({
 }
 
 function SecretMask() {
-  return <span className="token-secret">{SECRET_MASK}</span>;
+  return <span className="token-secret">{PREVIEW_SECRET_MASK}</span>;
 }
 
 function NestedText({
@@ -146,7 +145,7 @@ interface Props {
   clampId: string;
   text: string;
   variableMap: VariableMap;
-  secretKeys: Set<string>;
+  secretKeys: ReadonlySet<string>;
   surfaceRef: RefObject<HTMLElement | null>;
   actions?: ReactNode;
   /** Offer to jump to the variable behind a span. */

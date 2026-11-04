@@ -1,6 +1,7 @@
 import type { DocsSectionId } from "@/common/constants/docs";
 import type {
   BlockType,
+  EmbeddedRunbookStatus,
   NoteFormat,
   NoteStyle,
   PanelId,
@@ -8,6 +9,7 @@ import type {
   SaveOutcome,
   SortDirection,
   UnresolvedCause,
+  VariableEntryKind,
   VaultError,
   VaultField,
   VaultPrompt,
@@ -62,6 +64,8 @@ export interface Messages {
     noMatches: string;
     untitledTab: string;
     untitledRunbook: string;
+    showDescription: string;
+    hideDescription: string;
   };
   header: {
     reloadTitle: string;
@@ -129,6 +133,9 @@ export interface Messages {
     mask: (count: number) => string;
     enumLabel: string;
     newEnumTitle: string;
+    variableInfo: string;
+    enumInfo: string;
+    sectionInfo: string;
     optionPlaceholder: string;
     noOptions: string;
     searchOptionsPlaceholder: string;
@@ -151,13 +158,17 @@ export interface Messages {
     selected: (count: number) => string;
     dragResizeSplit: string;
     unusedTitle: (key: string) => string;
-    newSection: string;
+    variableTitle: string;
+    enumTitle: string;
+    sectionTitle: string;
     newRowLabel: string;
     variableLabel: string;
     sectionLabel: string;
     moveToNewSection: (count: number) => string;
     sectionPlaceholder: string;
     sectionActions: string;
+    selectRow: Record<VariableEntryKind, string>;
+    deselectRow: Record<VariableEntryKind, string>;
     duplicateSection: (count: number) => string;
     removeSection: (count: number) => string;
     duplicateItems: string;
@@ -193,14 +204,122 @@ export interface Messages {
     newBlockLabel: string;
     typeLabel: Record<BlockType, string>;
     typeTitle: (label: string) => string;
+    typeInfo: Record<BlockType, string>;
     actions: string;
     insertAbove: string;
     insertBelow: string;
+    select: string;
+    deselect: string;
+    copyNote: string;
     duplicate: (count: number) => string;
     delete: (count: number) => string;
     selected: (count: number) => string;
     emptyTitle: string;
     emptyHint: string;
+  };
+  info: {
+    action: string;
+    blockTitle: (type: string) => string;
+    variableTitle: string;
+    enumTitle: string;
+    sectionTitle: string;
+    position: (index: number, total: number) => string;
+    usedBy: (blocks: number, variables: number) => string;
+    unused: string;
+    variablesIn: (variables: number) => string;
+    variableLink: (number: number, key: string) => string;
+    undefinedKey: string;
+    seeMore: string;
+    seeLess: string;
+    yes: string;
+    no: string;
+    readingTime: (minutes: string) => string;
+    attached: string;
+    linked: string;
+    library: string;
+    visibleValue: string;
+    maskedValue: string;
+    embedStatus: Record<EmbeddedRunbookStatus, string>;
+    embedNoSource: string;
+    embedCircular: string;
+    embedTooDeep: string;
+    embedLocked: string;
+    sections: {
+      overview: string;
+      file: string;
+      reading: string;
+      size: string;
+      variables: string;
+      text: string;
+      content: string;
+      dimensions: string;
+      details: string;
+      overrides: string;
+      value: string;
+      references: string;
+      options: string;
+      breakdown: string;
+      status: string;
+    };
+    columns: {
+      editor: string;
+      preview: string;
+    };
+    rows: {
+      visibility: string;
+      valueReferences: string;
+      sectionVariables: string;
+      language: string;
+      references: string;
+      nestedReferences: string;
+      secretsUsed: string;
+      unresolved: string;
+      style: string;
+      lines: string;
+      paragraphs: string;
+      words: string;
+      characters: string;
+      nonSpaceCharacters: string;
+      links: string;
+      tables: string;
+      listItems: string;
+      readingTime: string;
+      source: string;
+      format: string;
+      size: string;
+      resolution: string;
+      aspectRatio: string;
+      alt: string;
+      link: string;
+      runbook: string;
+      cloudPath: string;
+      status: string;
+      blocks: string;
+      variables: string;
+      nestedRunbooks: string;
+      overrides: string;
+      outputSize: string;
+      overriddenOutputSize: string;
+      sizeDifference: string;
+      blocksInSection: string;
+      key: string;
+      valueSize: string;
+      resolvedSize: string;
+      blanks: string;
+      usedBy: string;
+      options: string;
+      selected: string;
+      longestOption: string;
+      optionsSize: string;
+      optionsWithReferences: string;
+      name: string;
+      enums: string;
+      secrets: string;
+      unusedVariables: string;
+      emptyOrUnresolved: string;
+      valuesSize: string;
+      collapsed: string;
+    };
   };
   runbookBlock: {
     changeSource: string;
@@ -556,6 +675,8 @@ export interface Messages {
       ) => string;
       autoCreate: string;
       labelDemo: string;
+      copyBlocks: string;
+      dragToTabDelay: string;
       unresolvedMarker: (create: string, edit: string) => string;
     };
     sidebar: {
@@ -773,6 +894,7 @@ export interface Messages {
     };
     blocks: {
       intro: (blockActionsLabel: string) => string;
+      info: (infoLabel: string) => string;
     };
     commandBlock: {
       intro: string;
@@ -785,6 +907,7 @@ export interface Messages {
     };
     noteBlock: {
       intro: string;
+      copy: (copyNoteLabel: string) => string;
       styles: (heading: string, subheading: string, body: string) => string;
       markdown: string;
       markdownTable: string;
@@ -827,9 +950,9 @@ export interface Messages {
     };
     multiSelect: {
       intro: string;
+      menuAction: (selectLabel: string) => string;
       actions: string;
       clear: string;
-      dragToTabDelay: string;
     };
     readMode: {
       intro: string;

@@ -14,13 +14,17 @@ import {
   resolveVaultStatus,
   unlockVault,
 } from "@/services/vault";
-import { stripJsonExtension } from "@/utils/export";
-
 import type { StoreKit } from "@/store/kit";
 import { withLibraryEntry } from "@/store/libraryState";
-import { getActiveTab, getLibraryEntry } from "@/store/selectors";
+import {
+  getActiveRunbookId,
+  getActiveTab,
+  getLibraryEntry,
+} from "@/store/selectors";
 import { tabContent } from "@/store/tabState";
 import type { VaultPassphrases } from "@/store/types";
+import { stripJsonExtension } from "@/utils/export";
+
 import type { ContentService } from "./content";
 import type { EmbedState } from "./embeds";
 import type { SyncService } from "./sync";
@@ -110,7 +114,7 @@ export function createVaultFlows(
   } = deps;
 
   /** The runbook a vault prompt acts on: whichever one is in front of you. */
-  const activeVaultScope = () => getActiveTab(get())?.runbookId ?? null;
+  const activeVaultScope = () => getActiveRunbookId(get());
 
   /** Runbooks whose vault setup was declined this session. */
   const declinedVaultSetup = new Set<string>();

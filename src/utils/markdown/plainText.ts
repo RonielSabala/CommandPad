@@ -1,35 +1,21 @@
-import { NoteNodeType } from "@/common/enums";
-import type { NoteList, NoteSegment, NoteTableCell } from "@/common/types";
+import type { NoteSegment } from "@/common/types";
 
-import { parseNoteNodes } from "./nodes";
+import { nodeRuns, parseNoteNodes } from "./nodes";
+
+const segmentsText = (segments: NoteSegment[]) =>
+  segments.map((segment) => segment.text).join("");
 
 export function noteToPlainText(text: string): string {
-  const segmentsText = (segments: NoteSegment[]) =>
-    segments.map((segment) => segment.text).join("");
+  const runs: string[] = [];
 
-  const cellText = (cell: NoteTableCell) => segmentsText(cell.segments);
-
-  const listText = (list: NoteList): string =>
-    list.items
-      .map((item) =>
-        [segmentsText(item.segments), ...item.lists.map(listText)]
-          .filter(Boolean)
-          .join(" "),
-      )
-      .join(" ");
-
-  return parseNoteNodes(text)
-    .map((node) => {
-      if (node.type === NoteNodeType.TABLE) {
-        return [node.table.head, ...node.table.rows]
-          .flatMap((row) => row.map(cellText))
-          .join(" ");
+  for (const node of parseNoteNodes(text)) {
+    for (const segments of nodeRuns(node)) {
+      const run = segmentsText(segments);
+      if (run) {
+        runs.push(run);
       }
+    }
+  }
 
-      return node.type === NoteNodeType.LIST
-        ? listText(node.list)
-        : segmentsText(node.segments);
-    })
-    .filter(Boolean)
-    .join(" ");
+  return runs.join(" ");
 }

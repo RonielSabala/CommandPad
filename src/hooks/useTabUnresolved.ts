@@ -1,5 +1,5 @@
 import { BlockType } from "@/common/enums";
-import type { Block, RunbookBlock, Tab, Variable } from "@/common/types";
+import type { Block, RunbookBlock, Tab } from "@/common/types";
 import { useStore, type StoreState } from "@/store/store";
 import {
   embeddedVariables,
@@ -7,7 +7,7 @@ import {
   type EmbedLookup,
 } from "@/utils/embeddedRunbook";
 import {
-  getVariableMap,
+  getTabVariableMap,
   hasUnresolvedBlockReferences,
   hasUnresolvedOverrides,
   unresolvedBlockParts,
@@ -17,21 +17,8 @@ import {
 } from "@/utils/resolution";
 import { useCallback, useMemo } from "react";
 
-const NO_RUNBOOK_BLOCKS: RunbookBlock[] = [];
-
-const tabMaps = new WeakMap<readonly Variable[], VariableMap>();
-
-export function getTabVariableMap(variables: Variable[]): VariableMap {
-  let map = tabMaps.get(variables);
-  if (!map) {
-    map = getVariableMap(variables);
-    tabMaps.set(variables, map);
-  }
-
-  return map;
-}
-
 const NO_PARTS: UnresolvedPart[] = [];
+const NO_RUNBOOK_BLOCKS: RunbookBlock[] = [];
 
 function isRunbookBlock(block: Block): block is RunbookBlock {
   return block.type === BlockType.RUNBOOK;

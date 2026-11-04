@@ -3,7 +3,7 @@
   z-index: var(--z-tooltip);
   width: max-content;
   max-width: var(--tooltip-max-width);
-  padding: var(--space-2) var(--space-5);
+  padding: var(--space-2) var(--tooltip-padding-x);
   background: var(--color-surface);
   border: var(--border-standard);
   border-radius: var(--radius-md);
@@ -110,7 +110,34 @@
   top: 100%;
 }
 
+.tooltip-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-2) 0 var(--space-4);
+}
+
+.tooltip-title {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.tooltip-scroll {
+  overflow-y: auto;
+  margin-right: calc(-1 * var(--tooltip-padding-x));
+  padding-right: var(--tooltip-padding-x);
+}
+
 /* Tooltip link */
+
+.tooltip-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  color: var(--color-text-secondary);
+}
 
 .tooltip-link {
   padding: 0;

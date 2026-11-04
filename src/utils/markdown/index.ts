@@ -8,3 +8,4 @@ export {
 } from "./format";
 export { parseNoteNodes } from "./nodes";
 export { noteToPlainText } from "./plainText";
+export { noteStats, type NoteStats } from "./stats";

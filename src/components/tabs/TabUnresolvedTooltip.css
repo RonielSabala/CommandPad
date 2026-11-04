@@ -3,37 +3,16 @@
 }
 
 .tab-unresolved-tooltip {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  margin-top: var(--space-2);
-  margin-bottom: var(--space-4);
-}
-
-.tab-unresolved-title {
-  margin: 0;
-  color: var(--color-text-primary);
+  min-width: min(var(--tab-unresolved-min-width), 80vw);
 }
 
 .tab-unresolved-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
   max-height: var(--tab-unresolved-max-height);
-  overflow-y: auto;
-}
-
-.tab-unresolved-cause {
-  margin: 0 0 var(--space-2);
-  color: var(--color-text-secondary);
 }
 
 .tab-unresolved-table {
   margin: 0;
   padding: 0;
-  border: var(--border-standard);
-  border-radius: var(--radius-md);
-  overflow: hidden;
   list-style: none;
 }
 
@@ -41,15 +20,10 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  padding: var(--space-2) var(--space-3);
 }
 
 .tab-unresolved-row + .tab-unresolved-row {
   border-top: var(--border-standard);
-}
-
-.tab-unresolved-row:nth-child(even) {
-  background: var(--color-surface-alt);
 }
 
 .tab-unresolved-problem {
@@ -76,11 +50,4 @@
 .tab-unresolved-problem .btn-flat-icon:hover,
 .tab-unresolved-problem .btn-flat-icon:focus-visible {
   color: var(--accent-text);
-}
-
-.tab-unresolved-blocks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1) var(--space-3);
-  color: var(--color-text-secondary);
 }

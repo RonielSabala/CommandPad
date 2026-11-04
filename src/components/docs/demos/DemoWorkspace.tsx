@@ -1,16 +1,19 @@
 import { InputSelector } from "@/common/constants/dom";
 import { SelectionGroup } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
-import type { Block, Variable } from "@/common/types";
 import { ImageLightbox } from "@/components/blocks/image/ImageLightbox";
+import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
 import { RunbookRow } from "@/components/sidebar/runbooks/RunbookRow";
 import "@/components/sidebar/shared/SidebarSectionList.css";
 import { VariableRow } from "@/components/sidebar/variables/VariableRow";
 import { useSelectModeBodyClass } from "@/hooks/useBodyClasses";
 import { useLassoSelection } from "@/hooks/useLassoSelection";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
+import { useLanguage } from "@/i18n";
 import {
   createAppStore,
+  EMPTY_BLOCKS,
+  EMPTY_VARIABLES,
   getActiveTab,
   StoreProvider,
   useStore,
@@ -39,6 +42,8 @@ interface DemoWorkspaceProps {
   tabs?: DemoContent[];
   library?: DemoContent[];
   className?: string;
+  /** Multi-select, off where it isn't explained yet. */
+  selectable?: boolean;
   children: ReactNode;
 }
 
@@ -49,9 +54,10 @@ export function DemoWorkspace({
   tabs = EMPTY_CONTENT,
   library = EMPTY_CONTENT,
   className,
+  selectable = true,
   children,
 }: DemoWorkspaceProps) {
-  const language = useStore((state) => state.language);
+  const language = useLanguage();
   const theme = useStore((state) => state.theme);
 
   const buildDemo = (
@@ -94,17 +100,20 @@ export function DemoWorkspace({
   return (
     <StoreProvider value={store}>
       <DocsDemo onReset={reset} className={className}>
-        <div key={version} className="docs-demo-content">
-          {children}
-        </div>
+        <SelectionActionsContext.Provider value={selectable}>
+          <div key={version} className="docs-demo-content">
+            {selectable ? (
+              <DemoSelectionArea>{children}</DemoSelectionArea>
+            ) : (
+              children
+            )}
+          </div>
+        </SelectionActionsContext.Provider>
       </DocsDemo>
       <ImageLightbox />
     </StoreProvider>
   );
 }
-
-const EMPTY_VARIABLES: Variable[] = [];
-const EMPTY_BLOCKS: Block[] = [];
 
 export function DemoVariableRows() {
   const activeTab = useStore(getActiveTab);
@@ -145,7 +154,7 @@ export function DemoRunbookList() {
 }
 
 /** Multi-select for a demo. */
-export function DemoSelectionArea({ children }: { children: ReactNode }) {
+function DemoSelectionArea({ children }: { children: ReactNode }) {
   const store = useStoreApi();
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
 

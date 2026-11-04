@@ -107,6 +107,8 @@ export function TabsDocs() {
         <DemoRunbookPanel />
       </DemoWorkspace>
 
+      <Prose text={t.docs.tabs.copyBlocks} />
+      <Prose text={t.docs.tabs.dragToTabDelay} />
       <Prose
         text={t.docs.tabs.unresolvedMarker(
           t.tabs.defineVariable,

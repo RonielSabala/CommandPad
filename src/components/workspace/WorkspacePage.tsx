@@ -17,6 +17,7 @@ import { PasteRunbookModal } from "../modals/PasteRunbookModal";
 import { VaultModal } from "../modals/vault/VaultModal";
 import { RunbookImportInput } from "../sidebar/runbooks/RunbookImportInput";
 import { Sidebar } from "../sidebar/Sidebar";
+import { VariablesViewContext } from "../variables/variablesViewContext";
 import { MainPanel } from "./MainPanel";
 import { SaveNotice } from "./SaveNotice";
 import { SelectionCount } from "./SelectionCount";
@@ -34,7 +35,9 @@ export function WorkspacePage() {
     <>
       <PanelShell panelId={PanelId.SIDEBAR} id="app-shell">
         <Header />
-        <Sidebar />
+        <VariablesViewContext.Provider value>
+          <Sidebar />
+        </VariablesViewContext.Provider>
         <RunbookImportInput />
         <MainPanel />
         <SelectionCount />

@@ -2,6 +2,7 @@ import { MIDDLE_DOT, VaultConfig } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
+  EmbeddedRunbookStatus,
   NoteFormat,
   NoteStyle,
   PanelId,
@@ -9,6 +10,7 @@ import {
   SaveOutcome,
   SortDirection,
   UnresolvedCause,
+  VariableEntryKind,
   VaultError,
   VaultField,
   VaultPrompt,
@@ -35,6 +37,8 @@ export const es: Messages = {
     noMatches: "Sin coincidencias.",
     untitledTab: "Sin título",
     untitledRunbook: "Libro sin título",
+    showDescription: "Mostrar descripción",
+    hideDescription: "Ocultar descripción",
   },
   header: {
     reloadTitle: "Recargar CommandPad",
@@ -125,6 +129,12 @@ export const es: Messages = {
     mask: (count) => (count === 1 ? "Ocultar valor" : "Ocultar valores"),
     enumLabel: "Enum",
     newEnumTitle: "Nueva variable enum",
+    variableInfo:
+      "Guarda un valor que escribes una vez y referencias en cualquier parte como {CLAVE}, como un host, una ruta o un token. Enmascárala para ocultar secretos en pantalla.",
+    enumInfo:
+      "Una variable cuyo valor se elige de una lista fija de opciones, como un entorno o una región. Las referencias ven la opción seleccionada.",
+    sectionInfo:
+      "Un grupo con nombre y plegable para las variables que tiene debajo, para apartar las que casi no tocas. Solo el editor de variables muestra secciones.",
     optionPlaceholder: "elige una opción",
     noOptions: "Aún no hay opciones",
     searchOptionsPlaceholder: "Buscar opciones…",
@@ -155,7 +165,9 @@ export const es: Messages = {
         : `${count} variables seleccionadas`,
     dragResizeSplit: `Arrastra para redimensionar clave y valor ${MIDDLE_DOT} doble clic para igualarlos`,
     unusedTitle: (key) => `${key} (sin usar)`,
-    newSection: "Nueva sección",
+    variableTitle: "Variable",
+    enumTitle: "Variable enumerada",
+    sectionTitle: "Sección de variables",
     newRowLabel: "NUEVA",
     variableLabel: "Variable",
     sectionLabel: "Sección",
@@ -165,6 +177,14 @@ export const es: Messages = {
         : "Mover variables a una nueva sección",
     sectionPlaceholder: "Nombre de la sección",
     sectionActions: "Acciones de la sección",
+    selectRow: {
+      [VariableEntryKind.VARIABLE]: "Seleccionar variable",
+      [VariableEntryKind.SECTION]: "Seleccionar sección",
+    },
+    deselectRow: {
+      [VariableEntryKind.VARIABLE]: "Deseleccionar variable",
+      [VariableEntryKind.SECTION]: "Deseleccionar sección",
+    },
     duplicateSection: (count) =>
       count === 1 ? "Duplicar sección" : "Duplicar secciones",
     removeSection: (count) =>
@@ -224,9 +244,24 @@ export const es: Messages = {
       [BlockType.DIVIDER]: "Divisor",
     },
     typeTitle: (label) => `Bloque de ${label.toLowerCase()}`,
+    typeInfo: {
+      [BlockType.COMMAND]:
+        "Un comando para ejecutar. Sus referencias {CLAVE} se resuelven con tus variables, así que al copiarlo obtienes el comando terminado.",
+      [BlockType.NOTE]:
+        "Texto libre con markdown: explica un paso, deja una advertencia o enlaza a más información.",
+      [BlockType.IMAGE]:
+        "Una imagen, adjunta o enlazada, como un diagrama o una captura de la salida esperada.",
+      [BlockType.RUNBOOK]:
+        "Incrusta otro runbook, de solo lectura, desde tu biblioteca o la nube. Sobrescribe sus variables sin tocar el original.",
+      [BlockType.DIVIDER]:
+        "Una línea horizontal que divide el runbook en partes.",
+    },
     actions: "Acciones del bloque",
     insertAbove: "Insertar bloque arriba",
     insertBelow: "Insertar bloque abajo",
+    select: "Seleccionar bloque",
+    deselect: "Deseleccionar bloque",
+    copyNote: "Copiar nota",
     duplicate: (count) =>
       count === 1 ? "Duplicar bloque" : "Duplicar bloques",
     delete: (count) => (count === 1 ? "Eliminar bloque" : "Eliminar bloques"),
@@ -235,12 +270,129 @@ export const es: Messages = {
     emptyTitle: "Aún no hay bloques.",
     emptyHint: "Agrega un comando o una nota abajo.",
   },
+  info: {
+    action: "Información",
+    blockTitle: (type) => `Información del bloque de ${type.toLowerCase()}`,
+    variableTitle: "Información de la variable",
+    enumTitle: "Información del enum",
+    sectionTitle: "Información de la sección",
+    position: (index, total) => `${index} de ${total}`,
+    usedBy: (blocks, variables) =>
+      [
+        blocks > 0 && `${blocks} ${blocks === 1 ? "bloque" : "bloques"}`,
+        variables > 0 &&
+          `${variables} ${variables === 1 ? "variable" : "variables"}`,
+      ]
+        .filter(Boolean)
+        .join(", "),
+    unused: "Sin usar",
+    variablesIn: (variables) => (variables === 1 ? "Variable" : "Variables"),
+    variableLink: (number, key) => `Variable ${number} ${MIDDLE_DOT} ${key}`,
+    undefinedKey: "Ninguna variable define esta clave",
+    seeMore: "(ver más)",
+    seeLess: "(ver menos)",
+    yes: "Sí",
+    no: "No",
+    readingTime: (minutes) => `${minutes} min`,
+    attached: "Adjunta",
+    linked: "Enlazada",
+    library: "Biblioteca",
+    visibleValue: "Visible",
+    maskedValue: "Enmascarado",
+    embedStatus: {
+      [EmbeddedRunbookStatus.ERROR]: "No se pudo cargar",
+      [EmbeddedRunbookStatus.MISSING]: "No encontrado",
+      [EmbeddedRunbookStatus.SIGNED_OUT]: "Sesión cerrada",
+      [EmbeddedRunbookStatus.LOADING]: "Cargando",
+      [EmbeddedRunbookStatus.READY]: "Cargado",
+    },
+    embedNoSource: "Ningún runbook elegido",
+    embedCircular: "Se incrusta a sí mismo",
+    embedTooDeep: "Anidado demasiado",
+    embedLocked: "Bloqueado",
+    sections: {
+      overview: "Resumen",
+      file: "Archivo",
+      reading: "Lectura",
+      size: "Tamaño",
+      variables: "Variables",
+      text: "Texto",
+      content: "Contenido",
+      dimensions: "Dimensiones",
+      details: "Detalles",
+      overrides: "Sobrescrituras",
+      value: "Formato del valor",
+      references: "Relaciones",
+      options: "Opciones",
+      breakdown: "Contenido",
+      status: "Problemas",
+    },
+    columns: {
+      editor: "Editor",
+      preview: "Vista previa",
+    },
+    rows: {
+      visibility: "Visibilidad",
+      valueReferences: "Usa",
+      sectionVariables: "Variables",
+      language: "Resaltado",
+      references: "Variables referenciadas",
+      nestedReferences: "Todas las variables necesarias",
+      secretsUsed: "Secretos usados",
+      unresolved: "Referencias sin resolver",
+      style: "Estilo",
+      lines: "Líneas",
+      paragraphs: "Párrafos",
+      words: "Palabras",
+      characters: "Caracteres",
+      nonSpaceCharacters: "Caracteres sin espacios",
+      links: "Enlaces",
+      tables: "Tablas",
+      listItems: "Elementos de lista",
+      readingTime: "Tiempo de lectura",
+      source: "Origen",
+      format: "Formato",
+      size: "Tamaño",
+      resolution: "Resolución",
+      aspectRatio: "Relación de aspecto",
+      alt: "Texto alternativo",
+      link: "Enlace",
+      runbook: "Runbook",
+      cloudPath: "Ruta en la nube",
+      status: "Estado",
+      blocks: "Bloques",
+      variables: "Variables",
+      nestedRunbooks: "Runbooks incrustados",
+      overrides: "Variables sobrescritas",
+      outputSize: "Tamaño de salida (valores propios)",
+      overriddenOutputSize: "Tamaño de salida (sobrescrito)",
+      sizeDifference: "Diferencia",
+      blocksInSection: "Bloques hasta el siguiente divisor",
+      key: "Clave",
+      valueSize: "Tamaño escrito",
+      resolvedSize: "Tamaño resuelto",
+      blanks: "Huecos por rellenar",
+      usedBy: "Usada por",
+      options: "Cantidad",
+      selected: "Seleccionada",
+      longestOption: "Longitud máxima",
+      optionsSize: "Tamaño total",
+      optionsWithReferences: "Con referencias",
+      name: "Nombre",
+      enums: "Enums",
+      secrets: "Secretos",
+      unusedVariables: "Sin usar",
+      emptyOrUnresolved: "Vacías o sin resolver",
+      valuesSize: "Tamaño total",
+      collapsed: "Plegada",
+    },
+  },
   runbookBlock: {
     changeSource: "Dónde está el runbook",
     labelPlaceholder: "Etiqueta del runbook",
     pathPlaceholder: "carpeta/runbook.json",
     parentFolder: "Volver a la carpeta anterior",
-    unresolvedLabel: "Ningún runbook de tu biblioteca tiene esta etiqueta.",
+    unresolvedLabel: `Ningún runbook de tu biblioteca tiene la etiqueta ${MessageSlot.LABEL}.`,
     emptyLabel: "Escribe la etiqueta de un runbook de tu biblioteca.",
     emptyPath: "Escribe la ruta de un runbook en la nube.",
     choiceStats: (size, blocks, variables) =>
@@ -990,6 +1142,10 @@ Si algo sale mal, deshazlo en este orden:
         "Si no hay pestañas abiertas y agregas un bloque o una variable, se crea automáticamente una pestaña nueva sin título.",
       labelDemo:
         "Una pestaña toma su nombre a partir del primer bloque de nota de su libro. Míralo en vivo abajo: la nota pertenece a la pestaña activa, y editarla renombra la pestaña mientras escribes. Pruébalo todo aquí: agrega una pestaña con el **+**, arrástralas, cambia entre ellas, cierra alguna, y abre la fuente para ver el libro de una pestaña como JSON.",
+      copyBlocks:
+        "Para copiar bloques a otra pestaña, selecciónalos y arrastra el control de cualquier bloque seleccionado sobre esa pestaña en la barra de pestañas. Las variables referenciadas viajan con los bloques; si la pestaña de destino ya define alguna con un valor distinto, la copia se añade con un nuevo nombre y los bloques copiados se reescriben para referenciarla, de modo que no se tocan los valores de ninguna pestaña.",
+      dragToTabDelay:
+        "Mientras arrastras bloques sobre la barra de pestañas, mantén el cursor un momento sobre una pestaña para cambiar a ella, y luego suelta.",
       unresolvedMarker: (create, edit) =>
         `Cuando el botón de cerrar de una pestaña es un punto rojo relleno, ese libro tiene partes sin resolver, así que un libro que no está listo para usarse se nota sin necesidad de abrirlo. Al pasar el puntero por el punto, vuelve a ser el botón de cerrar, con un resumen de lo que no resuelve: cuántos problemas hay y a cuántos bloques alcanzan, cada problema una sola vez bajo su causa, seguido de los bloques que rompe. Haz clic en un bloque para saltar directamente a él, usa la flecha para abrir la variable de la que viene un problema, o **${create}** para agregar una variable que todavía no existe. En la pestaña abierta, un valor vacío o un hueco sin rellenar también ofrece **${edit}**. Ambos abren el editor de la variable dentro del propio resumen, listo para que escribas el valor sin salir de la pestaña. La tercera pestaña de arriba lleva uno: abre sus variables y dale un valor a \`HOST\`, y el punto desaparece en cuanto todas las referencias resuelven.`,
     },
@@ -1395,6 +1551,8 @@ Si algo sale mal, deshazlo en este orden:
     blocks: {
       intro: (blockActionsLabel) =>
         `Los bloques son el contenido principal de un libro. Pasa el cursor sobre cualquier bloque para revelar sus controles: agarra el control de la izquierda para arrastrarlo a otro sitio, o abre el menú de **${blockActionsLabel}** de la derecha para insertar un bloque nuevo encima o debajo, duplicarlo o eliminarlo. Cada bloque tiene una anchura mínima que le impide encogerse hasta volverse ilegible.`,
+      info: (infoLabel) =>
+        `Elige **${infoLabel}** en ese menú para ver lo que contiene un bloque, calculado en el momento en que lo pides. Un valor que es cero, está vacío o no se puede calcular en ese momento muestra un guion, salvo los recuentos de problemas, donde 0 es la buena noticia. Haz clic en un recuento de referencias para ver cada bloque o variable que cuenta, y luego en un número para saltar allí. Haz clic en cualquier otro sitio o pulsa **Escape** para cerrarlo.`,
     },
     commandBlock: {
       intro:
@@ -1415,6 +1573,8 @@ Si algo sale mal, deshazlo en este orden:
     noteBlock: {
       intro:
         "Es un bloque de texto libre. Las notas se expanden a lo alto y a lo ancho mientras escribes.",
+      copy: (copyNoteLabel) =>
+        `Para copiar el texto de una nota tal como está escrito abre su menú de acciones del bloque y elige **${copyNoteLabel}**.`,
       styles: (heading, subheading, body) =>
         `Hay tres estilos de texto seleccionables al pasar el cursor: **${heading}** (grande, en negrita), **${subheading}** (mediano, acentuado) y **${body}** (la prosa por defecto).`,
       markdown: "Las notas soportan formato markdown:",
@@ -1486,14 +1646,13 @@ Si algo sale mal, deshazlo en este orden:
     multiSelect: {
       intro:
         "Mantén `Shift` y haz clic en bloques para construir una selección. También puedes mantener `Shift` y arrastrar el ratón sobre los bloques para seleccionarlos con un lazo. Lazar bloques ya seleccionados los deselecciona.",
+      menuAction: (selectLabel) =>
+        `Sin el teclado, elige **${selectLabel}** en el menú de acciones de un bloque para añadirlo a la selección, y vuelve a elegirlo para quitarlo.`,
       actions: `* **Arrastra** el control de cualquier bloque seleccionado para mover todos los bloques seleccionados juntos, conservando el orden relativo.
 * **Duplicar**: \`Ctrl+D\` duplica el grupo completo, insertado después del último bloque seleccionado.
-* **Eliminar**: \`Del\` elimina el grupo completo.
-* **Copiar a otra pestaña**: arrastra el control de cualquier bloque seleccionado sobre una pestaña para copiar toda la selección dentro de ella. Las variables referenciadas viajan con los bloques; si la pestaña de destino ya define alguna con un valor distinto, la copia se añade con un nuevo nombre y los bloques copiados se reescriben para referenciarla, de modo que no se tocan los valores de ninguna pestaña.`,
+* **Eliminar**: \`Del\` elimina el grupo completo.`,
       clear:
         "Pulsa `Escape` o haz clic fuera de los controles de bloque para limpiar la selección.",
-      dragToTabDelay:
-        "Mientras arrastras bloques sobre la barra de pestañas, mantén el cursor un momento sobre una pestaña para cambiar a ella, y luego suelta.",
     },
     readMode: {
       intro:

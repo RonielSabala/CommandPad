@@ -110,15 +110,16 @@ export function maskSpans(
   return shown;
 }
 
-/** `value`'s text with every secret in it masked. */
+/** `value`'s text with every secret in it masked by `mask`. */
 export function maskedText(
   { text, spans }: { text: string; spans?: readonly ResolvedSpan[] },
   secretKeys: ReadonlySet<string>,
+  mask = SECRET_MASK,
 ): string {
   const shown = spans && maskSpans(spans, secretKeys);
   return !shown || shown === spans
     ? text
-    : shown.map((span) => (span ? span.text : SECRET_MASK)).join("");
+    : shown.map((span) => (span ? span.text : mask)).join("");
 }
 
 export function countCommandLines(

@@ -377,6 +377,16 @@ body {
   pointer-events: none;
 }
 
+.row-reveal-resolved {
+  --row-reveal-bg: var(--resolved-bg-2);
+  --row-reveal-edge: var(--resolved-edge);
+}
+
+.row-reveal-neutral {
+  --row-reveal-bg: var(--accent-dim);
+  --row-reveal-edge: var(--accent);
+}
+
 @keyframes surface-reveal {
   from {
     border-color: var(--row-reveal-edge, var(--unresolved-edge));

@@ -1,3 +1,5 @@
+import { RevealTone } from "@/common/enums";
+
 export const CssClass = {
   // Core
 
@@ -25,12 +27,14 @@ export const CssClass = {
   SECTION_TITLE: "section-title",
 
   TOOLTIP: "tooltip",
+  MENU_OPEN: "menu-open",
   CONTEXT_MENU: "context-menu",
   CONTEXT_MENU_ITEM: "context-menu-item",
   CONTEXT_MENU_ICON: "context-menu-icon",
   SELECT_MENU: "select-menu",
   SELECT_MENU_PORTAL: "select-menu-portal",
   SELECT_OPTION: "select-option",
+
   CODE_EDITOR: "code-editor",
   CODE_EDITOR_HEADER: "code-editor-header",
   CODE_EDITOR_PROMPT: "code-editor-prompt",
@@ -95,10 +99,21 @@ export const CssClass = {
 
   NOTE_LINK: "note-link",
   TOOLTIP_LINK: "tooltip-link",
-  TOOLTIP_LINK_PLAIN: "tooltip-link-plain",
-  NOTE_EDITOR: "note-editor",
+  TOOLTIP_LINKS: "tooltip-links",
+  TOOLTIP_PANEL: "tooltip-panel",
+  TOOLTIP_TITLE: "tooltip-title",
+  TOOLTIP_SCROLL: "tooltip-scroll",
+
+  FRAMED_ROW: "framed-section-row",
+  FRAMED_CELLS: "framed-section-cells",
+  FRAMED_SECTIONS: "framed-sections",
+
   TEXT_MIRROR: "text-mirror",
+  NOTE_EDITOR: "note-editor",
+
+  NOTE_CODE: "note-code",
   NOTE_CODE_NEUTRAL: "note-code-neutral",
+  NOTE_TABLE: "note-table",
 
   // Controls beside a block/variable item
 
@@ -124,6 +139,12 @@ export const CssClass = {
   MODAL_BACKDROP: "modal-backdrop",
   MODAL_BACKDROP_TRANSPARENT: "modal-backdrop-transparent",
 } as const;
+
+export const REVEAL_TONE_CLASS: Record<RevealTone, string | undefined> = {
+  [RevealTone.NEUTRAL]: "row-reveal-neutral",
+  [RevealTone.RESOLVED]: "row-reveal-resolved",
+  [RevealTone.UNRESOLVED]: undefined,
+};
 
 export const CssAnimation = {
   SURFACE_REVEAL: "surface-reveal",

@@ -1,15 +1,16 @@
 import { CssClass } from "@/common/constants/css";
-import type { Block, Variable } from "@/common/types";
 import { BlockItem } from "@/components/blocks/BlockItem";
 import "@/components/blocks/BlocksList.css";
-import { getActiveTab, useStore } from "@/store/store";
-import { getSecretKeys, getVariableMap } from "@/utils/resolution";
-import { memo, useMemo } from "react";
+import {
+  EMPTY_BLOCKS,
+  EMPTY_VARIABLES,
+  getActiveTab,
+  useStore,
+} from "@/store/store";
+import { getTabSecretKeys, getTabVariableMap } from "@/utils/resolution";
+import { memo } from "react";
 
 import { MinimapMirror } from "./Minimap";
-
-const EMPTY_BLOCKS: Block[] = [];
-const EMPTY_VARIABLES: Variable[] = [];
 
 export const BlocksMirror = memo(function BlocksMirror({
   width,
@@ -20,8 +21,8 @@ export const BlocksMirror = memo(function BlocksMirror({
   const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
   const variables = activeTab?.variables ?? EMPTY_VARIABLES;
 
-  const variableMap = useMemo(() => getVariableMap(variables), [variables]);
-  const secretKeys = useMemo(() => getSecretKeys(variables), [variables]);
+  const variableMap = getTabVariableMap(variables);
+  const secretKeys = getTabSecretKeys(variables);
 
   return (
     <MinimapMirror className={CssClass.BLOCKS_LIST} width={width}>

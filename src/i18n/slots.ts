@@ -1,5 +1,6 @@
 export const MessageSlot = {
   PROVIDER: "{provider}",
+  LABEL: "{label}",
 } as const;
 export type MessageSlot = (typeof MessageSlot)[keyof typeof MessageSlot];
 

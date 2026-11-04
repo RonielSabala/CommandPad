@@ -1,4 +1,3 @@
-import { CloudSyncConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { XIcon } from "@/components/icons";
@@ -39,10 +38,7 @@ export function CloudSelectionPills({ listedIds }: Props) {
           <span
             className="cloud-selection-pill"
             key={entry.id}
-            {...tooltip(
-              `${formatCloudPath(path)}${CloudSyncConfig.PATH_SEPARATOR}${entry.name}`,
-              TooltipVariant.CODE,
-            )}
+            {...tooltip(formatCloudPath(path, entry.name), TooltipVariant.CODE)}
           >
             <EntryIcon
               className={classNames(

@@ -142,7 +142,7 @@ export function VariableActionsMenu({
       className={className}
       sectioned={sectioned}
     >
-      {(count) => (
+      {(count, selectItem) => (
         <>
           {!isEnum && (
             <ContextMenuItem
@@ -157,6 +157,8 @@ export function VariableActionsMenu({
               {isSecret ? t.variables.reveal(count) : t.variables.mask(count)}
             </ContextMenuItem>
           )}
+
+          {selectItem}
 
           <DuplicateItem targetId={variableId}>
             {t.variables.duplicate(count)}

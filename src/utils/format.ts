@@ -28,10 +28,15 @@ export function formatFileSize(bytes: number, language: Language): string {
   return `${formatted} ${FileSizeConfig.UNITS[unitIndex]}`;
 }
 
-export function formatCloudPath(path: CloudFolderRef[]): string {
+/** `path` from the app folder, then any `names` inside it. */
+export function formatCloudPath(
+  path: CloudFolderRef[],
+  ...names: string[]
+): string {
   return [
     CloudSyncConfig.APP_FOLDER_NAME,
     ...path.map((folder) => folder.name),
+    ...names,
   ].join(CloudSyncConfig.PATH_SEPARATOR);
 }
 

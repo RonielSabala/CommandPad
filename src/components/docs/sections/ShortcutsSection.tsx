@@ -1,5 +1,7 @@
+import { CssClass } from "@/common/constants/css";
 import { KeyBinding, KEYBINDINGS } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
+
 import { Kbd, Prose } from "../Prose";
 
 const BINDING_IDS = Object.keys(KEYBINDINGS) as KeyBinding[];
@@ -11,7 +13,7 @@ export function KeyboardShortcutsDocs() {
     <>
       <Prose text={t.docs.keyboardShortcuts.intro} />
       <div className="docs-prose">
-        <table className="note-table">
+        <table className={CssClass.NOTE_TABLE}>
           <tbody>
             {BINDING_IDS.map((id) => (
               <tr key={id}>

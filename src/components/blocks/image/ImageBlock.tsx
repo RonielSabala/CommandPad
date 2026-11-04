@@ -9,7 +9,7 @@ import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { ImportIcon, TrashIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
-import { useTranslation } from "@/i18n";
+import { useLanguage, useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { formatFileSize } from "@/utils/format";
 import {
@@ -34,7 +34,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
   const blockId = block.id;
   const src = block.src;
 
-  const language = useStore((state) => state.language);
+  const language = useLanguage();
   const isReadMode = useStore((state) => state.mode === AppMode.READ);
   const updateBlock = useStore((state) => state.updateBlock);
   const confirm = useStore((state) => state.confirm);

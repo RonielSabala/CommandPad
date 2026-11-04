@@ -16,10 +16,10 @@ import type {
   NoteTableCell,
 } from "@/common/types";
 import { useRichTooltip } from "@/components/common/tooltip/richTooltip";
+import { PLAIN_TOOLTIP_LINK } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { parseNoteNodes } from "@/utils/markdown";
-import { classNames } from "@/utils/string";
 import { Fragment } from "react";
 
 import "./NoteText.css";
@@ -29,7 +29,7 @@ const SEGMENT_CLASS: Record<NoteSegmentType, string | undefined> = {
   [NoteSegmentType.BOLD]: "note-bold",
   [NoteSegmentType.ITALIC]: "note-italic",
   [NoteSegmentType.STRIKETHROUGH]: "note-strikethrough",
-  [NoteSegmentType.CODE]: "note-code",
+  [NoteSegmentType.CODE]: CssClass.NOTE_CODE,
   [NoteSegmentType.LINK]: CssClass.NOTE_LINK,
 };
 
@@ -60,10 +60,7 @@ function NoteLink({ segment, binding }: LinkProps) {
         <>
           <a
             href={href}
-            className={classNames(
-              CssClass.TOOLTIP_LINK,
-              CssClass.TOOLTIP_LINK_PLAIN,
-            )}
+            className={PLAIN_TOOLTIP_LINK}
             target={Anchor.TARGET_BLANK}
             rel={Anchor.REL}
             title={href}
@@ -148,7 +145,7 @@ function NoteTableView({
   requiresLinkModifier?: boolean;
 }) {
   return (
-    <table className="note-table">
+    <table className={CssClass.NOTE_TABLE}>
       <thead>
         <NoteTableRow
           cells={table.head}

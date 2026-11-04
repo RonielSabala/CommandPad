@@ -1,5 +1,5 @@
 import { NoteNodeType } from "@/common/enums";
-import type { NoteNode } from "@/common/types";
+import type { NoteList, NoteNode, NoteSegment } from "@/common/types";
 import { lineStarts, splitLines } from "../string";
 
 import { parseNoteText } from "./inline";
@@ -54,4 +54,29 @@ export function parseNoteNodes(text: string): NoteNode[] {
 
   flushText(runStart, lines.length);
   return nodes;
+}
+
+function* listRuns(list: NoteList): Generator<NoteSegment[]> {
+  for (const item of list.items) {
+    yield item.segments;
+
+    for (const nested of item.lists) {
+      yield* listRuns(nested);
+    }
+  }
+}
+
+/** The inline runs `node` renders. */
+export function* nodeRuns(node: NoteNode): Generator<NoteSegment[]> {
+  if (node.type === NoteNodeType.TABLE) {
+    for (const row of [node.table.head, ...node.table.rows]) {
+      for (const cell of row) {
+        yield cell.segments;
+      }
+    }
+  } else if (node.type === NoteNodeType.LIST) {
+    yield* listRuns(node.list);
+  } else {
+    yield node.segments;
+  }
 }
