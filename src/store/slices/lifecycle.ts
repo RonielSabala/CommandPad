@@ -2,6 +2,7 @@ import { AppMode, DialogTone } from "@/common/enums";
 import type { Tab } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { lockVault } from "@/services/vault";
+import { findTabById } from "@/utils/tabs";
 
 import type { StoreKit } from "@/store/kit";
 import * as persistence from "@/store/persistence";
@@ -113,7 +114,8 @@ export function createLifecycleSlice(
               loadedTabs.some((t) => t.id === meta.activeTabId)
                 ? meta.activeTabId
                 : loadedTabs[0].id;
-            const activeTab = loadedTabs.find((t) => t.id === activeId);
+
+            const activeTab = findTabById(loadedTabs, activeId);
             set({
               tabs: loadedTabs,
               activeTabId: activeId,

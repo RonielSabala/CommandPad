@@ -5,6 +5,7 @@ import { hasEncryptedSecrets } from "@/services/vault";
 import {
   EMPTY_VARIABLES,
   getActiveRunbookId,
+  getTabByRunbookId,
   tabContent,
   useStore,
 } from "@/store/store";
@@ -60,9 +61,7 @@ export function useEmbeddedRunbook(
 
   const runbookId = source?.local?.id ?? entry?.runbookId;
   const openTab = useStore((state) =>
-    runbookId
-      ? (state.tabs.find((tab) => tab.runbookId === runbookId) ?? null)
-      : null,
+    runbookId ? (getTabByRunbookId(state, runbookId) ?? null) : null,
   );
 
   const circular = key !== null && trail.includes(key);

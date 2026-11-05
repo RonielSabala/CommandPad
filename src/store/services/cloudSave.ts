@@ -18,7 +18,7 @@ import { parseRunbookSource } from "@/utils/runbookSource";
 
 import type { StoreKit } from "@/store/kit";
 import { withLibraryEntry } from "@/store/libraryState";
-import { getRunbookTab } from "@/store/selectors";
+import { getTabByRunbookId } from "@/store/selectors";
 import { contentFields, entryLabel, relabelTab } from "@/store/tabState";
 import type { CloudConflict } from "@/store/types";
 import type { ContentService } from "./content";
@@ -68,7 +68,7 @@ export function createCloudSave(
     await writeRunbookContent(runbookId, content);
 
     set((s) => {
-      const tab = getRunbookTab(s, runbookId);
+      const tab = getTabByRunbookId(s, runbookId);
       if (tab) {
         const replaced = { ...tab, ...contentFields(content) };
         return relabelTab(

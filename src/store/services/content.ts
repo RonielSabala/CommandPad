@@ -10,7 +10,7 @@ import { holdsSecrets } from "@/services/vault";
 import { localSourceKey } from "@/utils/embeddedRunbook";
 
 import type { StoreKit } from "@/store/kit";
-import { getRunbookTab } from "@/store/selectors";
+import { getTabByRunbookId } from "@/store/selectors";
 import { tabContent } from "@/store/tabState";
 import type { EmbedState } from "./embeds";
 import type { SyncService } from "./sync";
@@ -51,7 +51,7 @@ export function createContentService(
 
   /** The runbook's content as the tab holds it, else as the DB holds it. */
   const readRunbookContent = async (runbookId: string) => {
-    const openTab = getRunbookTab(get(), runbookId);
+    const openTab = getTabByRunbookId(get(), runbookId);
     return openTab ? tabContent(openTab) : await contentDb.get(runbookId);
   };
 

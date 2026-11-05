@@ -3,15 +3,9 @@ import { AppMode, DialogTone, MoveDirection } from "@/common/enums";
 import type { RunbookContent } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { adoptOpenVault, holdsSecrets, unlockVault } from "@/services/vault";
-import { stripJsonExtension } from "@/utils/export";
-import { generateId } from "@/utils/id";
-import { displayLabel, getRunbookLabel } from "@/utils/runbook";
-import { parseRunbookSource } from "@/utils/runbookSource";
-import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
-
 import type { StoreKit } from "@/store/kit";
 import { withLibraryEntry } from "@/store/libraryState";
-import { getLibraryEntry, getRunbookTab } from "@/store/selectors";
+import { getLibraryEntry, getTabByRunbookId } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import {
   importedVault,
@@ -24,6 +18,12 @@ import {
   tabContent,
 } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
+import { stripJsonExtension } from "@/utils/export";
+import { generateId } from "@/utils/id";
+import { displayLabel, getRunbookLabel } from "@/utils/runbook";
+import { parseRunbookSource } from "@/utils/runbookSource";
+import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
+import { findTabById } from "@/utils/tabs";
 
 type LibraryActions = Pick<
   StoreState,
@@ -66,7 +66,7 @@ export function createLibrarySlice(
       }
 
       const state = get();
-      const existingTab = getRunbookTab(state, runbookId);
+      const existingTab = getTabByRunbookId(state, runbookId);
       if (existingTab) {
         get().switchTab(existingTab.id);
         return;
@@ -131,27 +131,23 @@ export function createLibrarySlice(
       const runbookLibrary = state.runbookLibrary.filter(
         (item) => item.id !== id,
       );
-      let tabs = state.tabs;
-      let activeTabId = state.activeTabId;
 
-      let tabIdx = state.tabs.findIndex((t) => t.runbookId === id);
-      if (tabIdx >= 0) {
-        tabs = state.tabs.filter((t) => t.runbookId !== id);
-        if (tabs.length === 0) {
-          activeTabId = null;
-        } else if (
-          state.activeTabId === state.tabs[tabIdx]?.id ||
-          !tabs.find((t) => t.id === activeTabId)
-        ) {
-          tabIdx = Math.min(tabIdx, tabs.length - 1);
-          activeTabId = tabs[tabIdx].id;
-        }
+      const tabIdx = state.tabs.findIndex((t) => t.runbookId === id);
+      const tabs =
+        tabIdx >= 0 ? state.tabs.filter((t) => t.runbookId !== id) : state.tabs;
+
+      let activeTabId = state.activeTabId;
+      let activeTab = findTabById(tabs, activeTabId);
+
+      // The active tab was closed: fall back to its closest surviving neighbor
+      if (tabIdx >= 0 && !activeTab) {
+        activeTab = tabs[Math.min(tabIdx, tabs.length - 1)];
+        activeTabId = activeTab?.id ?? null;
       }
 
-      const activeRunbookId =
-        tabs.find((t) => t.id === activeTabId)?.runbookId ?? null;
-
+      const activeRunbookId = activeTab?.runbookId ?? null;
       let focusedRunbookId = state.focusedRunbookId;
+
       if (focusedRunbookId === id) {
         const removedIdx = state.runbookLibrary.findIndex(
           (item) => item.id === id,
@@ -272,15 +268,19 @@ export function createLibrarySlice(
         return;
       }
 
-      const stored = getRunbookTab(state, id) ? null : await contentDb.get(id);
+      const stored = getTabByRunbookId(state, id)
+        ? null
+        : await contentDb.get(id);
+
       set((s) => {
         const entry = getLibraryEntry(s, id);
         if (!entry?.named) {
           return s;
         }
 
-        const blocks = getRunbookTab(s, id)?.blocks ?? stored?.blocks;
+        const blocks = getTabByRunbookId(s, id)?.blocks ?? stored?.blocks;
         const label = getRunbookLabel(blocks, entry.filename);
+
         return labelRunbook(s, id, label, false);
       });
 

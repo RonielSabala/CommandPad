@@ -6,7 +6,12 @@ import {
   type ContextMenuAnchor,
 } from "@/components/common/contextMenu/ContextMenu";
 import { useTranslation } from "@/i18n";
-import { getLibraryEntry, useStore, useStoreApi } from "@/store/store";
+import {
+  getLibraryEntry,
+  getTabById,
+  useStore,
+  useStoreApi,
+} from "@/store/store";
 
 interface Props {
   tabId: string;
@@ -21,7 +26,7 @@ export function TabContextMenu({ tabId, anchor, onClose, onRename }: Props) {
   const isOnlyTab = useStore((state) => state.tabs.length < 2);
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const runbookId = useStore(
-    (state) => state.tabs.find((tab) => tab.id === tabId)?.runbookId ?? null,
+    (state) => getTabById(state, tabId)?.runbookId ?? null,
   );
   const named = useStore(
     (state) => !!runbookId && !!getLibraryEntry(state, runbookId)?.named,

@@ -9,6 +9,7 @@ import type {
   Variable,
 } from "@/common/types";
 
+import { findTabByRunbookId } from "./tabs";
 import { isEnumValue, isObject, isString } from "./typeGuards";
 
 /** What a runbook block points at, and the key its content is cached under. */
@@ -149,9 +150,7 @@ export function embeddedVariables(
 
   const entry = embeddedRunbooks[source.key];
   const runbookId = source.local?.id ?? entry?.runbookId;
-  const openTab = runbookId
-    ? tabs.find((tab) => tab.runbookId === runbookId)
-    : undefined;
+  const openTab = runbookId ? findTabByRunbookId(tabs, runbookId) : undefined;
 
   return openTab?.variables ?? entry?.content?.variables ?? null;
 }

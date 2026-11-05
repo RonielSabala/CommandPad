@@ -44,6 +44,8 @@ export {
   getLibraryEntry,
   getRunbookEmbedView,
   getRunbookView,
+  getTabById,
+  getTabByRunbookId,
   hasOptionsToSort,
   hasOtherOptions,
   hasValuesToClear,

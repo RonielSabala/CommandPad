@@ -12,7 +12,7 @@ import {
   InsertPosition,
   RunbookView,
 } from "@/common/enums";
-import type { Block } from "@/common/types";
+import type { Block, Tab } from "@/common/types";
 import { withSetMember } from "@/utils/collections";
 import { generateId } from "@/utils/id";
 import { carryVariables, renameAllCommandTokens } from "@/utils/resolution";
@@ -23,6 +23,7 @@ import {
   actsOnBlockSelection,
   getActiveTab,
   getRunbookView,
+  getTabById,
 } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import {
@@ -161,14 +162,15 @@ export function createBlocksSlice(
         return;
       }
 
-      const source = state.tabs.find((t) => t.id === sourceTabId);
-      const target = state.tabs.find((t) => t.id === targetTabId);
+      const source = getTabById(state, sourceTabId);
+      const target = getTabById(state, targetTabId);
       if (!source || !target || source.id === target.id) {
         return;
       }
 
       // Copy in source document order, regardless of selection order
-      const ordered = source.blocks.filter((b) => blockIds.includes(b.id));
+      const copying = new Set(blockIds);
+      const ordered = source.blocks.filter((b) => copying.has(b.id));
       if (ordered.length === 0) {
         return;
       }
@@ -187,6 +189,7 @@ export function createBlocksSlice(
         id: generateId(),
       }));
 
+      let copied: Tab | undefined;
       set((s) => {
         const tabs = s.tabs.map((t) => {
           if (t.id !== targetTabId) {
@@ -205,24 +208,24 @@ export function createBlocksSlice(
             ...copies,
           );
 
-          return {
+          copied = {
             ...t,
             blocks,
             variables: [...t.variables, ...carriedVariables],
           };
+
+          return copied;
         });
 
-        const next = { ...s, tabs };
         return {
-          ...relabelTab(next, tabs.find((t) => t.id === targetTabId) ?? null),
+          ...relabelTab({ ...s, tabs }, copied ?? null),
           flashBlockIds: new Set(copies.map((b) => b.id)),
         };
       });
 
       // saveState only persists the active tab, so another target is written here
-      const updated = get().tabs.find((t) => t.id === targetTabId);
-      if (updated?.runbookId && updated.id !== getActiveTab(get())?.id) {
-        persistTabContent(updated.runbookId, updated);
+      if (copied?.runbookId && copied.id !== getActiveTab(get())?.id) {
+        persistTabContent(copied.runbookId, copied);
       }
 
       get().saveState();

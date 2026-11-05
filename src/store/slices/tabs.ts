@@ -2,9 +2,10 @@ import { DEFAULT_TAB_LABEL } from "@/common/config";
 import { AppMode, EmbeddedRunbookStatus } from "@/common/enums";
 import type { RunbookEntry } from "@/common/types";
 import { generateId } from "@/utils/id";
+import { findTabById, findTabByRunbookId } from "@/utils/tabs";
 
 import type { StoreKit } from "@/store/kit";
-import { getActiveTab, getRunbookTab } from "@/store/selectors";
+import { getActiveTab, getTabByRunbookId } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import { createTabObject, tabContent } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
@@ -35,7 +36,7 @@ export function createTabsSlice(
       }
 
       if (runbookId) {
-        const existingTab = getRunbookTab(state, runbookId);
+        const existingTab = getTabByRunbookId(state, runbookId);
         if (existingTab) {
           get().switchTab(existingTab.id);
           return existingTab;
@@ -122,7 +123,7 @@ export function createTabsSlice(
       }
 
       for (const tab of closed) {
-        if (tab.runbookId && !tabs.some((t) => t.runbookId === tab.runbookId)) {
+        if (tab.runbookId && !findTabByRunbookId(tabs, tab.runbookId)) {
           declinedVaultSetup.delete(tab.runbookId);
 
           // Update the embed runbook blocks that read this tab
@@ -137,10 +138,12 @@ export function createTabsSlice(
         }
       }
 
-      const activeRunbookId =
-        tabs.find((t) => t.id === activeTabId)?.runbookId ?? null;
+      set({
+        tabs,
+        activeTabId,
+        activeRunbookId: findTabById(tabs, activeTabId)?.runbookId ?? null,
+      });
 
-      set({ tabs, activeTabId, activeRunbookId });
       saveTabs();
     },
 

@@ -11,6 +11,7 @@ import type {
   Variable,
   VariableSection,
 } from "@/common/types";
+import { findTabById, findTabByRunbookId } from "@/utils/tabs";
 
 import type { StoreState } from "./types";
 
@@ -19,9 +20,7 @@ export const EMPTY_VARIABLES: Variable[] = [];
 export const EMPTY_SECTIONS: VariableSection[] = [];
 
 export function getActiveTab(state: StoreState): Tab | null {
-  return (
-    state.tabs.find((t) => t.id === state.activeTabId) ?? state.tabs[0] ?? null
-  );
+  return findTabById(state.tabs, state.activeTabId) ?? state.tabs[0] ?? null;
 }
 
 export function getActiveBlocks(state: StoreState): Block[] {
@@ -36,11 +35,18 @@ export function getActiveRunbookId(state: StoreState): string | null {
   return getActiveTab(state)?.runbookId ?? null;
 }
 
-export function getRunbookTab(
+export function getTabById(
+  state: StoreState,
+  tabId: string | null,
+): Tab | undefined {
+  return findTabById(state.tabs, tabId);
+}
+
+export function getTabByRunbookId(
   state: StoreState,
   runbookId: string,
 ): Tab | undefined {
-  return state.tabs.find((t) => t.runbookId === runbookId);
+  return findTabByRunbookId(state.tabs, runbookId);
 }
 
 const openRunbookIds = new WeakMap<

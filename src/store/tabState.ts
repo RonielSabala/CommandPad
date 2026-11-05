@@ -6,7 +6,7 @@ import { getRunbookLabel } from "@/utils/runbook";
 import { normalizeVariableSections } from "@/utils/variableSections";
 
 import { withLibraryEntry } from "./libraryState";
-import { getActiveTab, getLibraryEntry, getRunbookTab } from "./selectors";
+import { getActiveTab, getLibraryEntry, getTabByRunbookId } from "./selectors";
 import type { StoreState } from "./types";
 
 export function createTabObject(
@@ -76,7 +76,7 @@ export function labelRunbook(
   const { tabs, runbookLibrary } = state;
   const pinned = named || undefined;
   const entry = getLibraryEntry(state, runbookId);
-  const tab = getRunbookTab(state, runbookId);
+  const tab = getTabByRunbookId(state, runbookId);
 
   return {
     tabs:

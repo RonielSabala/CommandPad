@@ -5,7 +5,7 @@ import { buildRunbookSource } from "@/utils/runbookSource";
 
 import type { StoreKit } from "@/store/kit";
 import { withLibraryEntry } from "@/store/libraryState";
-import { getLibraryEntry, getRunbookTab } from "@/store/selectors";
+import { getLibraryEntry, getTabByRunbookId } from "@/store/selectors";
 import { tabContent } from "@/store/tabState";
 
 export function createSyncService(kit: StoreKit) {
@@ -98,7 +98,7 @@ export function createSyncService(kit: StoreKit) {
     clearSyncStatus(runbookId);
 
     // An edit made while the cloud was being reached is still unsaved
-    const openTab = getRunbookTab(get(), runbookId);
+    const openTab = getTabByRunbookId(get(), runbookId);
     const tabMoved =
       openTab &&
       (openTab.blocks !== content.blocks ||

@@ -14,7 +14,7 @@ import type { StoreKit } from "@/store/kit";
 import {
   getActiveTab,
   getRunbookEmbedView,
-  getRunbookTab,
+  getTabByRunbookId,
 } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import { tabContent, withActiveTab } from "@/store/tabState";
@@ -62,9 +62,10 @@ export function createEmbedsSlice(
 
   return {
     readRunbookStats: (runbookId) => {
-      const openTab = getRunbookTab(get(), runbookId);
+      const openTab = getTabByRunbookId(get(), runbookId);
       if (openTab) {
         let stats = tabStats.get(openTab);
+
         if (!stats) {
           stats = getRunbookStats(tabContent(openTab));
           tabStats.set(openTab, stats);
