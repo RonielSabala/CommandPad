@@ -21,6 +21,7 @@ import {
 } from "@/components/common/contextMenu/ContextMenu";
 import { DragHandle } from "@/components/common/DragHandle";
 import { DragImage } from "@/components/common/DragImage";
+import { RenameInput } from "@/components/common/RenameInput";
 import {
   Select,
   SelectAlign,
@@ -48,14 +49,7 @@ import {
   type VariableMap,
 } from "@/utils/resolution";
 import { abbreviate, classNames, countCharacters } from "@/utils/string";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { ArrowBarDown, ArrowBarUp } from "react-bootstrap-icons";
 
 import { OptionScopeContext } from "./optionScopeContext";
@@ -150,7 +144,6 @@ function VariableOptionRow({
   );
 
   const [editing, setEditing] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
   const {
     isDragging,
     isDragOver,
@@ -159,12 +152,6 @@ function VariableOptionRow({
   } = useRowReorder(DragGroup.VARIABLE_OPTION, option, (source, target) =>
     reorderVariableOptions(variableId, source, target),
   );
-
-  useEffect(() => {
-    if (editing) {
-      inputRef.current?.select();
-    }
-  }, [editing]);
 
   return (
     <li
@@ -181,35 +168,21 @@ function VariableOptionRow({
       <div
         className={classNames(
           "variable-option-target",
+          editing && "is-editing",
           isDragOver && CssClass.DRAG_OVER,
         )}
       >
-        {editing ? (
-          <input
-            ref={inputRef}
-            className={classNames(
-              "variable-option-input",
-              CssClass.NO_LIGATURES,
-            )}
-            type={InputType.TEXT}
-            defaultValue={option}
-            spellCheck={false}
-            autoComplete={AutoComplete.OFF}
-            aria-label={t.variables.editOption}
-            onBlur={(event) => {
+        {children}
+        {editing && (
+          <RenameInput
+            className="variable-option-field variable-option-rename-input"
+            value={option}
+            onCommit={(name) => {
               setEditing(false);
-              renameVariableOption(variableId, option, event.target.value);
+              renameVariableOption(variableId, option, name);
             }}
-            onKeyDown={(event) => {
-              if (event.key === Key.ENTER || event.key === Key.ESCAPE) {
-                event.preventDefault();
-                event.stopPropagation();
-                event.currentTarget.blur();
-              }
-            }}
+            onCancel={() => setEditing(false)}
           />
-        ) : (
-          children
         )}
       </div>
 
@@ -372,6 +345,7 @@ export function VariableOptionsSelect({
             <div className="variable-option-add-row">
               <input
                 className={classNames(
+                  "variable-option-field",
                   "variable-option-input",
                   CssClass.NO_LIGATURES,
                 )}

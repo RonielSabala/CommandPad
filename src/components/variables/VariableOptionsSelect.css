@@ -19,6 +19,14 @@
   min-width: 0;
 }
 
+.variable-option-target.is-editing {
+  position: relative;
+}
+
+.variable-option-target.is-editing > .select-option {
+  visibility: hidden;
+}
+
 .variable-option-actions {
   flex-shrink: 0;
 }
@@ -41,16 +49,24 @@
   gap: var(--space-2);
 }
 
-.variable-option-input {
+.variable-option-field {
   flex: 1 1 auto;
   min-width: 0;
+  padding: var(--space-2) var(--space-4);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
+}
+
+.variable-option-rename-input {
+  position: absolute;
+  inset: 0;
+}
+
+.variable-option-input {
   color: var(--color-text-primary);
   background: var(--color-surface-alt);
   border: var(--border-standard);
   border-radius: var(--radius-sm);
-  padding: var(--space-2) var(--space-4);
   outline: none;
 }
 
