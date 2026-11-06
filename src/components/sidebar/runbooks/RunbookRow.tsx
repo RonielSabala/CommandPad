@@ -131,7 +131,7 @@ export const RunbookRow = memo(function RunbookRow({
 
         {path && <span className="runbook-row-path">{path}</span>}
 
-        {isOpen && (
+        {isOpen && !isActive && (
           <span
             className="runbook-open-dot"
             {...tooltip(t.runbooks.openInTab)}
