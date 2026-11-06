@@ -14,7 +14,12 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { memo, useState } from "react";
-import { FileEarmarkPlus, FolderFill, FolderPlus } from "react-bootstrap-icons";
+import {
+  FileEarmarkPlus,
+  Folder2Open,
+  FolderFill,
+  FolderPlus,
+} from "react-bootstrap-icons";
 
 import { libraryDepthStyle } from "./libraryDepth";
 import "./LibraryFolderRow.css";
@@ -31,6 +36,7 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
 }: Props) {
   const t = useTranslation();
   const folderId = folder.id;
+  const FolderIcon = folder.collapsed ? FolderFill : Folder2Open;
 
   const createNewTab = useStore((state) => state.createNewTab);
   const createLibraryFolder = useStore((state) => state.createLibraryFolder);
@@ -98,7 +104,7 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
               )}
             />
 
-            <FolderFill
+            <FolderIcon
               className={classNames(
                 CssClass.ICON_MD,
                 CssClass.LIBRARY_ROW_ICON,
