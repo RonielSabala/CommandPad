@@ -43,9 +43,9 @@ export function RunbookSyncBadge({ runbookId, sync }: Props) {
   return (
     <button
       className={classNames(
-        "runbook-badge",
         "runbook-sync",
         `sync-${syncStatus}`,
+        CssClass.LIBRARY_RUNBOOK_BADGE,
       )}
       aria-label={statusLabel}
       {...tooltip(statusLabel)}

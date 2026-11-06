@@ -90,7 +90,6 @@ export const en: Messages = {
     stopSyncing: "Stop syncing",
     rename: "Rename",
     resetName: "Reset name",
-    openInTab: "Open in a tab",
     newFolder: "New folder",
     newRunbook: "New runbook",
     folderName: "New folder",
@@ -1154,6 +1153,7 @@ If something goes wrong, undo it in this order:
       ) => `* Click **${importLabel}** to load one or more \`.json\` files at once, or **Paste** to create a runbook from raw JSON.
 * You can also **drag files** from your file explorer and drop them onto the section to import them.
 * Click any runbook to open it. If it's already open in a tab, that tab becomes active.
+* A small ring beside a runbook means it's open in a tab you aren't viewing. Click the ring to close that tab.
 * Open the **${runbookActionsLabel}** menu shown on row hover to duplicate a runbook or remove it from the library.
 * Click **${clearLibraryLabel}** to empty the whole library at once.
 * Drag the handle on the left of a runbook to reorder it in the list. Dropping it on a runbook in another folder moves it into that folder.

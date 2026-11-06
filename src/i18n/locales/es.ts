@@ -90,7 +90,6 @@ export const es: Messages = {
     stopSyncing: "Dejar de sincronizar",
     rename: "Renombrar",
     resetName: "Restablecer nombre",
-    openInTab: "Abierto en una pestaña",
     newFolder: "Nueva carpeta",
     newRunbook: "Nuevo libro",
     folderName: "Nueva carpeta",
@@ -1180,6 +1179,7 @@ Si algo sale mal, deshazlo en este orden:
       ) => `* Haz clic en **${importLabel}** para cargar uno o varios archivos \`.json\` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.
 * También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.
 * Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.
+* Un pequeño círculo junto a un libro indica que está abierto en una pestaña que no estás viendo. Haz clic en el círculo para cerrar esa pestaña.
 * Abre el menú de **${runbookActionsLabel}** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.
 * Haz clic en **${clearLibraryLabel}** para vaciar la biblioteca completa de una vez.
 * Arrastra el control a la izquierda de un libro para reordenarlo en la lista. Si lo sueltas sobre un libro de otra carpeta, pasa a esa carpeta.

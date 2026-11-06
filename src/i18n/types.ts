@@ -114,7 +114,6 @@ export interface Messages {
     stopSyncing: string;
     rename: string;
     resetName: string;
-    openInTab: string;
     newFolder: string;
     newRunbook: string;
     folderName: string;

@@ -12,7 +12,12 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { DuplicateIcon, PencilIcon, TrashIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
-import { isRunbookOpen, useStore } from "@/store/store";
+import {
+  getTabByRunbookId,
+  isRunbookOpen,
+  useStore,
+  useStoreApi,
+} from "@/store/store";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { memo, useState } from "react";
@@ -50,6 +55,15 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
   const isOpen = useStore(
     (state) => marksOpenTabs && isRunbookOpen(state, runbookId),
   );
+
+  const store = useStoreApi();
+  const closeRunbookTab = () => {
+    const state = store.getState();
+    const tab = getTabByRunbookId(state, runbookId);
+    if (tab) {
+      state.closeTab(tab.id);
+    }
+  };
 
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const setRunbookFocus = useStore((state) => state.setRunbookFocus);
@@ -139,9 +153,14 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
         {path && <span className="library-runbook-row-path">{path}</span>}
 
         {isOpen && !isActive && (
-          <span
-            className="library-runbook-open-dot"
-            {...tooltip(t.runbooks.openInTab)}
+          <button
+            className={classNames(
+              "library-runbook-open-dot",
+              CssClass.LIBRARY_RUNBOOK_BADGE,
+            )}
+            aria-label={t.tabs.closeTab}
+            {...tooltip(t.tabs.closeTab)}
+            onClick={closeRunbookTab}
           />
         )}
 

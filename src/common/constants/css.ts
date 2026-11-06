@@ -133,6 +133,7 @@ export const CssClass = {
   LIBRARY_ROW_BTN: "library-row-btn",
   LIBRARY_ROW_ICON: "library-row-icon",
   LIBRARY_ROW_NAME: "library-row-name",
+  LIBRARY_RUNBOOK_BADGE: "library-runbook-badge",
 
   // Minimap
   MINIMAP_ON: "minimap-on",
