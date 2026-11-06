@@ -1,9 +1,19 @@
 .library-row {
   --library-indent: calc(var(--icon-sm) + var(--space-3));
 
-  grid-template-columns: auto fit-content(100%) auto;
-  justify-content: start;
-  margin-left: calc(var(--library-depth, 0) * var(--library-indent));
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  border-radius: var(--radius-md);
+}
+
+.library-row.sidebar-section-list-row {
+  padding-left: calc(
+    var(--space-2) + var(--library-depth, 0) * var(--library-indent)
+  );
+}
+
+.library-row:hover,
+.library-row:has(:focus-visible, .row-actions.menu-open) {
+  background: var(--color-surface-hover-bg);
 }
 
 .library-row-main {
@@ -14,6 +24,8 @@
 }
 
 .library-row-label {
+  max-width: 100%;
+  margin-right: auto;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   font-family: var(--font-mono);
@@ -43,7 +55,6 @@
 }
 
 .library-row-btn:hover {
-  background: var(--color-surface-hover-bg);
   color: var(--color-text-primary);
 }
 

@@ -109,8 +109,8 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
 
       <DragHandle handleProps={handleProps} />
 
-      <div className="library-runbook-row-content">
-        <div className={CssClass.LIBRARY_ROW_MAIN}>
+      <div className={CssClass.LIBRARY_ROW_MAIN}>
+        <div className="library-runbook-row-content">
           {renaming ? (
             <RenameInput
               className={classNames(
@@ -153,23 +153,23 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
             </button>
           )}
 
-          {isOpen && !isActive && (
-            <button
-              className={classNames(
-                "library-runbook-open-dot",
-                CssClass.LIBRARY_RUNBOOK_BADGE,
-              )}
-              aria-label={t.tabs.closeTab}
-              {...tooltip(t.tabs.closeTab)}
-              onClick={closeRunbookTab}
-            />
-          )}
-
-          {runbook.secured && <RunbookSecretBadge runbookId={runbookId} />}
-          {sync && <RunbookSyncBadge runbookId={runbookId} sync={sync} />}
+          {path && <span className="library-runbook-row-path">{path}</span>}
         </div>
 
-        {path && <span className="library-runbook-row-path">{path}</span>}
+        {isOpen && !isActive && (
+          <button
+            className={classNames(
+              "library-runbook-open-dot",
+              CssClass.LIBRARY_RUNBOOK_BADGE,
+            )}
+            aria-label={t.tabs.closeTab}
+            {...tooltip(t.tabs.closeTab)}
+            onClick={closeRunbookTab}
+          />
+        )}
+
+        {runbook.secured && <RunbookSecretBadge runbookId={runbookId} />}
+        {sync && <RunbookSyncBadge runbookId={runbookId} sync={sync} />}
       </div>
 
       <ActionsMenu className={CssClass.ROW_ACTIONS} title={t.runbooks.actions}>
