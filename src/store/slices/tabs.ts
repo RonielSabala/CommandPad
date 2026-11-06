@@ -51,6 +51,7 @@ export function createTabsSlice(
         libraryRunbooks: [...s.libraryRunbooks, runbook],
         activeRunbookId: runbookId,
         focusedRunbookId: null,
+        runbookSearchQuery: "",
       }));
 
       await writeRunbookContent(runbookId, tabContent(null));
