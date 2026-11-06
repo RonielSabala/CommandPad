@@ -9,7 +9,7 @@ import { DragHandle } from "@/components/common/DragHandle";
 import { DragImage } from "@/components/common/DragImage";
 import { RenameInput } from "@/components/common/RenameInput";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { DuplicateIcon, TrashIcon } from "@/components/icons";
+import { TrashIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
 import {
@@ -24,6 +24,7 @@ import { memo, useState } from "react";
 import {
   ArrowCounterclockwise,
   CloudSlash,
+  Copy,
   FileEarmark,
   Vr,
 } from "react-bootstrap-icons";
@@ -197,11 +198,7 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
         )}
 
         <ContextMenuItem
-          icon={
-            <DuplicateIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<Copy className={CssClass.ICON_MD} />}
           onSelect={() => void duplicateRunbook(runbookId)}
         >
           {t.runbooks.duplicate}
