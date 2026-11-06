@@ -26,9 +26,7 @@ body.read-mode .sidebar-section-list-row .row-actions {
 
 .sidebar-section-list-row :is(.drag-handle, .row-actions) {
   opacity: 0;
-  transition:
-    opacity var(--transition-fast),
-    color var(--transition-fast);
+  transition: color var(--transition-fast);
 }
 
 .sidebar-section-list-row:hover :is(.drag-handle, .row-actions),
