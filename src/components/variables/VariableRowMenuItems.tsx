@@ -15,7 +15,6 @@ import { SelectionToggleItem } from "@/components/common/contextMenu/SelectionTo
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import {
-  DuplicateIcon,
   EnumIcon,
   SectionIcon,
   TrashIcon,
@@ -25,6 +24,7 @@ import { useTranslation } from "@/i18n";
 import { countVariableTargets, useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useContext, type ReactNode } from "react";
+import { Copy } from "react-bootstrap-icons";
 
 import { VariableRowInfo } from "./info/VariableRowInfo";
 
@@ -115,11 +115,7 @@ export function DuplicateItem({ targetId, children }: ItemProps) {
 
   return (
     <ContextMenuItem
-      icon={
-        <DuplicateIcon
-          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-        />
-      }
+      icon={<Copy className={CssClass.ICON_MD} />}
       onSelect={() => duplicateVariable(targetId)}
     >
       {children}
