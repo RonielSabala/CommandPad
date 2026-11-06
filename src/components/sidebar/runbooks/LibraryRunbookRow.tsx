@@ -109,66 +109,67 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
 
       <DragHandle handleProps={handleProps} />
 
-      <div className={CssClass.LIBRARY_ROW_MAIN}>
-        {renaming ? (
-          <RenameInput
-            className={classNames(
-              CssClass.LIBRARY_ROW_LABEL,
-              CssClass.LIBRARY_ROW_RENAME_INPUT,
-            )}
-            value={runbookLabel}
-            maxLength={RunbookConfig.LABEL_MAX_LENGTH}
-            onCommit={(name) => {
-              renameRunbook(runbookId, name);
-              setRenaming(false);
-            }}
-            onCancel={() => setRenaming(false)}
-          />
-        ) : (
-          <button
-            className={classNames(
-              isActive && CssClass.ACTIVE,
-              isFocused && "library-runbook-focused",
-              isDragOver && CssClass.DRAG_OVER,
-              CssClass.LIBRARY_ROW_BTN,
-              CssClass.LIBRARY_ROW_LABEL,
-              CssClass.NO_USER_SELECT,
-            )}
-            onClick={() => {
-              setRunbookFocus(null);
-              void loadRunbookFromLibrary(runbookId);
-            }}
-            onDoubleClick={() => setRenaming(!readMode)}
-            {...tooltip(runbookLabel)}
-          >
-            <FileEarmark
+      <div className="library-runbook-row-content">
+        <div className={CssClass.LIBRARY_ROW_MAIN}>
+          {renaming ? (
+            <RenameInput
               className={classNames(
-                CssClass.ICON_MD,
-                CssClass.LIBRARY_ROW_ICON,
+                CssClass.LIBRARY_ROW_LABEL,
+                CssClass.LIBRARY_ROW_RENAME_INPUT,
               )}
+              value={runbookLabel}
+              maxLength={RunbookConfig.LABEL_MAX_LENGTH}
+              onCommit={(name) => {
+                renameRunbook(runbookId, name);
+                setRenaming(false);
+              }}
+              onCancel={() => setRenaming(false)}
             />
+          ) : (
+            <button
+              className={classNames(
+                isActive && CssClass.ACTIVE,
+                isFocused && "library-runbook-focused",
+                isDragOver && CssClass.DRAG_OVER,
+                CssClass.LIBRARY_ROW_BTN,
+                CssClass.LIBRARY_ROW_LABEL,
+                CssClass.NO_USER_SELECT,
+              )}
+              onClick={() => {
+                setRunbookFocus(null);
+                void loadRunbookFromLibrary(runbookId);
+              }}
+              onDoubleClick={() => setRenaming(!readMode)}
+              {...tooltip(runbookLabel)}
+            >
+              <FileEarmark
+                className={classNames(
+                  CssClass.ICON_MD,
+                  CssClass.LIBRARY_ROW_ICON,
+                )}
+              />
 
-            <span className={CssClass.LIBRARY_ROW_NAME}>{runbookLabel}</span>
-          </button>
-        )}
+              <span className={CssClass.LIBRARY_ROW_NAME}>{runbookLabel}</span>
+            </button>
+          )}
+
+          {isOpen && !isActive && (
+            <button
+              className={classNames(
+                "library-runbook-open-dot",
+                CssClass.LIBRARY_RUNBOOK_BADGE,
+              )}
+              aria-label={t.tabs.closeTab}
+              {...tooltip(t.tabs.closeTab)}
+              onClick={closeRunbookTab}
+            />
+          )}
+
+          {runbook.secured && <RunbookSecretBadge runbookId={runbookId} />}
+          {sync && <RunbookSyncBadge runbookId={runbookId} sync={sync} />}
+        </div>
 
         {path && <span className="library-runbook-row-path">{path}</span>}
-
-        {isOpen && !isActive && (
-          <button
-            className={classNames(
-              "library-runbook-open-dot",
-              CssClass.LIBRARY_RUNBOOK_BADGE,
-            )}
-            aria-label={t.tabs.closeTab}
-            {...tooltip(t.tabs.closeTab)}
-            onClick={closeRunbookTab}
-          />
-        )}
-
-        {runbook.secured && <RunbookSecretBadge runbookId={runbookId} />}
-
-        {sync && <RunbookSyncBadge runbookId={runbookId} sync={sync} />}
       </div>
 
       <ActionsMenu className={CssClass.ROW_ACTIONS} title={t.runbooks.actions}>

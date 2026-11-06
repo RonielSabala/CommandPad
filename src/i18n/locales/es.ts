@@ -1189,7 +1189,7 @@ Si algo sale mal, deshazlo en este orden:
       manualName: (renameLabel, resetNameLabel) =>
         `**Ponerle nombre tú mismo:** haz doble clic en un libro de la lista de arriba o en su pestaña, o elige **${renameLabel}** en cualquiera de sus menús, y pulsa Enter o Escape para conservar el nombre. Un nombre que eliges se mantiene mientras editas el libro; **${resetNameLabel}** vuelve al etiquetado automático.`,
       folders: (newFolderLabel, newRunbookLabel, folderActionsLabel) =>
-        `**Carpetas:** los botones junto a la barra de búsqueda crean una **${newFolderLabel}** en el nivel superior o un **${newRunbookLabel}** vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella, la renombra o la elimina con todo lo que contiene. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con las carpetas que lo contienen.`,
+        `**Carpetas:** los botones junto a la barra de búsqueda crean una **${newFolderLabel}** en el nivel superior o un **${newRunbookLabel}** vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella, la renombra o la elimina con todo lo que contiene. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con su ruta desde el nivel superior de la biblioteca.`,
       labelDetails:
         "Las etiquetas se normalizan: se limpia el formato markdown y se recorta hasta 60 caracteres.",
       autoSave:

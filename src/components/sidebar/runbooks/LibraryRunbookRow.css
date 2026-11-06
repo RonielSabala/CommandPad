@@ -21,8 +21,14 @@
   color: inherit;
 }
 
-.library-runbook-row-path {
+.library-runbook-row-content {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+}
+
+.library-runbook-row-path {
+  padding-left: calc(1px + var(--space-4) + var(--icon-md) + var(--space-3));
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -74,6 +74,16 @@ describe("libraryRows", () => {
     ]);
   });
 
+  it("gives a path only to search results", () => {
+    const pathOf = (query: string) =>
+      libraryRows([], [runbook("top")], query).map((row) =>
+        row.kind === LibraryItemKind.RUNBOOK ? row.path : null,
+      );
+
+    expect(pathOf("")).toEqual([undefined]);
+    expect(pathOf("top")).toEqual([[]]);
+  });
+
   it("matches a runbook by the folders holding it", () => {
     expect(describeRows(folders, runbooks, "db")).toEqual([
       "0:backup",

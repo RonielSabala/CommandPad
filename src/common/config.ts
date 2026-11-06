@@ -24,7 +24,8 @@ export const RunbookConfig = {
 
 export const LibraryFolderConfig = {
   NAME_MAX_LENGTH: 60,
-  PATH_SEPARATOR: " / ",
+  PATH_SEPARATOR: "/",
+  ROOT_PATH: "~/",
   DEPTH_PROPERTY: "--library-depth",
 } as const;
 

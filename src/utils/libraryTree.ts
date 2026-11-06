@@ -14,7 +14,7 @@ export type LibraryRow =
       runbook: LibraryRunbook;
       depth: number;
       /** The names of the folders holding it. */
-      path: readonly string[];
+      path?: readonly string[];
     };
 
 const EMPTY_PATH: readonly string[] = Object.freeze([]);
@@ -71,7 +71,12 @@ export function libraryRows(
 
     for (const runbook of contents.get(parentId) ?? []) {
       if (matchesQuery(query, runbook.label, runbook.filename, ...path)) {
-        rows.push({ kind: LibraryItemKind.RUNBOOK, runbook, depth, path });
+        rows.push({
+          kind: LibraryItemKind.RUNBOOK,
+          runbook,
+          depth,
+          path: query ? path : undefined,
+        });
       }
     }
   };

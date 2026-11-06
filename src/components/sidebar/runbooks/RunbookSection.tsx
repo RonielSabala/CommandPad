@@ -28,7 +28,11 @@ const renderRow = (row: LibraryRow) =>
     <LibraryRunbookRow
       runbook={row.runbook}
       depth={row.depth}
-      path={row.path.join(LibraryFolderConfig.PATH_SEPARATOR)}
+      path={
+        row.path &&
+        LibraryFolderConfig.ROOT_PATH +
+          row.path.join(LibraryFolderConfig.PATH_SEPARATOR)
+      }
     />
   );
 

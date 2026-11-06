@@ -1163,7 +1163,7 @@ If something goes wrong, undo it in this order:
       manualName: (renameLabel, resetNameLabel) =>
         `**Naming it yourself:** double-click a runbook in the list above or its tab, or pick **${renameLabel}** from either menu, then press Enter or Escape to keep the name. A name you choose stays put while you edit the runbook; **${resetNameLabel}** goes back to auto-labelling.`,
       folders: (newFolderLabel, newRunbookLabel, folderActionsLabel) =>
-        `**Folders:** the buttons beside the search bar create a top-level **${newFolderLabel}** or an empty **${newRunbookLabel}**. A folder's **${folderActionsLabel}** menu creates either one inside it, renames it, or deletes it with everything it holds. Folders nest as deep as you like: click one to fold or unfold it. While you search, the matching runbooks are listed flat, each with the folders that hold it.`,
+        `**Folders:** the buttons beside the search bar create a top-level **${newFolderLabel}** or an empty **${newRunbookLabel}**. A folder's **${folderActionsLabel}** menu creates either one inside it, renames it, or deletes it with everything it holds. Folders nest as deep as you like: click one to fold or unfold it. While you search, the matching runbooks are listed flat, each with its path from the top of the library.`,
       labelDetails:
         "Labels are normalized: markdown formatting is stripped and they are trimmed to 60 characters.",
       autoSave:
