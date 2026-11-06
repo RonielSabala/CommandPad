@@ -24,7 +24,9 @@
 }
 
 .runbook-item-btn {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   width: fit-content;
   min-width: 0;
   text-align: left;
@@ -32,8 +34,6 @@
   border: 1px solid transparent;
   color: var(--color-text-secondary);
   cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
   transition:
     color var(--transition-fast),
@@ -66,6 +66,22 @@
   outline: var(--space-1) solid var(--accent);
   outline-offset: var(--space-1);
   box-shadow: 0 0 0 var(--space-2) var(--accent-dim);
+}
+
+.library-row-icon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.runbook-item-btn.active .library-row-icon,
+.runbook-item-btn.runbook-focused .library-row-icon {
+  color: inherit;
+}
+
+.library-row-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .runbook-row-path {

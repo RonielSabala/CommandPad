@@ -93,10 +93,10 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
             />
 
             <FolderFill
-              className={classNames("library-folder-icon", CssClass.ICON_MD)}
+              className={classNames("library-row-icon", CssClass.ICON_MD)}
             />
 
-            <span className="library-folder-name">{folder.name}</span>
+            <span className="library-row-name">{folder.name}</span>
           </button>
         )}
       </div>

@@ -21,7 +21,11 @@ import { isRunbookOpen, useStore } from "@/store/store";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { memo, useState } from "react";
-import { ArrowCounterclockwise, CloudSlash } from "react-bootstrap-icons";
+import {
+  ArrowCounterclockwise,
+  CloudSlash,
+  FileEarmark,
+} from "react-bootstrap-icons";
 
 import { libraryDepthStyle } from "./libraryDepth";
 import "./RunbookRow.css";
@@ -119,7 +123,11 @@ export const RunbookRow = memo(function RunbookRow({
             onDoubleClick={() => setRenaming(!readMode)}
             {...tooltip(runbookLabel)}
           >
-            {runbookLabel}
+            <FileEarmark
+              className={classNames("library-row-icon", CssClass.ICON_MD)}
+            />
+
+            <span className="library-row-name">{runbookLabel}</span>
           </button>
         )}
 

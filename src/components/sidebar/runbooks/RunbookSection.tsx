@@ -1,15 +1,12 @@
 import { LibraryFolderConfig } from "@/common/config";
-import { CssClass } from "@/common/constants/css";
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
 import { AppMode, LibraryItemKind } from "@/common/enums";
 import { SearchInput } from "@/components/common/SearchInput";
-import { tooltip } from "@/components/common/tooltip/tooltip";
 import { ClipIcon, ImportIcon, TrashIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { libraryRows, type LibraryRow } from "@/utils/libraryTree";
-import { classNames } from "@/utils/string";
 import { useEffect, useMemo, useRef } from "react";
 import { FileEarmarkPlus, FolderPlus } from "react-bootstrap-icons";
 
@@ -19,6 +16,7 @@ import { SidebarSectionList } from "../shared/SidebarSectionList";
 import { LibraryFolderRow } from "./LibraryFolderRow";
 import { RunbookRow } from "./RunbookRow";
 import "./RunbookSection.css";
+import { RunbookToolbarButton } from "./RunbookToolbarButton";
 
 const getRowKey = (row: LibraryRow) =>
   row.kind === LibraryItemKind.FOLDER ? row.folder.id : row.runbook.id;
@@ -98,23 +96,17 @@ export function RunbookSection() {
 
         {!isReadMode && (
           <>
-            <button
-              className={classNames(CssClass.BTN, CssClass.BTN_SOFT_ICON)}
+            <RunbookToolbarButton
+              icon={FileEarmarkPlus}
+              label={t.runbooks.newRunbook}
               onClick={() => void createNewTab()}
-              aria-label={t.runbooks.newRunbook}
-              {...tooltip(t.runbooks.newRunbook)}
-            >
-              <FileEarmarkPlus className={CssClass.ICON_MD} />
-            </button>
+            />
 
-            <button
-              className={classNames(CssClass.BTN, CssClass.BTN_SOFT_ICON)}
+            <RunbookToolbarButton
+              icon={FolderPlus}
+              label={t.runbooks.newFolder}
               onClick={() => createLibraryFolder(null)}
-              aria-label={t.runbooks.newFolder}
-              {...tooltip(t.runbooks.newFolder)}
-            >
-              <FolderPlus className={CssClass.ICON_MD} />
-            </button>
+            />
           </>
         )}
       </div>
