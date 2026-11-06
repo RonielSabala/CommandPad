@@ -74,6 +74,6 @@
   border-bottom: 1px solid transparent;
 }
 
-.library-row-btn:hover .library-row-name {
+.library-row-btn:not(.active):hover .library-row-name {
   border-bottom-color: currentcolor;
 }
