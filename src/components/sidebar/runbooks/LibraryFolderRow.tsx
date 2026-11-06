@@ -5,11 +5,7 @@ import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { RenameInput } from "@/components/common/RenameInput";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import {
-  EditorToggleChevronIcon,
-  PencilIcon,
-  TrashIcon,
-} from "@/components/icons";
+import { EditorToggleChevronIcon, TrashIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -19,6 +15,7 @@ import {
   Folder2Open,
   FolderFill,
   FolderPlus,
+  Vr,
 } from "react-bootstrap-icons";
 
 import { libraryDepthStyle } from "./libraryDepth";
@@ -135,11 +132,7 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
         </ContextMenuItem>
 
         <ContextMenuItem
-          icon={
-            <PencilIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<Vr className={CssClass.ICON_MD} />}
           onSelect={() => setRenaming(true)}
         >
           {t.runbooks.rename}

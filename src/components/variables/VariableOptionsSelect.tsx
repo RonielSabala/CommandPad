@@ -35,7 +35,6 @@ import {
   CopyIcon,
   DuplicateIcon,
   OptionIcon,
-  PencilIcon,
   PlusIcon,
   TrashIcon,
 } from "@/components/icons";
@@ -52,6 +51,7 @@ import {
 } from "@/utils/resolution";
 import { abbreviate, classNames, countCharacters } from "@/utils/string";
 import { createContext, useContext, useMemo, useState } from "react";
+import { PencilSquare } from "react-bootstrap-icons";
 
 import { OptionScopeContext } from "./optionScopeContext";
 import "./VariableOptionsSelect.css";
@@ -204,11 +204,7 @@ function VariableOptionRow({
         besideSelector={SelectSelector.MENU}
       >
         <ContextMenuItem
-          icon={
-            <PencilIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<PencilSquare className={CssClass.ICON_MD} />}
           onSelect={() => setEditing(true)}
         >
           {t.variables.editOption}

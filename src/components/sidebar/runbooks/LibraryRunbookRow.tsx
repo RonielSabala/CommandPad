@@ -9,7 +9,7 @@ import { DragHandle } from "@/components/common/DragHandle";
 import { DragImage } from "@/components/common/DragImage";
 import { RenameInput } from "@/components/common/RenameInput";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { DuplicateIcon, PencilIcon, TrashIcon } from "@/components/icons";
+import { DuplicateIcon, TrashIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
 import {
@@ -25,6 +25,7 @@ import {
   ArrowCounterclockwise,
   CloudSlash,
   FileEarmark,
+  Vr,
 } from "react-bootstrap-icons";
 
 import { libraryDepthStyle } from "./libraryDepth";
@@ -180,11 +181,7 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
         )}
 
         <ContextMenuItem
-          icon={
-            <PencilIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<Vr className={CssClass.ICON_MD} />}
           onSelect={() => setRenaming(true)}
         >
           {t.runbooks.rename}
