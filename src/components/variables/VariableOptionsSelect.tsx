@@ -29,6 +29,8 @@ import {
 } from "@/components/common/Select";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import {
+  ArrowBarDown,
+  ArrowBarUp,
   CheckIcon,
   CopyIcon,
   DuplicateIcon,
@@ -50,7 +52,6 @@ import {
 } from "@/utils/resolution";
 import { abbreviate, classNames, countCharacters } from "@/utils/string";
 import { createContext, useContext, useMemo, useState } from "react";
-import { ArrowBarDown, ArrowBarUp } from "react-bootstrap-icons";
 
 import { OptionScopeContext } from "./optionScopeContext";
 import "./VariableOptionsSelect.css";
@@ -153,6 +154,8 @@ function VariableOptionRow({
     reorderVariableOptions(variableId, source, target),
   );
 
+  const OptionStateIcon = selected ? CheckIcon : OptionIcon;
+
   return (
     <li
       {...rowProps}
@@ -162,7 +165,16 @@ function VariableOptionRow({
         isDragging && CssClass.DRAGGING,
       )}
     >
-      <DragImage icon={selected ? CheckIcon : OptionIcon}>{option}</DragImage>
+      <DragImage
+        icon={
+          <OptionStateIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
+      >
+        {option}
+      </DragImage>
+
       <DragHandle handleProps={handleProps} />
 
       <div
@@ -229,7 +241,7 @@ function VariableOptionRow({
         <ContextMenuItem
           icon={
             <ArrowBarUp
-              className={(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
+              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
             />
           }
           onSelect={() =>
@@ -243,7 +255,7 @@ function VariableOptionRow({
         <ContextMenuItem
           icon={
             <ArrowBarDown
-              className={(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
+              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
             />
           }
           onSelect={() =>

@@ -79,6 +79,8 @@ export const VariableRow = memo(function VariableRow({
     }
   }, [pendingFocus, editorShowing, consumeVariableFocus]);
 
+  const KindIcon = variable.options ? EnumIcon : VariableIcon;
+
   return (
     <div
       className={classNames(
@@ -91,9 +93,16 @@ export const VariableRow = memo(function VariableRow({
       {...{ [DataAttr.VARIABLE_ID]: variableId }}
       {...rowProps}
     >
-      <DragImage icon={variable.options ? EnumIcon : VariableIcon}>
+      <DragImage
+        icon={
+          <KindIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
+      >
         {variableKey || t.variables.keyPlaceholder}
       </DragImage>
+
       <DragHandle handleProps={handleProps} />
 
       <div

@@ -1,8 +1,10 @@
+import { CssClass } from "@/common/constants/css";
 import type { Variable } from "@/common/types";
 import { DragImage } from "@/components/common/DragImage";
 import { EnumIcon, VariableIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import type { VariableCompletion } from "@/monaco/completions";
+import { classNames } from "@/utils/string";
 import { memo, useRef } from "react";
 
 import { VariableActionsMenu } from "./VariableActionsMenu";
@@ -22,6 +24,7 @@ export const VariableItem = memo(function VariableItem({
 }: Props) {
   const t = useTranslation();
   const keyRef = useRef<HTMLInputElement>(null);
+  const KindIcon = variable.options ? EnumIcon : VariableIcon;
 
   return (
     <VariableRowFrame
@@ -36,9 +39,16 @@ export const VariableItem = memo(function VariableItem({
         />
       )}
     >
-      <DragImage icon={variable.options ? EnumIcon : VariableIcon}>
+      <DragImage
+        icon={
+          <KindIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
+      >
         {variable.key || t.variables.keyPlaceholder}
       </DragImage>
+
       <VariableEditor
         variable={variable}
         completions={completions}

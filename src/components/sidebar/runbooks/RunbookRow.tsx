@@ -9,12 +9,7 @@ import { DragHandle } from "@/components/common/DragHandle";
 import { DragImage } from "@/components/common/DragImage";
 import { RenameInput } from "@/components/common/RenameInput";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import {
-  DuplicateIcon,
-  PencilIcon,
-  RunbookIcon,
-  TrashIcon,
-} from "@/components/icons";
+import { DuplicateIcon, PencilIcon, TrashIcon } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
 import { isRunbookOpen, useStore } from "@/store/store";
@@ -91,7 +86,10 @@ export const RunbookRow = memo(function RunbookRow({
       {...{ [DataAttr.RUNBOOK_ID]: runbookId }}
       {...rowProps}
     >
-      <DragImage icon={RunbookIcon}>{runbookLabel}</DragImage>
+      <DragImage icon={<FileEarmark className={CssClass.ICON_MD} />}>
+        {runbookLabel}
+      </DragImage>
+
       <DragHandle handleProps={handleProps} />
 
       <div className="runbook-row-main">

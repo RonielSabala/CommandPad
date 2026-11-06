@@ -1,6 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { InsertPosition } from "@/common/enums";
-import { InsertAboveIcon, InsertBelowIcon } from "@/components/icons";
+import { ArrowBarDown, ArrowBarUp } from "@/components/icons";
 import { classNames } from "@/utils/string";
 import type { ReactNode } from "react";
 
@@ -19,14 +19,14 @@ export function InsertSubmenus({ aboveLabel, belowLabel, children }: Props) {
   return (
     <>
       <ContextMenuSubmenu
-        icon={<InsertAboveIcon className={ICON_CLASS} />}
+        icon={<ArrowBarUp className={ICON_CLASS} />}
         label={aboveLabel}
       >
         {children(InsertPosition.ABOVE)}
       </ContextMenuSubmenu>
 
       <ContextMenuSubmenu
-        icon={<InsertBelowIcon className={ICON_CLASS} />}
+        icon={<ArrowBarDown className={ICON_CLASS} />}
         label={belowLabel}
       >
         {children(InsertPosition.BELOW)}

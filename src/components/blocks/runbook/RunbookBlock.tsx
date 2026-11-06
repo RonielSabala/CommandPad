@@ -273,7 +273,15 @@ export function RunbookBlock({
         CssClass.BLOCK_SURFACE,
       )}
     >
-      <DragImage icon={RunbookIcon}>{dragImageLabel}</DragImage>
+      <DragImage
+        icon={
+          <RunbookIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
+      >
+        {dragImageLabel}
+      </DragImage>
 
       {(!readMode || canSwitchView || !!local || embed.locked) && (
         <div
