@@ -71,4 +71,9 @@
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  border-bottom: 1px solid transparent;
+}
+
+.library-row-btn:hover .library-row-name {
+  border-bottom-color: currentcolor;
 }
