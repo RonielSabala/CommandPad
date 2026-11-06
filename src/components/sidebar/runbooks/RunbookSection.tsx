@@ -97,15 +97,15 @@ export function RunbookSection() {
         {!isReadMode && (
           <>
             <RunbookToolbarButton
-              icon={FileEarmarkPlus}
-              label={t.runbooks.newRunbook}
-              onClick={() => void createNewTab()}
-            />
-
-            <RunbookToolbarButton
               icon={FolderPlus}
               label={t.runbooks.newFolder}
               onClick={() => createLibraryFolder(null)}
+            />
+
+            <RunbookToolbarButton
+              icon={FileEarmarkPlus}
+              label={t.runbooks.newRunbook}
+              onClick={() => void createNewTab()}
             />
           </>
         )}

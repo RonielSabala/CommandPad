@@ -115,17 +115,17 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
         title={t.runbooks.folderActions}
       >
         <ContextMenuItem
-          icon={<FileEarmarkPlus className={CssClass.ICON_MD} />}
-          onSelect={() => void createNewTab(folderId)}
-        >
-          {t.runbooks.newRunbook}
-        </ContextMenuItem>
-
-        <ContextMenuItem
           icon={<FolderPlus className={CssClass.ICON_MD} />}
           onSelect={() => createLibraryFolder(folderId)}
         >
           {t.runbooks.newFolder}
+        </ContextMenuItem>
+
+        <ContextMenuItem
+          icon={<FileEarmarkPlus className={CssClass.ICON_MD} />}
+          onSelect={() => void createNewTab(folderId)}
+        >
+          {t.runbooks.newRunbook}
         </ContextMenuItem>
 
         <ContextMenuItem
