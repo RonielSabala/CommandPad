@@ -126,9 +126,17 @@ export interface RunbookEntry {
   filename: string;
   /** A label set by hand. */
   named?: boolean;
+  folderId?: string;
   sync?: RunbookSync;
   secured?: boolean;
   vault?: VaultRecord;
+}
+
+export interface LibraryFolder {
+  id: string;
+  name: string;
+  parentId: string | null;
+  collapsed?: boolean;
 }
 
 export interface RunbookStats {

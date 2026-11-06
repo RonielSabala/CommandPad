@@ -18,6 +18,7 @@ import {
   Theme,
 } from "@/common/enums";
 import type {
+  LibraryFolder,
   PanelState,
   RunbookEntry,
   RunbookSync,
@@ -27,6 +28,7 @@ import type {
 import { detectLanguage, isLanguage } from "@/i18n/messages";
 import type { Language } from "@/i18n/types";
 import type { CloudFolderRef } from "@/services/cloud";
+import { repairLibrary } from "@/utils/libraryTree";
 import { clamp } from "@/utils/number";
 import { isEnumValue, isNumber, isObject, isString } from "@/utils/typeGuards";
 
@@ -270,6 +272,7 @@ export function loadTabsMeta(): PersistedTabs | null {
 
 interface PersistedRunbooks {
   items: RunbookEntry[];
+  folders: LibraryFolder[];
   activeId: string | null;
 }
 
@@ -301,20 +304,41 @@ function restoreRunbookEntry(entry: RunbookEntry): RunbookEntry {
   return {
     ...entry,
     named: entry.named === true || undefined,
+    folderId: isString(entry.folderId) ? entry.folderId : undefined,
     sync: restoreRunbookSync(entry.sync),
     secured: entry.secured === true,
     vault: isVaultRecord(entry.vault) ? entry.vault : undefined,
   };
 }
 
+function restoreLibraryFolders(value: unknown): LibraryFolder[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.flatMap((folder) =>
+    isObject(folder) && isString(folder.id) && isString(folder.name)
+      ? [
+          {
+            id: folder.id,
+            name: folder.name,
+            parentId: isString(folder.parentId) ? folder.parentId : null,
+            ...(folder.collapsed === true ? { collapsed: true } : {}),
+          },
+        ]
+      : [],
+  );
+}
+
 export function saveRunbookLibrary(
   items: RunbookEntry[],
+  folders: LibraryFolder[],
   activeId: string | null,
 ): void {
   try {
     localStorage.setItem(
       StorageKey.RUNBOOK_LIBRARY,
-      JSON.stringify({ items, activeId }),
+      JSON.stringify({ items, folders, activeId }),
     );
   } catch (error) {
     console.warn("Failed to save runbook library:", error);
@@ -328,10 +352,12 @@ export function loadRunbookLibrary(): PersistedRunbooks | null {
       return null;
     }
 
-    return {
-      items: (saved.items ?? []).map(restoreRunbookEntry),
-      activeId: saved.activeId ?? null,
-    };
+    const { folders, runbooks } = repairLibrary(
+      restoreLibraryFolders(saved.folders),
+      (saved.items ?? []).map(restoreRunbookEntry),
+    );
+
+    return { items: runbooks, folders, activeId: saved.activeId ?? null };
   } catch (error) {
     console.warn("Failed to load runbook library:", error);
     return null;

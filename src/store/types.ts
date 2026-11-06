@@ -33,6 +33,7 @@ import type {
   BlockOfType,
   EmbeddedRunbook,
   ImageBlock,
+  LibraryFolder,
   PanelState,
   RunbookContent,
   RunbookEntry,
@@ -156,6 +157,7 @@ export interface StoreState {
   tabs: Tab[];
   activeTabId: string | null;
   runbookLibrary: RunbookEntry[];
+  libraryFolders: LibraryFolder[];
   activeRunbookId: string | null;
   runbookSyncStatus: Record<string, RunbookSyncStatus>;
   embeddedRunbooks: Record<string, EmbeddedRunbook>;
@@ -171,6 +173,7 @@ export interface StoreState {
   selectKeyHeld: boolean;
   linkKeyHeld: boolean;
   pendingFocusBlockId: string | null;
+  pendingFolderRenameId: string | null;
   pendingRevealBlockId: string | null;
   revealedBlockId: string | null;
   blockRevealTone: RevealTone;
@@ -260,10 +263,7 @@ export interface StoreState {
   setVariableSearchQuery: (query: string) => void;
 
   // Tabs
-  createNewTab: (
-    label?: string,
-    runbookId?: string | null,
-  ) => Promise<Tab | undefined>;
+  createNewTab: (folderId?: string) => Promise<Tab | undefined>;
   switchTab: (tabId: string) => void;
   closeTab: (tabId: string) => void;
   closeTabs: (tabIds: string[]) => void;
@@ -292,6 +292,13 @@ export interface StoreState {
   reorderRunbooks: (sourceId: string, targetId: string) => void;
   setRunbookFocus: (id: string | null) => void;
   navigateRunbookList: (direction: MoveDirection) => void;
+
+  // Library folders
+  createLibraryFolder: (parentId: string | null) => void;
+  removeLibraryFolder: (id: string) => Promise<void>;
+  renameLibraryFolder: (id: string, name: string) => void;
+  toggleLibraryFolder: (id: string) => void;
+  consumeFolderRename: () => void;
 
   // Variables
   addVariable: (kind?: VariableKind) => Promise<void>;

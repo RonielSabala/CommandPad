@@ -3,7 +3,7 @@ import React from "react";
 import "./SidebarSectionList.css";
 
 interface Props<T> {
-  items: T[];
+  isEmpty: boolean;
   visibleItems: T[];
   emptyMessage: string;
   getKey: (item: T) => string | number;
@@ -12,7 +12,7 @@ interface Props<T> {
 }
 
 export function SidebarSectionList<T>({
-  items,
+  isEmpty,
   visibleItems,
   emptyMessage,
   getKey,
@@ -23,7 +23,7 @@ export function SidebarSectionList<T>({
 
   return (
     <div className="sidebar-section-list" ref={listRef}>
-      {items.length === 0 ? (
+      {isEmpty ? (
         <p className="sidebar-section-empty-msg">{emptyMessage}</p>
       ) : visibleItems.length === 0 ? (
         <p className="sidebar-section-empty-msg">{t.common.noMatches}</p>

@@ -1,6 +1,10 @@
-.runbook-row {
+.runbook-row,
+.library-folder-row {
+  --library-indent: calc(var(--icon-sm) + var(--space-3));
+
   grid-template-columns: auto fit-content(100%) auto;
   justify-content: start;
+  margin-left: calc(var(--library-depth, 0) * var(--library-indent));
 }
 
 .runbook-row-main {
@@ -62,6 +66,16 @@
   outline: var(--space-1) solid var(--accent);
   outline-offset: var(--space-1);
   box-shadow: 0 0 0 var(--space-2) var(--accent-dim);
+}
+
+.runbook-row-path {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
 }
 
 .runbook-rename-input {

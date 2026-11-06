@@ -1,22 +1,46 @@
+import { LibraryFolderConfig } from "@/common/config";
+import { CssClass } from "@/common/constants/css";
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
-import { AppMode } from "@/common/enums";
+import { AppMode, LibraryItemKind } from "@/common/enums";
 import { SearchInput } from "@/components/common/SearchInput";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { ClipIcon, ImportIcon, TrashIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { matchesQuery } from "@/utils/string";
-import { useEffect, useRef } from "react";
+import { libraryRows, type LibraryRow } from "@/utils/libraryTree";
+import { classNames } from "@/utils/string";
+import { useEffect, useMemo, useRef } from "react";
+import { FileEarmarkPlus, FolderPlus } from "react-bootstrap-icons";
+
 import { SidebarSection } from "../shared/SidebarSection";
 import { SidebarSectionFooter } from "../shared/SidebarSectionFooter";
 import { SidebarSectionList } from "../shared/SidebarSectionList";
+import { LibraryFolderRow } from "./LibraryFolderRow";
 import { RunbookRow } from "./RunbookRow";
+import "./RunbookSection.css";
+
+const getRowKey = (row: LibraryRow) =>
+  row.kind === LibraryItemKind.FOLDER ? row.folder.id : row.runbook.id;
+
+const renderRow = (row: LibraryRow) =>
+  row.kind === LibraryItemKind.FOLDER ? (
+    <LibraryFolderRow folder={row.folder} depth={row.depth} />
+  ) : (
+    <RunbookRow
+      runbook={row.runbook}
+      depth={row.depth}
+      path={row.path.join(LibraryFolderConfig.PATH_SEPARATOR) || undefined}
+    />
+  );
 
 export function RunbookSection() {
   const t = useTranslation();
+  const isReadMode = useStore((state) => state.mode === AppMode.READ);
   const isCollapsed = useStore((state) => state.runbookSectionCollapsed);
   const onToggle = useStore((state) => state.toggleRunbookSection);
-  const library = useStore((state) => state.runbookLibrary);
+  const runbooks = useStore((state) => state.runbookLibrary);
+  const folders = useStore((state) => state.libraryFolders);
   const searchQuery = useStore((state) => state.runbookSearchQuery);
   const setQuery = useStore((state) => state.setRunbookSearchQuery);
   const focusedRunbookId = useStore((state) => state.focusedRunbookId);
@@ -24,20 +48,23 @@ export function RunbookSection() {
     (state) => state.openPasteRunbookModal,
   );
 
-  const importRunbooks = useStore((state) => state.importRunbooks);
-  const clearRunbookLibrary = useStore((state) => state.clearRunbookLibrary);
+  const createNewTab = useStore((state) => state.createNewTab);
   const beginImport = useStore((state) => state.beginImport);
-  const isReadMode = useStore((state) => state.mode === AppMode.READ);
+  const importRunbooks = useStore((state) => state.importRunbooks);
+  const createLibraryFolder = useStore((state) => state.createLibraryFolder);
+  const clearRunbookLibrary = useStore((state) => state.clearRunbookLibrary);
   const fileDrop = useFileDrop(
     (files) => void importRunbooks(files),
     !isReadMode && !isCollapsed,
   );
 
-  const visibleItems = library.filter((runbook) =>
-    matchesQuery(searchQuery, runbook.label, runbook.filename),
+  const listRef = useRef<HTMLDivElement>(null);
+  const rows = useMemo(
+    () => libraryRows(folders, runbooks, searchQuery),
+    [folders, runbooks, searchQuery],
   );
 
-  const listRef = useRef<HTMLDivElement>(null);
+  const isEmpty = folders.length === 0 && runbooks.length === 0;
 
   useEffect(() => {
     if (!focusedRunbookId) {
@@ -62,20 +89,42 @@ export function RunbookSection() {
       onToggle={onToggle}
       dropZone={{ ...fileDrop, hint: t.runbooks.dropToImport }}
     >
-      <SearchInput
-        value={searchQuery}
-        placeholder={t.runbooks.searchPlaceholder}
-        onChange={setQuery}
-      />
+      <div className="runbook-section-toolbar">
+        <SearchInput
+          value={searchQuery}
+          placeholder={t.runbooks.searchPlaceholder}
+          onChange={setQuery}
+        />
+
+        {!isReadMode && (
+          <>
+            <button
+              className={classNames(CssClass.BTN, CssClass.BTN_SOFT_ICON)}
+              onClick={() => void createNewTab()}
+              aria-label={t.runbooks.newRunbook}
+              {...tooltip(t.runbooks.newRunbook)}
+            >
+              <FileEarmarkPlus className={CssClass.ICON_MD} />
+            </button>
+
+            <button
+              className={classNames(CssClass.BTN, CssClass.BTN_SOFT_ICON)}
+              onClick={() => createLibraryFolder(null)}
+              aria-label={t.runbooks.newFolder}
+              {...tooltip(t.runbooks.newFolder)}
+            >
+              <FolderPlus className={CssClass.ICON_MD} />
+            </button>
+          </>
+        )}
+      </div>
 
       <SidebarSectionList
-        items={library}
-        visibleItems={visibleItems}
+        isEmpty={isEmpty}
+        visibleItems={rows}
         emptyMessage={t.runbooks.empty}
-        getKey={(runbook) => runbook.id}
-        renderItem={(runbook) => (
-          <RunbookRow key={runbook.id} runbook={runbook} />
-        )}
+        getKey={getRowKey}
+        renderItem={renderRow}
         listRef={listRef}
       />
 
@@ -91,7 +140,7 @@ export function RunbookSection() {
           icon: ClipIcon,
         }}
         tertiaryAction={
-          library.length > 0
+          !isEmpty
             ? {
                 onClick: () => void clearRunbookLibrary(),
                 title: t.runbooks.clearLibraryTitle,

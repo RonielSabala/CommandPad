@@ -91,6 +91,11 @@ export const es: Messages = {
     rename: "Renombrar",
     resetName: "Restablecer nombre",
     openInTab: "Abierto en una pestaña",
+    newRunbook: "Nuevo libro",
+    newFolder: "Nueva carpeta",
+    folderName: "Nueva carpeta",
+    folderActions: "Acciones de la carpeta",
+    deleteFolder: "Eliminar carpeta",
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Guardado en ${provider}`,
       [RunbookSyncStatus.UNSAVED]: (provider, shortcut) =>
@@ -693,6 +698,10 @@ export const es: Messages = {
       `¿Eliminar \`${label}\`? **Esto no se puede deshacer.**`,
     deleteUnsavedRunbookMessage: (label) =>
       `\`${label}\` tiene cambios que nunca se guardaron en la nube. ¿Eliminarlo de todos modos? **Esos cambios no se pueden recuperar.**`,
+    deleteFolderTitle: "Eliminar Carpeta",
+    deleteFolderConfirm: "Eliminar",
+    deleteFolderMessage: (name) =>
+      `¿Eliminar \`${name}\` y todo su contenido? **Esto no se puede deshacer.**`,
     deleteCloudFileTitle: "Eliminar Libro de la Nube",
     deleteCloudFileConfirm: "Eliminar",
     deleteCloudFileMessage: (filename) =>
@@ -1173,12 +1182,14 @@ Si algo sale mal, deshazlo en este orden:
 * Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.
 * Abre el menú de **${runbookActionsLabel}** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.
 * Haz clic en **${clearLibraryLabel}** para vaciar la biblioteca completa de una vez.
-* Arrastra el control a la izquierda de un libro para reordenarlo en la lista.
-* Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.`,
+* Arrastra el control a la izquierda de un libro para reordenarlo en la lista. Si lo sueltas sobre un libro de otra carpeta, pasa a esa carpeta.
+* Usa la **barra de búsqueda** para filtrar libros por su etiqueta, nombre de archivo o carpeta.`,
       autoLabel:
         "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca. En caso contrario se usa el nombre del archivo importado.",
       manualName: (renameLabel, resetNameLabel) =>
         `**Ponerle nombre tú mismo:** haz doble clic en un libro de la lista de arriba o en su pestaña, o elige **${renameLabel}** en cualquiera de sus menús, y pulsa Enter o Escape para conservar el nombre. Un nombre que eliges se mantiene mientras editas el libro; **${resetNameLabel}** vuelve al etiquetado automático.`,
+      folders: (newFolderLabel, newRunbookLabel, folderActionsLabel) =>
+        `**Carpetas:** los botones junto a la barra de búsqueda crean una **${newFolderLabel}** en el nivel superior o un **${newRunbookLabel}** vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella, la renombra o la elimina con todo lo que contiene. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con las carpetas que lo contienen.`,
       labelDetails:
         "Las etiquetas se normalizan: se limpia el formato markdown y se recorta hasta 60 caracteres.",
       autoSave:

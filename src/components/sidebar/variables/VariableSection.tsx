@@ -48,7 +48,7 @@ export function VariableSection() {
       />
 
       <SidebarSectionList
-        items={variables}
+        isEmpty={variables.length === 0}
         visibleItems={visibleItems}
         emptyMessage={t.variables.empty}
         getKey={(variable) => variable.id}

@@ -47,6 +47,7 @@ export function createStoreServices(kit: StoreKit) {
       activeTabId: null,
       activeRunbookId: null,
       runbookLibrary: [],
+      libraryFolders: [],
       runbookSyncStatus: {},
       embeddedRunbooks: {},
       embeddedSectionFolds: {},

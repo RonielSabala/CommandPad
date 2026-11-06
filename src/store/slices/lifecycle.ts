@@ -70,7 +70,9 @@ export function createLifecycleSlice(
 
       set({
         ...(ui ?? {}),
-        ...(library ? { runbookLibrary: library.items } : {}),
+        ...(library
+          ? { runbookLibrary: library.items, libraryFolders: library.folders }
+          : {}),
         activeRunbookId: initialActiveRunbookId,
         ...(sections ?? {}),
       });

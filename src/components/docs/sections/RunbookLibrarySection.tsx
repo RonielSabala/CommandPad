@@ -24,6 +24,13 @@ export function RunbookLibraryDocs() {
       >
         <DemoRunbookList />
       </DemoWorkspace>
+      <Prose
+        text={t.docs.runbookLibrary.folders(
+          t.runbooks.newFolder,
+          t.runbooks.newRunbook,
+          t.runbooks.folderActions,
+        )}
+      />
       <Prose text={t.docs.runbookLibrary.autoLabel} />
       <Prose
         text={t.docs.runbookLibrary.manualName(

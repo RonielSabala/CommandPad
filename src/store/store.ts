@@ -21,6 +21,7 @@ import { createDialogsSlice } from "./slices/dialogs";
 import { createEmbedsSlice } from "./slices/embeds";
 import { createInteractionSlice } from "./slices/interaction";
 import { createLibrarySlice } from "./slices/library";
+import { createLibraryFoldersSlice } from "./slices/libraryFolders";
 import { createLifecycleSlice } from "./slices/lifecycle";
 import { createTabsSlice } from "./slices/tabs";
 import { createTransferSlice } from "./slices/transfer";
@@ -76,7 +77,11 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       debouncedSaveState,
       saveTabs: () => persist.saveTabsMeta(get().tabs, get().activeTabId),
       saveLibrary: () =>
-        persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId),
+        persist.saveRunbookLibrary(
+          get().runbookLibrary,
+          get().libraryFolders,
+          get().activeRunbookId,
+        ),
       saveUi: () => persist.saveUiState(uiStateSnapshot(get())),
     };
 
@@ -86,6 +91,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       ...createLifecycleSlice(kit, services),
       ...createTabsSlice(kit, services),
       ...createLibrarySlice(kit, services),
+      ...createLibraryFoldersSlice(kit, services),
       ...createCloudSyncSlice(kit, services),
       ...createEmbedsSlice(kit, services),
       ...createVariablesSlice(kit, services),

@@ -221,6 +221,13 @@ export const DragGroup = {
 } as const;
 export type DragGroup = (typeof DragGroup)[keyof typeof DragGroup];
 
+export const LibraryItemKind = {
+  FOLDER: "folder",
+  RUNBOOK: "runbook",
+} as const;
+export type LibraryItemKind =
+  (typeof LibraryItemKind)[keyof typeof LibraryItemKind];
+
 export const HttpMethod = {
   GET: "GET",
   HEAD: "HEAD",

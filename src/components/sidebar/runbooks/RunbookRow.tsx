@@ -23,6 +23,7 @@ import { classNames } from "@/utils/string";
 import { memo, useState } from "react";
 import { ArrowCounterclockwise, CloudSlash } from "react-bootstrap-icons";
 
+import { libraryDepthStyle } from "./libraryDepth";
 import "./RunbookRow.css";
 import { RunbookSecretBadge } from "./RunbookSecretBadge";
 import { RunbookSyncBadge } from "./RunbookSyncBadge";
@@ -30,11 +31,15 @@ import { RunbookSyncBadge } from "./RunbookSyncBadge";
 interface Props {
   runbook: RunbookEntry;
   marksOpenTabs?: boolean;
+  depth?: number;
+  path?: string;
 }
 
 export const RunbookRow = memo(function RunbookRow({
   runbook,
   marksOpenTabs = true,
+  depth = 0,
+  path,
 }: Props) {
   const t = useTranslation();
   const runbookId = runbook.id;
@@ -78,6 +83,7 @@ export const RunbookRow = memo(function RunbookRow({
         "sidebar-section-list-row",
         isDragging && CssClass.DRAGGING,
       )}
+      style={libraryDepthStyle(depth)}
       {...{ [DataAttr.RUNBOOK_ID]: runbookId }}
       {...rowProps}
     >
@@ -116,6 +122,8 @@ export const RunbookRow = memo(function RunbookRow({
             {runbookLabel}
           </button>
         )}
+
+        {path && <span className="runbook-row-path">{path}</span>}
 
         {isOpen && (
           <span

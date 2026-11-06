@@ -1,0 +1,35 @@
+.library-row-spacer {
+  width: calc(var(--icon-md) + 2 * var(--space-2));
+}
+
+body.read-mode .library-row-spacer {
+  display: none;
+}
+
+/* Outranks `.runbook-item-btn`, whose sheet may load later. */
+.runbook-item-btn.library-folder-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.library-folder-chevron {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: transform var(--transition-base);
+}
+
+.library-folder-btn.collapsed .library-folder-chevron {
+  transform: rotate(-90deg);
+}
+
+.library-folder-icon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.library-folder-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

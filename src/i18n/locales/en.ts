@@ -91,6 +91,11 @@ export const en: Messages = {
     rename: "Rename",
     resetName: "Reset name",
     openInTab: "Open in a tab",
+    newRunbook: "New runbook",
+    newFolder: "New folder",
+    folderName: "New folder",
+    folderActions: "Folder actions",
+    deleteFolder: "Delete folder",
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Saved to ${provider}`,
       [RunbookSyncStatus.UNSAVED]: (provider, shortcut) =>
@@ -676,6 +681,10 @@ export const en: Messages = {
       `Delete \`${label}\`? **This cannot be undone.**`,
     deleteUnsavedRunbookMessage: (label) =>
       `\`${label}\` has changes that were never saved to the cloud. Delete it anyway? **Those changes cannot be recovered.**`,
+    deleteFolderTitle: "Delete Folder",
+    deleteFolderConfirm: "Delete",
+    deleteFolderMessage: (name) =>
+      `Delete \`${name}\` and everything in it? **This cannot be undone.**`,
     deleteCloudFileTitle: "Delete Cloud Runbook",
     deleteCloudFileConfirm: "Delete",
     deleteCloudFileMessage: (filename) =>
@@ -1147,12 +1156,14 @@ If something goes wrong, undo it in this order:
 * Click any runbook to open it. If it's already open in a tab, that tab becomes active.
 * Open the **${runbookActionsLabel}** menu shown on row hover to duplicate a runbook or remove it from the library.
 * Click **${clearLibraryLabel}** to empty the whole library at once.
-* Drag the handle on the left of a runbook to reorder it in the list.
-* Use the **search bar** to filter runbooks by label or filename.`,
+* Drag the handle on the left of a runbook to reorder it in the list. Dropping it on a runbook in another folder moves it into that folder.
+* Use the **search bar** to filter runbooks by label, filename or folder.`,
       autoLabel:
         "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label. Otherwise the imported filename is used as the fallback.",
       manualName: (renameLabel, resetNameLabel) =>
         `**Naming it yourself:** double-click a runbook in the list above or its tab, or pick **${renameLabel}** from either menu, then press Enter or Escape to keep the name. A name you choose stays put while you edit the runbook; **${resetNameLabel}** goes back to auto-labelling.`,
+      folders: (newFolderLabel, newRunbookLabel, folderActionsLabel) =>
+        `**Folders:** the buttons beside the search bar create a top-level **${newFolderLabel}** or an empty **${newRunbookLabel}**. A folder's **${folderActionsLabel}** menu creates either one inside it, renames it, or deletes it with everything it holds. Folders nest as deep as you like: click one to fold or unfold it. While you search, the matching runbooks are listed flat, each with the folders that hold it.`,
       labelDetails:
         "Labels are normalized: markdown formatting is stripped and they are trimmed to 60 characters.",
       autoSave:

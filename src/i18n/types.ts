@@ -115,6 +115,11 @@ export interface Messages {
     rename: string;
     resetName: string;
     openInTab: string;
+    newRunbook: string;
+    newFolder: string;
+    folderName: string;
+    folderActions: string;
+    deleteFolder: string;
     syncStatus: Record<
       RunbookSyncStatus,
       (provider: string, shortcut: string) => string
@@ -541,6 +546,9 @@ export interface Messages {
     deleteRunbookConfirm: string;
     deleteRunbookMessage: (label: string) => string;
     deleteUnsavedRunbookMessage: (label: string) => string;
+    deleteFolderTitle: string;
+    deleteFolderConfirm: string;
+    deleteFolderMessage: (name: string) => string;
     deleteCloudFileTitle: string;
     deleteCloudFileConfirm: string;
     deleteCloudFileMessage: (filename: string) => string;
@@ -696,6 +704,11 @@ export interface Messages {
       ) => string;
       autoLabel: string;
       manualName: (renameLabel: string, resetNameLabel: string) => string;
+      folders: (
+        newFolderLabel: string,
+        newRunbookLabel: string,
+        folderActionsLabel: string,
+      ) => string;
       labelDetails: string;
       autoSave: string;
     };

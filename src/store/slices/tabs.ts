@@ -2,10 +2,11 @@ import { DEFAULT_TAB_LABEL } from "@/common/config";
 import { AppMode, EmbeddedRunbookStatus } from "@/common/enums";
 import type { RunbookEntry } from "@/common/types";
 import { generateId } from "@/utils/id";
+import { withFolderExpanded } from "@/utils/libraryTree";
 import { findTabById, findTabByRunbookId } from "@/utils/tabs";
 
 import type { StoreKit } from "@/store/kit";
-import { getActiveTab, getTabByRunbookId } from "@/store/selectors";
+import { getActiveTab } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import { createTabObject, tabContent } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
@@ -29,51 +30,33 @@ export function createTabsSlice(
   } = services;
 
   return {
-    createNewTab: async (label, runbookId) => {
-      const state = get();
-      if (state.mode === AppMode.READ) {
+    createNewTab: async (folderId) => {
+      if (get().mode === AppMode.READ) {
         return;
       }
 
-      if (runbookId) {
-        const existingTab = getTabByRunbookId(state, runbookId);
-        if (existingTab) {
-          get().switchTab(existingTab.id);
-          return existingTab;
-        }
-      }
+      const runbookId = generateId();
+      const tab = createTabObject(DEFAULT_TAB_LABEL, runbookId);
+      const runbook: RunbookEntry = {
+        id: runbookId,
+        label: DEFAULT_TAB_LABEL,
+        filename: "",
+        folderId,
+      };
 
-      const resolvedLabel = label ?? DEFAULT_TAB_LABEL;
-      const tab = createTabObject(resolvedLabel, runbookId ?? null);
+      set((s) => ({
+        tabs: [...s.tabs, tab],
+        activeTabId: tab.id,
+        runbookLibrary: [...s.runbookLibrary, runbook],
+        libraryFolders: withFolderExpanded(s.libraryFolders, folderId ?? null),
+        activeRunbookId: runbookId,
+        focusedRunbookId: null,
+      }));
 
-      if (!runbookId) {
-        const newRunbookId = generateId();
-        tab.runbookId = newRunbookId;
-        const entry: RunbookEntry = {
-          id: newRunbookId,
-          label: resolvedLabel,
-          filename: "",
-        };
-
-        set((s) => ({
-          tabs: [...s.tabs, tab],
-          activeTabId: tab.id,
-          runbookLibrary: [...s.runbookLibrary, entry],
-          activeRunbookId: newRunbookId,
-          focusedRunbookId: null,
-        }));
-
-        await writeRunbookContent(newRunbookId, tabContent(null));
-        saveLibrary();
-      } else {
-        set((s) => ({
-          tabs: [...s.tabs, tab],
-          activeTabId: tab.id,
-          focusedRunbookId: null,
-        }));
-      }
-
+      await writeRunbookContent(runbookId, tabContent(null));
+      saveLibrary();
       saveTabs();
+
       return tab;
     },
 

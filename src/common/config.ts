@@ -22,6 +22,12 @@ export const RunbookConfig = {
   DEFAULT_LABEL: "Untitled runbook",
 } as const;
 
+export const LibraryFolderConfig = {
+  NAME_MAX_LENGTH: 60,
+  PATH_SEPARATOR: " / ",
+  DEPTH_PROPERTY: "--library-depth",
+} as const;
+
 export const RunbookSourceConfig = {
   INDENT: 2,
 } as const;

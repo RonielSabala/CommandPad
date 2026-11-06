@@ -1,10 +1,15 @@
 import { DEFAULT_TAB_LABEL, RunbookConfig } from "@/common/config";
-import { AppMode, DialogTone, MoveDirection } from "@/common/enums";
+import {
+  AppMode,
+  DialogTone,
+  LibraryItemKind,
+  MoveDirection,
+} from "@/common/enums";
 import type { RunbookContent } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { adoptOpenVault, holdsSecrets, unlockVault } from "@/services/vault";
 import type { StoreKit } from "@/store/kit";
-import { withLibraryEntry } from "@/store/libraryState";
+import { withLibraryEntry, withoutRunbooks } from "@/store/libraryState";
 import { getLibraryEntry, getTabByRunbookId } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import {
@@ -20,10 +25,10 @@ import {
 import type { StoreState } from "@/store/types";
 import { stripJsonExtension } from "@/utils/export";
 import { generateId } from "@/utils/id";
+import { libraryRows } from "@/utils/libraryTree";
 import { displayLabel, getRunbookLabel } from "@/utils/runbook";
 import { parseRunbookSource } from "@/utils/runbookSource";
 import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
-import { findTabById } from "@/utils/tabs";
 
 type LibraryActions = Pick<
   StoreState,
@@ -128,45 +133,7 @@ export function createLibrarySlice(
       await contentDb.delete(id);
       forgetSyncState(id);
 
-      const runbookLibrary = state.runbookLibrary.filter(
-        (item) => item.id !== id,
-      );
-
-      const tabIdx = state.tabs.findIndex((t) => t.runbookId === id);
-      const tabs =
-        tabIdx >= 0 ? state.tabs.filter((t) => t.runbookId !== id) : state.tabs;
-
-      let activeTabId = state.activeTabId;
-      let activeTab = findTabById(tabs, activeTabId);
-
-      // The active tab was closed: fall back to its closest surviving neighbor
-      if (tabIdx >= 0 && !activeTab) {
-        activeTab = tabs[Math.min(tabIdx, tabs.length - 1)];
-        activeTabId = activeTab?.id ?? null;
-      }
-
-      const activeRunbookId = activeTab?.runbookId ?? null;
-      let focusedRunbookId = state.focusedRunbookId;
-
-      if (focusedRunbookId === id) {
-        const removedIdx = state.runbookLibrary.findIndex(
-          (item) => item.id === id,
-        );
-
-        focusedRunbookId =
-          runbookLibrary.length === 0
-            ? null
-            : runbookLibrary[Math.min(removedIdx, runbookLibrary.length - 1)]
-                .id;
-      }
-
-      set({
-        tabs,
-        activeTabId,
-        activeRunbookId,
-        runbookLibrary,
-        focusedRunbookId,
-      });
+      set((s) => withoutRunbooks(s, new Set([id])));
       saveTabs();
       saveLibrary();
     },
@@ -233,6 +200,7 @@ export function createLibrarySlice(
           label,
           filename,
           named: source.named,
+          folderId: source.folderId,
           secured: holdsSecrets(copy),
         });
 
@@ -482,8 +450,14 @@ export function createLibrarySlice(
         return;
       }
 
+      // Dropping on a runbook in another folder moves it into that folder
+      const { folderId } = items[targetIndex];
       const [removed] = items.splice(sourceIndex, 1);
-      items.splice(targetIndex, 0, removed);
+      items.splice(
+        targetIndex,
+        0,
+        removed.folderId === folderId ? removed : { ...removed, folderId },
+      );
 
       set({ runbookLibrary: items });
       saveLibrary();
@@ -492,13 +466,23 @@ export function createLibrarySlice(
     setRunbookFocus: (id) => set({ focusedRunbookId: id }),
 
     navigateRunbookList: (direction) => {
-      const { runbookLibrary, focusedRunbookId } = get();
-      if (runbookLibrary.length === 0) {
+      const state = get();
+      const { focusedRunbookId } = state;
+
+      const visible = libraryRows(
+        state.libraryFolders,
+        state.runbookLibrary,
+        state.runbookSearchQuery,
+      ).flatMap((row) =>
+        row.kind === LibraryItemKind.RUNBOOK ? [row.runbook] : [],
+      );
+
+      if (visible.length === 0) {
         return;
       }
 
-      const count = runbookLibrary.length;
-      const currentIndex = runbookLibrary.findIndex(
+      const count = visible.length;
+      const currentIndex = visible.findIndex(
         (item) => item.id === focusedRunbookId,
       );
 
@@ -512,7 +496,7 @@ export function createLibrarySlice(
             : (currentIndex - 1 + count) % count;
       }
 
-      const nextId = runbookLibrary[nextIndex].id;
+      const nextId = visible[nextIndex].id;
       set({ focusedRunbookId: nextId });
       void get().loadRunbookFromLibrary(nextId);
     },
