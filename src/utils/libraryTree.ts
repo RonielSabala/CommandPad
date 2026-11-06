@@ -87,16 +87,10 @@ export function folderSubtree(
 ): Set<string> {
   const subfolders = groupByParent(folders, folderParent);
   const ids = new Set([folderId]);
-  const pending = [folderId];
 
-  for (let id = pending.pop(); id !== undefined; id = pending.pop()) {
-    for (const { id: childId } of subfolders.get(id) ?? []) {
-      if (ids.has(childId)) {
-        continue;
-      }
-
-      ids.add(childId);
-      pending.push(childId);
+  for (const id of ids) {
+    for (const child of subfolders.get(id) ?? []) {
+      ids.add(child.id);
     }
   }
 
@@ -120,7 +114,7 @@ export function uniqueFolderName(
 /** Expand one folder. */
 export function withFolderExpanded(
   folders: LibraryFolder[],
-  folderId: string | null,
+  folderId: string | null | undefined,
 ): LibraryFolder[] {
   return folders.some((f) => f.id === folderId && f.collapsed)
     ? folders.map((f) => (f.id === folderId ? { ...f, collapsed: false } : f))

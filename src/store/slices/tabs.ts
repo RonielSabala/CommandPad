@@ -48,7 +48,7 @@ export function createTabsSlice(
         tabs: [...s.tabs, tab],
         activeTabId: tab.id,
         runbookLibrary: [...s.runbookLibrary, runbook],
-        libraryFolders: withFolderExpanded(s.libraryFolders, folderId ?? null),
+        libraryFolders: withFolderExpanded(s.libraryFolders, folderId),
         activeRunbookId: runbookId,
         focusedRunbookId: null,
       }));
@@ -56,8 +56,6 @@ export function createTabsSlice(
       await writeRunbookContent(runbookId, tabContent(null));
       saveLibrary();
       saveTabs();
-
-      return tab;
     },
 
     switchTab: (tabId) => {

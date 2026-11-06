@@ -473,9 +473,7 @@ export function createLibrarySlice(
         state.libraryFolders,
         state.runbookLibrary,
         state.runbookSearchQuery,
-      ).flatMap((row) =>
-        row.kind === LibraryItemKind.RUNBOOK ? [row.runbook] : [],
-      );
+      ).filter((row) => row.kind === LibraryItemKind.RUNBOOK);
 
       if (visible.length === 0) {
         return;
@@ -483,7 +481,7 @@ export function createLibrarySlice(
 
       const count = visible.length;
       const currentIndex = visible.findIndex(
-        (item) => item.id === focusedRunbookId,
+        (row) => row.runbook.id === focusedRunbookId,
       );
 
       let nextIndex: number;
@@ -496,7 +494,7 @@ export function createLibrarySlice(
             : (currentIndex - 1 + count) % count;
       }
 
-      const nextId = visible[nextIndex].id;
+      const nextId = visible[nextIndex].runbook.id;
       set({ focusedRunbookId: nextId });
       void get().loadRunbookFromLibrary(nextId);
     },

@@ -263,7 +263,7 @@ export interface StoreState {
   setVariableSearchQuery: (query: string) => void;
 
   // Tabs
-  createNewTab: (folderId?: string) => Promise<Tab | undefined>;
+  createNewTab: (folderId?: string) => Promise<void>;
   switchTab: (tabId: string) => void;
   closeTab: (tabId: string) => void;
   closeTabs: (tabIds: string[]) => void;

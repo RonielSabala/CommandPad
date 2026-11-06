@@ -94,6 +94,11 @@ describe("folderSubtree", () => {
     expect(folderSubtree(folders, "a")).toEqual(new Set(["a", "b", "c"]));
     expect(folderSubtree(folders, "x")).toEqual(new Set(["x"]));
   });
+
+  it("stops at a cycle", () => {
+    const folders = [folder("a", "b"), folder("b", "a")];
+    expect(folderSubtree(folders, "a")).toEqual(new Set(["a", "b"]));
+  });
 });
 
 describe("uniqueFolderName", () => {
