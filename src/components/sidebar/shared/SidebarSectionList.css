@@ -8,12 +8,12 @@
 }
 
 .sidebar-section-list-row {
+  position: relative;
   display: grid;
-  gap: var(--space-3);
   align-items: center;
+  gap: var(--space-3);
   margin-bottom: var(--space-2);
   padding: 0 var(--space-2);
-  position: relative;
 }
 
 body.read-mode .sidebar-section-list-row {
@@ -24,16 +24,14 @@ body.read-mode .sidebar-section-list-row .row-actions {
   display: none;
 }
 
-.sidebar-section-list-row .drag-handle,
-.sidebar-section-list-row .row-actions {
+.sidebar-section-list-row :is(.drag-handle, .row-actions) {
   opacity: 0;
   transition:
     opacity var(--transition-fast),
     color var(--transition-fast);
 }
 
-.sidebar-section-list-row:hover .drag-handle,
-.sidebar-section-list-row:hover .row-actions,
+.sidebar-section-list-row:hover :is(.drag-handle, .row-actions),
 .sidebar-section-list-row .row-actions.menu-open {
   opacity: 1;
 }

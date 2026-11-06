@@ -123,7 +123,16 @@ export const CssClass = {
   RUNBOOK_EMBED_ACTIONS: "runbook-embed-actions",
 
   ROW_ACTIONS: "row-actions",
-  RUNBOOK_ITEM_BTN: "runbook-item-btn",
+
+  // Sidebar rows
+  SIDEBAR_SECTION_LIST_ROW: "sidebar-section-list-row",
+  LIBRARY_ROW: "library-row",
+  LIBRARY_ROW_MAIN: "library-row-main",
+  LIBRARY_ROW_LABEL: "library-row-label",
+  LIBRARY_ROW_RENAME_INPUT: "library-row-rename-input",
+  LIBRARY_ROW_BTN: "library-row-btn",
+  LIBRARY_ROW_ICON: "library-row-icon",
+  LIBRARY_ROW_NAME: "library-row-name",
 
   // Minimap
   MINIMAP_ON: "minimap-on",

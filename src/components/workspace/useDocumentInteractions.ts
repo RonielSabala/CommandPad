@@ -28,7 +28,7 @@ export function useDocumentInteractions(): void {
       const target = event.target as Element;
       if (
         state.focusedRunbookId !== null &&
-        !target.closest(classSelector(CssClass.RUNBOOK_ITEM_BTN))
+        !target.closest(classSelector(CssClass.LIBRARY_ROW_BTN))
       ) {
         state.setRunbookFocus(null);
       }

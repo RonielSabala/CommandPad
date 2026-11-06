@@ -18,7 +18,7 @@ import { FileEarmarkPlus, FolderFill, FolderPlus } from "react-bootstrap-icons";
 
 import { libraryDepthStyle } from "./libraryDepth";
 import "./LibraryFolderRow.css";
-import "./RunbookRow.css";
+import "./LibraryRow.css";
 
 interface Props {
   folder: LibraryFolder;
@@ -54,15 +54,21 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
 
   return (
     <div
-      className={classNames("library-folder-row", "sidebar-section-list-row")}
+      className={classNames(
+        CssClass.LIBRARY_ROW,
+        CssClass.SIDEBAR_SECTION_LIST_ROW,
+      )}
       style={libraryDepthStyle(depth)}
     >
       <span className="library-row-spacer" />
 
-      <div className="runbook-row-main">
+      <div className={CssClass.LIBRARY_ROW_MAIN}>
         {renaming || renamePending ? (
           <RenameInput
-            className="runbook-label runbook-rename-input"
+            className={classNames(
+              CssClass.LIBRARY_ROW_LABEL,
+              CssClass.LIBRARY_ROW_RENAME_INPUT,
+            )}
             value={folder.name}
             maxLength={LibraryFolderConfig.NAME_MAX_LENGTH}
             onCommit={(name) => {
@@ -74,11 +80,11 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
         ) : (
           <button
             className={classNames(
-              "runbook-label",
               "library-folder-btn",
-              CssClass.NO_USER_SELECT,
-              CssClass.RUNBOOK_ITEM_BTN,
               folder.collapsed && CssClass.COLLAPSED,
+              CssClass.LIBRARY_ROW_BTN,
+              CssClass.LIBRARY_ROW_LABEL,
+              CssClass.NO_USER_SELECT,
             )}
             aria-expanded={!folder.collapsed}
             onClick={() => toggleLibraryFolder(folderId)}
@@ -93,10 +99,13 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
             />
 
             <FolderFill
-              className={classNames("library-row-icon", CssClass.ICON_MD)}
+              className={classNames(
+                CssClass.ICON_MD,
+                CssClass.LIBRARY_ROW_ICON,
+              )}
             />
 
-            <span className="library-row-name">{folder.name}</span>
+            <span className={CssClass.LIBRARY_ROW_NAME}>{folder.name}</span>
           </button>
         )}
       </div>

@@ -23,6 +23,7 @@ import {
 } from "react-bootstrap-icons";
 
 import { libraryDepthStyle } from "./libraryDepth";
+import "./LibraryRow.css";
 import "./RunbookRow.css";
 import { RunbookSecretBadge } from "./RunbookSecretBadge";
 import { RunbookSyncBadge } from "./RunbookSyncBadge";
@@ -78,9 +79,9 @@ export const RunbookRow = memo(function RunbookRow({
   return (
     <div
       className={classNames(
-        "runbook-row",
-        "sidebar-section-list-row",
         isDragging && CssClass.DRAGGING,
+        CssClass.LIBRARY_ROW,
+        CssClass.SIDEBAR_SECTION_LIST_ROW,
       )}
       style={libraryDepthStyle(depth)}
       {...{ [DataAttr.RUNBOOK_ID]: runbookId }}
@@ -92,10 +93,13 @@ export const RunbookRow = memo(function RunbookRow({
 
       <DragHandle handleProps={handleProps} />
 
-      <div className="runbook-row-main">
+      <div className={CssClass.LIBRARY_ROW_MAIN}>
         {renaming ? (
           <RenameInput
-            className="runbook-label runbook-rename-input"
+            className={classNames(
+              CssClass.LIBRARY_ROW_LABEL,
+              CssClass.LIBRARY_ROW_RENAME_INPUT,
+            )}
             value={runbookLabel}
             maxLength={RunbookConfig.LABEL_MAX_LENGTH}
             onCommit={(name) => {
@@ -107,12 +111,12 @@ export const RunbookRow = memo(function RunbookRow({
         ) : (
           <button
             className={classNames(
-              "runbook-label",
-              CssClass.NO_USER_SELECT,
-              CssClass.RUNBOOK_ITEM_BTN,
               isActive && CssClass.ACTIVE,
               isFocused && "runbook-focused",
               isDragOver && CssClass.DRAG_OVER,
+              CssClass.LIBRARY_ROW_BTN,
+              CssClass.LIBRARY_ROW_LABEL,
+              CssClass.NO_USER_SELECT,
             )}
             onClick={() => {
               setRunbookFocus(null);
@@ -122,10 +126,13 @@ export const RunbookRow = memo(function RunbookRow({
             {...tooltip(runbookLabel)}
           >
             <FileEarmark
-              className={classNames("library-row-icon", CssClass.ICON_MD)}
+              className={classNames(
+                CssClass.ICON_MD,
+                CssClass.LIBRARY_ROW_ICON,
+              )}
             />
 
-            <span className="library-row-name">{runbookLabel}</span>
+            <span className={CssClass.LIBRARY_ROW_NAME}>{runbookLabel}</span>
           </button>
         )}
 
