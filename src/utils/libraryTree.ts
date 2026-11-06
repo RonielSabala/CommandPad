@@ -80,6 +80,17 @@ export function libraryRows(
   return rows;
 }
 
+/** The runbooks the library list shows. */
+export function visibleRunbooks(
+  folders: readonly LibraryFolder[],
+  runbooks: readonly RunbookEntry[],
+  query: string,
+): RunbookEntry[] {
+  return libraryRows(folders, runbooks, query).flatMap((row) =>
+    row.kind === LibraryItemKind.RUNBOOK ? [row.runbook] : [],
+  );
+}
+
 /** The folder and every folder nested inside it. */
 export function folderSubtree(
   folders: readonly LibraryFolder[],

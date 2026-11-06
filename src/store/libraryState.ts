@@ -1,4 +1,5 @@
 import type { LibraryFolder, RunbookEntry, Tab } from "@/common/types";
+import { visibleRunbooks } from "@/utils/libraryTree";
 import { findTabById } from "@/utils/tabs";
 
 import type { StoreState } from "./types";
@@ -51,6 +52,32 @@ function nearestSurvivor<T extends { id: string }>(
   return survivors[Math.min(survivorsBefore, survivors.length - 1)];
 }
 
+/** Where runbook focus lands once the runbooks are gone. */
+function focusAfterRemoval(
+  state: StoreState,
+  runbookIds: ReadonlySet<string>,
+): string | null {
+  const focused = state.focusedRunbookId;
+  if (focused === null || !runbookIds.has(focused)) {
+    return focused;
+  }
+
+  const visible = visibleRunbooks(
+    state.libraryFolders,
+    state.runbookLibrary,
+    state.runbookSearchQuery,
+  );
+
+  if (!visible.some((runbook) => runbook.id === focused)) {
+    return null;
+  }
+
+  const isRemoved = (runbook: RunbookEntry) => runbookIds.has(runbook.id);
+  const survivors = visible.filter((runbook) => !isRemoved(runbook));
+
+  return nearestSurvivor(visible, survivors, focused, isRemoved)?.id ?? null;
+}
+
 /** Drop runbooks from the library and close their tabs. */
 export function withoutRunbooks(
   state: StoreState,
@@ -78,22 +105,11 @@ export function withoutRunbooks(
       ? undefined
       : nearestSurvivor(state.tabs, tabs, state.activeTabId, isClosed));
 
-  const focused = state.focusedRunbookId;
-  const focusedRunbookId =
-    focused !== null && runbookIds.has(focused)
-      ? (nearestSurvivor(
-          state.runbookLibrary,
-          runbookLibrary,
-          focused,
-          isRemoved,
-        )?.id ?? null)
-      : focused;
-
   return {
     tabs,
     activeTabId: activeTab?.id ?? null,
     activeRunbookId: activeTab?.runbookId ?? null,
     runbookLibrary,
-    focusedRunbookId,
+    focusedRunbookId: focusAfterRemoval(state, runbookIds),
   };
 }

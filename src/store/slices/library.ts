@@ -1,10 +1,5 @@
 import { DEFAULT_TAB_LABEL, RunbookConfig } from "@/common/config";
-import {
-  AppMode,
-  DialogTone,
-  LibraryItemKind,
-  MoveDirection,
-} from "@/common/enums";
+import { AppMode, DialogTone, MoveDirection } from "@/common/enums";
 import type { RunbookContent } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { adoptOpenVault, holdsSecrets, unlockVault } from "@/services/vault";
@@ -25,7 +20,7 @@ import {
 import type { StoreState } from "@/store/types";
 import { stripJsonExtension } from "@/utils/export";
 import { generateId } from "@/utils/id";
-import { libraryRows } from "@/utils/libraryTree";
+import { visibleRunbooks } from "@/utils/libraryTree";
 import { displayLabel, getRunbookLabel } from "@/utils/runbook";
 import { parseRunbookSource } from "@/utils/runbookSource";
 import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
@@ -469,19 +464,18 @@ export function createLibrarySlice(
       const state = get();
       const { focusedRunbookId } = state;
 
-      const visible = libraryRows(
+      const visible = visibleRunbooks(
         state.libraryFolders,
         state.runbookLibrary,
         state.runbookSearchQuery,
-      ).filter((row) => row.kind === LibraryItemKind.RUNBOOK);
-
+      );
       if (visible.length === 0) {
         return;
       }
 
       const count = visible.length;
       const currentIndex = visible.findIndex(
-        (row) => row.runbook.id === focusedRunbookId,
+        (runbook) => runbook.id === focusedRunbookId,
       );
 
       let nextIndex: number;
@@ -494,7 +488,7 @@ export function createLibrarySlice(
             : (currentIndex - 1 + count) % count;
       }
 
-      const nextId = visible[nextIndex].runbook.id;
+      const nextId = visible[nextIndex].id;
       set({ focusedRunbookId: nextId });
       void get().loadRunbookFromLibrary(nextId);
     },
