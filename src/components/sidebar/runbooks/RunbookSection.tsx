@@ -14,7 +14,7 @@ import { SidebarSection } from "../shared/SidebarSection";
 import { SidebarSectionFooter } from "../shared/SidebarSectionFooter";
 import { SidebarSectionList } from "../shared/SidebarSectionList";
 import { LibraryFolderRow } from "./LibraryFolderRow";
-import { RunbookRow } from "./RunbookRow";
+import { LibraryRunbookRow } from "./LibraryRunbookRow";
 import "./RunbookSection.css";
 import { RunbookToolbarButton } from "./RunbookToolbarButton";
 
@@ -25,7 +25,7 @@ const renderRow = (row: LibraryRow) =>
   row.kind === LibraryItemKind.FOLDER ? (
     <LibraryFolderRow folder={row.folder} depth={row.depth} />
   ) : (
-    <RunbookRow
+    <LibraryRunbookRow
       runbook={row.runbook}
       depth={row.depth}
       path={row.path.join(LibraryFolderConfig.PATH_SEPARATOR)}
@@ -37,8 +37,8 @@ export function RunbookSection() {
   const isReadMode = useStore((state) => state.mode === AppMode.READ);
   const isCollapsed = useStore((state) => state.runbookSectionCollapsed);
   const onToggle = useStore((state) => state.toggleRunbookSection);
-  const runbooks = useStore((state) => state.runbookLibrary);
   const folders = useStore((state) => state.libraryFolders);
+  const runbooks = useStore((state) => state.libraryRunbooks);
   const searchQuery = useStore((state) => state.runbookSearchQuery);
   const setQuery = useStore((state) => state.setRunbookSearchQuery);
   const focusedRunbookId = useStore((state) => state.focusedRunbookId);
@@ -47,9 +47,9 @@ export function RunbookSection() {
   );
 
   const createNewTab = useStore((state) => state.createNewTab);
+  const createLibraryFolder = useStore((state) => state.createLibraryFolder);
   const beginImport = useStore((state) => state.beginImport);
   const importRunbooks = useStore((state) => state.importRunbooks);
-  const createLibraryFolder = useStore((state) => state.createLibraryFolder);
   const clearRunbookLibrary = useStore((state) => state.clearRunbookLibrary);
   const fileDrop = useFileDrop(
     (files) => void importRunbooks(files),

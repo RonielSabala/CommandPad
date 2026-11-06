@@ -1,5 +1,5 @@
 import { LibraryItemKind } from "@/common/enums";
-import type { LibraryFolder, RunbookEntry } from "@/common/types";
+import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -18,14 +18,14 @@ function folder(
   return { id, name: id, parentId, collapsed };
 }
 
-function runbook(id: string, folderId?: string): RunbookEntry {
+function runbook(id: string, folderId?: string): LibraryRunbook {
   return { id, label: id, filename: `${id}.json`, folderId };
 }
 
 /** Each row as `depth:id`. */
 const describeRows = (
   folders: LibraryFolder[],
-  runbooks: RunbookEntry[],
+  runbooks: LibraryRunbook[],
   query = "",
 ) =>
   libraryRows(folders, runbooks, query).map((row) =>

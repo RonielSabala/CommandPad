@@ -4,8 +4,8 @@ import type { RunbookContent } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { adoptOpenVault, holdsSecrets, unlockVault } from "@/services/vault";
 import type { StoreKit } from "@/store/kit";
-import { withLibraryEntry, withoutRunbooks } from "@/store/libraryState";
-import { getLibraryEntry, getTabByRunbookId } from "@/store/selectors";
+import { withLibraryRunbook, withoutRunbooks } from "@/store/libraryState";
+import { getLibraryRunbook, getTabByRunbookId } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import {
   importedVault,
@@ -40,7 +40,7 @@ type LibraryActions = Pick<
   | "navigateRunbookList"
 >;
 
-export function createLibrarySlice(
+export function createLibraryRunbooksSlice(
   kit: StoreKit,
   services: StoreServices,
 ): LibraryActions {
@@ -72,7 +72,7 @@ export function createLibrarySlice(
         return;
       }
 
-      const runbook = getLibraryEntry(state, runbookId);
+      const runbook = getLibraryRunbook(state, runbookId);
       const label = runbook?.label ?? DEFAULT_TAB_LABEL;
       const tab = {
         ...createTabObject(label, runbookId),
@@ -101,7 +101,7 @@ export function createLibrarySlice(
         (content?.blocks.length ?? 0) === 0 &&
         (content?.variables.length ?? 0) === 0;
 
-      const runbook = getLibraryEntry(state, id);
+      const runbook = getLibraryRunbook(state, id);
 
       // A saved runbook still exists in the cloud, so removing it loses nothing
       const sync = runbook?.sync;
@@ -139,15 +139,14 @@ export function createLibrarySlice(
         return;
       }
 
-      const sourceIndex = state.runbookLibrary.findIndex(
-        (item) => item.id === id,
+      const sourceIndex = state.libraryRunbooks.findIndex(
+        (runbook) => runbook.id === id,
       );
-
       if (sourceIndex < 0) {
         return;
       }
 
-      const source = state.runbookLibrary[sourceIndex];
+      const source = state.libraryRunbooks[sourceIndex];
       const stored = await readRunbookContent(id);
       if (!stored) {
         return;
@@ -169,9 +168,9 @@ export function createLibrarySlice(
         })),
       };
 
-      const library = get().runbookLibrary;
-      const takenLabels = new Set(library.map((item) => item.label));
-      const takenFilenames = new Set(library.map((item) => item.filename));
+      const runbooks = get().libraryRunbooks;
+      const takenLabels = new Set(runbooks.map((r) => r.label));
+      const takenFilenames = new Set(runbooks.map((r) => r.filename));
 
       // Base the copy's name on what the row actually shows
       const label = nextDuplicateName(
@@ -188,9 +187,9 @@ export function createLibrarySlice(
       await writeRunbookContent(newId, copy);
 
       set((s) => {
-        const runbookLibrary = [...s.runbookLibrary];
-        const insertAt = runbookLibrary.findIndex((item) => item.id === id) + 1;
-        runbookLibrary.splice(insertAt, 0, {
+        const libraryRunbooks = [...s.libraryRunbooks];
+        const insertAt = libraryRunbooks.findIndex((r) => r.id === id) + 1;
+        libraryRunbooks.splice(insertAt, 0, {
           id: newId,
           label,
           filename,
@@ -199,7 +198,7 @@ export function createLibrarySlice(
           secured: holdsSecrets(copy),
         });
 
-        return { runbookLibrary };
+        return { libraryRunbooks };
       });
 
       saveLibrary();
@@ -212,7 +211,7 @@ export function createLibrarySlice(
       }
 
       const label = name.trim().slice(0, RunbookConfig.LABEL_MAX_LENGTH);
-      if (!label || !getLibraryEntry(state, id)) {
+      if (!label || !getLibraryRunbook(state, id)) {
         return;
       }
 
@@ -227,7 +226,7 @@ export function createLibrarySlice(
         return;
       }
 
-      if (!getLibraryEntry(state, id)?.named) {
+      if (!getLibraryRunbook(state, id)?.named) {
         return;
       }
 
@@ -236,13 +235,13 @@ export function createLibrarySlice(
         : await contentDb.get(id);
 
       set((s) => {
-        const entry = getLibraryEntry(s, id);
-        if (!entry?.named) {
+        const runbook = getLibraryRunbook(s, id);
+        if (!runbook?.named) {
           return s;
         }
 
         const blocks = getTabByRunbookId(s, id)?.blocks ?? stored?.blocks;
-        const label = getRunbookLabel(blocks, entry.filename);
+        const label = getRunbookLabel(blocks, runbook.filename);
 
         return labelRunbook(s, id, label, false);
       });
@@ -293,8 +292,8 @@ export function createLibrarySlice(
       };
 
       const state = get();
-      const existing = state.runbookLibrary.find(
-        (item) => item.label === label || item.filename === filename,
+      const existing = state.libraryRunbooks.find(
+        (r) => r.label === label || r.filename === filename,
       );
 
       if (existing) {
@@ -315,12 +314,12 @@ export function createLibrarySlice(
 
         await writeRunbookContent(existing.id, content);
         set((s) => ({
-          ...withLibraryEntry(s, existing.id, (item) => ({
-            ...item,
-            label: item.named ? item.label : label,
+          ...withLibraryRunbook(s, existing.id, (runbook) => ({
+            ...runbook,
+            label: runbook.named ? runbook.label : label,
             filename: filename || "",
             secured: holdsSecrets(content),
-            // An import keeps the entry's existing link unless it brings its own
+            // An import keeps the runbook's existing link unless it brings its own
             ...(sync ? { sync } : {}),
           })),
           tabs: s.tabs.map((t) =>
@@ -346,8 +345,8 @@ export function createLibrarySlice(
       const newId = generateId();
       await writeRunbookContent(newId, content);
       set((s) => ({
-        runbookLibrary: [
-          ...s.runbookLibrary,
+        libraryRunbooks: [
+          ...s.libraryRunbooks,
           {
             id: newId,
             label,
@@ -438,23 +437,24 @@ export function createLibrarySlice(
     },
 
     reorderRunbooks: (sourceId, targetId) => {
-      const items = [...get().runbookLibrary];
-      const sourceIndex = items.findIndex((item) => item.id === sourceId);
-      const targetIndex = items.findIndex((item) => item.id === targetId);
+      const runbooks = [...get().libraryRunbooks];
+      const sourceIndex = runbooks.findIndex((r) => r.id === sourceId);
+      const targetIndex = runbooks.findIndex((r) => r.id === targetId);
+
       if (sourceIndex < 0 || targetIndex < 0) {
         return;
       }
 
       // Dropping on a runbook in another folder moves it into that folder
-      const { folderId } = items[targetIndex];
-      const [removed] = items.splice(sourceIndex, 1);
-      items.splice(
+      const { folderId } = runbooks[targetIndex];
+      const [removed] = runbooks.splice(sourceIndex, 1);
+      runbooks.splice(
         targetIndex,
         0,
         removed.folderId === folderId ? removed : { ...removed, folderId },
       );
 
-      set({ runbookLibrary: items });
+      set({ libraryRunbooks: runbooks });
       saveLibrary();
     },
 
@@ -466,7 +466,7 @@ export function createLibrarySlice(
 
       const visible = visibleRunbooks(
         state.libraryFolders,
-        state.runbookLibrary,
+        state.libraryRunbooks,
         state.runbookSearchQuery,
       );
       if (visible.length === 0) {
@@ -474,9 +474,7 @@ export function createLibrarySlice(
       }
 
       const count = visible.length;
-      const currentIndex = visible.findIndex(
-        (runbook) => runbook.id === focusedRunbookId,
-      );
+      const currentIndex = visible.findIndex((r) => r.id === focusedRunbookId);
 
       let nextIndex: number;
       if (currentIndex < 0) {

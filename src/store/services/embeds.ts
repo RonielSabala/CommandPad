@@ -131,7 +131,7 @@ export function createEmbedLoading(kit: StoreKit, deps: ContentService) {
   };
 
   const readEmbeddedForExport: EmbeddedReader = async (block) => {
-    const source = resolveEmbedSource(get().runbookLibrary, block);
+    const source = resolveEmbedSource(get().libraryRunbooks, block);
     if (!source) {
       return null;
     }

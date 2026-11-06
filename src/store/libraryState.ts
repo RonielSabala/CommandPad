@@ -1,21 +1,8 @@
-import type { LibraryFolder, RunbookEntry, Tab } from "@/common/types";
+import type { LibraryFolder, LibraryRunbook, Tab } from "@/common/types";
 import { visibleRunbooks } from "@/utils/libraryTree";
 import { findTabById } from "@/utils/tabs";
 
 import type { StoreState } from "./types";
-
-/** Replace one runbook library entry. */
-export function withLibraryEntry(
-  state: StoreState,
-  runbookId: string,
-  patch: (entry: RunbookEntry) => RunbookEntry,
-): Pick<StoreState, "runbookLibrary"> {
-  return {
-    runbookLibrary: state.runbookLibrary.map((runbook) =>
-      runbook.id === runbookId ? patch(runbook) : runbook,
-    ),
-  };
-}
 
 /** Replace one library folder. */
 export function withLibraryFolder(
@@ -26,6 +13,19 @@ export function withLibraryFolder(
   return {
     libraryFolders: state.libraryFolders.map((folder) =>
       folder.id === folderId ? patch(folder) : folder,
+    ),
+  };
+}
+
+/** Replace one library runbook. */
+export function withLibraryRunbook(
+  state: StoreState,
+  runbookId: string,
+  patch: (runbook: LibraryRunbook) => LibraryRunbook,
+): Pick<StoreState, "libraryRunbooks"> {
+  return {
+    libraryRunbooks: state.libraryRunbooks.map((runbook) =>
+      runbook.id === runbookId ? patch(runbook) : runbook,
     ),
   };
 }
@@ -64,7 +64,7 @@ function focusAfterRemoval(
 
   const visible = visibleRunbooks(
     state.libraryFolders,
-    state.runbookLibrary,
+    state.libraryRunbooks,
     state.runbookSearchQuery,
   );
 
@@ -72,7 +72,7 @@ function focusAfterRemoval(
     return null;
   }
 
-  const isRemoved = (runbook: RunbookEntry) => runbookIds.has(runbook.id);
+  const isRemoved = (runbook: LibraryRunbook) => runbookIds.has(runbook.id);
   const survivors = visible.filter((runbook) => !isRemoved(runbook));
 
   return nearestSurvivor(visible, survivors, focused, isRemoved)?.id ?? null;
@@ -87,14 +87,16 @@ export function withoutRunbooks(
   | "tabs"
   | "activeTabId"
   | "activeRunbookId"
-  | "runbookLibrary"
+  | "libraryRunbooks"
   | "focusedRunbookId"
 > {
-  const isRemoved = (runbook: RunbookEntry) => runbookIds.has(runbook.id);
+  const isRemoved = (r: LibraryRunbook) => runbookIds.has(r.id);
   const isClosed = (tab: Tab) =>
     tab.runbookId !== null && runbookIds.has(tab.runbookId);
 
-  const runbookLibrary = state.runbookLibrary.filter((r) => !isRemoved(r));
+  const libraryRunbooks = state.libraryRunbooks.filter(
+    (runbook) => !isRemoved(runbook),
+  );
   const tabs = state.tabs.some(isClosed)
     ? state.tabs.filter((tab) => !isClosed(tab))
     : state.tabs;
@@ -109,7 +111,7 @@ export function withoutRunbooks(
     tabs,
     activeTabId: activeTab?.id ?? null,
     activeRunbookId: activeTab?.runbookId ?? null,
-    runbookLibrary,
+    libraryRunbooks,
     focusedRunbookId: focusAfterRemoval(state, runbookIds),
   };
 }

@@ -8,8 +8,8 @@ import {
 } from "@/common/enums";
 import type {
   Block,
+  LibraryRunbook,
   RunbookContent,
-  RunbookEntry,
   Tab,
   Variable,
   VariableSection,
@@ -128,14 +128,14 @@ export function buildDemoSeed(
   previous?: DemoSeed,
 ): DemoSeed {
   const contentSeed: Record<string, RunbookContent> = {};
-  const runbookLibrary: RunbookEntry[] = [];
-  const previousLibrary = previous?.state.runbookLibrary ?? [];
+  const runbooks: LibraryRunbook[] = [];
+  const previousRunbooks = previous?.state.libraryRunbooks ?? [];
   const previousTabs = previous?.state.tabs ?? [];
 
-  const register = (content: DemoContent): RunbookEntry => {
-    const previousEntry = previousLibrary[runbookLibrary.length];
+  const register = (content: DemoContent): LibraryRunbook => {
+    const previousRunbook = previousRunbooks[runbooks.length];
     const previousContent =
-      previousEntry && previous?.contentSeed[previousEntry.id];
+      previousRunbook && previous?.contentSeed[previousRunbook.id];
 
     const blocks = reuseIds(
       content.blocks ?? [],
@@ -151,24 +151,24 @@ export function buildDemoSeed(
       previousContent?.variableSections,
     );
 
-    const entry: RunbookEntry = {
-      id: previousEntry?.id ?? generateId(),
+    const runbook: LibraryRunbook = {
+      id: previousRunbook?.id ?? generateId(),
       label: getRunbookLabel(blocks, RunbookConfig.DEFAULT_LABEL),
       filename: "",
     };
 
-    runbookLibrary.push(entry);
-    contentSeed[entry.id] = { blocks, variables, variableSections };
-    return entry;
+    runbooks.push(runbook);
+    contentSeed[runbook.id] = { blocks, variables, variableSections };
+    return runbook;
   };
 
   const seededTabs: Tab[] = tabs.map((content, index) => {
-    const entry = register(content);
+    const runbook = register(content);
     return {
       id: previousTabs[index]?.id ?? generateId(),
-      label: entry.label,
-      runbookId: entry.id,
-      ...contentSeed[entry.id],
+      label: runbook.label,
+      runbookId: runbook.id,
+      ...contentSeed[runbook.id],
       view: RunbookView.PREVIEW,
       scrollTop: createDefaultScrollTop(),
     };
@@ -183,9 +183,8 @@ export function buildDemoSeed(
     state: {
       tabs: seededTabs,
       activeTabId: seededTabs[0]?.id ?? null,
-      activeRunbookId:
-        seededTabs[0]?.runbookId ?? runbookLibrary[0]?.id ?? null,
-      runbookLibrary,
+      activeRunbookId: seededTabs[0]?.runbookId ?? runbooks[0]?.id ?? null,
+      libraryRunbooks: runbooks,
       language,
       variableKeyRatio: DEMO_VARIABLE_KEY_RATIO,
       initialized: true,

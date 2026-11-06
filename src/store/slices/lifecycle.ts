@@ -71,7 +71,10 @@ export function createLifecycleSlice(
       set({
         ...(ui ?? {}),
         ...(library
-          ? { runbookLibrary: library.items, libraryFolders: library.folders }
+          ? {
+              libraryFolders: library.folders,
+              libraryRunbooks: library.runbooks,
+            }
           : {}),
         activeRunbookId: initialActiveRunbookId,
         ...(sections ?? {}),
@@ -79,7 +82,7 @@ export function createLifecycleSlice(
 
       try {
         if (meta) {
-          const currentLibrary = get().runbookLibrary;
+          const currentRunbooks = get().libraryRunbooks;
           const loadedTabs: Tab[] = [];
 
           for (const {
@@ -89,8 +92,8 @@ export function createLifecycleSlice(
             scrollTop,
             embedViews,
           } of meta.tabOrder) {
-            const entry = currentLibrary.find((r) => r.id === runbookId);
-            if (!entry || runbookId === null) {
+            const runbook = currentRunbooks.find((r) => r.id === runbookId);
+            if (!runbook || runbookId === null) {
               continue;
             }
 
@@ -101,7 +104,7 @@ export function createLifecycleSlice(
 
             loadedTabs.push({
               id: tabId,
-              label: entry.label,
+              label: runbook.label,
               runbookId,
               ...contentFields(content),
               view: persistence.restoreRunbookView(view),

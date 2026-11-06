@@ -91,8 +91,8 @@ export const en: Messages = {
     rename: "Rename",
     resetName: "Reset name",
     openInTab: "Open in a tab",
-    newRunbook: "New runbook",
     newFolder: "New folder",
+    newRunbook: "New runbook",
     folderName: "New folder",
     folderActions: "Folder actions",
     deleteFolder: "Delete folder",
@@ -675,16 +675,16 @@ export const en: Messages = {
     clearLibraryConfirm: "Delete All",
     clearLibraryMessage:
       "Delete **every runbook** in the library? This cannot be undone.",
+    deleteFolderTitle: "Delete Folder",
+    deleteFolderConfirm: "Delete",
+    deleteFolderMessage: (name) =>
+      `Delete \`${name}\` and everything in it? **This cannot be undone.**`,
     deleteRunbookTitle: "Delete Runbook",
     deleteRunbookConfirm: "Delete",
     deleteRunbookMessage: (label) =>
       `Delete \`${label}\`? **This cannot be undone.**`,
     deleteUnsavedRunbookMessage: (label) =>
       `\`${label}\` has changes that were never saved to the cloud. Delete it anyway? **Those changes cannot be recovered.**`,
-    deleteFolderTitle: "Delete Folder",
-    deleteFolderConfirm: "Delete",
-    deleteFolderMessage: (name) =>
-      `Delete \`${name}\` and everything in it? **This cannot be undone.**`,
     deleteCloudFileTitle: "Delete Cloud Runbook",
     deleteCloudFileConfirm: "Delete",
     deleteCloudFileMessage: (filename) =>

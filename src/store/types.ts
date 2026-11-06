@@ -34,9 +34,9 @@ import type {
   EmbeddedRunbook,
   ImageBlock,
   LibraryFolder,
+  LibraryRunbook,
   PanelState,
   RunbookContent,
-  RunbookEntry,
   RunbookStats,
   RunbookSync,
   Tab,
@@ -156,8 +156,8 @@ export interface StoreState {
   // Data
   tabs: Tab[];
   activeTabId: string | null;
-  runbookLibrary: RunbookEntry[];
   libraryFolders: LibraryFolder[];
+  libraryRunbooks: LibraryRunbook[];
   activeRunbookId: string | null;
   runbookSyncStatus: Record<string, RunbookSyncStatus>;
   embeddedRunbooks: Record<string, EmbeddedRunbook>;
@@ -273,6 +273,13 @@ export interface StoreState {
     insertAfter: boolean,
   ) => void;
 
+  // Library folders
+  createLibraryFolder: (parentId: string | null) => void;
+  removeLibraryFolder: (id: string) => Promise<void>;
+  renameLibraryFolder: (id: string, name: string) => void;
+  toggleLibraryFolder: (id: string) => void;
+  consumeFolderRename: () => void;
+
   // Runbook library
   loadRunbookFromLibrary: (runbookId: string) => Promise<void>;
   removeRunbookFromLibrary: (id: string) => Promise<void>;
@@ -292,13 +299,6 @@ export interface StoreState {
   reorderRunbooks: (sourceId: string, targetId: string) => void;
   setRunbookFocus: (id: string | null) => void;
   navigateRunbookList: (direction: MoveDirection) => void;
-
-  // Library folders
-  createLibraryFolder: (parentId: string | null) => void;
-  removeLibraryFolder: (id: string) => Promise<void>;
-  renameLibraryFolder: (id: string, name: string) => void;
-  toggleLibraryFolder: (id: string) => void;
-  consumeFolderRename: () => void;
 
   // Variables
   addVariable: (kind?: VariableKind) => Promise<void>;

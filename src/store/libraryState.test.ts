@@ -1,11 +1,11 @@
-import type { LibraryFolder, RunbookEntry } from "@/common/types";
+import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 import { describe, expect, it } from "vitest";
 
 import { withoutRunbooks } from "./libraryState";
 import type { StoreState } from "./types";
 
 const runbook = (id: string, folderId?: string) =>
-  ({ id, label: id, folderId }) as RunbookEntry;
+  ({ id, label: id, folderId }) as LibraryRunbook;
 
 const COLLAPSED: LibraryFolder = {
   id: "closed",
@@ -31,8 +31,8 @@ function focusAfterRemoving(
   const state = {
     tabs: [],
     activeTabId: null,
-    runbookLibrary: LIBRARY,
     libraryFolders: [OPEN, COLLAPSED],
+    libraryRunbooks: LIBRARY,
     runbookSearchQuery,
     focusedRunbookId,
   } as unknown as StoreState;

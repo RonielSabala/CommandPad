@@ -64,11 +64,12 @@ export function useKeybindings(): void {
           state.removeBlock([...state.selectedBlockIds][0]);
         } else if (
           matchesKeybinding(event, KeyBinding.FOCUS_RUNBOOK) &&
-          state.runbookLibrary.length > 0
+          state.libraryRunbooks.length > 0
         ) {
           event.preventDefault();
 
-          const runbookId = state.activeRunbookId ?? state.runbookLibrary[0].id;
+          const runbookId =
+            state.activeRunbookId ?? state.libraryRunbooks[0].id;
           state.setRunbookFocus(runbookId);
           void state.loadRunbookFromLibrary(runbookId);
         } else if (
@@ -101,7 +102,7 @@ export function useKeybindings(): void {
         hit = true;
       } else if (
         matchesKeybinding(event, KeyBinding.CLEAR_LIBRARY) &&
-        state.runbookLibrary.length > 0
+        state.libraryRunbooks.length > 0
       ) {
         void state.clearRunbookLibrary();
         hit = true;

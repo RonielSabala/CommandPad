@@ -1,6 +1,6 @@
 import { DEFAULT_TAB_LABEL } from "@/common/config";
 import { AppMode, EmbeddedRunbookStatus } from "@/common/enums";
-import type { RunbookEntry } from "@/common/types";
+import type { LibraryRunbook } from "@/common/types";
 import { generateId } from "@/utils/id";
 import { withFolderExpanded } from "@/utils/libraryTree";
 import { findTabById, findTabByRunbookId } from "@/utils/tabs";
@@ -37,7 +37,7 @@ export function createTabsSlice(
 
       const runbookId = generateId();
       const tab = createTabObject(DEFAULT_TAB_LABEL, runbookId);
-      const runbook: RunbookEntry = {
+      const runbook: LibraryRunbook = {
         id: runbookId,
         label: DEFAULT_TAB_LABEL,
         filename: "",
@@ -47,8 +47,8 @@ export function createTabsSlice(
       set((s) => ({
         tabs: [...s.tabs, tab],
         activeTabId: tab.id,
-        runbookLibrary: [...s.runbookLibrary, runbook],
         libraryFolders: withFolderExpanded(s.libraryFolders, folderId),
+        libraryRunbooks: [...s.libraryRunbooks, runbook],
         activeRunbookId: runbookId,
         focusedRunbookId: null,
       }));

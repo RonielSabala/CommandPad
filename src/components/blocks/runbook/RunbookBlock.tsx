@@ -66,7 +66,7 @@ export function RunbookBlock({
   const hostRunbookId = useStore(getActiveRunbookId);
 
   const language = useLanguage();
-  const library = useStore((state) => state.runbookLibrary);
+  const runbooks = useStore((state) => state.libraryRunbooks);
   const readRunbookStats = useStore((state) => state.readRunbookStats);
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const isMirror = useCodeRendering() === CodeRendering.STATIC;
@@ -124,7 +124,7 @@ export function RunbookBlock({
   const choices = useMemo(() => {
     const byLabel = new Map<string, EditorChoice>();
 
-    for (const { id, label } of library) {
+    for (const { id, label } of runbooks) {
       if (id === hostRunbookId || !label.trim() || byLabel.has(label)) {
         continue;
       }
@@ -146,7 +146,7 @@ export function RunbookBlock({
     }
 
     return [...byLabel.values()];
-  }, [library, hostRunbookId, readRunbookStats, language, t]);
+  }, [runbooks, hostRunbookId, readRunbookStats, language, t]);
 
   // The folder typed so far, one level at a time
   const provider = cloud?.provider ?? null;

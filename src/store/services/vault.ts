@@ -15,11 +15,11 @@ import {
   unlockVault,
 } from "@/services/vault";
 import type { StoreKit } from "@/store/kit";
-import { withLibraryEntry } from "@/store/libraryState";
+import { withLibraryRunbook } from "@/store/libraryState";
 import {
   getActiveRunbookId,
   getActiveTab,
-  getLibraryEntry,
+  getLibraryRunbook,
 } from "@/store/selectors";
 import { tabContent } from "@/store/tabState";
 import type { VaultPassphrases } from "@/store/types";
@@ -43,22 +43,22 @@ export function createVaultRecords(kit: StoreKit) {
   const { set, get, isDemo, saveLibrary } = kit;
 
   const getVaultRecord = (runbookId: string) =>
-    (isDemo ? null : getLibraryEntry(get(), runbookId)?.vault) ?? null;
+    (isDemo ? null : getLibraryRunbook(get(), runbookId)?.vault) ?? null;
 
   const refreshVaultStatus = () =>
     set((s) => ({
       vaultStatus: Object.fromEntries(
-        s.runbookLibrary.map((entry) => [
-          entry.id,
-          resolveVaultStatus(entry.id, entry.vault),
+        s.libraryRunbooks.map((runbook) => [
+          runbook.id,
+          resolveVaultStatus(runbook.id, runbook.vault),
         ]),
       ),
     }));
 
   const setVaultRecord = (runbookId: string, record: VaultRecord | null) => {
     set((s) =>
-      withLibraryEntry(s, runbookId, (entry) => ({
-        ...entry,
+      withLibraryRunbook(s, runbookId, (runbook) => ({
+        ...runbook,
         vault: record ?? undefined,
       })),
     );
@@ -68,22 +68,22 @@ export function createVaultRecords(kit: StoreKit) {
   };
 
   const markRunbookSecured = (runbookId: string, secured: boolean) => {
-    const entry = getLibraryEntry(get(), runbookId);
-    if (!entry) {
+    const runbook = getLibraryRunbook(get(), runbookId);
+    if (!runbook) {
       return;
     }
 
-    if (!secured && (entry.vault || isVaultUnlocked(runbookId))) {
+    if (!secured && (runbook.vault || isVaultUnlocked(runbookId))) {
       lockVault(runbookId);
       setVaultRecord(runbookId, null);
     }
 
-    if (!!entry.secured === secured) {
+    if (!!runbook.secured === secured) {
       return;
     }
 
     set((s) =>
-      withLibraryEntry(s, runbookId, (item) => ({ ...item, secured })),
+      withLibraryRunbook(s, runbookId, (runbook) => ({ ...runbook, secured })),
     );
 
     saveLibrary();

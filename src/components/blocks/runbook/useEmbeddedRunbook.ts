@@ -47,11 +47,11 @@ export function useEmbeddedRunbook(
   { variableMap, secretKeys }: OverrideHost,
   trail: readonly string[],
 ): EmbeddedRunbookState {
-  const library = useStore((state) => state.runbookLibrary);
+  const runbooks = useStore((state) => state.libraryRunbooks);
   const loadEmbeddedRunbook = useStore((state) => state.loadEmbeddedRunbook);
   const source = useMemo(
-    () => resolveEmbedSource(library, block),
-    [library, block],
+    () => resolveEmbedSource(runbooks, block),
+    [runbooks, block],
   );
 
   const key = source?.key ?? null;

@@ -3,7 +3,7 @@ import { SelectionGroup } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import { ImageLightbox } from "@/components/blocks/image/ImageLightbox";
 import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
-import { RunbookRow } from "@/components/sidebar/runbooks/RunbookRow";
+import { LibraryRunbookRow } from "@/components/sidebar/runbooks/LibraryRunbookRow";
 import "@/components/sidebar/shared/SidebarSectionList.css";
 import { VariableRow } from "@/components/sidebar/variables/VariableRow";
 import { useSelectModeBodyClass } from "@/hooks/useBodyClasses";
@@ -142,12 +142,16 @@ export function DemoVariableRows() {
 }
 
 export function DemoRunbookList() {
-  const library = useStore((state) => state.runbookLibrary);
+  const runbooks = useStore((state) => state.libraryRunbooks);
 
   return (
     <div className="docs-demo-sidebar-frame">
-      {library.map((runbook) => (
-        <RunbookRow key={runbook.id} runbook={runbook} marksOpenTabs={false} />
+      {runbooks.map((runbook) => (
+        <LibraryRunbookRow
+          key={runbook.id}
+          runbook={runbook}
+          marksOpenTabs={false}
+        />
       ))}
     </div>
   );

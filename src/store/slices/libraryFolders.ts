@@ -72,7 +72,7 @@ export function createLibraryFoldersSlice(
 
       const folderIds = folderSubtree(state.libraryFolders, id);
       const runbookIds = new Set(
-        state.runbookLibrary
+        state.libraryRunbooks
           .filter((r) => r.folderId !== undefined && folderIds.has(r.folderId))
           .map((r) => r.id),
       );
@@ -97,8 +97,8 @@ export function createLibraryFoldersSlice(
       runbookIds.forEach(forgetSyncState);
 
       set((s) => ({
-        ...withoutRunbooks(s, runbookIds),
         libraryFolders: s.libraryFolders.filter((f) => !folderIds.has(f.id)),
+        ...withoutRunbooks(s, runbookIds),
       }));
 
       saveTabs();

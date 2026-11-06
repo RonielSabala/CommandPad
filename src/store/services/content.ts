@@ -42,7 +42,7 @@ export function createContentService(
   ): RunbookSync => ({ provider, filename: file.name, folderId });
 
   const runbookLinkedTo = (link: RunbookSync) =>
-    get().runbookLibrary.find(
+    get().libraryRunbooks.find(
       (item) =>
         item.sync?.provider === link.provider &&
         item.sync.filename === link.filename &&

@@ -3,8 +3,8 @@ import { CloudProvider, EmbeddedRunbookStatus } from "@/common/enums";
 import type {
   CloudRunbookRef,
   EmbeddedRunbook,
+  LibraryRunbook,
   RunbookBlock,
-  RunbookEntry,
   Tab,
   Variable,
 } from "@/common/types";
@@ -14,7 +14,7 @@ import { isEnumValue, isObject, isString } from "./typeGuards";
 
 /** What a runbook block points at, and the key its content is cached under. */
 export type EmbedSource = { key: string } & (
-  | { local: RunbookEntry; cloud?: never }
+  | { local: LibraryRunbook; cloud?: never }
   | { cloud: CloudRunbookRef; local?: never }
 );
 
@@ -48,19 +48,19 @@ export function cloudSourceKey(ref: CloudRunbookRef): string {
 }
 
 export function resolveLocalRunbook(
-  library: readonly RunbookEntry[],
+  libraryRunbooks: readonly LibraryRunbook[],
   block: Pick<RunbookBlock, "label" | "runbookId">,
-): RunbookEntry | null {
+): LibraryRunbook | null {
   const label = block.label.trim();
-  let labeled: RunbookEntry | null = null;
+  let labeled: LibraryRunbook | null = null;
 
-  for (const entry of library) {
-    if (entry.id === block.runbookId) {
-      return entry;
+  for (const runbook of libraryRunbooks) {
+    if (runbook.id === block.runbookId) {
+      return runbook;
     }
 
-    if (!labeled && label && entry.label.trim() === label) {
-      labeled = entry;
+    if (!labeled && label && runbook.label.trim() === label) {
+      labeled = runbook;
     }
   }
 
@@ -68,7 +68,7 @@ export function resolveLocalRunbook(
 }
 
 export function resolveEmbedSource(
-  library: readonly RunbookEntry[],
+  libraryRunbooks: readonly LibraryRunbook[],
   block: RunbookBlock,
 ): EmbedSource | null {
   const { cloud } = block;
@@ -78,7 +78,7 @@ export function resolveEmbedSource(
       : null;
   }
 
-  const local = resolveLocalRunbook(library, block);
+  const local = resolveLocalRunbook(libraryRunbooks, block);
   return local ? { key: localSourceKey(local.id), local } : null;
 }
 
@@ -95,45 +95,45 @@ export function isEmbedUnresolved(
 /** Each block's last source. */
 const blockSources = new WeakMap<
   RunbookBlock,
-  { library: readonly RunbookEntry[]; source: EmbedSource | null }
+  { libraryRunbooks: readonly LibraryRunbook[]; source: EmbedSource | null }
 >();
 
 function cachedEmbedSource(
-  library: readonly RunbookEntry[],
+  libraryRunbooks: readonly LibraryRunbook[],
   block: RunbookBlock,
 ): EmbedSource | null {
   const cached = blockSources.get(block);
-  if (cached?.library === library) {
+  if (cached?.libraryRunbooks === libraryRunbooks) {
     return cached.source;
   }
 
-  const source = resolveEmbedSource(library, block);
-  blockSources.set(block, { library, source });
+  const source = resolveEmbedSource(libraryRunbooks, block);
+  blockSources.set(block, { libraryRunbooks, source });
   return source;
 }
 
 export function isEmbedBlockUnresolved(
   block: RunbookBlock,
-  library: readonly RunbookEntry[],
+  libraryRunbooks: readonly LibraryRunbook[],
   embeddedRunbooks: Readonly<Record<string, EmbeddedRunbook>>,
 ): boolean {
-  const source = cachedEmbedSource(library, block);
+  const source = cachedEmbedSource(libraryRunbooks, block);
   const status = source ? embeddedRunbooks[source.key]?.status : undefined;
   return isEmbedUnresolved(block, source, status);
 }
 
 export function hasUnresolvedEmbeds(
   blocks: readonly RunbookBlock[],
-  library: readonly RunbookEntry[],
+  libraryRunbooks: readonly LibraryRunbook[],
   embeddedRunbooks: Readonly<Record<string, EmbeddedRunbook>>,
 ): boolean {
   return blocks.some((block) =>
-    isEmbedBlockUnresolved(block, library, embeddedRunbooks),
+    isEmbedBlockUnresolved(block, libraryRunbooks, embeddedRunbooks),
   );
 }
 
 export interface EmbedLookup {
-  runbookLibrary: readonly RunbookEntry[];
+  libraryRunbooks: readonly LibraryRunbook[];
   embeddedRunbooks: Readonly<Record<string, EmbeddedRunbook>>;
   tabs: readonly Tab[];
 }
@@ -141,9 +141,9 @@ export interface EmbedLookup {
 /** The embedded runbook's variables. */
 export function embeddedVariables(
   block: RunbookBlock,
-  { runbookLibrary, embeddedRunbooks, tabs }: EmbedLookup,
+  { libraryRunbooks, embeddedRunbooks, tabs }: EmbedLookup,
 ): Variable[] | null {
-  const source = cachedEmbedSource(runbookLibrary, block);
+  const source = cachedEmbedSource(libraryRunbooks, block);
   if (!source) {
     return null;
   }

@@ -7,7 +7,7 @@ import {
 } from "@/components/common/contextMenu/ContextMenu";
 import { useTranslation } from "@/i18n";
 import {
-  getLibraryEntry,
+  getLibraryRunbook,
   getTabById,
   useStore,
   useStoreApi,
@@ -29,7 +29,7 @@ export function TabContextMenu({ tabId, anchor, onClose, onRename }: Props) {
     (state) => getTabById(state, tabId)?.runbookId ?? null,
   );
   const named = useStore(
-    (state) => !!runbookId && !!getLibraryEntry(state, runbookId)?.named,
+    (state) => !!runbookId && !!getLibraryRunbook(state, runbookId)?.named,
   );
 
   const resetName = () => {

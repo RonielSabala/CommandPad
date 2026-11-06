@@ -1,5 +1,5 @@
 import { LibraryItemKind } from "@/common/enums";
-import type { LibraryFolder, RunbookEntry } from "@/common/types";
+import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 
 import { buildDuplicateName, matchesQuery } from "./string";
 
@@ -11,7 +11,7 @@ export type LibraryRow =
     }
   | {
       kind: typeof LibraryItemKind.RUNBOOK;
-      runbook: RunbookEntry;
+      runbook: LibraryRunbook;
       depth: number;
       /** The names of the folders holding it. */
       path: readonly string[];
@@ -40,12 +40,12 @@ function groupByParent<T>(
 }
 
 const folderParent = (folder: LibraryFolder) => folder.parentId;
-const runbookParent = (runbook: RunbookEntry) => runbook.folderId ?? null;
+const runbookParent = (runbook: LibraryRunbook) => runbook.folderId ?? null;
 
 /** The rows the library list shows. */
 export function libraryRows(
   folders: readonly LibraryFolder[],
-  runbooks: readonly RunbookEntry[],
+  runbooks: readonly LibraryRunbook[],
   query: string,
 ): LibraryRow[] {
   const subfolders = groupByParent(folders, folderParent);
@@ -83,9 +83,9 @@ export function libraryRows(
 /** The runbooks the library list shows. */
 export function visibleRunbooks(
   folders: readonly LibraryFolder[],
-  runbooks: readonly RunbookEntry[],
+  runbooks: readonly LibraryRunbook[],
   query: string,
-): RunbookEntry[] {
+): LibraryRunbook[] {
   return libraryRows(folders, runbooks, query).flatMap((row) =>
     row.kind === LibraryItemKind.RUNBOOK ? [row.runbook] : [],
   );
@@ -135,8 +135,8 @@ export function withFolderExpanded(
 /** Re-root what stored data left dangling. */
 export function repairLibrary(
   folders: LibraryFolder[],
-  runbooks: RunbookEntry[],
-): { folders: LibraryFolder[]; runbooks: RunbookEntry[] } {
+  runbooks: LibraryRunbook[],
+): { folders: LibraryFolder[]; runbooks: LibraryRunbook[] } {
   const parents = new Map(folders.map((f) => [f.id, f.parentId]));
 
   for (const [id, parentId] of parents) {

@@ -2,7 +2,7 @@ import { RunbookConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { AppMode, DragGroup } from "@/common/enums";
-import type { RunbookEntry } from "@/common/types";
+import type { LibraryRunbook } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { DragHandle } from "@/components/common/DragHandle";
@@ -24,18 +24,18 @@ import {
 
 import { libraryDepthStyle } from "./libraryDepth";
 import "./LibraryRow.css";
-import "./RunbookRow.css";
+import "./LibraryRunbookRow.css";
 import { RunbookSecretBadge } from "./RunbookSecretBadge";
 import { RunbookSyncBadge } from "./RunbookSyncBadge";
 
 interface Props {
-  runbook: RunbookEntry;
+  runbook: LibraryRunbook;
   marksOpenTabs?: boolean;
   depth?: number;
   path?: string;
 }
 
-export const RunbookRow = memo(function RunbookRow({
+export const LibraryRunbookRow = memo(function LibraryRunbookRow({
   runbook,
   marksOpenTabs = true,
   depth = 0,
@@ -112,7 +112,7 @@ export const RunbookRow = memo(function RunbookRow({
           <button
             className={classNames(
               isActive && CssClass.ACTIVE,
-              isFocused && "runbook-focused",
+              isFocused && "library-runbook-focused",
               isDragOver && CssClass.DRAG_OVER,
               CssClass.LIBRARY_ROW_BTN,
               CssClass.LIBRARY_ROW_LABEL,
@@ -136,11 +136,11 @@ export const RunbookRow = memo(function RunbookRow({
           </button>
         )}
 
-        {path && <span className="runbook-row-path">{path}</span>}
+        {path && <span className="library-runbook-row-path">{path}</span>}
 
         {isOpen && !isActive && (
           <span
-            className="runbook-open-dot"
+            className="library-runbook-open-dot"
             {...tooltip(t.runbooks.openInTab)}
           />
         )}

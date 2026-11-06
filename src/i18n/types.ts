@@ -115,8 +115,8 @@ export interface Messages {
     rename: string;
     resetName: string;
     openInTab: string;
-    newRunbook: string;
     newFolder: string;
+    newRunbook: string;
     folderName: string;
     folderActions: string;
     deleteFolder: string;
@@ -542,13 +542,13 @@ export interface Messages {
     clearLibraryTitle: string;
     clearLibraryConfirm: string;
     clearLibraryMessage: string;
+    deleteFolderTitle: string;
+    deleteFolderConfirm: string;
+    deleteFolderMessage: (name: string) => string;
     deleteRunbookTitle: string;
     deleteRunbookConfirm: string;
     deleteRunbookMessage: (label: string) => string;
     deleteUnsavedRunbookMessage: (label: string) => string;
-    deleteFolderTitle: string;
-    deleteFolderConfirm: string;
-    deleteFolderMessage: (name: string) => string;
     deleteCloudFileTitle: string;
     deleteCloudFileConfirm: string;
     deleteCloudFileMessage: (filename: string) => string;

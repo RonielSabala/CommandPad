@@ -120,7 +120,14 @@ export interface VaultRecord {
   verifier: string;
 }
 
-export interface RunbookEntry {
+export interface LibraryFolder {
+  id: string;
+  name: string;
+  parentId: string | null;
+  collapsed?: boolean;
+}
+
+export interface LibraryRunbook {
   id: string;
   label: string;
   filename: string;
@@ -130,13 +137,6 @@ export interface RunbookEntry {
   sync?: RunbookSync;
   secured?: boolean;
   vault?: VaultRecord;
-}
-
-export interface LibraryFolder {
-  id: string;
-  name: string;
-  parentId: string | null;
-  collapsed?: boolean;
 }
 
 export interface RunbookStats {

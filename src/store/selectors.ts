@@ -6,7 +6,7 @@ import {
 } from "@/common/enums";
 import type {
   Block,
-  RunbookEntry,
+  LibraryRunbook,
   Tab,
   Variable,
   VariableSection,
@@ -66,11 +66,11 @@ export function isRunbookOpen(state: StoreState, runbookId: string): boolean {
   return ids.has(runbookId);
 }
 
-export function getLibraryEntry(
+export function getLibraryRunbook(
   state: StoreState,
   runbookId: string,
-): RunbookEntry | undefined {
-  return state.runbookLibrary.find((entry) => entry.id === runbookId);
+): LibraryRunbook | undefined {
+  return state.libraryRunbooks.find((runbook) => runbook.id === runbookId);
 }
 
 export function getRunbookView(state: StoreState): RunbookView {

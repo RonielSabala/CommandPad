@@ -19,8 +19,8 @@ import {
 } from "@/common/enums";
 import type {
   LibraryFolder,
+  LibraryRunbook,
   PanelState,
-  RunbookEntry,
   RunbookSync,
   Tab,
   VaultRecord,
@@ -271,8 +271,8 @@ export function loadTabsMeta(): PersistedTabs | null {
 // Runbooks
 
 interface PersistedRunbooks {
-  items: RunbookEntry[];
   folders: LibraryFolder[];
+  runbooks: LibraryRunbook[];
   activeId: string | null;
 }
 
@@ -300,17 +300,6 @@ function restoreRunbookSync(value: unknown): RunbookSync | undefined {
 const isVaultRecord = (value: unknown): value is VaultRecord =>
   isObject(value) && isString(value.salt) && isString(value.verifier);
 
-function restoreRunbookEntry(entry: RunbookEntry): RunbookEntry {
-  return {
-    ...entry,
-    named: entry.named === true || undefined,
-    folderId: isString(entry.folderId) ? entry.folderId : undefined,
-    sync: restoreRunbookSync(entry.sync),
-    secured: entry.secured === true,
-    vault: isVaultRecord(entry.vault) ? entry.vault : undefined,
-  };
-}
-
 function restoreLibraryFolders(value: unknown): LibraryFolder[] {
   if (!Array.isArray(value)) {
     return [];
@@ -330,15 +319,27 @@ function restoreLibraryFolders(value: unknown): LibraryFolder[] {
   );
 }
 
+function restoreLibraryRunbook(runbook: LibraryRunbook): LibraryRunbook {
+  return {
+    ...runbook,
+    named: runbook.named === true || undefined,
+    folderId: isString(runbook.folderId) ? runbook.folderId : undefined,
+    sync: restoreRunbookSync(runbook.sync),
+    secured: runbook.secured === true,
+    vault: isVaultRecord(runbook.vault) ? runbook.vault : undefined,
+  };
+}
+
 export function saveRunbookLibrary(
-  items: RunbookEntry[],
   folders: LibraryFolder[],
+  runbooks: LibraryRunbook[],
   activeId: string | null,
 ): void {
   try {
     localStorage.setItem(
       StorageKey.RUNBOOK_LIBRARY,
-      JSON.stringify({ items, folders, activeId }),
+      // Saved libraries store the runbooks under `items`
+      JSON.stringify({ folders, items: runbooks, activeId }),
     );
   } catch (error) {
     console.warn("Failed to save runbook library:", error);
@@ -354,10 +355,10 @@ export function loadRunbookLibrary(): PersistedRunbooks | null {
 
     const { folders, runbooks } = repairLibrary(
       restoreLibraryFolders(saved.folders),
-      (saved.items ?? []).map(restoreRunbookEntry),
+      (saved.items ?? []).map(restoreLibraryRunbook),
     );
 
-    return { items: runbooks, folders, activeId: saved.activeId ?? null };
+    return { folders, runbooks, activeId: saved.activeId ?? null };
   } catch (error) {
     console.warn("Failed to load runbook library:", error);
     return null;

@@ -40,8 +40,8 @@ export function createInitialState(): StoreData {
     // Data
     tabs: [],
     activeTabId: null,
-    runbookLibrary: [],
     libraryFolders: [],
+    libraryRunbooks: [],
     activeRunbookId: null,
     runbookSyncStatus: {},
     embeddedRunbooks: {},

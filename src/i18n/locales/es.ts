@@ -91,8 +91,8 @@ export const es: Messages = {
     rename: "Renombrar",
     resetName: "Restablecer nombre",
     openInTab: "Abierto en una pestaña",
-    newRunbook: "Nuevo libro",
     newFolder: "Nueva carpeta",
+    newRunbook: "Nuevo libro",
     folderName: "Nueva carpeta",
     folderActions: "Acciones de la carpeta",
     deleteFolder: "Eliminar carpeta",
@@ -692,16 +692,16 @@ export const es: Messages = {
     clearLibraryConfirm: "Eliminar todo",
     clearLibraryMessage:
       "¿Eliminar **todos los libros** de la biblioteca? Esto no se puede deshacer.",
+    deleteFolderTitle: "Eliminar Carpeta",
+    deleteFolderConfirm: "Eliminar",
+    deleteFolderMessage: (name) =>
+      `¿Eliminar \`${name}\` y todo su contenido? **Esto no se puede deshacer.**`,
     deleteRunbookTitle: "Eliminar Libro",
     deleteRunbookConfirm: "Eliminar",
     deleteRunbookMessage: (label) =>
       `¿Eliminar \`${label}\`? **Esto no se puede deshacer.**`,
     deleteUnsavedRunbookMessage: (label) =>
       `\`${label}\` tiene cambios que nunca se guardaron en la nube. ¿Eliminarlo de todos modos? **Esos cambios no se pueden recuperar.**`,
-    deleteFolderTitle: "Eliminar Carpeta",
-    deleteFolderConfirm: "Eliminar",
-    deleteFolderMessage: (name) =>
-      `¿Eliminar \`${name}\` y todo su contenido? **Esto no se puede deshacer.**`,
     deleteCloudFileTitle: "Eliminar Libro de la Nube",
     deleteCloudFileConfirm: "Eliminar",
     deleteCloudFileMessage: (filename) =>

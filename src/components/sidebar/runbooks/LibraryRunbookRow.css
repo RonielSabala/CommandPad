@@ -1,5 +1,5 @@
 .library-row-btn.active,
-.library-row-btn.runbook-focused {
+.library-row-btn.library-runbook-focused {
   background: var(--accent-dim);
   border-color: var(--accent);
   color: var(--accent-text);
@@ -10,18 +10,18 @@
   border-color: transparent;
 }
 
-.library-row-btn.runbook-focused {
+.library-row-btn.library-runbook-focused {
   outline: var(--space-1) solid var(--accent);
   outline-offset: var(--space-1);
   box-shadow: 0 0 0 var(--space-2) var(--accent-dim);
 }
 
 .library-row-btn.active .library-row-icon,
-.library-row-btn.runbook-focused .library-row-icon {
+.library-row-btn.library-runbook-focused .library-row-icon {
   color: inherit;
 }
 
-.runbook-row-path {
+.library-runbook-row-path {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -33,7 +33,7 @@
 
 /* Status badges */
 
-.runbook-open-dot {
+.library-runbook-open-dot {
   flex-shrink: 0;
   width: var(--space-4);
   height: var(--space-4);

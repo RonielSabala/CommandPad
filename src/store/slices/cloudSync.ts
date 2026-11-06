@@ -4,7 +4,7 @@ import { getMessages } from "@/i18n/messages";
 import { parseRunbookSource } from "@/utils/runbookSource";
 
 import type { StoreKit } from "@/store/kit";
-import { withLibraryEntry } from "@/store/libraryState";
+import { withLibraryRunbook } from "@/store/libraryState";
 import { getActiveTab } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import type { StoreState } from "@/store/types";
@@ -91,7 +91,10 @@ export function createCloudSyncSlice(
       }
 
       set((s) =>
-        withLibraryEntry(s, id, (item) => ({ ...item, sync: undefined })),
+        withLibraryRunbook(s, id, (runbook) => ({
+          ...runbook,
+          sync: undefined,
+        })),
       );
 
       // Unlink the embed runbook blocks that read this runbook

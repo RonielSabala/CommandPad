@@ -79,7 +79,7 @@ export function useTabUnresolved(tab: Tab): boolean {
         runbookBlocks.length > 0 &&
         (hasUnresolvedEmbeds(
           runbookBlocks,
-          state.runbookLibrary,
+          state.libraryRunbooks,
           state.embeddedRunbooks,
         ) ||
           runbookBlocks.some((block) =>
