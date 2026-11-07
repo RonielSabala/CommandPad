@@ -1,4 +1,5 @@
 .library-row {
+  --library-guide-color: var(--color-border);
   --library-indent: round(calc(var(--icon-sm) + var(--space-3)), 1px);
   --library-row-lead: calc(
     var(--icon-md) + 2 * var(--space-2) + var(--space-3)
@@ -33,7 +34,7 @@ body.read-mode .library-row {
   width: calc(var(--library-depth, 0) * var(--library-indent));
   background: repeating-linear-gradient(
     to right,
-    var(--color-border) 0 1px,
+    var(--library-guide-color) 0 1px,
     transparent 1px var(--library-indent)
   );
   pointer-events: none;
@@ -41,6 +42,8 @@ body.read-mode .library-row {
 
 .library-row:hover,
 .library-row:has(:focus-visible, .row-actions.menu-open) {
+  --library-guide-color: var(--color-border-strong);
+
   background: var(--color-surface-hover-bg);
 }
 
