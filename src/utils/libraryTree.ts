@@ -1,3 +1,4 @@
+import { LibraryFolderConfig } from "@/common/config";
 import { LibraryItemKind } from "@/common/enums";
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 
@@ -70,7 +71,11 @@ export function libraryRows(
     }
 
     for (const runbook of contents.get(parentId) ?? []) {
-      if (matchesQuery(query, runbook.label, runbook.filename, ...path)) {
+      const location =
+        LibraryFolderConfig.ROOT_PATH +
+        [...path, runbook.label].join(LibraryFolderConfig.PATH_SEPARATOR);
+
+      if (matchesQuery(query, location, runbook.filename)) {
         rows.push({
           kind: LibraryItemKind.RUNBOOK,
           runbook,

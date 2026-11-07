@@ -90,6 +90,20 @@ describe("libraryRows", () => {
       "0:restore",
     ]);
   });
+
+  it("matches a runbook by its path", () => {
+    expect(describeRows(folders, runbooks, "OPS/db")).toEqual([
+      "0:backup",
+      "0:restore",
+    ]);
+    expect(describeRows(folders, runbooks, "s/db/back")).toEqual(["0:backup"]);
+    expect(describeRows(folders, runbooks, "~/ops/db")).toEqual([
+      "0:backup",
+      "0:restore",
+    ]);
+    expect(describeRows(folders, runbooks, "~/re")).toEqual(["0:readme"]);
+    expect(describeRows(folders, runbooks, "db/ops")).toEqual([]);
+  });
 });
 
 describe("folderSubtree", () => {

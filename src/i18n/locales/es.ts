@@ -1183,7 +1183,7 @@ Si algo sale mal, deshazlo en este orden:
 * Abre el menú de **${runbookActionsLabel}** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.
 * Haz clic en **${clearLibraryLabel}** para vaciar la biblioteca completa de una vez.
 * Arrastra el control a la izquierda de un libro para reordenarlo en la lista. Si lo sueltas sobre un libro de otra carpeta, pasa a esa carpeta.
-* Usa la **barra de búsqueda** para filtrar libros por su etiqueta, nombre de archivo o carpeta.`,
+* Usa la **barra de búsqueda** para filtrar libros por su etiqueta, nombre de archivo, carpeta o ruta.`,
       autoLabel:
         "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca. En caso contrario se usa el nombre del archivo importado.",
       manualName: (renameLabel, resetNameLabel) =>

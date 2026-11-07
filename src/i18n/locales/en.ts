@@ -1157,7 +1157,7 @@ If something goes wrong, undo it in this order:
 * Open the **${runbookActionsLabel}** menu shown on row hover to duplicate a runbook or remove it from the library.
 * Click **${clearLibraryLabel}** to empty the whole library at once.
 * Drag the handle on the left of a runbook to reorder it in the list. Dropping it on a runbook in another folder moves it into that folder.
-* Use the **search bar** to filter runbooks by label, filename or folder.`,
+* Use the **search bar** to filter runbooks by label, filename, folder or path.`,
       autoLabel:
         "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label. Otherwise the imported filename is used as the fallback.",
       manualName: (renameLabel, resetNameLabel) =>
