@@ -5,6 +5,8 @@ import { classNames } from "@/utils/string";
 
 const TOOLTIP_SELECTOR = `[${DataAttr.TOOLTIP}], [${DataAttr.TOOLTIP_RICH}]`;
 
+export const NO_TOOLTIP = { [DataAttr.TOOLTIP]: "" };
+
 export const PLAIN_TOOLTIP_LINK = classNames(
   CssClass.TOOLTIP_LINK,
   "tooltip-link-plain",

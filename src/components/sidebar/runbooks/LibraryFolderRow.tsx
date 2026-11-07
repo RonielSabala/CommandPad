@@ -4,7 +4,7 @@ import type { LibraryFolder } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { RenameInput } from "@/components/common/RenameInput";
-import { tooltip } from "@/components/common/tooltip/tooltip";
+import { NO_TOOLTIP, tooltip } from "@/components/common/tooltip/tooltip";
 import {
   EditorToggleChevronIcon,
   FolderOpenFillIcon,
@@ -96,13 +96,15 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
             onClick={() => toggleLibraryFolder(folderId)}
             {...tooltip(folder.name)}
           >
-            <EditorToggleChevronIcon
-              className={classNames(
-                "library-folder-chevron",
-                CssClass.ICON_SM,
-                CssClass.ICON_BOLD,
-              )}
-            />
+            <span className="library-folder-chevron-zone" {...NO_TOOLTIP}>
+              <EditorToggleChevronIcon
+                className={classNames(
+                  "library-folder-chevron",
+                  CssClass.ICON_SM,
+                  CssClass.ICON_BOLD,
+                )}
+              />
+            </span>
 
             <FolderIcon
               className={classNames(
