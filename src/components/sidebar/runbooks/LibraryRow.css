@@ -1,5 +1,6 @@
 .library-row {
   --library-guide-color: var(--color-border);
+  --library-guide-width: 1px;
 
   /* The drag handle's icon and padding */
   --library-handle-width: calc(var(--icon-md) + 2 * var(--space-2));
@@ -51,16 +52,17 @@ body.read-mode .library-row {
   inset-block: 0;
   left: round(
     calc(
-      var(--space-2) + var(--library-row-lead) +
-        var(--library-chevron-padding) + var(--icon-sm) / 2
+      var(--library-btn-border) + var(--library-row-lead) +
+        var(--library-chevron-padding) + var(--icon-sm) / 2 -
+        var(--library-guide-width) / 2
     ),
     1px
   );
   width: calc(var(--library-depth, 0) * var(--library-indent));
   background: repeating-linear-gradient(
     to right,
-    var(--library-guide-color) 0 1px,
-    transparent 1px var(--library-indent)
+    var(--library-guide-color) 0 var(--library-guide-width),
+    transparent var(--library-guide-width) var(--library-indent)
   );
   pointer-events: none;
 }
