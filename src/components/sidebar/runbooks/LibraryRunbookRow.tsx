@@ -156,6 +156,10 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
           {path && <span className="library-runbook-row-path">{path}</span>}
         </div>
 
+        {runbook.secured && <RunbookSecretBadge runbookId={runbookId} />}
+
+        {sync && <RunbookSyncBadge runbookId={runbookId} sync={sync} />}
+
         {isOpen && !isActive && (
           <button
             className={classNames(
@@ -167,9 +171,6 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
             onClick={closeRunbookTab}
           />
         )}
-
-        {runbook.secured && <RunbookSecretBadge runbookId={runbookId} />}
-        {sync && <RunbookSyncBadge runbookId={runbookId} sync={sync} />}
       </div>
 
       <ActionsMenu className={CssClass.ROW_ACTIONS} title={t.runbooks.actions}>
