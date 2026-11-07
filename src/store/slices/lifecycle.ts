@@ -56,7 +56,9 @@ export function createLifecycleSlice(
       bootstrapped = true;
 
       const ui = persistence.loadUiState();
-      const library = persistence.loadRunbookLibrary();
+      const library = persistence.loadRunbookLibrary(
+        getMessages(ui?.language ?? get().language),
+      );
       const sections = persistence.loadSidebarSections();
       const meta = persistence.loadTabsMeta();
 

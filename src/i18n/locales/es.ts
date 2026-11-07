@@ -695,6 +695,12 @@ export const es: Messages = {
     deleteFolderConfirm: "Eliminar",
     deleteFolderMessage: (name) =>
       `¿Eliminar \`${name}\` y todo su contenido? **Esto no se puede deshacer.**`,
+    nameTakenTitle: "Nombre Ya Usado",
+    nameTakenConfirm: "Usar este nombre",
+    folderNameTakenMessage: (name, numbered) =>
+      `Ya hay una carpeta llamada \`${name}\` aquí.\n\n¿Usar \`${numbered}\` en su lugar?`,
+    runbookNameTakenMessage: (name, numbered) =>
+      `Esa carpeta ya tiene un libro llamado \`${name}\`.\n\n¿Usar \`${numbered}\` en su lugar?`,
     deleteRunbookTitle: "Eliminar Libro",
     deleteRunbookConfirm: "Eliminar",
     deleteRunbookMessage: (label) =>
@@ -1190,6 +1196,8 @@ Si algo sale mal, deshazlo en este orden:
         `**Ponerle nombre tú mismo:** haz doble clic en un libro de la lista de arriba o en su pestaña, o elige **${renameLabel}** en cualquiera de sus menús, y pulsa Enter o Escape para conservar el nombre. Un nombre que eliges se mantiene mientras editas el libro; **${resetNameLabel}** vuelve al etiquetado automático.`,
       folders: (newFolderLabel, newRunbookLabel, folderActionsLabel) =>
         `**Carpetas:** los botones junto a la barra de búsqueda crean una **${newFolderLabel}** en el nivel superior o un **${newRunbookLabel}** vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella, la renombra o la elimina con todo lo que contiene. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con su ruta desde el nivel superior de la biblioteca.`,
+      uniqueNames:
+        "**Los nombres son únicos por carpeta:** dos libros pueden llamarse igual en carpetas distintas, pero no en la misma, porque un bloque de libro encuentra un libro por su nombre. Si renombras un libro con un nombre que su carpeta ya tiene, o lo mueves a una carpeta que ya tiene su nombre, se te propone un nombre numerado como `Deploy (1)`, que puedes aceptar o cancelar. Los libros nuevos, las copias y las etiquetas automáticas reciben el número por sí solos. Las carpetas siguen la misma regla entre las carpetas que tienen al lado.",
       labelDetails:
         "Las etiquetas se normalizan: se limpia el formato markdown y se recorta hasta 60 caracteres.",
       autoSave:

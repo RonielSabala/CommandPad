@@ -1,5 +1,7 @@
+import { DEFAULT_TAB_LABEL } from "@/common/config";
 import { LibraryItemKind } from "@/common/enums";
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
+import { getMessages } from "@/i18n/messages";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -9,8 +11,11 @@ import {
   libraryRows,
   repairLibrary,
   uniqueFolderName,
+  uniqueRunbookLabel,
   withFolderExpanded,
 } from "./libraryTree";
+
+const en = getMessages("en");
 
 function folder(
   id: string,
@@ -166,6 +171,17 @@ describe("libraryPathTrail", () => {
 });
 
 describe("uniqueFolderName", () => {
+  it("doesn't count the folder being renamed", () => {
+    expect(
+      uniqueFolderName(
+        [{ id: "a", name: "ops", parentId: null }],
+        null,
+        "ops",
+        "a",
+      ),
+    ).toBe("ops");
+  });
+
   it("numbers a name its siblings already use", () => {
     const folders = [
       { ...folder("1"), name: "New folder" },
@@ -191,8 +207,22 @@ describe("withFolderExpanded", () => {
 });
 
 describe("repairLibrary", () => {
+  it("numbers sibling folders sharing a name, keeping the first", () => {
+    const { folders } = repairLibrary(
+      [
+        { id: "a", name: "ops", parentId: null },
+        { id: "b", name: "ops", parentId: null },
+        { id: "c", name: "ops", parentId: "a" },
+      ],
+      [],
+      en,
+    );
+
+    expect(folders.map((f) => f.name)).toEqual(["ops", "ops (1)", "ops"]);
+  });
+
   it("re-roots a folder whose parent is missing", () => {
-    const { folders } = repairLibrary([folder("a", "gone")], []);
+    const { folders } = repairLibrary([folder("a", "gone")], [], en);
     expect(folders[0].parentId).toBeNull();
   });
 
@@ -200,6 +230,7 @@ describe("repairLibrary", () => {
     const { folders } = repairLibrary(
       [folder("a", "c"), folder("b", "a"), folder("c", "b"), folder("d")],
       [],
+      en,
     );
 
     expect(folders.filter((f) => f.parentId === null).length).toBe(2);
@@ -213,6 +244,7 @@ describe("repairLibrary", () => {
     const { runbooks } = repairLibrary(
       [folder("a")],
       [kept, runbook("lost", "gone")],
+      en,
     );
 
     expect(runbooks[0]).toBe(kept);
@@ -221,9 +253,111 @@ describe("repairLibrary", () => {
 
   it("keeps sound data by identity", () => {
     const folders = [folder("a"), folder("b", "a")];
-    const repaired = repairLibrary(folders, []);
+    const repaired = repairLibrary(folders, [], en);
 
     expect(repaired.folders[0]).toBe(folders[0]);
     expect(repaired.folders[1]).toBe(folders[1]);
   });
+});
+
+describe("runbook names", () => {
+  const t = getMessages("en");
+  const named = (id: string, label: string, folderId?: string) => ({
+    ...runbook(id, folderId),
+    label,
+  });
+
+  it("numbers a label only inside the same folder", () => {
+    const runbooks = [named("a", "Deploy"), named("b", "Build", "ops")];
+
+    expect(uniqueRunbookLabel(runbooks, undefined, "Deploy", t)).toBe(
+      "Deploy (1)",
+    );
+    expect(uniqueRunbookLabel(runbooks, "ops", "Deploy", t)).toBe("Deploy");
+  });
+
+  it("doesn't count the runbook being renamed", () => {
+    const runbooks = [named("a", "Deploy")];
+
+    expect(uniqueRunbookLabel(runbooks, undefined, "Deploy", t, "a")).toBe(
+      "Deploy",
+    );
+  });
+
+  it("compares the name a row shows", () => {
+    const es = getMessages("es");
+    const runbooks = [named("a", DEFAULT_TAB_LABEL)];
+
+    expect(
+      uniqueRunbookLabel(runbooks, undefined, es.common.untitledTab, es),
+    ).toBe(`${es.common.untitledTab} (1)`);
+  });
+
+  it("numbers a label only when its folder has it", () => {
+    const runbooks = [named("a", "Deploy"), named("b", "Deploy (1)")];
+
+    expect(uniqueRunbookLabel(runbooks, undefined, "Deploy", t)).toBe(
+      "Deploy (2)",
+    );
+    expect(uniqueRunbookLabel(runbooks, "ops", "Deploy", t)).toBe("Deploy");
+    expect(uniqueRunbookLabel(runbooks, undefined, "Build", t)).toBe("Build");
+  });
+
+  it("keeps the untitled sentinel while it's free", () => {
+    expect(uniqueRunbookLabel([], undefined, DEFAULT_TAB_LABEL, t)).toBe(
+      DEFAULT_TAB_LABEL,
+    );
+    expect(
+      uniqueRunbookLabel(
+        [named("a", DEFAULT_TAB_LABEL)],
+        undefined,
+        DEFAULT_TAB_LABEL,
+        t,
+      ),
+    ).toBe(`${t.common.untitledTab} (1)`);
+  });
+
+  it("numbers stored duplicates after the first, folder by folder", () => {
+    const { runbooks: repaired } = repairLibrary(
+      [folder("ops")],
+      [
+        named("a", "Deploy"),
+        named("b", "Deploy"),
+        named("c", "Deploy (1)"),
+        named("d", "Deploy", "ops"),
+      ],
+      t,
+    );
+
+    expect(repaired.map((r) => r.label)).toEqual([
+      "Deploy",
+      "Deploy (2)",
+      "Deploy (1)",
+      "Deploy",
+    ]);
+  });
+
+  it("returns stored runbooks untouched when nothing clashes", () => {
+    const runbooks = [named("a", "Deploy"), named("b", "Deploy", "ops")];
+    const repaired = repairLibrary([folder("ops")], runbooks, t).runbooks;
+
+    expect(repaired[0]).toBe(runbooks[0]);
+    expect(repaired[1]).toBe(runbooks[1]);
+  });
+});
+
+it("numbers a runbook re-rooted onto a name the top level has", () => {
+  const { runbooks } = repairLibrary(
+    [],
+    [
+      { ...runbook("a"), label: "Deploy" },
+      { ...runbook("b", "gone"), label: "Deploy" },
+    ],
+    en,
+  );
+
+  expect(runbooks.map((r) => [r.folderId, r.label])).toEqual([
+    [undefined, "Deploy"],
+    [undefined, "Deploy (1)"],
+  ]);
 });

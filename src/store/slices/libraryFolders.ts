@@ -10,7 +10,11 @@ import {
 } from "@/utils/libraryTree";
 
 import type { StoreKit } from "@/store/kit";
-import { withLibraryFolder, withoutRunbooks } from "@/store/libraryState";
+import {
+  offerNumberedName,
+  withLibraryFolder,
+  withoutRunbooks,
+} from "@/store/libraryState";
 import type { StoreServices } from "@/store/services";
 import type { StoreState } from "@/store/types";
 
@@ -106,12 +110,35 @@ export function createLibraryFoldersSlice(
     },
 
     renameLibraryFolder: (id, name) => {
-      if (get().mode === AppMode.READ) {
+      const state = get();
+      if (state.mode === AppMode.READ) {
         return;
       }
 
       const trimmed = name.trim().slice(0, LibraryFolderConfig.NAME_MAX_LENGTH);
       if (!trimmed) {
+        return;
+      }
+
+      const folder = state.libraryFolders.find((f) => f.id === id);
+      if (!folder) {
+        return;
+      }
+
+      const numbered = uniqueFolderName(
+        state.libraryFolders,
+        folder.parentId,
+        trimmed,
+        id,
+      );
+
+      if (numbered !== trimmed) {
+        offerNumberedName(
+          state,
+          (t) => t.dialogs.folderNameTakenMessage(trimmed, numbered),
+          () => get().renameLibraryFolder(id, numbered),
+        );
+
         return;
       }
 

@@ -6,6 +6,7 @@ import { withFolderExpanded } from "@/utils/libraryTree";
 import { findTabById, findTabByRunbookId } from "@/utils/tabs";
 
 import type { StoreKit } from "@/store/kit";
+import { uniqueLabelIn } from "@/store/libraryState";
 import { getActiveTab } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import { createTabObject, tabContent } from "@/store/tabState";
@@ -31,15 +32,17 @@ export function createTabsSlice(
 
   return {
     createNewTab: async (folderId) => {
-      if (get().mode === AppMode.READ) {
+      const state = get();
+      if (state.mode === AppMode.READ) {
         return;
       }
 
+      const label = uniqueLabelIn(state, folderId, DEFAULT_TAB_LABEL);
       const runbookId = generateId();
-      const tab = createTabObject(DEFAULT_TAB_LABEL, runbookId);
+      const tab = createTabObject(label, runbookId);
       const runbook: LibraryRunbook = {
         id: runbookId,
-        label: DEFAULT_TAB_LABEL,
+        label,
         filename: "",
         folderId,
       };

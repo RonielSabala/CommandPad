@@ -70,7 +70,7 @@ export function getLibraryRunbook(
   state: StoreState,
   runbookId: string,
 ): LibraryRunbook | undefined {
-  return state.libraryRunbooks.find((runbook) => runbook.id === runbookId);
+  return state.libraryRunbooks.find((r) => r.id === runbookId);
 }
 
 export function getRunbookView(state: StoreState): RunbookView {

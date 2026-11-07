@@ -544,6 +544,10 @@ export interface Messages {
     deleteFolderTitle: string;
     deleteFolderConfirm: string;
     deleteFolderMessage: (name: string) => string;
+    nameTakenTitle: string;
+    nameTakenConfirm: string;
+    folderNameTakenMessage: (name: string, numbered: string) => string;
+    runbookNameTakenMessage: (name: string, numbered: string) => string;
     deleteRunbookTitle: string;
     deleteRunbookConfirm: string;
     deleteRunbookMessage: (label: string) => string;
@@ -708,6 +712,7 @@ export interface Messages {
         newRunbookLabel: string,
         folderActionsLabel: string,
       ) => string;
+      uniqueNames: string;
       labelDetails: string;
       autoSave: string;
     };

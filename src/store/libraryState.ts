@@ -1,8 +1,44 @@
+import { DialogTone } from "@/common/enums";
 import type { LibraryFolder, LibraryRunbook, Tab } from "@/common/types";
-import { visibleRunbooks } from "@/utils/libraryTree";
+import { getMessages } from "@/i18n/messages";
+import type { Messages } from "@/i18n/types";
+import { uniqueRunbookLabel, visibleRunbooks } from "@/utils/libraryTree";
 import { findTabById } from "@/utils/tabs";
 
 import type { StoreState } from "./types";
+
+/** `label`, numbered if a runbook in `folderId` already shows it. */
+export function uniqueLabelIn(
+  state: StoreState,
+  folderId: string | undefined,
+  label: string,
+  exceptId?: string,
+): string {
+  return uniqueRunbookLabel(
+    state.libraryRunbooks,
+    folderId,
+    label,
+    getMessages(state.language),
+    exceptId,
+  );
+}
+
+/** Offer the numbered name `message` proposes, calling `accept` if taken. */
+export function offerNumberedName(
+  state: StoreState,
+  message: (t: Messages) => string,
+  accept: () => void,
+): void {
+  const t = getMessages(state.language);
+
+  void state
+    .confirm(message(t), {
+      title: t.dialogs.nameTakenTitle,
+      confirmLabel: t.dialogs.nameTakenConfirm,
+      tone: DialogTone.INFO,
+    })
+    .then((accepted) => accepted && accept());
+}
 
 /** Replace one library folder. */
 export function withLibraryFolder(

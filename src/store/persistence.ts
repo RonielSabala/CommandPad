@@ -26,7 +26,7 @@ import type {
   VaultRecord,
 } from "@/common/types";
 import { detectLanguage, isLanguage } from "@/i18n/messages";
-import type { Language } from "@/i18n/types";
+import type { Language, Messages } from "@/i18n/types";
 import type { CloudFolderRef } from "@/services/cloud";
 import { repairLibrary } from "@/utils/libraryTree";
 import { clamp } from "@/utils/number";
@@ -346,7 +346,7 @@ export function saveRunbookLibrary(
   }
 }
 
-export function loadRunbookLibrary(): PersistedRunbooks | null {
+export function loadRunbookLibrary(t: Messages): PersistedRunbooks | null {
   try {
     const saved = getSavedItemByKey(StorageKey.RUNBOOK_LIBRARY);
     if (!saved) {
@@ -356,6 +356,7 @@ export function loadRunbookLibrary(): PersistedRunbooks | null {
     const { folders, runbooks } = repairLibrary(
       restoreLibraryFolders(saved.folders),
       (saved.items ?? []).map(restoreLibraryRunbook),
+      t,
     );
 
     return { folders, runbooks, activeId: saved.activeId ?? null };

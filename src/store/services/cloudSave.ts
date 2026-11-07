@@ -83,7 +83,7 @@ export function createCloudSave(
 
       return withLibraryRunbook(s, runbookId, (runbook) => ({
         ...runbook,
-        label: libraryRunbookLabel(runbook, content.blocks),
+        label: libraryRunbookLabel(s, runbook, content.blocks),
       }));
     });
 

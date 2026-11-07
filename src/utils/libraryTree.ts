@@ -1,7 +1,9 @@
 import { LibraryFolderConfig, RunbookBlockConfig } from "@/common/config";
 import { LibraryItemKind } from "@/common/enums";
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
+import type { Messages } from "@/i18n/types";
 
+import { displayLabel } from "./runbook";
 import { buildDuplicateName, matchesQuery } from "./string";
 
 export type LibraryRow =
@@ -40,6 +42,7 @@ function groupByParent<T>(
   return groups;
 }
 
+const folderName = (folder: LibraryFolder) => folder.name;
 const folderParent = (folder: LibraryFolder) => folder.parentId;
 const runbookParent = (runbook: LibraryRunbook) => runbook.folderId ?? null;
 
@@ -155,18 +158,97 @@ export function libraryPathTrail(
   }
 }
 
+/** `name` numbered past what its siblings are called. */
+function numberedPastSiblings<T extends { id: string }>(
+  items: readonly T[],
+  parentOf: (item: T) => string | null,
+  nameOf: (item: T) => string,
+  parentId: string | null,
+  name: string,
+  exceptId?: string,
+): string | null {
+  const isSibling = (item: T) =>
+    parentOf(item) === parentId && item.id !== exceptId;
+
+  if (!items.some((item) => isSibling(item) && nameOf(item) === name)) {
+    return null;
+  }
+
+  const taken = new Set(items.filter(isSibling).map(nameOf));
+  return buildDuplicateName(name, (candidate) => taken.has(candidate));
+}
+
+/** `base`, numbered if a sibling folder already has it. */
 export function uniqueFolderName(
   folders: readonly LibraryFolder[],
   parentId: string | null,
   base: string,
+  exceptId?: string,
 ): string {
-  const taken = new Set(
-    folders.filter((f) => f.parentId === parentId).map((f) => f.name),
+  return (
+    numberedPastSiblings(
+      folders,
+      folderParent,
+      folderName,
+      parentId,
+      base,
+      exceptId,
+    ) ?? base
   );
+}
 
-  return taken.has(base)
-    ? buildDuplicateName(base, (candidate) => taken.has(candidate))
-    : base;
+/** `label`, numbered if the folder already shows it. */
+export function uniqueRunbookLabel(
+  runbooks: readonly LibraryRunbook[],
+  folderId: string | undefined,
+  label: string,
+  t: Messages,
+  exceptId?: string,
+): string {
+  return (
+    numberedPastSiblings(
+      runbooks,
+      runbookParent,
+      (runbook) => displayLabel(runbook.label, t),
+      folderId ?? null,
+      displayLabel(label, t),
+      exceptId,
+    ) ?? label
+  );
+}
+
+/** Rename each item after the first sharing a name in its folder. */
+function withNumberedDuplicates<T extends { id: string }>(
+  items: T[],
+  parentOf: (item: T) => string | null,
+  nameOf: (item: T) => string,
+  rename: (item: T, name: string) => T,
+): T[] {
+  const renamed = new Map<string, T>();
+
+  for (const group of groupByParent(items, parentOf).values()) {
+    const names = group.map(nameOf);
+    const taken = new Set(names);
+    const seen = new Set<string>();
+
+    group.forEach((item, index) => {
+      const name = names[index];
+
+      if (seen.has(name) && name.trim()) {
+        const numbered = buildDuplicateName(name, (candidate) =>
+          taken.has(candidate),
+        );
+        taken.add(numbered);
+        renamed.set(item.id, rename(item, numbered));
+      }
+
+      seen.add(name);
+    });
+  }
+
+  return renamed.size > 0
+    ? items.map((item) => renamed.get(item.id) ?? item)
+    : items;
 }
 
 /** Expand one folder. */
@@ -179,10 +261,11 @@ export function withFolderExpanded(
     : folders;
 }
 
-/** Re-root what stored data left dangling. */
+/** Re-root what stored data left dangling and number clashing names. */
 export function repairLibrary(
   folders: LibraryFolder[],
   runbooks: LibraryRunbook[],
+  t: Messages,
 ): { folders: LibraryFolder[]; runbooks: LibraryRunbook[] } {
   const parents = new Map(folders.map((f) => [f.id, f.parentId]));
 
@@ -207,7 +290,7 @@ export function repairLibrary(
     }
   }
 
-  return {
+  const rooted = {
     folders: folders.map((f) =>
       parents.get(f.id) === f.parentId
         ? f
@@ -217,6 +300,21 @@ export function repairLibrary(
       r.folderId === undefined || parents.has(r.folderId)
         ? r
         : { ...r, folderId: undefined },
+    ),
+  };
+
+  return {
+    folders: withNumberedDuplicates(
+      rooted.folders,
+      folderParent,
+      folderName,
+      (folder, name) => ({ ...folder, name }),
+    ),
+    runbooks: withNumberedDuplicates(
+      rooted.runbooks,
+      runbookParent,
+      (runbook) => displayLabel(runbook.label, t),
+      (runbook, label) => ({ ...runbook, label }),
     ),
   };
 }

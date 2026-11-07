@@ -38,6 +38,7 @@ export function RunbookLibraryDocs() {
           t.runbooks.resetName,
         )}
       />
+      <Prose text={t.docs.runbookLibrary.uniqueNames} />
       <Prose text={t.docs.runbookLibrary.labelDetails} />
       <Prose text={t.docs.runbookLibrary.autoSave} />
     </>

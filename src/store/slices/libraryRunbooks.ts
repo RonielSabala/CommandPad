@@ -4,7 +4,12 @@ import type { RunbookContent } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { adoptOpenVault, holdsSecrets, unlockVault } from "@/services/vault";
 import type { StoreKit } from "@/store/kit";
-import { withLibraryRunbook, withoutRunbooks } from "@/store/libraryState";
+import {
+  offerNumberedName,
+  uniqueLabelIn,
+  withLibraryRunbook,
+  withoutRunbooks,
+} from "@/store/libraryState";
 import { getLibraryRunbook, getTabByRunbookId } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import {
@@ -12,9 +17,11 @@ import {
   type ImportedVaultResult,
 } from "@/store/services/vault";
 import {
+  autoRunbookLabel,
   contentFields,
   createTabObject,
   labelRunbook,
+  libraryRunbookLabel,
   tabContent,
 } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
@@ -57,6 +64,60 @@ export function createLibraryRunbooksSlice(
     encryptStoredRunbook,
     decryptImportedContent,
   } = services;
+
+  /** Offer `numbered`, since the folder already has `label`. */
+  const offerNumberedLabel = (
+    label: string,
+    numbered: string,
+    accept: () => void,
+  ) =>
+    offerNumberedName(
+      get(),
+      (t) =>
+        t.dialogs.runbookNameTakenMessage(
+          displayLabel(label, t),
+          displayLabel(numbered, t),
+        ),
+      accept,
+    );
+
+  /** Move a runbook to where `targetId` sits, joining its folder. */
+  const placeRunbook = (sourceId: string, targetId: string, label?: string) => {
+    const runbooks = [...get().libraryRunbooks];
+    const sourceIndex = runbooks.findIndex((r) => r.id === sourceId);
+    const targetIndex = runbooks.findIndex((r) => r.id === targetId);
+
+    if (sourceIndex < 0 || targetIndex < 0) {
+      return;
+    }
+
+    const { folderId } = runbooks[targetIndex];
+    const [removed] = runbooks.splice(sourceIndex, 1);
+    runbooks.splice(
+      targetIndex,
+      0,
+      removed.folderId === folderId ? removed : { ...removed, folderId },
+    );
+
+    if (label === undefined) {
+      set({ libraryRunbooks: runbooks });
+      saveLibrary();
+      return;
+    }
+
+    // The new label also reaches the runbook's tab
+    set((s) =>
+      labelRunbook(
+        { ...s, libraryRunbooks: runbooks },
+        sourceId,
+        label,
+        removed.named === true,
+      ),
+    );
+
+    saveTabs();
+    saveLibrary();
+  };
 
   return {
     loadRunbookFromLibrary: async (runbookId) => {
@@ -168,15 +229,12 @@ export function createLibraryRunbooksSlice(
         })),
       };
 
-      const runbooks = get().libraryRunbooks;
-      const takenLabels = new Set(runbooks.map((r) => r.label));
-      const takenFilenames = new Set(runbooks.map((r) => r.filename));
-
-      // Base the copy's name on what the row actually shows
-      const label = nextDuplicateName(
-        displayLabel(source.label, getMessages(get().language)),
-        (candidate) => takenLabels.has(candidate),
+      // The library may have changed while the content loaded
+      const current = get();
+      const takenFilenames = new Set(
+        current.libraryRunbooks.map((r) => r.filename),
       );
+      const label = uniqueLabelIn(current, source.folderId, source.label);
       const filename = source.filename
         ? nextDuplicateName(source.filename, (candidate) =>
             takenFilenames.has(candidate),
@@ -211,7 +269,21 @@ export function createLibraryRunbooksSlice(
       }
 
       const label = name.trim().slice(0, RunbookConfig.LABEL_MAX_LENGTH);
-      if (!label || !getLibraryRunbook(state, id)) {
+      if (!label) {
+        return;
+      }
+
+      const runbook = getLibraryRunbook(state, id);
+      if (!runbook) {
+        return;
+      }
+
+      const numbered = uniqueLabelIn(state, runbook.folderId, label, id);
+      if (numbered !== label) {
+        offerNumberedLabel(label, numbered, () =>
+          get().renameRunbook(id, numbered),
+        );
+
         return;
       }
 
@@ -241,8 +313,7 @@ export function createLibraryRunbooksSlice(
         }
 
         const blocks = getTabByRunbookId(s, id)?.blocks ?? stored?.blocks;
-        const label = getRunbookLabel(blocks, runbook.filename);
-
+        const label = autoRunbookLabel(s, runbook, blocks);
         return labelRunbook(s, id, label, false);
       });
 
@@ -291,14 +362,18 @@ export function createLibraryRunbooksSlice(
         await encryptStoredRunbook(runbookId);
       };
 
+      // An import lands at the top level, so only a name taken there collides
       const state = get();
+      const t = getMessages(state.language);
+      const shown = displayLabel(label, t);
       const existing = state.libraryRunbooks.find(
-        (r) => r.label === label || r.filename === filename,
+        (r) =>
+          r.filename === filename ||
+          (!r.folderId && displayLabel(r.label, t) === shown),
       );
 
       if (existing) {
         const existingName = existing.label || existing.filename;
-        const t = getMessages(get().language);
         const confirmed = await get().confirm(
           t.dialogs.overwriteMessage(rawFilename, existingName),
           {
@@ -316,7 +391,11 @@ export function createLibraryRunbooksSlice(
         set((s) => ({
           ...withLibraryRunbook(s, existing.id, (runbook) => ({
             ...runbook,
-            label: runbook.named ? runbook.label : label,
+            label: libraryRunbookLabel(
+              s,
+              { ...runbook, filename },
+              content.blocks,
+            ),
             filename: filename || "",
             secured: holdsSecrets(content),
             // An import keeps the runbook's existing link unless it brings its own
@@ -437,25 +516,28 @@ export function createLibraryRunbooksSlice(
     },
 
     reorderRunbooks: (sourceId, targetId) => {
-      const runbooks = [...get().libraryRunbooks];
-      const sourceIndex = runbooks.findIndex((r) => r.id === sourceId);
-      const targetIndex = runbooks.findIndex((r) => r.id === targetId);
+      const state = get();
+      const source = getLibraryRunbook(state, sourceId);
+      const target = getLibraryRunbook(state, targetId);
 
-      if (sourceIndex < 0 || targetIndex < 0) {
+      if (!source || !target) {
         return;
       }
 
       // Dropping on a runbook in another folder moves it into that folder
-      const { folderId } = runbooks[targetIndex];
-      const [removed] = runbooks.splice(sourceIndex, 1);
-      runbooks.splice(
-        targetIndex,
-        0,
-        removed.folderId === folderId ? removed : { ...removed, folderId },
-      );
+      const label =
+        source.folderId === target.folderId
+          ? source.label
+          : uniqueLabelIn(state, target.folderId, source.label);
 
-      set({ libraryRunbooks: runbooks });
-      saveLibrary();
+      if (label === source.label) {
+        placeRunbook(sourceId, targetId);
+        return;
+      }
+
+      offerNumberedLabel(source.label, label, () =>
+        placeRunbook(sourceId, targetId, label),
+      );
     },
 
     setRunbookFocus: (id) => set({ focusedRunbookId: id }),

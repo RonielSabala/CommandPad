@@ -678,6 +678,12 @@ export const en: Messages = {
     deleteFolderConfirm: "Delete",
     deleteFolderMessage: (name) =>
       `Delete \`${name}\` and everything in it? **This cannot be undone.**`,
+    nameTakenTitle: "Name Already Taken",
+    nameTakenConfirm: "Use this name",
+    folderNameTakenMessage: (name, numbered) =>
+      `There's already a folder named \`${name}\` here.\n\nUse \`${numbered}\` instead?`,
+    runbookNameTakenMessage: (name, numbered) =>
+      `That folder already has a runbook named \`${name}\`.\n\nUse \`${numbered}\` instead?`,
     deleteRunbookTitle: "Delete Runbook",
     deleteRunbookConfirm: "Delete",
     deleteRunbookMessage: (label) =>
@@ -1164,6 +1170,8 @@ If something goes wrong, undo it in this order:
         `**Naming it yourself:** double-click a runbook in the list above or its tab, or pick **${renameLabel}** from either menu, then press Enter or Escape to keep the name. A name you choose stays put while you edit the runbook; **${resetNameLabel}** goes back to auto-labelling.`,
       folders: (newFolderLabel, newRunbookLabel, folderActionsLabel) =>
         `**Folders:** the buttons beside the search bar create a top-level **${newFolderLabel}** or an empty **${newRunbookLabel}**. A folder's **${folderActionsLabel}** menu creates either one inside it, renames it, or deletes it with everything it holds. Folders nest as deep as you like: click one to fold or unfold it. While you search, the matching runbooks are listed flat, each with its path from the top of the library.`,
+      uniqueNames:
+        "**Names are unique per folder:** two runbooks can share a name in different folders, but not in the same one, because a runbook block finds a runbook by its name. Renaming a runbook to a name its folder already has, or moving it into a folder that has its name, offers a numbered name like `Deploy (1)`, which you can take or cancel. New runbooks, copies and automatic labels get the number on their own. Folders follow the same rule among the folders beside them.",
       labelDetails:
         "Labels are normalized: markdown formatting is stripped and they are trimmed to 60 characters.",
       autoSave:
