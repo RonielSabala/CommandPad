@@ -1643,7 +1643,7 @@ Si algo sale mal, deshazlo en este orden:
       teaser: (embeddingSection, tabsSection) =>
         `Queda un bloque más: el bloque de runbook, que muestra otro runbook completo dentro de este. Está hecho de casi todo lo demás de CommandPad (variables, pestañas, tu biblioteca de runbooks), así que tiene su propia sección, **${embeddingSection}**, justo después de **${tabsSection}**. Sigue en orden. Cuando llegues habrás usado cada pieza de la que está hecho, y su demo se explicará sola.`,
       intro:
-        "Un bloque de runbook muestra otro runbook dentro de este. Escribe una sola vez un procedimiento que repites en varios sitios, como un despliegue o una copia de seguridad, e incrústalo donde haga falta. Para elegir el runbook, escribe su etiqueta en la cabecera del bloque: el cuadro sugiere todos los runbooks de tu biblioteca.",
+        "Un bloque de runbook muestra otro runbook dentro de este. Escribe una sola vez un procedimiento que repites en varios sitios, como un despliegue o una copia de seguridad, e incrústalo donde haga falta. Para elegir el runbook, usa el cuadro de la cabecera del bloque: lista tu biblioteca carpeta por carpeta. Al elegir una carpeta se abre, `..` sube un nivel y al elegir un runbook se incrusta. También puedes escribir la etiqueta de un runbook, esté donde esté.",
       demoHint: (showVariables) =>
         `La primera pestaña es un runbook de versión que incrusta el runbook de despliegue de la segunda. Pulsa **${showVariables}** en la cabecera del bloque, cambia \`ENV\` de \`prod\` a \`dev\` y vuelve: los comandos incrustados lo siguen. Después edita un comando en la pestaña de despliegue y regresa a la primera. El cambio ya está ahí.`,
       overrides:

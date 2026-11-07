@@ -5,7 +5,6 @@ import {
   MonacoSuggest,
 } from "@/common/editorConfig";
 import { ANY, oneOrMore } from "@/common/regex";
-import { isFunction } from "@/utils/typeGuards";
 import type { editor, languages, Position } from "monaco-editor";
 
 import { monaco } from "../setup";
@@ -22,9 +21,7 @@ export interface EditorChoice {
   onPick?: () => void;
 }
 
-export type ChoiceSource =
-  | EditorChoice[]
-  | ((text: string) => Promise<EditorChoice[]>);
+export type ChoiceSource = (text: string) => Promise<EditorChoice[]>;
 
 const ChoiceWordRegex = new RegExp(oneOrMore(ANY));
 
@@ -70,14 +67,13 @@ async function provideCompletionItems(
     model.getLineMaxColumn(lineNumber),
   );
 
-  const dynamic = isFunction(source);
-  const choices = dynamic ? await source(text) : source;
+  const choices = await source(text);
   const details = await Promise.all(
     choices.map((choice) => choice.describe?.()),
   );
 
   return {
-    incomplete: dynamic,
+    incomplete: true,
     suggestions: choices.map((choice, index) => ({
       label: choice.label,
       detail: details[index],

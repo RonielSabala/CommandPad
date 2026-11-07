@@ -4,6 +4,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   folderSubtree,
+  libraryLevel,
+  libraryPathTrail,
   libraryRows,
   repairLibrary,
   uniqueFolderName,
@@ -122,6 +124,44 @@ describe("folderSubtree", () => {
   it("stops at a cycle", () => {
     const folders = [folder("a", "b"), folder("b", "a")];
     expect(folderSubtree(folders, "a")).toEqual(new Set(["a", "b"]));
+  });
+});
+
+describe("libraryLevel", () => {
+  it("lists only what sits directly inside", () => {
+    const folders = [folder("ops"), folder("deploys", "ops")];
+    const runbooks = [runbook("root"), runbook("nested", "ops")];
+
+    expect(libraryLevel(folders, runbooks, null)).toEqual({
+      folders: [folders[0]],
+      runbooks: [runbooks[0]],
+    });
+    expect(libraryLevel(folders, runbooks, "ops")).toEqual({
+      folders: [folders[1]],
+      runbooks: [runbooks[1]],
+    });
+  });
+});
+
+describe("libraryPathTrail", () => {
+  const folders = [folder("ops"), folder("deploys", "ops"), folder("a/b")];
+  const trailIds = (text: string) =>
+    libraryPathTrail(folders, text).map((f) => f.id);
+
+  it("stops at the last folder fully spelled", () => {
+    expect(trailIds("")).toEqual([]);
+    expect(trailIds("ops")).toEqual([]);
+    expect(trailIds("ops/")).toEqual(["ops"]);
+    expect(trailIds("ops/dep")).toEqual(["ops"]);
+    expect(trailIds("ops/deploys/rollback")).toEqual(["ops", "deploys"]);
+  });
+
+  it("only walks into a folder under its own parent", () => {
+    expect(trailIds("deploys/")).toEqual([]);
+  });
+
+  it("reads a separator inside a folder's name", () => {
+    expect(trailIds("a/b/x")).toEqual(["a/b"]);
   });
 });
 

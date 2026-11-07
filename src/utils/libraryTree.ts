@@ -1,4 +1,4 @@
-import { LibraryFolderConfig } from "@/common/config";
+import { LibraryFolderConfig, RunbookBlockConfig } from "@/common/config";
 import { LibraryItemKind } from "@/common/enums";
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 
@@ -116,6 +116,43 @@ export function folderSubtree(
   }
 
   return ids;
+}
+
+/** What sits directly inside a folder. */
+export function libraryLevel(
+  folders: readonly LibraryFolder[],
+  runbooks: readonly LibraryRunbook[],
+  parentId: string | null,
+): { folders: LibraryFolder[]; runbooks: LibraryRunbook[] } {
+  return {
+    folders: folders.filter((f) => folderParent(f) === parentId),
+    runbooks: runbooks.filter((r) => runbookParent(r) === parentId),
+  };
+}
+
+/** The folders a typed path has fully spelled. */
+export function libraryPathTrail(
+  folders: readonly LibraryFolder[],
+  text: string,
+): LibraryFolder[] {
+  const separator = RunbookBlockConfig.PATH_SEPARATOR;
+  const trail: LibraryFolder[] = [];
+  let rest = text;
+
+  for (;;) {
+    const parentId = trail.at(-1)?.id ?? null;
+    const prefix = rest;
+    const next = folders.find(
+      (f) => f.parentId === parentId && prefix.startsWith(f.name + separator),
+    );
+
+    if (!next) {
+      return trail;
+    }
+
+    trail.push(next);
+    rest = rest.slice(next.name.length + separator.length);
+  }
 }
 
 export function uniqueFolderName(

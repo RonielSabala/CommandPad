@@ -1616,7 +1616,7 @@ If something goes wrong, undo it in this order:
       teaser: (embeddingSection, tabsSection) =>
         `There is one more block: the runbook block, which shows a whole other runbook inside this one. It's made of nearly everything else in CommandPad (variables, tabs, your runbook library), so it gets its own section, **${embeddingSection}**, right after **${tabsSection}**. Keep going in order. By the time you get there you'll have used every piece it's built from, and its demo will explain itself.`,
       intro:
-        "A runbook block shows another runbook inside this one. Write a procedure you repeat in several places once, such as a deploy or a backup, and embed it wherever it's needed. To pick the runbook, type its label in the block's header: the box suggests every runbook in your library.",
+        "A runbook block shows another runbook inside this one. Write a procedure you repeat in several places once, such as a deploy or a backup, and embed it wherever it's needed. To pick the runbook, use the box in the block's header: it lists your library one folder at a time. Picking a folder opens it, `..` goes back up a level, and picking a runbook embeds it. You can also type a runbook's label, wherever it lives.",
       demoHint: (showVariables) =>
         `The first tab is a release runbook that embeds the deploy runbook from the second tab. Press **${showVariables}** in the block's header, change \`ENV\` from \`prod\` to \`dev\` and switch back: the embedded commands follow. Then edit a command in the deploy tab and come back to the first one. The change is already there.`,
       overrides:
