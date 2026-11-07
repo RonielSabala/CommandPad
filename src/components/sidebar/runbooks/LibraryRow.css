@@ -9,9 +9,8 @@
 }
 
 .library-row.sidebar-section-list-row {
-  padding-left: calc(
-    var(--space-2) + var(--library-depth, 0) * var(--library-indent)
-  );
+  margin-bottom: 0;
+  padding-left: calc(var(--library-depth, 0) * var(--library-indent));
 }
 
 body.read-mode .library-row {
@@ -23,7 +22,7 @@ body.read-mode .library-row {
 .library-row::before {
   content: "";
   position: absolute;
-  inset-block: calc(-1 * var(--space-2)) 0;
+  inset-block: 0;
   left: round(
     calc(
       var(--space-2) + var(--library-row-lead) + var(--space-1) +
