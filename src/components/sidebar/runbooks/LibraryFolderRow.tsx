@@ -5,14 +5,17 @@ import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { RenameInput } from "@/components/common/RenameInput";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { EditorToggleChevronIcon, TrashIcon } from "@/components/icons";
+import {
+  EditorToggleChevronIcon,
+  FolderOpenFillIcon,
+  TrashIcon,
+} from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { memo, useState } from "react";
 import {
   FileEarmarkPlus,
-  Folder2Open,
   FolderFill,
   FolderPlus,
   Vr,
@@ -33,7 +36,7 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
 }: Props) {
   const t = useTranslation();
   const folderId = folder.id;
-  const FolderIcon = folder.collapsed ? FolderFill : Folder2Open;
+  const FolderIcon = folder.collapsed ? FolderFill : FolderOpenFillIcon;
 
   const createNewTab = useStore((state) => state.createNewTab);
   const createLibraryFolder = useStore((state) => state.createLibraryFolder);
