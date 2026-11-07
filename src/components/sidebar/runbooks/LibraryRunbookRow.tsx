@@ -160,7 +160,7 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
 
         {sync && <RunbookSyncBadge runbookId={runbookId} sync={sync} />}
 
-        {isOpen && !isActive && (
+        {isOpen && (
           <button
             className={classNames(
               "library-runbook-open-dot",

@@ -1,5 +1,8 @@
 .library-row {
-  --library-indent: calc(var(--icon-sm) + var(--space-3));
+  --library-indent: round(calc(var(--icon-sm) + var(--space-3)), 1px);
+  --library-row-lead: calc(
+    var(--icon-md) + 2 * var(--space-2) + var(--space-3)
+  );
 
   grid-template-columns: auto minmax(0, 1fr) auto;
   border-radius: var(--radius-md);
@@ -9,6 +12,32 @@
   padding-left: calc(
     var(--space-2) + var(--library-depth, 0) * var(--library-indent)
   );
+}
+
+body.read-mode .library-row {
+  --library-row-lead: 0px;
+}
+
+/* One guide per ancestor folder */
+
+.library-row::before {
+  content: "";
+  position: absolute;
+  inset-block: calc(-1 * var(--space-2)) 0;
+  left: round(
+    calc(
+      var(--space-2) + var(--library-row-lead) + var(--space-1) +
+        var(--icon-sm) / 2
+    ),
+    1px
+  );
+  width: calc(var(--library-depth, 0) * var(--library-indent));
+  background: repeating-linear-gradient(
+    to right,
+    var(--color-border) 0 1px,
+    transparent 1px var(--library-indent)
+  );
+  pointer-events: none;
 }
 
 .library-row:hover,
