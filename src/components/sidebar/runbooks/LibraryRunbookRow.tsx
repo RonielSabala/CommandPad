@@ -95,7 +95,10 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
   return (
     <div
       className={classNames(
+        isActive && CssClass.ACTIVE,
+        isFocused && "library-runbook-focused",
         isDragging && CssClass.DRAGGING,
+        isDragOver && CssClass.DRAG_OVER,
         CssClass.LIBRARY_ROW,
         CssClass.SIDEBAR_SECTION_LIST_ROW,
       )}
@@ -128,9 +131,6 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
           ) : (
             <button
               className={classNames(
-                isActive && CssClass.ACTIVE,
-                isFocused && "library-runbook-focused",
-                isDragOver && CssClass.DRAG_OVER,
                 CssClass.LIBRARY_ROW_BTN,
                 CssClass.LIBRARY_ROW_LABEL,
                 CssClass.NO_USER_SELECT,

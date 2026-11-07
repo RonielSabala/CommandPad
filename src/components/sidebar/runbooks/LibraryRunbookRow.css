@@ -1,24 +1,35 @@
-.library-row-btn.active,
-.library-row-btn.library-runbook-focused {
-  background: var(--accent-dim);
-  border-color: var(--accent);
+.library-row.library-runbook-focused {
+  --library-guide-color: var(--color-border-strong);
+
+  background: var(--color-surface-hover-bg);
+}
+
+.library-row.active {
+  background: var(--row-selected-bg);
+}
+
+.library-row.active:is(
+    :hover,
+    .library-runbook-focused,
+    :has(:focus-visible, .row-actions.menu-open)
+  ) {
+  background: var(--row-selected-hover-bg);
+}
+
+.library-row.drag-over {
+  outline-offset: calc(-1 * var(--border-dashed-width));
+}
+
+.library-row.drag-over::before {
+  inset-block: var(--border-dashed-width);
+}
+
+.library-row.active .library-row-btn {
+  color: var(--color-text-primary);
+}
+
+.library-row.active .library-row-icon {
   color: var(--accent-text);
-  font-weight: 500;
-}
-
-.library-row-btn.active.drag-over {
-  border-color: transparent;
-}
-
-.library-row-btn.library-runbook-focused {
-  outline: var(--space-1) solid var(--accent);
-  outline-offset: var(--space-1);
-  box-shadow: 0 0 0 var(--space-2) var(--accent-dim);
-}
-
-.library-row-btn.active .library-row-icon,
-.library-row-btn.library-runbook-focused .library-row-icon {
-  color: inherit;
 }
 
 .library-runbook-row-content {

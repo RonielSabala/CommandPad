@@ -37,12 +37,8 @@
   --color-border-strong: #545d68;
   --color-border-focus: #4493f8;
   --block-backdrop: var(--color-bg);
-  --cloud-row-selected-bg: color-mix(in srgb, var(--accent) 13%, transparent);
-  --cloud-row-selected-hover-bg: color-mix(
-    in srgb,
-    var(--accent) 19%,
-    transparent
-  );
+  --row-selected-bg: color-mix(in srgb, var(--accent) 13%, transparent);
+  --row-selected-hover-bg: color-mix(in srgb, var(--accent) 19%, transparent);
   --cloud-row-border: color-mix(in srgb, var(--color-border) 55%, transparent);
 
   /* Text */
@@ -197,7 +193,8 @@
   /* --- COMPOUND TOKENS --- */
 
   --border-standard: 1px solid var(--color-border);
-  --border-dashed: var(--space-1) dashed var(--accent);
+  --border-dashed-width: var(--space-1);
+  --border-dashed: var(--border-dashed-width) dashed var(--accent);
 
   --transition-fast: 0.15s;
   --transition-base: 0.2s;

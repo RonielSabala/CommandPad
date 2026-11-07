@@ -132,6 +132,6 @@ body.read-mode .library-row {
   border-bottom: 1px solid transparent;
 }
 
-.library-row-btn:not(.active):hover .library-row-name {
+.library-row:not(.active) .library-row-btn:hover .library-row-name {
   border-bottom-color: currentcolor;
 }
