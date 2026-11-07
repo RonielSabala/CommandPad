@@ -25,11 +25,13 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  min-width: calc(2 * (1px + var(--space-4)) + var(--icon-md));
+  min-width: calc(
+    var(--library-btn-icon-end) + var(--library-btn-inset-inline)
+  );
 }
 
 .library-runbook-row-path {
-  padding-left: calc(1px + var(--space-4) + var(--icon-md) + var(--space-3));
+  padding-left: calc(var(--library-btn-icon-end) + var(--library-btn-gap));
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -41,12 +43,14 @@
 /* Status badges */
 
 .library-runbook-badge {
+  --library-badge-padding: var(--space-1);
+
   display: flex;
   flex-shrink: 0;
   align-items: center;
   background: transparent;
   border: none;
-  padding: 0 var(--space-1);
+  padding: 0 var(--library-badge-padding);
   cursor: pointer;
   color: var(--color-text-muted);
   transition: color var(--transition-fast);
@@ -62,9 +66,13 @@
 
 .library-runbook-open-dot {
   justify-content: center;
-  width: calc(var(--icon-md) + 2 * var(--space-1));
-  margin-block: calc(-1 * var(--space-3));
-  padding-block: var(--space-3);
+
+  /* The slot of an icon badge */
+  width: calc(var(--icon-md) + 2 * var(--library-badge-padding));
+
+  /* A hit area as tall as the button's content and padding */
+  margin-block: calc(-1 * var(--library-btn-padding-block));
+  padding-block: var(--library-btn-padding-block);
 }
 
 .library-runbook-open-dot::before {

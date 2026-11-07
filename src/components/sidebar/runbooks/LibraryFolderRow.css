@@ -1,5 +1,5 @@
 .library-row-spacer {
-  width: calc(var(--icon-md) + 2 * var(--space-2));
+  width: var(--library-handle-width);
 }
 
 body.read-mode .library-row-spacer {
@@ -22,10 +22,12 @@ body.read-mode .library-row-spacer {
   flex-shrink: 0;
   align-items: center;
   align-self: stretch;
-  margin-block: calc(-1 * var(--space-3) - 1px);
-  margin-left: calc(-1 * var(--space-4) - 1px);
-  padding-left: calc(1px + var(--space-1));
-  padding-right: var(--space-1);
+  margin-block: calc(-1 * var(--library-btn-inset-block));
+  margin-left: calc(-1 * var(--library-btn-inset-inline));
+  padding-left: calc(
+    var(--library-btn-border) + var(--library-chevron-padding)
+  );
+  padding-right: var(--library-chevron-padding);
   border-radius: var(--radius-md) 0 0 var(--radius-md);
 }
 

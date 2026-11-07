@@ -1,9 +1,34 @@
 .library-row {
   --library-guide-color: var(--color-border);
-  --library-indent: round(calc(var(--icon-sm) + var(--space-3)), 1px);
-  --library-row-lead: calc(
-    var(--icon-md) + 2 * var(--space-2) + var(--space-3)
+
+  /* The drag handle's icon and padding */
+  --library-handle-width: calc(var(--icon-md) + 2 * var(--space-2));
+
+  /* One nesting level */
+  --library-indent: round(calc(var(--icon-sm) + var(--library-btn-gap)), 1px);
+  --library-row-lead: calc(var(--library-handle-width) + var(--space-3));
+
+  /* The row button's box */
+  --library-btn-border: 1px;
+  --library-btn-padding-block: var(--space-3);
+  --library-btn-padding-inline: var(--space-4);
+  --library-btn-gap: var(--space-3);
+
+  /* From the button's outer edge to its content */
+  --library-btn-inset-block: calc(
+    var(--library-btn-border) + var(--library-btn-padding-block)
   );
+  --library-btn-inset-inline: calc(
+    var(--library-btn-border) + var(--library-btn-padding-inline)
+  );
+
+  /* From the button's outer edge to the end of its icon */
+  --library-btn-icon-end: calc(
+    var(--library-btn-inset-inline) + var(--icon-md)
+  );
+
+  /* The space on each side of a folder's chevron */
+  --library-chevron-padding: var(--space-1);
 
   grid-template-columns: auto minmax(0, 1fr) auto;
   border-radius: var(--radius-md);
@@ -26,8 +51,8 @@ body.read-mode .library-row {
   inset-block: 0;
   left: round(
     calc(
-      var(--space-2) + var(--library-row-lead) + var(--space-1) +
-        var(--icon-sm) / 2
+      var(--space-2) + var(--library-row-lead) +
+        var(--library-chevron-padding) + var(--icon-sm) / 2
     ),
     1px
   );
@@ -57,7 +82,7 @@ body.read-mode .library-row {
 .library-row-label {
   max-width: 100%;
   margin-right: auto;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--library-btn-padding-block) var(--library-btn-padding-inline);
   border-radius: var(--radius-md);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
@@ -72,10 +97,10 @@ body.read-mode .library-row {
 .library-row-btn {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--library-btn-gap);
   min-width: 0;
   background: transparent;
-  border: 1px solid transparent;
+  border: var(--library-btn-border) solid transparent;
   color: var(--color-text-secondary);
   cursor: pointer;
   white-space: nowrap;
