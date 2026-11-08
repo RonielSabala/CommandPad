@@ -1,9 +1,14 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
 import { AppMode } from "@/common/enums";
+import {
+  ContextMenuItem,
+  ContextMenuSeparator,
+} from "@/components/common/contextMenu/ContextMenu";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import { SearchInput } from "@/components/common/SearchInput";
+import { TrashIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
@@ -13,6 +18,7 @@ import {
   libraryRows,
   type LibraryRow,
 } from "@/utils/libraryTree";
+import { classNames } from "@/utils/string";
 import { useEffect, useMemo, useRef } from "react";
 import { FileEarmark, Folder } from "react-bootstrap-icons";
 
@@ -44,6 +50,7 @@ export function RunbookSection() {
   const importRunbooks = useStore((state) => state.importRunbooks);
   const createNewTab = useStore((state) => state.createNewTab);
   const createLibraryFolder = useStore((state) => state.createLibraryFolder);
+  const clearRunbookLibrary = useStore((state) => state.clearRunbookLibrary);
   const fileDrop = useFileDrop(
     (files) => void importRunbooks(files),
     !isReadMode && !isCollapsed,
@@ -127,10 +134,32 @@ export function RunbookSection() {
           sortable
           onClose={closeMenu}
           endActions={
-            <InfoMenuItem
-              label={t.info.properties}
-              onSelect={() => info.open(toolbarRef.current)}
-            />
+            <>
+              <InfoMenuItem
+                label={t.info.properties}
+                onSelect={() => info.open(toolbarRef.current)}
+              />
+
+              {!isEmpty && (
+                <>
+                  <ContextMenuSeparator />
+                  <ContextMenuItem
+                    icon={
+                      <TrashIcon
+                        className={classNames(
+                          CssClass.ICON_MD,
+                          CssClass.ICON_BOLD,
+                        )}
+                      />
+                    }
+                    onSelect={() => void clearRunbookLibrary()}
+                    danger
+                  >
+                    {t.runbooks.clearLibraryTitle}
+                  </ContextMenuItem>
+                </>
+              )}
+            </>
           }
         />
       )}

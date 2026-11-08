@@ -1197,7 +1197,7 @@ If something goes wrong, undo it in this order:
 * Click any runbook to open it. If it's already open in a tab, that tab becomes active.
 * A small ring beside a runbook means it's open in a tab you aren't viewing. Click the ring to close that tab.
 * Open the **${runbookActionsLabel}** menu shown on row hover to duplicate a runbook or delete it from the library.
-* Right-click anywhere in the library for **${newLabel}** (a folder or a runbook) and **${clearLibraryLabel}**. On a row, the menu also holds that row's actions.
+* Right-click anywhere in the library for **${newLabel}** (a folder or a runbook). On a row, the menu also holds that row's actions. On an empty area, it also offers **${clearLibraryLabel}**.
 * Drag the handle on the left of a runbook or folder to move it.
 * Use the **search bar** to filter runbooks by label, filename, folder or path.`,
       autoLabel:

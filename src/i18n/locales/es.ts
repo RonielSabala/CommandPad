@@ -1223,7 +1223,7 @@ Si algo sale mal, deshazlo en este orden:
 * Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.
 * Un pequeño círculo junto a un libro indica que está abierto en una pestaña que no estás viendo. Haz clic en el círculo para cerrar esa pestaña.
 * Abre el menú de **${runbookActionsLabel}** que aparece al pasar el cursor sobre la fila para duplicar un libro o eliminarlo de la biblioteca.
-* Haz clic derecho en cualquier parte de la biblioteca para ver **${newLabel}** (una carpeta o un libro) y **${clearLibraryLabel}**. Sobre una fila, el menú también incluye las acciones de esa fila.
+* Haz clic derecho en cualquier parte de la biblioteca para ver **${newLabel}** (una carpeta o un libro). Sobre una fila, el menú también incluye las acciones de esa fila. En una zona vacía, también ofrece **${clearLibraryLabel}**.
 * Arrastra el control a la izquierda de un libro o una carpeta para moverlo.
 * Usa la **barra de búsqueda** para filtrar libros por su etiqueta, nombre de archivo, carpeta o ruta.`,
       autoLabel:
