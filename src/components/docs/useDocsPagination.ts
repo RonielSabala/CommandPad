@@ -5,6 +5,7 @@ import {
   type DocsSectionId,
 } from "@/common/constants/docs";
 import { ScrollIntoView } from "@/common/constants/dom";
+import { rememberDocsPage, rememberedDocsPage } from "@/utils/session";
 import { useCallback, useEffect, useState, type RefObject } from "react";
 
 const FIRST_PAGE = DOCS_SECTION_ORDER[0];
@@ -27,7 +28,7 @@ export function useDocsPagination(
   rootRef: RefObject<HTMLElement | null>,
 ): DocsPagination {
   const [pageId, setPageId] = useState<DocsSectionId>(
-    () => linkedPage() ?? FIRST_PAGE.id,
+    () => linkedPage() ?? rememberedDocsPage() ?? FIRST_PAGE.id,
   );
 
   const [pendingScroll, setPendingScroll] = useState<boolean | null>(null);
@@ -39,6 +40,8 @@ export function useDocsPagination(
     },
     [pageId],
   );
+
+  useEffect(() => rememberDocsPage(pageId), [pageId]);
 
   useEffect(() => {
     if (pendingScroll === null) {

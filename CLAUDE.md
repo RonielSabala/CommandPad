@@ -68,7 +68,7 @@ One store holds everything: `tabs`, `activeTabId`, `libraryRunbooks`, UI flags (
 
 ### Persistence
 
-- **localStorage** (`persistence.ts`, `StorageKey`): `commandpad_ui_state` (theme, language, panels, …), `commandpad_tabs` (tab meta incl. per-view scroll and embed views), `commandpad_runbook_library` (entries incl. `folderId`, `sync`, `secured`, `vault` record, plus `folders`), `commandpad_sidebar_sections`, `commandpad_visited_home`, `commandpad_google_session`.
+- **localStorage** (`persistence.ts`, `StorageKey`): `commandpad_ui_state` (theme, language, panels, …), `commandpad_tabs` (tab meta incl. per-view scroll and embed views), `commandpad_runbook_library` (entries incl. `folderId`, `sync`, `secured`, `vault` record, plus `folders`), `commandpad_sidebar_sections`, `commandpad_visited_home`, `commandpad_docs_page`, `commandpad_google_session`.
 - **IndexedDB** (`runbookDb.ts`, db `commandpad_runbooks_db`, store `runbooks`) — runbook **content** (variables, sections, blocks) keyed by runbook id.
 - `saveState()` persists meta + UI state + active content; edits go through a per-instance `debouncedSaveState`. `bootstrap()` loads localStorage synchronously, then rehydrates content from IndexedDB, then flips `initialized` (which gates saving).
 - **Every content write goes through `writeRunbookContent`** (put + `markRunbookSecured` + embed invalidation). Adding a raw `contentDb.put` elsewhere drifts the secured badge and embeds.
@@ -376,7 +376,7 @@ A route styled like Microsoft Learn: a numbered TOC panel (`DocsToc`, a `Resizab
 
 - **Registry**: `DocsSectionId` (ids are `#anchor` deep links, don't rename) + `DOCS_SECTION_ORDER` (id + level) in `common/constants/docs.ts`; numbering is derived (`getDocsSectionNumbers`), parents too (`getDocsSectionParents`).
 - **Adding a section**: id + order entry, a component in `components/docs/sections/`, registration in `DOCS_SECTION_CONTENT` (`docsSections.tsx`, a complete `Record`), and `docs.toc.<id>` + prose in `types.ts`/`en.ts`/`es.ts`.
-- **Pagination** (`useDocsPagination`): a page is a section; the hash is read at mount and written on navigation (`replaceState`); `hashchange` navigates. Only same-page scrolls animate. `DocsPageNav` (`#docs-page-bar`, pinned below `#docs-scroll`) holds previous / `n of total` / next (next tinted) and the `DocsFooter`; `DocsPageBack` sits above the heading. The TOC highlights the current page (or its folded parent) and scrolls it into view.
+- **Pagination** (`useDocsPagination`): a page is a section; the hash is read at mount, falling back to the last page read, and written on navigation (`replaceState`); `hashchange` navigates. Only same-page scrolls animate. `DocsPageNav` (`#docs-page-bar`, pinned below `#docs-scroll`) holds previous / `n of total` / next (next tinted) and the `DocsFooter`; `DocsPageBack` sits above the heading. The TOC highlights the current page (or its folded parent) and scrolls it into view.
 - **Folding is the TOC's alone** (`useDocsCollapse`, in-memory): a chevron hit area inside each parent row toggles its subsection rows; the header folds all. Section headings are plain text.
 - **Section shape: essentials → `TRY IT` demo → details.** Don't put a wall of prose before the playground.
 - **Sample data should make the feature self-evident**, stay in the app's domain (commands, deploys, errors) without requiring tool-specific knowledge, and preferably let the reader drive it (type into a variable and watch the output change).
