@@ -3,7 +3,7 @@ import { SortDirection } from "@/common/enums";
 import { useStore, type StoreState } from "@/store/store";
 import { SortAlphaDown, SortAlphaUp } from "react-bootstrap-icons";
 
-import { ContextMenuItem, ContextMenuSeparator } from "./ContextMenu";
+import { ContextMenuItem } from "./ContextMenu";
 
 interface Props {
   labels: Record<SortDirection, string>;
@@ -34,7 +34,6 @@ function SortMenuItem({
 export function SortMenuItems(props: Props) {
   return (
     <>
-      <ContextMenuSeparator />
       <SortMenuItem direction={SortDirection.ASC} {...props} />
       <SortMenuItem direction={SortDirection.DESC} {...props} />
     </>

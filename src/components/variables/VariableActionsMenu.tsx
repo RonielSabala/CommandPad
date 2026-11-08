@@ -160,13 +160,18 @@ export function VariableActionsMenu({
           )}
 
           {hasManyOptions && (
-            <SortMenuItems
-              labels={t.variables.sortOptions}
-              canSort={(state, direction) =>
-                hasOptionsToSort(state, variableId, direction)
-              }
-              onSort={(direction) => sortVariableOptions(variableId, direction)}
-            />
+            <>
+              <ContextMenuSeparator />
+              <SortMenuItems
+                labels={t.variables.sortOptions}
+                canSort={(state, direction) =>
+                  hasOptionsToSort(state, variableId, direction)
+                }
+                onSort={(direction) =>
+                  sortVariableOptions(variableId, direction)
+                }
+              />
+            </>
           )}
 
           {sectioned ? (

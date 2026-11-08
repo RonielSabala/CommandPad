@@ -39,9 +39,14 @@ export function LibraryContextMenu({
         </>
       )}
 
-      <LibraryNewSubmenu folderId={folderId} />
+      {sortable && (
+        <>
+          <LibrarySortItems folderId={folderId ?? null} />
+          <ContextMenuSeparator />
+        </>
+      )}
 
-      {sortable && <LibrarySortItems folderId={folderId ?? null} />}
+      <LibraryNewSubmenu folderId={folderId} />
 
       {endActions && (
         <>

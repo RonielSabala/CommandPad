@@ -207,10 +207,15 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
         triggerRef={info.triggerRef}
       >
         {folderActions}
+
         <ContextMenuSeparator />
-        <LibraryNewSubmenu folderId={folderId} />
         <LibrarySortItems folderId={folderId} />
+
         <ContextMenuSeparator />
+
+        <LibraryNewSubmenu folderId={folderId} />
+        <ContextMenuSeparator />
+
         {endActions}
       </ActionsMenu>
 
