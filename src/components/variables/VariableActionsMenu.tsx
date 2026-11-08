@@ -1,10 +1,11 @@
 import { CssClass } from "@/common/constants/css";
-import { SortDirection, VariableEntryKind } from "@/common/enums";
+import { VariableEntryKind } from "@/common/enums";
 import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
+import { SortMenuItems } from "@/components/common/contextMenu/SortMenuItems";
 import { EyeIcon, TrashIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import {
@@ -17,13 +18,7 @@ import {
 import { getCaseOperationKeywords } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import type { ReactNode } from "react";
-import {
-  AlphabetUppercase,
-  Collection,
-  Eraser,
-  SortAlphaDown,
-  SortAlphaUp,
-} from "react-bootstrap-icons";
+import { AlphabetUppercase, Collection, Eraser } from "react-bootstrap-icons";
 
 import {
   DuplicateItem,
@@ -33,10 +28,6 @@ import {
 } from "./VariableRowMenuItems";
 
 const CASE_KEYWORDS = getCaseOperationKeywords();
-const SORT_ICONS = {
-  [SortDirection.ASC]: SortAlphaDown,
-  [SortDirection.DESC]: SortAlphaUp,
-} as const;
 
 interface ItemProps {
   variableId: string;
@@ -57,31 +48,6 @@ function ClearValuesItem({ variableId, children }: ItemProps) {
       onSelect={() => clearVariableValues(variableId)}
     >
       {children}
-    </ContextMenuItem>
-  );
-}
-
-function SortOptionsItem({
-  variableId,
-  direction,
-}: {
-  variableId: string;
-  direction: SortDirection;
-}) {
-  const t = useTranslation();
-  const sortVariableOptions = useStore((state) => state.sortVariableOptions);
-  const hasUnsorted = useStore((state) =>
-    hasOptionsToSort(state, variableId, direction),
-  );
-
-  const Icon = SORT_ICONS[direction];
-  return (
-    <ContextMenuItem
-      icon={<Icon className={CssClass.ICON_MD} />}
-      onSelect={() => sortVariableOptions(variableId, direction)}
-      disabled={!hasUnsorted}
-    >
-      {t.variables.sortOptions[direction]}
     </ContextMenuItem>
   );
 }
@@ -128,6 +94,7 @@ export function VariableActionsMenu({
   const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
   const applyVariableKeyCase = useStore((state) => state.applyVariableKeyCase);
   const addVariableSection = useStore((state) => state.addVariableSection);
+  const sortVariableOptions = useStore((state) => state.sortVariableOptions);
   const hasManyOptions = useStore(
     (state) =>
       (getActiveTab(state)?.variables.find((v) => v.id === variableId)?.options
@@ -193,17 +160,13 @@ export function VariableActionsMenu({
           )}
 
           {hasManyOptions && (
-            <>
-              <ContextMenuSeparator />
-              <SortOptionsItem
-                variableId={variableId}
-                direction={SortDirection.ASC}
-              />
-              <SortOptionsItem
-                variableId={variableId}
-                direction={SortDirection.DESC}
-              />
-            </>
+            <SortMenuItems
+              labels={t.variables.sortOptions}
+              canSort={(state, direction) =>
+                hasOptionsToSort(state, variableId, direction)
+              }
+              onSort={(direction) => sortVariableOptions(variableId, direction)}
+            />
           )}
 
           {sectioned ? (

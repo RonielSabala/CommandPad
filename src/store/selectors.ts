@@ -11,6 +11,9 @@ import type {
   Variable,
   VariableSection,
 } from "@/common/types";
+import { getMessages } from "@/i18n/messages";
+import { isLibraryLevelOutOfOrder } from "@/utils/libraryTree";
+import { isOutOfOrder, sortedByName } from "@/utils/sort";
 import { findTabById, findTabByRunbookId } from "@/utils/tabs";
 
 import type { StoreState } from "./types";
@@ -157,35 +160,14 @@ export function hasValuesToClear(
   return someTargetVariable(state, variableId, (variable) => variable.value);
 }
 
-const OPTION_ORDER = new Intl.Collator(undefined, { numeric: true });
-const OPTION_SIGN = {
-  [SortDirection.ASC]: 1,
-  [SortDirection.DESC]: -1,
-} as const;
-
-function compareOptions(
-  a: string,
-  b: string,
-  direction: SortDirection,
-): number {
-  return OPTION_SIGN[direction] * OPTION_ORDER.compare(a, b);
-}
-
-/** Whether an enum's options are out of `direction` order. */
-function isOutOfOrder(variable: Variable, direction: SortDirection): boolean {
-  const { options } = variable;
-  return !!options?.some(
-    (option, index) =>
-      index > 0 && compareOptions(options[index - 1], option, direction) > 0,
-  );
-}
+const optionName = (option: string) => option;
 
 export function sortedOptions(
   variable: Variable,
   direction: SortDirection,
 ): string[] | null {
-  return variable.options && isOutOfOrder(variable, direction)
-    ? [...variable.options].sort((a, b) => compareOptions(a, b, direction))
+  return variable.options
+    ? sortedByName(variable.options, optionName, direction)
     : null;
 }
 
@@ -202,8 +184,25 @@ export function hasOptionsToSort(
   variableId: string,
   direction: SortDirection,
 ): boolean {
-  return someTargetVariable(state, variableId, (variable) =>
-    isOutOfOrder(variable, direction),
+  return someTargetVariable(
+    state,
+    variableId,
+    (variable) =>
+      variable.options && isOutOfOrder(variable.options, optionName, direction),
+  );
+}
+
+export function hasLibraryFolderToSort(
+  state: StoreState,
+  id: string | null,
+  direction: SortDirection,
+): boolean {
+  return isLibraryLevelOutOfOrder(
+    state.libraryFolders,
+    state.libraryRunbooks,
+    id,
+    direction,
+    getMessages(state.language),
   );
 }
 

@@ -1,6 +1,7 @@
 import { JSON_EXTENSION } from "@/common/config";
 import { CloudSortColumn, SortDirection } from "@/common/enums";
 import { stripJsonExtension } from "@/utils/export";
+import { DIRECTION_SIGN } from "@/utils/sort";
 import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
 import { isString } from "@/utils/typeGuards";
 import type { CloudEntry } from "./types";
@@ -69,7 +70,7 @@ export function compareCloudEntries(
   } else {
     const byColumn = compareValues(first, second);
     if (byColumn !== 0) {
-      return byColumn * (sort.direction === SortDirection.ASC ? 1 : -1);
+      return byColumn * DIRECTION_SIGN[sort.direction];
     }
   }
 

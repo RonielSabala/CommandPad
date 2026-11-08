@@ -120,6 +120,7 @@ export interface Messages {
     newRunbookItem: string;
     folderName: string;
     folderActions: string;
+    sortContents: Record<SortDirection, string>;
     deleteFolder: string;
     syncStatus: Record<
       RunbookSyncStatus,
@@ -734,6 +735,10 @@ export interface Messages {
         newRunbookLabel: string,
         folderActionsLabel: string,
         newLabel: string,
+      ) => string;
+      sorting: (
+        sortAscendingLabel: string,
+        sortDescendingLabel: string,
       ) => string;
       moving: string;
       uniqueNames: string;

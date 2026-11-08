@@ -1,4 +1,4 @@
-import { NoteStyle } from "@/common/enums";
+import { NoteStyle, SortDirection } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import { demoNote } from "../demos/demoSeeds";
 import { DemoRunbookList, DemoWorkspace } from "../demos/DemoWorkspace";
@@ -39,6 +39,12 @@ export function RunbookLibraryDocs() {
           t.runbooks.newRunbookItem,
           t.runbooks.folderActions,
           t.runbooks.new,
+        )}
+      />
+      <Prose
+        text={t.docs.runbookLibrary.sorting(
+          t.runbooks.sortContents[SortDirection.ASC],
+          t.runbooks.sortContents[SortDirection.DESC],
         )}
       />
       <Prose text={t.docs.runbookLibrary.moving} />

@@ -1,5 +1,9 @@
 import { DEFAULT_TAB_LABEL } from "@/common/config";
-import { LibraryDropZone, LibraryItemKind } from "@/common/enums";
+import {
+  LibraryDropZone,
+  LibraryItemKind,
+  SortDirection,
+} from "@/common/enums";
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { describe, expect, it } from "vitest";
@@ -7,6 +11,7 @@ import { describe, expect, it } from "vitest";
 import {
   folderLocation,
   folderSubtree,
+  isLibraryLevelOutOfOrder,
   libraryDropZone,
   libraryFolderDropParent,
   libraryLevel,
@@ -18,6 +23,7 @@ import {
   uniqueRunbookLabel,
   withFolderExpanded,
   withLibraryItemMoved,
+  withLibraryLevelSorted,
 } from "./libraryTree";
 
 const en = getMessages("en");
@@ -45,6 +51,103 @@ const describeRows = (
       ? `${row.depth}:${row.folder.id}/`
       : `${row.depth}:${row.runbook.id}`,
   );
+
+describe("withLibraryLevelSorted", () => {
+  const folders = [
+    folder("web"),
+    folder("z", "web"),
+    folder("api"),
+    folder("a", "web"),
+  ];
+  const runbooks = [
+    runbook("run10"),
+    runbook("y", "web"),
+    runbook("run2"),
+    runbook("b", "web"),
+  ];
+
+  const sortedRows = (parentId: string | null, direction: SortDirection) => {
+    const sorted = withLibraryLevelSorted(
+      folders,
+      runbooks,
+      parentId,
+      direction,
+      en,
+    );
+
+    return describeRows(sorted.folders, sorted.runbooks);
+  };
+
+  it("sorts folders and runbooks apart, folders first", () => {
+    expect(sortedRows(null, SortDirection.ASC)).toEqual([
+      "0:api/",
+      "0:web/",
+      "1:z/",
+      "1:a/",
+      "1:y",
+      "1:b",
+      "0:run2",
+      "0:run10",
+    ]);
+  });
+
+  it("sorts a folder's contents and nothing around them", () => {
+    expect(sortedRows("web", SortDirection.DESC)).toEqual([
+      "0:web/",
+      "1:z/",
+      "1:a/",
+      "1:y",
+      "1:b",
+      "0:api/",
+      "0:run10",
+      "0:run2",
+    ]);
+
+    expect(sortedRows("web", SortDirection.ASC)).toEqual([
+      "0:web/",
+      "1:a/",
+      "1:z/",
+      "1:b",
+      "1:y",
+      "0:api/",
+      "0:run10",
+      "0:run2",
+    ]);
+  });
+
+  it("returns the same arrays when already in order", () => {
+    const ordered = [folder("a"), folder("b")];
+    const sorted = withLibraryLevelSorted(
+      ordered,
+      [],
+      null,
+      SortDirection.ASC,
+      en,
+    );
+
+    expect(sorted.folders).toBe(ordered);
+  });
+
+  it("reports a level out of order by either kind", () => {
+    const isOut = (parentId: string | null, direction: SortDirection) =>
+      isLibraryLevelOutOfOrder(folders, runbooks, parentId, direction, en);
+
+    expect(isOut(null, SortDirection.ASC)).toBe(true);
+    expect(isOut(null, SortDirection.DESC)).toBe(false);
+    expect(
+      isLibraryLevelOutOfOrder(
+        [folder("a")],
+        [runbook("c"), runbook("b")],
+        null,
+        SortDirection.ASC,
+        en,
+      ),
+    ).toBe(true);
+    expect(
+      isLibraryLevelOutOfOrder([], [], "gone", SortDirection.ASC, en),
+    ).toBe(false);
+  });
+});
 
 describe("libraryRows", () => {
   const folders = [folder("ops"), folder("db", "ops"), folder("web")];

@@ -9,6 +9,7 @@ import {
   uniqueFolderName,
   withFolderExpanded,
   withLibraryItemMoved,
+  withLibraryLevelSorted,
 } from "@/utils/libraryTree";
 
 import type { StoreKit } from "@/store/kit";
@@ -27,6 +28,7 @@ type LibraryFoldersActions = Pick<
   | "toggleLibraryFolder"
   | "moveLibraryFolder"
   | "removeLibraryFolder"
+  | "sortLibraryFolder"
   | "consumeLibraryFolderRename"
 >;
 
@@ -213,6 +215,24 @@ export function createLibraryFoldersSlice(
         (t) => t.dialogs.folderNameTakenMessage(folder.name, name),
         place,
       );
+    },
+
+    sortLibraryFolder: (id, direction) => {
+      const state = get();
+      if (state.mode === AppMode.READ) {
+        return;
+      }
+
+      const { folders, runbooks } = withLibraryLevelSorted(
+        state.libraryFolders,
+        state.libraryRunbooks,
+        id,
+        direction,
+        getMessages(state.language),
+      );
+
+      set({ libraryFolders: folders, libraryRunbooks: runbooks });
+      saveLibrary();
     },
 
     consumeLibraryFolderRename: () =>

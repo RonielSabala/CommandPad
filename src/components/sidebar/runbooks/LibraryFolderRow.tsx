@@ -31,6 +31,7 @@ import "./LibraryFolderRow.css";
 import { LibraryNewSubmenu } from "./LibraryNewSubmenu";
 import { FolderProperties } from "./LibraryProperties";
 import "./LibraryRow.css";
+import { LibrarySortItems } from "./LibrarySortItems";
 import { useLibraryRowDrag } from "./useLibraryRowDrag";
 import { useLibraryRowMenu } from "./useLibraryRowMenu";
 
@@ -208,6 +209,7 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
         {folderActions}
         <ContextMenuSeparator />
         <LibraryNewSubmenu folderId={folderId} />
+        <LibrarySortItems folderId={folderId} />
         <ContextMenuSeparator />
         {endActions}
       </ActionsMenu>
@@ -216,6 +218,7 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
         <LibraryContextMenu
           anchor={menuAnchor}
           folderId={folderId}
+          sortable
           onClose={closeMenu}
           actions={folderActions}
           endActions={endActions}

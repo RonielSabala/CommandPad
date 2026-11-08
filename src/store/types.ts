@@ -284,6 +284,7 @@ export interface StoreState {
     targetId: string | null,
     zone: LibraryDropZone,
   ) => void;
+  sortLibraryFolder: (id: string | null, direction: SortDirection) => void;
   consumeLibraryFolderRename: () => void;
 
   // Runbook library

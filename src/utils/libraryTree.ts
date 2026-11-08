@@ -1,9 +1,14 @@
 import { LibraryFolderConfig, RunbookBlockConfig } from "@/common/config";
-import { LibraryDropZone, LibraryItemKind } from "@/common/enums";
+import {
+  LibraryDropZone,
+  LibraryItemKind,
+  type SortDirection,
+} from "@/common/enums";
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 import type { Messages } from "@/i18n/types";
 
 import { displayLabel } from "./runbook";
+import { isOutOfOrder, sortedByName } from "./sort";
 import { buildDuplicateName, matchesQuery } from "./string";
 
 export type LibraryRow =
@@ -21,11 +26,18 @@ export type LibraryRow =
       path?: readonly string[];
     };
 
+interface LibraryItems {
+  folders: LibraryFolder[];
+  runbooks: LibraryRunbook[];
+}
+
 const EMPTY_PATH: readonly string[] = Object.freeze([]);
 
 const folderName = (folder: LibraryFolder) => folder.name;
 const folderParent = (folder: LibraryFolder) => folder.parentId;
 const runbookParent = (runbook: LibraryRunbook) => runbook.folderId ?? null;
+const runbookName = (t: Messages) => (runbook: LibraryRunbook) =>
+  displayLabel(runbook.label, t);
 
 export const libraryRowKey = (row: LibraryRow) =>
   row.kind === LibraryItemKind.FOLDER ? row.folder.id : row.runbook.id;
@@ -158,10 +170,71 @@ export function libraryLevel(
   folders: readonly LibraryFolder[],
   runbooks: readonly LibraryRunbook[],
   parentId: string | null,
-): { folders: LibraryFolder[]; runbooks: LibraryRunbook[] } {
+): LibraryItems {
   return {
     folders: folders.filter((f) => folderParent(f) === parentId),
     runbooks: runbooks.filter((r) => runbookParent(r) === parentId),
+  };
+}
+
+/** Whether what sits directly inside a folder is out of `direction` order. */
+export function isLibraryLevelOutOfOrder(
+  folders: readonly LibraryFolder[],
+  runbooks: readonly LibraryRunbook[],
+  parentId: string | null,
+  direction: SortDirection,
+  t: Messages,
+): boolean {
+  const level = libraryLevel(folders, runbooks, parentId);
+
+  return (
+    isOutOfOrder(level.folders, folderName, direction) ||
+    isOutOfOrder(level.runbooks, runbookName(t), direction)
+  );
+}
+
+/** Sort the items of one parent. */
+function withChildrenSorted<T>(
+  items: T[],
+  parentOf: (item: T) => string | null,
+  nameOf: (item: T) => string,
+  parentId: string | null,
+  direction: SortDirection,
+): T[] {
+  const isChild = (item: T) => parentOf(item) === parentId;
+  const sorted = sortedByName(items.filter(isChild), nameOf, direction);
+
+  if (!sorted) {
+    return items;
+  }
+
+  let next = 0;
+  return items.map((item) => (isChild(item) ? sorted[next++] : item));
+}
+
+/** Sort what sits directly inside a folder, folders and runbooks apart. */
+export function withLibraryLevelSorted(
+  folders: LibraryFolder[],
+  runbooks: LibraryRunbook[],
+  parentId: string | null,
+  direction: SortDirection,
+  t: Messages,
+): LibraryItems {
+  return {
+    folders: withChildrenSorted(
+      folders,
+      folderParent,
+      folderName,
+      parentId,
+      direction,
+    ),
+    runbooks: withChildrenSorted(
+      runbooks,
+      runbookParent,
+      runbookName(t),
+      parentId,
+      direction,
+    ),
   };
 }
 
@@ -241,7 +314,7 @@ export function uniqueRunbookLabel(
     numberedPastSiblings(
       runbooks,
       runbookParent,
-      (runbook) => displayLabel(runbook.label, t),
+      runbookName(t),
       folderId ?? null,
       displayLabel(label, t),
       exceptId,
@@ -398,7 +471,7 @@ export function repairLibrary(
   folders: LibraryFolder[],
   runbooks: LibraryRunbook[],
   t: Messages,
-): { folders: LibraryFolder[]; runbooks: LibraryRunbook[] } {
+): LibraryItems {
   const parents = new Map(folders.map((f) => [f.id, f.parentId]));
 
   for (const [id, parentId] of parents) {
@@ -445,7 +518,7 @@ export function repairLibrary(
     runbooks: withNumberedDuplicates(
       rooted.runbooks,
       runbookParent,
-      (runbook) => displayLabel(runbook.label, t),
+      runbookName(t),
       (runbook, label) => ({ ...runbook, label }),
     ),
   };

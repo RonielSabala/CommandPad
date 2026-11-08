@@ -47,6 +47,7 @@ export {
   getRunbookView,
   getTabById,
   getTabByRunbookId,
+  hasLibraryFolderToSort,
   hasOptionsToSort,
   hasOtherOptions,
   hasValuesToClear,
