@@ -5,6 +5,7 @@ import { getMessages } from "@/i18n/messages";
 import { describe, expect, it } from "vitest";
 
 import {
+  folderLocation,
   folderSubtree,
   libraryLevel,
   libraryPathTrail,
@@ -129,6 +130,21 @@ describe("folderSubtree", () => {
   it("stops at a cycle", () => {
     const folders = [folder("a", "b"), folder("b", "a")];
     expect(folderSubtree(folders, "a")).toEqual(new Set(["a", "b"]));
+  });
+});
+
+describe("folderLocation", () => {
+  it("spells the path from the root", () => {
+    const folders = [folder("ops"), folder("deploys", "ops")];
+
+    expect(folderLocation(folders, null)).toBe("~/");
+    expect(folderLocation(folders, "ops")).toBe("~/ops/");
+    expect(folderLocation(folders, "deploys")).toBe("~/ops/deploys/");
+  });
+
+  it("stops at a cycle", () => {
+    const folders = [folder("a", "b"), folder("b", "a")];
+    expect(folderLocation(folders, "a")).toBe("~/b/a/");
   });
 });
 

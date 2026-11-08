@@ -19,7 +19,7 @@ interface Props {
   folderId?: string;
   onClose: () => void;
   actions?: ReactNode;
-  deleteAction?: ReactNode;
+  endActions?: ReactNode;
 }
 
 export function LibraryContextMenu({
@@ -27,7 +27,7 @@ export function LibraryContextMenu({
   folderId,
   onClose,
   actions,
-  deleteAction,
+  endActions,
 }: Props) {
   const t = useTranslation();
   const clearRunbookLibrary = useStore((state) => state.clearRunbookLibrary);
@@ -51,10 +51,10 @@ export function LibraryContextMenu({
 
       <LibraryNewSubmenu folderId={folderId} />
 
-      {deleteAction && (
+      {endActions && (
         <>
           <ContextMenuSeparator />
-          {deleteAction}
+          {endActions}
         </>
       )}
 

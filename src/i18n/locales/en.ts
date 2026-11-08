@@ -271,6 +271,24 @@ export const en: Messages = {
   },
   info: {
     action: "Info",
+    properties: "Properties",
+    runbookTitle: "Runbook properties",
+    folderTitle: "Folder properties",
+    manualName: "Set by hand",
+    derivedName: "From its first note",
+    vaultState: {
+      [VaultStatus.UNLOCKED]: "Encrypted, unlocked",
+      [VaultStatus.LOCKED]: "Encrypted, locked",
+      [VaultStatus.ABSENT]: "Not encrypted",
+      [VaultStatus.UNSUPPORTED]: "Not encrypted (unsupported browser)",
+    },
+    syncState: {
+      [RunbookSyncStatus.SYNCED]: "Saved",
+      [RunbookSyncStatus.UNSAVED]: "Unsaved changes",
+      [RunbookSyncStatus.SYNCING]: "Saving",
+      [RunbookSyncStatus.SIGNED_OUT]: "Signed out",
+      [RunbookSyncStatus.ERROR]: "Could not save",
+    },
     blockTitle: (type) => `${type} block info`,
     variableTitle: "Variable info",
     enumTitle: "Enum info",
@@ -325,6 +343,7 @@ export const en: Messages = {
       options: "Options",
       breakdown: "Contents",
       status: "Problems",
+      cloud: "Cloud sync",
     },
     columns: {
       editor: "Editor",
@@ -384,6 +403,14 @@ export const en: Messages = {
       emptyOrUnresolved: "Empty or unresolved",
       valuesSize: "Total size",
       collapsed: "Folded",
+      nameSource: "Name source",
+      location: "Location",
+      openInTab: "Open in a tab",
+      openInTabs: "Open in tabs",
+      fileName: "File name",
+      provider: "Provider",
+      folders: "Folders",
+      runbooks: "Runbooks",
     },
   },
   runbookBlock: {
@@ -1172,6 +1199,8 @@ If something goes wrong, undo it in this order:
         "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label. Otherwise the imported filename is used as the fallback.",
       manualName: (renameLabel, resetNameLabel) =>
         `**Naming it yourself:** double-click a runbook in the list above or its tab, or pick **${renameLabel}** from either menu, then press Enter or Escape to keep the name. A name you choose stays put while you edit the runbook; **${resetNameLabel}** goes back to auto-labelling.`,
+      properties: (propertiesLabel) =>
+        `**${propertiesLabel}**, in a folder's or runbook's menu, shows where it lives and how big it is; right-click empty space in the list for the same about the whole library.`,
       folders: (
         newFolderLabel,
         newRunbookLabel,

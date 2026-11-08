@@ -121,6 +121,27 @@ export function folderSubtree(
   return ids;
 }
 
+/** Where a folder's contents live. */
+export function folderLocation(
+  folders: readonly LibraryFolder[],
+  folderId: string | null,
+): string {
+  const byId = new Map(folders.map((f) => [f.id, f]));
+  const names: string[] = [];
+  const seen = new Set<string>();
+
+  for (
+    let folder = folderId ? byId.get(folderId) : undefined;
+    folder && !seen.has(folder.id);
+    folder = folder.parentId ? byId.get(folder.parentId) : undefined
+  ) {
+    seen.add(folder.id);
+    names.push(folder.name + LibraryFolderConfig.PATH_SEPARATOR);
+  }
+
+  return LibraryFolderConfig.ROOT_PATH + names.reverse().join("");
+}
+
 /** What sits directly inside a folder. */
 export function libraryLevel(
   folders: readonly LibraryFolder[],

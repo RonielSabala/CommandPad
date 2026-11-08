@@ -281,6 +281,24 @@ export const es: Messages = {
   },
   info: {
     action: "Información",
+    properties: "Propiedades",
+    runbookTitle: "Propiedades del libro",
+    folderTitle: "Propiedades de la carpeta",
+    manualName: "Puesto a mano",
+    derivedName: "De su primera nota",
+    vaultState: {
+      [VaultStatus.UNLOCKED]: "Cifrados, desbloqueados",
+      [VaultStatus.LOCKED]: "Cifrados, bloqueados",
+      [VaultStatus.ABSENT]: "Sin cifrar",
+      [VaultStatus.UNSUPPORTED]: "Sin cifrar (navegador no compatible)",
+    },
+    syncState: {
+      [RunbookSyncStatus.SYNCED]: "Guardado",
+      [RunbookSyncStatus.UNSAVED]: "Cambios sin guardar",
+      [RunbookSyncStatus.SYNCING]: "Guardando",
+      [RunbookSyncStatus.SIGNED_OUT]: "Sesión cerrada",
+      [RunbookSyncStatus.ERROR]: "No se pudo guardar",
+    },
     blockTitle: (type) => `Información del bloque de ${type.toLowerCase()}`,
     variableTitle: "Información de la variable",
     enumTitle: "Información del enum",
@@ -335,6 +353,7 @@ export const es: Messages = {
       options: "Opciones",
       breakdown: "Contenido",
       status: "Problemas",
+      cloud: "Sincronización en la nube",
     },
     columns: {
       editor: "Editor",
@@ -394,6 +413,14 @@ export const es: Messages = {
       emptyOrUnresolved: "Vacías o sin resolver",
       valuesSize: "Tamaño total",
       collapsed: "Plegada",
+      nameSource: "Origen del nombre",
+      location: "Ubicación",
+      openInTab: "Abierto en una pestaña",
+      openInTabs: "Abiertos en pestañas",
+      fileName: "Nombre de archivo",
+      provider: "Proveedor",
+      folders: "Carpetas",
+      runbooks: "Libros",
     },
   },
   runbookBlock: {
@@ -1198,6 +1225,8 @@ Si algo sale mal, deshazlo en este orden:
         "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca. En caso contrario se usa el nombre del archivo importado.",
       manualName: (renameLabel, resetNameLabel) =>
         `**Ponerle nombre tú mismo:** haz doble clic en un libro de la lista de arriba o en su pestaña, o elige **${renameLabel}** en cualquiera de sus menús, y pulsa Enter o Escape para conservar el nombre. Un nombre que eliges se mantiene mientras editas el libro; **${resetNameLabel}** vuelve al etiquetado automático.`,
+      properties: (propertiesLabel) =>
+        `**${propertiesLabel}**, en el menú de una carpeta o de un libro, muestra dónde está y cuánto ocupa; haz clic derecho en un espacio vacío de la lista para ver lo mismo de toda la biblioteca.`,
       folders: (
         newFolderLabel,
         newRunbookLabel,

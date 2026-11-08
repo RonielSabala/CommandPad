@@ -2,6 +2,8 @@ import { LibraryFolderConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
 import { AppMode, LibraryItemKind } from "@/common/enums";
+import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
+import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import { SearchInput } from "@/components/common/SearchInput";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
@@ -17,6 +19,7 @@ import { SidebarSectionList } from "../shared/SidebarSectionList";
 import { LibraryContextMenu } from "./LibraryContextMenu";
 import { LibraryFolderRow } from "./LibraryFolderRow";
 import { LibraryImportButton } from "./LibraryImportButton";
+import { FolderProperties } from "./LibraryProperties";
 import { LibraryRunbookRow } from "./LibraryRunbookRow";
 import "./RunbookSection.css";
 
@@ -60,7 +63,9 @@ export function RunbookSection() {
   );
 
   const { menuAnchor, onContextMenu, closeMenu } = useWorkspaceContextMenu();
+  const info = useInfoTooltip();
 
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const rows = useMemo(
     () => libraryRows(folders, runbooks, searchQuery),
@@ -93,7 +98,7 @@ export function RunbookSection() {
       dropZone={{ ...fileDrop, hint: t.runbooks.dropToImport }}
       onContextMenu={isReadMode ? undefined : onContextMenu}
     >
-      <div className="runbook-section-toolbar">
+      <div className="runbook-section-toolbar" ref={toolbarRef}>
         <SearchInput
           value={searchQuery}
           placeholder={t.runbooks.searchPlaceholder}
@@ -126,8 +131,21 @@ export function RunbookSection() {
       />
 
       {menuAnchor && !isReadMode && (
-        <LibraryContextMenu anchor={menuAnchor} onClose={closeMenu} />
+        <LibraryContextMenu
+          anchor={menuAnchor}
+          onClose={closeMenu}
+          endActions={
+            <InfoMenuItem
+              label={t.info.properties}
+              onSelect={() => info.open(toolbarRef.current)}
+            />
+          }
+        />
       )}
+
+      {info.render(() => (
+        <FolderProperties folderId={null} />
+      ))}
     </SidebarSection>
   );
 }

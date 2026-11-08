@@ -135,7 +135,7 @@ export function relabelTab(
     return { tabs: state.tabs, libraryRunbooks: state.libraryRunbooks };
   }
 
-  const runbook = state.libraryRunbooks.find((r) => r.id === tab.runbookId);
+  const runbook = getLibraryRunbook(state, tab.runbookId);
   if (!runbook) {
     return { tabs: state.tabs, libraryRunbooks: state.libraryRunbooks };
   }

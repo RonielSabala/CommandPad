@@ -6,6 +6,8 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
+import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
+import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import { RenameInput } from "@/components/common/RenameInput";
 import { NO_TOOLTIP, tooltip } from "@/components/common/tooltip/tooltip";
 import {
@@ -23,6 +25,7 @@ import { LibraryContextMenu } from "./LibraryContextMenu";
 import { libraryDepthStyle } from "./libraryDepth";
 import "./LibraryFolderRow.css";
 import { LibraryNewSubmenu } from "./LibraryNewSubmenu";
+import { FolderProperties } from "./LibraryProperties";
 import "./LibraryRow.css";
 import { useLibraryRowMenu } from "./useLibraryRowMenu";
 
@@ -49,6 +52,8 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
   );
   const consumeFolderRename = useStore((state) => state.consumeFolderRename);
   const [renaming, setRenaming] = useState(false);
+
+  const info = useInfoTooltip();
   const { menuAnchor, onContextMenu, closeMenu } = useLibraryRowMenu();
 
   const stopRenaming = () => {
@@ -58,7 +63,7 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
     }
   };
 
-  const renameAction = (
+  const folderActions = (
     <ContextMenuItem
       icon={<Vr className={CssClass.ICON_MD} />}
       onSelect={() => setRenaming(true)}
@@ -67,18 +72,22 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
     </ContextMenuItem>
   );
 
-  const deleteAction = (
-    <ContextMenuItem
-      icon={
-        <TrashIcon
-          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-        />
-      }
-      onSelect={() => void removeLibraryFolder(folderId)}
-      danger
-    >
-      {t.runbooks.deleteFolder}
-    </ContextMenuItem>
+  const endActions = (
+    <>
+      <InfoMenuItem label={t.info.properties} onSelect={info.open} />
+      <ContextMenuSeparator />
+      <ContextMenuItem
+        icon={
+          <TrashIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
+        onSelect={() => void removeLibraryFolder(folderId)}
+        danger
+      >
+        {t.runbooks.deleteFolder}
+      </ContextMenuItem>
+    </>
   );
 
   return (
@@ -144,14 +153,15 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
       </div>
 
       <ActionsMenu
-        className={CssClass.ROW_ACTIONS}
+        className={classNames(CssClass.ROW_ACTIONS, info.menuClassName)}
         title={t.runbooks.folderActions}
+        triggerRef={info.triggerRef}
       >
-        {renameAction}
+        {folderActions}
         <ContextMenuSeparator />
         <LibraryNewSubmenu folderId={folderId} />
         <ContextMenuSeparator />
-        {deleteAction}
+        {endActions}
       </ActionsMenu>
 
       {menuAnchor && (
@@ -159,10 +169,14 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
           anchor={menuAnchor}
           folderId={folderId}
           onClose={closeMenu}
-          actions={renameAction}
-          deleteAction={deleteAction}
+          actions={folderActions}
+          endActions={endActions}
         />
       )}
+
+      {info.render(() => (
+        <FolderProperties folderId={folderId} />
+      ))}
     </div>
   );
 });

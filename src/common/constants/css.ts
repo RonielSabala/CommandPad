@@ -26,14 +26,31 @@ export const CssClass = {
   PANEL_CARD: "panel-card",
   SECTION_TITLE: "section-title",
 
-  TOOLTIP: "tooltip",
+  // Menu
+
   MENU_OPEN: "menu-open",
   CONTEXT_MENU: "context-menu",
   CONTEXT_MENU_ITEM: "context-menu-item",
   CONTEXT_MENU_ICON: "context-menu-icon",
+
   SELECT_MENU: "select-menu",
   SELECT_MENU_PORTAL: "select-menu-portal",
   SELECT_OPTION: "select-option",
+
+  // Tooltip
+
+  TOOLTIP: "tooltip",
+  TOOLTIP_LINK: "tooltip-link",
+  TOOLTIP_LINKS: "tooltip-links",
+  TOOLTIP_PANEL: "tooltip-panel",
+  TOOLTIP_TITLE: "tooltip-title",
+  TOOLTIP_SCROLL: "tooltip-scroll",
+
+  FRAMED_ROW: "framed-section-row",
+  FRAMED_CELLS: "framed-section-cells",
+  FRAMED_SECTIONS: "framed-sections",
+
+  // Code editor
 
   CODE_EDITOR: "code-editor",
   CODE_EDITOR_HEADER: "code-editor-header",
@@ -91,29 +108,20 @@ export const CssClass = {
   IS_UNRESOLVED: "is-unresolved",
 
   // Blocks
+
   BLOCKS_LIST: "blocks-list",
   BLOCK_ITEM: "block-item",
   BLOCK_SURFACE: "block-surface",
   BLOCK_CARD: "block-card",
+
   COMMAND_CARD: "command-card",
 
-  NOTE_LINK: "note-link",
-  TOOLTIP_LINK: "tooltip-link",
-  TOOLTIP_LINKS: "tooltip-links",
-  TOOLTIP_PANEL: "tooltip-panel",
-  TOOLTIP_TITLE: "tooltip-title",
-  TOOLTIP_SCROLL: "tooltip-scroll",
-
-  FRAMED_ROW: "framed-section-row",
-  FRAMED_CELLS: "framed-section-cells",
-  FRAMED_SECTIONS: "framed-sections",
-
-  TEXT_MIRROR: "text-mirror",
   NOTE_EDITOR: "note-editor",
-
+  NOTE_LINK: "note-link",
+  NOTE_TABLE: "note-table",
   NOTE_CODE: "note-code",
   NOTE_CODE_NEUTRAL: "note-code-neutral",
-  NOTE_TABLE: "note-table",
+  TEXT_MIRROR: "text-mirror",
 
   // Controls beside a block/variable item
 
@@ -121,7 +129,6 @@ export const CssClass = {
   ITEM_ACTIONS: "item-actions",
   ITEM_DRAG_HANDLE: "item-drag-handle",
   RUNBOOK_EMBED_ACTIONS: "runbook-embed-actions",
-
   ROW_ACTIONS: "row-actions",
 
   // Sidebar rows

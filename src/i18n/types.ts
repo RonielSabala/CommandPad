@@ -228,6 +228,13 @@ export interface Messages {
   };
   info: {
     action: string;
+    properties: string;
+    runbookTitle: string;
+    folderTitle: string;
+    manualName: string;
+    derivedName: string;
+    vaultState: Record<VaultStatus, string>;
+    syncState: Record<RunbookSyncStatus, string>;
     blockTitle: (type: string) => string;
     variableTitle: string;
     enumTitle: string;
@@ -269,6 +276,7 @@ export interface Messages {
       options: string;
       breakdown: string;
       status: string;
+      cloud: string;
     };
     columns: {
       editor: string;
@@ -328,6 +336,14 @@ export interface Messages {
       emptyOrUnresolved: string;
       valuesSize: string;
       collapsed: string;
+      nameSource: string;
+      location: string;
+      openInTab: string;
+      openInTabs: string;
+      fileName: string;
+      provider: string;
+      folders: string;
+      runbooks: string;
     };
   };
   runbookBlock: {
@@ -711,6 +727,7 @@ export interface Messages {
       ) => string;
       autoLabel: string;
       manualName: (renameLabel: string, resetNameLabel: string) => string;
+      properties: (propertiesLabel: string) => string;
       folders: (
         newFolderLabel: string,
         newRunbookLabel: string,
