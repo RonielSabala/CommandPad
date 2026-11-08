@@ -1,5 +1,5 @@
 import { DEFAULT_TAB_LABEL } from "@/common/config";
-import { LibraryItemKind } from "@/common/enums";
+import { LibraryDropZone, LibraryItemKind } from "@/common/enums";
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { describe, expect, it } from "vitest";
@@ -7,13 +7,17 @@ import { describe, expect, it } from "vitest";
 import {
   folderLocation,
   folderSubtree,
+  libraryDropZone,
+  libraryFolderDropParent,
   libraryLevel,
   libraryPathTrail,
   libraryRows,
+  libraryRunbookDropParent,
   repairLibrary,
   uniqueFolderName,
   uniqueRunbookLabel,
   withFolderExpanded,
+  withLibraryItemMoved,
 } from "./libraryTree";
 
 const en = getMessages("en");
@@ -235,6 +239,108 @@ describe("withFolderExpanded", () => {
     expect(withFolderExpanded(folders, "a")[0].collapsed).toBe(false);
     expect(withFolderExpanded(folders, "b")).toBe(folders);
     expect(withFolderExpanded(folders, null)).toBe(folders);
+  });
+});
+
+describe("libraryDropZone", () => {
+  const { FOLDER, RUNBOOK } = LibraryItemKind;
+  const { BEFORE, AFTER, INTO } = LibraryDropZone;
+
+  it("splits a runbook row in two for a runbook", () => {
+    expect(libraryDropZone(RUNBOOK, RUNBOOK, false, 0.1)).toBe(BEFORE);
+    expect(libraryDropZone(RUNBOOK, RUNBOOK, false, 0.9)).toBe(AFTER);
+  });
+
+  it("takes a runbook into a folder from anywhere on its row", () => {
+    expect(libraryDropZone(RUNBOOK, FOLDER, false, 0)).toBe(INTO);
+    expect(libraryDropZone(RUNBOOK, FOLDER, false, 1)).toBe(INTO);
+  });
+
+  it("refuses a folder on a runbook row", () => {
+    expect(libraryDropZone(FOLDER, RUNBOOK, false, 0.5)).toBeNull();
+  });
+
+  it("gives a folder the edges and the middle of a folder row", () => {
+    expect(libraryDropZone(FOLDER, FOLDER, false, 0.1)).toBe(BEFORE);
+    expect(libraryDropZone(FOLDER, FOLDER, false, 0.5)).toBe(INTO);
+    expect(libraryDropZone(FOLDER, FOLDER, false, 0.9)).toBe(AFTER);
+  });
+
+  it("reads below an open folder's row as inside it", () => {
+    expect(libraryDropZone(FOLDER, FOLDER, true, 0.1)).toBe(BEFORE);
+    expect(libraryDropZone(FOLDER, FOLDER, true, 0.9)).toBe(INTO);
+  });
+});
+
+describe("drop parents", () => {
+  const { BEFORE, AFTER, INTO } = LibraryDropZone;
+  const folders = [folder("ops"), folder("db", "ops")];
+  const runbooks = [runbook("top"), runbook("nested", "ops")];
+
+  it("is the target itself for a drop into it", () => {
+    expect(libraryFolderDropParent(folders, "ops", INTO)).toBe("ops");
+    expect(libraryRunbookDropParent(runbooks, "ops", INTO)).toBe("ops");
+  });
+
+  it("is the top level for a drop below the rows", () => {
+    expect(libraryFolderDropParent(folders, null, INTO)).toBeNull();
+    expect(libraryRunbookDropParent(runbooks, null, INTO)).toBeNull();
+  });
+
+  it("is the target's folder for a drop beside it", () => {
+    expect(libraryFolderDropParent(folders, "db", BEFORE)).toBe("ops");
+    expect(libraryRunbookDropParent(runbooks, "nested", AFTER)).toBe("ops");
+    expect(libraryRunbookDropParent(runbooks, "top", AFTER)).toBeNull();
+  });
+});
+
+describe("withLibraryItemMoved", () => {
+  const { BEFORE, AFTER, INTO } = LibraryDropZone;
+  const items = [runbook("a"), runbook("b"), runbook("c")];
+
+  const ids = (moved: LibraryRunbook[]) => moved.map((item) => item.id);
+  const keep = (item: LibraryRunbook) => item;
+
+  it("lands on the named side of the target, from either direction", () => {
+    const move = (id: string, targetId: string, zone: LibraryDropZone) =>
+      ids(withLibraryItemMoved(items, id, keep, targetId, zone));
+
+    expect(move("a", "c", BEFORE)).toEqual(["b", "a", "c"]);
+    expect(move("a", "c", AFTER)).toEqual(["b", "c", "a"]);
+    expect(move("c", "a", BEFORE)).toEqual(["c", "a", "b"]);
+    expect(move("c", "a", AFTER)).toEqual(["a", "c", "b"]);
+  });
+
+  it("goes last when dropped into a folder", () => {
+    expect(ids(withLibraryItemMoved(items, "a", keep, "ops", INTO))).toEqual([
+      "b",
+      "c",
+      "a",
+    ]);
+  });
+
+  it("applies the patch to the moved item only", () => {
+    const moved = withLibraryItemMoved(
+      items,
+      "a",
+      (item) => ({ ...item, folderId: "ops" }),
+      "ops",
+      INTO,
+    );
+
+    expect(moved.map((item) => item.folderId)).toEqual([
+      undefined,
+      undefined,
+      "ops",
+    ]);
+  });
+
+  it("keeps the order when the item is gone", () => {
+    expect(ids(withLibraryItemMoved(items, "gone", keep, "a", AFTER))).toEqual([
+      "a",
+      "b",
+      "c",
+    ]);
   });
 });
 

@@ -8,6 +8,7 @@ import {
 } from "@/common/enums";
 import type {
   Block,
+  LibraryFolder,
   LibraryRunbook,
   RunbookContent,
   Tab,
@@ -90,6 +91,8 @@ export interface DemoContent {
   blocks?: Block[];
   variables?: Variable[];
   variableSections?: VariableSection[];
+  /** The names of the library folders holding it. */
+  folderPath?: string[];
 }
 
 export interface DemoSeed {
@@ -128,9 +131,35 @@ export function buildDemoSeed(
   previous?: DemoSeed,
 ): DemoSeed {
   const contentSeed: Record<string, RunbookContent> = {};
+  const folders: LibraryFolder[] = [];
   const runbooks: LibraryRunbook[] = [];
+  const previousFolders = previous?.state.libraryFolders ?? [];
   const previousRunbooks = previous?.state.libraryRunbooks ?? [];
   const previousTabs = previous?.state.tabs ?? [];
+
+  const registerFolders = (path: string[] = []) => {
+    let parentId: string | null = null;
+
+    for (const name of path) {
+      const existing = folders.find(
+        (f) => f.parentId === parentId && f.name === name,
+      );
+
+      const folder: LibraryFolder = existing ?? {
+        id: previousFolders[folders.length]?.id ?? generateId(),
+        name,
+        parentId,
+      };
+
+      if (!existing) {
+        folders.push(folder);
+      }
+
+      parentId = folder.id;
+    }
+
+    return parentId ?? undefined;
+  };
 
   const register = (content: DemoContent): LibraryRunbook => {
     const previousRunbook = previousRunbooks[runbooks.length];
@@ -155,6 +184,7 @@ export function buildDemoSeed(
       id: previousRunbook?.id ?? generateId(),
       label: getRunbookLabel(blocks, RunbookConfig.DEFAULT_LABEL),
       filename: "",
+      folderId: registerFolders(content.folderPath),
     };
 
     runbooks.push(runbook);
@@ -184,6 +214,7 @@ export function buildDemoSeed(
       tabs: seededTabs,
       activeTabId: seededTabs[0]?.id ?? null,
       activeRunbookId: seededTabs[0]?.runbookId ?? runbooks[0]?.id ?? null,
+      libraryFolders: folders,
       libraryRunbooks: runbooks,
       language,
       variableKeyRatio: DEMO_VARIABLE_KEY_RATIO,

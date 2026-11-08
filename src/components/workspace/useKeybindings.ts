@@ -67,11 +67,11 @@ export function useKeybindings(): void {
           state.libraryRunbooks.length > 0
         ) {
           event.preventDefault();
-
           const runbookId =
             state.activeRunbookId ?? state.libraryRunbooks[0].id;
+
           state.setRunbookFocus(runbookId);
-          void state.loadRunbookFromLibrary(runbookId);
+          void state.loadLibraryRunbook(runbookId);
         } else if (
           state.focusedRunbookId !== null &&
           (key === Key.ARROW_UP || key === Key.ARROW_DOWN)
@@ -117,7 +117,7 @@ export function useKeybindings(): void {
       } else if (matchesKeybinding(event, KeyBinding.DELETE_RUNBOOK)) {
         const deleteId = state.focusedRunbookId ?? state.activeRunbookId;
         if (deleteId) {
-          void state.removeRunbookFromLibrary(deleteId);
+          void state.removeLibraryRunbook(deleteId);
         }
 
         hit = true;

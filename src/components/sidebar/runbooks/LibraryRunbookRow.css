@@ -17,14 +17,6 @@
   background: var(--row-selected-hover-bg);
 }
 
-.library-row.drag-over {
-  outline-offset: calc(-1 * var(--border-dashed-width));
-}
-
-.library-row.drag-over::before {
-  inset-block: var(--border-dashed-width);
-}
-
 .library-row.active .library-row-btn {
   color: var(--color-text-primary);
 }

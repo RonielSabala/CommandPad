@@ -658,6 +658,7 @@ export interface Messages {
         siteCheck: { title: string; note: string };
       };
       runbookSamples: string[];
+      folderSamples: { operations: string; databases: string };
       multiSelectNotes: string[];
       greetingTemplate: string;
       commitSubject: string;
@@ -734,6 +735,7 @@ export interface Messages {
         folderActionsLabel: string,
         newLabel: string,
       ) => string;
+      moving: string;
       uniqueNames: string;
       labelDetails: string;
       autoSave: string;

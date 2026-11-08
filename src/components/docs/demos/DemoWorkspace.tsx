@@ -3,7 +3,8 @@ import { SelectionGroup } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import { ImageLightbox } from "@/components/blocks/image/ImageLightbox";
 import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
-import { LibraryRunbookRow } from "@/components/sidebar/runbooks/LibraryRunbookRow";
+import { LibraryTopLevelDrop } from "@/components/sidebar/runbooks/LibraryTopLevelDrop";
+import { LibraryTreeRow } from "@/components/sidebar/runbooks/LibraryTreeRow";
 import "@/components/sidebar/shared/SidebarSectionList.css";
 import { VariableRow } from "@/components/sidebar/variables/VariableRow";
 import { useSelectModeBodyClass } from "@/hooks/useBodyClasses";
@@ -19,9 +20,11 @@ import {
   useStore,
   useStoreApi,
 } from "@/store/store";
+import { libraryRowKey, libraryRows } from "@/utils/libraryTree";
 import { isVariableUnused } from "@/utils/resolution";
 import {
   useLayoutEffect,
+  useMemo,
   useState,
   type KeyboardEvent,
   type ReactNode,
@@ -142,17 +145,24 @@ export function DemoVariableRows() {
 }
 
 export function DemoRunbookList() {
+  const folders = useStore((state) => state.libraryFolders);
   const runbooks = useStore((state) => state.libraryRunbooks);
+  const rows = useMemo(
+    () => libraryRows(folders, runbooks, ""),
+    [folders, runbooks],
+  );
 
   return (
     <div className="docs-demo-sidebar-frame">
-      {runbooks.map((runbook) => (
-        <LibraryRunbookRow
-          key={runbook.id}
-          runbook={runbook}
+      {rows.map((row) => (
+        <LibraryTreeRow
+          key={libraryRowKey(row)}
+          row={row}
           marksOpenTabs={false}
         />
       ))}
+
+      <LibraryTopLevelDrop />
     </div>
   );
 }

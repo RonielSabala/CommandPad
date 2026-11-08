@@ -27,6 +27,11 @@ export const LibraryFolderConfig = {
   PATH_SEPARATOR: "/",
   ROOT_PATH: "~/",
   DEPTH_PROPERTY: "--library-depth",
+  DRAG_EXPAND_DELAY_MS: 500,
+  /** How far into a folder row a drop still lands beside it. */
+  DROP_EDGE_FRACTION: 0.25,
+  /** Where a drop on a runbook row turns from before it to after it. */
+  DROP_MIDDLE_FRACTION: 0.5,
 } as const;
 
 export const RunbookSourceConfig = {

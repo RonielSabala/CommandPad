@@ -13,12 +13,15 @@ export const CssClass = {
   COLLAPSED: "collapsed",
   HAS_ERROR: "has-error",
   ANIMATING: "animating",
+  ROW_REVEAL: "row-reveal",
+  DUPLICATE_FLASH: "duplicate-flash",
+
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",
   DRAG_IMAGE: "drag-image",
   DROP_TARGET: "drop-target",
-  DUPLICATE_FLASH: "duplicate-flash",
-  ROW_REVEAL: "row-reveal",
+  REORDER_LIST: "reorder-list",
+  REORDER_ROW: "reorder-row",
 
   CLAMPED: "clamped",
   CLAMP_SURFACE: "clamp-surface",

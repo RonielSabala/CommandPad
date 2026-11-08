@@ -1069,6 +1069,7 @@ export const en: Messages = {
         },
       },
       runbookSamples: ["Release checklist", "Postgres backup", "K8s debugging"],
+      folderSamples: { operations: "Operations", databases: "Databases" },
       multiSelectNotes: ["Create the backup", "Clean up"],
       greetingTemplate: "Hi {;name}, welcome to {;place}!",
       commitSubject: "Fix retry backoff on failed uploads",
@@ -1193,7 +1194,7 @@ If something goes wrong, undo it in this order:
 * A small ring beside a runbook means it's open in a tab you aren't viewing. Click the ring to close that tab.
 * Open the **${runbookActionsLabel}** menu shown on row hover to duplicate a runbook or delete it from the library.
 * Right-click anywhere in the library for **${newLabel}** (a folder or a runbook) and **${clearLibraryLabel}**. On a row, the menu also holds that row's actions.
-* Drag the handle on the left of a runbook to reorder it in the list. Dropping it on a runbook in another folder moves it into that folder.
+* Drag the handle on the left of a runbook or folder to move it.
 * Use the **search bar** to filter runbooks by label, filename, folder or path.`,
       autoLabel:
         "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label. Otherwise the imported filename is used as the fallback.",
@@ -1208,6 +1209,8 @@ If something goes wrong, undo it in this order:
         newLabel,
       ) =>
         `**Folders:** the **${newFolderLabel}** and **${newRunbookLabel}** buttons at the bottom of the section create a top-level folder or an empty runbook. A folder's **${folderActionsLabel}** menu creates either one inside it through its **${newLabel}** submenu, renames the folder, or deletes it with everything it holds. The library's right-click menu has the same **${newLabel}** submenu. Folders nest as deep as you like: click one to fold or unfold it. An empty folder shows no arrow. While you search, the matching runbooks are listed flat, each with its path from the top of the library.`,
+      moving:
+        "**Moving things:** a line shows where a dragged runbook or folder will land, so you can put it between two runbooks or between two folders, even in another folder. Drop anything on a folder to move it inside; hold it there for a moment and a folded folder opens.",
       uniqueNames:
         "**Names are unique per folder:** two runbooks can share a name in different folders, but not in the same one, because a runbook block finds a runbook by its name. Renaming a runbook to a name its folder already has, or moving it into a folder that has its name, offers a numbered name like `Deploy (1)`, which you can take or cancel. New runbooks, copies and automatic labels get the number on their own. Folders follow the same rule among the folders beside them.",
       labelDetails:

@@ -12,6 +12,11 @@
 }
 
 /* Sidebar rows */
+
 .docs-demo-sidebar-frame {
   max-width: var(--docs-demo-sidebar-width);
+}
+
+.docs-demo-sidebar-frame > .library-top-level-drop {
+  min-height: var(--space-10);
 }

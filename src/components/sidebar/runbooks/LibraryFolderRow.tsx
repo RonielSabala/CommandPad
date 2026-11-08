@@ -1,11 +1,14 @@
 import { LibraryFolderConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
+import { LibraryDropZone, LibraryItemKind } from "@/common/enums";
 import type { LibraryFolder } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
+import { DragHandle } from "@/components/common/DragHandle";
+import { DragImage } from "@/components/common/DragImage";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import { RenameInput } from "@/components/common/RenameInput";
@@ -17,8 +20,9 @@ import {
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { libraryDropZone } from "@/utils/libraryTree";
 import { classNames } from "@/utils/string";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { FolderFill, Vr } from "react-bootstrap-icons";
 
 import { LibraryContextMenu } from "./LibraryContextMenu";
@@ -27,6 +31,7 @@ import "./LibraryFolderRow.css";
 import { LibraryNewSubmenu } from "./LibraryNewSubmenu";
 import { FolderProperties } from "./LibraryProperties";
 import "./LibraryRow.css";
+import { useLibraryRowDrag } from "./useLibraryRowDrag";
 import { useLibraryRowMenu } from "./useLibraryRowMenu";
 
 interface Props {
@@ -43,6 +48,7 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
   const t = useTranslation();
   const folderId = folder.id;
   const FolderIcon = folder.collapsed ? FolderFill : FolderOpenFillIcon;
+  const showsContents = !folder.collapsed && !empty;
 
   const removeLibraryFolder = useStore((state) => state.removeLibraryFolder);
   const renameLibraryFolder = useStore((state) => state.renameLibraryFolder);
@@ -50,18 +56,46 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
 
   // A folder just created opens with its name ready to type over
   const renamePending = useStore(
-    (state) => state.pendingFolderRenameId === folderId,
+    (state) => state.pendingLibraryFolderRenameId === folderId,
   );
-  const consumeFolderRename = useStore((state) => state.consumeFolderRename);
+  const consumeLibraryFolderRename = useStore(
+    (state) => state.consumeLibraryFolderRename,
+  );
   const [renaming, setRenaming] = useState(false);
 
   const info = useInfoTooltip();
   const { menuAnchor, onContextMenu, closeMenu } = useLibraryRowMenu();
+  const { isDragging, dropZone, dropClassName, handleProps, rowProps } =
+    useLibraryRowDrag(folderId, (sourceKind, fraction) =>
+      libraryDropZone(
+        sourceKind,
+        LibraryItemKind.FOLDER,
+        showsContents,
+        fraction,
+      ),
+    );
+
+  // Holding a drag over a folded folder opens it
+  const opensUnderDrag =
+    dropZone === LibraryDropZone.INTO && !empty && folder.collapsed === true;
+
+  useEffect(() => {
+    if (!opensUnderDrag) {
+      return;
+    }
+
+    const timer = setTimeout(
+      () => toggleLibraryFolder(folderId),
+      LibraryFolderConfig.DRAG_EXPAND_DELAY_MS,
+    );
+
+    return () => clearTimeout(timer);
+  }, [opensUnderDrag, folderId, toggleLibraryFolder]);
 
   const stopRenaming = () => {
     setRenaming(false);
     if (renamePending) {
-      consumeFolderRename();
+      consumeLibraryFolderRename();
     }
   };
 
@@ -95,14 +129,21 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
   return (
     <div
       className={classNames(
+        dropClassName,
         CssClass.LIBRARY_ROW,
         CssClass.SIDEBAR_SECTION_LIST_ROW,
+        isDragging && CssClass.DRAGGING,
         menuAnchor && CssClass.MENU_OPEN,
       )}
       style={libraryDepthStyle(depth)}
+      {...rowProps}
       onContextMenu={onContextMenu}
     >
-      <span className="library-row-spacer" />
+      <DragImage icon={<FolderIcon className={CssClass.ICON_MD} />}>
+        {folder.name}
+      </DragImage>
+
+      <DragHandle handleProps={handleProps} />
 
       <div className={CssClass.LIBRARY_ROW_MAIN}>
         {renaming || renamePending ? (

@@ -5,8 +5,10 @@ import { getMessages } from "@/i18n/messages";
 import { generateId } from "@/utils/id";
 import {
   folderSubtree,
+  libraryFolderDropParent,
   uniqueFolderName,
   withFolderExpanded,
+  withLibraryItemMoved,
 } from "@/utils/libraryTree";
 
 import type { StoreKit } from "@/store/kit";
@@ -23,8 +25,9 @@ type LibraryFoldersActions = Pick<
   | "createLibraryFolder"
   | "renameLibraryFolder"
   | "toggleLibraryFolder"
+  | "moveLibraryFolder"
   | "removeLibraryFolder"
-  | "consumeFolderRename"
+  | "consumeLibraryFolderRename"
 >;
 
 export function createLibraryFoldersSlice(
@@ -56,7 +59,7 @@ export function createLibraryFoldersSlice(
           ...withFolderExpanded(s.libraryFolders, parentId),
           folder,
         ],
-        pendingFolderRenameId: folder.id,
+        pendingLibraryFolderRenameId: folder.id,
         runbookSearchQuery: "",
       }));
 
@@ -154,6 +157,65 @@ export function createLibraryFoldersSlice(
       saveLibrary();
     },
 
-    consumeFolderRename: () => set({ pendingFolderRenameId: null }),
+    moveLibraryFolder: (id, targetId, zone) => {
+      const state = get();
+      if (state.mode === AppMode.READ) {
+        return;
+      }
+
+      const folder = state.libraryFolders.find((f) => f.id === id);
+      if (!folder) {
+        return;
+      }
+
+      const parentId = libraryFolderDropParent(
+        state.libraryFolders,
+        targetId,
+        zone,
+      );
+
+      // A folder can't end up inside itself
+      if (
+        parentId !== null &&
+        folderSubtree(state.libraryFolders, id).has(parentId)
+      ) {
+        return;
+      }
+
+      const name = uniqueFolderName(
+        state.libraryFolders,
+        parentId,
+        folder.name,
+        id,
+      );
+
+      const place = () => {
+        set((s) => ({
+          libraryFolders: withLibraryItemMoved(
+            withFolderExpanded(s.libraryFolders, parentId),
+            id,
+            (f) => (f.parentId === parentId ? f : { ...f, parentId, name }),
+            targetId,
+            zone,
+          ),
+        }));
+
+        saveLibrary();
+      };
+
+      if (name === folder.name) {
+        place();
+        return;
+      }
+
+      offerNumberedName(
+        state,
+        (t) => t.dialogs.folderNameTakenMessage(folder.name, name),
+        place,
+      );
+    },
+
+    consumeLibraryFolderRename: () =>
+      set({ pendingLibraryFolderRenameId: null }),
   };
 }

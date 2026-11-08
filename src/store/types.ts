@@ -9,6 +9,7 @@ import {
   ExportFormat,
   HistoryDirection,
   InsertPosition,
+  LibraryDropZone,
   MoveDirection,
   PanelId,
   PanelSide,
@@ -173,7 +174,7 @@ export interface StoreState {
   selectKeyHeld: boolean;
   linkKeyHeld: boolean;
   pendingFocusBlockId: string | null;
-  pendingFolderRenameId: string | null;
+  pendingLibraryFolderRenameId: string | null;
   pendingRevealBlockId: string | null;
   revealedBlockId: string | null;
   blockRevealTone: RevealTone;
@@ -278,15 +279,20 @@ export interface StoreState {
   removeLibraryFolder: (id: string) => Promise<void>;
   renameLibraryFolder: (id: string, name: string) => void;
   toggleLibraryFolder: (id: string) => void;
-  consumeFolderRename: () => void;
+  moveLibraryFolder: (
+    id: string,
+    targetId: string | null,
+    zone: LibraryDropZone,
+  ) => void;
+  consumeLibraryFolderRename: () => void;
 
   // Runbook library
-  loadRunbookFromLibrary: (runbookId: string) => Promise<void>;
-  removeRunbookFromLibrary: (id: string) => Promise<void>;
-  duplicateRunbook: (id: string) => Promise<void>;
-  renameRunbook: (id: string, name: string) => void;
-  resetRunbookName: (id: string) => Promise<void>;
-  addRunbookToLibrary: (
+  loadLibraryRunbook: (runbookId: string) => Promise<void>;
+  removeLibraryRunbook: (id: string) => Promise<void>;
+  duplicateLibraryRunbook: (id: string) => Promise<void>;
+  renameLibraryRunbook: (id: string, name: string) => void;
+  resetLibraryRunbookName: (id: string) => Promise<void>;
+  addLibraryRunbook: (
     content: RunbookContent,
     filename: string,
     rawFilename: string,
@@ -296,7 +302,11 @@ export interface StoreState {
   ) => Promise<boolean>;
   importRunbooks: (files: File[]) => Promise<void>;
   importRunbookFromText: (text: string) => Promise<boolean>;
-  reorderRunbooks: (sourceId: string, targetId: string) => void;
+  moveLibraryRunbook: (
+    id: string,
+    targetId: string | null,
+    zone: LibraryDropZone,
+  ) => void;
   setRunbookFocus: (id: string | null) => void;
   navigateRunbookList: (direction: MoveDirection) => void;
 

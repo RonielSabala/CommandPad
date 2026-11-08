@@ -349,7 +349,7 @@ export function createVaultFlows(
     imported: ImportedVaultResult,
     sync: RunbookSync | undefined,
   ) =>
-    get().addRunbookToLibrary(
+    get().addLibraryRunbook(
       imported.content,
       stripJsonExtension(filename),
       filename,

@@ -11,6 +11,7 @@ import {
 } from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
 import { getTabSecretKeys, getTabVariableMap } from "@/utils/resolution";
+import { classNames } from "@/utils/string";
 import { useEffect, useMemo, useRef } from "react";
 
 import { BlockItem } from "./BlockItem";
@@ -64,7 +65,7 @@ export function BlocksList() {
     <CompletionsContext.Provider value={completions}>
       <div
         id={ElementId.BLOCKS_LIST}
-        className={CssClass.BLOCKS_LIST}
+        className={classNames(CssClass.BLOCKS_LIST, CssClass.REORDER_LIST)}
         ref={listRef}
       >
         {blocks.map((block) => (

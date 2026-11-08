@@ -1,7 +1,7 @@
 import { RunbookConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
-import { AppMode, DragGroup } from "@/common/enums";
+import { AppMode, LibraryItemKind } from "@/common/enums";
 import type { LibraryRunbook } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
@@ -15,7 +15,6 @@ import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import { RenameInput } from "@/components/common/RenameInput";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { TrashIcon } from "@/components/icons";
-import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
 import {
   getTabByRunbookId,
@@ -23,6 +22,7 @@ import {
   useStore,
   useStoreApi,
 } from "@/store/store";
+import { libraryDropZone } from "@/utils/libraryTree";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { memo, useState } from "react";
@@ -41,6 +41,7 @@ import "./LibraryRow.css";
 import "./LibraryRunbookRow.css";
 import { RunbookSecretBadge } from "./RunbookSecretBadge";
 import { RunbookSyncBadge } from "./RunbookSyncBadge";
+import { useLibraryRowDrag } from "./useLibraryRowDrag";
 import { useLibraryRowMenu } from "./useLibraryRowMenu";
 
 interface Props {
@@ -57,6 +58,8 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
   path,
 }: Props) {
   const t = useTranslation();
+  const store = useStoreApi();
+  const readMode = useStore((state) => state.mode === AppMode.READ);
   const runbookId = runbook.id;
   const runbookLabel = displayLabel(runbook.label, t);
 
@@ -66,7 +69,30 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
     (state) => marksOpenTabs && isRunbookOpen(state, runbookId),
   );
 
-  const store = useStoreApi();
+  const setRunbookFocus = useStore((state) => state.setRunbookFocus);
+  const loadLibraryRunbook = useStore((state) => state.loadLibraryRunbook);
+
+  const [renaming, setRenaming] = useState(false);
+  const renameLibraryRunbook = useStore((state) => state.renameLibraryRunbook);
+  const removeLibraryRunbook = useStore((state) => state.removeLibraryRunbook);
+  const resetLibraryRunbookName = useStore(
+    (state) => state.resetLibraryRunbookName,
+  );
+  const duplicateLibraryRunbook = useStore(
+    (state) => state.duplicateLibraryRunbook,
+  );
+
+  const sync = runbook.sync;
+  const unlinkRunbookSync = useStore((state) => state.unlinkRunbookSync);
+
+  const { isDragging, dropClassName, handleProps, rowProps } =
+    useLibraryRowDrag(runbookId, (sourceKind, fraction) =>
+      libraryDropZone(sourceKind, LibraryItemKind.RUNBOOK, false, fraction),
+    );
+
+  const info = useInfoTooltip();
+  const { menuAnchor, onContextMenu, closeMenu } = useLibraryRowMenu();
+
   const closeRunbookTab = () => {
     const state = store.getState();
     const tab = getTabByRunbookId(state, runbookId);
@@ -74,34 +100,6 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
       state.closeTab(tab.id);
     }
   };
-
-  const readMode = useStore((state) => state.mode === AppMode.READ);
-  const setRunbookFocus = useStore((state) => state.setRunbookFocus);
-  const reorderRunbooks = useStore((state) => state.reorderRunbooks);
-  const loadRunbookFromLibrary = useStore(
-    (state) => state.loadRunbookFromLibrary,
-  );
-
-  const [renaming, setRenaming] = useState(false);
-  const renameRunbook = useStore((state) => state.renameRunbook);
-  const resetRunbookName = useStore((state) => state.resetRunbookName);
-  const duplicateRunbook = useStore((state) => state.duplicateRunbook);
-  const removeRunbookFromLibrary = useStore(
-    (state) => state.removeRunbookFromLibrary,
-  );
-
-  const sync = runbook.sync;
-  const unlinkRunbookSync = useStore((state) => state.unlinkRunbookSync);
-
-  const { isDragging, isDragOver, handleProps, rowProps } = useRowReorder(
-    DragGroup.RUNBOOK,
-    runbookId,
-    reorderRunbooks,
-    !readMode,
-  );
-
-  const { menuAnchor, onContextMenu, closeMenu } = useLibraryRowMenu();
-  const info = useInfoTooltip();
 
   const runbookActions = (
     <>
@@ -115,7 +113,7 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
       {runbook.named && (
         <ContextMenuItem
           icon={<ArrowCounterclockwise className={CssClass.ICON_MD} />}
-          onSelect={() => void resetRunbookName(runbookId)}
+          onSelect={() => void resetLibraryRunbookName(runbookId)}
         >
           {t.runbooks.resetName}
         </ContextMenuItem>
@@ -123,7 +121,7 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
 
       <ContextMenuItem
         icon={<Copy className={CssClass.ICON_MD} />}
-        onSelect={() => void duplicateRunbook(runbookId)}
+        onSelect={() => void duplicateLibraryRunbook(runbookId)}
       >
         {t.runbooks.duplicate}
       </ContextMenuItem>
@@ -149,7 +147,7 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
             className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
           />
         }
-        onSelect={() => void removeRunbookFromLibrary(runbookId)}
+        onSelect={() => void removeLibraryRunbook(runbookId)}
         danger
       >
         {t.runbooks.deleteRunbook}
@@ -160,11 +158,11 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
   return (
     <div
       className={classNames(
-        menuAnchor && CssClass.MENU_OPEN,
+        dropClassName,
         isActive && CssClass.ACTIVE,
+        menuAnchor && CssClass.MENU_OPEN,
         isFocused && "library-runbook-focused",
         isDragging && CssClass.DRAGGING,
-        isDragOver && CssClass.DRAG_OVER,
         CssClass.LIBRARY_ROW,
         CssClass.SIDEBAR_SECTION_LIST_ROW,
       )}
@@ -190,7 +188,7 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
               value={runbookLabel}
               maxLength={RunbookConfig.LABEL_MAX_LENGTH}
               onCommit={(name) => {
-                renameRunbook(runbookId, name);
+                renameLibraryRunbook(runbookId, name);
                 setRenaming(false);
               }}
               onCancel={() => setRenaming(false)}
@@ -204,7 +202,7 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
               )}
               onClick={() => {
                 setRunbookFocus(null);
-                void loadRunbookFromLibrary(runbookId);
+                void loadLibraryRunbook(runbookId);
               }}
               onDoubleClick={() => setRenaming(!readMode)}
               {...tooltip(runbookLabel)}

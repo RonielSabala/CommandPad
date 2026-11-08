@@ -1,11 +1,3 @@
-.library-row-spacer {
-  width: var(--library-handle-width);
-}
-
-body.read-mode .library-row-spacer {
-  display: none;
-}
-
 .library-folder-chevron {
   flex-shrink: 0;
   color: var(--color-text-muted);

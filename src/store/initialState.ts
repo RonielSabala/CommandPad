@@ -61,7 +61,7 @@ export function createInitialState(): StoreData {
     selectKeyHeld: false,
     linkKeyHeld: false,
     pendingFocusBlockId: null,
-    pendingFolderRenameId: null,
+    pendingLibraryFolderRenameId: null,
     pendingRevealBlockId: null,
     revealedBlockId: null,
     blockRevealTone: RevealTone.UNRESOLVED,

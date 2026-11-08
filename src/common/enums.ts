@@ -214,10 +214,9 @@ export const LassoMode = {
 export type LassoMode = (typeof LassoMode)[keyof typeof LassoMode];
 
 export const DragGroup = {
-  RUNBOOK: "runbook",
+  LIBRARY: "library",
   VARIABLE: "variable",
   VARIABLE_OPTION: "variable-option",
-  DOCS_DEMO: "docs-demo",
 } as const;
 export type DragGroup = (typeof DragGroup)[keyof typeof DragGroup];
 
@@ -227,6 +226,14 @@ export const LibraryItemKind = {
 } as const;
 export type LibraryItemKind =
   (typeof LibraryItemKind)[keyof typeof LibraryItemKind];
+
+export const LibraryDropZone = {
+  BEFORE: "before",
+  AFTER: "after",
+  INTO: "into",
+} as const;
+export type LibraryDropZone =
+  (typeof LibraryDropZone)[keyof typeof LibraryDropZone];
 
 export const HttpMethod = {
   GET: "GET",

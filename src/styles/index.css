@@ -286,6 +286,19 @@ body {
   border-radius: var(--radius-sm);
 }
 
+.reorder-row {
+  position: relative;
+}
+
+/* While a row drags, the space below each row counts as that row. */
+.reorder-list:has(> .dragging) > .reorder-row:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  height: var(--row-gap);
+}
+
 .drag-handle {
   cursor: grab;
   color: var(--color-text-muted);

@@ -42,16 +42,17 @@ export function TabItem({
   onRenameEnd,
 }: Props) {
   const t = useTranslation();
+  const readMode = useStore((state) => state.mode === AppMode.READ);
   const tabId = tab.id;
-  const tabLabel = displayLabel(tab.label || t.common.untitledTab, t);
 
   const isActive = useStore((state) => state.activeTabId === tabId);
+  const tabLabel = displayLabel(tab.label || t.common.untitledTab, t);
+
   const switchTab = useStore((state) => state.switchTab);
   const closeTab = useStore((state) => state.closeTab);
   const reorderTabs = useStore((state) => state.reorderTabs);
   const copyBlocksToTab = useStore((state) => state.copyBlocksToTab);
-  const renameRunbook = useStore((state) => state.renameRunbook);
-  const readMode = useStore((state) => state.mode === AppMode.READ);
+  const renameLibraryRunbook = useStore((state) => state.renameLibraryRunbook);
 
   const unresolved = useTabUnresolved(tab);
   const unresolvedTip = useRichTooltip();
@@ -185,7 +186,7 @@ export function TabItem({
             maxLength={RunbookConfig.LABEL_MAX_LENGTH}
             onCommit={(name) => {
               if (tab.runbookId) {
-                renameRunbook(tab.runbookId, name);
+                renameLibraryRunbook(tab.runbookId, name);
               }
 
               onRenameEnd();

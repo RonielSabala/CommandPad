@@ -1,7 +1,6 @@
-import { LibraryFolderConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
-import { AppMode, LibraryItemKind } from "@/common/enums";
+import { AppMode } from "@/common/enums";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import { SearchInput } from "@/components/common/SearchInput";
@@ -9,7 +8,11 @@ import { useFileDrop } from "@/hooks/useFileDrop";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { libraryRows, type LibraryRow } from "@/utils/libraryTree";
+import {
+  libraryRowKey,
+  libraryRows,
+  type LibraryRow,
+} from "@/utils/libraryTree";
 import { useEffect, useMemo, useRef } from "react";
 import { FileEarmark, Folder } from "react-bootstrap-icons";
 
@@ -17,29 +20,13 @@ import { SidebarSection } from "../shared/SidebarSection";
 import { SidebarSectionFooter } from "../shared/SidebarSectionFooter";
 import { SidebarSectionList } from "../shared/SidebarSectionList";
 import { LibraryContextMenu } from "./LibraryContextMenu";
-import { LibraryFolderRow } from "./LibraryFolderRow";
 import { LibraryImportButton } from "./LibraryImportButton";
 import { FolderProperties } from "./LibraryProperties";
-import { LibraryRunbookRow } from "./LibraryRunbookRow";
+import { LibraryTopLevelDrop } from "./LibraryTopLevelDrop";
+import { LibraryTreeRow } from "./LibraryTreeRow";
 import "./RunbookSection.css";
 
-const getRowKey = (row: LibraryRow) =>
-  row.kind === LibraryItemKind.FOLDER ? row.folder.id : row.runbook.id;
-
-const renderRow = (row: LibraryRow) =>
-  row.kind === LibraryItemKind.FOLDER ? (
-    <LibraryFolderRow folder={row.folder} depth={row.depth} empty={row.empty} />
-  ) : (
-    <LibraryRunbookRow
-      runbook={row.runbook}
-      depth={row.depth}
-      path={
-        row.path &&
-        LibraryFolderConfig.ROOT_PATH +
-          row.path.join(LibraryFolderConfig.PATH_SEPARATOR)
-      }
-    />
-  );
+const renderRow = (row: LibraryRow) => <LibraryTreeRow row={row} />;
 
 export function RunbookSection() {
   const t = useTranslation();
@@ -112,23 +99,27 @@ export function RunbookSection() {
         isEmpty={isEmpty}
         visibleItems={rows}
         emptyMessage={t.runbooks.empty}
-        getKey={getRowKey}
+        getKey={libraryRowKey}
         renderItem={renderRow}
         listRef={listRef}
       />
 
-      <SidebarSectionFooter
-        onClick={() => createLibraryFolder(null)}
-        title={t.runbooks.newFolder}
-        label={t.runbooks.newFolderItem}
-        icon={<Folder className={CssClass.ICON_MD} />}
-        secondaryAction={{
-          onClick: () => void createNewTab(),
-          title: t.runbooks.newRunbook,
-          label: t.runbooks.newRunbookItem,
-          icon: <FileEarmark className={CssClass.ICON_MD} />,
-        }}
-      />
+      <div className="runbook-section-footer">
+        <SidebarSectionFooter
+          onClick={() => createLibraryFolder(null)}
+          title={t.runbooks.newFolder}
+          label={t.runbooks.newFolderItem}
+          icon={<Folder className={CssClass.ICON_MD} />}
+          secondaryAction={{
+            onClick: () => void createNewTab(),
+            title: t.runbooks.newRunbook,
+            label: t.runbooks.newRunbookItem,
+            icon: <FileEarmark className={CssClass.ICON_MD} />,
+          }}
+        />
+
+        <LibraryTopLevelDrop />
+      </div>
 
       {menuAnchor && !isReadMode && (
         <LibraryContextMenu

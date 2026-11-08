@@ -8,11 +8,13 @@
 }
 
 .sidebar-section-list-row {
+  --row-gap: var(--space-2);
+
   position: relative;
   display: grid;
   align-items: center;
   gap: var(--space-3);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--row-gap);
   padding: 0 var(--space-2);
 }
 

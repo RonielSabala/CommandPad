@@ -162,6 +162,7 @@ function VariableOptionRow({
       {...dragProps}
       className={classNames(
         rowProps.className,
+        CssClass.REORDER_ROW,
         isDragging && CssClass.DRAGGING,
       )}
     >

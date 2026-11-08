@@ -7,6 +7,9 @@
 
   /* One nesting level */
   --library-indent: round(calc(var(--icon-sm) + var(--library-btn-gap)), 1px);
+
+  /* All of this row's nesting levels */
+  --library-depth-inset: calc(var(--library-depth, 0) * var(--library-indent));
   --library-row-lead: calc(var(--library-handle-width) + var(--space-3));
 
   /* The row button's box */
@@ -31,13 +34,16 @@
   /* The space on each side of a folder's chevron */
   --library-chevron-padding: var(--space-1);
 
+  /* The line marking where a drop lands */
+  --library-drop-line-width: var(--space-1);
+
   grid-template-columns: auto minmax(0, 1fr) auto;
   border-radius: var(--radius-md);
 }
 
 .library-row.sidebar-section-list-row {
   margin-bottom: 0;
-  padding-left: calc(var(--library-depth, 0) * var(--library-indent));
+  padding-left: var(--library-depth-inset);
 }
 
 body.read-mode .library-row {
@@ -58,7 +64,7 @@ body.read-mode .library-row {
     ),
     1px
   );
-  width: calc(var(--library-depth, 0) * var(--library-indent));
+  width: var(--library-depth-inset);
   background: repeating-linear-gradient(
     to right,
     var(--library-guide-color) 0 var(--library-guide-width),
@@ -135,4 +141,34 @@ body.read-mode .library-row {
 
 .library-row:not(.active) .library-row-btn:hover .library-row-name {
   border-bottom-color: currentcolor;
+}
+
+/* Where a drop lands */
+
+:is(.library-row, .library-top-level-drop).drag-over {
+  outline-offset: calc(-1 * var(--border-dashed-width));
+}
+
+.library-row.drag-over::before {
+  inset-block: var(--border-dashed-width);
+}
+
+.library-row-drop-before::after,
+.library-row-drop-after::after {
+  content: "";
+  position: absolute;
+  z-index: var(--z-raised);
+  left: var(--library-depth-inset);
+  right: 0;
+  height: var(--library-drop-line-width);
+  background: var(--accent);
+  pointer-events: none;
+}
+
+.library-row-drop-before::after {
+  top: calc(var(--library-drop-line-width) / -2);
+}
+
+.library-row-drop-after::after {
+  bottom: calc(var(--library-drop-line-width) / -2);
 }

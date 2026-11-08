@@ -54,8 +54,9 @@ export function VariableRowFrame({
   return (
     <div
       className={classNames(
-        CssClass.VARIABLE_ITEM,
         className,
+        CssClass.REORDER_ROW,
+        CssClass.VARIABLE_ITEM,
         isDragging && CssClass.DRAGGING,
         isDragOver && CssClass.DRAG_OVER,
         isFlashing && CssClass.DUPLICATE_FLASH,

@@ -2,11 +2,13 @@
   --variable-row-gutter: var(--space-20);
   --variable-section-indent: var(--space-8);
   --variable-row-max-width: calc(100% - var(--variable-row-gutter));
+  --variable-section-gap: var(--space-6);
+  --row-gap: var(--space-4);
 
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   max-width: 100%;
-  gap: var(--space-4);
+  gap: var(--row-gap);
   justify-items: start;
 }
 
@@ -17,7 +19,15 @@
 /* Variable section */
 
 .variables-list > .variable-section:not(:first-child) {
-  margin-top: var(--space-6);
+  margin-top: var(--variable-section-gap);
+}
+
+.variables-list:has(> .dragging) > .variable-section:not(:first-child)::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 100%;
+  height: var(--variable-section-gap);
 }
 
 .variables-list > .variable-section ~ :not(.variable-section) {

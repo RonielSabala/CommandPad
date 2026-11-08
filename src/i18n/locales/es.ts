@@ -1094,6 +1094,7 @@ export const es: Messages = {
         "Respaldo de Postgres",
         "Depuración de K8s",
       ],
+      folderSamples: { operations: "Operaciones", databases: "Bases de datos" },
       multiSelectNotes: ["Crear la copia de seguridad", "Limpiar"],
       greetingTemplate: "¡Hola {;name}, bienvenido a {;place}!",
       commitSubject: "Corrige reintento en subidas fallidas",
@@ -1219,7 +1220,7 @@ Si algo sale mal, deshazlo en este orden:
 * Un pequeño círculo junto a un libro indica que está abierto en una pestaña que no estás viendo. Haz clic en el círculo para cerrar esa pestaña.
 * Abre el menú de **${runbookActionsLabel}** que aparece al pasar el cursor sobre la fila para duplicar un libro o eliminarlo de la biblioteca.
 * Haz clic derecho en cualquier parte de la biblioteca para ver **${newLabel}** (una carpeta o un libro) y **${clearLibraryLabel}**. Sobre una fila, el menú también incluye las acciones de esa fila.
-* Arrastra el control a la izquierda de un libro para reordenarlo en la lista. Si lo sueltas sobre un libro de otra carpeta, pasa a esa carpeta.
+* Arrastra el control a la izquierda de un libro o una carpeta para moverlo.
 * Usa la **barra de búsqueda** para filtrar libros por su etiqueta, nombre de archivo, carpeta o ruta.`,
       autoLabel:
         "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca. En caso contrario se usa el nombre del archivo importado.",
@@ -1234,6 +1235,8 @@ Si algo sale mal, deshazlo en este orden:
         newLabel,
       ) =>
         `**Carpetas:** los botones **${newFolderLabel}** y **${newRunbookLabel}** al pie de la sección crean una carpeta en el nivel superior o un libro vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella con su submenú **${newLabel}**, la renombra o la elimina con todo lo que contiene. El menú del clic derecho de la biblioteca tiene el mismo submenú **${newLabel}**. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. Una carpeta vacía no muestra flecha. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con su ruta desde el nivel superior de la biblioteca.`,
+      moving:
+        "**Mover elementos:** una línea muestra dónde caerá el libro o la carpeta que arrastras, así que puedes dejarlo entre dos libros o entre dos carpetas, incluso en otra carpeta. Suéltalo sobre una carpeta para moverlo dentro; si lo mantienes ahí un momento, una carpeta plegada se abre.",
       uniqueNames:
         "**Los nombres son únicos por carpeta:** dos libros pueden llamarse igual en carpetas distintas, pero no en la misma, porque un bloque de libro encuentra un libro por su nombre. Si renombras un libro con un nombre que su carpeta ya tiene, o lo mueves a una carpeta que ya tiene su nombre, se te propone un nombre numerado como `Deploy (1)`, que puedes aceptar o cancelar. Los libros nuevos, las copias y las etiquetas automáticas reciben el número por sí solos. Las carpetas siguen la misma regla entre las carpetas que tienen al lado.",
       labelDetails:

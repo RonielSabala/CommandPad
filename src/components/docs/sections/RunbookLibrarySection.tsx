@@ -6,6 +6,12 @@ import { Prose } from "../Prose";
 
 export function RunbookLibraryDocs() {
   const t = useTranslation();
+  const { runbookSamples, folderSamples } = t.docs.demo;
+  const samplePaths = [
+    [],
+    [folderSamples.operations, folderSamples.databases],
+    [folderSamples.operations],
+  ];
 
   return (
     <>
@@ -20,8 +26,9 @@ export function RunbookLibraryDocs() {
         )}
       />
       <DemoWorkspace
-        library={t.docs.demo.runbookSamples.map((label) => ({
+        library={runbookSamples.map((label, index) => ({
           blocks: [demoNote(label, NoteStyle.HEADING)],
+          folderPath: samplePaths[index],
         }))}
       >
         <DemoRunbookList />
@@ -34,6 +41,7 @@ export function RunbookLibraryDocs() {
           t.runbooks.new,
         )}
       />
+      <Prose text={t.docs.runbookLibrary.moving} />
       <Prose text={t.docs.runbookLibrary.autoLabel} />
       <Prose
         text={t.docs.runbookLibrary.manualName(

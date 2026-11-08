@@ -9,7 +9,7 @@ import { lasso } from "@/hooks/lasso";
 import { getActiveTab, useStore, useStoreApi } from "@/store/store";
 import { applyDragImage } from "@/utils/dom";
 import { classNames, classSelector } from "@/utils/string";
-import { memo, useRef, useState } from "react";
+import { memo, useRef, useState, type DragEvent } from "react";
 
 import { BlockActionsMenu } from "./BlockActionsMenu";
 import "./BlockItem.css";
@@ -42,10 +42,30 @@ export const BlockItem = memo(function BlockItem({
     undefined,
   );
 
+  const onDragOver = (event: DragEvent) => {
+    if (!blockDrag.srcId) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const activeTabId = getActiveTab(store.getState())?.id ?? null;
+    const isCrossTab = blockDrag.sourceTabId !== activeTabId;
+
+    event.dataTransfer.dropEffect = isCrossTab
+      ? DragEffect.COPY
+      : DragEffect.MOVE;
+
+    if (blockDrag.srcId !== block.id) {
+      setDragOver(true);
+    }
+  };
+
   return (
     <div
       className={classNames(
         CssClass.BLOCK_ITEM,
+        CssClass.REORDER_ROW,
         dragging && CssClass.DRAGGING,
         dragOver && CssClass.DRAG_OVER,
         isFlashing && CssClass.DUPLICATE_FLASH,
@@ -83,24 +103,8 @@ export const BlockItem = memo(function BlockItem({
         setDragging(false);
         setDragOver(false);
       }}
-      onDragOver={(event) => {
-        if (!blockDrag.srcId) {
-          return;
-        }
-
-        event.preventDefault();
-
-        const activeTabId = getActiveTab(store.getState())?.id ?? null;
-        const isCrossTab = blockDrag.sourceTabId !== activeTabId;
-
-        event.dataTransfer.dropEffect = isCrossTab
-          ? DragEffect.COPY
-          : DragEffect.MOVE;
-
-        if (blockDrag.srcId !== block.id) {
-          setDragOver(true);
-        }
-      }}
+      onDragEnter={onDragOver}
+      onDragOver={onDragOver}
       onDragLeave={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node))
           setDragOver(false);

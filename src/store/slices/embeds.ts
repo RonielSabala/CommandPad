@@ -135,7 +135,7 @@ export function createEmbedsSlice(
     /** Opens the embedded runbook in a tab. */
     openEmbeddedRunbook: async (source) => {
       if (source.local) {
-        await get().loadRunbookFromLibrary(source.local.id);
+        await get().loadLibraryRunbook(source.local.id);
         return;
       }
 
@@ -157,7 +157,7 @@ export function createEmbedsSlice(
         const link = cloudFileSync(cloud.provider, located);
         const linked = runbookLinkedTo(link);
         if (linked) {
-          await get().loadRunbookFromLibrary(linked);
+          await get().loadLibraryRunbook(linked);
           return;
         }
 
@@ -185,7 +185,7 @@ export function createEmbedsSlice(
           setEmbeddedRunbook(key, { ...entry, runbookId });
         }
 
-        await get().loadRunbookFromLibrary(runbookId);
+        await get().loadLibraryRunbook(runbookId);
       } catch (error) {
         console.error("Failed to open the embedded runbook", key, error);
       }

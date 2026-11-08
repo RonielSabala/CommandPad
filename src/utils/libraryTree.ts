@@ -1,5 +1,5 @@
 import { LibraryFolderConfig, RunbookBlockConfig } from "@/common/config";
-import { LibraryItemKind } from "@/common/enums";
+import { LibraryDropZone, LibraryItemKind } from "@/common/enums";
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 import type { Messages } from "@/i18n/types";
 
@@ -23,6 +23,13 @@ export type LibraryRow =
 
 const EMPTY_PATH: readonly string[] = Object.freeze([]);
 
+const folderName = (folder: LibraryFolder) => folder.name;
+const folderParent = (folder: LibraryFolder) => folder.parentId;
+const runbookParent = (runbook: LibraryRunbook) => runbook.folderId ?? null;
+
+export const libraryRowKey = (row: LibraryRow) =>
+  row.kind === LibraryItemKind.FOLDER ? row.folder.id : row.runbook.id;
+
 function groupByParent<T>(
   items: readonly T[],
   parentOf: (item: T) => string | null,
@@ -42,10 +49,6 @@ function groupByParent<T>(
 
   return groups;
 }
-
-const folderName = (folder: LibraryFolder) => folder.name;
-const folderParent = (folder: LibraryFolder) => folder.parentId;
-const runbookParent = (runbook: LibraryRunbook) => runbook.folderId ?? null;
 
 /** The rows the library list shows. */
 export function libraryRows(
@@ -288,6 +291,106 @@ export function withFolderExpanded(
   return folders.some((f) => f.id === folderId && f.collapsed)
     ? folders.map((f) => (f.id === folderId ? { ...f, collapsed: false } : f))
     : folders;
+}
+
+/** Where a drag lands at `fraction` down a row. */
+export function libraryDropZone(
+  sourceKind: LibraryItemKind,
+  targetKind: LibraryItemKind,
+  targetShowsContents: boolean,
+  fraction: number,
+): LibraryDropZone | null {
+  if (sourceKind === LibraryItemKind.RUNBOOK) {
+    if (targetKind === LibraryItemKind.FOLDER) {
+      return LibraryDropZone.INTO;
+    }
+
+    return fraction < LibraryFolderConfig.DROP_MIDDLE_FRACTION
+      ? LibraryDropZone.BEFORE
+      : LibraryDropZone.AFTER;
+  }
+
+  if (targetKind === LibraryItemKind.RUNBOOK) {
+    return null;
+  }
+
+  if (fraction < LibraryFolderConfig.DROP_EDGE_FRACTION) {
+    return LibraryDropZone.BEFORE;
+  }
+
+  return fraction > 1 - LibraryFolderConfig.DROP_EDGE_FRACTION &&
+    !targetShowsContents
+    ? LibraryDropZone.AFTER
+    : LibraryDropZone.INTO;
+}
+
+function dropParent<T extends { id: string }>(
+  items: readonly T[],
+  parentOf: (item: T) => string | null,
+  targetId: string | null,
+  zone: LibraryDropZone,
+): string | null {
+  if (zone === LibraryDropZone.INTO) {
+    return targetId;
+  }
+
+  const target = items.find((item) => item.id === targetId);
+  return target ? parentOf(target) : null;
+}
+
+/** The folder a dropped folder ends up in. */
+export const libraryFolderDropParent = (
+  folders: readonly LibraryFolder[],
+  targetId: string | null,
+  zone: LibraryDropZone,
+) => dropParent(folders, folderParent, targetId, zone);
+
+/** The folder a dropped runbook ends up in. */
+export const libraryRunbookDropParent = (
+  runbooks: readonly LibraryRunbook[],
+  targetId: string | null,
+  zone: LibraryDropZone,
+) => dropParent(runbooks, runbookParent, targetId, zone);
+
+/** Move one item beside `targetId`, or to the end if dropped into a folder. */
+export function withLibraryItemMoved<T extends { id: string }>(
+  items: readonly T[],
+  id: string,
+  patch: (item: T) => T,
+  targetId: string | null,
+  zone: LibraryDropZone,
+): T[] {
+  const rest: T[] = [];
+  let moved: T | undefined;
+
+  for (const item of items) {
+    if (item.id === id) {
+      moved = patch(item);
+    } else {
+      rest.push(item);
+    }
+  }
+
+  if (!moved) {
+    return [...items];
+  }
+
+  const targetIndex =
+    zone === LibraryDropZone.INTO
+      ? -1
+      : rest.findIndex((item) => item.id === targetId);
+
+  if (targetIndex < 0) {
+    return [...rest, moved];
+  }
+
+  rest.splice(
+    zone === LibraryDropZone.AFTER ? targetIndex + 1 : targetIndex,
+    0,
+    moved,
+  );
+
+  return rest;
 }
 
 /** Re-root what stored data left dangling and number clashing names. */

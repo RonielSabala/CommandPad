@@ -34,7 +34,7 @@ export function TabContextMenu({ tabId, anchor, onClose, onRename }: Props) {
 
   const resetName = () => {
     if (runbookId) {
-      void store.getState().resetRunbookName(runbookId);
+      void store.getState().resetLibraryRunbookName(runbookId);
     }
   };
 

@@ -278,7 +278,11 @@ export function Select<T extends string>({
 
       <ul
         ref={listRef}
-        className={classNames("select-list", scrollable && "is-scrollable")}
+        className={classNames(
+          "select-list",
+          scrollable && "is-scrollable",
+          OptionRow && CssClass.REORDER_LIST,
+        )}
         role={AriaRole.LISTBOX}
       >
         {shownOptions.length === 0 && (query || empty) && (

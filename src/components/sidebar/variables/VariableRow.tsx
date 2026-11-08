@@ -88,6 +88,7 @@ export const VariableRow = memo(function VariableRow({
         unused && CssClass.IS_UNUSED,
         isSecret && CssClass.IS_SECRET,
         isDragging && CssClass.DRAGGING,
+        CssClass.REORDER_ROW,
         CssClass.SIDEBAR_SECTION_LIST_ROW,
       )}
       {...{ [DataAttr.VARIABLE_ID]: variableId }}
