@@ -18,6 +18,8 @@ interface Props {
   align?: ContextMenuAlign;
   triggerClassName?: string;
   horizontal?: boolean;
+  /** Replaces the three dots on the trigger. */
+  icon?: ReactNode;
   /** Opens beside the trigger's closest match instead of below the trigger. */
   besideSelector?: string;
   /** Lets the owner anchor something else on the trigger. */
@@ -31,6 +33,7 @@ export function ActionsMenu({
   align = ContextMenuAlign.START,
   triggerClassName = classNames(CssClass.BTN, CssClass.BTN_FLAT_ICON),
   horizontal = false,
+  icon,
   besideSelector,
   triggerRef: ownerTriggerRef,
 }: Props) {
@@ -74,11 +77,12 @@ export function ActionsMenu({
         aria-haspopup={AriaRole.MENU}
         aria-expanded={anchor !== null}
       >
-        {horizontal ? (
-          <ThreeDots className={CssClass.ICON_MD} />
-        ) : (
-          <ThreeDotsVertical className={CssClass.ICON_MD} />
-        )}
+        {icon ??
+          (horizontal ? (
+            <ThreeDots className={CssClass.ICON_MD} />
+          ) : (
+            <ThreeDotsVertical className={CssClass.ICON_MD} />
+          ))}
       </button>
 
       {anchor && (

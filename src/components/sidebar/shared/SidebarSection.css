@@ -105,3 +105,7 @@
 .sidebar-section-scroll > .search-input-wrapper {
   margin-right: var(--panel-scroll-gutter);
 }
+
+.sidebar-section .search-input {
+  padding-block: var(--space-3);
+}

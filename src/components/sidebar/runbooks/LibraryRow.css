@@ -68,6 +68,7 @@ body.read-mode .library-row {
 }
 
 .library-row:hover,
+.library-row.menu-open,
 .library-row:has(:focus-visible, .row-actions.menu-open) {
   --library-guide-color: var(--color-border-strong);
 

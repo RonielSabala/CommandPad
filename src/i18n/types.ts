@@ -103,19 +103,21 @@ export interface Messages {
     empty: string;
     import: string;
     importTitle: string;
-    paste: string;
+    importOptions: string;
     pasteTitle: string;
     actions: string;
     duplicate: string;
-    removeFromLibrary: string;
+    deleteRunbook: string;
     dropToImport: string;
-    clearLibrary: string;
     clearLibraryTitle: string;
     stopSyncing: string;
     rename: string;
     resetName: string;
     newFolder: string;
     newRunbook: string;
+    new: string;
+    newFolderItem: string;
+    newRunbookItem: string;
     folderName: string;
     folderActions: string;
     deleteFolder: string;
@@ -702,8 +704,10 @@ export interface Messages {
       intro: (runbooksTitle: string) => string;
       items: (
         importLabel: string,
-        clearLibraryLabel: string,
         runbookActionsLabel: string,
+        newLabel: string,
+        pasteLabel: string,
+        clearLibraryLabel: string,
       ) => string;
       autoLabel: string;
       manualName: (renameLabel: string, resetNameLabel: string) => string;
@@ -711,6 +715,7 @@ export interface Messages {
         newFolderLabel: string,
         newRunbookLabel: string,
         folderActionsLabel: string,
+        newLabel: string,
       ) => string;
       uniqueNames: string;
       labelDetails: string;

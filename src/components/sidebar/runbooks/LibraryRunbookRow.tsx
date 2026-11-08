@@ -4,7 +4,10 @@ import { DataAttr } from "@/common/constants/dom";
 import { AppMode, DragGroup } from "@/common/enums";
 import type { LibraryRunbook } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
-import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
+import {
+  ContextMenuItem,
+  ContextMenuSeparator,
+} from "@/components/common/contextMenu/ContextMenu";
 import { DragHandle } from "@/components/common/DragHandle";
 import { DragImage } from "@/components/common/DragImage";
 import { RenameInput } from "@/components/common/RenameInput";
@@ -29,11 +32,13 @@ import {
   Vr,
 } from "react-bootstrap-icons";
 
+import { LibraryContextMenu } from "./LibraryContextMenu";
 import { libraryDepthStyle } from "./libraryDepth";
 import "./LibraryRow.css";
 import "./LibraryRunbookRow.css";
 import { RunbookSecretBadge } from "./RunbookSecretBadge";
 import { RunbookSyncBadge } from "./RunbookSyncBadge";
+import { useLibraryRowMenu } from "./useLibraryRowMenu";
 
 interface Props {
   runbook: LibraryRunbook;
@@ -92,9 +97,62 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
     !readMode,
   );
 
+  const { menuAnchor, onContextMenu, closeMenu } = useLibraryRowMenu();
+
+  const runbookActions = (
+    <>
+      <ContextMenuItem
+        icon={<Vr className={CssClass.ICON_MD} />}
+        onSelect={() => setRenaming(true)}
+      >
+        {t.runbooks.rename}
+      </ContextMenuItem>
+
+      {runbook.named && (
+        <ContextMenuItem
+          icon={<ArrowCounterclockwise className={CssClass.ICON_MD} />}
+          onSelect={() => void resetRunbookName(runbookId)}
+        >
+          {t.runbooks.resetName}
+        </ContextMenuItem>
+      )}
+
+      <ContextMenuItem
+        icon={<Copy className={CssClass.ICON_MD} />}
+        onSelect={() => void duplicateRunbook(runbookId)}
+      >
+        {t.runbooks.duplicate}
+      </ContextMenuItem>
+
+      {sync && (
+        <ContextMenuItem
+          icon={<CloudSlash className={CssClass.ICON_MD} />}
+          onSelect={() => unlinkRunbookSync(runbookId)}
+        >
+          {t.runbooks.stopSyncing}
+        </ContextMenuItem>
+      )}
+    </>
+  );
+
+  const deleteAction = (
+    <ContextMenuItem
+      icon={
+        <TrashIcon
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+        />
+      }
+      onSelect={() => void removeRunbookFromLibrary(runbookId)}
+      danger
+    >
+      {t.runbooks.deleteRunbook}
+    </ContextMenuItem>
+  );
+
   return (
     <div
       className={classNames(
+        menuAnchor && CssClass.MENU_OPEN,
         isActive && CssClass.ACTIVE,
         isFocused && "library-runbook-focused",
         isDragging && CssClass.DRAGGING,
@@ -105,6 +163,7 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
       style={libraryDepthStyle(depth)}
       {...{ [DataAttr.RUNBOOK_ID]: runbookId }}
       {...rowProps}
+      onContextMenu={onContextMenu}
     >
       <DragImage icon={<FileEarmark className={CssClass.ICON_MD} />}>
         {runbookLabel}
@@ -174,50 +233,20 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
       </div>
 
       <ActionsMenu className={CssClass.ROW_ACTIONS} title={t.runbooks.actions}>
-        {sync && (
-          <ContextMenuItem
-            icon={<CloudSlash className={CssClass.ICON_MD} />}
-            onSelect={() => unlinkRunbookSync(runbookId)}
-          >
-            {t.runbooks.stopSyncing}
-          </ContextMenuItem>
-        )}
-
-        <ContextMenuItem
-          icon={<Vr className={CssClass.ICON_MD} />}
-          onSelect={() => setRenaming(true)}
-        >
-          {t.runbooks.rename}
-        </ContextMenuItem>
-
-        {runbook.named && (
-          <ContextMenuItem
-            icon={<ArrowCounterclockwise className={CssClass.ICON_MD} />}
-            onSelect={() => void resetRunbookName(runbookId)}
-          >
-            {t.runbooks.resetName}
-          </ContextMenuItem>
-        )}
-
-        <ContextMenuItem
-          icon={<Copy className={CssClass.ICON_MD} />}
-          onSelect={() => void duplicateRunbook(runbookId)}
-        >
-          {t.runbooks.duplicate}
-        </ContextMenuItem>
-
-        <ContextMenuItem
-          icon={
-            <TrashIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
-          onSelect={() => void removeRunbookFromLibrary(runbookId)}
-          danger
-        >
-          {t.runbooks.removeFromLibrary}
-        </ContextMenuItem>
+        {runbookActions}
+        <ContextMenuSeparator />
+        {deleteAction}
       </ActionsMenu>
+
+      {menuAnchor && (
+        <LibraryContextMenu
+          anchor={menuAnchor}
+          folderId={runbook.folderId}
+          onClose={closeMenu}
+          actions={runbookActions}
+          deleteAction={deleteAction}
+        />
+      )}
     </div>
   );
 });

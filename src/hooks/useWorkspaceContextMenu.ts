@@ -4,14 +4,15 @@ import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextM
 import { classSelector } from "@/utils/string";
 import { useState, type MouseEvent } from "react";
 
-export function useWorkspaceContextMenu(itemClass: string) {
+/** A right-click menu over empty space, or anywhere without `itemClass`. */
+export function useWorkspaceContextMenu(itemClass?: string) {
   const [menuAnchor, setMenuAnchor] = useState<ContextMenuAnchor | null>(null);
 
   const onContextMenu = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
     if (
       target.closest(InputSelector.EDITABLE) ||
-      target.closest(classSelector(itemClass))
+      (itemClass && target.closest(classSelector(itemClass)))
     ) {
       return;
     }

@@ -79,19 +79,21 @@ export const es: Messages = {
     empty: "No hay libros importados.",
     import: "Importar",
     importTitle: "Importar libro",
-    paste: "Pegar",
+    importOptions: "Otras formas de importar",
     pasteTitle: "Pegar JSON de libro",
     actions: "Acciones del libro",
     duplicate: "Duplicar libro",
-    removeFromLibrary: "Quitar de la biblioteca",
+    deleteRunbook: "Eliminar libro",
     dropToImport: "Suelta los libros para importarlos",
-    clearLibrary: "Eliminar todo",
     clearLibraryTitle: "Eliminar todos los libros de la biblioteca",
     stopSyncing: "Dejar de sincronizar",
     rename: "Renombrar",
     resetName: "Restablecer nombre",
     newFolder: "Nueva carpeta",
     newRunbook: "Nuevo libro",
+    new: "Nuevo",
+    newFolderItem: "Carpeta",
+    newRunbookItem: "Libro",
     folderName: "Nueva carpeta",
     folderActions: "Acciones de la carpeta",
     deleteFolder: "Eliminar carpeta",
@@ -1180,22 +1182,29 @@ Si algo sale mal, deshazlo en este orden:
         `La sección **${runbooksTitle}** de la barra lateral contiene tus libros importados.`,
       items: (
         importLabel,
-        clearLibraryLabel,
         runbookActionsLabel,
-      ) => `* Haz clic en **${importLabel}** para cargar uno o varios archivos \`.json\` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.
+        newLabel,
+        pasteLabel,
+        clearLibraryLabel,
+      ) => `* Haz clic en **${importLabel}**, junto a la barra de búsqueda, para cargar uno o varios archivos \`.json\` a la vez, o abre la flecha de su lado para **${pasteLabel}**.
 * También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.
 * Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.
 * Un pequeño círculo junto a un libro indica que está abierto en una pestaña que no estás viendo. Haz clic en el círculo para cerrar esa pestaña.
-* Abre el menú de **${runbookActionsLabel}** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.
-* Haz clic en **${clearLibraryLabel}** para vaciar la biblioteca completa de una vez.
+* Abre el menú de **${runbookActionsLabel}** que aparece al pasar el cursor sobre la fila para duplicar un libro o eliminarlo de la biblioteca.
+* Haz clic derecho en cualquier parte de la biblioteca para ver **${newLabel}** (una carpeta o un libro) y **${clearLibraryLabel}**. Sobre una fila, el menú también incluye las acciones de esa fila.
 * Arrastra el control a la izquierda de un libro para reordenarlo en la lista. Si lo sueltas sobre un libro de otra carpeta, pasa a esa carpeta.
 * Usa la **barra de búsqueda** para filtrar libros por su etiqueta, nombre de archivo, carpeta o ruta.`,
       autoLabel:
         "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca. En caso contrario se usa el nombre del archivo importado.",
       manualName: (renameLabel, resetNameLabel) =>
         `**Ponerle nombre tú mismo:** haz doble clic en un libro de la lista de arriba o en su pestaña, o elige **${renameLabel}** en cualquiera de sus menús, y pulsa Enter o Escape para conservar el nombre. Un nombre que eliges se mantiene mientras editas el libro; **${resetNameLabel}** vuelve al etiquetado automático.`,
-      folders: (newFolderLabel, newRunbookLabel, folderActionsLabel) =>
-        `**Carpetas:** los botones junto a la barra de búsqueda crean una **${newFolderLabel}** en el nivel superior o un **${newRunbookLabel}** vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella, la renombra o la elimina con todo lo que contiene. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con su ruta desde el nivel superior de la biblioteca.`,
+      folders: (
+        newFolderLabel,
+        newRunbookLabel,
+        folderActionsLabel,
+        newLabel,
+      ) =>
+        `**Carpetas:** los botones **${newFolderLabel}** y **${newRunbookLabel}** al pie de la sección crean una carpeta en el nivel superior o un libro vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella con su submenú **${newLabel}**, la renombra o la elimina con todo lo que contiene. El menú del clic derecho de la biblioteca tiene el mismo submenú **${newLabel}**. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con su ruta desde el nivel superior de la biblioteca.`,
       uniqueNames:
         "**Los nombres son únicos por carpeta:** dos libros pueden llamarse igual en carpetas distintas, pero no en la misma, porque un bloque de libro encuentra un libro por su nombre. Si renombras un libro con un nombre que su carpeta ya tiene, o lo mueves a una carpeta que ya tiene su nombre, se te propone un nombre numerado como `Deploy (1)`, que puedes aceptar o cancelar. Los libros nuevos, las copias y las etiquetas automáticas reciben el número por sí solos. Las carpetas siguen la misma regla entre las carpetas que tienen al lado.",
       labelDetails:

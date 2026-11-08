@@ -37,6 +37,7 @@ interface ContextMenuProps {
   children: ReactNode;
   align?: ContextMenuAlign;
   triggerRef?: RefObject<HTMLElement | null>;
+  className?: string;
 }
 
 const CloseContext = createContext<(() => void) | null>(null);
@@ -47,6 +48,7 @@ export function ContextMenu({
   children,
   align = ContextMenuAlign.START,
   triggerRef,
+  className,
 }: ContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState(anchor);
@@ -108,7 +110,11 @@ export function ContextMenu({
         value={{ activeId: activeSubmenuId, setActiveId: setActiveSubmenuId }}
       >
         <div
-          className={classNames(CssClass.CONTEXT_MENU, CssClass.NO_USER_SELECT)}
+          className={classNames(
+            className,
+            CssClass.CONTEXT_MENU,
+            CssClass.NO_USER_SELECT,
+          )}
           ref={menuRef}
           role={AriaRole.MENU}
           style={{ left: position.x, top: position.y }}

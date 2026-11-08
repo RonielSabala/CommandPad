@@ -190,7 +190,8 @@ body {
   color: var(--accent-text);
 }
 
-.btn-primary:hover {
+.btn-primary:hover,
+.btn-primary[aria-expanded="true"] {
   background: var(--accent);
   color: white;
 }

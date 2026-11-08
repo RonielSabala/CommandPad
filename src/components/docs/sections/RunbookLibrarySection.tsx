@@ -13,8 +13,10 @@ export function RunbookLibraryDocs() {
       <Prose
         text={t.docs.runbookLibrary.items(
           t.runbooks.import,
-          t.runbooks.clearLibrary,
           t.runbooks.actions,
+          t.runbooks.new,
+          t.runbooks.pasteTitle,
+          t.runbooks.clearLibraryTitle,
         )}
       />
       <DemoWorkspace
@@ -26,9 +28,10 @@ export function RunbookLibraryDocs() {
       </DemoWorkspace>
       <Prose
         text={t.docs.runbookLibrary.folders(
-          t.runbooks.newFolder,
-          t.runbooks.newRunbook,
+          t.runbooks.newFolderItem,
+          t.runbooks.newRunbookItem,
           t.runbooks.folderActions,
+          t.runbooks.new,
         )}
       />
       <Prose text={t.docs.runbookLibrary.autoLabel} />

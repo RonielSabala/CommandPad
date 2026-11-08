@@ -79,19 +79,21 @@ export const en: Messages = {
     empty: "No runbooks imported.",
     import: "Import",
     importTitle: "Import runbook",
-    paste: "Paste",
+    importOptions: "More ways to import",
     pasteTitle: "Paste runbook JSON",
     actions: "Runbook actions",
     duplicate: "Duplicate runbook",
-    removeFromLibrary: "Remove from library",
+    deleteRunbook: "Delete runbook",
     dropToImport: "Drop runbooks to import",
-    clearLibrary: "Delete All",
     clearLibraryTitle: "Delete all runbooks from the library",
     stopSyncing: "Stop syncing",
     rename: "Rename",
     resetName: "Reset name",
     newFolder: "New folder",
     newRunbook: "New runbook",
+    new: "New",
+    newFolderItem: "Folder",
+    newRunbookItem: "Runbook",
     folderName: "New folder",
     folderActions: "Folder actions",
     deleteFolder: "Delete folder",
@@ -1154,22 +1156,29 @@ If something goes wrong, undo it in this order:
         `The sidebar's **${runbooksTitle}** section holds your imported runbooks.`,
       items: (
         importLabel,
-        clearLibraryLabel,
         runbookActionsLabel,
-      ) => `* Click **${importLabel}** to load one or more \`.json\` files at once, or **Paste** to create a runbook from raw JSON.
+        newLabel,
+        pasteLabel,
+        clearLibraryLabel,
+      ) => `* Click **${importLabel}** beside the search bar to load one or more \`.json\` files at once, or open the arrow beside it for **${pasteLabel}**.
 * You can also **drag files** from your file explorer and drop them onto the section to import them.
 * Click any runbook to open it. If it's already open in a tab, that tab becomes active.
 * A small ring beside a runbook means it's open in a tab you aren't viewing. Click the ring to close that tab.
-* Open the **${runbookActionsLabel}** menu shown on row hover to duplicate a runbook or remove it from the library.
-* Click **${clearLibraryLabel}** to empty the whole library at once.
+* Open the **${runbookActionsLabel}** menu shown on row hover to duplicate a runbook or delete it from the library.
+* Right-click anywhere in the library for **${newLabel}** (a folder or a runbook) and **${clearLibraryLabel}**. On a row, the menu also holds that row's actions.
 * Drag the handle on the left of a runbook to reorder it in the list. Dropping it on a runbook in another folder moves it into that folder.
 * Use the **search bar** to filter runbooks by label, filename, folder or path.`,
       autoLabel:
         "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label. Otherwise the imported filename is used as the fallback.",
       manualName: (renameLabel, resetNameLabel) =>
         `**Naming it yourself:** double-click a runbook in the list above or its tab, or pick **${renameLabel}** from either menu, then press Enter or Escape to keep the name. A name you choose stays put while you edit the runbook; **${resetNameLabel}** goes back to auto-labelling.`,
-      folders: (newFolderLabel, newRunbookLabel, folderActionsLabel) =>
-        `**Folders:** the buttons beside the search bar create a top-level **${newFolderLabel}** or an empty **${newRunbookLabel}**. A folder's **${folderActionsLabel}** menu creates either one inside it, renames it, or deletes it with everything it holds. Folders nest as deep as you like: click one to fold or unfold it. While you search, the matching runbooks are listed flat, each with its path from the top of the library.`,
+      folders: (
+        newFolderLabel,
+        newRunbookLabel,
+        folderActionsLabel,
+        newLabel,
+      ) =>
+        `**Folders:** the **${newFolderLabel}** and **${newRunbookLabel}** buttons at the bottom of the section create a top-level folder or an empty runbook. A folder's **${folderActionsLabel}** menu creates either one inside it through its **${newLabel}** submenu, renames the folder, or deletes it with everything it holds. The library's right-click menu has the same **${newLabel}** submenu. Folders nest as deep as you like: click one to fold or unfold it. While you search, the matching runbooks are listed flat, each with its path from the top of the library.`,
       uniqueNames:
         "**Names are unique per folder:** two runbooks can share a name in different folders, but not in the same one, because a runbook block finds a runbook by its name. Renaming a runbook to a name its folder already has, or moving it into a folder that has its name, offers a numbered name like `Deploy (1)`, which you can take or cancel. New runbooks, copies and automatic labels get the number on their own. Folders follow the same rule among the folders beside them.",
       labelDetails:

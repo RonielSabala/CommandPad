@@ -2,7 +2,10 @@ import { LibraryFolderConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import type { LibraryFolder } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
-import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
+import {
+  ContextMenuItem,
+  ContextMenuSeparator,
+} from "@/components/common/contextMenu/ContextMenu";
 import { RenameInput } from "@/components/common/RenameInput";
 import { NO_TOOLTIP, tooltip } from "@/components/common/tooltip/tooltip";
 import {
@@ -14,16 +17,14 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { memo, useState } from "react";
-import {
-  FileEarmarkPlus,
-  FolderFill,
-  FolderPlus,
-  Vr,
-} from "react-bootstrap-icons";
+import { FolderFill, Vr } from "react-bootstrap-icons";
 
+import { LibraryContextMenu } from "./LibraryContextMenu";
 import { libraryDepthStyle } from "./libraryDepth";
 import "./LibraryFolderRow.css";
+import { LibraryNewSubmenu } from "./LibraryNewSubmenu";
 import "./LibraryRow.css";
+import { useLibraryRowMenu } from "./useLibraryRowMenu";
 
 interface Props {
   folder: LibraryFolder;
@@ -38,8 +39,6 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
   const folderId = folder.id;
   const FolderIcon = folder.collapsed ? FolderFill : FolderOpenFillIcon;
 
-  const createNewTab = useStore((state) => state.createNewTab);
-  const createLibraryFolder = useStore((state) => state.createLibraryFolder);
   const removeLibraryFolder = useStore((state) => state.removeLibraryFolder);
   const renameLibraryFolder = useStore((state) => state.renameLibraryFolder);
   const toggleLibraryFolder = useStore((state) => state.toggleLibraryFolder);
@@ -50,6 +49,7 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
   );
   const consumeFolderRename = useStore((state) => state.consumeFolderRename);
   const [renaming, setRenaming] = useState(false);
+  const { menuAnchor, onContextMenu, closeMenu } = useLibraryRowMenu();
 
   const stopRenaming = () => {
     setRenaming(false);
@@ -58,13 +58,38 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
     }
   };
 
+  const renameAction = (
+    <ContextMenuItem
+      icon={<Vr className={CssClass.ICON_MD} />}
+      onSelect={() => setRenaming(true)}
+    >
+      {t.runbooks.rename}
+    </ContextMenuItem>
+  );
+
+  const deleteAction = (
+    <ContextMenuItem
+      icon={
+        <TrashIcon
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+        />
+      }
+      onSelect={() => void removeLibraryFolder(folderId)}
+      danger
+    >
+      {t.runbooks.deleteFolder}
+    </ContextMenuItem>
+  );
+
   return (
     <div
       className={classNames(
         CssClass.LIBRARY_ROW,
         CssClass.SIDEBAR_SECTION_LIST_ROW,
+        menuAnchor && CssClass.MENU_OPEN,
       )}
       style={libraryDepthStyle(depth)}
+      onContextMenu={onContextMenu}
     >
       <span className="library-row-spacer" />
 
@@ -122,39 +147,22 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
         className={CssClass.ROW_ACTIONS}
         title={t.runbooks.folderActions}
       >
-        <ContextMenuItem
-          icon={<FolderPlus className={CssClass.ICON_MD} />}
-          onSelect={() => createLibraryFolder(folderId)}
-        >
-          {t.runbooks.newFolder}
-        </ContextMenuItem>
-
-        <ContextMenuItem
-          icon={<FileEarmarkPlus className={CssClass.ICON_MD} />}
-          onSelect={() => void createNewTab(folderId)}
-        >
-          {t.runbooks.newRunbook}
-        </ContextMenuItem>
-
-        <ContextMenuItem
-          icon={<Vr className={CssClass.ICON_MD} />}
-          onSelect={() => setRenaming(true)}
-        >
-          {t.runbooks.rename}
-        </ContextMenuItem>
-
-        <ContextMenuItem
-          icon={
-            <TrashIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
-          onSelect={() => void removeLibraryFolder(folderId)}
-          danger
-        >
-          {t.runbooks.deleteFolder}
-        </ContextMenuItem>
+        {renameAction}
+        <ContextMenuSeparator />
+        <LibraryNewSubmenu folderId={folderId} />
+        <ContextMenuSeparator />
+        {deleteAction}
       </ActionsMenu>
+
+      {menuAnchor && (
+        <LibraryContextMenu
+          anchor={menuAnchor}
+          folderId={folderId}
+          onClose={closeMenu}
+          actions={renameAction}
+          deleteAction={deleteAction}
+        />
+      )}
     </div>
   );
 });

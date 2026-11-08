@@ -10,6 +10,7 @@
 
 .library-row.active:is(
     :hover,
+    .menu-open,
     .library-runbook-focused,
     :has(:focus-visible, .row-actions.menu-open)
   ) {
