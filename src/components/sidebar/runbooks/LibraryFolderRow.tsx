@@ -32,11 +32,13 @@ import { useLibraryRowMenu } from "./useLibraryRowMenu";
 interface Props {
   folder: LibraryFolder;
   depth: number;
+  empty: boolean;
 }
 
 export const LibraryFolderRow = memo(function LibraryFolderRow({
   folder,
   depth,
+  empty,
 }: Props) {
   const t = useTranslation();
   const folderId = folder.id;
@@ -121,16 +123,21 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
           <button
             className={classNames(
               "library-folder-btn",
+              empty && "library-folder-empty",
               folder.collapsed && CssClass.COLLAPSED,
               CssClass.LIBRARY_ROW_BTN,
               CssClass.LIBRARY_ROW_LABEL,
               CssClass.NO_USER_SELECT,
             )}
-            aria-expanded={!folder.collapsed}
+            aria-expanded={empty ? undefined : !folder.collapsed}
             onClick={() => toggleLibraryFolder(folderId)}
             {...tooltip(folder.name)}
           >
-            <span className="library-folder-chevron-zone" {...NO_TOOLTIP}>
+            <span
+              className="library-folder-chevron-zone"
+              onClick={empty ? (event) => event.stopPropagation() : undefined}
+              {...NO_TOOLTIP}
+            >
               <EditorToggleChevronIcon
                 className={classNames(
                   "library-folder-chevron",

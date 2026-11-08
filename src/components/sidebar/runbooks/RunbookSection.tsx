@@ -28,7 +28,7 @@ const getRowKey = (row: LibraryRow) =>
 
 const renderRow = (row: LibraryRow) =>
   row.kind === LibraryItemKind.FOLDER ? (
-    <LibraryFolderRow folder={row.folder} depth={row.depth} />
+    <LibraryFolderRow folder={row.folder} depth={row.depth} empty={row.empty} />
   ) : (
     <LibraryRunbookRow
       runbook={row.runbook}

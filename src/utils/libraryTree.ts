@@ -11,6 +11,7 @@ export type LibraryRow =
       kind: typeof LibraryItemKind.FOLDER;
       folder: LibraryFolder;
       depth: number;
+      empty: boolean;
     }
   | {
       kind: typeof LibraryItemKind.RUNBOOK;
@@ -62,14 +63,21 @@ export function libraryRows(
     path: readonly string[],
   ) => {
     for (const folder of subfolders.get(parentId) ?? []) {
+      const folderId = folder.id;
       if (query) {
-        visit(folder.id, depth, [...path, folder.name]);
+        visit(folderId, depth, [...path, folder.name]);
         continue;
       }
 
-      rows.push({ kind: LibraryItemKind.FOLDER, folder, depth });
+      rows.push({
+        kind: LibraryItemKind.FOLDER,
+        folder,
+        depth,
+        empty: !subfolders.has(folderId) && !contents.has(folderId),
+      });
+
       if (!folder.collapsed) {
-        visit(folder.id, depth + 1, path);
+        visit(folderId, depth + 1, path);
       }
     }
 

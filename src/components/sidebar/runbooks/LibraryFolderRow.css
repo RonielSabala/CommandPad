@@ -31,11 +31,27 @@ body.read-mode .library-row-spacer {
   border-radius: var(--radius-md) 0 0 var(--radius-md);
 }
 
-.library-folder-chevron-zone:hover {
+.library-folder-btn:not(.library-folder-empty)
+  .library-folder-chevron-zone:hover {
   background: var(--color-surface-hover-bg);
 }
 
-.library-folder-btn.library-row-btn:has(.library-folder-chevron-zone:hover)
+.library-row
+  .library-folder-btn.library-row-btn:has(.library-folder-chevron-zone:hover)
   .library-row-name {
   border-bottom-color: transparent;
+}
+
+/* Empty folder */
+
+.library-folder-empty .library-folder-chevron {
+  visibility: hidden;
+}
+
+.library-folder-empty .library-folder-chevron-zone {
+  cursor: default;
+}
+
+.library-folder-empty:has(.library-folder-chevron-zone:hover) {
+  color: var(--color-text-secondary);
 }

@@ -92,6 +92,22 @@ describe("libraryRows", () => {
     expect(pathOf("top")).toEqual([[]]);
   });
 
+  it("flags a folder holding neither a folder nor a runbook", () => {
+    const emptyFolders = libraryRows(
+      [
+        folder("parent"),
+        folder("child", "parent"),
+        folder("filled", null, true),
+      ],
+      [runbook("inside", "filled")],
+      "",
+    ).flatMap((row) =>
+      row.kind === LibraryItemKind.FOLDER && row.empty ? [row.folder.id] : [],
+    );
+
+    expect(emptyFolders).toEqual(["child"]);
+  });
+
   it("matches a runbook by the folders holding it", () => {
     expect(describeRows(folders, runbooks, "db")).toEqual([
       "0:backup",
