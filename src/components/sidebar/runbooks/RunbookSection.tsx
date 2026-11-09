@@ -1,10 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr, ScrollIntoView } from "@/common/constants/dom";
 import { AppMode } from "@/common/enums";
-import {
-  ContextMenuItem,
-  ContextMenuSeparator,
-} from "@/components/common/contextMenu/ContextMenu";
+import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import { SearchInput } from "@/components/common/SearchInput";
@@ -99,7 +96,7 @@ export function RunbookSection() {
       collapsed={isCollapsed}
       onToggle={onToggle}
       dropZone={{ ...fileDrop, hint: t.runbooks.dropToImport }}
-      onContextMenu={isReadMode ? undefined : onContextMenu}
+      onContextMenu={onContextMenu}
     >
       <div className="runbook-section-toolbar" ref={toolbarRef}>
         <SearchInput
@@ -137,39 +134,34 @@ export function RunbookSection() {
         <LibraryTopLevelDrop />
       </div>
 
-      {menuAnchor && !isReadMode && (
+      {menuAnchor && (
         <LibraryContextMenu
           anchor={menuAnchor}
           levelActions
           onClose={closeMenu}
-          endActions={
+          readActions={
             <>
               <LibraryDownloadItem folderId={null} disabled={isEmpty} />
               <InfoMenuItem
                 label={t.info.properties}
                 onSelect={() => info.open(toolbarRef.current)}
               />
-
-              {!isEmpty && (
-                <>
-                  <ContextMenuSeparator />
-                  <ContextMenuItem
-                    icon={
-                      <TrashIcon
-                        className={classNames(
-                          CssClass.ICON_MD,
-                          CssClass.ICON_BOLD,
-                        )}
-                      />
-                    }
-                    onSelect={() => void clearRunbookLibrary()}
-                    danger
-                  >
-                    {t.runbooks.clearLibraryTitle}
-                  </ContextMenuItem>
-                </>
-              )}
             </>
+          }
+          endActions={
+            !isEmpty && (
+              <ContextMenuItem
+                icon={
+                  <TrashIcon
+                    className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+                  />
+                }
+                onSelect={() => void clearRunbookLibrary()}
+                danger
+              >
+                {t.runbooks.clearLibraryTitle}
+              </ContextMenuItem>
+            )
           }
         />
       )}

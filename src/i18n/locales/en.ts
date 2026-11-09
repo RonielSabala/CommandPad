@@ -1719,6 +1719,7 @@ If something goes wrong, undo it in this order:
 * Block structure cannot be changed (no adding, deleting, or reordering).
 * Variable values can still be changed.
 * Runbooks can still be opened.
+* Library folders can still be downloaded as a zip.
 * Links can be opened with a direct click.
 * Images open full screen with a click.`,
       persisted:

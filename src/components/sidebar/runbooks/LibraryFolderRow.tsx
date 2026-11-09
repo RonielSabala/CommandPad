@@ -3,10 +3,7 @@ import { CssClass } from "@/common/constants/css";
 import { LibraryDropZone, LibraryItemKind } from "@/common/enums";
 import type { LibraryFolder } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
-import {
-  ContextMenuItem,
-  ContextMenuSeparator,
-} from "@/components/common/contextMenu/ContextMenu";
+import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { DragHandle } from "@/components/common/DragHandle";
 import { DragImage } from "@/components/common/DragImage";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
@@ -111,25 +108,24 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
         {t.runbooks.rename}
       </ContextMenuItem>
     ),
-    endActions: (
+    readActions: (
       <>
         <LibraryDownloadItem folderId={folderId} disabled={empty} />
-
         <InfoMenuItem label={t.info.properties} onSelect={info.open} />
-        <ContextMenuSeparator />
-
-        <ContextMenuItem
-          icon={
-            <TrashIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
-          onSelect={() => void removeLibraryFolder(folderId)}
-          danger
-        >
-          {t.runbooks.deleteFolder}
-        </ContextMenuItem>
       </>
+    ),
+    endActions: (
+      <ContextMenuItem
+        icon={
+          <TrashIcon
+            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+          />
+        }
+        onSelect={() => void removeLibraryFolder(folderId)}
+        danger
+      >
+        {t.runbooks.deleteFolder}
+      </ContextMenuItem>
     ),
   };
 

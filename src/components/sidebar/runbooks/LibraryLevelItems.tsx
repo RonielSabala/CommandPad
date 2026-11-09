@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { AppMode } from "@/common/enums";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { SortMenuItems } from "@/components/common/contextMenu/SortMenuItems";
 import { useTranslation } from "@/i18n";
@@ -32,17 +33,20 @@ function SubtreeToggleItem({ folderId }: Props) {
 /** What a folder's menu offers over its contents. */
 export function LibraryLevelItems({ folderId }: Props) {
   const t = useTranslation();
+  const isReadMode = useStore((state) => state.mode === AppMode.READ);
   const sortLibraryFolder = useStore((state) => state.sortLibraryFolder);
 
   return (
     <>
-      <SortMenuItems
-        labels={t.runbooks.sortContents}
-        canSort={(state, direction) =>
-          hasLibraryFolderToSort(state, folderId, direction)
-        }
-        onSort={(direction) => sortLibraryFolder(folderId, direction)}
-      />
+      {!isReadMode && (
+        <SortMenuItems
+          labels={t.runbooks.sortContents}
+          canSort={(state, direction) =>
+            hasLibraryFolderToSort(state, folderId, direction)
+          }
+          onSort={(direction) => sortLibraryFolder(folderId, direction)}
+        />
+      )}
 
       <SubtreeToggleItem folderId={folderId} />
     </>

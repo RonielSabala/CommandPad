@@ -50,6 +50,10 @@ body.read-mode .library-row {
   --library-row-lead: 0px;
 }
 
+body.read-mode .library-row.sidebar-section-list-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
 /* One guide per ancestor folder */
 
 .library-row::before {

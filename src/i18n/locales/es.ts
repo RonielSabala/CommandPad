@@ -1746,6 +1746,7 @@ Si algo sale mal, deshazlo en este orden:
 * La estructura de bloques no puede cambiarse (sin agregar, eliminar ni reordenar).
 * Los valores de las variables sí pueden cambiarse.
 * Los libros sí pueden abrirse.
+* Las carpetas de la biblioteca sí pueden descargarse como zip.
 * Los enlaces se pueden abrir con un clic directo.
 * Las imágenes se abren a pantalla completa con un clic.`,
       persisted:

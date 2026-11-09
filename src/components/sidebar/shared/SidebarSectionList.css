@@ -22,7 +22,7 @@ body.read-mode .sidebar-section-list-row {
   grid-template-columns: 1fr;
 }
 
-body.read-mode .sidebar-section-list-row .row-actions {
+body.read-mode .sidebar-section-list-row:not(.library-row) .row-actions {
   display: none;
 }
 

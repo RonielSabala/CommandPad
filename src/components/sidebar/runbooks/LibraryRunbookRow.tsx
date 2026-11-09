@@ -137,22 +137,22 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
     </>
   );
 
+  const readActions = (
+    <InfoMenuItem label={t.info.properties} onSelect={info.open} />
+  );
+
   const endActions = (
-    <>
-      <InfoMenuItem label={t.info.properties} onSelect={info.open} />
-      <ContextMenuSeparator />
-      <ContextMenuItem
-        icon={
-          <TrashIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-        onSelect={() => void removeLibraryRunbook(runbookId)}
-        danger
-      >
-        {t.runbooks.deleteRunbook}
-      </ContextMenuItem>
-    </>
+    <ContextMenuItem
+      icon={
+        <TrashIcon
+          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+        />
+      }
+      onSelect={() => void removeLibraryRunbook(runbookId)}
+      danger
+    >
+      {t.runbooks.deleteRunbook}
+    </ContextMenuItem>
   );
 
   return (
@@ -243,9 +243,21 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
         title={t.runbooks.actions}
         triggerRef={info.triggerRef}
       >
-        {runbookActions}
-        <ContextMenuSeparator />
-        {endActions}
+        {!readMode && (
+          <>
+            {runbookActions}
+            <ContextMenuSeparator />
+          </>
+        )}
+
+        {readActions}
+
+        {!readMode && (
+          <>
+            <ContextMenuSeparator />
+            {endActions}
+          </>
+        )}
       </ActionsMenu>
 
       {menuAnchor && (
@@ -254,6 +266,7 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
           folderId={runbook.folderId}
           onClose={closeMenu}
           actions={runbookActions}
+          readActions={readActions}
           endActions={endActions}
         />
       )}
