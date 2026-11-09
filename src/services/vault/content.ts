@@ -1,117 +1,32 @@
-import { VaultConfig } from "@/common/config";
-import { VaultStatus } from "@/common/enums";
 import type { RunbookContent, Variable, VaultRecord } from "@/common/types";
+
 import {
   decodeSalt,
   decryptValue,
   deriveVaultKey,
-  encodeSalt,
   encryptValue,
-  isEncryptedValue,
-  isVaultSupported,
-  randomSalt,
-  readPayloadSalt,
 } from "./crypto";
-
-interface VaultSession {
-  key: CryptoKey;
-  salt: Uint8Array;
-  passphrase: string;
-}
-
-const sessions = new Map<string, VaultSession>();
-
-export function isVaultUnlocked(scope: string): boolean {
-  return sessions.has(scope);
-}
-
-export function lockVault(scope?: string): void {
-  if (scope === undefined) {
-    sessions.clear();
-    return;
-  }
-
-  sessions.delete(scope);
-}
-
-export function resolveVaultStatus(
-  scope: string,
-  record: VaultRecord | null | undefined,
-): VaultStatus {
-  if (!isVaultSupported()) {
-    return VaultStatus.UNSUPPORTED;
-  }
-
-  if (!record) {
-    return VaultStatus.ABSENT;
-  }
-
-  return sessions.has(scope) ? VaultStatus.UNLOCKED : VaultStatus.LOCKED;
-}
-
-export async function createVault(
-  scope: string,
-  passphrase: string,
-): Promise<VaultRecord> {
-  const salt = randomSalt();
-  const key = await deriveVaultKey(passphrase, salt);
-  sessions.set(scope, { key, salt, passphrase });
-
-  return {
-    salt: encodeSalt(salt),
-    verifier: await encryptValue(key, salt, VaultConfig.VERIFIER_PLAINTEXT),
-  };
-}
-
-export async function unlockVault(
-  scope: string,
-  passphrase: string,
-  record: VaultRecord,
-): Promise<boolean> {
-  const salt = decodeSalt(record.salt);
-  const key = await deriveVaultKey(passphrase, salt);
-
-  try {
-    await decryptValue(key, record.verifier);
-  } catch {
-    return false;
-  }
-
-  sessions.set(scope, { key, salt, passphrase });
-  return true;
-}
-
-/**  Opens `scope` with a session that is already holding this record's salt. */
-export function adoptOpenVault(scope: string, record: VaultRecord): boolean {
-  for (const session of sessions.values()) {
-    if (encodeSalt(session.salt) === record.salt) {
-      sessions.set(scope, session);
-      return true;
-    }
-  }
-
-  return false;
-}
+import { isEncryptedValue, readPayload } from "./payload";
+import { getVaultSession, openVaultSessions } from "./session";
 
 export function recordFromCiphertext(
   content: RunbookContent,
 ): VaultRecord | null {
-  const payload = (content.variables ?? []).find((variable) =>
-    isEncryptedValue(variable.value),
-  )?.value;
-
-  if (!payload) {
-    return null;
+  for (const { value } of content.variables ?? []) {
+    const parts = readPayload(value);
+    if (parts) {
+      return { salt: parts.salt, verifier: value };
+    }
   }
 
-  const salt = readPayloadSalt(payload);
-  return salt ? { salt, verifier: payload } : null;
+  return null;
 }
-
-// --- Content transforms ---
 
 const isSecretVariable = (variable: Variable) =>
   !!variable.secret && variable.value.length > 0;
+
+const isPlainSecret = (variable: Variable) =>
+  isSecretVariable(variable) && !isEncryptedValue(variable.value);
 
 export function holdsSecrets(content: RunbookContent): boolean {
   return (content.variables ?? []).some(
@@ -121,10 +36,7 @@ export function holdsSecrets(content: RunbookContent): boolean {
 }
 
 export function hasPlainSecrets(content: RunbookContent): boolean {
-  return (content.variables ?? []).some(
-    (variable) =>
-      isSecretVariable(variable) && !isEncryptedValue(variable.value),
-  );
+  return (content.variables ?? []).some(isPlainSecret);
 }
 
 export function hasEncryptedSecrets(content: RunbookContent): boolean {
@@ -153,13 +65,13 @@ export async function encryptContent(
   scope: string,
   content: RunbookContent,
 ): Promise<RunbookContent> {
-  const open = sessions.get(scope);
+  const open = getVaultSession(scope);
   if (!open || !hasPlainSecrets(content)) {
     return content;
   }
 
   return mapVariables(content, async (variable) =>
-    isSecretVariable(variable) && !isEncryptedValue(variable.value)
+    isPlainSecret(variable)
       ? {
           ...variable,
           value: await encryptValue(open.key, open.salt, variable.value),
@@ -176,24 +88,24 @@ export interface DecryptResult {
 
 async function decryptWith(
   content: RunbookContent,
-  keyForValue: (value: string) => Promise<CryptoKey | null>,
+  keyForSalt: (salt: string) => Promise<CryptoKey | null>,
 ): Promise<DecryptResult> {
   let failed = 0;
 
   const decrypted = await mapVariables(content, async (variable) => {
-    const variableValue = variable.value;
-    if (!isEncryptedValue(variableValue)) {
+    const parts = readPayload(variable.value);
+    if (!parts) {
       return variable;
     }
 
     try {
-      const key = await keyForValue(variableValue);
+      const key = await keyForSalt(parts.salt);
       if (!key) {
         failed += 1;
         return variable;
       }
 
-      return { ...variable, value: await decryptValue(key, variableValue) };
+      return { ...variable, value: await decryptValue(key, parts) };
     } catch {
       failed += 1;
       return variable;
@@ -207,7 +119,7 @@ export async function decryptContent(
   scope: string,
   content: RunbookContent,
 ): Promise<DecryptResult> {
-  const open = sessions.get(scope);
+  const open = getVaultSession(scope);
   if (!open) {
     return { content, failed: countEncryptedSecrets(content) };
   }
@@ -228,20 +140,17 @@ export interface OpenVaultDecryptResult extends DecryptResult {
 export async function decryptContentWithOpenVaults(
   content: RunbookContent,
 ): Promise<OpenVaultDecryptResult> {
-  const keysBySalt = new Map<string, CryptoKey>();
+  const sessions = openVaultSessions();
+  const keysBySalt = new Map(sessions.map(({ salt, key }) => [salt, key]));
 
-  for (const { key, salt } of sessions.values()) {
-    keysBySalt.set(encodeSalt(salt), key);
-  }
-
-  const bySalt = await decryptWith(content, async (value) => {
-    const salt = readPayloadSalt(value);
-    return (salt && keysBySalt.get(salt)) || null;
-  });
+  const bySalt = await decryptWith(
+    content,
+    async (salt) => keysBySalt.get(salt) ?? null,
+  );
 
   if (bySalt.failed > 0) {
     const openPassphrases = new Set(
-      [...sessions.values()].map((session) => session.passphrase),
+      sessions.map((session) => session.passphrase),
     );
 
     for (const passphrase of openPassphrases) {
@@ -269,12 +178,7 @@ export async function decryptContentWithPassphrase(
 ): Promise<DecryptResult> {
   const keysBySalt = new Map<string, CryptoKey>();
 
-  return decryptWith(content, async (value) => {
-    const salt = readPayloadSalt(value);
-    if (!salt) {
-      return null;
-    }
-
+  return decryptWith(content, async (salt) => {
     const cached = keysBySalt.get(salt);
     if (cached) {
       return cached;

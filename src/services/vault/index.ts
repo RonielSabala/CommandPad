@@ -1,7 +1,4 @@
-export { isEncryptedValue, isVaultSupported } from "./crypto";
 export {
-  adoptOpenVault,
-  createVault,
   decryptContent,
   decryptContentWithOpenVaults,
   decryptContentWithPassphrase,
@@ -9,10 +6,16 @@ export {
   hasEncryptedSecrets,
   hasPlainSecrets,
   holdsSecrets,
+  recordFromCiphertext,
+  type DecryptResult
+} from "./content";
+export { isVaultSupported } from "./crypto";
+export { isEncryptedValue } from "./payload";
+export {
+  adoptOpenVault,
+  createVault,
   isVaultUnlocked,
   lockVault,
-  recordFromCiphertext,
   resolveVaultStatus,
-  unlockVault,
-  type DecryptResult
-} from "./vault";
+  unlockVault
+} from "./session";

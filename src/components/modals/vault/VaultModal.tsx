@@ -1,6 +1,6 @@
-import { VAULT_PROMPT_FIELDS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { VaultField, VaultPrompt } from "@/common/enums";
+import { VAULT_PROMPT_FIELDS } from "@/common/vaultConfig";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { Spinner } from "@/components/common/Spinner";
 import { VerticalDivider } from "@/components/common/VerticalDivider";

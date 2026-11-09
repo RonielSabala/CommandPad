@@ -1,5 +1,5 @@
-import { VAULT_PROMPT_FIELDS, VaultConfig } from "@/common/config";
 import { VaultError, VaultField, VaultPrompt } from "@/common/enums";
+import { VAULT_PROMPT_FIELDS, VaultConfig } from "@/common/vaultConfig";
 
 import type { StoreKit } from "@/store/kit";
 import type { StoreServices } from "@/store/services";

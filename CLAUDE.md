@@ -35,7 +35,7 @@ CommandPad is a variable-aware command runbook tool: define variables once, refe
 - `src/common/` — framework-free definitions:
   - `enums.ts` — domain enums as frozen `as const` objects (**never** TS `enum`) paired with a derived union type. `types.ts` — `Tab`, `Block` (discriminated union), `Variable`, `LibraryRunbook`, `RunbookContent`, …
   - `constants/` — `css.ts` (`CssClass`), `dom.ts` (`ElementId`, `Selector`, `DataAttr`, …), `events.ts` (`EventType`, `Key`, `PASSIVE`/`PASSIVE_CAPTURE`, …), `routes.ts`, `docs.ts` (the docs section registry).
-  - `config.ts` (storage keys, timing, per-feature configs), `editorConfig.ts` (code languages, Monaco options/constants), `regex.ts` (regex composition primitives), `markdownSyntax.ts`, `variableSyntax.ts` (see [Syntax tables](#syntax-tables-and-composed-regexes)), `zipFormat.ts` (the zip binary layout), `keybindings.ts` (`KEYBINDINGS`, `formatBinding`, `matchesKeybinding`; descriptions live in i18n).
+  - `config.ts` (storage keys, timing, per-feature configs), `editorConfig.ts` (code languages, Monaco options/constants), `regex.ts` (regex composition primitives), `markdownSyntax.ts`, `variableSyntax.ts` (see [Syntax tables](#syntax-tables-and-composed-regexes)), `zipFormat.ts` (the zip binary layout), `vaultConfig.ts` (the vault's crypto parameters and payload layout), `keybindings.ts` (`KEYBINDINGS`, `formatBinding`, `matchesKeybinding`; descriptions live in i18n).
 - `src/blocks/` — the block **model** registry. See [Block types](#block-types-the-registry).
 - `src/i18n/` — translations. See [Internationalization](#internationalization-i18n).
 - `src/store/` — the Zustand store (see [The Zustand store](#the-zustand-store)), `persistence.ts` (localStorage), `runbookDb.ts` (IndexedDB).

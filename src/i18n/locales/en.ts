@@ -1,4 +1,4 @@
-import { MIDDLE_DOT, VaultConfig } from "@/common/config";
+import { MIDDLE_DOT } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
@@ -17,6 +17,7 @@ import {
   VaultStatus,
 } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
+import { VaultConfig } from "@/common/vaultConfig";
 import { codeBulletList } from "../lists";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";

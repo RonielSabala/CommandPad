@@ -1,11 +1,4 @@
-import {
-  ExportFormat,
-  PanelId,
-  PanelSide,
-  RunbookView,
-  VaultField,
-  VaultPrompt,
-} from "./enums";
+import { ExportFormat, PanelId, PanelSide, RunbookView } from "./enums";
 import type { PanelState } from "./types";
 
 export const StorageKey = {
@@ -183,31 +176,6 @@ export const ELLIPSIS = "\u2026";
 export const MIDDLE_DOT = "·";
 export const SECRET_MASK = "•".repeat(8);
 export const PREVIEW_SECRET_MASK = "*".repeat(6);
-
-export const VaultConfig = {
-  PREFIX: "cpv1",
-  SEPARATOR: ".",
-  SEGMENT_COUNT: 4,
-  DERIVE_ALGORITHM: "PBKDF2",
-  HASH_ALGORITHM: "SHA-256",
-  CIPHER_ALGORITHM: "AES-GCM",
-  ITERATIONS: 310_000,
-  KEY_LENGTH_BITS: 256,
-  SALT_BYTES: 16,
-  IV_BYTES: 12,
-  VERIFIER_PLAINTEXT: "commandpad-vault",
-  MIN_PASSPHRASE_LENGTH: 8,
-} as const;
-
-export const VAULT_PROMPT_FIELDS: Record<VaultPrompt, readonly VaultField[]> = {
-  [VaultPrompt.CREATE]: [VaultField.NEXT, VaultField.CONFIRM],
-  [VaultPrompt.UNLOCK]: [VaultField.CURRENT],
-  [VaultPrompt.CHANGE]: [
-    VaultField.CURRENT,
-    VaultField.NEXT,
-    VaultField.CONFIRM,
-  ],
-};
 
 export const StringCaseConfig = {
   SNAKE_SEPARATOR: "_",
