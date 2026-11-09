@@ -6,7 +6,7 @@ import {
   readZip,
   readZipText,
   textZipFile,
-} from "./zip";
+} from "./index";
 
 // Written by Python's zipfile to a stream, with a non-ASCII name
 const STREAMED_ZIP =
