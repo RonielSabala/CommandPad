@@ -1,6 +1,6 @@
 import { LibraryFolderConfig } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { LibraryDropZone, LibraryItemKind } from "@/common/enums";
+import { AppMode, LibraryDropZone, LibraryItemKind } from "@/common/enums";
 import type { LibraryFolder } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
@@ -9,7 +9,6 @@ import { DragHandle } from "@/components/common/DragHandle";
 import { DragImage } from "@/components/common/DragImage";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
-import { RenameInput } from "@/components/common/RenameInput";
 import { NO_TOOLTIP, tooltip } from "@/components/common/tooltip/tooltip";
 import {
   EditorToggleChevronIcon,
@@ -30,6 +29,8 @@ import { FolderProperties } from "../menu/LibraryProperties";
 import { libraryDepthStyle } from "./libraryDepth";
 import "./LibraryFolderRow.css";
 import "./LibraryRow.css";
+import { LibraryRowLabel } from "./LibraryRowLabel";
+import { renameOnBlank } from "./renameOnBlank";
 import { useLibraryRowDrag } from "./useLibraryRowDrag";
 import { useLibraryRowMenu } from "./useLibraryRowMenu";
 
@@ -45,6 +46,8 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
   empty,
 }: Props) {
   const t = useTranslation();
+  const readMode = useStore((state) => state.mode === AppMode.READ);
+
   const folderId = folder.id;
   const FolderIcon = folder.collapsed ? FolderFill : FolderOpenFillIcon;
   const showsContents = !folder.collapsed && !empty;
@@ -141,59 +144,49 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
 
       <DragHandle handleProps={handleProps} />
 
-      <div className={CssClass.LIBRARY_ROW_MAIN}>
-        {renaming || renamePending ? (
-          <RenameInput
-            className={classNames(
-              CssClass.LIBRARY_ROW_LABEL,
-              CssClass.LIBRARY_ROW_RENAME_INPUT,
-            )}
-            value={folder.name}
-            maxLength={LibraryFolderConfig.NAME_MAX_LENGTH}
-            onCommit={(name) => {
-              renameLibraryFolder(folderId, name);
-              stopRenaming();
-            }}
-            onCancel={stopRenaming}
-          />
-        ) : (
-          <button
-            className={classNames(
-              "library-folder-btn",
-              empty && "library-folder-empty",
-              folder.collapsed && CssClass.COLLAPSED,
-              CssClass.LIBRARY_ROW_BTN,
-              CssClass.LIBRARY_ROW_LABEL,
-              CssClass.NO_USER_SELECT,
-            )}
-            aria-expanded={empty ? undefined : !folder.collapsed}
-            onClick={() => toggleLibraryFolder(folderId)}
-            {...tooltip(folder.name)}
-          >
-            <span
-              className="library-folder-chevron-zone"
-              onClick={empty ? (event) => event.stopPropagation() : undefined}
-              {...NO_TOOLTIP}
-            >
-              <EditorToggleChevronIcon
+      <div
+        className={CssClass.LIBRARY_ROW_MAIN}
+        onDoubleClick={renameOnBlank(readMode, () => setRenaming(true))}
+      >
+        <LibraryRowLabel
+          className={classNames(
+            "library-folder-btn",
+            empty && "library-folder-empty",
+            folder.collapsed && CssClass.COLLAPSED,
+          )}
+          leading={
+            <>
+              <span
+                className="library-folder-chevron-zone"
+                onClick={empty ? (event) => event.stopPropagation() : undefined}
+                {...NO_TOOLTIP}
+              >
+                <EditorToggleChevronIcon
+                  className={classNames(
+                    "library-folder-chevron",
+                    CssClass.ICON_SM,
+                    CssClass.ICON_BOLD,
+                  )}
+                />
+              </span>
+
+              <FolderIcon
                 className={classNames(
-                  "library-folder-chevron",
-                  CssClass.ICON_SM,
-                  CssClass.ICON_BOLD,
+                  CssClass.ICON_MD,
+                  CssClass.LIBRARY_ROW_ICON,
                 )}
               />
-            </span>
-
-            <FolderIcon
-              className={classNames(
-                CssClass.ICON_MD,
-                CssClass.LIBRARY_ROW_ICON,
-              )}
-            />
-
-            <span className={CssClass.LIBRARY_ROW_NAME}>{folder.name}</span>
-          </button>
-        )}
+            </>
+          }
+          name={folder.name}
+          renaming={renaming || renamePending}
+          maxLength={LibraryFolderConfig.NAME_MAX_LENGTH}
+          onRename={(name) => renameLibraryFolder(folderId, name)}
+          onRenameEnd={stopRenaming}
+          aria-expanded={empty ? undefined : !folder.collapsed}
+          onClick={() => toggleLibraryFolder(folderId)}
+          {...tooltip(folder.name)}
+        />
       </div>
 
       <ActionsMenu

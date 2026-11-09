@@ -31,6 +31,9 @@
     var(--library-btn-inset-inline) + var(--icon-md)
   );
 
+  /* The name's hover underline */
+  --library-name-underline: 1px;
+
   /* The space on each side of a folder's chevron */
   --library-chevron-padding: var(--space-1);
 
@@ -102,9 +105,22 @@ body.read-mode .library-row.sidebar-section-list-row {
   line-height: normal;
 }
 
-.library-row-rename-input {
+.library-row-renaming {
+  cursor: default;
+}
+
+.library-row-label .library-row-rename-input {
+  --library-rename-padding-block: var(--space-1);
+  --library-rename-inset-block: calc(
+    var(--rename-input-border) + var(--library-rename-padding-block)
+  );
+
   field-sizing: content;
   min-width: var(--space-8);
+  padding-block: var(--library-rename-padding-block);
+  margin-block: calc(-1 * var(--library-rename-inset-block))
+    calc(var(--library-name-underline) - var(--library-rename-inset-block));
+  margin-inline: calc(-1 * var(--rename-input-inset));
 }
 
 .library-row-btn {
@@ -140,7 +156,7 @@ body.read-mode .library-row.sidebar-section-list-row {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-bottom: 1px solid transparent;
+  border-bottom: var(--library-name-underline) solid transparent;
 }
 
 .library-row:not(.active) .library-row-btn:hover .library-row-name {

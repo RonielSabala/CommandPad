@@ -1245,7 +1245,7 @@ Si algo sale mal, deshazlo en este orden:
       autoLabel:
         "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca. En caso contrario se usa el nombre del archivo importado.",
       manualName: (renameLabel, resetNameLabel) =>
-        `**Ponerle nombre tú mismo:** haz doble clic en un libro de la lista de arriba o en su pestaña, o elige **${renameLabel}** en cualquiera de sus menús, y pulsa Enter o Escape para conservar el nombre. Un nombre que eliges se mantiene mientras editas el libro; **${resetNameLabel}** vuelve al etiquetado automático.`,
+        `**Ponerle nombre tú mismo:** haz doble clic en el espacio vacío junto al nombre de un libro en la lista de arriba, o en su pestaña, o elige **${renameLabel}** en cualquiera de sus menús, y pulsa Enter o Escape para conservar el nombre. Un nombre que eliges se mantiene mientras editas el libro; **${resetNameLabel}** vuelve al etiquetado automático.`,
       properties: (propertiesLabel) =>
         `**${propertiesLabel}**, en el menú de una carpeta o de un libro, muestra dónde está y cuánto ocupa; haz clic derecho en un espacio vacío de la lista para ver lo mismo de toda la biblioteca.`,
       folders: (
@@ -1256,7 +1256,7 @@ Si algo sale mal, deshazlo en este orden:
         collapseAllLabel,
         expandAllLabel,
       ) =>
-        `**Carpetas:** los botones **${newFolderLabel}** y **${newRunbookLabel}** al pie de la sección crean una carpeta en el nivel superior o un libro vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella con su submenú **${newLabel}**, la renombra o la elimina con todo lo que contiene. El menú del clic derecho de la biblioteca tiene el mismo submenú **${newLabel}**. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. **${collapseAllLabel}** y **${expandAllLabel}**, en el menú de una carpeta o en el del clic derecho de la biblioteca, pliegan o despliegan esa carpeta y todas las que contiene, a cualquier profundidad. Una carpeta vacía no muestra flecha. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con su ruta desde el nivel superior de la biblioteca.`,
+        `**Carpetas:** los botones **${newFolderLabel}** y **${newRunbookLabel}** al pie de la sección crean una carpeta en el nivel superior o un libro vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella con su submenú **${newLabel}**, la renombra o la elimina con todo lo que contiene. También puedes renombrarla con doble clic en el espacio vacío junto a su nombre. El menú del clic derecho de la biblioteca tiene el mismo submenú **${newLabel}**. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. **${collapseAllLabel}** y **${expandAllLabel}**, en el menú de una carpeta o en el del clic derecho de la biblioteca, pliegan o despliegan esa carpeta y todas las que contiene, a cualquier profundidad. Una carpeta vacía no muestra flecha. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con su ruta desde el nivel superior de la biblioteca.`,
       sorting: (sortAscendingLabel, sortDescendingLabel) =>
         `**Ordenar:** **${sortAscendingLabel}** y **${sortDescendingLabel}** ordenan por nombre lo que está directamente en una carpeta. Las carpetas que contiene se ordenan entre sí y quedan encima de sus libros, y lo que hay dentro de cada subcarpeta conserva su orden.`,
       moving:

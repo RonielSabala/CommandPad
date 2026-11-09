@@ -1219,7 +1219,7 @@ If something goes wrong, undo it in this order:
       autoLabel:
         "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label. Otherwise the imported filename is used as the fallback.",
       manualName: (renameLabel, resetNameLabel) =>
-        `**Naming it yourself:** double-click a runbook in the list above or its tab, or pick **${renameLabel}** from either menu, then press Enter or Escape to keep the name. A name you choose stays put while you edit the runbook; **${resetNameLabel}** goes back to auto-labelling.`,
+        `**Naming it yourself:** double-click the empty space beside a runbook's name in the list above, or its tab, or pick **${renameLabel}** from either menu, then press Enter or Escape to keep the name. A name you choose stays put while you edit the runbook; **${resetNameLabel}** goes back to auto-labelling.`,
       properties: (propertiesLabel) =>
         `**${propertiesLabel}**, in a folder's or runbook's menu, shows where it lives and how big it is; right-click empty space in the list for the same about the whole library.`,
       folders: (
@@ -1230,7 +1230,7 @@ If something goes wrong, undo it in this order:
         collapseAllLabel,
         expandAllLabel,
       ) =>
-        `**Folders:** the **${newFolderLabel}** and **${newRunbookLabel}** buttons at the bottom of the section create a top-level folder or an empty runbook. A folder's **${folderActionsLabel}** menu creates either one inside it through its **${newLabel}** submenu, renames the folder, or deletes it with everything it holds. The library's right-click menu has the same **${newLabel}** submenu. Folders nest as deep as you like: click one to fold or unfold it. **${collapseAllLabel}** and **${expandAllLabel}**, in a folder's menu or the library's right-click menu, fold or unfold that folder and every folder inside it at any depth. An empty folder shows no arrow. While you search, the matching runbooks are listed flat, each with its path from the top of the library.`,
+        `**Folders:** the **${newFolderLabel}** and **${newRunbookLabel}** buttons at the bottom of the section create a top-level folder or an empty runbook. A folder's **${folderActionsLabel}** menu creates either one inside it through its **${newLabel}** submenu, renames the folder, or deletes it with everything it holds. Double-clicking the empty space beside a folder's name renames it too. The library's right-click menu has the same **${newLabel}** submenu. Folders nest as deep as you like: click one to fold or unfold it. **${collapseAllLabel}** and **${expandAllLabel}**, in a folder's menu or the library's right-click menu, fold or unfold that folder and every folder inside it at any depth. An empty folder shows no arrow. While you search, the matching runbooks are listed flat, each with its path from the top of the library.`,
       sorting: (sortAscendingLabel, sortDescendingLabel) =>
         `**Sorting:** **${sortAscendingLabel}** and **${sortDescendingLabel}** order what sits directly in a folder. Folders inside it are sorted among themselves and stay above its runbooks, and what's inside each subfolder keeps its order.`,
       moving:

@@ -23,7 +23,7 @@
   border-radius: var(--radius-md) 0 0 var(--radius-md);
 }
 
-.library-folder-btn:not(.library-folder-empty)
+.library-folder-btn:not(.library-folder-empty, .library-row-renaming)
   .library-folder-chevron-zone:hover {
   background: var(--color-surface-hover-bg);
 }

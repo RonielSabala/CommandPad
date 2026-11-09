@@ -140,6 +140,7 @@ export const CssClass = {
   LIBRARY_ROW_MAIN: "library-row-main",
   LIBRARY_ROW_LABEL: "library-row-label",
   LIBRARY_ROW_RENAME_INPUT: "library-row-rename-input",
+  LIBRARY_ROW_RENAMING: "library-row-renaming",
   LIBRARY_ROW_BTN: "library-row-btn",
   LIBRARY_ROW_ICON: "library-row-icon",
   LIBRARY_ROW_NAME: "library-row-name",
