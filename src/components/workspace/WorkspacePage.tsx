@@ -16,9 +16,10 @@ import { ExportModal } from "../modals/ExportModal";
 import { PasteRunbookModal } from "../modals/PasteRunbookModal";
 import { QuickOpenModal } from "../modals/QuickOpenModal";
 import { VaultModal } from "../modals/vault/VaultModal";
-import { RunbookImportInput } from "../sidebar/runbooks/RunbookImportInput";
+import { RunbookImportInput } from "../sidebar/runbooks/import/RunbookImportInput";
 import { Sidebar } from "../sidebar/Sidebar";
 import { VariablesViewContext } from "../variables/variablesViewContext";
+
 import { MainPanel } from "./MainPanel";
 import { SaveNotice } from "./SaveNotice";
 import { SelectionCount } from "./SelectionCount";

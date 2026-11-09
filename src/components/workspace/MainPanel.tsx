@@ -6,6 +6,7 @@ import { getRunbookView, useStore } from "@/store/store";
 import type { ComponentType } from "react";
 
 import { TabsBar } from "../tabs/TabsBar";
+
 import "./MainPanel.css";
 import { RunbookPreview } from "./RunbookPreview";
 import { RunbookSource } from "./RunbookSource";

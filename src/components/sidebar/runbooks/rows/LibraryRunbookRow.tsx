@@ -34,13 +34,14 @@ import {
   Vr,
 } from "react-bootstrap-icons";
 
-import { LibraryContextMenu } from "./LibraryContextMenu";
+import { RunbookSecretBadge } from "../badges/RunbookSecretBadge";
+import { RunbookSyncBadge } from "../badges/RunbookSyncBadge";
+import { LibraryContextMenu } from "../menu/LibraryContextMenu";
+import { RunbookProperties } from "../menu/LibraryProperties";
+
 import { libraryDepthStyle } from "./libraryDepth";
-import { RunbookProperties } from "./LibraryProperties";
 import "./LibraryRow.css";
 import "./LibraryRunbookRow.css";
-import { RunbookSecretBadge } from "./RunbookSecretBadge";
-import { RunbookSyncBadge } from "./RunbookSyncBadge";
 import { useLibraryRowDrag } from "./useLibraryRowDrag";
 import { useLibraryRowMenu } from "./useLibraryRowMenu";
 

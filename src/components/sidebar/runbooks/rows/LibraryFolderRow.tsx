@@ -22,12 +22,13 @@ import { classNames } from "@/utils/string";
 import { memo, useEffect, useState } from "react";
 import { FolderFill, Vr } from "react-bootstrap-icons";
 
-import { LibraryContextMenu } from "./LibraryContextMenu";
+import { LibraryContextMenu } from "../menu/LibraryContextMenu";
+import { LibraryDownloadItem } from "../menu/LibraryDownloadItem";
+import { LibraryMenuItems } from "../menu/LibraryMenuItems";
+import { FolderProperties } from "../menu/LibraryProperties";
+
 import { libraryDepthStyle } from "./libraryDepth";
-import { LibraryDownloadItem } from "./LibraryDownloadItem";
 import "./LibraryFolderRow.css";
-import { LibraryMenuItems } from "./LibraryMenuItems";
-import { FolderProperties } from "./LibraryProperties";
 import "./LibraryRow.css";
 import { useLibraryRowDrag } from "./useLibraryRowDrag";
 import { useLibraryRowMenu } from "./useLibraryRowMenu";

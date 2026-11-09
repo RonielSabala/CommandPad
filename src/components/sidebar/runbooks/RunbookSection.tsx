@@ -21,12 +21,13 @@ import { FileEarmark, Folder } from "react-bootstrap-icons";
 import { SidebarSection } from "../shared/SidebarSection";
 import { SidebarSectionFooter } from "../shared/SidebarSectionFooter";
 import { SidebarSectionList } from "../shared/SidebarSectionList";
-import { LibraryContextMenu } from "./LibraryContextMenu";
-import { LibraryDownloadItem } from "./LibraryDownloadItem";
-import { LibraryImportButton } from "./LibraryImportButton";
-import { FolderProperties } from "./LibraryProperties";
-import { LibraryTopLevelDrop } from "./LibraryTopLevelDrop";
-import { LibraryTreeRow } from "./LibraryTreeRow";
+
+import { LibraryImportButton } from "./import/LibraryImportButton";
+import { LibraryContextMenu } from "./menu/LibraryContextMenu";
+import { LibraryDownloadItem } from "./menu/LibraryDownloadItem";
+import { FolderProperties } from "./menu/LibraryProperties";
+import { LibraryTopLevelDrop } from "./rows/LibraryTopLevelDrop";
+import { LibraryTreeRow } from "./rows/LibraryTreeRow";
 import "./RunbookSection.css";
 
 const renderRow = (row: LibraryRow) => <LibraryTreeRow row={row} />;
