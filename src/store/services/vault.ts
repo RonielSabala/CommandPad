@@ -22,7 +22,7 @@ import {
   getLibraryRunbook,
 } from "@/store/selectors";
 import { tabContent } from "@/store/tabState";
-import type { VaultPassphrases } from "@/store/types";
+import type { VaultBatch, VaultPassphrases } from "@/store/types";
 import { stripJsonExtension } from "@/utils/export";
 
 import type { ContentService } from "./content";
@@ -131,6 +131,7 @@ export function createVaultFlows(
     prompt: VaultPrompt,
     verify: (passphrases: VaultPassphrases) => Promise<boolean>,
     filename: string | null = null,
+    batch: VaultBatch | null = null,
   ) =>
     new Promise<boolean>((resolve) => {
       if (isDemo || !isVaultSupported()) {
@@ -142,6 +143,7 @@ export function createVaultFlows(
         vaultDialog: {
           prompt,
           filename,
+          batch,
           error: null,
           busy: false,
           verify,
@@ -319,6 +321,7 @@ export function createVaultFlows(
   const decryptImportedContent = async (
     content: RunbookContent,
     filename: string | null = null,
+    batch: VaultBatch | null = null,
   ): Promise<ImportedVaultResult> => {
     const read = await readImportedContent(content);
 
@@ -346,9 +349,29 @@ export function createVaultFlows(
         return true;
       },
       filename,
+      batch,
     );
 
     return { content: opened, vault: read.vault, passphrase };
+  };
+
+  /** Decrypts runbooks imported together. */
+  const decryptImportedBatch = (contents: readonly RunbookContent[]) => {
+    const locked = new Set(contents.filter(hasEncryptedSecrets));
+    let skipped = false;
+    const skipAll = () => {
+      skipped = true;
+    };
+
+    return (content: RunbookContent, filename: string) => {
+      locked.delete(content);
+      return skipped
+        ? readImportedContent(content)
+        : decryptImportedContent(content, filename, {
+            pending: locked.size,
+            skipAll,
+          });
+    };
   };
 
   /** Adds a runbook read out of a cloud file, linked to the file it came from. */
@@ -381,6 +404,7 @@ export function createVaultFlows(
     ensureVaultForSecrets,
     readImportedContent,
     decryptImportedContent,
+    decryptImportedBatch,
     addCloudRunbook,
   };
 }

@@ -11,6 +11,7 @@ type VaultActions = Pick<
   | "changeVaultPassphrase"
   | "submitVaultPassphrase"
   | "dismissVaultDialog"
+  | "skipVaultBatch"
 >;
 
 export function createVaultSlice(
@@ -104,5 +105,10 @@ export function createVaultSlice(
     },
 
     dismissVaultDialog: () => closeVaultDialog(false),
+
+    skipVaultBatch: () => {
+      get().vaultDialog?.batch?.skipAll();
+      closeVaultDialog(false);
+    },
   };
 }

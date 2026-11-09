@@ -461,11 +461,14 @@ export interface Messages {
     title: Record<VaultPrompt, string>;
     message: Record<VaultPrompt, string>;
     unlockFileMessage: (filename: string) => string;
+    batchMessage: (pending: number, skipAllLabel: string) => string;
     submit: Record<VaultPrompt, string>;
     fieldLabel: Record<VaultPrompt, Record<VaultField, string>>;
     reveal: string;
     hide: string;
     skip: string;
+    skipOne: string;
+    skipAll: string;
     working: string;
     errors: Record<VaultError, string>;
   };
@@ -949,7 +952,7 @@ export interface Messages {
       passphrase: (createLabel: string) => string;
       covered: string;
       unlocking: string;
-      importing: string;
+      importing: (skipAllLabel: string) => string;
       changing: (changeLabel: string) => string;
       markdownWarning: string;
     };

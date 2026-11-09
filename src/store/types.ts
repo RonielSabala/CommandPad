@@ -91,9 +91,15 @@ interface ConfirmDialog extends Dialog<boolean> {
 
 export type VaultPassphrases = Record<VaultField, string>;
 
+export interface VaultBatch {
+  pending: number;
+  skipAll: () => void;
+}
+
 interface VaultDialog {
   prompt: VaultPrompt;
   filename: string | null;
+  batch: VaultBatch | null;
   error: VaultError | null;
   busy: boolean;
   verify: (passphrases: VaultPassphrases) => Promise<boolean>;
@@ -440,6 +446,7 @@ export interface StoreState {
   changeVaultPassphrase: (runbookId: string) => Promise<boolean>;
   submitVaultPassphrase: (passphrases: VaultPassphrases) => Promise<void>;
   dismissVaultDialog: () => void;
+  skipVaultBatch: () => void;
 
   // Import / export
   openExportModal: () => void;

@@ -48,7 +48,7 @@ export function createCloudFilesSlice(
   services: StoreServices,
 ): CloudFilesActions {
   const { set, get } = kit;
-  const { decryptImportedContent, addCloudRunbook, emptyCloudSelection } =
+  const { decryptImportedBatch, addCloudRunbook, emptyCloudSelection } =
     services;
 
   /** Runs one change against the open provider, then relists the folder. */
@@ -225,8 +225,12 @@ export function createCloudFilesSlice(
       set({ cloudLoading: false, cloudError: failure });
 
       let added = 0;
+      const decrypt = decryptImportedBatch(
+        pending.map(({ content }) => content),
+      );
+
       for (const { file, content, revision } of pending) {
-        const decrypted = await decryptImportedContent(content, file.name);
+        const decrypted = await decrypt(content, file.name);
         const sync = syncs.get(file.id);
         const linked = sync && { ...sync, revision };
 

@@ -572,6 +572,10 @@ export const en: Messages = {
     },
     unlockFileMessage: (filename) =>
       `\`${filename}\` holds secrets encrypted with a different passphrase. Enter it to open them.`,
+    batchMessage: (pending, skipAllLabel) =>
+      pending === 1
+        ? `**1** more runbook in this import is locked. If it shares this passphrase, it opens without asking; **${skipAllLabel}** leaves it encrypted too.`
+        : `**${pending}** more runbooks in this import are locked. Those that share this passphrase open without asking; **${skipAllLabel}** leaves them all encrypted.`,
     submit: {
       [VaultPrompt.CREATE]: "Encrypt secrets",
       [VaultPrompt.UNLOCK]: "Unlock",
@@ -597,6 +601,8 @@ export const en: Messages = {
     reveal: "Show passphrase",
     hide: "Hide passphrase",
     skip: "Not now",
+    skipOne: "Skip this one",
+    skipAll: "Skip all",
     working: "Deriving key…",
     errors: {
       [VaultError.TOO_SHORT]: `Use at least ${VaultConfig.MIN_PASSPHRASE_LENGTH} characters.`,
@@ -1602,8 +1608,8 @@ If something goes wrong, undo it in this order:
         "Only secret values are encrypted; everything else stays plain text, so an exported runbook is still readable and diffable. On disk a secret looks like `cpv1.<salt>.<iv>.<ciphertext>`: a label plus everything needed to decrypt it except your passphrase, which is why the file opens on any machine that has it.",
       unlocking:
         "Reopening the tab locks every runbook again, but only the one in front of you asks to unlock; the rest wait until you open them. A shield by a runbook's name shows its state: green and closed when unlocked, plain when locked, crossed out when nothing protects it. Click it to unlock, or to set a passphrase. Copying a command from a locked runbook still works, but its secrets come out as ciphertext, so the copy warns you how many values are still encrypted.",
-      importing:
-        "Importing a `.json` that holds secrets is the same story, with one shortcut: if any runbook you already unlocked this session uses the passphrase that file was encrypted with, it opens without asking you for it again.",
+      importing: (skipAllLabel) =>
+        `Importing a \`.json\` that holds secrets is the same story, with one shortcut: if any runbook you already unlocked this session uses the passphrase that file was encrypted with, it opens without asking you for it again. When several locked runbooks arrive together (a zip, a batch of files, a cloud import), each prompt says how many are still waiting, and **${skipAllLabel}** leaves the rest encrypted.`,
       changing: (changeLabel) =>
         `Click an unlocked shield to open **${changeLabel}**: enter the current passphrase, then the new one twice. Every secret in that runbook, including its copy in a linked cloud file, is re-encrypted on the spot. Other runbooks and past exports keep the old passphrase.`,
       markdownWarning:

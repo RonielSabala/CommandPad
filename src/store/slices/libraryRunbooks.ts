@@ -2,12 +2,7 @@ import { DEFAULT_TAB_LABEL, RunbookConfig } from "@/common/config";
 import { AppMode, DialogTone, MoveDirection } from "@/common/enums";
 import type { LibraryRunbook, RunbookContent } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
-import {
-  adoptOpenVault,
-  hasEncryptedSecrets,
-  holdsSecrets,
-  unlockVault,
-} from "@/services/vault";
+import { adoptOpenVault, holdsSecrets, unlockVault } from "@/services/vault";
 import type { StoreKit } from "@/store/kit";
 import {
   offerNumberedName,
@@ -78,8 +73,8 @@ export function createLibraryRunbooksSlice(
     writeRunbookContent,
     readRunbookContent,
     encryptStoredRunbook,
-    readImportedContent,
     decryptImportedContent,
+    decryptImportedBatch,
     revealRunbook,
   } = services;
 
@@ -183,16 +178,12 @@ export function createLibraryRunbooksSlice(
       runbookSearchQuery: "",
     }));
 
-    let declined = false;
+    const decrypt = decryptImportedBatch(parsed.map(({ content }) => content));
     for (const { filename, folderId, content } of parsed) {
       try {
-        const imported = declined
-          ? await readImportedContent(content)
-          : await decryptImportedContent(content, filename);
-
-        declined ||= hasEncryptedSecrets(imported.content);
-
+        const imported = await decrypt(content, filename);
         const stem = stripJsonExtension(filename);
+
         await appendLibraryRunbook(
           imported.content,
           {
@@ -529,13 +520,33 @@ export function createLibraryRunbooksSlice(
       let failedCount = 0;
       const openInTab = files.length === 1;
 
-      const importJsonFile = async (file: File) => {
-        try {
-          const decrypted = await decryptImportedContent(
-            parseRunbookSource(await file.text()),
-            file.name,
-          );
+      // Every runbook file is read before the first one is added
+      const parsed = new Map<File, RunbookContent>();
+      for (const file of files) {
+        if (isZipFilename(file.name)) {
+          continue;
+        }
 
+        try {
+          parsed.set(file, parseRunbookSource(await file.text()));
+        } catch {
+          failedCount += 1;
+        }
+      }
+
+      const decrypt = decryptImportedBatch([...parsed.values()]);
+      for (const file of files) {
+        const content = parsed.get(file);
+        if (!content) {
+          if (isZipFilename(file.name)) {
+            failedCount += await importLibraryZip(file);
+          }
+
+          continue;
+        }
+
+        try {
+          const decrypted = await decrypt(content, file.name);
           await get().addLibraryRunbook(
             decrypted.content,
             stripJsonExtension(file.name),
@@ -544,17 +555,9 @@ export function createLibraryRunbooksSlice(
             openInTab,
             importedVault(decrypted),
           );
-
-          return 0;
         } catch {
-          return 1;
+          failedCount += 1;
         }
-      };
-
-      for (const file of files) {
-        failedCount += await (isZipFilename(file.name)
-          ? importLibraryZip(file)
-          : importJsonFile(file));
       }
 
       if (failedCount > 0) {
