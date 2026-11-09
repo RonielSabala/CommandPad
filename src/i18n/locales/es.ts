@@ -805,7 +805,8 @@ export const es: Messages = {
     [KeyBinding.IMPORT_RUNBOOK]: "Abrir el diálogo de importación de libro",
     [KeyBinding.EXPORT]: "Abrir el diálogo de exportación",
     [KeyBinding.DELETE_RUNBOOK]: "Eliminar el libro enfocado de la biblioteca",
-    [KeyBinding.CLEAR_LIBRARY]: "Abrir el diálogo de eliminar todos los libros",
+    [KeyBinding.DELETE_ACTIVE_RUNBOOK]:
+      "Eliminar el libro activo de la biblioteca",
     [KeyBinding.TOGGLE_EDITORS]:
       "Alternar todos los bloques, o todas las secciones en el editor de variables",
     [KeyBinding.TOGGLE_VARIABLES_VIEW]:

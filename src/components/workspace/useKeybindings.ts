@@ -106,11 +106,11 @@ export function useKeybindings(): void {
         }
 
         hit = true;
-      } else if (
-        matchesKeybinding(event, KeyBinding.CLEAR_LIBRARY) &&
-        state.libraryRunbooks.length > 0
-      ) {
-        void state.clearRunbookLibrary();
+      } else if (matchesKeybinding(event, KeyBinding.DELETE_ACTIVE_RUNBOOK)) {
+        if (state.activeRunbookId) {
+          void state.removeLibraryRunbook(state.activeRunbookId);
+        }
+
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.DUPLICATE_BLOCK)) {
         if (state.selectedVariableIds.size > 0) {

@@ -788,7 +788,8 @@ export const en: Messages = {
     [KeyBinding.IMPORT_RUNBOOK]: "Open runbook import dialog",
     [KeyBinding.EXPORT]: "Open export dialog",
     [KeyBinding.DELETE_RUNBOOK]: "Delete the focused runbook from the library",
-    [KeyBinding.CLEAR_LIBRARY]: "Open delete all runbooks dialog",
+    [KeyBinding.DELETE_ACTIVE_RUNBOOK]:
+      "Delete the active runbook from the library",
     [KeyBinding.TOGGLE_EDITORS]:
       "Toggle all blocks, or all sections in the variables editor",
     [KeyBinding.TOGGLE_VARIABLES_VIEW]:
