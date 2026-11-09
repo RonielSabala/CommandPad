@@ -125,6 +125,7 @@ export interface Messages {
     collapseAll: string;
     expandAll: string;
     downloadZip: string;
+    duplicateFolder: string;
     deleteFolder: string;
     syncStatus: Record<
       RunbookSyncStatus,

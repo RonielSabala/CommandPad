@@ -30,6 +30,7 @@ type LibraryFoldersActions = Pick<
   | "toggleLibrarySubtree"
   | "moveLibraryFolder"
   | "removeLibraryFolder"
+  | "duplicateLibraryFolder"
   | "sortLibraryFolder"
   | "consumeLibraryFolderRename"
 >;
@@ -39,7 +40,7 @@ export function createLibraryFoldersSlice(
   services: StoreServices,
 ): LibraryFoldersActions {
   const { set, get, contentDb, saveTabs, saveLibrary } = kit;
-  const { forgetSyncState } = services;
+  const { forgetSyncState, readRunbookContent, writeRunbookCopy } = services;
 
   return {
     createLibraryFolder: (parentId) => {
@@ -119,6 +120,83 @@ export function createLibraryFoldersSlice(
       });
 
       saveTabs();
+      saveLibrary();
+    },
+
+    duplicateLibraryFolder: async (id) => {
+      const state = get();
+      if (state.mode === AppMode.READ) {
+        return;
+      }
+
+      const sourceFolderIds = folderSubtree(state.libraryFolders, id);
+      const sources = state.libraryRunbooks.filter(
+        (r) => r.folderId !== undefined && sourceFolderIds.has(r.folderId),
+      );
+      const stored = await Promise.all(
+        sources.map((r) => readRunbookContent(r.id)),
+      );
+
+      // The library may have changed while the contents loaded
+      const current = get();
+      if (!current.libraryFolders.some((f) => f.id === id)) {
+        return;
+      }
+
+      const subtree = folderSubtree(current.libraryFolders, id);
+      const copiedIds = new Map([...subtree].map((fid) => [fid, generateId()]));
+
+      // The copy's own parent lies outside the subtree, so it stays put
+      const copyOf = (folderId: string) => copiedIds.get(folderId) ?? folderId;
+
+      const folderCopies = current.libraryFolders
+        .filter((f) => subtree.has(f.id))
+        .map((f) => ({
+          ...f,
+          id: copyOf(f.id),
+          parentId: f.parentId && copyOf(f.parentId),
+          name:
+            f.id === id
+              ? uniqueFolderName(current.libraryFolders, f.parentId, f.name)
+              : f.name,
+        }));
+
+      // Only runbooks still inside the subtree, and read before, are copied
+      const storedById = new Map(sources.map((r, i) => [r.id, stored[i]]));
+      const takenFilenames = new Set(
+        current.libraryRunbooks.map((r) => r.filename),
+      );
+
+      const runbookCopies = await Promise.all(
+        current.libraryRunbooks.flatMap((runbook) => {
+          const { folderId } = runbook;
+          const content = storedById.get(runbook.id);
+          if (!content || !folderId || !subtree.has(folderId)) {
+            return [];
+          }
+
+          return [
+            writeRunbookCopy(
+              runbook,
+              content,
+              { label: runbook.label, folderId: copyOf(folderId) },
+              takenFilenames,
+            ),
+          ];
+        }),
+      );
+
+      set((s) => {
+        const libraryFolders = [...s.libraryFolders];
+        const insertAt = libraryFolders.findIndex((f) => f.id === id) + 1;
+        libraryFolders.splice(insertAt, 0, ...folderCopies);
+
+        return {
+          libraryFolders,
+          libraryRunbooks: [...s.libraryRunbooks, ...runbookCopies],
+        };
+      });
+
       saveLibrary();
     },
 

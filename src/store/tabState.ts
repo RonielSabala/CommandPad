@@ -55,6 +55,21 @@ export function contentFields(content: RunbookContent) {
   };
 }
 
+/** A copy of stored content, with fresh ids throughout. */
+export function contentCopy(stored: RunbookContent): RunbookContent {
+  const content = contentFields(stored);
+  const withFreshId = <T extends { id: string }>(item: T): T => ({
+    ...item,
+    id: generateId(),
+  });
+
+  return {
+    variables: content.variables.map(withFreshId),
+    blocks: content.blocks.map(withFreshId),
+    variableSections: content.variableSections.map(withFreshId),
+  };
+}
+
 /** Immutably replace the active tab via `mutate`. */
 export function withActiveTab(
   state: StoreState,

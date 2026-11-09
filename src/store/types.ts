@@ -284,6 +284,7 @@ export interface StoreState {
   // Library folders
   createLibraryFolder: (parentId: string | null) => void;
   removeLibraryFolder: (id: string) => Promise<void>;
+  duplicateLibraryFolder: (id: string) => Promise<void>;
   renameLibraryFolder: (id: string, name: string) => void;
   toggleLibraryFolder: (id: string) => void;
   toggleLibrarySubtree: (id: string | null) => void;

@@ -105,6 +105,7 @@ export const es: Messages = {
     collapseAll: "Contraer todo",
     expandAll: "Expandir todo",
     downloadZip: "Descargar como zip",
+    duplicateFolder: "Duplicar carpeta",
     deleteFolder: "Eliminar carpeta",
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Guardado en ${provider}`,
@@ -1256,7 +1257,7 @@ Si algo sale mal, deshazlo en este orden:
         collapseAllLabel,
         expandAllLabel,
       ) =>
-        `**Carpetas:** los botones **${newFolderLabel}** y **${newRunbookLabel}** al pie de la sección crean una carpeta en el nivel superior o un libro vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella con su submenú **${newLabel}**, la renombra o la elimina con todo lo que contiene. También puedes renombrarla con doble clic en el espacio vacío junto a su nombre. El menú del clic derecho de la biblioteca tiene el mismo submenú **${newLabel}**. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. **${collapseAllLabel}** y **${expandAllLabel}**, en el menú de una carpeta o en el del clic derecho de la biblioteca, pliegan o despliegan esa carpeta y todas las que contiene, a cualquier profundidad. Una carpeta vacía no muestra flecha. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con su ruta desde el nivel superior de la biblioteca.`,
+        `**Carpetas:** los botones **${newFolderLabel}** y **${newRunbookLabel}** al pie de la sección crean una carpeta en el nivel superior o un libro vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella con su submenú **${newLabel}**, la renombra, la duplica o la elimina, en ambos casos con todo lo que contiene. También puedes renombrarla con doble clic en el espacio vacío junto a su nombre. El menú del clic derecho de la biblioteca tiene el mismo submenú **${newLabel}**. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. **${collapseAllLabel}** y **${expandAllLabel}**, en el menú de una carpeta o en el del clic derecho de la biblioteca, pliegan o despliegan esa carpeta y todas las que contiene, a cualquier profundidad. Una carpeta vacía no muestra flecha. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con su ruta desde el nivel superior de la biblioteca.`,
       sorting: (sortAscendingLabel, sortDescendingLabel) =>
         `**Ordenar:** **${sortAscendingLabel}** y **${sortDescendingLabel}** ordenan por nombre lo que está directamente en una carpeta. Las carpetas que contiene se ordenan entre sí y quedan encima de sus libros, y lo que hay dentro de cada subcarpeta conserva su orden.`,
       moving:

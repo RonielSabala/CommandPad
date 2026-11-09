@@ -38,7 +38,6 @@ import {
 import { isZipFilename, libraryZipImport } from "@/utils/libraryZip";
 import { displayLabel, getRunbookLabel } from "@/utils/runbook";
 import { parseRunbookSource } from "@/utils/runbookSource";
-import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
 import { readZip, readZipText } from "@/utils/zip";
 
 type LibraryActions = Pick<
@@ -72,6 +71,7 @@ export function createLibraryRunbooksSlice(
     setVaultRecord,
     writeRunbookContent,
     readRunbookContent,
+    writeRunbookCopy,
     encryptStoredRunbook,
     decryptImportedContent,
     decryptImportedBatch,
@@ -284,66 +284,32 @@ export function createLibraryRunbooksSlice(
     },
 
     duplicateLibraryRunbook: async (id) => {
-      const state = get();
-      if (state.mode === AppMode.READ) {
+      if (get().mode === AppMode.READ) {
         return;
       }
 
-      const sourceIndex = state.libraryRunbooks.findIndex(
-        (runbook) => runbook.id === id,
-      );
-      if (sourceIndex < 0) {
+      const source = getLibraryRunbook(get(), id);
+      const stored = source && (await readRunbookContent(id));
+      if (!source || !stored) {
         return;
       }
-
-      const source = state.libraryRunbooks[sourceIndex];
-      const stored = await readRunbookContent(id);
-      if (!stored) {
-        return;
-      }
-
-      const content = contentFields(stored);
-      const copy: RunbookContent = {
-        variables: content.variables.map((variable) => ({
-          ...variable,
-          id: generateId(),
-        })),
-        blocks: content.blocks.map((block) => ({
-          ...block,
-          id: generateId(),
-        })),
-        variableSections: content.variableSections.map((section) => ({
-          ...section,
-          id: generateId(),
-        })),
-      };
 
       // The library may have changed while the content loaded
       const current = get();
-      const takenFilenames = new Set(
-        current.libraryRunbooks.map((r) => r.filename),
+      const entry = await writeRunbookCopy(
+        source,
+        stored,
+        {
+          label: uniqueLabelIn(current, source.folderId, source.label),
+          folderId: source.folderId,
+        },
+        new Set(current.libraryRunbooks.map((r) => r.filename)),
       );
-      const label = uniqueLabelIn(current, source.folderId, source.label);
-      const filename = source.filename
-        ? nextDuplicateName(source.filename, (candidate) =>
-            takenFilenames.has(candidate),
-          )
-        : "";
-
-      const newId = generateId();
-      await writeRunbookContent(newId, copy);
 
       set((s) => {
         const libraryRunbooks = [...s.libraryRunbooks];
         const insertAt = libraryRunbooks.findIndex((r) => r.id === id) + 1;
-        libraryRunbooks.splice(insertAt, 0, {
-          id: newId,
-          label,
-          filename,
-          named: source.named,
-          folderId: source.folderId,
-          secured: holdsSecrets(copy),
-        });
+        libraryRunbooks.splice(insertAt, 0, entry);
 
         return { libraryRunbooks };
       });

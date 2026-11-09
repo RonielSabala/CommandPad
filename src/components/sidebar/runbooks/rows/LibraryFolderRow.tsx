@@ -19,7 +19,7 @@ import { useStore } from "@/store/store";
 import { libraryDropZone } from "@/utils/libraryTree";
 import { classNames } from "@/utils/string";
 import { memo, useEffect, useState } from "react";
-import { FolderFill, Vr } from "react-bootstrap-icons";
+import { Copy, FolderFill, Vr } from "react-bootstrap-icons";
 
 import { LibraryContextMenu } from "../menu/LibraryContextMenu";
 import { LibraryDownloadItem } from "../menu/LibraryDownloadItem";
@@ -53,6 +53,9 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
   const showsContents = !folder.collapsed && !empty;
 
   const removeLibraryFolder = useStore((state) => state.removeLibraryFolder);
+  const duplicateLibraryFolder = useStore(
+    (state) => state.duplicateLibraryFolder,
+  );
   const renameLibraryFolder = useStore((state) => state.renameLibraryFolder);
   const toggleLibraryFolder = useStore((state) => state.toggleLibraryFolder);
 
@@ -105,12 +108,21 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
     folderId,
     levelActions: true,
     actions: (
-      <ContextMenuItem
-        icon={<Vr className={CssClass.ICON_MD} />}
-        onSelect={() => setRenaming(true)}
-      >
-        {t.runbooks.rename}
-      </ContextMenuItem>
+      <>
+        <ContextMenuItem
+          icon={<Vr className={CssClass.ICON_MD} />}
+          onSelect={() => setRenaming(true)}
+        >
+          {t.runbooks.rename}
+        </ContextMenuItem>
+
+        <ContextMenuItem
+          icon={<Copy className={CssClass.ICON_MD} />}
+          onSelect={() => void duplicateLibraryFolder(folderId)}
+        >
+          {t.runbooks.duplicateFolder}
+        </ContextMenuItem>
+      </>
     ),
     readActions: (
       <>

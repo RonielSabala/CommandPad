@@ -1,5 +1,6 @@
 import { CloudProvider } from "@/common/enums";
 import type {
+  LibraryRunbook,
   RunbookContent,
   RunbookStats,
   RunbookSync,
@@ -8,10 +9,12 @@ import type {
 import type { CloudFileLocation } from "@/services/cloud";
 import { holdsSecrets } from "@/services/vault";
 import { localSourceKey } from "@/utils/embeddedRunbook";
+import { generateId } from "@/utils/id";
+import { buildDuplicateName } from "@/utils/string";
 
 import type { StoreKit } from "@/store/kit";
 import { getTabByRunbookId } from "@/store/selectors";
-import { tabContent } from "@/store/tabState";
+import { contentCopy, tabContent } from "@/store/tabState";
 import type { EmbedState } from "./embeds";
 import type { SyncService } from "./sync";
 import type { VaultRecords } from "./vault";
@@ -55,6 +58,35 @@ export function createContentService(
     return openTab ? tabContent(openTab) : await contentDb.get(runbookId);
   };
 
+  /** Stores a fresh-id copy of `source`'s content, returning the copy's entry. */
+  const writeRunbookCopy = async (
+    source: LibraryRunbook,
+    stored: RunbookContent,
+    { label, folderId }: Pick<LibraryRunbook, "label" | "folderId">,
+    takenFilenames: Set<string>,
+  ): Promise<LibraryRunbook> => {
+    const filename = source.filename
+      ? buildDuplicateName(source.filename, (candidate) =>
+          takenFilenames.has(candidate),
+        )
+      : "";
+
+    takenFilenames.add(filename);
+
+    const id = generateId();
+    const copy = contentCopy(stored);
+    await writeRunbookContent(id, copy);
+
+    return {
+      id,
+      label,
+      filename,
+      named: source.named,
+      folderId,
+      secured: holdsSecrets(copy),
+    };
+  };
+
   /** Writes a tab's content outside the debounced save, in the background. */
   const persistTabContent = (runbookId: string, tab: Tab) => {
     const content = tabContent(tab);
@@ -73,6 +105,7 @@ export function createContentService(
     cloudFileSync,
     runbookLinkedTo,
     readRunbookContent,
+    writeRunbookCopy,
   };
 }
 
