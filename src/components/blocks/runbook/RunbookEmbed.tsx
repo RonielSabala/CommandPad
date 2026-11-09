@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, SEMIBOLD_ICON_CLASS } from "@/common/constants/css";
 import { AppMode, BlockType, EmbeddedRunbookStatus } from "@/common/enums";
 import type { Block, BlockOfType, RunbookBlock } from "@/common/types";
 import "@/components/blocks/BlocksList.css";
@@ -290,11 +290,7 @@ function NestedRunbook({
     <div className="runbook-embed">
       <div className="runbook-embed-header">
         <RunbookIcon
-          className={classNames(
-            "runbook-embed-icon",
-            CssClass.ICON_MD,
-            CssClass.ICON_SEMIBOLD,
-          )}
+          className={classNames("runbook-embed-icon", SEMIBOLD_ICON_CLASS)}
         />
         <div className={CssClass.RUNBOOK_EMBED_ACTIONS}>
           <EmbedUnlock embed={embed} />

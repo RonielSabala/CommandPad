@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, SEMIBOLD_ICON_CLASS } from "@/common/constants/css";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -39,9 +39,7 @@ export function CloudImportModal() {
           className={classNames(CssClass.BTN, CssClass.BTN_LG)}
           onClick={returnToDestinationModal}
         >
-          <ArrowLeft
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
-          />
+          <ArrowLeft className={SEMIBOLD_ICON_CLASS} />
           {t.common.back}
         </button>
 

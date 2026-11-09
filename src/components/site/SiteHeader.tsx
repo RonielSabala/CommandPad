@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, HEADER_ICON_CLASS } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { AppRoute } from "@/common/constants/routes";
 import { Theme } from "@/common/enums";
@@ -67,13 +67,9 @@ export function SiteHeader({ title, showDocsLink }: Props) {
           {...tooltip(toggleThemeLabel)}
         >
           {isLight ? (
-            <MoonIcon
-              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
-            />
+            <MoonIcon className={HEADER_ICON_CLASS} />
           ) : (
-            <SunIcon
-              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
-            />
+            <SunIcon className={HEADER_ICON_CLASS} />
           )}
         </button>
 
@@ -94,9 +90,7 @@ export function SiteHeader({ title, showDocsLink }: Props) {
               aria-label={t.docs.meta.openDocs}
               {...tooltip(t.docs.meta.openDocs)}
             >
-              <BookIcon
-                className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
-              />
+              <BookIcon className={HEADER_ICON_CLASS} />
             </Link>
           </>
         )}

@@ -1,5 +1,5 @@
 import { ImageBlockConfig, MimeType } from "@/common/config";
-import { CssClass } from "@/common/constants/css";
+import { CssClass, SEMIBOLD_ICON_CLASS } from "@/common/constants/css";
 import { InputType } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { AppMode, BlockType, DialogTone } from "@/common/enums";
@@ -241,14 +241,7 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
                   )}
 
                   <ContextMenuItem
-                    icon={
-                      <ImportIcon
-                        className={classNames(
-                          CssClass.ICON_MD,
-                          CssClass.ICON_SEMIBOLD,
-                        )}
-                      />
-                    }
+                    icon={<ImportIcon className={SEMIBOLD_ICON_CLASS} />}
                     onSelect={openFilePicker}
                   >
                     {t.image.replace}
