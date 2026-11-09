@@ -28,10 +28,10 @@ import { FolderFill, Vr } from "react-bootstrap-icons";
 import { LibraryContextMenu } from "./LibraryContextMenu";
 import { libraryDepthStyle } from "./libraryDepth";
 import "./LibraryFolderRow.css";
+import { LibraryLevelItems } from "./LibraryLevelItems";
 import { LibraryNewSubmenu } from "./LibraryNewSubmenu";
 import { FolderProperties } from "./LibraryProperties";
 import "./LibraryRow.css";
-import { LibrarySortItems } from "./LibrarySortItems";
 import { useLibraryRowDrag } from "./useLibraryRowDrag";
 import { useLibraryRowMenu } from "./useLibraryRowMenu";
 
@@ -209,7 +209,7 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
         {folderActions}
 
         <ContextMenuSeparator />
-        <LibrarySortItems folderId={folderId} />
+        <LibraryLevelItems folderId={folderId} />
 
         <ContextMenuSeparator />
 
@@ -223,7 +223,7 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
         <LibraryContextMenu
           anchor={menuAnchor}
           folderId={folderId}
-          sortable
+          levelActions
           onClose={closeMenu}
           actions={folderActions}
           endActions={endActions}

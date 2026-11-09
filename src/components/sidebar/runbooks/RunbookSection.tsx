@@ -139,7 +139,7 @@ export function RunbookSection() {
       {menuAnchor && !isReadMode && (
         <LibraryContextMenu
           anchor={menuAnchor}
-          sortable
+          levelActions
           onClose={closeMenu}
           endActions={
             <>

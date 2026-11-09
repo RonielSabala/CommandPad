@@ -280,6 +280,7 @@ export interface StoreState {
   removeLibraryFolder: (id: string) => Promise<void>;
   renameLibraryFolder: (id: string, name: string) => void;
   toggleLibraryFolder: (id: string) => void;
+  toggleLibrarySubtree: (id: string | null) => void;
   moveLibraryFolder: (
     id: string,
     targetId: string | null,

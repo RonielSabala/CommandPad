@@ -100,6 +100,8 @@ export const es: Messages = {
       [SortDirection.ASC]: "Ordenar de forma ascendente",
       [SortDirection.DESC]: "Ordenar de forma descendente",
     },
+    collapseAll: "Contraer todo",
+    expandAll: "Expandir todo",
     deleteFolder: "Eliminar carpeta",
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Guardado en ${provider}`,
@@ -1238,8 +1240,10 @@ Si algo sale mal, deshazlo en este orden:
         newRunbookLabel,
         folderActionsLabel,
         newLabel,
+        collapseAllLabel,
+        expandAllLabel,
       ) =>
-        `**Carpetas:** los botones **${newFolderLabel}** y **${newRunbookLabel}** al pie de la sección crean una carpeta en el nivel superior o un libro vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella con su submenú **${newLabel}**, la renombra o la elimina con todo lo que contiene. El menú del clic derecho de la biblioteca tiene el mismo submenú **${newLabel}**. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. Una carpeta vacía no muestra flecha. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con su ruta desde el nivel superior de la biblioteca.`,
+        `**Carpetas:** los botones **${newFolderLabel}** y **${newRunbookLabel}** al pie de la sección crean una carpeta en el nivel superior o un libro vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella con su submenú **${newLabel}**, la renombra o la elimina con todo lo que contiene. El menú del clic derecho de la biblioteca tiene el mismo submenú **${newLabel}**. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. **${collapseAllLabel}** y **${expandAllLabel}**, en el menú de una carpeta o en el del clic derecho de la biblioteca, pliegan o despliegan esa carpeta y todas las que contiene, a cualquier profundidad. Una carpeta vacía no muestra flecha. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con su ruta desde el nivel superior de la biblioteca.`,
       sorting: (sortAscendingLabel, sortDescendingLabel) =>
         `**Ordenar:** **${sortAscendingLabel}** y **${sortDescendingLabel}** ordenan por nombre lo que está directamente en una carpeta. Las carpetas que contiene se ordenan entre sí y quedan encima de sus libros, y lo que hay dentro de cada subcarpeta conserva su orden.`,
       moving:

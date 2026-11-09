@@ -40,6 +40,8 @@ export function RunbookLibraryDocs() {
           t.runbooks.newRunbookItem,
           t.runbooks.folderActions,
           t.runbooks.new,
+          t.runbooks.collapseAll,
+          t.runbooks.expandAll,
         )}
       />
       <Prose

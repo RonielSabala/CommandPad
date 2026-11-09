@@ -10,6 +10,7 @@ import {
   withFolderExpanded,
   withLibraryItemMoved,
   withLibraryLevelSorted,
+  withSubtreeToggled,
 } from "@/utils/libraryTree";
 
 import type { StoreKit } from "@/store/kit";
@@ -26,6 +27,7 @@ type LibraryFoldersActions = Pick<
   | "createLibraryFolder"
   | "renameLibraryFolder"
   | "toggleLibraryFolder"
+  | "toggleLibrarySubtree"
   | "moveLibraryFolder"
   | "removeLibraryFolder"
   | "sortLibraryFolder"
@@ -161,6 +163,14 @@ export function createLibraryFoldersSlice(
       set((s) =>
         withLibraryFolder(s, id, (f) => ({ ...f, collapsed: !f.collapsed })),
       );
+
+      saveLibrary();
+    },
+
+    toggleLibrarySubtree: (id) => {
+      set((s) => ({
+        libraryFolders: withSubtreeToggled(s.libraryFolders, id),
+      }));
 
       saveLibrary();
     },

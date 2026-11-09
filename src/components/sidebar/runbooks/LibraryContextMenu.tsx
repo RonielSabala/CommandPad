@@ -6,13 +6,13 @@ import {
 import type { ReactNode } from "react";
 
 import "./LibraryContextMenu.css";
+import { LibraryLevelItems } from "./LibraryLevelItems";
 import { LibraryNewSubmenu } from "./LibraryNewSubmenu";
-import { LibrarySortItems } from "./LibrarySortItems";
 
 interface Props {
   anchor: ContextMenuAnchor;
   folderId?: string;
-  sortable?: boolean;
+  levelActions?: boolean;
   onClose: () => void;
   actions?: ReactNode;
   endActions?: ReactNode;
@@ -21,7 +21,7 @@ interface Props {
 export function LibraryContextMenu({
   anchor,
   folderId,
-  sortable,
+  levelActions,
   onClose,
   actions,
   endActions,
@@ -39,9 +39,9 @@ export function LibraryContextMenu({
         </>
       )}
 
-      {sortable && (
+      {levelActions && (
         <>
-          <LibrarySortItems folderId={folderId ?? null} />
+          <LibraryLevelItems folderId={folderId ?? null} />
           <ContextMenuSeparator />
         </>
       )}

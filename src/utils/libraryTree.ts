@@ -169,6 +169,33 @@ export function folderSubtree(
   return ids;
 }
 
+/** Whether toggling acts as a collapse. */
+export function collapsesSubtree(
+  folders: readonly LibraryFolder[],
+  folderId: string | null,
+): boolean {
+  return folders.some(
+    (f) =>
+      !f.collapsed &&
+      (folderId === null ? f.parentId === null : f.id === folderId),
+  );
+}
+
+/** Collapse or expand a folder and all its subfolders. */
+export function withSubtreeToggled(
+  folders: LibraryFolder[],
+  folderId: string | null,
+): LibraryFolder[] {
+  const collapsed = collapsesSubtree(folders, folderId);
+  const subtree = folderId === null ? null : folderSubtree(folders, folderId);
+
+  return folders.map((f) =>
+    (!subtree || subtree.has(f.id)) && !!f.collapsed !== collapsed
+      ? { ...f, collapsed }
+      : f,
+  );
+}
+
 /** A folder and the folders holding it, innermost first. */
 function folderTrail(
   folders: readonly LibraryFolder[],

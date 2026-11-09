@@ -9,6 +9,7 @@ import { getMessages } from "@/i18n/messages";
 import { describe, expect, it } from "vitest";
 
 import {
+  collapsesSubtree,
   folderLocation,
   folderSubtree,
   foundRunbooks,
@@ -25,6 +26,7 @@ import {
   withFolderExpanded,
   withLibraryItemMoved,
   withLibraryLevelSorted,
+  withSubtreeToggled,
 } from "./libraryTree";
 
 const en = getMessages("en");
@@ -379,6 +381,78 @@ describe("withFolderExpanded", () => {
     expect(
       withFolderExpanded(folders, "inner").map((f) => !!f.collapsed),
     ).toEqual([false, false, false, true]);
+  });
+});
+
+describe("collapsesSubtree", () => {
+  it("follows the folder itself, whatever is inside it", () => {
+    const folders = [folder("open"), folder("shut", null, true)];
+    const nested = [...folders, folder("child", "shut")];
+
+    expect(collapsesSubtree(folders, "open")).toBe(true);
+    expect(collapsesSubtree(nested, "shut")).toBe(false);
+  });
+
+  it("follows the top-level folders for the whole library", () => {
+    const shut = [folder("outer", null, true), folder("inner", "outer")];
+
+    expect(collapsesSubtree(shut, null)).toBe(false);
+    expect(collapsesSubtree([...shut, folder("open")], null)).toBe(true);
+    expect(collapsesSubtree([], null)).toBe(false);
+  });
+});
+
+describe("withSubtreeToggled", () => {
+  const collapsedIds = (folders: LibraryFolder[]) =>
+    folders.filter((f) => f.collapsed).map((f) => f.id);
+
+  it("collapses the folder and all inside it, leaving the rest", () => {
+    const folders = [
+      folder("outer"),
+      folder("middle", "outer", true),
+      folder("inner", "middle"),
+      folder("other"),
+    ];
+
+    expect(collapsedIds(withSubtreeToggled(folders, "outer"))).toEqual([
+      "outer",
+      "middle",
+      "inner",
+    ]);
+  });
+
+  it("expands the folder and all inside it, leaving the rest", () => {
+    const folders = [
+      folder("outer", null, true),
+      folder("middle", "outer"),
+      folder("inner", "middle", true),
+      folder("other", null, true),
+    ];
+
+    expect(collapsedIds(withSubtreeToggled(folders, "outer"))).toEqual([
+      "other",
+    ]);
+  });
+
+  it("toggles a folder with no subfolders", () => {
+    const collapsed = withSubtreeToggled([folder("alone")], "alone");
+
+    expect(collapsedIds(collapsed)).toEqual(["alone"]);
+    expect(collapsedIds(withSubtreeToggled(collapsed, "alone"))).toEqual([]);
+  });
+
+  it("covers the whole library at the top level", () => {
+    const folders = [folder("outer"), folder("inner", "outer", true)];
+    const collapsed = withSubtreeToggled(folders, null);
+
+    expect(collapsedIds(collapsed)).toEqual(["outer", "inner"]);
+    expect(collapsedIds(withSubtreeToggled(collapsed, null))).toEqual([]);
+  });
+
+  it("keeps the objects it doesn't change", () => {
+    const folders = [folder("a"), folder("b", null, true)];
+
+    expect(withSubtreeToggled(folders, null)[1]).toBe(folders[1]);
   });
 });
 
