@@ -1,4 +1,6 @@
 import type { StoreKit } from "@/store/kit";
+import { getLibraryRunbook } from "@/store/selectors";
+import { withFolderExpanded } from "@/utils/libraryTree";
 import { createCloudBrowse } from "./cloudBrowse";
 import { createCloudSave } from "./cloudSave";
 import { createContentService } from "./content";
@@ -31,7 +33,7 @@ export function createStoreServices(kit: StoreKit) {
   });
   const cloudBrowse = createCloudBrowse(kit);
 
-  const { set } = kit;
+  const { set, get, saveLibrary } = kit;
   const { syncedContent } = sync;
   const { embedRequests } = embedState;
   const { declinedVaultSetup } = vaultFlows;
@@ -59,6 +61,18 @@ export function createStoreServices(kit: StoreKit) {
     });
   };
 
+  /** Expands the folders hiding a runbook's row. */
+  const revealRunbook = (runbookId: string | null) => {
+    const state = get();
+    const folderId = runbookId && getLibraryRunbook(state, runbookId)?.folderId;
+    const libraryFolders = withFolderExpanded(state.libraryFolders, folderId);
+
+    if (libraryFolders !== state.libraryFolders) {
+      set({ libraryFolders });
+      saveLibrary();
+    }
+  };
+
   return {
     ...sync,
     ...embedState,
@@ -69,6 +83,7 @@ export function createStoreServices(kit: StoreKit) {
     ...cloudSave,
     ...cloudBrowse,
     resetWorkspace,
+    revealRunbook,
   };
 }
 

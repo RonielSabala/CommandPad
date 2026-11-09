@@ -1,4 +1,5 @@
 import { NoteStyle, SortDirection } from "@/common/enums";
+import { formatBinding, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
 import { demoNote } from "../demos/demoSeeds";
 import { DemoRunbookList, DemoWorkspace } from "../demos/DemoWorkspace";
@@ -48,6 +49,11 @@ export function RunbookLibraryDocs() {
         )}
       />
       <Prose text={t.docs.runbookLibrary.moving} />
+      <Prose
+        text={t.docs.runbookLibrary.quickOpen(
+          formatBinding(KEYBINDINGS[KeyBinding.QUICK_OPEN].binding),
+        )}
+      />
       <Prose text={t.docs.runbookLibrary.autoLabel} />
       <Prose
         text={t.docs.runbookLibrary.manualName(

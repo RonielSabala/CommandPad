@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { ElementId } from "@/common/constants/dom";
 import { RunbookView } from "@/common/enums";
 import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -45,7 +46,7 @@ export function TabsBar() {
     : t.source.openSource;
 
   return (
-    <div id="tabs-bar">
+    <div id={ElementId.TABS_BAR}>
       <div id="tabs-strip">
         {tabs.map((tab) => (
           <TabItem

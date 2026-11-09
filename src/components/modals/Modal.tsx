@@ -16,6 +16,7 @@ interface Props {
   children: ReactNode;
   animated?: boolean;
   noBackdrop?: boolean;
+  closeButton?: boolean;
 }
 
 export function Modal({
@@ -25,6 +26,7 @@ export function Modal({
   children,
   animated = true,
   noBackdrop = false,
+  closeButton = true,
 }: Props) {
   const t = useTranslation();
   useModalDismiss(open, onClose);
@@ -48,18 +50,20 @@ export function Modal({
       }}
     >
       <div className={classNames("modal", className)}>
-        <button
-          className={classNames(
-            "modal-close",
-            CssClass.BTN,
-            CssClass.BTN_SOFT_ICON,
-          )}
-          onClick={onClose}
-          {...tooltip(t.common.close)}
-          aria-label={t.common.close}
-        >
-          <CloseIcon className={CssClass.ICON_SEMIBOLD} />
-        </button>
+        {closeButton && (
+          <button
+            className={classNames(
+              "modal-close",
+              CssClass.BTN,
+              CssClass.BTN_SOFT_ICON,
+            )}
+            onClick={onClose}
+            {...tooltip(t.common.close)}
+            aria-label={t.common.close}
+          >
+            <CloseIcon className={CssClass.ICON_SEMIBOLD} />
+          </button>
+        )}
         {children}
       </div>
     </div>

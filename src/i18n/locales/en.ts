@@ -767,6 +767,7 @@ export const en: Messages = {
       "Save the runbook to the cloud file it is linked to",
     [KeyBinding.NEW_TAB]: "Open a new tab",
     [KeyBinding.CLOSE_TAB]: "Close the active tab",
+    [KeyBinding.QUICK_OPEN]: "Search the library and open a runbook",
     [KeyBinding.FOCUS_RUNBOOK]: "Select active runbook",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navigate runbooks with the active runbook selected",
@@ -1217,6 +1218,8 @@ If something goes wrong, undo it in this order:
         `**Sorting:** **${sortAscendingLabel}** and **${sortDescendingLabel}** order what sits directly in a folder. Folders inside it are sorted among themselves and stay above its runbooks, and what's inside each subfolder keeps its order.`,
       moving:
         "**Moving things:** a line shows where a dragged runbook or folder will land, so you can put it between two runbooks or between two folders, even in another folder. Drop anything on a folder to move it inside; hold it there for a moment and a folded folder opens.",
+      quickOpen: (binding) =>
+        `**Opening by name:** press \`${binding}\` anywhere in the workspace to search the whole library by label, filename, folder or path. Pick a result with the arrow keys and press Enter to open it.`,
       uniqueNames:
         "**Names are unique per folder:** two runbooks can share a name in different folders, but not in the same one, because a runbook block finds a runbook by its name. Renaming a runbook to a name its folder already has, or moving it into a folder that has its name, offers a numbered name like `Deploy (1)`, which you can take or cancel. New runbooks, copies and automatic labels get the number on their own. Folders follow the same rule among the folders beside them.",
       labelDetails:

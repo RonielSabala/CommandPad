@@ -784,6 +784,7 @@ export const es: Messages = {
       "Guardar el libro en el archivo de la nube al que está vinculado",
     [KeyBinding.NEW_TAB]: "Abrir una nueva pestaña",
     [KeyBinding.CLOSE_TAB]: "Cerrar la pestaña activa",
+    [KeyBinding.QUICK_OPEN]: "Buscar en la biblioteca y abrir un libro",
     [KeyBinding.FOCUS_RUNBOOK]: "Seleccionar libro activo",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navegar libros con el libro activo seleccionado",
@@ -1243,6 +1244,8 @@ Si algo sale mal, deshazlo en este orden:
         `**Ordenar:** **${sortAscendingLabel}** y **${sortDescendingLabel}** ordenan por nombre lo que está directamente en una carpeta. Las carpetas que contiene se ordenan entre sí y quedan encima de sus libros, y lo que hay dentro de cada subcarpeta conserva su orden.`,
       moving:
         "**Mover elementos:** una línea muestra dónde caerá el libro o la carpeta que arrastras, así que puedes dejarlo entre dos libros o entre dos carpetas, incluso en otra carpeta. Suéltalo sobre una carpeta para moverlo dentro; si lo mantienes ahí un momento, una carpeta plegada se abre.",
+      quickOpen: (binding) =>
+        `**Abrir por nombre:** pulsa \`${binding}\` en cualquier parte del espacio de trabajo para buscar en toda la biblioteca por etiqueta, nombre de archivo, carpeta o ruta. Elige un resultado con las flechas y pulsa Enter para abrirlo.`,
       uniqueNames:
         "**Los nombres son únicos por carpeta:** dos libros pueden llamarse igual en carpetas distintas, pero no en la misma, porque un bloque de libro encuentra un libro por su nombre. Si renombras un libro con un nombre que su carpeta ya tiene, o lo mueves a una carpeta que ya tiene su nombre, se te propone un nombre numerado como `Deploy (1)`, que puedes aceptar o cancelar. Los libros nuevos, las copias y las etiquetas automáticas reciben el número por sí solos. Las carpetas siguen la misma regla entre las carpetas que tienen al lado.",
       labelDetails:

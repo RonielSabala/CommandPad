@@ -11,6 +11,8 @@ import { displayLabel } from "./runbook";
 import { isOutOfOrder, sortedByName } from "./sort";
 import { buildDuplicateName, matchesQuery } from "./string";
 
+// Types
+
 export type LibraryRow =
   | {
       kind: typeof LibraryItemKind.FOLDER;
@@ -26,12 +28,19 @@ export type LibraryRow =
       path?: readonly string[];
     };
 
+export type LibraryRunbookListing = Extract<
+  LibraryRow,
+  { kind: typeof LibraryItemKind.RUNBOOK }
+> & { path: readonly string[] };
+
 interface LibraryItems {
   folders: LibraryFolder[];
   runbooks: LibraryRunbook[];
 }
 
 const EMPTY_PATH: readonly string[] = Object.freeze([]);
+
+// Utils
 
 const folderName = (folder: LibraryFolder) => folder.name;
 const folderParent = (folder: LibraryFolder) => folder.parentId;
@@ -41,6 +50,10 @@ const runbookName = (t: Messages) => (runbook: LibraryRunbook) =>
 
 export const libraryRowKey = (row: LibraryRow) =>
   row.kind === LibraryItemKind.FOLDER ? row.folder.id : row.runbook.id;
+
+export const libraryPath = (names: readonly string[]) =>
+  LibraryFolderConfig.ROOT_PATH +
+  names.join(LibraryFolderConfig.PATH_SEPARATOR);
 
 function groupByParent<T>(
   items: readonly T[],
@@ -68,22 +81,17 @@ export function libraryRows(
   runbooks: readonly LibraryRunbook[],
   query: string,
 ): LibraryRow[] {
+  if (query) {
+    return foundRunbooks(folders, runbooks, query);
+  }
+
   const subfolders = groupByParent(folders, folderParent);
   const contents = groupByParent(runbooks, runbookParent);
   const rows: LibraryRow[] = [];
 
-  const visit = (
-    parentId: string | null,
-    depth: number,
-    path: readonly string[],
-  ) => {
+  const visit = (parentId: string | null, depth: number) => {
     for (const folder of subfolders.get(parentId) ?? []) {
       const folderId = folder.id;
-      if (query) {
-        visit(folderId, depth, [...path, folder.name]);
-        continue;
-      }
-
       rows.push({
         kind: LibraryItemKind.FOLDER,
         folder,
@@ -92,28 +100,45 @@ export function libraryRows(
       });
 
       if (!folder.collapsed) {
-        visit(folderId, depth + 1, path);
+        visit(folderId, depth + 1);
       }
     }
 
     for (const runbook of contents.get(parentId) ?? []) {
-      const location =
-        LibraryFolderConfig.ROOT_PATH +
-        [...path, runbook.label].join(LibraryFolderConfig.PATH_SEPARATOR);
+      rows.push({ kind: LibraryItemKind.RUNBOOK, runbook, depth });
+    }
+  };
+
+  visit(null, 0);
+  return rows;
+}
+
+/** Every runbook `query` finds. */
+export function foundRunbooks(
+  folders: readonly LibraryFolder[],
+  runbooks: readonly LibraryRunbook[],
+  query: string,
+): LibraryRunbookListing[] {
+  const subfolders = groupByParent(folders, folderParent);
+  const contents = groupByParent(runbooks, runbookParent);
+  const found: LibraryRunbookListing[] = [];
+
+  const visit = (parentId: string | null, path: readonly string[]) => {
+    for (const folder of subfolders.get(parentId) ?? []) {
+      visit(folder.id, [...path, folder.name]);
+    }
+
+    for (const runbook of contents.get(parentId) ?? []) {
+      const location = libraryPath([...path, runbook.label]);
 
       if (matchesQuery(query, location, runbook.filename)) {
-        rows.push({
-          kind: LibraryItemKind.RUNBOOK,
-          runbook,
-          depth,
-          path: query ? path : undefined,
-        });
+        found.push({ kind: LibraryItemKind.RUNBOOK, runbook, depth: 0, path });
       }
     }
   };
 
-  visit(null, 0, EMPTY_PATH);
-  return rows;
+  visit(null, EMPTY_PATH);
+  return found;
 }
 
 /** The runbooks the library list shows. */
@@ -144,25 +169,37 @@ export function folderSubtree(
   return ids;
 }
 
+/** A folder and the folders holding it, innermost first. */
+function folderTrail(
+  folders: readonly LibraryFolder[],
+  folderId: string | null | undefined,
+): Set<LibraryFolder> {
+  const trail = new Set<LibraryFolder>();
+  const byId = new Map<string | null, LibraryFolder>(
+    folders.map((f) => [f.id, f]),
+  );
+
+  for (
+    let folder = byId.get(folderId ?? null);
+    folder && !trail.has(folder);
+    folder = byId.get(folder.parentId)
+  ) {
+    trail.add(folder);
+  }
+
+  return trail;
+}
+
 /** Where a folder's contents live. */
 export function folderLocation(
   folders: readonly LibraryFolder[],
   folderId: string | null,
 ): string {
-  const byId = new Map(folders.map((f) => [f.id, f]));
-  const names: string[] = [];
-  const seen = new Set<string>();
+  const names = [...folderTrail(folders, folderId)]
+    .reverse()
+    .map((folder) => folder.name + LibraryFolderConfig.PATH_SEPARATOR);
 
-  for (
-    let folder = folderId ? byId.get(folderId) : undefined;
-    folder && !seen.has(folder.id);
-    folder = folder.parentId ? byId.get(folder.parentId) : undefined
-  ) {
-    seen.add(folder.id);
-    names.push(folder.name + LibraryFolderConfig.PATH_SEPARATOR);
-  }
-
-  return LibraryFolderConfig.ROOT_PATH + names.reverse().join("");
+  return LibraryFolderConfig.ROOT_PATH + names.join("");
 }
 
 /** What sits directly inside a folder. */
@@ -356,13 +393,16 @@ function withNumberedDuplicates<T extends { id: string }>(
     : items;
 }
 
-/** Expand one folder. */
+/** Expand a folder and every folder holding it. */
 export function withFolderExpanded(
   folders: LibraryFolder[],
   folderId: string | null | undefined,
 ): LibraryFolder[] {
-  return folders.some((f) => f.id === folderId && f.collapsed)
-    ? folders.map((f) => (f.id === folderId ? { ...f, collapsed: false } : f))
+  const trail = folderTrail(folders, folderId);
+  const isHidden = (f: LibraryFolder) => f.collapsed && trail.has(f);
+
+  return folders.some(isHidden)
+    ? folders.map((f) => (isHidden(f) ? { ...f, collapsed: false } : f))
     : folders;
 }
 

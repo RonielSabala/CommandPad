@@ -50,6 +50,8 @@ type LibraryActions = Pick<
   | "moveLibraryRunbook"
   | "setRunbookFocus"
   | "navigateRunbookList"
+  | "openQuickOpenModal"
+  | "closeQuickOpenModal"
 >;
 
 export function createLibraryRunbooksSlice(
@@ -68,6 +70,7 @@ export function createLibraryRunbooksSlice(
     readRunbookContent,
     encryptStoredRunbook,
     decryptImportedContent,
+    revealRunbook,
   } = services;
 
   /** Offer `numbered`, since the folder already has `label`. */
@@ -92,6 +95,8 @@ export function createLibraryRunbooksSlice(
       if (!content) {
         return;
       }
+
+      revealRunbook(runbookId);
 
       const state = get();
       const existingTab = getTabByRunbookId(state, runbookId);
@@ -568,5 +573,9 @@ export function createLibraryRunbooksSlice(
 
       void get().loadLibraryRunbook(nextId);
     },
+
+    openQuickOpenModal: () => set({ quickOpenModalOpen: true }),
+
+    closeQuickOpenModal: () => set({ quickOpenModalOpen: false }),
   };
 }

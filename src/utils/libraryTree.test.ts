@@ -11,6 +11,7 @@ import { describe, expect, it } from "vitest";
 import {
   folderLocation,
   folderSubtree,
+  foundRunbooks,
   isLibraryLevelOutOfOrder,
   libraryDropZone,
   libraryFolderDropParent,
@@ -146,6 +147,29 @@ describe("withLibraryLevelSorted", () => {
     expect(
       isLibraryLevelOutOfOrder([], [], "gone", SortDirection.ASC, en),
     ).toBe(false);
+  });
+});
+
+describe("foundRunbooks", () => {
+  const folders = [folder("ops", null, true), folder("db", "ops")];
+  const runbooks = [runbook("backup", "db"), runbook("readme")];
+
+  const found = (query: string) =>
+    foundRunbooks(folders, runbooks, query).map(({ runbook, path }) => [
+      runbook.id,
+      path,
+    ]);
+
+  it("lists every runbook with its path, even with no query", () => {
+    expect(found("")).toEqual([
+      ["backup", ["ops", "db"]],
+      ["readme", []],
+    ]);
+  });
+
+  it("leaves out what the query doesn't match", () => {
+    expect(found("read")).toEqual([["readme", []]]);
+    expect(found("missing")).toEqual([]);
   });
 });
 
@@ -342,6 +366,19 @@ describe("withFolderExpanded", () => {
     expect(withFolderExpanded(folders, "a")[0].collapsed).toBe(false);
     expect(withFolderExpanded(folders, "b")).toBe(folders);
     expect(withFolderExpanded(folders, null)).toBe(folders);
+  });
+
+  it("expands every folder holding it and leaves the others", () => {
+    const folders = [
+      folder("outer", null, true),
+      folder("middle", "outer"),
+      folder("inner", "middle", true),
+      folder("other", null, true),
+    ];
+
+    expect(
+      withFolderExpanded(folders, "inner").map((f) => !!f.collapsed),
+    ).toEqual([false, false, false, true]);
   });
 });
 

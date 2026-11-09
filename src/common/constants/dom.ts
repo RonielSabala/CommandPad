@@ -5,6 +5,7 @@ import { classSelector, compoundSelector } from "@/utils/string";
 export const ElementId = {
   BLOCKS_LIST: "blocks-list",
   VARIABLES_LIST: "variables-list",
+  TABS_BAR: "tabs-bar",
 } as const;
 
 export const MonacoSelector = {

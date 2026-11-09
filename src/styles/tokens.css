@@ -155,6 +155,8 @@
   --modal-cloud-width: 50vw;
   --modal-cloud-height: 75vh;
   --modal-conflict-width: 80vw;
+  --modal-quick-open-width: 46rem;
+  --modal-quick-open-list-height: 22rem;
   --modal-cloud-padding-x: var(--space-12);
   --modal-cloud-padding-y: var(--space-10);
 

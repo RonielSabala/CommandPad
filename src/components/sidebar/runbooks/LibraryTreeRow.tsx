@@ -1,6 +1,5 @@
-import { LibraryFolderConfig } from "@/common/config";
 import { LibraryItemKind } from "@/common/enums";
-import type { LibraryRow } from "@/utils/libraryTree";
+import { libraryPath, type LibraryRow } from "@/utils/libraryTree";
 
 import { LibraryFolderRow } from "./LibraryFolderRow";
 import { LibraryRunbookRow } from "./LibraryRunbookRow";
@@ -19,11 +18,7 @@ export function LibraryTreeRow({ row, marksOpenTabs }: Props) {
       runbook={row.runbook}
       marksOpenTabs={marksOpenTabs}
       depth={row.depth}
-      path={
-        row.path &&
-        LibraryFolderConfig.ROOT_PATH +
-          row.path.join(LibraryFolderConfig.PATH_SEPARATOR)
-      }
+      path={row.path && libraryPath(row.path)}
     />
   );
 }

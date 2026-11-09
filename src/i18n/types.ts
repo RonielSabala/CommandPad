@@ -741,6 +741,7 @@ export interface Messages {
         sortDescendingLabel: string,
       ) => string;
       moving: string;
+      quickOpen: (binding: string) => string;
       uniqueNames: string;
       labelDetails: string;
       autoSave: string;

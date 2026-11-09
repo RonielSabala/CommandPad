@@ -94,6 +94,12 @@ export function useKeybindings(): void {
       if (matchesKeybinding(event, KeyBinding.TOGGLE_MODE)) {
         state.toggleAppMode();
         hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.QUICK_OPEN)) {
+        if (state.libraryRunbooks.length > 0) {
+          state.openQuickOpenModal();
+        }
+
+        hit = true;
       } else if (matchesKeybinding(event, KeyBinding.EXPORT)) {
         if ((getActiveTab(state)?.blocks.length ?? 0) > 0) {
           state.openExportModal();

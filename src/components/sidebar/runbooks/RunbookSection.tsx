@@ -12,7 +12,8 @@ import { TrashIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreApi } from "@/store/store";
+import { scrollRowIntoView } from "@/utils/dom";
 import {
   libraryRowKey,
   libraryRows,
@@ -36,12 +37,13 @@ const renderRow = (row: LibraryRow) => <LibraryTreeRow row={row} />;
 
 export function RunbookSection() {
   const t = useTranslation();
-  const isReadMode = useStore((state) => state.mode === AppMode.READ);
-  const isCollapsed = useStore((state) => state.runbookSectionCollapsed);
-  const focusedRunbookId = useStore((state) => state.focusedRunbookId);
-
+  const store = useStoreApi();
   const folders = useStore((state) => state.libraryFolders);
   const runbooks = useStore((state) => state.libraryRunbooks);
+  const isReadMode = useStore((state) => state.mode === AppMode.READ);
+  const isCollapsed = useStore((state) => state.runbookSectionCollapsed);
+  const activeRunbookId = useStore((state) => state.activeRunbookId);
+  const focusedRunbookId = useStore((state) => state.focusedRunbookId);
 
   const searchQuery = useStore((state) => state.runbookSearchQuery);
   const setQuery = useStore((state) => state.setRunbookSearchQuery);
@@ -69,19 +71,25 @@ export function RunbookSection() {
   const isEmpty = folders.length === 0 && runbooks.length === 0;
 
   useEffect(() => {
-    if (!focusedRunbookId) {
-      return;
-    }
-
-    const row = listRef.current?.querySelector(
-      `[${DataAttr.RUNBOOK_ID}="${focusedRunbookId}"]`,
+    scrollRowIntoView(
+      listRef.current,
+      DataAttr.RUNBOOK_ID,
+      focusedRunbookId,
+      ScrollIntoView.BLOCK_CENTER,
     );
-
-    row?.scrollIntoView({
-      block: ScrollIntoView.BLOCK_CENTER,
-      behavior: ScrollIntoView.BEHAVIOR_SMOOTH,
-    });
   }, [focusedRunbookId]);
+
+  // Keyboard navigation already scrolls to the row it focuses
+  useEffect(() => {
+    if (store.getState().focusedRunbookId !== activeRunbookId) {
+      scrollRowIntoView(
+        listRef.current,
+        DataAttr.RUNBOOK_ID,
+        activeRunbookId,
+        ScrollIntoView.BLOCK_NEAREST,
+      );
+    }
+  }, [store, activeRunbookId]);
 
   return (
     <SidebarSection

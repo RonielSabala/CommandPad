@@ -7,7 +7,6 @@ import { findTabById, findTabByRunbookId } from "@/utils/tabs";
 
 import type { StoreKit } from "@/store/kit";
 import { uniqueLabelIn } from "@/store/libraryState";
-import { getActiveTab } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import { createTabObject, tabContent } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
@@ -28,6 +27,7 @@ export function createTabsSlice(
     embedsReadingRunbook,
     writeRunbookContent,
     declinedVaultSetup,
+    revealRunbook,
   } = services;
 
   return {
@@ -63,16 +63,18 @@ export function createTabsSlice(
     },
 
     switchTab: (tabId) => {
-      if (get().activeTabId === tabId) {
+      const state = get();
+      if (state.activeTabId === tabId) {
         return;
       }
 
-      set((s) => ({
+      const runbookId = findTabById(state.tabs, tabId)?.runbookId ?? null;
+      revealRunbook(runbookId);
+      set({
         activeTabId: tabId,
-        activeRunbookId:
-          getActiveTab({ ...s, activeTabId: tabId })?.runbookId ?? null,
+        activeRunbookId: runbookId,
         selectKeyHeld: false,
-      }));
+      });
 
       saveTabs();
     },
