@@ -80,11 +80,12 @@ export const en: Messages = {
     import: "Import",
     importTitle: "Import runbook",
     importOptions: "More ways to import",
+    importZip: "Import from zip",
     pasteTitle: "Paste runbook JSON",
     actions: "Runbook actions",
     duplicate: "Duplicate runbook",
     deleteRunbook: "Delete runbook",
-    dropToImport: "Drop runbooks to import",
+    dropToImport: "Drop runbooks or a zip to import",
     clearLibraryTitle: "Delete all runbooks from the library",
     stopSyncing: "Stop syncing",
     rename: "Rename",
@@ -1228,6 +1229,8 @@ If something goes wrong, undo it in this order:
         "**Moving things:** a line shows where a dragged runbook or folder will land, so you can put it between two runbooks or between two folders, even in another folder. Drop anything on a folder to move it inside; hold it there for a moment and a folded folder opens.",
       zipExport: (downloadZipLabel) =>
         `**Taking it with you:** **${downloadZipLabel}**, in a folder's menu, downloads that folder. Folders stay folders, even empty ones, and each runbook becomes a \`.json\` file.`,
+      zipImport: (importZipLabel) =>
+        `**Bringing it back:** drop a \`.zip\` on the library, or pick **${importZipLabel}** from the arrow beside the import button. It lands in a new folder named after the zip, with its folders and runbooks inside.`,
       quickOpen: (binding) =>
         `**Opening by name:** press \`${binding}\` anywhere in the workspace to search the whole library by label, filename, folder or path. Pick a result with the arrow keys and press Enter to open it.`,
       uniqueNames:

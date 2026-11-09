@@ -460,6 +460,7 @@ export interface StoreState {
   exportLibraryFolder: (folderId: string | null) => Promise<void>;
   copyRunbookMarkdown: () => Promise<void>;
   beginImport: () => void;
+  beginZipImport: () => void;
   openDestinationModal: () => void;
   closeDestinationModal: () => void;
   chooseDestination: (destination: SyncDestination) => void;

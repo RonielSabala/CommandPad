@@ -359,6 +359,9 @@ export const ZipConfig = {
   VERSION: 20,
   UTF8_FLAG: 0x0800,
   STORED_METHOD: 0,
+  DEFLATED_METHOD: 8,
+  DEFLATE_FORMAT: "deflate-raw",
+  MAX_COMMENT_SIZE: 0xffff,
   CRC_POLYNOMIAL: 0xedb88320,
   CRC_SEED: 0xffffffff,
   CRC_TABLE_SIZE: 256,
@@ -367,9 +370,11 @@ export const ZipConfig = {
 
 export const LibraryZipConfig = {
   LIBRARY_NAME: "commandpad-library",
-  FALLBACK_NAME: "untitled",
+  FALLBACK_NAME: "untitled-zip",
   PATH_SEPARATOR: "/",
   UNSAFE_CHAR_REPLACEMENT: "-",
+  /** The folder macOS adds to a zip. */
+  SYSTEM_FOLDER: "__MACOSX",
 } as const;
 
 export const Utf8Config = {

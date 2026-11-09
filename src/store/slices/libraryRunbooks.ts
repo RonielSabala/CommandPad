@@ -1,8 +1,13 @@
 import { DEFAULT_TAB_LABEL, RunbookConfig } from "@/common/config";
 import { AppMode, DialogTone, MoveDirection } from "@/common/enums";
-import type { RunbookContent } from "@/common/types";
+import type { LibraryRunbook, RunbookContent } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
-import { adoptOpenVault, holdsSecrets, unlockVault } from "@/services/vault";
+import {
+  adoptOpenVault,
+  hasEncryptedSecrets,
+  holdsSecrets,
+  unlockVault,
+} from "@/services/vault";
 import type { StoreKit } from "@/store/kit";
 import {
   offerNumberedName,
@@ -14,6 +19,7 @@ import { getLibraryRunbook, getTabByRunbookId } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
 import {
   importedVault,
+  type ImportedVault,
   type ImportedVaultResult,
 } from "@/store/services/vault";
 import {
@@ -29,13 +35,16 @@ import { stripJsonExtension } from "@/utils/export";
 import { generateId } from "@/utils/id";
 import {
   libraryRunbookDropParent,
+  uniqueFolderName,
   visibleRunbooks,
   withFolderExpanded,
   withLibraryItemMoved,
 } from "@/utils/libraryTree";
+import { isZipFilename, libraryZipImport } from "@/utils/libraryZip";
 import { displayLabel, getRunbookLabel } from "@/utils/runbook";
 import { parseRunbookSource } from "@/utils/runbookSource";
 import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
+import { readZip, readZipText } from "@/utils/zip";
 
 type LibraryActions = Pick<
   StoreState,
@@ -69,6 +78,7 @@ export function createLibraryRunbooksSlice(
     writeRunbookContent,
     readRunbookContent,
     encryptStoredRunbook,
+    readImportedContent,
     decryptImportedContent,
     revealRunbook,
   } = services;
@@ -88,6 +98,122 @@ export function createLibraryRunbooksSlice(
         ),
       accept,
     );
+
+  const applyImportedVault = async (
+    runbookId: string,
+    vault: ImportedVault | undefined,
+  ) => {
+    if (!vault) {
+      return;
+    }
+
+    const { record, passphrase } = vault;
+    setVaultRecord(runbookId, record);
+
+    const opened = passphrase
+      ? await unlockVault(runbookId, passphrase, record)
+      : adoptOpenVault(runbookId, record);
+    if (!opened) {
+      return;
+    }
+
+    refreshVaultStatus();
+    await encryptStoredRunbook(runbookId);
+  };
+
+  /** Add a brand-new runbook, returning its id. */
+  const appendLibraryRunbook = async (
+    content: RunbookContent,
+    fields: Omit<LibraryRunbook, "id" | "secured">,
+    vault: ImportedVault | undefined,
+  ) => {
+    const id = generateId();
+    await writeRunbookContent(id, content);
+
+    set((s) => ({
+      libraryRunbooks: [
+        ...s.libraryRunbooks,
+        { id, ...fields, secured: holdsSecrets(content) },
+      ],
+    }));
+
+    await applyImportedVault(id, vault);
+    return id;
+  };
+
+  /** Unpack a zip into a new folder, returning how many files failed. */
+  const importLibraryZip = async (file: File) => {
+    const entries = await readZip(file).catch(() => null);
+    if (!entries) {
+      return 1;
+    }
+
+    const zip = libraryZipImport(file.name, entries);
+    let failedCount = 0;
+
+    // Every file is read before the first one is added
+    const parsed: {
+      filename: string;
+      folderId: string;
+      content: RunbookContent;
+    }[] = [];
+
+    for (const { entry, filename, folderId } of zip.runbooks) {
+      try {
+        const content = parseRunbookSource(await readZipText(entry));
+        parsed.push({ filename, folderId, content });
+      } catch {
+        failedCount += 1;
+      }
+    }
+
+    if (parsed.length === 0 && zip.subfolders.length === 0) {
+      return Math.max(failedCount, 1);
+    }
+
+    set((s) => ({
+      libraryFolders: [
+        ...s.libraryFolders,
+        {
+          ...zip.root,
+          name: uniqueFolderName(s.libraryFolders, null, zip.root.name),
+        },
+        ...zip.subfolders,
+      ],
+      runbookSearchQuery: "",
+    }));
+
+    let declined = false;
+    for (const { filename, folderId, content } of parsed) {
+      try {
+        const imported = declined
+          ? await readImportedContent(content)
+          : await decryptImportedContent(content, filename);
+
+        declined ||= hasEncryptedSecrets(imported.content);
+
+        const stem = stripJsonExtension(filename);
+        await appendLibraryRunbook(
+          imported.content,
+          {
+            label: uniqueLabelIn(
+              get(),
+              folderId,
+              getRunbookLabel(imported.content.blocks, stem),
+            ),
+            filename: stem,
+            folderId,
+          },
+          importedVault(imported),
+        );
+      } catch {
+        failedCount += 1;
+      }
+    }
+
+    saveLibrary();
+    return failedCount;
+  };
 
   return {
     loadLibraryRunbook: async (runbookId) => {
@@ -315,25 +441,6 @@ export function createLibraryRunbooksSlice(
         }
       };
 
-      const applyImportedVault = async (runbookId: string) => {
-        if (!vault) {
-          return;
-        }
-
-        setVaultRecord(runbookId, vault.record);
-
-        const opened = vault.passphrase
-          ? await unlockVault(runbookId, vault.passphrase, vault.record)
-          : adoptOpenVault(runbookId, vault.record);
-
-        if (!opened) {
-          return;
-        }
-
-        refreshVaultStatus();
-        await encryptStoredRunbook(runbookId);
-      };
-
       // An import lands at the top level, so only a name taken there collides
       const state = get();
       const t = getMessages(state.language);
@@ -386,28 +493,23 @@ export function createLibraryRunbooksSlice(
         }
 
         if (!existing.vault) {
-          await applyImportedVault(existing.id);
+          await applyImportedVault(existing.id, vault);
         }
 
         settleSync(existing.id);
         return true;
       }
 
-      const newId = generateId();
-      await writeRunbookContent(newId, content);
-      set((s) => ({
-        libraryRunbooks: [
-          ...s.libraryRunbooks,
-          {
-            id: newId,
-            label,
-            filename: filename || "",
-            secured: holdsSecrets(content),
-            ...(sync ? { sync } : {}),
-          },
-        ],
-      }));
-      await applyImportedVault(newId);
+      const newId = await appendLibraryRunbook(
+        content,
+        {
+          label,
+          filename: filename || "",
+          ...(sync ? { sync } : {}),
+        },
+        vault,
+      );
+
       settleSync(newId);
 
       if (!openInTab) {
@@ -420,44 +522,39 @@ export function createLibraryRunbooksSlice(
     },
 
     importRunbooks: async (files) => {
+      if (get().mode === AppMode.READ) {
+        return;
+      }
+
       let failedCount = 0;
       const openInTab = files.length === 1;
 
-      const readFile = (file: File) =>
-        new Promise<void>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = async (loadEvent) => {
-            try {
-              const decrypted = await decryptImportedContent(
-                parseRunbookSource(String(loadEvent.target?.result)),
-                file.name,
-              );
+      const importJsonFile = async (file: File) => {
+        try {
+          const decrypted = await decryptImportedContent(
+            parseRunbookSource(await file.text()),
+            file.name,
+          );
 
-              await get().addLibraryRunbook(
-                decrypted.content,
-                stripJsonExtension(file.name),
-                file.name,
-                undefined,
-                openInTab,
-                importedVault(decrypted),
-              );
-            } catch {
-              failedCount += 1;
-            }
+          await get().addLibraryRunbook(
+            decrypted.content,
+            stripJsonExtension(file.name),
+            file.name,
+            undefined,
+            openInTab,
+            importedVault(decrypted),
+          );
 
-            resolve();
-          };
-
-          reader.onerror = () => {
-            failedCount += 1;
-            resolve();
-          };
-
-          reader.readAsText(file);
-        });
+          return 0;
+        } catch {
+          return 1;
+        }
+      };
 
       for (const file of files) {
-        await readFile(file);
+        failedCount += await (isZipFilename(file.name)
+          ? importLibraryZip(file)
+          : importJsonFile(file));
       }
 
       if (failedCount > 0) {

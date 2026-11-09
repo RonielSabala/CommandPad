@@ -1,4 +1,4 @@
-import { FilePickerConfig } from "@/common/config";
+import { FilePickerConfig, ZIP_EXTENSION } from "@/common/config";
 import {
   AppMode,
   CloudExportStatus,
@@ -41,6 +41,7 @@ type TransferActions = Pick<
   | "exportRunbook"
   | "exportLibraryFolder"
   | "beginImport"
+  | "beginZipImport"
   | "openDestinationModal"
   | "closeDestinationModal"
   | "chooseDestination"
@@ -245,6 +246,12 @@ export function createTransferSlice(
       }
 
       void get().startCloudImportBrowse(source);
+    },
+
+    beginZipImport: () => {
+      if (get().mode !== AppMode.READ) {
+        openImportDialog(ZIP_EXTENSION);
+      }
     },
 
     openDestinationModal: () => {

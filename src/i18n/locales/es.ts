@@ -80,11 +80,12 @@ export const es: Messages = {
     import: "Importar",
     importTitle: "Importar libro",
     importOptions: "Otras formas de importar",
+    importZip: "Importar desde zip",
     pasteTitle: "Pegar JSON de libro",
     actions: "Acciones del libro",
     duplicate: "Duplicar libro",
     deleteRunbook: "Eliminar libro",
-    dropToImport: "Suelta los libros para importarlos",
+    dropToImport: "Suelta libros o un zip para importarlos",
     clearLibraryTitle: "Eliminar todos los libros de la biblioteca",
     stopSyncing: "Dejar de sincronizar",
     rename: "Renombrar",
@@ -1254,6 +1255,8 @@ Si algo sale mal, deshazlo en este orden:
         "**Mover elementos:** una línea muestra dónde caerá el libro o la carpeta que arrastras, así que puedes dejarlo entre dos libros o entre dos carpetas, incluso en otra carpeta. Suéltalo sobre una carpeta para moverlo dentro; si lo mantienes ahí un momento, una carpeta plegada se abre.",
       zipExport: (downloadZipLabel) =>
         `**Llévatela contigo:** **${downloadZipLabel}**, en el menú de una carpeta, descarga esa carpeta. Las carpetas siguen siendo carpetas, incluso las vacías, y cada libro se convierte en un archivo \`.json\`.`,
+      zipImport: (importZipLabel) =>
+        `**Recupérala:** suelta un \`.zip\` en la biblioteca, o elige **${importZipLabel}** en la flecha junto al botón de importar. Llega en una carpeta nueva con el nombre del zip, con sus carpetas y libros dentro.`,
       quickOpen: (binding) =>
         `**Abrir por nombre:** pulsa \`${binding}\` en cualquier parte del espacio de trabajo para buscar en toda la biblioteca por etiqueta, nombre de archivo, carpeta o ruta. Elige un resultado con las flechas y pulsa Enter para abrirlo.`,
       uniqueNames:

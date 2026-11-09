@@ -1,5 +1,7 @@
 import { MimeType, ZipConfig } from "@/common/config";
 
+// Types
+
 type ZipBytes = Uint8Array<ArrayBuffer>;
 
 export interface ZipFile {
@@ -7,14 +9,23 @@ export interface ZipFile {
   data: ZipBytes;
 }
 
+/** A file in a zip being read. */
+export interface ZipEntry {
+  path: string;
+  read: () => Promise<ZipBytes>;
+}
+
+// Utils
+
 const encoder = new TextEncoder();
+const decoder = new TextDecoder();
 const EMPTY_DATA = new Uint8Array(0);
+const CORRUPT_ZIP = "Corrupt zip archive";
 
 export function textZipFile(path: string, text: string): ZipFile {
   return { path, data: encoder.encode(text) };
 }
 
-/** `path` ends in a separator, which is how a zip stores an empty folder. */
 export function emptyZipFolder(path: string): ZipFile {
   return { path, data: EMPTY_DATA };
 }
@@ -59,6 +70,40 @@ function dosDateTime(date: Date): { time: number; date: number } {
       date.getDate(),
   };
 }
+
+function findEndRecord(view: DataView): number {
+  const last = view.byteLength - ZipConfig.END_RECORD_SIZE;
+  const first = Math.max(0, last - ZipConfig.MAX_COMMENT_SIZE);
+
+  for (let offset = last; offset >= first; offset--) {
+    if (view.getUint32(offset, true) === ZipConfig.END_RECORD_SIGNATURE) {
+      return offset;
+    }
+  }
+
+  throw new Error(CORRUPT_ZIP);
+}
+
+async function inflate(packed: ZipBytes): Promise<ZipBytes> {
+  const stream = new Blob([packed])
+    .stream()
+    .pipeThrough(new DecompressionStream(ZipConfig.DEFLATE_FORMAT));
+
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+
+async function unpack(packed: ZipBytes, method: number): Promise<ZipBytes> {
+  switch (method) {
+    case ZipConfig.STORED_METHOD:
+      return packed;
+    case ZipConfig.DEFLATED_METHOD:
+      return inflate(packed);
+    default:
+      throw new Error(CORRUPT_ZIP);
+  }
+}
+
+// Core functions
 
 export function createZip(files: ZipFile[]): Blob {
   const locals: ZipBytes[] = [];
@@ -118,3 +163,61 @@ export function createZip(files: ZipFile[]): Blob {
 
   return new Blob([...locals, ...central, end], { type: MimeType.ZIP });
 }
+
+export async function readZip(blob: Blob): Promise<ZipEntry[]> {
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  const view = new DataView(bytes.buffer);
+  const end = findEndRecord(view);
+  const count = view.getUint16(end + 10, true);
+  let offset = view.getUint32(end + 16, true);
+
+  const entries: ZipEntry[] = [];
+
+  for (let index = 0; index < count; index++) {
+    if (view.getUint32(offset, true) !== ZipConfig.CENTRAL_HEADER_SIGNATURE) {
+      throw new Error(CORRUPT_ZIP);
+    }
+
+    const method = view.getUint16(offset + 10, true);
+    const crc = view.getUint32(offset + 16, true);
+    const packedSize = view.getUint32(offset + 20, true);
+    const nameSize = view.getUint16(offset + 28, true);
+    const extraSize = view.getUint16(offset + 30, true);
+    const commentSize = view.getUint16(offset + 32, true);
+    const local = view.getUint32(offset + 42, true);
+    const name = offset + ZipConfig.CENTRAL_HEADER_SIZE;
+
+    entries.push({
+      path: decoder.decode(bytes.subarray(name, name + nameSize)),
+      read: async () => {
+        if (view.getUint32(local, true) !== ZipConfig.LOCAL_HEADER_SIGNATURE) {
+          throw new Error(CORRUPT_ZIP);
+        }
+
+        const start =
+          local +
+          ZipConfig.LOCAL_HEADER_SIZE +
+          view.getUint16(local + 26, true) +
+          view.getUint16(local + 28, true);
+
+        const data = await unpack(
+          bytes.subarray(start, start + packedSize),
+          method,
+        );
+
+        if (crc32(data) !== crc) {
+          throw new Error(CORRUPT_ZIP);
+        }
+
+        return data;
+      },
+    });
+
+    offset = name + nameSize + extraSize + commentSize;
+  }
+
+  return entries;
+}
+
+export const readZipText = async (entry: ZipEntry) =>
+  decoder.decode(await entry.read());

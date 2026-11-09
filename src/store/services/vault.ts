@@ -35,7 +35,15 @@ export interface ImportedVaultResult {
   passphrase: string | null;
 }
 
-export function importedVault({ vault, passphrase }: ImportedVaultResult) {
+export interface ImportedVault {
+  record: VaultRecord;
+  passphrase: string | null;
+}
+
+export function importedVault({
+  vault,
+  passphrase,
+}: ImportedVaultResult): ImportedVault | undefined {
   return vault ? { record: vault, passphrase } : undefined;
 }
 

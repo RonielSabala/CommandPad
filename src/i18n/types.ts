@@ -104,6 +104,7 @@ export interface Messages {
     import: string;
     importTitle: string;
     importOptions: string;
+    importZip: string;
     pasteTitle: string;
     actions: string;
     duplicate: string;
@@ -749,6 +750,7 @@ export interface Messages {
       ) => string;
       moving: string;
       zipExport: (downloadZipLabel: string) => string;
+      zipImport: (importZipLabel: string) => string;
       quickOpen: (binding: string) => string;
       uniqueNames: string;
       labelDetails: string;

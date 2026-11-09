@@ -13,6 +13,7 @@ import {
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
+import { FileEarmarkZip } from "react-bootstrap-icons";
 
 import "./LibraryImportButton.css";
 
@@ -21,6 +22,7 @@ const HALF_CLASS = classNames(CssClass.BTN, CssClass.BTN_PRIMARY);
 export function LibraryImportButton() {
   const t = useTranslation();
   const beginImport = useStore((state) => state.beginImport);
+  const beginZipImport = useStore((state) => state.beginZipImport);
   const openPasteRunbookModal = useStore(
     (state) => state.openPasteRunbookModal,
   );
@@ -51,6 +53,13 @@ export function LibraryImportButton() {
           />
         }
       >
+        <ContextMenuItem
+          icon={<FileEarmarkZip className={CssClass.ICON_MD} />}
+          onSelect={beginZipImport}
+        >
+          {t.runbooks.importZip}
+        </ContextMenuItem>
+
         <ContextMenuItem
           icon={
             <ClipIcon
