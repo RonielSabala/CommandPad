@@ -6,8 +6,9 @@ import { AppMode, BlockType, DialogTone } from "@/common/enums";
 import type { ImageBlock as ImageBlockData } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
+import { DeleteMenuItem } from "@/components/common/contextMenu/DeleteMenuItem";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { ImportIcon, TrashIcon } from "@/components/icons";
+import { ImportIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useLanguage, useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -253,20 +254,9 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
                     {t.image.replace}
                   </ContextMenuItem>
 
-                  <ContextMenuItem
-                    icon={
-                      <TrashIcon
-                        className={classNames(
-                          CssClass.ICON_MD,
-                          CssClass.ICON_BOLD,
-                        )}
-                      />
-                    }
-                    onSelect={clear}
-                    danger
-                  >
+                  <DeleteMenuItem onSelect={clear}>
                     {t.image.remove}
-                  </ContextMenuItem>
+                  </DeleteMenuItem>
                 </ActionsMenu>
               </div>
             </div>

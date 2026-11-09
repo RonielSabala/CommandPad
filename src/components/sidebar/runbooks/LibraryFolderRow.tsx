@@ -4,6 +4,7 @@ import { LibraryDropZone, LibraryItemKind } from "@/common/enums";
 import type { LibraryFolder } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
+import { DeleteMenuItem } from "@/components/common/contextMenu/DeleteMenuItem";
 import { DragHandle } from "@/components/common/DragHandle";
 import { DragImage } from "@/components/common/DragImage";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
@@ -13,7 +14,6 @@ import { NO_TOOLTIP, tooltip } from "@/components/common/tooltip/tooltip";
 import {
   EditorToggleChevronIcon,
   FolderOpenFillIcon,
-  TrashIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -115,17 +115,9 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
       </>
     ),
     endActions: (
-      <ContextMenuItem
-        icon={
-          <TrashIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-        onSelect={() => void removeLibraryFolder(folderId)}
-        danger
-      >
+      <DeleteMenuItem onSelect={() => void removeLibraryFolder(folderId)}>
         {t.runbooks.deleteFolder}
-      </ContextMenuItem>
+      </DeleteMenuItem>
     ),
   };
 

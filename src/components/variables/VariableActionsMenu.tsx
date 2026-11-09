@@ -5,8 +5,9 @@ import {
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
+import { DeleteMenuItem } from "@/components/common/contextMenu/DeleteMenuItem";
 import { SortMenuItems } from "@/components/common/contextMenu/SortMenuItems";
-import { EyeIcon, TrashIcon } from "@/components/icons";
+import { EyeIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import {
   getActiveTab,
@@ -59,18 +60,12 @@ function RemoveOtherOptionsItem({ variableId, children }: ItemProps) {
   );
 
   return (
-    <ContextMenuItem
-      icon={
-        <TrashIcon
-          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-        />
-      }
+    <DeleteMenuItem
       onSelect={() => removeOtherVariableOptions(variableId)}
       disabled={!hasOthers}
-      danger
     >
       {children}
-    </ContextMenuItem>
+    </DeleteMenuItem>
   );
 }
 

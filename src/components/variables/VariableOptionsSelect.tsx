@@ -19,6 +19,7 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
+import { DeleteMenuItem } from "@/components/common/contextMenu/DeleteMenuItem";
 import { DragHandle } from "@/components/common/DragHandle";
 import { DragImage } from "@/components/common/DragImage";
 import { RenameInput } from "@/components/common/RenameInput";
@@ -36,7 +37,6 @@ import {
   DuplicateIcon,
   OptionIcon,
   PlusIcon,
-  TrashIcon,
 } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
@@ -265,17 +265,11 @@ function VariableOptionRow({
 
         <ContextMenuSeparator />
 
-        <ContextMenuItem
-          icon={
-            <TrashIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+        <DeleteMenuItem
           onSelect={() => removeVariableOption(variableId, option)}
-          danger
         >
           {t.variables.removeOption}
-        </ContextMenuItem>
+        </DeleteMenuItem>
       </ActionsMenu>
     </li>
   );

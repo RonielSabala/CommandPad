@@ -6,12 +6,13 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
+import { DeleteMenuItem } from "@/components/common/contextMenu/DeleteMenuItem";
 import { InsertSubmenus } from "@/components/common/contextMenu/InsertSubmenus";
 import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
 import { SelectionToggleItem } from "@/components/common/contextMenu/SelectionToggleItem";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
-import { CopyIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
+import { CopyIcon, DuplicateIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -121,17 +122,9 @@ export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
 
         <ContextMenuSeparator />
 
-        <ContextMenuItem
-          icon={
-            <TrashIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
-          onSelect={() => removeBlock(blockId)}
-          danger
-        >
+        <DeleteMenuItem onSelect={() => removeBlock(blockId)}>
           {t.blocks.delete(selectionCount)}
-        </ContextMenuItem>
+        </DeleteMenuItem>
       </ActionsMenu>
 
       {info.render(() => (

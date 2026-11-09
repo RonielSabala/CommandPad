@@ -9,17 +9,13 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
+import { DeleteMenuItem } from "@/components/common/contextMenu/DeleteMenuItem";
 import { InsertSubmenus } from "@/components/common/contextMenu/InsertSubmenus";
 import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
 import { SelectionToggleItem } from "@/components/common/contextMenu/SelectionToggleItem";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
-import {
-  EnumIcon,
-  SectionIcon,
-  TrashIcon,
-  VariableIcon,
-} from "@/components/icons";
+import { EnumIcon, SectionIcon, VariableIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { countVariableTargets, useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -127,17 +123,9 @@ export function RemoveItem({ targetId, children }: ItemProps) {
   const removeVariable = useStore((state) => state.removeVariable);
 
   return (
-    <ContextMenuItem
-      icon={
-        <TrashIcon
-          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-        />
-      }
-      onSelect={() => removeVariable(targetId)}
-      danger
-    >
+    <DeleteMenuItem onSelect={() => removeVariable(targetId)}>
       {children}
-    </ContextMenuItem>
+    </DeleteMenuItem>
   );
 }
 

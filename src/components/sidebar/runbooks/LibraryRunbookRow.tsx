@@ -8,13 +8,13 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
+import { DeleteMenuItem } from "@/components/common/contextMenu/DeleteMenuItem";
 import { DragHandle } from "@/components/common/DragHandle";
 import { DragImage } from "@/components/common/DragImage";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import { RenameInput } from "@/components/common/RenameInput";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { TrashIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import {
   getTabByRunbookId,
@@ -142,17 +142,9 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
   );
 
   const endActions = (
-    <ContextMenuItem
-      icon={
-        <TrashIcon
-          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-        />
-      }
-      onSelect={() => void removeLibraryRunbook(runbookId)}
-      danger
-    >
+    <DeleteMenuItem onSelect={() => void removeLibraryRunbook(runbookId)}>
       {t.runbooks.deleteRunbook}
-    </ContextMenuItem>
+    </DeleteMenuItem>
   );
 
   return (
