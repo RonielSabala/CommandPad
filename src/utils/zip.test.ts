@@ -8,7 +8,7 @@ import {
   textZipFile,
 } from "./zip";
 
-// Written by Python's zipfile to a stream
+// Written by Python's zipfile to a stream, with a non-ASCII name
 const STREAMED_ZIP =
   "UEsDBBQACAgIAAAAIQAAAAAAAAAAAAAAAAASAAYAb3BzL2RlcGxveSDDsS5qc29umZkCAGFiq1ZKyslPzi5WsoqO1VEqSyzKTEzKSQVza6tpIAcAUEsHCNt1dlYeAAAAcAAAAFBLAwQUAAgACAAjBGldAAAAAAAAAAAAAAAACgAAAHJlYWRtZS50eHQryEnMzAMAUEsHCM9iIBkHAAAABQAAAFBLAQIUABQACAgIAAAAIQDbdXZWHgAAAHAAAAASAAYAAAAAAAAAAACAAQAAAABvcHMvZGVwbG95IMOxLmpzb26ZmQIAYWJQSwECFAAUAAgACAAjBGldz2IgGQcAAAAFAAAACgAAAAAAAAAAAAAAgAFkAAAAcmVhZG1lLnR4dFBLBQYAAAAAAgACAH4AAACjAAAADgBtYWRlIGVsc2V3aGVyZQ==";
 
@@ -16,7 +16,7 @@ const streamedZip = () =>
   new Blob([Uint8Array.from(atob(STREAMED_ZIP), (c) => c.charCodeAt(0))]);
 
 describe("readZip", () => {
-  it("reads back what createZip wrote", async () => {
+  it("reads back what createZip wrote, non-ASCII names too", async () => {
     const entries = await readZip(
       createZip([
         textZipFile("ops/déploy.json", '{"a":1}'),
@@ -37,7 +37,7 @@ describe("readZip", () => {
     ]);
   });
 
-  it("reads a deflated, streamed zip from another tool", async () => {
+  it("reads a deflated, streamed zip with a UTF-8 name", async () => {
     const entries = await readZip(streamedZip());
 
     expect(entries.map((entry) => entry.path)).toEqual([
