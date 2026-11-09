@@ -16,7 +16,7 @@ import {
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { libraryDropZone } from "@/utils/libraryTree";
+import { displayFolderName, libraryDropZone } from "@/utils/libraryTree";
 import { classNames } from "@/utils/string";
 import { memo, useEffect, useState } from "react";
 import { Copy, FolderFill, Vr } from "react-bootstrap-icons";
@@ -49,6 +49,7 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
   const readMode = useStore((state) => state.mode === AppMode.READ);
 
   const folderId = folder.id;
+  const folderName = displayFolderName(folder.name, t);
   const FolderIcon = folder.collapsed ? FolderFill : FolderOpenFillIcon;
   const showsContents = !folder.collapsed && !empty;
 
@@ -151,7 +152,7 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
       onContextMenu={onContextMenu}
     >
       <DragImage icon={<FolderIcon className={CssClass.ICON_MD} />}>
-        {folder.name}
+        {folderName}
       </DragImage>
 
       <DragHandle handleProps={handleProps} />
@@ -190,14 +191,14 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
               />
             </>
           }
-          name={folder.name}
+          name={folderName}
           renaming={renaming || renamePending}
           maxLength={LibraryFolderConfig.NAME_MAX_LENGTH}
           onRename={(name) => renameLibraryFolder(folderId, name)}
           onRenameEnd={stopRenaming}
           aria-expanded={empty ? undefined : !folder.collapsed}
           onClick={() => toggleLibraryFolder(folderId)}
-          {...tooltip(folder.name)}
+          {...tooltip(folderName)}
         />
       </div>
 

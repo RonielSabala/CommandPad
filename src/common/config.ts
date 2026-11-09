@@ -18,6 +18,7 @@ export const RunbookConfig = {
 } as const;
 
 export const LibraryFolderConfig = {
+  DEFAULT_NAME: "New folder",
   NAME_MAX_LENGTH: 60,
   PATH_SEPARATOR: "/",
   ROOT_PATH: "~/",

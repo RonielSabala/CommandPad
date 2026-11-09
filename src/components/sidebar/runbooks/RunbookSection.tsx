@@ -61,8 +61,8 @@ export function RunbookSection() {
   const toolbarRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const rows = useMemo(
-    () => libraryRows(folders, runbooks, searchQuery),
-    [folders, runbooks, searchQuery],
+    () => libraryRows(folders, runbooks, searchQuery, t),
+    [folders, runbooks, searchQuery, t],
   );
 
   const isEmpty = folders.length === 0 && runbooks.length === 0;

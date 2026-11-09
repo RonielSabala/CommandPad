@@ -118,7 +118,7 @@ export function RunbookBlock({
 
   const changeLabel = (text: string) => {
     setDraft(text);
-    if (libraryPathTrail(store.getState().libraryFolders, text).length > 0) {
+    if (libraryPathTrail(store.getState().libraryFolders, text, t).length > 0) {
       return;
     }
 

@@ -85,8 +85,8 @@ function QuickOpenSearch() {
 
   const rows = useMemo(() => {
     const { libraryFolders, libraryRunbooks } = store.getState();
-    return foundRunbooks(libraryFolders, libraryRunbooks, query);
-  }, [store, query]);
+    return foundRunbooks(libraryFolders, libraryRunbooks, query, t);
+  }, [store, query, t]);
 
   // The modal's top edge starts where the tabs bar does
   useLayoutEffect(() => {

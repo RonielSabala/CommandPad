@@ -4,6 +4,7 @@ import type { LibraryFolder } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { generateId } from "@/utils/id";
 import {
+  displayFolderName,
   folderSubtree,
   libraryFolderDropParent,
   uniqueFolderName,
@@ -54,7 +55,8 @@ export function createLibraryFoldersSlice(
         name: uniqueFolderName(
           state.libraryFolders,
           parentId,
-          getMessages(state.language).runbooks.folderName,
+          LibraryFolderConfig.DEFAULT_NAME,
+          getMessages(state.language),
         ),
         parentId,
       };
@@ -92,7 +94,7 @@ export function createLibraryFoldersSlice(
       if (folderIds.size > 1 || runbookIds.size > 0) {
         const t = getMessages(state.language);
         const confirmed = await get().confirm(
-          t.dialogs.deleteFolderMessage(folder.name),
+          t.dialogs.deleteFolderMessage(displayFolderName(folder.name, t)),
           {
             title: t.dialogs.deleteFolderTitle,
             confirmLabel: t.dialogs.deleteFolderConfirm,
@@ -157,7 +159,12 @@ export function createLibraryFoldersSlice(
           parentId: f.parentId && copyOf(f.parentId),
           name:
             f.id === id
-              ? uniqueFolderName(current.libraryFolders, f.parentId, f.name)
+              ? uniqueFolderName(
+                  current.libraryFolders,
+                  f.parentId,
+                  f.name,
+                  getMessages(current.language),
+                )
               : f.name,
         }));
 
@@ -212,7 +219,10 @@ export function createLibraryFoldersSlice(
       }
 
       const folder = state.libraryFolders.find((f) => f.id === id);
-      if (!folder) {
+      const t = getMessages(state.language);
+
+      // Keeping the shown default name keeps it localized
+      if (!folder || trimmed === displayFolderName(folder.name, t)) {
         return;
       }
 
@@ -220,13 +230,15 @@ export function createLibraryFoldersSlice(
         state.libraryFolders,
         folder.parentId,
         trimmed,
+        t,
         id,
       );
 
       if (numbered !== trimmed) {
         offerNumberedName(
           state,
-          (t) => t.dialogs.folderNameTakenMessage(trimmed, numbered),
+          (messages) =>
+            messages.dialogs.folderNameTakenMessage(trimmed, numbered),
           () => get().renameLibraryFolder(id, numbered),
         );
 
@@ -270,6 +282,8 @@ export function createLibraryFoldersSlice(
         zone,
       );
 
+      const t = getMessages(state.language);
+
       // A folder can't end up inside itself
       if (
         parentId !== null &&
@@ -282,6 +296,7 @@ export function createLibraryFoldersSlice(
         state.libraryFolders,
         parentId,
         folder.name,
+        t,
         id,
       );
 
@@ -306,7 +321,11 @@ export function createLibraryFoldersSlice(
 
       offerNumberedName(
         state,
-        (t) => t.dialogs.folderNameTakenMessage(folder.name, name),
+        (messages) =>
+          messages.dialogs.folderNameTakenMessage(
+            displayFolderName(folder.name, messages),
+            displayFolderName(name, messages),
+          ),
         place,
       );
     },

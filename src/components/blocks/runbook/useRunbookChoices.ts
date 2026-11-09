@@ -8,7 +8,11 @@ import { getActiveRunbookId, useStore, useStoreApi } from "@/store/store";
 import { cloudPathSegments } from "@/utils/embeddedRunbook";
 import { folderChoices, folderPath } from "@/utils/folderChoices";
 import { formatFileSize } from "@/utils/format";
-import { libraryLevel, libraryPathTrail } from "@/utils/libraryTree";
+import {
+  displayFolderName,
+  libraryLevel,
+  libraryPathTrail,
+} from "@/utils/libraryTree";
 import { displayLabel } from "@/utils/runbook";
 import { useMemo } from "react";
 
@@ -49,8 +53,8 @@ export function useLibraryChoices(
         );
       };
 
-      const trail = libraryPathTrail(folders, text);
-      const names = trail.map((folder) => folder.name);
+      const trail = libraryPathTrail(folders, text, t);
+      const names = trail.map((folder) => displayFolderName(folder.name, t));
       const level = libraryLevel(folders, embeddable, trail.at(-1)?.id ?? null);
 
       return folderChoices(
@@ -58,7 +62,7 @@ export function useLibraryChoices(
         names,
         [
           ...level.folders.map((folder) => ({
-            name: folder.name,
+            name: displayFolderName(folder.name, t),
             describe: () => describeFolder(folder.id),
             folder: true,
           })),

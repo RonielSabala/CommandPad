@@ -163,13 +163,15 @@ describe("libraryZipFiles", () => {
 
 describe("libraryZipName", () => {
   it("names a folder's zip after the folder", () => {
-    expect(libraryZipName([folder("a", null, "ops/db")], "a")).toBe(
+    expect(libraryZipName([folder("a", null, "ops/db")], "a", en)).toBe(
       "ops-db.zip",
     );
   });
 
   it("names the whole library's zip after the library", () => {
-    expect(libraryZipName([folder("a")], null)).toBe("commandpad-library.zip");
+    expect(libraryZipName([folder("a")], null, en)).toBe(
+      "commandpad-library.zip",
+    );
   });
 });
 
@@ -193,6 +195,7 @@ describe("libraryZipImport", () => {
     const { root, subfolders, runbooks } = libraryZipImport(
       zipName,
       paths.map(entry),
+      en,
     );
 
     const byId = new Map(subfolders.map((f) => [f.id, f]));
@@ -209,7 +212,7 @@ describe("libraryZipImport", () => {
   }
 
   it("names the new top-level folder after the zip", () => {
-    const { root } = libraryZipImport("Ops Backup.ZIP", []);
+    const { root } = libraryZipImport("Ops Backup.ZIP", [], en);
 
     expect(root.name).toBe("Ops Backup");
     expect(root.parentId).toBeNull();
@@ -229,6 +232,7 @@ describe("libraryZipImport", () => {
     const { subfolders, runbooks } = libraryZipImport(
       "x.zip",
       ["a/", "a/one.json", "a/two.json"].map(entry),
+      en,
     );
 
     expect(subfolders).toHaveLength(1);
@@ -311,7 +315,7 @@ describe("libraryZipImport", () => {
   });
 
   it("falls back when the zip has no name to give", () => {
-    expect(libraryZipImport(".zip", []).root.name).toBe(
+    expect(libraryZipImport(".zip", [], en).root.name).toBe(
       LibraryZipConfig.FALLBACK_NAME,
     );
   });
@@ -328,8 +332,9 @@ describe("libraryZipImport", () => {
     );
 
     const { root, subfolders } = libraryZipImport(
-      libraryZipName(folders, "ops"),
+      libraryZipName(folders, "ops", en),
       await readZip(createZip(files)),
+      en,
     );
 
     expect(root.name).toBe("ops");

@@ -222,7 +222,7 @@ export function createTransferSlice(
 
         downloadBlob(
           createZip(files),
-          libraryZipName(libraryFolders, folderId),
+          libraryZipName(libraryFolders, folderId, t),
         );
       } catch (error) {
         console.error("Library export failed", error);

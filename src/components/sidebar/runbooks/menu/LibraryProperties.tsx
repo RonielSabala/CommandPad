@@ -6,7 +6,11 @@ import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
 import { useTranslation } from "@/i18n";
 import { getLibraryRunbook, isRunbookOpen, useStore } from "@/store/store";
 import { getExportBasename, withJsonExtension } from "@/utils/export";
-import { folderLocation, folderSubtree } from "@/utils/libraryTree";
+import {
+  displayFolderName,
+  folderLocation,
+  folderSubtree,
+} from "@/utils/libraryTree";
 import { displayLabel } from "@/utils/runbook";
 import { useEffect, useMemo, useState } from "react";
 
@@ -81,7 +85,7 @@ export function RunbookProperties({ runbookId }: { runbookId: string }) {
             },
             {
               label: rows.location,
-              value: folderLocation(folders, runbook.folderId ?? null),
+              value: folderLocation(folders, runbook.folderId ?? null, t),
             },
             {
               label: rows.fileName,
@@ -176,10 +180,12 @@ export function FolderProperties({ folderId }: { folderId: string | null }) {
         {
           title: sections.overview,
           rows: [
-            ...(folder ? [{ label: rows.name, value: folder.name }] : []),
+            ...(folder
+              ? [{ label: rows.name, value: displayFolderName(folder.name, t) }]
+              : []),
             {
               label: rows.location,
-              value: folderLocation(folders, folder?.parentId ?? null),
+              value: folderLocation(folders, folder?.parentId ?? null, t),
             },
             {
               label: rows.folders,

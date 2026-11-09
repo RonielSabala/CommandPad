@@ -1,4 +1,8 @@
-import { LibraryFolderConfig, RunbookBlockConfig } from "@/common/config";
+import {
+  DuplicateNameConfig,
+  LibraryFolderConfig,
+  RunbookBlockConfig,
+} from "@/common/config";
 import {
   LibraryDropZone,
   LibraryItemKind,
@@ -42,11 +46,27 @@ const EMPTY_PATH: readonly string[] = Object.freeze([]);
 
 // Utils
 
-const folderName = (folder: LibraryFolder) => folder.name;
+const folderName = (t: Messages) => (folder: LibraryFolder) =>
+  displayFolderName(folder.name, t);
+const storedFolderName = (folder: LibraryFolder) => folder.name;
+const asShown = (name: string) => name;
 const folderParent = (folder: LibraryFolder) => folder.parentId;
 const runbookParent = (runbook: LibraryRunbook) => runbook.folderId ?? null;
 const runbookName = (t: Messages) => (runbook: LibraryRunbook) =>
   displayLabel(runbook.label, t);
+
+/** A folder's name as shown. */
+export function displayFolderName(name: string, t: Messages): string {
+  const { DEFAULT_NAME } = LibraryFolderConfig;
+  if (!name.startsWith(DEFAULT_NAME)) {
+    return name;
+  }
+
+  const suffix = name.slice(DEFAULT_NAME.length);
+  return suffix.replace(DuplicateNameConfig.SUFFIX_REGEX, "")
+    ? name
+    : t.runbooks.folderName + suffix;
+}
 
 export const libraryRowKey = (row: LibraryRow) =>
   row.kind === LibraryItemKind.FOLDER ? row.folder.id : row.runbook.id;
@@ -91,9 +111,10 @@ export function libraryRows(
   folders: readonly LibraryFolder[],
   runbooks: readonly LibraryRunbook[],
   query: string,
+  t: Messages,
 ): LibraryRow[] {
   if (query) {
-    return foundRunbooks(folders, runbooks, query);
+    return foundRunbooks(folders, runbooks, query, t);
   }
 
   const { subfolders, contents } = libraryChildren(folders, runbooks);
@@ -128,17 +149,20 @@ export function foundRunbooks(
   folders: readonly LibraryFolder[],
   runbooks: readonly LibraryRunbook[],
   query: string,
+  t: Messages,
 ): LibraryRunbookListing[] {
   const { subfolders, contents } = libraryChildren(folders, runbooks);
   const found: LibraryRunbookListing[] = [];
+  const nameFolder = folderName(t);
+  const nameRunbook = runbookName(t);
 
   const visit = (parentId: string | null, path: readonly string[]) => {
     for (const folder of subfolders.get(parentId) ?? []) {
-      visit(folder.id, [...path, folder.name]);
+      visit(folder.id, [...path, nameFolder(folder)]);
     }
 
     for (const runbook of contents.get(parentId) ?? []) {
-      const location = libraryPath([...path, runbook.label]);
+      const location = libraryPath([...path, nameRunbook(runbook)]);
 
       if (matchesQuery(query, location, runbook.filename)) {
         found.push({ kind: LibraryItemKind.RUNBOOK, runbook, depth: 0, path });
@@ -155,8 +179,9 @@ export function visibleRunbooks(
   folders: readonly LibraryFolder[],
   runbooks: readonly LibraryRunbook[],
   query: string,
+  t: Messages,
 ): LibraryRunbook[] {
-  return libraryRows(folders, runbooks, query).flatMap((row) =>
+  return libraryRows(folders, runbooks, query, t).flatMap((row) =>
     row.kind === LibraryItemKind.RUNBOOK ? [row.runbook] : [],
   );
 }
@@ -230,10 +255,12 @@ function folderTrail(
 export function folderLocation(
   folders: readonly LibraryFolder[],
   folderId: string | null,
+  t: Messages,
 ): string {
+  const nameFolder = folderName(t);
   const names = [...folderTrail(folders, folderId)]
     .reverse()
-    .map((folder) => folder.name + LibraryFolderConfig.PATH_SEPARATOR);
+    .map((folder) => nameFolder(folder) + LibraryFolderConfig.PATH_SEPARATOR);
 
   return LibraryFolderConfig.ROOT_PATH + names.join("");
 }
@@ -261,7 +288,7 @@ export function isLibraryLevelOutOfOrder(
   const level = libraryLevel(folders, runbooks, parentId);
 
   return (
-    isOutOfOrder(level.folders, folderName, direction) ||
+    isOutOfOrder(level.folders, folderName(t), direction) ||
     isOutOfOrder(level.runbooks, runbookName(t), direction)
   );
 }
@@ -297,7 +324,7 @@ export function withLibraryLevelSorted(
     folders: withChildrenSorted(
       folders,
       folderParent,
-      folderName,
+      folderName(t),
       parentId,
       direction,
     ),
@@ -315,8 +342,10 @@ export function withLibraryLevelSorted(
 export function libraryPathTrail(
   folders: readonly LibraryFolder[],
   text: string,
+  t: Messages,
 ): LibraryFolder[] {
   const separator = RunbookBlockConfig.PATH_SEPARATOR;
+  const nameFolder = folderName(t);
   const trail: LibraryFolder[] = [];
   let rest = text;
 
@@ -324,7 +353,8 @@ export function libraryPathTrail(
     const parentId = trail.at(-1)?.id ?? null;
     const prefix = rest;
     const next = folders.find(
-      (f) => f.parentId === parentId && prefix.startsWith(f.name + separator),
+      (f) =>
+        f.parentId === parentId && prefix.startsWith(nameFolder(f) + separator),
     );
 
     if (!next) {
@@ -332,28 +362,33 @@ export function libraryPathTrail(
     }
 
     trail.push(next);
-    rest = rest.slice(next.name.length + separator.length);
+    rest = rest.slice(nameFolder(next).length + separator.length);
   }
 }
 
-/** `name` numbered past what its siblings are called. */
+/** `name` numbered past what its siblings show, each name shown by `show`. */
 function numberedPastSiblings<T extends { id: string }>(
   items: readonly T[],
   parentOf: (item: T) => string | null,
   nameOf: (item: T) => string,
+  show: (name: string) => string,
   parentId: string | null,
   name: string,
   exceptId?: string,
 ): string | null {
-  const isSibling = (item: T) =>
-    parentOf(item) === parentId && item.id !== exceptId;
+  const taken = new Set<string>();
 
-  if (!items.some((item) => isSibling(item) && nameOf(item) === name)) {
+  for (const item of items) {
+    if (parentOf(item) === parentId && item.id !== exceptId) {
+      taken.add(show(nameOf(item)));
+    }
+  }
+
+  if (!taken.has(show(name))) {
     return null;
   }
 
-  const taken = new Set(items.filter(isSibling).map(nameOf));
-  return buildDuplicateName(name, (candidate) => taken.has(candidate));
+  return buildDuplicateName(name, (candidate) => taken.has(show(candidate)));
 }
 
 /** `base`, numbered if a sibling folder already has it. */
@@ -361,13 +396,15 @@ export function uniqueFolderName(
   folders: readonly LibraryFolder[],
   parentId: string | null,
   base: string,
+  t: Messages,
   exceptId?: string,
 ): string {
   return (
     numberedPastSiblings(
       folders,
       folderParent,
-      folderName,
+      storedFolderName,
+      (name) => displayFolderName(name, t),
       parentId,
       base,
       exceptId,
@@ -388,6 +425,7 @@ export function uniqueRunbookLabel(
       runbooks,
       runbookParent,
       runbookName(t),
+      asShown,
       folderId ?? null,
       displayLabel(label, t),
       exceptId,
@@ -395,32 +433,34 @@ export function uniqueRunbookLabel(
   );
 }
 
-/** Rename each item after the first sharing a name in its folder. */
+/** Rename each item after the first showing a name in its folder. */
 function withNumberedDuplicates<T extends { id: string }>(
   items: T[],
   parentOf: (item: T) => string | null,
   nameOf: (item: T) => string,
+  show: (name: string) => string,
   rename: (item: T, name: string) => T,
 ): T[] {
   const renamed = new Map<string, T>();
 
   for (const group of groupByParent(items, parentOf).values()) {
     const names = group.map(nameOf);
-    const taken = new Set(names);
+    const shownNames = names.map(show);
+    const taken = new Set(shownNames);
     const seen = new Set<string>();
 
     group.forEach((item, index) => {
-      const name = names[index];
+      const shown = shownNames[index];
 
-      if (seen.has(name) && name.trim()) {
-        const numbered = buildDuplicateName(name, (candidate) =>
-          taken.has(candidate),
+      if (seen.has(shown) && shown.trim()) {
+        const numbered = buildDuplicateName(names[index], (candidate) =>
+          taken.has(show(candidate)),
         );
-        taken.add(numbered);
+        taken.add(show(numbered));
         renamed.set(item.id, rename(item, numbered));
       }
 
-      seen.add(name);
+      seen.add(shown);
     });
   }
 
@@ -588,13 +628,15 @@ export function repairLibrary(
     folders: withNumberedDuplicates(
       rooted.folders,
       folderParent,
-      folderName,
+      storedFolderName,
+      (name) => displayFolderName(name, t),
       (folder, name) => ({ ...folder, name }),
     ),
     runbooks: withNumberedDuplicates(
       rooted.runbooks,
       runbookParent,
       runbookName(t),
+      asShown,
       (runbook, label) => ({ ...runbook, label }),
     ),
   };

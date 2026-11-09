@@ -107,6 +107,7 @@ function focusAfterRemoval(
     state.libraryFolders,
     state.libraryRunbooks,
     state.runbookSearchQuery,
+    getMessages(state.language),
   );
 
   if (!visible.some((runbook) => runbook.id === focused)) {

@@ -435,6 +435,6 @@ English and Spanish; adding a language is data-only.
 - `messages.ts`: `MESSAGES`, `detectLanguage()`, `isLanguage()`, `getMessages(language)`. Components use `useTranslation()` (and `useLanguage()` for the code itself); outside React use `getMessages(get().language)`.
 - **Adding a string**: key in `Messages`, then every locale. **Adding a language**: a locale file, `MESSAGES`, the `LANGUAGE_*` maps, and a flag in `components/icons/flags.tsx`.
 - No inline ternaries over translated fragments: one key per full phrase. Interpolated strings are functions (type-checked params, per-locale pluralization). Sentences wrapping an element use slots (`i18n/slots.ts`, `splitAtSlot`).
-- Language is persisted UI state. "Untitled" sentinels stay language-neutral in storage and are localized at render (`displayLabel`).
+- Language is persisted UI state. "Untitled" sentinels and the default folder name (`LibraryFolderConfig.DEFAULT_NAME`, numbered too) stay language-neutral in storage and are localized at render (`displayLabel`, `displayFolderName`); compare and number folder names by what they show.
 - Keybinding descriptions live in `Messages.keybindings`. Proper nouns and command syntax examples aren't translated.
 - `LanguageSelect` (header) wraps `Select` with hand-drawn SVG flags (not emoji).

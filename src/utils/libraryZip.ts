@@ -10,7 +10,11 @@ import type { Messages } from "@/i18n/types";
 
 import { stripJsonExtension } from "./export";
 import { generateId } from "./id";
-import { libraryChildren, uniqueFolderName } from "./libraryTree";
+import {
+  displayFolderName,
+  libraryChildren,
+  uniqueFolderName,
+} from "./libraryTree";
 import { displayLabel } from "./runbook";
 import { buildDuplicateName } from "./string";
 import {
@@ -68,9 +72,12 @@ function claimName(taken: Set<string>, name: string, extension = ""): string {
 export function libraryZipName(
   folders: readonly LibraryFolder[],
   folderId: string | null,
+  t: Messages,
 ): string {
   const folder = folders.find((f) => f.id === folderId);
-  const name = folder ? safeName(folder.name) : LibraryZipConfig.LIBRARY_NAME;
+  const name = folder
+    ? safeName(displayFolderName(folder.name, t))
+    : LibraryZipConfig.LIBRARY_NAME;
 
   return `${name}${ZIP_EXTENSION}`;
 }
@@ -98,7 +105,10 @@ export function libraryZipFiles(
     const taken = new Set<string>();
 
     for (const folder of levelFolders ?? []) {
-      visit(folder.id, folderPath(prefix, claimName(taken, folder.name)));
+      visit(
+        folder.id,
+        folderPath(prefix, claimName(taken, displayFolderName(folder.name, t))),
+      );
     }
 
     for (const runbook of levelRunbooks ?? []) {
@@ -115,7 +125,10 @@ export function libraryZipFiles(
   };
 
   const root = folders.find((f) => f.id === folderId);
-  visit(folderId, root ? folderPath("", safeName(root.name)) : "");
+  visit(
+    folderId,
+    root ? folderPath("", safeName(displayFolderName(root.name, t))) : "",
+  );
 
   return Promise.all(files);
 }
@@ -149,6 +162,7 @@ function zipLibraryItems(entries: readonly ZipEntry[]): ZipLibraryItem[] {
 export function libraryZipImport(
   zipName: string,
   entries: readonly ZipEntry[],
+  t: Messages,
 ) {
   const name = zipName.replace(ZIP_EXTENSION_REGEX, "");
   const items = zipLibraryItems(entries);
@@ -180,7 +194,12 @@ export function libraryZipImport(
         idsByPath.set(path, id);
         subfolders.push({
           id,
-          name: uniqueFolderName(subfolders, parentId, clipFolderName(folder)),
+          name: uniqueFolderName(
+            subfolders,
+            parentId,
+            clipFolderName(folder),
+            t,
+          ),
           parentId,
         });
       }

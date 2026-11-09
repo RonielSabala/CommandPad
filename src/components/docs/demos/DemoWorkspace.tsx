@@ -10,7 +10,7 @@ import { VariableRow } from "@/components/sidebar/variables/VariableRow";
 import { useSelectModeBodyClass } from "@/hooks/useBodyClasses";
 import { useLassoSelection } from "@/hooks/useLassoSelection";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
-import { useLanguage } from "@/i18n";
+import { useLanguage, useTranslation } from "@/i18n";
 import {
   createAppStore,
   EMPTY_BLOCKS,
@@ -145,11 +145,12 @@ export function DemoVariableRows() {
 }
 
 export function DemoRunbookList() {
+  const t = useTranslation();
   const folders = useStore((state) => state.libraryFolders);
   const runbooks = useStore((state) => state.libraryRunbooks);
   const rows = useMemo(
-    () => libraryRows(folders, runbooks, ""),
-    [folders, runbooks],
+    () => libraryRows(folders, runbooks, "", t),
+    [folders, runbooks, t],
   );
 
   return (

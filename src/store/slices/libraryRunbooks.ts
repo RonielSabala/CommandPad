@@ -143,7 +143,8 @@ export function createLibraryRunbooksSlice(
       return 1;
     }
 
-    const zip = libraryZipImport(file.name, entries);
+    const t = getMessages(get().language);
+    const zip = libraryZipImport(file.name, entries, t);
     let failedCount = 0;
 
     // Every file is read before the first one is added
@@ -171,7 +172,7 @@ export function createLibraryRunbooksSlice(
         ...s.libraryFolders,
         {
           ...zip.root,
-          name: uniqueFolderName(s.libraryFolders, null, zip.root.name),
+          name: uniqueFolderName(s.libraryFolders, null, zip.root.name, t),
         },
         ...zip.subfolders,
       ],
@@ -616,6 +617,7 @@ export function createLibraryRunbooksSlice(
         state.libraryFolders,
         state.libraryRunbooks,
         state.runbookSearchQuery,
+        getMessages(state.language),
       );
       if (visible.length === 0) {
         return;

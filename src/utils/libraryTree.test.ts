@@ -1,4 +1,4 @@
-import { DEFAULT_TAB_LABEL } from "@/common/config";
+import { DEFAULT_TAB_LABEL, LibraryFolderConfig } from "@/common/config";
 import {
   LibraryDropZone,
   LibraryItemKind,
@@ -10,6 +10,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   collapsesSubtree,
+  displayFolderName,
   folderLocation,
   folderSubtree,
   foundRunbooks,
@@ -30,6 +31,7 @@ import {
 } from "./libraryTree";
 
 const en = getMessages("en");
+const es = getMessages("es");
 
 function folder(
   id: string,
@@ -49,7 +51,7 @@ const describeRows = (
   runbooks: LibraryRunbook[],
   query = "",
 ) =>
-  libraryRows(folders, runbooks, query).map((row) =>
+  libraryRows(folders, runbooks, query, en).map((row) =>
     row.kind === LibraryItemKind.FOLDER
       ? `${row.depth}:${row.folder.id}/`
       : `${row.depth}:${row.runbook.id}`,
@@ -157,7 +159,7 @@ describe("foundRunbooks", () => {
   const runbooks = [runbook("backup", "db"), runbook("readme")];
 
   const found = (query: string) =>
-    foundRunbooks(folders, runbooks, query).map(({ runbook, path }) => [
+    foundRunbooks(folders, runbooks, query, en).map(({ runbook, path }) => [
       runbook.id,
       path,
     ]);
@@ -203,7 +205,7 @@ describe("libraryRows", () => {
 
   it("lists matching runbooks flat with their path, ignoring folding", () => {
     const collapsed = [folder("ops", null, true), folder("db", "ops")];
-    const rows = libraryRows(collapsed, runbooks, "back");
+    const rows = libraryRows(collapsed, runbooks, "back", en);
 
     expect(rows).toEqual([
       {
@@ -217,7 +219,7 @@ describe("libraryRows", () => {
 
   it("gives a path only to search results", () => {
     const pathOf = (query: string) =>
-      libraryRows([], [runbook("top")], query).map((row) =>
+      libraryRows([], [runbook("top")], query, en).map((row) =>
         row.kind === LibraryItemKind.RUNBOOK ? row.path : null,
       );
 
@@ -234,6 +236,7 @@ describe("libraryRows", () => {
       ],
       [runbook("inside", "filled")],
       "",
+      en,
     ).flatMap((row) =>
       row.kind === LibraryItemKind.FOLDER && row.empty ? [row.folder.id] : [],
     );
@@ -286,14 +289,14 @@ describe("folderLocation", () => {
   it("spells the path from the root", () => {
     const folders = [folder("ops"), folder("deploys", "ops")];
 
-    expect(folderLocation(folders, null)).toBe("~/");
-    expect(folderLocation(folders, "ops")).toBe("~/ops/");
-    expect(folderLocation(folders, "deploys")).toBe("~/ops/deploys/");
+    expect(folderLocation(folders, null, en)).toBe("~/");
+    expect(folderLocation(folders, "ops", en)).toBe("~/ops/");
+    expect(folderLocation(folders, "deploys", en)).toBe("~/ops/deploys/");
   });
 
   it("stops at a cycle", () => {
     const folders = [folder("a", "b"), folder("b", "a")];
-    expect(folderLocation(folders, "a")).toBe("~/b/a/");
+    expect(folderLocation(folders, "a", en)).toBe("~/b/a/");
   });
 });
 
@@ -316,7 +319,7 @@ describe("libraryLevel", () => {
 describe("libraryPathTrail", () => {
   const folders = [folder("ops"), folder("deploys", "ops"), folder("a/b")];
   const trailIds = (text: string) =>
-    libraryPathTrail(folders, text).map((f) => f.id);
+    libraryPathTrail(folders, text, en).map((f) => f.id);
 
   it("stops at the last folder fully spelled", () => {
     expect(trailIds("")).toEqual([]);
@@ -342,6 +345,7 @@ describe("uniqueFolderName", () => {
         [{ id: "a", name: "ops", parentId: null }],
         null,
         "ops",
+        en,
         "a",
       ),
     ).toBe("ops");
@@ -354,10 +358,48 @@ describe("uniqueFolderName", () => {
       { ...folder("3", "1"), name: "Other" },
     ];
 
-    expect(uniqueFolderName(folders, null, "New folder")).toBe(
+    expect(uniqueFolderName(folders, null, "New folder", en)).toBe(
       "New folder (2)",
     );
-    expect(uniqueFolderName(folders, "1", "New folder")).toBe("New folder");
+    expect(uniqueFolderName(folders, "1", "New folder", en)).toBe("New folder");
+  });
+
+  it("numbers the default name against what its siblings show", () => {
+    const { DEFAULT_NAME } = LibraryFolderConfig;
+    const folders = [
+      { ...folder("1"), name: es.runbooks.folderName },
+      { ...folder("2"), name: `${DEFAULT_NAME} (1)` },
+    ];
+
+    expect(uniqueFolderName(folders, null, DEFAULT_NAME, es)).toBe(
+      `${DEFAULT_NAME} (2)`,
+    );
+    expect(uniqueFolderName(folders, null, DEFAULT_NAME, en)).toBe(
+      DEFAULT_NAME,
+    );
+  });
+});
+
+describe("displayFolderName", () => {
+  const { DEFAULT_NAME } = LibraryFolderConfig;
+
+  it("localizes the default name, numbered or not", () => {
+    expect(displayFolderName(DEFAULT_NAME, es)).toBe(es.runbooks.folderName);
+    expect(displayFolderName(`${DEFAULT_NAME} (3)`, es)).toBe(
+      `${es.runbooks.folderName} (3)`,
+    );
+  });
+
+  it("keeps any other name as written", () => {
+    expect(displayFolderName(`${DEFAULT_NAME} copy`, es)).toBe(
+      `${DEFAULT_NAME} copy`,
+    );
+    expect(displayFolderName(`${DEFAULT_NAME} copy (2)`, es)).toBe(
+      `${DEFAULT_NAME} copy (2)`,
+    );
+    expect(displayFolderName(es.runbooks.folderName, en)).toBe(
+      es.runbooks.folderName,
+    );
   });
 });
 
