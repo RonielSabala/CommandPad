@@ -28,8 +28,7 @@ import { FolderFill, Vr } from "react-bootstrap-icons";
 import { LibraryContextMenu } from "./LibraryContextMenu";
 import { libraryDepthStyle } from "./libraryDepth";
 import "./LibraryFolderRow.css";
-import { LibraryLevelItems } from "./LibraryLevelItems";
-import { LibraryNewSubmenu } from "./LibraryNewSubmenu";
+import { LibraryMenuItems } from "./LibraryMenuItems";
 import { FolderProperties } from "./LibraryProperties";
 import "./LibraryRow.css";
 import { useLibraryRowDrag } from "./useLibraryRowDrag";
@@ -100,32 +99,35 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
     }
   };
 
-  const folderActions = (
-    <ContextMenuItem
-      icon={<Vr className={CssClass.ICON_MD} />}
-      onSelect={() => setRenaming(true)}
-    >
-      {t.runbooks.rename}
-    </ContextMenuItem>
-  );
-
-  const endActions = (
-    <>
-      <InfoMenuItem label={t.info.properties} onSelect={info.open} />
-      <ContextMenuSeparator />
+  const menuItems = {
+    folderId,
+    levelActions: true,
+    actions: (
       <ContextMenuItem
-        icon={
-          <TrashIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-        onSelect={() => void removeLibraryFolder(folderId)}
-        danger
+        icon={<Vr className={CssClass.ICON_MD} />}
+        onSelect={() => setRenaming(true)}
       >
-        {t.runbooks.deleteFolder}
+        {t.runbooks.rename}
       </ContextMenuItem>
-    </>
-  );
+    ),
+    endActions: (
+      <>
+        <InfoMenuItem label={t.info.properties} onSelect={info.open} />
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          icon={
+            <TrashIcon
+              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
+            />
+          }
+          onSelect={() => void removeLibraryFolder(folderId)}
+          danger
+        >
+          {t.runbooks.deleteFolder}
+        </ContextMenuItem>
+      </>
+    ),
+  };
 
   return (
     <div
@@ -206,27 +208,14 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
         title={t.runbooks.folderActions}
         triggerRef={info.triggerRef}
       >
-        {folderActions}
-
-        <ContextMenuSeparator />
-        <LibraryLevelItems folderId={folderId} />
-
-        <ContextMenuSeparator />
-
-        <LibraryNewSubmenu folderId={folderId} />
-        <ContextMenuSeparator />
-
-        {endActions}
+        <LibraryMenuItems {...menuItems} />
       </ActionsMenu>
 
       {menuAnchor && (
         <LibraryContextMenu
           anchor={menuAnchor}
-          folderId={folderId}
-          levelActions
           onClose={closeMenu}
-          actions={folderActions}
-          endActions={endActions}
+          {...menuItems}
         />
       )}
 
