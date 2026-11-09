@@ -37,6 +37,16 @@
   /* The space on each side of a folder's chevron */
   --library-chevron-padding: var(--space-1);
 
+  /* From the row's edge to the first guide */
+  --library-guide-left: round(
+    calc(
+      var(--library-btn-border) + var(--library-row-lead) +
+        var(--library-chevron-padding) + var(--icon-sm) / 2 -
+        var(--library-guide-width) / 2
+    ),
+    1px
+  );
+
   /* The line marking where a drop lands */
   --library-drop-line-width: var(--space-1);
 
@@ -63,14 +73,7 @@ body.read-mode .library-row.sidebar-section-list-row {
   content: "";
   position: absolute;
   inset-block: 0;
-  left: round(
-    calc(
-      var(--library-btn-border) + var(--library-row-lead) +
-        var(--library-chevron-padding) + var(--icon-sm) / 2 -
-        var(--library-guide-width) / 2
-    ),
-    1px
-  );
+  left: var(--library-guide-left);
   width: var(--library-depth-inset);
   background: repeating-linear-gradient(
     to right,
@@ -178,7 +181,10 @@ body.read-mode .library-row.sidebar-section-list-row {
   content: "";
   position: absolute;
   z-index: var(--z-raised);
-  left: var(--library-depth-inset);
+  left: calc(
+    var(--library-depth-inset) +
+      mod(var(--library-guide-left), var(--library-indent))
+  );
   right: 0;
   height: var(--library-drop-line-width);
   background: var(--accent);
