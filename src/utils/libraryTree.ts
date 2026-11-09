@@ -75,6 +75,17 @@ function groupByParent<T>(
   return groups;
 }
 
+/** What sits directly inside every folder. */
+export function libraryChildren(
+  folders: readonly LibraryFolder[],
+  runbooks: readonly LibraryRunbook[],
+) {
+  return {
+    subfolders: groupByParent(folders, folderParent),
+    contents: groupByParent(runbooks, runbookParent),
+  };
+}
+
 /** The rows the library list shows. */
 export function libraryRows(
   folders: readonly LibraryFolder[],
@@ -85,8 +96,7 @@ export function libraryRows(
     return foundRunbooks(folders, runbooks, query);
   }
 
-  const subfolders = groupByParent(folders, folderParent);
-  const contents = groupByParent(runbooks, runbookParent);
+  const { subfolders, contents } = libraryChildren(folders, runbooks);
   const rows: LibraryRow[] = [];
 
   const visit = (parentId: string | null, depth: number) => {
@@ -119,8 +129,7 @@ export function foundRunbooks(
   runbooks: readonly LibraryRunbook[],
   query: string,
 ): LibraryRunbookListing[] {
-  const subfolders = groupByParent(folders, folderParent);
-  const contents = groupByParent(runbooks, runbookParent);
+  const { subfolders, contents } = libraryChildren(folders, runbooks);
   const found: LibraryRunbookListing[] = [];
 
   const visit = (parentId: string | null, path: readonly string[]) => {

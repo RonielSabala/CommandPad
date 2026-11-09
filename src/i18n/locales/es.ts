@@ -102,6 +102,7 @@ export const es: Messages = {
     },
     collapseAll: "Contraer todo",
     expandAll: "Expandir todo",
+    downloadZip: "Descargar como zip",
     deleteFolder: "Eliminar carpeta",
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Guardado en ${provider}`,
@@ -717,6 +718,9 @@ export const es: Messages = {
       count === 1
         ? "No se pudo importar **1 archivo** porque su formato no se reconoce."
         : `No se pudieron importar **${count} archivos** porque sus formatos no se reconocen.`,
+    exportLibraryFailedTitle: "Error al Exportar",
+    exportLibraryFailed:
+      "No se pudo crear el zip porque no se pudo leer un libro. Inténtalo de nuevo.",
     pastedRunbook: "Libro pegado",
     resetTitle: "Resetear Espacio de Trabajo",
     resetConfirm: "Resetear",
@@ -1248,6 +1252,8 @@ Si algo sale mal, deshazlo en este orden:
         `**Ordenar:** **${sortAscendingLabel}** y **${sortDescendingLabel}** ordenan por nombre lo que está directamente en una carpeta. Las carpetas que contiene se ordenan entre sí y quedan encima de sus libros, y lo que hay dentro de cada subcarpeta conserva su orden.`,
       moving:
         "**Mover elementos:** una línea muestra dónde caerá el libro o la carpeta que arrastras, así que puedes dejarlo entre dos libros o entre dos carpetas, incluso en otra carpeta. Suéltalo sobre una carpeta para moverlo dentro; si lo mantienes ahí un momento, una carpeta plegada se abre.",
+      zipExport: (downloadZipLabel) =>
+        `**Llévatela contigo:** **${downloadZipLabel}**, en el menú de una carpeta, descarga esa carpeta. Las carpetas siguen siendo carpetas, incluso las vacías, y cada libro se convierte en un archivo \`.json\`.`,
       quickOpen: (binding) =>
         `**Abrir por nombre:** pulsa \`${binding}\` en cualquier parte del espacio de trabajo para buscar en toda la biblioteca por etiqueta, nombre de archivo, carpeta o ruta. Elige un resultado con las flechas y pulsa Enter para abrirlo.`,
       uniqueNames:

@@ -457,6 +457,7 @@ export interface StoreState {
     filename: string,
     folderId: string | null,
   ) => Promise<void>;
+  exportLibraryFolder: (folderId: string | null) => Promise<void>;
   copyRunbookMarkdown: () => Promise<void>;
   beginImport: () => void;
   openDestinationModal: () => void;

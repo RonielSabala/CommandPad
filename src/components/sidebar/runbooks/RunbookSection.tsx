@@ -27,6 +27,7 @@ import { SidebarSection } from "../shared/SidebarSection";
 import { SidebarSectionFooter } from "../shared/SidebarSectionFooter";
 import { SidebarSectionList } from "../shared/SidebarSectionList";
 import { LibraryContextMenu } from "./LibraryContextMenu";
+import { LibraryDownloadItem } from "./LibraryDownloadItem";
 import { LibraryImportButton } from "./LibraryImportButton";
 import { FolderProperties } from "./LibraryProperties";
 import { LibraryTopLevelDrop } from "./LibraryTopLevelDrop";
@@ -143,6 +144,7 @@ export function RunbookSection() {
           onClose={closeMenu}
           endActions={
             <>
+              <LibraryDownloadItem folderId={null} disabled={isEmpty} />
               <InfoMenuItem
                 label={t.info.properties}
                 onSelect={() => info.open(toolbarRef.current)}

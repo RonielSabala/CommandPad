@@ -102,6 +102,7 @@ export const en: Messages = {
     },
     collapseAll: "Collapse all",
     expandAll: "Expand all",
+    downloadZip: "Download as zip",
     deleteFolder: "Delete folder",
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Saved to ${provider}`,
@@ -700,6 +701,9 @@ export const en: Messages = {
       count === 1
         ? "**1 file** could not be imported because its format isn't recognized."
         : `**${count} files** could not be imported because their formats aren't recognized.`,
+    exportLibraryFailedTitle: "Export Failed",
+    exportLibraryFailed:
+      "The zip could not be created because a runbook could not be read. Please try again.",
     pastedRunbook: "Pasted runbook",
     resetTitle: "Reset Workspace",
     resetConfirm: "Reset",
@@ -1222,6 +1226,8 @@ If something goes wrong, undo it in this order:
         `**Sorting:** **${sortAscendingLabel}** and **${sortDescendingLabel}** order what sits directly in a folder. Folders inside it are sorted among themselves and stay above its runbooks, and what's inside each subfolder keeps its order.`,
       moving:
         "**Moving things:** a line shows where a dragged runbook or folder will land, so you can put it between two runbooks or between two folders, even in another folder. Drop anything on a folder to move it inside; hold it there for a moment and a folded folder opens.",
+      zipExport: (downloadZipLabel) =>
+        `**Taking it with you:** **${downloadZipLabel}**, in a folder's menu, downloads that folder. Folders stay folders, even empty ones, and each runbook becomes a \`.json\` file.`,
       quickOpen: (binding) =>
         `**Opening by name:** press \`${binding}\` anywhere in the workspace to search the whole library by label, filename, folder or path. Pick a result with the arrow keys and press Enter to open it.`,
       uniqueNames:

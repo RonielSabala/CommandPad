@@ -1,10 +1,12 @@
 import { CloudSyncConfig, MimeType } from "@/common/config";
-import { createZip, type ZipFile } from "@/utils/zip";
+import {
+  createZip,
+  emptyZipFolder,
+  textZipFile,
+  type ZipFile,
+} from "@/utils/zip";
 import { buildDuplicateName } from "./entries";
 import type { CloudClient, CloudEntry } from "./types";
-
-const encoder = new TextEncoder();
-const EMPTY_FOLDER_DATA = new Uint8Array(0);
 
 function joinZipPath(prefix: string, name: string): string {
   return `${prefix}${CloudSyncConfig.PATH_SEPARATOR}${name}`;
@@ -46,13 +48,7 @@ async function collectZipFiles(
       : await client.listEntries(folderId);
 
   if (children.length === 0) {
-    // A trailing separator is how a zip stores an empty folder
-    return [
-      {
-        path: `${prefix}${CloudSyncConfig.PATH_SEPARATOR}`,
-        data: EMPTY_FOLDER_DATA,
-      },
-    ];
+    return [emptyZipFolder(`${prefix}${CloudSyncConfig.PATH_SEPARATOR}`)];
   }
 
   const nested = await Promise.all(
@@ -61,7 +57,7 @@ async function collectZipFiles(
 
       return child.isFolder
         ? collectZipFiles(client, child.id, path, depth + 1)
-        : [{ path, data: encoder.encode(await client.readFile(child)) }];
+        : [textZipFile(path, await client.readFile(child))];
     }),
   );
 
@@ -88,7 +84,7 @@ export async function buildCloudEntriesZip(
     nested.push(
       entry.isFolder
         ? await collectZipFiles(client, entry.id, root, 0)
-        : [{ path: root, data: encoder.encode(await client.readFile(entry)) }],
+        : [textZipFile(root, await client.readFile(entry))],
     );
   }
 

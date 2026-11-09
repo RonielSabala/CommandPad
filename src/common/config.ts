@@ -365,6 +365,13 @@ export const ZipConfig = {
   DOS_EPOCH_YEAR: 1980,
 } as const;
 
+export const LibraryZipConfig = {
+  LIBRARY_NAME: "commandpad-library",
+  FALLBACK_NAME: "untitled",
+  PATH_SEPARATOR: "/",
+  UNSAFE_CHAR_REPLACEMENT: "-",
+} as const;
+
 export const Utf8Config = {
   ONE_BYTE_MAX: 0x7f,
   TWO_BYTE_MAX: 0x7ff,

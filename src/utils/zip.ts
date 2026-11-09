@@ -8,6 +8,17 @@ export interface ZipFile {
 }
 
 const encoder = new TextEncoder();
+const EMPTY_DATA = new Uint8Array(0);
+
+export function textZipFile(path: string, text: string): ZipFile {
+  return { path, data: encoder.encode(text) };
+}
+
+/** `path` ends in a separator, which is how a zip stores an empty folder. */
+export function emptyZipFolder(path: string): ZipFile {
+  return { path, data: EMPTY_DATA };
+}
+
 const CRC_TABLE = (() => {
   const table = new Uint32Array(ZipConfig.CRC_TABLE_SIZE);
 

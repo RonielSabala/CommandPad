@@ -51,6 +51,7 @@ export function RunbookLibraryDocs() {
         )}
       />
       <Prose text={t.docs.runbookLibrary.moving} />
+      <Prose text={t.docs.runbookLibrary.zipExport(t.runbooks.downloadZip)} />
       <Prose
         text={t.docs.runbookLibrary.quickOpen(
           formatBinding(KEYBINDINGS[KeyBinding.QUICK_OPEN].binding),

@@ -27,6 +27,7 @@ import { FolderFill, Vr } from "react-bootstrap-icons";
 
 import { LibraryContextMenu } from "./LibraryContextMenu";
 import { libraryDepthStyle } from "./libraryDepth";
+import { LibraryDownloadItem } from "./LibraryDownloadItem";
 import "./LibraryFolderRow.css";
 import { LibraryMenuItems } from "./LibraryMenuItems";
 import { FolderProperties } from "./LibraryProperties";
@@ -112,8 +113,11 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
     ),
     endActions: (
       <>
+        <LibraryDownloadItem folderId={folderId} disabled={empty} />
+
         <InfoMenuItem label={t.info.properties} onSelect={info.open} />
         <ContextMenuSeparator />
+
         <ContextMenuItem
           icon={
             <TrashIcon

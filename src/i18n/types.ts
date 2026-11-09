@@ -123,6 +123,7 @@ export interface Messages {
     sortContents: Record<SortDirection, string>;
     collapseAll: string;
     expandAll: string;
+    downloadZip: string;
     deleteFolder: string;
     syncStatus: Record<
       RunbookSyncStatus,
@@ -555,6 +556,8 @@ export interface Messages {
     overwriteCloudFileMessage: (filename: string) => string;
     importFailedTitle: string;
     importFailed: (count: number) => string;
+    exportLibraryFailedTitle: string;
+    exportLibraryFailed: string;
     pastedRunbook: string;
     resetTitle: string;
     resetConfirm: string;
@@ -745,6 +748,7 @@ export interface Messages {
         sortDescendingLabel: string,
       ) => string;
       moving: string;
+      zipExport: (downloadZipLabel: string) => string;
       quickOpen: (binding: string) => string;
       uniqueNames: string;
       labelDetails: string;
