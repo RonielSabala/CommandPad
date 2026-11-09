@@ -6,7 +6,7 @@ import {
   NON_BREAKING_SPACE,
   PREVIEW_SECRET_MASK,
 } from "@/common/config";
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { AriaRole, DataAttr } from "@/common/constants/dom";
 import { ClampSurface, TooltipVariant } from "@/common/enums";
 import type { CommandSegment } from "@/common/types";
@@ -280,16 +280,10 @@ export function CommandPreview({
         >
           {copied !== null ? (
             <CheckIcon
-              className={classNames(
-                "copy-check-icon",
-                CssClass.ICON_MD,
-                CssClass.ICON_BOLD,
-              )}
+              className={classNames("copy-check-icon", STANDARD_ICON_CLASS)}
             />
           ) : (
-            <CopyIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
+            <CopyIcon className={STANDARD_ICON_CLASS} />
           )}
         </button>
       </div>

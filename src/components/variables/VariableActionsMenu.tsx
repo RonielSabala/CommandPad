@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { VariableEntryKind } from "@/common/enums";
 import {
   ContextMenuItem,
@@ -17,7 +17,6 @@ import {
   useStore,
 } from "@/store/store";
 import { getCaseOperationKeywords } from "@/utils/resolution";
-import { classNames } from "@/utils/string";
 import type { ReactNode } from "react";
 import { AlphabetUppercase, Collection, Eraser } from "react-bootstrap-icons";
 
@@ -109,10 +108,7 @@ export function VariableActionsMenu({
           {!isEnum && (
             <ContextMenuItem
               icon={
-                <EyeIcon
-                  slashed={!isSecret}
-                  className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-                />
+                <EyeIcon slashed={!isSecret} className={STANDARD_ICON_CLASS} />
               }
               onSelect={() => toggleVariableSecret(variableId)}
             >

@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { AriaRole } from "@/common/constants/dom";
 import { EventType, Key } from "@/common/constants/events";
 import { CheckIcon } from "@/components/icons";
@@ -160,9 +160,7 @@ export function ContextMenuItem({
     >
       <span className={CssClass.CONTEXT_MENU_ICON}>
         {isCheckbox && checked ? (
-          <CheckIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
+          <CheckIcon className={STANDARD_ICON_CLASS} />
         ) : (
           icon
         )}

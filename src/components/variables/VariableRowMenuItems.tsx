@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import {
   VariableEntryKind,
   VariableKind,
@@ -39,11 +39,7 @@ function InsertItems({ targetId, position }: InsertItemsProps) {
   return (
     <>
       <ContextMenuItem
-        icon={
-          <VariableIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
+        icon={<VariableIcon className={STANDARD_ICON_CLASS} />}
         onSelect={() =>
           insertVariableRow(targetId, VariableEntryKind.VARIABLE, position)
         }
@@ -52,11 +48,7 @@ function InsertItems({ targetId, position }: InsertItemsProps) {
       </ContextMenuItem>
 
       <ContextMenuItem
-        icon={
-          <EnumIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
+        icon={<EnumIcon className={STANDARD_ICON_CLASS} />}
         onSelect={() =>
           insertVariableRow(
             targetId,
@@ -70,11 +62,7 @@ function InsertItems({ targetId, position }: InsertItemsProps) {
       </ContextMenuItem>
 
       <ContextMenuItem
-        icon={
-          <SectionIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
+        icon={<SectionIcon className={STANDARD_ICON_CLASS} />}
         onSelect={() =>
           insertVariableRow(targetId, VariableEntryKind.SECTION, position)
         }

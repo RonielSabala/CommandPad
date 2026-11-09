@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuAlign,
@@ -34,9 +34,7 @@ export function LibraryImportButton() {
         onClick={beginImport}
         {...tooltip(t.runbooks.importTitle)}
       >
-        <ImportIcon
-          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-        />
+        <ImportIcon className={STANDARD_ICON_CLASS} />
         <span className="library-import-label">
           <span>{t.runbooks.import}</span>
         </span>
@@ -61,11 +59,7 @@ export function LibraryImportButton() {
         </ContextMenuItem>
 
         <ContextMenuItem
-          icon={
-            <ClipIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<ClipIcon className={STANDARD_ICON_CLASS} />}
           onSelect={openPasteRunbookModal}
         >
           {t.runbooks.pasteTitle}

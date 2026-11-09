@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { VariableKind } from "@/common/enums";
 import { SearchInput } from "@/components/common/SearchInput";
 import { EnumIcon, VariableIcon } from "@/components/icons";
@@ -11,14 +11,12 @@ import {
   useStore,
 } from "@/store/store";
 import { isVariableUnused } from "@/utils/resolution";
-import { classNames, matchesQuery } from "@/utils/string";
+import { matchesQuery } from "@/utils/string";
 
 import { SidebarSection } from "../shared/SidebarSection";
 import { SidebarSectionFooter } from "../shared/SidebarSectionFooter";
 import { SidebarSectionList } from "../shared/SidebarSectionList";
 import { VariableRow } from "./VariableRow";
-
-const FOOTER_ICON_CLASS = classNames(CssClass.ICON_MD, CssClass.ICON_BOLD);
 
 export function VariableSection() {
   const t = useTranslation();
@@ -69,12 +67,12 @@ export function VariableSection() {
         onClick={() => void addVariable()}
         title={t.variables.newTitle}
         label={t.variables.variableLabel}
-        icon={<VariableIcon className={FOOTER_ICON_CLASS} />}
+        icon={<VariableIcon className={STANDARD_ICON_CLASS} />}
         secondaryAction={{
           onClick: () => void addVariable(VariableKind.ENUM),
           title: t.variables.newEnumTitle,
           label: t.variables.enumLabel,
-          icon: <EnumIcon className={FOOTER_ICON_CLASS} />,
+          icon: <EnumIcon className={STANDARD_ICON_CLASS} />,
         }}
       />
     </SidebarSection>

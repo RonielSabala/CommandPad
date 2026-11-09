@@ -1,5 +1,5 @@
 import { SelectConfig } from "@/common/config";
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import {
   AutoComplete,
   InputType,
@@ -166,13 +166,7 @@ function VariableOptionRow({
         isDragging && CssClass.DRAGGING,
       )}
     >
-      <DragImage
-        icon={
-          <OptionStateIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-      >
+      <DragImage icon={<OptionStateIcon className={STANDARD_ICON_CLASS} />}>
         {option}
       </DragImage>
 
@@ -212,22 +206,14 @@ function VariableOptionRow({
         </ContextMenuItem>
 
         <ContextMenuItem
-          icon={
-            <DuplicateIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<DuplicateIcon className={STANDARD_ICON_CLASS} />}
           onSelect={() => duplicateVariableOption(variableId, option)}
         >
           {t.variables.duplicateOption}
         </ContextMenuItem>
 
         <ContextMenuItem
-          icon={
-            <CopyIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<CopyIcon className={STANDARD_ICON_CLASS} />}
           onSelect={() => void navigator.clipboard.writeText(option)}
         >
           {t.variables.copyOption}
@@ -236,11 +222,7 @@ function VariableOptionRow({
         <ContextMenuSeparator />
 
         <ContextMenuItem
-          icon={
-            <ArrowBarUp
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<ArrowBarUp className={STANDARD_ICON_CLASS} />}
           onSelect={() =>
             reorderVariableOptions(variableId, option, options[0] ?? option)
           }
@@ -250,11 +232,7 @@ function VariableOptionRow({
         </ContextMenuItem>
 
         <ContextMenuItem
-          icon={
-            <ArrowBarDown
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<ArrowBarDown className={STANDARD_ICON_CLASS} />}
           onSelect={() =>
             reorderVariableOptions(variableId, option, options.at(-1) ?? option)
           }
@@ -372,9 +350,7 @@ export function VariableOptionsSelect({
                 aria-label={t.variables.addOption}
                 {...tooltip(t.variables.addOption)}
               >
-                <PlusIcon
-                  className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-                />
+                <PlusIcon className={STANDARD_ICON_CLASS} />
               </button>
             </div>
           )

@@ -1,5 +1,5 @@
 import { SECTION_ANIMATION_FALLBACK_MS } from "@/common/config";
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { asButton } from "@/components/common/asButton";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import type { FileDrop } from "@/hooks/useFileDrop";
@@ -88,11 +88,7 @@ export function SidebarSection({
       >
         <p className={CssClass.SECTION_TITLE}>{title}</p>
         <SidebarSectionChevronIcon
-          className={classNames(
-            "sidebar-section-chevron",
-            CssClass.ICON_MD,
-            CssClass.ICON_BOLD,
-          )}
+          className={classNames("sidebar-section-chevron", STANDARD_ICON_CLASS)}
         />
       </div>
       <div

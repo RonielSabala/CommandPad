@@ -1,10 +1,9 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
 import { PlusIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
-import { classNames } from "@/utils/string";
 import { FileEarmark, Folder } from "react-bootstrap-icons";
 
 interface Props {
@@ -18,11 +17,7 @@ export function LibraryNewSubmenu({ folderId }: Props) {
 
   return (
     <ContextMenuSubmenu
-      icon={
-        <PlusIcon
-          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-        />
-      }
+      icon={<PlusIcon className={STANDARD_ICON_CLASS} />}
       label={t.runbooks.new}
     >
       <ContextMenuItem

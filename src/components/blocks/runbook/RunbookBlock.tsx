@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { ScrollIntoView } from "@/common/constants/dom";
 import { CodeModelScope, EditorLanguage } from "@/common/editorConfig";
 import {
@@ -210,13 +210,7 @@ export function RunbookBlock({
         CssClass.BLOCK_SURFACE,
       )}
     >
-      <DragImage
-        icon={
-          <RunbookIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-      >
+      <DragImage icon={<RunbookIcon className={STANDARD_ICON_CLASS} />}>
         {dragImageLabel}
       </DragImage>
 

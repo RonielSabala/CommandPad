@@ -1,5 +1,5 @@
 import { SECRET_MASK } from "@/common/config";
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { AutoComplete, DataAttr, InputType } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import {
@@ -94,13 +94,7 @@ export const VariableRow = memo(function VariableRow({
       {...{ [DataAttr.VARIABLE_ID]: variableId }}
       {...rowProps}
     >
-      <DragImage
-        icon={
-          <KindIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-      >
+      <DragImage icon={<KindIcon className={STANDARD_ICON_CLASS} />}>
         {variableKey || t.variables.keyPlaceholder}
       </DragImage>
 
@@ -192,10 +186,7 @@ export const VariableRow = memo(function VariableRow({
           aria-label={t.variables.reveal(1)}
           {...tooltip(t.variables.reveal(1))}
         >
-          <EyeIcon
-            slashed
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
+          <EyeIcon slashed className={STANDARD_ICON_CLASS} />
         </button>
       )}
 
@@ -215,10 +206,7 @@ export const VariableRow = memo(function VariableRow({
           )}
           aria-hidden={true}
         >
-          <EyeIcon
-            slashed
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
+          <EyeIcon slashed className={STANDARD_ICON_CLASS} />
         </div>
       )}
     </div>

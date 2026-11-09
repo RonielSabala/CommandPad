@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { useRichTooltip } from "@/components/common/tooltip/richTooltip";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
@@ -56,7 +56,7 @@ export function AddRowButton({
   return (
     <>
       <button className={CssClass.BTN} onClick={() => onAdd()} {...tip.props}>
-        <Icon className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)} />
+        <Icon className={STANDARD_ICON_CLASS} />
         {label}
       </button>
 

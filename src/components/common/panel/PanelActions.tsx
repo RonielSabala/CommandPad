@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { PanelId, PanelSide } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PanelCollapseIcon, PanelSideIcon } from "@/components/icons";
@@ -35,23 +35,17 @@ export function PanelActions({ panelId, name }: Props) {
         {...tooltip(toggleLabel)}
       >
         <PanelCollapseIcon
-          className={classNames(
-            "panel-collapse-chevron",
-            CssClass.ICON_MD,
-            CssClass.ICON_BOLD,
-          )}
+          className={classNames("panel-collapse-chevron", STANDARD_ICON_CLASS)}
         />
       </button>
+
       <button
         className={classNames(CssClass.BTN, CssClass.BTN_ICON)}
         onClick={() => togglePanelSide(panelId)}
         aria-label={toggleSideLabel}
         {...tooltip(toggleSideLabel)}
       >
-        <PanelSideIcon
-          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          mirrored={isRight}
-        />
+        <PanelSideIcon className={STANDARD_ICON_CLASS} mirrored={isRight} />
       </button>
     </div>
   );

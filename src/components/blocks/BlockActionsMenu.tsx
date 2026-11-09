@@ -1,5 +1,5 @@
 import { BLOCK_TYPE_ORDER } from "@/blocks";
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { BlockType, type InsertPosition } from "@/common/enums";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
@@ -36,9 +36,7 @@ function InsertItems({ blockId, position }: InsertItemsProps) {
     return (
       <ContextMenuItem
         key={type}
-        icon={
-          <Icon className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)} />
-        }
+        icon={<Icon className={STANDARD_ICON_CLASS} />}
         onSelect={() => void addBlock(type, { blockId, position })}
       >
         {t.blocks.typeLabel[type]}
@@ -77,11 +75,7 @@ export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
 
         {isNote && (
           <ContextMenuItem
-            icon={
-              <CopyIcon
-                className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-              />
-            }
+            icon={<CopyIcon className={STANDARD_ICON_CLASS} />}
             onSelect={() => void navigator.clipboard.writeText(block.text)}
             disabled={!block.text.trim()}
           >
@@ -101,11 +95,7 @@ export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
         )}
 
         <ContextMenuItem
-          icon={
-            <DuplicateIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<DuplicateIcon className={STANDARD_ICON_CLASS} />}
           onSelect={() => duplicateBlock(blockId)}
         >
           {t.blocks.duplicate(selectionCount)}

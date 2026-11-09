@@ -160,6 +160,8 @@ export const CssClass = {
   MODAL_BACKDROP_TRANSPARENT: "modal-backdrop-transparent",
 } as const;
 
+export const STANDARD_ICON_CLASS = `${CssClass.ICON_MD} ${CssClass.ICON_BOLD}`;
+
 export const REVEAL_TONE_CLASS: Record<RevealTone, string | undefined> = {
   [RevealTone.NEUTRAL]: "row-reveal-neutral",
   [RevealTone.RESOLVED]: "row-reveal-resolved",

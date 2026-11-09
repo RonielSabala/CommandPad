@@ -1,10 +1,9 @@
-import { CssClass } from "@/common/constants/css";
+import { STANDARD_ICON_CLASS } from "@/common/constants/css";
 import type { Variable } from "@/common/types";
 import { DragImage } from "@/components/common/DragImage";
 import { EnumIcon, VariableIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import type { VariableCompletion } from "@/monaco/completions";
-import { classNames } from "@/utils/string";
 import { memo, useRef } from "react";
 
 import { VariableActionsMenu } from "./VariableActionsMenu";
@@ -39,13 +38,7 @@ export const VariableItem = memo(function VariableItem({
         />
       )}
     >
-      <DragImage
-        icon={
-          <KindIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-      >
+      <DragImage icon={<KindIcon className={STANDARD_ICON_CLASS} />}>
         {variable.key || t.variables.keyPlaceholder}
       </DragImage>
 

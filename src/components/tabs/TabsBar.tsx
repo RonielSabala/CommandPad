@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { ElementId } from "@/common/constants/dom";
 import { RunbookView } from "@/common/enums";
 import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
@@ -65,9 +65,7 @@ export function TabsBar() {
         {...tooltip(t.tabs.newTab)}
         onClick={() => void createNewTab()}
       >
-        <PlusIcon
-          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-        />
+        <PlusIcon className={STANDARD_ICON_CLASS} />
       </button>
 
       {tabs.length > 0 && (
