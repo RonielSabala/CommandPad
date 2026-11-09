@@ -71,3 +71,29 @@ describe("withoutRunbooks focus", () => {
     expect(focusAfterRemoving("first", ["last"])).toBe("first");
   });
 });
+
+describe("withoutRunbooks reveal", () => {
+  const tab = (runbookId: string) => ({ id: `tab-${runbookId}`, runbookId });
+
+  function collapsedAfterRemoving(activeRunbookId: string, removed: string) {
+    const state = {
+      tabs: [tab("first"), tab("hidden")],
+      activeTabId: `tab-${activeRunbookId}`,
+      libraryFolders: [OPEN, COLLAPSED],
+      libraryRunbooks: LIBRARY,
+      runbookSearchQuery: "",
+      focusedRunbookId: null,
+    } as unknown as StoreState;
+
+    return withoutRunbooks(state, new Set([removed])).libraryFolders[1]
+      .collapsed;
+  }
+
+  it("expands the folder of the runbook that becomes active", () => {
+    expect(collapsedAfterRemoving("first", "first")).toBe(false);
+  });
+
+  it("leaves a collapsed folder alone when the active tab stays", () => {
+    expect(collapsedAfterRemoving("hidden", "first")).toBe(true);
+  });
+});

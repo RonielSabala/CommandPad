@@ -125,12 +125,13 @@ export function createTabsSlice(
         }
       }
 
-      set({
-        tabs,
-        activeTabId,
-        activeRunbookId: findTabById(tabs, activeTabId)?.runbookId ?? null,
-      });
+      // Closing another tab must not reopen a folder the user collapsed
+      const activeRunbookId = findTabById(tabs, activeTabId)?.runbookId ?? null;
+      if (activeTabId !== state.activeTabId) {
+        revealRunbook(activeRunbookId);
+      }
 
+      set({ tabs, activeTabId, activeRunbookId });
       saveTabs();
     },
 

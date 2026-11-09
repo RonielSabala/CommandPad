@@ -2,9 +2,14 @@ import { DialogTone } from "@/common/enums";
 import type { LibraryFolder, LibraryRunbook, Tab } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import type { Messages } from "@/i18n/types";
-import { uniqueRunbookLabel, visibleRunbooks } from "@/utils/libraryTree";
+import {
+  uniqueRunbookLabel,
+  visibleRunbooks,
+  withFolderExpanded,
+} from "@/utils/libraryTree";
 import { findTabById } from "@/utils/tabs";
 
+import { getLibraryRunbook } from "./selectors";
 import type { StoreState } from "./types";
 
 /** `label`, numbered if a runbook in `folderId` already shows it. */
@@ -123,6 +128,7 @@ export function withoutRunbooks(
   | "tabs"
   | "activeTabId"
   | "activeRunbookId"
+  | "libraryFolders"
   | "libraryRunbooks"
   | "focusedRunbookId"
 > {
@@ -143,10 +149,18 @@ export function withoutRunbooks(
       ? undefined
       : nearestSurvivor(state.tabs, tabs, state.activeTabId, isClosed));
 
+  const activeTabId = activeTab?.id ?? null;
+  const activeRunbookId = activeTab?.runbookId ?? null;
+  const revealedFolderId =
+    activeRunbookId && activeTabId !== state.activeTabId
+      ? getLibraryRunbook(state, activeRunbookId)?.folderId
+      : undefined;
+
   return {
     tabs,
-    activeTabId: activeTab?.id ?? null,
-    activeRunbookId: activeTab?.runbookId ?? null,
+    activeTabId,
+    activeRunbookId,
+    libraryFolders: withFolderExpanded(state.libraryFolders, revealedFolderId),
     libraryRunbooks,
     focusedRunbookId: focusAfterRemoval(state, runbookIds),
   };

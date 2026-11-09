@@ -42,6 +42,7 @@
   justify-content: center;
   background: transparent;
   border: none;
+  outline: none;
   padding: var(--space-1);
   color: var(--color-text-muted);
   cursor: pointer;

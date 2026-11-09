@@ -21,6 +21,7 @@ import {
   useRef,
   useState,
   type KeyboardEvent,
+  type MouseEvent,
 } from "react";
 import { FileEarmark } from "react-bootstrap-icons";
 
@@ -66,6 +67,12 @@ const QuickOpenRow = memo(function QuickOpenRow({
     </li>
   );
 });
+
+const keepSearchFocused = (event: MouseEvent) => {
+  if (!(event.target instanceof HTMLInputElement)) {
+    event.preventDefault();
+  }
+};
 
 function QuickOpenSearch() {
   const t = useTranslation();
@@ -184,6 +191,7 @@ export function QuickOpenModal() {
       onClose={closeQuickOpenModal}
       className="modal-quick-open"
       closeButton={false}
+      onMouseDown={keepSearchFocused}
       noBackdrop
     >
       {openings > 0 && <QuickOpenSearch key={openings} />}

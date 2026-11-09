@@ -105,10 +105,16 @@ export function createLibraryFoldersSlice(
       await Promise.all([...runbookIds].map((rid) => contentDb.delete(rid)));
       runbookIds.forEach(forgetSyncState);
 
-      set((s) => ({
-        libraryFolders: s.libraryFolders.filter((f) => !folderIds.has(f.id)),
-        ...withoutRunbooks(s, runbookIds),
-      }));
+      set((s) => {
+        const remaining = withoutRunbooks(s, runbookIds);
+
+        return {
+          ...remaining,
+          libraryFolders: remaining.libraryFolders.filter(
+            (f) => !folderIds.has(f.id),
+          ),
+        };
+      });
 
       saveTabs();
       saveLibrary();
