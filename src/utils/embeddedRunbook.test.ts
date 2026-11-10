@@ -1,9 +1,10 @@
-import { CloudProvider } from "@/common/enums";
+import { CloudProvider, EmbeddedRunbookStatus } from "@/common/enums";
 import type { LibraryRunbook, RunbookBlock } from "@/common/types";
 import { describe, expect, it } from "vitest";
 
 import {
   cloudSourceKey,
+  embeddedRunbookId,
   localSourceKey,
   resolveEmbedSource,
   resolveLocalRunbook,
@@ -94,5 +95,52 @@ describe("resolveEmbedSource", () => {
         block({ cloud: { provider: CloudProvider.ONEDRIVE, path: " / " } }),
       ),
     ).toBeNull();
+  });
+});
+
+describe("embeddedRunbookId", () => {
+  const cloud = { provider: CloudProvider.ONEDRIVE, path: "ops/backup.json" };
+
+  it("names a library runbook embedded by id or by label", () => {
+    expect(
+      embeddedRunbookId(
+        block({ label: "Old name", runbookId: "backup" }),
+        libraryRunbooks,
+        {},
+      ),
+    ).toBe("backup");
+    expect(
+      embeddedRunbookId(block({ label: "Deploy" }), libraryRunbooks, {}),
+    ).toBe("deploy");
+    expect(
+      embeddedRunbookId(block({ label: "Missing" }), libraryRunbooks, {}),
+    ).toBeUndefined();
+  });
+
+  it("names the runbook synced with an embedded cloud file", () => {
+    const embeddedRunbooks = {
+      [cloudSourceKey(cloud)]: {
+        status: EmbeddedRunbookStatus.READY,
+        content: null,
+        runbookId: "backup",
+      },
+    };
+
+    expect(
+      embeddedRunbookId(block({ cloud }), libraryRunbooks, embeddedRunbooks),
+    ).toBe("backup");
+    expect(
+      embeddedRunbookId(block({ cloud }), libraryRunbooks, {}),
+    ).toBeUndefined();
+  });
+
+  it("ignores blocks of other types", () => {
+    expect(
+      embeddedRunbookId(
+        { id: "note", type: "note", text: "Deploy" },
+        libraryRunbooks,
+        {},
+      ),
+    ).toBeUndefined();
   });
 });

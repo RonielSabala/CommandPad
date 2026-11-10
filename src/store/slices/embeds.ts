@@ -1,5 +1,15 @@
-import { EmbeddedRunbookStatus, VaultField, VaultPrompt } from "@/common/enums";
-import type { EmbeddedRunbook } from "@/common/types";
+import {
+  BlockType,
+  EmbeddedRunbookStatus,
+  VaultField,
+  VaultPrompt,
+} from "@/common/enums";
+import type {
+  Block,
+  EmbeddedRunbook,
+  RunbookContent,
+  Tab,
+} from "@/common/types";
 import {
   clearCachedCloudEntries,
   getCloudClient,
@@ -7,8 +17,10 @@ import {
   resolveCloudFile,
 } from "@/services/cloud";
 import { recordFromCiphertext, unlockVault } from "@/services/vault";
+import { embeddedRunbookId } from "@/utils/embeddedRunbook";
 import { sha256 } from "@/utils/hash";
 import { getRunbookStats, parseRunbookSource } from "@/utils/runbookSource";
+import { findTabByRunbookId } from "@/utils/tabs";
 
 import type { StoreKit } from "@/store/kit";
 import {
@@ -23,6 +35,7 @@ import type { StoreState } from "@/store/types";
 type EmbedsActions = Pick<
   StoreState,
   | "readRunbookStats"
+  | "readRunbookLinks"
   | "loadEmbeddedRunbook"
   | "refreshEmbeddedRunbook"
   | "openEmbeddedRunbook"
@@ -45,6 +58,7 @@ export function createEmbedsSlice(
     invalidateEmbed,
     getVaultRecord,
     storedStats,
+    storedRunbookBlocks,
     tabStats,
     cloudFileSync,
     runbookLinkedTo,
@@ -60,36 +74,77 @@ export function createEmbedsSlice(
     ensureSignedIn,
   } = services;
 
+  /** Derives from a closed runbook's stored content, once per write. */
+  const readStored = <T>(
+    cache: Map<string, Promise<T | null>>,
+    runbookId: string,
+    derive: (content: RunbookContent) => T,
+  ): Promise<T | null> => {
+    let derived = cache.get(runbookId);
+    if (derived) {
+      return derived;
+    }
+
+    derived = contentDb
+      .get(runbookId)
+      .then((content) => (content ? derive(content) : null))
+      .catch((error) => {
+        cache.delete(runbookId);
+        console.warn("Failed to read runbook:", runbookId, error);
+        return null;
+      });
+
+    cache.set(runbookId, derived);
+    return derived;
+  };
+
+  /** A runbook's blocks, holding at least its runbook blocks. */
+  const readEmbedBlocks = (
+    tabs: readonly Tab[],
+    runbookId: string,
+  ): Block[] | Promise<Block[] | null> =>
+    findTabByRunbookId(tabs, runbookId)?.blocks ??
+    readStored(storedRunbookBlocks, runbookId, ({ blocks }) =>
+      blocks.filter(({ type }) => type === BlockType.RUNBOOK),
+    );
+
   return {
     readRunbookStats: (runbookId) => {
       const openTab = getTabByRunbookId(get(), runbookId);
-      if (openTab) {
-        let stats = tabStats.get(openTab);
-
-        if (!stats) {
-          stats = getRunbookStats(tabContent(openTab));
-          tabStats.set(openTab, stats);
-        }
-
-        return Promise.resolve(stats);
+      if (!openTab) {
+        return readStored(storedStats, runbookId, getRunbookStats);
       }
 
-      let stats = storedStats.get(runbookId);
-      if (stats) {
-        return stats;
+      let stats = tabStats.get(openTab);
+      if (!stats) {
+        stats = getRunbookStats(tabContent(openTab));
+        tabStats.set(openTab, stats);
       }
 
-      stats = contentDb
-        .get(runbookId)
-        .then((content) => (content ? getRunbookStats(content) : null))
-        .catch((error) => {
-          storedStats.delete(runbookId);
-          console.warn("Failed to measure runbook:", runbookId, error);
-          return null;
-        });
+      return Promise.resolve(stats);
+    },
 
-      storedStats.set(runbookId, stats);
-      return stats;
+    /** The library runbooks `runbookId` embeds, and the ones embedding it. */
+    readRunbookLinks: async (runbookId) => {
+      const { libraryRunbooks, tabs } = get();
+      const embedBlocks = await Promise.all(
+        libraryRunbooks.map(({ id }) => readEmbedBlocks(tabs, id)),
+      );
+
+      // Read after the wait, so a cloud embed loaded meanwhile counts
+      const { embeddedRunbooks } = get();
+      const embeddedId = (block: Block) =>
+        embeddedRunbookId(block, libraryRunbooks, embeddedRunbooks);
+
+      const own = libraryRunbooks.findIndex(({ id }) => id === runbookId);
+      const usedIds = new Set(embedBlocks[own]?.map(embeddedId));
+
+      return {
+        uses: libraryRunbooks.filter(({ id }) => usedIds.has(id)),
+        usedBy: libraryRunbooks.filter((_, at) =>
+          embedBlocks[at]?.some((block) => embeddedId(block) === runbookId),
+        ),
+      };
     },
 
     loadEmbeddedRunbook: async (source) => {

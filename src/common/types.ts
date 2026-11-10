@@ -145,6 +145,12 @@ export interface RunbookStats {
   variables: number;
 }
 
+/** The runbooks a runbook embeds, and the ones embedding it. */
+export interface RunbookLinks {
+  uses: LibraryRunbook[];
+  usedBy: LibraryRunbook[];
+}
+
 export interface RunbookContent {
   blocks: Block[];
   variables: Variable[];

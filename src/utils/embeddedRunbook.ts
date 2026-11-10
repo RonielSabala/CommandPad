@@ -1,6 +1,11 @@
 import { RunbookBlockConfig } from "@/common/config";
-import { CloudProvider, EmbeddedRunbookStatus } from "@/common/enums";
+import {
+  BlockType,
+  CloudProvider,
+  EmbeddedRunbookStatus,
+} from "@/common/enums";
 import type {
+  Block,
   CloudRunbookRef,
   EmbeddedRunbook,
   LibraryRunbook,
@@ -130,6 +135,22 @@ export function hasUnresolvedEmbeds(
   return blocks.some((block) =>
     isEmbedBlockUnresolved(block, libraryRunbooks, embeddedRunbooks),
   );
+}
+
+/** The library runbook `block` embeds. */
+export function embeddedRunbookId(
+  block: Block,
+  libraryRunbooks: readonly LibraryRunbook[],
+  embeddedRunbooks: Readonly<Record<string, EmbeddedRunbook>>,
+): string | undefined {
+  if (block.type !== BlockType.RUNBOOK) {
+    return undefined;
+  }
+
+  const source = cachedEmbedSource(libraryRunbooks, block);
+  return source?.cloud
+    ? embeddedRunbooks[source.key]?.runbookId
+    : source?.local.id;
 }
 
 export interface EmbedLookup {

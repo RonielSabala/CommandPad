@@ -1,6 +1,13 @@
+import { CssClass } from "@/common/constants/css";
+import { ButtonType } from "@/common/constants/dom";
 import { RunbookSyncStatus, VaultStatus } from "@/common/enums";
-import type { RunbookStats } from "@/common/types";
+import type {
+  LibraryRunbook,
+  RunbookLinks,
+  RunbookStats,
+} from "@/common/types";
 import { InfoTable } from "@/components/common/info/InfoTable";
+import { InfoDismissContext } from "@/components/common/info/infoTooltipContext";
 import { useInfoFormat } from "@/components/common/info/useInfoFormat";
 import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
 import { useTranslation } from "@/i18n";
@@ -12,7 +19,7 @@ import {
   folderSubtree,
 } from "@/utils/libraryTree";
 import { displayLabel } from "@/utils/runbook";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 
 function useRunbookStats(runbookIds: Iterable<string>) {
   const readRunbookStats = useStore((state) => state.readRunbookStats);
@@ -46,6 +53,57 @@ function useRunbookStats(runbookIds: Iterable<string>) {
   return stats;
 }
 
+function useRunbookLinks(runbookId: string) {
+  const readRunbookLinks = useStore((state) => state.readRunbookLinks);
+  const libraryRunbooks = useStore((state) => state.libraryRunbooks);
+  const [links, setLinks] = useState<RunbookLinks | null>(null);
+
+  useEffect(() => {
+    let current = true;
+
+    void readRunbookLinks(runbookId).then((read) => {
+      if (current) {
+        setLinks(read);
+      }
+    });
+
+    return () => {
+      current = false;
+    };
+  }, [runbookId, libraryRunbooks, readRunbookLinks]);
+
+  return links;
+}
+
+/** Links that open each runbook. */
+function RunbookLinkList({
+  runbooks,
+}: {
+  runbooks: readonly LibraryRunbook[];
+}) {
+  const t = useTranslation();
+  const dismiss = useContext(InfoDismissContext);
+  const loadLibraryRunbook = useStore((state) => state.loadLibraryRunbook);
+
+  return (
+    <div className={CssClass.TOOLTIP_LINKS}>
+      {runbooks.map(({ id, label }) => (
+        <button
+          key={id}
+          type={ButtonType.BUTTON}
+          className={CssClass.TOOLTIP_LINK}
+          onClick={() => {
+            dismiss();
+            void loadLibraryRunbook(id);
+          }}
+        >
+          {displayLabel(label, t)}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function RunbookProperties({ runbookId }: { runbookId: string }) {
   const t = useTranslation();
   const folders = useStore((state) => state.libraryFolders);
@@ -54,6 +112,7 @@ export function RunbookProperties({ runbookId }: { runbookId: string }) {
 
   const format = useInfoFormat();
   const stats = useRunbookStats(runbookIds);
+  const links = useRunbookLinks(runbookId);
 
   const isOpen = useStore((state) => isRunbookOpen(state, runbookId));
   const transientSync = useStore((state) => state.runbookSyncStatus[runbookId]);
@@ -109,6 +168,18 @@ export function RunbookProperties({ runbookId }: { runbookId: string }) {
               value: stats && format.count(stats.variables),
             },
             { label: rows.size, value: stats && format.size(stats.bytes) },
+            {
+              label: rows.runbookUses,
+              value: links?.uses.length ? (
+                <RunbookLinkList runbooks={links.uses} />
+              ) : null,
+            },
+            {
+              label: rows.runbookUsedBy,
+              value: links?.usedBy.length ? (
+                <RunbookLinkList runbooks={links.usedBy} />
+              ) : null,
+            },
           ],
         },
         ...(sync

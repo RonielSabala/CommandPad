@@ -38,6 +38,7 @@ import type {
   LibraryRunbook,
   PanelState,
   RunbookContent,
+  RunbookLinks,
   RunbookStats,
   RunbookSync,
   Tab,
@@ -424,6 +425,7 @@ export interface StoreState {
 
   // Embedded runbooks
   readRunbookStats: (runbookId: string) => Promise<RunbookStats | null>;
+  readRunbookLinks: (runbookId: string) => Promise<RunbookLinks>;
   loadEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
   refreshEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
   openEmbeddedRunbook: (source: EmbedSource) => Promise<void>;

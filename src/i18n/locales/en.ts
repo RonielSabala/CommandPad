@@ -416,6 +416,8 @@ export const en: Messages = {
       nameSource: "Name source",
       location: "Location",
       openInTab: "Open in a tab",
+      runbookUses: "Uses",
+      runbookUsedBy: "Used by",
       openInTabs: "Open in tabs",
       fileName: "File name",
       provider: "Provider",
@@ -1222,7 +1224,7 @@ If something goes wrong, undo it in this order:
       manualName: (renameLabel, resetNameLabel) =>
         `**Naming it yourself:** double-click the empty space beside a runbook's name in the list above, or its tab, or pick **${renameLabel}** from either menu, then press Enter or Escape to keep the name. A name you choose stays put while you edit the runbook; **${resetNameLabel}** goes back to auto-labelling.`,
       properties: (propertiesLabel) =>
-        `**${propertiesLabel}**, in a folder's or runbook's menu, shows where it lives and how big it is; right-click empty space in the list for the same about the whole library.`,
+        `**${propertiesLabel}**, in a folder's or runbook's menu, shows where it lives and how big it is, and a runbook's also lists the runbooks it embeds and the ones embedding it; right-click empty space in the list for the same about the whole library.`,
       folders: (
         newFolderLabel,
         newRunbookLabel,

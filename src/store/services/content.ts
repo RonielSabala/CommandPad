@@ -1,5 +1,6 @@
 import { CloudProvider } from "@/common/enums";
 import type {
+  Block,
   LibraryRunbook,
   RunbookContent,
   RunbookStats,
@@ -26,8 +27,9 @@ export function createContentService(
   const { get, contentDb } = kit;
   const { trackCloudChanges, invalidateEmbed, markRunbookSecured } = deps;
 
-  const storedStats = new Map<string, Promise<RunbookStats | null>>();
   const tabStats = new WeakMap<Tab, RunbookStats>();
+  const storedStats = new Map<string, Promise<RunbookStats | null>>();
+  const storedRunbookBlocks = new Map<string, Promise<Block[] | null>>();
 
   const writeRunbookContent = async (
     runbookId: string,
@@ -36,6 +38,7 @@ export function createContentService(
     await contentDb.put(runbookId, content);
     markRunbookSecured(runbookId, holdsSecrets(content));
     storedStats.delete(runbookId);
+    storedRunbookBlocks.delete(runbookId);
     invalidateEmbed(localSourceKey(runbookId));
   };
 
@@ -99,6 +102,7 @@ export function createContentService(
 
   return {
     storedStats,
+    storedRunbookBlocks,
     tabStats,
     writeRunbookContent,
     persistTabContent,

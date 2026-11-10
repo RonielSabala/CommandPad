@@ -345,6 +345,8 @@ export interface Messages {
       nameSource: string;
       location: string;
       openInTab: string;
+      runbookUses: string;
+      runbookUsedBy: string;
       openInTabs: string;
       fileName: string;
       provider: string;

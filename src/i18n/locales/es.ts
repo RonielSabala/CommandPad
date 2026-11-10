@@ -426,6 +426,8 @@ export const es: Messages = {
       nameSource: "Origen del nombre",
       location: "Ubicación",
       openInTab: "Abierto en una pestaña",
+      runbookUses: "Usa",
+      runbookUsedBy: "Usado por",
       openInTabs: "Abiertos en pestañas",
       fileName: "Nombre de archivo",
       provider: "Proveedor",
@@ -1248,7 +1250,7 @@ Si algo sale mal, deshazlo en este orden:
       manualName: (renameLabel, resetNameLabel) =>
         `**Ponerle nombre tú mismo:** haz doble clic en el espacio vacío junto al nombre de un libro en la lista de arriba, o en su pestaña, o elige **${renameLabel}** en cualquiera de sus menús, y pulsa Enter o Escape para conservar el nombre. Un nombre que eliges se mantiene mientras editas el libro; **${resetNameLabel}** vuelve al etiquetado automático.`,
       properties: (propertiesLabel) =>
-        `**${propertiesLabel}**, en el menú de una carpeta o de un libro, muestra dónde está y cuánto ocupa; haz clic derecho en un espacio vacío de la lista para ver lo mismo de toda la biblioteca.`,
+        `**${propertiesLabel}**, en el menú de una carpeta o de un libro, muestra dónde está y cuánto ocupa, y el de un libro también lista los libros que incrusta y los que lo incrustan; haz clic derecho en un espacio vacío de la lista para ver lo mismo de toda la biblioteca.`,
       folders: (
         newFolderLabel,
         newRunbookLabel,
