@@ -1,4 +1,4 @@
-import { RecentRunbooksConfig } from "@/common/config";
+import { QuickOpenConfig } from "@/common/config";
 import { DialogTone } from "@/common/enums";
 import type { LibraryFolder, LibraryRunbook, Tab } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
@@ -132,7 +132,7 @@ export function withRecentRunbook(
 
   return [runbookId, ...recent.filter((id) => id !== runbookId)].slice(
     0,
-    RecentRunbooksConfig.LIMIT,
+    QuickOpenConfig.RECENT_RUNBOOKS_LIMIT,
   );
 }
 

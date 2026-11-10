@@ -17,8 +17,9 @@ export const RunbookConfig = {
   DEFAULT_LABEL: "Untitled runbook",
 } as const;
 
-export const RecentRunbooksConfig = {
-  LIMIT: 5,
+export const QuickOpenConfig = {
+  COMMAND_PREFIX: ">",
+  RECENT_RUNBOOKS_LIMIT: 5,
 } as const;
 
 export const LibraryFolderConfig = {

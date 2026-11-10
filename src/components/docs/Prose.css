@@ -24,18 +24,3 @@
 .docs-prose:has(+ .docs-prose > .note-list) {
   margin: 0;
 }
-
-/* Keybinding */
-
-.docs-kbd {
-  display: inline-block;
-  padding: 0 var(--space-3);
-  border: var(--border-standard);
-  border-bottom-width: var(--space-2);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-alt);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--color-text-primary);
-  white-space: nowrap;
-}

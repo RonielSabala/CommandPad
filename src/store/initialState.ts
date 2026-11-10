@@ -78,7 +78,7 @@ export function createInitialState(): StoreData {
     cloudExportStatus: CloudExportStatus.IDLE,
     cloudExportProvider: null,
     pasteRunbookModalOpen: false,
-    quickOpenModalOpen: false,
+    quickOpenQuery: null,
     confirmDialog: null,
     alertDialog: null,
 

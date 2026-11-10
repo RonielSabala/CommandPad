@@ -27,6 +27,26 @@ export const QueryMatch = {
 } as const;
 export type QueryMatch = (typeof QueryMatch)[keyof typeof QueryMatch];
 
+/** A workspace action quick open can run. */
+export const PaletteCommand = {
+  NEW_RUNBOOK: "newRunbook",
+  NEW_FOLDER: "newFolder",
+  IMPORT_RUNBOOKS: "importRunbooks",
+  PASTE_RUNBOOK: "pasteRunbook",
+  TOGGLE_MODE: "toggleMode",
+  TOGGLE_FOLDING: "toggleFolding",
+  TOGGLE_VARIABLES_VIEW: "toggleVariablesView",
+  TOGGLE_SOURCE_VIEW: "toggleSourceView",
+  TOGGLE_SIDEBAR: "toggleSidebar",
+  MOVE_SIDEBAR: "moveSidebar",
+  TOGGLE_THEME: "toggleTheme",
+  TOGGLE_MINIMAP: "toggleMinimap",
+  MOVE_MINIMAP: "moveMinimap",
+  TOGGLE_SPELLCHECK: "toggleSpellcheck",
+} as const;
+export type PaletteCommand =
+  (typeof PaletteCommand)[keyof typeof PaletteCommand];
+
 export const SectionState = {
   EXPANDED: "expanded",
   COLLAPSED: "collapsed",

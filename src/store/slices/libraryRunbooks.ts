@@ -644,8 +644,8 @@ export function createLibraryRunbooksSlice(
       void get().loadLibraryRunbook(nextId);
     },
 
-    openQuickOpenModal: () => set({ quickOpenModalOpen: true }),
+    openQuickOpenModal: (query = "") => set({ quickOpenQuery: query }),
 
-    closeQuickOpenModal: () => set({ quickOpenModalOpen: false }),
+    closeQuickOpenModal: () => set({ quickOpenQuery: null }),
   };
 }

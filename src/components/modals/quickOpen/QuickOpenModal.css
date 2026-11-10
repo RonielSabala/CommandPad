@@ -80,3 +80,10 @@
 .quick-open-row-tag {
   flex-shrink: 0;
 }
+
+.quick-open-row .kbd {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: var(--text-xs);
+  margin-block: calc(-1 * var(--space-2));
+}

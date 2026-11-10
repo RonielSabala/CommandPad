@@ -4,6 +4,7 @@ import type {
   EmbeddedRunbookStatus,
   NoteFormat,
   NoteStyle,
+  PaletteCommand,
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
@@ -612,6 +613,10 @@ export interface Messages {
     replaceImageConfirm: string;
     replaceImageMessage: string;
   };
+  quickOpen: {
+    placeholder: (commandPrefix: string) => string;
+    commands: Record<PaletteCommand, string>;
+  };
   keybindings: Record<KeyBinding, string>;
   footer: {
     privacy: string;
@@ -759,6 +764,7 @@ export interface Messages {
       zipExport: (downloadZipLabel: string) => string;
       zipImport: (importZipLabel: string) => string;
       quickOpen: (binding: string, recentlyOpened: string) => string;
+      commandPalette: (commandPrefix: string, binding: string) => string;
       uniqueNames: string;
       labelDetails: string;
       autoSave: string;
@@ -1071,7 +1077,7 @@ export interface Messages {
       detection: string;
     };
     keyboardShortcuts: {
-      intro: string;
+      intro: (binding: string) => string;
     };
     qa: {
       intro: string;

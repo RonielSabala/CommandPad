@@ -5,6 +5,7 @@ import {
   EmbeddedRunbookStatus,
   NoteFormat,
   NoteStyle,
+  PaletteCommand,
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
@@ -778,6 +779,26 @@ export const en: Messages = {
     replaceImageMessage:
       "This block already holds an image. Replacing it **discards the current one**.",
   },
+  quickOpen: {
+    placeholder: (commandPrefix) =>
+      `Search runbooks, or type ${commandPrefix} for actions`,
+    commands: {
+      [PaletteCommand.NEW_RUNBOOK]: "New runbook",
+      [PaletteCommand.NEW_FOLDER]: "New folder",
+      [PaletteCommand.IMPORT_RUNBOOKS]: "Import runbooks",
+      [PaletteCommand.PASTE_RUNBOOK]: "Paste runbook JSON",
+      [PaletteCommand.TOGGLE_MODE]: "Toggle read mode",
+      [PaletteCommand.TOGGLE_FOLDING]: "Fold or unfold all",
+      [PaletteCommand.TOGGLE_VARIABLES_VIEW]: "Toggle variables editor",
+      [PaletteCommand.TOGGLE_SOURCE_VIEW]: "Toggle source view",
+      [PaletteCommand.TOGGLE_SIDEBAR]: "Toggle sidebar",
+      [PaletteCommand.MOVE_SIDEBAR]: "Move sidebar to the other side",
+      [PaletteCommand.TOGGLE_THEME]: "Toggle light / dark theme",
+      [PaletteCommand.TOGGLE_MINIMAP]: "Toggle minimap",
+      [PaletteCommand.MOVE_MINIMAP]: "Move minimap to the other side",
+      [PaletteCommand.TOGGLE_SPELLCHECK]: "Toggle spell check",
+    },
+  },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Toggle read / edit mode",
     [KeyBinding.ESCAPE]: "Clear block selection / close modals",
@@ -785,7 +806,9 @@ export const en: Messages = {
       "Save the runbook to the cloud file it is linked to",
     [KeyBinding.NEW_TAB]: "Open a new tab",
     [KeyBinding.CLOSE_TAB]: "Close the active tab",
-    [KeyBinding.QUICK_OPEN]: "Search the library and open a runbook",
+    [KeyBinding.QUICK_OPEN]:
+      "Search the library and open a runbook, or run an action",
+    [KeyBinding.COMMAND_PALETTE]: "Open quick open ready to run an action",
     [KeyBinding.FOCUS_RUNBOOK]: "Select active runbook",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navigate runbooks with the active runbook selected",
@@ -1245,6 +1268,8 @@ If something goes wrong, undo it in this order:
         `**Bringing it back:** drop a \`.zip\` on the library, or pick **${importZipLabel}** from the arrow beside the import button. It lands in a new folder named after the zip, with its folders and runbooks inside.`,
       quickOpen: (binding, recentlyOpened) =>
         `**Opening by name:** press \`${binding}\` anywhere in the workspace to search the whole library by label, filename, folder or path. Pick a result with the arrow keys and press Enter to open it. Results are ordered like the library search, and among equally close names the ones you opened last come first, tagged \`${recentlyOpened}\`.`,
+      commandPalette: (commandPrefix, binding) =>
+        `**Running an action:** type \`${commandPrefix}\` first in the same search, or press \`${binding}\` to open it with \`${commandPrefix}\` already typed, to look through the workspace actions instead.`,
       uniqueNames:
         "**Names are unique per folder:** two runbooks can share a name in different folders, but not in the same one, because a runbook block finds a runbook by its name. Renaming a runbook to a name its folder already has, or moving it into a folder that has its name, offers a numbered name like `Deploy (1)`, which you can take or cancel. New runbooks, copies and automatic labels get the number on their own. Folders follow the same rule among the folders beside them.",
       labelDetails:
@@ -1803,7 +1828,8 @@ If something goes wrong, undo it in this order:
         "The app detects your browser language on first visit, and your choice is remembered afterward.",
     },
     keyboardShortcuts: {
-      intro: "Every shortcut available in the app.",
+      intro: (binding) =>
+        `Every shortcut available in the app. Many of the actions behind them also run by name: press \`${binding}\` and pick one.`,
     },
     qa: {
       intro: "Quick answers to the questions that come up most often.",

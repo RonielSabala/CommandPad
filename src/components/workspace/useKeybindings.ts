@@ -1,3 +1,4 @@
+import { QuickOpenConfig } from "@/common/config";
 import { InputSelector } from "@/common/constants/dom";
 import { EventType, Key, Modifier } from "@/common/constants/events";
 import { MoveDirection, RunbookView } from "@/common/enums";
@@ -95,10 +96,10 @@ export function useKeybindings(): void {
         state.toggleAppMode();
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.QUICK_OPEN)) {
-        if (state.libraryRunbooks.length > 0) {
-          state.openQuickOpenModal();
-        }
-
+        state.openQuickOpenModal();
+        hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.COMMAND_PALETTE)) {
+        state.openQuickOpenModal(QuickOpenConfig.COMMAND_PREFIX);
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.EXPORT)) {
         if ((getActiveTab(state)?.blocks.length ?? 0) > 0) {

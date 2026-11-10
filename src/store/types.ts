@@ -198,7 +198,7 @@ export interface StoreState {
   cloudExportStatus: CloudExportStatus;
   cloudExportProvider: CloudProvider | null;
   pasteRunbookModalOpen: boolean;
-  quickOpenModalOpen: boolean;
+  quickOpenQuery: string | null;
   confirmDialog: ConfirmDialog | null;
   alertDialog: AlertDialog | null;
 
@@ -321,7 +321,7 @@ export interface StoreState {
   ) => void;
   setRunbookFocus: (id: string | null) => void;
   navigateRunbookList: (direction: MoveDirection) => void;
-  openQuickOpenModal: () => void;
+  openQuickOpenModal: (query?: string) => void;
   closeQuickOpenModal: () => void;
 
   // Variables

@@ -5,6 +5,7 @@ import {
   EmbeddedRunbookStatus,
   NoteFormat,
   NoteStyle,
+  PaletteCommand,
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
@@ -795,6 +796,26 @@ export const es: Messages = {
     replaceImageMessage:
       "Este bloque ya contiene una imagen. Al reemplazarla **se descarta la actual**.",
   },
+  quickOpen: {
+    placeholder: (commandPrefix) =>
+      `Buscar libros, o escribe ${commandPrefix} para acciones`,
+    commands: {
+      [PaletteCommand.NEW_RUNBOOK]: "Nuevo libro",
+      [PaletteCommand.NEW_FOLDER]: "Nueva carpeta",
+      [PaletteCommand.IMPORT_RUNBOOKS]: "Importar libros",
+      [PaletteCommand.PASTE_RUNBOOK]: "Pegar el JSON de un libro",
+      [PaletteCommand.TOGGLE_MODE]: "Alternar modo lectura",
+      [PaletteCommand.TOGGLE_FOLDING]: "Plegar o desplegar todo",
+      [PaletteCommand.TOGGLE_VARIABLES_VIEW]: "Alternar editor de variables",
+      [PaletteCommand.TOGGLE_SOURCE_VIEW]: "Alternar vista de código fuente",
+      [PaletteCommand.TOGGLE_SIDEBAR]: "Alternar barra lateral",
+      [PaletteCommand.MOVE_SIDEBAR]: "Mover la barra lateral al otro lado",
+      [PaletteCommand.TOGGLE_THEME]: "Alternar tema claro / oscuro",
+      [PaletteCommand.TOGGLE_MINIMAP]: "Alternar minimapa",
+      [PaletteCommand.MOVE_MINIMAP]: "Mover el minimapa al otro lado",
+      [PaletteCommand.TOGGLE_SPELLCHECK]: "Alternar corrector ortográfico",
+    },
+  },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Alternar modo lectura / edición",
     [KeyBinding.ESCAPE]: "Limpiar selección de bloques / cerrar diálogos",
@@ -802,7 +823,10 @@ export const es: Messages = {
       "Guardar el libro en el archivo de la nube al que está vinculado",
     [KeyBinding.NEW_TAB]: "Abrir una nueva pestaña",
     [KeyBinding.CLOSE_TAB]: "Cerrar la pestaña activa",
-    [KeyBinding.QUICK_OPEN]: "Buscar en la biblioteca y abrir un libro",
+    [KeyBinding.QUICK_OPEN]:
+      "Buscar en la biblioteca y abrir un libro, o ejecutar una acción",
+    [KeyBinding.COMMAND_PALETTE]:
+      "Abrir la búsqueda rápida lista para ejecutar una acción",
     [KeyBinding.FOCUS_RUNBOOK]: "Seleccionar libro activo",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navegar libros con el libro activo seleccionado",
@@ -1271,6 +1295,8 @@ Si algo sale mal, deshazlo en este orden:
         `**Recupérala:** suelta un \`.zip\` en la biblioteca, o elige **${importZipLabel}** en la flecha junto al botón de importar. Llega en una carpeta nueva con el nombre del zip, con sus carpetas y libros dentro.`,
       quickOpen: (binding, recentlyOpened) =>
         `**Abrir por nombre:** pulsa \`${binding}\` en cualquier parte del espacio de trabajo para buscar en toda la biblioteca por etiqueta, nombre de archivo, carpeta o ruta. Elige un resultado con las flechas y pulsa Enter para abrirlo. Los resultados se ordenan como en la búsqueda de la biblioteca y, entre nombres igual de parecidos, los que abriste por última vez van primero, marcados como \`${recentlyOpened}\`.`,
+      commandPalette: (commandPrefix, binding) =>
+        `**Ejecutar una acción:** escribe primero \`${commandPrefix}\` en la misma búsqueda, o pulsa \`${binding}\` para abrirla con \`${commandPrefix}\` ya escrito, y recorre las acciones del espacio de trabajo.`,
       uniqueNames:
         "**Los nombres son únicos por carpeta:** dos libros pueden llamarse igual en carpetas distintas, pero no en la misma, porque un bloque de libro encuentra un libro por su nombre. Si renombras un libro con un nombre que su carpeta ya tiene, o lo mueves a una carpeta que ya tiene su nombre, se te propone un nombre numerado como `Deploy (1)`, que puedes aceptar o cancelar. Los libros nuevos, las copias y las etiquetas automáticas reciben el número por sí solos. Las carpetas siguen la misma regla entre las carpetas que tienen al lado.",
       labelDetails:
@@ -1830,7 +1856,8 @@ Si algo sale mal, deshazlo en este orden:
         "La app detecta el idioma de tu navegador en la primera visita, y tu elección se recuerda después.",
     },
     keyboardShortcuts: {
-      intro: "Todos los atajos disponibles en la app.",
+      intro: (binding) =>
+        `Todos los atajos disponibles en la app. Muchas de sus acciones también se ejecutan por nombre: pulsa \`${binding}\` y elige una.`,
     },
     qa: {
       intro:
