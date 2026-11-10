@@ -120,10 +120,7 @@ function titleCaseChord(chord: string, joiner: string): string {
     .join(joiner);
 }
 
-export function formatBinding(
-  binding: string,
-  joiner: string = BINDING_SEPARATOR,
-): string {
+function formatBinding(binding: string, joiner: string): string {
   if (!binding.includes(" ")) {
     return titleCaseChord(binding, joiner);
   }
@@ -136,6 +133,14 @@ export function formatBinding(
         : part,
     )
     .join(" ");
+}
+
+/** How `id`'s shortcut reads on screen, its keys joined by `joiner`. */
+export function bindingLabel(
+  id: KeyBinding,
+  joiner: string = BINDING_SEPARATOR,
+): string {
+  return formatBinding(KEYBINDINGS[id].binding, joiner);
 }
 
 interface ParsedBinding {

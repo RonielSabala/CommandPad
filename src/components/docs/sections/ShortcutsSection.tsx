@@ -1,5 +1,5 @@
 import { CssClass } from "@/common/constants/css";
-import { formatBinding, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
+import { bindingLabel, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
 import { Kbd } from "@/components/common/Kbd";
 import { useTranslation } from "@/i18n";
 
@@ -14,7 +14,7 @@ export function KeyboardShortcutsDocs() {
     <>
       <Prose
         text={t.docs.keyboardShortcuts.intro(
-          formatBinding(KEYBINDINGS[KeyBinding.COMMAND_PALETTE].binding),
+          bindingLabel(KeyBinding.COMMAND_PALETTE),
         )}
       />
       <div className="docs-prose">

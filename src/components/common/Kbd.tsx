@@ -1,13 +1,7 @@
-import {
-  formatBinding,
-  KEYBINDINGS,
-  type KeyBinding,
-} from "@/common/keybindings";
+import { bindingLabel, type KeyBinding } from "@/common/keybindings";
 import "./Kbd.css";
 
 /** A shortcut drawn as a key cap. */
 export function Kbd({ binding }: { binding: KeyBinding }) {
-  return (
-    <kbd className="kbd">{formatBinding(KEYBINDINGS[binding].binding)}</kbd>
-  );
+  return <kbd className="kbd">{bindingLabel(binding)}</kbd>;
 }

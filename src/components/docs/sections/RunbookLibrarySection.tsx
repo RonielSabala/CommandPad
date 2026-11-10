@@ -1,6 +1,6 @@
 import { QuickOpenConfig } from "@/common/config";
 import { NoteStyle, SortDirection } from "@/common/enums";
-import { formatBinding, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
+import { bindingLabel, KeyBinding } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
 import { demoNote } from "../demos/demoSeeds";
 import { DemoRunbookList, DemoWorkspace } from "../demos/DemoWorkspace";
@@ -56,14 +56,14 @@ export function RunbookLibraryDocs() {
       <Prose text={t.docs.runbookLibrary.zipImport(t.runbooks.importZip)} />
       <Prose
         text={t.docs.runbookLibrary.quickOpen(
-          formatBinding(KEYBINDINGS[KeyBinding.QUICK_OPEN].binding),
+          bindingLabel(KeyBinding.QUICK_OPEN),
           t.runbooks.recentlyOpened,
         )}
       />
       <Prose
         text={t.docs.runbookLibrary.commandPalette(
           QuickOpenConfig.COMMAND_PREFIX,
-          formatBinding(KEYBINDINGS[KeyBinding.COMMAND_PALETTE].binding),
+          bindingLabel(KeyBinding.COMMAND_PALETTE),
         )}
       />
       <Prose text={t.docs.runbookLibrary.autoLabel} />

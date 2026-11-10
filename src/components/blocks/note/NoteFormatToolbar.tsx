@@ -7,11 +7,7 @@ import {
 } from "@/common/constants/dom";
 import { EventType, PASSIVE, PASSIVE_CAPTURE } from "@/common/constants/events";
 import { NoteFormat, NoteFormatState } from "@/common/enums";
-import {
-  formatBinding,
-  KEYBINDINGS,
-  SPACED_BINDING_SEPARATOR,
-} from "@/common/keybindings";
+import { bindingLabel, SPACED_BINDING_SEPARATOR } from "@/common/keybindings";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { ClearFormattingIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
@@ -254,10 +250,7 @@ export function NoteFormatToolbar({
             const hint = bindingId
               ? t.note.formatHint(
                   label,
-                  formatBinding(
-                    KEYBINDINGS[bindingId].binding,
-                    SPACED_BINDING_SEPARATOR,
-                  ),
+                  bindingLabel(bindingId, SPACED_BINDING_SEPARATOR),
                 )
               : label;
 
