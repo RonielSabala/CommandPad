@@ -1,14 +1,12 @@
 import { RunbookBlockConfig } from "@/common/config";
 import type { EditorChoice } from "@/monaco/completions";
 
+import { folderPath } from "./path";
+
 type FolderEntry = Omit<EditorChoice, "label" | "value" | "pinned"> & {
   name: string;
   label?: string;
 };
-
-export function folderPath(names: readonly string[]): string {
-  return names.map((name) => name + RunbookBlockConfig.PATH_SEPARATOR).join("");
-}
 
 /** A folder's entries, plus the way back up. */
 export function folderChoices(
@@ -21,8 +19,7 @@ export function folderChoices(
     ({ name, label = name, ...entry }): EditorChoice => ({
       ...entry,
       label,
-      value:
-        path + name + (entry.folder ? RunbookBlockConfig.PATH_SEPARATOR : ""),
+      value: path + (entry.folder ? folderPath([name]) : name),
     }),
   );
 

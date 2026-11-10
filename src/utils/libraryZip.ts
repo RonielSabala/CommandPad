@@ -16,6 +16,7 @@ import {
   libraryChildren,
   uniqueFolderName,
 } from "./libraryTree";
+import { folderPath } from "./path";
 import { displayLabel } from "./runbook";
 import type { ZipEntry, ZipFile } from "./zip";
 import { safeZipName, zipTreeFiles, type ZipTree } from "./zipTree";
@@ -40,10 +41,6 @@ const NO_NAME_PARTS: ReadonlySet<string> = new Set(["", ".", ".."]);
 // Utils
 
 export const isZipFilename = (name: string) => ZIP_EXTENSION_REGEX.test(name);
-
-function folderPath(prefix: string, name: string): string {
-  return `${prefix}${name}${ZipConfig.PATH_SEPARATOR}`;
-}
 
 const clipFolderName = (name: string) =>
   name.slice(0, LibraryFolderConfig.NAME_MAX_LENGTH);
@@ -145,7 +142,7 @@ export function libraryZipImport(
     let path = "";
 
     for (const folder of names) {
-      path = folderPath(path, folder);
+      path += folderPath([folder]);
 
       let id = idsByPath.get(path);
       if (!id) {

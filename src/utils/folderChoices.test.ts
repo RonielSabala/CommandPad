@@ -1,7 +1,7 @@
 import { RunbookBlockConfig } from "@/common/config";
 import { describe, expect, it } from "vitest";
 
-import { folderChoices, folderPath } from "./folderChoices";
+import { folderChoices } from "./folderChoices";
 
 const summary = (path: string, names: string[]) =>
   folderChoices(
@@ -19,14 +19,6 @@ const summary = (path: string, names: string[]) =>
     folder,
     pinned,
   }));
-
-describe("folderPath", () => {
-  it("ends every name with the separator", () => {
-    expect(folderPath([])).toBe("");
-    expect(folderPath(["ops"])).toBe("ops/");
-    expect(folderPath(["ops", "deploys"])).toBe("ops/deploys/");
-  });
-});
 
 describe("folderChoices", () => {
   it("offers no way up at the root", () => {

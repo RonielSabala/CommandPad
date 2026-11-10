@@ -1,5 +1,5 @@
-import { JSON_EXTENSION, RunbookBlockConfig } from "@/common/config";
-import { cloudPathSegments } from "@/utils/embeddedRunbook";
+import { JSON_EXTENSION } from "@/common/config";
+import { joinPath, splitPath } from "@/utils/path";
 
 import { getCachedCloudEntries, setCachedCloudEntries } from "./cache";
 import type { CloudClient, CloudEntry, CloudFileLocation } from "./types";
@@ -50,7 +50,7 @@ async function walkToFolder(
 ): Promise<{ folderId: string | null; entries: CloudEntry[] } | null> {
   let folderId: string | null = null;
 
-  for (const segment of cloudPathSegments(path)) {
+  for (const segment of splitPath(path)) {
     const folder = findNamed(await listFolder(client, folderId), segment, true);
     if (!folder) {
       return null;
@@ -73,16 +73,14 @@ export async function resolveCloudFile(
   client: CloudClient,
   path: string,
 ): Promise<CloudFileLocation | null> {
-  const segments = cloudPathSegments(path);
+  const segments = splitPath(path);
   const filename = segments.pop();
+
   if (!filename) {
     return null;
   }
 
-  const folder = await walkToFolder(
-    client,
-    segments.join(RunbookBlockConfig.PATH_SEPARATOR),
-  );
+  const folder = await walkToFolder(client, joinPath(segments));
   if (!folder) {
     return null;
   }

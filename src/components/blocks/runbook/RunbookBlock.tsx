@@ -30,8 +30,9 @@ import {
   useStore,
   useStoreApi,
 } from "@/store/store";
-import { cloudPathSegments, isEmbedUnresolved } from "@/utils/embeddedRunbook";
+import { isEmbedUnresolved } from "@/utils/embeddedRunbook";
 import { libraryPathTrail } from "@/utils/libraryTree";
+import { splitPath } from "@/utils/path";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -165,7 +166,7 @@ export function RunbookBlock({
 
   const changePath = (path: string) => {
     setDraft(path);
-    if (cloudPathSegments(path).length) {
+    if (splitPath(path).length) {
       return;
     }
 

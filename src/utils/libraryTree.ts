@@ -1,8 +1,4 @@
-import {
-  DuplicateNameConfig,
-  LibraryFolderConfig,
-  RunbookBlockConfig,
-} from "@/common/config";
+import { DuplicateNameConfig, LibraryFolderConfig } from "@/common/config";
 import {
   LibraryDropZone,
   LibraryItemKind,
@@ -11,6 +7,7 @@ import {
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 import type { Messages } from "@/i18n/types";
 
+import { folderPath, joinPath } from "./path";
 import { displayLabel } from "./runbook";
 import { isOutOfOrder, sortedByName } from "./sort";
 import { buildDuplicateName, matchesQuery } from "./string";
@@ -72,8 +69,7 @@ export const libraryRowKey = (row: LibraryRow) =>
   row.kind === LibraryItemKind.FOLDER ? row.folder.id : row.runbook.id;
 
 export const libraryPath = (names: readonly string[]) =>
-  LibraryFolderConfig.ROOT_PATH +
-  names.join(LibraryFolderConfig.PATH_SEPARATOR);
+  LibraryFolderConfig.ROOT_PATH + joinPath(names);
 
 function groupByParent<T>(
   items: readonly T[],
@@ -258,11 +254,9 @@ export function folderLocation(
   t: Messages,
 ): string {
   const nameFolder = folderName(t);
-  const names = [...folderTrail(folders, folderId)]
-    .reverse()
-    .map((folder) => nameFolder(folder) + LibraryFolderConfig.PATH_SEPARATOR);
+  const names = [...folderTrail(folders, folderId)].reverse().map(nameFolder);
 
-  return LibraryFolderConfig.ROOT_PATH + names.join("");
+  return LibraryFolderConfig.ROOT_PATH + folderPath(names);
 }
 
 /** What sits directly inside a folder. */
@@ -344,7 +338,6 @@ export function libraryPathTrail(
   text: string,
   t: Messages,
 ): LibraryFolder[] {
-  const separator = RunbookBlockConfig.PATH_SEPARATOR;
   const nameFolder = folderName(t);
   const trail: LibraryFolder[] = [];
   let rest = text;
@@ -354,7 +347,8 @@ export function libraryPathTrail(
     const prefix = rest;
     const next = folders.find(
       (f) =>
-        f.parentId === parentId && prefix.startsWith(nameFolder(f) + separator),
+        f.parentId === parentId &&
+        prefix.startsWith(folderPath([nameFolder(f)])),
     );
 
     if (!next) {
@@ -362,7 +356,7 @@ export function libraryPathTrail(
     }
 
     trail.push(next);
-    rest = rest.slice(nameFolder(next).length + separator.length);
+    rest = rest.slice(folderPath([nameFolder(next)]).length);
   }
 }
 

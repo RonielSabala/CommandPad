@@ -14,6 +14,7 @@ import type {
   Variable,
 } from "@/common/types";
 
+import { joinPath, splitPath } from "./path";
 import { findTabByRunbookId } from "./tabs";
 import { isEnumValue, isObject, isString } from "./typeGuards";
 
@@ -31,13 +32,6 @@ export function isCloudRunbookRef(value: unknown): value is CloudRunbookRef {
   );
 }
 
-export function cloudPathSegments(path: string): string[] {
-  return path
-    .split(RunbookBlockConfig.PATH_SEPARATOR)
-    .map((segment) => segment.trim())
-    .filter(Boolean);
-}
-
 export function localSourceKey(runbookId: string): string {
   return [RunbookBlockConfig.LOCAL_SOURCE, runbookId].join(
     RunbookBlockConfig.KEY_SEPARATOR,
@@ -48,7 +42,7 @@ export function cloudSourceKey(ref: CloudRunbookRef): string {
   return [
     RunbookBlockConfig.CLOUD_SOURCE,
     ref.provider,
-    cloudPathSegments(ref.path).join(RunbookBlockConfig.PATH_SEPARATOR),
+    joinPath(splitPath(ref.path)),
   ].join(RunbookBlockConfig.KEY_SEPARATOR);
 }
 
@@ -78,7 +72,7 @@ export function resolveEmbedSource(
 ): EmbedSource | null {
   const { cloud } = block;
   if (cloud) {
-    return cloudPathSegments(cloud.path).length
+    return splitPath(cloud.path).length
       ? { key: cloudSourceKey(cloud), cloud }
       : null;
   }

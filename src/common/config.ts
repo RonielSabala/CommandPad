@@ -20,7 +20,6 @@ export const RunbookConfig = {
 export const LibraryFolderConfig = {
   DEFAULT_NAME: "New folder",
   NAME_MAX_LENGTH: 60,
-  PATH_SEPARATOR: "/",
   ROOT_PATH: "~/",
   DEPTH_PROPERTY: "--library-depth",
   DRAG_EXPAND_DELAY_MS: 500,
@@ -174,6 +173,8 @@ export const CARRIAGE_RETURN = "\r";
 export const NON_BREAKING_SPACE = "\u00A0";
 export const ELLIPSIS = "\u2026";
 
+export const PATH_SEPARATOR = "/";
+
 export const MIDDLE_DOT = "·";
 export const SECRET_MASK = "•".repeat(8);
 export const PREVIEW_SECRET_MASK = "*".repeat(6);
@@ -205,7 +206,6 @@ export const RunbookBlockConfig = {
   LOCAL_SOURCE: "local",
   CLOUD_SOURCE: "cloud",
   KEY_SEPARATOR: ":",
-  PATH_SEPARATOR: "/",
   SCOPE_SEPARATOR: "/",
   PARENT_FOLDER_LABEL: "..",
 } as const;
@@ -297,7 +297,6 @@ export const FilePickerConfig: Record<ExportFormat, FilePickerFormat> =
 
 export const CloudSyncConfig = {
   APP_FOLDER_NAME: "CommandPad",
-  PATH_SEPARATOR: "/",
   MAX_SEARCH_DEPTH: 10,
   NO_SIZE_PLACEHOLDER: "—",
 } as const;
@@ -320,7 +319,6 @@ export const ZIP_EXTENSION = ".zip";
 
 export const ZipConfig = {
   FALLBACK_NAME: "untitled-zip",
-  PATH_SEPARATOR: "/",
   UNSAFE_CHAR_REPLACEMENT: "-",
 } as const;
 

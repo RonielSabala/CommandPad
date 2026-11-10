@@ -1,18 +1,17 @@
-import { RunbookBlockConfig } from "@/common/config";
 import type { CloudProvider } from "@/common/enums";
 import type { CloudRunbookRef, LibraryRunbook } from "@/common/types";
 import { useLanguage, useTranslation } from "@/i18n";
 import type { ChoiceSource } from "@/monaco/completions";
 import type { CloudEntry } from "@/services/cloud";
 import { getActiveRunbookId, useStore, useStoreApi } from "@/store/store";
-import { cloudPathSegments } from "@/utils/embeddedRunbook";
-import { folderChoices, folderPath } from "@/utils/folderChoices";
+import { folderChoices } from "@/utils/folderChoices";
 import { formatFileSize } from "@/utils/format";
 import {
   displayFolderName,
   libraryLevel,
   libraryPathTrail,
 } from "@/utils/libraryTree";
+import { folderPath, parentPath, splitPath } from "@/utils/path";
 import { displayLabel } from "@/utils/runbook";
 import { useMemo } from "react";
 
@@ -105,8 +104,7 @@ export function useCloudChoices(
         return [];
       }
 
-      const separator = RunbookBlockConfig.PATH_SEPARATOR;
-      const folder = text.slice(0, text.lastIndexOf(separator) + 1);
+      const folder = parentPath(text);
       const entries = await listEmbeddableCloudFolder(provider, folder);
 
       if (!entries) {
@@ -115,7 +113,7 @@ export function useCloudChoices(
 
       return folderChoices(
         folder,
-        cloudPathSegments(folder),
+        splitPath(folder),
         entries.map((entry) => ({
           name: entry.name,
           describe: () => describe(entry),

@@ -6,8 +6,15 @@ export const DIRECTION_SIGN = {
   [SortDirection.DESC]: -1,
 } as const;
 
-function compareNames(a: string, b: string, direction: SortDirection): number {
-  return DIRECTION_SIGN[direction] * NAME_ORDER.compare(a, b);
+export const compareNames = (a: string, b: string): number =>
+  NAME_ORDER.compare(a, b);
+
+function compareInDirection(
+  a: string,
+  b: string,
+  direction: SortDirection,
+): number {
+  return DIRECTION_SIGN[direction] * compareNames(a, b);
 }
 
 /** Whether the names are out of `direction` order. */
@@ -19,7 +26,7 @@ export function isOutOfOrder<T>(
   return items.some(
     (item, index) =>
       index > 0 &&
-      compareNames(nameOf(items[index - 1]), nameOf(item), direction) > 0,
+      compareInDirection(nameOf(items[index - 1]), nameOf(item), direction) > 0,
   );
 }
 
@@ -30,6 +37,8 @@ export function sortedByName<T>(
   direction: SortDirection,
 ): T[] | null {
   return isOutOfOrder(items, nameOf, direction)
-    ? [...items].sort((a, b) => compareNames(nameOf(a), nameOf(b), direction))
+    ? [...items].sort((a, b) =>
+        compareInDirection(nameOf(a), nameOf(b), direction),
+      )
     : null;
 }

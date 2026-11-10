@@ -1,5 +1,6 @@
 import { ZipConfig } from "@/common/config";
 
+import { folderPath } from "./path";
 import { claimUniqueName } from "./string";
 import { emptyZipFolder, textZipFile, type ZipFile } from "./zip";
 
@@ -57,7 +58,7 @@ export async function zipTreeFiles<Folder, File>(
         return [textZipFile(path, await tree.read(node))];
       }
 
-      const folderPrefix = `${path}${ZipConfig.PATH_SEPARATOR}`;
+      const folderPrefix = folderPath([path]);
       const children =
         depth < (tree.maxDepth ?? Infinity) ? await tree.children(node) : [];
 

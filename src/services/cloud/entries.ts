@@ -1,7 +1,7 @@
 import { JSON_EXTENSION } from "@/common/config";
 import { CloudSortColumn, SortDirection } from "@/common/enums";
 import { stripJsonExtension } from "@/utils/export";
-import { DIRECTION_SIGN } from "@/utils/sort";
+import { compareNames, DIRECTION_SIGN } from "@/utils/sort";
 import { claimUniqueName } from "@/utils/string";
 import { isString } from "@/utils/typeGuards";
 import type { CloudEntry } from "./types";
@@ -50,7 +50,7 @@ function columnValue(
 
 function compareValues(a: string | number, b: string | number): number {
   return isString(a) && isString(b)
-    ? a.localeCompare(b)
+    ? compareNames(a, b)
     : Number(a) - Number(b);
 }
 
@@ -73,5 +73,5 @@ export function compareCloudEntries(
     }
   }
 
-  return a.name.localeCompare(b.name);
+  return compareNames(a.name, b.name);
 }
