@@ -17,6 +17,16 @@ export const ExportFormat = {
 } as const;
 export type ExportFormat = (typeof ExportFormat)[keyof typeof ExportFormat];
 
+/** How closely a name matches a search. */
+export const QueryMatch = {
+  EXACT: 0,
+  PREFIX: 1,
+  WORD_START: 2,
+  INSIDE: 3,
+  ELSEWHERE: 4,
+} as const;
+export type QueryMatch = (typeof QueryMatch)[keyof typeof QueryMatch];
+
 export const SectionState = {
   EXPANDED: "expanded",
   COLLAPSED: "collapsed",

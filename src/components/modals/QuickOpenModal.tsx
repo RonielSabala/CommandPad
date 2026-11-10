@@ -9,7 +9,6 @@ import { toPx } from "@/utils/dom";
 import {
   foundRunbooks,
   libraryPath,
-  recentFirst,
   type LibraryRunbookListing,
 } from "@/utils/libraryTree";
 import { displayLabel } from "@/utils/runbook";
@@ -89,20 +88,16 @@ function QuickOpenSearch() {
   const store = useStoreApi();
 
   const [query, setQuery] = useState("");
+  const [highlighted, setHighlighted] = useState(0);
+  const [recentIds] = useState(() => store.getState().recentRunbookIds);
+
   const listRef = useRef<HTMLUListElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+  const rows = useMemo(() => {
+    const { libraryFolders, libraryRunbooks } = store.getState();
 
-  const { listings: rows, recentCount } = useMemo(() => {
-    const { libraryFolders, libraryRunbooks, recentRunbookIds } =
-      store.getState();
-
-    return recentFirst(
-      foundRunbooks(libraryFolders, libraryRunbooks, query, t),
-      recentRunbookIds,
-    );
-  }, [store, query, t]);
-
-  const [highlighted, setHighlighted] = useState(0);
+    return foundRunbooks(libraryFolders, libraryRunbooks, query, t, recentIds);
+  }, [store, query, t, recentIds]);
 
   // The modal's top edge starts where the tabs bar does
   useLayoutEffect(() => {
@@ -176,7 +171,7 @@ function QuickOpenSearch() {
               listing={listing}
               index={index}
               selected={index === highlighted}
-              recent={index < recentCount}
+              recent={recentIds.includes(listing.runbook.id)}
               onOpen={openRunbook}
               onHighlight={setHighlighted}
             />

@@ -21,7 +21,6 @@ import {
   libraryPathTrail,
   libraryRows,
   libraryRunbookDropParent,
-  recentFirst,
   repairLibrary,
   uniqueFolderName,
   uniqueRunbookLabel,
@@ -178,25 +177,59 @@ describe("foundRunbooks", () => {
   });
 });
 
-describe("recentFirst", () => {
-  const runbooks = [runbook("a"), runbook("b"), runbook("c"), runbook("d")];
-  const listings = foundRunbooks([], runbooks, "", en);
-
-  const ordered = (recentIds: string[]) => {
-    const { listings: rows, recentCount } = recentFirst(listings, recentIds);
-    return [rows.map(({ runbook }) => runbook.id), recentCount];
-  };
-
-  it("puts recent runbooks first, most recent first", () => {
-    expect(ordered(["c", "a"])).toEqual([["c", "a", "b", "d"], 2]);
+describe("foundRunbooks ranking", () => {
+  const named = (id: string, label: string, folderId?: string) => ({
+    ...runbook(id, folderId),
+    label,
+    filename: "",
   });
 
-  it("skips recent runbooks the listings leave out", () => {
-    expect(ordered(["gone", "d"])).toEqual([["d", "a", "b", "c"], 1]);
+  const folders = [folder("Apps")];
+  const runbooks = [
+    named("inside", "Backup"),
+    named("word", "Run a check"),
+    named("elsewhere", "Deploy", "Apps"),
+    named("prefix", "Api keys"),
+    named("exact", "A"),
+    named("prefix2", "Alerts"),
+  ];
+
+  const ranked = (query: string, recentIds?: string[]) =>
+    foundRunbooks(folders, runbooks, query, en, recentIds).map(
+      ({ runbook }) => runbook.id,
+    );
+
+  it("puts the closest name first, then library order", () => {
+    expect(ranked("a")).toEqual([
+      "exact",
+      "prefix",
+      "prefix2",
+      "word",
+      "inside",
+      "elsewhere",
+    ]);
   });
 
-  it("keeps the listings as they are with nothing recent", () => {
-    expect(ordered(["gone"])).toEqual([["a", "b", "c", "d"], 0]);
+  it("breaks ties by recency, most recent first", () => {
+    expect(ranked("a", ["inside", "prefix2"])).toEqual([
+      "exact",
+      "prefix2",
+      "prefix",
+      "word",
+      "inside",
+      "elsewhere",
+    ]);
+  });
+
+  it("lists recent runbooks first with no query", () => {
+    expect(ranked("", ["word", "gone", "exact"])).toEqual([
+      "word",
+      "exact",
+      "elsewhere",
+      "inside",
+      "prefix",
+      "prefix2",
+    ]);
   });
 });
 

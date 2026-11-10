@@ -1270,7 +1270,7 @@ Si algo sale mal, deshazlo en este orden:
       zipImport: (importZipLabel) =>
         `**Recupérala:** suelta un \`.zip\` en la biblioteca, o elige **${importZipLabel}** en la flecha junto al botón de importar. Llega en una carpeta nueva con el nombre del zip, con sus carpetas y libros dentro.`,
       quickOpen: (binding, recentlyOpened) =>
-        `**Abrir por nombre:** pulsa \`${binding}\` en cualquier parte del espacio de trabajo para buscar en toda la biblioteca por etiqueta, nombre de archivo, carpeta o ruta. Elige un resultado con las flechas y pulsa Enter para abrirlo. Los últimos libros que abriste aparecen primero, marcados como \`${recentlyOpened}\`.`,
+        `**Abrir por nombre:** pulsa \`${binding}\` en cualquier parte del espacio de trabajo para buscar en toda la biblioteca por etiqueta, nombre de archivo, carpeta o ruta. Elige un resultado con las flechas y pulsa Enter para abrirlo. Los resultados se ordenan como en la búsqueda de la biblioteca y, entre nombres igual de parecidos, los que abriste por última vez van primero, marcados como \`${recentlyOpened}\`.`,
       uniqueNames:
         "**Los nombres son únicos por carpeta:** dos libros pueden llamarse igual en carpetas distintas, pero no en la misma, porque un bloque de libro encuentra un libro por su nombre. Si renombras un libro con un nombre que su carpeta ya tiene, o lo mueves a una carpeta que ya tiene su nombre, se te propone un nombre numerado como `Deploy (1)`, que puedes aceptar o cancelar. Los libros nuevos, las copias y las etiquetas automáticas reciben el número por sí solos. Las carpetas siguen la misma regla entre las carpetas que tienen al lado.",
       labelDetails:

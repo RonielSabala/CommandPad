@@ -2,6 +2,7 @@ import { DuplicateNameConfig, LibraryFolderConfig } from "@/common/config";
 import {
   LibraryDropZone,
   LibraryItemKind,
+  type QueryMatch,
   type SortDirection,
 } from "@/common/enums";
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
@@ -10,7 +11,7 @@ import type { Messages } from "@/i18n/types";
 import { folderPath, joinPath } from "./path";
 import { displayLabel } from "./runbook";
 import { isOutOfOrder, sortedByName } from "./sort";
-import { buildDuplicateName, matchesQuery } from "./string";
+import { buildDuplicateName, matchesQuery, queryMatch } from "./string";
 
 // Types
 
@@ -140,15 +141,22 @@ export function libraryRows(
   return rows;
 }
 
-/** Every runbook `query` finds. */
+/** Every runbook `query` finds, closest name first. */
 export function foundRunbooks(
   folders: readonly LibraryFolder[],
   runbooks: readonly LibraryRunbook[],
   query: string,
   t: Messages,
+  recentIds: readonly string[] = [],
 ): LibraryRunbookListing[] {
   const { subfolders, contents } = libraryChildren(folders, runbooks);
-  const found: LibraryRunbookListing[] = [];
+  const recency = new Map(recentIds.map((id, index) => [id, index]));
+  const found: {
+    listing: LibraryRunbookListing;
+    match: QueryMatch;
+    recency: number;
+  }[] = [];
+
   const nameFolder = folderName(t);
   const nameRunbook = runbookName(t);
 
@@ -158,45 +166,23 @@ export function foundRunbooks(
     }
 
     for (const runbook of contents.get(parentId) ?? []) {
-      const location = libraryPath([...path, nameRunbook(runbook)]);
+      const name = nameRunbook(runbook);
 
-      if (matchesQuery(query, location, runbook.filename)) {
-        found.push({ kind: LibraryItemKind.RUNBOOK, runbook, depth: 0, path });
+      if (matchesQuery(query, libraryPath([...path, name]), runbook.filename)) {
+        found.push({
+          listing: { kind: LibraryItemKind.RUNBOOK, runbook, depth: 0, path },
+          match: queryMatch(query, name),
+          recency: recency.get(runbook.id) ?? recentIds.length,
+        });
       }
     }
   };
 
   visit(null, EMPTY_PATH);
-  return found;
-}
 
-export interface RecentFirstListings {
-  listings: LibraryRunbookListing[];
-  /** How many leading listings are recent. */
-  recentCount: number;
-}
-
-/** `listings` with the ones in `recentIds` first, in that order. */
-export function recentFirst(
-  listings: readonly LibraryRunbookListing[],
-  recentIds: readonly string[],
-): RecentFirstListings {
-  const rank = new Map(recentIds.map((id, index) => [id, index]));
-  const recent: LibraryRunbookListing[] = [];
-  const rest: LibraryRunbookListing[] = [];
-
-  for (const listing of listings) {
-    const index = rank.get(listing.runbook.id);
-
-    if (index === undefined) {
-      rest.push(listing);
-    } else {
-      recent[index] = listing;
-    }
-  }
-
-  const found = recent.flat();
-  return { listings: [...found, ...rest], recentCount: found.length };
+  return found
+    .sort((a, b) => a.match - b.match || a.recency - b.recency)
+    .map(({ listing }) => listing);
 }
 
 /** The runbooks the library list shows. */
