@@ -23,7 +23,6 @@ import { AlphabetUppercase, Collection, Eraser } from "react-bootstrap-icons";
 import {
   DuplicateItem,
   RemoveItem,
-  VariableInsertItems,
   VariableRowMenu,
 } from "./VariableRowMenuItems";
 
@@ -102,6 +101,19 @@ export function VariableActionsMenu({
       title={t.variables.actions}
       className={className}
       sectioned={sectioned}
+      removeItems={(count) => (
+        <>
+          {hasManyOptions && (
+            <RemoveOtherOptionsItem variableId={variableId}>
+              {t.variables.removeOtherOptions}
+            </RemoveOtherOptionsItem>
+          )}
+
+          <RemoveItem targetId={variableId}>
+            {t.variables.remove(count)}
+          </RemoveItem>
+        </>
+      )}
     >
       {(count, selectItem) => (
         <>
@@ -164,22 +176,6 @@ export function VariableActionsMenu({
               />
             </>
           )}
-
-          {sectioned ? (
-            <VariableInsertItems targetId={variableId} />
-          ) : (
-            <ContextMenuSeparator />
-          )}
-
-          {hasManyOptions && (
-            <RemoveOtherOptionsItem variableId={variableId}>
-              {t.variables.removeOtherOptions}
-            </RemoveOtherOptionsItem>
-          )}
-
-          <RemoveItem targetId={variableId}>
-            {t.variables.remove(count)}
-          </RemoveItem>
         </>
       )}
     </VariableRowMenu>

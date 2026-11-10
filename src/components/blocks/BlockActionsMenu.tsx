@@ -71,19 +71,19 @@ export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
         title={t.blocks.actions}
         triggerRef={info.triggerRef}
       >
-        <InfoMenuItem onSelect={info.open} />
-
         {isNote && (
-          <ContextMenuItem
-            icon={<CopyIcon className={STANDARD_ICON_CLASS} />}
-            onSelect={() => void navigator.clipboard.writeText(block.text)}
-            disabled={!block.text.trim()}
-          >
-            {t.blocks.copyNote}
-          </ContextMenuItem>
-        )}
+          <>
+            <ContextMenuItem
+              icon={<CopyIcon className={STANDARD_ICON_CLASS} />}
+              onSelect={() => void navigator.clipboard.writeText(block.text)}
+              disabled={!block.text.trim()}
+            >
+              {t.blocks.copyNote}
+            </ContextMenuItem>
 
-        <ContextMenuSeparator />
+            <ContextMenuSeparator />
+          </>
+        )}
 
         {canSelect && (
           <SelectionToggleItem
@@ -109,6 +109,10 @@ export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
         >
           {(position) => <InsertItems blockId={blockId} position={position} />}
         </InsertSubmenus>
+
+        <ContextMenuSeparator />
+
+        <InfoMenuItem onSelect={info.open} />
 
         <ContextMenuSeparator />
 

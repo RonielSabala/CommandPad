@@ -73,7 +73,7 @@ function InsertItems({ targetId, position }: InsertItemsProps) {
   );
 }
 
-export function VariableInsertItems({ targetId }: Props) {
+function VariableInsertItems({ targetId }: Props) {
   const t = useTranslation();
 
   return (
@@ -117,39 +117,15 @@ export function RemoveItem({ targetId, children }: ItemProps) {
   );
 }
 
-interface BasicItemsProps extends Props {
-  /** Whether this surface shows sections. */
-  sectioned?: boolean;
-  selectItem: ReactNode;
-  duplicateLabel: string;
-  removeLabel: string;
-}
-
-export function BasicRowItems({
-  targetId,
-  sectioned,
-  selectItem,
-  duplicateLabel,
-  removeLabel,
-}: BasicItemsProps) {
-  return (
-    <>
-      {selectItem}
-      <DuplicateItem targetId={targetId}>{duplicateLabel}</DuplicateItem>
-
-      {sectioned && <VariableInsertItems targetId={targetId} />}
-
-      <RemoveItem targetId={targetId}>{removeLabel}</RemoveItem>
-    </>
-  );
-}
-
 interface MenuProps extends Props {
   kind: VariableEntryKind;
   title: string;
   className: string;
   sectioned?: boolean;
+  /** The edits, offered first. */
   children: (count: number, selectItem: ReactNode) => ReactNode;
+  /** What removes the targets, offered last. */
+  removeItems: (count: number) => ReactNode;
 }
 
 export function VariableRowMenu({
@@ -159,6 +135,7 @@ export function VariableRowMenu({
   className,
   sectioned,
   children,
+  removeItems,
 }: MenuProps) {
   const t = useTranslation();
   const info = useInfoTooltip();
@@ -194,20 +171,31 @@ export function VariableRowMenu({
         title={title}
         triggerRef={info.triggerRef}
       >
+        {count === null ? (
+          <>
+            {selectItem}
+            <DuplicateItem targetId={targetId}>
+              {t.variables.duplicateItems}
+            </DuplicateItem>
+          </>
+        ) : (
+          children(count, selectItem)
+        )}
+
+        {sectioned ? (
+          <VariableInsertItems targetId={targetId} />
+        ) : (
+          <ContextMenuSeparator />
+        )}
+
         <InfoMenuItem onSelect={info.open} />
 
         <ContextMenuSeparator />
 
         {count === null ? (
-          <BasicRowItems
-            targetId={targetId}
-            sectioned={sectioned}
-            selectItem={selectItem}
-            duplicateLabel={t.variables.duplicateItems}
-            removeLabel={t.variables.removeItems}
-          />
+          <RemoveItem targetId={targetId}>{t.variables.removeItems}</RemoveItem>
         ) : (
-          children(count, selectItem)
+          removeItems(count)
         )}
       </ActionsMenu>
 
