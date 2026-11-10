@@ -4,6 +4,7 @@ import {
   LibraryFolderConfig,
   LibraryZipConfig,
   ZIP_EXTENSION,
+  ZipConfig,
 } from "@/common/config";
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 import type { Messages } from "@/i18n/types";
@@ -16,21 +17,22 @@ import {
   uniqueFolderName,
 } from "./libraryTree";
 import { displayLabel } from "./runbook";
-import { buildDuplicateName } from "./string";
-import {
-  emptyZipFolder,
-  textZipFile,
-  type ZipEntry,
-  type ZipFile,
-} from "./zip";
+import type { ZipEntry, ZipFile } from "./zip";
+import { safeZipName, zipTreeFiles, type ZipTree } from "./zipTree";
 
 interface ZipLibraryItem {
   folders: string[];
   runbook?: { entry: ZipEntry; filename: string };
 }
 
-const UNSAFE_CHARS_REGEX = /[<>:"/\\|?*\p{Cc}]/gu;
-const UNSAFE_EDGES_REGEX = /^[\s.]+|[\s.]+$/g;
+interface FolderNode {
+  folder: LibraryFolder;
+}
+
+interface RunbookNode {
+  runbook: LibraryRunbook;
+}
+
 const ZIP_EXTENSION_REGEX = new RegExp(`\\${ZIP_EXTENSION}$`, "i");
 const ZIP_PATH_SEPARATOR_REGEX = /[\\/]/;
 const NO_NAME_PARTS: ReadonlySet<string> = new Set(["", ".", ".."]);
@@ -40,33 +42,11 @@ const NO_NAME_PARTS: ReadonlySet<string> = new Set(["", ".", ".."]);
 export const isZipFilename = (name: string) => ZIP_EXTENSION_REGEX.test(name);
 
 function folderPath(prefix: string, name: string): string {
-  return `${prefix}${name}${LibraryZipConfig.PATH_SEPARATOR}`;
+  return `${prefix}${name}${ZipConfig.PATH_SEPARATOR}`;
 }
 
 const clipFolderName = (name: string) =>
   name.slice(0, LibraryFolderConfig.NAME_MAX_LENGTH);
-
-/** `name` as a path part any file system can extract. */
-function safeName(name: string): string {
-  const safe = name
-    .replace(UNSAFE_CHARS_REGEX, LibraryZipConfig.UNSAFE_CHAR_REPLACEMENT)
-    .replace(UNSAFE_EDGES_REGEX, "");
-
-  return safe || LibraryZipConfig.FALLBACK_NAME;
-}
-
-/** `name`, numbered past its siblings, which may only differ by case. */
-function claimName(taken: Set<string>, name: string, extension = ""): string {
-  const isTaken = (stem: string) =>
-    taken.has(`${stem}${extension}`.toLowerCase());
-
-  const safe = safeName(name);
-  const stem = isTaken(safe) ? buildDuplicateName(safe, isTaken) : safe;
-  const claimed = `${stem}${extension}`;
-
-  taken.add(claimed.toLowerCase());
-  return claimed;
-}
 
 /** A folder's zip name. */
 export function libraryZipName(
@@ -76,7 +56,7 @@ export function libraryZipName(
 ): string {
   const folder = folders.find((f) => f.id === folderId);
   const name = folder
-    ? safeName(displayFolderName(folder.name, t))
+    ? safeZipName(displayFolderName(folder.name, t))
     : LibraryZipConfig.LIBRARY_NAME;
 
   return `${name}${ZIP_EXTENSION}`;
@@ -91,46 +71,25 @@ export function libraryZipFiles(
   t: Messages,
 ): Promise<ZipFile[]> {
   const { subfolders, contents } = libraryChildren(folders, runbooks);
-  const files: (ZipFile | Promise<ZipFile>)[] = [];
 
-  const visit = (parentId: string | null, prefix: string) => {
-    const levelFolders = subfolders.get(parentId);
-    const levelRunbooks = contents.get(parentId);
+  const level = (parentId: string | null): (FolderNode | RunbookNode)[] => [
+    ...(subfolders.get(parentId) ?? []).map((folder) => ({ folder })),
+    ...(contents.get(parentId) ?? []).map((runbook) => ({ runbook })),
+  ];
 
-    if (prefix && !levelFolders && !levelRunbooks) {
-      files.push(emptyZipFolder(prefix));
-      return;
-    }
-
-    const taken = new Set<string>();
-
-    for (const folder of levelFolders ?? []) {
-      visit(
-        folder.id,
-        folderPath(prefix, claimName(taken, displayFolderName(folder.name, t))),
-      );
-    }
-
-    for (const runbook of levelRunbooks ?? []) {
-      const path = `${prefix}${claimName(
-        taken,
-        stripJsonExtension(displayLabel(runbook.label, t)),
-        JSON_EXTENSION,
-      )}`;
-
-      files.push(
-        readRunbook(runbook.id).then((text) => textZipFile(path, text)),
-      );
-    }
+  const tree: ZipTree<FolderNode, RunbookNode> = {
+    children: ({ folder }) => level(folder.id),
+    isFolder: (node) => "folder" in node,
+    nameOf: (node) =>
+      "folder" in node
+        ? displayFolderName(node.folder.name, t)
+        : stripJsonExtension(displayLabel(node.runbook.label, t)),
+    read: ({ runbook }) => readRunbook(runbook.id),
+    extension: JSON_EXTENSION,
   };
 
   const root = folders.find((f) => f.id === folderId);
-  visit(
-    folderId,
-    root ? folderPath("", safeName(displayFolderName(root.name, t))) : "",
-  );
-
-  return Promise.all(files);
+  return zipTreeFiles(tree, root ? [{ folder: root }] : level(folderId));
 }
 
 /** The folders and runbooks a zip holds. */
@@ -174,7 +133,7 @@ export function libraryZipImport(
 
   const root: LibraryFolder = {
     id: generateId(),
-    name: clipFolderName(name) || LibraryZipConfig.FALLBACK_NAME,
+    name: clipFolderName(name) || ZipConfig.FALLBACK_NAME,
     parentId: null,
   };
 

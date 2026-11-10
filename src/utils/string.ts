@@ -66,6 +66,22 @@ export function buildDuplicateName(
   return name;
 }
 
+/** `stem` + `extension`, numbered past the names `taken` holds. */
+export function claimUniqueName(
+  taken: Set<string>,
+  stem: string,
+  extension = "",
+): string {
+  const isTaken = (candidate: string) =>
+    taken.has(`${candidate}${extension}`.toLowerCase());
+
+  const unique = isTaken(stem) ? buildDuplicateName(stem, isTaken) : stem;
+  const claimed = `${unique}${extension}`;
+
+  taken.add(claimed.toLowerCase());
+  return claimed;
+}
+
 export function countCharacters(text: string): number {
   return Array.from(text).length;
 }

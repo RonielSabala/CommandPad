@@ -318,11 +318,14 @@ export const DuplicateNameConfig = {
 
 export const ZIP_EXTENSION = ".zip";
 
-export const LibraryZipConfig = {
-  LIBRARY_NAME: "commandpad-library",
+export const ZipConfig = {
   FALLBACK_NAME: "untitled-zip",
   PATH_SEPARATOR: "/",
   UNSAFE_CHAR_REPLACEMENT: "-",
+} as const;
+
+export const LibraryZipConfig = {
+  LIBRARY_NAME: "commandpad-library",
   /** The folder macOS adds to a zip. */
   SYSTEM_FOLDER: "__MACOSX",
 } as const;

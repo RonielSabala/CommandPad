@@ -421,7 +421,7 @@ Runbooks can be exported to / imported from a provider's **app-scoped folder**, 
 - **Browser UI**: `CloudBrowser/` (breadcrumbs, sortable list, inline rename/create, `CloudRowMenu`: Rename, Edit, Duplicate, Download, Delete).
 - **Selection**: explorer-style (click, Ctrl, Shift, circles); stored as a placed `Map` (entry + the folder path it was picked from) so it survives search and navigation; only a provider switch, fresh open or sign-out clears it (`clearedCloudListing`). `CloudSelectionPills` shows picks not on screen. Row order and the Shift anchor live in `CloudBrowser` (`CloudSelectionContext`). All row actions take `CloudEntry[]`; targets are the selection if the clicked row is in it. Row click handlers must check `currentTarget.contains(target)` (portalled menus bubble through React).
 - Imports read and parse every file before adding any; bulk duplicate confirms; multi-delete lists names via `codeBulletList`.
-- `utils/zip/` is a dependency-free zip writer (stored) and reader (stored or deflated, lazily per entry).
+- `utils/zip/` is a dependency-free zip writer (stored) and reader (stored or deflated, lazily per entry). Any tree becomes zip files through `utils/zipTree.ts#zipTreeFiles` (a `ZipTree` adapter; the library and the cloud each have one), which makes names safe and numbers clashes ignoring case via `claimUniqueName`, because file systems do. That folding is the zip's and the cloud's, never the library's: sibling library names stay exact.
 
 ### The import/export JSON schema
 

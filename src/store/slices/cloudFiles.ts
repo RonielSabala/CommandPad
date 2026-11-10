@@ -4,7 +4,6 @@ import type { RunbookContent, RunbookSync } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import {
   buildCloudEntriesZip,
-  buildCloudFolderZip,
   buildDuplicateName,
   copyCloudEntry,
   getCloudClient,
@@ -476,7 +475,7 @@ export function createCloudFilesSlice(
           );
         } else if (single.isFolder) {
           downloadBlob(
-            await buildCloudFolderZip(client, single),
+            await buildCloudEntriesZip(client, [single]),
             `${single.name}${ZIP_EXTENSION}`,
           );
         } else {

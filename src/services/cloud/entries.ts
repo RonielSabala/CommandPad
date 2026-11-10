@@ -2,7 +2,7 @@ import { JSON_EXTENSION } from "@/common/config";
 import { CloudSortColumn, SortDirection } from "@/common/enums";
 import { stripJsonExtension } from "@/utils/export";
 import { DIRECTION_SIGN } from "@/utils/sort";
-import { buildDuplicateName as nextDuplicateName } from "@/utils/string";
+import { claimUniqueName } from "@/utils/string";
 import { isString } from "@/utils/typeGuards";
 import type { CloudEntry } from "./types";
 
@@ -20,19 +20,18 @@ export function isBrowsableEntry(entry: CloudEntry): boolean {
   return entry.isFolder || entry.name.endsWith(JSON_EXTENSION);
 }
 
+/** A name for a copy of `entry`. */
 export function buildDuplicateName(
   entry: CloudEntry,
   siblingNames: string[],
 ): string {
-  const base = entry.isFolder ? entry.name : stripJsonExtension(entry.name);
-  const extension = entry.isFolder ? "" : JSON_EXTENSION;
-  const taken = new Set(siblingNames.map((name) => name.toLowerCase()));
-
-  return (
-    nextDuplicateName(base, (candidate) =>
-      taken.has(`${candidate}${extension}`.toLowerCase()),
-    ) + extension
+  const taken = new Set(
+    [entry.name, ...siblingNames].map((name) => name.toLowerCase()),
   );
+
+  return entry.isFolder
+    ? claimUniqueName(taken, entry.name)
+    : claimUniqueName(taken, stripJsonExtension(entry.name), JSON_EXTENSION);
 }
 
 function columnValue(

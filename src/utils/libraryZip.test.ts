@@ -1,8 +1,4 @@
-import {
-  LibraryFolderConfig,
-  LibraryZipConfig,
-  RunbookConfig,
-} from "@/common/config";
+import { LibraryFolderConfig, RunbookConfig, ZipConfig } from "@/common/config";
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { describe, expect, it } from "vitest";
@@ -110,7 +106,7 @@ describe("libraryZipFiles", () => {
       ),
     ).toEqual([
       "-..-etc/backup.json",
-      `${LibraryZipConfig.FALLBACK_NAME}/restore.json`,
+      `${ZipConfig.FALLBACK_NAME}/restore.json`,
       "deploy- a-b -now--.json",
     ]);
   });
@@ -316,7 +312,7 @@ describe("libraryZipImport", () => {
 
   it("falls back when the zip has no name to give", () => {
     expect(libraryZipImport(".zip", [], en).root.name).toBe(
-      LibraryZipConfig.FALLBACK_NAME,
+      ZipConfig.FALLBACK_NAME,
     );
   });
 
