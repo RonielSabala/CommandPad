@@ -40,8 +40,10 @@ export function createInitialState(): StoreData {
     // Data
     tabs: [],
     activeTabId: null,
-    runbookLibrary: [],
+    libraryFolders: [],
+    libraryRunbooks: [],
     activeRunbookId: null,
+    recentRunbookIds: [],
     runbookSyncStatus: {},
     embeddedRunbooks: {},
     embeddedSectionFolds: {},
@@ -60,6 +62,7 @@ export function createInitialState(): StoreData {
     selectKeyHeld: false,
     linkKeyHeld: false,
     pendingFocusBlockId: null,
+    pendingLibraryFolderRenameId: null,
     pendingRevealBlockId: null,
     revealedBlockId: null,
     blockRevealTone: RevealTone.UNRESOLVED,
@@ -75,6 +78,7 @@ export function createInitialState(): StoreData {
     cloudExportStatus: CloudExportStatus.IDLE,
     cloudExportProvider: null,
     pasteRunbookModalOpen: false,
+    quickOpenQuery: null,
     confirmDialog: null,
     alertDialog: null,
 

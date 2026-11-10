@@ -1,10 +1,11 @@
-import { MIDDLE_DOT, VaultConfig } from "@/common/config";
+import { MIDDLE_DOT } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
   EmbeddedRunbookStatus,
   NoteFormat,
   NoteStyle,
+  PaletteCommand,
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
@@ -17,6 +18,7 @@ import {
   VaultStatus,
 } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
+import { VaultConfig } from "@/common/vaultConfig";
 import { codeBulletList } from "../lists";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
@@ -76,18 +78,37 @@ export const en: Messages = {
   runbooks: {
     title: "RUNBOOKS",
     searchPlaceholder: "Search runbooks…",
+    recentlyOpened: "recently opened",
     empty: "No runbooks imported.",
     import: "Import",
     importTitle: "Import runbook",
-    paste: "Paste",
+    importOptions: "More ways to import",
+    importZip: "Import from zip",
     pasteTitle: "Paste runbook JSON",
     actions: "Runbook actions",
     duplicate: "Duplicate runbook",
-    removeFromLibrary: "Remove from library",
-    dropToImport: "Drop runbooks to import",
-    clearLibrary: "Delete All",
+    deleteRunbook: "Delete runbook",
+    dropToImport: "Drop runbooks or a zip to import",
     clearLibraryTitle: "Delete all runbooks from the library",
     stopSyncing: "Stop syncing",
+    rename: "Rename",
+    resetName: "Reset name",
+    newFolder: "New folder",
+    newRunbook: "New runbook",
+    new: "New",
+    newFolderItem: "Folder",
+    newRunbookItem: "Runbook",
+    folderName: "New folder",
+    folderActions: "Folder actions",
+    sortContents: {
+      [SortDirection.ASC]: "Sort ascending",
+      [SortDirection.DESC]: "Sort descending",
+    },
+    collapseAll: "Collapse all",
+    expandAll: "Expand all",
+    downloadZip: "Download as zip",
+    duplicateFolder: "Duplicate folder",
+    deleteFolder: "Delete folder",
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Saved to ${provider}`,
       [RunbookSyncStatus.UNSAVED]: (provider, shortcut) =>
@@ -262,6 +283,24 @@ export const en: Messages = {
   },
   info: {
     action: "Info",
+    properties: "Properties",
+    runbookTitle: "Runbook properties",
+    folderTitle: "Folder properties",
+    manualName: "Set by hand",
+    derivedName: "From its first note",
+    vaultState: {
+      [VaultStatus.UNLOCKED]: "Encrypted, unlocked",
+      [VaultStatus.LOCKED]: "Encrypted, locked",
+      [VaultStatus.ABSENT]: "Not encrypted",
+      [VaultStatus.UNSUPPORTED]: "Not encrypted (unsupported browser)",
+    },
+    syncState: {
+      [RunbookSyncStatus.SYNCED]: "Saved",
+      [RunbookSyncStatus.UNSAVED]: "Unsaved changes",
+      [RunbookSyncStatus.SYNCING]: "Saving",
+      [RunbookSyncStatus.SIGNED_OUT]: "Signed out",
+      [RunbookSyncStatus.ERROR]: "Could not save",
+    },
     blockTitle: (type) => `${type} block info`,
     variableTitle: "Variable info",
     enumTitle: "Enum info",
@@ -316,6 +355,7 @@ export const en: Messages = {
       options: "Options",
       breakdown: "Contents",
       status: "Problems",
+      cloud: "Cloud sync",
     },
     columns: {
       editor: "Editor",
@@ -375,6 +415,16 @@ export const en: Messages = {
       emptyOrUnresolved: "Empty or unresolved",
       valuesSize: "Total size",
       collapsed: "Folded",
+      nameSource: "Name source",
+      location: "Location",
+      openInTab: "Open in a tab",
+      runbookUses: "Uses",
+      runbookUsedBy: "Used by",
+      openInTabs: "Open in tabs",
+      fileName: "File name",
+      provider: "Provider",
+      folders: "Folders",
+      runbooks: "Runbooks",
     },
   },
   runbookBlock: {
@@ -527,6 +577,10 @@ export const en: Messages = {
     },
     unlockFileMessage: (filename) =>
       `\`${filename}\` holds secrets encrypted with a different passphrase. Enter it to open them.`,
+    batchMessage: (pending, skipAllLabel) =>
+      pending === 1
+        ? `**1** more runbook in this import is locked. If it shares this passphrase, it opens without asking; **${skipAllLabel}** leaves it encrypted too.`
+        : `**${pending}** more runbooks in this import are locked. Those that share this passphrase open without asking; **${skipAllLabel}** leaves them all encrypted.`,
     submit: {
       [VaultPrompt.CREATE]: "Encrypt secrets",
       [VaultPrompt.UNLOCK]: "Unlock",
@@ -552,6 +606,8 @@ export const en: Messages = {
     reveal: "Show passphrase",
     hide: "Hide passphrase",
     skip: "Not now",
+    skipOne: "Skip this one",
+    skipAll: "Skip all",
     working: "Deriving key…",
     errors: {
       [VaultError.TOO_SHORT]: `Use at least ${VaultConfig.MIN_PASSPHRASE_LENGTH} characters.`,
@@ -658,6 +714,9 @@ export const en: Messages = {
       count === 1
         ? "**1 file** could not be imported because its format isn't recognized."
         : `**${count} files** could not be imported because their formats aren't recognized.`,
+    exportLibraryFailedTitle: "Export Failed",
+    exportLibraryFailed:
+      "The zip could not be created because a runbook could not be read. Please try again.",
     pastedRunbook: "Pasted runbook",
     resetTitle: "Reset Workspace",
     resetConfirm: "Reset",
@@ -667,6 +726,16 @@ export const en: Messages = {
     clearLibraryConfirm: "Delete All",
     clearLibraryMessage:
       "Delete **every runbook** in the library? This cannot be undone.",
+    deleteFolderTitle: "Delete Folder",
+    deleteFolderConfirm: "Delete",
+    deleteFolderMessage: (name) =>
+      `Delete \`${name}\` and everything in it? **This cannot be undone.**`,
+    nameTakenTitle: "Name Already Taken",
+    nameTakenConfirm: "Use this name",
+    folderNameTakenMessage: (name, numbered) =>
+      `There's already a folder named \`${name}\` here.\n\nUse \`${numbered}\` instead?`,
+    runbookNameTakenMessage: (name, numbered) =>
+      `That folder already has a runbook named \`${name}\`.\n\nUse \`${numbered}\` instead?`,
     deleteRunbookTitle: "Delete Runbook",
     deleteRunbookConfirm: "Delete",
     deleteRunbookMessage: (label) =>
@@ -710,6 +779,26 @@ export const en: Messages = {
     replaceImageMessage:
       "This block already holds an image. Replacing it **discards the current one**.",
   },
+  quickOpen: {
+    placeholder: (commandPrefix) =>
+      `Search runbooks, or type ${commandPrefix} for actions`,
+    commands: {
+      [PaletteCommand.NEW_RUNBOOK]: "New runbook",
+      [PaletteCommand.NEW_FOLDER]: "New folder",
+      [PaletteCommand.IMPORT_RUNBOOKS]: "Import runbooks",
+      [PaletteCommand.PASTE_RUNBOOK]: "Paste runbook JSON",
+      [PaletteCommand.TOGGLE_MODE]: "Toggle read mode",
+      [PaletteCommand.TOGGLE_FOLDING]: "Fold or unfold all",
+      [PaletteCommand.TOGGLE_VARIABLES_VIEW]: "Toggle variables editor",
+      [PaletteCommand.TOGGLE_SOURCE_VIEW]: "Toggle source view",
+      [PaletteCommand.TOGGLE_SIDEBAR]: "Toggle sidebar",
+      [PaletteCommand.MOVE_SIDEBAR]: "Move sidebar to the other side",
+      [PaletteCommand.TOGGLE_THEME]: "Toggle light / dark theme",
+      [PaletteCommand.TOGGLE_MINIMAP]: "Toggle minimap",
+      [PaletteCommand.MOVE_MINIMAP]: "Move minimap to the other side",
+      [PaletteCommand.TOGGLE_SPELLCHECK]: "Toggle spell check",
+    },
+  },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Toggle read / edit mode",
     [KeyBinding.ESCAPE]: "Clear block selection / close modals",
@@ -717,13 +806,17 @@ export const en: Messages = {
       "Save the runbook to the cloud file it is linked to",
     [KeyBinding.NEW_TAB]: "Open a new tab",
     [KeyBinding.CLOSE_TAB]: "Close the active tab",
+    [KeyBinding.QUICK_OPEN]:
+      "Search the library and open a runbook, or run an action",
+    [KeyBinding.COMMAND_PALETTE]: "Open quick open ready to run an action",
     [KeyBinding.FOCUS_RUNBOOK]: "Select active runbook",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navigate runbooks with the active runbook selected",
     [KeyBinding.IMPORT_RUNBOOK]: "Open runbook import dialog",
     [KeyBinding.EXPORT]: "Open export dialog",
     [KeyBinding.DELETE_RUNBOOK]: "Delete the focused runbook from the library",
-    [KeyBinding.CLEAR_LIBRARY]: "Open delete all runbooks dialog",
+    [KeyBinding.DELETE_ACTIVE_RUNBOOK]:
+      "Delete the active runbook from the library",
     [KeyBinding.TOGGLE_EDITORS]:
       "Toggle all blocks, or all sections in the variables editor",
     [KeyBinding.TOGGLE_VARIABLES_VIEW]:
@@ -1023,6 +1116,7 @@ export const en: Messages = {
         },
       },
       runbookSamples: ["Release checklist", "Postgres backup", "K8s debugging"],
+      folderSamples: { operations: "Operations", databases: "Databases" },
       multiSelectNotes: ["Create the backup", "Clean up"],
       greetingTemplate: "Hi {;name}, welcome to {;place}!",
       commitSubject: "Fix retry backoff on failed uploads",
@@ -1137,17 +1231,47 @@ If something goes wrong, undo it in this order:
         `The sidebar's **${runbooksTitle}** section holds your imported runbooks.`,
       items: (
         importLabel,
-        clearLibraryLabel,
         runbookActionsLabel,
-      ) => `* Click **${importLabel}** to load one or more \`.json\` files at once, or **Paste** to create a runbook from raw JSON.
+        newLabel,
+        pasteLabel,
+        clearLibraryLabel,
+      ) => `* Click **${importLabel}** beside the search bar to load one or more \`.json\` files at once, or open the arrow beside it for **${pasteLabel}**.
 * You can also **drag files** from your file explorer and drop them onto the section to import them.
 * Click any runbook to open it. If it's already open in a tab, that tab becomes active.
-* Open the **${runbookActionsLabel}** menu shown on row hover to duplicate a runbook or remove it from the library.
-* Click **${clearLibraryLabel}** to empty the whole library at once.
-* Drag the handle on the left of a runbook to reorder it in the list.
-* Use the **search bar** to filter runbooks by label or filename.`,
+* A small ring beside a runbook means it's open in a tab you aren't viewing. Click the ring to close that tab.
+* Open the **${runbookActionsLabel}** menu shown on row hover to duplicate a runbook or delete it from the library.
+* Right-click anywhere in the library for **${newLabel}** (a folder or a runbook). On a row, the menu also holds that row's actions. On an empty area, it also offers **${clearLibraryLabel}**.
+* Drag the handle on the left of a runbook or folder to move it.
+* Use the **search bar** to filter runbooks by label, filename, folder or path.`,
       autoLabel:
         "**Auto-labelling:** if a runbook's first block is a note, its text is used as the library label. Otherwise the imported filename is used as the fallback.",
+      manualName: (renameLabel, resetNameLabel) =>
+        `**Naming it yourself:** double-click the empty space beside a runbook's name in the list above, or its tab, or pick **${renameLabel}** from either menu, then press Enter or Escape to keep the name. A name you choose stays put while you edit the runbook; **${resetNameLabel}** goes back to auto-labelling.`,
+      properties: (propertiesLabel) =>
+        `**${propertiesLabel}**, in a folder's or runbook's menu, shows where it lives and how big it is, and a runbook's also lists the runbooks it embeds and the ones embedding it; right-click empty space in the list for the same about the whole library.`,
+      folders: (
+        newFolderLabel,
+        newRunbookLabel,
+        folderActionsLabel,
+        newLabel,
+        collapseAllLabel,
+        expandAllLabel,
+      ) =>
+        `**Folders:** the **${newFolderLabel}** and **${newRunbookLabel}** buttons at the bottom of the section create a top-level folder or an empty runbook. A folder's **${folderActionsLabel}** menu creates either one inside it through its **${newLabel}** submenu, renames the folder, duplicates it, or deletes it, either one with everything it holds. Double-clicking the empty space beside a folder's name renames it too. The library's right-click menu has the same **${newLabel}** submenu. Folders nest as deep as you like: click one to fold or unfold it. **${collapseAllLabel}** and **${expandAllLabel}**, in a folder's menu or the library's right-click menu, fold or unfold that folder and every folder inside it at any depth. An empty folder shows no arrow. While you search, the matching runbooks are listed flat, each with its path from the top of the library.`,
+      sorting: (sortAscendingLabel, sortDescendingLabel) =>
+        `**Sorting:** **${sortAscendingLabel}** and **${sortDescendingLabel}** order what sits directly in a folder. Folders inside it are sorted among themselves and stay above its runbooks, and what's inside each subfolder keeps its order.`,
+      moving:
+        "**Moving things:** a line shows where a dragged runbook or folder will land, so you can put it between two runbooks or between two folders, even in another folder. Drop anything on a folder to move it inside; hold it there for a moment and a folded folder opens.",
+      zipExport: (downloadZipLabel) =>
+        `**Taking it with you:** **${downloadZipLabel}**, in a folder's menu, downloads that folder. Folders stay folders, even empty ones, and each runbook becomes a \`.json\` file.`,
+      zipImport: (importZipLabel) =>
+        `**Bringing it back:** drop a \`.zip\` on the library, or pick **${importZipLabel}** from the arrow beside the import button. It lands in a new folder named after the zip, with its folders and runbooks inside.`,
+      quickOpen: (binding, recentlyOpened) =>
+        `**Opening by name:** press \`${binding}\` anywhere in the workspace to search the whole library by label, filename, folder or path. Pick a result with the arrow keys and press Enter to open it. Results are ordered like the library search, and among equally close names the ones you opened last come first, tagged \`${recentlyOpened}\`.`,
+      commandPalette: (commandPrefix, binding) =>
+        `**Running an action:** type \`${commandPrefix}\` first in the same search, or press \`${binding}\` to open it with \`${commandPrefix}\` already typed, to look through the workspace actions instead.`,
+      uniqueNames:
+        "**Names are unique per folder:** two runbooks can share a name in different folders, but not in the same one, because a runbook block finds a runbook by its name. Renaming a runbook to a name its folder already has, or moving it into a folder that has its name, offers a numbered name like `Deploy (1)`, which you can take or cancel. New runbooks, copies and automatic labels get the number on their own. Folders follow the same rule among the folders beside them.",
       labelDetails:
         "Labels are normalized: markdown formatting is stripped and they are trimmed to 60 characters.",
       autoSave:
@@ -1514,8 +1638,8 @@ If something goes wrong, undo it in this order:
         "Only secret values are encrypted; everything else stays plain text, so an exported runbook is still readable and diffable. On disk a secret looks like `cpv1.<salt>.<iv>.<ciphertext>`: a label plus everything needed to decrypt it except your passphrase, which is why the file opens on any machine that has it.",
       unlocking:
         "Reopening the tab locks every runbook again, but only the one in front of you asks to unlock; the rest wait until you open them. A shield by a runbook's name shows its state: green and closed when unlocked, plain when locked, crossed out when nothing protects it. Click it to unlock, or to set a passphrase. Copying a command from a locked runbook still works, but its secrets come out as ciphertext, so the copy warns you how many values are still encrypted.",
-      importing:
-        "Importing a `.json` that holds secrets is the same story, with one shortcut: if any runbook you already unlocked this session uses the passphrase that file was encrypted with, it opens without asking you for it again.",
+      importing: (skipAllLabel) =>
+        `Importing a \`.json\` that holds secrets is the same story, with one shortcut: if any runbook you already unlocked this session uses the passphrase that file was encrypted with, it opens without asking you for it again. When several locked runbooks arrive together (a zip, a batch of files, a cloud import), each prompt says how many are still waiting, and **${skipAllLabel}** leaves the rest encrypted.`,
       changing: (changeLabel) =>
         `Click an unlocked shield to open **${changeLabel}**: enter the current passphrase, then the new one twice. Every secret in that runbook, including its copy in a linked cloud file, is re-encrypted on the spot. Other runbooks and past exports keep the old passphrase.`,
       markdownWarning:
@@ -1600,7 +1724,7 @@ If something goes wrong, undo it in this order:
       teaser: (embeddingSection, tabsSection) =>
         `There is one more block: the runbook block, which shows a whole other runbook inside this one. It's made of nearly everything else in CommandPad (variables, tabs, your runbook library), so it gets its own section, **${embeddingSection}**, right after **${tabsSection}**. Keep going in order. By the time you get there you'll have used every piece it's built from, and its demo will explain itself.`,
       intro:
-        "A runbook block shows another runbook inside this one. Write a procedure you repeat in several places once, such as a deploy or a backup, and embed it wherever it's needed. To pick the runbook, type its label in the block's header: the box suggests every runbook in your library.",
+        "A runbook block shows another runbook inside this one. Write a procedure you repeat in several places once, such as a deploy or a backup, and embed it wherever it's needed. To pick the runbook, use the box in the block's header: it lists your library one folder at a time. Picking a folder opens it, `..` goes back up a level, and picking a runbook embeds it. You can also type a runbook's label, wherever it lives.",
       demoHint: (showVariables) =>
         `The first tab is a release runbook that embeds the deploy runbook from the second tab. Press **${showVariables}** in the block's header, change \`ENV\` from \`prod\` to \`dev\` and switch back: the embedded commands follow. Then edit a command in the deploy tab and come back to the first one. The change is already there.`,
       overrides:
@@ -1635,6 +1759,7 @@ If something goes wrong, undo it in this order:
 * Block structure cannot be changed (no adding, deleting, or reordering).
 * Variable values can still be changed.
 * Runbooks can still be opened.
+* Library folders can still be downloaded as a zip.
 * Links can be opened with a direct click.
 * Images open full screen with a click.`,
       persisted:
@@ -1703,7 +1828,8 @@ If something goes wrong, undo it in this order:
         "The app detects your browser language on first visit, and your choice is remembered afterward.",
     },
     keyboardShortcuts: {
-      intro: "Every shortcut available in the app.",
+      intro: (binding) =>
+        `Every shortcut available in the app. Many of the actions behind them also run by name: press \`${binding}\` and pick one.`,
     },
     qa: {
       intro: "Quick answers to the questions that come up most often.",

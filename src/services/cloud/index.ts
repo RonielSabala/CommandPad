@@ -15,11 +15,7 @@ export {
 export type { CloudSort } from "./entries";
 export { listCloudFolder, resolveCloudFile } from "./path";
 export { walkCloudTree } from "./search";
-export {
-  buildCloudEntriesZip,
-  buildCloudFolderZip,
-  copyCloudEntry
-} from "./transfer";
+export { buildCloudEntriesZip, copyCloudEntry } from "./transfer";
 export { CloudSyncError } from "./types";
 export type {
   CloudClient,

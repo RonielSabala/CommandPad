@@ -1,0 +1,89 @@
+.modal.modal-quick-open {
+  align-self: flex-start;
+  width: min(var(--modal-quick-open-width), 80vw);
+  max-width: none;
+  padding: var(--space-4) var(--space-4) 0 var(--space-4);
+  gap: var(--space-3);
+}
+
+.modal-quick-open .search-input {
+  border-radius: var(--radius-lg);
+}
+
+/* List */
+
+.quick-open-empty {
+  padding: var(--space-4);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.quick-open-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-height: min(var(--modal-quick-open-list-height), 50vh);
+  padding-bottom: var(--space-4);
+  overflow-y: auto;
+  list-style: none;
+  outline: none;
+}
+
+/* Row */
+
+.quick-open-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-4);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.quick-open-row.is-selected {
+  background: var(--accent-dim);
+  color: var(--accent-text);
+}
+
+.quick-open-row > svg {
+  flex-shrink: 0;
+}
+
+.quick-open-row-label,
+.quick-open-row-path {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.quick-open-row-path,
+.quick-open-row-tag {
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.quick-open-row-path {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.quick-open-row-tag {
+  flex-shrink: 0;
+}
+
+.quick-open-row .kbd {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: var(--text-xs);
+  margin-block: calc(-1 * var(--space-2));
+}

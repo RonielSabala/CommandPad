@@ -121,6 +121,13 @@
   min-width: 0;
 }
 
+.tab-rename-input {
+  position: relative;
+  z-index: var(--z-raised);
+  flex: 1;
+  width: 100%;
+}
+
 .tab-close {
   position: relative;
   z-index: var(--z-raised);

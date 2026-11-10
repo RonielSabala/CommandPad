@@ -20,7 +20,8 @@ import { createCloudSyncSlice } from "./slices/cloudSync";
 import { createDialogsSlice } from "./slices/dialogs";
 import { createEmbedsSlice } from "./slices/embeds";
 import { createInteractionSlice } from "./slices/interaction";
-import { createLibrarySlice } from "./slices/library";
+import { createLibraryFoldersSlice } from "./slices/libraryFolders";
+import { createLibraryRunbooksSlice } from "./slices/libraryRunbooks";
 import { createLifecycleSlice } from "./slices/lifecycle";
 import { createTabsSlice } from "./slices/tabs";
 import { createTransferSlice } from "./slices/transfer";
@@ -41,11 +42,16 @@ export {
   getActiveRunbookId,
   getActiveTab,
   getActiveVariables,
+  getLibraryRunbook,
   getRunbookEmbedView,
   getRunbookView,
+  getTabById,
+  getTabByRunbookId,
+  hasLibraryFolderToSort,
   hasOptionsToSort,
   hasOtherOptions,
-  hasValuesToClear
+  hasValuesToClear,
+  isRunbookOpen
 } from "./selectors";
 export { tabContent } from "./tabState";
 export type { AppStoreApi, StoreState, VaultPassphrases } from "./types";
@@ -72,7 +78,12 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       debouncedSaveState,
       saveTabs: () => persist.saveTabsMeta(get().tabs, get().activeTabId),
       saveLibrary: () =>
-        persist.saveRunbookLibrary(get().runbookLibrary, get().activeRunbookId),
+        persist.saveRunbookLibrary(
+          get().libraryFolders,
+          get().libraryRunbooks,
+          get().activeRunbookId,
+          get().recentRunbookIds,
+        ),
       saveUi: () => persist.saveUiState(uiStateSnapshot(get())),
     };
 
@@ -81,7 +92,8 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       ...createInitialState(),
       ...createLifecycleSlice(kit, services),
       ...createTabsSlice(kit, services),
-      ...createLibrarySlice(kit, services),
+      ...createLibraryFoldersSlice(kit, services),
+      ...createLibraryRunbooksSlice(kit, services),
       ...createCloudSyncSlice(kit, services),
       ...createEmbedsSlice(kit, services),
       ...createVariablesSlice(kit, services),

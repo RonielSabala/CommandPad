@@ -1,6 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { RunbookSyncStatus } from "@/common/enums";
-import { formatBinding, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
+import { bindingLabel, KeyBinding } from "@/common/keybindings";
 import type { RunbookSync } from "@/common/types";
 import { Spinner } from "@/components/common/Spinner";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -17,9 +17,7 @@ import {
 
 import "./RunbookSyncBadge.css";
 
-const SAVE_SHORTCUT = formatBinding(
-  KEYBINDINGS[KeyBinding.SAVE_RUNBOOK].binding,
-);
+const SAVE_SHORTCUT = bindingLabel(KeyBinding.SAVE_RUNBOOK);
 
 interface Props {
   runbookId: string;
@@ -43,9 +41,9 @@ export function RunbookSyncBadge({ runbookId, sync }: Props) {
   return (
     <button
       className={classNames(
-        "runbook-badge",
         "runbook-sync",
         `sync-${syncStatus}`,
+        CssClass.LIBRARY_RUNBOOK_BADGE,
       )}
       aria-label={statusLabel}
       {...tooltip(statusLabel)}

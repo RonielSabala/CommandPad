@@ -1,4 +1,4 @@
-import { MonacoWorkerLabel } from "@/common/editorConfig";
+import { MonacoCommand, MonacoWorkerLabel } from "@/common/editorConfig";
 import { loader } from "@monaco-editor/react";
 import "monaco-editor/esm/vs/basic-languages/powershell/powershell.contribution.js";
 import "monaco-editor/esm/vs/basic-languages/shell/shell.contribution.js";
@@ -21,7 +21,12 @@ self.MonacoEnvironment = {
 
 loader.config({ monaco });
 
+monaco.editor.addKeybindingRule({
+  keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyL,
+  command: MonacoCommand.REMOVE_EXPAND_LINE_SELECTION,
+});
+
 /** Settle the loader at import time. */
-export const monacoReady = loader.init();
+void loader.init();
 
 export { monaco };

@@ -28,9 +28,9 @@ export function RunbookSecretBadge({ runbookId }: Props) {
   return (
     <button
       className={classNames(
-        "runbook-badge",
         "runbook-secret",
         `secret-${status}`,
+        CssClass.LIBRARY_RUNBOOK_BADGE,
       )}
       {...tooltip(t.runbooks.secretStatus[status])}
       aria-label={t.runbooks.secretStatus[status]}

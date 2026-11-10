@@ -1,0 +1,41 @@
+.library-import-btn {
+  display: flex;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+.library-import-main {
+  gap: 0;
+  padding-left: var(--space-4);
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+}
+
+.library-import-label {
+  display: grid;
+  grid-template-columns: 0fr;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    grid-template-columns var(--transition-base),
+    opacity var(--transition-base);
+}
+
+.library-import-label > span {
+  min-width: 0;
+  padding-left: var(--space-3);
+}
+
+.library-import-main:is(:hover, :focus-visible) .library-import-label {
+  grid-template-columns: 1fr;
+  opacity: 1;
+}
+
+.library-import-more {
+  display: flex;
+}
+
+.library-import-chevron {
+  padding-inline: var(--space-1) var(--space-2);
+  border-left-width: 0;
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+}

@@ -1,5 +1,5 @@
 import { SelectConfig } from "@/common/config";
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import {
   AutoComplete,
   InputType,
@@ -19,8 +19,10 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
+import { DeleteMenuItem } from "@/components/common/contextMenu/DeleteMenuItem";
 import { DragHandle } from "@/components/common/DragHandle";
 import { DragImage } from "@/components/common/DragImage";
+import { RenameInput } from "@/components/common/RenameInput";
 import {
   Select,
   SelectAlign,
@@ -28,13 +30,13 @@ import {
 } from "@/components/common/Select";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import {
+  ArrowBarDown,
+  ArrowBarUp,
   CheckIcon,
   CopyIcon,
   DuplicateIcon,
   OptionIcon,
-  PencilIcon,
   PlusIcon,
-  TrashIcon,
 } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
@@ -48,15 +50,8 @@ import {
   type VariableMap,
 } from "@/utils/resolution";
 import { abbreviate, classNames, countCharacters } from "@/utils/string";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { ArrowBarDown, ArrowBarUp } from "react-bootstrap-icons";
+import { createContext, useContext, useMemo, useState } from "react";
+import { PencilSquare } from "react-bootstrap-icons";
 
 import { OptionScopeContext } from "./optionScopeContext";
 import "./VariableOptionsSelect.css";
@@ -150,7 +145,6 @@ function VariableOptionRow({
   );
 
   const [editing, setEditing] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
   const {
     isDragging,
     isDragOver,
@@ -160,11 +154,7 @@ function VariableOptionRow({
     reorderVariableOptions(variableId, source, target),
   );
 
-  useEffect(() => {
-    if (editing) {
-      inputRef.current?.select();
-    }
-  }, [editing]);
+  const OptionStateIcon = selected ? CheckIcon : OptionIcon;
 
   return (
     <li
@@ -172,44 +162,34 @@ function VariableOptionRow({
       {...dragProps}
       className={classNames(
         rowProps.className,
+        CssClass.REORDER_ROW,
         isDragging && CssClass.DRAGGING,
       )}
     >
-      <DragImage icon={selected ? CheckIcon : OptionIcon}>{option}</DragImage>
+      <DragImage icon={<OptionStateIcon className={STANDARD_ICON_CLASS} />}>
+        {option}
+      </DragImage>
+
       <DragHandle handleProps={handleProps} />
 
       <div
         className={classNames(
           "variable-option-target",
+          editing && "is-editing",
           isDragOver && CssClass.DRAG_OVER,
         )}
       >
-        {editing ? (
-          <input
-            ref={inputRef}
-            className={classNames(
-              "variable-option-input",
-              CssClass.NO_LIGATURES,
-            )}
-            type={InputType.TEXT}
-            defaultValue={option}
-            spellCheck={false}
-            autoComplete={AutoComplete.OFF}
-            aria-label={t.variables.editOption}
-            onBlur={(event) => {
+        {children}
+        {editing && (
+          <RenameInput
+            className="variable-option-field variable-option-rename-input"
+            value={option}
+            onCommit={(name) => {
               setEditing(false);
-              renameVariableOption(variableId, option, event.target.value);
+              renameVariableOption(variableId, option, name);
             }}
-            onKeyDown={(event) => {
-              if (event.key === Key.ENTER || event.key === Key.ESCAPE) {
-                event.preventDefault();
-                event.stopPropagation();
-                event.currentTarget.blur();
-              }
-            }}
+            onCancel={() => setEditing(false)}
           />
-        ) : (
-          children
         )}
       </div>
 
@@ -219,33 +199,21 @@ function VariableOptionRow({
         besideSelector={SelectSelector.MENU}
       >
         <ContextMenuItem
-          icon={
-            <PencilIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<PencilSquare className={CssClass.ICON_MD} />}
           onSelect={() => setEditing(true)}
         >
           {t.variables.editOption}
         </ContextMenuItem>
 
         <ContextMenuItem
-          icon={
-            <DuplicateIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<DuplicateIcon className={STANDARD_ICON_CLASS} />}
           onSelect={() => duplicateVariableOption(variableId, option)}
         >
           {t.variables.duplicateOption}
         </ContextMenuItem>
 
         <ContextMenuItem
-          icon={
-            <CopyIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<CopyIcon className={STANDARD_ICON_CLASS} />}
           onSelect={() => void navigator.clipboard.writeText(option)}
         >
           {t.variables.copyOption}
@@ -254,11 +222,7 @@ function VariableOptionRow({
         <ContextMenuSeparator />
 
         <ContextMenuItem
-          icon={
-            <ArrowBarUp
-              className={(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
-            />
-          }
+          icon={<ArrowBarUp className={STANDARD_ICON_CLASS} />}
           onSelect={() =>
             reorderVariableOptions(variableId, option, options[0] ?? option)
           }
@@ -268,11 +232,7 @@ function VariableOptionRow({
         </ContextMenuItem>
 
         <ContextMenuItem
-          icon={
-            <ArrowBarDown
-              className={(CssClass.ICON_MD, CssClass.ICON_SEMIBOLD)}
-            />
-          }
+          icon={<ArrowBarDown className={STANDARD_ICON_CLASS} />}
           onSelect={() =>
             reorderVariableOptions(variableId, option, options.at(-1) ?? option)
           }
@@ -283,17 +243,11 @@ function VariableOptionRow({
 
         <ContextMenuSeparator />
 
-        <ContextMenuItem
-          icon={
-            <TrashIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+        <DeleteMenuItem
           onSelect={() => removeVariableOption(variableId, option)}
-          danger
         >
           {t.variables.removeOption}
-        </ContextMenuItem>
+        </DeleteMenuItem>
       </ActionsMenu>
     </li>
   );
@@ -372,6 +326,7 @@ export function VariableOptionsSelect({
             <div className="variable-option-add-row">
               <input
                 className={classNames(
+                  "variable-option-field",
                   "variable-option-input",
                   CssClass.NO_LIGATURES,
                 )}
@@ -395,9 +350,7 @@ export function VariableOptionsSelect({
                 aria-label={t.variables.addOption}
                 {...tooltip(t.variables.addOption)}
               >
-                <PlusIcon
-                  className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-                />
+                <PlusIcon className={STANDARD_ICON_CLASS} />
               </button>
             </div>
           )

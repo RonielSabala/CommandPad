@@ -1,4 +1,5 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
+import { ElementId } from "@/common/constants/dom";
 import { RunbookView } from "@/common/enums";
 import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -25,6 +26,9 @@ export function TabsBar() {
     anchor: ContextMenuAnchor;
   } | null>(null);
 
+  const [renamingTabId, setRenamingTabId] = useState<string | null>(null);
+  const endRename = useCallback(() => setRenamingTabId(null), []);
+
   const closeMenu = useCallback(() => setMenu(null), []);
   const onOpenMenu = useCallback((event: MouseEvent, tabId: string) => {
     event.preventDefault();
@@ -42,10 +46,17 @@ export function TabsBar() {
     : t.source.openSource;
 
   return (
-    <div id="tabs-bar">
+    <div id={ElementId.TABS_BAR}>
       <div id="tabs-strip">
         {tabs.map((tab) => (
-          <TabItem key={tab.id} tab={tab} onOpenMenu={onOpenMenu} />
+          <TabItem
+            key={tab.id}
+            tab={tab}
+            renaming={tab.id === renamingTabId}
+            onOpenMenu={onOpenMenu}
+            onRename={setRenamingTabId}
+            onRenameEnd={endRename}
+          />
         ))}
       </div>
       <button
@@ -54,9 +65,7 @@ export function TabsBar() {
         {...tooltip(t.tabs.newTab)}
         onClick={() => void createNewTab()}
       >
-        <PlusIcon
-          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-        />
+        <PlusIcon className={STANDARD_ICON_CLASS} />
       </button>
 
       {tabs.length > 0 && (
@@ -104,6 +113,7 @@ export function TabsBar() {
           tabId={menu.tabId}
           anchor={menu.anchor}
           onClose={closeMenu}
+          onRename={setRenamingTabId}
         />
       )}
     </div>

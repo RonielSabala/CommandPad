@@ -177,7 +177,7 @@ export function RunbookVariables() {
 
         <div
           id={ElementId.VARIABLES_LIST}
-          className={CssClass.VARIABLES_LIST}
+          className={classNames(CssClass.VARIABLES_LIST, CssClass.REORDER_LIST)}
           ref={listRef}
         >
           <VariableRows

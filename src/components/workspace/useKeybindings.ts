@@ -1,3 +1,4 @@
+import { QuickOpenConfig } from "@/common/config";
 import { InputSelector } from "@/common/constants/dom";
 import { EventType, Key, Modifier } from "@/common/constants/events";
 import { MoveDirection, RunbookView } from "@/common/enums";
@@ -64,13 +65,14 @@ export function useKeybindings(): void {
           state.removeBlock([...state.selectedBlockIds][0]);
         } else if (
           matchesKeybinding(event, KeyBinding.FOCUS_RUNBOOK) &&
-          state.runbookLibrary.length > 0
+          state.libraryRunbooks.length > 0
         ) {
           event.preventDefault();
+          const runbookId =
+            state.activeRunbookId ?? state.libraryRunbooks[0].id;
 
-          const runbookId = state.activeRunbookId ?? state.runbookLibrary[0].id;
           state.setRunbookFocus(runbookId);
-          void state.loadRunbookFromLibrary(runbookId);
+          void state.loadLibraryRunbook(runbookId);
         } else if (
           state.focusedRunbookId !== null &&
           (key === Key.ARROW_UP || key === Key.ARROW_DOWN)
@@ -93,17 +95,23 @@ export function useKeybindings(): void {
       if (matchesKeybinding(event, KeyBinding.TOGGLE_MODE)) {
         state.toggleAppMode();
         hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.QUICK_OPEN)) {
+        state.openQuickOpenModal();
+        hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.COMMAND_PALETTE)) {
+        state.openQuickOpenModal(QuickOpenConfig.COMMAND_PREFIX);
+        hit = true;
       } else if (matchesKeybinding(event, KeyBinding.EXPORT)) {
         if ((getActiveTab(state)?.blocks.length ?? 0) > 0) {
           state.openExportModal();
         }
 
         hit = true;
-      } else if (
-        matchesKeybinding(event, KeyBinding.CLEAR_LIBRARY) &&
-        state.runbookLibrary.length > 0
-      ) {
-        void state.clearRunbookLibrary();
+      } else if (matchesKeybinding(event, KeyBinding.DELETE_ACTIVE_RUNBOOK)) {
+        if (state.activeRunbookId) {
+          void state.removeLibraryRunbook(state.activeRunbookId);
+        }
+
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.DUPLICATE_BLOCK)) {
         if (state.selectedVariableIds.size > 0) {
@@ -116,7 +124,7 @@ export function useKeybindings(): void {
       } else if (matchesKeybinding(event, KeyBinding.DELETE_RUNBOOK)) {
         const deleteId = state.focusedRunbookId ?? state.activeRunbookId;
         if (deleteId) {
-          void state.removeRunbookFromLibrary(deleteId);
+          void state.removeLibraryRunbook(deleteId);
         }
 
         hit = true;

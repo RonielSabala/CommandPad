@@ -13,12 +13,15 @@ export const CssClass = {
   COLLAPSED: "collapsed",
   HAS_ERROR: "has-error",
   ANIMATING: "animating",
+  ROW_REVEAL: "row-reveal",
+  DUPLICATE_FLASH: "duplicate-flash",
+
   DRAGGING: "dragging",
   DRAG_OVER: "drag-over",
   DRAG_IMAGE: "drag-image",
   DROP_TARGET: "drop-target",
-  DUPLICATE_FLASH: "duplicate-flash",
-  ROW_REVEAL: "row-reveal",
+  REORDER_LIST: "reorder-list",
+  REORDER_ROW: "reorder-row",
 
   CLAMPED: "clamped",
   CLAMP_SURFACE: "clamp-surface",
@@ -26,14 +29,31 @@ export const CssClass = {
   PANEL_CARD: "panel-card",
   SECTION_TITLE: "section-title",
 
-  TOOLTIP: "tooltip",
+  // Menu
+
   MENU_OPEN: "menu-open",
   CONTEXT_MENU: "context-menu",
   CONTEXT_MENU_ITEM: "context-menu-item",
   CONTEXT_MENU_ICON: "context-menu-icon",
+
   SELECT_MENU: "select-menu",
   SELECT_MENU_PORTAL: "select-menu-portal",
   SELECT_OPTION: "select-option",
+
+  // Tooltip
+
+  TOOLTIP: "tooltip",
+  TOOLTIP_LINK: "tooltip-link",
+  TOOLTIP_LINKS: "tooltip-links",
+  TOOLTIP_PANEL: "tooltip-panel",
+  TOOLTIP_TITLE: "tooltip-title",
+  TOOLTIP_SCROLL: "tooltip-scroll",
+
+  FRAMED_ROW: "framed-section-row",
+  FRAMED_CELLS: "framed-section-cells",
+  FRAMED_SECTIONS: "framed-sections",
+
+  // Code editor
 
   CODE_EDITOR: "code-editor",
   CODE_EDITOR_HEADER: "code-editor-header",
@@ -91,29 +111,20 @@ export const CssClass = {
   IS_UNRESOLVED: "is-unresolved",
 
   // Blocks
+
   BLOCKS_LIST: "blocks-list",
   BLOCK_ITEM: "block-item",
   BLOCK_SURFACE: "block-surface",
   BLOCK_CARD: "block-card",
+
   COMMAND_CARD: "command-card",
 
-  NOTE_LINK: "note-link",
-  TOOLTIP_LINK: "tooltip-link",
-  TOOLTIP_LINKS: "tooltip-links",
-  TOOLTIP_PANEL: "tooltip-panel",
-  TOOLTIP_TITLE: "tooltip-title",
-  TOOLTIP_SCROLL: "tooltip-scroll",
-
-  FRAMED_ROW: "framed-section-row",
-  FRAMED_CELLS: "framed-section-cells",
-  FRAMED_SECTIONS: "framed-sections",
-
-  TEXT_MIRROR: "text-mirror",
   NOTE_EDITOR: "note-editor",
-
+  NOTE_LINK: "note-link",
+  NOTE_TABLE: "note-table",
   NOTE_CODE: "note-code",
   NOTE_CODE_NEUTRAL: "note-code-neutral",
-  NOTE_TABLE: "note-table",
+  TEXT_MIRROR: "text-mirror",
 
   // Controls beside a block/variable item
 
@@ -121,9 +132,19 @@ export const CssClass = {
   ITEM_ACTIONS: "item-actions",
   ITEM_DRAG_HANDLE: "item-drag-handle",
   RUNBOOK_EMBED_ACTIONS: "runbook-embed-actions",
-
   ROW_ACTIONS: "row-actions",
-  RUNBOOK_ITEM_BTN: "runbook-item-btn",
+
+  // Sidebar rows
+  SIDEBAR_SECTION_LIST_ROW: "sidebar-section-list-row",
+  LIBRARY_ROW: "library-row",
+  LIBRARY_ROW_MAIN: "library-row-main",
+  LIBRARY_ROW_LABEL: "library-row-label",
+  LIBRARY_ROW_RENAME_INPUT: "library-row-rename-input",
+  LIBRARY_ROW_RENAMING: "library-row-renaming",
+  LIBRARY_ROW_BTN: "library-row-btn",
+  LIBRARY_ROW_ICON: "library-row-icon",
+  LIBRARY_ROW_NAME: "library-row-name",
+  LIBRARY_RUNBOOK_BADGE: "library-runbook-badge",
 
   // Minimap
   MINIMAP_ON: "minimap-on",
@@ -139,6 +160,10 @@ export const CssClass = {
   MODAL_BACKDROP: "modal-backdrop",
   MODAL_BACKDROP_TRANSPARENT: "modal-backdrop-transparent",
 } as const;
+
+export const HEADER_ICON_CLASS = `${CssClass.ICON} ${CssClass.ICON_BOLD}`;
+export const SEMIBOLD_ICON_CLASS = `${CssClass.ICON_MD} ${CssClass.ICON_SEMIBOLD}`;
+export const STANDARD_ICON_CLASS = `${CssClass.ICON_MD} ${CssClass.ICON_BOLD}`;
 
 export const REVEAL_TONE_CLASS: Record<RevealTone, string | undefined> = {
   [RevealTone.NEUTRAL]: "row-reveal-neutral",

@@ -217,6 +217,11 @@ export const MonacoContextMenu = {
   TRIGGER_SOURCE: "commandpad",
 } as const;
 
+/** Monaco's own commands. */
+export const MonacoCommand = {
+  REMOVE_EXPAND_LINE_SELECTION: "-expandLineSelection",
+} as const;
+
 export const EditorActionId = {
   EXTRACT_VARIABLE: "commandpad.extractVariable",
   INLINE_VARIABLE: "commandpad.inlineVariable",

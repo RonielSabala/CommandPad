@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EditorToggleChevronIcon } from "@/components/icons";
 import { classNames } from "@/utils/string";
@@ -25,11 +25,7 @@ export function EditorToggle({ collapsed, label, onToggle }: Props) {
       {...tooltip(label)}
     >
       <EditorToggleChevronIcon
-        className={classNames(
-          "toggle-editor-icon",
-          CssClass.ICON_MD,
-          CssClass.ICON_BOLD,
-        )}
+        className={classNames("toggle-editor-icon", STANDARD_ICON_CLASS)}
       />
     </button>
   );

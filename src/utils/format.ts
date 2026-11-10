@@ -7,6 +7,8 @@ import {
 import type { Language } from "@/i18n";
 import type { CloudFolderRef } from "@/services/cloud";
 
+import { joinPath } from "./path";
+
 export function formatFileSize(bytes: number, language: Language): string {
   let value = bytes;
   let unitIndex = 0;
@@ -33,11 +35,11 @@ export function formatCloudPath(
   path: CloudFolderRef[],
   ...names: string[]
 ): string {
-  return [
+  return joinPath([
     CloudSyncConfig.APP_FOLDER_NAME,
     ...path.map((folder) => folder.name),
     ...names,
-  ].join(CloudSyncConfig.PATH_SEPARATOR);
+  ]);
 }
 
 export function formatTimestamp(

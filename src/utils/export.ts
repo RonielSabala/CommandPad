@@ -184,6 +184,10 @@ export async function buildMarkdownExport(
   return joinLines(markdownLines(blocks));
 }
 
+export function isJsonFilename(filename: string): boolean {
+  return JSON_EXTENSION_REGEX.test(filename);
+}
+
 export function stripJsonExtension(filename: string): string {
   return filename.replace(JSON_EXTENSION_REGEX, "");
 }

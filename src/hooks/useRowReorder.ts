@@ -7,6 +7,10 @@ import { useRef, useState, type DragEvent, type RefObject } from "react";
 
 const dragGroups: Record<string, string | null> = {};
 
+/** The row being dragged in a group. */
+export const draggedRowId = (group: DragGroup): string | null =>
+  dragGroups[group] ?? null;
+
 export interface RowReorder {
   isDragging: boolean;
   isDragOver: boolean;
@@ -18,6 +22,7 @@ export interface RowReorder {
     draggable: boolean;
     onDragStart: (event: DragEvent) => void;
     onDragEnd: () => void;
+    onDragEnter: (event: DragEvent) => void;
     onDragOver: (event: DragEvent) => void;
     onDragLeave: (event: DragEvent) => void;
     onDrop: (event: DragEvent) => void;
@@ -36,6 +41,17 @@ export function useRowReorder(
   const [isDragOver, setIsDragOver] = useState(false);
 
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const onDragOver = (event: DragEvent) => {
+    const source = dragGroups[group];
+    if (!source || source === id) {
+      return;
+    }
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = DragEffect.MOVE;
+    setIsDragOver(true);
+  };
 
   return {
     isDragging,
@@ -74,16 +90,8 @@ export function useRowReorder(
         setIsDragging(false);
         setIsDragOver(false);
       },
-      onDragOver: (event) => {
-        const source = dragGroups[group];
-        if (!source || source === id) {
-          return;
-        }
-
-        event.preventDefault();
-        event.dataTransfer.dropEffect = DragEffect.MOVE;
-        setIsDragOver(true);
-      },
+      onDragEnter: onDragOver,
+      onDragOver,
       onDragLeave: (event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node)) {
           setIsDragOver(false);

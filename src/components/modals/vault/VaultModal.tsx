@@ -1,6 +1,6 @@
-import { VAULT_PROMPT_FIELDS } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { VaultField, VaultPrompt } from "@/common/enums";
+import { VAULT_PROMPT_FIELDS } from "@/common/vaultConfig";
 import { NoteText } from "@/components/blocks/note/NoteText";
 import { Spinner } from "@/components/common/Spinner";
 import { VerticalDivider } from "@/components/common/VerticalDivider";
@@ -25,6 +25,7 @@ export function VaultModal() {
   const dialog = useStore((state) => state.vaultDialog);
   const submit = useStore((state) => state.submitVaultPassphrase);
   const dismiss = useStore((state) => state.dismissVaultDialog);
+  const skipBatch = useStore((state) => state.skipVaultBatch);
 
   const [passphrases, setPassphrases] =
     useState<VaultPassphrases>(EMPTY_PASSPHRASES);
@@ -50,7 +51,8 @@ export function VaultModal() {
     return null;
   }
 
-  const { prompt, busy, error, filename } = active;
+  const { prompt, busy, error, filename, batch } = active;
+  const pending = batch?.pending ?? 0;
   const fields = VAULT_PROMPT_FIELDS[prompt];
 
   const handleSubmit = () => {
@@ -76,7 +78,20 @@ export function VaultModal() {
             {t.vaultModal.title[prompt]}
           </ModalTitle>
           <div className="vault-message">
-            <NoteText text={message} />
+            <p>
+              <NoteText text={message} />
+            </p>
+
+            {pending > 0 && (
+              <p>
+                <NoteText
+                  text={t.vaultModal.batchMessage(
+                    pending,
+                    t.vaultModal.skipAll,
+                  )}
+                />
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -100,12 +115,22 @@ export function VaultModal() {
       {error && <p className="vault-error">{t.vaultModal.errors[error]}</p>}
 
       <ModalActions>
+        {pending > 0 && (
+          <button
+            className={classNames(CssClass.BTN, CssClass.BTN_LG)}
+            onClick={skipBatch}
+            disabled={busy}
+          >
+            {t.vaultModal.skipAll}
+          </button>
+        )}
+
         <button
           className={classNames(CssClass.BTN, CssClass.BTN_LG)}
           onClick={dismiss}
           disabled={busy}
         >
-          {t.vaultModal.skip}
+          {pending > 0 ? t.vaultModal.skipOne : t.vaultModal.skip}
         </button>
 
         <VerticalDivider />

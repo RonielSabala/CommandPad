@@ -8,7 +8,11 @@ import { classNames, classSelector } from "@/utils/string";
 import { memo, useCallback, useRef, type MouseEvent } from "react";
 
 import { VariableRowFrame } from "./VariableRowFrame";
-import { BasicRowItems, VariableRowMenu } from "./VariableRowMenuItems";
+import {
+  DuplicateItem,
+  RemoveItem,
+  VariableRowMenu,
+} from "./VariableRowMenuItems";
 import { VariableSectionHeader } from "./VariableSectionHeader";
 import "./VariableSectionItem.css";
 
@@ -74,15 +78,20 @@ export const VariableSectionItem = memo(function VariableSectionItem({
           title={t.variables.sectionActions}
           className={className}
           sectioned
+          removeItems={(targets) => (
+            <RemoveItem targetId={sectionId}>
+              {t.variables.removeSection(targets)}
+            </RemoveItem>
+          )}
         >
           {(targets, selectItem) => (
-            <BasicRowItems
-              targetId={sectionId}
-              sectioned
-              selectItem={selectItem}
-              duplicateLabel={t.variables.duplicateSection(targets)}
-              removeLabel={t.variables.removeSection(targets)}
-            />
+            <>
+              {selectItem}
+
+              <DuplicateItem targetId={sectionId}>
+                {t.variables.duplicateSection(targets)}
+              </DuplicateItem>
+            </>
           )}
         </VariableRowMenu>
       )}

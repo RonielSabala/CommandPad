@@ -3,7 +3,12 @@ import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { useTranslation } from "@/i18n";
 import { InfoCircle } from "react-bootstrap-icons";
 
-export function InfoMenuItem({ onSelect }: { onSelect: () => void }) {
+interface Props {
+  onSelect: () => void;
+  label?: string;
+}
+
+export function InfoMenuItem({ onSelect, label }: Props) {
   const t = useTranslation();
 
   return (
@@ -11,7 +16,7 @@ export function InfoMenuItem({ onSelect }: { onSelect: () => void }) {
       icon={<InfoCircle className={CssClass.ICON_MD} />}
       onSelect={onSelect}
     >
-      {t.info.action}
+      {label ?? t.info.action}
     </ContextMenuItem>
   );
 }

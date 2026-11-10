@@ -1,10 +1,15 @@
 import { SECTION_ANIMATION_FALLBACK_MS } from "@/common/config";
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { asButton } from "@/components/common/asButton";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import type { FileDrop } from "@/hooks/useFileDrop";
 import { classNames } from "@/utils/string";
-import { useEffect, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useState,
+  type MouseEventHandler,
+  type ReactNode,
+} from "react";
 
 import "./SidebarSection.css";
 
@@ -18,6 +23,7 @@ interface Props {
   collapsed: boolean;
   onToggle: () => void;
   dropZone?: DropZone;
+  onContextMenu?: MouseEventHandler;
   children: ReactNode;
 }
 
@@ -27,6 +33,7 @@ export function SidebarSection({
   collapsed,
   onToggle,
   dropZone,
+  onContextMenu,
   children,
 }: Props) {
   const [animating, setAnimating] = useState(false);
@@ -59,6 +66,7 @@ export function SidebarSection({
         dropZone?.isDropActive && CssClass.DROP_TARGET,
       )}
       {...dropZone?.dropProps}
+      onContextMenu={onContextMenu}
     >
       {dropZone?.isDropActive && (
         <div
@@ -80,11 +88,7 @@ export function SidebarSection({
       >
         <p className={CssClass.SECTION_TITLE}>{title}</p>
         <SidebarSectionChevronIcon
-          className={classNames(
-            "sidebar-section-chevron",
-            CssClass.ICON_MD,
-            CssClass.ICON_BOLD,
-          )}
+          className={classNames("sidebar-section-chevron", STANDARD_ICON_CLASS)}
         />
       </div>
       <div

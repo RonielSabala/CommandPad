@@ -62,7 +62,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
   const { hide } = tip;
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const isActive = useStore((state) => getActiveTab(state)?.id === tab.id);
-  const library = useStore((state) => state.runbookLibrary);
+  const runbooks = useStore((state) => state.libraryRunbooks);
   const embeddedRunbooks = useStore((state) => state.embeddedRunbooks);
   const tabs = useStore((state) => state.tabs);
   const switchTab = useStore((state) => state.switchTab);
@@ -75,7 +75,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
   const { groups, problemCount, blockCount } = useMemo(() => {
     const found = new Map<string, Problem>();
     const byCause = new Map<UnresolvedCause, Problem[]>();
-    const embedLookup = { runbookLibrary: library, embeddedRunbooks, tabs };
+    const embedLookup = { libraryRunbooks: runbooks, embeddedRunbooks, tabs };
     let blockCount = 0;
 
     const report = (
@@ -130,7 +130,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
 
       const missing =
         block.type === BlockType.RUNBOOK &&
-        isEmbedBlockUnresolved(block, library, embeddedRunbooks);
+        isEmbedBlockUnresolved(block, runbooks, embeddedRunbooks);
 
       if (missing) {
         report(
@@ -151,7 +151,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
     );
 
     return { groups, problemCount: found.size, blockCount };
-  }, [tab.blocks, variableMap, secretKeys, library, embeddedRunbooks, tabs]);
+  }, [tab.blocks, variableMap, secretKeys, runbooks, embeddedRunbooks, tabs]);
 
   const variableIds = useMemo(
     () =>

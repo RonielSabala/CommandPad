@@ -1,13 +1,14 @@
 import { ImageBlockConfig, MimeType } from "@/common/config";
-import { CssClass } from "@/common/constants/css";
+import { CssClass, SEMIBOLD_ICON_CLASS } from "@/common/constants/css";
 import { InputType } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { AppMode, BlockType, DialogTone } from "@/common/enums";
 import type { ImageBlock as ImageBlockData } from "@/common/types";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
+import { DeleteMenuItem } from "@/components/common/contextMenu/DeleteMenuItem";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { ImportIcon, TrashIcon } from "@/components/icons";
+import { ImportIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useLanguage, useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -240,33 +241,15 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
                   )}
 
                   <ContextMenuItem
-                    icon={
-                      <ImportIcon
-                        className={classNames(
-                          CssClass.ICON_MD,
-                          CssClass.ICON_SEMIBOLD,
-                        )}
-                      />
-                    }
+                    icon={<ImportIcon className={SEMIBOLD_ICON_CLASS} />}
                     onSelect={openFilePicker}
                   >
                     {t.image.replace}
                   </ContextMenuItem>
 
-                  <ContextMenuItem
-                    icon={
-                      <TrashIcon
-                        className={classNames(
-                          CssClass.ICON_MD,
-                          CssClass.ICON_BOLD,
-                        )}
-                      />
-                    }
-                    onSelect={clear}
-                    danger
-                  >
+                  <DeleteMenuItem onSelect={clear}>
                     {t.image.remove}
-                  </ContextMenuItem>
+                  </DeleteMenuItem>
                 </ActionsMenu>
               </div>
             </div>

@@ -167,6 +167,7 @@ export function unresolvedBlockParts(
   );
 }
 
+/** What fails inside a variable's value. */
 export function unresolvedVariableParts(
   key: string,
   variableMap: VariableMap,
@@ -174,6 +175,8 @@ export function unresolvedVariableParts(
 ): UnresolvedPart[] {
   return unresolvedParts(braceToken(key), variableMap, secretKeys).filter(
     (part) =>
-      part.cause !== UnresolvedCause.BLANK || sourceKey(part.source) !== key,
+      (part.cause !== UnresolvedCause.BLANK ||
+        sourceKey(part.source) !== key) &&
+      (part.cause !== UnresolvedCause.EMPTY || part.source !== key),
   );
 }

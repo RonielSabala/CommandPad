@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import {
   VariableEntryKind,
   VariableKind,
@@ -9,22 +9,18 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
+import { DeleteMenuItem } from "@/components/common/contextMenu/DeleteMenuItem";
 import { InsertSubmenus } from "@/components/common/contextMenu/InsertSubmenus";
 import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
 import { SelectionToggleItem } from "@/components/common/contextMenu/SelectionToggleItem";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
-import {
-  DuplicateIcon,
-  EnumIcon,
-  SectionIcon,
-  TrashIcon,
-  VariableIcon,
-} from "@/components/icons";
+import { EnumIcon, SectionIcon, VariableIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { countVariableTargets, useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useContext, type ReactNode } from "react";
+import { Copy } from "react-bootstrap-icons";
 
 import { VariableRowInfo } from "./info/VariableRowInfo";
 
@@ -43,11 +39,7 @@ function InsertItems({ targetId, position }: InsertItemsProps) {
   return (
     <>
       <ContextMenuItem
-        icon={
-          <VariableIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
+        icon={<VariableIcon className={STANDARD_ICON_CLASS} />}
         onSelect={() =>
           insertVariableRow(targetId, VariableEntryKind.VARIABLE, position)
         }
@@ -56,11 +48,7 @@ function InsertItems({ targetId, position }: InsertItemsProps) {
       </ContextMenuItem>
 
       <ContextMenuItem
-        icon={
-          <EnumIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
+        icon={<EnumIcon className={STANDARD_ICON_CLASS} />}
         onSelect={() =>
           insertVariableRow(
             targetId,
@@ -74,11 +62,7 @@ function InsertItems({ targetId, position }: InsertItemsProps) {
       </ContextMenuItem>
 
       <ContextMenuItem
-        icon={
-          <SectionIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
+        icon={<SectionIcon className={STANDARD_ICON_CLASS} />}
         onSelect={() =>
           insertVariableRow(targetId, VariableEntryKind.SECTION, position)
         }
@@ -89,7 +73,7 @@ function InsertItems({ targetId, position }: InsertItemsProps) {
   );
 }
 
-export function VariableInsertItems({ targetId }: Props) {
+function VariableInsertItems({ targetId }: Props) {
   const t = useTranslation();
 
   return (
@@ -115,11 +99,7 @@ export function DuplicateItem({ targetId, children }: ItemProps) {
 
   return (
     <ContextMenuItem
-      icon={
-        <DuplicateIcon
-          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-        />
-      }
+      icon={<Copy className={CssClass.ICON_MD} />}
       onSelect={() => duplicateVariable(targetId)}
     >
       {children}
@@ -131,44 +111,9 @@ export function RemoveItem({ targetId, children }: ItemProps) {
   const removeVariable = useStore((state) => state.removeVariable);
 
   return (
-    <ContextMenuItem
-      icon={
-        <TrashIcon
-          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-        />
-      }
-      onSelect={() => removeVariable(targetId)}
-      danger
-    >
+    <DeleteMenuItem onSelect={() => removeVariable(targetId)}>
       {children}
-    </ContextMenuItem>
-  );
-}
-
-interface BasicItemsProps extends Props {
-  /** Whether this surface shows sections. */
-  sectioned?: boolean;
-  selectItem: ReactNode;
-  duplicateLabel: string;
-  removeLabel: string;
-}
-
-export function BasicRowItems({
-  targetId,
-  sectioned,
-  selectItem,
-  duplicateLabel,
-  removeLabel,
-}: BasicItemsProps) {
-  return (
-    <>
-      {selectItem}
-      <DuplicateItem targetId={targetId}>{duplicateLabel}</DuplicateItem>
-
-      {sectioned && <VariableInsertItems targetId={targetId} />}
-
-      <RemoveItem targetId={targetId}>{removeLabel}</RemoveItem>
-    </>
+    </DeleteMenuItem>
   );
 }
 
@@ -177,7 +122,10 @@ interface MenuProps extends Props {
   title: string;
   className: string;
   sectioned?: boolean;
+  /** The edits, offered first. */
   children: (count: number, selectItem: ReactNode) => ReactNode;
+  /** What removes the targets, offered last. */
+  removeItems: (count: number) => ReactNode;
 }
 
 export function VariableRowMenu({
@@ -187,6 +135,7 @@ export function VariableRowMenu({
   className,
   sectioned,
   children,
+  removeItems,
 }: MenuProps) {
   const t = useTranslation();
   const info = useInfoTooltip();
@@ -222,20 +171,31 @@ export function VariableRowMenu({
         title={title}
         triggerRef={info.triggerRef}
       >
+        {count === null ? (
+          <>
+            {selectItem}
+            <DuplicateItem targetId={targetId}>
+              {t.variables.duplicateItems}
+            </DuplicateItem>
+          </>
+        ) : (
+          children(count, selectItem)
+        )}
+
+        {sectioned ? (
+          <VariableInsertItems targetId={targetId} />
+        ) : (
+          <ContextMenuSeparator />
+        )}
+
         <InfoMenuItem onSelect={info.open} />
 
         <ContextMenuSeparator />
 
         {count === null ? (
-          <BasicRowItems
-            targetId={targetId}
-            sectioned={sectioned}
-            selectItem={selectItem}
-            duplicateLabel={t.variables.duplicateItems}
-            removeLabel={t.variables.removeItems}
-          />
+          <RemoveItem targetId={targetId}>{t.variables.removeItems}</RemoveItem>
         ) : (
-          children(count, selectItem)
+          removeItems(count)
         )}
       </ActionsMenu>
 

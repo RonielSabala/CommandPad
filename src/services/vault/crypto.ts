@@ -1,27 +1,10 @@
-import { VaultConfig } from "@/common/config";
+import { VaultConfig, VaultKeyUsage } from "@/common/vaultConfig";
+
+import { fromBase64, toBase64 } from "./base64";
+import { writePayload, type PayloadParts } from "./payload";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
-
-function toBase64(bytes: Uint8Array): string {
-  let binary = "";
-  for (const byte of bytes) {
-    binary += String.fromCharCode(byte);
-  }
-
-  return btoa(binary);
-}
-
-function fromBase64(text: string): Uint8Array {
-  const binary = atob(text);
-  const bytes = new Uint8Array(binary.length);
-
-  for (let index = 0; index < binary.length; index += 1) {
-    bytes[index] = binary.charCodeAt(index);
-  }
-
-  return bytes;
-}
 
 export function isVaultSupported(): boolean {
   return typeof crypto !== "undefined" && !!crypto.subtle;
@@ -40,11 +23,11 @@ export async function deriveVaultKey(
   salt: Uint8Array,
 ): Promise<CryptoKey> {
   const material = await crypto.subtle.importKey(
-    "raw",
+    VaultKeyUsage.PASSPHRASE_FORMAT,
     encoder.encode(passphrase),
     VaultConfig.DERIVE_ALGORITHM,
-    false,
-    ["deriveKey"],
+    VaultKeyUsage.EXTRACTABLE,
+    VaultKeyUsage.PASSPHRASE,
   );
 
   return crypto.subtle.deriveKey(
@@ -59,32 +42,14 @@ export async function deriveVaultKey(
       name: VaultConfig.CIPHER_ALGORITHM,
       length: VaultConfig.KEY_LENGTH_BITS,
     },
-    false,
-    ["encrypt", "decrypt"],
+    VaultKeyUsage.EXTRACTABLE,
+    VaultKeyUsage.CIPHER,
   );
-}
-
-export function isEncryptedValue(value: string): boolean {
-  if (!value.startsWith(VaultConfig.PREFIX + VaultConfig.SEPARATOR)) {
-    return false;
-  }
-
-  return (
-    value.split(VaultConfig.SEPARATOR).length === VaultConfig.SEGMENT_COUNT
-  );
-}
-
-export function readPayloadSalt(payload: string): string | null {
-  if (!isEncryptedValue(payload)) {
-    return null;
-  }
-
-  return payload.split(VaultConfig.SEPARATOR)[1];
 }
 
 export async function encryptValue(
   key: CryptoKey,
-  salt: Uint8Array,
+  salt: string,
   plaintext: string,
 ): Promise<string> {
   const iv = randomBytes(VaultConfig.IV_BYTES);
@@ -94,27 +59,24 @@ export async function encryptValue(
     encoder.encode(plaintext),
   );
 
-  return [
-    VaultConfig.PREFIX,
-    toBase64(salt),
-    toBase64(iv),
-    toBase64(new Uint8Array(ciphertext)),
-  ].join(VaultConfig.SEPARATOR);
+  return writePayload({
+    salt,
+    iv: toBase64(iv),
+    ciphertext: toBase64(new Uint8Array(ciphertext)),
+  });
 }
 
 export async function decryptValue(
   key: CryptoKey,
-  payload: string,
+  parts: PayloadParts,
 ): Promise<string> {
-  if (!isEncryptedValue(payload)) {
-    throw new Error("Not an encrypted value");
-  }
-
-  const [, , iv, ciphertext] = payload.split(VaultConfig.SEPARATOR);
   const plaintext = await crypto.subtle.decrypt(
-    { name: VaultConfig.CIPHER_ALGORITHM, iv: fromBase64(iv) as BufferSource },
+    {
+      name: VaultConfig.CIPHER_ALGORITHM,
+      iv: fromBase64(parts.iv) as BufferSource,
+    },
     key,
-    fromBase64(ciphertext) as BufferSource,
+    fromBase64(parts.ciphertext) as BufferSource,
   );
 
   return decoder.decode(plaintext);

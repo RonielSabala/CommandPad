@@ -1,10 +1,8 @@
-import { formatBinding, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
+import { bindingLabel, KeyBinding } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
 import { Prose } from "../Prose";
 
-const SAVE_SHORTCUT = formatBinding(
-  KEYBINDINGS[KeyBinding.SAVE_RUNBOOK].binding,
-);
+const SAVE_SHORTCUT = bindingLabel(KeyBinding.SAVE_RUNBOOK);
 
 export function ExportDocs() {
   const t = useTranslation();

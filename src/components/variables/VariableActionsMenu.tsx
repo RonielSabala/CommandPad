@@ -1,11 +1,13 @@
-import { CssClass } from "@/common/constants/css";
-import { SortDirection, VariableEntryKind } from "@/common/enums";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
+import { VariableEntryKind } from "@/common/enums";
 import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
-import { EyeIcon, TrashIcon } from "@/components/icons";
+import { DeleteMenuItem } from "@/components/common/contextMenu/DeleteMenuItem";
+import { SortMenuItems } from "@/components/common/contextMenu/SortMenuItems";
+import { EyeIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import {
   getActiveTab,
@@ -15,28 +17,16 @@ import {
   useStore,
 } from "@/store/store";
 import { getCaseOperationKeywords } from "@/utils/resolution";
-import { classNames } from "@/utils/string";
 import type { ReactNode } from "react";
-import {
-  AlphabetUppercase,
-  Collection,
-  Eraser,
-  SortAlphaDown,
-  SortAlphaUp,
-} from "react-bootstrap-icons";
+import { AlphabetUppercase, Collection, Eraser } from "react-bootstrap-icons";
 
 import {
   DuplicateItem,
   RemoveItem,
-  VariableInsertItems,
   VariableRowMenu,
 } from "./VariableRowMenuItems";
 
 const CASE_KEYWORDS = getCaseOperationKeywords();
-const SORT_ICONS = {
-  [SortDirection.ASC]: SortAlphaDown,
-  [SortDirection.DESC]: SortAlphaUp,
-} as const;
 
 interface ItemProps {
   variableId: string;
@@ -61,31 +51,6 @@ function ClearValuesItem({ variableId, children }: ItemProps) {
   );
 }
 
-function SortOptionsItem({
-  variableId,
-  direction,
-}: {
-  variableId: string;
-  direction: SortDirection;
-}) {
-  const t = useTranslation();
-  const sortVariableOptions = useStore((state) => state.sortVariableOptions);
-  const hasUnsorted = useStore((state) =>
-    hasOptionsToSort(state, variableId, direction),
-  );
-
-  const Icon = SORT_ICONS[direction];
-  return (
-    <ContextMenuItem
-      icon={<Icon className={CssClass.ICON_MD} />}
-      onSelect={() => sortVariableOptions(variableId, direction)}
-      disabled={!hasUnsorted}
-    >
-      {t.variables.sortOptions[direction]}
-    </ContextMenuItem>
-  );
-}
-
 function RemoveOtherOptionsItem({ variableId, children }: ItemProps) {
   const hasOthers = useStore((state) => hasOtherOptions(state, variableId));
   const removeOtherVariableOptions = useStore(
@@ -93,18 +58,12 @@ function RemoveOtherOptionsItem({ variableId, children }: ItemProps) {
   );
 
   return (
-    <ContextMenuItem
-      icon={
-        <TrashIcon
-          className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-        />
-      }
+    <DeleteMenuItem
       onSelect={() => removeOtherVariableOptions(variableId)}
       disabled={!hasOthers}
-      danger
     >
       {children}
-    </ContextMenuItem>
+    </DeleteMenuItem>
   );
 }
 
@@ -128,6 +87,7 @@ export function VariableActionsMenu({
   const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
   const applyVariableKeyCase = useStore((state) => state.applyVariableKeyCase);
   const addVariableSection = useStore((state) => state.addVariableSection);
+  const sortVariableOptions = useStore((state) => state.sortVariableOptions);
   const hasManyOptions = useStore(
     (state) =>
       (getActiveTab(state)?.variables.find((v) => v.id === variableId)?.options
@@ -141,16 +101,26 @@ export function VariableActionsMenu({
       title={t.variables.actions}
       className={className}
       sectioned={sectioned}
+      removeItems={(count) => (
+        <>
+          {hasManyOptions && (
+            <RemoveOtherOptionsItem variableId={variableId}>
+              {t.variables.removeOtherOptions}
+            </RemoveOtherOptionsItem>
+          )}
+
+          <RemoveItem targetId={variableId}>
+            {t.variables.remove(count)}
+          </RemoveItem>
+        </>
+      )}
     >
       {(count, selectItem) => (
         <>
           {!isEnum && (
             <ContextMenuItem
               icon={
-                <EyeIcon
-                  slashed={!isSecret}
-                  className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-                />
+                <EyeIcon slashed={!isSecret} className={STANDARD_ICON_CLASS} />
               }
               onSelect={() => toggleVariableSecret(variableId)}
             >
@@ -195,32 +165,17 @@ export function VariableActionsMenu({
           {hasManyOptions && (
             <>
               <ContextMenuSeparator />
-              <SortOptionsItem
-                variableId={variableId}
-                direction={SortDirection.ASC}
-              />
-              <SortOptionsItem
-                variableId={variableId}
-                direction={SortDirection.DESC}
+              <SortMenuItems
+                labels={t.variables.sortOptions}
+                canSort={(state, direction) =>
+                  hasOptionsToSort(state, variableId, direction)
+                }
+                onSort={(direction) =>
+                  sortVariableOptions(variableId, direction)
+                }
               />
             </>
           )}
-
-          {sectioned ? (
-            <VariableInsertItems targetId={variableId} />
-          ) : (
-            <ContextMenuSeparator />
-          )}
-
-          {hasManyOptions && (
-            <RemoveOtherOptionsItem variableId={variableId}>
-              {t.variables.removeOtherOptions}
-            </RemoveOtherOptionsItem>
-          )}
-
-          <RemoveItem targetId={variableId}>
-            {t.variables.remove(count)}
-          </RemoveItem>
         </>
       )}
     </VariableRowMenu>

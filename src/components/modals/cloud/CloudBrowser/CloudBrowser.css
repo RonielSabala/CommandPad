@@ -88,7 +88,7 @@
 }
 
 .cloud-browser-row.is-selected::before {
-  background: var(--cloud-row-selected-bg);
+  background: var(--row-selected-bg);
 }
 
 :is(
@@ -104,7 +104,7 @@
 
 .cloud-browser-row.is-selected:hover::before,
 .cloud-browser-row.is-selected:has(:focus-visible)::before {
-  background: var(--cloud-row-selected-hover-bg);
+  background: var(--row-selected-hover-bg);
 }
 
 /* Selection tick */

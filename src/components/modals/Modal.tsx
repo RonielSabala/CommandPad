@@ -4,7 +4,7 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CloseIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
-import type { ReactNode } from "react";
+import type { MouseEventHandler, ReactNode } from "react";
 
 import "./Modal.css";
 import { useModalDismiss } from "./useModalDismiss";
@@ -16,6 +16,8 @@ interface Props {
   children: ReactNode;
   animated?: boolean;
   noBackdrop?: boolean;
+  closeButton?: boolean;
+  onMouseDown?: MouseEventHandler;
 }
 
 export function Modal({
@@ -25,6 +27,8 @@ export function Modal({
   children,
   animated = true,
   noBackdrop = false,
+  closeButton = true,
+  onMouseDown,
 }: Props) {
   const t = useTranslation();
   useModalDismiss(open, onClose);
@@ -47,19 +51,21 @@ export function Modal({
         }
       }}
     >
-      <div className={classNames("modal", className)}>
-        <button
-          className={classNames(
-            "modal-close",
-            CssClass.BTN,
-            CssClass.BTN_SOFT_ICON,
-          )}
-          onClick={onClose}
-          {...tooltip(t.common.close)}
-          aria-label={t.common.close}
-        >
-          <CloseIcon className={CssClass.ICON_SEMIBOLD} />
-        </button>
+      <div className={classNames("modal", className)} onMouseDown={onMouseDown}>
+        {closeButton && (
+          <button
+            className={classNames(
+              "modal-close",
+              CssClass.BTN,
+              CssClass.BTN_SOFT_ICON,
+            )}
+            onClick={onClose}
+            {...tooltip(t.common.close)}
+            aria-label={t.common.close}
+          >
+            <CloseIcon className={CssClass.ICON_SEMIBOLD} />
+          </button>
+        )}
         {children}
       </div>
     </div>

@@ -4,6 +4,7 @@ import type {
   EmbeddedRunbookStatus,
   NoteFormat,
   NoteStyle,
+  PaletteCommand,
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
@@ -100,18 +101,34 @@ export interface Messages {
   runbooks: {
     title: string;
     searchPlaceholder: string;
+    recentlyOpened: string;
     empty: string;
     import: string;
     importTitle: string;
-    paste: string;
+    importOptions: string;
+    importZip: string;
     pasteTitle: string;
     actions: string;
     duplicate: string;
-    removeFromLibrary: string;
+    deleteRunbook: string;
     dropToImport: string;
-    clearLibrary: string;
     clearLibraryTitle: string;
     stopSyncing: string;
+    rename: string;
+    resetName: string;
+    newFolder: string;
+    newRunbook: string;
+    new: string;
+    newFolderItem: string;
+    newRunbookItem: string;
+    folderName: string;
+    folderActions: string;
+    sortContents: Record<SortDirection, string>;
+    collapseAll: string;
+    expandAll: string;
+    downloadZip: string;
+    duplicateFolder: string;
+    deleteFolder: string;
     syncStatus: Record<
       RunbookSyncStatus,
       (provider: string, shortcut: string) => string
@@ -219,6 +236,13 @@ export interface Messages {
   };
   info: {
     action: string;
+    properties: string;
+    runbookTitle: string;
+    folderTitle: string;
+    manualName: string;
+    derivedName: string;
+    vaultState: Record<VaultStatus, string>;
+    syncState: Record<RunbookSyncStatus, string>;
     blockTitle: (type: string) => string;
     variableTitle: string;
     enumTitle: string;
@@ -260,6 +284,7 @@ export interface Messages {
       options: string;
       breakdown: string;
       status: string;
+      cloud: string;
     };
     columns: {
       editor: string;
@@ -319,6 +344,16 @@ export interface Messages {
       emptyOrUnresolved: string;
       valuesSize: string;
       collapsed: string;
+      nameSource: string;
+      location: string;
+      openInTab: string;
+      runbookUses: string;
+      runbookUsedBy: string;
+      openInTabs: string;
+      fileName: string;
+      provider: string;
+      folders: string;
+      runbooks: string;
     };
   };
   runbookBlock: {
@@ -431,11 +466,14 @@ export interface Messages {
     title: Record<VaultPrompt, string>;
     message: Record<VaultPrompt, string>;
     unlockFileMessage: (filename: string) => string;
+    batchMessage: (pending: number, skipAllLabel: string) => string;
     submit: Record<VaultPrompt, string>;
     fieldLabel: Record<VaultPrompt, Record<VaultField, string>>;
     reveal: string;
     hide: string;
     skip: string;
+    skipOne: string;
+    skipAll: string;
     working: string;
     errors: Record<VaultError, string>;
   };
@@ -527,6 +565,8 @@ export interface Messages {
     overwriteCloudFileMessage: (filename: string) => string;
     importFailedTitle: string;
     importFailed: (count: number) => string;
+    exportLibraryFailedTitle: string;
+    exportLibraryFailed: string;
     pastedRunbook: string;
     resetTitle: string;
     resetConfirm: string;
@@ -534,6 +574,13 @@ export interface Messages {
     clearLibraryTitle: string;
     clearLibraryConfirm: string;
     clearLibraryMessage: string;
+    deleteFolderTitle: string;
+    deleteFolderConfirm: string;
+    deleteFolderMessage: (name: string) => string;
+    nameTakenTitle: string;
+    nameTakenConfirm: string;
+    folderNameTakenMessage: (name: string, numbered: string) => string;
+    runbookNameTakenMessage: (name: string, numbered: string) => string;
     deleteRunbookTitle: string;
     deleteRunbookConfirm: string;
     deleteRunbookMessage: (label: string) => string;
@@ -565,6 +612,10 @@ export interface Messages {
     replaceImageTitle: string;
     replaceImageConfirm: string;
     replaceImageMessage: string;
+  };
+  quickOpen: {
+    placeholder: (commandPrefix: string) => string;
+    commands: Record<PaletteCommand, string>;
   };
   keybindings: Record<KeyBinding, string>;
   footer: {
@@ -626,6 +677,7 @@ export interface Messages {
         siteCheck: { title: string; note: string };
       };
       runbookSamples: string[];
+      folderSamples: { operations: string; databases: string };
       multiSelectNotes: string[];
       greetingTemplate: string;
       commitSubject: string;
@@ -688,10 +740,32 @@ export interface Messages {
       intro: (runbooksTitle: string) => string;
       items: (
         importLabel: string,
-        clearLibraryLabel: string,
         runbookActionsLabel: string,
+        newLabel: string,
+        pasteLabel: string,
+        clearLibraryLabel: string,
       ) => string;
       autoLabel: string;
+      manualName: (renameLabel: string, resetNameLabel: string) => string;
+      properties: (propertiesLabel: string) => string;
+      folders: (
+        newFolderLabel: string,
+        newRunbookLabel: string,
+        folderActionsLabel: string,
+        newLabel: string,
+        collapseAllLabel: string,
+        expandAllLabel: string,
+      ) => string;
+      sorting: (
+        sortAscendingLabel: string,
+        sortDescendingLabel: string,
+      ) => string;
+      moving: string;
+      zipExport: (downloadZipLabel: string) => string;
+      zipImport: (importZipLabel: string) => string;
+      quickOpen: (binding: string, recentlyOpened: string) => string;
+      commandPalette: (commandPrefix: string, binding: string) => string;
+      uniqueNames: string;
       labelDetails: string;
       autoSave: string;
     };
@@ -888,7 +962,7 @@ export interface Messages {
       passphrase: (createLabel: string) => string;
       covered: string;
       unlocking: string;
-      importing: string;
+      importing: (skipAllLabel: string) => string;
       changing: (changeLabel: string) => string;
       markdownWarning: string;
     };
@@ -1003,7 +1077,7 @@ export interface Messages {
       detection: string;
     };
     keyboardShortcuts: {
-      intro: string;
+      intro: (binding: string) => string;
     };
     qa: {
       intro: string;

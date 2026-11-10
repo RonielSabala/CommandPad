@@ -1,10 +1,11 @@
 .blocks-list {
   --block-row-gutter: var(--space-20);
+  --row-gap: var(--space-4);
 
   display: grid;
   grid-template-columns: fit-content(calc(100% - var(--block-row-gutter)));
   max-width: 100%;
-  gap: var(--space-4);
+  gap: var(--row-gap);
   justify-items: start;
 }
 

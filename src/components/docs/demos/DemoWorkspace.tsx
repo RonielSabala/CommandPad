@@ -3,13 +3,14 @@ import { SelectionGroup } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
 import { ImageLightbox } from "@/components/blocks/image/ImageLightbox";
 import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
-import { RunbookRow } from "@/components/sidebar/runbooks/RunbookRow";
+import { LibraryTopLevelDrop } from "@/components/sidebar/runbooks/rows/LibraryTopLevelDrop";
+import { LibraryTreeRow } from "@/components/sidebar/runbooks/rows/LibraryTreeRow";
 import "@/components/sidebar/shared/SidebarSectionList.css";
 import { VariableRow } from "@/components/sidebar/variables/VariableRow";
 import { useSelectModeBodyClass } from "@/hooks/useBodyClasses";
 import { useLassoSelection } from "@/hooks/useLassoSelection";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
-import { useLanguage } from "@/i18n";
+import { useLanguage, useTranslation } from "@/i18n";
 import {
   createAppStore,
   EMPTY_BLOCKS,
@@ -19,9 +20,11 @@ import {
   useStore,
   useStoreApi,
 } from "@/store/store";
+import { libraryRowKey, libraryRows } from "@/utils/libraryTree";
 import { isVariableUnused } from "@/utils/resolution";
 import {
   useLayoutEffect,
+  useMemo,
   useState,
   type KeyboardEvent,
   type ReactNode,
@@ -142,13 +145,25 @@ export function DemoVariableRows() {
 }
 
 export function DemoRunbookList() {
-  const library = useStore((state) => state.runbookLibrary);
+  const t = useTranslation();
+  const folders = useStore((state) => state.libraryFolders);
+  const runbooks = useStore((state) => state.libraryRunbooks);
+  const rows = useMemo(
+    () => libraryRows(folders, runbooks, "", t),
+    [folders, runbooks, t],
+  );
 
   return (
     <div className="docs-demo-sidebar-frame">
-      {library.map((runbook) => (
-        <RunbookRow key={runbook.id} runbook={runbook} />
+      {rows.map((row) => (
+        <LibraryTreeRow
+          key={libraryRowKey(row)}
+          row={row}
+          marksOpenTabs={false}
+        />
       ))}
+
+      <LibraryTopLevelDrop />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SidebarSectionChevronIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
@@ -58,8 +58,7 @@ export function VariableSectionHeader({
           <SidebarSectionChevronIcon
             className={classNames(
               "variable-section-chevron",
-              CssClass.ICON_MD,
-              CssClass.ICON_BOLD,
+              STANDARD_ICON_CLASS,
             )}
           />
         </button>

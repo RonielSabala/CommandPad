@@ -2,7 +2,7 @@ import { ESCAPED_BRACE_OPEN, VariableSyntax } from "@/common/variableSyntax";
 
 import promptSource from "./agentPrompt.md?raw";
 
-/**  The prompt that turns an AI assistant into a CommandPad runbook generator. */
+/**  The prompt that turns an AI assistant into a runbook generator. */
 export const AGENT_PROMPT = promptSource.trimEnd();
 
 /** The prompt as a command block holds it. */

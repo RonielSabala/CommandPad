@@ -15,6 +15,15 @@ export function DragIcon(props: IconProps) {
   );
 }
 
+export function FolderOpenFillIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" fill="currentColor" {...props}>
+      <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h2.764c.958 0 1.76.56 2.311 1.184C7.985 2.648 8.48 3 9 3h4.5A1.5 1.5 0 0 1 15 4.5V5H1z" />
+      <path d="M.84 6h14.32a.7.7 0 0 1 .696.686l-.64 5.124A2.5 2.5 0 0 1 12.733 14H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A.7.7 0 0 1 .84 6z" />
+    </svg>
+  );
+}
+
 export function CloseIcon(props: IconProps) {
   return (
     <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
@@ -296,7 +305,7 @@ export function DuplicateIcon(props: IconProps) {
   );
 }
 
-export function InsertAboveIcon(props: IconProps) {
+export function ArrowBarUp(props: IconProps) {
   return (
     <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M8 8V2M5 5l3-3 3 3" />
@@ -305,7 +314,7 @@ export function InsertAboveIcon(props: IconProps) {
   );
 }
 
-export function InsertBelowIcon(props: IconProps) {
+export function ArrowBarDown(props: IconProps) {
   return (
     <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
       <path d="M8 8v6M5 11l3 3 3-3" />

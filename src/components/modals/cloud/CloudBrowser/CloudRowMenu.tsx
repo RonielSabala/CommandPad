@@ -4,9 +4,8 @@ import {
   ContextMenuAlign,
   ContextMenuItem,
 } from "@/components/common/contextMenu/ContextMenu";
-import { TrashIcon } from "@/components/icons";
+import { DeleteMenuItem } from "@/components/common/contextMenu/DeleteMenuItem";
 import { useTranslation } from "@/i18n";
-import { classNames } from "@/utils/string";
 import {
   BoxArrowInDown,
   Copy,
@@ -86,17 +85,9 @@ export function CloudRowMenu({
         {t.cloudModal.download(count)}
       </ContextMenuItem>
 
-      <ContextMenuItem
-        icon={
-          <TrashIcon
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
-        }
-        onSelect={onDelete}
-        danger
-      >
+      <DeleteMenuItem onSelect={onDelete}>
         {t.cloudModal.delete(count)}
-      </ContextMenuItem>
+      </DeleteMenuItem>
     </ActionsMenu>
   );
 }

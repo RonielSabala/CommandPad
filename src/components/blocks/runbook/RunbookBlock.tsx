@@ -1,5 +1,4 @@
-import { RunbookBlockConfig } from "@/common/config";
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { ScrollIntoView } from "@/common/constants/dom";
 import { CodeModelScope, EditorLanguage } from "@/common/editorConfig";
 import {
@@ -9,7 +8,11 @@ import {
   RunbookEmbedView,
   SyncDestination,
 } from "@/common/enums";
-import type { RunbookBlock as RunbookBlockData } from "@/common/types";
+import type {
+  CloudRunbookRef,
+  LibraryRunbook,
+  RunbookBlock as RunbookBlockData,
+} from "@/common/types";
 import {
   CodeEditor,
   type CodeEditorHandle,
@@ -20,20 +23,19 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { RunbookIcon } from "@/components/icons";
 import { ProviderSelect } from "@/components/modals/cloud/ProviderSelect";
 import { useKeepInView } from "@/hooks/useKeepInView";
-import { useLanguage, useTranslation } from "@/i18n";
-import type { ChoiceSource, EditorChoice } from "@/monaco/completions";
-import type { CloudEntry } from "@/services/cloud";
+import { useTranslation } from "@/i18n";
 import {
-  getActiveRunbookId,
   getActiveTab,
   getRunbookEmbedView,
   useStore,
+  useStoreApi,
 } from "@/store/store";
-import { cloudPathSegments, isEmbedUnresolved } from "@/utils/embeddedRunbook";
-import { formatFileSize } from "@/utils/format";
+import { isEmbedUnresolved } from "@/utils/embeddedRunbook";
+import { libraryPathTrail } from "@/utils/libraryTree";
+import { splitPath } from "@/utils/path";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BodyText, Braces } from "react-bootstrap-icons";
 
 import type { BlockViewProps } from "../blockViews";
@@ -47,6 +49,7 @@ import {
   EmbedUnlock,
 } from "./RunbookEmbed";
 import { useTabEmbed } from "./useEmbeddedRunbook";
+import { useCloudChoices, useLibraryChoices } from "./useRunbookChoices";
 
 export function RunbookBlock({
   block,
@@ -63,23 +66,14 @@ export function RunbookBlock({
   } = block;
 
   const cloudPath = cloud?.path ?? "";
-  const hostRunbookId = useStore(getActiveRunbookId);
-
-  const language = useLanguage();
-  const library = useStore((state) => state.runbookLibrary);
-  const readRunbookStats = useStore((state) => state.readRunbookStats);
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const isMirror = useCodeRendering() === CodeRendering.STATIC;
-
   const setRunbookEmbedView = useStore((state) => state.setRunbookEmbedView);
   const view = useStore((state) =>
     getRunbookEmbedView(getActiveTab(state), blockId),
   );
 
   const updateBlock = useStore((state) => state.updateBlock);
-  const listEmbeddableCloudFolder = useStore(
-    (state) => state.listEmbeddableCloudFolder,
-  );
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
@@ -88,9 +82,10 @@ export function RunbookBlock({
   const { host, embed } = useTabEmbed(block, variableMap, secretKeys);
   const local = embed.source?.local ?? null;
 
-  // A path is only looked up once it's committed
-  const [pathDraft, setPathDraft] = useState(cloudPath);
-  useEffect(() => setPathDraft(cloudPath), [cloudPath]);
+  // Browsing folders stays out of the block, which keeps its runbook
+  const committed = cloud ? cloudPath : label;
+  const [draft, setDraft] = useState(committed);
+  useEffect(() => setDraft(committed), [committed]);
 
   const sourceRef = useRef<CodeEditorHandle>(null);
 
@@ -120,93 +115,36 @@ export function RunbookBlock({
     });
   }, [isMirror, local, runbookId, label, blockId, updateBlock]);
 
-  // Every library runbook except the current one
-  const choices = useMemo(() => {
-    const byLabel = new Map<string, EditorChoice>();
+  const store = useStoreApi();
 
-    for (const { id, label } of library) {
-      if (id === hostRunbookId || !label.trim() || byLabel.has(label)) {
-        continue;
-      }
-
-      byLabel.set(label, {
-        label: displayLabel(label, t),
-        value: label,
-        describe: async () => {
-          const stats = await readRunbookStats(id);
-          return stats
-            ? t.runbookBlock.choiceStats(
-                formatFileSize(stats.bytes, language),
-                stats.blocks,
-                stats.variables,
-              )
-            : undefined;
-        },
-      });
+  const changeLabel = (text: string) => {
+    setDraft(text);
+    if (libraryPathTrail(store.getState().libraryFolders, text, t).length > 0) {
+      return;
     }
 
-    return [...byLabel.values()];
-  }, [library, hostRunbookId, readRunbookStats, language, t]);
+    updateBlock(blockId, BlockType.RUNBOOK, {
+      label: text,
+      runbookId: undefined,
+    });
+  };
 
-  // The folder typed so far, one level at a time
-  const provider = cloud?.provider ?? null;
-  const pathChoices = useMemo<ChoiceSource | undefined>(() => {
-    if (!provider) {
-      return undefined;
-    }
+  const pickRunbook = useCallback(
+    ({ id, label }: LibraryRunbook) => {
+      setDraft(label);
+      updateBlock(blockId, BlockType.RUNBOOK, { label, runbookId: id });
+    },
+    [blockId, updateBlock],
+  );
 
-    const separator = RunbookBlockConfig.PATH_SEPARATOR;
-    const describe = (entry: CloudEntry) =>
-      entry.isFolder
-        ? entry.itemCount === null
-          ? undefined
-          : t.cloudModal.folderItemCount(entry.itemCount)
-        : entry.size === null
-          ? undefined
-          : formatFileSize(entry.size, language);
+  const pickCloudFile = useCallback(
+    (file: CloudRunbookRef) =>
+      updateBlock(blockId, BlockType.RUNBOOK, { cloud: file }),
+    [blockId, updateBlock],
+  );
 
-    return async (text) => {
-      const folder = text.slice(0, text.lastIndexOf(separator) + 1);
-      const entries = await listEmbeddableCloudFolder(provider, folder);
-      if (!entries) {
-        return [];
-      }
-
-      const choices = entries.map((entry): EditorChoice => {
-        const value = folder + entry.name;
-        return entry.isFolder
-          ? {
-              label: entry.name,
-              value: value + separator,
-              describe: () => describe(entry),
-              folder: true,
-            }
-          : {
-              label: entry.name,
-              value,
-              describe: () => describe(entry),
-              onPick: () =>
-                updateBlock(blockId, BlockType.RUNBOOK, {
-                  cloud: { provider, path: value },
-                }),
-            };
-      });
-
-      const segments = cloudPathSegments(folder);
-      if (segments.length > 0) {
-        const parent = segments.slice(0, -1);
-        choices.push({
-          label: RunbookBlockConfig.PARENT_FOLDER_LABEL,
-          value: parent.map((segment) => segment + separator).join(""),
-          describe: () => t.runbookBlock.parentFolder,
-          folder: true,
-          pinned: true,
-        });
-      }
-
-      return choices;
-    };
-  }, [provider, listEmbeddableCloudFolder, updateBlock, blockId, language, t]);
+  const libraryChoices = useLibraryChoices(pickRunbook);
+  const cloudChoices = useCloudChoices(cloud?.provider ?? null, pickCloudFile);
 
   const changeSource = (destination: SyncDestination) =>
     updateBlock(blockId, BlockType.RUNBOOK, {
@@ -227,8 +165,8 @@ export function RunbookBlock({
   };
 
   const changePath = (path: string) => {
-    setPathDraft(path);
-    if (cloudPathSegments(path).length) {
+    setDraft(path);
+    if (splitPath(path).length) {
       return;
     }
 
@@ -253,7 +191,7 @@ export function RunbookBlock({
   // Labels
 
   const dragImageLabel = cloud
-    ? pathDraft || t.runbookBlock.pathPlaceholder
+    ? draft || t.runbookBlock.pathPlaceholder
     : displayLabel(label, t) || t.runbookBlock.labelPlaceholder;
 
   const viewLabel = showingVariables
@@ -273,7 +211,9 @@ export function RunbookBlock({
         CssClass.BLOCK_SURFACE,
       )}
     >
-      <DragImage icon={RunbookIcon}>{dragImageLabel}</DragImage>
+      <DragImage icon={<RunbookIcon className={STANDARD_ICON_CLASS} />}>
+        {dragImageLabel}
+      </DragImage>
 
       {(!readMode || canSwitchView || !!local || embed.locked) && (
         <div
@@ -299,9 +239,9 @@ export function RunbookBlock({
                 "runbook-block-source",
                 unresolved && CssClass.IS_UNRESOLVED,
               )}
-              value={cloud ? pathDraft : label}
+              value={draft}
               language={EditorLanguage.CHOICE}
-              choices={cloud ? pathChoices : choices}
+              choices={cloud ? cloudChoices : libraryChoices}
               singleLine
               gutter={false}
               placeholder={
@@ -309,15 +249,8 @@ export function RunbookBlock({
                   ? t.runbookBlock.pathPlaceholder
                   : t.runbookBlock.labelPlaceholder
               }
-              onChange={(text) =>
-                cloud
-                  ? changePath(text)
-                  : updateBlock(blockId, BlockType.RUNBOOK, {
-                      label: text,
-                      runbookId: undefined,
-                    })
-              }
-              onBlur={() => commitPath(pathDraft)}
+              onChange={cloud ? changePath : changeLabel}
+              onBlur={() => (cloud ? commitPath(draft) : setDraft(label))}
               onFocus={() => {
                 if (cloud ? !embed.content : !local) {
                   sourceRef.current?.suggest();

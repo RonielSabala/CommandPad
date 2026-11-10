@@ -87,9 +87,6 @@
   height: var(--docs-toc-chevron-hit-size);
   margin-block: calc(var(--space-4) * -1);
   border-radius: var(--radius-md);
-  transition:
-    background-color var(--transition-fast),
-    color var(--transition-fast);
 }
 
 .docs-toc-active .docs-toc-chevron-hit {
@@ -106,16 +103,12 @@
 
 .docs-toc-chevron {
   color: var(--color-text-muted);
-  transition:
-    transform var(--transition-fast),
-    color var(--transition-fast);
 }
 
 .docs-toc-chevron.is-collapsed {
   transform: rotate(-90deg);
 }
 
-.docs-toc-item:hover .docs-toc-chevron,
 .docs-toc-active .docs-toc-chevron {
   color: var(--accent-text);
 }

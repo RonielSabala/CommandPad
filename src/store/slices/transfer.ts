@@ -1,4 +1,4 @@
-import { FilePickerConfig } from "@/common/config";
+import { FilePickerConfig, ZIP_EXTENSION } from "@/common/config";
 import {
   AppMode,
   CloudExportStatus,
@@ -8,6 +8,7 @@ import {
 } from "@/common/enums";
 import { getMessages } from "@/i18n/messages";
 import { clearCachedCloudEntries, getCloudClient } from "@/services/cloud";
+import { downloadBlob } from "@/utils/download";
 import {
   buildMarkdownExport,
   buildSecuredRunbookExportContent,
@@ -16,6 +17,8 @@ import {
 } from "@/utils/export";
 import { sha256 } from "@/utils/hash";
 import { openImportDialog } from "@/utils/importTrigger";
+import { libraryZipFiles, libraryZipName } from "@/utils/libraryZip";
+import { createZip } from "@/utils/zip";
 
 import { ROOT_CLOUD_PATH } from "@/store/cloudPaths";
 import type { StoreKit } from "@/store/kit";
@@ -36,7 +39,9 @@ type TransferActions = Pick<
   | "openPasteRunbookModal"
   | "closePasteRunbookModal"
   | "exportRunbook"
+  | "exportLibraryFolder"
   | "beginImport"
+  | "beginZipImport"
   | "openDestinationModal"
   | "closeDestinationModal"
   | "chooseDestination"
@@ -48,8 +53,12 @@ export function createTransferSlice(
   services: StoreServices,
 ): TransferActions {
   const { set, get, debouncedSaveState, saveUi } = kit;
-  const { linkRunbookToCloud, readEmbeddedForExport, ensureSignedIn } =
-    services;
+  const {
+    linkRunbookToCloud,
+    readEmbeddedForExport,
+    readRunbookContent,
+    ensureSignedIn,
+  } = services;
 
   return {
     openExportModal: () => {
@@ -192,6 +201,39 @@ export function createTransferSlice(
       }
     },
 
+    exportLibraryFolder: async (folderId) => {
+      const { libraryFolders, libraryRunbooks, language } = get();
+      const t = getMessages(language);
+
+      try {
+        const files = await libraryZipFiles(
+          libraryFolders,
+          libraryRunbooks,
+          folderId,
+          async (runbookId) =>
+            buildSecuredRunbookExportContent(
+              ExportFormat.JSON,
+              runbookId,
+              (await readRunbookContent(runbookId)) ?? tabContent(null),
+              readEmbeddedForExport,
+            ),
+          t,
+        );
+
+        downloadBlob(
+          createZip(files),
+          libraryZipName(libraryFolders, folderId, t),
+        );
+      } catch (error) {
+        console.error("Library export failed", error);
+
+        await get().alert(t.dialogs.exportLibraryFailed, {
+          title: t.dialogs.exportLibraryFailedTitle,
+          tone: DialogTone.WARNING,
+        });
+      }
+    },
+
     beginImport: () => {
       if (get().mode === AppMode.READ) {
         return;
@@ -204,6 +246,12 @@ export function createTransferSlice(
       }
 
       void get().startCloudImportBrowse(source);
+    },
+
+    beginZipImport: () => {
+      if (get().mode !== AppMode.READ) {
+        openImportDialog(ZIP_EXTENSION);
+      }
     },
 
     openDestinationModal: () => {

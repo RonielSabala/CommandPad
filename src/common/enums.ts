@@ -17,6 +17,36 @@ export const ExportFormat = {
 } as const;
 export type ExportFormat = (typeof ExportFormat)[keyof typeof ExportFormat];
 
+/** How closely a name matches a search. */
+export const QueryMatch = {
+  EXACT: 0,
+  PREFIX: 1,
+  WORD_START: 2,
+  INSIDE: 3,
+  ELSEWHERE: 4,
+} as const;
+export type QueryMatch = (typeof QueryMatch)[keyof typeof QueryMatch];
+
+/** A workspace action quick open can run. */
+export const PaletteCommand = {
+  NEW_RUNBOOK: "newRunbook",
+  NEW_FOLDER: "newFolder",
+  IMPORT_RUNBOOKS: "importRunbooks",
+  PASTE_RUNBOOK: "pasteRunbook",
+  TOGGLE_MODE: "toggleMode",
+  TOGGLE_FOLDING: "toggleFolding",
+  TOGGLE_VARIABLES_VIEW: "toggleVariablesView",
+  TOGGLE_SOURCE_VIEW: "toggleSourceView",
+  TOGGLE_SIDEBAR: "toggleSidebar",
+  MOVE_SIDEBAR: "moveSidebar",
+  TOGGLE_THEME: "toggleTheme",
+  TOGGLE_MINIMAP: "toggleMinimap",
+  MOVE_MINIMAP: "moveMinimap",
+  TOGGLE_SPELLCHECK: "toggleSpellcheck",
+} as const;
+export type PaletteCommand =
+  (typeof PaletteCommand)[keyof typeof PaletteCommand];
+
 export const SectionState = {
   EXPANDED: "expanded",
   COLLAPSED: "collapsed",
@@ -214,12 +244,26 @@ export const LassoMode = {
 export type LassoMode = (typeof LassoMode)[keyof typeof LassoMode];
 
 export const DragGroup = {
-  RUNBOOK: "runbook",
+  LIBRARY: "library",
   VARIABLE: "variable",
   VARIABLE_OPTION: "variable-option",
-  DOCS_DEMO: "docs-demo",
 } as const;
 export type DragGroup = (typeof DragGroup)[keyof typeof DragGroup];
+
+export const LibraryItemKind = {
+  FOLDER: "folder",
+  RUNBOOK: "runbook",
+} as const;
+export type LibraryItemKind =
+  (typeof LibraryItemKind)[keyof typeof LibraryItemKind];
+
+export const LibraryDropZone = {
+  BEFORE: "before",
+  AFTER: "after",
+  INTO: "into",
+} as const;
+export type LibraryDropZone =
+  (typeof LibraryDropZone)[keyof typeof LibraryDropZone];
 
 export const HttpMethod = {
   GET: "GET",

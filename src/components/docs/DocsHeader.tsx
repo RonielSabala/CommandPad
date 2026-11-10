@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, HEADER_ICON_CLASS } from "@/common/constants/css";
 import { AppRoute } from "@/common/constants/routes";
 import { Theme } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -52,13 +52,9 @@ export function DocsHeader() {
           {...tooltip(toggleThemeLabel)}
         >
           {isLight ? (
-            <MoonIcon
-              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
-            />
+            <MoonIcon className={HEADER_ICON_CLASS} />
           ) : (
-            <SunIcon
-              className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
-            />
+            <SunIcon className={HEADER_ICON_CLASS} />
           )}
         </button>
 

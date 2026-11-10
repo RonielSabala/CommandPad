@@ -1,5 +1,7 @@
 import { CloudProvider } from "@/common/enums";
 import type {
+  Block,
+  LibraryRunbook,
   RunbookContent,
   RunbookStats,
   RunbookSync,
@@ -8,10 +10,12 @@ import type {
 import type { CloudFileLocation } from "@/services/cloud";
 import { holdsSecrets } from "@/services/vault";
 import { localSourceKey } from "@/utils/embeddedRunbook";
+import { generateId } from "@/utils/id";
+import { buildDuplicateName } from "@/utils/string";
 
 import type { StoreKit } from "@/store/kit";
-import { getRunbookTab } from "@/store/selectors";
-import { tabContent } from "@/store/tabState";
+import { getTabByRunbookId } from "@/store/selectors";
+import { contentCopy, tabContent } from "@/store/tabState";
 import type { EmbedState } from "./embeds";
 import type { SyncService } from "./sync";
 import type { VaultRecords } from "./vault";
@@ -23,8 +27,9 @@ export function createContentService(
   const { get, contentDb } = kit;
   const { trackCloudChanges, invalidateEmbed, markRunbookSecured } = deps;
 
-  const storedStats = new Map<string, Promise<RunbookStats | null>>();
   const tabStats = new WeakMap<Tab, RunbookStats>();
+  const storedStats = new Map<string, Promise<RunbookStats | null>>();
+  const storedRunbookBlocks = new Map<string, Promise<Block[] | null>>();
 
   const writeRunbookContent = async (
     runbookId: string,
@@ -33,6 +38,7 @@ export function createContentService(
     await contentDb.put(runbookId, content);
     markRunbookSecured(runbookId, holdsSecrets(content));
     storedStats.delete(runbookId);
+    storedRunbookBlocks.delete(runbookId);
     invalidateEmbed(localSourceKey(runbookId));
   };
 
@@ -42,7 +48,7 @@ export function createContentService(
   ): RunbookSync => ({ provider, filename: file.name, folderId });
 
   const runbookLinkedTo = (link: RunbookSync) =>
-    get().runbookLibrary.find(
+    get().libraryRunbooks.find(
       (item) =>
         item.sync?.provider === link.provider &&
         item.sync.filename === link.filename &&
@@ -51,8 +57,37 @@ export function createContentService(
 
   /** The runbook's content as the tab holds it, else as the DB holds it. */
   const readRunbookContent = async (runbookId: string) => {
-    const openTab = getRunbookTab(get(), runbookId);
+    const openTab = getTabByRunbookId(get(), runbookId);
     return openTab ? tabContent(openTab) : await contentDb.get(runbookId);
+  };
+
+  /** Stores a fresh-id copy of `source`'s content, returning the copy's entry. */
+  const writeRunbookCopy = async (
+    source: LibraryRunbook,
+    stored: RunbookContent,
+    { label, folderId }: Pick<LibraryRunbook, "label" | "folderId">,
+    takenFilenames: Set<string>,
+  ): Promise<LibraryRunbook> => {
+    const filename = source.filename
+      ? buildDuplicateName(source.filename, (candidate) =>
+          takenFilenames.has(candidate),
+        )
+      : "";
+
+    takenFilenames.add(filename);
+
+    const id = generateId();
+    const copy = contentCopy(stored);
+    await writeRunbookContent(id, copy);
+
+    return {
+      id,
+      label,
+      filename,
+      named: source.named,
+      folderId,
+      secured: holdsSecrets(copy),
+    };
   };
 
   /** Writes a tab's content outside the debounced save, in the background. */
@@ -67,12 +102,14 @@ export function createContentService(
 
   return {
     storedStats,
+    storedRunbookBlocks,
     tabStats,
     writeRunbookContent,
     persistTabContent,
     cloudFileSync,
     runbookLinkedTo,
     readRunbookContent,
+    writeRunbookCopy,
   };
 }
 

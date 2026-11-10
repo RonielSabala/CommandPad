@@ -19,12 +19,9 @@ import {
   getActiveTab,
   useStore,
 } from "@/store/store";
-import {
-  cloudPathSegments,
-  embedScopeId,
-  type EmbedSource,
-} from "@/utils/embeddedRunbook";
+import { embedScopeId, type EmbedSource } from "@/utils/embeddedRunbook";
 import { stripJsonExtension } from "@/utils/export";
+import { splitPath } from "@/utils/path";
 import {
   getVariableKey,
   isConstantVariableKey,
@@ -53,7 +50,7 @@ function embedSourceName(
 ): string {
   if (block.cloud) {
     const cloudPath = block.cloud.path;
-    const filename = cloudPathSegments(cloudPath).at(-1);
+    const filename = splitPath(cloudPath).at(-1);
     return filename ? stripJsonExtension(filename) : cloudPath;
   }
 

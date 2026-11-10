@@ -2,6 +2,7 @@ import { AppMode, DialogTone } from "@/common/enums";
 import type { Tab } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { lockVault } from "@/services/vault";
+import { findTabById } from "@/utils/tabs";
 
 import type { StoreKit } from "@/store/kit";
 import * as persistence from "@/store/persistence";
@@ -55,7 +56,9 @@ export function createLifecycleSlice(
       bootstrapped = true;
 
       const ui = persistence.loadUiState();
-      const library = persistence.loadRunbookLibrary();
+      const library = persistence.loadRunbookLibrary(
+        getMessages(ui?.language ?? get().language),
+      );
       const sections = persistence.loadSidebarSections();
       const meta = persistence.loadTabsMeta();
 
@@ -69,14 +72,20 @@ export function createLifecycleSlice(
 
       set({
         ...(ui ?? {}),
-        ...(library ? { runbookLibrary: library.items } : {}),
+        ...(library
+          ? {
+              libraryFolders: library.folders,
+              libraryRunbooks: library.runbooks,
+              recentRunbookIds: library.recent,
+            }
+          : {}),
         activeRunbookId: initialActiveRunbookId,
         ...(sections ?? {}),
       });
 
       try {
         if (meta) {
-          const currentLibrary = get().runbookLibrary;
+          const currentRunbooks = get().libraryRunbooks;
           const loadedTabs: Tab[] = [];
 
           for (const {
@@ -86,8 +95,8 @@ export function createLifecycleSlice(
             scrollTop,
             embedViews,
           } of meta.tabOrder) {
-            const entry = currentLibrary.find((r) => r.id === runbookId);
-            if (!entry || runbookId === null) {
+            const runbook = currentRunbooks.find((r) => r.id === runbookId);
+            if (!runbook || runbookId === null) {
               continue;
             }
 
@@ -98,7 +107,7 @@ export function createLifecycleSlice(
 
             loadedTabs.push({
               id: tabId,
-              label: entry.label,
+              label: runbook.label,
               runbookId,
               ...contentFields(content),
               view: persistence.restoreRunbookView(view),
@@ -113,7 +122,8 @@ export function createLifecycleSlice(
               loadedTabs.some((t) => t.id === meta.activeTabId)
                 ? meta.activeTabId
                 : loadedTabs[0].id;
-            const activeTab = loadedTabs.find((t) => t.id === activeId);
+
+            const activeTab = findTabById(loadedTabs, activeId);
             set({
               tabs: loadedTabs,
               activeTabId: activeId,

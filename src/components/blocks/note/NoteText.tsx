@@ -3,9 +3,8 @@ import { CssClass } from "@/common/constants/css";
 import { Anchor, DataAttr, HtmlTag } from "@/common/constants/dom";
 import { AppMode, NoteNodeType, NoteSegmentType } from "@/common/enums";
 import {
-  formatBinding,
+  bindingLabel,
   KeyBinding,
-  KEYBINDINGS,
   SPACED_BINDING_SEPARATOR,
 } from "@/common/keybindings";
 import type {
@@ -85,10 +84,7 @@ function NoteSegments({ segments, requiresLinkModifier }: SegmentsProps) {
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const binding =
     requiresLinkModifier && !readMode
-      ? formatBinding(
-          KEYBINDINGS[KeyBinding.OPEN_LINK].binding,
-          SPACED_BINDING_SEPARATOR,
-        )
+      ? bindingLabel(KeyBinding.OPEN_LINK, SPACED_BINDING_SEPARATOR)
       : undefined;
 
   return (

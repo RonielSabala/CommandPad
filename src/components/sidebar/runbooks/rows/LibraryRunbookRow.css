@@ -1,0 +1,92 @@
+.library-row.library-runbook-focused {
+  --library-guide-color: var(--color-border-strong);
+
+  background: var(--color-surface-hover-bg);
+}
+
+.library-row.active {
+  background: var(--row-selected-bg);
+}
+
+.library-row.active:is(
+    :hover,
+    .menu-open,
+    .library-runbook-focused,
+    :has(:focus-visible, .row-actions.menu-open)
+  ) {
+  background: var(--row-selected-hover-bg);
+}
+
+.library-row.active .library-row-btn {
+  color: var(--color-text-primary);
+}
+
+.library-row.active .library-row-icon {
+  color: var(--accent-text);
+}
+
+.library-runbook-row-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: calc(
+    var(--library-btn-icon-end) + var(--library-btn-inset-inline)
+  );
+}
+
+.library-runbook-row-path {
+  padding-left: calc(var(--library-btn-icon-end) + var(--library-btn-gap));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+/* Status badges */
+
+.library-runbook-badge {
+  --library-badge-padding: var(--space-1);
+
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 0 var(--library-badge-padding);
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.library-runbook-badge:hover:not(:disabled) {
+  color: var(--color-text-primary);
+}
+
+.library-runbook-badge:disabled {
+  cursor: default;
+}
+
+.library-runbook-open-dot {
+  justify-content: center;
+
+  /* The slot of an icon badge */
+  width: calc(var(--icon-md) + 2 * var(--library-badge-padding));
+
+  /* A hit area as tall as the button's content and padding */
+  margin-block: calc(-1 * var(--library-btn-padding-block));
+  padding-block: var(--library-btn-padding-block);
+}
+
+.library-runbook-open-dot::before {
+  content: "";
+  width: round(var(--space-4), 1px);
+  height: round(var(--space-4), 1px);
+  border: var(--space-1) solid var(--accent-text);
+  border-radius: 50%;
+}
+
+.library-runbook-open-dot:hover::before {
+  background: var(--accent-text);
+}

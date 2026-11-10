@@ -4,7 +4,7 @@ import { useRef, type ReactNode } from "react";
 
 import { InfoDismissContext } from "./infoTooltipContext";
 
-/** An info bubble pinned on an actions menu's trigger. */
+/** An info bubble pinned on an actions menu's trigger, or on `anchor`. */
 export function useInfoTooltip() {
   const tip = useRichTooltip();
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -12,9 +12,10 @@ export function useInfoTooltip() {
   return {
     triggerRef,
     menuClassName: tip.pinned ? CssClass.MENU_OPEN : undefined,
-    open: () => {
-      if (triggerRef.current) {
-        tip.open(triggerRef.current);
+    open: (anchor?: HTMLElement | null) => {
+      const target = anchor ?? triggerRef.current;
+      if (target) {
+        tip.open(target);
       }
     },
     render: (content: () => ReactNode) =>

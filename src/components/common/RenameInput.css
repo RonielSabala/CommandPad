@@ -1,0 +1,17 @@
+.rename-input {
+  --rename-input-border: 1px;
+  --rename-input-padding: var(--space-2);
+  --rename-input-inset: calc(
+    var(--rename-input-border) + var(--rename-input-padding)
+  );
+
+  min-width: 0;
+  margin: 0;
+  padding: 0 var(--rename-input-padding);
+  border: var(--rename-input-border) solid var(--color-border-focus);
+  border-radius: var(--radius-sm);
+  background: var(--accent-dim);
+  color: var(--color-text-primary);
+  font: inherit;
+  outline: none;
+}

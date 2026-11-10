@@ -120,10 +120,20 @@ export interface VaultRecord {
   verifier: string;
 }
 
-export interface RunbookEntry {
+export interface LibraryFolder {
+  id: string;
+  name: string;
+  parentId: string | null;
+  collapsed?: boolean;
+}
+
+export interface LibraryRunbook {
   id: string;
   label: string;
   filename: string;
+  /** A label set by hand. */
+  named?: boolean;
+  folderId?: string;
   sync?: RunbookSync;
   secured?: boolean;
   vault?: VaultRecord;
@@ -133,6 +143,12 @@ export interface RunbookStats {
   bytes: number;
   blocks: number;
   variables: number;
+}
+
+/** The runbooks a runbook embeds, and the ones embedding it. */
+export interface RunbookLinks {
+  uses: LibraryRunbook[];
+  usedBy: LibraryRunbook[];
 }
 
 export interface RunbookContent {

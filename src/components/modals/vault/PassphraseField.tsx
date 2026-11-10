@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { AutoComplete, ButtonType, InputType } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -68,10 +68,7 @@ export function PassphraseField({
           {...tooltip(toggleLabel)}
           aria-label={toggleLabel}
         >
-          <EyeIcon
-            slashed={!revealed}
-            className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-          />
+          <EyeIcon slashed={!revealed} className={STANDARD_ICON_CLASS} />
         </button>
       </div>
     </div>

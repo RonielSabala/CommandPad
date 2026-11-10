@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { EditorToggleChevronIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
@@ -24,11 +24,7 @@ export function ClampToggle({ expanded, onToggle }: Props) {
       onClick={onToggle}
     >
       <EditorToggleChevronIcon
-        className={classNames(
-          "clamp-toggle-icon",
-          CssClass.ICON_MD,
-          CssClass.ICON_BOLD,
-        )}
+        className={classNames("clamp-toggle-icon", STANDARD_ICON_CLASS)}
       />
       {expanded ? t.command.showFewerLines : t.command.showMoreLines}
     </button>

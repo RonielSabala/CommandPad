@@ -2,7 +2,11 @@ import {
   getDocsSectionParents,
   type DocsSectionId,
 } from "@/common/constants/docs";
-import { useCallback, useState } from "react";
+import {
+  rememberDocsCollapsed,
+  rememberedDocsCollapsed,
+} from "@/utils/session";
+import { useCallback, useEffect, useState } from "react";
 
 const SECTION_PARENTS = getDocsSectionParents();
 const PARENT_IDS = new Set(
@@ -22,8 +26,10 @@ export interface DocsCollapse {
 
 export function useDocsCollapse(): DocsCollapse {
   const [collapsed, setCollapsed] = useState<ReadonlySet<DocsSectionId>>(
-    () => new Set(),
+    () => new Set(rememberedDocsCollapsed().filter((id) => PARENT_IDS.has(id))),
   );
+
+  useEffect(() => rememberDocsCollapsed(collapsed), [collapsed]);
 
   const isCollapsed = useCallback(
     (id: DocsSectionId) => collapsed.has(id),

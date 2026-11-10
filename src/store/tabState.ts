@@ -1,11 +1,21 @@
 import { createDefaultScrollTop, DEFAULT_TAB_LABEL } from "@/common/config";
 import { RunbookView } from "@/common/enums";
-import type { RunbookContent, RunbookEntry, Tab } from "@/common/types";
+import type {
+  Block,
+  LibraryRunbook,
+  RunbookContent,
+  Tab,
+} from "@/common/types";
 import { generateId } from "@/utils/id";
 import { getRunbookLabel } from "@/utils/runbook";
 import { normalizeVariableSections } from "@/utils/variableSections";
 
-import { getActiveTab } from "./selectors";
+import { uniqueLabelIn, withLibraryRunbook } from "./libraryState";
+import {
+  getActiveTab,
+  getLibraryRunbook,
+  getTabByRunbookId,
+} from "./selectors";
 import type { StoreState } from "./types";
 
 export function createTabObject(
@@ -45,6 +55,21 @@ export function contentFields(content: RunbookContent) {
   };
 }
 
+/** A copy of stored content, with fresh ids throughout. */
+export function contentCopy(stored: RunbookContent): RunbookContent {
+  const content = contentFields(stored);
+  const withFreshId = <T extends { id: string }>(item: T): T => ({
+    ...item,
+    id: generateId(),
+  });
+
+  return {
+    variables: content.variables.map(withFreshId),
+    blocks: content.blocks.map(withFreshId),
+    variableSections: content.variableSections.map(withFreshId),
+  };
+}
+
 /** Immutably replace the active tab via `mutate`. */
 export function withActiveTab(
   state: StoreState,
@@ -57,44 +82,97 @@ export function withActiveTab(
   return { tabs: state.tabs.map((t) => (t.id === active.id ? mutate(t) : t)) };
 }
 
+/** The label a runbook's blocks give it. */
+export function autoRunbookLabel(
+  state: StoreState,
+  runbook: LibraryRunbook,
+  blocks: Block[] | undefined,
+): string {
+  return uniqueLabelIn(
+    state,
+    runbook.folderId,
+    getRunbookLabel(blocks, runbook.filename),
+    runbook.id,
+  );
+}
+
+/** The label a library runbook shows. */
+export function libraryRunbookLabel(
+  state: StoreState,
+  runbook: LibraryRunbook,
+  blocks: Block[] | undefined,
+): string {
+  return runbook.named
+    ? runbook.label
+    : autoRunbookLabel(state, runbook, blocks);
+}
+
+/** Give a runbook `label` in the library and on its tab. */
+export function labelRunbook(
+  state: StoreState,
+  runbookId: string,
+  label: string,
+  named: boolean,
+): Pick<StoreState, "tabs" | "libraryRunbooks"> {
+  const { tabs, libraryRunbooks } = state;
+  const pinned = named || undefined;
+  const runbook = getLibraryRunbook(state, runbookId);
+  const tab = getTabByRunbookId(state, runbookId);
+
+  return {
+    tabs:
+      tab && tab.label !== label
+        ? tabs.map((t) => (t === tab ? { ...t, label } : t))
+        : tabs,
+    libraryRunbooks:
+      runbook && (runbook.label !== label || runbook.named !== pinned)
+        ? withLibraryRunbook(state, runbookId, (r) => ({
+            ...r,
+            label,
+            named: pinned,
+          })).libraryRunbooks
+        : libraryRunbooks,
+  };
+}
+
 /**
- * Recompute a tab's label from its blocks and mirror it into the runbook
- * library entry.
+ * Recompute a tab's label from its blocks and mirror it into the
+ * library runbook.
  */
 export function relabelTab(
   state: StoreState,
   tab: Tab | null,
 ): {
   tabs: Tab[];
-  runbookLibrary: RunbookEntry[];
+  libraryRunbooks: LibraryRunbook[];
 } {
   if (!tab?.runbookId) {
-    return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
+    return { tabs: state.tabs, libraryRunbooks: state.libraryRunbooks };
   }
 
-  const entry = state.runbookLibrary.find((item) => item.id === tab.runbookId);
-  if (!entry) {
-    return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
+  const runbook = getLibraryRunbook(state, tab.runbookId);
+  if (!runbook) {
+    return { tabs: state.tabs, libraryRunbooks: state.libraryRunbooks };
   }
 
-  const newLabel = getRunbookLabel(tab.blocks, entry.filename);
-  if (newLabel === entry.label && newLabel === tab.label) {
-    return { tabs: state.tabs, runbookLibrary: state.runbookLibrary };
+  const newLabel = libraryRunbookLabel(state, runbook, tab.blocks);
+  if (newLabel === runbook.label && newLabel === tab.label) {
+    return { tabs: state.tabs, libraryRunbooks: state.libraryRunbooks };
   }
 
   return {
     tabs: state.tabs.map((t) =>
       t.id === tab.id ? { ...t, label: newLabel } : t,
     ),
-    runbookLibrary: state.runbookLibrary.map((item) =>
-      item.id === entry.id ? { ...item, label: newLabel } : item,
+    libraryRunbooks: state.libraryRunbooks.map((r) =>
+      r.id === runbook.id ? { ...r, label: newLabel } : r,
     ),
   };
 }
 
 export function relabelActive(state: StoreState): {
   tabs: Tab[];
-  runbookLibrary: RunbookEntry[];
+  libraryRunbooks: LibraryRunbook[];
 } {
   return relabelTab(state, getActiveTab(state));
 }
@@ -105,7 +183,7 @@ export function withActiveTabRelabeled(
   mutate: (tab: Tab) => Tab,
 ): {
   tabs: Tab[];
-  runbookLibrary: RunbookEntry[];
+  libraryRunbooks: LibraryRunbook[];
 } {
   const updated = withActiveTab(state, mutate);
   return { ...updated, ...relabelActive({ ...state, ...updated }) };

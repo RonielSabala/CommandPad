@@ -1,9 +1,13 @@
-let trigger: (() => void) | null = null;
+import { JSON_EXTENSION } from "@/common/config";
 
-export function registerImportTrigger(fn: (() => void) | null): void {
+type ImportTrigger = (accept: string) => void;
+
+let trigger: ImportTrigger | null = null;
+
+export function registerImportTrigger(fn: ImportTrigger | null): void {
   trigger = fn;
 }
 
-export function openImportDialog(): void {
-  trigger?.();
+export function openImportDialog(accept: string = JSON_EXTENSION): void {
+  trigger?.(accept);
 }

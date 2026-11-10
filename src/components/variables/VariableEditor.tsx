@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { CodeModelScope } from "@/common/editorConfig";
 import type { Variable } from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
@@ -93,10 +93,7 @@ export function VariableEditor({
               aria-label={t.variables.reveal(1)}
               {...tooltip(t.variables.reveal(1))}
             >
-              <EyeIcon
-                slashed
-                className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-              />
+              <EyeIcon slashed className={STANDARD_ICON_CLASS} />
             </button>
           )}
         </>

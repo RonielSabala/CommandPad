@@ -1,3 +1,4 @@
+import { STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { VariableKind } from "@/common/enums";
 import { SearchInput } from "@/components/common/SearchInput";
 import { EnumIcon, VariableIcon } from "@/components/icons";
@@ -48,7 +49,7 @@ export function VariableSection() {
       />
 
       <SidebarSectionList
-        items={variables}
+        isEmpty={variables.length === 0}
         visibleItems={visibleItems}
         emptyMessage={t.variables.empty}
         getKey={(variable) => variable.id}
@@ -66,12 +67,12 @@ export function VariableSection() {
         onClick={() => void addVariable()}
         title={t.variables.newTitle}
         label={t.variables.variableLabel}
-        icon={VariableIcon}
+        icon={<VariableIcon className={STANDARD_ICON_CLASS} />}
         secondaryAction={{
           onClick: () => void addVariable(VariableKind.ENUM),
           title: t.variables.newEnumTitle,
           label: t.variables.enumLabel,
-          icon: EnumIcon,
+          icon: <EnumIcon className={STANDARD_ICON_CLASS} />,
         }}
       />
     </SidebarSection>

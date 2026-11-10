@@ -4,8 +4,8 @@ import { withoutKey } from "@/utils/collections";
 import { buildRunbookSource } from "@/utils/runbookSource";
 
 import type { StoreKit } from "@/store/kit";
-import { withLibraryEntry } from "@/store/libraryState";
-import { getLibraryEntry, getRunbookTab } from "@/store/selectors";
+import { withLibraryRunbook } from "@/store/libraryState";
+import { getLibraryRunbook, getTabByRunbookId } from "@/store/selectors";
 import { tabContent } from "@/store/tabState";
 
 export function createSyncService(kit: StoreKit) {
@@ -32,7 +32,7 @@ export function createSyncService(kit: StoreKit) {
   };
 
   const getSyncLink = (runbookId: string): RunbookSync | undefined =>
-    getLibraryEntry(get(), runbookId)?.sync;
+    getLibraryRunbook(get(), runbookId)?.sync;
 
   /** Rewrites a link that still exists, or creates one when `linking`. */
   const setSyncLink = (
@@ -41,8 +41,8 @@ export function createSyncService(kit: StoreKit) {
     linking = false,
   ) => {
     set((s) =>
-      withLibraryEntry(s, runbookId, (item) =>
-        linking || item.sync ? { ...item, sync } : item,
+      withLibraryRunbook(s, runbookId, (runbook) =>
+        linking || runbook.sync ? { ...runbook, sync } : runbook,
       ),
     );
 
@@ -98,7 +98,7 @@ export function createSyncService(kit: StoreKit) {
     clearSyncStatus(runbookId);
 
     // An edit made while the cloud was being reached is still unsaved
-    const openTab = getRunbookTab(get(), runbookId);
+    const openTab = getTabByRunbookId(get(), runbookId);
     const tabMoved =
       openTab &&
       (openTab.blocks !== content.blocks ||

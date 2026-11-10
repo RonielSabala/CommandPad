@@ -1,17 +1,18 @@
 import { BLOCK_TYPE_ORDER } from "@/blocks";
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { BlockType, type InsertPosition } from "@/common/enums";
 import { ActionsMenu } from "@/components/common/contextMenu/ActionsMenu";
 import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/common/contextMenu/ContextMenu";
+import { DeleteMenuItem } from "@/components/common/contextMenu/DeleteMenuItem";
 import { InsertSubmenus } from "@/components/common/contextMenu/InsertSubmenus";
 import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
 import { SelectionToggleItem } from "@/components/common/contextMenu/SelectionToggleItem";
 import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
-import { CopyIcon, DuplicateIcon, TrashIcon } from "@/components/icons";
+import { CopyIcon, DuplicateIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -35,9 +36,7 @@ function InsertItems({ blockId, position }: InsertItemsProps) {
     return (
       <ContextMenuItem
         key={type}
-        icon={
-          <Icon className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)} />
-        }
+        icon={<Icon className={STANDARD_ICON_CLASS} />}
         onSelect={() => void addBlock(type, { blockId, position })}
       >
         {t.blocks.typeLabel[type]}
@@ -72,23 +71,19 @@ export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
         title={t.blocks.actions}
         triggerRef={info.triggerRef}
       >
-        <InfoMenuItem onSelect={info.open} />
-
         {isNote && (
-          <ContextMenuItem
-            icon={
-              <CopyIcon
-                className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-              />
-            }
-            onSelect={() => void navigator.clipboard.writeText(block.text)}
-            disabled={!block.text.trim()}
-          >
-            {t.blocks.copyNote}
-          </ContextMenuItem>
-        )}
+          <>
+            <ContextMenuItem
+              icon={<CopyIcon className={STANDARD_ICON_CLASS} />}
+              onSelect={() => void navigator.clipboard.writeText(block.text)}
+              disabled={!block.text.trim()}
+            >
+              {t.blocks.copyNote}
+            </ContextMenuItem>
 
-        <ContextMenuSeparator />
+            <ContextMenuSeparator />
+          </>
+        )}
 
         {canSelect && (
           <SelectionToggleItem
@@ -100,11 +95,7 @@ export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
         )}
 
         <ContextMenuItem
-          icon={
-            <DuplicateIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
+          icon={<DuplicateIcon className={STANDARD_ICON_CLASS} />}
           onSelect={() => duplicateBlock(blockId)}
         >
           {t.blocks.duplicate(selectionCount)}
@@ -121,17 +112,13 @@ export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
 
         <ContextMenuSeparator />
 
-        <ContextMenuItem
-          icon={
-            <TrashIcon
-              className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-            />
-          }
-          onSelect={() => removeBlock(blockId)}
-          danger
-        >
+        <InfoMenuItem onSelect={info.open} />
+
+        <ContextMenuSeparator />
+
+        <DeleteMenuItem onSelect={() => removeBlock(blockId)}>
           {t.blocks.delete(selectionCount)}
-        </ContextMenuItem>
+        </DeleteMenuItem>
       </ActionsMenu>
 
       {info.render(() => (

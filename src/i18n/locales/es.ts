@@ -1,10 +1,11 @@
-import { MIDDLE_DOT, VaultConfig } from "@/common/config";
+import { MIDDLE_DOT } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
   EmbeddedRunbookStatus,
   NoteFormat,
   NoteStyle,
+  PaletteCommand,
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
@@ -17,6 +18,7 @@ import {
   VaultStatus,
 } from "@/common/enums";
 import { KeyBinding } from "@/common/keybindings";
+import { VaultConfig } from "@/common/vaultConfig";
 import { codeBulletList } from "../lists";
 import { MessageSlot } from "../slots";
 import type { Messages } from "../types";
@@ -76,18 +78,37 @@ export const es: Messages = {
   runbooks: {
     title: "LIBROS",
     searchPlaceholder: "Buscar libros…",
+    recentlyOpened: "abierto recientemente",
     empty: "No hay libros importados.",
     import: "Importar",
     importTitle: "Importar libro",
-    paste: "Pegar",
+    importOptions: "Otras formas de importar",
+    importZip: "Importar desde zip",
     pasteTitle: "Pegar JSON de libro",
     actions: "Acciones del libro",
     duplicate: "Duplicar libro",
-    removeFromLibrary: "Quitar de la biblioteca",
-    dropToImport: "Suelta los libros para importarlos",
-    clearLibrary: "Eliminar todo",
+    deleteRunbook: "Eliminar libro",
+    dropToImport: "Suelta libros o un zip para importarlos",
     clearLibraryTitle: "Eliminar todos los libros de la biblioteca",
     stopSyncing: "Dejar de sincronizar",
+    rename: "Renombrar",
+    resetName: "Restablecer nombre",
+    newFolder: "Nueva carpeta",
+    newRunbook: "Nuevo libro",
+    new: "Nuevo",
+    newFolderItem: "Carpeta",
+    newRunbookItem: "Libro",
+    folderName: "Nueva carpeta",
+    folderActions: "Acciones de la carpeta",
+    sortContents: {
+      [SortDirection.ASC]: "Ordenar de forma ascendente",
+      [SortDirection.DESC]: "Ordenar de forma descendente",
+    },
+    collapseAll: "Contraer todo",
+    expandAll: "Expandir todo",
+    downloadZip: "Descargar como zip",
+    duplicateFolder: "Duplicar carpeta",
+    deleteFolder: "Eliminar carpeta",
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Guardado en ${provider}`,
       [RunbookSyncStatus.UNSAVED]: (provider, shortcut) =>
@@ -272,6 +293,24 @@ export const es: Messages = {
   },
   info: {
     action: "Información",
+    properties: "Propiedades",
+    runbookTitle: "Propiedades del libro",
+    folderTitle: "Propiedades de la carpeta",
+    manualName: "Puesto a mano",
+    derivedName: "De su primera nota",
+    vaultState: {
+      [VaultStatus.UNLOCKED]: "Cifrados, desbloqueados",
+      [VaultStatus.LOCKED]: "Cifrados, bloqueados",
+      [VaultStatus.ABSENT]: "Sin cifrar",
+      [VaultStatus.UNSUPPORTED]: "Sin cifrar (navegador no compatible)",
+    },
+    syncState: {
+      [RunbookSyncStatus.SYNCED]: "Guardado",
+      [RunbookSyncStatus.UNSAVED]: "Cambios sin guardar",
+      [RunbookSyncStatus.SYNCING]: "Guardando",
+      [RunbookSyncStatus.SIGNED_OUT]: "Sesión cerrada",
+      [RunbookSyncStatus.ERROR]: "No se pudo guardar",
+    },
     blockTitle: (type) => `Información del bloque de ${type.toLowerCase()}`,
     variableTitle: "Información de la variable",
     enumTitle: "Información del enum",
@@ -326,6 +365,7 @@ export const es: Messages = {
       options: "Opciones",
       breakdown: "Contenido",
       status: "Problemas",
+      cloud: "Sincronización en la nube",
     },
     columns: {
       editor: "Editor",
@@ -385,6 +425,16 @@ export const es: Messages = {
       emptyOrUnresolved: "Vacías o sin resolver",
       valuesSize: "Tamaño total",
       collapsed: "Plegada",
+      nameSource: "Origen del nombre",
+      location: "Ubicación",
+      openInTab: "Abierto en una pestaña",
+      runbookUses: "Usa",
+      runbookUsedBy: "Usado por",
+      openInTabs: "Abiertos en pestañas",
+      fileName: "Nombre de archivo",
+      provider: "Proveedor",
+      folders: "Carpetas",
+      runbooks: "Libros",
     },
   },
   runbookBlock: {
@@ -539,6 +589,10 @@ export const es: Messages = {
     },
     unlockFileMessage: (filename) =>
       `\`${filename}\` contiene secretos cifrados con otra frase de contraseña. Introdúcela para abrirlos.`,
+    batchMessage: (pending, skipAllLabel) =>
+      pending === 1
+        ? `Queda **1** libro bloqueado más en esta importación. Si comparte esta frase de contraseña, se abre sin preguntar; **${skipAllLabel}** también lo deja cifrado.`
+        : `Quedan **${pending}** libros bloqueados más en esta importación. Los que comparten esta frase de contraseña se abren sin preguntar; **${skipAllLabel}** los deja todos cifrados.`,
     submit: {
       [VaultPrompt.CREATE]: "Cifrar secretos",
       [VaultPrompt.UNLOCK]: "Desbloquear",
@@ -564,6 +618,8 @@ export const es: Messages = {
     reveal: "Mostrar frase de contraseña",
     hide: "Ocultar frase de contraseña",
     skip: "Ahora no",
+    skipOne: "Omitir este",
+    skipAll: "Omitir todos",
     working: "Derivando clave…",
     errors: {
       [VaultError.TOO_SHORT]: `Usa al menos ${VaultConfig.MIN_PASSPHRASE_LENGTH} caracteres.`,
@@ -675,6 +731,9 @@ export const es: Messages = {
       count === 1
         ? "No se pudo importar **1 archivo** porque su formato no se reconoce."
         : `No se pudieron importar **${count} archivos** porque sus formatos no se reconocen.`,
+    exportLibraryFailedTitle: "Error al Exportar",
+    exportLibraryFailed:
+      "No se pudo crear el zip porque no se pudo leer un libro. Inténtalo de nuevo.",
     pastedRunbook: "Libro pegado",
     resetTitle: "Resetear Espacio de Trabajo",
     resetConfirm: "Resetear",
@@ -684,6 +743,16 @@ export const es: Messages = {
     clearLibraryConfirm: "Eliminar todo",
     clearLibraryMessage:
       "¿Eliminar **todos los libros** de la biblioteca? Esto no se puede deshacer.",
+    deleteFolderTitle: "Eliminar Carpeta",
+    deleteFolderConfirm: "Eliminar",
+    deleteFolderMessage: (name) =>
+      `¿Eliminar \`${name}\` y todo su contenido? **Esto no se puede deshacer.**`,
+    nameTakenTitle: "Nombre Ya Usado",
+    nameTakenConfirm: "Usar este nombre",
+    folderNameTakenMessage: (name, numbered) =>
+      `Ya hay una carpeta llamada \`${name}\` aquí.\n\n¿Usar \`${numbered}\` en su lugar?`,
+    runbookNameTakenMessage: (name, numbered) =>
+      `Esa carpeta ya tiene un libro llamado \`${name}\`.\n\n¿Usar \`${numbered}\` en su lugar?`,
     deleteRunbookTitle: "Eliminar Libro",
     deleteRunbookConfirm: "Eliminar",
     deleteRunbookMessage: (label) =>
@@ -727,6 +796,26 @@ export const es: Messages = {
     replaceImageMessage:
       "Este bloque ya contiene una imagen. Al reemplazarla **se descarta la actual**.",
   },
+  quickOpen: {
+    placeholder: (commandPrefix) =>
+      `Buscar libros, o escribe ${commandPrefix} para acciones`,
+    commands: {
+      [PaletteCommand.NEW_RUNBOOK]: "Nuevo libro",
+      [PaletteCommand.NEW_FOLDER]: "Nueva carpeta",
+      [PaletteCommand.IMPORT_RUNBOOKS]: "Importar libros",
+      [PaletteCommand.PASTE_RUNBOOK]: "Pegar el JSON de un libro",
+      [PaletteCommand.TOGGLE_MODE]: "Alternar modo lectura",
+      [PaletteCommand.TOGGLE_FOLDING]: "Plegar o desplegar todo",
+      [PaletteCommand.TOGGLE_VARIABLES_VIEW]: "Alternar editor de variables",
+      [PaletteCommand.TOGGLE_SOURCE_VIEW]: "Alternar vista de código fuente",
+      [PaletteCommand.TOGGLE_SIDEBAR]: "Alternar barra lateral",
+      [PaletteCommand.MOVE_SIDEBAR]: "Mover la barra lateral al otro lado",
+      [PaletteCommand.TOGGLE_THEME]: "Alternar tema claro / oscuro",
+      [PaletteCommand.TOGGLE_MINIMAP]: "Alternar minimapa",
+      [PaletteCommand.MOVE_MINIMAP]: "Mover el minimapa al otro lado",
+      [PaletteCommand.TOGGLE_SPELLCHECK]: "Alternar corrector ortográfico",
+    },
+  },
   keybindings: {
     [KeyBinding.TOGGLE_MODE]: "Alternar modo lectura / edición",
     [KeyBinding.ESCAPE]: "Limpiar selección de bloques / cerrar diálogos",
@@ -734,13 +823,18 @@ export const es: Messages = {
       "Guardar el libro en el archivo de la nube al que está vinculado",
     [KeyBinding.NEW_TAB]: "Abrir una nueva pestaña",
     [KeyBinding.CLOSE_TAB]: "Cerrar la pestaña activa",
+    [KeyBinding.QUICK_OPEN]:
+      "Buscar en la biblioteca y abrir un libro, o ejecutar una acción",
+    [KeyBinding.COMMAND_PALETTE]:
+      "Abrir la búsqueda rápida lista para ejecutar una acción",
     [KeyBinding.FOCUS_RUNBOOK]: "Seleccionar libro activo",
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navegar libros con el libro activo seleccionado",
     [KeyBinding.IMPORT_RUNBOOK]: "Abrir el diálogo de importación de libro",
     [KeyBinding.EXPORT]: "Abrir el diálogo de exportación",
     [KeyBinding.DELETE_RUNBOOK]: "Eliminar el libro enfocado de la biblioteca",
-    [KeyBinding.CLEAR_LIBRARY]: "Abrir el diálogo de eliminar todos los libros",
+    [KeyBinding.DELETE_ACTIVE_RUNBOOK]:
+      "Eliminar el libro activo de la biblioteca",
     [KeyBinding.TOGGLE_EDITORS]:
       "Alternar todos los bloques, o todas las secciones en el editor de variables",
     [KeyBinding.TOGGLE_VARIABLES_VIEW]:
@@ -1048,6 +1142,7 @@ export const es: Messages = {
         "Respaldo de Postgres",
         "Depuración de K8s",
       ],
+      folderSamples: { operations: "Operaciones", databases: "Bases de datos" },
       multiSelectNotes: ["Crear la copia de seguridad", "Limpiar"],
       greetingTemplate: "¡Hola {;name}, bienvenido a {;place}!",
       commitSubject: "Corrige reintento en subidas fallidas",
@@ -1163,17 +1258,47 @@ Si algo sale mal, deshazlo en este orden:
         `La sección **${runbooksTitle}** de la barra lateral contiene tus libros importados.`,
       items: (
         importLabel,
-        clearLibraryLabel,
         runbookActionsLabel,
-      ) => `* Haz clic en **${importLabel}** para cargar uno o varios archivos \`.json\` a la vez, o en **Pegar** para crear un libro desde JSON en bruto.
+        newLabel,
+        pasteLabel,
+        clearLibraryLabel,
+      ) => `* Haz clic en **${importLabel}**, junto a la barra de búsqueda, para cargar uno o varios archivos \`.json\` a la vez, o abre la flecha de su lado para **${pasteLabel}**.
 * También puedes **arrastrar archivos** desde tu explorador de archivos y soltarlos sobre la sección para importarlos.
 * Haz clic en cualquier libro para abrirlo. Si ya está abierto en una pestaña, esa pestaña pasará a estar activa.
-* Abre el menú de **${runbookActionsLabel}** que aparece al pasar el cursor sobre la fila para duplicar un libro o quitarlo de la biblioteca.
-* Haz clic en **${clearLibraryLabel}** para vaciar la biblioteca completa de una vez.
-* Arrastra el control a la izquierda de un libro para reordenarlo en la lista.
-* Usa la **barra de búsqueda** para filtrar libros por su etiqueta o nombre de archivo.`,
+* Un pequeño círculo junto a un libro indica que está abierto en una pestaña que no estás viendo. Haz clic en el círculo para cerrar esa pestaña.
+* Abre el menú de **${runbookActionsLabel}** que aparece al pasar el cursor sobre la fila para duplicar un libro o eliminarlo de la biblioteca.
+* Haz clic derecho en cualquier parte de la biblioteca para ver **${newLabel}** (una carpeta o un libro). Sobre una fila, el menú también incluye las acciones de esa fila. En una zona vacía, también ofrece **${clearLibraryLabel}**.
+* Arrastra el control a la izquierda de un libro o una carpeta para moverlo.
+* Usa la **barra de búsqueda** para filtrar libros por su etiqueta, nombre de archivo, carpeta o ruta.`,
       autoLabel:
         "**Etiquetado automático:** si el primer bloque de un libro es una nota, su texto se usa como etiqueta en la biblioteca. En caso contrario se usa el nombre del archivo importado.",
+      manualName: (renameLabel, resetNameLabel) =>
+        `**Ponerle nombre tú mismo:** haz doble clic en el espacio vacío junto al nombre de un libro en la lista de arriba, o en su pestaña, o elige **${renameLabel}** en cualquiera de sus menús, y pulsa Enter o Escape para conservar el nombre. Un nombre que eliges se mantiene mientras editas el libro; **${resetNameLabel}** vuelve al etiquetado automático.`,
+      properties: (propertiesLabel) =>
+        `**${propertiesLabel}**, en el menú de una carpeta o de un libro, muestra dónde está y cuánto ocupa, y el de un libro también lista los libros que incrusta y los que lo incrustan; haz clic derecho en un espacio vacío de la lista para ver lo mismo de toda la biblioteca.`,
+      folders: (
+        newFolderLabel,
+        newRunbookLabel,
+        folderActionsLabel,
+        newLabel,
+        collapseAllLabel,
+        expandAllLabel,
+      ) =>
+        `**Carpetas:** los botones **${newFolderLabel}** y **${newRunbookLabel}** al pie de la sección crean una carpeta en el nivel superior o un libro vacío. El menú de **${folderActionsLabel}** crea cualquiera de los dos dentro de ella con su submenú **${newLabel}**, la renombra, la duplica o la elimina, en ambos casos con todo lo que contiene. También puedes renombrarla con doble clic en el espacio vacío junto a su nombre. El menú del clic derecho de la biblioteca tiene el mismo submenú **${newLabel}**. Las carpetas se anidan tanto como quieras: haz clic en una para plegarla o desplegarla. **${collapseAllLabel}** y **${expandAllLabel}**, en el menú de una carpeta o en el del clic derecho de la biblioteca, pliegan o despliegan esa carpeta y todas las que contiene, a cualquier profundidad. Una carpeta vacía no muestra flecha. Mientras buscas, los libros que coinciden se listan sin anidar, cada uno con su ruta desde el nivel superior de la biblioteca.`,
+      sorting: (sortAscendingLabel, sortDescendingLabel) =>
+        `**Ordenar:** **${sortAscendingLabel}** y **${sortDescendingLabel}** ordenan por nombre lo que está directamente en una carpeta. Las carpetas que contiene se ordenan entre sí y quedan encima de sus libros, y lo que hay dentro de cada subcarpeta conserva su orden.`,
+      moving:
+        "**Mover elementos:** una línea muestra dónde caerá el libro o la carpeta que arrastras, así que puedes dejarlo entre dos libros o entre dos carpetas, incluso en otra carpeta. Suéltalo sobre una carpeta para moverlo dentro; si lo mantienes ahí un momento, una carpeta plegada se abre.",
+      zipExport: (downloadZipLabel) =>
+        `**Llévatela contigo:** **${downloadZipLabel}**, en el menú de una carpeta, descarga esa carpeta. Las carpetas siguen siendo carpetas, incluso las vacías, y cada libro se convierte en un archivo \`.json\`.`,
+      zipImport: (importZipLabel) =>
+        `**Recupérala:** suelta un \`.zip\` en la biblioteca, o elige **${importZipLabel}** en la flecha junto al botón de importar. Llega en una carpeta nueva con el nombre del zip, con sus carpetas y libros dentro.`,
+      quickOpen: (binding, recentlyOpened) =>
+        `**Abrir por nombre:** pulsa \`${binding}\` en cualquier parte del espacio de trabajo para buscar en toda la biblioteca por etiqueta, nombre de archivo, carpeta o ruta. Elige un resultado con las flechas y pulsa Enter para abrirlo. Los resultados se ordenan como en la búsqueda de la biblioteca y, entre nombres igual de parecidos, los que abriste por última vez van primero, marcados como \`${recentlyOpened}\`.`,
+      commandPalette: (commandPrefix, binding) =>
+        `**Ejecutar una acción:** escribe primero \`${commandPrefix}\` en la misma búsqueda, o pulsa \`${binding}\` para abrirla con \`${commandPrefix}\` ya escrito, y recorre las acciones del espacio de trabajo.`,
+      uniqueNames:
+        "**Los nombres son únicos por carpeta:** dos libros pueden llamarse igual en carpetas distintas, pero no en la misma, porque un bloque de libro encuentra un libro por su nombre. Si renombras un libro con un nombre que su carpeta ya tiene, o lo mueves a una carpeta que ya tiene su nombre, se te propone un nombre numerado como `Deploy (1)`, que puedes aceptar o cancelar. Los libros nuevos, las copias y las etiquetas automáticas reciben el número por sí solos. Las carpetas siguen la misma regla entre las carpetas que tienen al lado.",
       labelDetails:
         "Las etiquetas se normalizan: se limpia el formato markdown y se recorta hasta 60 caracteres.",
       autoSave:
@@ -1541,8 +1666,8 @@ Si algo sale mal, deshazlo en este orden:
         "Solo se cifran los valores secretos; el resto sigue en texto plano, así que un libro exportado se puede seguir leyendo y comparando. En el disco, un secreto se ve como `cpv1.<sal>.<iv>.<cifrado>`: una etiqueta más todo lo necesario para descifrarlo salvo tu frase de contraseña, por eso el archivo se abre en cualquier máquina que la tenga.",
       unlocking:
         "Volver a abrir la pestaña bloquea todos los libros de nuevo, pero solo el que tienes delante te pide desbloquearlo; los demás esperan a que los abras. Un escudo junto al nombre del libro muestra su estado: verde y cerrado si está desbloqueado, neutro si está bloqueado, tachado si nada lo protege. Haz clic para desbloquearlo o para ponerle una frase de contraseña. Copiar un comando de un libro bloqueado sigue funcionando, pero sus secretos salen cifrados, así que la copia te avisa de cuántos valores siguen cifrados.",
-      importing:
-        "Importar un `.json` con secretos funciona igual, con un atajo: si algún libro que ya desbloqueaste en esta sesión usa la frase de contraseña con la que se cifró ese archivo, se abre sin volver a pedírtela.",
+      importing: (skipAllLabel) =>
+        `Importar un \`.json\` con secretos funciona igual, con un atajo: si algún libro que ya desbloqueaste en esta sesión usa la frase de contraseña con la que se cifró ese archivo, se abre sin volver a pedírtela. Cuando llegan varios libros bloqueados a la vez (un zip, varios archivos, una importación desde la nube), cada aviso dice cuántos quedan, y **${skipAllLabel}** deja el resto cifrado.`,
       changing: (changeLabel) =>
         `Haz clic en un escudo desbloqueado para abrir **${changeLabel}**: escribe la frase de contraseña actual y luego la nueva dos veces. Todos los secretos de ese libro, incluida su copia en un archivo enlazado de la nube, se cifran de nuevo al momento. Los demás libros y los archivos ya exportados conservan la anterior.`,
       markdownWarning:
@@ -1627,7 +1752,7 @@ Si algo sale mal, deshazlo en este orden:
       teaser: (embeddingSection, tabsSection) =>
         `Queda un bloque más: el bloque de runbook, que muestra otro runbook completo dentro de este. Está hecho de casi todo lo demás de CommandPad (variables, pestañas, tu biblioteca de runbooks), así que tiene su propia sección, **${embeddingSection}**, justo después de **${tabsSection}**. Sigue en orden. Cuando llegues habrás usado cada pieza de la que está hecho, y su demo se explicará sola.`,
       intro:
-        "Un bloque de runbook muestra otro runbook dentro de este. Escribe una sola vez un procedimiento que repites en varios sitios, como un despliegue o una copia de seguridad, e incrústalo donde haga falta. Para elegir el runbook, escribe su etiqueta en la cabecera del bloque: el cuadro sugiere todos los runbooks de tu biblioteca.",
+        "Un bloque de runbook muestra otro runbook dentro de este. Escribe una sola vez un procedimiento que repites en varios sitios, como un despliegue o una copia de seguridad, e incrústalo donde haga falta. Para elegir el runbook, usa el cuadro de la cabecera del bloque: lista tu biblioteca carpeta por carpeta. Al elegir una carpeta se abre, `..` sube un nivel y al elegir un runbook se incrusta. También puedes escribir la etiqueta de un runbook, esté donde esté.",
       demoHint: (showVariables) =>
         `La primera pestaña es un runbook de versión que incrusta el runbook de despliegue de la segunda. Pulsa **${showVariables}** en la cabecera del bloque, cambia \`ENV\` de \`prod\` a \`dev\` y vuelve: los comandos incrustados lo siguen. Después edita un comando en la pestaña de despliegue y regresa a la primera. El cambio ya está ahí.`,
       overrides:
@@ -1662,6 +1787,7 @@ Si algo sale mal, deshazlo en este orden:
 * La estructura de bloques no puede cambiarse (sin agregar, eliminar ni reordenar).
 * Los valores de las variables sí pueden cambiarse.
 * Los libros sí pueden abrirse.
+* Las carpetas de la biblioteca sí pueden descargarse como zip.
 * Los enlaces se pueden abrir con un clic directo.
 * Las imágenes se abren a pantalla completa con un clic.`,
       persisted:
@@ -1730,7 +1856,8 @@ Si algo sale mal, deshazlo en este orden:
         "La app detecta el idioma de tu navegador en la primera visita, y tu elección se recuerda después.",
     },
     keyboardShortcuts: {
-      intro: "Todos los atajos disponibles en la app.",
+      intro: (binding) =>
+        `Todos los atajos disponibles en la app. Muchas de sus acciones también se ejecutan por nombre: pulsa \`${binding}\` y elige una.`,
     },
     qa: {
       intro:

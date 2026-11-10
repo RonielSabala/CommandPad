@@ -1,11 +1,4 @@
-import {
-  ExportFormat,
-  PanelId,
-  PanelSide,
-  RunbookView,
-  VaultField,
-  VaultPrompt,
-} from "./enums";
+import { ExportFormat, PanelId, PanelSide, RunbookView } from "./enums";
 import type { PanelState } from "./types";
 
 export const StorageKey = {
@@ -14,12 +7,31 @@ export const StorageKey = {
   RUNBOOK_LIBRARY: "commandpad_runbook_library",
   SIDEBAR_SECTIONS: "commandpad_sidebar_sections",
   VISITED_HOME: "commandpad_visited_home",
+  DOCS_PAGE: "commandpad_docs_page",
+  DOCS_COLLAPSED: "commandpad_docs_collapsed",
   GOOGLE_SESSION: "commandpad_google_session",
 } as const;
 
 export const RunbookConfig = {
   LABEL_MAX_LENGTH: 60,
   DEFAULT_LABEL: "Untitled runbook",
+} as const;
+
+export const QuickOpenConfig = {
+  COMMAND_PREFIX: ">",
+  RECENT_RUNBOOKS_LIMIT: 5,
+} as const;
+
+export const LibraryFolderConfig = {
+  DEFAULT_NAME: "New folder",
+  NAME_MAX_LENGTH: 60,
+  ROOT_PATH: "~/",
+  DEPTH_PROPERTY: "--library-depth",
+  DRAG_EXPAND_DELAY_MS: 500,
+  /** How far into a folder row a drop still lands beside it. */
+  DROP_EDGE_FRACTION: 0.25,
+  /** Where a drop on a runbook row turns from before it to after it. */
+  DROP_MIDDLE_FRACTION: 0.5,
 } as const;
 
 export const RunbookSourceConfig = {
@@ -166,34 +178,11 @@ export const CARRIAGE_RETURN = "\r";
 export const NON_BREAKING_SPACE = "\u00A0";
 export const ELLIPSIS = "\u2026";
 
+export const PATH_SEPARATOR = "/";
+
 export const MIDDLE_DOT = "·";
 export const SECRET_MASK = "•".repeat(8);
 export const PREVIEW_SECRET_MASK = "*".repeat(6);
-
-export const VaultConfig = {
-  PREFIX: "cpv1",
-  SEPARATOR: ".",
-  SEGMENT_COUNT: 4,
-  DERIVE_ALGORITHM: "PBKDF2",
-  HASH_ALGORITHM: "SHA-256",
-  CIPHER_ALGORITHM: "AES-GCM",
-  ITERATIONS: 310_000,
-  KEY_LENGTH_BITS: 256,
-  SALT_BYTES: 16,
-  IV_BYTES: 12,
-  VERIFIER_PLAINTEXT: "commandpad-vault",
-  MIN_PASSPHRASE_LENGTH: 8,
-} as const;
-
-export const VAULT_PROMPT_FIELDS: Record<VaultPrompt, readonly VaultField[]> = {
-  [VaultPrompt.CREATE]: [VaultField.NEXT, VaultField.CONFIRM],
-  [VaultPrompt.UNLOCK]: [VaultField.CURRENT],
-  [VaultPrompt.CHANGE]: [
-    VaultField.CURRENT,
-    VaultField.NEXT,
-    VaultField.CONFIRM,
-  ],
-};
 
 export const StringCaseConfig = {
   SNAKE_SEPARATOR: "_",
@@ -222,7 +211,6 @@ export const RunbookBlockConfig = {
   LOCAL_SOURCE: "local",
   CLOUD_SOURCE: "cloud",
   KEY_SEPARATOR: ":",
-  PATH_SEPARATOR: "/",
   SCOPE_SEPARATOR: "/",
   PARENT_FOLDER_LABEL: "..",
 } as const;
@@ -314,7 +302,6 @@ export const FilePickerConfig: Record<ExportFormat, FilePickerFormat> =
 
 export const CloudSyncConfig = {
   APP_FOLDER_NAME: "CommandPad",
-  PATH_SEPARATOR: "/",
   MAX_SEARCH_DEPTH: 10,
   NO_SIZE_PLACEHOLDER: "—",
 } as const;
@@ -336,19 +323,14 @@ export const DuplicateNameConfig = {
 export const ZIP_EXTENSION = ".zip";
 
 export const ZipConfig = {
-  LOCAL_HEADER_SIGNATURE: 0x04034b50,
-  CENTRAL_HEADER_SIGNATURE: 0x02014b50,
-  END_RECORD_SIGNATURE: 0x06054b50,
-  LOCAL_HEADER_SIZE: 30,
-  CENTRAL_HEADER_SIZE: 46,
-  END_RECORD_SIZE: 22,
-  VERSION: 20,
-  UTF8_FLAG: 0x0800,
-  STORED_METHOD: 0,
-  CRC_POLYNOMIAL: 0xedb88320,
-  CRC_SEED: 0xffffffff,
-  CRC_TABLE_SIZE: 256,
-  DOS_EPOCH_YEAR: 1980,
+  FALLBACK_NAME: "untitled-zip",
+  UNSAFE_CHAR_REPLACEMENT: "-",
+} as const;
+
+export const LibraryZipConfig = {
+  LIBRARY_NAME: "commandpad-library",
+  /** The folder macOS adds to a zip. */
+  SYSTEM_FOLDER: "__MACOSX",
 } as const;
 
 export const Utf8Config = {

@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { AutoComplete, InputType } from "@/common/constants/dom";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { SearchIcon, XIcon } from "@/components/icons";
@@ -36,11 +36,7 @@ export function SearchInput({
         onChange={(event) => onChange(event.target.value)}
       />
       <SearchIcon
-        className={classNames(
-          "search-input-icon",
-          CssClass.ICON_MD,
-          CssClass.ICON_BOLD,
-        )}
+        className={classNames("search-input-icon", STANDARD_ICON_CLASS)}
       />
       {value && (
         <button

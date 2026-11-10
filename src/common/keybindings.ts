@@ -26,12 +26,14 @@ export const KeyBinding = {
   SAVE_RUNBOOK: "SAVE_RUNBOOK",
   NEW_TAB: "NEW_TAB",
   CLOSE_TAB: "CLOSE_TAB",
+  QUICK_OPEN: "QUICK_OPEN",
+  COMMAND_PALETTE: "COMMAND_PALETTE",
   FOCUS_RUNBOOK: "FOCUS_RUNBOOK",
   NAVIGATE_RUNBOOKS: "NAVIGATE_RUNBOOKS",
   IMPORT_RUNBOOK: "IMPORT_RUNBOOK",
   EXPORT: "EXPORT",
   DELETE_RUNBOOK: "DELETE_RUNBOOK",
-  CLEAR_LIBRARY: "CLEAR_LIBRARY",
+  DELETE_ACTIVE_RUNBOOK: "DELETE_ACTIVE_RUNBOOK",
   TOGGLE_EDITORS: "TOGGLE_EDITORS",
   TOGGLE_VARIABLES_VIEW: "TOGGLE_VARIABLES_VIEW",
   TOGGLE_SOURCE_VIEW: "TOGGLE_SOURCE_VIEW",
@@ -61,12 +63,14 @@ export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
   [KeyBinding.SAVE_RUNBOOK]: { binding: "ctrl+s" },
   [KeyBinding.NEW_TAB]: { binding: "ctrl+alt+n" },
   [KeyBinding.CLOSE_TAB]: { binding: "ctrl+alt+w" },
+  [KeyBinding.QUICK_OPEN]: { binding: "ctrl+l" },
+  [KeyBinding.COMMAND_PALETTE]: { binding: "ctrl+shift+p" },
   [KeyBinding.FOCUS_RUNBOOK]: { binding: "tab" },
   [KeyBinding.NAVIGATE_RUNBOOKS]: { binding: "↑ / ↓", keyboard: false },
   [KeyBinding.IMPORT_RUNBOOK]: { binding: "ctrl+i" },
   [KeyBinding.EXPORT]: { binding: "ctrl+shift+e" },
   [KeyBinding.DELETE_RUNBOOK]: { binding: "ctrl+shift+d" },
-  [KeyBinding.CLEAR_LIBRARY]: { binding: "ctrl+shift+backspace" },
+  [KeyBinding.DELETE_ACTIVE_RUNBOOK]: { binding: "ctrl+shift+backspace" },
   [KeyBinding.TOGGLE_EDITORS]: { binding: "ctrl+g" },
   [KeyBinding.TOGGLE_VARIABLES_VIEW]: { binding: "ctrl+shift+v" },
   [KeyBinding.TOGGLE_SOURCE_VIEW]: { binding: "ctrl+shift+c" },
@@ -116,10 +120,7 @@ function titleCaseChord(chord: string, joiner: string): string {
     .join(joiner);
 }
 
-export function formatBinding(
-  binding: string,
-  joiner: string = BINDING_SEPARATOR,
-): string {
+function formatBinding(binding: string, joiner: string): string {
   if (!binding.includes(" ")) {
     return titleCaseChord(binding, joiner);
   }
@@ -132,6 +133,14 @@ export function formatBinding(
         : part,
     )
     .join(" ");
+}
+
+/** How `id`'s shortcut reads on screen, its keys joined by `joiner`. */
+export function bindingLabel(
+  id: KeyBinding,
+  joiner: string = BINDING_SEPARATOR,
+): string {
+  return formatBinding(KEYBINDINGS[id].binding, joiner);
 }
 
 interface ParsedBinding {

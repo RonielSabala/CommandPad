@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import {
   DOCS_SECTION_ORDER,
   DocsSectionLevel,
@@ -71,8 +71,7 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
             className={classNames(
               "docs-toc-chevron",
               collapse.allCollapsed && "is-collapsed",
-              CssClass.ICON_MD,
-              CssClass.ICON_BOLD,
+              STANDARD_ICON_CLASS,
             )}
           />
         </button>
@@ -115,8 +114,7 @@ export function DocsToc({ pageId, collapse, onNavigate }: Props) {
                       className={classNames(
                         "docs-toc-chevron",
                         collapse.isCollapsed(id) && "is-collapsed",
-                        CssClass.ICON_MD,
-                        CssClass.ICON_BOLD,
+                        STANDARD_ICON_CLASS,
                       )}
                     />
                   </span>

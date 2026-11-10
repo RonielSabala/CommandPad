@@ -6,11 +6,15 @@ import {
 } from "@/common/enums";
 import type {
   Block,
-  RunbookEntry,
+  LibraryRunbook,
   Tab,
   Variable,
   VariableSection,
 } from "@/common/types";
+import { getMessages } from "@/i18n/messages";
+import { isLibraryLevelOutOfOrder } from "@/utils/libraryTree";
+import { isOutOfOrder, sortedByName } from "@/utils/sort";
+import { findTabById, findTabByRunbookId } from "@/utils/tabs";
 
 import type { StoreState } from "./types";
 
@@ -19,9 +23,7 @@ export const EMPTY_VARIABLES: Variable[] = [];
 export const EMPTY_SECTIONS: VariableSection[] = [];
 
 export function getActiveTab(state: StoreState): Tab | null {
-  return (
-    state.tabs.find((t) => t.id === state.activeTabId) ?? state.tabs[0] ?? null
-  );
+  return findTabById(state.tabs, state.activeTabId) ?? state.tabs[0] ?? null;
 }
 
 export function getActiveBlocks(state: StoreState): Block[] {
@@ -36,18 +38,42 @@ export function getActiveRunbookId(state: StoreState): string | null {
   return getActiveTab(state)?.runbookId ?? null;
 }
 
-export function getRunbookTab(
+export function getTabById(
+  state: StoreState,
+  tabId: string | null,
+): Tab | undefined {
+  return findTabById(state.tabs, tabId);
+}
+
+export function getTabByRunbookId(
   state: StoreState,
   runbookId: string,
 ): Tab | undefined {
-  return state.tabs.find((t) => t.runbookId === runbookId);
+  return findTabByRunbookId(state.tabs, runbookId);
 }
 
-export function getLibraryEntry(
+const openRunbookIds = new WeakMap<
+  readonly Tab[],
+  ReadonlySet<string | null>
+>();
+
+/** Whether a tab shows `runbookId`. */
+export function isRunbookOpen(state: StoreState, runbookId: string): boolean {
+  const tabs = state.tabs;
+  let ids = openRunbookIds.get(tabs);
+  if (!ids) {
+    ids = new Set(tabs.map((tab) => tab.runbookId));
+    openRunbookIds.set(tabs, ids);
+  }
+
+  return ids.has(runbookId);
+}
+
+export function getLibraryRunbook(
   state: StoreState,
   runbookId: string,
-): RunbookEntry | undefined {
-  return state.runbookLibrary.find((entry) => entry.id === runbookId);
+): LibraryRunbook | undefined {
+  return state.libraryRunbooks.find((r) => r.id === runbookId);
 }
 
 export function getRunbookView(state: StoreState): RunbookView {
@@ -134,35 +160,14 @@ export function hasValuesToClear(
   return someTargetVariable(state, variableId, (variable) => variable.value);
 }
 
-const OPTION_ORDER = new Intl.Collator(undefined, { numeric: true });
-const OPTION_SIGN = {
-  [SortDirection.ASC]: 1,
-  [SortDirection.DESC]: -1,
-} as const;
-
-function compareOptions(
-  a: string,
-  b: string,
-  direction: SortDirection,
-): number {
-  return OPTION_SIGN[direction] * OPTION_ORDER.compare(a, b);
-}
-
-/** Whether an enum's options are out of `direction` order. */
-function isOutOfOrder(variable: Variable, direction: SortDirection): boolean {
-  const { options } = variable;
-  return !!options?.some(
-    (option, index) =>
-      index > 0 && compareOptions(options[index - 1], option, direction) > 0,
-  );
-}
+const optionName = (option: string) => option;
 
 export function sortedOptions(
   variable: Variable,
   direction: SortDirection,
 ): string[] | null {
-  return variable.options && isOutOfOrder(variable, direction)
-    ? [...variable.options].sort((a, b) => compareOptions(a, b, direction))
+  return variable.options
+    ? sortedByName(variable.options, optionName, direction)
     : null;
 }
 
@@ -179,8 +184,25 @@ export function hasOptionsToSort(
   variableId: string,
   direction: SortDirection,
 ): boolean {
-  return someTargetVariable(state, variableId, (variable) =>
-    isOutOfOrder(variable, direction),
+  return someTargetVariable(
+    state,
+    variableId,
+    (variable) =>
+      variable.options && isOutOfOrder(variable.options, optionName, direction),
+  );
+}
+
+export function hasLibraryFolderToSort(
+  state: StoreState,
+  id: string | null,
+  direction: SortDirection,
+): boolean {
+  return isLibraryLevelOutOfOrder(
+    state.libraryFolders,
+    state.libraryRunbooks,
+    id,
+    direction,
+    getMessages(state.language),
   );
 }
 

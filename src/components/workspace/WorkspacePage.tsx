@@ -14,10 +14,12 @@ import { AlertModal } from "../modals/dialogs/AlertModal";
 import { ConfirmModal } from "../modals/dialogs/ConfirmModal";
 import { ExportModal } from "../modals/ExportModal";
 import { PasteRunbookModal } from "../modals/PasteRunbookModal";
+import { QuickOpenModal } from "../modals/quickOpen/QuickOpenModal";
 import { VaultModal } from "../modals/vault/VaultModal";
-import { RunbookImportInput } from "../sidebar/runbooks/RunbookImportInput";
+import { RunbookImportInput } from "../sidebar/runbooks/import/RunbookImportInput";
 import { Sidebar } from "../sidebar/Sidebar";
 import { VariablesViewContext } from "../variables/variablesViewContext";
+
 import { MainPanel } from "./MainPanel";
 import { SaveNotice } from "./SaveNotice";
 import { SelectionCount } from "./SelectionCount";
@@ -46,6 +48,7 @@ export function WorkspacePage() {
       <ImageLightbox />
       <ExportModal />
       <PasteRunbookModal />
+      <QuickOpenModal />
       <DestinationModal />
       <CloudImportModal />
       <CloudFileEditorModal />

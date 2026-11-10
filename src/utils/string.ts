@@ -4,9 +4,19 @@ import {
   LINE_BREAK,
   Utf8Config,
 } from "@/common/config";
-import { globalRegex, oneOrMore, WHITESPACE } from "@/common/regex";
+import { QueryMatch } from "@/common/enums";
+import {
+  anyOf,
+  globalRegex,
+  LETTER,
+  NUMBER,
+  oneOrMore,
+  unicodeRegex,
+  WHITESPACE,
+} from "@/common/regex";
 
 const WHITESPACE_RUN = globalRegex(oneOrMore(WHITESPACE));
+const WORD_CHAR = unicodeRegex(anyOf(LETTER, NUMBER));
 
 export function splitLines(text: string): string[] {
   return text.split(LINE_BREAK);
@@ -49,6 +59,31 @@ export function matchesQuery(
   return fields.some((field) => field?.toLowerCase().includes(needle));
 }
 
+/** How closely `name` matches `query`, ignoring case. */
+export function queryMatch(query: string, name: string): QueryMatch {
+  const needle = query.toLowerCase();
+  const haystack = name.toLowerCase();
+  let at = haystack.indexOf(needle);
+
+  if (at === 0) {
+    return needle.length === haystack.length
+      ? QueryMatch.EXACT
+      : QueryMatch.PREFIX;
+  }
+
+  if (at < 0) {
+    return QueryMatch.ELSEWHERE;
+  }
+
+  for (; at > 0; at = haystack.indexOf(needle, at + 1)) {
+    if (!WORD_CHAR.test(haystack[at - 1])) {
+      return QueryMatch.WORD_START;
+    }
+  }
+
+  return QueryMatch.INSIDE;
+}
+
 export function buildDuplicateName(
   base: string,
   isTaken: (candidate: string) => boolean,
@@ -64,6 +99,22 @@ export function buildDuplicateName(
   } while (isTaken(name));
 
   return name;
+}
+
+/** `stem` + `extension`, numbered past the names `taken` holds. */
+export function claimUniqueName(
+  taken: Set<string>,
+  stem: string,
+  extension = "",
+): string {
+  const isTaken = (candidate: string) =>
+    taken.has(`${candidate}${extension}`.toLowerCase());
+
+  const unique = isTaken(stem) ? buildDuplicateName(stem, isTaken) : stem;
+  const claimed = `${unique}${extension}`;
+
+  taken.add(claimed.toLowerCase());
+  return claimed;
 }
 
 export function countCharacters(text: string): number {

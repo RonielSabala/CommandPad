@@ -1,5 +1,5 @@
 import { SelectConfig } from "@/common/config";
-import { CssClass } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { AriaRole, SelectSelector } from "@/common/constants/dom";
 import { EventType, Key } from "@/common/constants/events";
 import { SearchInput } from "@/components/common/SearchInput";
@@ -278,7 +278,11 @@ export function Select<T extends string>({
 
       <ul
         ref={listRef}
-        className={classNames("select-list", scrollable && "is-scrollable")}
+        className={classNames(
+          "select-list",
+          scrollable && "is-scrollable",
+          OptionRow && CssClass.REORDER_LIST,
+        )}
         role={AriaRole.LISTBOX}
       >
         {shownOptions.length === 0 && (query || empty) && (
@@ -357,8 +361,7 @@ export function Select<T extends string>({
           className={classNames(
             "select-chevron",
             open && "is-open",
-            CssClass.ICON_MD,
-            CssClass.ICON_BOLD,
+            STANDARD_ICON_CLASS,
           )}
         />
       </button>

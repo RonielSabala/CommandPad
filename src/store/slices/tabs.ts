@@ -1,10 +1,12 @@
 import { DEFAULT_TAB_LABEL } from "@/common/config";
 import { AppMode, EmbeddedRunbookStatus } from "@/common/enums";
-import type { RunbookEntry } from "@/common/types";
+import type { LibraryRunbook } from "@/common/types";
 import { generateId } from "@/utils/id";
+import { withFolderExpanded } from "@/utils/libraryTree";
+import { findTabById, findTabByRunbookId } from "@/utils/tabs";
 
 import type { StoreKit } from "@/store/kit";
-import { getActiveTab, getRunbookTab } from "@/store/selectors";
+import { uniqueLabelIn, withRecentRunbook } from "@/store/libraryState";
 import type { StoreServices } from "@/store/services";
 import { createTabObject, tabContent } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
@@ -25,70 +27,66 @@ export function createTabsSlice(
     embedsReadingRunbook,
     writeRunbookContent,
     declinedVaultSetup,
+    revealRunbook,
   } = services;
 
   return {
-    createNewTab: async (label, runbookId) => {
+    createNewTab: async (folderId) => {
       const state = get();
       if (state.mode === AppMode.READ) {
         return;
       }
 
-      if (runbookId) {
-        const existingTab = getRunbookTab(state, runbookId);
-        if (existingTab) {
-          get().switchTab(existingTab.id);
-          return existingTab;
-        }
-      }
+      const label = uniqueLabelIn(state, folderId, DEFAULT_TAB_LABEL);
+      const runbookId = generateId();
+      const tab = createTabObject(label, runbookId);
+      const runbook: LibraryRunbook = {
+        id: runbookId,
+        label,
+        filename: "",
+        folderId,
+      };
 
-      const resolvedLabel = label ?? DEFAULT_TAB_LABEL;
-      const tab = createTabObject(resolvedLabel, runbookId ?? null);
+      set((s) => ({
+        tabs: [...s.tabs, tab],
+        activeTabId: tab.id,
+        libraryFolders: withFolderExpanded(s.libraryFolders, folderId),
+        libraryRunbooks: [...s.libraryRunbooks, runbook],
+        activeRunbookId: runbookId,
+        recentRunbookIds: withRecentRunbook(s.recentRunbookIds, runbookId),
+        focusedRunbookId: null,
+        runbookSearchQuery: "",
+      }));
 
-      if (!runbookId) {
-        const newRunbookId = generateId();
-        tab.runbookId = newRunbookId;
-        const entry: RunbookEntry = {
-          id: newRunbookId,
-          label: resolvedLabel,
-          filename: "",
-        };
-
-        set((s) => ({
-          tabs: [...s.tabs, tab],
-          activeTabId: tab.id,
-          runbookLibrary: [...s.runbookLibrary, entry],
-          activeRunbookId: newRunbookId,
-          focusedRunbookId: null,
-        }));
-
-        await writeRunbookContent(newRunbookId, tabContent(null));
-        saveLibrary();
-      } else {
-        set((s) => ({
-          tabs: [...s.tabs, tab],
-          activeTabId: tab.id,
-          focusedRunbookId: null,
-        }));
-      }
-
+      await writeRunbookContent(runbookId, tabContent(null));
+      saveLibrary();
       saveTabs();
-      return tab;
     },
 
     switchTab: (tabId) => {
-      if (get().activeTabId === tabId) {
+      const state = get();
+      if (state.activeTabId === tabId) {
         return;
       }
 
-      set((s) => ({
+      const runbookId = findTabById(state.tabs, tabId)?.runbookId ?? null;
+      const recentRunbookIds = withRecentRunbook(
+        state.recentRunbookIds,
+        runbookId,
+      );
+
+      revealRunbook(runbookId);
+      set({
         activeTabId: tabId,
-        activeRunbookId:
-          getActiveTab({ ...s, activeTabId: tabId })?.runbookId ?? null,
+        activeRunbookId: runbookId,
+        recentRunbookIds,
         selectKeyHeld: false,
-      }));
+      });
 
       saveTabs();
+      if (recentRunbookIds !== state.recentRunbookIds) {
+        saveLibrary();
+      }
     },
 
     closeTab: (tabId) => {
@@ -122,7 +120,7 @@ export function createTabsSlice(
       }
 
       for (const tab of closed) {
-        if (tab.runbookId && !tabs.some((t) => t.runbookId === tab.runbookId)) {
+        if (tab.runbookId && !findTabByRunbookId(tabs, tab.runbookId)) {
           declinedVaultSetup.delete(tab.runbookId);
 
           // Update the embed runbook blocks that read this tab
@@ -137,8 +135,11 @@ export function createTabsSlice(
         }
       }
 
-      const activeRunbookId =
-        tabs.find((t) => t.id === activeTabId)?.runbookId ?? null;
+      // Closing another tab must not reopen a folder the user collapsed
+      const activeRunbookId = findTabById(tabs, activeTabId)?.runbookId ?? null;
+      if (activeTabId !== state.activeTabId) {
+        revealRunbook(activeRunbookId);
+      }
 
       set({ tabs, activeTabId, activeRunbookId });
       saveTabs();

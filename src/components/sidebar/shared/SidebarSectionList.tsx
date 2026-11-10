@@ -1,9 +1,12 @@
+import { CssClass } from "@/common/constants/css";
 import { useTranslation } from "@/i18n";
+import { classNames } from "@/utils/string";
 import React from "react";
+
 import "./SidebarSectionList.css";
 
 interface Props<T> {
-  items: T[];
+  isEmpty: boolean;
   visibleItems: T[];
   emptyMessage: string;
   getKey: (item: T) => string | number;
@@ -12,7 +15,7 @@ interface Props<T> {
 }
 
 export function SidebarSectionList<T>({
-  items,
+  isEmpty,
   visibleItems,
   emptyMessage,
   getKey,
@@ -22,8 +25,11 @@ export function SidebarSectionList<T>({
   const t = useTranslation();
 
   return (
-    <div className="sidebar-section-list" ref={listRef}>
-      {items.length === 0 ? (
+    <div
+      className={classNames("sidebar-section-list", CssClass.REORDER_LIST)}
+      ref={listRef}
+    >
+      {isEmpty ? (
         <p className="sidebar-section-empty-msg">{emptyMessage}</p>
       ) : visibleItems.length === 0 ? (
         <p className="sidebar-section-empty-msg">{t.common.noMatches}</p>

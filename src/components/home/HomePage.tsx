@@ -1,4 +1,4 @@
-import { CssClass } from "@/common/constants/css";
+import { CssClass, HEADER_ICON_CLASS } from "@/common/constants/css";
 import { AppRoute } from "@/common/constants/routes";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { NoteText } from "@/components/blocks/note/NoteText";
@@ -88,9 +88,7 @@ export function HomePage() {
                     CssClass.BTN_LG,
                   )}
                 >
-                  <BookIcon
-                    className={classNames(CssClass.ICON, CssClass.ICON_BOLD)}
-                  />
+                  <BookIcon className={HEADER_ICON_CLASS} />
                   {t.home.hero.secondaryCta}
                 </Link>
               </div>

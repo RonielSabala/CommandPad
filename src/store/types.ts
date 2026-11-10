@@ -9,6 +9,7 @@ import {
   ExportFormat,
   HistoryDirection,
   InsertPosition,
+  LibraryDropZone,
   MoveDirection,
   PanelId,
   PanelSide,
@@ -33,9 +34,11 @@ import type {
   BlockOfType,
   EmbeddedRunbook,
   ImageBlock,
+  LibraryFolder,
+  LibraryRunbook,
   PanelState,
   RunbookContent,
-  RunbookEntry,
+  RunbookLinks,
   RunbookStats,
   RunbookSync,
   Tab,
@@ -89,9 +92,15 @@ interface ConfirmDialog extends Dialog<boolean> {
 
 export type VaultPassphrases = Record<VaultField, string>;
 
+export interface VaultBatch {
+  pending: number;
+  skipAll: () => void;
+}
+
 interface VaultDialog {
   prompt: VaultPrompt;
   filename: string | null;
+  batch: VaultBatch | null;
   error: VaultError | null;
   busy: boolean;
   verify: (passphrases: VaultPassphrases) => Promise<boolean>;
@@ -155,8 +164,10 @@ export interface StoreState {
   // Data
   tabs: Tab[];
   activeTabId: string | null;
-  runbookLibrary: RunbookEntry[];
+  libraryFolders: LibraryFolder[];
+  libraryRunbooks: LibraryRunbook[];
   activeRunbookId: string | null;
+  recentRunbookIds: string[];
   runbookSyncStatus: Record<string, RunbookSyncStatus>;
   embeddedRunbooks: Record<string, EmbeddedRunbook>;
   embeddedSectionFolds: Record<string, boolean>;
@@ -171,6 +182,7 @@ export interface StoreState {
   selectKeyHeld: boolean;
   linkKeyHeld: boolean;
   pendingFocusBlockId: string | null;
+  pendingLibraryFolderRenameId: string | null;
   pendingRevealBlockId: string | null;
   revealedBlockId: string | null;
   blockRevealTone: RevealTone;
@@ -186,6 +198,7 @@ export interface StoreState {
   cloudExportStatus: CloudExportStatus;
   cloudExportProvider: CloudProvider | null;
   pasteRunbookModalOpen: boolean;
+  quickOpenQuery: string | null;
   confirmDialog: ConfirmDialog | null;
   alertDialog: AlertDialog | null;
 
@@ -260,10 +273,7 @@ export interface StoreState {
   setVariableSearchQuery: (query: string) => void;
 
   // Tabs
-  createNewTab: (
-    label?: string,
-    runbookId?: string | null,
-  ) => Promise<Tab | undefined>;
+  createNewTab: (folderId?: string) => Promise<void>;
   switchTab: (tabId: string) => void;
   closeTab: (tabId: string) => void;
   closeTabs: (tabIds: string[]) => void;
@@ -273,11 +283,28 @@ export interface StoreState {
     insertAfter: boolean,
   ) => void;
 
+  // Library folders
+  createLibraryFolder: (parentId: string | null) => void;
+  removeLibraryFolder: (id: string) => Promise<void>;
+  duplicateLibraryFolder: (id: string) => Promise<void>;
+  renameLibraryFolder: (id: string, name: string) => void;
+  toggleLibraryFolder: (id: string) => void;
+  toggleLibrarySubtree: (id: string | null) => void;
+  moveLibraryFolder: (
+    id: string,
+    targetId: string | null,
+    zone: LibraryDropZone,
+  ) => void;
+  sortLibraryFolder: (id: string | null, direction: SortDirection) => void;
+  consumeLibraryFolderRename: () => void;
+
   // Runbook library
-  loadRunbookFromLibrary: (runbookId: string) => Promise<void>;
-  removeRunbookFromLibrary: (id: string) => Promise<void>;
-  duplicateRunbook: (id: string) => Promise<void>;
-  addRunbookToLibrary: (
+  loadLibraryRunbook: (runbookId: string) => Promise<void>;
+  removeLibraryRunbook: (id: string) => Promise<void>;
+  duplicateLibraryRunbook: (id: string) => Promise<void>;
+  renameLibraryRunbook: (id: string, name: string) => void;
+  resetLibraryRunbookName: (id: string) => Promise<void>;
+  addLibraryRunbook: (
     content: RunbookContent,
     filename: string,
     rawFilename: string,
@@ -287,9 +314,15 @@ export interface StoreState {
   ) => Promise<boolean>;
   importRunbooks: (files: File[]) => Promise<void>;
   importRunbookFromText: (text: string) => Promise<boolean>;
-  reorderRunbooks: (sourceId: string, targetId: string) => void;
+  moveLibraryRunbook: (
+    id: string,
+    targetId: string | null,
+    zone: LibraryDropZone,
+  ) => void;
   setRunbookFocus: (id: string | null) => void;
   navigateRunbookList: (direction: MoveDirection) => void;
+  openQuickOpenModal: (query?: string) => void;
+  closeQuickOpenModal: () => void;
 
   // Variables
   addVariable: (kind?: VariableKind) => Promise<void>;
@@ -393,6 +426,7 @@ export interface StoreState {
 
   // Embedded runbooks
   readRunbookStats: (runbookId: string) => Promise<RunbookStats | null>;
+  readRunbookLinks: (runbookId: string) => Promise<RunbookLinks>;
   loadEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
   refreshEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
   openEmbeddedRunbook: (source: EmbedSource) => Promise<void>;
@@ -416,6 +450,7 @@ export interface StoreState {
   changeVaultPassphrase: (runbookId: string) => Promise<boolean>;
   submitVaultPassphrase: (passphrases: VaultPassphrases) => Promise<void>;
   dismissVaultDialog: () => void;
+  skipVaultBatch: () => void;
 
   // Import / export
   openExportModal: () => void;
@@ -433,8 +468,10 @@ export interface StoreState {
     filename: string,
     folderId: string | null,
   ) => Promise<void>;
+  exportLibraryFolder: (folderId: string | null) => Promise<void>;
   copyRunbookMarkdown: () => Promise<void>;
   beginImport: () => void;
+  beginZipImport: () => void;
   openDestinationModal: () => void;
   closeDestinationModal: () => void;
   chooseDestination: (destination: SyncDestination) => void;

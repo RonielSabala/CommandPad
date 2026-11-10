@@ -172,7 +172,7 @@ export function createCloudSessionSlice(
           ...s.runbookSyncStatus,
           // Linked runbooks can no longer reach this provider until a new sign-in
           ...Object.fromEntries(
-            s.runbookLibrary
+            s.libraryRunbooks
               .filter((item) => item.sync?.provider === s.cloudProvider)
               .map((item) => [item.id, RunbookSyncStatus.SIGNED_OUT]),
           ),

@@ -1,0 +1,49 @@
+.library-folder-chevron {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.library-folder-btn.collapsed .library-folder-chevron {
+  transform: rotate(-90deg);
+}
+
+/* Chevron zone */
+
+.library-folder-chevron-zone {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  align-self: stretch;
+  margin-block: calc(-1 * var(--library-btn-inset-block));
+  margin-left: calc(-1 * var(--library-btn-inset-inline));
+  padding-left: calc(
+    var(--library-btn-border) + var(--library-chevron-padding)
+  );
+  padding-right: var(--library-chevron-padding);
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+.library-folder-btn:not(.library-folder-empty, .library-row-renaming)
+  .library-folder-chevron-zone:hover {
+  background: var(--color-surface-hover-bg);
+}
+
+.library-row
+  .library-folder-btn.library-row-btn:has(.library-folder-chevron-zone:hover)
+  .library-row-name {
+  border-bottom-color: transparent;
+}
+
+/* Empty folder */
+
+.library-folder-empty .library-folder-chevron {
+  visibility: hidden;
+}
+
+.library-folder-empty .library-folder-chevron-zone {
+  cursor: default;
+}
+
+.library-folder-empty:has(.library-folder-chevron-zone:hover) {
+  color: var(--color-text-secondary);
+}

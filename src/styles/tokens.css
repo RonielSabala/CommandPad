@@ -34,14 +34,11 @@
   --color-surface-alt: #2d333b;
   --color-surface-hover-bg: rgba(99, 110, 123, 0.32);
   --color-border: #373e47;
+  --color-border-strong: #545d68;
   --color-border-focus: #4493f8;
   --block-backdrop: var(--color-bg);
-  --cloud-row-selected-bg: color-mix(in srgb, var(--accent) 13%, transparent);
-  --cloud-row-selected-hover-bg: color-mix(
-    in srgb,
-    var(--accent) 19%,
-    transparent
-  );
+  --row-selected-bg: color-mix(in srgb, var(--accent) 13%, transparent);
+  --row-selected-hover-bg: color-mix(in srgb, var(--accent) 19%, transparent);
   --cloud-row-border: color-mix(in srgb, var(--color-border) 55%, transparent);
 
   /* Text */
@@ -158,6 +155,8 @@
   --modal-cloud-width: 50vw;
   --modal-cloud-height: 75vh;
   --modal-conflict-width: 80vw;
+  --modal-quick-open-width: 46rem;
+  --modal-quick-open-list-height: 22rem;
   --modal-cloud-padding-x: var(--space-12);
   --modal-cloud-padding-y: var(--space-10);
 
@@ -196,7 +195,8 @@
   /* --- COMPOUND TOKENS --- */
 
   --border-standard: 1px solid var(--color-border);
-  --border-dashed: var(--space-1) dashed var(--accent);
+  --border-dashed-width: var(--space-1);
+  --border-dashed: var(--border-dashed-width) dashed var(--accent);
 
   --transition-fast: 0.15s;
   --transition-base: 0.2s;
@@ -250,6 +250,7 @@
   --color-surface-alt: #eaeef2;
   --color-surface-hover-bg: rgba(175, 184, 193, 0.32);
   --color-border: #d0d7de;
+  --color-border-strong: #afb8c1;
   --color-border-focus: #0969da;
 
   /* Text */

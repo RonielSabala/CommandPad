@@ -18,15 +18,17 @@ import {
   Theme,
 } from "@/common/enums";
 import type {
+  LibraryFolder,
+  LibraryRunbook,
   PanelState,
-  RunbookEntry,
   RunbookSync,
   Tab,
   VaultRecord,
 } from "@/common/types";
 import { detectLanguage, isLanguage } from "@/i18n/messages";
-import type { Language } from "@/i18n/types";
+import type { Language, Messages } from "@/i18n/types";
 import type { CloudFolderRef } from "@/services/cloud";
+import { repairLibrary } from "@/utils/libraryTree";
 import { clamp } from "@/utils/number";
 import { isEnumValue, isNumber, isObject, isString } from "@/utils/typeGuards";
 
@@ -269,8 +271,10 @@ export function loadTabsMeta(): PersistedTabs | null {
 // Runbooks
 
 interface PersistedRunbooks {
-  items: RunbookEntry[];
+  folders: LibraryFolder[];
+  runbooks: LibraryRunbook[];
   activeId: string | null;
+  recent: string[];
 }
 
 const isRunbookSync = (value: unknown): value is RunbookSync =>
@@ -297,40 +301,72 @@ function restoreRunbookSync(value: unknown): RunbookSync | undefined {
 const isVaultRecord = (value: unknown): value is VaultRecord =>
   isObject(value) && isString(value.salt) && isString(value.verifier);
 
-function restoreRunbookEntry(entry: RunbookEntry): RunbookEntry {
+function restoreLibraryFolders(value: unknown): LibraryFolder[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.flatMap((folder) =>
+    isObject(folder) && isString(folder.id) && isString(folder.name)
+      ? [
+          {
+            id: folder.id,
+            name: folder.name,
+            parentId: isString(folder.parentId) ? folder.parentId : null,
+            ...(folder.collapsed === true ? { collapsed: true } : {}),
+          },
+        ]
+      : [],
+  );
+}
+
+function restoreLibraryRunbook(runbook: LibraryRunbook): LibraryRunbook {
   return {
-    ...entry,
-    sync: restoreRunbookSync(entry.sync),
-    secured: entry.secured === true,
-    vault: isVaultRecord(entry.vault) ? entry.vault : undefined,
+    ...runbook,
+    named: runbook.named === true || undefined,
+    folderId: isString(runbook.folderId) ? runbook.folderId : undefined,
+    sync: restoreRunbookSync(runbook.sync),
+    secured: runbook.secured === true,
+    vault: isVaultRecord(runbook.vault) ? runbook.vault : undefined,
   };
 }
 
 export function saveRunbookLibrary(
-  items: RunbookEntry[],
+  folders: LibraryFolder[],
+  runbooks: LibraryRunbook[],
   activeId: string | null,
+  recent: string[],
 ): void {
   try {
     localStorage.setItem(
       StorageKey.RUNBOOK_LIBRARY,
-      JSON.stringify({ items, activeId }),
+      // Saved libraries store the runbooks under `items`
+      JSON.stringify({ folders, items: runbooks, activeId, recent }),
     );
   } catch (error) {
     console.warn("Failed to save runbook library:", error);
   }
 }
 
-export function loadRunbookLibrary(): PersistedRunbooks | null {
+export function loadRunbookLibrary(t: Messages): PersistedRunbooks | null {
   try {
     const saved = getSavedItemByKey(StorageKey.RUNBOOK_LIBRARY);
     if (!saved) {
       return null;
     }
 
-    return {
-      items: (saved.items ?? []).map(restoreRunbookEntry),
-      activeId: saved.activeId ?? null,
-    };
+    const { folders, runbooks } = repairLibrary(
+      restoreLibraryFolders(saved.folders),
+      (saved.items ?? []).map(restoreLibraryRunbook),
+      t,
+    );
+
+    const ids = new Set(runbooks.map((r) => r.id));
+    const recent = Array.isArray(saved.recent)
+      ? saved.recent.filter((id: unknown) => isString(id) && ids.has(id))
+      : [];
+
+    return { folders, runbooks, activeId: saved.activeId ?? null, recent };
   } catch (error) {
     console.warn("Failed to load runbook library:", error);
     return null;

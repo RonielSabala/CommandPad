@@ -1,0 +1,200 @@
+.library-row {
+  --library-guide-color: var(--color-border);
+  --library-guide-width: 1px;
+
+  /* The drag handle's icon and padding */
+  --library-handle-width: calc(var(--icon-md) + 2 * var(--space-2));
+
+  /* One nesting level */
+  --library-indent: round(calc(var(--icon-sm) + var(--library-btn-gap)), 1px);
+
+  /* All of this row's nesting levels */
+  --library-depth-inset: calc(var(--library-depth, 0) * var(--library-indent));
+  --library-row-lead: calc(var(--library-handle-width) + var(--space-3));
+
+  /* The row button's box */
+  --library-btn-border: 1px;
+  --library-btn-padding-block: var(--space-3);
+  --library-btn-padding-inline: var(--space-4);
+  --library-btn-gap: var(--space-3);
+
+  /* From the button's outer edge to its content */
+  --library-btn-inset-block: calc(
+    var(--library-btn-border) + var(--library-btn-padding-block)
+  );
+  --library-btn-inset-inline: calc(
+    var(--library-btn-border) + var(--library-btn-padding-inline)
+  );
+
+  /* From the button's outer edge to the end of its icon */
+  --library-btn-icon-end: calc(
+    var(--library-btn-inset-inline) + var(--icon-md)
+  );
+
+  /* The name's hover underline */
+  --library-name-underline: 1px;
+
+  /* The space on each side of a folder's chevron */
+  --library-chevron-padding: var(--space-1);
+
+  /* From the row's edge to the first guide */
+  --library-guide-left: round(
+    calc(
+      var(--library-btn-border) + var(--library-row-lead) +
+        var(--library-chevron-padding) + var(--icon-sm) / 2 -
+        var(--library-guide-width) / 2
+    ),
+    1px
+  );
+
+  /* The line marking where a drop lands */
+  --library-drop-line-width: var(--space-1);
+
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  border-radius: var(--radius-md);
+}
+
+.library-row.sidebar-section-list-row {
+  margin-bottom: 0;
+  padding-left: var(--library-depth-inset);
+}
+
+body.read-mode .library-row {
+  --library-row-lead: 0px;
+}
+
+body.read-mode .library-row.sidebar-section-list-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+/* One guide per ancestor folder */
+
+.library-row::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: var(--library-guide-left);
+  width: var(--library-depth-inset);
+  background: repeating-linear-gradient(
+    to right,
+    var(--library-guide-color) 0 var(--library-guide-width),
+    transparent var(--library-guide-width) var(--library-indent)
+  );
+  pointer-events: none;
+}
+
+.library-row:hover,
+.library-row.menu-open,
+.library-row:has(:focus-visible, .row-actions.menu-open) {
+  --library-guide-color: var(--color-border-strong);
+
+  background: var(--color-surface-hover-bg);
+}
+
+.library-row-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.library-row-label {
+  max-width: 100%;
+  margin-right: auto;
+  padding: var(--library-btn-padding-block) var(--library-btn-padding-inline);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: normal;
+}
+
+.library-row-renaming {
+  cursor: default;
+}
+
+.library-row-label .library-row-rename-input {
+  --library-rename-padding-block: var(--space-1);
+  --library-rename-inset-block: calc(
+    var(--rename-input-border) + var(--library-rename-padding-block)
+  );
+
+  field-sizing: content;
+  min-width: var(--space-8);
+  padding-block: var(--library-rename-padding-block);
+  margin-block: calc(-1 * var(--library-rename-inset-block))
+    calc(var(--library-name-underline) - var(--library-rename-inset-block));
+  margin-inline: calc(-1 * var(--rename-input-inset));
+}
+
+.library-row-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--library-btn-gap);
+  min-width: 0;
+  background: transparent;
+  border: var(--library-btn-border) solid transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.library-row-btn:hover {
+  color: var(--color-text-primary);
+}
+
+.library-row-btn:focus {
+  outline: none;
+}
+
+.library-row-icon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.library-row-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: var(--library-name-underline) solid transparent;
+}
+
+.library-row:not(.active) .library-row-btn:hover .library-row-name {
+  border-bottom-color: currentcolor;
+}
+
+/* Where a drop lands */
+
+:is(.library-row, .library-top-level-drop).drag-over {
+  outline-offset: calc(-1 * var(--border-dashed-width));
+}
+
+.library-row.drag-over::before {
+  inset-block: var(--border-dashed-width);
+}
+
+.library-row-drop-before::after,
+.library-row-drop-after::after {
+  content: "";
+  position: absolute;
+  z-index: var(--z-raised);
+  left: calc(
+    var(--library-depth-inset) +
+      mod(var(--library-guide-left), var(--library-indent))
+  );
+  right: 0;
+  height: var(--library-drop-line-width);
+  background: var(--accent);
+  pointer-events: none;
+}
+
+.library-row-drop-before::after {
+  top: calc(var(--library-drop-line-width) / -2);
+}
+
+.library-row-drop-after::after {
+  bottom: calc(var(--library-drop-line-width) / -2);
+}

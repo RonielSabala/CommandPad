@@ -1,7 +1,6 @@
 import { CssClass } from "@/common/constants/css";
 import { tooltip } from "@/components/common/tooltip/tooltip";
-import { classNames } from "@/utils/string";
-import type { SVGProps } from "react";
+import type { ReactNode } from "react";
 
 import "./SidebarSectionFooter.css";
 
@@ -9,46 +8,27 @@ interface FooterAction {
   onClick: () => void;
   title: string;
   label: string;
-  icon: (props: SVGProps<SVGSVGElement>) => React.ReactElement;
-  danger?: boolean;
+  icon: ReactNode;
 }
 
 interface Props extends FooterAction {
   secondaryAction?: FooterAction;
-  tertiaryAction?: FooterAction;
 }
 
-function FooterButton({
-  onClick,
-  title,
-  label,
-  icon: IconComponent,
-  danger,
-}: FooterAction) {
+function FooterButton({ onClick, title, label, icon }: FooterAction) {
   return (
-    <button
-      className={classNames(CssClass.BTN, danger && CssClass.BTN_DANGER)}
-      onClick={onClick}
-      {...tooltip(title)}
-    >
-      <IconComponent
-        className={classNames(CssClass.ICON_MD, CssClass.ICON_BOLD)}
-      />
+    <button className={CssClass.BTN} onClick={onClick} {...tooltip(title)}>
+      {icon}
       {label}
     </button>
   );
 }
 
-export function SidebarSectionFooter({
-  secondaryAction,
-  tertiaryAction,
-  ...action
-}: Props) {
+export function SidebarSectionFooter({ secondaryAction, ...action }: Props) {
   return (
     <div className="sidebar-section-footer">
       <FooterButton {...action} />
       {secondaryAction && <FooterButton {...secondaryAction} />}
-      {tertiaryAction && <FooterButton {...tertiaryAction} />}
     </div>
   );
 }
