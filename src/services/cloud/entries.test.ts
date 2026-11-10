@@ -1,7 +1,7 @@
 import { CloudSortColumn, SortDirection } from "@/common/enums";
 import { describe, expect, it } from "vitest";
 
-import { compareCloudEntries } from "./entries";
+import { compareCloudEntries, isBrowsableEntry } from "./entries";
 import type { CloudEntry } from "./types";
 
 const entry = (name: string, modifiedAt: string | null = null): CloudEntry => ({
@@ -41,5 +41,14 @@ describe("compareCloudEntries", () => {
     expect(
       sortedNames(entries, CloudSortColumn.MODIFIED, SortDirection.DESC),
     ).toEqual(["b 9", "b 10"]);
+  });
+});
+
+describe("isBrowsableEntry", () => {
+  it("lists folders and JSON files whatever their extension's case", () => {
+    expect(isBrowsableEntry({ ...entry("ops"), isFolder: true })).toBe(true);
+    expect(isBrowsableEntry(entry("deploy.json"))).toBe(true);
+    expect(isBrowsableEntry(entry("deploy.JSON"))).toBe(true);
+    expect(isBrowsableEntry(entry("notes.txt"))).toBe(false);
   });
 });

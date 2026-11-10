@@ -1,6 +1,6 @@
 import { JSON_EXTENSION } from "@/common/config";
 import { CloudSortColumn, SortDirection } from "@/common/enums";
-import { stripJsonExtension } from "@/utils/export";
+import { isJsonFilename, stripJsonExtension } from "@/utils/export";
 import { compareNames, DIRECTION_SIGN } from "@/utils/sort";
 import { claimUniqueName } from "@/utils/string";
 import { isString } from "@/utils/typeGuards";
@@ -17,7 +17,7 @@ export const DEFAULT_CLOUD_SORT: CloudSort = {
 };
 
 export function isBrowsableEntry(entry: CloudEntry): boolean {
-  return entry.isFolder || entry.name.endsWith(JSON_EXTENSION);
+  return entry.isFolder || isJsonFilename(entry.name);
 }
 
 /** A name for a copy of `entry`. */

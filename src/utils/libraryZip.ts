@@ -9,7 +9,7 @@ import {
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 import type { Messages } from "@/i18n/types";
 
-import { stripJsonExtension } from "./export";
+import { isJsonFilename, stripJsonExtension } from "./export";
 import { generateId } from "./id";
 import {
   displayFolderName,
@@ -108,7 +108,7 @@ function zipLibraryItems(entries: readonly ZipEntry[]): ZipLibraryItem[] {
       return [{ folders }];
     }
 
-    return filename.toLowerCase().endsWith(JSON_EXTENSION)
+    return isJsonFilename(filename)
       ? [{ folders, runbook: { entry, filename } }]
       : [];
   });

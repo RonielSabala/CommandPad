@@ -1,4 +1,5 @@
 import { JSON_EXTENSION } from "@/common/config";
+import { isJsonFilename } from "@/utils/export";
 import { joinPath, splitPath } from "@/utils/path";
 
 import { getCachedCloudEntries, setCachedCloudEntries } from "./cache";
@@ -85,10 +86,8 @@ export async function resolveCloudFile(
     return null;
   }
 
-  const named = filename.toLowerCase().endsWith(JSON_EXTENSION)
-    ? filename
-    : filename + JSON_EXTENSION;
-
+  const named = isJsonFilename(filename) ? filename : filename + JSON_EXTENSION;
   const file = findNamed(folder.entries, named, false);
+
   return file && { file, folderId: folder.folderId };
 }

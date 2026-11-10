@@ -27,6 +27,6 @@ monaco.editor.addKeybindingRule({
 });
 
 /** Settle the loader at import time. */
-export const monacoReady = loader.init();
+void loader.init();
 
 export { monaco };
