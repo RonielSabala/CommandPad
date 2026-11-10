@@ -9,6 +9,7 @@ import {
   uniqueLabelIn,
   withLibraryRunbook,
   withoutRunbooks,
+  withRecentRunbook,
 } from "@/store/libraryState";
 import { getLibraryRunbook, getTabByRunbookId } from "@/store/selectors";
 import type { StoreServices } from "@/store/services";
@@ -234,6 +235,7 @@ export function createLibraryRunbooksSlice(
         tabs: [...s.tabs, tab],
         activeTabId: tab.id,
         activeRunbookId: runbookId,
+        recentRunbookIds: withRecentRunbook(s.recentRunbookIds, runbookId),
       }));
 
       trackCloudChanges(runbookId, tabContent(tab));

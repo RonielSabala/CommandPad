@@ -76,6 +76,7 @@ export function createLifecycleSlice(
           ? {
               libraryFolders: library.folders,
               libraryRunbooks: library.runbooks,
+              recentRunbookIds: library.recent,
             }
           : {}),
         activeRunbookId: initialActiveRunbookId,

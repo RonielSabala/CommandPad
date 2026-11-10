@@ -1,3 +1,4 @@
+import { RecentRunbooksConfig } from "@/common/config";
 import { DialogTone } from "@/common/enums";
 import type { LibraryFolder, LibraryRunbook, Tab } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
@@ -120,6 +121,21 @@ function focusAfterRemoval(
   return nearestSurvivor(visible, survivors, focused, isRemoved)?.id ?? null;
 }
 
+/** `recent` with `runbookId` moved to the front. */
+export function withRecentRunbook(
+  recent: string[],
+  runbookId: string | null,
+): string[] {
+  if (!runbookId || recent[0] === runbookId) {
+    return recent;
+  }
+
+  return [runbookId, ...recent.filter((id) => id !== runbookId)].slice(
+    0,
+    RecentRunbooksConfig.LIMIT,
+  );
+}
+
 /** Drop runbooks from the library and close their tabs. */
 export function withoutRunbooks(
   state: StoreState,
@@ -129,6 +145,7 @@ export function withoutRunbooks(
   | "tabs"
   | "activeTabId"
   | "activeRunbookId"
+  | "recentRunbookIds"
   | "libraryFolders"
   | "libraryRunbooks"
   | "focusedRunbookId"
@@ -161,6 +178,9 @@ export function withoutRunbooks(
     tabs,
     activeTabId,
     activeRunbookId,
+    recentRunbookIds: state.recentRunbookIds.filter(
+      (id) => !runbookIds.has(id),
+    ),
     libraryFolders: withFolderExpanded(state.libraryFolders, revealedFolderId),
     libraryRunbooks,
     focusedRunbookId: focusAfterRemoval(state, runbookIds),

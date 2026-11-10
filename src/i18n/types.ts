@@ -100,6 +100,7 @@ export interface Messages {
   runbooks: {
     title: string;
     searchPlaceholder: string;
+    recentlyOpened: string;
     empty: string;
     import: string;
     importTitle: string;
@@ -757,7 +758,7 @@ export interface Messages {
       moving: string;
       zipExport: (downloadZipLabel: string) => string;
       zipImport: (importZipLabel: string) => string;
-      quickOpen: (binding: string) => string;
+      quickOpen: (binding: string, recentlyOpened: string) => string;
       uniqueNames: string;
       labelDetails: string;
       autoSave: string;

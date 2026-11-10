@@ -82,6 +82,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
           get().libraryFolders,
           get().libraryRunbooks,
           get().activeRunbookId,
+          get().recentRunbookIds,
         ),
       saveUi: () => persist.saveUiState(uiStateSnapshot(get())),
     };

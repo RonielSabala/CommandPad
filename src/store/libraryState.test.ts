@@ -1,7 +1,8 @@
+import { RecentRunbooksConfig } from "@/common/config";
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 import { describe, expect, it } from "vitest";
 
-import { withoutRunbooks } from "./libraryState";
+import { withRecentRunbook, withoutRunbooks } from "./libraryState";
 import type { StoreState } from "./types";
 
 const runbook = (id: string, folderId?: string) =>
@@ -33,6 +34,7 @@ function focusAfterRemoving(
     activeTabId: null,
     libraryFolders: [OPEN, COLLAPSED],
     libraryRunbooks: LIBRARY,
+    recentRunbookIds: [],
     runbookSearchQuery,
     focusedRunbookId,
   } as unknown as StoreState;
@@ -81,6 +83,7 @@ describe("withoutRunbooks reveal", () => {
       activeTabId: `tab-${activeRunbookId}`,
       libraryFolders: [OPEN, COLLAPSED],
       libraryRunbooks: LIBRARY,
+      recentRunbookIds: [],
       runbookSearchQuery: "",
       focusedRunbookId: null,
     } as unknown as StoreState;
@@ -95,5 +98,45 @@ describe("withoutRunbooks reveal", () => {
 
   it("leaves a collapsed folder alone when the active tab stays", () => {
     expect(collapsedAfterRemoving("hidden", "first")).toBe(true);
+  });
+});
+
+describe("withRecentRunbook", () => {
+  it("moves the opened runbook to the front", () => {
+    expect(withRecentRunbook(["a", "b", "c"], "c")).toEqual(["c", "a", "b"]);
+  });
+
+  it("keeps the list when the runbook is already first or missing", () => {
+    const recent = ["a", "b"];
+    expect(withRecentRunbook(recent, "a")).toBe(recent);
+    expect(withRecentRunbook(recent, null)).toBe(recent);
+  });
+
+  it("drops the oldest past the limit", () => {
+    const full = Array.from(
+      { length: RecentRunbooksConfig.LIMIT },
+      (_, index) => `r${index}`,
+    );
+
+    expect(withRecentRunbook(full, "new")).toEqual([
+      "new",
+      ...full.slice(0, -1),
+    ]);
+  });
+
+  it("forgets removed runbooks", () => {
+    const state = {
+      tabs: [],
+      activeTabId: null,
+      libraryFolders: [OPEN, COLLAPSED],
+      libraryRunbooks: LIBRARY,
+      recentRunbookIds: ["last", "first"],
+      runbookSearchQuery: "",
+      focusedRunbookId: null,
+    } as unknown as StoreState;
+
+    expect(withoutRunbooks(state, new Set(["last"])).recentRunbookIds).toEqual([
+      "first",
+    ]);
   });
 });

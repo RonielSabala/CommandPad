@@ -43,6 +43,7 @@ export function createInitialState(): StoreData {
     libraryFolders: [],
     libraryRunbooks: [],
     activeRunbookId: null,
+    recentRunbookIds: [],
     runbookSyncStatus: {},
     embeddedRunbooks: {},
     embeddedSectionFolds: {},

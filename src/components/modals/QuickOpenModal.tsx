@@ -9,6 +9,7 @@ import { toPx } from "@/utils/dom";
 import {
   foundRunbooks,
   libraryPath,
+  recentFirst,
   type LibraryRunbookListing,
 } from "@/utils/libraryTree";
 import { displayLabel } from "@/utils/runbook";
@@ -23,7 +24,7 @@ import {
   type KeyboardEvent,
   type MouseEvent,
 } from "react";
-import { FileEarmark } from "react-bootstrap-icons";
+import { Clock, FileEarmark } from "react-bootstrap-icons";
 
 import { Modal } from "./Modal";
 import "./QuickOpenModal.css";
@@ -32,6 +33,7 @@ interface RowProps {
   listing: LibraryRunbookListing;
   index: number;
   selected: boolean;
+  recent: boolean;
   onOpen: (runbookId: string) => void;
   onHighlight: (index: number) => void;
 }
@@ -40,11 +42,13 @@ const QuickOpenRow = memo(function QuickOpenRow({
   listing: { runbook, path },
   index,
   selected,
+  recent,
   onOpen,
   onHighlight,
 }: RowProps) {
   const t = useTranslation();
   const label = displayLabel(runbook.label, t);
+  const Icon = recent ? Clock : FileEarmark;
 
   return (
     <li role={AriaRole.OPTION} aria-selected={selected}>
@@ -59,10 +63,16 @@ const QuickOpenRow = memo(function QuickOpenRow({
         onPointerMove={() => onHighlight(index)}
         {...tooltip(libraryPath([...path, label]))}
       >
-        <FileEarmark className={CssClass.ICON_MD} />
+        <Icon className={CssClass.ICON_MD} />
 
         <span className="quick-open-row-label">{label}</span>
         <span className="quick-open-row-path">{libraryPath(path)}</span>
+
+        {recent && (
+          <span className="quick-open-row-tag">
+            {t.runbooks.recentlyOpened}
+          </span>
+        )}
       </button>
     </li>
   );
@@ -79,14 +89,20 @@ function QuickOpenSearch() {
   const store = useStoreApi();
 
   const [query, setQuery] = useState("");
-  const [highlighted, setHighlighted] = useState(0);
   const listRef = useRef<HTMLUListElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
 
-  const rows = useMemo(() => {
-    const { libraryFolders, libraryRunbooks } = store.getState();
-    return foundRunbooks(libraryFolders, libraryRunbooks, query, t);
+  const { listings: rows, recentCount } = useMemo(() => {
+    const { libraryFolders, libraryRunbooks, recentRunbookIds } =
+      store.getState();
+
+    return recentFirst(
+      foundRunbooks(libraryFolders, libraryRunbooks, query, t),
+      recentRunbookIds,
+    );
   }, [store, query, t]);
+
+  const [highlighted, setHighlighted] = useState(0);
 
   // The modal's top edge starts where the tabs bar does
   useLayoutEffect(() => {
@@ -160,6 +176,7 @@ function QuickOpenSearch() {
               listing={listing}
               index={index}
               selected={index === highlighted}
+              recent={index < recentCount}
               onOpen={openRunbook}
               onHighlight={setHighlighted}
             />

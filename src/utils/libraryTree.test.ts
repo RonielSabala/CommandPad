@@ -21,6 +21,7 @@ import {
   libraryPathTrail,
   libraryRows,
   libraryRunbookDropParent,
+  recentFirst,
   repairLibrary,
   uniqueFolderName,
   uniqueRunbookLabel,
@@ -174,6 +175,28 @@ describe("foundRunbooks", () => {
   it("leaves out what the query doesn't match", () => {
     expect(found("read")).toEqual([["readme", []]]);
     expect(found("missing")).toEqual([]);
+  });
+});
+
+describe("recentFirst", () => {
+  const runbooks = [runbook("a"), runbook("b"), runbook("c"), runbook("d")];
+  const listings = foundRunbooks([], runbooks, "", en);
+
+  const ordered = (recentIds: string[]) => {
+    const { listings: rows, recentCount } = recentFirst(listings, recentIds);
+    return [rows.map(({ runbook }) => runbook.id), recentCount];
+  };
+
+  it("puts recent runbooks first, most recent first", () => {
+    expect(ordered(["c", "a"])).toEqual([["c", "a", "b", "d"], 2]);
+  });
+
+  it("skips recent runbooks the listings leave out", () => {
+    expect(ordered(["gone", "d"])).toEqual([["d", "a", "b", "c"], 1]);
+  });
+
+  it("keeps the listings as they are with nothing recent", () => {
+    expect(ordered(["gone"])).toEqual([["a", "b", "c", "d"], 0]);
   });
 });
 

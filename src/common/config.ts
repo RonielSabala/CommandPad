@@ -17,6 +17,10 @@ export const RunbookConfig = {
   DEFAULT_LABEL: "Untitled runbook",
 } as const;
 
+export const RecentRunbooksConfig = {
+  LIMIT: 5,
+} as const;
+
 export const LibraryFolderConfig = {
   DEFAULT_NAME: "New folder",
   NAME_MAX_LENGTH: 60,

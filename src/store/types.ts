@@ -167,6 +167,7 @@ export interface StoreState {
   libraryFolders: LibraryFolder[];
   libraryRunbooks: LibraryRunbook[];
   activeRunbookId: string | null;
+  recentRunbookIds: string[];
   runbookSyncStatus: Record<string, RunbookSyncStatus>;
   embeddedRunbooks: Record<string, EmbeddedRunbook>;
   embeddedSectionFolds: Record<string, boolean>;

@@ -56,6 +56,7 @@ export function RunbookLibraryDocs() {
       <Prose
         text={t.docs.runbookLibrary.quickOpen(
           formatBinding(KEYBINDINGS[KeyBinding.QUICK_OPEN].binding),
+          t.runbooks.recentlyOpened,
         )}
       />
       <Prose text={t.docs.runbookLibrary.autoLabel} />

@@ -274,6 +274,7 @@ interface PersistedRunbooks {
   folders: LibraryFolder[];
   runbooks: LibraryRunbook[];
   activeId: string | null;
+  recent: string[];
 }
 
 const isRunbookSync = (value: unknown): value is RunbookSync =>
@@ -334,12 +335,13 @@ export function saveRunbookLibrary(
   folders: LibraryFolder[],
   runbooks: LibraryRunbook[],
   activeId: string | null,
+  recent: string[],
 ): void {
   try {
     localStorage.setItem(
       StorageKey.RUNBOOK_LIBRARY,
       // Saved libraries store the runbooks under `items`
-      JSON.stringify({ folders, items: runbooks, activeId }),
+      JSON.stringify({ folders, items: runbooks, activeId, recent }),
     );
   } catch (error) {
     console.warn("Failed to save runbook library:", error);
@@ -359,7 +361,12 @@ export function loadRunbookLibrary(t: Messages): PersistedRunbooks | null {
       t,
     );
 
-    return { folders, runbooks, activeId: saved.activeId ?? null };
+    const ids = new Set(runbooks.map((r) => r.id));
+    const recent = Array.isArray(saved.recent)
+      ? saved.recent.filter((id: unknown) => isString(id) && ids.has(id))
+      : [];
+
+    return { folders, runbooks, activeId: saved.activeId ?? null, recent };
   } catch (error) {
     console.warn("Failed to load runbook library:", error);
     return null;

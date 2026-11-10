@@ -77,6 +77,7 @@ export const en: Messages = {
   runbooks: {
     title: "RUNBOOKS",
     searchPlaceholder: "Search runbooks…",
+    recentlyOpened: "recently opened",
     empty: "No runbooks imported.",
     import: "Import",
     importTitle: "Import runbook",
@@ -1242,8 +1243,8 @@ If something goes wrong, undo it in this order:
         `**Taking it with you:** **${downloadZipLabel}**, in a folder's menu, downloads that folder. Folders stay folders, even empty ones, and each runbook becomes a \`.json\` file.`,
       zipImport: (importZipLabel) =>
         `**Bringing it back:** drop a \`.zip\` on the library, or pick **${importZipLabel}** from the arrow beside the import button. It lands in a new folder named after the zip, with its folders and runbooks inside.`,
-      quickOpen: (binding) =>
-        `**Opening by name:** press \`${binding}\` anywhere in the workspace to search the whole library by label, filename, folder or path. Pick a result with the arrow keys and press Enter to open it.`,
+      quickOpen: (binding, recentlyOpened) =>
+        `**Opening by name:** press \`${binding}\` anywhere in the workspace to search the whole library by label, filename, folder or path. Pick a result with the arrow keys and press Enter to open it. The last runbooks you opened come first, tagged \`${recentlyOpened}\`.`,
       uniqueNames:
         "**Names are unique per folder:** two runbooks can share a name in different folders, but not in the same one, because a runbook block finds a runbook by its name. Renaming a runbook to a name its folder already has, or moving it into a folder that has its name, offers a numbered name like `Deploy (1)`, which you can take or cancel. New runbooks, copies and automatic labels get the number on their own. Folders follow the same rule among the folders beside them.",
       labelDetails:

@@ -170,6 +170,35 @@ export function foundRunbooks(
   return found;
 }
 
+export interface RecentFirstListings {
+  listings: LibraryRunbookListing[];
+  /** How many leading listings are recent. */
+  recentCount: number;
+}
+
+/** `listings` with the ones in `recentIds` first, in that order. */
+export function recentFirst(
+  listings: readonly LibraryRunbookListing[],
+  recentIds: readonly string[],
+): RecentFirstListings {
+  const rank = new Map(recentIds.map((id, index) => [id, index]));
+  const recent: LibraryRunbookListing[] = [];
+  const rest: LibraryRunbookListing[] = [];
+
+  for (const listing of listings) {
+    const index = rank.get(listing.runbook.id);
+
+    if (index === undefined) {
+      rest.push(listing);
+    } else {
+      recent[index] = listing;
+    }
+  }
+
+  const found = recent.flat();
+  return { listings: [...found, ...rest], recentCount: found.length };
+}
+
 /** The runbooks the library list shows. */
 export function visibleRunbooks(
   folders: readonly LibraryFolder[],

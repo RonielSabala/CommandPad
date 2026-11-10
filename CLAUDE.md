@@ -68,7 +68,7 @@ One store holds everything: `tabs`, `activeTabId`, `libraryRunbooks`, UI flags (
 
 ### Persistence
 
-- **localStorage** (`persistence.ts`, `StorageKey`): `commandpad_ui_state` (theme, language, panels, …), `commandpad_tabs` (tab meta incl. per-view scroll and embed views), `commandpad_runbook_library` (entries incl. `folderId`, `sync`, `secured`, `vault` record, plus `folders`), `commandpad_sidebar_sections`, `commandpad_visited_home`, `commandpad_docs_page`, `commandpad_docs_collapsed`, `commandpad_google_session`.
+- **localStorage** (`persistence.ts`, `StorageKey`): `commandpad_ui_state` (theme, language, panels, …), `commandpad_tabs` (tab meta incl. per-view scroll and embed views), `commandpad_runbook_library` (entries incl. `folderId`, `sync`, `secured`, `vault` record, plus `folders` and `recent`, the ids quick open lists first, moved up by `withRecentRunbook` on every open and pruned by `withoutRunbooks`), `commandpad_sidebar_sections`, `commandpad_visited_home`, `commandpad_docs_page`, `commandpad_docs_collapsed`, `commandpad_google_session`.
 - **IndexedDB** (`runbookDb.ts`, db `commandpad_runbooks_db`, store `runbooks`) — runbook **content** (variables, sections, blocks) keyed by runbook id.
 - `saveState()` persists meta + UI state + active content; edits go through a per-instance `debouncedSaveState`. `bootstrap()` loads localStorage synchronously, then rehydrates content from IndexedDB, then flips `initialized` (which gates saving).
 - **Every content write goes through `writeRunbookContent`** (put + `markRunbookSecured` + embed invalidation). Adding a raw `contentDb.put` elsewhere drifts the secured badge and embeds.

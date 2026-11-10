@@ -6,7 +6,7 @@ import { withFolderExpanded } from "@/utils/libraryTree";
 import { findTabById, findTabByRunbookId } from "@/utils/tabs";
 
 import type { StoreKit } from "@/store/kit";
-import { uniqueLabelIn } from "@/store/libraryState";
+import { uniqueLabelIn, withRecentRunbook } from "@/store/libraryState";
 import type { StoreServices } from "@/store/services";
 import { createTabObject, tabContent } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
@@ -53,6 +53,7 @@ export function createTabsSlice(
         libraryFolders: withFolderExpanded(s.libraryFolders, folderId),
         libraryRunbooks: [...s.libraryRunbooks, runbook],
         activeRunbookId: runbookId,
+        recentRunbookIds: withRecentRunbook(s.recentRunbookIds, runbookId),
         focusedRunbookId: null,
         runbookSearchQuery: "",
       }));
@@ -69,14 +70,23 @@ export function createTabsSlice(
       }
 
       const runbookId = findTabById(state.tabs, tabId)?.runbookId ?? null;
+      const recentRunbookIds = withRecentRunbook(
+        state.recentRunbookIds,
+        runbookId,
+      );
+
       revealRunbook(runbookId);
       set({
         activeTabId: tabId,
         activeRunbookId: runbookId,
+        recentRunbookIds,
         selectKeyHeld: false,
       });
 
       saveTabs();
+      if (recentRunbookIds !== state.recentRunbookIds) {
+        saveLibrary();
+      }
     },
 
     closeTab: (tabId) => {

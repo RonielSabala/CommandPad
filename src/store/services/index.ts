@@ -48,6 +48,7 @@ export function createStoreServices(kit: StoreKit) {
       tabs: [],
       activeTabId: null,
       activeRunbookId: null,
+      recentRunbookIds: [],
       libraryFolders: [],
       libraryRunbooks: [],
       runbookSyncStatus: {},
