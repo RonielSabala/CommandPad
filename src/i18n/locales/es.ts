@@ -841,6 +841,7 @@ export const es: Messages = {
       "Cambiar entre los bloques y el editor de variables",
     [KeyBinding.TOGGLE_SOURCE_VIEW]:
       "Cambiar entre los bloques y el archivo fuente del libro",
+    [KeyBinding.TOGGLE_SIDEBAR]: "Contraer o expandir la barra lateral",
     [KeyBinding.MULTISELECT_BLOCKS]: "Selección múltiple de bloques",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicar bloques seleccionados",
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
@@ -1247,7 +1248,8 @@ Si algo sale mal, deshazlo en este orden:
     sidebar: {
       intro:
         "La barra lateral contiene la biblioteca de libros y el panel de variables.",
-      items: `* **Contraer / expandir**: haz clic en el botón de flecha o usa su atajo de teclado.
+      items: (toggleShortcut) =>
+        `* **Contraer / expandir**: haz clic en el botón de flecha o pulsa \`${toggleShortcut}\`.
 * **Mover a izquierda / derecha**: haz clic en el botón de disposición para mover la barra lateral al otro lado de la pantalla.
 * **Redimensionar**: arrastra el borde interior de la barra lateral; doble clic para contraerla.`,
       resizeDetails:

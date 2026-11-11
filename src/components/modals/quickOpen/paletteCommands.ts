@@ -63,6 +63,7 @@ export const PALETTE_COMMANDS: Record<
     run: (state) => state.toggleRunbookView(RunbookView.SOURCE),
   },
   [PaletteCommand.TOGGLE_SIDEBAR]: {
+    binding: KeyBinding.TOGGLE_SIDEBAR,
     run: (state) => state.togglePanel(PanelId.SIDEBAR),
   },
   [PaletteCommand.MOVE_SIDEBAR]: {

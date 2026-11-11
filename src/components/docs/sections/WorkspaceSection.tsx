@@ -1,3 +1,4 @@
+import { bindingLabel, KeyBinding } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
 import { Prose } from "../Prose";
 
@@ -43,7 +44,9 @@ export function SidebarDocs() {
   return (
     <>
       <Prose text={t.docs.sidebar.intro} />
-      <Prose text={t.docs.sidebar.items} />
+      <Prose
+        text={t.docs.sidebar.items(bindingLabel(KeyBinding.TOGGLE_SIDEBAR))}
+      />
       <Prose text={t.docs.sidebar.resizeDetails} />
     </>
   );

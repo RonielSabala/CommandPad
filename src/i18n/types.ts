@@ -733,7 +733,7 @@ export interface Messages {
     };
     sidebar: {
       intro: string;
-      items: string;
+      items: (toggleShortcut: string) => string;
       resizeDetails: string;
     };
     runbookLibrary: {

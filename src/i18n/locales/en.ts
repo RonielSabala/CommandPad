@@ -823,6 +823,7 @@ export const en: Messages = {
       "Switch between the blocks and the variables editor",
     [KeyBinding.TOGGLE_SOURCE_VIEW]:
       "Switch between the blocks and the runbook's source file",
+    [KeyBinding.TOGGLE_SIDEBAR]: "Collapse or expand the sidebar",
     [KeyBinding.MULTISELECT_BLOCKS]: "Multi-select blocks",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicate selected blocks",
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
@@ -1220,7 +1221,8 @@ If something goes wrong, undo it in this order:
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",
-      items: `* **Collapse / expand**: click the chevron button or use its keyboard shortcut.
+      items: (toggleShortcut) =>
+        `* **Collapse / expand**: click the chevron button or press \`${toggleShortcut}\`.
 * **Move left / right**: click the layout button to move the sidebar to the other side of the screen.
 * **Resize**: drag the sidebar's inner edge; double-click it to collapse.`,
       resizeDetails:

@@ -1,7 +1,7 @@
 import { QuickOpenConfig } from "@/common/config";
 import { InputSelector } from "@/common/constants/dom";
 import { EventType, Key, Modifier } from "@/common/constants/events";
-import { MoveDirection, RunbookView } from "@/common/enums";
+import { MoveDirection, PanelId, RunbookView } from "@/common/enums";
 import {
   isModifierPressed,
   KeyBinding,
@@ -142,6 +142,12 @@ export function useKeybindings(): void {
         hit = true;
       } else if (matchesKeybinding(event, KeyBinding.TOGGLE_SOURCE_VIEW)) {
         state.toggleRunbookView(RunbookView.SOURCE);
+        hit = true;
+      } else if (
+        !event.defaultPrevented &&
+        matchesKeybinding(event, KeyBinding.TOGGLE_SIDEBAR)
+      ) {
+        state.togglePanel(PanelId.SIDEBAR);
         hit = true;
       }
 
