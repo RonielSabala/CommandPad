@@ -48,6 +48,11 @@ export const AriaRole = {
   MENU_ITEM_CHECKBOX: "menuitemcheckbox",
   PROGRESSBAR: "progressbar",
   SEPARATOR: "separator",
+  GROUP: "group",
+} as const;
+
+export const AriaCurrent = {
+  PAGE: "page",
 } as const;
 
 export const SelectSelector = {

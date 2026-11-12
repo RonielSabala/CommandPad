@@ -332,6 +332,15 @@ export function BookIcon(props: IconProps) {
   );
 }
 
+export function GearIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
+      <path d="M6.72 2.86L7.03 1.07L8.97 1.07L9.28 2.86L10.73 3.46L12.21 2.41L13.59 3.79L12.54 5.27L13.14 6.72L14.93 7.03L14.93 8.97L13.14 9.28L12.54 10.73L13.59 12.21L12.21 13.59L10.73 12.54L9.28 13.14L8.97 14.93L7.03 14.93L6.72 13.14L5.27 12.54L3.79 13.59L2.41 12.21L3.46 10.73L2.86 9.28L1.07 8.97L1.07 7.03L2.86 6.72L3.46 5.27L2.41 3.79L3.79 2.41L5.27 3.46z" />
+      <circle cx="8" cy="8" r="2.25" />
+    </svg>
+  );
+}
+
 export function EmptyStateIcon(props: IconProps) {
   return (
     <svg aria-hidden={true} viewBox="0 0 40 40" {...props}>

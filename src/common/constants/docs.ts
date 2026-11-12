@@ -46,6 +46,7 @@ export const DocsSectionId = {
   CLOUD_EXPORT: "cloud-export",
   CLOUD_LINKED_SYNC: "cloud-linked-sync",
   CLOUD_FILE_MANAGEMENT: "cloud-file-management",
+  SETTINGS: "settings",
   LANGUAGE: "language",
   KEYBOARD_SHORTCUTS: "keyboard-shortcuts",
   QA: "qa",
@@ -140,7 +141,8 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
     level: DocsSectionLevel.SUBSECTION,
   },
   { id: DocsSectionId.AI_AGENT, level: DocsSectionLevel.SECTION },
-  { id: DocsSectionId.LANGUAGE, level: DocsSectionLevel.SECTION },
+  { id: DocsSectionId.SETTINGS, level: DocsSectionLevel.SECTION },
+  { id: DocsSectionId.LANGUAGE, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.KEYBOARD_SHORTCUTS, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.QA, level: DocsSectionLevel.SECTION },
 ];

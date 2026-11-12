@@ -43,9 +43,18 @@ export const PaletteCommand = {
   TOGGLE_MINIMAP: "toggleMinimap",
   MOVE_MINIMAP: "moveMinimap",
   TOGGLE_SPELLCHECK: "toggleSpellcheck",
+  OPEN_SETTINGS: "openSettings",
 } as const;
 export type PaletteCommand =
   (typeof PaletteCommand)[keyof typeof PaletteCommand];
+
+/** A page of the settings modal. */
+export const SettingsCategory = {
+  APPEARANCE: "appearance",
+  WORKSPACE: "workspace",
+} as const;
+export type SettingsCategory =
+  (typeof SettingsCategory)[keyof typeof SettingsCategory];
 
 export const SectionState = {
   EXPANDED: "expanded",

@@ -15,6 +15,7 @@ import { ConfirmModal } from "../modals/dialogs/ConfirmModal";
 import { ExportModal } from "../modals/ExportModal";
 import { PasteRunbookModal } from "../modals/PasteRunbookModal";
 import { QuickOpenModal } from "../modals/quickOpen/QuickOpenModal";
+import { SettingsModal } from "../modals/settings/SettingsModal";
 import { VaultModal } from "../modals/vault/VaultModal";
 import { RunbookImportInput } from "../sidebar/runbooks/import/RunbookImportInput";
 import { Sidebar } from "../sidebar/Sidebar";
@@ -53,6 +54,7 @@ export function WorkspacePage() {
       <CloudImportModal />
       <CloudFileEditorModal />
       <CloudConflictModal />
+      <SettingsModal />
       <VaultModal />
       <ConfirmModal />
       <AlertModal />

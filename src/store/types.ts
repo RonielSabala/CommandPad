@@ -198,6 +198,7 @@ export interface StoreState {
   cloudExportStatus: CloudExportStatus;
   cloudExportProvider: CloudProvider | null;
   pasteRunbookModalOpen: boolean;
+  settingsModalOpen: boolean;
   quickOpenQuery: string | null;
   confirmDialog: ConfirmDialog | null;
   alertDialog: AlertDialog | null;
@@ -254,6 +255,7 @@ export interface StoreState {
   toggleAppMode: () => void;
   toggleRunbookView: (view: RunbookView) => void;
   applyRunbookSource: (text: string) => string | null;
+  setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
   toggleSpellcheck: () => void;
   setLanguage: (language: Language) => void;
@@ -267,6 +269,8 @@ export interface StoreState {
   resetVariableKeyRatio: () => void;
   toggleRunbookSection: () => void;
   toggleVariablesSection: () => void;
+  openSettingsModal: () => void;
+  closeSettingsModal: () => void;
 
   // Search
   setRunbookSearchQuery: (query: string) => void;

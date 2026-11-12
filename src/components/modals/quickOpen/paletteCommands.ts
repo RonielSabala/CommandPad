@@ -82,6 +82,10 @@ export const PALETTE_COMMANDS: Record<
   [PaletteCommand.TOGGLE_SPELLCHECK]: {
     run: (state) => state.toggleSpellcheck(),
   },
+  [PaletteCommand.OPEN_SETTINGS]: {
+    binding: KeyBinding.OPEN_SETTINGS,
+    run: (state) => state.openSettingsModal(),
+  },
 };
 
 const COMMAND_ORDER = Object.values(PaletteCommand);

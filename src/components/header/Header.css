@@ -43,7 +43,3 @@
   align-items: center;
   gap: var(--space-3);
 }
-
-#reset-workspace-icon {
-  fill: currentColor;
-}

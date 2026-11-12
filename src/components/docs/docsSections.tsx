@@ -16,7 +16,6 @@ import {
   ExportDocs,
 } from "./sections/ExportSection";
 import { GettingStartedDocs } from "./sections/GettingStartedSection";
-import { LanguageDocs } from "./sections/LanguageSection";
 import { MultiSelectDocs } from "./sections/MultiSelectSection";
 import { QaDocs } from "./sections/QaSection";
 import { ReadModeDocs } from "./sections/ReadModeSection";
@@ -25,6 +24,7 @@ import {
   RunbookBlockDocs,
 } from "./sections/RunbookBlockSection";
 import { RunbookLibraryDocs } from "./sections/RunbookLibrarySection";
+import { LanguageDocs, SettingsDocs } from "./sections/SettingsSection";
 import { KeyboardShortcutsDocs } from "./sections/ShortcutsSection";
 import { TabsDocs } from "./sections/TabsSection";
 import {
@@ -110,6 +110,7 @@ export const DOCS_SECTION_CONTENT: Record<DocsSectionId, ComponentType> = {
   [DocsSectionId.CLOUD_LINKED_SYNC]: CloudLinkedSyncDocs,
   [DocsSectionId.CLOUD_FILE_MANAGEMENT]: CloudFileManagementDocs,
   [DocsSectionId.AI_AGENT]: AiAgentDocs,
+  [DocsSectionId.SETTINGS]: SettingsDocs,
   [DocsSectionId.LANGUAGE]: LanguageDocs,
   [DocsSectionId.KEYBOARD_SHORTCUTS]: KeyboardShortcutsDocs,
   [DocsSectionId.QA]: QaDocs,

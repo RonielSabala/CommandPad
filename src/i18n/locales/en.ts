@@ -9,7 +9,9 @@ import {
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
+  SettingsCategory,
   SortDirection,
+  Theme,
   UnresolvedCause,
   VariableEntryKind,
   VaultError,
@@ -51,7 +53,7 @@ export const en: Messages = {
     collapseAll: "Collapse All",
     toggleEditorsTitle: "Expand/collapse all blocks",
     toggleSectionsTitle: "Expand/collapse all variable sections",
-    resetWorkspaceTitle: "Reset workspace",
+    openSettings: "Open settings",
     exportTitle: "Export runbook",
     export: "Export",
     changeLanguage: "Change language",
@@ -797,6 +799,7 @@ export const en: Messages = {
       [PaletteCommand.TOGGLE_MINIMAP]: "Toggle minimap",
       [PaletteCommand.MOVE_MINIMAP]: "Move minimap to the other side",
       [PaletteCommand.TOGGLE_SPELLCHECK]: "Toggle spell check",
+      [PaletteCommand.OPEN_SETTINGS]: "Open settings",
     },
   },
   keybindings: {
@@ -824,6 +827,7 @@ export const en: Messages = {
     [KeyBinding.TOGGLE_SOURCE_VIEW]:
       "Switch between the blocks and the runbook's source file",
     [KeyBinding.TOGGLE_SIDEBAR]: "Collapse or expand the sidebar",
+    [KeyBinding.OPEN_SETTINGS]: "Open the settings",
     [KeyBinding.MULTISELECT_BLOCKS]: "Multi-select blocks",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicate selected blocks",
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
@@ -839,6 +843,33 @@ export const en: Messages = {
     [KeyBinding.WRAP_SELECTION]:
       "Wrap selected text in the typed pair (any text field)",
     [KeyBinding.SUBMIT_EDITOR]: "Save / create from a code editor",
+  },
+  settings: {
+    title: "Settings",
+    categories: {
+      [SettingsCategory.APPEARANCE]: "Appearance",
+      [SettingsCategory.WORKSPACE]: "Workspace",
+    },
+    theme: {
+      title: "Theme",
+      description: "The color scheme of the whole app.",
+      options: {
+        [Theme.LIGHT]: "Light",
+        [Theme.DARK]: "Dark",
+      },
+    },
+    language: {
+      title: "Language",
+      description:
+        "The language of the interface. The content of your runbooks is never translated.",
+    },
+    dangerZone: "Danger zone",
+    reset: {
+      title: "Reset workspace",
+      description:
+        "Delete every tab, runbook, variable and preference stored in this browser. This cannot be undone.",
+      action: "Reset workspace",
+    },
   },
   footer: {
     privacy: "Privacy",
@@ -1098,6 +1129,7 @@ export const en: Messages = {
       [DocsSectionId.CLOUD_LINKED_SYNC]: "Keeping a runbook in sync",
       [DocsSectionId.CLOUD_FILE_MANAGEMENT]: "Managing cloud files",
       [DocsSectionId.AI_AGENT]: "AI agent",
+      [DocsSectionId.SETTINGS]: "Settings",
       [DocsSectionId.LANGUAGE]: "Language",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Keyboard shortcuts",
       [DocsSectionId.QA]: "Q&A",
@@ -1173,10 +1205,8 @@ If something goes wrong, undo it in this order:
       ) => `* The **CommandPad logo**: click it to reload the app.
 * The **padlock / pencil**: switches between read mode and edit mode. It has its own section later in this guide.
 * **${collapseAllLabel}**: collapses or expands every block in the active runbook at once. In the variables editor it folds or unfolds every variable section instead.
-* The **sun / moon**: switches between the light and dark themes.
-* The **language selector**: changes the interface language.
+* The **gear**: opens the settings. They have their own section later.
 * The **book**: opens this documentation.
-* The **red arrow**: resets the workspace. It wipes everything, so the app always asks you to confirm first.
 * **${exportLabel}**: saves the active runbook to a file. It also has its own section later.`,
     },
     mainPanel: {
@@ -1823,9 +1853,17 @@ If something goes wrong, undo it in this order:
       updates:
         "It grows with the app: every new block type, field and operation lands in it too, so copy it again after an update. And read what your agent writes before you run it, exactly as you would a script somebody sent you.",
     },
+    settings: {
+      intro: (shortcut) =>
+        `The settings gather the preferences that apply to the whole app. Open them with the **gear** in the header, or press \`${shortcut}\`. A change applies at once and is remembered in this browser.`,
+      categories: (appearanceLabel, workspaceLabel, resetLabel) =>
+        `Pick a category on the left:
+* **${appearanceLabel}**: the light or dark theme, and the interface language.
+* **${workspaceLabel}**: **${resetLabel}** wipes every tab, runbook, variable and preference from this browser. It cannot be undone, so the app always asks you to confirm first.`,
+    },
     language: {
-      intro:
-        "Use the **language selector** in the header to pick the interface language.",
+      intro: (appearanceLabel, languageLabel) =>
+        `Pick the interface language in the settings: **${languageLabel}**, under **${appearanceLabel}**.`,
       detection:
         "The app detects your browser language on first visit, and your choice is remembered afterward.",
     },

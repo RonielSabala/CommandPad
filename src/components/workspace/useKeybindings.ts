@@ -101,6 +101,9 @@ export function useKeybindings(): void {
       } else if (matchesKeybinding(event, KeyBinding.COMMAND_PALETTE)) {
         state.openQuickOpenModal(QuickOpenConfig.COMMAND_PREFIX);
         hit = true;
+      } else if (matchesKeybinding(event, KeyBinding.OPEN_SETTINGS)) {
+        state.openSettingsModal();
+        hit = true;
       } else if (matchesKeybinding(event, KeyBinding.EXPORT)) {
         if ((getActiveTab(state)?.blocks.length ?? 0) > 0) {
           state.openExportModal();

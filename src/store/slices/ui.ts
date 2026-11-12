@@ -24,6 +24,7 @@ type UiActions = Pick<
   | "toggleAppMode"
   | "toggleRunbookView"
   | "applyRunbookSource"
+  | "setTheme"
   | "toggleTheme"
   | "toggleSpellcheck"
   | "setLanguage"
@@ -37,6 +38,8 @@ type UiActions = Pick<
   | "resetVariableKeyRatio"
   | "toggleRunbookSection"
   | "toggleVariablesSection"
+  | "openSettingsModal"
+  | "closeSettingsModal"
   | "setRunbookSearchQuery"
   | "setVariableSearchQuery"
 >;
@@ -94,12 +97,17 @@ export function createUiSlice(kit: StoreKit): UiActions {
       return buildRunbookSource(content);
     },
 
-    toggleTheme: () => {
-      set((s) => ({
-        theme: s.theme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT,
-      }));
+    setTheme: (theme) => {
+      if (get().theme === theme) {
+        return;
+      }
 
+      set({ theme });
       saveUi();
+    },
+
+    toggleTheme: () => {
+      get().setTheme(get().theme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT);
     },
 
     toggleSpellcheck: () => {
@@ -198,6 +206,9 @@ export function createUiSlice(kit: StoreKit): UiActions {
       }));
       persist.saveSidebarSections(sidebarSectionsSnapshot(get()));
     },
+
+    openSettingsModal: () => set({ settingsModalOpen: true }),
+    closeSettingsModal: () => set({ settingsModalOpen: false }),
 
     setRunbookSearchQuery: (query) => set({ runbookSearchQuery: query }),
     setVariableSearchQuery: (query) => set({ variableSearchQuery: query }),

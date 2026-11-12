@@ -9,7 +9,9 @@ import {
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
+  SettingsCategory,
   SortDirection,
+  Theme,
   UnresolvedCause,
   VariableEntryKind,
   VaultError,
@@ -51,7 +53,7 @@ export const es: Messages = {
     collapseAll: "Contraer todo",
     toggleEditorsTitle: "Expandir/contraer todos los bloques",
     toggleSectionsTitle: "Expandir/contraer todas las secciones de variables",
-    resetWorkspaceTitle: "Resetear espacio de trabajo",
+    openSettings: "Abrir configuración",
     exportTitle: "Exportar libro",
     export: "Exportar",
     changeLanguage: "Cambiar idioma",
@@ -814,6 +816,7 @@ export const es: Messages = {
       [PaletteCommand.TOGGLE_MINIMAP]: "Alternar minimapa",
       [PaletteCommand.MOVE_MINIMAP]: "Mover el minimapa al otro lado",
       [PaletteCommand.TOGGLE_SPELLCHECK]: "Alternar corrector ortográfico",
+      [PaletteCommand.OPEN_SETTINGS]: "Abrir configuración",
     },
   },
   keybindings: {
@@ -842,6 +845,7 @@ export const es: Messages = {
     [KeyBinding.TOGGLE_SOURCE_VIEW]:
       "Cambiar entre los bloques y el archivo fuente del libro",
     [KeyBinding.TOGGLE_SIDEBAR]: "Contraer o expandir la barra lateral",
+    [KeyBinding.OPEN_SETTINGS]: "Abrir la configuración",
     [KeyBinding.MULTISELECT_BLOCKS]: "Selección múltiple de bloques",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicar bloques seleccionados",
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
@@ -861,6 +865,33 @@ export const es: Messages = {
     [KeyBinding.WRAP_SELECTION]:
       "Envolver el texto seleccionado en el par escrito (cualquier campo de texto)",
     [KeyBinding.SUBMIT_EDITOR]: "Guardar / crear desde un editor de código",
+  },
+  settings: {
+    title: "Configuración",
+    categories: {
+      [SettingsCategory.APPEARANCE]: "Apariencia",
+      [SettingsCategory.WORKSPACE]: "Espacio de trabajo",
+    },
+    theme: {
+      title: "Tema",
+      description: "El esquema de colores de toda la app.",
+      options: {
+        [Theme.LIGHT]: "Claro",
+        [Theme.DARK]: "Oscuro",
+      },
+    },
+    language: {
+      title: "Idioma",
+      description:
+        "El idioma de la interfaz. El contenido de tus libros nunca se traduce.",
+    },
+    dangerZone: "Zona de peligro",
+    reset: {
+      title: "Resetear espacio de trabajo",
+      description:
+        "Elimina todas las pestañas, libros, variables y preferencias guardadas en este navegador. No se puede deshacer.",
+      action: "Resetear espacio de trabajo",
+    },
   },
   footer: {
     privacy: "Privacidad",
@@ -1120,6 +1151,7 @@ export const es: Messages = {
       [DocsSectionId.CLOUD_LINKED_SYNC]: "Mantener un libro sincronizado",
       [DocsSectionId.CLOUD_FILE_MANAGEMENT]: "Gestionar archivos en la nube",
       [DocsSectionId.AI_AGENT]: "Agente de IA",
+      [DocsSectionId.SETTINGS]: "Configuración",
       [DocsSectionId.LANGUAGE]: "Idioma",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Atajos de teclado",
       [DocsSectionId.QA]: "Preguntas y respuestas",
@@ -1199,10 +1231,8 @@ Si algo sale mal, deshazlo en este orden:
       ) => `* El **logo de CommandPad**: haz clic en él para recargar la app.
 * El **candado / lápiz**: alterna entre el modo lectura y el modo edición. Tiene su propia sección más adelante.
 * **${collapseAllLabel}**: contrae o expande de golpe todos los bloques del libro activo. En el editor de variables pliega o despliega todas las secciones de variables.
-* El **sol / la luna**: cambia entre el tema claro y oscuro.
-* El **selector de idioma**: cambia el idioma de la interfaz.
+* El **engranaje**: abre la configuración. Tiene su propia sección más adelante.
 * El **libro**: abre esta documentación.
-* La **flecha roja**: resetea el espacio de trabajo. Lo borra todo, así que la app siempre te pide confirmación antes.
 * **${exportLabel}**: guarda el libro activo en un archivo. También tiene su propia sección más adelante.`,
     },
     mainPanel: {
@@ -1851,9 +1881,17 @@ Si algo sale mal, deshazlo en este orden:
       updates:
         "Crece con la aplicación: cada bloque, campo u operación que se añade acaba también aquí, así que vuelve a copiarlo después de cada actualización. Y revisa lo que escriba tu agente antes de ejecutarlo, igual que harías con cualquier script que te pasen.",
     },
+    settings: {
+      intro: (shortcut) =>
+        `La configuración reúne las preferencias que afectan a toda la app. Ábrela con el **engranaje** de la cabecera, o pulsa \`${shortcut}\`. Un cambio se aplica al momento y se recuerda en este navegador.`,
+      categories: (appearanceLabel, workspaceLabel, resetLabel) =>
+        `Elige una categoría a la izquierda:
+* **${appearanceLabel}**: el tema claro u oscuro, y el idioma de la interfaz.
+* **${workspaceLabel}**: **${resetLabel}** borra de este navegador todas las pestañas, libros, variables y preferencias. No se puede deshacer, así que la app siempre te pide confirmación antes.`,
+    },
     language: {
-      intro:
-        "Usa el **selector de idioma** de la cabecera para elegir el idioma de la interfaz.",
+      intro: (appearanceLabel, languageLabel) =>
+        `Elige el idioma de la interfaz en la configuración: **${languageLabel}**, dentro de **${appearanceLabel}**.`,
       detection:
         "La app detecta el idioma de tu navegador en la primera visita, y tu elección se recuerda después.",
     },

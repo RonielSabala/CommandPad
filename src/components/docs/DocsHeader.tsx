@@ -1,6 +1,7 @@
 import { CssClass, HEADER_ICON_CLASS } from "@/common/constants/css";
 import { AppRoute } from "@/common/constants/routes";
 import { Theme } from "@/common/enums";
+import { LanguageSelect } from "@/components/common/LanguageSelect";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { MoonIcon, SunIcon } from "@/components/icons";
@@ -11,7 +12,6 @@ import { BoxArrowLeft } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
 import "../header/Header.css";
-import { LanguageSelect } from "../header/LanguageSelect";
 import "./DocsHeader.css";
 
 export function DocsHeader() {

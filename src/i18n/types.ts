@@ -8,7 +8,9 @@ import type {
   PanelId,
   RunbookSyncStatus,
   SaveOutcome,
+  SettingsCategory,
   SortDirection,
+  Theme,
   UnresolvedCause,
   VariableEntryKind,
   VaultError,
@@ -77,7 +79,7 @@ export interface Messages {
     collapseAll: string;
     toggleEditorsTitle: string;
     toggleSectionsTitle: string;
-    resetWorkspaceTitle: string;
+    openSettings: string;
     exportTitle: string;
     export: string;
     changeLanguage: string;
@@ -618,6 +620,25 @@ export interface Messages {
     commands: Record<PaletteCommand, string>;
   };
   keybindings: Record<KeyBinding, string>;
+  settings: {
+    title: string;
+    categories: Record<SettingsCategory, string>;
+    theme: {
+      title: string;
+      description: string;
+      options: Record<Theme, string>;
+    };
+    language: {
+      title: string;
+      description: string;
+    };
+    dangerZone: string;
+    reset: {
+      title: string;
+      description: string;
+      action: string;
+    };
+  };
   footer: {
     privacy: string;
     terms: string;
@@ -1072,8 +1093,16 @@ export interface Messages {
       promptLanguage: string;
       updates: string;
     };
+    settings: {
+      intro: (shortcut: string) => string;
+      categories: (
+        appearanceLabel: string,
+        workspaceLabel: string,
+        resetLabel: string,
+      ) => string;
+    };
     language: {
-      intro: string;
+      intro: (appearanceLabel: string, languageLabel: string) => string;
       detection: string;
     };
     keyboardShortcuts: {
