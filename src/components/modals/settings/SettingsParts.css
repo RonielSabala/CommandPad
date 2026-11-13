@@ -1,0 +1,96 @@
+/* Setting item */
+
+.setting-item {
+  position: relative;
+  padding: var(--space-8) 0;
+}
+
+.setting-item + .setting-item {
+  border-top: var(--border-standard);
+}
+
+/* Focused setting bar */
+.setting-item:focus-within::before {
+  content: "";
+  position: absolute;
+  top: var(--space-8);
+  bottom: var(--space-8);
+  left: calc(-1 * var(--space-8));
+  width: var(--space-1);
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+}
+
+.setting-item-title {
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.setting-item-description {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-md);
+  color: var(--color-text-secondary);
+}
+
+.setting-item-control {
+  margin-top: var(--space-5);
+}
+
+/* Setting select */
+
+.setting-select {
+  width: fit-content;
+}
+
+.setting-select-trigger {
+  min-width: var(--setting-control-width);
+  justify-content: space-between;
+}
+
+.setting-select-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Danger zone */
+
+.danger-zone {
+  margin-top: var(--space-8);
+}
+
+.danger-zone .framed-section-title {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.danger-zone .framed-section-frame {
+  border-color: var(--danger);
+}
+
+/* Danger zone item */
+
+.danger-zone .framed-section-row.danger-zone-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  padding: var(--space-6) var(--space-8);
+}
+
+.danger-zone-text {
+  min-width: 0;
+}
+
+.btn.danger-zone-button {
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: var(--danger);
+}
+
+.btn.danger-zone-button:hover {
+  background: var(--danger-solid);
+  border-color: var(--danger-solid);
+  color: white;
+}

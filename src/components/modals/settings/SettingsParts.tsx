@@ -9,28 +9,30 @@ import {
 import { classNames } from "@/utils/string";
 import { useId, type ReactNode } from "react";
 
-interface PageProps {
+import "./SettingsParts.css";
+
+interface TextProps {
+  id?: string;
   title: string;
-  children: ReactNode;
+  description: string;
 }
 
-/** One category's page: its heading, then its settings. */
-export function SettingsPage({ title, children }: PageProps) {
+/** A setting's title above its description. */
+function SettingText({ id, title, description }: TextProps) {
   return (
-    <section className="settings-page">
-      <h2 className="settings-page-title">{title}</h2>
-      {children}
-    </section>
+    <>
+      <div className="setting-item-title" id={id}>
+        {title}
+      </div>
+      <p className="setting-item-description">{description}</p>
+    </>
   );
 }
 
-interface ItemProps {
-  title: string;
-  description: string;
+interface ItemProps extends Omit<TextProps, "id"> {
   children: ReactNode;
 }
 
-/** A setting: its name, what it does, then its control. */
 export function SettingItem({ title, description, children }: ItemProps) {
   const titleId = useId();
 
@@ -40,10 +42,7 @@ export function SettingItem({ title, description, children }: ItemProps) {
       role={AriaRole.GROUP}
       aria-labelledby={titleId}
     >
-      <div className="setting-item-title" id={titleId}>
-        {title}
-      </div>
-      <p className="setting-item-description">{description}</p>
+      <SettingText id={titleId} title={title} description={description} />
       <div className="setting-item-control">{children}</div>
     </div>
   );
@@ -55,7 +54,6 @@ interface SelectProps<T extends string> {
   onChange: (value: T) => void;
 }
 
-/** A setting's dropdown, showing the chosen option's label. */
 export function SettingSelect<T extends string>({
   value,
   options,
@@ -78,12 +76,13 @@ export function SettingSelect<T extends string>({
   );
 }
 
+// Danger zone
+
 interface DangerZoneProps {
   title: string;
   children: ReactNode;
 }
 
-/** The red box that holds the actions that can't be undone. */
 export function DangerZone({ title, children }: DangerZoneProps) {
   return (
     <FramedSection className="danger-zone" title={title}>
@@ -92,9 +91,7 @@ export function DangerZone({ title, children }: DangerZoneProps) {
   );
 }
 
-interface DangerItemProps {
-  title: string;
-  description: string;
+interface DangerItemProps extends Omit<TextProps, "id"> {
   action: string;
   onAction: () => void;
 }
@@ -106,14 +103,13 @@ export function DangerZoneItem({
   onAction,
 }: DangerItemProps) {
   return (
-    <div className={classNames(CssClass.FRAMED_ROW, "danger-zone-item")}>
+    <div className={classNames("danger-zone-item", CssClass.FRAMED_ROW)}>
       <div className="danger-zone-text">
-        <div className="setting-item-title">{title}</div>
-        <p className="setting-item-description">{description}</p>
+        <SettingText title={title} description={description} />
       </div>
 
       <button
-        className={classNames(CssClass.BTN, "danger-zone-button")}
+        className={classNames("danger-zone-button", CssClass.BTN)}
         onClick={onAction}
       >
         {action}

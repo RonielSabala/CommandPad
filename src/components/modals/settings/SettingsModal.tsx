@@ -69,9 +69,12 @@ export function SettingsModal() {
         </ul>
       </nav>
 
-      <div className="settings-content">
+      <section className="settings-content">
+        <h2 className="settings-page-title">
+          {t.settings.categories[category]}
+        </h2>
         <Page />
-      </div>
+      </section>
     </Modal>
   );
 }

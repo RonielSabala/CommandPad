@@ -1,5 +1,5 @@
 import { CssClass } from "@/common/constants/css";
-import { SettingsCategory, Theme } from "@/common/enums";
+import { Theme } from "@/common/enums";
 import { LANGUAGE_OPTIONS } from "@/components/common/LanguageSelect";
 import type { SelectOption } from "@/components/common/Select";
 import { MoonIcon, SunIcon } from "@/components/icons";
@@ -8,7 +8,7 @@ import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useMemo } from "react";
 
-import { SettingItem, SettingSelect, SettingsPage } from "./SettingsParts";
+import { SettingItem, SettingSelect } from "./SettingsParts";
 
 const THEME_ICONS: Record<Theme, typeof SunIcon> = {
   [Theme.DARK]: MoonIcon,
@@ -21,7 +21,6 @@ export function AppearanceSettings() {
   const theme = useStore((state) => state.theme);
   const setTheme = useStore((state) => state.setTheme);
   const setLanguage = useStore((state) => state.setLanguage);
-
   const themeOptions = useMemo<SelectOption<Theme>[]>(
     () =>
       Object.values(Theme).map((value) => {
@@ -40,7 +39,7 @@ export function AppearanceSettings() {
   );
 
   return (
-    <SettingsPage title={t.settings.categories[SettingsCategory.APPEARANCE]}>
+    <>
       <SettingItem
         title={t.settings.theme.title}
         description={t.settings.theme.description}
@@ -62,6 +61,6 @@ export function AppearanceSettings() {
           onChange={setLanguage}
         />
       </SettingItem>
-    </SettingsPage>
+    </>
   );
 }

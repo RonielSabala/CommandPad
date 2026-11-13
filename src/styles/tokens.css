@@ -169,6 +169,8 @@
   --vault-modal-width: 28rem;
   --vault-badge-size: 2.5rem;
 
+  --setting-control-width: 18rem;
+
   --minimap-width: 7rem;
   --tooltip-max-width: 18rem;
   --tooltip-padding-x: var(--space-5);
