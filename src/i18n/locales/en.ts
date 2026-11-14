@@ -114,7 +114,9 @@ export const en: Messages = {
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Saved to ${provider}`,
       [RunbookSyncStatus.UNSAVED]: (provider, shortcut) =>
-        `Unsaved changes ${MIDDLE_DOT} click or press ${shortcut} to save to ${provider}`,
+        shortcut
+          ? `Unsaved changes ${MIDDLE_DOT} click or press ${shortcut} to save to ${provider}`
+          : `Unsaved changes ${MIDDLE_DOT} click to save to ${provider}`,
       [RunbookSyncStatus.SYNCING]: (provider) => `Saving to ${provider}…`,
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
         `Signed out of ${provider} ${MIDDLE_DOT} click to sign in and save`,
@@ -816,6 +818,8 @@ export const en: Messages = {
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navigate runbooks with the active runbook selected",
     [KeyBinding.IMPORT_RUNBOOK]: "Open runbook import dialog",
+    [KeyBinding.NEW_FOLDER]: "Create a folder in the library",
+    [KeyBinding.PASTE_RUNBOOK]: "Open the paste runbook JSON dialog",
     [KeyBinding.EXPORT]: "Open export dialog",
     [KeyBinding.DELETE_RUNBOOK]: "Delete the focused runbook from the library",
     [KeyBinding.DELETE_ACTIVE_RUNBOOK]:
@@ -827,6 +831,11 @@ export const en: Messages = {
     [KeyBinding.TOGGLE_SOURCE_VIEW]:
       "Switch between the blocks and the runbook's source file",
     [KeyBinding.TOGGLE_SIDEBAR]: "Collapse or expand the sidebar",
+    [KeyBinding.MOVE_SIDEBAR]: "Move the sidebar to the other side",
+    [KeyBinding.TOGGLE_THEME]: "Switch between the light and dark theme",
+    [KeyBinding.TOGGLE_MINIMAP]: "Show or hide the minimap",
+    [KeyBinding.MOVE_MINIMAP]: "Move the minimap to the other side",
+    [KeyBinding.TOGGLE_SPELLCHECK]: "Turn spell check in notes on or off",
     [KeyBinding.OPEN_SETTINGS]: "Open the settings",
     [KeyBinding.MULTISELECT_BLOCKS]: "Multi-select blocks",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicate selected blocks",
@@ -1891,7 +1900,7 @@ If something goes wrong, undo it in this order:
     },
     keyboardShortcuts: {
       intro: (binding) =>
-        `Every shortcut available in the app. Many of the actions behind them also run by name: press \`${binding}\` and pick one.`,
+        `Every shortcut available in the app. Each action in the command list also runs by name, including those with no shortcut yet, like switching the theme: press \`${binding}\` and pick one.`,
     },
     qa: {
       intro: "Quick answers to the questions that come up most often.",

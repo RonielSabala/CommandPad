@@ -6,6 +6,7 @@ export const StorageKey = {
   UI_STATE: "commandpad_ui_state",
   RUNBOOK_LIBRARY: "commandpad_runbook_library",
   SIDEBAR_SECTIONS: "commandpad_sidebar_sections",
+  KEYBINDINGS: "commandpad_keybindings",
   VISITED_HOME: "commandpad_visited_home",
   DOCS_PAGE: "commandpad_docs_page",
   DOCS_COLLAPSED: "commandpad_docs_collapsed",

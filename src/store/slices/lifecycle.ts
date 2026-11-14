@@ -1,4 +1,5 @@
 import { AppMode, DialogTone } from "@/common/enums";
+import { applyKeybindingOverrides } from "@/common/keybindings";
 import type { Tab } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { lockVault } from "@/services/vault";
@@ -60,6 +61,7 @@ export function createLifecycleSlice(
         getMessages(ui?.language ?? get().language),
       );
       const sections = persistence.loadSidebarSections();
+      const keybindingOverrides = persistence.loadKeybindings();
       const meta = persistence.loadTabsMeta();
 
       const activeTabMeta = meta
@@ -81,7 +83,12 @@ export function createLifecycleSlice(
           : {}),
         activeRunbookId: initialActiveRunbookId,
         ...(sections ?? {}),
+        keybindingOverrides,
       });
+
+      if (!isDemo) {
+        applyKeybindingOverrides(keybindingOverrides);
+      }
 
       try {
         if (meta) {
@@ -192,7 +199,8 @@ export function createLifecycleSlice(
         sessionStorage.clear();
 
         lockVault();
-        set({ vaultStatus: {} });
+        applyKeybindingOverrides({});
+        set({ vaultStatus: {}, keybindingOverrides: {} });
       }
 
       resetWorkspace();

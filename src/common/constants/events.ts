@@ -32,7 +32,11 @@ export const PASSIVE = { passive: true } as const;
 export const PASSIVE_CAPTURE = { passive: true, capture: true } as const;
 
 export const Key = {
+  CONTROL: "Control",
+  ALT: "Alt",
+  ALT_GRAPH: "AltGraph",
   SHIFT: "Shift",
+  META: "Meta",
   ENTER: "Enter",
   SPACE: " ",
   ESCAPE: "Escape",

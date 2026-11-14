@@ -19,6 +19,10 @@ import {
   SyncDestination,
   Theme,
 } from "@/common/enums";
+import {
+  REBINDABLE_KEYBINDINGS,
+  type KeybindingOverrides,
+} from "@/common/keybindings";
 import type {
   LibraryFolder,
   LibraryRunbook,
@@ -434,4 +438,36 @@ export function loadSidebarSections(): PersistedSections | null {
     console.warn("Failed to load sidebar section state:", error);
     return null;
   }
+}
+
+// Keybindings
+
+export function saveKeybindings(overrides: KeybindingOverrides): void {
+  try {
+    localStorage.setItem(StorageKey.KEYBINDINGS, JSON.stringify(overrides));
+  } catch (error) {
+    console.warn("Failed to save keybindings:", error);
+  }
+}
+
+export function loadKeybindings(): KeybindingOverrides {
+  const overrides: KeybindingOverrides = {};
+
+  try {
+    const saved = getSavedItemByKey(StorageKey.KEYBINDINGS);
+    if (!isObject(saved)) {
+      return overrides;
+    }
+
+    for (const id of REBINDABLE_KEYBINDINGS) {
+      const binding = saved[id];
+      if (binding === null || (isString(binding) && binding !== "")) {
+        overrides[id] = binding;
+      }
+    }
+  } catch (error) {
+    console.warn("Failed to load keybindings:", error);
+  }
+
+  return overrides;
 }

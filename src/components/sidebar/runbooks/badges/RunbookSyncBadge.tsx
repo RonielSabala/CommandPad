@@ -1,10 +1,11 @@
 import { CssClass } from "@/common/constants/css";
 import { RunbookSyncStatus } from "@/common/enums";
-import { bindingLabel, KeyBinding } from "@/common/keybindings";
+import { KeyBinding } from "@/common/keybindings";
 import type { RunbookSync } from "@/common/types";
 import { Spinner } from "@/components/common/Spinner";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
+import { useBindingLabel } from "@/hooks/useBindingLabel";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -17,8 +18,6 @@ import {
 
 import "./RunbookSyncBadge.css";
 
-const SAVE_SHORTCUT = bindingLabel(KeyBinding.SAVE_RUNBOOK);
-
 interface Props {
   runbookId: string;
   sync: RunbookSync;
@@ -30,12 +29,15 @@ export function RunbookSyncBadge({ runbookId, sync }: Props) {
     (state) => state.runbookSyncStatus[runbookId],
   );
   const saveRunbookToCloud = useStore((state) => state.saveRunbookToCloud);
+  const saveShortcut = useBindingLabel(KeyBinding.SAVE_RUNBOOK);
+
   const syncStatus =
     transientStatus ??
     (sync.pending ? RunbookSyncStatus.UNSAVED : RunbookSyncStatus.SYNCED);
+
   const statusLabel = t.runbooks.syncStatus[syncStatus](
     PROVIDER_NAME[sync.provider],
-    SAVE_SHORTCUT,
+    saveShortcut,
   );
 
   return (

@@ -1,18 +1,18 @@
 import { SettingsCategory } from "@/common/enums";
-import { bindingLabel, KeyBinding } from "@/common/keybindings";
+import { KeyBinding } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
 
 import { Prose } from "../Prose";
+import { useShortcutLabel } from "../useShortcutLabel";
 
 export function SettingsDocs() {
   const t = useTranslation();
+  const settingsKey = useShortcutLabel(KeyBinding.OPEN_SETTINGS);
   const { categories } = t.settings;
 
   return (
     <>
-      <Prose
-        text={t.docs.settings.intro(bindingLabel(KeyBinding.OPEN_SETTINGS))}
-      />
+      <Prose text={t.docs.settings.intro(settingsKey)} />
       <Prose
         text={t.docs.settings.categories(
           categories[SettingsCategory.APPEARANCE],

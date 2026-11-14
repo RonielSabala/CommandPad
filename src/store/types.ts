@@ -30,6 +30,7 @@ import {
   VaultPrompt,
   VaultStatus,
 } from "@/common/enums";
+import type { KeyBinding, KeybindingOverrides } from "@/common/keybindings";
 import type {
   BlockInsertAnchor,
   BlockOfType,
@@ -153,6 +154,7 @@ export interface StoreState {
   spellcheckEnabled: boolean;
   defaultCommandLanguage: CodeLanguage;
   defaultVariableLanguage: CodeLanguage;
+  keybindingOverrides: KeybindingOverrides;
   panels: Record<PanelId, PanelState>;
   variableKeyRatio: number;
   minimapEnabled: boolean;
@@ -276,6 +278,11 @@ export interface StoreState {
   toggleVariablesSection: () => void;
   openSettingsModal: () => void;
   closeSettingsModal: () => void;
+
+  // Keybindings
+  setKeybinding: (id: KeyBinding, chord: string | null) => void;
+  resetKeybinding: (id: KeyBinding) => void;
+  resetAllKeybindings: () => void;
 
   // Search
   setRunbookSearchQuery: (query: string) => void;

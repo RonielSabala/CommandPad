@@ -114,7 +114,9 @@ export const es: Messages = {
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Guardado en ${provider}`,
       [RunbookSyncStatus.UNSAVED]: (provider, shortcut) =>
-        `Cambios sin guardar ${MIDDLE_DOT} haz clic o pulsa ${shortcut} para guardar en ${provider}`,
+        shortcut
+          ? `Cambios sin guardar ${MIDDLE_DOT} haz clic o pulsa ${shortcut} para guardar en ${provider}`
+          : `Cambios sin guardar ${MIDDLE_DOT} haz clic para guardar en ${provider}`,
       [RunbookSyncStatus.SYNCING]: (provider) => `Guardando en ${provider}…`,
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
         `Sesión cerrada en ${provider} ${MIDDLE_DOT} haz clic para iniciar sesión y guardar`,
@@ -834,6 +836,9 @@ export const es: Messages = {
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navegar libros con el libro activo seleccionado",
     [KeyBinding.IMPORT_RUNBOOK]: "Abrir el diálogo de importación de libro",
+    [KeyBinding.NEW_FOLDER]: "Crear una carpeta en la biblioteca",
+    [KeyBinding.PASTE_RUNBOOK]:
+      "Abrir el diálogo para pegar el JSON de un libro",
     [KeyBinding.EXPORT]: "Abrir el diálogo de exportación",
     [KeyBinding.DELETE_RUNBOOK]: "Eliminar el libro enfocado de la biblioteca",
     [KeyBinding.DELETE_ACTIVE_RUNBOOK]:
@@ -845,6 +850,12 @@ export const es: Messages = {
     [KeyBinding.TOGGLE_SOURCE_VIEW]:
       "Cambiar entre los bloques y el archivo fuente del libro",
     [KeyBinding.TOGGLE_SIDEBAR]: "Contraer o expandir la barra lateral",
+    [KeyBinding.MOVE_SIDEBAR]: "Mover la barra lateral al otro lado",
+    [KeyBinding.TOGGLE_THEME]: "Cambiar entre el tema claro y el oscuro",
+    [KeyBinding.TOGGLE_MINIMAP]: "Mostrar u ocultar el minimapa",
+    [KeyBinding.MOVE_MINIMAP]: "Mover el minimapa al otro lado",
+    [KeyBinding.TOGGLE_SPELLCHECK]:
+      "Activar o desactivar el corrector ortográfico en las notas",
     [KeyBinding.OPEN_SETTINGS]: "Abrir la configuración",
     [KeyBinding.MULTISELECT_BLOCKS]: "Selección múltiple de bloques",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicar bloques seleccionados",
@@ -1920,7 +1931,7 @@ Si algo sale mal, deshazlo en este orden:
     },
     keyboardShortcuts: {
       intro: (binding) =>
-        `Todos los atajos disponibles en la app. Muchas de sus acciones también se ejecutan por nombre: pulsa \`${binding}\` y elige una.`,
+        `Todos los atajos disponibles en la app. Cada acción de la lista de comandos también se ejecuta por nombre, incluso las que aún no tienen atajo, como cambiar el tema: pulsa \`${binding}\` y elige una.`,
     },
     qa: {
       intro:

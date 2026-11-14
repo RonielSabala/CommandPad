@@ -32,6 +32,7 @@ export function createInitialState(): StoreData {
     spellcheckEnabled: true,
     defaultCommandLanguage: DEFAULT_COMMAND_LANGUAGE,
     defaultVariableLanguage: DEFAULT_VARIABLE_LANGUAGE,
+    keybindingOverrides: {},
     panels: createDefaultPanels(),
     variableKeyRatio: VariableSplit.DEFAULT,
     minimapEnabled: true,

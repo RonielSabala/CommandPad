@@ -99,7 +99,7 @@ export const QuickOpenCommandRow = memo(function QuickOpenCommandRow({
         {t.quickOpen.commands[command]}
       </span>
 
-      {binding && <Kbd binding={binding} />}
+      <Kbd binding={binding} />
     </QuickOpenOption>
   );
 });

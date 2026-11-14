@@ -20,6 +20,7 @@ import { createCloudSyncSlice } from "./slices/cloudSync";
 import { createDialogsSlice } from "./slices/dialogs";
 import { createEmbedsSlice } from "./slices/embeds";
 import { createInteractionSlice } from "./slices/interaction";
+import { createKeybindingsSlice } from "./slices/keybindings";
 import { createLibraryFoldersSlice } from "./slices/libraryFolders";
 import { createLibraryRunbooksSlice } from "./slices/libraryRunbooks";
 import { createLifecycleSlice } from "./slices/lifecycle";
@@ -101,6 +102,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       ...createBlocksSlice(kit, services),
       ...createInteractionSlice(kit),
       ...createUiSlice(kit),
+      ...createKeybindingsSlice(kit),
       ...createTransferSlice(kit, services),
       ...createCloudSessionSlice(kit, services),
       ...createCloudFilesSlice(kit, services),
