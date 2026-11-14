@@ -9,7 +9,7 @@ import {
   SettingItem,
   SettingRange,
   SettingSelect,
-} from "./SettingsParts";
+} from "./parts";
 
 function keyPercentOf(ratio: number): number {
   return Math.round(ratio * 100);

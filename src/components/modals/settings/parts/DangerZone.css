@@ -1,0 +1,13 @@
+.danger-zone {
+  margin-top: var(--space-8);
+}
+
+.danger-zone .framed-section-title {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.danger-zone .framed-section-frame {
+  border-color: var(--danger);
+}

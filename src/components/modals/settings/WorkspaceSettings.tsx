@@ -3,7 +3,7 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { useNavigate } from "react-router-dom";
 
-import { DangerZone, DangerZoneItem } from "./SettingsParts";
+import { DangerZone, DangerZoneItem } from "./parts";
 
 export function WorkspaceSettings() {
   const t = useTranslation();

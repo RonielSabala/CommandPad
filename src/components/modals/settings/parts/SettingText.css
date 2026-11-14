@@ -1,0 +1,14 @@
+.setting-title {
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.setting-description {
+  display: block;
+  font-size: var(--text-md);
+  color: var(--color-text-secondary);
+}
+
+.setting-title + .setting-description {
+  margin-top: var(--space-2);
+}

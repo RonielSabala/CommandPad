@@ -1,0 +1,14 @@
+.setting-select {
+  width: fit-content;
+}
+
+.setting-select-trigger {
+  min-width: var(--setting-control-width);
+  justify-content: space-between;
+}
+
+.setting-select-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}

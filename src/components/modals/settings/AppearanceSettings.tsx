@@ -8,7 +8,7 @@ import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useMemo } from "react";
 
-import { SettingItem, SettingSelect } from "./SettingsParts";
+import { SettingItem, SettingSelect } from "./parts";
 
 const THEME_ICONS: Record<Theme, typeof SunIcon> = {
   [Theme.DARK]: MoonIcon,

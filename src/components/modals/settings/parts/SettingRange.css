@@ -1,0 +1,15 @@
+.setting-range {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.setting-range-input {
+  width: var(--setting-control-width);
+}
+
+.setting-range-value {
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+}
