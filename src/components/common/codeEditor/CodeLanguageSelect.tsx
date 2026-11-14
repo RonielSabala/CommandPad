@@ -1,7 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import {
   CODE_LANGUAGE_LABEL,
-  COMMAND_LANGUAGE_ORDER,
+  CODE_LANGUAGE_ORDER,
 } from "@/common/editorConfig";
 import { CodeLanguage } from "@/common/enums";
 import { useTranslation } from "@/i18n";
@@ -11,7 +11,7 @@ import { Select, SelectAlign, type SelectOption } from "../Select";
 import "./CodeLanguageSelect.css";
 
 export const CODE_LANGUAGE_OPTIONS: readonly SelectOption<CodeLanguage>[] =
-  COMMAND_LANGUAGE_ORDER.map((language) => ({
+  CODE_LANGUAGE_ORDER.map((language) => ({
     value: language,
     label: CODE_LANGUAGE_LABEL[language],
   }));

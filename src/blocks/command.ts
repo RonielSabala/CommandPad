@@ -1,8 +1,8 @@
 import {
   BlockField,
-  COMMAND_LANGUAGE_ORDER,
+  CODE_LANGUAGE_ORDER,
   DEFAULT_COMMAND_LANGUAGE,
-  isCommandLanguage,
+  isCodeLanguage,
   JsonSchemaType,
 } from "@/common/editorConfig";
 import { BlockType } from "@/common/enums";
@@ -17,7 +17,7 @@ export const commandBlockDefinition: BlockDefinition<typeof BlockType.COMMAND> =
     jsonSchema: {
       properties: {
         [BlockField.TEXT]: { type: JsonSchemaType.STRING },
-        [BlockField.LANGUAGE]: { enum: [...COMMAND_LANGUAGE_ORDER] },
+        [BlockField.LANGUAGE]: { enum: [...CODE_LANGUAGE_ORDER] },
         [BlockField.EDITOR_COLLAPSED]: { type: JsonSchemaType.BOOLEAN },
       },
       required: [BlockField.TEXT],
@@ -33,7 +33,7 @@ export const commandBlockDefinition: BlockDefinition<typeof BlockType.COMMAND> =
     normalize: (block) => ({
       ...block,
       text: isString(block.text) ? block.text : "",
-      language: isCommandLanguage(block.language)
+      language: isCodeLanguage(block.language)
         ? block.language
         : DEFAULT_COMMAND_LANGUAGE,
       editorCollapsed: isBoolean(block.editorCollapsed)

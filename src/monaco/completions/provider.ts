@@ -1,5 +1,5 @@
 import {
-  COMMAND_LANGUAGE_ORDER,
+  CODE_LANGUAGE_ORDER,
   MonacoLayout,
   VariableCompletionConfig,
 } from "@/common/editorConfig";
@@ -73,7 +73,7 @@ function provideCompletionItems(
 }
 
 export function registerVariableCompletions(): void {
-  COMMAND_LANGUAGE_ORDER.forEach((language) =>
+  CODE_LANGUAGE_ORDER.forEach((language) =>
     monaco.languages.registerCompletionItemProvider(language, {
       triggerCharacters: [
         VariableSyntax.BRACE_OPEN,

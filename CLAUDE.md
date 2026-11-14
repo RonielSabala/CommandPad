@@ -242,7 +242,7 @@ Resolved text is green and **tinted by depth**: level 1 is text the referenced v
 
 `CommandBlock.language` (and `Variable.language`) is a `CodeLanguage` = a Monaco language id (Bash is `"shell"`). It only affects highlighting and validation; resolution, Copy and export ignore it.
 
-- `COMMAND_LANGUAGE_ORDER` (`editorConfig.ts`) is the one selectable list (menu, `jsonSchema` enum, `isCommandLanguage` coercion, completion registrations); `CODE_LANGUAGE_LABEL` holds names (proper nouns, not i18n). Defaults: `DEFAULT_COMMAND_LANGUAGE` is Bash, `DEFAULT_VARIABLE_LANGUAGE` is plain text (a value is usually a text fragment, not a script).
+- `CODE_LANGUAGE_ORDER` (`editorConfig.ts`) is the one selectable list (menu, `jsonSchema` enum, `isCodeLanguage` coercion, completion registrations); `CODE_LANGUAGE_LABEL` holds names (proper nouns, not i18n). Defaults: `DEFAULT_COMMAND_LANGUAGE` is Bash, `DEFAULT_VARIABLE_LANGUAGE` is plain text (a value is usually a text fragment, not a script).
 - Grammars are bundled basic-language contributions (shell, powershell, sql, xml, yaml), lazily tokenized; JSON uses its own contribution.
 - **A model's path never encodes its language**: `modelPath(modelId)` gives `.runbook.json` only to `RUNBOOK_JSON_SCOPES` (paste, cloud file, cloud conflict, runbook source) and `.txt` to everything else. Changing the path would drop undo history, and a language-derived suffix would validate command JSON against the runbook schema.
 - Variable completions are registered for every language in the list.

@@ -2,7 +2,7 @@ import { blockToJson, normalizeBlock } from "@/blocks";
 import { RunbookSourceConfig } from "@/common/config";
 import {
   DEFAULT_VARIABLE_LANGUAGE,
-  isCommandLanguage,
+  isCodeLanguage,
   VariableSectionField,
 } from "@/common/editorConfig";
 import { VariableEntryKind } from "@/common/enums";
@@ -97,7 +97,7 @@ function normalizeVariable(
 
   return {
     ...variable,
-    language: isCommandLanguage(raw.language)
+    language: isCodeLanguage(raw.language)
       ? raw.language
       : DEFAULT_VARIABLE_LANGUAGE,
     ...(raw.secret === true ? { secret: true } : {}),

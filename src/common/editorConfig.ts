@@ -292,7 +292,7 @@ export const BlockField = {
   EDITOR_COLLAPSED: "editorCollapsed",
 } as const;
 
-export const COMMAND_LANGUAGE_ORDER = [
+export const CODE_LANGUAGE_ORDER = [
   CodeLanguage.PLAIN,
   CodeLanguage.BASH,
   CodeLanguage.POWERSHELL,
@@ -312,8 +312,8 @@ export const CODE_LANGUAGE_LABEL: Record<CodeLanguage, string> = {
   [CodeLanguage.YAML]: "YAML",
 };
 
-export const isCommandLanguage = (value: unknown): value is CodeLanguage =>
-  COMMAND_LANGUAGE_ORDER.includes(value as CodeLanguage);
+export const isCodeLanguage = (value: unknown): value is CodeLanguage =>
+  CODE_LANGUAGE_ORDER.includes(value as CodeLanguage);
 
 export const DEFAULT_COMMAND_LANGUAGE = CodeLanguage.BASH;
 

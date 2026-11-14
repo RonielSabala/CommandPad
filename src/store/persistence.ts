@@ -5,7 +5,7 @@ import {
   StorageKey,
   VariableSplit,
 } from "@/common/config";
-import { isCommandLanguage } from "@/common/editorConfig";
+import { isCodeLanguage } from "@/common/editorConfig";
 import {
   AppMode,
   CloudProvider,
@@ -155,10 +155,10 @@ export function loadUiState(): Partial<PersistedUiState> | null {
       theme: saved.theme === Theme.LIGHT ? Theme.LIGHT : Theme.DARK,
       language: isLanguage(saved.language) ? saved.language : detectLanguage(),
       spellcheckEnabled: saved.spellcheckEnabled === true,
-      ...(isCommandLanguage(saved.defaultCommandLanguage)
+      ...(isCodeLanguage(saved.defaultCommandLanguage)
         ? { defaultCommandLanguage: saved.defaultCommandLanguage }
         : {}),
-      ...(isCommandLanguage(saved.defaultVariableLanguage)
+      ...(isCodeLanguage(saved.defaultVariableLanguage)
         ? { defaultVariableLanguage: saved.defaultVariableLanguage }
         : {}),
       panels: restorePanels(saved.panels),
