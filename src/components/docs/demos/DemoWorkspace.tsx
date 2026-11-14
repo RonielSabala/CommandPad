@@ -1,6 +1,6 @@
 import { InputSelector } from "@/common/constants/dom";
 import { SelectionGroup } from "@/common/enums";
-import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
+import { KeyBinding, keybindingFromEvent } from "@/common/keybindings";
 import { ImageLightbox } from "@/components/blocks/image/ImageLightbox";
 import { SelectionActionsContext } from "@/components/common/contextMenu/selectionActionsContext";
 import { LibraryTopLevelDrop } from "@/components/sidebar/runbooks/rows/LibraryTopLevelDrop";
@@ -184,18 +184,26 @@ function DemoSelectionArea({ children }: { children: ReactNode }) {
     const state = store.getState();
     const firstSelected = [...state.selectedBlockIds][0];
 
-    if (matchesKeybinding(event.nativeEvent, KeyBinding.DUPLICATE_BLOCK)) {
-      event.preventDefault();
-      if (firstSelected) {
-        state.duplicateBlock(firstSelected);
-      }
-    } else if (matchesKeybinding(event.nativeEvent, KeyBinding.DELETE_BLOCK)) {
-      if (firstSelected) {
+    switch (keybindingFromEvent(event.nativeEvent)) {
+      case KeyBinding.DUPLICATE_BLOCK:
         event.preventDefault();
-        state.removeBlock(firstSelected);
-      }
-    } else if (matchesKeybinding(event.nativeEvent, KeyBinding.ESCAPE)) {
-      state.clearBlockSelection();
+        if (firstSelected) {
+          state.duplicateBlock(firstSelected);
+        }
+
+        break;
+
+      case KeyBinding.DELETE_BLOCK:
+        if (firstSelected) {
+          event.preventDefault();
+          state.removeBlock(firstSelected);
+        }
+
+        break;
+
+      case KeyBinding.ESCAPE:
+        state.clearBlockSelection();
+        break;
     }
   };
 
