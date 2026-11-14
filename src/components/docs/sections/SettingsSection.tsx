@@ -24,19 +24,3 @@ export function SettingsDocs() {
     </>
   );
 }
-
-export function LanguageDocs() {
-  const t = useTranslation();
-
-  return (
-    <>
-      <Prose
-        text={t.docs.language.intro(
-          t.settings.categories[SettingsCategory.APPEARANCE],
-          t.settings.language.title,
-        )}
-      />
-      <Prose text={t.docs.language.detection} />
-    </>
-  );
-}

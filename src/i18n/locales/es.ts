@@ -1181,7 +1181,6 @@ export const es: Messages = {
       [DocsSectionId.CLOUD_FILE_MANAGEMENT]: "Gestionar archivos en la nube",
       [DocsSectionId.AI_AGENT]: "Agente de IA",
       [DocsSectionId.SETTINGS]: "Configuración",
-      [DocsSectionId.LANGUAGE]: "Idioma",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Atajos de teclado",
       [DocsSectionId.QA]: "Preguntas y respuestas",
     },
@@ -1918,12 +1917,6 @@ Si algo sale mal, deshazlo en este orden:
 * **${appearanceLabel}**: el tema claro u oscuro, y el idioma de la interfaz.
 * **${editorLabel}**: el lenguaje con el que empieza un comando o una variable nuevos, cómo se reparte una fila de variable entre clave y valor, el corrector ortográfico de las notas y el minimapa.
 * **${workspaceLabel}**: **${resetLabel}** borra de este navegador todas las pestañas, libros, variables y preferencias. No se puede deshacer, así que la app siempre te pide confirmación antes.`,
-    },
-    language: {
-      intro: (appearanceLabel, languageLabel) =>
-        `Elige el idioma de la interfaz en la configuración: **${languageLabel}**, dentro de **${appearanceLabel}**.`,
-      detection:
-        "La app detecta el idioma de tu navegador en la primera visita, y tu elección se recuerda después.",
     },
     keyboardShortcuts: {
       intro: (binding) =>

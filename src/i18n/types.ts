@@ -1124,10 +1124,6 @@ export interface Messages {
         resetLabel: string,
       ) => string;
     };
-    language: {
-      intro: (appearanceLabel: string, languageLabel: string) => string;
-      detection: string;
-    };
     keyboardShortcuts: {
       intro: (binding: string) => string;
     };

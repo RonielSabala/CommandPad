@@ -1158,7 +1158,6 @@ export const en: Messages = {
       [DocsSectionId.CLOUD_FILE_MANAGEMENT]: "Managing cloud files",
       [DocsSectionId.AI_AGENT]: "AI agent",
       [DocsSectionId.SETTINGS]: "Settings",
-      [DocsSectionId.LANGUAGE]: "Language",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Keyboard shortcuts",
       [DocsSectionId.QA]: "Q&A",
     },
@@ -1889,12 +1888,6 @@ If something goes wrong, undo it in this order:
 * **${appearanceLabel}**: the light or dark theme, and the interface language.
 * **${editorLabel}**: the language a new command or variable starts in, how a variable row splits between key and value, spell check in notes, and the minimap.
 * **${workspaceLabel}**: **${resetLabel}** wipes every tab, runbook, variable and preference from this browser. It cannot be undone, so the app always asks you to confirm first.`,
-    },
-    language: {
-      intro: (appearanceLabel, languageLabel) =>
-        `Pick the interface language in the settings: **${languageLabel}**, under **${appearanceLabel}**.`,
-      detection:
-        "The app detects your browser language on first visit, and your choice is remembered afterward.",
     },
     keyboardShortcuts: {
       intro: (binding) =>
