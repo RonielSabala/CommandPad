@@ -1,5 +1,4 @@
 import { AppMode, DialogTone } from "@/common/enums";
-import { applyKeybindingOverrides } from "@/common/keybindings";
 import type { Tab } from "@/common/types";
 import { getMessages } from "@/i18n/messages";
 import { lockVault } from "@/services/vault";
@@ -85,10 +84,6 @@ export function createLifecycleSlice(
         ...(sections ?? {}),
         keybindingOverrides,
       });
-
-      if (!isDemo) {
-        applyKeybindingOverrides(keybindingOverrides);
-      }
 
       try {
         if (meta) {
@@ -199,7 +194,6 @@ export function createLifecycleSlice(
         sessionStorage.clear();
 
         lockVault();
-        applyKeybindingOverrides({});
         set({ vaultStatus: {}, keybindingOverrides: {} });
       }
 

@@ -1,6 +1,5 @@
 import {
-  applyKeybindingOverrides,
-  KEYBINDINGS,
+  withDefaultKeybinding,
   withKeybinding,
   type KeybindingOverrides,
 } from "@/common/keybindings";
@@ -14,15 +13,10 @@ type KeybindingActions = Pick<
 >;
 
 export function createKeybindingsSlice(kit: StoreKit): KeybindingActions {
-  const { set, get, isDemo, persist } = kit;
-
+  const { set, get, persist } = kit;
   const commit = (keybindingOverrides: KeybindingOverrides) => {
     set({ keybindingOverrides });
     persist.saveKeybindings(keybindingOverrides);
-
-    if (!isDemo) {
-      applyKeybindingOverrides(keybindingOverrides);
-    }
   };
 
   return {
@@ -30,9 +24,7 @@ export function createKeybindingsSlice(kit: StoreKit): KeybindingActions {
       commit(withKeybinding(get().keybindingOverrides, id, chord)),
 
     resetKeybinding: (id) =>
-      commit(
-        withKeybinding(get().keybindingOverrides, id, KEYBINDINGS[id].binding),
-      ),
+      commit(withDefaultKeybinding(get().keybindingOverrides, id)),
 
     resetAllKeybindings: () => commit({}),
   };

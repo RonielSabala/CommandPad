@@ -21,6 +21,7 @@ import {
 } from "@/common/enums";
 import {
   REBINDABLE_KEYBINDINGS,
+  withKeybinding,
   type KeybindingOverrides,
 } from "@/common/keybindings";
 import type {
@@ -451,7 +452,7 @@ export function saveKeybindings(overrides: KeybindingOverrides): void {
 }
 
 export function loadKeybindings(): KeybindingOverrides {
-  const overrides: KeybindingOverrides = {};
+  let overrides: KeybindingOverrides = {};
 
   try {
     const saved = getSavedItemByKey(StorageKey.KEYBINDINGS);
@@ -462,7 +463,7 @@ export function loadKeybindings(): KeybindingOverrides {
     for (const id of REBINDABLE_KEYBINDINGS) {
       const binding = saved[id];
       if (binding === null || (isString(binding) && binding !== "")) {
-        overrides[id] = binding;
+        overrides = withKeybinding(overrides, id, binding);
       }
     }
   } catch (error) {

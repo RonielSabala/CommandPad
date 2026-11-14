@@ -176,6 +176,13 @@ export function isModifierPressed(
   }
 }
 
+function spellChord(
+  key: string,
+  hasModifier: (modifier: Modifier) => boolean,
+): string {
+  return [...MODIFIER_KEYS.filter(hasModifier), key].join(BINDING_SEPARATOR);
+}
+
 /** The chord a key press spells. */
 export function chordFromEvent(event: KeyChordEvent): string | null {
   if (!event.key || MODIFIER_ONLY_KEYS.has(event.key)) {
@@ -183,22 +190,18 @@ export function chordFromEvent(event: KeyChordEvent): string | null {
   }
 
   const key = event.key.toLowerCase();
-  const modifiers = MODIFIER_KEYS.filter((modifier) =>
+
+  return spellChord(KEY_ALIASES[key] ?? key, (modifier) =>
     isModifierPressed(event, modifier),
   );
-
-  return [...modifiers, KEY_ALIASES[key] ?? key].join(BINDING_SEPARATOR);
 }
 
 /** `chord` spelled the way `chordFromEvent` spells it. */
 function canonicalChord(chord: string): string {
   const tokens = chord.toLowerCase().split(BINDING_SEPARATOR);
   const key = tokens.pop() ?? "";
-  const modifiers = MODIFIER_KEYS.filter((modifier) =>
-    tokens.includes(modifier),
-  );
 
-  return [...modifiers, key].join(BINDING_SEPARATOR);
+  return spellChord(key, (modifier) => tokens.includes(modifier));
 }
 
 // Labels
@@ -272,6 +275,14 @@ export function withKeybinding(
 
   assign(id, canonicalChord(chord));
   return next;
+}
+
+/** `overrides` with `id` back on its default. */
+export function withDefaultKeybinding(
+  overrides: KeybindingOverrides,
+  id: KeyBinding,
+): KeybindingOverrides {
+  return withKeybinding(overrides, id, KEYBINDINGS[id].binding);
 }
 
 // The registry: the effective bindings every reader goes through

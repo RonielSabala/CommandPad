@@ -1,4 +1,5 @@
 import { DEBOUNCE_SAVE_MS } from "@/common/config";
+import { applyKeybindingOverrides } from "@/common/keybindings";
 import { debounce } from "@/utils/debounce";
 import { createContext, useContext } from "react";
 import { createStore, useStore as useZustandStore } from "zustand";
@@ -64,7 +65,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
     ? createMemoryContentDb(contentSeed)
     : REAL_CONTENT_DB;
 
-  return createStore<StoreState>()((set, get) => {
+  const store = createStore<StoreState>()((set, get) => {
     const debouncedSaveState = debounce(
       () => get().saveState(),
       DEBOUNCE_SAVE_MS,
@@ -110,6 +111,16 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       ...createDialogsSlice(kit),
     };
   });
+
+  if (!isDemo) {
+    store.subscribe(({ keybindingOverrides }, previous) => {
+      if (keybindingOverrides !== previous.keybindingOverrides) {
+        applyKeybindingOverrides(keybindingOverrides);
+      }
+    });
+  }
+
+  return store;
 }
 
 const appStore = createAppStore();

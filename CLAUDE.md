@@ -395,7 +395,7 @@ The **AI agent** section hands out a prompt that turns any AI assistant into a C
 
 A user can rebind any `REBINDABLE_KEYBINDINGS` action (not Escape, gestures or note formatting); `keybindingOverrides` (store, `StorageKey.KEYBINDINGS`) holds only what differs from the default, `null` unbinding.
 
-- **The registry in `keybindings.ts` is the only reader**: match with `keybindingFromEvent` / `matchesKeybinding`, show with `bindingLabel` / `useBindingLabel` (render time, so labels follow a rebind), never `KEYBINDINGS[id].binding`. Only a non-demo store pushes to it (`applyKeybindingOverrides`). A chord is written as `chordFromEvent` spells it, and binding a taken chord unbinds its holder (`withKeybinding`), so rebindable chords stay unique.
+- **The registry in `keybindings.ts` is the only reader**: match with `keybindingFromEvent` / `matchesKeybinding`, show with `bindingLabel` / `useBindingLabel` (render time, so labels follow a rebind), never `KEYBINDINGS[id].binding`. The real store pushes to it through one subscription in `store.ts` (a demo never does), so actions only set `keybindingOverrides`. A chord is written as `chordFromEvent` spells it, and binding a taken chord unbinds its holder (`withKeybinding`), so rebindable chords stay unique.
 - `useKeybindings` is one `KEY_ACTIONS` table: a key a field already handled (`defaultPrevented`, e.g. Ctrl+B bolding a note) is left alone, and inside an editable only Ctrl/Alt chords fire. Monaco's own bindings still win inside a code editor.
 
 ### Tooltips
