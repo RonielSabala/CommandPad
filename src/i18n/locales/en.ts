@@ -848,6 +848,7 @@ export const en: Messages = {
     title: "Settings",
     categories: {
       [SettingsCategory.APPEARANCE]: "Appearance",
+      [SettingsCategory.EDITOR]: "Editor",
       [SettingsCategory.WORKSPACE]: "Workspace",
     },
     theme: {
@@ -862,6 +863,33 @@ export const en: Messages = {
       title: "Language",
       description:
         "The language of the interface. The content of your runbooks is never translated.",
+    },
+    commandLanguage: {
+      title: "Default command language",
+      description:
+        "The language a new command block starts in. Existing commands and imported runbooks keep their own.",
+    },
+    variableLanguage: {
+      title: "Default variable language",
+      description:
+        "The language a new text variable's value starts in. Existing variables and imported runbooks keep their own.",
+    },
+    variableSplit: {
+      title: "Variable split",
+      description:
+        "How a variable row shares its width between the key and the value.",
+      value: (keyPercent, valuePercent) =>
+        `Key ${keyPercent}% ${MIDDLE_DOT} Value ${valuePercent}%`,
+      reset: "Even out",
+    },
+    spellcheck: {
+      title: "Spell check",
+      description: "Underline misspelled words while you write a note.",
+    },
+    minimap: {
+      title: "Minimap",
+      description:
+        "Show a miniature of the content in place of the scrollbar, in the blocks, the variables editor and the source view.",
     },
     dangerZone: "Danger zone",
     reset: {
@@ -1856,9 +1884,10 @@ If something goes wrong, undo it in this order:
     settings: {
       intro: (shortcut) =>
         `The settings gather the preferences that apply to the whole app. Open them with the **gear** in the header, or press \`${shortcut}\`. A change applies at once and is remembered in this browser.`,
-      categories: (appearanceLabel, workspaceLabel, resetLabel) =>
+      categories: (appearanceLabel, editorLabel, workspaceLabel, resetLabel) =>
         `Pick a category on the left:
 * **${appearanceLabel}**: the light or dark theme, and the interface language.
+* **${editorLabel}**: the language a new command or variable starts in, how a variable row splits between key and value, spell check in notes, and the minimap.
 * **${workspaceLabel}**: **${resetLabel}** wipes every tab, runbook, variable and preference from this browser. It cannot be undone, so the app always asks you to confirm first.`,
     },
     language: {

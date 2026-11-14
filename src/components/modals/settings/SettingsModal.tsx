@@ -5,15 +5,17 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useState, type ComponentType, type SVGProps } from "react";
-import { DatabaseFill, PaletteFill } from "react-bootstrap-icons";
+import { DatabaseFill, PaletteFill, TerminalFill } from "react-bootstrap-icons";
 
 import { Modal, ModalTitle } from "../Modal";
 import { AppearanceSettings } from "./AppearanceSettings";
+import { EditorSettings } from "./EditorSettings";
 import "./SettingsModal.css";
 import { WorkspaceSettings } from "./WorkspaceSettings";
 
 interface SettingsPageDefinition {
   icon: ComponentType<SVGProps<SVGSVGElement>>;
+  iconClass?: string;
   Page: ComponentType;
 }
 
@@ -21,6 +23,11 @@ const SETTINGS_PAGES: Record<SettingsCategory, SettingsPageDefinition> = {
   [SettingsCategory.APPEARANCE]: {
     icon: PaletteFill,
     Page: AppearanceSettings,
+  },
+  [SettingsCategory.EDITOR]: {
+    icon: TerminalFill,
+    iconClass: CssClass.ICON_SEMIBOLD,
+    Page: EditorSettings,
   },
   [SettingsCategory.WORKSPACE]: {
     icon: DatabaseFill,
@@ -47,7 +54,7 @@ export function SettingsModal() {
 
         <ul className="settings-nav-list">
           {CATEGORY_ORDER.map((id) => {
-            const Icon = SETTINGS_PAGES[id].icon;
+            const { icon: Icon, iconClass } = SETTINGS_PAGES[id];
             const active = id === category;
 
             return (
@@ -56,11 +63,12 @@ export function SettingsModal() {
                   className={classNames(
                     "settings-nav-item",
                     active && CssClass.ACTIVE,
+                    CssClass.NO_USER_SELECT,
                   )}
                   aria-current={active ? AriaCurrent.PAGE : undefined}
                   onClick={() => setCategory(id)}
                 >
-                  <Icon className={CssClass.ICON} />
+                  <Icon className={classNames(CssClass.ICON, iconClass)} />
                   {t.settings.categories[id]}
                 </button>
               </li>
@@ -73,7 +81,10 @@ export function SettingsModal() {
         <h2 className="settings-page-title">
           {t.settings.categories[category]}
         </h2>
-        <Page />
+
+        <div className="settings-page">
+          <Page />
+        </div>
       </section>
     </Modal>
   );

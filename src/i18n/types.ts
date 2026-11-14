@@ -632,6 +632,28 @@ export interface Messages {
       title: string;
       description: string;
     };
+    commandLanguage: {
+      title: string;
+      description: string;
+    };
+    variableLanguage: {
+      title: string;
+      description: string;
+    };
+    variableSplit: {
+      title: string;
+      description: string;
+      value: (keyPercent: number, valuePercent: number) => string;
+      reset: string;
+    };
+    spellcheck: {
+      title: string;
+      description: string;
+    };
+    minimap: {
+      title: string;
+      description: string;
+    };
     dangerZone: string;
     reset: {
       title: string;
@@ -1097,6 +1119,7 @@ export interface Messages {
       intro: (shortcut: string) => string;
       categories: (
         appearanceLabel: string,
+        editorLabel: string,
         workspaceLabel: string,
         resetLabel: string,
       ) => string;

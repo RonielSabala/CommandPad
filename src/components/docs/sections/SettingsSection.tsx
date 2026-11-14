@@ -16,6 +16,7 @@ export function SettingsDocs() {
       <Prose
         text={t.docs.settings.categories(
           categories[SettingsCategory.APPEARANCE],
+          categories[SettingsCategory.EDITOR],
           categories[SettingsCategory.WORKSPACE],
           t.settings.reset.action,
         )}

@@ -76,12 +76,21 @@
 /* Content */
 
 .settings-content {
-  overflow-y: auto;
-  padding: var(--space-10) var(--space-16);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-top: var(--space-10);
 }
 
 .settings-page-title {
-  margin: 0;
+  margin: 0 var(--space-16);
   padding: 0 var(--space-12) var(--space-4) 0;
   border-bottom: var(--border-standard);
+}
+
+.settings-page {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 var(--space-16) var(--space-10);
 }

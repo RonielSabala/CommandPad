@@ -1,5 +1,5 @@
 import { CssClass } from "@/common/constants/css";
-import { AriaRole } from "@/common/constants/dom";
+import { AriaRole, InputType } from "@/common/constants/dom";
 import { FramedSection } from "@/components/common/FramedSection";
 import {
   Select,
@@ -14,7 +14,7 @@ import "./SettingsParts.css";
 interface TextProps {
   id?: string;
   title: string;
-  description: string;
+  description?: string;
 }
 
 /** A setting's title above its description. */
@@ -24,10 +24,12 @@ function SettingText({ id, title, description }: TextProps) {
       <div className="setting-item-title" id={id}>
         {title}
       </div>
-      <p className="setting-item-description">{description}</p>
+      {description && <p className="setting-item-description">{description}</p>}
     </>
   );
 }
+
+// Setting items
 
 interface ItemProps extends Omit<TextProps, "id"> {
   children: ReactNode;
@@ -44,6 +46,80 @@ export function SettingItem({ title, description, children }: ItemProps) {
     >
       <SettingText id={titleId} title={title} description={description} />
       <div className="setting-item-control">{children}</div>
+    </div>
+  );
+}
+
+interface CheckboxProps {
+  title: string;
+  description: string;
+  checked: boolean;
+  onToggle: () => void;
+}
+
+export function SettingCheckbox({
+  title,
+  description,
+  checked,
+  onToggle,
+}: CheckboxProps) {
+  return (
+    <SettingItem title={title}>
+      <label className="setting-checkbox">
+        <input
+          type={InputType.CHECKBOX}
+          checked={checked}
+          onChange={onToggle}
+        />
+        <span
+          className={classNames(
+            "setting-item-description",
+            CssClass.NO_USER_SELECT,
+          )}
+        >
+          {description}
+        </span>
+      </label>
+    </SettingItem>
+  );
+}
+
+interface RangeProps {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  valueText: string;
+  onChange: (value: number) => void;
+  children?: ReactNode;
+}
+
+export function SettingRange({
+  label,
+  value,
+  min,
+  max,
+  step,
+  valueText,
+  onChange,
+  children,
+}: RangeProps) {
+  return (
+    <div className="setting-range">
+      <input
+        type={InputType.RANGE}
+        className="setting-range-input"
+        aria-label={label}
+        aria-valuetext={valueText}
+        value={value}
+        min={min}
+        max={max}
+        step={step}
+        onChange={(event) => onChange(event.currentTarget.valueAsNumber)}
+      />
+      <span className="setting-range-value">{valueText}</span>
+      {children}
     </div>
   );
 }

@@ -1,4 +1,3 @@
-import { DEFAULT_VARIABLE_LANGUAGE } from "@/common/editorConfig";
 import { VariableKind } from "@/common/enums";
 import type { Tab, Variable, VariableSection } from "@/common/types";
 import { generateId } from "@/utils/id";
@@ -7,12 +6,15 @@ import { revealVariables } from "@/utils/variableSections";
 import { withActiveTab } from "./tabState";
 import type { StoreState } from "./types";
 
-export function createVariable(kind: VariableKind): Variable {
+export function createVariable(
+  state: Pick<StoreState, "defaultVariableLanguage">,
+  kind: VariableKind,
+): Variable {
   const variable = { id: generateId(), key: "", value: "" };
 
   return kind === VariableKind.ENUM
     ? { ...variable, options: [] }
-    : { ...variable, language: DEFAULT_VARIABLE_LANGUAGE };
+    : { ...variable, language: state.defaultVariableLanguage };
 }
 
 function appendVariable(tab: Tab, variable: Variable): Tab {

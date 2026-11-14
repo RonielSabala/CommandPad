@@ -27,6 +27,8 @@ type UiActions = Pick<
   | "setTheme"
   | "toggleTheme"
   | "toggleSpellcheck"
+  | "setDefaultCommandLanguage"
+  | "setDefaultVariableLanguage"
   | "setLanguage"
   | "toggleMinimap"
   | "toggleMinimapPosition"
@@ -112,6 +114,16 @@ export function createUiSlice(kit: StoreKit): UiActions {
 
     toggleSpellcheck: () => {
       set((s) => ({ spellcheckEnabled: !s.spellcheckEnabled }));
+      saveUi();
+    },
+
+    setDefaultCommandLanguage: (language) => {
+      set({ defaultCommandLanguage: language });
+      saveUi();
+    },
+
+    setDefaultVariableLanguage: (language) => {
+      set({ defaultVariableLanguage: language });
       saveUi();
     },
 

@@ -1,5 +1,9 @@
 import { createDefaultPanels, VariableSplit } from "@/common/config";
 import {
+  DEFAULT_COMMAND_LANGUAGE,
+  DEFAULT_VARIABLE_LANGUAGE,
+} from "@/common/editorConfig";
+import {
   AppMode,
   ClampSurface,
   CloudExportStatus,
@@ -26,6 +30,8 @@ export function createInitialState(): StoreData {
     theme: Theme.LIGHT,
     language: detectLanguage(),
     spellcheckEnabled: true,
+    defaultCommandLanguage: DEFAULT_COMMAND_LANGUAGE,
+    defaultVariableLanguage: DEFAULT_VARIABLE_LANGUAGE,
     panels: createDefaultPanels(),
     variableKeyRatio: VariableSplit.DEFAULT,
     minimapEnabled: true,

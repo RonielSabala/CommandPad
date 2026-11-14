@@ -66,7 +66,11 @@ export function createBlocksSlice(
         await get().createNewTab();
       }
 
-      const newBlock = createBlock(blockType);
+      const created = createBlock(blockType);
+      const newBlock =
+        created.type === BlockType.COMMAND
+          ? { ...created, language: state.defaultCommandLanguage }
+          : created;
 
       set((s) => ({
         ...withActiveTab(s, (tab) => {

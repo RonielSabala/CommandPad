@@ -107,6 +107,7 @@ export const VariableSplit = {
   MIN: 0.15,
   MAX: 0.85,
   DEFAULT: 0.5,
+  STEP: 0.01,
 } as const;
 
 // Timeouts

@@ -870,6 +870,7 @@ export const es: Messages = {
     title: "Configuración",
     categories: {
       [SettingsCategory.APPEARANCE]: "Apariencia",
+      [SettingsCategory.EDITOR]: "Editor",
       [SettingsCategory.WORKSPACE]: "Espacio de trabajo",
     },
     theme: {
@@ -884,6 +885,34 @@ export const es: Messages = {
       title: "Idioma",
       description:
         "El idioma de la interfaz. El contenido de tus libros nunca se traduce.",
+    },
+    commandLanguage: {
+      title: "Lenguaje predeterminado de los comandos",
+      description:
+        "El lenguaje con el que empieza un bloque de comando nuevo. Los comandos existentes y los libros importados conservan el suyo.",
+    },
+    variableLanguage: {
+      title: "Lenguaje predeterminado de las variables",
+      description:
+        "El lenguaje con el que empieza el valor de una variable de texto nueva. Las variables existentes y los libros importados conservan el suyo.",
+    },
+    variableSplit: {
+      title: "División de las variables",
+      description:
+        "Cómo reparte una fila de variable su ancho entre la clave y el valor.",
+      value: (keyPercent, valuePercent) =>
+        `Clave ${keyPercent}% ${MIDDLE_DOT} Valor ${valuePercent}%`,
+      reset: "Igualar",
+    },
+    spellcheck: {
+      title: "Corrector ortográfico",
+      description:
+        "Subraya las palabras mal escritas mientras escribes una nota.",
+    },
+    minimap: {
+      title: "Minimapa",
+      description:
+        "Muestra una miniatura del contenido en lugar de la barra de desplazamiento, en los bloques, el editor de variables y la vista de código fuente.",
     },
     dangerZone: "Zona de peligro",
     reset: {
@@ -1884,9 +1913,10 @@ Si algo sale mal, deshazlo en este orden:
     settings: {
       intro: (shortcut) =>
         `La configuración reúne las preferencias que afectan a toda la app. Ábrela con el **engranaje** de la cabecera, o pulsa \`${shortcut}\`. Un cambio se aplica al momento y se recuerda en este navegador.`,
-      categories: (appearanceLabel, workspaceLabel, resetLabel) =>
+      categories: (appearanceLabel, editorLabel, workspaceLabel, resetLabel) =>
         `Elige una categoría a la izquierda:
 * **${appearanceLabel}**: el tema claro u oscuro, y el idioma de la interfaz.
+* **${editorLabel}**: el lenguaje con el que empieza un comando o una variable nuevos, cómo se reparte una fila de variable entre clave y valor, el corrector ortográfico de las notas y el minimapa.
 * **${workspaceLabel}**: **${resetLabel}** borra de este navegador todas las pestañas, libros, variables y preferencias. No se puede deshacer, así que la app siempre te pide confirmación antes.`,
     },
     language: {

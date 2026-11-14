@@ -51,6 +51,7 @@ export type PaletteCommand =
 /** A page of the settings modal. */
 export const SettingsCategory = {
   APPEARANCE: "appearance",
+  EDITOR: "editor",
   WORKSPACE: "workspace",
 } as const;
 export type SettingsCategory =

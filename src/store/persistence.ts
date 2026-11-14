@@ -5,9 +5,11 @@ import {
   StorageKey,
   VariableSplit,
 } from "@/common/config";
+import { isCommandLanguage } from "@/common/editorConfig";
 import {
   AppMode,
   CloudProvider,
+  CodeLanguage,
   ExportFormat,
   PanelId,
   PanelSide,
@@ -99,6 +101,8 @@ interface PersistedUiState {
   theme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
+  defaultCommandLanguage: CodeLanguage;
+  defaultVariableLanguage: CodeLanguage;
   panels: Record<PanelId, PanelState>;
   variableKeyRatio: number;
   minimapEnabled: boolean;
@@ -120,6 +124,8 @@ export function saveUiState(ui: PersistedUiState): void {
         theme: ui.theme,
         language: ui.language,
         spellcheckEnabled: ui.spellcheckEnabled,
+        defaultCommandLanguage: ui.defaultCommandLanguage,
+        defaultVariableLanguage: ui.defaultVariableLanguage,
         panels: serializePanels(ui.panels),
         variableKeyRatio: ui.variableKeyRatio,
         minimapEnabled: ui.minimapEnabled,
@@ -149,6 +155,12 @@ export function loadUiState(): Partial<PersistedUiState> | null {
       theme: saved.theme === Theme.LIGHT ? Theme.LIGHT : Theme.DARK,
       language: isLanguage(saved.language) ? saved.language : detectLanguage(),
       spellcheckEnabled: saved.spellcheckEnabled === true,
+      ...(isCommandLanguage(saved.defaultCommandLanguage)
+        ? { defaultCommandLanguage: saved.defaultCommandLanguage }
+        : {}),
+      ...(isCommandLanguage(saved.defaultVariableLanguage)
+        ? { defaultVariableLanguage: saved.defaultVariableLanguage }
+        : {}),
       panels: restorePanels(saved.panels),
       ...(isNumber(saved.variableKeyRatio)
         ? {

@@ -36,6 +36,53 @@
   margin-top: var(--space-5);
 }
 
+.setting-item-title + .setting-item-control {
+  margin-top: var(--space-3);
+}
+
+/* Setting checkbox */
+
+.setting-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  cursor: pointer;
+}
+
+.setting-checkbox input,
+.setting-range-input {
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.setting-checkbox input {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+}
+
+.setting-checkbox .setting-item-description {
+  margin: 0;
+}
+
+/* Setting range */
+
+.setting-range {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.setting-range-input {
+  width: var(--setting-control-width);
+}
+
+.setting-range-value {
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+}
+
 /* Setting select */
 
 .setting-select {

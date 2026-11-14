@@ -5,6 +5,7 @@ import {
   CloudExportStatus,
   CloudProvider,
   CloudSortColumn,
+  CodeLanguage,
   DialogTone,
   ExportFormat,
   HistoryDirection,
@@ -150,6 +151,8 @@ export interface StoreState {
   theme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
+  defaultCommandLanguage: CodeLanguage;
+  defaultVariableLanguage: CodeLanguage;
   panels: Record<PanelId, PanelState>;
   variableKeyRatio: number;
   minimapEnabled: boolean;
@@ -258,6 +261,8 @@ export interface StoreState {
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
   toggleSpellcheck: () => void;
+  setDefaultCommandLanguage: (language: CodeLanguage) => void;
+  setDefaultVariableLanguage: (language: CodeLanguage) => void;
   setLanguage: (language: Language) => void;
   toggleMinimap: () => void;
   toggleMinimapPosition: () => void;

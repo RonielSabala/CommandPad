@@ -10,7 +10,7 @@ import { Select, SelectAlign, type SelectOption } from "../Select";
 
 import "./CodeLanguageSelect.css";
 
-const LANGUAGE_OPTIONS: readonly SelectOption<CodeLanguage>[] =
+export const CODE_LANGUAGE_OPTIONS: readonly SelectOption<CodeLanguage>[] =
   COMMAND_LANGUAGE_ORDER.map((language) => ({
     value: language,
     label: CODE_LANGUAGE_LABEL[language],
@@ -31,7 +31,7 @@ export function CodeLanguageSelect({ language: value, onChange }: Props) {
       align={SelectAlign.END}
       portal
       value={value}
-      options={LANGUAGE_OPTIONS}
+      options={CODE_LANGUAGE_OPTIONS}
       onChange={onChange}
     >
       <span className="code-language-label">{CODE_LANGUAGE_LABEL[value]}</span>

@@ -101,6 +101,8 @@ export const InputType = {
   PASSWORD: "password",
   URL: "url",
   FILE: "file",
+  CHECKBOX: "checkbox",
+  RANGE: "range",
 } as const;
 
 export const AutoComplete = {
