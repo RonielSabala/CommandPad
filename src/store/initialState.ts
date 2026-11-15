@@ -32,6 +32,7 @@ export function createInitialState(): StoreData {
     systemTheme: readSystemTheme(),
     language: detectLanguage(),
     spellcheckEnabled: true,
+    commandPromptEnabled: true,
     defaultCommandLanguage: DEFAULT_COMMAND_LANGUAGE,
     defaultVariableLanguage: DEFAULT_VARIABLE_LANGUAGE,
     keybindingOverrides: {},

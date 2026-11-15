@@ -42,6 +42,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     ? t.command.showEditor
     : t.command.hideEditor;
 
+  const promptEnabled = useStore((state) => state.commandPromptEnabled);
   const updateBlock = useStore((state) => state.updateBlock);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
   const pendingFocus = useStore(
@@ -124,7 +125,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         placeholder={t.command.placeholder}
         completions={completions}
         actions={actions}
-        promptPrefix={COMMAND_PROMPT_PREFIX}
+        promptPrefix={promptEnabled ? COMMAND_PROMPT_PREFIX : undefined}
         clamped={editor.clamped}
         header={
           <CodeLanguageSelect

@@ -106,6 +106,7 @@ interface PersistedUiState {
   theme: ThemeSetting;
   language: Language;
   spellcheckEnabled: boolean;
+  commandPromptEnabled: boolean;
   defaultCommandLanguage: CodeLanguage;
   defaultVariableLanguage: CodeLanguage;
   panels: Record<PanelId, PanelState>;
@@ -129,6 +130,7 @@ export function saveUiState(ui: PersistedUiState): void {
         theme: ui.theme,
         language: ui.language,
         spellcheckEnabled: ui.spellcheckEnabled,
+        commandPromptEnabled: ui.commandPromptEnabled,
         defaultCommandLanguage: ui.defaultCommandLanguage,
         defaultVariableLanguage: ui.defaultVariableLanguage,
         panels: serializePanels(ui.panels),
@@ -159,7 +161,8 @@ export function loadUiState(): Partial<PersistedUiState> | null {
       mode: saved.mode === AppMode.READ ? AppMode.READ : AppMode.EDIT,
       ...(isEnumValue(ThemeSetting, saved.theme) ? { theme: saved.theme } : {}),
       language: isLanguage(saved.language) ? saved.language : detectLanguage(),
-      spellcheckEnabled: saved.spellcheckEnabled === true,
+      spellcheckEnabled: saved.spellcheckEnabled !== false,
+      commandPromptEnabled: saved.commandPromptEnabled !== false,
       ...(isCodeLanguage(saved.defaultCommandLanguage)
         ? { defaultCommandLanguage: saved.defaultCommandLanguage }
         : {}),

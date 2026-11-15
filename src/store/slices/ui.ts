@@ -28,6 +28,7 @@ type UiActions = Pick<
   | "setSystemTheme"
   | "toggleTheme"
   | "toggleSpellcheck"
+  | "toggleCommandPrompt"
   | "setDefaultCommandLanguage"
   | "setDefaultVariableLanguage"
   | "setLanguage"
@@ -124,6 +125,11 @@ export function createUiSlice(kit: StoreKit): UiActions {
 
     toggleSpellcheck: () => {
       set((s) => ({ spellcheckEnabled: !s.spellcheckEnabled }));
+      saveUi();
+    },
+
+    toggleCommandPrompt: () => {
+      set((s) => ({ commandPromptEnabled: !s.commandPromptEnabled }));
       saveUi();
     },
 

@@ -154,6 +154,7 @@ export interface StoreState {
   systemTheme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
+  commandPromptEnabled: boolean;
   defaultCommandLanguage: CodeLanguage;
   defaultVariableLanguage: CodeLanguage;
   keybindingOverrides: KeybindingOverrides;
@@ -266,6 +267,7 @@ export interface StoreState {
   setSystemTheme: (theme: Theme) => void;
   toggleTheme: () => void;
   toggleSpellcheck: () => void;
+  toggleCommandPrompt: () => void;
   setDefaultCommandLanguage: (language: CodeLanguage) => void;
   setDefaultVariableLanguage: (language: CodeLanguage) => void;
   setLanguage: (language: Language) => void;

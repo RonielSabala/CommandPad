@@ -641,6 +641,10 @@ export interface Messages {
       title: string;
       description: string;
     };
+    commandPrompt: {
+      title: string;
+      description: string;
+    };
     variableSplit: {
       title: string;
       description: string;

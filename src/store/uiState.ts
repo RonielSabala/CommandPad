@@ -27,6 +27,7 @@ export function uiStateSnapshot(state: StoreState) {
     theme: state.theme,
     language: state.language,
     spellcheckEnabled: state.spellcheckEnabled,
+    commandPromptEnabled: state.commandPromptEnabled,
     defaultCommandLanguage: state.defaultCommandLanguage,
     defaultVariableLanguage: state.defaultVariableLanguage,
     panels: state.panels,

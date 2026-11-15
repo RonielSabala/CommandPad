@@ -24,6 +24,7 @@ export function EditorSettings() {
   const commandLanguage = useStore((state) => state.defaultCommandLanguage);
   const variableLanguage = useStore((state) => state.defaultVariableLanguage);
   const keyRatio = useStore((state) => state.variableKeyRatio);
+  const promptEnabled = useStore((state) => state.commandPromptEnabled);
   const spellcheckEnabled = useStore((state) => state.spellcheckEnabled);
   const minimapEnabled = useStore((state) => state.minimapEnabled);
   const minimapPosition = useStore((state) => state.minimapPosition);
@@ -37,6 +38,7 @@ export function EditorSettings() {
 
   const setKeyRatio = useStore((state) => state.setVariableKeyRatio);
   const resetKeyRatio = useStore((state) => state.resetVariableKeyRatio);
+  const togglePrompt = useStore((state) => state.toggleCommandPrompt);
   const toggleSpellcheck = useStore((state) => state.toggleSpellcheck);
   const toggleMinimap = useStore((state) => state.toggleMinimap);
   const setMinimapPosition = useStore((state) => state.setMinimapPosition);
@@ -75,6 +77,13 @@ export function EditorSettings() {
           onChange={setVariableLanguage}
         />
       </SettingItem>
+
+      <SettingCheckbox
+        title={t.settings.commandPrompt.title}
+        description={t.settings.commandPrompt.description}
+        checked={promptEnabled}
+        onToggle={togglePrompt}
+      />
 
       <SettingItem
         title={variableSplit.title}
