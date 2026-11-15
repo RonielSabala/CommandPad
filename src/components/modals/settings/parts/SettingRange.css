@@ -5,7 +5,41 @@
 }
 
 .setting-range-input {
+  --setting-range-track-height: var(--space-2);
+  --setting-range-thumb-size: var(--icon-sm);
+  /* How far along the value is, from 0 to 1. */
+  --setting-range-fill: 0;
+
+  appearance: none;
   width: var(--setting-control-width);
+  height: var(--setting-range-track-height);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    to right,
+    var(--accent)
+      calc(
+        var(--setting-range-thumb-size) / 2 + var(--setting-range-fill) *
+          (100% - var(--setting-range-thumb-size))
+      ),
+    var(--color-border) 0
+  );
+}
+
+.setting-range-input::-webkit-slider-thumb {
+  appearance: none;
+  width: var(--setting-range-thumb-size);
+  height: var(--setting-range-thumb-size);
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.setting-range-input::-moz-range-thumb {
+  width: var(--setting-range-thumb-size);
+  height: var(--setting-range-thumb-size);
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
 }
 
 .setting-range-value {

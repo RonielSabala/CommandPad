@@ -2,17 +2,15 @@
   width: fit-content;
 }
 
-.setting-select-trigger {
+.btn.setting-select-trigger {
   min-width: var(--setting-control-width);
   justify-content: space-between;
-}
-
-.btn.setting-select-trigger {
   border-color: transparent;
 }
 
-.btn.setting-select-trigger:hover {
-  border-color: var(--color-border);
+.btn.setting-select-trigger:not(:disabled):hover,
+.btn.setting-select-trigger[aria-expanded="true"] {
+  border-color: var(--color-border-focus);
 }
 
 .setting-select-label {

@@ -1,11 +1,40 @@
 .setting-checkbox {
-  display: inline-flex;
+  display: flex;
+  width: fit-content;
   align-items: center;
   gap: var(--space-4);
   cursor: pointer;
 }
 
 .setting-checkbox-input {
+  appearance: none;
+  flex-shrink: 0;
+  display: inline-grid;
+  place-content: center;
+  width: var(--icon-md);
+  height: var(--icon-md);
+  border: var(--border-standard);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-alt);
+  transition:
+    background var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.setting-checkbox:hover .setting-checkbox-input {
+  border-color: var(--color-border-focus);
+}
+
+.setting-checkbox-input:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.setting-checkbox-input:checked::before {
+  content: "";
   width: var(--icon-sm);
   height: var(--icon-sm);
+  background: var(--color-bg);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' d='M4 8.5l2.5 2.5 5.5-6'/%3E%3C/svg%3E")
+    center / contain no-repeat;
 }

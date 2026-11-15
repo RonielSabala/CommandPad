@@ -3,7 +3,7 @@ import type { InputHTMLAttributes } from "react";
 
 import "./SettingInput.css";
 
-/** A native input wearing the accent. */
+/** A native input, unstyled. */
 export function SettingInput({
   className,
   ...props

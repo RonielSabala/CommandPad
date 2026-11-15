@@ -1,5 +1,5 @@
 import { InputType } from "@/common/constants/dom";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 import { SettingInput } from "./SettingInput";
 import "./SettingRange.css";
@@ -31,6 +31,11 @@ export function SettingRange({
       <SettingInput
         type={InputType.RANGE}
         className="setting-range-input"
+        style={
+          {
+            "--setting-range-fill": (value - min) / (max - min),
+          } as CSSProperties
+        }
         aria-label={label}
         aria-valuetext={valueText}
         value={value}
