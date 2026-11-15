@@ -396,6 +396,7 @@ The **AI agent** section hands out a prompt that turns any AI assistant into a C
 A user can rebind any `REBINDABLE_KEYBINDINGS` action (not Escape, gestures or note formatting); `keybindingOverrides` (store, `StorageKey.KEYBINDINGS`) holds only what differs from the default, `null` unbinding.
 
 - **The registry in `keybindings.ts` is the only reader**: match with `keybindingFromEvent` / `matchesKeybinding`, show with `bindingLabel` / `useBindingLabel` (render time, so labels follow a rebind), never `KEYBINDINGS[id].binding`. The real store pushes to it through one subscription in `store.ts` (a demo never does), so actions only set `keybindingOverrides`. A chord is written as `chordFromEvent` spells it, and binding a taken chord unbinds its holder (`withKeybinding`), so rebindable chords stay unique.
+- The editor is the settings' keyboard page (`modals/settings/keyboard/`). `ChordRecorder` listens on `window` in capture and swallows every key, keyup included, until it finishes on the **release** of Enter or Escape, so neither the modal's Escape nor a global shortcut (nor `useKeybindings`' Escape keyup) sees a key while it records.
 - `useKeybindings` is one `KEY_ACTIONS` table: a key a field already handled (`defaultPrevented`, e.g. Ctrl+B bolding a note) is left alone, and inside an editable only Ctrl/Alt chords fire. Monaco's own bindings still win inside a code editor.
 
 ### Tooltips

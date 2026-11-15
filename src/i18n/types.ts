@@ -654,6 +654,23 @@ export interface Messages {
       title: string;
       description: string;
     };
+    keyboard: {
+      search: string;
+      noMatch: string;
+      resetAll: string;
+      resetAllTitle: string;
+      resetAllMessage: string;
+      actions: string;
+      change: string;
+      reset: string;
+      remove: string;
+      unbound: string;
+      modified: (defaultLabel: string) => string;
+      modifiedFromUnbound: string;
+      recording: string;
+      recordingHint: (accept: string, cancel: string) => string;
+      conflict: (action: string) => string;
+    };
     dangerZone: string;
     reset: {
       title: string;
@@ -1120,12 +1137,14 @@ export interface Messages {
       categories: (
         appearanceLabel: string,
         editorLabel: string,
+        keyboardLabel: string,
         workspaceLabel: string,
+        resetAllLabel: string,
         resetLabel: string,
       ) => string;
     };
     keyboardShortcuts: {
-      intro: (binding: string) => string;
+      intro: (binding: string, keyboardLabel: string) => string;
     };
     qa: {
       intro: string;

@@ -214,7 +214,10 @@ function chordLabel(chord: string, joiner: string): string {
 }
 
 /** How `binding` reads; a gesture labels each of its words as a chord. */
-function labelOf(binding: string | null, joiner: string): string {
+export function formatBinding(
+  binding: string | null,
+  joiner: string = BINDING_SEPARATOR,
+): string {
   return binding === null
     ? ""
     : binding
@@ -345,7 +348,7 @@ export function bindingLabel(
   id: KeyBinding,
   joiner: string = BINDING_SEPARATOR,
 ): string {
-  return labelOf(bindingIn(activeOverrides, id), joiner);
+  return formatBinding(bindingIn(activeOverrides, id), joiner);
 }
 
 /** How `id`'s shortcut reads before the user changes it. */
@@ -353,5 +356,5 @@ export function defaultBindingLabel(
   id: KeyBinding,
   joiner: string = BINDING_SEPARATOR,
 ): string {
-  return labelOf(KEYBINDINGS[id].binding, joiner);
+  return formatBinding(KEYBINDINGS[id].binding, joiner);
 }

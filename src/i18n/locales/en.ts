@@ -858,6 +858,7 @@ export const en: Messages = {
     categories: {
       [SettingsCategory.APPEARANCE]: "Appearance",
       [SettingsCategory.EDITOR]: "Editor",
+      [SettingsCategory.KEYBOARD]: "Keyboard shortcuts",
       [SettingsCategory.WORKSPACE]: "Workspace",
     },
     theme: {
@@ -899,6 +900,26 @@ export const en: Messages = {
       title: "Minimap",
       description:
         "Show a miniature of the content in place of the scrollbar, in the blocks, the variables editor and the source view.",
+    },
+    keyboard: {
+      search: "Search shortcuts",
+      noMatch: "No shortcut matches your search.",
+      resetAll: "Reset all",
+      resetAllTitle: "Reset all shortcuts?",
+      resetAllMessage:
+        "Every shortcut goes back to its **default**, and the ones you added are removed.",
+      actions: "Shortcut actions",
+      change: "Change shortcut",
+      reset: "Reset to default",
+      remove: "Remove shortcut",
+      unbound: "Unbound",
+      modified: (defaultLabel) => `Changed from ${defaultLabel}`,
+      modifiedFromUnbound: "Added by you",
+      recording: "Press the keys",
+      recordingHint: (accept, cancel) =>
+        `${accept} to accept, ${cancel} to cancel`,
+      conflict: (action) =>
+        `Already used by "${action}". Accepting moves it here.`,
     },
     dangerZone: "Danger zone",
     reset: {
@@ -1892,15 +1913,23 @@ If something goes wrong, undo it in this order:
     settings: {
       intro: (shortcut) =>
         `The settings gather the preferences that apply to the whole app. Open them with the **gear** in the header, or press \`${shortcut}\`. A change applies at once and is remembered in this browser.`,
-      categories: (appearanceLabel, editorLabel, workspaceLabel, resetLabel) =>
+      categories: (
+        appearanceLabel,
+        editorLabel,
+        keyboardLabel,
+        workspaceLabel,
+        resetAllLabel,
+        resetLabel,
+      ) =>
         `Pick a category on the left:
 * **${appearanceLabel}**: the light or dark theme, and the interface language.
 * **${editorLabel}**: the language a new command or variable starts in, how a variable row splits between key and value, spell check in notes, and the minimap.
+* **${keyboardLabel}**: every shortcut, searchable. Click a shortcut, press the new keys, then \`Enter\` to keep them or \`Escape\` to cancel; while you record, the app's other shortcuts stay quiet. If another action already uses those keys, the app says which, and accepting moves them over. Each row's menu also removes a shortcut or puts back its default, and **${resetAllLabel}** restores every default.
 * **${workspaceLabel}**: **${resetLabel}** wipes every tab, runbook, variable and preference from this browser. It cannot be undone, so the app always asks you to confirm first.`,
     },
     keyboardShortcuts: {
-      intro: (binding) =>
-        `Every shortcut available in the app. Each action in the command list also runs by name, including those with no shortcut yet, like switching the theme: press \`${binding}\` and pick one.`,
+      intro: (binding, keyboardLabel) =>
+        `Every shortcut available in the app, as you have them set: change any of them in the settings, under **${keyboardLabel}**. Each action in the command list also runs by name, including those with no shortcut yet, like switching the theme: press \`${binding}\` and pick one.`,
     },
     qa: {
       intro: "Quick answers to the questions that come up most often.",

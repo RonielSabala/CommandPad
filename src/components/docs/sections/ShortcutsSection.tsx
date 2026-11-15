@@ -1,4 +1,5 @@
 import { CssClass } from "@/common/constants/css";
+import { SettingsCategory } from "@/common/enums";
 import { KEYBINDING_IDS, KeyBinding } from "@/common/keybindings";
 import { Kbd } from "@/components/common/Kbd";
 import { useBindingLabel } from "@/hooks/useBindingLabel";
@@ -29,7 +30,12 @@ export function KeyboardShortcutsDocs() {
 
   return (
     <>
-      <Prose text={t.docs.keyboardShortcuts.intro(paletteKey)} />
+      <Prose
+        text={t.docs.keyboardShortcuts.intro(
+          paletteKey,
+          t.settings.categories[SettingsCategory.KEYBOARD],
+        )}
+      />
       <div className="docs-prose">
         <table className={CssClass.NOTE_TABLE}>
           <tbody>

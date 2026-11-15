@@ -5,11 +5,17 @@ import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useState, type ComponentType, type SVGProps } from "react";
-import { DatabaseFill, PaletteFill, TerminalFill } from "react-bootstrap-icons";
+import {
+  DatabaseFill,
+  KeyboardFill,
+  PaletteFill,
+  TerminalFill,
+} from "react-bootstrap-icons";
 
 import { Modal, ModalTitle } from "../Modal";
 import { AppearanceSettings } from "./AppearanceSettings";
 import { EditorSettings } from "./EditorSettings";
+import { KeyboardSettings } from "./keyboard/KeyboardSettings";
 import "./SettingsModal.css";
 import { WorkspaceSettings } from "./WorkspaceSettings";
 
@@ -28,6 +34,10 @@ const SETTINGS_PAGES: Record<SettingsCategory, SettingsPageDefinition> = {
     icon: TerminalFill,
     iconClass: CssClass.ICON_SEMIBOLD,
     Page: EditorSettings,
+  },
+  [SettingsCategory.KEYBOARD]: {
+    icon: KeyboardFill,
+    Page: KeyboardSettings,
   },
   [SettingsCategory.WORKSPACE]: {
     icon: DatabaseFill,

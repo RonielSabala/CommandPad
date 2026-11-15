@@ -1,0 +1,58 @@
+.keybinding-row {
+  --keybinding-chord-min-width: 9rem;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  column-gap: var(--space-4);
+}
+
+.framed-section-row.keybinding-row {
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-6);
+}
+
+.keybinding-row.is-recording {
+  background: var(--color-surface-alt);
+}
+
+/* Row name */
+
+.keybinding-name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+  font-size: var(--text-md);
+}
+
+.keybinding-modified {
+  flex: none;
+  width: var(--space-3);
+  height: var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+/* Row chord */
+
+.keybinding-chord {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: var(--keybinding-chord-min-width);
+  padding: var(--space-2);
+  border: none;
+  outline: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  cursor: pointer;
+}
+
+.keybinding-chord:is(:hover, :focus-visible) {
+  background: var(--color-surface-hover-bg);
+}
+
+.keybinding-unbound {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}

@@ -17,7 +17,9 @@ export function SettingsDocs() {
         text={t.docs.settings.categories(
           categories[SettingsCategory.APPEARANCE],
           categories[SettingsCategory.EDITOR],
+          categories[SettingsCategory.KEYBOARD],
           categories[SettingsCategory.WORKSPACE],
+          t.settings.keyboard.resetAll,
           t.settings.reset.action,
         )}
       />

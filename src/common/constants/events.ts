@@ -28,6 +28,9 @@ export const EventType = {
 /** A listener that never calls `preventDefault`. */
 export const PASSIVE = { passive: true } as const;
 
+/** In capture, so a listener on `window` runs before any other. */
+export const CAPTURE = { capture: true } as const;
+
 /** Passive, in capture, so a scroll on an inner scroller counts too. */
 export const PASSIVE_CAPTURE = { passive: true, capture: true } as const;
 

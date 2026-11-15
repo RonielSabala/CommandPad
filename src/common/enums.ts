@@ -52,6 +52,7 @@ export type PaletteCommand =
 export const SettingsCategory = {
   APPEARANCE: "appearance",
   EDITOR: "editor",
+  KEYBOARD: "keyboard",
   WORKSPACE: "workspace",
 } as const;
 export type SettingsCategory =
