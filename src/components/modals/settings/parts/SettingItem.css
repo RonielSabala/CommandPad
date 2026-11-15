@@ -1,6 +1,6 @@
 .setting-item {
   position: relative;
-  padding: var(--space-8) 0;
+  padding: var(--setting-gap) 0;
 }
 
 .setting-item + .setting-item {
@@ -11,8 +11,8 @@
 .setting-item:focus-within::before {
   content: "";
   position: absolute;
-  top: var(--space-8);
-  bottom: var(--space-8);
+  top: var(--setting-gap);
+  bottom: var(--setting-gap);
   left: calc(-1 * var(--space-8));
   width: var(--space-1);
   border-radius: var(--radius-sm);

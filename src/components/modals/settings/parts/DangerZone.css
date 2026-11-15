@@ -1,5 +1,11 @@
 .danger-zone {
-  margin-top: var(--space-8);
+  margin-top: var(--setting-gap);
+}
+
+.setting-item + .danger-zone {
+  margin-top: 0;
+  padding-top: var(--setting-gap);
+  border-top: var(--border-standard);
 }
 
 .danger-zone .framed-section-title {
