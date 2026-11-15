@@ -46,14 +46,14 @@ export const RunbookSourceConfig = {
 } as const;
 
 export const RunbookDbConfig = {
-  DB_VERSION: 1,
-  DB_NAME: "commandpad_runbooks_db",
   STORE_NAME: "runbooks",
+  DB_NAME: "commandpad_runbooks_db",
+  DB_VERSION: 1,
 } as const;
 
 export const IndexedDbTransactionMode = {
-  READ_WRITE: "readwrite",
   READ_ONLY: "readonly",
+  READ_WRITE: "readwrite",
 } as const;
 
 export const DEFAULT_TAB_LABEL = "Untitled";

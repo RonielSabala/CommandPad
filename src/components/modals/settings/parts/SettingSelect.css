@@ -7,6 +7,14 @@
   justify-content: space-between;
 }
 
+.btn.setting-select-trigger {
+  border-color: transparent;
+}
+
+.btn.setting-select-trigger:hover {
+  border-color: var(--color-border);
+}
+
 .setting-select-label {
   display: inline-flex;
   align-items: center;
