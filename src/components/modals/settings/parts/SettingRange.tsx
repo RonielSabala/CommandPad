@@ -1,5 +1,6 @@
+import { SettingRangeConfig } from "@/common/config";
 import { InputType } from "@/common/constants/dom";
-import type { CSSProperties, ReactNode } from "react";
+import { useRef, type CSSProperties } from "react";
 
 import { SettingInput } from "./SettingInput";
 import "./SettingRange.css";
@@ -7,45 +8,70 @@ import "./SettingRange.css";
 interface Props {
   label: string;
   value: number;
+  defaultValue: number;
   min: number;
   max: number;
   step: number;
   valueText: string;
   onChange: (value: number) => void;
-  children?: ReactNode;
 }
 
 /** A slider with its value spelled out. */
 export function SettingRange({
   label,
   value,
+  defaultValue,
   min,
   max,
   step,
   valueText,
   onChange,
-  children,
 }: Props) {
+  const pointerDriven = useRef(false);
+  const span = max - min;
+  const snapDistance = span * SettingRangeConfig.SNAP_FRACTION;
+
   return (
     <div className="setting-range">
-      <SettingInput
-        type={InputType.RANGE}
-        className="setting-range-input"
+      <span
+        className="setting-range-track"
         style={
           {
-            "--setting-range-fill": (value - min) / (max - min),
+            "--setting-range-fill": (value - min) / span,
+            "--setting-range-default": (defaultValue - min) / span,
           } as CSSProperties
         }
-        aria-label={label}
-        aria-valuetext={valueText}
-        value={value}
-        min={min}
-        max={max}
-        step={step}
-        onChange={(event) => onChange(event.currentTarget.valueAsNumber)}
-      />
+      >
+        <SettingInput
+          type={InputType.RANGE}
+          className="setting-range-input"
+          aria-label={label}
+          aria-valuetext={valueText}
+          value={value}
+          min={min}
+          max={max}
+          step={step}
+          onPointerDown={() => {
+            pointerDriven.current = true;
+          }}
+          onKeyDown={() => {
+            pointerDriven.current = false;
+          }}
+          onChange={(event) => {
+            const next = event.currentTarget.valueAsNumber;
+            onChange(
+              pointerDriven.current &&
+                Math.abs(next - defaultValue) <= snapDistance
+                ? defaultValue
+                : next,
+            );
+          }}
+        />
+
+        {value !== defaultValue && <span className="setting-range-default" />}
+      </span>
+
       <span className="setting-range-value">{valueText}</span>
-      {children}
     </div>
   );
 }

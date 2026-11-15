@@ -32,12 +32,18 @@ import type {
   Tab,
   VaultRecord,
 } from "@/common/types";
-import { detectLanguage, isLanguage } from "@/i18n/messages";
+import { isLanguage } from "@/i18n/messages";
 import type { Language, Messages } from "@/i18n/types";
 import type { CloudFolderRef } from "@/services/cloud";
 import { repairLibrary } from "@/utils/libraryTree";
 import { clamp } from "@/utils/number";
-import { isEnumValue, isNumber, isObject, isString } from "@/utils/typeGuards";
+import {
+  isBoolean,
+  isEnumValue,
+  isNumber,
+  isObject,
+  isString,
+} from "@/utils/typeGuards";
 
 import { toClampMaxLines, toQuickOpenRecents, toTabWidth } from "./uiState";
 
@@ -168,12 +174,16 @@ export function loadUiState(): Partial<PersistedUiState> | null {
     return {
       mode: saved.mode === AppMode.READ ? AppMode.READ : AppMode.EDIT,
       ...(isEnumValue(ThemeSetting, saved.theme) ? { theme: saved.theme } : {}),
-      language: isLanguage(saved.language) ? saved.language : detectLanguage(),
-      spellcheckEnabled: saved.spellcheckEnabled !== false,
+      ...(isLanguage(saved.language) ? { language: saved.language } : {}),
+      ...(isBoolean(saved.spellcheckEnabled)
+        ? { spellcheckEnabled: saved.spellcheckEnabled }
+        : {}),
       ...(isNumber(saved.tabWidth)
         ? { tabWidth: toTabWidth(saved.tabWidth) }
         : {}),
-      commandPromptEnabled: saved.commandPromptEnabled !== false,
+      ...(isBoolean(saved.commandPromptEnabled)
+        ? { commandPromptEnabled: saved.commandPromptEnabled }
+        : {}),
       ...(isNumber(saved.clampMaxLines)
         ? { clampMaxLines: toClampMaxLines(saved.clampMaxLines) }
         : {}),
@@ -193,8 +203,12 @@ export function loadUiState(): Partial<PersistedUiState> | null {
             ),
           }
         : {}),
-      minimapEnabled: saved.minimapEnabled !== false,
-      minimapPosition: toPanelSide(saved.minimapPosition, PanelSide.RIGHT),
+      ...(isBoolean(saved.minimapEnabled)
+        ? { minimapEnabled: saved.minimapEnabled }
+        : {}),
+      ...(isEnumValue(PanelSide, saved.minimapPosition)
+        ? { minimapPosition: saved.minimapPosition }
+        : {}),
       ...(isNumber(saved.quickOpenRecents)
         ? { quickOpenRecents: toQuickOpenRecents(saved.quickOpenRecents) }
         : {}),

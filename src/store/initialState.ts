@@ -1,6 +1,7 @@
 import {
   createDefaultPanels,
   QuickOpenRecents,
+  SettingDefault,
   VariableSplit,
 } from "@/common/config";
 import {
@@ -15,10 +16,8 @@ import {
   CloudExportStatus,
   CloudProvider,
   ExportFormat,
-  PanelSide,
   RevealTone,
   SyncDestination,
-  ThemeSetting,
 } from "@/common/enums";
 import { detectLanguage } from "@/i18n/messages";
 import { DEFAULT_CLOUD_SORT } from "@/services/cloud";
@@ -34,11 +33,11 @@ export function createInitialState(): StoreData {
 
     // UI
     mode: AppMode.EDIT,
-    theme: ThemeSetting.SYSTEM,
+    theme: SettingDefault.THEME,
     systemTheme: readSystemTheme(),
     language: detectLanguage(),
-    spellcheckEnabled: true,
-    commandPromptEnabled: true,
+    spellcheckEnabled: SettingDefault.SPELLCHECK,
+    commandPromptEnabled: SettingDefault.COMMAND_PROMPT,
     tabWidth: TabWidth.DEFAULT,
     clampMaxLines: ClampLines.DEFAULT,
     defaultCommandLanguage: DEFAULT_COMMAND_LANGUAGE,
@@ -46,8 +45,8 @@ export function createInitialState(): StoreData {
     keybindingOverrides: {},
     panels: createDefaultPanels(),
     variableKeyRatio: VariableSplit.DEFAULT,
-    minimapEnabled: true,
-    minimapPosition: PanelSide.RIGHT,
+    minimapEnabled: SettingDefault.MINIMAP,
+    minimapPosition: SettingDefault.MINIMAP_POSITION,
     quickOpenRecents: QuickOpenRecents.DEFAULT,
     runbookSectionCollapsed: false,
     variablesSectionCollapsed: false,

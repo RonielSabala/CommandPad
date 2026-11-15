@@ -856,6 +856,7 @@ export const en: Messages = {
   },
   settings: {
     title: "Settings",
+    defaultTag: "(default)",
     categories: {
       [SettingsCategory.APPEARANCE]: "Appearance",
       [SettingsCategory.EDITOR]: "Editor",
@@ -909,7 +910,6 @@ export const en: Messages = {
         "How a variable row shares its width between the key and the value.",
       value: (keyPercent, valuePercent) =>
         `Key ${keyPercent}% ${MIDDLE_DOT} Value ${valuePercent}%`,
-      reset: "Even out",
     },
     spellcheck: {
       title: "Spell check",

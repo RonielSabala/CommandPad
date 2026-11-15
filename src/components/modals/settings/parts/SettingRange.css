@@ -4,13 +4,22 @@
   gap: var(--space-6);
 }
 
-.setting-range-input {
+.setting-range-track {
   --setting-range-track-height: var(--space-2);
   --setting-range-thumb-size: var(--icon-sm);
-  /* How far along the value is, from 0 to 1. */
-  --setting-range-fill: 0;
+  --setting-range-default-size: var(--space-4);
 
+  /* Where the value and the default sit. */
+  --setting-range-fill: 0;
+  --setting-range-default: 0;
+
+  position: relative;
+  display: flex;
+}
+
+.setting-range-input {
   appearance: none;
+  outline: none;
   width: var(--setting-control-width);
   height: var(--setting-range-track-height);
   border-radius: var(--radius-pill);
@@ -24,6 +33,8 @@
     var(--color-border) 0
   );
 }
+
+/* One rule per engine */
 
 .setting-range-input::-webkit-slider-thumb {
   appearance: none;
@@ -40,6 +51,22 @@
   border: none;
   border-radius: 50%;
   background: var(--accent);
+}
+
+/* The default's dot */
+.setting-range-default {
+  position: absolute;
+  top: 50%;
+  left: calc(
+    var(--setting-range-thumb-size) / 2 + var(--setting-range-default) *
+      (100% - var(--setting-range-thumb-size))
+  );
+  width: var(--setting-range-default-size);
+  height: var(--setting-range-default-size);
+  border-radius: 50%;
+  background: var(--color-text-muted);
+  translate: -50% -50%;
+  pointer-events: none;
 }
 
 .setting-range-value {

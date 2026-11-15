@@ -31,6 +31,7 @@ export function WorkspaceSettings() {
         <SettingRange
           label={quickOpenRecents.title}
           value={recents}
+          defaultValue={QuickOpenRecents.DEFAULT}
           min={QuickOpenRecents.MIN}
           max={QuickOpenRecents.MAX}
           step={QuickOpenRecents.STEP}

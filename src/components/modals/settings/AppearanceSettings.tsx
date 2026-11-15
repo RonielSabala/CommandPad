@@ -1,14 +1,17 @@
+import { SettingDefault } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
 import { ThemeSetting } from "@/common/enums";
 import { LANGUAGE_OPTIONS } from "@/components/common/LanguageSelect";
 import type { SelectOption } from "@/components/common/Select";
 import { DisplayIcon, MoonIcon, SunIcon } from "@/components/icons";
-import { useLanguage, useTranslation } from "@/i18n";
+import { detectLanguage, useLanguage, useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useMemo } from "react";
 
 import { SettingItem, SettingSelect } from "./parts";
+
+const DEFAULT_LANGUAGE = detectLanguage();
 
 const THEME_ICONS: Record<ThemeSetting, typeof SunIcon> = {
   [ThemeSetting.DARK]: MoonIcon,
@@ -47,6 +50,7 @@ export function AppearanceSettings() {
       >
         <SettingSelect
           value={theme}
+          defaultValue={SettingDefault.THEME}
           options={themeOptions}
           onChange={setTheme}
         />
@@ -58,6 +62,7 @@ export function AppearanceSettings() {
       >
         <SettingSelect
           value={language}
+          defaultValue={DEFAULT_LANGUAGE}
           options={LANGUAGE_OPTIONS}
           onChange={setLanguage}
         />

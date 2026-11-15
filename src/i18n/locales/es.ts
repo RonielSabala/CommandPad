@@ -880,6 +880,7 @@ export const es: Messages = {
   },
   settings: {
     title: "Configuración",
+    defaultTag: "(predeterminado)",
     categories: {
       [SettingsCategory.APPEARANCE]: "Apariencia",
       [SettingsCategory.EDITOR]: "Editor",
@@ -934,7 +935,6 @@ export const es: Messages = {
         "Cómo reparte una fila de variable su ancho entre la clave y el valor.",
       value: (keyPercent, valuePercent) =>
         `Clave ${keyPercent}% ${MIDDLE_DOT} Valor ${valuePercent}%`,
-      reset: "Igualar",
     },
     spellcheck: {
       title: "Corrector ortográfico",

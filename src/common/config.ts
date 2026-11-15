@@ -1,4 +1,10 @@
-import { ExportFormat, PanelId, PanelSide, RunbookView } from "./enums";
+import {
+  ExportFormat,
+  PanelId,
+  PanelSide,
+  RunbookView,
+  ThemeSetting,
+} from "./enums";
 import type { PanelState } from "./types";
 
 export const StorageKey = {
@@ -115,6 +121,19 @@ export const VariableSplit = {
   MAX: 0.85,
   DEFAULT: 0.5,
   STEP: 0.01,
+} as const;
+
+export const SettingDefault = {
+  THEME: ThemeSetting.SYSTEM,
+  SPELLCHECK: true,
+  COMMAND_PROMPT: true,
+  MINIMAP: true,
+  MINIMAP_POSITION: PanelSide.RIGHT,
+} as const;
+
+export const SettingRangeConfig = {
+  /** How close to its default a dragged slider snaps onto it. */
+  SNAP_FRACTION: 0.04,
 } as const;
 
 // Timeouts

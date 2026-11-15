@@ -623,6 +623,7 @@ export interface Messages {
   keybindings: Record<KeyBinding, string>;
   settings: {
     title: string;
+    defaultTag: string;
     categories: Record<SettingsCategory, string>;
     theme: {
       title: string;
@@ -659,7 +660,6 @@ export interface Messages {
       title: string;
       description: string;
       value: (keyPercent: number, valuePercent: number) => string;
-      reset: string;
     };
     spellcheck: {
       title: string;

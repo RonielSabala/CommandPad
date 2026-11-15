@@ -1,6 +1,10 @@
-import { VariableSplit } from "@/common/config";
-import { CssClass } from "@/common/constants/css";
-import { ClampLines, TabWidth } from "@/common/editorConfig";
+import { SettingDefault, VariableSplit } from "@/common/config";
+import {
+  ClampLines,
+  DEFAULT_COMMAND_LANGUAGE,
+  DEFAULT_VARIABLE_LANGUAGE,
+  TabWidth,
+} from "@/common/editorConfig";
 import { PanelSide } from "@/common/enums";
 import { CODE_LANGUAGE_OPTIONS } from "@/components/common/codeEditor/CodeLanguageSelect";
 import { useTranslation } from "@/i18n";
@@ -17,8 +21,6 @@ import {
 function keyPercentOf(ratio: number): number {
   return Math.round(ratio * 100);
 }
-
-const EVEN_KEY_PERCENT = keyPercentOf(VariableSplit.DEFAULT);
 
 export function EditorSettings() {
   const t = useTranslation();
@@ -40,7 +42,6 @@ export function EditorSettings() {
   );
 
   const setKeyRatio = useStore((state) => state.setVariableKeyRatio);
-  const resetKeyRatio = useStore((state) => state.resetVariableKeyRatio);
   const setTabWidth = useStore((state) => state.setTabWidth);
   const togglePrompt = useStore((state) => state.toggleCommandPrompt);
   const setClampMaxLines = useStore((state) => state.setClampMaxLines);
@@ -72,6 +73,7 @@ export function EditorSettings() {
       >
         <SettingSelect
           value={commandLanguage}
+          defaultValue={DEFAULT_COMMAND_LANGUAGE}
           options={CODE_LANGUAGE_OPTIONS}
           onChange={setCommandLanguage}
         />
@@ -83,6 +85,7 @@ export function EditorSettings() {
       >
         <SettingSelect
           value={variableLanguage}
+          defaultValue={DEFAULT_VARIABLE_LANGUAGE}
           options={CODE_LANGUAGE_OPTIONS}
           onChange={setVariableLanguage}
         />
@@ -95,6 +98,7 @@ export function EditorSettings() {
         <SettingRange
           label={tabWidthText.title}
           value={tabWidth}
+          defaultValue={TabWidth.DEFAULT}
           min={TabWidth.MIN}
           max={TabWidth.MAX}
           step={TabWidth.STEP}
@@ -107,6 +111,7 @@ export function EditorSettings() {
         title={t.settings.commandPrompt.title}
         description={t.settings.commandPrompt.description}
         checked={promptEnabled}
+        defaultValue={SettingDefault.COMMAND_PROMPT}
         onToggle={togglePrompt}
       />
 
@@ -117,6 +122,7 @@ export function EditorSettings() {
         <SettingRange
           label={clampLines.title}
           value={clampMaxLines}
+          defaultValue={ClampLines.DEFAULT}
           min={ClampLines.MIN}
           max={ClampLines.MAX}
           step={ClampLines.STEP}
@@ -132,26 +138,20 @@ export function EditorSettings() {
         <SettingRange
           label={variableSplit.title}
           value={keyRatio}
+          defaultValue={VariableSplit.DEFAULT}
           min={VariableSplit.MIN}
           max={VariableSplit.MAX}
           step={VariableSplit.STEP}
           valueText={variableSplit.value(keyPercent, 100 - keyPercent)}
           onChange={setKeyRatio}
-        >
-          <button
-            className={CssClass.BTN}
-            disabled={keyPercent === EVEN_KEY_PERCENT}
-            onClick={resetKeyRatio}
-          >
-            {variableSplit.reset}
-          </button>
-        </SettingRange>
+        />
       </SettingItem>
 
       <SettingCheckbox
         title={t.settings.spellcheck.title}
         description={t.settings.spellcheck.description}
         checked={spellcheckEnabled}
+        defaultValue={SettingDefault.SPELLCHECK}
         onToggle={toggleSpellcheck}
       />
 
@@ -159,6 +159,7 @@ export function EditorSettings() {
         title={t.settings.minimap.title}
         description={t.settings.minimap.description}
         checked={minimapEnabled}
+        defaultValue={SettingDefault.MINIMAP}
         onToggle={toggleMinimap}
       />
 
@@ -168,6 +169,7 @@ export function EditorSettings() {
       >
         <SettingSelect
           value={minimapPosition}
+          defaultValue={SettingDefault.MINIMAP_POSITION}
           options={minimapSideOptions}
           onChange={setMinimapPosition}
           disabled={!minimapEnabled}

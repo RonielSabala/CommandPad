@@ -5,22 +5,37 @@ import {
   type SelectOption,
 } from "@/components/common/Select";
 import { classNames } from "@/utils/string";
+import { useMemo } from "react";
 
+import { SettingDefaultTag } from "./SettingDefaultTag";
 import "./SettingSelect.css";
 
 interface Props<T extends string> {
   value: T;
+  defaultValue: T;
   options: readonly SelectOption<T>[];
   onChange: (value: T) => void;
   disabled?: boolean;
 }
 
+/** A pick-one setting. */
 export function SettingSelect<T extends string>({
   value,
+  defaultValue,
   options,
   onChange,
   disabled,
 }: Props<T>) {
+  const taggedOptions = useMemo(
+    () =>
+      options.map((option) =>
+        option.value === defaultValue
+          ? { ...option, hint: <SettingDefaultTag /> }
+          : option,
+      ),
+    [options, defaultValue],
+  );
+
   return (
     <Select
       className="setting-select"
@@ -29,7 +44,7 @@ export function SettingSelect<T extends string>({
       disabled={disabled}
       portal
       value={value}
-      options={options}
+      options={taggedOptions}
       onChange={onChange}
     >
       <span className="setting-select-label">

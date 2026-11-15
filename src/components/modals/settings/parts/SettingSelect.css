@@ -18,3 +18,7 @@
   align-items: center;
   gap: var(--space-3);
 }
+
+.select-option .setting-default-tag {
+  margin-left: auto;
+}
