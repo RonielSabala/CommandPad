@@ -155,6 +155,7 @@ export interface StoreState {
   language: Language;
   spellcheckEnabled: boolean;
   commandPromptEnabled: boolean;
+  clampMaxLines: number;
   defaultCommandLanguage: CodeLanguage;
   defaultVariableLanguage: CodeLanguage;
   keybindingOverrides: KeybindingOverrides;
@@ -268,6 +269,7 @@ export interface StoreState {
   toggleTheme: () => void;
   toggleSpellcheck: () => void;
   toggleCommandPrompt: () => void;
+  setClampMaxLines: (lines: number) => void;
   setDefaultCommandLanguage: (language: CodeLanguage) => void;
   setDefaultVariableLanguage: (language: CodeLanguage) => void;
   setLanguage: (language: Language) => void;

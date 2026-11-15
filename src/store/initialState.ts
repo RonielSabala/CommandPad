@@ -1,5 +1,6 @@
 import { createDefaultPanels, VariableSplit } from "@/common/config";
 import {
+  ClampLines,
   DEFAULT_COMMAND_LANGUAGE,
   DEFAULT_VARIABLE_LANGUAGE,
 } from "@/common/editorConfig";
@@ -33,6 +34,7 @@ export function createInitialState(): StoreData {
     language: detectLanguage(),
     spellcheckEnabled: true,
     commandPromptEnabled: true,
+    clampMaxLines: ClampLines.DEFAULT,
     defaultCommandLanguage: DEFAULT_COMMAND_LANGUAGE,
     defaultVariableLanguage: DEFAULT_VARIABLE_LANGUAGE,
     keybindingOverrides: {},

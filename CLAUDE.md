@@ -254,10 +254,10 @@ Resolved text is green and **tinted by depth**: level 1 is text the referenced v
 
 ### Clamping long code surfaces
 
-A command block has two independently clampable surfaces (`ClampSurface`: preview and editor); a variable's value is clamped the same way. Anything taller than `CommandClampConfig.MAX_LINES` is clipped behind its own show-more toggle.
+A command block has two independently clampable surfaces (`ClampSurface`: preview and editor); a variable's value is clamped the same way. Anything taller than the user's `clampMaxLines` is clipped behind its own show-more toggle; the setting has no off position (bounded by `ClampLines`, normalized by `toClampMaxLines`), because an unclamped 1000-line block is what the clamp exists to prevent.
 
 - Overflow is a **line count**, not a measurement (no soft wrap): `countCommandLines(segments, secretKeys)` for the preview (skips masked secrets via `isMaskedSegment`), `countLines` for the editor.
-- Heights are CSS from `--command-clamp-line-height` × `--command-clamp-max-lines` (set inline from the TS constant). The fade is a `mask-image` on the clipped content (`in oklab`).
+- Heights are CSS from `--clamp-line-height` × `--clamp-max-lines` (set inline on each surface by `useClampSurfaceStyle`). The fade is a `mask-image` on the clipped content (`in oklab`).
 - Each toggle is the **last child of its surface, below its content row**, so both center on the block's axis; sticky with only `bottom` set, on `--z-raised` (below the scrollbar's `--z-sticky`), a halo pill.
 - **Expansion state is global** (`expandedClampSurfaces`, `toggleClampSurfaceExpanded`), transient, because the minimap renders every block twice.
 - Collapsing keeps the surface in view: `useClampSurface` uses `useKeepInView(ref, state)` (arm on toggle, `scrollIntoView` in a layout effect; arming keeps the mirror from scrolling). The runbook block reuses `useKeepInView` for its fold and view switch.

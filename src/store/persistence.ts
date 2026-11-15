@@ -39,6 +39,8 @@ import { repairLibrary } from "@/utils/libraryTree";
 import { clamp } from "@/utils/number";
 import { isEnumValue, isNumber, isObject, isString } from "@/utils/typeGuards";
 
+import { toClampMaxLines } from "./uiState";
+
 const PANEL_IDS = Object.keys(PANEL_DEFINITIONS) as PanelId[];
 
 function getSavedItemByKey(key: string) {
@@ -107,6 +109,7 @@ interface PersistedUiState {
   language: Language;
   spellcheckEnabled: boolean;
   commandPromptEnabled: boolean;
+  clampMaxLines: number;
   defaultCommandLanguage: CodeLanguage;
   defaultVariableLanguage: CodeLanguage;
   panels: Record<PanelId, PanelState>;
@@ -131,6 +134,7 @@ export function saveUiState(ui: PersistedUiState): void {
         language: ui.language,
         spellcheckEnabled: ui.spellcheckEnabled,
         commandPromptEnabled: ui.commandPromptEnabled,
+        clampMaxLines: ui.clampMaxLines,
         defaultCommandLanguage: ui.defaultCommandLanguage,
         defaultVariableLanguage: ui.defaultVariableLanguage,
         panels: serializePanels(ui.panels),
@@ -163,6 +167,9 @@ export function loadUiState(): Partial<PersistedUiState> | null {
       language: isLanguage(saved.language) ? saved.language : detectLanguage(),
       spellcheckEnabled: saved.spellcheckEnabled !== false,
       commandPromptEnabled: saved.commandPromptEnabled !== false,
+      ...(isNumber(saved.clampMaxLines)
+        ? { clampMaxLines: toClampMaxLines(saved.clampMaxLines) }
+        : {}),
       ...(isCodeLanguage(saved.defaultCommandLanguage)
         ? { defaultCommandLanguage: saved.defaultCommandLanguage }
         : {}),

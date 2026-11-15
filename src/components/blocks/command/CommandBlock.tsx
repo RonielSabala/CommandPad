@@ -13,7 +13,7 @@ import {
 } from "@/components/common/codeEditor/CodeEditor";
 import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageSelect";
 import { VariablesViewContext } from "@/components/variables/variablesViewContext";
-import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
+import { useClampSurface, useClampSurfaceStyle } from "@/hooks/useClampSurface";
 import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -50,6 +50,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   );
 
   const rootRef = useRef<HTMLDivElement>(null);
+  const clampStyle = useClampSurfaceStyle();
   const editorRef = useRef<CodeEditorHandle>(null);
   const completions = useContext(CompletionsContext);
   const actions = useEditorActions();
@@ -88,7 +89,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         CssClass.BLOCK_SURFACE,
         CssClass.CLAMP_SURFACE,
       )}
-      style={CLAMP_SURFACE_STYLE}
+      style={clampStyle}
     >
       <CommandPreview
         clampId={blockId}

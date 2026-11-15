@@ -1,5 +1,6 @@
 import { VariableSplit } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
+import { ClampLines } from "@/common/editorConfig";
 import { PanelSide } from "@/common/enums";
 import { CODE_LANGUAGE_OPTIONS } from "@/components/common/codeEditor/CodeLanguageSelect";
 import { useTranslation } from "@/i18n";
@@ -25,6 +26,7 @@ export function EditorSettings() {
   const variableLanguage = useStore((state) => state.defaultVariableLanguage);
   const keyRatio = useStore((state) => state.variableKeyRatio);
   const promptEnabled = useStore((state) => state.commandPromptEnabled);
+  const clampMaxLines = useStore((state) => state.clampMaxLines);
   const spellcheckEnabled = useStore((state) => state.spellcheckEnabled);
   const minimapEnabled = useStore((state) => state.minimapEnabled);
   const minimapPosition = useStore((state) => state.minimapPosition);
@@ -39,11 +41,12 @@ export function EditorSettings() {
   const setKeyRatio = useStore((state) => state.setVariableKeyRatio);
   const resetKeyRatio = useStore((state) => state.resetVariableKeyRatio);
   const togglePrompt = useStore((state) => state.toggleCommandPrompt);
+  const setClampMaxLines = useStore((state) => state.setClampMaxLines);
   const toggleSpellcheck = useStore((state) => state.toggleSpellcheck);
   const toggleMinimap = useStore((state) => state.toggleMinimap);
   const setMinimapPosition = useStore((state) => state.setMinimapPosition);
 
-  const { variableSplit, minimapSide } = t.settings;
+  const { clampLines, variableSplit, minimapSide } = t.settings;
   const keyPercent = keyPercentOf(keyRatio);
   const minimapSideOptions = useMemo(
     () =>
@@ -84,6 +87,21 @@ export function EditorSettings() {
         checked={promptEnabled}
         onToggle={togglePrompt}
       />
+
+      <SettingItem
+        title={clampLines.title}
+        description={clampLines.description}
+      >
+        <SettingRange
+          label={clampLines.title}
+          value={clampMaxLines}
+          min={ClampLines.MIN}
+          max={ClampLines.MAX}
+          step={ClampLines.STEP}
+          valueText={clampLines.value(clampMaxLines)}
+          onChange={setClampMaxLines}
+        />
+      </SettingItem>
 
       <SettingItem
         title={variableSplit.title}

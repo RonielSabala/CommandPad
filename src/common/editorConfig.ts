@@ -3,8 +3,14 @@ import { CodeLanguage } from "./enums";
 export const COMMAND_PROMPT_PREFIX = "$";
 
 export const ClampConfig = {
-  MAX_LINES: 8,
   MAX_LINES_PROPERTY: "--clamp-max-lines",
+} as const;
+
+export const ClampLines = {
+  MIN: 2,
+  MAX: 40,
+  STEP: 1,
+  DEFAULT: 8,
 } as const;
 
 export const CodeToken = {

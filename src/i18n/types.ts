@@ -645,6 +645,11 @@ export interface Messages {
       title: string;
       description: string;
     };
+    clampLines: {
+      title: string;
+      description: string;
+      value: (lines: number) => string;
+    };
     variableSplit: {
       title: string;
       description: string;

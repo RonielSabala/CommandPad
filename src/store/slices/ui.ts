@@ -15,6 +15,7 @@ import type { StoreState } from "@/store/types";
 import {
   oppositeSide,
   sidebarSectionsSnapshot,
+  toClampMaxLines,
   withPanel,
 } from "@/store/uiState";
 
@@ -29,6 +30,7 @@ type UiActions = Pick<
   | "toggleTheme"
   | "toggleSpellcheck"
   | "toggleCommandPrompt"
+  | "setClampMaxLines"
   | "setDefaultCommandLanguage"
   | "setDefaultVariableLanguage"
   | "setLanguage"
@@ -130,6 +132,16 @@ export function createUiSlice(kit: StoreKit): UiActions {
 
     toggleCommandPrompt: () => {
       set((s) => ({ commandPromptEnabled: !s.commandPromptEnabled }));
+      saveUi();
+    },
+
+    setClampMaxLines: (lines) => {
+      const clampMaxLines = toClampMaxLines(lines);
+      if (get().clampMaxLines === clampMaxLines) {
+        return;
+      }
+
+      set({ clampMaxLines });
       saveUi();
     },
 
