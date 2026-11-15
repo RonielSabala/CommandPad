@@ -1,6 +1,6 @@
 import { VariableSplit } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
-import { ClampLines } from "@/common/editorConfig";
+import { ClampLines, TabWidth } from "@/common/editorConfig";
 import { PanelSide } from "@/common/enums";
 import { CODE_LANGUAGE_OPTIONS } from "@/components/common/codeEditor/CodeLanguageSelect";
 import { useTranslation } from "@/i18n";
@@ -25,6 +25,7 @@ export function EditorSettings() {
   const commandLanguage = useStore((state) => state.defaultCommandLanguage);
   const variableLanguage = useStore((state) => state.defaultVariableLanguage);
   const keyRatio = useStore((state) => state.variableKeyRatio);
+  const tabWidth = useStore((state) => state.tabWidth);
   const promptEnabled = useStore((state) => state.commandPromptEnabled);
   const clampMaxLines = useStore((state) => state.clampMaxLines);
   const spellcheckEnabled = useStore((state) => state.spellcheckEnabled);
@@ -40,13 +41,19 @@ export function EditorSettings() {
 
   const setKeyRatio = useStore((state) => state.setVariableKeyRatio);
   const resetKeyRatio = useStore((state) => state.resetVariableKeyRatio);
+  const setTabWidth = useStore((state) => state.setTabWidth);
   const togglePrompt = useStore((state) => state.toggleCommandPrompt);
   const setClampMaxLines = useStore((state) => state.setClampMaxLines);
   const toggleSpellcheck = useStore((state) => state.toggleSpellcheck);
   const toggleMinimap = useStore((state) => state.toggleMinimap);
   const setMinimapPosition = useStore((state) => state.setMinimapPosition);
 
-  const { clampLines, variableSplit, minimapSide } = t.settings;
+  const {
+    tabWidth: tabWidthText,
+    clampLines,
+    variableSplit,
+    minimapSide,
+  } = t.settings;
   const keyPercent = keyPercentOf(keyRatio);
   const minimapSideOptions = useMemo(
     () =>
@@ -78,6 +85,21 @@ export function EditorSettings() {
           value={variableLanguage}
           options={CODE_LANGUAGE_OPTIONS}
           onChange={setVariableLanguage}
+        />
+      </SettingItem>
+
+      <SettingItem
+        title={tabWidthText.title}
+        description={tabWidthText.description}
+      >
+        <SettingRange
+          label={tabWidthText.title}
+          value={tabWidth}
+          min={TabWidth.MIN}
+          max={TabWidth.MAX}
+          step={TabWidth.STEP}
+          valueText={tabWidthText.value(tabWidth)}
+          onChange={setTabWidth}
         />
       </SettingItem>
 

@@ -39,7 +39,7 @@ import { repairLibrary } from "@/utils/libraryTree";
 import { clamp } from "@/utils/number";
 import { isEnumValue, isNumber, isObject, isString } from "@/utils/typeGuards";
 
-import { toClampMaxLines } from "./uiState";
+import { toClampMaxLines, toTabWidth } from "./uiState";
 
 const PANEL_IDS = Object.keys(PANEL_DEFINITIONS) as PanelId[];
 
@@ -108,6 +108,7 @@ interface PersistedUiState {
   theme: ThemeSetting;
   language: Language;
   spellcheckEnabled: boolean;
+  tabWidth: number;
   commandPromptEnabled: boolean;
   clampMaxLines: number;
   defaultCommandLanguage: CodeLanguage;
@@ -133,6 +134,7 @@ export function saveUiState(ui: PersistedUiState): void {
         theme: ui.theme,
         language: ui.language,
         spellcheckEnabled: ui.spellcheckEnabled,
+        tabWidth: ui.tabWidth,
         commandPromptEnabled: ui.commandPromptEnabled,
         clampMaxLines: ui.clampMaxLines,
         defaultCommandLanguage: ui.defaultCommandLanguage,
@@ -166,6 +168,9 @@ export function loadUiState(): Partial<PersistedUiState> | null {
       ...(isEnumValue(ThemeSetting, saved.theme) ? { theme: saved.theme } : {}),
       language: isLanguage(saved.language) ? saved.language : detectLanguage(),
       spellcheckEnabled: saved.spellcheckEnabled !== false,
+      ...(isNumber(saved.tabWidth)
+        ? { tabWidth: toTabWidth(saved.tabWidth) }
+        : {}),
       commandPromptEnabled: saved.commandPromptEnabled !== false,
       ...(isNumber(saved.clampMaxLines)
         ? { clampMaxLines: toClampMaxLines(saved.clampMaxLines) }

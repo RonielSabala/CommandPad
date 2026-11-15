@@ -13,9 +13,16 @@ export const ClampLines = {
   DEFAULT: 8,
 } as const;
 
+/** The columns a tab character spans. */
+export const TabWidth = {
+  MIN: 1,
+  MAX: 8,
+  STEP: 1,
+  DEFAULT: 4,
+} as const;
+
 export const CodeToken = {
   FONT_MONO: "--font-mono",
-  TAB_SIZE: "--tab-size",
   TEXT_BASE: "--text-base",
   TEXT_MD: "--text-md",
   TEXT_SM: "--text-sm",
@@ -48,6 +55,7 @@ export const ColorToken = {
 } as const;
 
 export const CodeMetricProperty = {
+  TAB_SIZE: "--tab-size",
   LINE_HEIGHT_BASE: "--code-line-height-base",
   LINE_HEIGHT_MEDIUM: "--code-line-height-medium",
   LINE_HEIGHT_SMALL: "--code-line-height-small",

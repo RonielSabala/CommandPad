@@ -1,4 +1,4 @@
-import { ClampLines } from "@/common/editorConfig";
+import { ClampLines, TabWidth } from "@/common/editorConfig";
 import { PanelId, PanelSide } from "@/common/enums";
 import type { PanelState } from "@/common/types";
 import { clamp } from "@/utils/number";
@@ -11,6 +11,10 @@ export function oppositeSide(side: PanelSide): PanelSide {
 
 export function toClampMaxLines(lines: number): number {
   return Math.round(clamp(lines, ClampLines.MIN, ClampLines.MAX));
+}
+
+export function toTabWidth(width: number): number {
+  return Math.round(clamp(width, TabWidth.MIN, TabWidth.MAX));
 }
 
 /** Replace one panel's state. */
@@ -33,6 +37,7 @@ export function uiStateSnapshot(state: StoreState) {
     theme: state.theme,
     language: state.language,
     spellcheckEnabled: state.spellcheckEnabled,
+    tabWidth: state.tabWidth,
     commandPromptEnabled: state.commandPromptEnabled,
     clampMaxLines: state.clampMaxLines,
     defaultCommandLanguage: state.defaultCommandLanguage,

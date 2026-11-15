@@ -641,6 +641,11 @@ export interface Messages {
       title: string;
       description: string;
     };
+    tabWidth: {
+      title: string;
+      description: string;
+      value: (columns: number) => string;
+    };
     commandPrompt: {
       title: string;
       description: string;

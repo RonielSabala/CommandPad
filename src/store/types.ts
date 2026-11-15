@@ -154,6 +154,7 @@ export interface StoreState {
   systemTheme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
+  tabWidth: number;
   commandPromptEnabled: boolean;
   clampMaxLines: number;
   defaultCommandLanguage: CodeLanguage;
@@ -268,6 +269,7 @@ export interface StoreState {
   setSystemTheme: (theme: Theme) => void;
   toggleTheme: () => void;
   toggleSpellcheck: () => void;
+  setTabWidth: (width: number) => void;
   toggleCommandPrompt: () => void;
   setClampMaxLines: (lines: number) => void;
   setDefaultCommandLanguage: (language: CodeLanguage) => void;

@@ -16,6 +16,7 @@ import {
   oppositeSide,
   sidebarSectionsSnapshot,
   toClampMaxLines,
+  toTabWidth,
   withPanel,
 } from "@/store/uiState";
 
@@ -29,6 +30,7 @@ type UiActions = Pick<
   | "setSystemTheme"
   | "toggleTheme"
   | "toggleSpellcheck"
+  | "setTabWidth"
   | "toggleCommandPrompt"
   | "setClampMaxLines"
   | "setDefaultCommandLanguage"
@@ -127,6 +129,16 @@ export function createUiSlice(kit: StoreKit): UiActions {
 
     toggleSpellcheck: () => {
       set((s) => ({ spellcheckEnabled: !s.spellcheckEnabled }));
+      saveUi();
+    },
+
+    setTabWidth: (width) => {
+      const tabWidth = toTabWidth(width);
+      if (get().tabWidth === tabWidth) {
+        return;
+      }
+
+      set({ tabWidth });
       saveUi();
     },
 

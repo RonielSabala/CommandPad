@@ -3,6 +3,7 @@ import {
   ClampLines,
   DEFAULT_COMMAND_LANGUAGE,
   DEFAULT_VARIABLE_LANGUAGE,
+  TabWidth,
 } from "@/common/editorConfig";
 import {
   AppMode,
@@ -34,6 +35,7 @@ export function createInitialState(): StoreData {
     language: detectLanguage(),
     spellcheckEnabled: true,
     commandPromptEnabled: true,
+    tabWidth: TabWidth.DEFAULT,
     clampMaxLines: ClampLines.DEFAULT,
     defaultCommandLanguage: DEFAULT_COMMAND_LANGUAGE,
     defaultVariableLanguage: DEFAULT_VARIABLE_LANGUAGE,

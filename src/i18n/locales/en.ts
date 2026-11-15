@@ -887,6 +887,12 @@ export const en: Messages = {
       description:
         "The language a new text variable's value starts in. Existing variables and imported runbooks keep their own.",
     },
+    tabWidth: {
+      title: "Tab width",
+      description:
+        "How many columns a tab spans in commands, variable values and notes.",
+      value: (columns) => (columns === 1 ? "1 column" : `${columns} columns`),
+    },
     commandPrompt: {
       title: "Command prompt",
       description: "Show the $ before the first line of a command's editor.",
@@ -1945,7 +1951,7 @@ If something goes wrong, undo it in this order:
       ) =>
         `Pick a category on the left:
 * **${appearanceLabel}**: the light or dark theme, or the one your device uses, and the interface language.
-* **${editorLabel}**: the language a new command or variable starts in, the $ prompt in a command's editor, how many lines a long command shows before it folds, how a variable row splits between key and value, spell check in notes, and the minimap and the side it sits on.
+* **${editorLabel}**: the language a new command or variable starts in, how wide a tab is, the $ prompt in a command's editor, how many lines a long command shows before it folds, how a variable row splits between key and value, spell check in notes, and the minimap and the side it sits on.
 * **${keyboardLabel}**: every shortcut, searchable. Click a shortcut, press the new keys, then \`Enter\` or the check mark beside them to keep them, or \`Escape\` or the cross to cancel. If another action already uses those keys, the app says which, and accepting moves them over. Each row's menu also removes a shortcut or puts back its default, and **${resetAllLabel}** restores every default.
 * **${workspaceLabel}**: **${resetLabel}** wipes every tab, runbook, variable and preference from this browser. It cannot be undone, so the app always asks you to confirm first.`,
     },

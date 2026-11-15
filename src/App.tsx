@@ -5,6 +5,7 @@ import { useDocumentLanguage, useThemeClass } from "@/hooks/useBodyClasses";
 import { useRoutePrefetch, type RouteLoader } from "@/hooks/useRoutePrefetch";
 import { useSystemTheme } from "@/hooks/useSystemTheme";
 import { useMonacoBootstrap } from "@/monaco/useMonacoBootstrap";
+import { useMonacoTabSize } from "@/monaco/useMonacoTabSize";
 import { useMonacoTheme } from "@/monaco/useMonacoTheme";
 import { useStore } from "@/store/store";
 import { lazy, Suspense, useEffect } from "react";
@@ -47,6 +48,7 @@ export default function App() {
   useRoutePrefetch(ROUTE_LOADERS);
   useMonacoBootstrap();
   useMonacoTheme();
+  useMonacoTabSize();
 
   useEffect(() => {
     void bootstrap();
