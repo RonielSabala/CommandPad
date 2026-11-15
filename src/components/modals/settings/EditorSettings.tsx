@@ -1,8 +1,10 @@
 import { VariableSplit } from "@/common/config";
 import { CssClass } from "@/common/constants/css";
+import { PanelSide } from "@/common/enums";
 import { CODE_LANGUAGE_OPTIONS } from "@/components/common/codeEditor/CodeLanguageSelect";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
+import { useMemo } from "react";
 
 import {
   SettingCheckbox,
@@ -24,6 +26,7 @@ export function EditorSettings() {
   const keyRatio = useStore((state) => state.variableKeyRatio);
   const spellcheckEnabled = useStore((state) => state.spellcheckEnabled);
   const minimapEnabled = useStore((state) => state.minimapEnabled);
+  const minimapPosition = useStore((state) => state.minimapPosition);
 
   const setCommandLanguage = useStore(
     (state) => state.setDefaultCommandLanguage,
@@ -36,9 +39,18 @@ export function EditorSettings() {
   const resetKeyRatio = useStore((state) => state.resetVariableKeyRatio);
   const toggleSpellcheck = useStore((state) => state.toggleSpellcheck);
   const toggleMinimap = useStore((state) => state.toggleMinimap);
+  const setMinimapPosition = useStore((state) => state.setMinimapPosition);
 
-  const { variableSplit } = t.settings;
+  const { variableSplit, minimapSide } = t.settings;
   const keyPercent = keyPercentOf(keyRatio);
+  const minimapSideOptions = useMemo(
+    () =>
+      Object.values(PanelSide).map((value) => ({
+        value,
+        label: minimapSide.options[value],
+      })),
+    [minimapSide],
+  );
 
   return (
     <>
@@ -100,6 +112,18 @@ export function EditorSettings() {
         checked={minimapEnabled}
         onToggle={toggleMinimap}
       />
+
+      <SettingItem
+        title={minimapSide.title}
+        description={minimapSide.description}
+      >
+        <SettingSelect
+          value={minimapPosition}
+          options={minimapSideOptions}
+          onChange={setMinimapPosition}
+          disabled={!minimapEnabled}
+        />
+      </SettingItem>
     </>
   );
 }

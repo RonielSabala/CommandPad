@@ -6,6 +6,7 @@ import type {
   NoteStyle,
   PaletteCommand,
   PanelId,
+  PanelSide,
   RunbookSyncStatus,
   SaveOutcome,
   SettingsCategory,
@@ -653,6 +654,11 @@ export interface Messages {
     minimap: {
       title: string;
       description: string;
+    };
+    minimapSide: {
+      title: string;
+      description: string;
+      options: Record<PanelSide, string>;
     };
     keyboard: {
       search: string;

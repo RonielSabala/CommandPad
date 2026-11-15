@@ -270,6 +270,7 @@ export interface StoreState {
   setDefaultVariableLanguage: (language: CodeLanguage) => void;
   setLanguage: (language: Language) => void;
   toggleMinimap: () => void;
+  setMinimapPosition: (side: PanelSide) => void;
   toggleMinimapPosition: () => void;
   togglePanel: (panelId: PanelId) => void;
   togglePanelSide: (panelId: PanelId) => void;

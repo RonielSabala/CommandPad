@@ -12,18 +12,21 @@ interface Props<T extends string> {
   value: T;
   options: readonly SelectOption<T>[];
   onChange: (value: T) => void;
+  disabled?: boolean;
 }
 
 export function SettingSelect<T extends string>({
   value,
   options,
   onChange,
+  disabled,
 }: Props<T>) {
   return (
     <Select
       className="setting-select"
       triggerClassName={classNames(CssClass.BTN, "setting-select-trigger")}
       align={SelectAlign.START}
+      disabled={disabled}
       portal
       value={value}
       options={options}

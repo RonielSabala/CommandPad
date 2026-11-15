@@ -7,6 +7,7 @@ import {
   NoteStyle,
   PaletteCommand,
   PanelId,
+  PanelSide,
   RunbookSyncStatus,
   SaveOutcome,
   SettingsCategory,
@@ -902,6 +903,14 @@ export const en: Messages = {
       title: "Minimap",
       description:
         "Show a miniature of the content in place of the scrollbar, in the blocks, the variables editor and the source view.",
+    },
+    minimapSide: {
+      title: "Minimap side",
+      description: "The edge of the content the minimap sits on.",
+      options: {
+        [PanelSide.LEFT]: "Left",
+        [PanelSide.RIGHT]: "Right",
+      },
     },
     keyboard: {
       search: "Search shortcuts",
@@ -1926,7 +1935,7 @@ If something goes wrong, undo it in this order:
       ) =>
         `Pick a category on the left:
 * **${appearanceLabel}**: the light or dark theme, or the one your device uses, and the interface language.
-* **${editorLabel}**: the language a new command or variable starts in, how a variable row splits between key and value, spell check in notes, and the minimap.
+* **${editorLabel}**: the language a new command or variable starts in, how a variable row splits between key and value, spell check in notes, and the minimap and the side it sits on.
 * **${keyboardLabel}**: every shortcut, searchable. Click a shortcut, press the new keys, then \`Enter\` or the check mark beside them to keep them, or \`Escape\` or the cross to cancel. If another action already uses those keys, the app says which, and accepting moves them over. Each row's menu also removes a shortcut or puts back its default, and **${resetAllLabel}** restores every default.
 * **${workspaceLabel}**: **${resetLabel}** wipes every tab, runbook, variable and preference from this browser. It cannot be undone, so the app always asks you to confirm first.`,
     },

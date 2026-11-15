@@ -57,6 +57,7 @@ interface SelectProps<T extends string> {
   triggerClassName?: string;
   align?: SelectAlign;
   title?: string;
+  disabled?: boolean;
   portal?: boolean;
   matchTriggerWidth?: boolean;
   searchPlaceholder?: string;
@@ -74,6 +75,7 @@ export function Select<T extends string>({
   triggerClassName,
   align = SelectAlign.END,
   title,
+  disabled,
   portal = false,
   matchTriggerWidth = true,
   searchPlaceholder,
@@ -349,6 +351,7 @@ export function Select<T extends string>({
       <button
         className={triggerClassName}
         {...tooltip(title)}
+        disabled={disabled}
         aria-haspopup={AriaRole.LISTBOX}
         aria-expanded={open}
         onClick={() => {

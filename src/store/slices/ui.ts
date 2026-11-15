@@ -32,6 +32,7 @@ type UiActions = Pick<
   | "setDefaultVariableLanguage"
   | "setLanguage"
   | "toggleMinimap"
+  | "setMinimapPosition"
   | "toggleMinimapPosition"
   | "togglePanel"
   | "togglePanelSide"
@@ -147,12 +148,20 @@ export function createUiSlice(kit: StoreKit): UiActions {
 
     toggleMinimap: () => {
       set((s) => ({ minimapEnabled: !s.minimapEnabled }));
-      get().saveState();
+      saveUi();
+    },
+
+    setMinimapPosition: (minimapPosition) => {
+      if (get().minimapPosition === minimapPosition) {
+        return;
+      }
+
+      set({ minimapPosition });
+      saveUi();
     },
 
     toggleMinimapPosition: () => {
-      set((s) => ({ minimapPosition: oppositeSide(s.minimapPosition) }));
-      get().saveState();
+      get().setMinimapPosition(oppositeSide(get().minimapPosition));
     },
 
     togglePanel: (panelId) => {
