@@ -40,7 +40,10 @@ function QuickOpenSearch({ initialQuery }: { initialQuery: string }) {
   const [highlighted, setHighlighted] = useState(0);
 
   // Neither changes while the search is open
-  const [recentIds] = useState(() => store.getState().recentRunbookIds);
+  const [recentIds] = useState(() => {
+    const { recentRunbookIds, quickOpenRecents } = store.getState();
+    return recentRunbookIds.slice(0, quickOpenRecents);
+  });
   const [commands] = useState(() => availableCommands(store.getState()));
 
   const listRef = useRef<HTMLUListElement>(null);

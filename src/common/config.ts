@@ -20,7 +20,13 @@ export const RunbookConfig = {
 
 export const QuickOpenConfig = {
   COMMAND_PREFIX: ">",
-  RECENT_RUNBOOKS_LIMIT: 5,
+} as const;
+
+export const QuickOpenRecents = {
+  MIN: 0,
+  MAX: 20,
+  STEP: 1,
+  DEFAULT: 5,
 } as const;
 
 export const LibraryFolderConfig = {

@@ -1,3 +1,4 @@
+import { QuickOpenRecents } from "@/common/config";
 import { ClampLines, TabWidth } from "@/common/editorConfig";
 import { PanelId, PanelSide } from "@/common/enums";
 import type { PanelState } from "@/common/types";
@@ -9,12 +10,26 @@ export function oppositeSide(side: PanelSide): PanelSide {
   return side === PanelSide.RIGHT ? PanelSide.LEFT : PanelSide.RIGHT;
 }
 
-export function toClampMaxLines(lines: number): number {
-  return Math.round(clamp(lines, ClampLines.MIN, ClampLines.MAX));
+interface WholeRange {
+  MIN: number;
+  MAX: number;
+}
+
+/** `value` as a whole number within `range`. */
+function toWholeIn(value: number, range: WholeRange): number {
+  return Math.round(clamp(value, range.MIN, range.MAX));
 }
 
 export function toTabWidth(width: number): number {
-  return Math.round(clamp(width, TabWidth.MIN, TabWidth.MAX));
+  return toWholeIn(width, TabWidth);
+}
+
+export function toClampMaxLines(lines: number): number {
+  return toWholeIn(lines, ClampLines);
+}
+
+export function toQuickOpenRecents(count: number): number {
+  return toWholeIn(count, QuickOpenRecents);
 }
 
 /** Replace one panel's state. */
@@ -46,6 +61,7 @@ export function uiStateSnapshot(state: StoreState) {
     variableKeyRatio: state.variableKeyRatio,
     minimapEnabled: state.minimapEnabled,
     minimapPosition: state.minimapPosition,
+    quickOpenRecents: state.quickOpenRecents,
     lastExportDestination: state.lastExportDestination,
     lastExportFormat: state.lastExportFormat,
     lastExportFilename: state.lastExportFilename,

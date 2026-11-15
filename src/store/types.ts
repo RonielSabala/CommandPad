@@ -164,6 +164,7 @@ export interface StoreState {
   variableKeyRatio: number;
   minimapEnabled: boolean;
   minimapPosition: PanelSide;
+  quickOpenRecents: number;
   runbookSectionCollapsed: boolean;
   variablesSectionCollapsed: boolean;
 
@@ -278,6 +279,7 @@ export interface StoreState {
   toggleMinimap: () => void;
   setMinimapPosition: (side: PanelSide) => void;
   toggleMinimapPosition: () => void;
+  setQuickOpenRecents: (count: number) => void;
   togglePanel: (panelId: PanelId) => void;
   togglePanelSide: (panelId: PanelId) => void;
   setPanelWidth: (panelId: PanelId, width: number) => void;

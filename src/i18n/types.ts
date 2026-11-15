@@ -692,6 +692,11 @@ export interface Messages {
       recordingHint: (accept: string, cancel: string) => string;
       conflict: (action: string) => string;
     };
+    quickOpenRecents: {
+      title: string;
+      description: string;
+      value: (count: number) => string;
+    };
     dangerZone: string;
     reset: {
       title: string;

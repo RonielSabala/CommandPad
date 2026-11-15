@@ -1,4 +1,4 @@
-import { QuickOpenConfig } from "@/common/config";
+import { QuickOpenRecents } from "@/common/config";
 import type { LibraryFolder, LibraryRunbook } from "@/common/types";
 import { describe, expect, it } from "vitest";
 
@@ -114,7 +114,7 @@ describe("withRecentRunbook", () => {
 
   it("drops the oldest past the limit", () => {
     const full = Array.from(
-      { length: QuickOpenConfig.RECENT_RUNBOOKS_LIMIT },
+      { length: QuickOpenRecents.MAX },
       (_, index) => `r${index}`,
     );
 

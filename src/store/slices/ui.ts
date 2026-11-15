@@ -16,6 +16,7 @@ import {
   oppositeSide,
   sidebarSectionsSnapshot,
   toClampMaxLines,
+  toQuickOpenRecents,
   toTabWidth,
   withPanel,
 } from "@/store/uiState";
@@ -39,6 +40,7 @@ type UiActions = Pick<
   | "toggleMinimap"
   | "setMinimapPosition"
   | "toggleMinimapPosition"
+  | "setQuickOpenRecents"
   | "togglePanel"
   | "togglePanelSide"
   | "setPanelWidth"
@@ -192,6 +194,16 @@ export function createUiSlice(kit: StoreKit): UiActions {
 
     toggleMinimapPosition: () => {
       get().setMinimapPosition(oppositeSide(get().minimapPosition));
+    },
+
+    setQuickOpenRecents: (count) => {
+      const quickOpenRecents = toQuickOpenRecents(count);
+      if (get().quickOpenRecents === quickOpenRecents) {
+        return;
+      }
+
+      set({ quickOpenRecents });
+      saveUi();
     },
 
     togglePanel: (panelId) => {

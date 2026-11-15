@@ -1,4 +1,8 @@
-import { createDefaultPanels, VariableSplit } from "@/common/config";
+import {
+  createDefaultPanels,
+  QuickOpenRecents,
+  VariableSplit,
+} from "@/common/config";
 import {
   ClampLines,
   DEFAULT_COMMAND_LANGUAGE,
@@ -44,6 +48,7 @@ export function createInitialState(): StoreData {
     variableKeyRatio: VariableSplit.DEFAULT,
     minimapEnabled: true,
     minimapPosition: PanelSide.RIGHT,
+    quickOpenRecents: QuickOpenRecents.DEFAULT,
     runbookSectionCollapsed: false,
     variablesSectionCollapsed: false,
 

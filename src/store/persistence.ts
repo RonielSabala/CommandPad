@@ -39,7 +39,7 @@ import { repairLibrary } from "@/utils/libraryTree";
 import { clamp } from "@/utils/number";
 import { isEnumValue, isNumber, isObject, isString } from "@/utils/typeGuards";
 
-import { toClampMaxLines, toTabWidth } from "./uiState";
+import { toClampMaxLines, toQuickOpenRecents, toTabWidth } from "./uiState";
 
 const PANEL_IDS = Object.keys(PANEL_DEFINITIONS) as PanelId[];
 
@@ -117,6 +117,7 @@ interface PersistedUiState {
   variableKeyRatio: number;
   minimapEnabled: boolean;
   minimapPosition: PanelSide;
+  quickOpenRecents: number;
   lastExportDestination: SyncDestination;
   lastExportFormat: ExportFormat;
   lastExportFilename: string;
@@ -143,6 +144,7 @@ export function saveUiState(ui: PersistedUiState): void {
         variableKeyRatio: ui.variableKeyRatio,
         minimapEnabled: ui.minimapEnabled,
         minimapPosition: ui.minimapPosition,
+        quickOpenRecents: ui.quickOpenRecents,
         lastExportDestination: ui.lastExportDestination,
         lastExportFormat: ui.lastExportFormat,
         lastExportFilename: ui.lastExportFilename,
@@ -193,6 +195,9 @@ export function loadUiState(): Partial<PersistedUiState> | null {
         : {}),
       minimapEnabled: saved.minimapEnabled !== false,
       minimapPosition: toPanelSide(saved.minimapPosition, PanelSide.RIGHT),
+      ...(isNumber(saved.quickOpenRecents)
+        ? { quickOpenRecents: toQuickOpenRecents(saved.quickOpenRecents) }
+        : {}),
       ...(isEnumValue(SyncDestination, saved.lastExportDestination)
         ? { lastExportDestination: saved.lastExportDestination }
         : {}),
