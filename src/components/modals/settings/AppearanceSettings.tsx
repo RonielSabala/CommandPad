@@ -1,8 +1,8 @@
 import { CssClass } from "@/common/constants/css";
-import { Theme } from "@/common/enums";
+import { ThemeSetting } from "@/common/enums";
 import { LANGUAGE_OPTIONS } from "@/components/common/LanguageSelect";
 import type { SelectOption } from "@/components/common/Select";
-import { MoonIcon, SunIcon } from "@/components/icons";
+import { DisplayIcon, MoonIcon, SunIcon } from "@/components/icons";
 import { useLanguage, useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
@@ -10,9 +10,10 @@ import { useMemo } from "react";
 
 import { SettingItem, SettingSelect } from "./parts";
 
-const THEME_ICONS: Record<Theme, typeof SunIcon> = {
-  [Theme.DARK]: MoonIcon,
-  [Theme.LIGHT]: SunIcon,
+const THEME_ICONS: Record<ThemeSetting, typeof SunIcon> = {
+  [ThemeSetting.DARK]: MoonIcon,
+  [ThemeSetting.LIGHT]: SunIcon,
+  [ThemeSetting.SYSTEM]: DisplayIcon,
 };
 
 export function AppearanceSettings() {
@@ -21,9 +22,9 @@ export function AppearanceSettings() {
   const theme = useStore((state) => state.theme);
   const setTheme = useStore((state) => state.setTheme);
   const setLanguage = useStore((state) => state.setLanguage);
-  const themeOptions = useMemo<SelectOption<Theme>[]>(
+  const themeOptions = useMemo<SelectOption<ThemeSetting>[]>(
     () =>
-      Object.values(Theme).map((value) => {
+      Object.values(ThemeSetting).map((value) => {
         const Icon = THEME_ICONS[value];
         return {
           value,

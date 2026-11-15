@@ -22,6 +22,7 @@ import {
   SortDirection,
   SyncDestination,
   Theme,
+  ThemeSetting,
   VariableEntryKind,
   VariableField,
   VariableKind,
@@ -149,7 +150,8 @@ export interface StoreState {
 
   // UI
   mode: AppMode;
-  theme: Theme;
+  theme: ThemeSetting;
+  systemTheme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
   defaultCommandLanguage: CodeLanguage;
@@ -260,7 +262,8 @@ export interface StoreState {
   toggleAppMode: () => void;
   toggleRunbookView: (view: RunbookView) => void;
   applyRunbookSource: (text: string) => string | null;
-  setTheme: (theme: Theme) => void;
+  setTheme: (theme: ThemeSetting) => void;
+  setSystemTheme: (theme: Theme) => void;
   toggleTheme: () => void;
   toggleSpellcheck: () => void;
   setDefaultCommandLanguage: (language: CodeLanguage) => void;

@@ -17,7 +17,7 @@ import {
   RunbookView,
   SectionState,
   SyncDestination,
-  Theme,
+  ThemeSetting,
 } from "@/common/enums";
 import {
   REBINDABLE_KEYBINDINGS,
@@ -103,7 +103,7 @@ const isCloudFolderPath = (value: unknown): value is CloudFolderRef[] =>
 
 interface PersistedUiState {
   mode: AppMode;
-  theme: Theme;
+  theme: ThemeSetting;
   language: Language;
   spellcheckEnabled: boolean;
   defaultCommandLanguage: CodeLanguage;
@@ -157,7 +157,7 @@ export function loadUiState(): Partial<PersistedUiState> | null {
 
     return {
       mode: saved.mode === AppMode.READ ? AppMode.READ : AppMode.EDIT,
-      theme: saved.theme === Theme.LIGHT ? Theme.LIGHT : Theme.DARK,
+      ...(isEnumValue(ThemeSetting, saved.theme) ? { theme: saved.theme } : {}),
       language: isLanguage(saved.language) ? saved.language : detectLanguage(),
       spellcheckEnabled: saved.spellcheckEnabled === true,
       ...(isCodeLanguage(saved.defaultCommandLanguage)

@@ -3,6 +3,7 @@ import { PageSpinner } from "@/components/common/PageSpinner";
 import { TooltipLayer } from "@/components/common/tooltip/TooltipLayer";
 import { useDocumentLanguage, useThemeClass } from "@/hooks/useBodyClasses";
 import { useRoutePrefetch, type RouteLoader } from "@/hooks/useRoutePrefetch";
+import { useSystemTheme } from "@/hooks/useSystemTheme";
 import { useMonacoBootstrap } from "@/monaco/useMonacoBootstrap";
 import { useMonacoTheme } from "@/monaco/useMonacoTheme";
 import { useStore } from "@/store/store";
@@ -40,6 +41,7 @@ export default function App() {
   const bootstrap = useStore((state) => state.bootstrap);
   const isInitialized = useStore((state) => state.initialized);
 
+  useSystemTheme();
   useThemeClass();
   useDocumentLanguage();
   useRoutePrefetch(ROUTE_LOADERS);

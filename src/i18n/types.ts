@@ -10,7 +10,7 @@ import type {
   SaveOutcome,
   SettingsCategory,
   SortDirection,
-  Theme,
+  ThemeSetting,
   UnresolvedCause,
   VariableEntryKind,
   VaultError,
@@ -626,7 +626,7 @@ export interface Messages {
     theme: {
       title: string;
       description: string;
-      options: Record<Theme, string>;
+      options: Record<ThemeSetting, string>;
     };
     language: {
       title: string;

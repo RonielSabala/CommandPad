@@ -34,7 +34,7 @@ import { bindStickyWidgets } from "@/monaco/stickyWidgets";
 import { hasFocusedSuggestion, triggerSuggest } from "@/monaco/suggest";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { validateModel } from "@/monaco/validation";
-import { useStore } from "@/store/store";
+import { getAppliedTheme, useStore } from "@/store/store";
 import { toPx, whenElementSettles } from "@/utils/dom";
 import { classNames, countLines, joinLines } from "@/utils/string";
 import Editor, {
@@ -198,7 +198,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     },
     forwardedRef,
   ) {
-    const theme = useStore((state) => state.theme);
+    const theme = useStore(getAppliedTheme);
     const themeName = monacoThemeName(theme);
 
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);

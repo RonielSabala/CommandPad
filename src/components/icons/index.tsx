@@ -98,6 +98,16 @@ export function MoonIcon(props: IconProps) {
   );
 }
 
+export function DisplayIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
+      <rect x="1.5" y="2.5" width="13" height="9" rx="1.5" />
+      <line x1="8" y1="11.5" x2="8" y2="14" />
+      <line x1="5" y1="14" x2="11" y2="14" />
+    </svg>
+  );
+}
+
 export function SunIcon(props: IconProps) {
   return (
     <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>

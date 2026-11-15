@@ -44,6 +44,7 @@ export {
   getActiveRunbookId,
   getActiveTab,
   getActiveVariables,
+  getAppliedTheme,
   getLibraryRunbook,
   getRunbookEmbedView,
   getRunbookView,

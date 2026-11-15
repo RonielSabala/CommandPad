@@ -11,7 +11,7 @@ import {
   SaveOutcome,
   SettingsCategory,
   SortDirection,
-  Theme,
+  ThemeSetting,
   UnresolvedCause,
   VariableEntryKind,
   VaultError,
@@ -863,10 +863,12 @@ export const en: Messages = {
     },
     theme: {
       title: "Theme",
-      description: "The color scheme of the whole app.",
+      description:
+        "The color scheme of the whole app. Following the system switches it along with your device.",
       options: {
-        [Theme.LIGHT]: "Light",
-        [Theme.DARK]: "Dark",
+        [ThemeSetting.DARK]: "Dark",
+        [ThemeSetting.LIGHT]: "Light",
+        [ThemeSetting.SYSTEM]: "System",
       },
     },
     language: {
@@ -1923,7 +1925,7 @@ If something goes wrong, undo it in this order:
         resetLabel,
       ) =>
         `Pick a category on the left:
-* **${appearanceLabel}**: the light or dark theme, and the interface language.
+* **${appearanceLabel}**: the light or dark theme, or the one your device uses, and the interface language.
 * **${editorLabel}**: the language a new command or variable starts in, how a variable row splits between key and value, spell check in notes, and the minimap.
 * **${keyboardLabel}**: every shortcut, searchable. Click a shortcut, press the new keys, then \`Enter\` or the check mark beside them to keep them, or \`Escape\` or the cross to cancel. If another action already uses those keys, the app says which, and accepting moves them over. Each row's menu also removes a shortcut or puts back its default, and **${resetAllLabel}** restores every default.
 * **${workspaceLabel}**: **${resetLabel}** wipes every tab, runbook, variable and preference from this browser. It cannot be undone, so the app always asks you to confirm first.`,

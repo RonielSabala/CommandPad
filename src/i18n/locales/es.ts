@@ -11,7 +11,7 @@ import {
   SaveOutcome,
   SettingsCategory,
   SortDirection,
-  Theme,
+  ThemeSetting,
   UnresolvedCause,
   VariableEntryKind,
   VaultError,
@@ -887,10 +887,12 @@ export const es: Messages = {
     },
     theme: {
       title: "Tema",
-      description: "El esquema de colores de toda la app.",
+      description:
+        "El esquema de colores de toda la app. Seguir al sistema lo cambia junto con tu dispositivo.",
       options: {
-        [Theme.LIGHT]: "Claro",
-        [Theme.DARK]: "Oscuro",
+        [ThemeSetting.DARK]: "Oscuro",
+        [ThemeSetting.LIGHT]: "Claro",
+        [ThemeSetting.SYSTEM]: "Sistema",
       },
     },
     language: {
@@ -1954,7 +1956,7 @@ Si algo sale mal, deshazlo en este orden:
         resetLabel,
       ) =>
         `Elige una categoría a la izquierda:
-* **${appearanceLabel}**: el tema claro u oscuro, y el idioma de la interfaz.
+* **${appearanceLabel}**: el tema claro u oscuro, o el que usa tu dispositivo, y el idioma de la interfaz.
 * **${editorLabel}**: el lenguaje con el que empieza un comando o una variable nuevos, cómo se reparte una fila de variable entre clave y valor, el corrector ortográfico de las notas y el minimapa.
 * **${keyboardLabel}**: todos los atajos, con buscador. Haz clic en un atajo, pulsa las teclas nuevas y luego \`Enter\` o la marca de verificación junto a ellas para quedártelas, o \`Escape\` o la cruz para cancelar. Si otra acción ya usa esas teclas, la app te dice cuál, y al aceptar pasan a la nueva. El menú de cada fila también quita un atajo o recupera su valor predeterminado, y **${resetAllLabel}** recupera todos los predeterminados.
 * **${workspaceLabel}**: **${resetLabel}** borra de este navegador todas las pestañas, libros, variables y preferencias. No se puede deshacer, así que la app siempre te pide confirmación antes.`,

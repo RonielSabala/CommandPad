@@ -6,7 +6,7 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { MoonIcon, SunIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { getAppliedTheme, useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { BoxArrowLeft } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
@@ -16,7 +16,7 @@ import "./DocsHeader.css";
 
 export function DocsHeader() {
   const t = useTranslation();
-  const isLight = useStore((state) => state.theme === Theme.LIGHT);
+  const isLight = useStore((state) => getAppliedTheme(state) === Theme.LIGHT);
   const toggleTheme = useStore((state) => state.toggleTheme);
   const toggleThemeLabel = isLight
     ? t.header.switchToDark

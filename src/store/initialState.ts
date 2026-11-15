@@ -12,10 +12,11 @@ import {
   PanelSide,
   RevealTone,
   SyncDestination,
-  Theme,
+  ThemeSetting,
 } from "@/common/enums";
 import { detectLanguage } from "@/i18n/messages";
 import { DEFAULT_CLOUD_SORT } from "@/services/cloud";
+import { readSystemTheme } from "@/utils/systemTheme";
 
 import { ROOT_CLOUD_PATH } from "./cloudPaths";
 import type { StoreData } from "./types";
@@ -27,7 +28,8 @@ export function createInitialState(): StoreData {
 
     // UI
     mode: AppMode.EDIT,
-    theme: Theme.LIGHT,
+    theme: ThemeSetting.SYSTEM,
+    systemTheme: readSystemTheme(),
     language: detectLanguage(),
     spellcheckEnabled: true,
     defaultCommandLanguage: DEFAULT_COMMAND_LANGUAGE,

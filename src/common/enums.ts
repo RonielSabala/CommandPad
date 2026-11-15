@@ -4,6 +4,12 @@ export const Theme = {
 } as const;
 export type Theme = (typeof Theme)[keyof typeof Theme];
 
+export const ThemeSetting = {
+  ...Theme,
+  SYSTEM: "system",
+} as const;
+export type ThemeSetting = (typeof ThemeSetting)[keyof typeof ThemeSetting];
+
 export const AppMode = {
   EDIT: "edit",
   READ: "read",

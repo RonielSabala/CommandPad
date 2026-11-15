@@ -16,6 +16,7 @@ import {
   EMPTY_BLOCKS,
   EMPTY_VARIABLES,
   getActiveTab,
+  getAppliedTheme,
   StoreProvider,
   useStore,
   useStoreApi,
@@ -61,7 +62,7 @@ export function DemoWorkspace({
   children,
 }: DemoWorkspaceProps) {
   const language = useLanguage();
-  const theme = useStore((state) => state.theme);
+  const theme = useStore(getAppliedTheme);
 
   const buildDemo = (
     previous?: DemoSeed,

@@ -2,6 +2,8 @@ import {
   RunbookEmbedView,
   RunbookView,
   SortDirection,
+  Theme,
+  ThemeSetting,
   VariableEntryKind,
 } from "@/common/enums";
 import type {
@@ -74,6 +76,11 @@ export function getLibraryRunbook(
   runbookId: string,
 ): LibraryRunbook | undefined {
   return state.libraryRunbooks.find((r) => r.id === runbookId);
+}
+
+/** The theme the app paints with. */
+export function getAppliedTheme(state: StoreState): Theme {
+  return state.theme === ThemeSetting.SYSTEM ? state.systemTheme : state.theme;
 }
 
 export function getRunbookView(state: StoreState): RunbookView {

@@ -9,7 +9,7 @@ import "@/components/docs/DocsHeader.css";
 import "@/components/header/Header.css";
 import { BookIcon, MoonIcon, SunIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { getAppliedTheme, useStore } from "@/store/store";
 import { markHomeVisited } from "@/utils/session";
 import { classNames } from "@/utils/string";
 import { BoxArrowInRight } from "react-bootstrap-icons";
@@ -24,7 +24,7 @@ interface Props {
 
 export function SiteHeader({ title, showDocsLink }: Props) {
   const t = useTranslation();
-  const isLight = useStore((state) => state.theme === Theme.LIGHT);
+  const isLight = useStore((state) => getAppliedTheme(state) === Theme.LIGHT);
   const toggleTheme = useStore((state) => state.toggleTheme);
   const toggleThemeLabel = isLight
     ? t.header.switchToDark

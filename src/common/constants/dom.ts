@@ -2,6 +2,10 @@ import { CssClass } from "@/common/constants/css";
 import { MonacoLayer } from "@/common/editorConfig";
 import { classSelector, compoundSelector } from "@/utils/string";
 
+export const MediaQuery = {
+  PREFERS_DARK: "(prefers-color-scheme: dark)",
+} as const;
+
 export const ElementId = {
   BLOCKS_LIST: "blocks-list",
   VARIABLES_LIST: "variables-list",

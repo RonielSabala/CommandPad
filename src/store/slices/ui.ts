@@ -5,7 +5,7 @@ import { clamp } from "@/utils/number";
 import { buildRunbookSource, parseRunbookSource } from "@/utils/runbookSource";
 
 import type { StoreKit } from "@/store/kit";
-import { getActiveTab } from "@/store/selectors";
+import { getActiveTab, getAppliedTheme } from "@/store/selectors";
 import {
   tabContent,
   withActiveTab,
@@ -25,6 +25,7 @@ type UiActions = Pick<
   | "toggleRunbookView"
   | "applyRunbookSource"
   | "setTheme"
+  | "setSystemTheme"
   | "toggleTheme"
   | "toggleSpellcheck"
   | "setDefaultCommandLanguage"
@@ -108,8 +109,16 @@ export function createUiSlice(kit: StoreKit): UiActions {
       saveUi();
     },
 
+    setSystemTheme: (systemTheme) => {
+      if (get().systemTheme !== systemTheme) {
+        set({ systemTheme });
+      }
+    },
+
     toggleTheme: () => {
-      get().setTheme(get().theme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT);
+      get().setTheme(
+        getAppliedTheme(get()) === Theme.LIGHT ? Theme.DARK : Theme.LIGHT,
+      );
     },
 
     toggleSpellcheck: () => {

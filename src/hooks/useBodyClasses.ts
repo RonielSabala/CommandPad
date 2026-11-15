@@ -2,11 +2,11 @@ import { CssClass } from "@/common/constants/css";
 import { Cursor } from "@/common/constants/dom";
 import { AppMode, Theme } from "@/common/enums";
 import { useLanguage } from "@/i18n";
-import { useStore } from "@/store/store";
+import { getAppliedTheme, useStore } from "@/store/store";
 import { useEffect, useLayoutEffect } from "react";
 
 export function useThemeClass(): void {
-  const theme = useStore((state) => state.theme);
+  const theme = useStore(getAppliedTheme);
 
   useLayoutEffect(() => {
     const root = document.documentElement;
