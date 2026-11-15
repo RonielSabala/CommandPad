@@ -916,6 +916,7 @@ export const en: Messages = {
       modified: (defaultLabel) => `Changed from ${defaultLabel}`,
       modifiedFromUnbound: "Added by you",
       recording: "Press the keys",
+      accept: "Accept shortcut",
       recordingHint: (accept, cancel) =>
         `${accept} to accept, ${cancel} to cancel`,
       conflict: (action) =>
@@ -1924,7 +1925,7 @@ If something goes wrong, undo it in this order:
         `Pick a category on the left:
 * **${appearanceLabel}**: the light or dark theme, and the interface language.
 * **${editorLabel}**: the language a new command or variable starts in, how a variable row splits between key and value, spell check in notes, and the minimap.
-* **${keyboardLabel}**: every shortcut, searchable. Click a shortcut, press the new keys, then \`Enter\` to keep them or \`Escape\` to cancel; while you record, the app's other shortcuts stay quiet. If another action already uses those keys, the app says which, and accepting moves them over. Each row's menu also removes a shortcut or puts back its default, and **${resetAllLabel}** restores every default.
+* **${keyboardLabel}**: every shortcut, searchable. Click a shortcut, press the new keys, then \`Enter\` or the check mark beside them to keep them, or \`Escape\` or the cross to cancel. If another action already uses those keys, the app says which, and accepting moves them over. Each row's menu also removes a shortcut or puts back its default, and **${resetAllLabel}** restores every default.
 * **${workspaceLabel}**: **${resetLabel}** wipes every tab, runbook, variable and preference from this browser. It cannot be undone, so the app always asks you to confirm first.`,
     },
     keyboardShortcuts: {

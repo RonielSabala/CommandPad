@@ -6,15 +6,43 @@ import {
   formatBinding,
   type KeyBinding,
 } from "@/common/keybindings";
-import { KeyCap } from "@/components/common/Kbd";
+import { KeyCap, KeyCapPlaceholder } from "@/components/common/Kbd";
+import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
 import { classNames } from "@/utils/string";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { CheckLg, XLg } from "react-bootstrap-icons";
 
 import "./ChordRecorder.css";
 
 const ACCEPT_CHORD = Key.ENTER.toLowerCase();
 const CANCEL_CHORD = Key.ESCAPE.toLowerCase();
+
+function RecorderButton({
+  label,
+  onClick,
+  children,
+}: {
+  label: string;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      className={classNames(
+        "chord-recorder-button",
+        CssClass.BTN,
+        CssClass.BTN_SOFT_ICON,
+      )}
+      aria-label={label}
+      {...tooltip(label)}
+      onMouseDown={(event) => event.preventDefault()}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}
 
 interface Props {
   id: KeyBinding;
@@ -83,12 +111,25 @@ export function ChordRecorder({ id, onFinish }: Props) {
         onBlur={() => onFinish(null, false)}
       >
         {chord === null ? (
-          <span className="chord-recorder-placeholder">
-            {keyboard.recording}
-          </span>
+          <KeyCapPlaceholder label={keyboard.recording} />
         ) : (
-          <KeyCap label={formatBinding(chord)} />
+          <>
+            <KeyCap label={formatBinding(chord)} />
+            <RecorderButton
+              label={keyboard.accept}
+              onClick={() => onFinish(chord, false)}
+            >
+              <CheckLg className={CssClass.ICON} />
+            </RecorderButton>
+          </>
         )}
+
+        <RecorderButton
+          label={t.common.cancel}
+          onClick={() => onFinish(null, false)}
+        >
+          <XLg className={CssClass.ICON} />
+        </RecorderButton>
       </div>
 
       <p className={classNames("chord-recorder-note", CssClass.NO_USER_SELECT)}>

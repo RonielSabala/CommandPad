@@ -668,6 +668,7 @@ export interface Messages {
       modified: (defaultLabel: string) => string;
       modifiedFromUnbound: string;
       recording: string;
+      accept: string;
       recordingHint: (accept: string, cancel: string) => string;
       conflict: (action: string) => string;
     };

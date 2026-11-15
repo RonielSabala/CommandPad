@@ -52,6 +52,10 @@
   background: var(--color-surface-hover-bg);
 }
 
+.keybinding-chord:is(:hover, :focus-visible) .kbd {
+  box-shadow: 0 1px 0 var(--shadow-color-float);
+}
+
 .keybinding-unbound {
   font-size: var(--text-sm);
   color: var(--color-text-muted);

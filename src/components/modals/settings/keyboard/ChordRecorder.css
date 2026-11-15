@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: var(--space-2);
   min-width: var(--keybinding-chord-min-width);
   padding: var(--space-1) var(--space-3);
   border: var(--border-standard);
@@ -11,9 +12,8 @@
   background: var(--color-surface-alt);
 }
 
-.chord-recorder-placeholder {
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
+.chord-recorder-button {
+  padding: var(--space-1);
 }
 
 .chord-recorder-note {
