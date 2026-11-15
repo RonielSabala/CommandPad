@@ -1,15 +1,14 @@
 import { CssClass, HEADER_ICON_CLASS } from "@/common/constants/css";
 import { Key } from "@/common/constants/events";
 import { AppRoute } from "@/common/constants/routes";
-import { Theme } from "@/common/enums";
 import { LanguageSelect } from "@/components/common/LanguageSelect";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { VerticalDivider } from "@/components/common/VerticalDivider";
 import "@/components/docs/DocsHeader.css";
 import "@/components/header/Header.css";
-import { BookIcon, MoonIcon, SunIcon } from "@/components/icons";
+import { BookIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { getAppliedTheme, useStore } from "@/store/store";
 import { markHomeVisited } from "@/utils/session";
 import { classNames } from "@/utils/string";
 import { BoxArrowInRight } from "react-bootstrap-icons";
@@ -24,11 +23,6 @@ interface Props {
 
 export function SiteHeader({ title, showDocsLink }: Props) {
   const t = useTranslation();
-  const isLight = useStore((state) => getAppliedTheme(state) === Theme.LIGHT);
-  const toggleTheme = useStore((state) => state.toggleTheme);
-  const toggleThemeLabel = isLight
-    ? t.header.switchToDark
-    : t.header.switchToLight;
 
   return (
     <header className="header-bar">
@@ -54,25 +48,8 @@ export function SiteHeader({ title, showDocsLink }: Props) {
       )}
 
       <div className="header-spacer" />
-
       <div className="header-actions">
-        <button
-          className={classNames(
-            CssClass.BTN,
-            CssClass.BTN_LG,
-            CssClass.BTN_FLAT_ICON,
-          )}
-          onClick={toggleTheme}
-          aria-label={toggleThemeLabel}
-          {...tooltip(toggleThemeLabel)}
-        >
-          {isLight ? (
-            <MoonIcon className={HEADER_ICON_CLASS} />
-          ) : (
-            <SunIcon className={HEADER_ICON_CLASS} />
-          )}
-        </button>
-
+        <ThemeToggle />
         <VerticalDivider />
 
         <LanguageSelect />
@@ -96,7 +73,6 @@ export function SiteHeader({ title, showDocsLink }: Props) {
         )}
 
         <VerticalDivider />
-
         <Link
           to={AppRoute.WORKSPACE}
           className={classNames(
