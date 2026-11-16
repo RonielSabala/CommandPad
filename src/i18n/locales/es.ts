@@ -20,7 +20,7 @@ import {
   VaultPrompt,
   VaultStatus,
 } from "@/common/enums";
-import { KeyBinding } from "@/common/keybindings";
+import { KeyBinding, mapTabKeybindings } from "@/common/keybindings";
 import { VaultConfig } from "@/common/vaultConfig";
 import { codeBulletList } from "../lists";
 import { MessageSlot } from "../slots";
@@ -829,6 +829,7 @@ export const es: Messages = {
       "Guardar el libro en el archivo de la nube al que está vinculado",
     [KeyBinding.NEW_TAB]: "Abrir una nueva pestaña",
     [KeyBinding.CLOSE_TAB]: "Cerrar la pestaña activa",
+    ...mapTabKeybindings((position) => `Ir a la pestaña ${position}`),
     [KeyBinding.QUICK_OPEN]:
       "Buscar en la biblioteca y abrir un libro, o ejecutar una acción",
     [KeyBinding.COMMAND_PALETTE]:
@@ -1348,7 +1349,9 @@ Si algo sale mal, deshazlo en este orden:
         closeLabel,
         closeOthersLabel,
         closeAllLabel,
-      ) => `* **Haz clic** en una pestaña para cambiar a ella.
+        firstTabShortcut,
+        lastTabShortcut,
+      ) => `* **Haz clic** en una pestaña para cambiar a ella, o pulsa **${firstTabShortcut}** a **${lastTabShortcut}** para saltar a una de las nueve primeras.
 * **Arrastra** una pestaña para reordenarla.
 * **Clic con la rueda** del ratón en una pestaña para cerrarla.
 * **Clic derecho** en una pestaña para **${closeLabel}**, **${closeOthersLabel}** y **${closeAllLabel}**.

@@ -1,5 +1,5 @@
 import { NoteStyle, RunbookView } from "@/common/enums";
-import { KeyBinding } from "@/common/keybindings";
+import { KeyBinding, TAB_KEYBINDINGS } from "@/common/keybindings";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { TabsBar } from "@/components/tabs/TabsBar";
 import { RunbookVariables } from "@/components/variables/RunbookVariables";
@@ -44,6 +44,11 @@ export function TabsDocs() {
   const t = useTranslation();
   const sourceKey = useShortcutLabel(KeyBinding.TOGGLE_SOURCE_VIEW);
   const variablesKey = useShortcutLabel(KeyBinding.TOGGLE_VARIABLES_VIEW);
+  const firstTabKey = useShortcutLabel(TAB_KEYBINDINGS[0]);
+  const lastTabKey = useShortcutLabel(
+    TAB_KEYBINDINGS[TAB_KEYBINDINGS.length - 1],
+  );
+
   const { backup, siteCheck } = t.docs.demo.tabSamples;
 
   return (
@@ -59,6 +64,8 @@ export function TabsDocs() {
           t.tabs.close,
           t.tabs.closeOthers,
           t.tabs.closeAll,
+          firstTabKey,
+          lastTabKey,
         )}
       />
       <Prose text={t.docs.tabs.variablesEditorNote} />

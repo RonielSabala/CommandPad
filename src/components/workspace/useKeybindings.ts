@@ -6,6 +6,7 @@ import {
   isModifierPressed,
   KeyBinding,
   keybindingFromEvent,
+  mapTabKeybindings,
 } from "@/common/keybindings";
 import {
   COMMAND_ORDER,
@@ -46,6 +47,14 @@ const WORKSPACE_KEY_ACTIONS: Partial<Record<KeyBinding, KeyAction>> = {
 
   [KeyBinding.CLOSE_TAB]: (state) =>
     state.activeTabId !== null && state.closeTab(state.activeTabId),
+
+  ...mapTabKeybindings(
+    (position): KeyAction =>
+      (state) => {
+        const tab = state.tabs[position - 1];
+        return tab !== undefined && void state.switchTab(tab.id);
+      },
+  ),
 
   [KeyBinding.QUICK_OPEN]: (state) => state.openQuickOpenModal(),
 

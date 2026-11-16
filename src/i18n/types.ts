@@ -804,6 +804,8 @@ export interface Messages {
         closeLabel: string,
         closeOthersLabel: string,
         closeAllLabel: string,
+        firstTabShortcut: string,
+        lastTabShortcut: string,
       ) => string;
       variablesEditorNote: string;
       variableSections: (

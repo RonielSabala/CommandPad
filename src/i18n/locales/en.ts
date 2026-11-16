@@ -20,7 +20,7 @@ import {
   VaultPrompt,
   VaultStatus,
 } from "@/common/enums";
-import { KeyBinding } from "@/common/keybindings";
+import { KeyBinding, mapTabKeybindings } from "@/common/keybindings";
 import { VaultConfig } from "@/common/vaultConfig";
 import { codeBulletList } from "../lists";
 import { MessageSlot } from "../slots";
@@ -812,6 +812,7 @@ export const en: Messages = {
       "Save the runbook to the cloud file it is linked to",
     [KeyBinding.NEW_TAB]: "Open a new tab",
     [KeyBinding.CLOSE_TAB]: "Close the active tab",
+    ...mapTabKeybindings((position) => `Go to tab ${position}`),
     [KeyBinding.QUICK_OPEN]:
       "Search the library and open a runbook, or run an action",
     [KeyBinding.COMMAND_PALETTE]: "Open quick open ready to run an action",
@@ -1318,7 +1319,9 @@ If something goes wrong, undo it in this order:
         closeLabel,
         closeOthersLabel,
         closeAllLabel,
-      ) => `* **Click** a tab to switch to it.
+        firstTabShortcut,
+        lastTabShortcut,
+      ) => `* **Click** a tab to switch to it, or press **${firstTabShortcut}** to **${lastTabShortcut}** to jump to one of the first nine.
 * **Drag** a tab to reorder it.
 * **Middle-click** a tab to close it.
 * **Right-click** a tab for **${closeLabel}**, **${closeOthersLabel}** and **${closeAllLabel}**.

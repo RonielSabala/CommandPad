@@ -57,6 +57,15 @@ export const KeyBinding = {
   SAVE_RUNBOOK: "SAVE_RUNBOOK",
   NEW_TAB: "NEW_TAB",
   CLOSE_TAB: "CLOSE_TAB",
+  GO_TO_TAB_1: "GO_TO_TAB_1",
+  GO_TO_TAB_2: "GO_TO_TAB_2",
+  GO_TO_TAB_3: "GO_TO_TAB_3",
+  GO_TO_TAB_4: "GO_TO_TAB_4",
+  GO_TO_TAB_5: "GO_TO_TAB_5",
+  GO_TO_TAB_6: "GO_TO_TAB_6",
+  GO_TO_TAB_7: "GO_TO_TAB_7",
+  GO_TO_TAB_8: "GO_TO_TAB_8",
+  GO_TO_TAB_9: "GO_TO_TAB_9",
   QUICK_OPEN: "QUICK_OPEN",
   COMMAND_PALETTE: "COMMAND_PALETTE",
   FOCUS_RUNBOOK: "FOCUS_RUNBOOK",
@@ -92,12 +101,40 @@ export const KeyBinding = {
 } as const;
 export type KeyBinding = (typeof KeyBinding)[keyof typeof KeyBinding];
 
+export const TAB_KEYBINDINGS = [
+  KeyBinding.GO_TO_TAB_1,
+  KeyBinding.GO_TO_TAB_2,
+  KeyBinding.GO_TO_TAB_3,
+  KeyBinding.GO_TO_TAB_4,
+  KeyBinding.GO_TO_TAB_5,
+  KeyBinding.GO_TO_TAB_6,
+  KeyBinding.GO_TO_TAB_7,
+  KeyBinding.GO_TO_TAB_8,
+  KeyBinding.GO_TO_TAB_9,
+] as const;
+export type TabKeybinding = (typeof TAB_KEYBINDINGS)[number];
+
+/** A record over the tab shortcuts. */
+export function mapTabKeybindings<T>(
+  map: (position: number) => T,
+): Record<TabKeybinding, T> {
+  return Object.fromEntries(
+    TAB_KEYBINDINGS.map((id, index) => [id, map(index + 1)]),
+  ) as Record<TabKeybinding, T>;
+}
+
 export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
   [KeyBinding.TOGGLE_MODE]: { binding: "ctrl+e" },
   [KeyBinding.ESCAPE]: { binding: "escape" },
   [KeyBinding.SAVE_RUNBOOK]: { binding: "ctrl+s" },
   [KeyBinding.NEW_TAB]: { binding: "ctrl+alt+n" },
   [KeyBinding.CLOSE_TAB]: { binding: "ctrl+alt+w" },
+  ...mapTabKeybindings((position) => ({
+    binding: spellChord(
+      String(position),
+      (modifier) => modifier === Modifier.CTRL,
+    ),
+  })),
   [KeyBinding.QUICK_OPEN]: { binding: "ctrl+l" },
   [KeyBinding.COMMAND_PALETTE]: { binding: "ctrl+shift+p" },
   [KeyBinding.FOCUS_RUNBOOK]: { binding: "tab" },
