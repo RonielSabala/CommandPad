@@ -98,6 +98,16 @@ export function MoonIcon(props: IconProps) {
   );
 }
 
+export function DisplayIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
+      <rect x="1.5" y="2.5" width="13" height="9" rx="1.5" />
+      <line x1="8" y1="11.5" x2="8" y2="14" />
+      <line x1="5" y1="14" x2="11" y2="14" />
+    </svg>
+  );
+}
+
 export function SunIcon(props: IconProps) {
   return (
     <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
@@ -332,6 +342,15 @@ export function BookIcon(props: IconProps) {
   );
 }
 
+export function GearIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
+      <path d="M6.72 2.86L7.03 1.07L8.97 1.07L9.28 2.86L10.73 3.46L12.21 2.41L13.59 3.79L12.54 5.27L13.14 6.72L14.93 7.03L14.93 8.97L13.14 9.28L12.54 10.73L13.59 12.21L12.21 13.59L10.73 12.54L9.28 13.14L8.97 14.93L7.03 14.93L6.72 13.14L5.27 12.54L3.79 13.59L2.41 12.21L3.46 10.73L2.86 9.28L1.07 8.97L1.07 7.03L2.86 6.72L3.46 5.27L2.41 3.79L3.79 2.41L5.27 3.46z" />
+      <circle cx="8" cy="8" r="2.25" />
+    </svg>
+  );
+}
+
 export function EmptyStateIcon(props: IconProps) {
   return (
     <svg aria-hidden={true} viewBox="0 0 40 40" {...props}>
@@ -354,6 +373,47 @@ export function ClearFormattingIcon(props: IconProps) {
         strokeWidth="1.5"
         strokeLinecap="round"
       />
+    </svg>
+  );
+}
+
+export function PaletteIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
+      <path d="M8 14.5A6.5 6.5 0 1 1 14.5 8c0 1.66-1.34 2.5-3 2.5h-1.25a1.25 1.25 0 0 0-.9 2.12c.6.62.2 1.88-1.35 1.88z" />
+      <g fill="currentColor" stroke="none">
+        <circle cx="4.75" cy="8.5" r="0.9" />
+        <circle cx="5.5" cy="5.25" r="0.9" />
+        <circle cx="8.75" cy="4.25" r="0.9" />
+        <circle cx="11.5" cy="6.25" r="0.9" />
+      </g>
+    </svg>
+  );
+}
+
+export function CodeSquareIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
+      <rect x="1.5" y="1.5" width="13" height="13" rx="2.5" />
+      <path d="M6.25 5.5 3.75 8l2.5 2.5M9.75 5.5l2.5 2.5-2.5 2.5" />
+    </svg>
+  );
+}
+
+export function KeyboardIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
+      <rect x="0.75" y="3" width="14.5" height="10" rx="2" />
+      <path d="M2.75 5.75h.5m2 0h.5m2 0h.5m2 0h.5m2 0h.5M2.75 8h.5m2 0h.5m2 0h.5m2 0h.5m2 0h.5M5 10.25h6" />
+    </svg>
+  );
+}
+
+export function WindowSidebarIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
+      <rect x="1" y="2" width="14" height="12" rx="2" />
+      <path d="M1 5.5h14M5.5 5.5V14" />
     </svg>
   );
 }

@@ -1,18 +1,78 @@
-import { CodeLanguage } from "./enums";
+import {
+  CodeLanguage,
+  RunbookEmbedView,
+  SectionState,
+  VariableEntryKind,
+  VariableField,
+} from "./enums";
 
-export const COMMAND_PROMPT_PREFIX = "$";
+// Languages
+
+export const CODE_LANGUAGE_ORDER = [
+  CodeLanguage.PLAIN,
+  CodeLanguage.BASH,
+  CodeLanguage.POWERSHELL,
+  CodeLanguage.JSON,
+  CodeLanguage.SQL,
+  CodeLanguage.XML,
+  CodeLanguage.YAML,
+] as const;
+
+export const CODE_LANGUAGE_LABEL: Record<CodeLanguage, string> = {
+  [CodeLanguage.PLAIN]: "Plain text",
+  [CodeLanguage.BASH]: "Bash",
+  [CodeLanguage.POWERSHELL]: "PowerShell",
+  [CodeLanguage.JSON]: "JSON",
+  [CodeLanguage.SQL]: "SQL",
+  [CodeLanguage.XML]: "XML",
+  [CodeLanguage.YAML]: "YAML",
+};
+
+export const isCodeLanguage = (value: unknown): value is CodeLanguage =>
+  CODE_LANGUAGE_ORDER.includes(value as CodeLanguage);
+
+export const DEFAULT_COMMAND_LANGUAGE = CodeLanguage.BASH;
+
+export const DEFAULT_VARIABLE_LANGUAGE = CodeLanguage.PLAIN;
+
+export const EditorLanguage = {
+  CHOICE: "commandpad-choice",
+} as const;
+export type EditorLanguage =
+  (typeof EditorLanguage)[keyof typeof EditorLanguage];
+
+export const MonacoWorkerLabel = {
+  JSON: "json",
+} as const;
+
+// Settings
 
 export const ClampConfig = {
-  MAX_LINES: 8,
   MAX_LINES_PROPERTY: "--clamp-max-lines",
 } as const;
 
+export const ClampLines = {
+  MIN: 2,
+  MAX: 40,
+  STEP: 1,
+  DEFAULT: 8,
+} as const;
+
+/** The columns a tab character spans. */
+export const TabWidth = {
+  MIN: 1,
+  MAX: 8,
+  STEP: 1,
+  DEFAULT: 4,
+} as const;
+
+// CSS tokens and properties
+
 export const CodeToken = {
-  FONT_MONO: "--font-mono",
-  TAB_SIZE: "--tab-size",
-  TEXT_BASE: "--text-base",
-  TEXT_MD: "--text-md",
   TEXT_SM: "--text-sm",
+  TEXT_MD: "--text-md",
+  TEXT_BASE: "--text-base",
+  FONT_MONO: "--font-mono",
   LINE_HEIGHT_RATIO: "--code-line-height-ratio",
   GUTTER_PAD_START: "--space-5",
   GUTTER_GAP_BEFORE: "--space-5",
@@ -42,6 +102,7 @@ export const ColorToken = {
 } as const;
 
 export const CodeMetricProperty = {
+  TAB_SIZE: "--tab-size",
   LINE_HEIGHT_BASE: "--code-line-height-base",
   LINE_HEIGHT_MEDIUM: "--code-line-height-medium",
   LINE_HEIGHT_SMALL: "--code-line-height-small",
@@ -55,10 +116,12 @@ export const CodeEditorProperty = {
   WIDGET_OFFSET: "--code-editor-widget-offset",
 } as const;
 
+// Models
+
 export const CodeModelConfig = {
   SCHEME: "commandpad",
-  RUNBOOK_SUFFIX: ".runbook.json",
   PLAIN_SUFFIX: ".txt",
+  RUNBOOK_SUFFIX: ".runbook.json",
 } as const;
 
 export const CodeModelScope = {
@@ -83,19 +146,12 @@ export const RUNBOOK_JSON_SCOPES: readonly string[] = [
 ];
 
 export const ConflictSide = {
-  CLOUD: "cloud",
   LOCAL: "local",
+  CLOUD: "cloud",
 } as const;
 export type ConflictSide = (typeof ConflictSide)[keyof typeof ConflictSide];
 
-export const MonacoMinimap = {
-  showSlider: "mouseover",
-  renderCharacters: true,
-} as const;
-
-export const MonacoWorkerLabel = {
-  JSON: "json",
-} as const;
+// Theme
 
 export const MonacoTheme = {
   DARK: "commandpad-dark",
@@ -125,15 +181,58 @@ export const MonacoTokenScope = {
   ATTRIBUTE_NAME: "attribute.name",
   TAG: "tag",
   TYPE: "type",
-  // JSON
   JSON_KEY: "string.key.json",
   JSON_NUMBER: "number.json",
   JSON_KEYWORD: "keyword.json",
-  // SQL
   SQL_STRING: "string.sql",
   SQL_PREDEFINED: "predefined.sql",
   SQL_OPERATOR: "operator.sql",
 } as const;
+
+// Layout
+
+export const COMMAND_PROMPT_PREFIX = "$";
+
+export const MonacoLayout = {
+  FIRST_LINE: 1,
+  FIRST_COLUMN: 1,
+  LINE_NUMBER_MIN_CHARS: 1,
+  FULL_HEIGHT: "100%",
+} as const;
+
+export const MonacoMinimap = {
+  showSlider: "mouseover",
+  renderCharacters: true,
+} as const;
+
+/** The body-level nodes Monaco renders out of the editor into. */
+export const MonacoLayer = {
+  EDITOR_CLASS: "monaco-editor",
+  OVERFLOW_ROOT_CLASS: "monaco-overflow-widgets",
+  HOVER_ROOT_CLASS: "monaco-hover-layer",
+} as const;
+
+// Scrolling
+
+export const MonacoCursorSource = {
+  API: "api",
+  MOUSE: "mouse",
+} as const;
+
+export const DragScrollConfig = {
+  EDGE_PX: 56,
+  RAMP_PX: 56,
+  MIN_SPEED: 4,
+  MAX_SPEED: 16,
+} as const;
+
+/** How much of the window a revealed caret keeps clear of its edges. */
+export const RevealScrollConfig = {
+  MARGIN_PX: 64,
+  MAX_MARGIN_FRACTION: 4,
+} as const;
+
+// Validation
 
 export const MonacoMarker = {
   OWNER: "commandpad",
@@ -149,51 +248,11 @@ export const XmlValidation = {
   FIREFOX_COLUMN: ", Column ",
 } as const;
 
-export const MonacoLayout = {
-  FIRST_LINE: 1,
-  FIRST_COLUMN: 1,
-  LINE_NUMBER_MIN_CHARS: 1,
-  FULL_HEIGHT: "100%",
-} as const;
-
-export const DragScrollConfig = {
-  EDGE_PX: 56,
-  RAMP_PX: 56,
-  MIN_SPEED: 4,
-  MAX_SPEED: 16,
-} as const;
-
-export const MonacoCursorSource = {
-  API: "api",
-  MOUSE: "mouse",
-} as const;
-
-export const EditorLanguage = {
-  CHOICE: "commandpad-choice",
-} as const;
-export type EditorLanguage =
-  (typeof EditorLanguage)[keyof typeof EditorLanguage];
+// Completions and choices
 
 export const MonacoSuggest = {
   CONTROLLER_ID: "editor.contrib.suggestController",
   TRIGGER_ACTION_ID: "editor.action.triggerSuggest",
-} as const;
-
-export const ChoiceConfig = {
-  PICK_COMMAND_ID: "commandpad.pickChoice",
-  PINNED_RANK: "0",
-  FOLDER_RANK: "1",
-  ITEM_RANK: "2",
-} as const;
-
-export const MonacoFind = {
-  CONTROLLER_ID: "editor.contrib.findController",
-} as const;
-
-/** How much of the window a revealed caret keeps clear of its edges. */
-export const RevealScrollConfig = {
-  MARGIN_PX: 64,
-  MAX_MARGIN_FRACTION: 4,
 } as const;
 
 export const VariableCompletionConfig = {
@@ -208,6 +267,24 @@ export const VariableCompletionConfig = {
   EMBEDDED_GROUP: 1,
 } as const;
 
+export const ChoiceConfig = {
+  PICK_COMMAND_ID: "commandpad.pickChoice",
+  PINNED_RANK: "0",
+  FOLDER_RANK: "1",
+  ITEM_RANK: "2",
+} as const;
+
+// Commands and actions
+
+/** Monaco's own commands. */
+export const MonacoCommand = {
+  REMOVE_EXPAND_LINE_SELECTION: "-expandLineSelection",
+} as const;
+
+export const MonacoFind = {
+  CONTROLLER_ID: "editor.contrib.findController",
+} as const;
+
 export const MonacoContextMenu = {
   GROUP: "1_commandpad",
   CONTROLLER_ID: "editor.contrib.contextmenu",
@@ -215,11 +292,6 @@ export const MonacoContextMenu = {
   OPEN_WAIT_FRAMES: 10,
   SHOW_ACTION: "editor.action.showContextMenu",
   TRIGGER_SOURCE: "commandpad",
-} as const;
-
-/** Monaco's own commands. */
-export const MonacoCommand = {
-  REMOVE_EXPAND_LINE_SELECTION: "-expandLineSelection",
 } as const;
 
 export const EditorActionId = {
@@ -236,14 +308,7 @@ export const EditorActionOrder = {
   UNESCAPE_VARIABLE: 4,
 } as const;
 
-/** The body-level nodes Monaco renders out of the editor into. */
-export const MonacoLayer = {
-  EDITOR_CLASS: "monaco-editor",
-  OVERFLOW_ROOT_CLASS: "monaco-overflow-widgets",
-  HOVER_ROOT_CLASS: "monaco-hover-layer",
-} as const;
-
-// --- Runbook JSON schema ---
+// Runbook JSON schema
 
 export const RunbookSchemaConfig = {
   SCHEMA_URI: "commandpad://schemas/runbook.json",
@@ -257,25 +322,22 @@ export const JsonSchemaType = {
   BOOLEAN: "boolean",
 } as const;
 
-export const RunbookField = {
-  VARIABLES: "variables",
-  BLOCKS: "blocks",
+export const RunbookJsonField = {
+  VARIABLES: RunbookEmbedView.VARIABLES,
+  BLOCKS: RunbookEmbedView.BLOCKS,
 } as const;
 
-export const VariableField = {
-  KEY: "key",
-  VALUE: "value",
-  SECRET: "secret",
-  LANGUAGE: "language",
+export const VariableJsonField = {
+  ...VariableField,
   OPTIONS: "options",
 } as const;
 
-export const VariableSectionField = {
-  SECTION: "section",
-  COLLAPSED: "collapsed",
+export const VariableSectionJsonField = {
+  SECTION: VariableEntryKind.SECTION,
+  COLLAPSED: SectionState.COLLAPSED,
 } as const;
 
-export const BlockField = {
+export const BlockJsonField = {
   TYPE: "type",
   RUNBOOK_ID: "runbookId",
   TEXT: "text",
@@ -287,37 +349,10 @@ export const BlockField = {
   CLOUD: "cloud",
   PROVIDER: "provider",
   OVERRIDES: "overrides",
-  LANGUAGE: "language",
-  COLLAPSED: "collapsed",
+  LANGUAGE: VariableField.LANGUAGE,
+  COLLAPSED: SectionState.COLLAPSED,
   EDITOR_COLLAPSED: "editorCollapsed",
 } as const;
-
-export const COMMAND_LANGUAGE_ORDER = [
-  CodeLanguage.PLAIN,
-  CodeLanguage.BASH,
-  CodeLanguage.POWERSHELL,
-  CodeLanguage.JSON,
-  CodeLanguage.SQL,
-  CodeLanguage.XML,
-  CodeLanguage.YAML,
-] as const;
-
-export const CODE_LANGUAGE_LABEL: Record<CodeLanguage, string> = {
-  [CodeLanguage.PLAIN]: "Plain text",
-  [CodeLanguage.BASH]: "Bash",
-  [CodeLanguage.POWERSHELL]: "PowerShell",
-  [CodeLanguage.JSON]: "JSON",
-  [CodeLanguage.SQL]: "SQL",
-  [CodeLanguage.XML]: "XML",
-  [CodeLanguage.YAML]: "YAML",
-};
-
-export const isCommandLanguage = (value: unknown): value is CodeLanguage =>
-  COMMAND_LANGUAGE_ORDER.includes(value as CodeLanguage);
-
-export const DEFAULT_COMMAND_LANGUAGE = CodeLanguage.BASH;
-
-export const DEFAULT_VARIABLE_LANGUAGE = CodeLanguage.PLAIN;
 
 export const RUNBOOK_JSON_PLACEHOLDER =
   '{\n  "variables": [],\n  "blocks": []\n}';

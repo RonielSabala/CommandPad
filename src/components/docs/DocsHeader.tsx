@@ -1,26 +1,19 @@
-import { CssClass, HEADER_ICON_CLASS } from "@/common/constants/css";
+import { CssClass } from "@/common/constants/css";
 import { AppRoute } from "@/common/constants/routes";
-import { Theme } from "@/common/enums";
+import { LanguageSelect } from "@/components/common/LanguageSelect";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { VerticalDivider } from "@/components/common/VerticalDivider";
-import { MoonIcon, SunIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { BoxArrowLeft } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
 import "../header/Header.css";
-import { LanguageSelect } from "../header/LanguageSelect";
 import "./DocsHeader.css";
 
 export function DocsHeader() {
   const t = useTranslation();
-  const isLight = useStore((state) => state.theme === Theme.LIGHT);
-  const toggleTheme = useStore((state) => state.toggleTheme);
-  const toggleThemeLabel = isLight
-    ? t.header.switchToDark
-    : t.header.switchToLight;
 
   return (
     <header className="header-bar">
@@ -39,31 +32,13 @@ export function DocsHeader() {
       </span>
 
       <div className="header-spacer" />
-
       <div className="header-actions">
-        <button
-          className={classNames(
-            CssClass.BTN,
-            CssClass.BTN_LG,
-            CssClass.BTN_FLAT_ICON,
-          )}
-          onClick={toggleTheme}
-          aria-label={toggleThemeLabel}
-          {...tooltip(toggleThemeLabel)}
-        >
-          {isLight ? (
-            <MoonIcon className={HEADER_ICON_CLASS} />
-          ) : (
-            <SunIcon className={HEADER_ICON_CLASS} />
-          )}
-        </button>
-
+        <ThemeToggle />
         <VerticalDivider />
 
         <LanguageSelect />
 
         <VerticalDivider />
-
         <Link
           to={AppRoute.HOME}
           className={classNames(

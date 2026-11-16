@@ -1,4 +1,4 @@
-import { BlockField, JsonSchemaType } from "@/common/editorConfig";
+import { BlockJsonField, JsonSchemaType } from "@/common/editorConfig";
 import { BlockType, NoteStyle } from "@/common/enums";
 import { MarkdownSyntax } from "@/common/markdownSyntax";
 import { isEnumValue, isString } from "@/utils/typeGuards";
@@ -14,10 +14,10 @@ export const noteBlockDefinition: BlockDefinition<typeof BlockType.NOTE> = {
   type: BlockType.NOTE,
   jsonSchema: {
     properties: {
-      [BlockField.TEXT]: { type: JsonSchemaType.STRING },
-      [BlockField.STYLE]: { enum: Object.values(NoteStyle) },
+      [BlockJsonField.TEXT]: { type: JsonSchemaType.STRING },
+      [BlockJsonField.STYLE]: { enum: Object.values(NoteStyle) },
     },
-    required: [BlockField.TEXT],
+    required: [BlockJsonField.TEXT],
   },
 
   create: (id) => ({

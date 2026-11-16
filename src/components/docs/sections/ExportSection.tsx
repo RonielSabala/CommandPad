@@ -1,8 +1,8 @@
-import { bindingLabel, KeyBinding } from "@/common/keybindings";
+import { KeyBinding } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
-import { Prose } from "../Prose";
 
-const SAVE_SHORTCUT = bindingLabel(KeyBinding.SAVE_RUNBOOK);
+import { Prose } from "../Prose";
+import { useShortcutLabel } from "../useShortcutLabel";
 
 export function ExportDocs() {
   const t = useTranslation();
@@ -33,11 +33,12 @@ export function CloudExportDocs() {
 
 export function CloudLinkedSyncDocs() {
   const t = useTranslation();
+  const saveKey = useShortcutLabel(KeyBinding.SAVE_RUNBOOK);
 
   return (
     <>
-      <Prose text={t.docs.cloudLinkedSync.intro(SAVE_SHORTCUT)} />
-      <Prose text={t.docs.cloudLinkedSync.localSave(SAVE_SHORTCUT)} />
+      <Prose text={t.docs.cloudLinkedSync.intro(saveKey)} />
+      <Prose text={t.docs.cloudLinkedSync.localSave(saveKey)} />
       <Prose text={t.docs.cloudLinkedSync.syncBadge(t.runbooks.title)} />
       <Prose
         text={t.docs.cloudLinkedSync.conflicts(t.cloudConflict.keepMine)}

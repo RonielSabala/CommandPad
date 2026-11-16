@@ -34,14 +34,10 @@ import { bindStickyWidgets } from "@/monaco/stickyWidgets";
 import { hasFocusedSuggestion, triggerSuggest } from "@/monaco/suggest";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { validateModel } from "@/monaco/validation";
-import { useStore } from "@/store/store";
+import { getAppliedTheme, useStore } from "@/store/store";
 import { toPx, whenElementSettles } from "@/utils/dom";
 import { classNames, countLines, joinLines } from "@/utils/string";
-import Editor, {
-  type BeforeMount,
-  type Monaco,
-  type OnMount,
-} from "@monaco-editor/react";
+import Editor, { type BeforeMount, type OnMount } from "@monaco-editor/react";
 import type { Selection, editor } from "monaco-editor";
 import {
   forwardRef,
@@ -96,6 +92,16 @@ interface Props {
   onBlur?: () => void;
   onScrollChange?: (scrollTop: number) => void;
 }
+
+const PROMPT_DECORATION: editor.IModelDeltaDecoration = {
+  range: {
+    startLineNumber: MonacoLayout.FIRST_LINE,
+    startColumn: MonacoLayout.FIRST_COLUMN,
+    endLineNumber: MonacoLayout.FIRST_LINE,
+    endColumn: MonacoLayout.FIRST_COLUMN,
+  },
+  options: { lineNumberClassName: CssClass.CODE_EDITOR_PROMPT },
+};
 
 function estimateContentHeight(value: string, compact: boolean): number {
   const { lineHeightBase, lineHeightMedium } = getCodeMetrics();
@@ -198,7 +204,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     },
     forwardedRef,
   ) {
-    const theme = useStore((state) => state.theme);
+    const theme = useStore(getAppliedTheme);
     const themeName = monacoThemeName(theme);
 
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -224,6 +230,10 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
 
     const gutterRef = useRef(gutter);
     gutterRef.current = gutter;
+
+    const promptRef = useRef(promptPrefix);
+    promptRef.current = promptPrefix;
+    const markPromptRef = useRef<(() => void) | null>(null);
 
     const inputElement = useCallback(
       () =>
@@ -320,24 +330,25 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       );
     };
 
-    const pinPrompt = (instance: editor.ICodeEditor, api: Monaco) => {
+    const pinPrompt = (instance: editor.ICodeEditor) => {
       const prompt = instance.createDecorationsCollection();
       const mark = () =>
-        prompt.set([
-          {
-            range: new api.Range(
-              MonacoLayout.FIRST_LINE,
-              MonacoLayout.FIRST_COLUMN,
-              MonacoLayout.FIRST_LINE,
-              MonacoLayout.FIRST_COLUMN,
-            ),
-            options: { lineNumberClassName: CssClass.CODE_EDITOR_PROMPT },
-          },
-        ]);
+        prompt.set(promptRef.current ? [PROMPT_DECORATION] : []);
 
       instance.onDidChangeModel(mark);
       instance.onDidChangeModelContent(mark);
+      return mark;
     };
+
+    // The prompt can be switched on or off after creation
+    useEffect(() => {
+      if (!mounted || (!promptPrefix && !markPromptRef.current)) {
+        return;
+      }
+
+      markPromptRef.current ??= pinPrompt(mounted);
+      markPromptRef.current();
+    }, [mounted, promptPrefix]);
 
     const handleBeforeMount: BeforeMount = (api) => {
       const created = api.editor.onDidCreateEditor(
@@ -348,7 +359,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
           instance.onDidLayoutChange(() => publishGutterWidth(instance));
 
           if (promptPrefix) {
-            pinPrompt(instance, api);
+            markPromptRef.current = pinPrompt(instance);
           }
         },
       );

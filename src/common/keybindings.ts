@@ -1,24 +1,55 @@
 import { upperFirst } from "../utils/stringCase";
-import { Modifier } from "./constants/events";
+import { Key, Modifier } from "./constants/events";
+
+// Types
+
+interface KeybindingDef {
+  binding: string | null;
+  /** `false` for a gesture described in words. */
+  keyboard?: boolean;
+}
+
+type ModifierState = Pick<
+  KeyboardEvent,
+  "altKey" | "ctrlKey" | "metaKey" | "shiftKey"
+>;
+
+export type KeyChordEvent = ModifierState & Pick<KeyboardEvent, "key">;
+
+/** A user's bindings. */
+export type KeybindingOverrides = Partial<Record<KeyBinding, string | null>>;
+
+// Constants
+
+const BINDING_SEPARATOR = "+";
+const GESTURE_SEPARATOR = " ";
+export const SPACED_BINDING_SEPARATOR = ` ${BINDING_SEPARATOR} `;
+
+const MODIFIER_KEYS = [Modifier.CTRL, Modifier.ALT, Modifier.SHIFT] as const;
+const MODIFIER_ONLY_KEYS: ReadonlySet<string> = new Set([
+  Key.CONTROL,
+  Key.ALT,
+  Key.ALT_GRAPH,
+  Key.SHIFT,
+  Key.META,
+]);
+
+const KEY_ALIASES: Record<string, string> = {
+  [Key.SPACE]: "space",
+  [BINDING_SEPARATOR]: "plus",
+};
+const KEY_LABELS: Record<string, string> = {
+  delete: "Del",
+  arrowup: "↑",
+  arrowdown: "↓",
+  arrowleft: "←",
+  arrowright: "→",
+};
 
 export const ModifierAction = {
-  SELECT_BLOCKS: Modifier.SHIFT,
   OPEN_LINK: Modifier.CTRL,
+  SELECT_BLOCKS: Modifier.SHIFT,
 } as const;
-
-export function isModifierPressed(
-  event: KeyboardEvent | MouseEvent,
-  modifier: Modifier,
-): boolean {
-  switch (modifier) {
-    case Modifier.CTRL:
-      return event.ctrlKey || event.metaKey;
-    case Modifier.ALT:
-      return event.altKey;
-    case Modifier.SHIFT:
-      return event.shiftKey;
-  }
-}
 
 export const KeyBinding = {
   TOGGLE_MODE: "TOGGLE_MODE",
@@ -26,17 +57,35 @@ export const KeyBinding = {
   SAVE_RUNBOOK: "SAVE_RUNBOOK",
   NEW_TAB: "NEW_TAB",
   CLOSE_TAB: "CLOSE_TAB",
+  GO_TO_TAB_1: "GO_TO_TAB_1",
+  GO_TO_TAB_2: "GO_TO_TAB_2",
+  GO_TO_TAB_3: "GO_TO_TAB_3",
+  GO_TO_TAB_4: "GO_TO_TAB_4",
+  GO_TO_TAB_5: "GO_TO_TAB_5",
+  GO_TO_TAB_6: "GO_TO_TAB_6",
+  GO_TO_TAB_7: "GO_TO_TAB_7",
+  GO_TO_TAB_8: "GO_TO_TAB_8",
+  GO_TO_TAB_9: "GO_TO_TAB_9",
   QUICK_OPEN: "QUICK_OPEN",
   COMMAND_PALETTE: "COMMAND_PALETTE",
   FOCUS_RUNBOOK: "FOCUS_RUNBOOK",
   NAVIGATE_RUNBOOKS: "NAVIGATE_RUNBOOKS",
   IMPORT_RUNBOOK: "IMPORT_RUNBOOK",
+  NEW_FOLDER: "NEW_FOLDER",
+  PASTE_RUNBOOK: "PASTE_RUNBOOK",
   EXPORT: "EXPORT",
   DELETE_RUNBOOK: "DELETE_RUNBOOK",
   DELETE_ACTIVE_RUNBOOK: "DELETE_ACTIVE_RUNBOOK",
   TOGGLE_EDITORS: "TOGGLE_EDITORS",
   TOGGLE_VARIABLES_VIEW: "TOGGLE_VARIABLES_VIEW",
   TOGGLE_SOURCE_VIEW: "TOGGLE_SOURCE_VIEW",
+  TOGGLE_SIDEBAR: "TOGGLE_SIDEBAR",
+  MOVE_SIDEBAR: "MOVE_SIDEBAR",
+  TOGGLE_THEME: "TOGGLE_THEME",
+  TOGGLE_MINIMAP: "TOGGLE_MINIMAP",
+  MOVE_MINIMAP: "MOVE_MINIMAP",
+  TOGGLE_SPELLCHECK: "TOGGLE_SPELLCHECK",
+  OPEN_SETTINGS: "OPEN_SETTINGS",
   MULTISELECT_BLOCKS: "MULTISELECT_BLOCKS",
   DUPLICATE_BLOCK: "DUPLICATE_BLOCK",
   DELETE_BLOCK: "DELETE_BLOCK",
@@ -52,9 +101,26 @@ export const KeyBinding = {
 } as const;
 export type KeyBinding = (typeof KeyBinding)[keyof typeof KeyBinding];
 
-interface KeybindingDef {
-  binding: string;
-  keyboard?: boolean;
+export const TAB_KEYBINDINGS = [
+  KeyBinding.GO_TO_TAB_1,
+  KeyBinding.GO_TO_TAB_2,
+  KeyBinding.GO_TO_TAB_3,
+  KeyBinding.GO_TO_TAB_4,
+  KeyBinding.GO_TO_TAB_5,
+  KeyBinding.GO_TO_TAB_6,
+  KeyBinding.GO_TO_TAB_7,
+  KeyBinding.GO_TO_TAB_8,
+  KeyBinding.GO_TO_TAB_9,
+] as const;
+export type TabKeybinding = (typeof TAB_KEYBINDINGS)[number];
+
+/** A record over the tab shortcuts. */
+export function mapTabKeybindings<T>(
+  map: (position: number) => T,
+): Record<TabKeybinding, T> {
+  return Object.fromEntries(
+    TAB_KEYBINDINGS.map((id, index) => [id, map(index + 1)]),
+  ) as Record<TabKeybinding, T>;
 }
 
 export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
@@ -63,17 +129,32 @@ export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
   [KeyBinding.SAVE_RUNBOOK]: { binding: "ctrl+s" },
   [KeyBinding.NEW_TAB]: { binding: "ctrl+alt+n" },
   [KeyBinding.CLOSE_TAB]: { binding: "ctrl+alt+w" },
+  ...mapTabKeybindings((position) => ({
+    binding: spellChord(
+      String(position),
+      (modifier) => modifier === Modifier.CTRL,
+    ),
+  })),
   [KeyBinding.QUICK_OPEN]: { binding: "ctrl+l" },
   [KeyBinding.COMMAND_PALETTE]: { binding: "ctrl+shift+p" },
   [KeyBinding.FOCUS_RUNBOOK]: { binding: "tab" },
   [KeyBinding.NAVIGATE_RUNBOOKS]: { binding: "↑ / ↓", keyboard: false },
   [KeyBinding.IMPORT_RUNBOOK]: { binding: "ctrl+i" },
+  [KeyBinding.NEW_FOLDER]: { binding: null },
+  [KeyBinding.PASTE_RUNBOOK]: { binding: null },
   [KeyBinding.EXPORT]: { binding: "ctrl+shift+e" },
   [KeyBinding.DELETE_RUNBOOK]: { binding: "ctrl+shift+d" },
   [KeyBinding.DELETE_ACTIVE_RUNBOOK]: { binding: "ctrl+shift+backspace" },
   [KeyBinding.TOGGLE_EDITORS]: { binding: "ctrl+g" },
   [KeyBinding.TOGGLE_VARIABLES_VIEW]: { binding: "ctrl+shift+v" },
   [KeyBinding.TOGGLE_SOURCE_VIEW]: { binding: "ctrl+shift+c" },
+  [KeyBinding.TOGGLE_SIDEBAR]: { binding: "ctrl+b" },
+  [KeyBinding.MOVE_SIDEBAR]: { binding: null },
+  [KeyBinding.TOGGLE_THEME]: { binding: null },
+  [KeyBinding.TOGGLE_MINIMAP]: { binding: null },
+  [KeyBinding.MOVE_MINIMAP]: { binding: null },
+  [KeyBinding.TOGGLE_SPELLCHECK]: { binding: null },
+  [KeyBinding.OPEN_SETTINGS]: { binding: "ctrl+," },
   [KeyBinding.MULTISELECT_BLOCKS]: {
     binding: `${ModifierAction.SELECT_BLOCKS}+click / drag`,
     keyboard: false,
@@ -106,78 +187,211 @@ export const KEYBINDINGS: Record<KeyBinding, KeybindingDef> = {
   [KeyBinding.SUBMIT_EDITOR]: { binding: "ctrl+enter" },
 };
 
-const BINDING_SEPARATOR = "+";
-export const SPACED_BINDING_SEPARATOR = ` ${BINDING_SEPARATOR} `;
-const MODIFIER_KEYS = [Modifier.ALT, Modifier.CTRL, Modifier.SHIFT] as const;
+export const KEYBINDING_IDS = Object.keys(KEYBINDINGS) as KeyBinding[];
 
-const KEY_ALIASES: Record<string, string> = { space: " " };
-const KEY_LABELS: Record<string, string> = { delete: "Del" };
+const PRESSABLE_KEYBINDINGS = KEYBINDING_IDS.filter(
+  (id) => KEYBINDINGS[id].keyboard !== false,
+);
 
-function titleCaseChord(chord: string, joiner: string): string {
+export const REBINDABLE_KEYBINDINGS = PRESSABLE_KEYBINDINGS.filter(
+  (id) => id !== KeyBinding.ESCAPE,
+);
+
+// Chords
+
+export function isModifierPressed(
+  event: ModifierState,
+  modifier: Modifier,
+): boolean {
+  switch (modifier) {
+    case Modifier.CTRL:
+      return event.ctrlKey || event.metaKey;
+    case Modifier.ALT:
+      return event.altKey;
+    case Modifier.SHIFT:
+      return event.shiftKey;
+  }
+}
+
+function spellChord(
+  key: string,
+  hasModifier: (modifier: Modifier) => boolean,
+): string {
+  return [...MODIFIER_KEYS.filter(hasModifier), key].join(BINDING_SEPARATOR);
+}
+
+/** The chord a key press spells. */
+export function chordFromEvent(event: KeyChordEvent): string | null {
+  if (!event.key || MODIFIER_ONLY_KEYS.has(event.key)) {
+    return null;
+  }
+
+  const key = event.key.toLowerCase();
+
+  return spellChord(KEY_ALIASES[key] ?? key, (modifier) =>
+    isModifierPressed(event, modifier),
+  );
+}
+
+/** `chord` spelled the way `chordFromEvent` spells it. */
+function canonicalChord(chord: string): string {
+  const tokens = chord.toLowerCase().split(BINDING_SEPARATOR);
+  const key = tokens.pop() ?? "";
+
+  return spellChord(key, (modifier) => tokens.includes(modifier));
+}
+
+// Labels
+
+function chordLabel(chord: string, joiner: string): string {
   return chord
     .split(BINDING_SEPARATOR)
     .map((token) => KEY_LABELS[token] ?? upperFirst(token))
     .join(joiner);
 }
 
-function formatBinding(binding: string, joiner: string): string {
-  if (!binding.includes(" ")) {
-    return titleCaseChord(binding, joiner);
-  }
-
-  return binding
-    .split(" ")
-    .map((part) =>
-      part.includes(BINDING_SEPARATOR) || /[a-z]/.test(part)
-        ? titleCaseChord(part, joiner)
-        : part,
-    )
-    .join(" ");
+/** How `binding` reads; a gesture labels each of its words as a chord. */
+export function formatBinding(
+  binding: string | null,
+  joiner: string = BINDING_SEPARATOR,
+): string {
+  return binding === null
+    ? ""
+    : binding
+        .split(GESTURE_SEPARATOR)
+        .map((part) => chordLabel(part, joiner))
+        .join(GESTURE_SEPARATOR);
 }
 
-/** How `id`'s shortcut reads on screen, its keys joined by `joiner`. */
+// Overrides
+
+function bindingIn(
+  overrides: KeybindingOverrides,
+  id: KeyBinding,
+): string | null {
+  const override = overrides[id];
+  return override === undefined ? KEYBINDINGS[id].binding : override;
+}
+
+/** The rebindable actions besides `id` that `chord` runs under `overrides`. */
+export function bindingConflicts(
+  chord: string,
+  id: KeyBinding,
+  overrides: KeybindingOverrides = activeOverrides,
+): KeyBinding[] {
+  const target = canonicalChord(chord);
+
+  return REBINDABLE_KEYBINDINGS.filter((other) => {
+    const binding = bindingIn(overrides, other);
+    return (
+      other !== id && binding !== null && canonicalChord(binding) === target
+    );
+  });
+}
+
+/** `overrides` with `id` bound to `chord`. */
+export function withKeybinding(
+  overrides: KeybindingOverrides,
+  id: KeyBinding,
+  chord: string | null,
+): KeybindingOverrides {
+  const next = { ...overrides };
+  const assign = (target: KeyBinding, binding: string | null) => {
+    if (binding === KEYBINDINGS[target].binding) {
+      delete next[target];
+    } else {
+      next[target] = binding;
+    }
+  };
+
+  if (chord === null) {
+    assign(id, null);
+    return next;
+  }
+
+  for (const other of bindingConflicts(chord, id, overrides)) {
+    assign(other, null);
+  }
+
+  assign(id, canonicalChord(chord));
+  return next;
+}
+
+/** `overrides` with `id` back on its default. */
+export function withDefaultKeybinding(
+  overrides: KeybindingOverrides,
+  id: KeyBinding,
+): KeybindingOverrides {
+  return withKeybinding(overrides, id, KEYBINDINGS[id].binding);
+}
+
+// The registry: the effective bindings every reader goes through
+
+let activeOverrides: KeybindingOverrides = {};
+let actionByChord = indexChords(activeOverrides);
+let version = 0;
+const listeners = new Set<() => void>();
+
+/** The action each pressable chord runs under `overrides`. */
+function indexChords(overrides: KeybindingOverrides): Map<string, KeyBinding> {
+  const index = new Map<string, KeyBinding>();
+
+  for (const id of PRESSABLE_KEYBINDINGS) {
+    const binding = bindingIn(overrides, id);
+
+    if (binding !== null) {
+      index.set(canonicalChord(binding), id);
+    }
+  }
+
+  return index;
+}
+
+export function applyKeybindingOverrides(overrides: KeybindingOverrides): void {
+  activeOverrides = overrides;
+  actionByChord = indexChords(overrides);
+  version += 1;
+  listeners.forEach((listener) => listener());
+}
+
+export function getKeybindingsVersion(): number {
+  return version;
+}
+
+export function subscribeKeybindings(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+/** The action a key press runs, if any. */
+export function keybindingFromEvent(
+  event: KeyChordEvent,
+): KeyBinding | undefined {
+  const chord = chordFromEvent(event);
+  return chord === null ? undefined : actionByChord.get(chord);
+}
+
+export function matchesKeybinding(
+  event: KeyChordEvent,
+  id: KeyBinding,
+): boolean {
+  return keybindingFromEvent(event) === id;
+}
+
+/** How `id`'s shortcut reads. */
 export function bindingLabel(
   id: KeyBinding,
   joiner: string = BINDING_SEPARATOR,
 ): string {
+  return formatBinding(bindingIn(activeOverrides, id), joiner);
+}
+
+/** How `id`'s shortcut reads before the user changes it. */
+export function defaultBindingLabel(
+  id: KeyBinding,
+  joiner: string = BINDING_SEPARATOR,
+): string {
   return formatBinding(KEYBINDINGS[id].binding, joiner);
-}
-
-interface ParsedBinding {
-  alt: boolean;
-  ctrl: boolean;
-  shift: boolean;
-  key: string;
-}
-
-const parsedBindings: Partial<Record<KeyBinding, ParsedBinding>> =
-  Object.fromEntries(
-    Object.entries(KEYBINDINGS)
-      .filter(([, def]) => def.keyboard !== false)
-      .map(([id, { binding }]) => {
-        const parts = binding.toLowerCase().split(BINDING_SEPARATOR);
-        const rawKey = parts.at(-1) ?? "";
-        const modifiers = Object.fromEntries(
-          MODIFIER_KEYS.map((modifier) => [modifier, parts.includes(modifier)]),
-        );
-
-        return [id, { ...modifiers, key: KEY_ALIASES[rawKey] ?? rawKey }];
-      }),
-  );
-
-export function matchesKeybinding(
-  event: KeyboardEvent,
-  bindingId: KeyBinding,
-): boolean {
-  const binding = parsedBindings[bindingId];
-  if (!binding) {
-    return false;
-  }
-
-  return (
-    event.key?.toLowerCase() === binding.key &&
-    !!(event.ctrlKey || event.metaKey) === binding.ctrl &&
-    !!event.shiftKey === binding.shift &&
-    !!event.altKey === binding.alt
-  );
 }

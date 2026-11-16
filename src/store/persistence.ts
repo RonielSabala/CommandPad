@@ -5,9 +5,11 @@ import {
   StorageKey,
   VariableSplit,
 } from "@/common/config";
+import { isCodeLanguage } from "@/common/editorConfig";
 import {
   AppMode,
   CloudProvider,
+  CodeLanguage,
   ExportFormat,
   PanelId,
   PanelSide,
@@ -15,8 +17,13 @@ import {
   RunbookView,
   SectionState,
   SyncDestination,
-  Theme,
+  ThemeSetting,
 } from "@/common/enums";
+import {
+  REBINDABLE_KEYBINDINGS,
+  withKeybinding,
+  type KeybindingOverrides,
+} from "@/common/keybindings";
 import type {
   LibraryFolder,
   LibraryRunbook,
@@ -25,12 +32,20 @@ import type {
   Tab,
   VaultRecord,
 } from "@/common/types";
-import { detectLanguage, isLanguage } from "@/i18n/messages";
+import { isLanguage } from "@/i18n/messages";
 import type { Language, Messages } from "@/i18n/types";
 import type { CloudFolderRef } from "@/services/cloud";
 import { repairLibrary } from "@/utils/libraryTree";
 import { clamp } from "@/utils/number";
-import { isEnumValue, isNumber, isObject, isString } from "@/utils/typeGuards";
+import {
+  isBoolean,
+  isEnumValue,
+  isNumber,
+  isObject,
+  isString,
+} from "@/utils/typeGuards";
+
+import { toClampMaxLines, toQuickOpenRecents, toTabWidth } from "./uiState";
 
 const PANEL_IDS = Object.keys(PANEL_DEFINITIONS) as PanelId[];
 
@@ -96,13 +111,19 @@ const isCloudFolderPath = (value: unknown): value is CloudFolderRef[] =>
 
 interface PersistedUiState {
   mode: AppMode;
-  theme: Theme;
+  theme: ThemeSetting;
   language: Language;
   spellcheckEnabled: boolean;
+  tabWidth: number;
+  commandPromptEnabled: boolean;
+  clampMaxLines: number;
+  defaultCommandLanguage: CodeLanguage;
+  defaultVariableLanguage: CodeLanguage;
   panels: Record<PanelId, PanelState>;
   variableKeyRatio: number;
   minimapEnabled: boolean;
   minimapPosition: PanelSide;
+  quickOpenRecents: number;
   lastExportDestination: SyncDestination;
   lastExportFormat: ExportFormat;
   lastExportFilename: string;
@@ -120,10 +141,16 @@ export function saveUiState(ui: PersistedUiState): void {
         theme: ui.theme,
         language: ui.language,
         spellcheckEnabled: ui.spellcheckEnabled,
+        tabWidth: ui.tabWidth,
+        commandPromptEnabled: ui.commandPromptEnabled,
+        clampMaxLines: ui.clampMaxLines,
+        defaultCommandLanguage: ui.defaultCommandLanguage,
+        defaultVariableLanguage: ui.defaultVariableLanguage,
         panels: serializePanels(ui.panels),
         variableKeyRatio: ui.variableKeyRatio,
         minimapEnabled: ui.minimapEnabled,
         minimapPosition: ui.minimapPosition,
+        quickOpenRecents: ui.quickOpenRecents,
         lastExportDestination: ui.lastExportDestination,
         lastExportFormat: ui.lastExportFormat,
         lastExportFilename: ui.lastExportFilename,
@@ -146,9 +173,26 @@ export function loadUiState(): Partial<PersistedUiState> | null {
 
     return {
       mode: saved.mode === AppMode.READ ? AppMode.READ : AppMode.EDIT,
-      theme: saved.theme === Theme.LIGHT ? Theme.LIGHT : Theme.DARK,
-      language: isLanguage(saved.language) ? saved.language : detectLanguage(),
-      spellcheckEnabled: saved.spellcheckEnabled === true,
+      ...(isEnumValue(ThemeSetting, saved.theme) ? { theme: saved.theme } : {}),
+      ...(isLanguage(saved.language) ? { language: saved.language } : {}),
+      ...(isBoolean(saved.spellcheckEnabled)
+        ? { spellcheckEnabled: saved.spellcheckEnabled }
+        : {}),
+      ...(isNumber(saved.tabWidth)
+        ? { tabWidth: toTabWidth(saved.tabWidth) }
+        : {}),
+      ...(isBoolean(saved.commandPromptEnabled)
+        ? { commandPromptEnabled: saved.commandPromptEnabled }
+        : {}),
+      ...(isNumber(saved.clampMaxLines)
+        ? { clampMaxLines: toClampMaxLines(saved.clampMaxLines) }
+        : {}),
+      ...(isCodeLanguage(saved.defaultCommandLanguage)
+        ? { defaultCommandLanguage: saved.defaultCommandLanguage }
+        : {}),
+      ...(isCodeLanguage(saved.defaultVariableLanguage)
+        ? { defaultVariableLanguage: saved.defaultVariableLanguage }
+        : {}),
       panels: restorePanels(saved.panels),
       ...(isNumber(saved.variableKeyRatio)
         ? {
@@ -159,8 +203,15 @@ export function loadUiState(): Partial<PersistedUiState> | null {
             ),
           }
         : {}),
-      minimapEnabled: saved.minimapEnabled !== false,
-      minimapPosition: toPanelSide(saved.minimapPosition, PanelSide.RIGHT),
+      ...(isBoolean(saved.minimapEnabled)
+        ? { minimapEnabled: saved.minimapEnabled }
+        : {}),
+      ...(isEnumValue(PanelSide, saved.minimapPosition)
+        ? { minimapPosition: saved.minimapPosition }
+        : {}),
+      ...(isNumber(saved.quickOpenRecents)
+        ? { quickOpenRecents: toQuickOpenRecents(saved.quickOpenRecents) }
+        : {}),
       ...(isEnumValue(SyncDestination, saved.lastExportDestination)
         ? { lastExportDestination: saved.lastExportDestination }
         : {}),
@@ -422,4 +473,36 @@ export function loadSidebarSections(): PersistedSections | null {
     console.warn("Failed to load sidebar section state:", error);
     return null;
   }
+}
+
+// Keybindings
+
+export function saveKeybindings(overrides: KeybindingOverrides): void {
+  try {
+    localStorage.setItem(StorageKey.KEYBINDINGS, JSON.stringify(overrides));
+  } catch (error) {
+    console.warn("Failed to save keybindings:", error);
+  }
+}
+
+export function loadKeybindings(): KeybindingOverrides {
+  let overrides: KeybindingOverrides = {};
+
+  try {
+    const saved = getSavedItemByKey(StorageKey.KEYBINDINGS);
+    if (!isObject(saved)) {
+      return overrides;
+    }
+
+    for (const id of REBINDABLE_KEYBINDINGS) {
+      const binding = saved[id];
+      if (binding === null || (isString(binding) && binding !== "")) {
+        overrides = withKeybinding(overrides, id, binding);
+      }
+    }
+  } catch (error) {
+    console.warn("Failed to load keybindings:", error);
+  }
+
+  return overrides;
 }

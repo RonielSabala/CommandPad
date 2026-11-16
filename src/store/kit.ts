@@ -18,7 +18,11 @@ export interface AppStoreOptions {
 
 export type PersistenceWrites = Pick<
   typeof persistence,
-  "saveTabsMeta" | "saveRunbookLibrary" | "saveUiState" | "saveSidebarSections"
+  | "saveTabsMeta"
+  | "saveRunbookLibrary"
+  | "saveUiState"
+  | "saveSidebarSections"
+  | "saveKeybindings"
 >;
 
 export const NOOP_PERSISTENCE: PersistenceWrites = {
@@ -26,6 +30,7 @@ export const NOOP_PERSISTENCE: PersistenceWrites = {
   saveRunbookLibrary: () => {},
   saveUiState: () => {},
   saveSidebarSections: () => {},
+  saveKeybindings: () => {},
 };
 
 export interface ContentDb {

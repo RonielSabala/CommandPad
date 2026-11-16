@@ -2,13 +2,19 @@ import { ClampConfig } from "@/common/editorConfig";
 import type { ClampSurface } from "@/common/enums";
 import { useStore } from "@/store/store";
 import type { CSSProperties, RefObject } from "react";
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
 import { useKeepInView } from "./useKeepInView";
 
-export const CLAMP_SURFACE_STYLE = {
-  [ClampConfig.MAX_LINES_PROPERTY]: ClampConfig.MAX_LINES,
-} as CSSProperties;
+/** The style a clamp surface's root wears. */
+export function useClampSurfaceStyle(): CSSProperties {
+  const maxLines = useStore((state) => state.clampMaxLines);
+
+  return useMemo(
+    () => ({ [ClampConfig.MAX_LINES_PROPERTY]: maxLines }) as CSSProperties,
+    [maxLines],
+  );
+}
 
 export interface ClampState {
   overflows: boolean;
@@ -25,7 +31,8 @@ export function useClampSurface(
   lines: number,
   surfaceRef?: RefObject<HTMLElement | null>,
 ): ClampState {
-  const overflows = lines > ClampConfig.MAX_LINES;
+  const maxLines = useStore((state) => state.clampMaxLines);
+  const overflows = lines > maxLines;
 
   const expanded = useStore((state) =>
     state.expandedClampSurfaces[surface].has(id),

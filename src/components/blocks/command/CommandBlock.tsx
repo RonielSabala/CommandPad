@@ -13,7 +13,7 @@ import {
 } from "@/components/common/codeEditor/CodeEditor";
 import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageSelect";
 import { VariablesViewContext } from "@/components/variables/variablesViewContext";
-import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
+import { useClampSurface, useClampSurfaceStyle } from "@/hooks/useClampSurface";
 import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
@@ -42,6 +42,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     ? t.command.showEditor
     : t.command.hideEditor;
 
+  const promptEnabled = useStore((state) => state.commandPromptEnabled);
   const updateBlock = useStore((state) => state.updateBlock);
   const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
   const pendingFocus = useStore(
@@ -49,6 +50,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   );
 
   const rootRef = useRef<HTMLDivElement>(null);
+  const clampStyle = useClampSurfaceStyle();
   const editorRef = useRef<CodeEditorHandle>(null);
   const completions = useContext(CompletionsContext);
   const actions = useEditorActions();
@@ -87,7 +89,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         CssClass.BLOCK_SURFACE,
         CssClass.CLAMP_SURFACE,
       )}
-      style={CLAMP_SURFACE_STYLE}
+      style={clampStyle}
     >
       <CommandPreview
         clampId={blockId}
@@ -124,7 +126,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         placeholder={t.command.placeholder}
         completions={completions}
         actions={actions}
-        promptPrefix={COMMAND_PROMPT_PREFIX}
+        promptPrefix={promptEnabled ? COMMAND_PROMPT_PREFIX : undefined}
         clamped={editor.clamped}
         header={
           <CodeLanguageSelect

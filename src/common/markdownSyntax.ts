@@ -26,21 +26,32 @@ import {
   zeroOrMore,
 } from "./regex";
 
+// Delimiters
+
 export const MarkdownDelimiter = {
+  // Emphasis
   BOLD: "**",
   ITALIC: "_",
   ITALIC_ALT: "*",
   STRIKETHROUGH: "~",
   STRIKETHROUGH_ALT: "~~",
+
+  // Code
   CODE: "`",
   CODE_ALT: "´",
+
+  // Links
   LINK_LABEL_OPEN: "[",
   LINK_LABEL_CLOSE: "]",
   LINK_HREF_OPEN: "(",
   LINK_HREF_CLOSE: ")",
+
+  // Tables
   TABLE_SEPARATOR: "|",
   TABLE_ALIGN: ":",
   TABLE_FILL: "-",
+
+  // Lists
   LIST_BULLET: "*",
   LIST_BULLET_ALT: "-",
   LIST_ORDINAL: ".",
@@ -48,11 +59,12 @@ export const MarkdownDelimiter = {
 
 const Mark = escapeSyntax(MarkdownDelimiter);
 
-// Markdown the app writes out
+// Exported markdown
 
 const FENCE = "```";
 const IMAGE_MARKER = "!";
 const RUNBOOK_REFERENCE_LABEL = "Runbook:";
+
 const link = (label: string, target: string) =>
   sequence(
     MarkdownDelimiter.LINK_LABEL_OPEN,
@@ -74,7 +86,7 @@ export const MarkdownSyntax = {
     `${MarkdownDelimiter.BOLD}${RUNBOOK_REFERENCE_LABEL}${MarkdownDelimiter.BOLD} ${MarkdownDelimiter.CODE}${target}${MarkdownDelimiter.CODE}`,
 } as const;
 
-// The inline marks
+// Inline marks
 
 /** The shortest run of text a pair of marks can wrap. */
 const MARK_CONTENT = oneOrMoreLazy(ANY);
@@ -93,9 +105,13 @@ const wrapped = (mark: string, name: string, content = MARK_CONTENT) =>
 /** A one-character mark that isn't half of its doubled spelling. */
 const lone = (mark: string) => sequence(notAfter(mark), mark, notBefore(mark));
 
+// URLs
+
 const URL_PROTOCOL = String.raw`https?:\/\/`;
 const URL_EXCLUDED = '\\s<>"{}|\\\\^`[\\]';
 const URL_EXCLUDED_END = `${URL_EXCLUDED}.,;:!?()-`;
+
+// Inline tokens
 
 export const MarkdownToken = {
   BOLD_REGEX: globalRegex(unescaped(wrapped(Mark.BOLD, "bold"))),
@@ -156,6 +172,8 @@ export const MarkdownToken = {
   ),
 } as const;
 
+// Escapes
+
 /** What a leading backslash can escape. */
 const ESCAPABLE_MARKS = [
   Mark.ITALIC,
@@ -175,6 +193,8 @@ export const MarkdownEscapeRegex = globalRegex(
   ),
 );
 
+// Tables
+
 export const MarkdownTable = {
   DELIMITER_CELL_REGEX: new RegExp(
     anchored(
@@ -189,6 +209,8 @@ export const MarkdownTable = {
   TRAILING_SEPARATOR_REGEX: new RegExp(unescaped(atEnd(Mark.TABLE_SEPARATOR))),
   ESCAPED_SEPARATOR_REGEX: globalRegex(sequence(ESCAPE, Mark.TABLE_SEPARATOR)),
 } as const;
+
+// Lists
 
 export const MarkdownList = {
   FIRST_ORDINAL: 1,

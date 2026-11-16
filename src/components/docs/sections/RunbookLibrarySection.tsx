@@ -1,13 +1,18 @@
 import { QuickOpenConfig } from "@/common/config";
 import { NoteStyle, SortDirection } from "@/common/enums";
-import { bindingLabel, KeyBinding } from "@/common/keybindings";
+import { KeyBinding } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
+
 import { demoNote } from "../demos/demoSeeds";
 import { DemoRunbookList, DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
+import { useShortcutLabel } from "../useShortcutLabel";
 
 export function RunbookLibraryDocs() {
   const t = useTranslation();
+  const quickOpenKey = useShortcutLabel(KeyBinding.QUICK_OPEN);
+  const paletteKey = useShortcutLabel(KeyBinding.COMMAND_PALETTE);
+
   const { runbookSamples, folderSamples } = t.docs.demo;
   const samplePaths = [
     [],
@@ -56,14 +61,14 @@ export function RunbookLibraryDocs() {
       <Prose text={t.docs.runbookLibrary.zipImport(t.runbooks.importZip)} />
       <Prose
         text={t.docs.runbookLibrary.quickOpen(
-          bindingLabel(KeyBinding.QUICK_OPEN),
+          quickOpenKey,
           t.runbooks.recentlyOpened,
         )}
       />
       <Prose
         text={t.docs.runbookLibrary.commandPalette(
           QuickOpenConfig.COMMAND_PREFIX,
-          bindingLabel(KeyBinding.COMMAND_PALETTE),
+          paletteKey,
         )}
       />
       <Prose text={t.docs.runbookLibrary.autoLabel} />

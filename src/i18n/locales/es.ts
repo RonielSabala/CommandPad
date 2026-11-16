@@ -1,5 +1,6 @@
-import { MIDDLE_DOT } from "@/common/config";
+import { ELLIPSIS, MIDDLE_DOT } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
+import { COMMAND_PROMPT_PREFIX } from "@/common/editorConfig";
 import {
   BlockType,
   EmbeddedRunbookStatus,
@@ -7,9 +8,12 @@ import {
   NoteStyle,
   PaletteCommand,
   PanelId,
+  PanelSide,
   RunbookSyncStatus,
   SaveOutcome,
+  SettingsCategory,
   SortDirection,
+  ThemeSetting,
   UnresolvedCause,
   VariableEntryKind,
   VaultError,
@@ -17,7 +21,7 @@ import {
   VaultPrompt,
   VaultStatus,
 } from "@/common/enums";
-import { KeyBinding } from "@/common/keybindings";
+import { KeyBinding, mapTabKeybindings } from "@/common/keybindings";
 import { VaultConfig } from "@/common/vaultConfig";
 import { codeBulletList } from "../lists";
 import { MessageSlot } from "../slots";
@@ -27,7 +31,7 @@ const andMore = (count: number) => `_y ${count} más..._`;
 
 export const es: Messages = {
   common: {
-    loading: "Cargando…",
+    loading: `Cargando${ELLIPSIS}`,
     cancel: "Cancelar",
     close: "Cerrar",
     back: "Atrás",
@@ -51,7 +55,7 @@ export const es: Messages = {
     collapseAll: "Contraer todo",
     toggleEditorsTitle: "Expandir/contraer todos los bloques",
     toggleSectionsTitle: "Expandir/contraer todas las secciones de variables",
-    resetWorkspaceTitle: "Resetear espacio de trabajo",
+    openSettings: "Abrir configuración",
     exportTitle: "Exportar libro",
     export: "Exportar",
     changeLanguage: "Cambiar idioma",
@@ -77,7 +81,7 @@ export const es: Messages = {
   },
   runbooks: {
     title: "LIBROS",
-    searchPlaceholder: "Buscar libros…",
+    searchPlaceholder: `Buscar libros${ELLIPSIS}`,
     recentlyOpened: "abierto recientemente",
     empty: "No hay libros importados.",
     import: "Importar",
@@ -112,8 +116,11 @@ export const es: Messages = {
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Guardado en ${provider}`,
       [RunbookSyncStatus.UNSAVED]: (provider, shortcut) =>
-        `Cambios sin guardar ${MIDDLE_DOT} haz clic o pulsa ${shortcut} para guardar en ${provider}`,
-      [RunbookSyncStatus.SYNCING]: (provider) => `Guardando en ${provider}…`,
+        shortcut
+          ? `Cambios sin guardar ${MIDDLE_DOT} haz clic o pulsa ${shortcut} para guardar en ${provider}`
+          : `Cambios sin guardar ${MIDDLE_DOT} haz clic para guardar en ${provider}`,
+      [RunbookSyncStatus.SYNCING]: (provider) =>
+        `Guardando en ${provider}${ELLIPSIS}`,
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
         `Sesión cerrada en ${provider} ${MIDDLE_DOT} haz clic para iniciar sesión y guardar`,
       [RunbookSyncStatus.ERROR]: (provider) =>
@@ -121,7 +128,7 @@ export const es: Messages = {
     },
     saveNotice: {
       [SaveOutcome.LOCAL]: () => "CommandPad guarda mientras trabajas.",
-      [SaveOutcome.SAVING]: (provider) => `Guardando en ${provider}…`,
+      [SaveOutcome.SAVING]: (provider) => `Guardando en ${provider}${ELLIPSIS}`,
       [SaveOutcome.SAVED]: (provider) => `Guardado en ${provider}`,
       [SaveOutcome.UP_TO_DATE]: () => "Ya está al día",
       [SaveOutcome.UPDATED]: (provider) => `Actualizado desde ${provider}`,
@@ -138,7 +145,7 @@ export const es: Messages = {
   },
   variables: {
     title: "VARIABLES",
-    searchPlaceholder: "Buscar variables…",
+    searchPlaceholder: `Buscar variables${ELLIPSIS}`,
     empty: "No hay variables definidas.",
     emptyTitle: "Aún no hay variables.",
     emptyHint: "Agrega una abajo y referénciala donde quieras.",
@@ -158,8 +165,8 @@ export const es: Messages = {
       "Un grupo con nombre y plegable para las variables que tiene debajo, para apartar las que casi no tocas. Solo el editor de variables muestra secciones.",
     optionPlaceholder: "elige una opción",
     noOptions: "Aún no hay opciones",
-    searchOptionsPlaceholder: "Buscar opciones…",
-    addOptionPlaceholder: "Agregar opción…",
+    searchOptionsPlaceholder: `Buscar opciones${ELLIPSIS}`,
+    addOptionPlaceholder: `Agregar opción${ELLIPSIS}`,
     addOption: "Agregar opción",
     optionActions: "Acciones de la opción",
     editOption: "Editar opción",
@@ -559,7 +566,7 @@ export const es: Messages = {
     chooseFolder: "Elige una carpeta donde guardar.",
     selectFolder: "Guardar aquí",
     confirm: "Exportar",
-    savingTo: (provider) => `Guardando en ${provider}…`,
+    savingTo: (provider) => `Guardando en ${provider}${ELLIPSIS}`,
     savedTo: (provider) => `Guardado en ${provider}`,
     exportError: "La exportación falló. Inténtalo de nuevo.",
     tryAgain: "Intentar de nuevo",
@@ -620,7 +627,7 @@ export const es: Messages = {
     skip: "Ahora no",
     skipOne: "Omitir este",
     skipAll: "Omitir todos",
-    working: "Derivando clave…",
+    working: `Derivando clave${ELLIPSIS}`,
     errors: {
       [VaultError.TOO_SHORT]: `Usa al menos ${VaultConfig.MIN_PASSPHRASE_LENGTH} caracteres.`,
       [VaultError.MISMATCH]: "Las dos frases de contraseña no coinciden.",
@@ -814,6 +821,7 @@ export const es: Messages = {
       [PaletteCommand.TOGGLE_MINIMAP]: "Alternar minimapa",
       [PaletteCommand.MOVE_MINIMAP]: "Mover el minimapa al otro lado",
       [PaletteCommand.TOGGLE_SPELLCHECK]: "Alternar corrector ortográfico",
+      [PaletteCommand.OPEN_SETTINGS]: "Abrir configuración",
     },
   },
   keybindings: {
@@ -823,6 +831,7 @@ export const es: Messages = {
       "Guardar el libro en el archivo de la nube al que está vinculado",
     [KeyBinding.NEW_TAB]: "Abrir una nueva pestaña",
     [KeyBinding.CLOSE_TAB]: "Cerrar la pestaña activa",
+    ...mapTabKeybindings((position) => `Ir a la pestaña ${position}`),
     [KeyBinding.QUICK_OPEN]:
       "Buscar en la biblioteca y abrir un libro, o ejecutar una acción",
     [KeyBinding.COMMAND_PALETTE]:
@@ -831,6 +840,9 @@ export const es: Messages = {
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navegar libros con el libro activo seleccionado",
     [KeyBinding.IMPORT_RUNBOOK]: "Abrir el diálogo de importación de libro",
+    [KeyBinding.NEW_FOLDER]: "Crear una carpeta en la biblioteca",
+    [KeyBinding.PASTE_RUNBOOK]:
+      "Abrir el diálogo para pegar el JSON de un libro",
     [KeyBinding.EXPORT]: "Abrir el diálogo de exportación",
     [KeyBinding.DELETE_RUNBOOK]: "Eliminar el libro enfocado de la biblioteca",
     [KeyBinding.DELETE_ACTIVE_RUNBOOK]:
@@ -841,6 +853,14 @@ export const es: Messages = {
       "Cambiar entre los bloques y el editor de variables",
     [KeyBinding.TOGGLE_SOURCE_VIEW]:
       "Cambiar entre los bloques y el archivo fuente del libro",
+    [KeyBinding.TOGGLE_SIDEBAR]: "Contraer o expandir la barra lateral",
+    [KeyBinding.MOVE_SIDEBAR]: "Mover la barra lateral al otro lado",
+    [KeyBinding.TOGGLE_THEME]: "Cambiar entre el tema claro y el oscuro",
+    [KeyBinding.TOGGLE_MINIMAP]: "Mostrar u ocultar el minimapa",
+    [KeyBinding.MOVE_MINIMAP]: "Mover el minimapa al otro lado",
+    [KeyBinding.TOGGLE_SPELLCHECK]:
+      "Activar o desactivar el corrector ortográfico en las notas",
+    [KeyBinding.OPEN_SETTINGS]: "Abrir la configuración",
     [KeyBinding.MULTISELECT_BLOCKS]: "Selección múltiple de bloques",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicar bloques seleccionados",
     [KeyBinding.DELETE_BLOCK]: "Eliminar bloques seleccionados",
@@ -860,6 +880,117 @@ export const es: Messages = {
     [KeyBinding.WRAP_SELECTION]:
       "Envolver el texto seleccionado en el par escrito (cualquier campo de texto)",
     [KeyBinding.SUBMIT_EDITOR]: "Guardar / crear desde un editor de código",
+  },
+  settings: {
+    title: "Configuración",
+    defaultTag: "(predeterminado)",
+    categories: {
+      [SettingsCategory.APPEARANCE]: "Apariencia",
+      [SettingsCategory.EDITOR]: "Editor",
+      [SettingsCategory.KEYBOARD]: "Atajos de teclado",
+      [SettingsCategory.WORKSPACE]: "Espacio de trabajo",
+    },
+    theme: {
+      title: "Tema",
+      description:
+        "El esquema de colores de toda la app. Seguir al sistema lo cambia junto con tu dispositivo.",
+      options: {
+        [ThemeSetting.DARK]: "Oscuro",
+        [ThemeSetting.LIGHT]: "Claro",
+        [ThemeSetting.SYSTEM]: "Sistema",
+      },
+    },
+    language: {
+      title: "Idioma",
+      description:
+        "El idioma de la interfaz. El contenido de tus libros nunca se traduce.",
+    },
+    commandLanguage: {
+      title: "Lenguaje predeterminado de los comandos",
+      description:
+        "El lenguaje con el que empieza un bloque de comando nuevo. Los comandos existentes y los libros importados conservan el suyo.",
+    },
+    variableLanguage: {
+      title: "Lenguaje predeterminado de las variables",
+      description:
+        "El lenguaje con el que empieza el valor de una variable de texto nueva. Las variables existentes y los libros importados conservan el suyo.",
+    },
+    tabWidth: {
+      title: "Ancho de la tabulación",
+      description:
+        "Cuántas columnas ocupa una tabulación en los comandos, los valores de las variables y las notas.",
+      value: (columns) => (columns === 1 ? "1 columna" : `${columns} columnas`),
+    },
+    commandPrompt: {
+      title: "Prompt de los comandos",
+      description: `Muestra el ${COMMAND_PROMPT_PREFIX} delante de la primera línea del editor de un comando.`,
+    },
+    clampLines: {
+      title: "Límite de los comandos largos",
+      description:
+        "Cuántas líneas muestra un comando o el valor de una variable antes de plegar el resto.",
+      value: (lines) => `${lines} líneas`,
+    },
+    variableSplit: {
+      title: "División de las variables",
+      description:
+        "Cómo reparte una fila de variable su ancho entre la clave y el valor.",
+      value: (keyPercent, valuePercent) =>
+        `Clave ${keyPercent}% ${MIDDLE_DOT} Valor ${valuePercent}%`,
+    },
+    spellcheck: {
+      title: "Corrector ortográfico",
+      description:
+        "Subraya las palabras mal escritas mientras escribes una nota.",
+    },
+    minimap: {
+      title: "Minimapa",
+      description:
+        "Muestra una miniatura del contenido en lugar de la barra de desplazamiento, en los bloques, el editor de variables y la vista de código fuente.",
+    },
+    minimapSide: {
+      title: "Lado del minimapa",
+      description: "El borde del contenido en el que se sitúa el minimapa.",
+      options: {
+        [PanelSide.LEFT]: "Izquierda",
+        [PanelSide.RIGHT]: "Derecha",
+      },
+    },
+    keyboard: {
+      search: "Buscar atajos",
+      noMatch: "Ningún atajo coincide con tu búsqueda.",
+      resetAll: "Restablecer todos",
+      resetAllTitle: "¿Restablecer todos los atajos?",
+      resetAllMessage:
+        "Cada atajo vuelve a su valor **predeterminado**, y se quitan los que añadiste.",
+      actions: "Acciones del atajo",
+      change: "Cambiar atajo",
+      reset: "Restablecer predeterminado",
+      remove: "Quitar atajo",
+      unbound: "Sin asignar",
+      modified: (defaultLabel) => `Cambiado desde ${defaultLabel}`,
+      modifiedFromUnbound: "Añadido por ti",
+      recording: "Pulsa las teclas",
+      accept: "Aceptar atajo",
+      recordingHint: (accept, cancel) =>
+        `${accept} para aceptar, ${cancel} para cancelar`,
+      conflict: (action) =>
+        `Ya lo usa "${action}". Al aceptar, pasa a esta acción.`,
+    },
+    quickOpenRecents: {
+      title: "Libros recientes en la apertura rápida",
+      description:
+        "Cuántos de los libros que abriste por última vez lista primero la apertura rápida.",
+      value: (count) =>
+        count === 0 ? "Ninguno" : count === 1 ? "1 libro" : `${count} libros`,
+    },
+    dangerZone: "Zona de peligro",
+    reset: {
+      title: "Resetear espacio de trabajo",
+      description:
+        "Elimina todas las pestañas, libros, variables y preferencias guardadas en este navegador. No se puede deshacer.",
+      action: "Resetear espacio de trabajo",
+    },
   },
   footer: {
     privacy: "Privacidad",
@@ -1119,7 +1250,7 @@ export const es: Messages = {
       [DocsSectionId.CLOUD_LINKED_SYNC]: "Mantener un libro sincronizado",
       [DocsSectionId.CLOUD_FILE_MANAGEMENT]: "Gestionar archivos en la nube",
       [DocsSectionId.AI_AGENT]: "Agente de IA",
-      [DocsSectionId.LANGUAGE]: "Idioma",
+      [DocsSectionId.SETTINGS]: "Configuración",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Atajos de teclado",
       [DocsSectionId.QA]: "Preguntas y respuestas",
     },
@@ -1198,10 +1329,8 @@ Si algo sale mal, deshazlo en este orden:
       ) => `* El **logo de CommandPad**: haz clic en él para recargar la app.
 * El **candado / lápiz**: alterna entre el modo lectura y el modo edición. Tiene su propia sección más adelante.
 * **${collapseAllLabel}**: contrae o expande de golpe todos los bloques del libro activo. En el editor de variables pliega o despliega todas las secciones de variables.
-* El **sol / la luna**: cambia entre el tema claro y oscuro.
-* El **selector de idioma**: cambia el idioma de la interfaz.
+* El **engranaje**: abre la configuración. Tiene su propia sección más adelante.
 * El **libro**: abre esta documentación.
-* La **flecha roja**: resetea el espacio de trabajo. Lo borra todo, así que la app siempre te pide confirmación antes.
 * **${exportLabel}**: guarda el libro activo en un archivo. También tiene su propia sección más adelante.`,
     },
     mainPanel: {
@@ -1218,13 +1347,16 @@ Si algo sale mal, deshazlo en este orden:
         openEditorLabel,
         openSourceShortcut,
         openEditorShortcut,
+        propertiesLabel,
         closeLabel,
         closeOthersLabel,
         closeAllLabel,
-      ) => `* **Haz clic** en una pestaña para cambiar a ella.
+        firstTabShortcut,
+        lastTabShortcut,
+      ) => `* **Haz clic** en una pestaña para cambiar a ella, o pulsa **${firstTabShortcut}** a **${lastTabShortcut}** para saltar a una de las nueve primeras.
 * **Arrastra** una pestaña para reordenarla.
 * **Clic con la rueda** del ratón en una pestaña para cerrarla.
-* **Clic derecho** en una pestaña para **${closeLabel}**, **${closeOthersLabel}** y **${closeAllLabel}**.
+* **Clic derecho** en una pestaña para ver sus **${propertiesLabel}**, o para **${closeLabel}**, **${closeOthersLabel}** y **${closeAllLabel}**.
 * **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.
 * **${openSourceLabel}**, al final de la barra de pestañas, cambia los bloques de abajo por el JSON del libro (**${openSourceShortcut}**).
 * **${openEditorLabel}**, a su lado, los cambia por las variables del libro (**${openEditorShortcut}**).
@@ -1247,7 +1379,8 @@ Si algo sale mal, deshazlo en este orden:
     sidebar: {
       intro:
         "La barra lateral contiene la biblioteca de libros y el panel de variables.",
-      items: `* **Contraer / expandir**: haz clic en el botón de flecha o usa su atajo de teclado.
+      items: (toggleShortcut) =>
+        `* **Contraer / expandir**: haz clic en el botón de flecha o pulsa \`${toggleShortcut}\`.
 * **Mover a izquierda / derecha**: haz clic en el botón de disposición para mover la barra lateral al otro lado de la pantalla.
 * **Redimensionar**: arrastra el borde interior de la barra lateral; doble clic para contraerla.`,
       resizeDetails:
@@ -1849,15 +1982,26 @@ Si algo sale mal, deshazlo en este orden:
       updates:
         "Crece con la aplicación: cada bloque, campo u operación que se añade acaba también aquí, así que vuelve a copiarlo después de cada actualización. Y revisa lo que escriba tu agente antes de ejecutarlo, igual que harías con cualquier script que te pasen.",
     },
-    language: {
-      intro:
-        "Usa el **selector de idioma** de la cabecera para elegir el idioma de la interfaz.",
-      detection:
-        "La app detecta el idioma de tu navegador en la primera visita, y tu elección se recuerda después.",
+    settings: {
+      intro: (shortcut) =>
+        `La configuración reúne las preferencias que afectan a toda la app. Ábrela con el **engranaje** de la cabecera, o pulsa \`${shortcut}\`. Un cambio se aplica al momento y se recuerda en este navegador.`,
+      categories: (
+        appearanceLabel,
+        editorLabel,
+        keyboardLabel,
+        workspaceLabel,
+        resetAllLabel,
+        resetLabel,
+      ) =>
+        `Elige una categoría a la izquierda:
+* **${appearanceLabel}**: el tema claro u oscuro, o el que usa tu dispositivo, y el idioma de la interfaz.
+* **${editorLabel}**: el lenguaje con el que empieza un comando o una variable nuevos, el ancho de una tabulación, el prompt ${COMMAND_PROMPT_PREFIX} del editor de un comando, cuántas líneas muestra un comando largo antes de plegarse, cómo se reparte una fila de variable entre clave y valor, el corrector ortográfico de las notas, y el minimapa y el lado en el que se sitúa.
+* **${keyboardLabel}**: todos los atajos, con buscador. Haz clic en un atajo, pulsa las teclas nuevas y luego \`Enter\` o la marca de verificación junto a ellas para quedártelas, o \`Escape\` o la cruz para cancelar. Si otra acción ya usa esas teclas, la app te dice cuál, y al aceptar pasan a la nueva. El menú de cada fila también quita un atajo o recupera su valor predeterminado, y **${resetAllLabel}** recupera todos los predeterminados.
+* **${workspaceLabel}**: cuántos libros abiertos recientemente lista primero la apertura rápida. **${resetLabel}** borra de este navegador todas las pestañas, libros, variables y preferencias. No se puede deshacer, así que la app siempre te pide confirmación antes.`,
     },
     keyboardShortcuts: {
-      intro: (binding) =>
-        `Todos los atajos disponibles en la app. Muchas de sus acciones también se ejecutan por nombre: pulsa \`${binding}\` y elige una.`,
+      intro: (binding, keyboardLabel) =>
+        `Todos los atajos disponibles en la app, tal como los tienes: cambia cualquiera en la configuración, en **${keyboardLabel}**. Cada acción de la lista de comandos también se ejecuta por nombre, incluso las que aún no tienen atajo, como cambiar el tema: pulsa \`${binding}\` y elige una.`,
     },
     qa: {
       intro:

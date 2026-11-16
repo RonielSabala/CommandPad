@@ -1,0 +1,19 @@
+.danger-zone {
+  margin-top: var(--setting-gap);
+}
+
+.setting-item + .danger-zone {
+  margin-top: 0;
+  padding-top: var(--setting-gap);
+  border-top: var(--border-standard);
+}
+
+.danger-zone .framed-section-title {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.danger-zone .framed-section-frame {
+  border-color: var(--danger);
+}

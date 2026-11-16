@@ -3,24 +3,22 @@ import { CssClass } from "@/common/constants/css";
 import { DragEffect, MouseButton } from "@/common/constants/events";
 import { AppMode, TabDropSide } from "@/common/enums";
 import type { Tab } from "@/common/types";
+import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import { RenameInput } from "@/components/common/RenameInput";
 import { useRichTooltip } from "@/components/common/tooltip/richTooltip";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CloseIcon } from "@/components/icons";
+import { RunbookProperties } from "@/components/sidebar/runbooks/menu/LibraryProperties";
 import { blockDrag } from "@/hooks/blockDrag";
 import { useTabUnresolved } from "@/hooks/useTabUnresolved";
+import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
-import {
-  useEffect,
-  useRef,
-  useState,
-  type DragEvent,
-  type MouseEvent,
-} from "react";
+import { useEffect, useRef, useState, type DragEvent } from "react";
 
+import { TabContextMenu } from "./TabContextMenu";
 import "./TabItem.css";
 import { TabUnresolvedTooltip } from "./TabUnresolvedTooltip";
 
@@ -29,21 +27,15 @@ const tabDrag: { srcId: string | null } = { srcId: null };
 interface Props {
   tab: Tab;
   renaming: boolean;
-  onOpenMenu: (event: MouseEvent, tabId: string) => void;
   onRename: (tabId: string) => void;
   onRenameEnd: () => void;
 }
 
-export function TabItem({
-  tab,
-  renaming,
-  onOpenMenu,
-  onRename,
-  onRenameEnd,
-}: Props) {
+export function TabItem({ tab, renaming, onRename, onRenameEnd }: Props) {
   const t = useTranslation();
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const tabId = tab.id;
+  const runbookId = tab.runbookId;
 
   const isActive = useStore((state) => state.activeTabId === tabId);
   const tabLabel = displayLabel(tab.label || t.common.untitledTab, t);
@@ -57,6 +49,10 @@ export function TabItem({
   const unresolved = useTabUnresolved(tab);
   const unresolvedTip = useRichTooltip();
   const showsUnresolvedTip = unresolved || unresolvedTip.pinned;
+
+  const tabRef = useRef<HTMLDivElement>(null);
+  const properties = useInfoTooltip();
+  const { menuAnchor, onContextMenu, closeMenu } = useWorkspaceContextMenu();
 
   const [dragging, setDragging] = useState(false);
   const [dropSide, setDropSide] = useState<TabDropSide | null>(null);
@@ -82,6 +78,7 @@ export function TabItem({
   return (
     <>
       <div
+        ref={tabRef}
         className={classNames(
           "tab",
           isActive && "tab-active",
@@ -98,7 +95,7 @@ export function TabItem({
             event.preventDefault();
           }
         }}
-        onContextMenu={(event) => onOpenMenu(event, tabId)}
+        onContextMenu={onContextMenu}
         onMouseUp={(event) => {
           if (event.button === MouseButton.MIDDLE) {
             event.preventDefault();
@@ -185,8 +182,8 @@ export function TabItem({
             value={tabLabel}
             maxLength={RunbookConfig.LABEL_MAX_LENGTH}
             onCommit={(name) => {
-              if (tab.runbookId) {
-                renameLibraryRunbook(tab.runbookId, name);
+              if (runbookId) {
+                renameLibraryRunbook(runbookId, name);
               }
 
               onRenameEnd();
@@ -227,6 +224,19 @@ export function TabItem({
         unresolvedTip.render((tip) => (
           <TabUnresolvedTooltip tab={tab} tip={tip} />
         ))}
+
+      {menuAnchor && (
+        <TabContextMenu
+          tabId={tabId}
+          anchor={menuAnchor}
+          onClose={closeMenu}
+          onRename={onRename}
+          onProperties={() => properties.open(tabRef.current)}
+        />
+      )}
+
+      {runbookId &&
+        properties.render(() => <RunbookProperties runbookId={runbookId} />)}
     </>
   );
 }

@@ -12,8 +12,8 @@ import type { StoreState } from "@/store/store";
 import { queryMatch } from "@/utils/string";
 
 interface PaletteCommandDefinition {
-  binding?: KeyBinding;
-  /** Read mode hides it. */
+  binding: KeyBinding;
+  /** Whether read mode hides it. */
   edits?: boolean;
   isAvailable?: (state: StoreState) => boolean;
   run: (state: StoreState) => void;
@@ -31,6 +31,7 @@ export const PALETTE_COMMANDS: Record<
     run: (state) => void state.createNewTab(),
   },
   [PaletteCommand.NEW_FOLDER]: {
+    binding: KeyBinding.NEW_FOLDER,
     edits: true,
     run: (state) => state.createLibraryFolder(null),
   },
@@ -40,6 +41,7 @@ export const PALETTE_COMMANDS: Record<
     run: (state) => state.beginImport(),
   },
   [PaletteCommand.PASTE_RUNBOOK]: {
+    binding: KeyBinding.PASTE_RUNBOOK,
     edits: true,
     run: (state) => state.openPasteRunbookModal(),
   },
@@ -63,27 +65,37 @@ export const PALETTE_COMMANDS: Record<
     run: (state) => state.toggleRunbookView(RunbookView.SOURCE),
   },
   [PaletteCommand.TOGGLE_SIDEBAR]: {
+    binding: KeyBinding.TOGGLE_SIDEBAR,
     run: (state) => state.togglePanel(PanelId.SIDEBAR),
   },
   [PaletteCommand.MOVE_SIDEBAR]: {
+    binding: KeyBinding.MOVE_SIDEBAR,
     run: (state) => state.togglePanelSide(PanelId.SIDEBAR),
   },
   [PaletteCommand.TOGGLE_THEME]: {
+    binding: KeyBinding.TOGGLE_THEME,
     run: (state) => state.toggleTheme(),
   },
   [PaletteCommand.TOGGLE_MINIMAP]: {
+    binding: KeyBinding.TOGGLE_MINIMAP,
     run: (state) => state.toggleMinimap(),
   },
   [PaletteCommand.MOVE_MINIMAP]: {
+    binding: KeyBinding.MOVE_MINIMAP,
     isAvailable: (state) => state.minimapEnabled,
     run: (state) => state.toggleMinimapPosition(),
   },
   [PaletteCommand.TOGGLE_SPELLCHECK]: {
+    binding: KeyBinding.TOGGLE_SPELLCHECK,
     run: (state) => state.toggleSpellcheck(),
+  },
+  [PaletteCommand.OPEN_SETTINGS]: {
+    binding: KeyBinding.OPEN_SETTINGS,
+    run: (state) => state.openSettingsModal(),
   },
 };
 
-const COMMAND_ORDER = Object.values(PaletteCommand);
+export const COMMAND_ORDER = Object.values(PaletteCommand);
 
 /** The search after the command prefix. */
 export function commandSearch(query: string): string | null {
@@ -92,15 +104,21 @@ export function commandSearch(query: string): string | null {
     : null;
 }
 
+/** Whether `command` can run in `state`. */
+export function isCommandAvailable(
+  state: StoreState,
+  command: PaletteCommand,
+): boolean {
+  const { edits, isAvailable } = PALETTE_COMMANDS[command];
+
+  return (
+    !(edits && state.mode === AppMode.READ) && (isAvailable?.(state) ?? true)
+  );
+}
+
 /** The commands that can run in `state`. */
 export function availableCommands(state: StoreState): PaletteCommand[] {
-  const reading = state.mode === AppMode.READ;
-
-  return COMMAND_ORDER.filter((command) => {
-    const { edits, isAvailable } = PALETTE_COMMANDS[command];
-
-    return !(edits && reading) && (isAvailable?.(state) ?? true);
-  });
+  return COMMAND_ORDER.filter((command) => isCommandAvailable(state, command));
 }
 
 /** Every command `query` finds. */

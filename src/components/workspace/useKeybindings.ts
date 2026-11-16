@@ -1,167 +1,176 @@
 import { QuickOpenConfig } from "@/common/config";
 import { InputSelector } from "@/common/constants/dom";
 import { EventType, Key, Modifier } from "@/common/constants/events";
-import { MoveDirection, RunbookView } from "@/common/enums";
+import { MoveDirection } from "@/common/enums";
 import {
   isModifierPressed,
   KeyBinding,
-  matchesKeybinding,
-  ModifierAction,
+  keybindingFromEvent,
+  mapTabKeybindings,
 } from "@/common/keybindings";
-import { getActiveTab, useStoreApi } from "@/store/store";
+import {
+  COMMAND_ORDER,
+  isCommandAvailable,
+  PALETTE_COMMANDS,
+} from "@/components/modals/quickOpen/paletteCommands";
+import { getActiveTab, useStoreApi, type StoreState } from "@/store/store";
 import { useEffect } from "react";
+
+/** Runs a shortcut. `false` means it had nothing to act on. */
+type KeyAction = (state: StoreState) => boolean | void;
+
+type SelectionAction = (state: StoreState, id: string) => void;
+
+/** Acts on the first selected block, else the first selected variable. */
+function onFirstSelected(
+  onBlock: SelectionAction,
+  onVariable: SelectionAction,
+): KeyAction {
+  return (state) => {
+    const [blockId] = state.selectedBlockIds;
+    if (blockId !== undefined) {
+      return void onBlock(state, blockId);
+    }
+
+    const [variableId] = state.selectedVariableIds;
+    if (variableId !== undefined) {
+      return void onVariable(state, variableId);
+    }
+
+    return false;
+  };
+}
+
+/** The shortcuts no palette command runs. */
+const WORKSPACE_KEY_ACTIONS: Partial<Record<KeyBinding, KeyAction>> = {
+  [KeyBinding.SAVE_RUNBOOK]: (state) => void state.saveActiveRunbook(),
+
+  [KeyBinding.CLOSE_TAB]: (state) =>
+    state.activeTabId !== null && state.closeTab(state.activeTabId),
+
+  ...mapTabKeybindings(
+    (position): KeyAction =>
+      (state) => {
+        const tab = state.tabs[position - 1];
+        return tab !== undefined && void state.switchTab(tab.id);
+      },
+  ),
+
+  [KeyBinding.QUICK_OPEN]: (state) => state.openQuickOpenModal(),
+
+  [KeyBinding.COMMAND_PALETTE]: (state) =>
+    state.openQuickOpenModal(QuickOpenConfig.COMMAND_PREFIX),
+
+  [KeyBinding.EXPORT]: (state) =>
+    (getActiveTab(state)?.blocks.length ?? 0) > 0 && state.openExportModal(),
+
+  [KeyBinding.DELETE_ACTIVE_RUNBOOK]: (state) =>
+    state.activeRunbookId !== null &&
+    void state.removeLibraryRunbook(state.activeRunbookId),
+
+  [KeyBinding.DELETE_RUNBOOK]: (state) => {
+    const runbookId = state.focusedRunbookId ?? state.activeRunbookId;
+    return runbookId !== null && void state.removeLibraryRunbook(runbookId);
+  },
+
+  [KeyBinding.DUPLICATE_BLOCK]: onFirstSelected(
+    (state, id) => state.duplicateBlock(id),
+    (state, id) => state.duplicateVariable(id),
+  ),
+
+  [KeyBinding.DELETE_BLOCK]: onFirstSelected(
+    (state, id) => state.removeBlock(id),
+    (state, id) => state.removeVariable(id),
+  ),
+
+  [KeyBinding.FOCUS_RUNBOOK]: (state) => {
+    const runbookId = state.activeRunbookId ?? state.libraryRunbooks[0]?.id;
+    if (runbookId === undefined) {
+      return false;
+    }
+
+    state.setRunbookFocus(runbookId);
+    void state.loadLibraryRunbook(runbookId);
+  },
+};
+
+const KEY_ACTIONS = new Map<KeyBinding, KeyAction>([
+  ...COMMAND_ORDER.map((command): [KeyBinding, KeyAction] => {
+    const { binding, run } = PALETTE_COMMANDS[command];
+
+    return [
+      binding,
+      (state) => isCommandAvailable(state, command) && run(state),
+    ];
+  }),
+  ...(Object.entries(WORKSPACE_KEY_ACTIONS) as [KeyBinding, KeyAction][]),
+]);
+
+const RUNBOOK_LIST_KEYS: Partial<Record<string, MoveDirection>> = {
+  [Key.ARROW_UP]: MoveDirection.UP,
+  [Key.ARROW_DOWN]: MoveDirection.DOWN,
+};
+
+/** Whether `event` holds Ctrl or Alt. */
+function isCommandChord(event: KeyboardEvent): boolean {
+  return (
+    isModifierPressed(event, Modifier.CTRL) ||
+    isModifierPressed(event, Modifier.ALT)
+  );
+}
 
 export function useKeybindings(): void {
   const store = useStoreApi();
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      const state = store.getState();
-
-      if (matchesKeybinding(event, KeyBinding.NEW_TAB)) {
-        event.preventDefault();
-        void state.createNewTab();
+      if (event.defaultPrevented) {
         return;
       }
 
-      if (matchesKeybinding(event, KeyBinding.SAVE_RUNBOOK)) {
-        event.preventDefault();
-        void state.saveActiveRunbook();
-        return;
-      }
-
-      if (matchesKeybinding(event, KeyBinding.CLOSE_TAB)) {
-        event.preventDefault();
-        if (state.activeTabId) {
-          state.closeTab(state.activeTabId);
-        }
-
-        return;
-      }
-
-      const key = event.key;
-      const ctrlPressed = isModifierPressed(event, Modifier.CTRL);
-      const linkKeyPressed = isModifierPressed(event, ModifierAction.OPEN_LINK);
-      const selectKeyPressed = isModifierPressed(
-        event,
-        ModifierAction.SELECT_BLOCKS,
-      );
-      const inEditable = !!document.activeElement?.matches(
-        InputSelector.EDITABLE,
-      );
-
-      if (!ctrlPressed && !linkKeyPressed && !selectKeyPressed && !inEditable) {
-        if (
-          matchesKeybinding(event, KeyBinding.DELETE_BLOCK) &&
-          state.selectedVariableIds.size > 0
-        ) {
-          event.preventDefault();
-          state.removeVariable([...state.selectedVariableIds][0]);
-        } else if (
-          matchesKeybinding(event, KeyBinding.DELETE_BLOCK) &&
-          state.selectedBlockIds.size > 0
-        ) {
-          event.preventDefault();
-          state.removeBlock([...state.selectedBlockIds][0]);
-        } else if (
-          matchesKeybinding(event, KeyBinding.FOCUS_RUNBOOK) &&
-          state.libraryRunbooks.length > 0
-        ) {
-          event.preventDefault();
-          const runbookId =
-            state.activeRunbookId ?? state.libraryRunbooks[0].id;
-
-          state.setRunbookFocus(runbookId);
-          void state.loadLibraryRunbook(runbookId);
-        } else if (
-          state.focusedRunbookId !== null &&
-          (key === Key.ARROW_UP || key === Key.ARROW_DOWN)
-        ) {
-          event.preventDefault();
-          state.navigateRunbookList(
-            key === Key.ARROW_DOWN ? MoveDirection.DOWN : MoveDirection.UP,
-          );
-        }
-
-        return;
-      }
-
-      if (!ctrlPressed) {
-        return;
-      }
-
-      let hit = false;
-
-      if (matchesKeybinding(event, KeyBinding.TOGGLE_MODE)) {
-        state.toggleAppMode();
-        hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.QUICK_OPEN)) {
-        state.openQuickOpenModal();
-        hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.COMMAND_PALETTE)) {
-        state.openQuickOpenModal(QuickOpenConfig.COMMAND_PREFIX);
-        hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.EXPORT)) {
-        if ((getActiveTab(state)?.blocks.length ?? 0) > 0) {
-          state.openExportModal();
-        }
-
-        hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.DELETE_ACTIVE_RUNBOOK)) {
-        if (state.activeRunbookId) {
-          void state.removeLibraryRunbook(state.activeRunbookId);
-        }
-
-        hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.DUPLICATE_BLOCK)) {
-        if (state.selectedVariableIds.size > 0) {
-          state.duplicateVariable([...state.selectedVariableIds][0]);
-        } else if (state.selectedBlockIds.size > 0) {
-          state.duplicateBlock([...state.selectedBlockIds][0]);
-        }
-
-        hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.DELETE_RUNBOOK)) {
-        const deleteId = state.focusedRunbookId ?? state.activeRunbookId;
-        if (deleteId) {
-          void state.removeLibraryRunbook(deleteId);
-        }
-
-        hit = true;
-      } else if (
-        !inEditable &&
-        matchesKeybinding(event, KeyBinding.IMPORT_RUNBOOK)
+      const commandChord = isCommandChord(event);
+      if (
+        !commandChord &&
+        document.activeElement?.matches(InputSelector.EDITABLE)
       ) {
-        state.beginImport();
-        hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.TOGGLE_EDITORS)) {
-        state.toggleCollapseAll();
-        hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.TOGGLE_VARIABLES_VIEW)) {
-        state.toggleRunbookView(RunbookView.VARIABLES);
-        hit = true;
-      } else if (matchesKeybinding(event, KeyBinding.TOGGLE_SOURCE_VIEW)) {
-        state.toggleRunbookView(RunbookView.SOURCE);
-        hit = true;
+        return;
       }
 
-      if (hit) {
+      const state = store.getState();
+      const id = keybindingFromEvent(event);
+      const action = id && KEY_ACTIONS.get(id);
+
+      if (action) {
+        if (action(state) !== false || commandChord) {
+          event.preventDefault();
+        }
+
+        return;
+      }
+
+      const direction = RUNBOOK_LIST_KEYS[event.key];
+      if (
+        direction &&
+        state.focusedRunbookId !== null &&
+        !commandChord &&
+        !isModifierPressed(event, Modifier.SHIFT)
+      ) {
         event.preventDefault();
+        state.navigateRunbookList(direction);
       }
     };
 
     const onKeyUp = (event: KeyboardEvent) => {
-      const key = event.key;
-      const state = store.getState();
-
-      if (key === Key.ESCAPE) {
-        const active = document.activeElement as HTMLElement | null;
-        if (!active?.matches(InputSelector.CODE)) {
-          active?.blur?.();
-        }
-
-        state.clearUserInteraction();
+      if (event.key !== Key.ESCAPE) {
+        return;
       }
+
+      const active = document.activeElement as HTMLElement | null;
+      if (!active?.matches(InputSelector.CODE)) {
+        active?.blur?.();
+      }
+
+      store.getState().clearUserInteraction();
     };
 
     document.addEventListener(EventType.KEY_DOWN, onKeyDown);

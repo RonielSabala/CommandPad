@@ -4,6 +4,7 @@ import type { editor } from "monaco-editor";
 
 import { getOverflowWidgetsRoot } from "./layers";
 import { getCodeMetrics } from "./metrics";
+import { getTabSize } from "./tabSize";
 
 type Options = editor.IStandaloneEditorConstructionOptions;
 
@@ -19,7 +20,7 @@ export function baseEditorOptions(folding: boolean): Options {
 
     fontFamily: metrics.fontFamily,
     fontLigatures: false,
-    tabSize: metrics.tabSize,
+    tabSize: getTabSize(),
     insertSpaces: false,
     detectIndentation: false,
 

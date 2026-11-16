@@ -1,6 +1,6 @@
 import { CssClass, HEADER_ICON_CLASS } from "@/common/constants/css";
 import { AppRoute } from "@/common/constants/routes";
-import { AppMode, RunbookView, Theme } from "@/common/enums";
+import { AppMode, RunbookView } from "@/common/enums";
 import { asButton } from "@/components/common/asButton";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { VerticalDivider } from "@/components/common/VerticalDivider";
@@ -8,30 +8,23 @@ import {
   BookIcon,
   ChevronsRightIcon,
   ExportIcon,
-  MoonIcon,
+  GearIcon,
   PadlockIcon,
   PencilIcon,
-  SunIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { getActiveTab, getRunbookView, useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
-import { ArrowCounterclockwise } from "react-bootstrap-icons";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import "./Header.css";
-import { LanguageSelect } from "./LanguageSelect";
 
 export function Header() {
   const t = useTranslation();
-  const navigate = useNavigate();
-
   const isRead = useStore((state) => state.mode === AppMode.READ);
-  const isLight = useStore((state) => state.theme === Theme.LIGHT);
 
-  const toggleTheme = useStore((state) => state.toggleTheme);
   const toggleAppMode = useStore((state) => state.toggleAppMode);
-  const clearAllData = useStore((state) => state.clearAllData);
+  const openSettingsModal = useStore((state) => state.openSettingsModal);
   const openExportModal = useStore((state) => state.openExportModal);
   const toggleCollapseAll = useStore((state) => state.toggleCollapseAll);
 
@@ -46,14 +39,9 @@ export function Header() {
   );
 
   const canCollapse = inVariables ? hasSections : !isEmpty && !isRead;
-
   const toggleModeLabel = isRead
     ? t.header.switchToEdit
     : t.header.switchToRead;
-
-  const toggleThemeLabel = isLight
-    ? t.header.switchToDark
-    : t.header.switchToLight;
 
   return (
     <header className="header-bar">
@@ -67,7 +55,6 @@ export function Header() {
       </span>
 
       <div className="header-spacer" />
-
       <div className="header-actions">
         <button
           className={classNames(
@@ -104,7 +91,6 @@ export function Header() {
       </div>
 
       <div className="header-spacer" />
-
       <div className="header-actions">
         <button
           className={classNames(
@@ -112,20 +98,14 @@ export function Header() {
             CssClass.BTN_LG,
             CssClass.BTN_FLAT_ICON,
           )}
-          onClick={toggleTheme}
-          aria-label={toggleThemeLabel}
-          {...tooltip(toggleThemeLabel)}
+          onClick={openSettingsModal}
+          aria-label={t.header.openSettings}
+          {...tooltip(t.header.openSettings)}
         >
-          {isLight ? (
-            <MoonIcon className={HEADER_ICON_CLASS} />
-          ) : (
-            <SunIcon className={HEADER_ICON_CLASS} />
-          )}
+          <GearIcon
+            className={classNames(CssClass.ICON, CssClass.ICON_SEMIBOLD)}
+          />
         </button>
-
-        <VerticalDivider />
-
-        <LanguageSelect />
 
         <VerticalDivider />
 
@@ -141,28 +121,6 @@ export function Header() {
         >
           <BookIcon className={HEADER_ICON_CLASS} />
         </Link>
-
-        <VerticalDivider />
-
-        <button
-          className={classNames(
-            CssClass.BTN,
-            CssClass.BTN_LG,
-            CssClass.BTN_DANGER,
-          )}
-          onClick={async () => {
-            if (await clearAllData()) {
-              navigate(AppRoute.HOME);
-            }
-          }}
-          aria-label={t.header.resetWorkspaceTitle}
-          {...tooltip(t.header.resetWorkspaceTitle)}
-        >
-          <ArrowCounterclockwise
-            id="reset-workspace-icon"
-            className={classNames(CssClass.ICON, CssClass.ICON_SEMIBOLD)}
-          />
-        </button>
 
         <VerticalDivider />
 

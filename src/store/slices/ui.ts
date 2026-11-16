@@ -5,7 +5,7 @@ import { clamp } from "@/utils/number";
 import { buildRunbookSource, parseRunbookSource } from "@/utils/runbookSource";
 
 import type { StoreKit } from "@/store/kit";
-import { getActiveTab } from "@/store/selectors";
+import { getActiveTab, getAppliedTheme } from "@/store/selectors";
 import {
   tabContent,
   withActiveTab,
@@ -15,6 +15,9 @@ import type { StoreState } from "@/store/types";
 import {
   oppositeSide,
   sidebarSectionsSnapshot,
+  toClampMaxLines,
+  toQuickOpenRecents,
+  toTabWidth,
   withPanel,
 } from "@/store/uiState";
 
@@ -24,11 +27,20 @@ type UiActions = Pick<
   | "toggleAppMode"
   | "toggleRunbookView"
   | "applyRunbookSource"
+  | "setTheme"
+  | "setSystemTheme"
   | "toggleTheme"
   | "toggleSpellcheck"
+  | "setTabWidth"
+  | "toggleCommandPrompt"
+  | "setClampMaxLines"
+  | "setDefaultCommandLanguage"
+  | "setDefaultVariableLanguage"
   | "setLanguage"
   | "toggleMinimap"
+  | "setMinimapPosition"
   | "toggleMinimapPosition"
+  | "setQuickOpenRecents"
   | "togglePanel"
   | "togglePanelSide"
   | "setPanelWidth"
@@ -37,6 +49,8 @@ type UiActions = Pick<
   | "resetVariableKeyRatio"
   | "toggleRunbookSection"
   | "toggleVariablesSection"
+  | "openSettingsModal"
+  | "closeSettingsModal"
   | "setRunbookSearchQuery"
   | "setVariableSearchQuery"
 >;
@@ -94,16 +108,64 @@ export function createUiSlice(kit: StoreKit): UiActions {
       return buildRunbookSource(content);
     },
 
-    toggleTheme: () => {
-      set((s) => ({
-        theme: s.theme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT,
-      }));
+    setTheme: (theme) => {
+      if (get().theme === theme) {
+        return;
+      }
 
+      set({ theme });
       saveUi();
+    },
+
+    setSystemTheme: (systemTheme) => {
+      if (get().systemTheme !== systemTheme) {
+        set({ systemTheme });
+      }
+    },
+
+    toggleTheme: () => {
+      get().setTheme(
+        getAppliedTheme(get()) === Theme.LIGHT ? Theme.DARK : Theme.LIGHT,
+      );
     },
 
     toggleSpellcheck: () => {
       set((s) => ({ spellcheckEnabled: !s.spellcheckEnabled }));
+      saveUi();
+    },
+
+    setTabWidth: (width) => {
+      const tabWidth = toTabWidth(width);
+      if (get().tabWidth === tabWidth) {
+        return;
+      }
+
+      set({ tabWidth });
+      saveUi();
+    },
+
+    toggleCommandPrompt: () => {
+      set((s) => ({ commandPromptEnabled: !s.commandPromptEnabled }));
+      saveUi();
+    },
+
+    setClampMaxLines: (lines) => {
+      const clampMaxLines = toClampMaxLines(lines);
+      if (get().clampMaxLines === clampMaxLines) {
+        return;
+      }
+
+      set({ clampMaxLines });
+      saveUi();
+    },
+
+    setDefaultCommandLanguage: (language) => {
+      set({ defaultCommandLanguage: language });
+      saveUi();
+    },
+
+    setDefaultVariableLanguage: (language) => {
+      set({ defaultVariableLanguage: language });
       saveUi();
     },
 
@@ -118,12 +180,30 @@ export function createUiSlice(kit: StoreKit): UiActions {
 
     toggleMinimap: () => {
       set((s) => ({ minimapEnabled: !s.minimapEnabled }));
-      get().saveState();
+      saveUi();
+    },
+
+    setMinimapPosition: (minimapPosition) => {
+      if (get().minimapPosition === minimapPosition) {
+        return;
+      }
+
+      set({ minimapPosition });
+      saveUi();
     },
 
     toggleMinimapPosition: () => {
-      set((s) => ({ minimapPosition: oppositeSide(s.minimapPosition) }));
-      get().saveState();
+      get().setMinimapPosition(oppositeSide(get().minimapPosition));
+    },
+
+    setQuickOpenRecents: (count) => {
+      const quickOpenRecents = toQuickOpenRecents(count);
+      if (get().quickOpenRecents === quickOpenRecents) {
+        return;
+      }
+
+      set({ quickOpenRecents });
+      saveUi();
     },
 
     togglePanel: (panelId) => {
@@ -198,6 +278,9 @@ export function createUiSlice(kit: StoreKit): UiActions {
       }));
       persist.saveSidebarSections(sidebarSectionsSnapshot(get()));
     },
+
+    openSettingsModal: () => set({ settingsModalOpen: true }),
+    closeSettingsModal: () => set({ settingsModalOpen: false }),
 
     setRunbookSearchQuery: (query) => set({ runbookSearchQuery: query }),
     setVariableSearchQuery: (query) => set({ variableSearchQuery: query }),

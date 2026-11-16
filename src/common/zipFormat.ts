@@ -1,23 +1,36 @@
+// Format
+
 export const ZipConfig = {
+  // Signatures
   LOCAL_HEADER_SIGNATURE: 0x04034b50,
   CENTRAL_HEADER_SIGNATURE: 0x02014b50,
   END_RECORD_SIGNATURE: 0x06054b50,
+
+  // Record sizes
   LOCAL_HEADER_SIZE: 30,
   CENTRAL_HEADER_SIZE: 46,
   END_RECORD_SIZE: 22,
+  MAX_COMMENT_SIZE: 0xffff,
+
+  // Entries
   VERSION: 20,
   UTF8_FLAG: 0x0800,
   STORED_METHOD: 0,
   DEFLATED_METHOD: 8,
   DEFLATE_FORMAT: "deflate-raw",
-  MAX_COMMENT_SIZE: 0xffff,
+
+  // Bytes
   LITTLE_ENDIAN: true,
   BITS_PER_BYTE: 8,
   BYTE_MASK: 0xff,
+
+  // Checksums
   CRC_POLYNOMIAL: 0xedb88320,
   CRC_SEED: 0xffffffff,
   CRC_TABLE_SIZE: 256,
 } as const;
+
+// Field offsets
 
 /** Where each field sits in a local file header. */
 export const ZipLocalOffset = {
@@ -60,6 +73,8 @@ export const ZipEndOffset = {
   CENTRAL_SIZE: 12,
   CENTRAL_OFFSET: 16,
 } as const;
+
+// Timestamps
 
 /** How a date and time pack into a zip's two 16-bit DOS fields. */
 export const ZipDosTime = {

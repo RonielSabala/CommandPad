@@ -1,4 +1,4 @@
-import { TAB_CHARACTER } from "@/common/constants/events";
+import { TAB_CHARACTER } from "@/common/config";
 import { NoteFormat, NoteFormatState } from "@/common/enums";
 import { describe, expect, it } from "vitest";
 

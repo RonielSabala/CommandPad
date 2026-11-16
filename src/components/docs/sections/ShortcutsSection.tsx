@@ -1,32 +1,46 @@
 import { CssClass } from "@/common/constants/css";
-import { bindingLabel, KeyBinding, KEYBINDINGS } from "@/common/keybindings";
+import { SettingsCategory } from "@/common/enums";
+import { KEYBINDING_IDS, KeyBinding } from "@/common/keybindings";
 import { Kbd } from "@/components/common/Kbd";
+import { useBindingLabel } from "@/hooks/useBindingLabel";
 import { useTranslation } from "@/i18n";
 
 import { Prose } from "../Prose";
+import { useShortcutLabel } from "../useShortcutLabel";
 
-const BINDING_IDS = Object.keys(KEYBINDINGS) as KeyBinding[];
+function ShortcutRow({ id }: { id: KeyBinding }) {
+  const t = useTranslation();
+  if (!useBindingLabel(id)) {
+    return null;
+  }
+
+  return (
+    <tr>
+      <td>
+        <Kbd binding={id} />
+      </td>
+      <td>{t.keybindings[id]}</td>
+    </tr>
+  );
+}
 
 export function KeyboardShortcutsDocs() {
   const t = useTranslation();
+  const paletteKey = useShortcutLabel(KeyBinding.COMMAND_PALETTE);
 
   return (
     <>
       <Prose
         text={t.docs.keyboardShortcuts.intro(
-          bindingLabel(KeyBinding.COMMAND_PALETTE),
+          paletteKey,
+          t.settings.categories[SettingsCategory.KEYBOARD],
         )}
       />
       <div className="docs-prose">
         <table className={CssClass.NOTE_TABLE}>
           <tbody>
-            {BINDING_IDS.map((id) => (
-              <tr key={id}>
-                <td>
-                  <Kbd binding={id} />
-                </td>
-                <td>{t.keybindings[id]}</td>
-              </tr>
+            {KEYBINDING_IDS.map((id) => (
+              <ShortcutRow key={id} id={id} />
             ))}
           </tbody>
         </table>

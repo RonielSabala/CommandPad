@@ -1,5 +1,6 @@
-import { MIDDLE_DOT } from "@/common/config";
+import { ELLIPSIS, MIDDLE_DOT } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
+import { COMMAND_PROMPT_PREFIX } from "@/common/editorConfig";
 import {
   BlockType,
   EmbeddedRunbookStatus,
@@ -7,9 +8,12 @@ import {
   NoteStyle,
   PaletteCommand,
   PanelId,
+  PanelSide,
   RunbookSyncStatus,
   SaveOutcome,
+  SettingsCategory,
   SortDirection,
+  ThemeSetting,
   UnresolvedCause,
   VariableEntryKind,
   VaultError,
@@ -17,7 +21,7 @@ import {
   VaultPrompt,
   VaultStatus,
 } from "@/common/enums";
-import { KeyBinding } from "@/common/keybindings";
+import { KeyBinding, mapTabKeybindings } from "@/common/keybindings";
 import { VaultConfig } from "@/common/vaultConfig";
 import { codeBulletList } from "../lists";
 import { MessageSlot } from "../slots";
@@ -27,7 +31,7 @@ const andMore = (count: number) => `_and ${count} more..._`;
 
 export const en: Messages = {
   common: {
-    loading: "Loading…",
+    loading: `Loading${ELLIPSIS}`,
     cancel: "Cancel",
     close: "Close",
     back: "Back",
@@ -51,7 +55,7 @@ export const en: Messages = {
     collapseAll: "Collapse All",
     toggleEditorsTitle: "Expand/collapse all blocks",
     toggleSectionsTitle: "Expand/collapse all variable sections",
-    resetWorkspaceTitle: "Reset workspace",
+    openSettings: "Open settings",
     exportTitle: "Export runbook",
     export: "Export",
     changeLanguage: "Change language",
@@ -77,7 +81,7 @@ export const en: Messages = {
   },
   runbooks: {
     title: "RUNBOOKS",
-    searchPlaceholder: "Search runbooks…",
+    searchPlaceholder: `Search runbooks${ELLIPSIS}`,
     recentlyOpened: "recently opened",
     empty: "No runbooks imported.",
     import: "Import",
@@ -112,8 +116,11 @@ export const en: Messages = {
     syncStatus: {
       [RunbookSyncStatus.SYNCED]: (provider) => `Saved to ${provider}`,
       [RunbookSyncStatus.UNSAVED]: (provider, shortcut) =>
-        `Unsaved changes ${MIDDLE_DOT} click or press ${shortcut} to save to ${provider}`,
-      [RunbookSyncStatus.SYNCING]: (provider) => `Saving to ${provider}…`,
+        shortcut
+          ? `Unsaved changes ${MIDDLE_DOT} click or press ${shortcut} to save to ${provider}`
+          : `Unsaved changes ${MIDDLE_DOT} click to save to ${provider}`,
+      [RunbookSyncStatus.SYNCING]: (provider) =>
+        `Saving to ${provider}${ELLIPSIS}`,
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
         `Signed out of ${provider} ${MIDDLE_DOT} click to sign in and save`,
       [RunbookSyncStatus.ERROR]: (provider) =>
@@ -121,7 +128,7 @@ export const en: Messages = {
     },
     saveNotice: {
       [SaveOutcome.LOCAL]: () => "CommandPad saves as you go.",
-      [SaveOutcome.SAVING]: (provider) => `Saving to ${provider}…`,
+      [SaveOutcome.SAVING]: (provider) => `Saving to ${provider}${ELLIPSIS}`,
       [SaveOutcome.SAVED]: (provider) => `Saved to ${provider}`,
       [SaveOutcome.UP_TO_DATE]: () => "Already up to date",
       [SaveOutcome.UPDATED]: (provider) => `Updated from ${provider}`,
@@ -138,7 +145,7 @@ export const en: Messages = {
   },
   variables: {
     title: "VARIABLES",
-    searchPlaceholder: "Search variables…",
+    searchPlaceholder: `Search variables${ELLIPSIS}`,
     empty: "No variables defined.",
     emptyTitle: "No variables yet.",
     emptyHint: "Add one below, then reference it anywhere.",
@@ -158,8 +165,8 @@ export const en: Messages = {
       "A named, collapsible group for the variables below it, to tuck away the ones you rarely touch. Only the variables editor shows sections.",
     optionPlaceholder: "choose an option",
     noOptions: "No options yet",
-    searchOptionsPlaceholder: "Search options…",
-    addOptionPlaceholder: "Add option…",
+    searchOptionsPlaceholder: `Search options${ELLIPSIS}`,
+    addOptionPlaceholder: `Add option${ELLIPSIS}`,
     addOption: "Add option",
     optionActions: "Option actions",
     editOption: "Edit option",
@@ -547,7 +554,7 @@ export const en: Messages = {
     chooseFolder: "Choose a folder to save into.",
     selectFolder: "Save here",
     confirm: "Export",
-    savingTo: (provider) => `Saving to ${provider}…`,
+    savingTo: (provider) => `Saving to ${provider}${ELLIPSIS}`,
     savedTo: (provider) => `Saved to ${provider}`,
     exportError: "Export failed. Please try again.",
     tryAgain: "Try again",
@@ -608,7 +615,7 @@ export const en: Messages = {
     skip: "Not now",
     skipOne: "Skip this one",
     skipAll: "Skip all",
-    working: "Deriving key…",
+    working: `Deriving key${ELLIPSIS}`,
     errors: {
       [VaultError.TOO_SHORT]: `Use at least ${VaultConfig.MIN_PASSPHRASE_LENGTH} characters.`,
       [VaultError.MISMATCH]: "The two passphrases do not match.",
@@ -797,6 +804,7 @@ export const en: Messages = {
       [PaletteCommand.TOGGLE_MINIMAP]: "Toggle minimap",
       [PaletteCommand.MOVE_MINIMAP]: "Move minimap to the other side",
       [PaletteCommand.TOGGLE_SPELLCHECK]: "Toggle spell check",
+      [PaletteCommand.OPEN_SETTINGS]: "Open settings",
     },
   },
   keybindings: {
@@ -806,6 +814,7 @@ export const en: Messages = {
       "Save the runbook to the cloud file it is linked to",
     [KeyBinding.NEW_TAB]: "Open a new tab",
     [KeyBinding.CLOSE_TAB]: "Close the active tab",
+    ...mapTabKeybindings((position) => `Go to tab ${position}`),
     [KeyBinding.QUICK_OPEN]:
       "Search the library and open a runbook, or run an action",
     [KeyBinding.COMMAND_PALETTE]: "Open quick open ready to run an action",
@@ -813,6 +822,8 @@ export const en: Messages = {
     [KeyBinding.NAVIGATE_RUNBOOKS]:
       "Navigate runbooks with the active runbook selected",
     [KeyBinding.IMPORT_RUNBOOK]: "Open runbook import dialog",
+    [KeyBinding.NEW_FOLDER]: "Create a folder in the library",
+    [KeyBinding.PASTE_RUNBOOK]: "Open the paste runbook JSON dialog",
     [KeyBinding.EXPORT]: "Open export dialog",
     [KeyBinding.DELETE_RUNBOOK]: "Delete the focused runbook from the library",
     [KeyBinding.DELETE_ACTIVE_RUNBOOK]:
@@ -823,6 +834,13 @@ export const en: Messages = {
       "Switch between the blocks and the variables editor",
     [KeyBinding.TOGGLE_SOURCE_VIEW]:
       "Switch between the blocks and the runbook's source file",
+    [KeyBinding.TOGGLE_SIDEBAR]: "Collapse or expand the sidebar",
+    [KeyBinding.MOVE_SIDEBAR]: "Move the sidebar to the other side",
+    [KeyBinding.TOGGLE_THEME]: "Switch between the light and dark theme",
+    [KeyBinding.TOGGLE_MINIMAP]: "Show or hide the minimap",
+    [KeyBinding.MOVE_MINIMAP]: "Move the minimap to the other side",
+    [KeyBinding.TOGGLE_SPELLCHECK]: "Turn spell check in notes on or off",
+    [KeyBinding.OPEN_SETTINGS]: "Open the settings",
     [KeyBinding.MULTISELECT_BLOCKS]: "Multi-select blocks",
     [KeyBinding.DUPLICATE_BLOCK]: "Duplicate selected blocks",
     [KeyBinding.DELETE_BLOCK]: "Delete selected blocks",
@@ -838,6 +856,116 @@ export const en: Messages = {
     [KeyBinding.WRAP_SELECTION]:
       "Wrap selected text in the typed pair (any text field)",
     [KeyBinding.SUBMIT_EDITOR]: "Save / create from a code editor",
+  },
+  settings: {
+    title: "Settings",
+    defaultTag: "(default)",
+    categories: {
+      [SettingsCategory.APPEARANCE]: "Appearance",
+      [SettingsCategory.EDITOR]: "Editor",
+      [SettingsCategory.KEYBOARD]: "Keyboard shortcuts",
+      [SettingsCategory.WORKSPACE]: "Workspace",
+    },
+    theme: {
+      title: "Theme",
+      description:
+        "The color scheme of the whole app. Following the system switches it along with your device.",
+      options: {
+        [ThemeSetting.DARK]: "Dark",
+        [ThemeSetting.LIGHT]: "Light",
+        [ThemeSetting.SYSTEM]: "System",
+      },
+    },
+    language: {
+      title: "Language",
+      description:
+        "The language of the interface. The content of your runbooks is never translated.",
+    },
+    commandLanguage: {
+      title: "Default command language",
+      description:
+        "The language a new command block starts in. Existing commands and imported runbooks keep their own.",
+    },
+    variableLanguage: {
+      title: "Default variable language",
+      description:
+        "The language a new text variable's value starts in. Existing variables and imported runbooks keep their own.",
+    },
+    tabWidth: {
+      title: "Tab width",
+      description:
+        "How many columns a tab spans in commands, variable values and notes.",
+      value: (columns) => (columns === 1 ? "1 column" : `${columns} columns`),
+    },
+    commandPrompt: {
+      title: "Command prompt",
+      description: `Show the ${COMMAND_PROMPT_PREFIX} before the first line of a command's editor.`,
+    },
+    clampLines: {
+      title: "Long command limit",
+      description:
+        "How many lines a command or a variable's value shows before the rest folds away.",
+      value: (lines) => `${lines} lines`,
+    },
+    variableSplit: {
+      title: "Variable split",
+      description:
+        "How a variable row shares its width between the key and the value.",
+      value: (keyPercent, valuePercent) =>
+        `Key ${keyPercent}% ${MIDDLE_DOT} Value ${valuePercent}%`,
+    },
+    spellcheck: {
+      title: "Spell check",
+      description: "Underline misspelled words while you write a note.",
+    },
+    minimap: {
+      title: "Minimap",
+      description:
+        "Show a miniature of the content in place of the scrollbar, in the blocks, the variables editor and the source view.",
+    },
+    minimapSide: {
+      title: "Minimap side",
+      description: "The edge of the content the minimap sits on.",
+      options: {
+        [PanelSide.LEFT]: "Left",
+        [PanelSide.RIGHT]: "Right",
+      },
+    },
+    keyboard: {
+      search: "Search shortcuts",
+      noMatch: "No shortcut matches your search.",
+      resetAll: "Reset all",
+      resetAllTitle: "Reset all shortcuts?",
+      resetAllMessage:
+        "Every shortcut goes back to its **default**, and the ones you added are removed.",
+      actions: "Shortcut actions",
+      change: "Change shortcut",
+      reset: "Reset to default",
+      remove: "Remove shortcut",
+      unbound: "Unbound",
+      modified: (defaultLabel) => `Changed from ${defaultLabel}`,
+      modifiedFromUnbound: "Added by you",
+      recording: "Press the keys",
+      accept: "Accept shortcut",
+      recordingHint: (accept, cancel) =>
+        `${accept} to accept, ${cancel} to cancel`,
+      conflict: (action) =>
+        `Already used by "${action}". Accepting moves it here.`,
+    },
+    quickOpenRecents: {
+      title: "Recent runbooks in quick open",
+      description:
+        "How many of the runbooks you opened last quick open lists first.",
+      value: (count) =>
+        count === 0 ? "None" : count === 1 ? "1 runbook" : `${count} runbooks`,
+    },
+    dangerZone: "Danger zone",
+    reset: {
+      title: "Reset workspace",
+      description:
+        "Delete every tab, runbook, variable and preference stored in this browser. This cannot be undone.",
+      action: "Reset workspace",
+    },
   },
   footer: {
     privacy: "Privacy",
@@ -1097,7 +1225,7 @@ export const en: Messages = {
       [DocsSectionId.CLOUD_LINKED_SYNC]: "Keeping a runbook in sync",
       [DocsSectionId.CLOUD_FILE_MANAGEMENT]: "Managing cloud files",
       [DocsSectionId.AI_AGENT]: "AI agent",
-      [DocsSectionId.LANGUAGE]: "Language",
+      [DocsSectionId.SETTINGS]: "Settings",
       [DocsSectionId.KEYBOARD_SHORTCUTS]: "Keyboard shortcuts",
       [DocsSectionId.QA]: "Q&A",
     },
@@ -1172,10 +1300,8 @@ If something goes wrong, undo it in this order:
       ) => `* The **CommandPad logo**: click it to reload the app.
 * The **padlock / pencil**: switches between read mode and edit mode. It has its own section later in this guide.
 * **${collapseAllLabel}**: collapses or expands every block in the active runbook at once. In the variables editor it folds or unfolds every variable section instead.
-* The **sun / moon**: switches between the light and dark themes.
-* The **language selector**: changes the interface language.
+* The **gear**: opens the settings. They have their own section later.
 * The **book**: opens this documentation.
-* The **red arrow**: resets the workspace. It wipes everything, so the app always asks you to confirm first.
 * **${exportLabel}**: saves the active runbook to a file. It also has its own section later.`,
     },
     mainPanel: {
@@ -1192,13 +1318,16 @@ If something goes wrong, undo it in this order:
         openEditorLabel,
         openSourceShortcut,
         openEditorShortcut,
+        propertiesLabel,
         closeLabel,
         closeOthersLabel,
         closeAllLabel,
-      ) => `* **Click** a tab to switch to it.
+        firstTabShortcut,
+        lastTabShortcut,
+      ) => `* **Click** a tab to switch to it, or press **${firstTabShortcut}** to **${lastTabShortcut}** to jump to one of the first nine.
 * **Drag** a tab to reorder it.
 * **Middle-click** a tab to close it.
-* **Right-click** a tab for **${closeLabel}**, **${closeOthersLabel}** and **${closeAllLabel}**.
+* **Right-click** a tab for **${propertiesLabel}**, **${closeLabel}**, **${closeOthersLabel}** and **${closeAllLabel}**.
 * **Click** the **+** at the end of the tabs bar to open a new tab.
 * **${openSourceLabel}**, at the far end of the tabs bar, swaps the blocks below for the runbook's raw JSON (**${openSourceShortcut}**).
 * **${openEditorLabel}**, beside it, swaps them for the runbook's variables instead (**${openEditorShortcut}**).
@@ -1220,7 +1349,8 @@ If something goes wrong, undo it in this order:
     },
     sidebar: {
       intro: "The sidebar holds the runbook library and the variables panel.",
-      items: `* **Collapse / expand**: click the chevron button or use its keyboard shortcut.
+      items: (toggleShortcut) =>
+        `* **Collapse / expand**: click the chevron button or press \`${toggleShortcut}\`.
 * **Move left / right**: click the layout button to move the sidebar to the other side of the screen.
 * **Resize**: drag the sidebar's inner edge; double-click it to collapse.`,
       resizeDetails:
@@ -1821,15 +1951,26 @@ If something goes wrong, undo it in this order:
       updates:
         "It grows with the app: every new block type, field and operation lands in it too, so copy it again after an update. And read what your agent writes before you run it, exactly as you would a script somebody sent you.",
     },
-    language: {
-      intro:
-        "Use the **language selector** in the header to pick the interface language.",
-      detection:
-        "The app detects your browser language on first visit, and your choice is remembered afterward.",
+    settings: {
+      intro: (shortcut) =>
+        `The settings gather the preferences that apply to the whole app. Open them with the **gear** in the header, or press \`${shortcut}\`. A change applies at once and is remembered in this browser.`,
+      categories: (
+        appearanceLabel,
+        editorLabel,
+        keyboardLabel,
+        workspaceLabel,
+        resetAllLabel,
+        resetLabel,
+      ) =>
+        `Pick a category on the left:
+* **${appearanceLabel}**: the light or dark theme, or the one your device uses, and the interface language.
+* **${editorLabel}**: the language a new command or variable starts in, how wide a tab is, the ${COMMAND_PROMPT_PREFIX} prompt in a command's editor, how many lines a long command shows before it folds, how a variable row splits between key and value, spell check in notes, and the minimap and the side it sits on.
+* **${keyboardLabel}**: every shortcut, searchable. Click a shortcut, press the new keys, then \`Enter\` or the check mark beside them to keep them, or \`Escape\` or the cross to cancel. If another action already uses those keys, the app says which, and accepting moves them over. Each row's menu also removes a shortcut or puts back its default, and **${resetAllLabel}** restores every default.
+* **${workspaceLabel}**: how many recently opened runbooks quick open lists first. **${resetLabel}** wipes every tab, runbook, variable and preference from this browser. It cannot be undone, so the app always asks you to confirm first.`,
     },
     keyboardShortcuts: {
-      intro: (binding) =>
-        `Every shortcut available in the app. Many of the actions behind them also run by name: press \`${binding}\` and pick one.`,
+      intro: (binding, keyboardLabel) =>
+        `Every shortcut available in the app, as you have them set: change any of them in the settings, under **${keyboardLabel}**. Each action in the command list also runs by name, including those with no shortcut yet, like switching the theme: press \`${binding}\` and pick one.`,
     },
     qa: {
       intro: "Quick answers to the questions that come up most often.",

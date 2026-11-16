@@ -60,6 +60,7 @@ export function createLifecycleSlice(
         getMessages(ui?.language ?? get().language),
       );
       const sections = persistence.loadSidebarSections();
+      const keybindingOverrides = persistence.loadKeybindings();
       const meta = persistence.loadTabsMeta();
 
       const activeTabMeta = meta
@@ -81,6 +82,7 @@ export function createLifecycleSlice(
           : {}),
         activeRunbookId: initialActiveRunbookId,
         ...(sections ?? {}),
+        keybindingOverrides,
       });
 
       try {
@@ -192,7 +194,7 @@ export function createLifecycleSlice(
         sessionStorage.clear();
 
         lockVault();
-        set({ vaultStatus: {} });
+        set({ vaultStatus: {}, keybindingOverrides: {} });
       }
 
       resetWorkspace();

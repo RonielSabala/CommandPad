@@ -1,17 +1,27 @@
-import { createDefaultPanels, VariableSplit } from "@/common/config";
+import {
+  createDefaultPanels,
+  QuickOpenRecents,
+  SettingDefault,
+  VariableSplit,
+} from "@/common/config";
+import {
+  ClampLines,
+  DEFAULT_COMMAND_LANGUAGE,
+  DEFAULT_VARIABLE_LANGUAGE,
+  TabWidth,
+} from "@/common/editorConfig";
 import {
   AppMode,
   ClampSurface,
   CloudExportStatus,
   CloudProvider,
   ExportFormat,
-  PanelSide,
   RevealTone,
   SyncDestination,
-  Theme,
 } from "@/common/enums";
 import { detectLanguage } from "@/i18n/messages";
 import { DEFAULT_CLOUD_SORT } from "@/services/cloud";
+import { readSystemTheme } from "@/utils/systemTheme";
 
 import { ROOT_CLOUD_PATH } from "./cloudPaths";
 import type { StoreData } from "./types";
@@ -23,13 +33,21 @@ export function createInitialState(): StoreData {
 
     // UI
     mode: AppMode.EDIT,
-    theme: Theme.LIGHT,
+    theme: SettingDefault.THEME,
+    systemTheme: readSystemTheme(),
     language: detectLanguage(),
-    spellcheckEnabled: true,
+    spellcheckEnabled: SettingDefault.SPELLCHECK,
+    commandPromptEnabled: SettingDefault.COMMAND_PROMPT,
+    tabWidth: TabWidth.DEFAULT,
+    clampMaxLines: ClampLines.DEFAULT,
+    defaultCommandLanguage: DEFAULT_COMMAND_LANGUAGE,
+    defaultVariableLanguage: DEFAULT_VARIABLE_LANGUAGE,
+    keybindingOverrides: {},
     panels: createDefaultPanels(),
     variableKeyRatio: VariableSplit.DEFAULT,
-    minimapEnabled: true,
-    minimapPosition: PanelSide.RIGHT,
+    minimapEnabled: SettingDefault.MINIMAP,
+    minimapPosition: SettingDefault.MINIMAP_POSITION,
+    quickOpenRecents: QuickOpenRecents.DEFAULT,
     runbookSectionCollapsed: false,
     variablesSectionCollapsed: false,
 
@@ -78,6 +96,7 @@ export function createInitialState(): StoreData {
     cloudExportStatus: CloudExportStatus.IDLE,
     cloudExportProvider: null,
     pasteRunbookModalOpen: false,
+    settingsModalOpen: false,
     quickOpenQuery: null,
     confirmDialog: null,
     alertDialog: null,

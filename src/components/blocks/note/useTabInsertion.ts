@@ -1,4 +1,5 @@
-import { Key, TAB_CHARACTER } from "@/common/constants/events";
+import { TAB_CHARACTER } from "@/common/config";
+import { Key } from "@/common/constants/events";
 import { replaceSelection } from "@/utils/dom";
 import { indentNoteLines, outdentNoteLines } from "@/utils/markdown";
 import { useCallback, type KeyboardEvent } from "react";

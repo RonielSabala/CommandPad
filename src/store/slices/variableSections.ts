@@ -98,7 +98,7 @@ export function createVariableSectionsSlice(
             }
           : {
               kind: VariableEntryKind.VARIABLE,
-              variable: createVariable(variableKind),
+              variable: createVariable(state, variableKind),
             };
 
       const id = entryId(entry);

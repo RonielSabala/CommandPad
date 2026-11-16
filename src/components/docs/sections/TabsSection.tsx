@@ -1,5 +1,5 @@
 import { NoteStyle, RunbookView } from "@/common/enums";
-import { bindingLabel, KeyBinding } from "@/common/keybindings";
+import { KeyBinding, TAB_KEYBINDINGS } from "@/common/keybindings";
 import { BlocksList } from "@/components/blocks/BlocksList";
 import { TabsBar } from "@/components/tabs/TabsBar";
 import { RunbookVariables } from "@/components/variables/RunbookVariables";
@@ -17,6 +17,7 @@ import {
 } from "../demos/demoSeeds";
 import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
+import { useShortcutLabel } from "../useShortcutLabel";
 import "./TabsSection.css";
 
 const DEMO_RUNBOOK_VIEWS: Record<RunbookView, ComponentType> = {
@@ -41,6 +42,13 @@ export function DemoRunbookPanel() {
 
 export function TabsDocs() {
   const t = useTranslation();
+  const sourceKey = useShortcutLabel(KeyBinding.TOGGLE_SOURCE_VIEW);
+  const variablesKey = useShortcutLabel(KeyBinding.TOGGLE_VARIABLES_VIEW);
+  const firstTabKey = useShortcutLabel(TAB_KEYBINDINGS[0]);
+  const lastTabKey = useShortcutLabel(
+    TAB_KEYBINDINGS[TAB_KEYBINDINGS.length - 1],
+  );
+
   const { backup, siteCheck } = t.docs.demo.tabSamples;
 
   return (
@@ -51,11 +59,14 @@ export function TabsDocs() {
           t.source.openSource,
           t.source.openPreview,
           t.variables.openEditorTitle,
-          bindingLabel(KeyBinding.TOGGLE_SOURCE_VIEW),
-          bindingLabel(KeyBinding.TOGGLE_VARIABLES_VIEW),
+          sourceKey,
+          variablesKey,
+          t.info.properties,
           t.tabs.close,
           t.tabs.closeOthers,
           t.tabs.closeAll,
+          firstTabKey,
+          lastTabKey,
         )}
       />
       <Prose text={t.docs.tabs.variablesEditorNote} />

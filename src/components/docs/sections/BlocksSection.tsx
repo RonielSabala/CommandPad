@@ -1,7 +1,7 @@
 import { ImageBlockConfig } from "@/common/config";
 import {
   CODE_LANGUAGE_LABEL,
-  COMMAND_LANGUAGE_ORDER,
+  CODE_LANGUAGE_ORDER,
 } from "@/common/editorConfig";
 import { NoteStyle } from "@/common/enums";
 import { BlocksList } from "@/components/blocks/BlocksList";
@@ -17,7 +17,7 @@ import {
 import { DemoWorkspace } from "../demos/DemoWorkspace";
 import { Prose } from "../Prose";
 
-const COMMAND_LANGUAGE_NAMES = COMMAND_LANGUAGE_ORDER.map(
+const COMMAND_LANGUAGE_NAMES = CODE_LANGUAGE_ORDER.map(
   (language) => CODE_LANGUAGE_LABEL[language],
 ).join(", ");
 

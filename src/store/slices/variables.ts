@@ -107,11 +107,12 @@ export function createVariablesSlice(
         await get().createNewTab();
       }
 
-      const newVariable = createVariable(kind);
+      const newVariable = createVariable(state, kind);
       set((s) => ({
         ...withNewVariable(s, newVariable),
         pendingFocusVariableId: newVariable.id,
       }));
+
       get().saveState();
     },
 
@@ -128,7 +129,7 @@ export function createVariablesSlice(
         new Set(tab.variables.map((v) => getVariableKey(v))),
       );
       const newVariable = {
-        ...createVariable(VariableKind.TEXT),
+        ...createVariable(state, VariableKind.TEXT),
         key,
         value,
       };
@@ -153,10 +154,14 @@ export function createVariablesSlice(
 
       get().switchTab(tabId);
 
-      const newVariable = { ...createVariable(VariableKind.TEXT), key };
-      set((s) => withNewVariable(s, newVariable));
+      const newVariable = {
+        ...createVariable(get(), VariableKind.TEXT),
+        key,
+      };
 
+      set((s) => withNewVariable(s, newVariable));
       get().saveState();
+
       return newVariable.id;
     },
 

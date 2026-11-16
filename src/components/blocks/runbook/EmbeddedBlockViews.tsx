@@ -7,7 +7,7 @@ import type {
   NoteBlock,
 } from "@/common/types";
 import { VariablesViewContext } from "@/components/variables/variablesViewContext";
-import { CLAMP_SURFACE_STYLE } from "@/hooks/useClampSurface";
+import { useClampSurfaceStyle } from "@/hooks/useClampSurface";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
@@ -37,13 +37,14 @@ export function EmbeddedCommand({
   scopeId,
 }: EmbeddedBlockProps<CommandBlock>) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const clampStyle = useClampSurfaceStyle();
   const linkSources = useContext(VariablesViewContext);
 
   return (
     <div
       ref={rootRef}
       className={classNames(CssClass.COMMAND_CARD, CssClass.CLAMP_SURFACE)}
-      style={CLAMP_SURFACE_STYLE}
+      style={clampStyle}
     >
       <CommandPreview
         clampId={scopeId}

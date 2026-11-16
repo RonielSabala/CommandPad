@@ -1,63 +1,67 @@
 import { getBlockJsonSchemas } from "@/blocks";
 import {
-  COMMAND_LANGUAGE_ORDER,
+  CODE_LANGUAGE_ORDER,
   JsonSchemaType,
-  RunbookField,
-  VariableField,
-  VariableSectionField,
+  RunbookJsonField,
+  VariableJsonField,
+  VariableSectionJsonField,
 } from "@/common/editorConfig";
 
 const VARIABLE_PROPERTIES = {
-  [VariableField.KEY]: { type: JsonSchemaType.STRING },
-  [VariableField.VALUE]: { type: JsonSchemaType.STRING },
+  [VariableJsonField.KEY]: { type: JsonSchemaType.STRING },
+  [VariableJsonField.VALUE]: { type: JsonSchemaType.STRING },
 };
 
 const TEXT_VARIABLE_SCHEMA = {
   type: JsonSchemaType.OBJECT,
-  required: [VariableField.KEY, VariableField.VALUE],
+  required: [VariableJsonField.KEY, VariableJsonField.VALUE],
   properties: {
     ...VARIABLE_PROPERTIES,
-    [VariableField.SECRET]: { type: JsonSchemaType.BOOLEAN },
-    [VariableField.LANGUAGE]: { enum: [...COMMAND_LANGUAGE_ORDER] },
-    [VariableField.OPTIONS]: false,
+    [VariableJsonField.SECRET]: { type: JsonSchemaType.BOOLEAN },
+    [VariableJsonField.LANGUAGE]: { enum: [...CODE_LANGUAGE_ORDER] },
+    [VariableJsonField.OPTIONS]: false,
   },
 };
 
 const ENUM_VARIABLE_SCHEMA = {
   type: JsonSchemaType.OBJECT,
-  required: [VariableField.KEY, VariableField.VALUE, VariableField.OPTIONS],
+  required: [
+    VariableJsonField.KEY,
+    VariableJsonField.VALUE,
+    VariableJsonField.OPTIONS,
+  ],
   properties: {
     ...VARIABLE_PROPERTIES,
-    [VariableField.OPTIONS]: {
+    [VariableJsonField.OPTIONS]: {
       type: JsonSchemaType.ARRAY,
       items: { type: JsonSchemaType.STRING },
     },
-    [VariableField.SECRET]: false,
-    [VariableField.LANGUAGE]: false,
+    [VariableJsonField.SECRET]: false,
+    [VariableJsonField.LANGUAGE]: false,
   },
 };
 
 const SECTION_SCHEMA = {
   type: JsonSchemaType.OBJECT,
-  required: [VariableSectionField.SECTION],
+  required: [VariableSectionJsonField.SECTION],
   additionalProperties: false,
   properties: {
-    [VariableSectionField.SECTION]: { type: JsonSchemaType.STRING },
-    [VariableSectionField.COLLAPSED]: { type: JsonSchemaType.BOOLEAN },
+    [VariableSectionJsonField.SECTION]: { type: JsonSchemaType.STRING },
+    [VariableSectionJsonField.COLLAPSED]: { type: JsonSchemaType.BOOLEAN },
   },
 };
 
 export const RUNBOOK_JSON_SCHEMA = {
   type: JsonSchemaType.OBJECT,
-  required: [RunbookField.VARIABLES, RunbookField.BLOCKS],
+  required: [RunbookJsonField.VARIABLES, RunbookJsonField.BLOCKS],
   properties: {
-    [RunbookField.VARIABLES]: {
+    [RunbookJsonField.VARIABLES]: {
       type: JsonSchemaType.ARRAY,
       items: {
         oneOf: [TEXT_VARIABLE_SCHEMA, ENUM_VARIABLE_SCHEMA, SECTION_SCHEMA],
       },
     },
-    [RunbookField.BLOCKS]: {
+    [RunbookJsonField.BLOCKS]: {
       type: JsonSchemaType.ARRAY,
       items: { oneOf: getBlockJsonSchemas() },
     },

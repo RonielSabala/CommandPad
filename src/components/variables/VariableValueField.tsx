@@ -14,7 +14,7 @@ import type { Variable } from "@/common/types";
 import { ClampToggle } from "@/components/common/codeEditor/ClampToggle";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageSelect";
-import { CLAMP_SURFACE_STYLE, useClampSurface } from "@/hooks/useClampSurface";
+import { useClampSurface, useClampSurfaceStyle } from "@/hooks/useClampSurface";
 import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
 import type { VariableCompletion } from "@/monaco/completions";
@@ -61,6 +61,7 @@ export function VariableValueField({
   const actions = useEditorActions();
 
   const rootRef = useRef<HTMLDivElement>(null);
+  const clampStyle = useClampSurfaceStyle();
   const lines = useMemo(() => countLines(value), [value]);
   const clamp = useClampSurface(surfaceId, ClampSurface.VALUE, lines, rootRef);
 
@@ -87,7 +88,7 @@ export function VariableValueField({
         isSecret && CssClass.IS_SECRET,
         className,
       )}
-      style={CLAMP_SURFACE_STYLE}
+      style={clampStyle}
     >
       <div className="variable-editor-key-row">{keyRow}</div>
 

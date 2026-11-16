@@ -1,0 +1,24 @@
+.setting-select {
+  width: fit-content;
+}
+
+.btn.setting-select-trigger {
+  min-width: var(--setting-control-width);
+  justify-content: space-between;
+  border-color: transparent;
+}
+
+.btn.setting-select-trigger:not(:disabled):hover,
+.btn.setting-select-trigger[aria-expanded="true"] {
+  border-color: var(--color-border-focus);
+}
+
+.setting-select-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.select-option .setting-default-tag {
+  margin-left: auto;
+}

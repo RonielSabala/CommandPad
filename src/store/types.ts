@@ -5,6 +5,7 @@ import {
   CloudExportStatus,
   CloudProvider,
   CloudSortColumn,
+  CodeLanguage,
   DialogTone,
   ExportFormat,
   HistoryDirection,
@@ -21,6 +22,7 @@ import {
   SortDirection,
   SyncDestination,
   Theme,
+  ThemeSetting,
   VariableEntryKind,
   VariableField,
   VariableKind,
@@ -29,6 +31,7 @@ import {
   VaultPrompt,
   VaultStatus,
 } from "@/common/enums";
+import type { KeyBinding, KeybindingOverrides } from "@/common/keybindings";
 import type {
   BlockInsertAnchor,
   BlockOfType,
@@ -147,13 +150,21 @@ export interface StoreState {
 
   // UI
   mode: AppMode;
-  theme: Theme;
+  theme: ThemeSetting;
+  systemTheme: Theme;
   language: Language;
   spellcheckEnabled: boolean;
+  tabWidth: number;
+  commandPromptEnabled: boolean;
+  clampMaxLines: number;
+  defaultCommandLanguage: CodeLanguage;
+  defaultVariableLanguage: CodeLanguage;
+  keybindingOverrides: KeybindingOverrides;
   panels: Record<PanelId, PanelState>;
   variableKeyRatio: number;
   minimapEnabled: boolean;
   minimapPosition: PanelSide;
+  quickOpenRecents: number;
   runbookSectionCollapsed: boolean;
   variablesSectionCollapsed: boolean;
 
@@ -198,6 +209,7 @@ export interface StoreState {
   cloudExportStatus: CloudExportStatus;
   cloudExportProvider: CloudProvider | null;
   pasteRunbookModalOpen: boolean;
+  settingsModalOpen: boolean;
   quickOpenQuery: string | null;
   confirmDialog: ConfirmDialog | null;
   alertDialog: AlertDialog | null;
@@ -254,11 +266,20 @@ export interface StoreState {
   toggleAppMode: () => void;
   toggleRunbookView: (view: RunbookView) => void;
   applyRunbookSource: (text: string) => string | null;
+  setTheme: (theme: ThemeSetting) => void;
+  setSystemTheme: (theme: Theme) => void;
   toggleTheme: () => void;
   toggleSpellcheck: () => void;
+  setTabWidth: (width: number) => void;
+  toggleCommandPrompt: () => void;
+  setClampMaxLines: (lines: number) => void;
+  setDefaultCommandLanguage: (language: CodeLanguage) => void;
+  setDefaultVariableLanguage: (language: CodeLanguage) => void;
   setLanguage: (language: Language) => void;
   toggleMinimap: () => void;
+  setMinimapPosition: (side: PanelSide) => void;
   toggleMinimapPosition: () => void;
+  setQuickOpenRecents: (count: number) => void;
   togglePanel: (panelId: PanelId) => void;
   togglePanelSide: (panelId: PanelId) => void;
   setPanelWidth: (panelId: PanelId, width: number) => void;
@@ -267,6 +288,13 @@ export interface StoreState {
   resetVariableKeyRatio: () => void;
   toggleRunbookSection: () => void;
   toggleVariablesSection: () => void;
+  openSettingsModal: () => void;
+  closeSettingsModal: () => void;
+
+  // Keybindings
+  setKeybinding: (id: KeyBinding, chord: string | null) => void;
+  resetKeybinding: (id: KeyBinding) => void;
+  resetAllKeybindings: () => void;
 
   // Search
   setRunbookSearchQuery: (query: string) => void;

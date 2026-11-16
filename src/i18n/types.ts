@@ -6,9 +6,12 @@ import type {
   NoteStyle,
   PaletteCommand,
   PanelId,
+  PanelSide,
   RunbookSyncStatus,
   SaveOutcome,
+  SettingsCategory,
   SortDirection,
+  ThemeSetting,
   UnresolvedCause,
   VariableEntryKind,
   VaultError,
@@ -77,7 +80,7 @@ export interface Messages {
     collapseAll: string;
     toggleEditorsTitle: string;
     toggleSectionsTitle: string;
-    resetWorkspaceTitle: string;
+    openSettings: string;
     exportTitle: string;
     export: string;
     changeLanguage: string;
@@ -618,6 +621,89 @@ export interface Messages {
     commands: Record<PaletteCommand, string>;
   };
   keybindings: Record<KeyBinding, string>;
+  settings: {
+    title: string;
+    defaultTag: string;
+    categories: Record<SettingsCategory, string>;
+    theme: {
+      title: string;
+      description: string;
+      options: Record<ThemeSetting, string>;
+    };
+    language: {
+      title: string;
+      description: string;
+    };
+    commandLanguage: {
+      title: string;
+      description: string;
+    };
+    variableLanguage: {
+      title: string;
+      description: string;
+    };
+    tabWidth: {
+      title: string;
+      description: string;
+      value: (columns: number) => string;
+    };
+    commandPrompt: {
+      title: string;
+      description: string;
+    };
+    clampLines: {
+      title: string;
+      description: string;
+      value: (lines: number) => string;
+    };
+    variableSplit: {
+      title: string;
+      description: string;
+      value: (keyPercent: number, valuePercent: number) => string;
+    };
+    spellcheck: {
+      title: string;
+      description: string;
+    };
+    minimap: {
+      title: string;
+      description: string;
+    };
+    minimapSide: {
+      title: string;
+      description: string;
+      options: Record<PanelSide, string>;
+    };
+    keyboard: {
+      search: string;
+      noMatch: string;
+      resetAll: string;
+      resetAllTitle: string;
+      resetAllMessage: string;
+      actions: string;
+      change: string;
+      reset: string;
+      remove: string;
+      unbound: string;
+      modified: (defaultLabel: string) => string;
+      modifiedFromUnbound: string;
+      recording: string;
+      accept: string;
+      recordingHint: (accept: string, cancel: string) => string;
+      conflict: (action: string) => string;
+    };
+    quickOpenRecents: {
+      title: string;
+      description: string;
+      value: (count: number) => string;
+    };
+    dangerZone: string;
+    reset: {
+      title: string;
+      description: string;
+      action: string;
+    };
+  };
   footer: {
     privacy: string;
     terms: string;
@@ -715,9 +801,12 @@ export interface Messages {
         openEditorLabel: string,
         openSourceShortcut: string,
         openEditorShortcut: string,
+        propertiesLabel: string,
         closeLabel: string,
         closeOthersLabel: string,
         closeAllLabel: string,
+        firstTabShortcut: string,
+        lastTabShortcut: string,
       ) => string;
       variablesEditorNote: string;
       variableSections: (
@@ -733,7 +822,7 @@ export interface Messages {
     };
     sidebar: {
       intro: string;
-      items: string;
+      items: (toggleShortcut: string) => string;
       resizeDetails: string;
     };
     runbookLibrary: {
@@ -1072,12 +1161,19 @@ export interface Messages {
       promptLanguage: string;
       updates: string;
     };
-    language: {
-      intro: string;
-      detection: string;
+    settings: {
+      intro: (shortcut: string) => string;
+      categories: (
+        appearanceLabel: string,
+        editorLabel: string,
+        keyboardLabel: string,
+        workspaceLabel: string,
+        resetAllLabel: string,
+        resetLabel: string,
+      ) => string;
     };
     keyboardShortcuts: {
-      intro: (binding: string) => string;
+      intro: (binding: string, keyboardLabel: string) => string;
     };
     qa: {
       intro: string;

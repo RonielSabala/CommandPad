@@ -1,4 +1,4 @@
-import { TAB_CHARACTER } from "@/common/constants/events";
+import { TAB_CHARACTER } from "@/common/config";
 import { MarkdownList } from "@/common/markdownSyntax";
 import type { NoteList } from "@/common/types";
 

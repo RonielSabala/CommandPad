@@ -1,5 +1,8 @@
+import { KeyBinding } from "@/common/keybindings";
 import { useTranslation } from "@/i18n";
+
 import { Prose } from "../Prose";
+import { useShortcutLabel } from "../useShortcutLabel";
 
 export function WorkspaceDocs() {
   const t = useTranslation();
@@ -39,11 +42,12 @@ export function MainPanelDocs() {
 
 export function SidebarDocs() {
   const t = useTranslation();
+  const sidebarKey = useShortcutLabel(KeyBinding.TOGGLE_SIDEBAR);
 
   return (
     <>
       <Prose text={t.docs.sidebar.intro} />
-      <Prose text={t.docs.sidebar.items} />
+      <Prose text={t.docs.sidebar.items(sidebarKey)} />
       <Prose text={t.docs.sidebar.resizeDetails} />
     </>
   );

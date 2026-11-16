@@ -13,7 +13,6 @@ export interface CodeMetrics {
   lineHeightBase: number;
   lineHeightMedium: number;
   lineHeightSmall: number;
-  tabSize: number;
   gutterPadStart: number;
   gutterGapBefore: number;
   gutterGapAfter: number;
@@ -46,7 +45,6 @@ export function publishCodeMetrics(): CodeMetrics {
     lineHeightBase: Math.round(fontSizeBase * ratio),
     lineHeightMedium: Math.round(fontSizeMedium * ratio),
     lineHeightSmall: Math.round(fontSizeSmall * ratio),
-    tabSize: readNumber(style, CodeToken.TAB_SIZE),
     gutterPadStart: pixels(CodeToken.GUTTER_PAD_START),
     gutterGapBefore: pixels(CodeToken.GUTTER_GAP_BEFORE),
     gutterGapAfter: pixels(CodeToken.GUTTER_GAP_AFTER),

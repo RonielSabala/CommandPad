@@ -2,8 +2,8 @@ import { blockToJson, normalizeBlock } from "@/blocks";
 import { RunbookSourceConfig } from "@/common/config";
 import {
   DEFAULT_VARIABLE_LANGUAGE,
-  isCommandLanguage,
-  VariableSectionField,
+  isCodeLanguage,
+  VariableSectionJsonField,
 } from "@/common/editorConfig";
 import { VariableEntryKind } from "@/common/enums";
 import type {
@@ -33,8 +33,10 @@ const INVALID_SOURCE = "Invalid runbook format";
 
 function serializeSection(section: VariableSection) {
   return {
-    [VariableSectionField.SECTION]: section.name,
-    ...(section.collapsed ? { [VariableSectionField.COLLAPSED]: true } : {}),
+    [VariableSectionJsonField.SECTION]: section.name,
+    ...(section.collapsed
+      ? { [VariableSectionJsonField.COLLAPSED]: true }
+      : {}),
   };
 }
 
@@ -97,7 +99,7 @@ function normalizeVariable(
 
   return {
     ...variable,
-    language: isCommandLanguage(raw.language)
+    language: isCodeLanguage(raw.language)
       ? raw.language
       : DEFAULT_VARIABLE_LANGUAGE,
     ...(raw.secret === true ? { secret: true } : {}),
@@ -113,7 +115,7 @@ function parseVariableEntries(
   const entries: VariableEntry[] = [];
 
   for (const item of raw) {
-    const name = isObject(item) ? item[VariableSectionField.SECTION] : null;
+    const name = isObject(item) ? item[VariableSectionJsonField.SECTION] : null;
     if (isObject(item) && isString(name)) {
       entries.push({
         kind: VariableEntryKind.SECTION,
@@ -121,7 +123,7 @@ function parseVariableEntries(
           id: previous.variableSections[sectionIndex++]?.id ?? generateId(),
           name,
           start: 0,
-          ...(item[VariableSectionField.COLLAPSED] === true
+          ...(item[VariableSectionJsonField.COLLAPSED] === true
             ? { collapsed: true }
             : {}),
         },

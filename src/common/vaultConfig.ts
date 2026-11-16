@@ -1,14 +1,23 @@
 import { VaultField, VaultPrompt } from "./enums";
 
+// Cryptography
+
 export const VaultConfig = {
+  // Algorithms
   DERIVE_ALGORITHM: "PBKDF2",
   HASH_ALGORITHM: "SHA-256",
   CIPHER_ALGORITHM: "AES-GCM",
+
+  // Key derivation
   ITERATIONS: 310_000,
   KEY_LENGTH_BITS: 256,
   SALT_BYTES: 16,
+
+  // Encryption
   IV_BYTES: 12,
   VERIFIER_PLAINTEXT: "commandpad-vault",
+
+  // Passphrases
   MIN_PASSPHRASE_LENGTH: 8,
 } as const;
 
@@ -19,6 +28,8 @@ export const VaultKeyUsage = {
   PASSPHRASE: ["deriveKey"],
   CIPHER: ["encrypt", "decrypt"],
 } as const;
+
+// Payloads
 
 /** An encrypted value reads `cpv1.<salt>.<iv>.<ciphertext>`. */
 export const VaultPayload = {
@@ -32,6 +43,8 @@ export const VaultPayloadSegment = {
   IV: 2,
   CIPHERTEXT: 3,
 } as const;
+
+// Prompts
 
 export const VAULT_PROMPT_FIELDS: Record<VaultPrompt, readonly VaultField[]> = {
   [VaultPrompt.CREATE]: [VaultField.NEXT, VaultField.CONFIRM],

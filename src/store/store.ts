@@ -1,4 +1,5 @@
 import { DEBOUNCE_SAVE_MS } from "@/common/config";
+import { applyKeybindingOverrides } from "@/common/keybindings";
 import { debounce } from "@/utils/debounce";
 import { createContext, useContext } from "react";
 import { createStore, useStore as useZustandStore } from "zustand";
@@ -20,6 +21,7 @@ import { createCloudSyncSlice } from "./slices/cloudSync";
 import { createDialogsSlice } from "./slices/dialogs";
 import { createEmbedsSlice } from "./slices/embeds";
 import { createInteractionSlice } from "./slices/interaction";
+import { createKeybindingsSlice } from "./slices/keybindings";
 import { createLibraryFoldersSlice } from "./slices/libraryFolders";
 import { createLibraryRunbooksSlice } from "./slices/libraryRunbooks";
 import { createLifecycleSlice } from "./slices/lifecycle";
@@ -42,6 +44,7 @@ export {
   getActiveRunbookId,
   getActiveTab,
   getActiveVariables,
+  getAppliedTheme,
   getLibraryRunbook,
   getRunbookEmbedView,
   getRunbookView,
@@ -63,7 +66,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
     ? createMemoryContentDb(contentSeed)
     : REAL_CONTENT_DB;
 
-  return createStore<StoreState>()((set, get) => {
+  const store = createStore<StoreState>()((set, get) => {
     const debouncedSaveState = debounce(
       () => get().saveState(),
       DEBOUNCE_SAVE_MS,
@@ -101,6 +104,7 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       ...createBlocksSlice(kit, services),
       ...createInteractionSlice(kit),
       ...createUiSlice(kit),
+      ...createKeybindingsSlice(kit),
       ...createTransferSlice(kit, services),
       ...createCloudSessionSlice(kit, services),
       ...createCloudFilesSlice(kit, services),
@@ -108,6 +112,16 @@ export function createAppStore(options: AppStoreOptions = {}): AppStoreApi {
       ...createDialogsSlice(kit),
     };
   });
+
+  if (!isDemo) {
+    store.subscribe(({ keybindingOverrides }, previous) => {
+      if (keybindingOverrides !== previous.keybindingOverrides) {
+        applyKeybindingOverrides(keybindingOverrides);
+      }
+    });
+  }
+
+  return store;
 }
 
 const appStore = createAppStore();

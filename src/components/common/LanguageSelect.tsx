@@ -1,5 +1,4 @@
 import { CssClass } from "@/common/constants/css";
-import { Select, type SelectOption } from "@/components/common/Select";
 import { LanguageFlag } from "@/components/icons/flags";
 import {
   LANGUAGE_LABELS,
@@ -14,6 +13,7 @@ import { classNames } from "@/utils/string";
 import { Translate } from "react-bootstrap-icons";
 
 import "./LanguageSelect.css";
+import { Select, type SelectOption } from "./Select";
 
 interface FlagCircleProps {
   language: Language;
@@ -27,8 +27,8 @@ function FlagCircle({ language }: FlagCircleProps) {
   );
 }
 
-const LANGUAGE_OPTIONS: readonly SelectOption<Language>[] = LANGUAGE_ORDER.map(
-  (language) => ({
+export const LANGUAGE_OPTIONS: readonly SelectOption<Language>[] =
+  LANGUAGE_ORDER.map((language) => ({
     value: language,
     label: (
       <>
@@ -36,8 +36,7 @@ const LANGUAGE_OPTIONS: readonly SelectOption<Language>[] = LANGUAGE_ORDER.map(
         {LANGUAGE_NAMES[language]}
       </>
     ),
-  }),
-);
+  }));
 
 export function LanguageSelect() {
   const t = useTranslation();
