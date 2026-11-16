@@ -51,8 +51,6 @@ export const Key = {
   ARROW_RIGHT: "ArrowRight",
 } as const;
 
-export const TAB_CHARACTER = "\t";
-
 export const Modifier = {
   ALT: "alt",
   CTRL: "ctrl",
