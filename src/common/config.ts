@@ -7,6 +7,8 @@ import {
 } from "./enums";
 import type { PanelState } from "./types";
 
+// Storage
+
 export const StorageKey = {
   TABS: "commandpad_tabs",
   UI_STATE: "commandpad_ui_state",
@@ -17,38 +19,6 @@ export const StorageKey = {
   DOCS_PAGE: "commandpad_docs_page",
   DOCS_COLLAPSED: "commandpad_docs_collapsed",
   GOOGLE_SESSION: "commandpad_google_session",
-} as const;
-
-export const RunbookConfig = {
-  LABEL_MAX_LENGTH: 60,
-  DEFAULT_LABEL: "Untitled runbook",
-} as const;
-
-export const QuickOpenConfig = {
-  COMMAND_PREFIX: ">",
-} as const;
-
-export const QuickOpenRecents = {
-  MIN: 0,
-  MAX: 20,
-  STEP: 1,
-  DEFAULT: 5,
-} as const;
-
-export const LibraryFolderConfig = {
-  DEFAULT_NAME: "New folder",
-  NAME_MAX_LENGTH: 60,
-  ROOT_PATH: "~/",
-  DEPTH_PROPERTY: "--library-depth",
-  DRAG_EXPAND_DELAY_MS: 500,
-  /** How far into a folder row a drop still lands beside it. */
-  DROP_EDGE_FRACTION: 0.25,
-  /** Where a drop on a runbook row turns from before it to after it. */
-  DROP_MIDDLE_FRACTION: 0.5,
-} as const;
-
-export const RunbookSourceConfig = {
-  INDENT: 2,
 } as const;
 
 export const RunbookDbConfig = {
@@ -62,8 +32,63 @@ export const IndexedDbTransactionMode = {
   READ_WRITE: "readwrite",
 } as const;
 
-export const DEFAULT_TAB_LABEL = "Untitled";
-export const DEFAULT_CONFIRM_LABEL = "Confirm";
+// Timeouts
+
+export const DRAG_TIMEOUT_MS = 50;
+export const DEBOUNCE_SAVE_MS = 150;
+export const SCROLL_IDLE_MS = 150;
+export const SAVE_NOTICE_TIMEOUT_MS = 3000;
+export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
+export const COPY_WARNING_TIMEOUT_MS = 2000;
+export const EXPORT_SUCCESS_TIMEOUT_MS = 1000;
+export const TAB_HOVER_SWITCH_MS = 300;
+export const SECTION_ANIMATION_FALLBACK_MS = 250;
+export const ROUTE_PREFETCH_TIMEOUT_MS = 2000;
+
+// Text characters
+
+export const LINE_BREAK = "\n";
+export const LINE_FILLER = "\u200B​";
+export const CARRIAGE_RETURN = "\r";
+export const NON_BREAKING_SPACE = "\u00A0";
+export const ELLIPSIS = "\u2026";
+export const MIDDLE_DOT = "\u00b7";
+export const PATH_SEPARATOR = "/";
+
+export const SECRET_MASK = "•".repeat(8);
+export const PREVIEW_SECRET_MASK = "*".repeat(6);
+
+export const WrapPairs = {
+  "(": ")",
+  "[": "]",
+  "{": "}",
+  '"': '"',
+  "'": "'",
+} as const;
+
+export const StringCaseConfig = {
+  SNAKE_SEPARATOR: "_",
+  KEBAB_SEPARATOR: "-",
+  // Kept inside a word so `don't` titles as `Don't` rather than `Don'T`
+  APOSTROPHE: "'",
+} as const;
+
+export const StringTestConfig = {
+  ASCII_MAX_CODE_POINT: 0x7f,
+} as const;
+
+export const Utf8Config = {
+  ONE_BYTE_MAX: 0x7f,
+  TWO_BYTE_MAX: 0x7ff,
+  SURROGATE_MIN: 0xd800,
+  SURROGATE_MAX: 0xdfff,
+  SURROGATE_BYTES: 2,
+  THREE_BYTES: 3,
+} as const;
+
+// Panels
+
+const COLLAPSE_SNAP_RATIO = 1 / 3;
 
 export interface PanelDefinition {
   defaultWidth: number;
@@ -71,8 +96,6 @@ export interface PanelDefinition {
   maxScreenFraction: number;
   collapseSnap: number;
 }
-
-const COLLAPSE_SNAP_RATIO = 1 / 3;
 
 function panelDefinition(
   defaultWidth: number,
@@ -106,22 +129,7 @@ export function createDefaultPanels(): Record<PanelId, PanelState> {
   return panels;
 }
 
-export function createDefaultScrollTop(): Record<RunbookView, number> {
-  const scrollTop = {} as Record<RunbookView, number>;
-
-  for (const view of Object.values(RunbookView)) {
-    scrollTop[view] = 0;
-  }
-
-  return scrollTop;
-}
-
-export const VariableSplit = {
-  MIN: 0.15,
-  MAX: 0.85,
-  DEFAULT: 0.5,
-  STEP: 0.01,
-} as const;
+// Settings
 
 export const SettingDefault = {
   THEME: ThemeSetting.SYSTEM,
@@ -136,111 +144,68 @@ export const SettingRangeConfig = {
   SNAP_FRACTION: 0.04,
 } as const;
 
-// Timeouts
-export const DRAG_TIMEOUT_MS = 50;
-export const DEBOUNCE_SAVE_MS = 150;
-export const SCROLL_IDLE_MS = 150;
-export const SAVE_NOTICE_TIMEOUT_MS = 3000;
-export const COPY_FEEDBACK_TIMEOUT_MS = 1000;
-export const COPY_WARNING_TIMEOUT_MS = 2000;
-export const EXPORT_SUCCESS_TIMEOUT_MS = 1000;
-export const TAB_HOVER_SWITCH_MS = 300;
-export const SECTION_ANIMATION_FALLBACK_MS = 250;
-export const ROUTE_PREFETCH_TIMEOUT_MS = 2000;
-
-export const SelectConfig = {
-  MAX_VISIBLE_OPTIONS: 6,
-  MAX_OPTION_CHARS: 40,
+export const VariableSplit = {
+  MIN: 0.15,
+  MAX: 0.85,
+  DEFAULT: 0.5,
+  STEP: 0.01,
 } as const;
 
-export const InfoConfig = {
-  EMPTY: "—",
-  WORDS_PER_MINUTE: 200,
-  LIST_SEPARATOR: ", ",
-  PLUS: "+",
-  MINUS: "−",
-  DIMENSION_SEPARATOR: " × ",
-  RATIO_SEPARATOR: ":",
-  MAX_RATIO_TERM: 32,
-  RATIO_DECIMALS: 2,
-  READING_TIME_DECIMALS: 1,
+export const QuickOpenRecents = {
+  MIN: 0,
+  MAX: 20,
+  STEP: 1,
+  DEFAULT: 5,
 } as const;
 
-export const TooltipConfig = {
-  SHOW_DELAY_MS: 500,
-  WARM_DELAY_MS: 90,
-  WARM_WINDOW_MS: 500,
-  HIDE_DELAY_MS: 250,
-  HANDOFF_DELAY_MS: 150,
-  GAP: 8,
-  VIEWPORT_MARGIN: 8,
-  ARROW_INSET: 14,
+// Tabs, runbooks and the library
+
+export const DEFAULT_TAB_LABEL = "Untitled";
+
+export function createDefaultScrollTop(): Record<RunbookView, number> {
+  const scrollTop = {} as Record<RunbookView, number>;
+
+  for (const view of Object.values(RunbookView)) {
+    scrollTop[view] = 0;
+  }
+
+  return scrollTop;
+}
+
+export const RunbookConfig = {
+  LABEL_MAX_LENGTH: 60,
+  DEFAULT_LABEL: "Untitled runbook",
 } as const;
 
-export const TabUnresolvedConfig = {
-  MAX_LABEL_LENGTH: 120,
+export const RunbookSourceConfig = {
+  INDENT: 2,
 } as const;
 
-export const StickyScrollbarConfig = {
-  /** Positions closer than this are the same. */
-  EPSILON_PX: 1,
+export const LibraryFolderConfig = {
+  DEFAULT_NAME: "New folder",
+  NAME_MAX_LENGTH: 60,
+  ROOT_PATH: "~/",
+  DEPTH_PROPERTY: "--library-depth",
+  DRAG_EXPAND_DELAY_MS: 500,
+  /** How far into a folder row a drop still lands beside it. */
+  DROP_EDGE_FRACTION: 0.25,
+  /** Where a drop on a runbook row turns from before it to after it. */
+  DROP_MIDDLE_FRACTION: 0.5,
 } as const;
 
-export const MinimapConfig = {
-  SCALE: 0.12,
-  OVERSCROLL_PROPERTY: "--minimap-overscroll",
+export const QuickOpenConfig = {
+  COMMAND_PREFIX: ">",
 } as const;
 
-export const WrapPairs = {
-  "(": ")",
-  "[": "]",
-  "{": "}",
-  '"': '"',
-  "'": "'",
+// Copies made by a "Duplicate" action
+
+export const DuplicateNameConfig = {
+  SUFFIX: (index: number) => ` (${index})`,
+  SUFFIX_REGEX: / \(\d+\)$/,
+  FIRST_INDEX: 1,
 } as const;
 
-export const LINE_BREAK = "\n";
-export const LINE_FILLER = "\u200B";
-export const CARRIAGE_RETURN = "\r";
-export const NON_BREAKING_SPACE = "\u00A0";
-export const ELLIPSIS = "\u2026";
-
-export const PATH_SEPARATOR = "/";
-
-export const MIDDLE_DOT = "·";
-export const SECRET_MASK = "•".repeat(8);
-export const PREVIEW_SECRET_MASK = "*".repeat(6);
-
-export const StringCaseConfig = {
-  SNAKE_SEPARATOR: "_",
-  KEBAB_SEPARATOR: "-",
-  // Kept inside a word so `don't` titles as `Don't` rather than `Don'T`
-  APOSTROPHE: "'",
-} as const;
-
-export const StringTestConfig = {
-  ASCII_MAX_CODE_POINT: 0x7f,
-} as const;
-
-export const ReferenceConfig = {
-  MAX_TEMPLATE_DEPTH: 10,
-  MAX_NESTING_DEPTH: 3,
-} as const;
-
-export const ExtractedVariableConfig = {
-  DEFAULT_KEY: "VARIABLE",
-  MAX_KEY_WORDS: 3,
-  MAX_KEY_LENGTH: 24,
-} as const;
-
-export const RunbookBlockConfig = {
-  MAX_DEPTH: 4,
-  LOCAL_SOURCE: "local",
-  CLOUD_SOURCE: "cloud",
-  KEY_SEPARATOR: ":",
-  SCOPE_SEPARATOR: "/",
-  PARENT_FOLDER_LABEL: "..",
-} as const;
+// Blocks
 
 export const ImageBlockConfig = {
   MAX_BYTES: 5 * 1024 * 1024,
@@ -267,9 +232,84 @@ export const ImageBlockConfig = {
   BASE64_GROUP_BYTES: 3,
 } as const;
 
-// Supported file types
+export const RunbookBlockConfig = {
+  MAX_DEPTH: 4,
+  LOCAL_SOURCE: "local",
+  CLOUD_SOURCE: "cloud",
+  KEY_SEPARATOR: ":",
+  SCOPE_SEPARATOR: "/",
+  PARENT_FOLDER_LABEL: "..",
+} as const;
+
+// Variables and references
+
+export const ReferenceConfig = {
+  MAX_TEMPLATE_DEPTH: 10,
+  MAX_NESTING_DEPTH: 3,
+} as const;
+
+export const ExtractedVariableConfig = {
+  DEFAULT_KEY: "VARIABLE",
+  MAX_KEY_WORDS: 3,
+  MAX_KEY_LENGTH: 24,
+} as const;
+
+// UI components
+
+export const DEFAULT_CONFIRM_LABEL = "Confirm";
+
+export const SelectConfig = {
+  MAX_VISIBLE_OPTIONS: 6,
+  MAX_OPTION_CHARS: 40,
+} as const;
+
+export const TooltipConfig = {
+  SHOW_DELAY_MS: 500,
+  WARM_DELAY_MS: 90,
+  WARM_WINDOW_MS: 500,
+  HIDE_DELAY_MS: 250,
+  HANDOFF_DELAY_MS: 150,
+  GAP: 8,
+  VIEWPORT_MARGIN: 8,
+  ARROW_INSET: 14,
+} as const;
+
+export const InfoConfig = {
+  EMPTY: "—",
+  WORDS_PER_MINUTE: 200,
+  LIST_SEPARATOR: ", ",
+  PLUS: "+",
+  MINUS: "−",
+  DIMENSION_SEPARATOR: " × ",
+  RATIO_SEPARATOR: ":",
+  MAX_RATIO_TERM: 32,
+  RATIO_DECIMALS: 2,
+  READING_TIME_DECIMALS: 1,
+} as const;
+
+export const MessageListConfig = {
+  MAX_ITEMS: 8,
+} as const;
+
+export const TabUnresolvedConfig = {
+  MAX_LABEL_LENGTH: 120,
+} as const;
+
+export const StickyScrollbarConfig = {
+  /** Positions closer than this are the same. */
+  EPSILON_PX: 1,
+} as const;
+
+export const MinimapConfig = {
+  SCALE: 0.12,
+  OVERSCROLL_PROPERTY: "--minimap-overscroll",
+} as const;
+
+// Files
 
 export const JSON_EXTENSION = `.${ExportFormat.JSON}`;
+
+export const CONTENT_TYPE_HEADER = "Content-Type";
 
 export const MimeType = {
   JSON: "application/json",
@@ -278,8 +318,6 @@ export const MimeType = {
   ZIP: "application/zip",
 } as const;
 export type MimeType = (typeof MimeType)[keyof typeof MimeType];
-
-export const CONTENT_TYPE_HEADER = "Content-Type";
 
 export function contentTypeHeaders(mimeType: string): Record<string, string> {
   return { [CONTENT_TYPE_HEADER]: mimeType };
@@ -325,25 +363,19 @@ export const FilePickerConfig: Record<ExportFormat, FilePickerFormat> =
     ),
   ) as Record<ExportFormat, FilePickerFormat>;
 
-// Cloud sync
-
-export const CloudSyncConfig = {
-  APP_FOLDER_NAME: "CommandPad",
-  MAX_SEARCH_DEPTH: 10,
-  NO_SIZE_PLACEHOLDER: "—",
+export const FileSizeConfig = {
+  BASE: 1024,
+  UNITS: ["B", "KB", "MB", "GB"],
+  DECIMALS: 1,
 } as const;
 
-export const MessageListConfig = {
-  MAX_ITEMS: 8,
-} as const;
+export const FileTimeFormat: Intl.DateTimeFormatOptions = {
+  timeStyle: "short",
+};
 
-// Copies made by a "Duplicate" action
-
-export const DuplicateNameConfig = {
-  SUFFIX: (index: number) => ` (${index})`,
-  SUFFIX_REGEX: / \(\d+\)$/,
-  FIRST_INDEX: 1,
-} as const;
+export const FileDateFormat: Intl.DateTimeFormatOptions = {
+  dateStyle: "medium",
+};
 
 // Zip archives
 
@@ -360,28 +392,13 @@ export const LibraryZipConfig = {
   SYSTEM_FOLDER: "__MACOSX",
 } as const;
 
-export const Utf8Config = {
-  ONE_BYTE_MAX: 0x7f,
-  TWO_BYTE_MAX: 0x7ff,
-  SURROGATE_MIN: 0xd800,
-  SURROGATE_MAX: 0xdfff,
-  SURROGATE_BYTES: 2,
-  THREE_BYTES: 3,
+// Cloud sync
+
+export const CloudSyncConfig = {
+  APP_FOLDER_NAME: "CommandPad",
+  MAX_SEARCH_DEPTH: 10,
+  NO_SIZE_PLACEHOLDER: "—",
 } as const;
-
-export const FileSizeConfig = {
-  BASE: 1024,
-  UNITS: ["B", "KB", "MB", "GB"],
-  DECIMALS: 1,
-} as const;
-
-export const FileTimeFormat: Intl.DateTimeFormatOptions = {
-  timeStyle: "short",
-};
-
-export const FileDateFormat: Intl.DateTimeFormatOptions = {
-  dateStyle: "medium",
-};
 
 export const AuthResponseParam = {
   STATE: "state",
