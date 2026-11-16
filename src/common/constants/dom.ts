@@ -2,9 +2,13 @@ import { CssClass } from "@/common/constants/css";
 import { MonacoLayer } from "@/common/editorConfig";
 import { classSelector, compoundSelector } from "@/utils/string";
 
+// Media queries
+
 export const MediaQuery = {
   PREFERS_DARK: "(prefers-color-scheme: dark)",
 } as const;
+
+// Element ids
 
 export const ElementId = {
   BLOCKS_LIST: "blocks-list",
@@ -12,77 +16,7 @@ export const ElementId = {
   TABS_BAR: "tabs-bar",
 } as const;
 
-export const MonacoSelector = {
-  INPUT: "textarea.inputarea",
-  EDIT_CONTEXT: classSelector("native-edit-context"),
-  VIEW_LINES: classSelector("view-lines"),
-  FIND_WIDGET: classSelector("find-widget"),
-  CONTEXT_MENU: classSelector("monaco-menu"),
-  MENU_ITEM: ".action-item:not(.disabled):not(.separator)",
-} as const;
-
-export const PopupSelector = {
-  LAYERS: classSelector(
-    CssClass.SELECT_MENU_PORTAL,
-    MonacoLayer.HOVER_ROOT_CLASS,
-    MonacoLayer.OVERFLOW_ROOT_CLASS,
-  ),
-} as const;
-
-export const CodeSurfaceSelector = {
-  ROOT: classSelector(CssClass.CODE_EDITOR),
-  HEADER: classSelector(CssClass.CODE_EDITOR_HEADER),
-} as const;
-
-export const InputSelector = {
-  EDITABLE: `textarea, input, ${MonacoSelector.EDIT_CONTEXT}`,
-  CODE: `${MonacoSelector.INPUT}, ${MonacoSelector.EDIT_CONTEXT}`,
-} as const;
-
-export const AriaRole = {
-  STATUS: "status",
-  TOOLTIP: "tooltip",
-  TOOLBAR: "toolbar",
-  OPTION: "option",
-  DIALOG: "dialog",
-  LISTBOX: "listbox",
-  CHECKBOX: "checkbox",
-  MENU: "menu",
-  MENU_ITEM: "menuitem",
-  MENU_ITEM_CHECKBOX: "menuitemcheckbox",
-  PROGRESSBAR: "progressbar",
-  SEPARATOR: "separator",
-  GROUP: "group",
-} as const;
-
-export const AriaCurrent = {
-  PAGE: "page",
-} as const;
-
-export const SelectSelector = {
-  MENU: classSelector(CssClass.SELECT_MENU),
-  OPTION: `[role="${AriaRole.OPTION}"]`,
-  SELECTED_OPTION: compoundSelector(
-    CssClass.SELECT_OPTION,
-    CssClass.IS_SELECTED,
-  ),
-  NESTED_POPUP: classSelector(CssClass.CONTEXT_MENU),
-} as const;
-
-export const ModalSelector = {
-  OPEN: compoundSelector(CssClass.MODAL_BACKDROP, CssClass.MODAL_VISIBLE),
-} as const;
-
-export const BodySelector = {
-  RESIZING: classSelector(
-    CssClass.PANEL_RESIZING,
-    CssClass.VARIABLE_SPLIT_RESIZING,
-  ),
-} as const;
-
-export const EditCommand = {
-  INSERT_TEXT: "insertText",
-} as const;
+// Elements and attributes
 
 export const HtmlTag = {
   DIV: "div",
@@ -113,16 +47,18 @@ export const AutoComplete = {
   OFF: "off",
 } as const;
 
+export const Anchor = {
+  TARGET_BLANK: "_blank",
+  REL: "noopener,noreferrer",
+} as const;
+
 export const DataAttr = {
   // Core
-
   BLOCK_ID: "data-block-id",
   VARIABLE_ID: "data-variable-id",
   RUNBOOK_ID: "data-runbook-id",
-
   NOTE_OFFSET: "data-note-offset",
   NOTE_ALIGN: "data-note-align",
-
   DRAG_IMAGE: "data-drag-image",
 
   // Panels
@@ -136,21 +72,98 @@ export const DataAttr = {
   TOOLTIP_SIDE: "data-tooltip-side",
 } as const;
 
-export const Cursor = {
-  DEFAULT: "",
-  POINTER: "pointer",
-  COL_RESIZE: "col-resize",
+// Accessibility
+
+export const AriaRole = {
+  STATUS: "status",
+  TOOLTIP: "tooltip",
+  TOOLBAR: "toolbar",
+  OPTION: "option",
+  DIALOG: "dialog",
+  LISTBOX: "listbox",
+  CHECKBOX: "checkbox",
+  MENU: "menu",
+  MENU_ITEM: "menuitem",
+  MENU_ITEM_CHECKBOX: "menuitemcheckbox",
+  PROGRESSBAR: "progressbar",
+  SEPARATOR: "separator",
+  GROUP: "group",
 } as const;
 
-export const Anchor = {
-  TARGET_BLANK: "_blank",
-  REL: "noopener,noreferrer",
+export const AriaCurrent = {
+  PAGE: "page",
+} as const;
+
+// Selectors
+
+export const MonacoSelector = {
+  INPUT: "textarea.inputarea",
+  EDIT_CONTEXT: classSelector("native-edit-context"),
+  VIEW_LINES: classSelector("view-lines"),
+  FIND_WIDGET: classSelector("find-widget"),
+  CONTEXT_MENU: classSelector("monaco-menu"),
+  MENU_ITEM: ".action-item:not(.disabled):not(.separator)",
+} as const;
+
+export const InputSelector = {
+  EDITABLE: `textarea, input, ${MonacoSelector.EDIT_CONTEXT}`,
+  CODE: `${MonacoSelector.INPUT}, ${MonacoSelector.EDIT_CONTEXT}`,
+} as const;
+
+export const CodeSurfaceSelector = {
+  ROOT: classSelector(CssClass.CODE_EDITOR),
+  HEADER: classSelector(CssClass.CODE_EDITOR_HEADER),
+} as const;
+
+export const PopupSelector = {
+  LAYERS: classSelector(
+    CssClass.SELECT_MENU_PORTAL,
+    MonacoLayer.HOVER_ROOT_CLASS,
+    MonacoLayer.OVERFLOW_ROOT_CLASS,
+  ),
+} as const;
+
+export const SelectSelector = {
+  MENU: classSelector(CssClass.SELECT_MENU),
+  OPTION: `[role="${AriaRole.OPTION}"]`,
+  SELECTED_OPTION: compoundSelector(
+    CssClass.SELECT_OPTION,
+    CssClass.IS_SELECTED,
+  ),
+  NESTED_POPUP: classSelector(CssClass.CONTEXT_MENU),
+} as const;
+
+export const ModalSelector = {
+  OPEN: compoundSelector(CssClass.MODAL_BACKDROP, CssClass.MODAL_VISIBLE),
+} as const;
+
+export const BodySelector = {
+  RESIZING: classSelector(
+    CssClass.PANEL_RESIZING,
+    CssClass.VARIABLE_SPLIT_RESIZING,
+  ),
+} as const;
+
+// Editing and selection
+
+export const EditCommand = {
+  INSERT_TEXT: "insertText",
 } as const;
 
 export const SelectionDirection = {
   FORWARD: "forward",
   BACKWARD: "backward",
 } as const;
+
+// Pointer
+
+export const Cursor = {
+  DEFAULT: "",
+  POINTER: "pointer",
+  COL_RESIZE: "col-resize",
+} as const;
+
+// Scrolling
 
 export const ScrollIntoView = {
   BLOCK_START: "start",
