@@ -11,18 +11,14 @@ import { CloseIcon } from "@/components/icons";
 import { RunbookProperties } from "@/components/sidebar/runbooks/menu/LibraryProperties";
 import { blockDrag } from "@/hooks/blockDrag";
 import { useTabUnresolved } from "@/hooks/useTabUnresolved";
+import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
-import {
-  useEffect,
-  useRef,
-  useState,
-  type DragEvent,
-  type MouseEvent,
-} from "react";
+import { useEffect, useRef, useState, type DragEvent } from "react";
 
+import { TabContextMenu } from "./TabContextMenu";
 import "./TabItem.css";
 import { TabUnresolvedTooltip } from "./TabUnresolvedTooltip";
 
@@ -31,22 +27,11 @@ const tabDrag: { srcId: string | null } = { srcId: null };
 interface Props {
   tab: Tab;
   renaming: boolean;
-  onOpenMenu: (
-    event: MouseEvent,
-    tabId: string,
-    openProperties: () => void,
-  ) => void;
   onRename: (tabId: string) => void;
   onRenameEnd: () => void;
 }
 
-export function TabItem({
-  tab,
-  renaming,
-  onOpenMenu,
-  onRename,
-  onRenameEnd,
-}: Props) {
+export function TabItem({ tab, renaming, onRename, onRenameEnd }: Props) {
   const t = useTranslation();
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const tabId = tab.id;
@@ -67,6 +52,7 @@ export function TabItem({
 
   const tabRef = useRef<HTMLDivElement>(null);
   const properties = useInfoTooltip();
+  const { menuAnchor, onContextMenu, closeMenu } = useWorkspaceContextMenu();
 
   const [dragging, setDragging] = useState(false);
   const [dropSide, setDropSide] = useState<TabDropSide | null>(null);
@@ -109,9 +95,7 @@ export function TabItem({
             event.preventDefault();
           }
         }}
-        onContextMenu={(event) =>
-          onOpenMenu(event, tabId, () => properties.open(tabRef.current))
-        }
+        onContextMenu={onContextMenu}
         onMouseUp={(event) => {
           if (event.button === MouseButton.MIDDLE) {
             event.preventDefault();
@@ -240,6 +224,16 @@ export function TabItem({
         unresolvedTip.render((tip) => (
           <TabUnresolvedTooltip tab={tab} tip={tip} />
         ))}
+
+      {menuAnchor && (
+        <TabContextMenu
+          tabId={tabId}
+          anchor={menuAnchor}
+          onClose={closeMenu}
+          onRename={onRename}
+          onProperties={() => properties.open(tabRef.current)}
+        />
+      )}
 
       {runbookId &&
         properties.render(() => <RunbookProperties runbookId={runbookId} />)}

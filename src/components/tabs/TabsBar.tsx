@@ -1,16 +1,14 @@
 import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { ElementId } from "@/common/constants/dom";
 import { RunbookView } from "@/common/enums";
-import type { ContextMenuAnchor } from "@/components/common/contextMenu/ContextMenu";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PlusIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { getRunbookView, useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
-import { useCallback, useState, type MouseEvent } from "react";
+import { useCallback, useState } from "react";
 import { BodyText, Braces, FileEarmarkCode } from "react-bootstrap-icons";
 
-import { TabContextMenu } from "./TabContextMenu";
 import { TabItem } from "./TabItem";
 import "./TabsBar.css";
 
@@ -21,27 +19,8 @@ export function TabsBar() {
   const runbookView = useStore(getRunbookView);
   const toggleRunbookView = useStore((state) => state.toggleRunbookView);
 
-  const [menu, setMenu] = useState<{
-    tabId: string;
-    anchor: ContextMenuAnchor;
-    openProperties: () => void;
-  } | null>(null);
-
   const [renamingTabId, setRenamingTabId] = useState<string | null>(null);
   const endRename = useCallback(() => setRenamingTabId(null), []);
-
-  const closeMenu = useCallback(() => setMenu(null), []);
-  const onOpenMenu = useCallback(
-    (event: MouseEvent, tabId: string, openProperties: () => void) => {
-      event.preventDefault();
-      setMenu({
-        tabId,
-        anchor: { x: event.clientX, y: event.clientY },
-        openProperties,
-      });
-    },
-    [],
-  );
 
   const showingSource = runbookView === RunbookView.SOURCE;
   const showingVariables = runbookView === RunbookView.VARIABLES;
@@ -61,7 +40,6 @@ export function TabsBar() {
             key={tab.id}
             tab={tab}
             renaming={tab.id === renamingTabId}
-            onOpenMenu={onOpenMenu}
             onRename={setRenamingTabId}
             onRenameEnd={endRename}
           />
@@ -114,16 +92,6 @@ export function TabsBar() {
             )}
           </button>
         </div>
-      )}
-
-      {menu && (
-        <TabContextMenu
-          tabId={menu.tabId}
-          anchor={menu.anchor}
-          onClose={closeMenu}
-          onRename={setRenamingTabId}
-          onProperties={menu.openProperties}
-        />
       )}
     </div>
   );
