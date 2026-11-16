@@ -2,9 +2,9 @@ import { getBlockJsonSchemas } from "@/blocks";
 import {
   CODE_LANGUAGE_ORDER,
   JsonSchemaType,
-  RunbookField,
+  RunbookJsonField,
   VariableJsonField,
-  VariableSectionField,
+  VariableSectionJsonField,
 } from "@/common/editorConfig";
 
 const VARIABLE_PROPERTIES = {
@@ -43,25 +43,25 @@ const ENUM_VARIABLE_SCHEMA = {
 
 const SECTION_SCHEMA = {
   type: JsonSchemaType.OBJECT,
-  required: [VariableSectionField.SECTION],
+  required: [VariableSectionJsonField.SECTION],
   additionalProperties: false,
   properties: {
-    [VariableSectionField.SECTION]: { type: JsonSchemaType.STRING },
-    [VariableSectionField.COLLAPSED]: { type: JsonSchemaType.BOOLEAN },
+    [VariableSectionJsonField.SECTION]: { type: JsonSchemaType.STRING },
+    [VariableSectionJsonField.COLLAPSED]: { type: JsonSchemaType.BOOLEAN },
   },
 };
 
 export const RUNBOOK_JSON_SCHEMA = {
   type: JsonSchemaType.OBJECT,
-  required: [RunbookField.VARIABLES, RunbookField.BLOCKS],
+  required: [RunbookJsonField.VARIABLES, RunbookJsonField.BLOCKS],
   properties: {
-    [RunbookField.VARIABLES]: {
+    [RunbookJsonField.VARIABLES]: {
       type: JsonSchemaType.ARRAY,
       items: {
         oneOf: [TEXT_VARIABLE_SCHEMA, ENUM_VARIABLE_SCHEMA, SECTION_SCHEMA],
       },
     },
-    [RunbookField.BLOCKS]: {
+    [RunbookJsonField.BLOCKS]: {
       type: JsonSchemaType.ARRAY,
       items: { oneOf: getBlockJsonSchemas() },
     },

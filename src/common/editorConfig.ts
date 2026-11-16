@@ -1,4 +1,10 @@
-import { CodeLanguage, VariableField } from "./enums";
+import {
+  CodeLanguage,
+  RunbookEmbedView,
+  SectionState,
+  VariableEntryKind,
+  VariableField,
+} from "./enums";
 
 // Languages
 
@@ -316,9 +322,9 @@ export const JsonSchemaType = {
   BOOLEAN: "boolean",
 } as const;
 
-export const RunbookField = {
-  VARIABLES: "variables",
-  BLOCKS: "blocks",
+export const RunbookJsonField = {
+  VARIABLES: RunbookEmbedView.VARIABLES,
+  BLOCKS: RunbookEmbedView.BLOCKS,
 } as const;
 
 export const VariableJsonField = {
@@ -326,12 +332,12 @@ export const VariableJsonField = {
   OPTIONS: "options",
 } as const;
 
-export const VariableSectionField = {
-  SECTION: "section",
-  COLLAPSED: "collapsed",
+export const VariableSectionJsonField = {
+  SECTION: VariableEntryKind.SECTION,
+  COLLAPSED: SectionState.COLLAPSED,
 } as const;
 
-export const BlockField = {
+export const BlockJsonField = {
   TYPE: "type",
   RUNBOOK_ID: "runbookId",
   TEXT: "text",
@@ -343,8 +349,8 @@ export const BlockField = {
   CLOUD: "cloud",
   PROVIDER: "provider",
   OVERRIDES: "overrides",
-  LANGUAGE: "language",
-  COLLAPSED: "collapsed",
+  LANGUAGE: VariableField.LANGUAGE,
+  COLLAPSED: SectionState.COLLAPSED,
   EDITOR_COLLAPSED: "editorCollapsed",
 } as const;
 

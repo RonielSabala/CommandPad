@@ -1,4 +1,4 @@
-import { BlockField, JsonSchemaType } from "@/common/editorConfig";
+import { BlockJsonField, JsonSchemaType } from "@/common/editorConfig";
 import { BlockType, CloudProvider } from "@/common/enums";
 import { MarkdownSyntax } from "@/common/markdownSyntax";
 import { isCloudRunbookRef } from "@/utils/embeddedRunbook";
@@ -23,25 +23,25 @@ export const runbookBlockDefinition: BlockDefinition<typeof BlockType.RUNBOOK> =
     type: BlockType.RUNBOOK,
     jsonSchema: {
       properties: {
-        [BlockField.LABEL]: { type: JsonSchemaType.STRING },
-        [BlockField.CLOUD]: {
+        [BlockJsonField.LABEL]: { type: JsonSchemaType.STRING },
+        [BlockJsonField.CLOUD]: {
           type: JsonSchemaType.OBJECT,
           properties: {
-            [BlockField.PROVIDER]: { enum: Object.values(CloudProvider) },
-            [BlockField.PATH]: { type: JsonSchemaType.STRING },
+            [BlockJsonField.PROVIDER]: { enum: Object.values(CloudProvider) },
+            [BlockJsonField.PATH]: { type: JsonSchemaType.STRING },
           },
-          required: [BlockField.PROVIDER, BlockField.PATH],
+          required: [BlockJsonField.PROVIDER, BlockJsonField.PATH],
         },
-        [BlockField.OVERRIDES]: {
+        [BlockJsonField.OVERRIDES]: {
           type: JsonSchemaType.OBJECT,
           additionalProperties: { type: JsonSchemaType.STRING },
         },
-        [BlockField.COLLAPSED]: { type: JsonSchemaType.BOOLEAN },
+        [BlockJsonField.COLLAPSED]: { type: JsonSchemaType.BOOLEAN },
       },
-      required: [BlockField.LABEL],
+      required: [BlockJsonField.LABEL],
     },
 
-    runtimeFields: [BlockField.RUNBOOK_ID],
+    runtimeFields: [BlockJsonField.RUNBOOK_ID],
 
     create: (id) => ({ id, type: BlockType.RUNBOOK, label: "" }),
 

@@ -1,4 +1,4 @@
-import { BlockField, JsonSchemaType } from "@/common/editorConfig";
+import { BlockJsonField, JsonSchemaType } from "@/common/editorConfig";
 import { BlockType } from "@/common/enums";
 import type { Block } from "@/common/types";
 import { generateId } from "@/utils/id";
@@ -109,10 +109,10 @@ export function getBlockJsonSchemas(): unknown[] {
     return {
       type: JsonSchemaType.OBJECT,
       properties: {
-        [BlockField.TYPE]: { const: type },
+        [BlockJsonField.TYPE]: { const: type },
         ...properties,
       },
-      required: [BlockField.TYPE, ...required],
+      required: [BlockJsonField.TYPE, ...required],
     };
   });
 }

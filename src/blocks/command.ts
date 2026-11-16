@@ -1,5 +1,5 @@
 import {
-  BlockField,
+  BlockJsonField,
   CODE_LANGUAGE_ORDER,
   DEFAULT_COMMAND_LANGUAGE,
   isCodeLanguage,
@@ -16,11 +16,11 @@ export const commandBlockDefinition: BlockDefinition<typeof BlockType.COMMAND> =
     type: BlockType.COMMAND,
     jsonSchema: {
       properties: {
-        [BlockField.TEXT]: { type: JsonSchemaType.STRING },
-        [BlockField.LANGUAGE]: { enum: [...CODE_LANGUAGE_ORDER] },
-        [BlockField.EDITOR_COLLAPSED]: { type: JsonSchemaType.BOOLEAN },
+        [BlockJsonField.TEXT]: { type: JsonSchemaType.STRING },
+        [BlockJsonField.LANGUAGE]: { enum: [...CODE_LANGUAGE_ORDER] },
+        [BlockJsonField.EDITOR_COLLAPSED]: { type: JsonSchemaType.BOOLEAN },
       },
-      required: [BlockField.TEXT],
+      required: [BlockJsonField.TEXT],
     },
 
     create: (id) => ({
