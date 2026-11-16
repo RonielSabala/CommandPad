@@ -14,11 +14,15 @@ import type {
   RunbookView,
 } from "./enums";
 
+// Panels
+
 export interface PanelState {
   collapsed: boolean;
   side: PanelSide;
   width: number;
 }
+
+// Blocks
 
 export interface CommandBlock {
   id: string;
@@ -76,6 +80,8 @@ export interface BlockInsertAnchor {
   position: InsertPosition;
 }
 
+// Variables
+
 export interface Variable {
   id: string;
   key: string;
@@ -92,6 +98,25 @@ export interface VariableSection {
   collapsed?: boolean;
 }
 
+// Runbook content
+
+export interface RunbookContent {
+  blocks: Block[];
+  variables: Variable[];
+  variableSections: VariableSection[];
+}
+
+export interface EmbeddedRunbook {
+  status: EmbeddedRunbookStatus;
+  content: RunbookContent | null;
+  /** Due a reload. */
+  stale?: boolean;
+  /** The library runbook kept in this cloud file. */
+  runbookId?: string;
+}
+
+// Tabs
+
 export interface Tab {
   id: string;
   label: string;
@@ -104,6 +129,8 @@ export interface Tab {
   /** What each runbook block's body shows. */
   embedViews?: Record<string, RunbookEmbedView>;
 }
+
+// Library
 
 export interface RunbookSync {
   provider: CloudProvider;
@@ -151,20 +178,7 @@ export interface RunbookLinks {
   usedBy: LibraryRunbook[];
 }
 
-export interface RunbookContent {
-  blocks: Block[];
-  variables: Variable[];
-  variableSections: VariableSection[];
-}
-
-export interface EmbeddedRunbook {
-  status: EmbeddedRunbookStatus;
-  content: RunbookContent | null;
-  /** Due a reload. */
-  stale?: boolean;
-  /** The library runbook kept in this cloud file. */
-  runbookId?: string;
-}
+// Resolved commands
 
 export interface ResolvedSpan {
   text: string;
@@ -181,6 +195,8 @@ export interface CommandSegment {
   type: CommandSegmentType;
   spans?: ResolvedSpan[];
 }
+
+// Notes
 
 export interface NoteSegment {
   text: string;
@@ -201,15 +217,15 @@ export interface NoteTable {
   rows: NoteTableCell[][];
 }
 
-export interface NoteListItem {
-  segments: NoteSegment[];
-  lists: NoteList[];
-}
-
 export interface NoteList {
   ordered: boolean;
   start: number;
   items: NoteListItem[];
+}
+
+export interface NoteListItem {
+  segments: NoteSegment[];
+  lists: NoteList[];
 }
 
 export type NoteNode =
