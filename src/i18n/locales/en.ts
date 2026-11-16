@@ -1318,6 +1318,7 @@ If something goes wrong, undo it in this order:
         openEditorLabel,
         openSourceShortcut,
         openEditorShortcut,
+        propertiesLabel,
         closeLabel,
         closeOthersLabel,
         closeAllLabel,
@@ -1326,7 +1327,7 @@ If something goes wrong, undo it in this order:
       ) => `* **Click** a tab to switch to it, or press **${firstTabShortcut}** to **${lastTabShortcut}** to jump to one of the first nine.
 * **Drag** a tab to reorder it.
 * **Middle-click** a tab to close it.
-* **Right-click** a tab for **${closeLabel}**, **${closeOthersLabel}** and **${closeAllLabel}**.
+* **Right-click** a tab for **${propertiesLabel}**, **${closeLabel}**, **${closeOthersLabel}** and **${closeAllLabel}**.
 * **Click** the **+** at the end of the tabs bar to open a new tab.
 * **${openSourceLabel}**, at the far end of the tabs bar, swaps the blocks below for the runbook's raw JSON (**${openSourceShortcut}**).
 * **${openEditorLabel}**, beside it, swaps them for the runbook's variables instead (**${openEditorShortcut}**).

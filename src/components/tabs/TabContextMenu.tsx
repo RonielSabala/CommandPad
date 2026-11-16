@@ -5,6 +5,7 @@ import {
   ContextMenuSeparator,
   type ContextMenuAnchor,
 } from "@/components/common/contextMenu/ContextMenu";
+import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useTranslation } from "@/i18n";
 import {
   getLibraryRunbook,
@@ -18,9 +19,16 @@ interface Props {
   anchor: ContextMenuAnchor;
   onClose: () => void;
   onRename: (tabId: string) => void;
+  onProperties: () => void;
 }
 
-export function TabContextMenu({ tabId, anchor, onClose, onRename }: Props) {
+export function TabContextMenu({
+  tabId,
+  anchor,
+  onClose,
+  onRename,
+  onProperties,
+}: Props) {
   const t = useTranslation();
   const store = useStoreApi();
   const isOnlyTab = useStore((state) => state.tabs.length < 2);
@@ -60,6 +68,13 @@ export function TabContextMenu({ tabId, anchor, onClose, onRename }: Props) {
             </ContextMenuItem>
           )}
 
+          <ContextMenuSeparator />
+        </>
+      )}
+
+      {runbookId && (
+        <>
+          <InfoMenuItem label={t.info.properties} onSelect={onProperties} />
           <ContextMenuSeparator />
         </>
       )}

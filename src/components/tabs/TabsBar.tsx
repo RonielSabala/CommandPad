@@ -24,16 +24,24 @@ export function TabsBar() {
   const [menu, setMenu] = useState<{
     tabId: string;
     anchor: ContextMenuAnchor;
+    openProperties: () => void;
   } | null>(null);
 
   const [renamingTabId, setRenamingTabId] = useState<string | null>(null);
   const endRename = useCallback(() => setRenamingTabId(null), []);
 
   const closeMenu = useCallback(() => setMenu(null), []);
-  const onOpenMenu = useCallback((event: MouseEvent, tabId: string) => {
-    event.preventDefault();
-    setMenu({ tabId, anchor: { x: event.clientX, y: event.clientY } });
-  }, []);
+  const onOpenMenu = useCallback(
+    (event: MouseEvent, tabId: string, openProperties: () => void) => {
+      event.preventDefault();
+      setMenu({
+        tabId,
+        anchor: { x: event.clientX, y: event.clientY },
+        openProperties,
+      });
+    },
+    [],
+  );
 
   const showingSource = runbookView === RunbookView.SOURCE;
   const showingVariables = runbookView === RunbookView.VARIABLES;
@@ -114,6 +122,7 @@ export function TabsBar() {
           anchor={menu.anchor}
           onClose={closeMenu}
           onRename={setRenamingTabId}
+          onProperties={menu.openProperties}
         />
       )}
     </div>

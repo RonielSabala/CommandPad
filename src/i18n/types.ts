@@ -801,6 +801,7 @@ export interface Messages {
         openEditorLabel: string,
         openSourceShortcut: string,
         openEditorShortcut: string,
+        propertiesLabel: string,
         closeLabel: string,
         closeOthersLabel: string,
         closeAllLabel: string,

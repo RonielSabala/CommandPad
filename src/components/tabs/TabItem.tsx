@@ -3,10 +3,12 @@ import { CssClass } from "@/common/constants/css";
 import { DragEffect, MouseButton } from "@/common/constants/events";
 import { AppMode, TabDropSide } from "@/common/enums";
 import type { Tab } from "@/common/types";
+import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import { RenameInput } from "@/components/common/RenameInput";
 import { useRichTooltip } from "@/components/common/tooltip/richTooltip";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { CloseIcon } from "@/components/icons";
+import { RunbookProperties } from "@/components/sidebar/runbooks/menu/LibraryProperties";
 import { blockDrag } from "@/hooks/blockDrag";
 import { useTabUnresolved } from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
@@ -29,7 +31,11 @@ const tabDrag: { srcId: string | null } = { srcId: null };
 interface Props {
   tab: Tab;
   renaming: boolean;
-  onOpenMenu: (event: MouseEvent, tabId: string) => void;
+  onOpenMenu: (
+    event: MouseEvent,
+    tabId: string,
+    openProperties: () => void,
+  ) => void;
   onRename: (tabId: string) => void;
   onRenameEnd: () => void;
 }
@@ -44,6 +50,7 @@ export function TabItem({
   const t = useTranslation();
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const tabId = tab.id;
+  const runbookId = tab.runbookId;
 
   const isActive = useStore((state) => state.activeTabId === tabId);
   const tabLabel = displayLabel(tab.label || t.common.untitledTab, t);
@@ -57,6 +64,9 @@ export function TabItem({
   const unresolved = useTabUnresolved(tab);
   const unresolvedTip = useRichTooltip();
   const showsUnresolvedTip = unresolved || unresolvedTip.pinned;
+
+  const tabRef = useRef<HTMLDivElement>(null);
+  const properties = useInfoTooltip();
 
   const [dragging, setDragging] = useState(false);
   const [dropSide, setDropSide] = useState<TabDropSide | null>(null);
@@ -82,6 +92,7 @@ export function TabItem({
   return (
     <>
       <div
+        ref={tabRef}
         className={classNames(
           "tab",
           isActive && "tab-active",
@@ -98,7 +109,9 @@ export function TabItem({
             event.preventDefault();
           }
         }}
-        onContextMenu={(event) => onOpenMenu(event, tabId)}
+        onContextMenu={(event) =>
+          onOpenMenu(event, tabId, () => properties.open(tabRef.current))
+        }
         onMouseUp={(event) => {
           if (event.button === MouseButton.MIDDLE) {
             event.preventDefault();
@@ -185,8 +198,8 @@ export function TabItem({
             value={tabLabel}
             maxLength={RunbookConfig.LABEL_MAX_LENGTH}
             onCommit={(name) => {
-              if (tab.runbookId) {
-                renameLibraryRunbook(tab.runbookId, name);
+              if (runbookId) {
+                renameLibraryRunbook(runbookId, name);
               }
 
               onRenameEnd();
@@ -227,6 +240,9 @@ export function TabItem({
         unresolvedTip.render((tip) => (
           <TabUnresolvedTooltip tab={tab} tip={tip} />
         ))}
+
+      {runbookId &&
+        properties.render(() => <RunbookProperties runbookId={runbookId} />)}
     </>
   );
 }

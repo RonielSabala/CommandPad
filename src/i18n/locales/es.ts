@@ -1347,6 +1347,7 @@ Si algo sale mal, deshazlo en este orden:
         openEditorLabel,
         openSourceShortcut,
         openEditorShortcut,
+        propertiesLabel,
         closeLabel,
         closeOthersLabel,
         closeAllLabel,
@@ -1355,7 +1356,7 @@ Si algo sale mal, deshazlo en este orden:
       ) => `* **Haz clic** en una pestaña para cambiar a ella, o pulsa **${firstTabShortcut}** a **${lastTabShortcut}** para saltar a una de las nueve primeras.
 * **Arrastra** una pestaña para reordenarla.
 * **Clic con la rueda** del ratón en una pestaña para cerrarla.
-* **Clic derecho** en una pestaña para **${closeLabel}**, **${closeOthersLabel}** y **${closeAllLabel}**.
+* **Clic derecho** en una pestaña para ver sus **${propertiesLabel}**, o para **${closeLabel}**, **${closeOthersLabel}** y **${closeAllLabel}**.
 * **Haz clic** en el **+** al final de la barra de pestañas para abrir una pestaña nueva.
 * **${openSourceLabel}**, al final de la barra de pestañas, cambia los bloques de abajo por el JSON del libro (**${openSourceShortcut}**).
 * **${openEditorLabel}**, a su lado, los cambia por las variables del libro (**${openEditorShortcut}**).

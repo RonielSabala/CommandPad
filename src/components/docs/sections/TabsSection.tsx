@@ -61,6 +61,7 @@ export function TabsDocs() {
           t.variables.openEditorTitle,
           sourceKey,
           variablesKey,
+          t.info.properties,
           t.tabs.close,
           t.tabs.closeOthers,
           t.tabs.closeAll,
