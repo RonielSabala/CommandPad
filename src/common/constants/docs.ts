@@ -1,16 +1,19 @@
+// Section ids
+
 export const DocsSectionId = {
+  // Introduction
   GETTING_STARTED: "getting-started",
-  WORKSPACE: "workspace",
-  HEADER: "header",
-  SIDEBAR: "sidebar",
-  MAIN_PANEL: "main-panel",
+
+  // Blocks
   BLOCKS: "blocks",
   COMMAND_BLOCK: "command-block",
   NOTE_BLOCK: "note-block",
   IMAGE_BLOCK: "image-block",
   DIVIDER_BLOCK: "divider-block",
   RUNBOOK_BLOCK: "runbook-block",
-  EMBEDDING_RUNBOOKS: "embedding-runbooks",
+  MULTI_SELECT: "multi-select",
+
+  // Variables
   VARIABLES: "variables",
   SECRET_VARIABLES: "secret-variables",
   SECRET_ENCRYPTION: "secret-encryption",
@@ -18,12 +21,12 @@ export const DocsSectionId = {
   PARAMETERIZED_PLACEHOLDERS: "parameterized-placeholders",
   PLACEHOLDER_DEFAULTS: "placeholder-defaults",
   VARIABLE_OPERATIONS: "variable-operations",
+  VARIABLE_CASE: "variable-case",
   VARIABLE_SLICING: "variable-slicing",
   VARIABLE_LEN: "variable-len",
   VARIABLE_COUNT: "variable-count",
   VARIABLE_KEY: "variable-key",
   VARIABLE_HASH: "variable-hash",
-  VARIABLE_CASE: "variable-case",
   VARIABLE_STRIP: "variable-strip",
   VARIABLE_FILL: "variable-fill",
   VARIABLE_REPLACE: "variable-replace",
@@ -37,20 +40,38 @@ export const DocsSectionId = {
   VARIABLE_CONDITIONAL: "variable-conditional",
   MULTILINE_REFERENCES: "multiline-references",
   ESCAPING_BRACES: "escaping-braces",
+
+  // Workspace
   TABS: "tabs",
-  MULTI_SELECT: "multi-select",
+  EMBEDDING_RUNBOOKS: "embedding-runbooks",
+  WORKSPACE: "workspace",
+  HEADER: "header",
+  SIDEBAR: "sidebar",
+  MAIN_PANEL: "main-panel",
   RUNBOOK_LIBRARY: "runbook-library",
   READ_MODE: "read-mode",
+
+  // Sharing
   EXPORT: "export",
-  AI_AGENT: "ai-agent",
   CLOUD_EXPORT: "cloud-export",
   CLOUD_LINKED_SYNC: "cloud-linked-sync",
   CLOUD_FILE_MANAGEMENT: "cloud-file-management",
+  AI_AGENT: "ai-agent",
+
+  // Reference
   SETTINGS: "settings",
   KEYBOARD_SHORTCUTS: "keyboard-shortcuts",
   QA: "qa",
 } as const;
 export type DocsSectionId = (typeof DocsSectionId)[keyof typeof DocsSectionId];
+
+const SECTION_IDS = new Set<string>(Object.values(DocsSectionId));
+
+export function isDocsSectionId(value: string): value is DocsSectionId {
+  return SECTION_IDS.has(value);
+}
+
+// Section levels
 
 export const DocsSectionLevel = {
   SECTION: 1,
@@ -59,20 +80,18 @@ export const DocsSectionLevel = {
 export type DocsSectionLevel =
   (typeof DocsSectionLevel)[keyof typeof DocsSectionLevel];
 
+// Display order
+
 export interface DocsSectionEntry {
   id: DocsSectionId;
   level: DocsSectionLevel;
 }
 
-const SECTION_IDS = new Set<string>(Object.values(DocsSectionId));
-
-export function isDocsSectionId(value: string): value is DocsSectionId {
-  return SECTION_IDS.has(value);
-}
-
-// Display order
 export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
+  // Introduction
   { id: DocsSectionId.GETTING_STARTED, level: DocsSectionLevel.SECTION },
+
+  // Blocks
   { id: DocsSectionId.BLOCKS, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.COMMAND_BLOCK, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.NOTE_BLOCK, level: DocsSectionLevel.SUBSECTION },
@@ -80,6 +99,8 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.DIVIDER_BLOCK, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.RUNBOOK_BLOCK, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.MULTI_SELECT, level: DocsSectionLevel.SECTION },
+
+  // Variables
   { id: DocsSectionId.VARIABLES, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.SECRET_VARIABLES, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.SECRET_ENCRYPTION, level: DocsSectionLevel.SUBSECTION },
@@ -124,6 +145,8 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
     level: DocsSectionLevel.SUBSECTION,
   },
   { id: DocsSectionId.ESCAPING_BRACES, level: DocsSectionLevel.SUBSECTION },
+
+  // Workspace
   { id: DocsSectionId.TABS, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.EMBEDDING_RUNBOOKS, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.WORKSPACE, level: DocsSectionLevel.SECTION },
@@ -132,6 +155,8 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
   { id: DocsSectionId.MAIN_PANEL, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.RUNBOOK_LIBRARY, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.READ_MODE, level: DocsSectionLevel.SECTION },
+
+  // Sharing
   { id: DocsSectionId.EXPORT, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.CLOUD_EXPORT, level: DocsSectionLevel.SUBSECTION },
   { id: DocsSectionId.CLOUD_LINKED_SYNC, level: DocsSectionLevel.SUBSECTION },
@@ -140,10 +165,14 @@ export const DOCS_SECTION_ORDER: readonly DocsSectionEntry[] = [
     level: DocsSectionLevel.SUBSECTION,
   },
   { id: DocsSectionId.AI_AGENT, level: DocsSectionLevel.SECTION },
+
+  // Reference
   { id: DocsSectionId.SETTINGS, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.KEYBOARD_SHORTCUTS, level: DocsSectionLevel.SECTION },
   { id: DocsSectionId.QA, level: DocsSectionLevel.SECTION },
 ];
+
+// Numbering
 
 export function getDocsSectionParents(): Record<
   DocsSectionId,
