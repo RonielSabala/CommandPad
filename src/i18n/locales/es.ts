@@ -1,4 +1,4 @@
-import { MIDDLE_DOT } from "@/common/config";
+import { ELLIPSIS, MIDDLE_DOT } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
@@ -30,7 +30,7 @@ const andMore = (count: number) => `_y ${count} más..._`;
 
 export const es: Messages = {
   common: {
-    loading: "Cargando…",
+    loading: `Cargando${ELLIPSIS}`,
     cancel: "Cancelar",
     close: "Cerrar",
     back: "Atrás",
@@ -80,7 +80,7 @@ export const es: Messages = {
   },
   runbooks: {
     title: "LIBROS",
-    searchPlaceholder: "Buscar libros…",
+    searchPlaceholder: `Buscar libros${ELLIPSIS}`,
     recentlyOpened: "abierto recientemente",
     empty: "No hay libros importados.",
     import: "Importar",
@@ -118,7 +118,8 @@ export const es: Messages = {
         shortcut
           ? `Cambios sin guardar ${MIDDLE_DOT} haz clic o pulsa ${shortcut} para guardar en ${provider}`
           : `Cambios sin guardar ${MIDDLE_DOT} haz clic para guardar en ${provider}`,
-      [RunbookSyncStatus.SYNCING]: (provider) => `Guardando en ${provider}…`,
+      [RunbookSyncStatus.SYNCING]: (provider) =>
+        `Guardando en ${provider}${ELLIPSIS}`,
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
         `Sesión cerrada en ${provider} ${MIDDLE_DOT} haz clic para iniciar sesión y guardar`,
       [RunbookSyncStatus.ERROR]: (provider) =>
@@ -126,7 +127,7 @@ export const es: Messages = {
     },
     saveNotice: {
       [SaveOutcome.LOCAL]: () => "CommandPad guarda mientras trabajas.",
-      [SaveOutcome.SAVING]: (provider) => `Guardando en ${provider}…`,
+      [SaveOutcome.SAVING]: (provider) => `Guardando en ${provider}${ELLIPSIS}`,
       [SaveOutcome.SAVED]: (provider) => `Guardado en ${provider}`,
       [SaveOutcome.UP_TO_DATE]: () => "Ya está al día",
       [SaveOutcome.UPDATED]: (provider) => `Actualizado desde ${provider}`,
@@ -143,7 +144,7 @@ export const es: Messages = {
   },
   variables: {
     title: "VARIABLES",
-    searchPlaceholder: "Buscar variables…",
+    searchPlaceholder: `Buscar variables${ELLIPSIS}`,
     empty: "No hay variables definidas.",
     emptyTitle: "Aún no hay variables.",
     emptyHint: "Agrega una abajo y referénciala donde quieras.",
@@ -163,8 +164,8 @@ export const es: Messages = {
       "Un grupo con nombre y plegable para las variables que tiene debajo, para apartar las que casi no tocas. Solo el editor de variables muestra secciones.",
     optionPlaceholder: "elige una opción",
     noOptions: "Aún no hay opciones",
-    searchOptionsPlaceholder: "Buscar opciones…",
-    addOptionPlaceholder: "Agregar opción…",
+    searchOptionsPlaceholder: `Buscar opciones${ELLIPSIS}`,
+    addOptionPlaceholder: `Agregar opción${ELLIPSIS}`,
     addOption: "Agregar opción",
     optionActions: "Acciones de la opción",
     editOption: "Editar opción",
@@ -564,7 +565,7 @@ export const es: Messages = {
     chooseFolder: "Elige una carpeta donde guardar.",
     selectFolder: "Guardar aquí",
     confirm: "Exportar",
-    savingTo: (provider) => `Guardando en ${provider}…`,
+    savingTo: (provider) => `Guardando en ${provider}${ELLIPSIS}`,
     savedTo: (provider) => `Guardado en ${provider}`,
     exportError: "La exportación falló. Inténtalo de nuevo.",
     tryAgain: "Intentar de nuevo",
@@ -625,7 +626,7 @@ export const es: Messages = {
     skip: "Ahora no",
     skipOne: "Omitir este",
     skipAll: "Omitir todos",
-    working: "Derivando clave…",
+    working: `Derivando clave${ELLIPSIS}`,
     errors: {
       [VaultError.TOO_SHORT]: `Usa al menos ${VaultConfig.MIN_PASSPHRASE_LENGTH} caracteres.`,
       [VaultError.MISMATCH]: "Las dos frases de contraseña no coinciden.",

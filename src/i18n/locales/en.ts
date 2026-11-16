@@ -1,4 +1,4 @@
-import { MIDDLE_DOT } from "@/common/config";
+import { ELLIPSIS, MIDDLE_DOT } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
 import {
   BlockType,
@@ -30,7 +30,7 @@ const andMore = (count: number) => `_and ${count} more..._`;
 
 export const en: Messages = {
   common: {
-    loading: "Loading…",
+    loading: `Loading${ELLIPSIS}`,
     cancel: "Cancel",
     close: "Close",
     back: "Back",
@@ -80,7 +80,7 @@ export const en: Messages = {
   },
   runbooks: {
     title: "RUNBOOKS",
-    searchPlaceholder: "Search runbooks…",
+    searchPlaceholder: `Search runbooks${ELLIPSIS}`,
     recentlyOpened: "recently opened",
     empty: "No runbooks imported.",
     import: "Import",
@@ -118,7 +118,8 @@ export const en: Messages = {
         shortcut
           ? `Unsaved changes ${MIDDLE_DOT} click or press ${shortcut} to save to ${provider}`
           : `Unsaved changes ${MIDDLE_DOT} click to save to ${provider}`,
-      [RunbookSyncStatus.SYNCING]: (provider) => `Saving to ${provider}…`,
+      [RunbookSyncStatus.SYNCING]: (provider) =>
+        `Saving to ${provider}${ELLIPSIS}`,
       [RunbookSyncStatus.SIGNED_OUT]: (provider) =>
         `Signed out of ${provider} ${MIDDLE_DOT} click to sign in and save`,
       [RunbookSyncStatus.ERROR]: (provider) =>
@@ -126,7 +127,7 @@ export const en: Messages = {
     },
     saveNotice: {
       [SaveOutcome.LOCAL]: () => "CommandPad saves as you go.",
-      [SaveOutcome.SAVING]: (provider) => `Saving to ${provider}…`,
+      [SaveOutcome.SAVING]: (provider) => `Saving to ${provider}${ELLIPSIS}`,
       [SaveOutcome.SAVED]: (provider) => `Saved to ${provider}`,
       [SaveOutcome.UP_TO_DATE]: () => "Already up to date",
       [SaveOutcome.UPDATED]: (provider) => `Updated from ${provider}`,
@@ -143,7 +144,7 @@ export const en: Messages = {
   },
   variables: {
     title: "VARIABLES",
-    searchPlaceholder: "Search variables…",
+    searchPlaceholder: `Search variables${ELLIPSIS}`,
     empty: "No variables defined.",
     emptyTitle: "No variables yet.",
     emptyHint: "Add one below, then reference it anywhere.",
@@ -163,8 +164,8 @@ export const en: Messages = {
       "A named, collapsible group for the variables below it, to tuck away the ones you rarely touch. Only the variables editor shows sections.",
     optionPlaceholder: "choose an option",
     noOptions: "No options yet",
-    searchOptionsPlaceholder: "Search options…",
-    addOptionPlaceholder: "Add option…",
+    searchOptionsPlaceholder: `Search options${ELLIPSIS}`,
+    addOptionPlaceholder: `Add option${ELLIPSIS}`,
     addOption: "Add option",
     optionActions: "Option actions",
     editOption: "Edit option",
@@ -552,7 +553,7 @@ export const en: Messages = {
     chooseFolder: "Choose a folder to save into.",
     selectFolder: "Save here",
     confirm: "Export",
-    savingTo: (provider) => `Saving to ${provider}…`,
+    savingTo: (provider) => `Saving to ${provider}${ELLIPSIS}`,
     savedTo: (provider) => `Saved to ${provider}`,
     exportError: "Export failed. Please try again.",
     tryAgain: "Try again",
@@ -613,7 +614,7 @@ export const en: Messages = {
     skip: "Not now",
     skipOne: "Skip this one",
     skipAll: "Skip all",
-    working: "Deriving key…",
+    working: `Deriving key${ELLIPSIS}`,
     errors: {
       [VaultError.TOO_SHORT]: `Use at least ${VaultConfig.MIN_PASSPHRASE_LENGTH} characters.`,
       [VaultError.MISMATCH]: "The two passphrases do not match.",
