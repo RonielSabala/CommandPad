@@ -1,3 +1,5 @@
+// App
+
 export const Theme = {
   DARK: "dark",
   LIGHT: "light",
@@ -16,24 +18,15 @@ export const AppMode = {
 } as const;
 export type AppMode = (typeof AppMode)[keyof typeof AppMode];
 
-export const ExportFormat = {
-  JSON: "json",
-  MD: "md",
-  TXT: "txt",
+export const SettingsCategory = {
+  APPEARANCE: "appearance",
+  EDITOR: "editor",
+  KEYBOARD: "keyboard",
+  WORKSPACE: "workspace",
 } as const;
-export type ExportFormat = (typeof ExportFormat)[keyof typeof ExportFormat];
+export type SettingsCategory =
+  (typeof SettingsCategory)[keyof typeof SettingsCategory];
 
-/** How closely a name matches a search. */
-export const QueryMatch = {
-  EXACT: 0,
-  PREFIX: 1,
-  WORD_START: 2,
-  INSIDE: 3,
-  ELSEWHERE: 4,
-} as const;
-export type QueryMatch = (typeof QueryMatch)[keyof typeof QueryMatch];
-
-/** A workspace action quick open can run. */
 export const PaletteCommand = {
   NEW_RUNBOOK: "newRunbook",
   NEW_FOLDER: "newFolder",
@@ -54,15 +47,45 @@ export const PaletteCommand = {
 export type PaletteCommand =
   (typeof PaletteCommand)[keyof typeof PaletteCommand];
 
-/** A page of the settings modal. */
-export const SettingsCategory = {
-  APPEARANCE: "appearance",
-  EDITOR: "editor",
-  KEYBOARD: "keyboard",
-  WORKSPACE: "workspace",
+/** How closely a name matches a search. */
+export const QueryMatch = {
+  EXACT: 0,
+  PREFIX: 1,
+  WORD_START: 2,
+  INSIDE: 3,
+  ELSEWHERE: 4,
 } as const;
-export type SettingsCategory =
-  (typeof SettingsCategory)[keyof typeof SettingsCategory];
+export type QueryMatch = (typeof QueryMatch)[keyof typeof QueryMatch];
+
+// Directions and order
+
+export const MoveDirection = {
+  UP: "up",
+  DOWN: "down",
+} as const;
+export type MoveDirection = (typeof MoveDirection)[keyof typeof MoveDirection];
+
+export const InsertPosition = {
+  ABOVE: "above",
+  BELOW: "below",
+} as const;
+export type InsertPosition =
+  (typeof InsertPosition)[keyof typeof InsertPosition];
+
+export const HistoryDirection = {
+  BACK: "back",
+  FORWARD: "forward",
+} as const;
+export type HistoryDirection =
+  (typeof HistoryDirection)[keyof typeof HistoryDirection];
+
+export const SortDirection = {
+  ASC: "asc",
+  DESC: "desc",
+} as const;
+export type SortDirection = (typeof SortDirection)[keyof typeof SortDirection];
+
+// UI components
 
 export const SectionState = {
   EXPANDED: "expanded",
@@ -83,6 +106,22 @@ export const TooltipSide = {
 } as const;
 export type TooltipSide = (typeof TooltipSide)[keyof typeof TooltipSide];
 
+export const DialogTone = {
+  INFO: "info",
+  WARNING: "warning",
+  DANGER: "danger",
+} as const;
+export type DialogTone = (typeof DialogTone)[keyof typeof DialogTone];
+
+export const RevealTone = {
+  NEUTRAL: "neutral",
+  RESOLVED: "resolved",
+  UNRESOLVED: "unresolved",
+} as const;
+export type RevealTone = (typeof RevealTone)[keyof typeof RevealTone];
+
+// Panels and tabs
+
 export const PanelSide = {
   LEFT: "left",
   RIGHT: "right",
@@ -101,11 +140,60 @@ export const TabDropSide = {
 } as const;
 export type TabDropSide = (typeof TabDropSide)[keyof typeof TabDropSide];
 
-export const MoveDirection = {
-  UP: "up",
-  DOWN: "down",
+export const RunbookView = {
+  SOURCE: "source",
+  PREVIEW: "preview",
+  VARIABLES: "variables",
 } as const;
-export type MoveDirection = (typeof MoveDirection)[keyof typeof MoveDirection];
+export type RunbookView = (typeof RunbookView)[keyof typeof RunbookView];
+
+// Selection and dragging
+
+export const SelectionGroup = {
+  BLOCK: "block",
+  VARIABLE: "variable",
+} as const;
+export type SelectionGroup =
+  (typeof SelectionGroup)[keyof typeof SelectionGroup];
+
+export const LassoMode = {
+  SELECT: "select",
+  DESELECT: "deselect",
+} as const;
+export type LassoMode = (typeof LassoMode)[keyof typeof LassoMode];
+
+export const DragGroup = {
+  LIBRARY: "library",
+  VARIABLE: "variable",
+  VARIABLE_OPTION: "variable-option",
+} as const;
+export type DragGroup = (typeof DragGroup)[keyof typeof DragGroup];
+
+// Library
+
+export const LibraryItemKind = {
+  FOLDER: "folder",
+  RUNBOOK: "runbook",
+} as const;
+export type LibraryItemKind =
+  (typeof LibraryItemKind)[keyof typeof LibraryItemKind];
+
+export const LibraryDropZone = {
+  BEFORE: "before",
+  AFTER: "after",
+  INTO: "into",
+} as const;
+export type LibraryDropZone =
+  (typeof LibraryDropZone)[keyof typeof LibraryDropZone];
+
+export const ExportFormat = {
+  JSON: "json",
+  MD: "md",
+  TXT: "txt",
+} as const;
+export type ExportFormat = (typeof ExportFormat)[keyof typeof ExportFormat];
+
+// Blocks
 
 export const BlockType = {
   COMMAND: "command",
@@ -115,6 +203,14 @@ export const BlockType = {
   DIVIDER: "divider",
 } as const;
 export type BlockType = (typeof BlockType)[keyof typeof BlockType];
+
+/** Every surface that clips itself behind a show-more toggle. */
+export const ClampSurface = {
+  PREVIEW: "preview",
+  EDITOR: "editor",
+  VALUE: "value",
+} as const;
+export type ClampSurface = (typeof ClampSurface)[keyof typeof ClampSurface];
 
 export const EmbeddedRunbookStatus = {
   ERROR: "error",
@@ -133,12 +229,26 @@ export const RunbookEmbedView = {
 export type RunbookEmbedView =
   (typeof RunbookEmbedView)[keyof typeof RunbookEmbedView];
 
-export const InsertPosition = {
-  ABOVE: "above",
-  BELOW: "below",
+// Code
+
+export const CodeLanguage = {
+  PLAIN: "plaintext",
+  BASH: "shell",
+  POWERSHELL: "powershell",
+  JSON: "json",
+  SQL: "sql",
+  XML: "xml",
+  YAML: "yaml",
 } as const;
-export type InsertPosition =
-  (typeof InsertPosition)[keyof typeof InsertPosition];
+export type CodeLanguage = (typeof CodeLanguage)[keyof typeof CodeLanguage];
+
+export const CodeRendering = {
+  LIVE: "live",
+  STATIC: "static",
+} as const;
+export type CodeRendering = (typeof CodeRendering)[keyof typeof CodeRendering];
+
+// Notes
 
 export const NoteStyle = {
   BODY: "body",
@@ -146,6 +256,76 @@ export const NoteStyle = {
   HEADING: "heading",
 } as const;
 export type NoteStyle = (typeof NoteStyle)[keyof typeof NoteStyle];
+
+export const NoteNodeType = {
+  TEXT: "text",
+  TABLE: "table",
+  LIST: "list",
+} as const;
+export type NoteNodeType = (typeof NoteNodeType)[keyof typeof NoteNodeType];
+
+export const NoteSegmentType = {
+  TEXT: "text",
+  BOLD: "bold",
+  ITALIC: "italic",
+  STRIKETHROUGH: "strikethrough",
+  CODE: "code",
+  LINK: "link",
+} as const;
+export type NoteSegmentType =
+  (typeof NoteSegmentType)[keyof typeof NoteSegmentType];
+
+export const NoteTableAlign = {
+  LEFT: "left",
+  CENTER: "center",
+  RIGHT: "right",
+} as const;
+export type NoteTableAlign =
+  (typeof NoteTableAlign)[keyof typeof NoteTableAlign];
+
+export const NoteFormat = {
+  BOLD: "bold",
+  ITALIC: "italic",
+  STRIKETHROUGH: "strikethrough",
+  CODE: "code",
+  NUMBERED_LIST: "numberedList",
+  BULLETED_LIST: "bulletedList",
+  CLEAR: "clear",
+} as const;
+export type NoteFormat = (typeof NoteFormat)[keyof typeof NoteFormat];
+
+export const NoteFormatState = {
+  ON: "on",
+  OFF: "off",
+  DISABLED: "disabled",
+} as const;
+export type NoteFormatState =
+  (typeof NoteFormatState)[keyof typeof NoteFormatState];
+
+// Variables
+
+export const VariableKind = {
+  TEXT: "text",
+  ENUM: "enum",
+} as const;
+export type VariableKind = (typeof VariableKind)[keyof typeof VariableKind];
+
+export const VariableField = {
+  KEY: "key",
+  VALUE: "value",
+  SECRET: "secret",
+  LANGUAGE: "language",
+} as const;
+export type VariableField = (typeof VariableField)[keyof typeof VariableField];
+
+export const VariableEntryKind = {
+  VARIABLE: "variable",
+  SECTION: "section",
+} as const;
+export type VariableEntryKind =
+  (typeof VariableEntryKind)[keyof typeof VariableEntryKind];
+
+// References
 
 export const ReferenceSurface = {
   COMMAND: "command",
@@ -181,207 +361,7 @@ export const UnresolvedCause = {
 export type UnresolvedCause =
   (typeof UnresolvedCause)[keyof typeof UnresolvedCause];
 
-export const NoteSegmentType = {
-  TEXT: "text",
-  BOLD: "bold",
-  ITALIC: "italic",
-  STRIKETHROUGH: "strikethrough",
-  CODE: "code",
-  LINK: "link",
-} as const;
-export type NoteSegmentType =
-  (typeof NoteSegmentType)[keyof typeof NoteSegmentType];
-
-export const NoteFormat = {
-  BOLD: "bold",
-  ITALIC: "italic",
-  STRIKETHROUGH: "strikethrough",
-  CODE: "code",
-  NUMBERED_LIST: "numberedList",
-  BULLETED_LIST: "bulletedList",
-  CLEAR: "clear",
-} as const;
-export type NoteFormat = (typeof NoteFormat)[keyof typeof NoteFormat];
-
-export const NoteFormatState = {
-  OFF: "off",
-  ON: "on",
-  DISABLED: "disabled",
-} as const;
-export type NoteFormatState =
-  (typeof NoteFormatState)[keyof typeof NoteFormatState];
-
-export const NoteNodeType = {
-  TEXT: "text",
-  TABLE: "table",
-  LIST: "list",
-} as const;
-export type NoteNodeType = (typeof NoteNodeType)[keyof typeof NoteNodeType];
-
-export const NoteTableAlign = {
-  LEFT: "left",
-  CENTER: "center",
-  RIGHT: "right",
-} as const;
-export type NoteTableAlign =
-  (typeof NoteTableAlign)[keyof typeof NoteTableAlign];
-
-export const VariableField = {
-  KEY: "key",
-  VALUE: "value",
-  SECRET: "secret",
-  LANGUAGE: "language",
-} as const;
-export type VariableField = (typeof VariableField)[keyof typeof VariableField];
-
-export const VariableKind = {
-  TEXT: "text",
-  ENUM: "enum",
-} as const;
-export type VariableKind = (typeof VariableKind)[keyof typeof VariableKind];
-
-export const VariableEntryKind = {
-  VARIABLE: "variable",
-  SECTION: "section",
-} as const;
-export type VariableEntryKind =
-  (typeof VariableEntryKind)[keyof typeof VariableEntryKind];
-
-export const SelectionGroup = {
-  BLOCK: "block",
-  VARIABLE: "variable",
-} as const;
-export type SelectionGroup =
-  (typeof SelectionGroup)[keyof typeof SelectionGroup];
-
-export const LassoMode = {
-  SELECT: "select",
-  DESELECT: "deselect",
-} as const;
-export type LassoMode = (typeof LassoMode)[keyof typeof LassoMode];
-
-export const DragGroup = {
-  LIBRARY: "library",
-  VARIABLE: "variable",
-  VARIABLE_OPTION: "variable-option",
-} as const;
-export type DragGroup = (typeof DragGroup)[keyof typeof DragGroup];
-
-export const LibraryItemKind = {
-  FOLDER: "folder",
-  RUNBOOK: "runbook",
-} as const;
-export type LibraryItemKind =
-  (typeof LibraryItemKind)[keyof typeof LibraryItemKind];
-
-export const LibraryDropZone = {
-  BEFORE: "before",
-  AFTER: "after",
-  INTO: "into",
-} as const;
-export type LibraryDropZone =
-  (typeof LibraryDropZone)[keyof typeof LibraryDropZone];
-
-export const HttpMethod = {
-  GET: "GET",
-  HEAD: "HEAD",
-  POST: "POST",
-  PUT: "PUT",
-  PATCH: "PATCH",
-  DELETE: "DELETE",
-} as const;
-export type HttpMethod = (typeof HttpMethod)[keyof typeof HttpMethod];
-
-export const HttpStatus = {
-  NOT_FOUND: 404,
-} as const;
-export type HttpStatus = (typeof HttpStatus)[keyof typeof HttpStatus];
-
-export const CloudProvider = {
-  ONEDRIVE: "onedrive",
-  GOOGLE_DRIVE: "google-drive",
-} as const;
-export type CloudProvider = (typeof CloudProvider)[keyof typeof CloudProvider];
-
-export const SyncDestination = {
-  LOCAL: "local",
-  ONEDRIVE: CloudProvider.ONEDRIVE,
-  GOOGLE_DRIVE: CloudProvider.GOOGLE_DRIVE,
-} as const;
-export type SyncDestination =
-  (typeof SyncDestination)[keyof typeof SyncDestination];
-
-export const CloudSortColumn = {
-  NAME: "name",
-  MODIFIED: "modified",
-  SIZE: "size",
-} as const;
-export type CloudSortColumn =
-  (typeof CloudSortColumn)[keyof typeof CloudSortColumn];
-
-export const SortDirection = {
-  ASC: "asc",
-  DESC: "desc",
-} as const;
-export type SortDirection = (typeof SortDirection)[keyof typeof SortDirection];
-
-export const HistoryDirection = {
-  BACK: "back",
-  FORWARD: "forward",
-} as const;
-export type HistoryDirection =
-  (typeof HistoryDirection)[keyof typeof HistoryDirection];
-
-export const CloudExportStatus = {
-  IDLE: "idle",
-  UPLOADING: "uploading",
-  SUCCESS: "success",
-  ERROR: "error",
-} as const;
-export type CloudExportStatus =
-  (typeof CloudExportStatus)[keyof typeof CloudExportStatus];
-
-export const RunbookSyncStatus = {
-  SYNCED: "synced",
-  UNSAVED: "unsaved",
-  SYNCING: "syncing",
-  SIGNED_OUT: "signed-out",
-  ERROR: "error",
-} as const;
-export type RunbookSyncStatus =
-  (typeof RunbookSyncStatus)[keyof typeof RunbookSyncStatus];
-
-export const RunbookView = {
-  SOURCE: "source",
-  PREVIEW: "preview",
-  VARIABLES: "variables",
-} as const;
-export type RunbookView = (typeof RunbookView)[keyof typeof RunbookView];
-
-/** Every surface that clips itself behind a show-more toggle. */
-export const ClampSurface = {
-  PREVIEW: "preview",
-  EDITOR: "editor",
-  VALUE: "value",
-} as const;
-export type ClampSurface = (typeof ClampSurface)[keyof typeof ClampSurface];
-
-export const CodeLanguage = {
-  PLAIN: "plaintext",
-  BASH: "shell",
-  POWERSHELL: "powershell",
-  JSON: "json",
-  SQL: "sql",
-  XML: "xml",
-  YAML: "yaml",
-} as const;
-export type CodeLanguage = (typeof CodeLanguage)[keyof typeof CodeLanguage];
-
-export const CodeRendering = {
-  LIVE: "live",
-  STATIC: "static",
-} as const;
-export type CodeRendering = (typeof CodeRendering)[keyof typeof CodeRendering];
+// Vault
 
 export const VaultStatus = {
   ABSENT: "absent",
@@ -413,6 +393,66 @@ export const VaultError = {
 } as const;
 export type VaultError = (typeof VaultError)[keyof typeof VaultError];
 
+// HTTP
+
+export const HttpMethod = {
+  GET: "GET",
+  HEAD: "HEAD",
+  POST: "POST",
+  PUT: "PUT",
+  PATCH: "PATCH",
+  DELETE: "DELETE",
+} as const;
+export type HttpMethod = (typeof HttpMethod)[keyof typeof HttpMethod];
+
+export const HttpStatus = {
+  NOT_FOUND: 404,
+} as const;
+export type HttpStatus = (typeof HttpStatus)[keyof typeof HttpStatus];
+
+// Cloud sync
+
+export const CloudProvider = {
+  ONEDRIVE: "onedrive",
+  GOOGLE_DRIVE: "google-drive",
+} as const;
+export type CloudProvider = (typeof CloudProvider)[keyof typeof CloudProvider];
+
+export const SyncDestination = {
+  LOCAL: "local",
+  ONEDRIVE: CloudProvider.ONEDRIVE,
+  GOOGLE_DRIVE: CloudProvider.GOOGLE_DRIVE,
+} as const;
+export type SyncDestination =
+  (typeof SyncDestination)[keyof typeof SyncDestination];
+
+export const CloudSortColumn = {
+  NAME: "name",
+  MODIFIED: "modified",
+  SIZE: "size",
+} as const;
+export type CloudSortColumn =
+  (typeof CloudSortColumn)[keyof typeof CloudSortColumn];
+
+export const CloudExportStatus = {
+  IDLE: "idle",
+  UPLOADING: "uploading",
+  SUCCESS: "success",
+  ERROR: "error",
+} as const;
+export type CloudExportStatus =
+  (typeof CloudExportStatus)[keyof typeof CloudExportStatus];
+
+export const RunbookSyncStatus = {
+  SYNCED: "synced",
+  UNSAVED: "unsaved",
+  SYNCING: "syncing",
+  SIGNED_OUT: "signed-out",
+  ERROR: "error",
+} as const;
+export type RunbookSyncStatus =
+  (typeof RunbookSyncStatus)[keyof typeof RunbookSyncStatus];
+
 export const SaveOutcome = {
   LOCAL: "local",
   SAVING: "saving",
@@ -423,18 +463,3 @@ export const SaveOutcome = {
   FAILED: "failed",
 } as const;
 export type SaveOutcome = (typeof SaveOutcome)[keyof typeof SaveOutcome];
-
-export const DialogTone = {
-  DANGER: "danger",
-  WARNING: "warning",
-  INFO: "info",
-} as const;
-export type DialogTone = (typeof DialogTone)[keyof typeof DialogTone];
-
-/** The tint a revealed row flashes in. */
-export const RevealTone = {
-  NEUTRAL: "neutral",
-  RESOLVED: "resolved",
-  UNRESOLVED: "unresolved",
-} as const;
-export type RevealTone = (typeof RevealTone)[keyof typeof RevealTone];
