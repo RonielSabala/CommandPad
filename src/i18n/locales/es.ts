@@ -1,5 +1,6 @@
 import { ELLIPSIS, MIDDLE_DOT } from "@/common/config";
 import { DocsSectionId } from "@/common/constants/docs";
+import { COMMAND_PROMPT_PREFIX } from "@/common/editorConfig";
 import {
   BlockType,
   EmbeddedRunbookStatus,
@@ -922,8 +923,7 @@ export const es: Messages = {
     },
     commandPrompt: {
       title: "Prompt de los comandos",
-      description:
-        "Muestra el $ delante de la primera línea del editor de un comando.",
+      description: `Muestra el ${COMMAND_PROMPT_PREFIX} delante de la primera línea del editor de un comando.`,
     },
     clampLines: {
       title: "Límite de los comandos largos",
@@ -1994,7 +1994,7 @@ Si algo sale mal, deshazlo en este orden:
       ) =>
         `Elige una categoría a la izquierda:
 * **${appearanceLabel}**: el tema claro u oscuro, o el que usa tu dispositivo, y el idioma de la interfaz.
-* **${editorLabel}**: el lenguaje con el que empieza un comando o una variable nuevos, el ancho de una tabulación, el prompt $ del editor de un comando, cuántas líneas muestra un comando largo antes de plegarse, cómo se reparte una fila de variable entre clave y valor, el corrector ortográfico de las notas, y el minimapa y el lado en el que se sitúa.
+* **${editorLabel}**: el lenguaje con el que empieza un comando o una variable nuevos, el ancho de una tabulación, el prompt ${COMMAND_PROMPT_PREFIX} del editor de un comando, cuántas líneas muestra un comando largo antes de plegarse, cómo se reparte una fila de variable entre clave y valor, el corrector ortográfico de las notas, y el minimapa y el lado en el que se sitúa.
 * **${keyboardLabel}**: todos los atajos, con buscador. Haz clic en un atajo, pulsa las teclas nuevas y luego \`Enter\` o la marca de verificación junto a ellas para quedártelas, o \`Escape\` o la cruz para cancelar. Si otra acción ya usa esas teclas, la app te dice cuál, y al aceptar pasan a la nueva. El menú de cada fila también quita un atajo o recupera su valor predeterminado, y **${resetAllLabel}** recupera todos los predeterminados.
 * **${workspaceLabel}**: cuántos libros abiertos recientemente lista primero la apertura rápida. **${resetLabel}** borra de este navegador todas las pestañas, libros, variables y preferencias. No se puede deshacer, así que la app siempre te pide confirmación antes.`,
     },
