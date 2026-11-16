@@ -376,3 +376,44 @@ export function ClearFormattingIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function PaletteIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
+      <path d="M8 14.5A6.5 6.5 0 1 1 14.5 8c0 1.66-1.34 2.5-3 2.5h-1.25a1.25 1.25 0 0 0-.9 2.12c.6.62.2 1.88-1.35 1.88z" />
+      <g fill="currentColor" stroke="none">
+        <circle cx="4.75" cy="8.5" r="0.9" />
+        <circle cx="5.5" cy="5.25" r="0.9" />
+        <circle cx="8.75" cy="4.25" r="0.9" />
+        <circle cx="11.5" cy="6.25" r="0.9" />
+      </g>
+    </svg>
+  );
+}
+
+export function CodeSquareIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
+      <rect x="1.5" y="1.5" width="13" height="13" rx="2.5" />
+      <path d="M6.25 5.5 3.75 8l2.5 2.5M9.75 5.5l2.5 2.5-2.5 2.5" />
+    </svg>
+  );
+}
+
+export function KeyboardIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
+      <rect x="0.75" y="3" width="14.5" height="10" rx="2" />
+      <path d="M2.75 5.75h.5m2 0h.5m2 0h.5m2 0h.5m2 0h.5M2.75 8h.5m2 0h.5m2 0h.5m2 0h.5m2 0h.5M5 10.25h6" />
+    </svg>
+  );
+}
+
+export function WindowSidebarIcon(props: IconProps) {
+  return (
+    <svg aria-hidden={true} viewBox="0 0 16 16" {...props}>
+      <rect x="1" y="2" width="14" height="12" rx="2" />
+      <path d="M1 5.5h14M5.5 5.5V14" />
+    </svg>
+  );
+}

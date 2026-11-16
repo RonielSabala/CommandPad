@@ -1,16 +1,16 @@
 import { CssClass } from "@/common/constants/css";
 import { AriaCurrent } from "@/common/constants/dom";
 import { SettingsCategory } from "@/common/enums";
+import {
+  CodeSquareIcon,
+  KeyboardIcon,
+  PaletteIcon,
+  WindowSidebarIcon,
+} from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { useStore } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useState, type ComponentType, type SVGProps } from "react";
-import {
-  DatabaseFill,
-  KeyboardFill,
-  PaletteFill,
-  TerminalFill,
-} from "react-bootstrap-icons";
 
 import { Modal, ModalTitle } from "../Modal";
 import { AppearanceSettings } from "./AppearanceSettings";
@@ -21,29 +21,29 @@ import { WorkspaceSettings } from "./WorkspaceSettings";
 
 interface SettingsPageDefinition {
   icon: ComponentType<SVGProps<SVGSVGElement>>;
-  iconClass?: string;
   Page: ComponentType;
 }
 
 const SETTINGS_PAGES: Record<SettingsCategory, SettingsPageDefinition> = {
   [SettingsCategory.APPEARANCE]: {
-    icon: PaletteFill,
+    icon: PaletteIcon,
     Page: AppearanceSettings,
   },
   [SettingsCategory.EDITOR]: {
-    icon: TerminalFill,
-    iconClass: CssClass.ICON_SEMIBOLD,
+    icon: CodeSquareIcon,
     Page: EditorSettings,
   },
   [SettingsCategory.KEYBOARD]: {
-    icon: KeyboardFill,
+    icon: KeyboardIcon,
     Page: KeyboardSettings,
   },
   [SettingsCategory.WORKSPACE]: {
-    icon: DatabaseFill,
+    icon: WindowSidebarIcon,
     Page: WorkspaceSettings,
   },
 };
+
+const SETTINGS_ICON_CLASS = classNames(CssClass.ICON, CssClass.ICON_SEMIBOLD);
 
 const CATEGORY_ORDER = Object.values(SettingsCategory);
 
@@ -64,7 +64,7 @@ export function SettingsModal() {
 
         <ul className="settings-nav-list">
           {CATEGORY_ORDER.map((id) => {
-            const { icon: Icon, iconClass } = SETTINGS_PAGES[id];
+            const { icon: Icon } = SETTINGS_PAGES[id];
             const active = id === category;
 
             return (
@@ -78,7 +78,7 @@ export function SettingsModal() {
                   aria-current={active ? AriaCurrent.PAGE : undefined}
                   onClick={() => setCategory(id)}
                 >
-                  <Icon className={classNames(CssClass.ICON, iconClass)} />
+                  <Icon className={SETTINGS_ICON_CLASS} />
                   {t.settings.categories[id]}
                 </button>
               </li>
