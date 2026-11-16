@@ -3,37 +3,41 @@ import {
   CODE_LANGUAGE_ORDER,
   JsonSchemaType,
   RunbookField,
-  VariableField,
+  VariableJsonField,
   VariableSectionField,
 } from "@/common/editorConfig";
 
 const VARIABLE_PROPERTIES = {
-  [VariableField.KEY]: { type: JsonSchemaType.STRING },
-  [VariableField.VALUE]: { type: JsonSchemaType.STRING },
+  [VariableJsonField.KEY]: { type: JsonSchemaType.STRING },
+  [VariableJsonField.VALUE]: { type: JsonSchemaType.STRING },
 };
 
 const TEXT_VARIABLE_SCHEMA = {
   type: JsonSchemaType.OBJECT,
-  required: [VariableField.KEY, VariableField.VALUE],
+  required: [VariableJsonField.KEY, VariableJsonField.VALUE],
   properties: {
     ...VARIABLE_PROPERTIES,
-    [VariableField.SECRET]: { type: JsonSchemaType.BOOLEAN },
-    [VariableField.LANGUAGE]: { enum: [...CODE_LANGUAGE_ORDER] },
-    [VariableField.OPTIONS]: false,
+    [VariableJsonField.SECRET]: { type: JsonSchemaType.BOOLEAN },
+    [VariableJsonField.LANGUAGE]: { enum: [...CODE_LANGUAGE_ORDER] },
+    [VariableJsonField.OPTIONS]: false,
   },
 };
 
 const ENUM_VARIABLE_SCHEMA = {
   type: JsonSchemaType.OBJECT,
-  required: [VariableField.KEY, VariableField.VALUE, VariableField.OPTIONS],
+  required: [
+    VariableJsonField.KEY,
+    VariableJsonField.VALUE,
+    VariableJsonField.OPTIONS,
+  ],
   properties: {
     ...VARIABLE_PROPERTIES,
-    [VariableField.OPTIONS]: {
+    [VariableJsonField.OPTIONS]: {
       type: JsonSchemaType.ARRAY,
       items: { type: JsonSchemaType.STRING },
     },
-    [VariableField.SECRET]: false,
-    [VariableField.LANGUAGE]: false,
+    [VariableJsonField.SECRET]: false,
+    [VariableJsonField.LANGUAGE]: false,
   },
 };
 

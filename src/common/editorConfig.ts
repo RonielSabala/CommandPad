@@ -1,4 +1,4 @@
-import { CodeLanguage } from "./enums";
+import { CodeLanguage, VariableField } from "./enums";
 
 // Languages
 
@@ -321,11 +321,8 @@ export const RunbookField = {
   BLOCKS: "blocks",
 } as const;
 
-export const VariableField = {
-  KEY: "key",
-  VALUE: "value",
-  SECRET: "secret",
-  LANGUAGE: "language",
+export const VariableJsonField = {
+  ...VariableField,
   OPTIONS: "options",
 } as const;
 
