@@ -1,3 +1,4 @@
+import { charFlagTable } from "./charFlags";
 import {
   ANY,
   DIGIT,
@@ -24,11 +25,11 @@ import {
 // References
 
 export const VariableSyntax = {
+  BRACE_OPEN: "{",
+  BRACE_CLOSE: "}",
   PARAM_SEPARATOR: ";",
   PARAM_ASSIGNMENT: "=",
   OPERATION_SEPARATOR: "|",
-  BRACE_OPEN: "{",
-  BRACE_CLOSE: "}",
   COPY_SUFFIX: "_COPY",
 } as const;
 
@@ -52,6 +53,27 @@ export const CallSyntax = {
   ARGUMENT_SEPARATOR: ";",
   VARIADIC: Number.POSITIVE_INFINITY,
 } as const;
+
+// Character classes
+
+/** One bit per character splitting a reference body. */
+export const SyntaxChar = {
+  BRACE_OPEN: 1 << 0,
+  BRACE_CLOSE: 1 << 1,
+  PARAM_SEPARATOR: 1 << 2,
+  OPERATION_SEPARATOR: 1 << 3,
+  ARGUMENT_OPEN: 1 << 4,
+  ARGUMENT_CLOSE: 1 << 5,
+} as const;
+
+export const SYNTAX_CHAR_FLAGS = charFlagTable([
+  [VariableSyntax.BRACE_OPEN, SyntaxChar.BRACE_OPEN],
+  [VariableSyntax.BRACE_CLOSE, SyntaxChar.BRACE_CLOSE],
+  [VariableSyntax.PARAM_SEPARATOR, SyntaxChar.PARAM_SEPARATOR],
+  [VariableSyntax.OPERATION_SEPARATOR, SyntaxChar.OPERATION_SEPARATOR],
+  [CallSyntax.ARGUMENT_OPEN, SyntaxChar.ARGUMENT_OPEN],
+  [CallSyntax.ARGUMENT_CLOSE, SyntaxChar.ARGUMENT_CLOSE],
+]);
 
 export const CallGroup = {
   KEYWORD: "keyword",

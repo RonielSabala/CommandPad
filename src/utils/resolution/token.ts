@@ -1,10 +1,12 @@
+import { charFlagsAt } from "@/common/charFlags";
 import { ReferenceSurface } from "@/common/enums";
 import { ESCAPE_CHAR } from "@/common/regex";
 import type { ResolvedSpan } from "@/common/types";
 import {
-  CallSyntax,
   ESCAPED_BRACE_OPEN,
   EscapedBraceOpenRegex,
+  SYNTAX_CHAR_FLAGS,
+  SyntaxChar,
   VariableSyntax,
 } from "@/common/variableSyntax";
 
@@ -22,6 +24,42 @@ const CONSUMES_ESCAPES: Record<ReferenceSurface, boolean> = {
   [ReferenceSurface.COMMAND]: true,
   [ReferenceSurface.VALUE]: false,
 };
+
+const SEPARATORS = SyntaxChar.PARAM_SEPARATOR | SyntaxChar.OPERATION_SEPARATOR;
+const ARGUMENT_PARENS = SyntaxChar.ARGUMENT_OPEN | SyntaxChar.ARGUMENT_CLOSE;
+
+/** Whether a backslash sits right before `index`. */
+function isEscapedAt(text: string, index: number): boolean {
+  return text[index - 1] === ESCAPE_CHAR;
+}
+
+/** Visits every brace before `end` in order. */
+function forEachBrace(
+  text: string,
+  end: number,
+  visit: (index: number, opens: boolean) => void,
+): void {
+  const { BRACE_OPEN, BRACE_CLOSE } = VariableSyntax;
+  let open = text.indexOf(BRACE_OPEN);
+  let close = text.indexOf(BRACE_CLOSE);
+
+  for (;;) {
+    const opens = open !== -1 && (close === -1 || open < close);
+    const index = opens ? open : close;
+
+    if (index === -1 || index >= end) {
+      return;
+    }
+
+    visit(index, opens);
+
+    if (opens) {
+      open = text.indexOf(BRACE_OPEN, index + 1);
+    } else {
+      close = text.indexOf(BRACE_CLOSE, index + 1);
+    }
+  }
+}
 
 export interface ReferenceMatch {
   token: string;
@@ -114,7 +152,7 @@ export function escapeBraces(text: string): string {
 
   for (const match of scanBraces(text, false)) {
     const start = match.start;
-    const escaped = text[start - 1] === ESCAPE_CHAR && start - 1 >= lastEnd;
+    const escaped = isEscapedAt(text, start) && start - 1 >= lastEnd;
 
     result +=
       text.slice(lastEnd, escaped ? start - 1 : start) +
@@ -150,23 +188,20 @@ function referenceAt(text: string, start: number, end: number): ReferenceMatch {
 
 /** Recovers the references from a text whose braces do not balance. */
 function scanUnbalanced(text: string, escapes: boolean): ReferenceMatch[] {
-  const openIndexes: number[] = [];
-  const openEscaped: boolean[] = [];
+  const open: number[] = [];
   const pairs: ReferenceMatch[] = [];
 
-  for (let i = 0; i < text.length; i += 1) {
-    const char = text[i];
-
-    if (char === VariableSyntax.BRACE_OPEN) {
-      openIndexes.push(i);
-      openEscaped.push(escapes && text[i - 1] === ESCAPE_CHAR);
-    } else if (char === VariableSyntax.BRACE_CLOSE && openIndexes.length > 0) {
-      const start = openIndexes.pop() as number;
-      if (!openEscaped.pop()) {
-        pairs.push(referenceAt(text, start, i + 1));
-      }
+  forEachBrace(text, text.length, (i, opens) => {
+    if (opens) {
+      open.push(i);
+      return;
     }
-  }
+
+    const start = open.pop();
+    if (start !== undefined && !(escapes && isEscapedAt(text, start))) {
+      pairs.push(referenceAt(text, start, i + 1));
+    }
+  });
 
   pairs.sort((a, b) => a.start - b.start);
 
@@ -189,23 +224,21 @@ export function scanBraces(text: string, escapes: boolean): ReferenceMatch[] {
   let start = -1;
   let depth = 0;
 
-  for (let i = 0; i < text.length; i += 1) {
-    const char = text[i];
-
-    if (char === VariableSyntax.BRACE_OPEN) {
+  forEachBrace(text, text.length, (i, opens) => {
+    if (opens) {
       if (depth > 0) {
         depth += 1;
-      } else if (!escapes || text[i - 1] !== ESCAPE_CHAR) {
+      } else if (!escapes || !isEscapedAt(text, i)) {
         depth = 1;
         start = i;
       }
-    } else if (char === VariableSyntax.BRACE_CLOSE && depth > 0) {
+    } else if (depth > 0) {
       depth -= 1;
       if (depth === 0) {
         matches.push(referenceAt(text, start, i + 1));
       }
     }
-  }
+  });
 
   return depth === 0 ? matches : scanUnbalanced(text, escapes);
 }
@@ -224,7 +257,7 @@ export function escapableReferenceAt(
   index: number,
 ): { start: number; end: number } | null {
   const escapedStart = (start: number) =>
-    text[start - 1] === ESCAPE_CHAR ? start - 1 : start;
+    isEscapedAt(text, start) ? start - 1 : start;
 
   const match = scanBraces(text, false).find(
     (reference) =>
@@ -240,24 +273,19 @@ export function openReferenceAt(
   index: number,
   surface: ReferenceSurface,
 ): OpenReference | null {
-  const escapes = ESCAPES_REFERENCES[surface];
-  const openIndexes: number[] = [];
-  const openEscaped: boolean[] = [];
+  const open: number[] = [];
 
-  for (let i = 0; i < index; i += 1) {
-    const char = text[i];
-
-    if (char === VariableSyntax.BRACE_OPEN) {
-      openIndexes.push(i);
-      openEscaped.push(escapes && text[i - 1] === ESCAPE_CHAR);
-    } else if (char === VariableSyntax.BRACE_CLOSE && openIndexes.length > 0) {
-      openIndexes.pop();
-      openEscaped.pop();
+  forEachBrace(text, index, (i, opens) => {
+    if (opens) {
+      open.push(i);
+    } else {
+      open.pop();
     }
-  }
+  });
 
-  const start = openIndexes.pop();
-  return start === undefined || openEscaped.pop()
+  const start = open.pop();
+  return start === undefined ||
+    (ESCAPES_REFERENCES[surface] && isEscapedAt(text, start))
     ? null
     : { start, raw: text.slice(start + 1, index) };
 }
@@ -350,26 +378,25 @@ export function splitReferenceBody(raw: string): ReferenceBodyChunk[] {
   let call = 0;
 
   for (let i = 0; i < raw.length; i += 1) {
-    const char = raw[i];
-    const inCall =
-      separator === VariableSyntax.OPERATION_SEPARATOR && depth === 0;
+    const flags = charFlagsAt(SYNTAX_CHAR_FLAGS, raw, i);
+    if (!flags) {
+      continue;
+    }
 
-    if (char === VariableSyntax.BRACE_OPEN) {
+    if (flags & SyntaxChar.BRACE_OPEN) {
       depth += 1;
-    } else if (char === VariableSyntax.BRACE_CLOSE) {
+    } else if (flags & SyntaxChar.BRACE_CLOSE) {
       depth -= 1;
-    } else if (inCall && char === CallSyntax.ARGUMENT_OPEN) {
-      call += 1;
-    } else if (inCall && char === CallSyntax.ARGUMENT_CLOSE) {
-      call = Math.max(0, call - 1);
-    } else if (
-      depth === 0 &&
-      call === 0 &&
-      (char === VariableSyntax.PARAM_SEPARATOR ||
-        char === VariableSyntax.OPERATION_SEPARATOR)
-    ) {
+    } else if (depth !== 0) {
+      continue;
+    } else if (flags & ARGUMENT_PARENS) {
+      if (separator === VariableSyntax.OPERATION_SEPARATOR) {
+        call =
+          flags & SyntaxChar.ARGUMENT_OPEN ? call + 1 : Math.max(0, call - 1);
+      }
+    } else if (call === 0 && flags & SEPARATORS) {
       chunks.push({ separator, text: raw.slice(start, i) });
-      separator = char;
+      separator = raw[i];
       start = i + 1;
     }
   }

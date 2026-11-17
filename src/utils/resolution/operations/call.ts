@@ -45,11 +45,13 @@ function splitArguments(raw: string, arity: number): CallArgument[] {
   const args: CallArgument[] = [];
   let start = 0;
 
-  for (let i = 0; i < raw.length && args.length < arity - 1; i += 1) {
-    if (raw[i] === CallSyntax.ARGUMENT_SEPARATOR) {
-      args.push({ text: raw.slice(start, i), start });
-      start = i + 1;
-    }
+  for (
+    let i = raw.indexOf(CallSyntax.ARGUMENT_SEPARATOR);
+    i !== -1 && args.length < arity - 1;
+    i = raw.indexOf(CallSyntax.ARGUMENT_SEPARATOR, start)
+  ) {
+    args.push({ text: raw.slice(start, i), start });
+    start = i + CallSyntax.ARGUMENT_SEPARATOR.length;
   }
 
   args.push({ text: raw.slice(start), start });
