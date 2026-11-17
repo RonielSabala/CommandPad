@@ -210,7 +210,7 @@ Grammar rules:
 
 **Module split** (`utils/resolution/`, re-exported from `index.ts`): `token.ts` (grammar floor), `spans.ts` (nesting depth), `params.ts` (`;` half and blanks), `operations/` (`|` half), `reference.ts` (one whole reference), `variables.ts` (`variableMap`), `usage.ts`, `rename.ts`, `carry.ts`, `keys.ts`, `overrides.ts`, `command.ts`, `segments.ts`, `inline.ts`. Anything two parts share belongs in `token.ts`.
 
-**Three things must move together when the grammar changes**: `resolveReference`, `usage.ts#collectRefs` (or variables get dimmed as unused), and `rename.ts#renameTokens` (or renames orphan references). Renames come in surface pairs: `renameCommandTokens` (skips escaped references) and `renameValueTokens`.
+**Three things must move together when the grammar changes**: `resolveReference`, `usage.ts#collectRefs` (or variables get dimmed as unused), and `rename.ts#renameTokens` (or renames orphan references). Renames come in surface pairs: `renameCommandTokens` (skips escaped references) and `renameValueTokens`. Several keys rename in one pass over a key map (`renameAll*`), never one pass per key, so a key just written is never renamed again (swaps and `_COPY` chains stay correct).
 
 #### Nesting depth in the resolved preview
 
