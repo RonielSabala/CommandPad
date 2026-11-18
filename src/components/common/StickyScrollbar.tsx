@@ -1,7 +1,7 @@
 import { StickyScrollbarConfig } from "@/common/config";
 import { EventType, PASSIVE } from "@/common/constants/events";
 import { toPx } from "@/utils/dom";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ScrollTarget } from "./scrollTarget";
 import "./StickyScrollbar.css";
 
@@ -14,13 +14,31 @@ function samePosition(a: number, b: number | null): boolean {
   return b !== null && Math.abs(a - b) < StickyScrollbarConfig.EPSILON_PX;
 }
 
+// Every scrollbar measures in one shared frame
+const pendingMeasures = new Set<() => void>();
+let measureFrame = 0;
+
+function measureNextFrame(measure: () => void): () => void {
+  pendingMeasures.add(measure);
+
+  measureFrame ||= requestAnimationFrame(() => {
+    measureFrame = 0;
+    const measures = [...pendingMeasures];
+
+    pendingMeasures.clear();
+    measures.forEach((run) => run());
+  });
+
+  return () => pendingMeasures.delete(measure);
+}
+
 export function StickyScrollbar({ target, deps }: Props) {
   const proxyRef = useRef<HTMLDivElement>(null);
   const [scrollRange, setScrollRange] = useState(0);
 
   const overflowing = scrollRange > 0;
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!target) {
       return;
     }
@@ -34,8 +52,13 @@ export function StickyScrollbar({ target, deps }: Props) {
       setScrollRange(Math.max(0, target.getScrollWidth() - clientWidth));
     };
 
-    measure();
-    return target.onResize(measure);
+    const cancel = measureNextFrame(measure);
+    const unsubscribe = target.onResize(() => measureNextFrame(measure));
+
+    return () => {
+      unsubscribe();
+      cancel();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target, ...deps]);
 
@@ -76,7 +99,10 @@ export function StickyScrollbar({ target, deps }: Props) {
       target.setScrollLeft(left);
     };
 
-    proxy.scrollLeft = target.getScrollLeft();
+    const left = target.getScrollLeft();
+    if (left !== 0) {
+      proxy.scrollLeft = left;
+    }
 
     const unsubscribe = target.onScroll(onTargetScroll);
     proxy.addEventListener(EventType.SCROLL, onProxyScroll, PASSIVE);

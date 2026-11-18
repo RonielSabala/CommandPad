@@ -292,8 +292,8 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       const grew = value.length > measuredLength.current;
       measuredLength.current = value.length;
 
-      if (grew && !bounded) {
-        editorRef.current?.layout();
+      if (grew && !bounded && editorRef.current?.hasTextFocus()) {
+        editorRef.current.layout();
       }
     }, [bounded, value]);
 

@@ -11,7 +11,11 @@ export function monacoScrollTarget(
     getClientWidth: () => instance.getLayoutInfo().contentWidth,
 
     onScroll: (listener) => {
-      const subscription = instance.onDidScrollChange(listener);
+      const subscription = instance.onDidScrollChange((event) => {
+        if (event.scrollLeftChanged) {
+          listener();
+        }
+      });
       return () => subscription.dispose();
     },
 
