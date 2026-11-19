@@ -17,7 +17,7 @@ import {
   modelChoices,
   modelCompletions,
   type ChoiceSource,
-  type VariableCompletion,
+  type CompletionSource,
 } from "@/monaco/completions";
 import {
   bindContextMenuChord,
@@ -81,7 +81,7 @@ interface Props {
   minimapSide?: PanelSide | null;
   header?: ReactNode;
   footer?: ReactNode;
-  completions?: VariableCompletion[];
+  completions?: CompletionSource;
   choices?: ChoiceSource;
   /** Enter commits instead of breaking the line. */
   singleLine?: boolean;

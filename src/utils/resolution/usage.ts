@@ -3,7 +3,7 @@ import { ReferenceSurface } from "@/common/enums";
 import type { Block, Variable } from "@/common/types";
 
 import { getTokenKey, scanReferences } from "./token";
-import { getVariableKey } from "./variables";
+import { cachedPerVariables, getVariableKey } from "./variables";
 
 /** Every key `text` references. */
 function* referencedKeys(
@@ -104,25 +104,53 @@ export function lookupVariables(
   };
 }
 
+const blockKeys = new WeakMap<Block, readonly string[]>();
+
+/** The keys `block`'s own texts reference. */
+function getBlockKeys(block: Block): readonly string[] {
+  let keys = blockKeys.get(block);
+  if (!keys) {
+    keys = getBlockCommandTexts(block).flatMap((text) => [
+      ...referencedKeys(text, ReferenceSurface.COMMAND),
+    ]);
+
+    blockKeys.set(block, keys);
+  }
+
+  return keys;
+}
+
+/** The keys each variable's value references. */
+const getValueKeys = cachedPerVariables((variables) => {
+  const values = new Map<string, string>();
+
+  for (const variable of variables) {
+    const key = getVariableKey(variable);
+    if (key) {
+      values.set(key, variable.value);
+    }
+  }
+
+  const read = new Map<string, readonly string[]>();
+
+  return (key: string): readonly string[] => {
+    let keys = read.get(key);
+    if (!keys) {
+      const value = values.get(key);
+      keys = value ? [...referencedKeys(value, ReferenceSurface.VALUE)] : [];
+      read.set(key, keys);
+    }
+
+    return keys;
+  };
+});
+
 export function getUsedVariableKeys(
   blocks: Block[] = [],
   variables: Variable[] = [],
 ): Set<string> {
-  const rawValues: Record<string, string> = {};
-  for (const variable of variables) {
-    const key = getVariableKey(variable);
-    if (key) {
-      rawValues[key] = variable.value;
-    }
-  }
-
-  const pending: string[] = [];
-
-  for (const block of blocks) {
-    for (const text of getBlockCommandTexts(block)) {
-      pending.push(...referencedKeys(text, ReferenceSurface.COMMAND));
-    }
-  }
+  const valueKeys = getValueKeys(variables);
+  const pending = blocks.flatMap(getBlockKeys);
 
   const used = new Set<string>();
   while (pending.length > 0) {
@@ -132,9 +160,7 @@ export function getUsedVariableKeys(
     }
 
     used.add(key);
-    if (key in rawValues) {
-      pending.push(...referencedKeys(rawValues[key], ReferenceSurface.VALUE));
-    }
+    pending.push(...valueKeys(key));
   }
 
   return used;

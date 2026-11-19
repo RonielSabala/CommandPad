@@ -3,11 +3,13 @@ import { CssClass, REVEAL_TONE_CLASS } from "@/common/constants/css";
 import { DataAttr } from "@/common/constants/dom";
 import { DragEffect } from "@/common/constants/events";
 import { AppMode, LassoMode, SelectionGroup } from "@/common/enums";
+import type { Block, Variable } from "@/common/types";
 import { DragHandle } from "@/components/common/DragHandle";
 import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
 import { getActiveTab, useStore, useStoreApi } from "@/store/store";
 import { applyDragImage } from "@/utils/dom";
+import { getBlockScope } from "@/utils/resolution";
 import { classNames, classSelector } from "@/utils/string";
 import { memo, useRef, useState, type DragEvent } from "react";
 
@@ -183,3 +185,24 @@ export const BlockItem = memo(function BlockItem({
     </div>
   );
 });
+
+export function BlockItems({
+  blocks,
+  variables,
+}: {
+  blocks: Block[];
+  variables: Variable[];
+}) {
+  return blocks.map((block) => {
+    const scope = getBlockScope(block, variables);
+
+    return (
+      <BlockItem
+        key={block.id}
+        block={block}
+        variableMap={scope.variableMap}
+        secretKeys={scope.secretKeys}
+      />
+    );
+  });
+}

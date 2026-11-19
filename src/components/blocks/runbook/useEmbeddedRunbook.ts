@@ -19,8 +19,8 @@ import {
   getOverriddenVariableMap,
   getTabVariableMap,
   overriddenSecretKeys,
-  type OverrideHost,
   type VariableMap,
+  type VariableScope,
 } from "@/utils/resolution";
 import { useEffect, useMemo } from "react";
 
@@ -44,7 +44,7 @@ const NO_TRAIL: readonly string[] = [];
 
 export function useEmbeddedRunbook(
   block: RunbookBlock,
-  { variableMap, secretKeys }: OverrideHost,
+  { variableMap, secretKeys }: VariableScope,
   trail: readonly string[],
 ): EmbeddedRunbookState {
   const runbooks = useStore((state) => state.libraryRunbooks);
@@ -127,7 +127,7 @@ export function useTabEmbed(
   block: RunbookBlock,
   variableMap: VariableMap,
   secretKeys: ReadonlySet<string>,
-): { host: OverrideHost; embed: EmbeddedRunbookState } {
+): { host: VariableScope; embed: EmbeddedRunbookState } {
   const hostRunbookId = useStore(getActiveRunbookId);
 
   const host = useMemo(

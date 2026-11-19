@@ -17,7 +17,7 @@ import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageS
 import { useClampSurface, useClampSurfaceStyle } from "@/hooks/useClampSurface";
 import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
-import type { VariableCompletion } from "@/monaco/completions";
+import type { CompletionSource } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import { classNames, countLines } from "@/utils/string";
 import { useCallback, useMemo, useRef, type ReactNode } from "react";
@@ -30,7 +30,7 @@ interface Props {
   value: string;
   scope: CodeModelScope;
   surfaceId: string;
-  completions: VariableCompletion[];
+  completions: CompletionSource;
   keyRow: ReactNode;
   className?: string;
   autoFocus?: boolean;

@@ -33,6 +33,7 @@ import {
 import { classNames, splitLines, stripEnd } from "@/utils/string";
 import {
   Fragment,
+  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -152,7 +153,7 @@ interface Props {
   linkSources?: boolean;
 }
 
-export function CommandPreview({
+export const CommandPreview = memo(function CommandPreview({
   clampId,
   text,
   variableMap,
@@ -306,4 +307,4 @@ export function CommandPreview({
         ))}
     </div>
   );
-}
+});

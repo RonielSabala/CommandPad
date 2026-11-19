@@ -2,7 +2,10 @@ import { CssClass } from "@/common/constants/css";
 import { DataAttr, ElementId, ScrollIntoView } from "@/common/constants/dom";
 import { useRowReveal } from "@/hooks/useRowReveal";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
-import { buildVariableCompletions } from "@/monaco/completions";
+import {
+  buildVariableCompletions,
+  type VariableCompletion,
+} from "@/monaco/completions";
 import {
   EMPTY_BLOCKS,
   EMPTY_VARIABLES,
@@ -10,13 +13,44 @@ import {
   useStore,
 } from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
-import { getTabSecretKeys, getTabVariableMap } from "@/utils/resolution";
+import {
+  getTabSecretKeys,
+  getTabVariableMap,
+  type VariableMap,
+} from "@/utils/resolution";
 import { classNames } from "@/utils/string";
-import { useEffect, useMemo, useRef } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from "react";
 
-import { BlockItem } from "./BlockItem";
+import { BlockItems } from "./BlockItem";
 import "./BlocksList.css";
 import { CompletionsContext } from "./listContext";
+
+/** The list's completions. */
+function useCompletionSource(
+  variableMap: VariableMap,
+  secretKeys: ReadonlySet<string>,
+  usedKeys: Set<string>,
+) {
+  const build = useMemo(() => {
+    let list: VariableCompletion[] | undefined;
+
+    return () =>
+      (list ??= buildVariableCompletions(variableMap, secretKeys, usedKeys));
+  }, [variableMap, secretKeys, usedKeys]);
+
+  const latest = useRef(build);
+  useLayoutEffect(() => {
+    latest.current = build;
+  }, [build]);
+
+  return useCallback(() => latest.current(), []);
+}
 
 export function BlocksList() {
   const activeTab = useStore(getActiveTab);
@@ -31,10 +65,7 @@ export function BlocksList() {
   const variableMap = getTabVariableMap(variables);
   const secretKeys = getTabSecretKeys(variables);
   const usedKeys = useUsedVariableKeys(blocks, variables);
-  const completions = useMemo(
-    () => buildVariableCompletions(variableMap, secretKeys, usedKeys),
-    [variableMap, secretKeys, usedKeys],
-  );
+  const completions = useCompletionSource(variableMap, secretKeys, usedKeys);
 
   useEffect(() => {
     scrollRowIntoView(
@@ -68,14 +99,7 @@ export function BlocksList() {
         className={classNames(CssClass.BLOCKS_LIST, CssClass.REORDER_LIST)}
         ref={listRef}
       >
-        {blocks.map((block) => (
-          <BlockItem
-            key={block.id}
-            block={block}
-            variableMap={variableMap}
-            secretKeys={secretKeys}
-          />
-        ))}
+        <BlockItems blocks={blocks} variables={variables} />
       </div>
     </CompletionsContext.Provider>
   );

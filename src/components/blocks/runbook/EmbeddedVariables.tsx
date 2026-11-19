@@ -10,6 +10,7 @@ import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { useTranslation, type Messages } from "@/i18n";
 import {
   buildVariableCompletions,
+  readCompletions,
   withOrigin,
   type VariableCompletion,
 } from "@/monaco/completions";
@@ -27,7 +28,7 @@ import {
   isConstantVariableKey,
   isVariableUnused,
   withOverride,
-  type OverrideHost,
+  type VariableScope,
 } from "@/utils/resolution";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
@@ -61,7 +62,7 @@ interface Props {
   block: RunbookBlock;
   embed: EmbeddedRunbookState;
   /** The embedding runbook's own variables. */
-  host: OverrideHost;
+  host: VariableScope;
 }
 
 export function EmbeddedVariables({ block, embed, host }: Props) {
@@ -98,8 +99,12 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
   const embedName = embedSourceName(block, embed.source, t);
 
   const listCompletions = useContext(CompletionsContext);
-  const hostCompletions = useMemo(
-    () => withOrigin(listCompletions, { name: hostName, embedded: false }),
+  const hostCompletions = useCallback(
+    () =>
+      withOrigin(readCompletions(listCompletions), {
+        name: hostName,
+        embedded: false,
+      }),
     [listCompletions, hostName],
   );
 
@@ -235,7 +240,7 @@ interface VariableProps {
   override: string | undefined;
   scopedId: string;
   unused: boolean;
-  hostCompletions: VariableCompletion[];
+  hostCompletions: () => VariableCompletion[];
   embeddedCompletions: VariableCompletion[];
   onChange: (variable: Variable, value: string) => void;
 }
@@ -254,9 +259,9 @@ function EmbeddedVariable({
   const value = override ?? variable.value;
   const overridden = override !== undefined;
 
-  const completions = useMemo(
+  const completions = useCallback(
     () => [
-      ...hostCompletions,
+      ...hostCompletions(),
       ...embeddedCompletions.filter((entry) => entry.key !== key),
     ],
     [hostCompletions, embeddedCompletions, key],

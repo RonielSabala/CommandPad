@@ -67,6 +67,21 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     [updateBlock, blockId],
   );
 
+  const previewActions = useMemo(
+    () => (
+      <EditorToggle
+        collapsed={isEditorCollapsed}
+        label={toggleEditorLabel}
+        onToggle={() =>
+          updateBlock(blockId, BlockType.COMMAND, {
+            editorCollapsed: !isEditorCollapsed,
+          })
+        }
+      />
+    ),
+    [isEditorCollapsed, toggleEditorLabel, updateBlock, blockId],
+  );
+
   const handleLanguageChange = useCallback(
     (language: CodeLanguage) =>
       updateBlock(blockId, BlockType.COMMAND, { language }),
@@ -98,17 +113,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         secretKeys={secretKeys}
         surfaceRef={rootRef}
         linkSources={linkSources}
-        actions={
-          <EditorToggle
-            collapsed={isEditorCollapsed}
-            label={toggleEditorLabel}
-            onToggle={() =>
-              updateBlock(blockId, BlockType.COMMAND, {
-                editorCollapsed: !isEditorCollapsed,
-              })
-            }
-          />
-        }
+        actions={previewActions}
       />
 
       <CodeEditor

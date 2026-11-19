@@ -7,7 +7,7 @@ import { VariableSyntax } from "@/common/variableSyntax";
 import type { editor, languages, Position } from "monaco-editor";
 import { monaco } from "../setup";
 import { readCompletionContext } from "./context";
-import { modelCompletions } from "./registry";
+import { modelCompletions, readCompletions } from "./registry";
 import { buildSuggestions } from "./suggestions";
 
 const UNUSED_TAGS = [monaco.languages.CompletionItemTag.Deprecated];
@@ -16,8 +16,8 @@ function provideCompletionItems(
   model: editor.ITextModel,
   position: Position,
 ): languages.CompletionList {
-  const completions = modelCompletions.get(model.uri.toString());
-  if (!completions) {
+  const source = modelCompletions.get(model.uri.toString());
+  if (!source) {
     return { suggestions: [] };
   }
 
@@ -49,26 +49,28 @@ function provideCompletionItems(
   );
 
   return {
-    suggestions: buildSuggestions(context, completions).map((suggestion) => ({
-      label:
-        suggestion.detail === undefined
-          ? suggestion.label
-          : {
-              label: suggestion.label,
-              detail: suggestion.origin,
-              description: suggestion.detail,
-            },
-      detail: suggestion.detail,
-      kind: suggestion.kind,
-      tags: suggestion.unused ? UNUSED_TAGS : undefined,
-      insertText: suggestion.insertText,
-      insertTextRules: suggestion.snippet
-        ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
-        : undefined,
-      filterText: suggestion.label,
-      sortText: `${suggestion.group ?? VariableCompletionConfig.HOST_GROUP}${suggestion.label}`,
-      range,
-    })),
+    suggestions: buildSuggestions(context, readCompletions(source)).map(
+      (suggestion) => ({
+        label:
+          suggestion.detail === undefined
+            ? suggestion.label
+            : {
+                label: suggestion.label,
+                detail: suggestion.origin,
+                description: suggestion.detail,
+              },
+        detail: suggestion.detail,
+        kind: suggestion.kind,
+        tags: suggestion.unused ? UNUSED_TAGS : undefined,
+        insertText: suggestion.insertText,
+        insertTextRules: suggestion.snippet
+          ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+          : undefined,
+        filterText: suggestion.label,
+        sortText: `${suggestion.group ?? VariableCompletionConfig.HOST_GROUP}${suggestion.label}`,
+        range,
+      }),
+    ),
   };
 }
 
