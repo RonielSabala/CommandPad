@@ -13,6 +13,7 @@ import { EnumIcon, SectionIcon, VariableIcon } from "@/components/icons";
 import { Minimap } from "@/components/workspace/minimap/Minimap";
 import { VariablesMirror } from "@/components/workspace/minimap/VariablesMirror";
 import { WorkspaceContextMenu } from "@/components/workspace/WorkspaceContextMenu";
+import { useCompletionSource } from "@/hooks/useCompletionSource";
 import { useLassoSelection } from "@/hooks/useLassoSelection";
 import { useRowReveal } from "@/hooks/useRowReveal";
 import { useScrollingClass } from "@/hooks/useScrollingClass";
@@ -20,7 +21,6 @@ import { useScrollPersistence } from "@/hooks/useScrollPersistence";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
-import { buildVariableCompletions } from "@/monaco/completions";
 import {
   EMPTY_BLOCKS,
   EMPTY_SECTIONS,
@@ -29,9 +29,8 @@ import {
   useStore,
 } from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
-import { getTabSecretKeys, getTabVariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import "./RunbookVariables.css";
 import { VariableRows } from "./VariableRows";
@@ -137,13 +136,8 @@ export function RunbookVariables() {
     );
   }, [pendingFocusSectionId]);
 
-  const variableMap = getTabVariableMap(variables);
-  const secretKeys = getTabSecretKeys(variables);
   const usedKeys = useUsedVariableKeys(blocks, variables);
-  const completions = useMemo(
-    () => buildVariableCompletions(variableMap, secretKeys, usedKeys),
-    [variableMap, secretKeys, usedKeys],
-  );
+  const completions = useCompletionSource(variables, usedKeys);
 
   return (
     <div

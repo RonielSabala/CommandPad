@@ -3,7 +3,7 @@ import type { Variable } from "@/common/types";
 import { DragImage } from "@/components/common/DragImage";
 import { EnumIcon, VariableIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import type { VariableCompletion } from "@/monaco/completions";
+import type { CompletionSource } from "@/monaco/completions";
 import { memo, useRef } from "react";
 
 import { VariableActionsMenu } from "./VariableActionsMenu";
@@ -12,7 +12,7 @@ import { VariableRowFrame } from "./VariableRowFrame";
 
 interface Props {
   variable: Variable;
-  completions: VariableCompletion[];
+  completions: CompletionSource;
   unused?: boolean;
 }
 

@@ -4,11 +4,11 @@ import type { Variable } from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import type { VariableCompletion } from "@/monaco/completions";
+import { readCompletions, type CompletionSource } from "@/monaco/completions";
 import { useStore } from "@/store/store";
 import { getVariableKey } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
-import { useEffect, useMemo, type RefObject } from "react";
+import { useCallback, useEffect, type RefObject } from "react";
 
 import "./VariableEditor.css";
 import { VariableKeyInput } from "./VariableKeyInput";
@@ -16,7 +16,7 @@ import { VariableValueField } from "./VariableValueField";
 
 interface Props {
   variable: Variable;
-  completions: VariableCompletion[];
+  completions: CompletionSource;
   unused?: boolean;
   autoFocus?: boolean;
   keyRef: RefObject<HTMLInputElement | null>;
@@ -43,8 +43,8 @@ export function VariableEditor({
 
   // A variable resolving to itself can never fill in, so never offer it
   const ownKey = getVariableKey(variable);
-  const valueCompletions = useMemo(
-    () => completions.filter((entry) => entry.key !== ownKey),
+  const valueCompletions = useCallback(
+    () => readCompletions(completions).filter((entry) => entry.key !== ownKey),
     [completions, ownKey],
   );
 
