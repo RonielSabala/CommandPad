@@ -102,7 +102,7 @@ A `secret` variable is masked on screen; the **vault** protects its value **at r
 Previews are **derived, not pushed**: command previews recompute from `block.text` + a per-render `variableMap` (`useMemo` in `BlocksList`, threaded as props). `getVariableMap`/`getSecretKeys` are expensive: read a tab's through `getTabVariableMap`/`getTabSecretKeys` (cached per variables array, shared, so the secret set is a `ReadonlySet`), never per block. Everything renders parsed segments as real elements — no `innerHTML`.
 
 - **A row renders only when what it reads changes**: each block row gets `getBlockScope(block, variables)`, which hands back its previous scope while every key the block reads (through values too) resolves the same, so memoized rows and `CommandPreview` skip. Never pass a row the tab's map directly. An embed always gets the live scope (its overrides and options read any host key).
-- **Off-screen block editors skip rendering** via `content-visibility: auto` on `.code-editor-monaco` only, because its box is sized from outside (set height, contained width) and skipping it moves nothing. Never put it on a row or block surface: skipped rows lose their real size (the minimap and divider widths drift) and paint containment clips the item controls.
+- **Off-screen editors in the blocks list and the variables editor skip rendering** via `content-visibility: auto` on `.code-editor-monaco` only, because its box is sized from outside (set height, contained width) and skipping it moves nothing. Never put it on a row or block surface: skipped rows lose their real size (the minimap and divider widths drift) and paint containment clips the item controls.
 
 ### Collapsible / resizable panels
 
