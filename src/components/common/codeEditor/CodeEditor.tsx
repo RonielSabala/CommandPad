@@ -4,6 +4,7 @@ import { MonacoSelector } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import {
   CodeEditorProperty,
+  CodeMetricProperty,
   EditorLanguage,
   MonacoLayout,
 } from "@/common/editorConfig";
@@ -26,7 +27,7 @@ import {
 } from "@/monaco/contextMenu";
 import { bindDragScrolling } from "@/monaco/dragScroll";
 import { getFindController, isFindRevealed } from "@/monaco/findWidget";
-import { getCodeMetrics } from "@/monaco/metrics";
+import { getCodeMetrics, lineNumberChars } from "@/monaco/metrics";
 import { modelPath } from "@/monaco/modelPath";
 import { boundedEditorOptions, flowingEditorOptions } from "@/monaco/options";
 import { bindRevealScrolling } from "@/monaco/revealScroll";
@@ -35,7 +36,7 @@ import { hasFocusedSuggestion, triggerSuggest } from "@/monaco/suggest";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
 import { validateModel } from "@/monaco/validation";
 import { getAppliedTheme, useStore } from "@/store/store";
-import { toPx, whenElementSettles } from "@/utils/dom";
+import { getTextCaretAtPoint, toPx, whenElementSettles } from "@/utils/dom";
 import { classNames, countLines, joinLines } from "@/utils/string";
 import Editor, { type BeforeMount, type OnMount } from "@monaco-editor/react";
 import type { Selection, editor } from "monaco-editor";
@@ -48,14 +49,17 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
+  type PointerEvent as ReactPointerEvent,
 } from "react";
 
 import "./CodeEditor.css";
 import { useCodeRendering } from "./codeRendering";
 import { monacoScrollTarget } from "./monacoScrollTarget";
 import { StaticCodeView } from "./StaticCodeView";
+import { useLazyMount } from "./useLazyMount";
 
 export interface CodeEditorHandle {
   focus(): void;
@@ -103,9 +107,9 @@ const PROMPT_DECORATION: editor.IModelDeltaDecoration = {
   options: { lineNumberClassName: CssClass.CODE_EDITOR_PROMPT },
 };
 
-function estimateContentHeight(value: string, compact: boolean): number {
+function estimateContentHeight(lineCount: number, compact: boolean): number {
   const { lineHeightBase, lineHeightMedium } = getCodeMetrics();
-  return countLines(value) * (compact ? lineHeightMedium : lineHeightBase);
+  return lineCount * (compact ? lineHeightMedium : lineHeightBase);
 }
 
 /** Nothing else claimed focus while the menu was up. */
@@ -213,6 +217,8 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
     );
     const rootRef = useRef<HTMLDivElement>(null);
     const pendingFocusRef = useRef(false);
+    const overlayRef = useRef<HTMLDivElement>(null);
+    const pendingCaretRef = useRef<number | undefined>(undefined);
     const pendingScrollTopRef = useRef<number | null>(null);
     const cancelSuggestRef = useRef<(() => void) | null>(null);
     const openingContextMenuRef = useRef(false);
@@ -221,8 +227,8 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       version: number;
     } | null>(null);
     const [scrollTarget, setScrollTarget] = useState<ScrollTarget | null>(null);
-    const [contentHeight, setContentHeight] = useState<number>(() =>
-      estimateContentHeight(value, singleLine),
+    const [contentHeight, setContentHeight] = useState(() =>
+      estimateContentHeight(countLines(value), singleLine),
     );
 
     const callbacks = useRef({ onSubmit, onFocus, onBlur, onScrollChange });
@@ -243,14 +249,37 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       [],
     );
 
+    // A flowing editor mounts Monaco once it shows or is used
+    const [live, wake] = useLazyMount(rootRef, bounded || autoFocus);
+    const [painted, setPainted] = useState(false);
+
+    const showMask = masked && value.length > 0;
+
     const focus = useCallback(() => {
       const input = inputElement();
       if (input) {
         input.focus({ preventScroll: true });
       } else {
         pendingFocusRef.current = true;
+        wake();
       }
-    }, [inputElement]);
+    }, [inputElement, wake]);
+
+    const focusAtPointer = (event: ReactPointerEvent) => {
+      event.preventDefault();
+
+      // The overlay holds the value's text where Monaco will draw it
+      const text = value && !showMask ? overlayRef.current?.firstChild : null;
+      if (text) {
+        pendingCaretRef.current = getTextCaretAtPoint(
+          text,
+          event.clientX,
+          event.clientY,
+        );
+      }
+
+      focus();
+    };
 
     const setScrollTop = useCallback((next: number) => {
       if (editorRef.current) {
@@ -481,9 +510,17 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         }
       });
 
+      // Monaco draws its lines a frame later
+      requestAnimationFrame(() => setPainted(true));
+
       // Ready to type on
       const model = instance.getModel();
-      if (autoFocus && model) {
+      const caret = pendingCaretRef.current;
+      pendingCaretRef.current = undefined;
+
+      if (model && caret !== undefined) {
+        instance.setPosition(model.getPositionAt(caret));
+      } else if (autoFocus && model) {
         instance.setPosition(model.getFullModelRange().getEndPosition());
       }
 
@@ -505,7 +542,22 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       }
     };
 
-    const showMask = masked && value.length > 0;
+    // Until Monaco mounts, the value's lines size the editor and its gutter
+    const pendingLines = mounted ? 0 : countLines(value);
+    const height = mounted
+      ? contentHeight
+      : estimateContentHeight(pendingLines, singleLine);
+
+    // The text until Monaco paints it
+    let overlay: ReactNode = null;
+    if (showMask) {
+      overlay = joinLines(Array(countLines(value)).fill(SECRET_MASK));
+    } else if (!painted && !bounded && (value || placeholder)) {
+      overlay = value || (
+        <span className="code-editor-static-placeholder">{placeholder}</span>
+      );
+    }
+
     const shownPlaceholder = value ? undefined : placeholder;
 
     const options = useMemo<editor.IStandaloneEditorConstructionOptions>(
@@ -534,12 +586,22 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         className={classNames(
           CssClass.CODE_EDITOR,
           "code-editor-live",
+          painted && "code-editor-painted",
           !gutter && "no-gutter",
           showMask && "is-masked",
           singleLine && "code-editor-single-line",
           !bounded && className,
           clamped && CssClass.CLAMPED,
         )}
+        // Monaco sizes its gutter once mounted; reserve it until then
+        style={
+          mounted || !gutter
+            ? undefined
+            : ({
+                [CodeMetricProperty.LINE_NUMBER_CHARS]:
+                  lineNumberChars(pendingLines),
+              } as CSSProperties)
+        }
         onKeyDown={handleKeyDown}
         ref={rootRef}
       >
@@ -558,27 +620,42 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
           )}
           data-value={value}
         >
-          <Editor
-            path={modelPath(modelId)}
-            language={language}
-            theme={themeName}
-            value={value}
-            onChange={(next) =>
-              onChange(singleLine ? toSingleLine(next ?? "") : (next ?? ""))
-            }
-            height={bounded ? MonacoLayout.FULL_HEIGHT : contentHeight}
-            options={options}
-            beforeMount={handleBeforeMount}
-            onMount={handleMount}
-            loading={null}
-            wrapperProps={{ className: "code-editor-monaco" }}
-          />
+          {live ? (
+            <Editor
+              path={modelPath(modelId)}
+              language={language}
+              theme={themeName}
+              value={value}
+              onChange={(next) =>
+                onChange(singleLine ? toSingleLine(next ?? "") : (next ?? ""))
+              }
+              height={bounded ? MonacoLayout.FULL_HEIGHT : height}
+              options={options}
+              beforeMount={handleBeforeMount}
+              onMount={handleMount}
+              loading={null}
+              wrapperProps={{ className: "code-editor-monaco" }}
+            />
+          ) : (
+            <div
+              className="code-editor-monaco code-editor-pending"
+              style={{ height }}
+              tabIndex={0}
+              onFocus={focus}
+              onPointerDown={focusAtPointer}
+            />
+          )}
 
-          {showMask && (
-            <div className="code-editor-mask" aria-hidden={true}>
-              {joinLines(
-                Array.from({ length: countLines(value) }, () => SECRET_MASK),
+          {overlay !== null && (
+            <div
+              className={classNames(
+                "code-editor-overlay",
+                CssClass.NO_LIGATURES,
               )}
+              aria-hidden={true}
+              ref={overlayRef}
+            >
+              {overlay}
             </div>
           )}
         </div>

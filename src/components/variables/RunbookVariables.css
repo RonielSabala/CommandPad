@@ -10,7 +10,7 @@
   padding: var(--space-8) var(--space-20) var(--space-20);
 }
 
-/* Off-screen editors skip rendering. */
-#variables-list .code-editor-monaco:not(:focus-within) {
+/* Off-screen editors skip rendering, once Monaco has laid out at full size. */
+#variables-list .code-editor-painted .code-editor-monaco:not(:focus-within) {
   content-visibility: auto;
 }

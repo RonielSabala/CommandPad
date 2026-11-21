@@ -3,6 +3,7 @@ import { CssClass } from "@/common/constants/css";
 import { CodeMetricProperty, MonacoLayout } from "@/common/editorConfig";
 import { useDomScrollTarget } from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
+import { lineNumberChars } from "@/monaco/metrics";
 import { classNames, countLines } from "@/utils/string";
 import { useRef, type CSSProperties, type ReactNode } from "react";
 
@@ -43,10 +44,6 @@ export function StaticCodeView({
   const lineCount = countLines(value);
   const text = masked && value ? SECRET_MASK : value;
   const firstNumbered = promptPrefix ? SECOND_LINE : MonacoLayout.FIRST_LINE;
-  const numberChars = Math.max(
-    MonacoLayout.LINE_NUMBER_MIN_CHARS,
-    String(lineCount).length,
-  );
 
   const view = (
     <div
@@ -59,7 +56,9 @@ export function StaticCodeView({
         clamped && CssClass.CLAMPED,
       )}
       style={
-        { [CodeMetricProperty.LINE_NUMBER_CHARS]: numberChars } as CSSProperties
+        {
+          [CodeMetricProperty.LINE_NUMBER_CHARS]: lineNumberChars(lineCount),
+        } as CSSProperties
       }
     >
       {header && (

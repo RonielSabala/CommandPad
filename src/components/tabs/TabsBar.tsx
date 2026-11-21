@@ -1,5 +1,5 @@
 import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
-import { ElementId } from "@/common/constants/dom";
+import { DataAttr, ElementId } from "@/common/constants/dom";
 import { RunbookView } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PlusIcon } from "@/components/icons";
@@ -33,7 +33,7 @@ export function TabsBar() {
     : t.source.openSource;
 
   return (
-    <div id={ElementId.TABS_BAR}>
+    <div id={ElementId.TABS_BAR} {...{ [DataAttr.RUNBOOK_VIEW]: runbookView }}>
       <div id="tabs-strip">
         {tabs.map((tab) => (
           <TabItem

@@ -98,7 +98,8 @@
   color: transparent !important;
 }
 
-.code-editor-mask {
+/* Text drawn over the surface: a secret's mask, or the value until Monaco mounts. */
+.code-editor-overlay {
   position: absolute;
   inset: 0;
   padding: var(--code-editor-surface-padding-top, var(--space-5)) 0 0
@@ -106,9 +107,14 @@
   font: inherit;
   color: var(--color-text-primary);
   white-space: pre;
+  tab-size: var(--tab-size);
   overflow: hidden;
   pointer-events: none;
   z-index: var(--z-raised);
+}
+
+.code-editor-pending:focus {
+  outline: none;
 }
 
 .code-editor-live .code-editor-surface::after {

@@ -81,3 +81,8 @@ export function publishCodeMetrics(): CodeMetrics {
 export function getCodeMetrics(): CodeMetrics {
   return metrics ?? publishCodeMetrics();
 }
+
+/** The line-number column Monaco gives `lineCount` lines, in characters. */
+export function lineNumberChars(lineCount: number): number {
+  return Math.max(MonacoLayout.LINE_NUMBER_MIN_CHARS, String(lineCount).length);
+}

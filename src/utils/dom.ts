@@ -216,6 +216,15 @@ export function getNoteCaretAtPoint(
   return nearestCaret(characterBoxes(noteTexts(root)), x, y);
 }
 
+/** Offset into `text` of the character edge nearest the point. */
+export function getTextCaretAtPoint(
+  text: Node,
+  x: number,
+  y: number,
+): number | undefined {
+  return nearestCaret(characterBoxes([[text, 0]]), x, y);
+}
+
 const TEXT_LAYOUT_STYLES = [
   "box-sizing",
   "width",

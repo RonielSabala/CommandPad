@@ -200,6 +200,9 @@ export const MonacoLayout = {
   FULL_HEIGHT: "100%",
 } as const;
 
+/** Flowing editors not yet on screen mount this many per frame. */
+export const LAZY_MOUNTS_PER_FRAME = 3;
+
 export const MonacoMinimap = {
   showSlider: "mouseover",
   renderCharacters: true,
