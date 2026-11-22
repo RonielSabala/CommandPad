@@ -5,7 +5,11 @@ import { NoteText } from "@/components/blocks/note/NoteText";
 import { Spinner } from "@/components/common/Spinner";
 import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
-import { useStore, type VaultPassphrases } from "@/store/store";
+import {
+  useStore,
+  useStoreActions,
+  type VaultPassphrases,
+} from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useEffect, useRef, useState } from "react";
 import { ShieldLock } from "react-bootstrap-icons";
@@ -23,9 +27,11 @@ const EMPTY_PASSPHRASES: VaultPassphrases = {
 export function VaultModal() {
   const t = useTranslation();
   const dialog = useStore((state) => state.vaultDialog);
-  const submit = useStore((state) => state.submitVaultPassphrase);
-  const dismiss = useStore((state) => state.dismissVaultDialog);
-  const skipBatch = useStore((state) => state.skipVaultBatch);
+  const {
+    submitVaultPassphrase: submit,
+    dismissVaultDialog: dismiss,
+    skipVaultBatch: skipBatch,
+  } = useStoreActions();
 
   const [passphrases, setPassphrases] =
     useState<VaultPassphrases>(EMPTY_PASSPHRASES);

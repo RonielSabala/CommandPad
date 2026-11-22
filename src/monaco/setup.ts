@@ -1,10 +1,15 @@
-import { MonacoCommand, MonacoWorkerLabel } from "@/common/editorConfig";
+import {
+  MonacoCommand,
+  MonacoDroppedContribution,
+  MonacoWorkerLabel,
+} from "@/common/editorConfig";
 import { loader } from "@monaco-editor/react";
 import "monaco-editor/esm/vs/basic-languages/powershell/powershell.contribution.js";
 import "monaco-editor/esm/vs/basic-languages/shell/shell.contribution.js";
 import "monaco-editor/esm/vs/basic-languages/sql/sql.contribution.js";
 import "monaco-editor/esm/vs/basic-languages/xml/xml.contribution.js";
 import "monaco-editor/esm/vs/basic-languages/yaml/yaml.contribution.js";
+import { EditorExtensionsRegistry } from "monaco-editor/esm/vs/editor/browser/editorExtensions.js";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker.js?worker";
 import JsonWorker from "monaco-editor/esm/vs/language/json/json.worker.js?worker";
@@ -20,6 +25,13 @@ self.MonacoEnvironment = {
 };
 
 loader.config({ monaco });
+
+const DROPPED_CONTRIBUTIONS: ReadonlySet<string> = new Set(
+  Object.values(MonacoDroppedContribution),
+);
+const { getEditorContributions } = EditorExtensionsRegistry;
+EditorExtensionsRegistry.getEditorContributions = () =>
+  getEditorContributions().filter(({ id }) => !DROPPED_CONTRIBUTIONS.has(id));
 
 monaco.editor.addKeybindingRule({
   keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyL,

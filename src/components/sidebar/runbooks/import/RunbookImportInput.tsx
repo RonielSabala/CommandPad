@@ -1,11 +1,11 @@
 import { InputType } from "@/common/constants/dom";
-import { useStore } from "@/store/store";
+import { useStoreActions } from "@/store/store";
 import { registerImportTrigger } from "@/utils/importTrigger";
 import { useEffect, useRef } from "react";
 
 export function RunbookImportInput() {
   const ref = useRef<HTMLInputElement>(null);
-  const importRunbooks = useStore((state) => state.importRunbooks);
+  const { importRunbooks } = useStoreActions();
 
   useEffect(() => {
     registerImportTrigger((accept) => {

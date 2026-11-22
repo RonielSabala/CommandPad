@@ -1,13 +1,13 @@
 import { BLOCK_TYPE_ORDER } from "@/blocks";
 import { AddRow } from "@/components/common/addRow/AddRow";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStoreActions } from "@/store/store";
 
 import { getBlockIcon } from "./blockViews";
 
 export function AddBlockRow() {
   const t = useTranslation();
-  const addBlock = useStore((state) => state.addBlock);
+  const { addBlock } = useStoreActions();
 
   return (
     <AddRow

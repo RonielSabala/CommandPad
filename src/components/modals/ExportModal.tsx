@@ -11,7 +11,7 @@ import { Spinner } from "@/components/common/Spinner";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
 import { classNames } from "@/utils/string";
 import { useEffect, useState } from "react";
@@ -42,10 +42,7 @@ function CloudExportStatusView({ onDone }: { onDone: () => void }) {
   const t = useTranslation();
   const status = useStore((state) => state.cloudExportStatus);
   const provider = useStore((state) => state.cloudExportProvider);
-  const closeExportModal = useStore((state) => state.closeExportModal);
-  const resetCloudExportStatus = useStore(
-    (state) => state.resetCloudExportStatus,
-  );
+  const { closeExportModal, resetCloudExportStatus } = useStoreActions();
 
   const providerName = provider ? PROVIDER_NAME[provider] : "";
 
@@ -122,18 +119,19 @@ function CloudExportStatusView({ onDone }: { onDone: () => void }) {
 export function ExportModal() {
   const t = useTranslation();
   const isOpen = useStore((state) => state.exportModalOpen);
-  const onClose = useStore((state) => state.closeExportModal);
-  const exportRunbook = useStore((state) => state.exportRunbook);
+  const {
+    closeExportModal: onClose,
+    exportRunbook,
+    setExportDestination,
+    setExportFolderPath,
+    setExportFormat,
+    setExportFilename,
+  } = useStoreActions();
 
   const destination = useStore((state) => state.lastExportDestination);
   const folderPath = useStore((state) => state.lastExportFolderPath);
   const format = useStore((state) => state.lastExportFormat);
   const filename = useStore((state) => state.lastExportFilename);
-
-  const setExportDestination = useStore((state) => state.setExportDestination);
-  const setExportFolderPath = useStore((state) => state.setExportFolderPath);
-  const setExportFormat = useStore((state) => state.setExportFormat);
-  const setExportFilename = useStore((state) => state.setExportFilename);
 
   const cloudExportStatus = useStore((state) => state.cloudExportStatus);
   const isExporting = cloudExportStatus !== CloudExportStatus.IDLE;

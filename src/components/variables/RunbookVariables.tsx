@@ -10,9 +10,12 @@ import {
 import { AddRow } from "@/components/common/addRow/AddRow";
 import { EmptyState } from "@/components/common/EmptyState";
 import { EnumIcon, SectionIcon, VariableIcon } from "@/components/icons";
+import { KeptTabs } from "@/components/tabs/KeptTabs";
+import { useScopedTab, useViewScope } from "@/components/tabs/tabScope";
 import { Minimap } from "@/components/workspace/minimap/Minimap";
 import { VariablesMirror } from "@/components/workspace/minimap/VariablesMirror";
 import { WorkspaceContextMenu } from "@/components/workspace/WorkspaceContextMenu";
+import { useCompletionSource } from "@/hooks/useCompletionSource";
 import { useLassoSelection } from "@/hooks/useLassoSelection";
 import { useRowReveal } from "@/hooks/useRowReveal";
 import { useScrollingClass } from "@/hooks/useScrollingClass";
@@ -20,18 +23,16 @@ import { useScrollPersistence } from "@/hooks/useScrollPersistence";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
-import { buildVariableCompletions } from "@/monaco/completions";
 import {
   EMPTY_BLOCKS,
   EMPTY_SECTIONS,
   EMPTY_VARIABLES,
-  getActiveTab,
   useStore,
+  useStoreActions,
 } from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
-import { getTabSecretKeys, getTabVariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 
 import "./RunbookVariables.css";
 import { VariableRows } from "./VariableRows";
@@ -39,8 +40,7 @@ import "./VariablesList.css";
 
 function AddVariableRow() {
   const t = useTranslation();
-  const addVariable = useStore((state) => state.addVariable);
-  const addVariableSection = useStore((state) => state.addVariableSection);
+  const { addVariable, addVariableSection } = useStoreActions();
 
   return (
     <AddRow
@@ -75,18 +75,17 @@ function AddVariableRow() {
   );
 }
 
-export function RunbookVariables() {
-  const t = useTranslation();
-  const activeTab = useStore(getActiveTab);
+/** The variables of the tab in scope. */
+const VariablesList = memo(function VariablesList({
+  shown,
+}: {
+  shown: boolean;
+}) {
+  const tab = useScopedTab();
+  const blocks = tab?.blocks ?? EMPTY_BLOCKS;
+  const variables = tab?.variables ?? EMPTY_VARIABLES;
+  const sections = tab?.variableSections ?? EMPTY_SECTIONS;
 
-  const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
-  const variables = activeTab?.variables ?? EMPTY_VARIABLES;
-  const sections = activeTab?.variableSections ?? EMPTY_SECTIONS;
-
-  const isEmpty = variables.length === 0 && sections.length === 0;
-
-  const [root, setRoot] = useState<HTMLDivElement | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
   const pendingFocusVariableId = useStore(
@@ -98,24 +97,12 @@ export function RunbookVariables() {
   const pendingRevealVariableId = useStore(
     (state) => state.pendingRevealVariable?.id ?? null,
   );
-  const finishVariableReveal = useStore((state) => state.finishVariableReveal);
+  const { finishVariableReveal } = useStoreActions();
 
-  const minimapEnabled = useStore((state) => state.minimapEnabled);
-  const minimapOnLeft = useStore(
-    (state) => state.minimapPosition === PanelSide.LEFT,
-  );
-  const showMinimap = minimapEnabled && !isEmpty;
-  const { menuAnchor, onContextMenu, closeMenu } = useWorkspaceContextMenu(
-    CssClass.VARIABLE_ITEM,
-  );
-
-  useScrollingClass(scrollRef);
-  useScrollPersistence(scrollRef, RunbookView.VARIABLES);
-  useLassoSelection(root, SelectionGroup.VARIABLE);
   useRowReveal(
     listRef,
     DataAttr.VARIABLE_ID,
-    pendingRevealVariableId,
+    shown ? pendingRevealVariableId : null,
     finishVariableReveal,
   );
 
@@ -137,13 +124,47 @@ export function RunbookVariables() {
     );
   }, [pendingFocusSectionId]);
 
-  const variableMap = getTabVariableMap(variables);
-  const secretKeys = getTabSecretKeys(variables);
   const usedKeys = useUsedVariableKeys(blocks, variables);
-  const completions = useMemo(
-    () => buildVariableCompletions(variableMap, secretKeys, usedKeys),
-    [variableMap, secretKeys, usedKeys],
+  const completions = useCompletionSource(variables, usedKeys);
+
+  return (
+    <div
+      id={shown ? ElementId.VARIABLES_LIST : undefined}
+      className={classNames(CssClass.VARIABLES_LIST, CssClass.REORDER_LIST)}
+      ref={listRef}
+    >
+      <VariableRows
+        variables={variables}
+        sections={sections}
+        usedKeys={usedKeys}
+        completions={completions}
+      />
+    </div>
   );
+});
+
+export function RunbookVariables() {
+  const t = useTranslation();
+  const { shown } = useViewScope();
+  const isEmpty = useScopedTab(
+    (tab) => !tab?.variables.length && !tab?.variableSections.length,
+  );
+
+  const [root, setRoot] = useState<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const minimapEnabled = useStore((state) => state.minimapEnabled);
+  const minimapOnLeft = useStore(
+    (state) => state.minimapPosition === PanelSide.LEFT,
+  );
+  const showMinimap = minimapEnabled && !isEmpty;
+  const { menuAnchor, onContextMenu, closeMenu } = useWorkspaceContextMenu(
+    CssClass.VARIABLE_ITEM,
+  );
+
+  useScrollingClass(scrollRef);
+  useScrollPersistence(scrollRef, RunbookView.VARIABLES);
+  useLassoSelection(shown ? root : null, SelectionGroup.VARIABLE);
 
   return (
     <div
@@ -175,19 +196,7 @@ export function RunbookVariables() {
           />
         )}
 
-        <div
-          id={ElementId.VARIABLES_LIST}
-          className={classNames(CssClass.VARIABLES_LIST, CssClass.REORDER_LIST)}
-          ref={listRef}
-        >
-          <VariableRows
-            variables={variables}
-            sections={sections}
-            usedKeys={usedKeys}
-            completions={completions}
-          />
-        </div>
-
+        <KeptTabs>{(shown) => <VariablesList shown={shown} />}</KeptTabs>
         <AddVariableRow />
       </div>
 

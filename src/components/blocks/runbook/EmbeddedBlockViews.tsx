@@ -9,7 +9,7 @@ import type {
 import { VariablesViewContext } from "@/components/variables/variablesViewContext";
 import { useClampSurfaceStyle } from "@/hooks/useClampSurface";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStoreActions } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { useContext, useRef } from "react";
@@ -77,7 +77,7 @@ export function EmbeddedImage({
   scopeId,
   images,
 }: EmbeddedBlockProps<ImageBlock>) {
-  const openImageViewer = useStore((state) => state.openImageViewer);
+  const { openImageViewer } = useStoreActions();
   if (!block.src) {
     return <ImageEmpty />;
   }

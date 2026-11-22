@@ -19,6 +19,7 @@ import {
   getTabByRunbookId,
   isRunbookOpen,
   useStore,
+  useStoreActions,
   useStoreApi,
 } from "@/store/store";
 import { libraryDropZone } from "@/utils/libraryTree";
@@ -64,29 +65,24 @@ export const LibraryRunbookRow = memo(function LibraryRunbookRow({
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const runbookId = runbook.id;
   const runbookLabel = displayLabel(runbook.label, t);
+  const {
+    setRunbookFocus,
+    loadLibraryRunbook,
+    renameLibraryRunbook,
+    removeLibraryRunbook,
+    resetLibraryRunbookName,
+    duplicateLibraryRunbook,
+    unlinkRunbookSync,
+  } = useStoreActions();
 
+  const sync = runbook.sync;
   const isActive = useStore((state) => state.activeRunbookId === runbookId);
   const isFocused = useStore((state) => state.focusedRunbookId === runbookId);
   const isOpen = useStore(
     (state) => marksOpenTabs && isRunbookOpen(state, runbookId),
   );
 
-  const setRunbookFocus = useStore((state) => state.setRunbookFocus);
-  const loadLibraryRunbook = useStore((state) => state.loadLibraryRunbook);
-
   const [renaming, setRenaming] = useState(false);
-  const renameLibraryRunbook = useStore((state) => state.renameLibraryRunbook);
-  const removeLibraryRunbook = useStore((state) => state.removeLibraryRunbook);
-  const resetLibraryRunbookName = useStore(
-    (state) => state.resetLibraryRunbookName,
-  );
-  const duplicateLibraryRunbook = useStore(
-    (state) => state.duplicateLibraryRunbook,
-  );
-
-  const sync = runbook.sync;
-  const unlinkRunbookSync = useStore((state) => state.unlinkRunbookSync);
-
   const { isDragging, dropClassName, handleProps, rowProps } =
     useLibraryRowDrag(runbookId, (sourceKind, fraction) =>
       libraryDropZone(sourceKind, LibraryItemKind.RUNBOOK, false, fraction),

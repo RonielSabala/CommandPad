@@ -2,7 +2,11 @@ import { EditorActionId, EditorActionOrder } from "@/common/editorConfig";
 import { VariableField } from "@/common/enums";
 import { useTranslation } from "@/i18n";
 import type { EditorAction } from "@/monaco/actions";
-import { getActiveVariables, useStore, useStoreApi } from "@/store/store";
+import {
+  getActiveVariables,
+  useStoreActions,
+  useStoreApi,
+} from "@/store/store";
 import {
   braceToken,
   braceTokenKeyRange,
@@ -16,8 +20,7 @@ import { useMemo } from "react";
 export function useEditorActions(): EditorAction[] {
   const t = useTranslation();
   const store = useStoreApi();
-  const extractVariable = useStore((state) => state.extractVariable);
-  const updateVariable = useStore((state) => state.updateVariable);
+  const { extractVariable, updateVariable } = useStoreActions();
 
   return useMemo(() => {
     const inlineVariables = (text: string) =>

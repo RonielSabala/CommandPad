@@ -282,7 +282,11 @@ export interface StoreState {
   setQuickOpenRecents: (count: number) => void;
   togglePanel: (panelId: PanelId) => void;
   togglePanelSide: (panelId: PanelId) => void;
-  setPanelWidth: (panelId: PanelId, width: number) => void;
+  setPanelWidth: (
+    panelId: PanelId,
+    width: number,
+    restoreWidth: number,
+  ) => void;
   resetPanelWidth: (panelId: PanelId) => void;
   setVariableKeyRatio: (ratio: number) => void;
   resetVariableKeyRatio: () => void;
@@ -433,7 +437,7 @@ export interface StoreState {
   // Interaction
   setSelectKeyHeld: (held: boolean) => void;
   setLinkKeyHeld: (held: boolean) => void;
-  setScrollTop: (view: RunbookView, scrollTop: number) => void;
+  setScrollTop: (tabId: string, view: RunbookView, scrollTop: number) => void;
   clearUserInteraction: () => void;
   toggleClampSurfaceExpanded: (id: string, surface: ClampSurface) => void;
   openImageViewer: (blockId: string, slides?: ImageBlock[] | null) => void;
@@ -556,3 +560,5 @@ export type StoreData = {
     ? never
     : K]: StoreState[K];
 };
+
+export type StoreActions = Omit<StoreState, keyof StoreData>;

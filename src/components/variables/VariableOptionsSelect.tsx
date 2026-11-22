@@ -40,7 +40,12 @@ import {
 } from "@/components/icons";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
-import { EMPTY_VARIABLES, getActiveVariables, useStore } from "@/store/store";
+import {
+  EMPTY_VARIABLES,
+  getActiveVariables,
+  useStore,
+  useStoreActions,
+} from "@/store/store";
 import {
   getTabSecretKeys,
   getTabVariableMap,
@@ -135,14 +140,12 @@ function VariableOptionRow({
 }: SelectOptionRowProps<string>) {
   const t = useTranslation();
   const { variableId, options } = useContext(OptionVariableContext);
-  const renameVariableOption = useStore((state) => state.renameVariableOption);
-  const removeVariableOption = useStore((state) => state.removeVariableOption);
-  const duplicateVariableOption = useStore(
-    (state) => state.duplicateVariableOption,
-  );
-  const reorderVariableOptions = useStore(
-    (state) => state.reorderVariableOptions,
-  );
+  const {
+    renameVariableOption,
+    removeVariableOption,
+    duplicateVariableOption,
+    reorderVariableOptions,
+  } = useStoreActions();
 
   const [editing, setEditing] = useState(false);
   const {
@@ -270,8 +273,7 @@ export function VariableOptionsSelect({
 }: Props) {
   const t = useTranslation();
   const readMode = useStore((state) => state.mode === AppMode.READ);
-  const updateVariable = useStore((state) => state.updateVariable);
-  const addVariableOption = useStore((state) => state.addVariableOption);
+  const { updateVariable, addVariableOption } = useStoreActions();
   const [draft, setDraft] = useState("");
 
   const variableId = variable.id;

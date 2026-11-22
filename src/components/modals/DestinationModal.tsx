@@ -1,7 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { SyncDestination } from "@/common/enums";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { LaptopFill } from "react-bootstrap-icons";
 
@@ -16,10 +16,7 @@ import { Modal, ModalActions, ModalMessage, ModalTitle } from "./Modal";
 export function DestinationModal() {
   const t = useTranslation();
   const isOpen = useStore((state) => state.destinationModalOpen);
-  const chooseDestination = useStore((state) => state.chooseDestination);
-  const closeDestinationModal = useStore(
-    (state) => state.closeDestinationModal,
-  );
+  const { chooseDestination, closeDestinationModal } = useStoreActions();
 
   return (
     <Modal open={isOpen} onClose={closeDestinationModal}>

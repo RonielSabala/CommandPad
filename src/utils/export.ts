@@ -18,7 +18,7 @@ import {
   getVariableMap,
   overrideScope,
   resolveCommandToString,
-  type OverrideHost,
+  type VariableScope,
 } from "./resolution";
 import { slugifyLabel } from "./runbook";
 import { buildRunbookSource } from "./runbookSource";
@@ -103,7 +103,7 @@ export type EmbeddedReader = (
 function bakeOverrides(
   variables: Variable[],
   { overrides }: RunbookBlock,
-  host: OverrideHost,
+  host: VariableScope,
 ): Variable[] {
   const overridden = applyOverrides(variables, overrides, host.secretKeys);
   const scope = overrideScope(overridden, overrides, host.variableMap);
@@ -128,7 +128,7 @@ async function renderMarkdownBlocks(
   trail: readonly string[],
 ): Promise<string[]> {
   const secured = await encryptContent(scope, content);
-  const host: OverrideHost = {
+  const host: VariableScope = {
     variableMap: getVariableMap(secured.variables),
     secretKeys: getSecretKeys(secured.variables),
   };

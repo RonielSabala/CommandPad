@@ -1,7 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { Cursor } from "@/common/constants/dom";
 import { EventType, MouseButton } from "@/common/constants/events";
-import { useStore } from "@/store/store";
+import { useStoreActions } from "@/store/store";
 import {
   useCallback,
   type MouseEvent as ReactMouseEvent,
@@ -13,10 +13,7 @@ import {
  * The ratio is shared by every row, so one drag resizes the whole list.
  */
 export function useVariableSplitResize() {
-  const setVariableKeyRatio = useStore((state) => state.setVariableKeyRatio);
-  const resetVariableKeyRatio = useStore(
-    (state) => state.resetVariableKeyRatio,
-  );
+  const { setVariableKeyRatio, resetVariableKeyRatio } = useStoreActions();
 
   const onPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {

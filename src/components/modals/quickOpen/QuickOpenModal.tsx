@@ -3,7 +3,7 @@ import { AriaRole, ElementId, ScrollIntoView } from "@/common/constants/dom";
 import { Key } from "@/common/constants/events";
 import { SearchInput } from "@/components/common/SearchInput";
 import { useTranslation } from "@/i18n";
-import { useStore, useStoreApi } from "@/store/store";
+import { useStore, useStoreActions, useStoreApi } from "@/store/store";
 import { toPx } from "@/utils/dom";
 import { foundRunbooks } from "@/utils/libraryTree";
 import {
@@ -167,7 +167,7 @@ function QuickOpenSearch({ initialQuery }: { initialQuery: string }) {
 
 export function QuickOpenModal() {
   const requested = useStore((state) => state.quickOpenQuery);
-  const closeQuickOpenModal = useStore((state) => state.closeQuickOpenModal);
+  const { closeQuickOpenModal } = useStoreActions();
 
   // Each opening mounts a fresh search
   const [lastRequested, setLastRequested] = useState(requested);

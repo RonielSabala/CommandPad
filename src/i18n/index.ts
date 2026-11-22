@@ -1,3 +1,4 @@
+export { LanguageProvider } from "./LanguageProvider";
 export { detectLanguage, getMessages, isLanguage, MESSAGES } from "./messages";
 export { MessageSlot, splitAtSlot } from "./slots";
 export {

@@ -60,6 +60,37 @@ export function spansText(spans: readonly ResolvedSpan[]): string {
   return spans.map((span) => span.text).join("");
 }
 
+function sameItems<T>(
+  a: readonly T[],
+  b: readonly T[],
+  same: (x: T, y: T) => boolean,
+): boolean {
+  return a === b || (a.length === b.length && a.every((x, i) => same(x, b[i])));
+}
+
+const NO_KEYS: readonly string[] = [];
+
+function sameSpan(a: ResolvedSpan, b: ResolvedSpan): boolean {
+  return (
+    a.text === b.text &&
+    a.depth === b.depth &&
+    a.source === b.source &&
+    !a.unresolved === !b.unresolved &&
+    sameItems(
+      a.derivedFrom ?? NO_KEYS,
+      b.derivedFrom ?? NO_KEYS,
+      (x, y) => x === y,
+    )
+  );
+}
+
+export function sameSpans(
+  a: readonly ResolvedSpan[],
+  b: readonly ResolvedSpan[],
+): boolean {
+  return sameItems(a, b, sameSpan);
+}
+
 /** Joins the neighbors sitting at one depth under one source and drops the empty ones. */
 export function mergeSpans(spans: readonly ResolvedSpan[]): ResolvedSpan[] {
   const merged: ResolvedSpan[] = [];

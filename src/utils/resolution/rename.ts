@@ -2,59 +2,78 @@ import { ReferenceSurface } from "@/common/enums";
 
 import { braceToken, replaceReferences, splitReferenceBody } from "./token";
 
+/** Old keys mapped to their new keys. */
+type Renames = ReadonlyMap<string, string>;
+
 /** Rewrites the key that opens a body. */
-function renameKeyChunk(text: string, oldKey: string, newKey: string): string {
-  if (text.trim() !== oldKey) {
+function renameKeyChunk(text: string, renames: Renames): string {
+  const key = text.trim();
+  const newKey = key ? renames.get(key) : undefined;
+  if (newKey === undefined) {
     return text;
   }
 
-  const at = text.indexOf(oldKey);
-  return `${text.slice(0, at)}${newKey}${text.slice(at + oldKey.length)}`;
+  const at = text.indexOf(key);
+  return `${text.slice(0, at)}${newKey}${text.slice(at + key.length)}`;
 }
 
 function renameReference(
   raw: string,
-  oldKey: string,
-  newKey: string,
+  renames: Renames,
   surface: ReferenceSurface,
 ): string {
-  const [keyChunk, ...rest] = splitReferenceBody(raw).map((chunk) => ({
-    separator: chunk.separator,
-    text: renameTokens(chunk.text, oldKey, newKey, surface),
-  }));
-
-  return braceToken(
-    renameKeyChunk(keyChunk.text, oldKey, newKey) +
-      rest.map((chunk) => `${chunk.separator}${chunk.text}`).join(""),
+  const chunks = splitReferenceBody(raw);
+  let body = renameKeyChunk(
+    renameTokens(chunks[0].text, renames, surface),
+    renames,
   );
+
+  for (let i = 1; i < chunks.length; i += 1) {
+    const { separator, text } = chunks[i];
+    body += separator + renameTokens(text, renames, surface);
+  }
+
+  return braceToken(body);
 }
 
+/** Whether `text` holds an old key at all. */
+function mentionsRenamedKey(text: string, renames: Renames): boolean {
+  for (const oldKey of renames.keys()) {
+    if (oldKey && text.includes(oldKey)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/** Rewrites every renamed key in one pass. */
 function renameTokens(
   text: string,
-  oldKey: string,
-  newKey: string,
+  renames: Renames,
   surface: ReferenceSurface,
 ): string {
-  if (!oldKey) {
-    return text;
-  }
-
   return replaceReferences(text, surface, (match) =>
-    renameReference(match.raw, oldKey, newKey, surface),
+    renameReference(match.raw, renames, surface),
   );
 }
 
-function renameAllTokens(
+function renameText(
   text: string,
-  renames: ReadonlyMap<string, string>,
+  renames: Renames,
   surface: ReferenceSurface,
 ): string {
-  let renamed = text;
-  for (const [oldKey, newKey] of renames) {
-    renamed = renameTokens(renamed, oldKey, newKey, surface);
-  }
+  return mentionsRenamedKey(text, renames)
+    ? renameTokens(text, renames, surface)
+    : text;
+}
 
-  return renamed;
+export function renameAllCommandTokens(text: string, renames: Renames): string {
+  return renameText(text, renames, ReferenceSurface.COMMAND);
+}
+
+export function renameAllValueTokens(text: string, renames: Renames): string {
+  return renameText(text, renames, ReferenceSurface.VALUE);
 }
 
 /** Rewrites a key in command text. */
@@ -63,7 +82,7 @@ export function renameCommandTokens(
   oldKey: string,
   newKey: string,
 ): string {
-  return renameTokens(text, oldKey, newKey, ReferenceSurface.COMMAND);
+  return renameAllCommandTokens(text, new Map([[oldKey, newKey]]));
 }
 
 /** Rewrites a key in a variable value. */
@@ -72,19 +91,5 @@ export function renameValueTokens(
   oldKey: string,
   newKey: string,
 ): string {
-  return renameTokens(text, oldKey, newKey, ReferenceSurface.VALUE);
-}
-
-export function renameAllCommandTokens(
-  text: string,
-  renames: ReadonlyMap<string, string>,
-): string {
-  return renameAllTokens(text, renames, ReferenceSurface.COMMAND);
-}
-
-export function renameAllValueTokens(
-  text: string,
-  renames: ReadonlyMap<string, string>,
-): string {
-  return renameAllTokens(text, renames, ReferenceSurface.VALUE);
+  return renameAllValueTokens(text, new Map([[oldKey, newKey]]));
 }

@@ -16,3 +16,8 @@
 .blocks-list > :is(.divider-block, .block-item:has(> .divider-block)) {
   justify-self: stretch;
 }
+
+/* Off-screen editors skip rendering, once Monaco has laid out at full size. */
+.blocks-list .code-editor-painted .code-editor-monaco:not(:focus-within) {
+  content-visibility: auto;
+}

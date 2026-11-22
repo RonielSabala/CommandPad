@@ -13,8 +13,19 @@ export interface VariableCompletion {
   unused?: boolean;
 }
 
+/** An editor's completions, or a function listing them as a suggestion opens. */
+export type CompletionSource =
+  | VariableCompletion[]
+  | (() => VariableCompletion[]);
+
+export function readCompletions(
+  source: CompletionSource,
+): VariableCompletion[] {
+  return typeof source === "function" ? source() : source;
+}
+
 /** What each editor offers, keyed by its model. */
-export const modelCompletions = new Map<string, VariableCompletion[]>();
+export const modelCompletions = new Map<string, CompletionSource>();
 
 /** The key a model path is filed under. */
 export function completionModelKey(path: string): string {

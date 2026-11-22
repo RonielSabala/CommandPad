@@ -16,7 +16,7 @@ import { VariablesViewContext } from "@/components/variables/variablesViewContex
 import { useClampSurface, useClampSurfaceStyle } from "@/hooks/useClampSurface";
 import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
 import { classNames, countLines } from "@/utils/string";
 import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
@@ -43,8 +43,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     : t.command.hideEditor;
 
   const promptEnabled = useStore((state) => state.commandPromptEnabled);
-  const updateBlock = useStore((state) => state.updateBlock);
-  const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
+  const { updateBlock, consumeBlockFocus } = useStoreActions();
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
   );
@@ -65,6 +64,21 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
   const handleChange = useCallback(
     (value: string) => updateBlock(blockId, BlockType.COMMAND, { text: value }),
     [updateBlock, blockId],
+  );
+
+  const previewActions = useMemo(
+    () => (
+      <EditorToggle
+        collapsed={isEditorCollapsed}
+        label={toggleEditorLabel}
+        onToggle={() =>
+          updateBlock(blockId, BlockType.COMMAND, {
+            editorCollapsed: !isEditorCollapsed,
+          })
+        }
+      />
+    ),
+    [isEditorCollapsed, toggleEditorLabel, updateBlock, blockId],
   );
 
   const handleLanguageChange = useCallback(
@@ -98,17 +112,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
         secretKeys={secretKeys}
         surfaceRef={rootRef}
         linkSources={linkSources}
-        actions={
-          <EditorToggle
-            collapsed={isEditorCollapsed}
-            label={toggleEditorLabel}
-            onToggle={() =>
-              updateBlock(blockId, BlockType.COMMAND, {
-                editorCollapsed: !isEditorCollapsed,
-              })
-            }
-          />
-        }
+        actions={previewActions}
       />
 
       <CodeEditor

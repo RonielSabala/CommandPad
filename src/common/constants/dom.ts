@@ -61,7 +61,8 @@ export const DataAttr = {
   NOTE_ALIGN: "data-note-align",
   DRAG_IMAGE: "data-drag-image",
 
-  // Panels
+  // Panels and views
+  RUNBOOK_VIEW: "data-runbook-view",
   PANEL_SIDE: "data-panel-side",
   PANEL_COLLAPSED: "data-panel-collapsed",
 

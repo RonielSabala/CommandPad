@@ -93,6 +93,19 @@ export function scrollRowIntoView(
   });
 }
 
+/** Run `callback` right after the next frame paints. */
+export function afterNextPaint(callback: () => void): () => void {
+  let timeout = 0;
+  const frame = requestAnimationFrame(() => {
+    timeout = window.setTimeout(callback);
+  });
+
+  return () => {
+    cancelAnimationFrame(frame);
+    clearTimeout(timeout);
+  };
+}
+
 /** Run `callback` once `element` has stopped moving on screen */
 export function whenElementSettles(
   element: HTMLElement,
@@ -214,6 +227,15 @@ export function getNoteCaretAtPoint(
   y: number,
 ): number | undefined {
   return nearestCaret(characterBoxes(noteTexts(root)), x, y);
+}
+
+/** Offset into `text` of the character edge nearest the point. */
+export function getTextCaretAtPoint(
+  text: Node,
+  x: number,
+  y: number,
+): number | undefined {
+  return nearestCaret(characterBoxes([[text, 0]]), x, y);
 }
 
 const TEXT_LAYOUT_STYLES = [

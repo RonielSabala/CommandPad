@@ -1,7 +1,7 @@
 import { CloudSortColumn, SortDirection } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { CaretDownFill, CaretUpFill } from "react-bootstrap-icons";
 
@@ -18,7 +18,7 @@ interface SortButtonProps {
 function SortButton({ column, label, className }: SortButtonProps) {
   const t = useTranslation();
   const sort = useStore((state) => state.cloudSort);
-  const toggleCloudSort = useStore((state) => state.toggleCloudSort);
+  const { toggleCloudSort } = useStoreActions();
 
   const active = sort.column === column;
   const ascending = sort.direction === SortDirection.ASC;
@@ -49,8 +49,8 @@ function SortButton({ column, label, className }: SortButtonProps) {
 export function CloudListHeader() {
   const t = useTranslation();
   const { rows } = useCloudSelection();
+  const { setCloudSelection } = useStoreActions();
   const selectedEntries = useStore((state) => state.cloudSelectedEntries);
-  const setCloudSelection = useStore((state) => state.setCloudSelection);
 
   const allSelected =
     rows.length > 0 && rows.every((entry) => selectedEntries.has(entry.id));

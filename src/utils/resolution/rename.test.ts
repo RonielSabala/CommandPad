@@ -73,6 +73,24 @@ describe("renaming several keys at once", () => {
     );
   });
 
+  it("swaps two keys", () => {
+    const swap = new Map([
+      ["A", "B"],
+      ["B", "A"],
+    ]);
+    expect(renameAllCommandTokens("{A} {B;p={A}}", swap)).toBe("{B} {A;p={B}}");
+  });
+
+  it("never renames a key it just wrote", () => {
+    const chain = new Map([
+      ["HOST", "HOST_COPY"],
+      ["HOST_COPY", "HOST_COPY1"],
+    ]);
+    expect(renameAllValueTokens("{HOST} {HOST_COPY}", chain)).toBe(
+      "{HOST_COPY} {HOST_COPY1}",
+    );
+  });
+
   it("is a no-op with nothing to rename", () => {
     expect(renameAllCommandTokens("{HOST}", new Map())).toBe("{HOST}");
   });

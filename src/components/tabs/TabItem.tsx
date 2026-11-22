@@ -13,7 +13,7 @@ import { blockDrag } from "@/hooks/blockDrag";
 import { useTabUnresolved } from "@/hooks/useTabUnresolved";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
 import { useEffect, useRef, useState, type DragEvent } from "react";
@@ -34,17 +34,18 @@ interface Props {
 export function TabItem({ tab, renaming, onRename, onRenameEnd }: Props) {
   const t = useTranslation();
   const readMode = useStore((state) => state.mode === AppMode.READ);
+  const {
+    switchTab,
+    closeTab,
+    reorderTabs,
+    copyBlocksToTab,
+    renameLibraryRunbook,
+  } = useStoreActions();
+
   const tabId = tab.id;
   const runbookId = tab.runbookId;
-
   const isActive = useStore((state) => state.activeTabId === tabId);
   const tabLabel = displayLabel(tab.label || t.common.untitledTab, t);
-
-  const switchTab = useStore((state) => state.switchTab);
-  const closeTab = useStore((state) => state.closeTab);
-  const reorderTabs = useStore((state) => state.reorderTabs);
-  const copyBlocksToTab = useStore((state) => state.copyBlocksToTab);
-  const renameLibraryRunbook = useStore((state) => state.renameLibraryRunbook);
 
   const unresolved = useTabUnresolved(tab);
   const unresolvedTip = useRichTooltip();

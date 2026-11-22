@@ -1,10 +1,10 @@
 import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
-import { ElementId } from "@/common/constants/dom";
+import { DataAttr, ElementId } from "@/common/constants/dom";
 import { RunbookView } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PlusIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { getRunbookView, useStore } from "@/store/store";
+import { getRunbookView, useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useCallback, useState } from "react";
 import { BodyText, Braces, FileEarmarkCode } from "react-bootstrap-icons";
@@ -15,9 +15,8 @@ import "./TabsBar.css";
 export function TabsBar() {
   const t = useTranslation();
   const tabs = useStore((state) => state.tabs);
-  const createNewTab = useStore((state) => state.createNewTab);
   const runbookView = useStore(getRunbookView);
-  const toggleRunbookView = useStore((state) => state.toggleRunbookView);
+  const { createNewTab, toggleRunbookView } = useStoreActions();
 
   const [renamingTabId, setRenamingTabId] = useState<string | null>(null);
   const endRename = useCallback(() => setRenamingTabId(null), []);
@@ -33,7 +32,7 @@ export function TabsBar() {
     : t.source.openSource;
 
   return (
-    <div id={ElementId.TABS_BAR}>
+    <div id={ElementId.TABS_BAR} {...{ [DataAttr.RUNBOOK_VIEW]: runbookView }}>
       <div id="tabs-strip">
         {tabs.map((tab) => (
           <TabItem

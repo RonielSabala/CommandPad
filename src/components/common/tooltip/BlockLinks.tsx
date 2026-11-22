@@ -3,7 +3,7 @@ import { ButtonType } from "@/common/constants/dom";
 import type { RevealTone } from "@/common/enums";
 import type { Block } from "@/common/types";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStoreActions } from "@/store/store";
 
 interface NumberedBlock {
   block: Block;
@@ -19,7 +19,7 @@ interface Props {
 
 export function BlockLinks({ tabId, blocks, tone, onReveal }: Props) {
   const t = useTranslation();
-  const revealBlock = useStore((state) => state.revealBlock);
+  const { revealBlock } = useStoreActions();
 
   return (
     <div className={CssClass.TOOLTIP_LINKS}>

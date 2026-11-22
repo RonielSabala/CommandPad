@@ -8,7 +8,7 @@ import { SearchInput } from "@/components/common/SearchInput";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useWorkspaceContextMenu } from "@/hooks/useWorkspaceContextMenu";
 import { useTranslation } from "@/i18n";
-import { useStore, useStoreApi } from "@/store/store";
+import { useStore, useStoreActions, useStoreApi } from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
 import {
   libraryRowKey,
@@ -41,15 +41,16 @@ export function RunbookSection() {
   const isCollapsed = useStore((state) => state.runbookSectionCollapsed);
   const activeRunbookId = useStore((state) => state.activeRunbookId);
   const focusedRunbookId = useStore((state) => state.focusedRunbookId);
-
   const searchQuery = useStore((state) => state.runbookSearchQuery);
-  const setQuery = useStore((state) => state.setRunbookSearchQuery);
+  const {
+    setRunbookSearchQuery: setQuery,
+    toggleRunbookSection: onToggle,
+    importRunbooks,
+    createNewTab,
+    createLibraryFolder,
+    clearRunbookLibrary,
+  } = useStoreActions();
 
-  const onToggle = useStore((state) => state.toggleRunbookSection);
-  const importRunbooks = useStore((state) => state.importRunbooks);
-  const createNewTab = useStore((state) => state.createNewTab);
-  const createLibraryFolder = useStore((state) => state.createLibraryFolder);
-  const clearRunbookLibrary = useStore((state) => state.clearRunbookLibrary);
   const fileDrop = useFileDrop(
     (files) => void importRunbooks(files),
     !isReadMode && !isCollapsed,

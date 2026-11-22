@@ -17,7 +17,7 @@ import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import { EnumIcon, SectionIcon, VariableIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { countVariableTargets, useStore } from "@/store/store";
+import { countVariableTargets, useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useContext, type ReactNode } from "react";
 import { Copy } from "react-bootstrap-icons";
@@ -34,7 +34,7 @@ interface InsertItemsProps extends Props {
 
 function InsertItems({ targetId, position }: InsertItemsProps) {
   const t = useTranslation();
-  const insertVariableRow = useStore((state) => state.insertVariableRow);
+  const { insertVariableRow } = useStoreActions();
 
   return (
     <>
@@ -95,7 +95,7 @@ interface ItemProps extends Props {
 }
 
 export function DuplicateItem({ targetId, children }: ItemProps) {
-  const duplicateVariable = useStore((state) => state.duplicateVariable);
+  const { duplicateVariable } = useStoreActions();
 
   return (
     <ContextMenuItem
@@ -108,7 +108,7 @@ export function DuplicateItem({ targetId, children }: ItemProps) {
 }
 
 export function RemoveItem({ targetId, children }: ItemProps) {
-  const removeVariable = useStore((state) => state.removeVariable);
+  const { removeVariable } = useStoreActions();
 
   return (
     <DeleteMenuItem onSelect={() => removeVariable(targetId)}>
@@ -140,12 +140,11 @@ export function VariableRowMenu({
   const t = useTranslation();
   const info = useInfoTooltip();
   const canSelect = useContext(SelectionActionsContext);
-  const toggleVariableSelection = useStore(
-    (state) => state.toggleVariableSelection,
-  );
+  const { toggleVariableSelection } = useStoreActions();
   const isSelected = useStore((state) =>
     state.selectedVariableIds.has(targetId),
   );
+
   const count = useStore((state) => {
     const targets = countVariableTargets(state, targetId);
 

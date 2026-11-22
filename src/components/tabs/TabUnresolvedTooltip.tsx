@@ -18,7 +18,7 @@ import {
 } from "@/components/variables/lazyVariableTooltipEditor";
 import { getBlockUnresolvedParts } from "@/hooks/useTabUnresolved";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import { getActiveTab, useStore, useStoreActions } from "@/store/store";
 import { isEmbedBlockUnresolved } from "@/utils/embeddedRunbook";
 import {
   getTabSecretKeys,
@@ -60,14 +60,12 @@ interface Props {
 export function TabUnresolvedTooltip({ tab, tip }: Props) {
   const t = useTranslation();
   const { hide } = tip;
+  const tabs = useStore((state) => state.tabs);
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const isActive = useStore((state) => getActiveTab(state)?.id === tab.id);
   const runbooks = useStore((state) => state.libraryRunbooks);
   const embeddedRunbooks = useStore((state) => state.embeddedRunbooks);
-  const tabs = useStore((state) => state.tabs);
-  const switchTab = useStore((state) => state.switchTab);
-  const revealVariable = useStore((state) => state.revealVariable);
-  const defineVariable = useStore((state) => state.defineVariable);
+  const { switchTab, revealVariable, defineVariable } = useStoreActions();
 
   const variableMap = getTabVariableMap(tab.variables);
   const secretKeys = getTabSecretKeys(tab.variables);

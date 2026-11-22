@@ -6,7 +6,7 @@ import { BlockLinks } from "@/components/common/tooltip/BlockLinks";
 import { PLAIN_TOOLTIP_LINK } from "@/components/common/tooltip/tooltip";
 import { VariablesViewContext } from "@/components/variables/variablesViewContext";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import { getActiveTab, useStore, useStoreActions } from "@/store/store";
 import { positionsIn } from "@/utils/collections";
 import { getVariableKey } from "@/utils/resolution";
 import { useContext, useState, type ReactNode } from "react";
@@ -32,7 +32,7 @@ export function InfoReferences({
   const dismiss = useContext(InfoDismissContext);
   const canRevealVariables = useContext(VariablesViewContext);
   const tab = useStore(getActiveTab);
-  const revealVariable = useStore((state) => state.revealVariable);
+  const { revealVariable } = useStoreActions();
   const [expanded, setExpanded] = useState(false);
 
   if (!tab) {

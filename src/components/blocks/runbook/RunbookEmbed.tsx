@@ -8,7 +8,7 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { RunbookIcon } from "@/components/icons";
 import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
 import { MessageSlot, splitAtSlot, useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { embedScopeId } from "@/utils/embeddedRunbook";
 import { isFilledImage } from "@/utils/image";
 import { classNames } from "@/utils/string";
@@ -59,9 +59,7 @@ export function EmbedNotice({ children, error }: NoticeProps) {
 
 export function EmbedUnlock({ embed }: { embed: EmbeddedRunbookState }) {
   const t = useTranslation();
-  const unlockEmbeddedRunbook = useStore(
-    (state) => state.unlockEmbeddedRunbook,
-  );
+  const { unlockEmbeddedRunbook } = useStoreActions();
 
   const { source } = embed;
   if (!source || !embed.locked) {
@@ -87,10 +85,7 @@ export function EmbedUnlock({ embed }: { embed: EmbeddedRunbookState }) {
 export function EmbedActions({ embed }: { embed: EmbeddedRunbookState }) {
   const t = useTranslation();
   const readMode = useStore((state) => state.mode === AppMode.READ);
-  const openEmbeddedRunbook = useStore((state) => state.openEmbeddedRunbook);
-  const refreshEmbeddedRunbook = useStore(
-    (state) => state.refreshEmbeddedRunbook,
-  );
+  const { openEmbeddedRunbook, refreshEmbeddedRunbook } = useStoreActions();
 
   const { source } = embed;
   if (!source) {
@@ -146,9 +141,7 @@ export function EmbedBody({
   const t = useTranslation();
   const { source } = embed;
   const readMode = useStore((state) => state.mode === AppMode.READ);
-  const signInForEmbeddedRunbooks = useStore(
-    (state) => state.signInForEmbeddedRunbooks,
-  );
+  const { signInForEmbeddedRunbooks } = useStoreActions();
 
   if (!source) {
     const label = block.label.trim();

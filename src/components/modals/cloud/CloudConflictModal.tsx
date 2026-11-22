@@ -12,7 +12,7 @@ import { useTranslation } from "@/i18n";
 import { modelPath } from "@/monaco/modelPath";
 import { conflictDiffOptions } from "@/monaco/options";
 import { ensureMonacoTheme, monacoThemeName } from "@/monaco/theme";
-import { getAppliedTheme, useStore } from "@/store/store";
+import { getAppliedTheme, useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { DiffEditor, type MonacoDiffEditor } from "@monaco-editor/react";
 import {
@@ -28,10 +28,10 @@ import { PROVIDER_NAME } from "./cloudProviders";
 export function CloudConflictModal() {
   const t = useTranslation();
   const conflict = useStore((state) => state.cloudConflict);
-  const resolve = useStore((state) => state.resolveCloudConflict);
   const theme = useStore(getAppliedTheme);
   const diffRef = useRef<MonacoDiffEditor | null>(null);
   const options = useMemo(conflictDiffOptions, []);
+  const { resolveCloudConflict: resolve } = useStoreActions();
 
   const provider = conflict ? PROVIDER_NAME[conflict.provider] : "";
   const sidePath = (side: ConflictSide) =>

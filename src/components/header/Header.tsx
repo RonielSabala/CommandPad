@@ -13,7 +13,12 @@ import {
   PencilIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, getRunbookView, useStore } from "@/store/store";
+import {
+  getActiveTab,
+  getRunbookView,
+  useStore,
+  useStoreActions,
+} from "@/store/store";
 import { classNames } from "@/utils/string";
 import { Link } from "react-router-dom";
 
@@ -22,11 +27,12 @@ import "./Header.css";
 export function Header() {
   const t = useTranslation();
   const isRead = useStore((state) => state.mode === AppMode.READ);
-
-  const toggleAppMode = useStore((state) => state.toggleAppMode);
-  const openSettingsModal = useStore((state) => state.openSettingsModal);
-  const openExportModal = useStore((state) => state.openExportModal);
-  const toggleCollapseAll = useStore((state) => state.toggleCollapseAll);
+  const {
+    toggleAppMode,
+    openSettingsModal,
+    openExportModal,
+    toggleCollapseAll,
+  } = useStoreActions();
 
   const isEmpty = useStore(
     (state) => !(getActiveTab(state)?.blocks.length ?? 0),

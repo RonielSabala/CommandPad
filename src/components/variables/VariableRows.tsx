@@ -1,6 +1,6 @@
 import { VariableEntryKind } from "@/common/enums";
 import type { Variable, VariableSection } from "@/common/types";
-import type { VariableCompletion } from "@/monaco/completions";
+import type { CompletionSource } from "@/monaco/completions";
 import { isVariableUnused } from "@/utils/resolution";
 import { buildVariableLayout } from "@/utils/variableSections";
 import { useMemo } from "react";
@@ -12,7 +12,7 @@ interface Props {
   variables: Variable[];
   sections: VariableSection[];
   usedKeys: Set<string>;
-  completions: VariableCompletion[];
+  completions: CompletionSource;
 }
 
 export function VariableRows({

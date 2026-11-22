@@ -48,10 +48,10 @@ body.variable-split-resizing
 }
 
 /* Hovering or dragging one segment lights that list's whole line. */
-.sidebar-section-list:has(.variable-split-handle:active)
+.variable-rows:has(.variable-split-handle:active)
   .variable-split-handle::before,
 body:not(.variable-split-resizing)
-  .sidebar-section-list:has(.variable-split-handle:hover)
+  .variable-rows:has(.variable-split-handle:hover)
   .variable-split-handle::before {
   width: var(--space-2);
   background: var(--accent);

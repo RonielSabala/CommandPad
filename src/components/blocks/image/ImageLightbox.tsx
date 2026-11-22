@@ -4,7 +4,12 @@ import type { ImageBlock } from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { Modal } from "@/components/modals/Modal";
 import { useTranslation } from "@/i18n";
-import { EMPTY_BLOCKS, getActiveTab, useStore } from "@/store/store";
+import {
+  EMPTY_BLOCKS,
+  getActiveTab,
+  useStore,
+  useStoreActions,
+} from "@/store/store";
 import { isFilledImage } from "@/utils/image";
 import { classNames } from "@/utils/string";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -24,8 +29,7 @@ export function ImageLightbox() {
   const activeTab = useStore(getActiveTab);
   const viewerBlockId = useStore((state) => state.imageViewerBlockId);
   const slides = useStore((state) => state.imageViewerSlides);
-  const openImageViewer = useStore((state) => state.openImageViewer);
-  const closeImageViewer = useStore((state) => state.closeImageViewer);
+  const { openImageViewer, closeImageViewer } = useStoreActions();
 
   const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
   const images = useMemo(

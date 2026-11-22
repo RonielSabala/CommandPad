@@ -8,10 +8,16 @@ import {
   literalGroupSpans,
   mergeSpans,
   nestSpans,
+  sameSpans,
   spansText,
 } from "./spans";
 import { splitReferenceParts } from "./token";
-import type { ResolvedValue, VariableLookup, VariableMap } from "./types";
+import type {
+  ResolvedValue,
+  VariableLookup,
+  VariableMap,
+  VariableScope,
+} from "./types";
 
 export function getVariableKey(variable: Variable): string {
   return variable.key.trim();
@@ -156,8 +162,29 @@ export function getSecretKeys(variables: Variable[] = []): Set<string> {
   return keys;
 }
 
+/** Whether `key` resolves to the same text and spans in both maps. */
+export function sameResolvedValue(
+  a: VariableMap,
+  b: VariableMap,
+  key: string,
+): boolean {
+  const value = Object.hasOwn(a, key) ? a[key] : undefined;
+  const other = Object.hasOwn(b, key) ? b[key] : undefined;
+
+  if (value === other) {
+    return true;
+  }
+
+  return (
+    !!value &&
+    !!other &&
+    value.text === other.text &&
+    sameSpans(value.spans, other.spans)
+  );
+}
+
 /** `compute`, worked out once per variables array. */
-function cachedPerVariables<T>(compute: (variables: Variable[]) => T) {
+export function cachedPerVariables<T>(compute: (variables: Variable[]) => T) {
   const cache = new WeakMap<readonly Variable[], T>();
 
   return (variables: Variable[]): T => {
@@ -178,3 +205,8 @@ export const getTabVariableMap = cachedPerVariables<VariableMap>((variables) =>
 export const getTabSecretKeys = cachedPerVariables<ReadonlySet<string>>(
   (variables) => getSecretKeys(variables),
 );
+
+export const getTabScope = cachedPerVariables<VariableScope>((variables) => ({
+  variableMap: getTabVariableMap(variables),
+  secretKeys: getTabSecretKeys(variables),
+}));

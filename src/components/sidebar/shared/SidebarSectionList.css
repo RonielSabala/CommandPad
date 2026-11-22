@@ -7,6 +7,19 @@
   padding: var(--space-2) 0;
 }
 
+/* A hidden kept list keeps its display, since changing that rebuilds the list on every switch. */
+.sidebar-kept-lists,
+.sidebar-kept-lists > * {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.sidebar-kept-lists > .kept-tab-hidden {
+  flex: none;
+}
+
 .sidebar-section-list-row {
   --row-gap: var(--space-2);
 

@@ -7,7 +7,7 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
 import { useBindingLabel } from "@/hooks/useBindingLabel";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import {
   ArrowRepeat,
@@ -25,12 +25,12 @@ interface Props {
 
 export function RunbookSyncBadge({ runbookId, sync }: Props) {
   const t = useTranslation();
+  const { saveRunbookToCloud } = useStoreActions();
   const transientStatus = useStore(
     (state) => state.runbookSyncStatus[runbookId],
   );
-  const saveRunbookToCloud = useStore((state) => state.saveRunbookToCloud);
-  const saveShortcut = useBindingLabel(KeyBinding.SAVE_RUNBOOK);
 
+  const saveShortcut = useBindingLabel(KeyBinding.SAVE_RUNBOOK);
   const syncStatus =
     transientStatus ??
     (sync.pending ? RunbookSyncStatus.UNSAVED : RunbookSyncStatus.SYNCED);

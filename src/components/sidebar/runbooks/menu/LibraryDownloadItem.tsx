@@ -1,7 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStoreActions } from "@/store/store";
 import { Download } from "react-bootstrap-icons";
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 
 export function LibraryDownloadItem({ folderId, disabled }: Props) {
   const t = useTranslation();
-  const exportLibraryFolder = useStore((state) => state.exportLibraryFolder);
+  const { exportLibraryFolder } = useStoreActions();
 
   return (
     <ContextMenuItem

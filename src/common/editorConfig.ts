@@ -198,7 +198,11 @@ export const MonacoLayout = {
   FIRST_COLUMN: 1,
   LINE_NUMBER_MIN_CHARS: 1,
   FULL_HEIGHT: "100%",
+  UNMEASURED: { width: 0, height: 0 },
 } as const;
+
+/** Flowing editors not yet on screen mount this many per frame. */
+export const LAZY_MOUNTS_PER_FRAME = 3;
 
 export const MonacoMinimap = {
   showSlider: "mouseover",
@@ -279,6 +283,27 @@ export const ChoiceConfig = {
 /** Monaco's own commands. */
 export const MonacoCommand = {
   REMOVE_EXPAND_LINE_SELECTION: "-expandLineSelection",
+} as const;
+
+/** Editor contributions dropped from every editor. */
+export const MonacoDroppedContribution = {
+  // Adds a <style> per editor
+  INLINE_COMPLETIONS: "editor.contrib.inlineCompletionsController",
+  // Off in the options
+  STICKY_SCROLL: "store.contrib.stickyScrollController",
+  LINKS: "editor.linkDetector",
+  COLOR_DETECTOR: "editor.contrib.colorDetector",
+  UNICODE_HIGHLIGHTER: "editor.contrib.unicodeHighlighter",
+  MIDDLE_SCROLL: "editor.contrib.middleScroll",
+  // No provider or menu feeds them
+  CODE_ACTIONS: "editor.contrib.codeActionController",
+  COLOR_PICKER: "editor.contrib.standaloneColorPickerController",
+  FLOATING_TOOLBAR: "editor.contrib.floatingToolbar",
+  GOTO_DEFINITION: "editor.contrib.gotodefinitionatposition",
+  INLAY_HINTS: "editor.contrib.InlayHints",
+  LINKED_EDITING: "editor.contrib.linkedEditing",
+  PARAMETER_HINTS: "editor.controller.parameterHints",
+  SEMANTIC_TOKENS: "editor.contrib.viewportSemanticTokens",
 } as const;
 
 export const MonacoFind = {

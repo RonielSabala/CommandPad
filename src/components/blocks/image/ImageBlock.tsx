@@ -11,7 +11,7 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { ImportIcon } from "@/components/icons";
 import { useFileDrop } from "@/hooks/useFileDrop";
 import { useLanguage, useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { formatFileSize } from "@/utils/format";
 import {
   downloadImage,
@@ -37,10 +37,8 @@ export function ImageBlock({ block }: BlockViewProps<ImageBlockData>) {
 
   const language = useLanguage();
   const isReadMode = useStore((state) => state.mode === AppMode.READ);
-  const updateBlock = useStore((state) => state.updateBlock);
-  const confirm = useStore((state) => state.confirm);
-  const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
-  const openImageViewer = useStore((state) => state.openImageViewer);
+  const { updateBlock, confirm, consumeBlockFocus, openImageViewer } =
+    useStoreActions();
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
   );

@@ -7,7 +7,7 @@ import { StickyScrollbar } from "@/components/common/StickyScrollbar";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { isConstantVariableKey } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { useRef, type RefObject } from "react";
@@ -33,10 +33,11 @@ export function VariableKeyInput({
 }: Props) {
   const t = useTranslation();
   const readMode = useStore((state) => state.mode === AppMode.READ);
-  const updateVariable = useStore((state) => state.updateVariable);
+  const { updateVariable } = useStoreActions();
   const handlePairWrap = usePairWrapping((value) =>
     updateVariable(variableId, VariableField.KEY, value),
   );
+
   const ownRef = useRef<HTMLInputElement>(null);
   const scrollTarget = useDomScrollTarget(ownRef);
 

@@ -22,12 +22,13 @@ import { DragImage } from "@/components/common/DragImage";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { RunbookIcon } from "@/components/icons";
 import { ProviderSelect } from "@/components/modals/cloud/ProviderSelect";
+import { useScopedTab } from "@/components/tabs/tabScope";
 import { useKeepInView } from "@/hooks/useKeepInView";
 import { useTranslation } from "@/i18n";
 import {
-  getActiveTab,
   getRunbookEmbedView,
   useStore,
+  useStoreActions,
   useStoreApi,
 } from "@/store/store";
 import { isEmbedUnresolved } from "@/utils/embeddedRunbook";
@@ -66,15 +67,11 @@ export function RunbookBlock({
   } = block;
 
   const cloudPath = cloud?.path ?? "";
+  const view = useScopedTab((tab) => getRunbookEmbedView(tab, blockId));
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const isMirror = useCodeRendering() === CodeRendering.STATIC;
-  const setRunbookEmbedView = useStore((state) => state.setRunbookEmbedView);
-  const view = useStore((state) =>
-    getRunbookEmbedView(getActiveTab(state), blockId),
-  );
-
-  const updateBlock = useStore((state) => state.updateBlock);
-  const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
+  const { setRunbookEmbedView, updateBlock, consumeBlockFocus } =
+    useStoreActions();
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
   );

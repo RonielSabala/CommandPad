@@ -2,7 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { XIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
 import { classNames } from "@/utils/string";
 import { FileEarmark, FolderFill } from "react-bootstrap-icons";
@@ -17,8 +17,7 @@ interface Props {
 export function CloudSelectionPills({ listedIds }: Props) {
   const t = useTranslation();
   const selectedEntries = useStore((state) => state.cloudSelectedEntries);
-  const toggleCloudSelected = useStore((state) => state.toggleCloudSelected);
-  const clearCloudSelection = useStore((state) => state.clearCloudSelection);
+  const { toggleCloudSelected, clearCloudSelection } = useStoreActions();
 
   const allListed = [...selectedEntries.values()].every(({ entry }) =>
     listedIds.has(entry.id),

@@ -1,40 +1,41 @@
 import { CssClass } from "@/common/constants/css";
 import { DataAttr, ElementId, ScrollIntoView } from "@/common/constants/dom";
+import { useScopedTab } from "@/components/tabs/tabScope";
+import { useCompletionSource } from "@/hooks/useCompletionSource";
 import { useRowReveal } from "@/hooks/useRowReveal";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
-import { buildVariableCompletions } from "@/monaco/completions";
 import {
   EMPTY_BLOCKS,
   EMPTY_VARIABLES,
-  getActiveTab,
   useStore,
+  useStoreActions,
 } from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
-import { getTabSecretKeys, getTabVariableMap } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
-import { useEffect, useMemo, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 
-import { BlockItem } from "./BlockItem";
+import { BlockItems } from "./BlockItem";
 import "./BlocksList.css";
 import { CompletionsContext } from "./listContext";
 
-export function BlocksList() {
-  const activeTab = useStore(getActiveTab);
-  const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
-  const variables = activeTab?.variables ?? EMPTY_VARIABLES;
+/** The blocks of the tab in scope. */
+export const BlocksList = memo(function BlocksList({
+  shown = true,
+}: {
+  shown?: boolean;
+}) {
+  const tab = useScopedTab();
+  const blocks = tab?.blocks ?? EMPTY_BLOCKS;
+  const variables = tab?.variables ?? EMPTY_VARIABLES;
+
   const pendingFocusBlockId = useStore((state) => state.pendingFocusBlockId);
   const imageViewerBlockId = useStore((state) => state.imageViewerBlockId);
   const pendingRevealBlockId = useStore((state) => state.pendingRevealBlockId);
-  const finishBlockReveal = useStore((state) => state.finishBlockReveal);
+  const { finishBlockReveal } = useStoreActions();
 
   const listRef = useRef<HTMLDivElement>(null);
-  const variableMap = getTabVariableMap(variables);
-  const secretKeys = getTabSecretKeys(variables);
   const usedKeys = useUsedVariableKeys(blocks, variables);
-  const completions = useMemo(
-    () => buildVariableCompletions(variableMap, secretKeys, usedKeys),
-    [variableMap, secretKeys, usedKeys],
-  );
+  const completions = useCompletionSource(variables, usedKeys);
 
   useEffect(() => {
     scrollRowIntoView(
@@ -57,26 +58,19 @@ export function BlocksList() {
   useRowReveal(
     listRef,
     DataAttr.BLOCK_ID,
-    pendingRevealBlockId,
+    shown ? pendingRevealBlockId : null,
     finishBlockReveal,
   );
 
   return (
     <CompletionsContext.Provider value={completions}>
       <div
-        id={ElementId.BLOCKS_LIST}
+        id={shown ? ElementId.BLOCKS_LIST : undefined}
         className={classNames(CssClass.BLOCKS_LIST, CssClass.REORDER_LIST)}
         ref={listRef}
       >
-        {blocks.map((block) => (
-          <BlockItem
-            key={block.id}
-            block={block}
-            variableMap={variableMap}
-            secretKeys={secretKeys}
-          />
-        ))}
+        <BlockItems blocks={blocks} variables={variables} />
       </div>
     </CompletionsContext.Provider>
   );
-}
+});

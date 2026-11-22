@@ -4,6 +4,8 @@ import { DragEffect } from "@/common/constants/events";
 import { PanelSide, RunbookView } from "@/common/enums";
 import { EmptyState } from "@/components/common/EmptyState";
 import { EmptyStateIcon } from "@/components/icons";
+import { KeptTabs } from "@/components/tabs/KeptTabs";
+import { useScopedTab } from "@/components/tabs/tabScope";
 import { blockDrag } from "@/hooks/blockDrag";
 import { useScrollingClass } from "@/hooks/useScrollingClass";
 import { useScrollPersistence } from "@/hooks/useScrollPersistence";
@@ -38,9 +40,7 @@ export function RunbookPreview() {
   const t = useTranslation();
   const store = useStoreApi();
   const tabsContentRef = useRef<HTMLDivElement>(null);
-  const isEmpty = useStore(
-    (state) => !(getActiveTab(state)?.blocks.length ?? 0),
-  );
+  const isEmpty = useScopedTab((tab) => !tab?.blocks.length);
 
   const minimapEnabled = useStore((state) => state.minimapEnabled);
   const minimapOnLeft = useStore(
@@ -109,7 +109,8 @@ export function RunbookPreview() {
             hint={t.blocks.emptyHint}
           />
         )}
-        <BlocksList />
+
+        <KeptTabs>{(shown) => <BlocksList shown={shown} />}</KeptTabs>
         <AddBlockRow />
       </div>
 

@@ -3,6 +3,7 @@ import { CodeModelScope } from "@/common/editorConfig";
 import { TooltipVariant, VariableEntryKind } from "@/common/enums";
 import type { RunbookBlock, Variable, VariableSection } from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
+import { useScopedTab } from "@/components/tabs/tabScope";
 import { OptionScopeContext } from "@/components/variables/optionScopeContext";
 import { VariableSectionHeader } from "@/components/variables/VariableSectionHeader";
 import { VariableValueField } from "@/components/variables/VariableValueField";
@@ -10,14 +11,15 @@ import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { useTranslation, type Messages } from "@/i18n";
 import {
   buildVariableCompletions,
+  readCompletions,
   withOrigin,
   type VariableCompletion,
 } from "@/monaco/completions";
 import {
   EMPTY_BLOCKS,
   EMPTY_VARIABLES,
-  getActiveTab,
   useStore,
+  useStoreActions,
 } from "@/store/store";
 import { embedScopeId, type EmbedSource } from "@/utils/embeddedRunbook";
 import { stripJsonExtension } from "@/utils/export";
@@ -27,7 +29,7 @@ import {
   isConstantVariableKey,
   isVariableUnused,
   withOverride,
-  type OverrideHost,
+  type VariableScope,
 } from "@/utils/resolution";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
@@ -61,7 +63,7 @@ interface Props {
   block: RunbookBlock;
   embed: EmbeddedRunbookState;
   /** The embedding runbook's own variables. */
-  host: OverrideHost;
+  host: VariableScope;
 }
 
 export function EmbeddedVariables({ block, embed, host }: Props) {
@@ -69,12 +71,9 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
   const { id: blockId, overrides } = block;
   const { variableMap } = host;
 
-  const hostLabel = useStore((state) => getActiveTab(state)?.label ?? "");
+  const hostLabel = useScopedTab((tab) => tab?.label ?? "");
   const folds = useStore((state) => state.embeddedSectionFolds);
-  const setRunbookOverrides = useStore((state) => state.setRunbookOverrides);
-  const setEmbeddedSectionFolded = useStore(
-    (state) => state.setEmbeddedSectionFolded,
-  );
+  const { setRunbookOverrides, setEmbeddedSectionFolded } = useStoreActions();
 
   const variables = embed.content?.variables;
   const variableSections = embed.content?.variableSections;
@@ -98,8 +97,12 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
   const embedName = embedSourceName(block, embed.source, t);
 
   const listCompletions = useContext(CompletionsContext);
-  const hostCompletions = useMemo(
-    () => withOrigin(listCompletions, { name: hostName, embedded: false }),
+  const hostCompletions = useCallback(
+    () =>
+      withOrigin(readCompletions(listCompletions), {
+        name: hostName,
+        embedded: false,
+      }),
     [listCompletions, hostName],
   );
 
@@ -235,7 +238,7 @@ interface VariableProps {
   override: string | undefined;
   scopedId: string;
   unused: boolean;
-  hostCompletions: VariableCompletion[];
+  hostCompletions: () => VariableCompletion[];
   embeddedCompletions: VariableCompletion[];
   onChange: (variable: Variable, value: string) => void;
 }
@@ -254,9 +257,9 @@ function EmbeddedVariable({
   const value = override ?? variable.value;
   const overridden = override !== undefined;
 
-  const completions = useMemo(
+  const completions = useCallback(
     () => [
-      ...hostCompletions,
+      ...hostCompletions(),
       ...embeddedCompletions.filter((entry) => entry.key !== key),
     ],
     [hostCompletions, embeddedCompletions, key],

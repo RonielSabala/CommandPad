@@ -8,7 +8,7 @@ import {
   type CloudEntry,
   type CloudFolderRef,
 } from "@/services/cloud";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames, matchesQuery } from "@/utils/string";
 import { useCallback, useMemo, useRef, useState, type MouseEvent } from "react";
 
@@ -47,17 +47,18 @@ export function CloudBrowser({ showFiles = false }: CloudBrowserProps) {
   const searchQuery = useStore((state) => state.cloudSearchQuery);
   const searchEntries = useStore((state) => state.cloudSearchEntries);
   const searchLoading = useStore((state) => state.cloudSearchLoading);
-  const setCloudSearchQuery = useStore((state) => state.setCloudSearchQuery);
+  const {
+    setCloudSearchQuery,
+    signInToCloud,
+    signOutOfCloud,
+    createCloudFolder,
+    setCloudSelection,
+    toggleCloudSelected,
+    clearCloudSelection,
+  } = useStoreActions();
+
   const sort = useStore((state) => state.cloudSort);
-
-  const signInToCloud = useStore((state) => state.signInToCloud);
-  const signOutOfCloud = useStore((state) => state.signOutOfCloud);
-  const createCloudFolder = useStore((state) => state.createCloudFolder);
-
   const selectedEntries = useStore((state) => state.cloudSelectedEntries);
-  const setCloudSelection = useStore((state) => state.setCloudSelection);
-  const toggleCloudSelected = useStore((state) => state.toggleCloudSelected);
-  const clearCloudSelection = useStore((state) => state.clearCloudSelection);
 
   // A non-null draft means the new-folder form is open
   const [newFolderDraft, setNewFolderDraft] = useState<string | null>(null);

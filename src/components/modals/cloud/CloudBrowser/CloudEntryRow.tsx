@@ -8,7 +8,7 @@ import {
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useLanguage, useTranslation } from "@/i18n";
 import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { stripJsonExtension } from "@/utils/export";
 import {
   formatCloudPath,
@@ -47,15 +47,13 @@ export function CloudEntryRow({
 }: CloudEntryRowProps) {
   const t = useTranslation();
   const language = useLanguage();
-  const renameCloudEntry = useStore((state) => state.renameCloudEntry);
-  const importRunbooksFromCloud = useStore(
-    (state) => state.importRunbooksFromCloud,
-  );
-  const duplicateCloudEntries = useStore(
-    (state) => state.duplicateCloudEntries,
-  );
-  const downloadCloudEntries = useStore((state) => state.downloadCloudEntries);
-  const deleteCloudEntries = useStore((state) => state.deleteCloudEntries);
+  const {
+    renameCloudEntry,
+    importRunbooksFromCloud,
+    duplicateCloudEntries,
+    downloadCloudEntries,
+    deleteCloudEntries,
+  } = useStoreActions();
 
   const selection = useCloudSelection();
   const selectedEntries = useStore((state) => state.cloudSelectedEntries);

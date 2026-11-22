@@ -1,4 +1,3 @@
-import { mapBlockCommandTexts } from "@/blocks";
 import {
   AppMode,
   RunbookView,
@@ -13,8 +12,6 @@ import {
   applyOperations,
   extractedVariableKey,
   getVariableKey,
-  renameCommandTokens,
-  renameValueTokens,
   uniqueCopyKey,
 } from "@/utils/resolution";
 import { buildDuplicateName } from "@/utils/string";
@@ -39,7 +36,11 @@ import {
 import type { StoreServices } from "@/store/services";
 import { withActiveTab } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
-import { createVariable, withNewVariable } from "@/store/variableState";
+import {
+  createVariable,
+  withNewVariable,
+  withVariableKeys,
+} from "@/store/variableState";
 
 type VariablesActions = Pick<
   StoreState,
@@ -268,50 +269,20 @@ export function createVariablesSlice(
     updateVariable: (variableId, field, value) => {
       set((s) =>
         withActiveTab(s, (tab) => {
-          const target = tab.variables.find((v) => v.id === variableId);
-          if (!target) {
+          if (!tab.variables.some((v) => v.id === variableId)) {
             return tab;
           }
 
-          let blocks = tab.blocks;
-          let variables = tab.variables;
-
           if (field === VariableField.KEY) {
-            const oldKey = getVariableKey(target);
-            const newKey = value.trim();
-
-            if (oldKey && newKey && oldKey !== newKey) {
-              blocks = tab.blocks.map((b) =>
-                mapBlockCommandTexts(b, (text) =>
-                  renameCommandTokens(text, oldKey, newKey),
-                ),
-              );
-
-              variables = tab.variables.map((v) => {
-                if (v.id === variableId) {
-                  return v;
-                }
-
-                const value = renameValueTokens(v.value, oldKey, newKey);
-                const options = v.options?.map((option) =>
-                  renameValueTokens(option, oldKey, newKey),
-                );
-
-                const optionsChanged = options?.some(
-                  (option, index) => option !== v.options?.[index],
-                );
-
-                return value === v.value && !optionsChanged
-                  ? v
-                  : { ...v, value, options };
-              });
-            }
+            return withVariableKeys(tab, new Map([[variableId, value]]));
           }
 
-          variables = variables.map((v) =>
-            v.id === variableId ? { ...v, [field]: value } : v,
-          );
-          return { ...tab, blocks, variables };
+          return {
+            ...tab,
+            variables: tab.variables.map((v) =>
+              v.id === variableId ? { ...v, [field]: value } : v,
+            ),
+          };
         }),
       );
 
@@ -492,21 +463,22 @@ export function createVariablesSlice(
         return;
       }
 
-      // Read the keys in one pass
+      // Every key in one rename
       const targets = targetVariableIds(state, variableId);
-      const variables = getActiveTab(state)?.variables ?? [];
-      const renames = variables.flatMap((v) => {
-        const key = targets.has(v.id) ? getVariableKey(v) : "";
-        return key ? [{ id: v.id, key }] : [];
-      });
+      const keys = new Map<string, string>();
 
-      for (const { id, key } of renames) {
-        get().updateVariable(
-          id,
-          VariableField.KEY,
-          applyOperations(key, [{ text: keyword }], { key }).text,
-        );
+      for (const v of getActiveTab(state)?.variables ?? []) {
+        const key = targets.has(v.id) ? getVariableKey(v) : "";
+        if (key) {
+          keys.set(
+            v.id,
+            applyOperations(key, [{ text: keyword }], { key }).text,
+          );
+        }
       }
+
+      set((s) => withActiveTab(s, (tab) => withVariableKeys(tab, keys)));
+      get().saveState();
     },
 
     clearVariableValues: (variableId) => {

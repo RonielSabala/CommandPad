@@ -14,6 +14,7 @@ export function baseEditorOptions(folding: boolean): Options {
 
   return {
     automaticLayout: true,
+    dimension: MonacoLayout.UNMEASURED,
     contextmenu: true,
     editContext: false,
     accessibilitySupport: "off",

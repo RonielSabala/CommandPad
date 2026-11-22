@@ -1,3 +1,4 @@
+export { getBlockScope } from "./blockScope";
 export { carryVariables, uniqueCopyKey } from "./carry";
 export type { CarriedVariables } from "./carry";
 export {
@@ -25,7 +26,6 @@ export {
   unresolvedOverrideParts,
   withOverride
 } from "./overrides";
-export type { OverrideHost } from "./overrides";
 export { getTemplateParamNames, sourceKey } from "./params";
 export {
   renameAllCommandTokens,
@@ -52,7 +52,12 @@ export {
   splitReferenceBody
 } from "./token";
 export type { OpenReference, ReferenceMatch } from "./token";
-export type { ResolvedValue, VariableLookup, VariableMap } from "./types";
+export type {
+  ResolvedValue,
+  VariableLookup,
+  VariableMap,
+  VariableScope
+} from "./types";
 export {
   hasUnresolvedBlockReferences,
   unresolvedBlockParts,

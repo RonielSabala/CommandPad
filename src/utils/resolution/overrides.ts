@@ -18,11 +18,6 @@ export type VariableOverrides = Readonly<Record<string, string>>;
 const NO_SECRETS: ReadonlySet<string> = new Set();
 const NO_PARTS: UnresolvedPart[] = [];
 
-export interface OverrideHost {
-  variableMap: VariableMap;
-  secretKeys: ReadonlySet<string>;
-}
-
 function referencesSecret(
   text: string,
   secretKeys: ReadonlySet<string>,

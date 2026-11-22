@@ -17,8 +17,8 @@ import { CodeLanguageSelect } from "@/components/common/codeEditor/CodeLanguageS
 import { useClampSurface, useClampSurfaceStyle } from "@/hooks/useClampSurface";
 import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
-import type { VariableCompletion } from "@/monaco/completions";
-import { useStore } from "@/store/store";
+import type { CompletionSource } from "@/monaco/completions";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames, countLines } from "@/utils/string";
 import { useCallback, useMemo, useRef, type ReactNode } from "react";
 
@@ -30,7 +30,7 @@ interface Props {
   value: string;
   scope: CodeModelScope;
   surfaceId: string;
-  completions: VariableCompletion[];
+  completions: CompletionSource;
   keyRow: ReactNode;
   className?: string;
   autoFocus?: boolean;
@@ -50,6 +50,8 @@ export function VariableValueField({
   onChange,
 }: Props) {
   const t = useTranslation();
+  const { updateVariable } = useStoreActions();
+
   const variableId = variable.id;
   const isSecret = !!variable.secret;
   const language = variable.language ?? DEFAULT_VARIABLE_LANGUAGE;
@@ -57,7 +59,6 @@ export function VariableValueField({
   // An override edits the block
   const editable = !onChange;
   const readMode = useStore((state) => state.mode === AppMode.READ);
-  const updateVariable = useStore((state) => state.updateVariable);
   const actions = useEditorActions();
 
   const rootRef = useRef<HTMLDivElement>(null);

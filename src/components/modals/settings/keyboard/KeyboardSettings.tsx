@@ -8,7 +8,7 @@ import {
 import { FramedSection } from "@/components/common/FramedSection";
 import { SearchInput } from "@/components/common/SearchInput";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames, matchesQuery } from "@/utils/string";
 import { useState } from "react";
 
@@ -18,8 +18,7 @@ import "./KeyboardSettings.css";
 export function KeyboardSettings() {
   const t = useTranslation();
   const overrides = useStore((state) => state.keybindingOverrides);
-  const confirm = useStore((state) => state.confirm);
-  const resetAllKeybindings = useStore((state) => state.resetAllKeybindings);
+  const { confirm, resetAllKeybindings } = useStoreActions();
 
   const [query, setQuery] = useState("");
   const [recordingId, setRecordingId] = useState<KeyBinding | null>(null);

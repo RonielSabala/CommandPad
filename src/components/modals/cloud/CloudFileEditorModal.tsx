@@ -9,7 +9,7 @@ import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { Spinner } from "@/components/common/Spinner";
 import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { formatCloudPath } from "@/utils/format";
 import { classNames } from "@/utils/string";
 
@@ -19,9 +19,11 @@ import "./CloudFileEditorModal.css";
 export function CloudFileEditorModal() {
   const t = useTranslation();
   const editor = useStore((state) => state.cloudFileEditor);
-  const setText = useStore((state) => state.setCloudFileEditorText);
-  const save = useStore((state) => state.saveCloudFileEditor);
-  const close = useStore((state) => state.closeCloudFileEditor);
+  const {
+    setCloudFileEditorText: setText,
+    saveCloudFileEditor: save,
+    closeCloudFileEditor: close,
+  } = useStoreActions();
 
   const busy = editor !== null && (editor.loading || editor.saving);
   const dirty = editor !== null && editor.text !== editor.original;

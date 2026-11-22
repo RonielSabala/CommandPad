@@ -3,7 +3,7 @@ import { AppMode, VariableEntryKind } from "@/common/enums";
 import type { VariableSection } from "@/common/types";
 import { NoteEditor } from "@/components/blocks/note/NoteEditor";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames, classSelector } from "@/utils/string";
 import { memo, useCallback, useRef, type MouseEvent } from "react";
 
@@ -26,23 +26,17 @@ export const VariableSectionItem = memo(function VariableSectionItem({
   count,
 }: Props) {
   const t = useTranslation();
+  const readMode = useStore((state) => state.mode === AppMode.READ);
+  const pendingFocus = useStore(
+    (state) => state.pendingFocusSectionId === sectionId,
+  );
+  const { consumeSectionFocus, renameVariableSection, toggleVariableSection } =
+    useStoreActions();
 
   const empty = count === 0;
   const sectionId = section.id;
   const collapsed = !!section.collapsed && !empty;
 
-  const readMode = useStore((state) => state.mode === AppMode.READ);
-  const pendingFocus = useStore(
-    (state) => state.pendingFocusSectionId === sectionId,
-  );
-
-  const consumeSectionFocus = useStore((state) => state.consumeSectionFocus);
-  const renameVariableSection = useStore(
-    (state) => state.renameVariableSection,
-  );
-  const toggleVariableSection = useStore(
-    (state) => state.toggleVariableSection,
-  );
   const rename = useCallback(
     (name: string) => renameVariableSection(sectionId, name),
     [renameVariableSection, sectionId],

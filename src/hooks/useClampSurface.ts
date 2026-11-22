@@ -1,6 +1,6 @@
 import { ClampConfig } from "@/common/editorConfig";
 import type { ClampSurface } from "@/common/enums";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import type { CSSProperties, RefObject } from "react";
 import { useCallback, useMemo, useRef } from "react";
 
@@ -37,7 +37,7 @@ export function useClampSurface(
   const expanded = useStore((state) =>
     state.expandedClampSurfaces[surface].has(id),
   );
-  const toggleExpanded = useStore((state) => state.toggleClampSurfaceExpanded);
+  const { toggleClampSurfaceExpanded: toggleExpanded } = useStoreActions();
   const autoExpandedRef = useRef(false);
   const keepInView = useKeepInView(surfaceRef, expanded);
 

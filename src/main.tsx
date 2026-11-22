@@ -1,4 +1,5 @@
 import App from "@/App";
+import { LanguageProvider } from "@/i18n";
 import {
   completeCloudAuthRedirect,
   isCloudAuthRedirect,
@@ -12,7 +13,9 @@ function renderApp(): void {
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
       <BrowserRouter>
-        <App />
+        <LanguageProvider>
+          <App />
+        </LanguageProvider>
       </BrowserRouter>
     </StrictMode>,
   );

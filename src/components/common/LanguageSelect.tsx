@@ -8,7 +8,7 @@ import {
   useTranslation,
   type Language,
 } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { Translate } from "react-bootstrap-icons";
 
@@ -41,7 +41,7 @@ export const LANGUAGE_OPTIONS: readonly SelectOption<Language>[] =
 export function LanguageSelect() {
   const t = useTranslation();
   const language = useLanguage();
-  const setLanguage = useStore((state) => state.setLanguage);
+  const { setLanguage } = useStoreActions();
 
   return (
     <Select

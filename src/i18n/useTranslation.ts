@@ -1,11 +1,17 @@
-import { useStore } from "@/store/store";
+import { useContext } from "react";
+import { LanguageContext } from "./languageContext";
 import { MESSAGES } from "./messages";
 import type { Language, Messages } from "./types";
 
 export function useLanguage(): Language {
-  return useStore((state) => state.language);
+  const language = useContext(LanguageContext);
+  if (language === null) {
+    throw new Error("useLanguage needs a LanguageProvider above it");
+  }
+
+  return language;
 }
 
 export function useTranslation(): Messages {
-  return useStore((state) => MESSAGES[state.language]);
+  return MESSAGES[useLanguage()];
 }

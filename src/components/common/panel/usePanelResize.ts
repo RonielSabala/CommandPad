@@ -3,7 +3,7 @@ import { CssClass } from "@/common/constants/css";
 import { Cursor, HtmlTag } from "@/common/constants/dom";
 import { EventType, MouseButton } from "@/common/constants/events";
 import { PanelId, PanelSide } from "@/common/enums";
-import { useStore, useStoreApi } from "@/store/store";
+import { useStoreActions, useStoreApi } from "@/store/store";
 import {
   useCallback,
   type MouseEvent as ReactMouseEvent,
@@ -16,9 +16,7 @@ export function usePanelResize(
   panelRef: RefObject<HTMLElement | null>,
 ) {
   const store = useStoreApi();
-  const setPanelWidth = useStore((state) => state.setPanelWidth);
-  const togglePanel = useStore((state) => state.togglePanel);
-  const resetPanelWidth = useStore((state) => state.resetPanelWidth);
+  const { setPanelWidth, togglePanel, resetPanelWidth } = useStoreActions();
 
   const onPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -37,8 +35,9 @@ export function usePanelResize(
         return;
       }
 
+      const { side, width: startWidth } = store.getState().panels[panelId];
+      const isRight = side === PanelSide.RIGHT;
       const rect = panel.getBoundingClientRect();
-      const isRight = store.getState().panels[panelId].side === PanelSide.RIGHT;
 
       document.body.classList.add(CssClass.PANEL_RESIZING);
       document.body.style.cursor = Cursor.COL_RESIZE;
@@ -48,7 +47,7 @@ export function usePanelResize(
           ? rect.right - moveEvent.clientX
           : moveEvent.clientX - rect.left;
 
-        setPanelWidth(panelId, width);
+        setPanelWidth(panelId, width, startWidth);
       };
 
       const onUp = () => {

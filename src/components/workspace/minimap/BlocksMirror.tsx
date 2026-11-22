@@ -1,39 +1,35 @@
 import { CssClass } from "@/common/constants/css";
-import { BlockItem } from "@/components/blocks/BlockItem";
+import { BlockItems } from "@/components/blocks/BlockItem";
 import "@/components/blocks/BlocksList.css";
-import {
-  EMPTY_BLOCKS,
-  EMPTY_VARIABLES,
-  getActiveTab,
-  useStore,
-} from "@/store/store";
-import { getTabSecretKeys, getTabVariableMap } from "@/utils/resolution";
+import { KeptTabs } from "@/components/tabs/KeptTabs";
+import { useScopedTab } from "@/components/tabs/tabScope";
+import { EMPTY_BLOCKS, EMPTY_VARIABLES } from "@/store/store";
 import { memo } from "react";
 
 import { MinimapMirror } from "./Minimap";
+
+const TabBlocksMirror = memo(function TabBlocksMirror({
+  width,
+}: {
+  width: number;
+}) {
+  const tab = useScopedTab();
+  const blocks = tab?.blocks ?? EMPTY_BLOCKS;
+  const variables = tab?.variables ?? EMPTY_VARIABLES;
+
+  return (
+    <MinimapMirror className={CssClass.BLOCKS_LIST} width={width}>
+      <BlockItems blocks={blocks} variables={variables} />
+    </MinimapMirror>
+  );
+});
 
 export const BlocksMirror = memo(function BlocksMirror({
   width,
 }: {
   width: number;
 }) {
-  const activeTab = useStore(getActiveTab);
-  const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
-  const variables = activeTab?.variables ?? EMPTY_VARIABLES;
-
-  const variableMap = getTabVariableMap(variables);
-  const secretKeys = getTabSecretKeys(variables);
-
   return (
-    <MinimapMirror className={CssClass.BLOCKS_LIST} width={width}>
-      {blocks.map((block) => (
-        <BlockItem
-          key={block.id}
-          block={block}
-          variableMap={variableMap}
-          secretKeys={secretKeys}
-        />
-      ))}
-    </MinimapMirror>
+    <KeptTabs afterPaint>{() => <TabBlocksMirror width={width} />}</KeptTabs>
   );
 });
