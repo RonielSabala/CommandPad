@@ -282,7 +282,11 @@ export interface StoreState {
   setQuickOpenRecents: (count: number) => void;
   togglePanel: (panelId: PanelId) => void;
   togglePanelSide: (panelId: PanelId) => void;
-  setPanelWidth: (panelId: PanelId, width: number) => void;
+  setPanelWidth: (
+    panelId: PanelId,
+    width: number,
+    restoreWidth: number,
+  ) => void;
   resetPanelWidth: (panelId: PanelId) => void;
   setVariableKeyRatio: (ratio: number) => void;
   resetVariableKeyRatio: () => void;

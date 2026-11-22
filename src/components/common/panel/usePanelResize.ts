@@ -35,8 +35,9 @@ export function usePanelResize(
         return;
       }
 
+      const { side, width: startWidth } = store.getState().panels[panelId];
+      const isRight = side === PanelSide.RIGHT;
       const rect = panel.getBoundingClientRect();
-      const isRight = store.getState().panels[panelId].side === PanelSide.RIGHT;
 
       document.body.classList.add(CssClass.PANEL_RESIZING);
       document.body.style.cursor = Cursor.COL_RESIZE;
@@ -46,7 +47,7 @@ export function usePanelResize(
           ? rect.right - moveEvent.clientX
           : moveEvent.clientX - rect.left;
 
-        setPanelWidth(panelId, width);
+        setPanelWidth(panelId, width, startWidth);
       };
 
       const onUp = () => {

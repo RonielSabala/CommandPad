@@ -207,15 +207,9 @@ export function createUiSlice(kit: StoreKit): UiActions {
     },
 
     togglePanel: (panelId) => {
-      set((s) => {
-        const panel = s.panels[panelId];
-        return withPanel(s, panelId, {
-          collapsed: !panel.collapsed,
-          width: panel.collapsed
-            ? PANEL_DEFINITIONS[panelId].defaultWidth
-            : panel.width,
-        });
-      });
+      set((s) =>
+        withPanel(s, panelId, { collapsed: !s.panels[panelId].collapsed }),
+      );
 
       get().saveState();
     },
@@ -228,7 +222,7 @@ export function createUiSlice(kit: StoreKit): UiActions {
       get().saveState();
     },
 
-    setPanelWidth: (panelId, width) => {
+    setPanelWidth: (panelId, width, restoreWidth) => {
       const definition = PANEL_DEFINITIONS[panelId];
       const shouldCollapse = width < definition.collapseSnap;
       const max = Math.floor(window.innerWidth * definition.maxScreenFraction);
@@ -237,7 +231,7 @@ export function createUiSlice(kit: StoreKit): UiActions {
         withPanel(s, panelId, {
           collapsed: shouldCollapse,
           width: shouldCollapse
-            ? definition.defaultWidth
+            ? restoreWidth
             : Math.min(max, Math.round(width)),
         }),
       );
