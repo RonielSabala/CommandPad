@@ -127,6 +127,21 @@ function editorIsInUse(instance: editor.IStandaloneCodeEditor): boolean {
   return isFindRevealed(instance) && focusIsAdrift();
 }
 
+// One function per prompt
+const PROMPT_LINE_NUMBERS = new Map<string, (line: number) => string>();
+
+function promptLineNumbers(prompt: string): (line: number) => string {
+  let lineNumbers = PROMPT_LINE_NUMBERS.get(prompt);
+  if (!lineNumbers) {
+    lineNumbers = (line) =>
+      line === MonacoLayout.FIRST_LINE ? prompt : String(line);
+
+    PROMPT_LINE_NUMBERS.set(prompt, lineNumbers);
+  }
+
+  return lineNumbers;
+}
+
 function gutterOptions(
   gutter: boolean,
   promptPrefix?: string,
@@ -136,10 +151,7 @@ function gutterOptions(
   }
 
   return {
-    lineNumbers: promptPrefix
-      ? (line) =>
-          line === MonacoLayout.FIRST_LINE ? promptPrefix : String(line)
-      : "on",
+    lineNumbers: promptPrefix ? promptLineNumbers(promptPrefix) : "on",
   };
 }
 

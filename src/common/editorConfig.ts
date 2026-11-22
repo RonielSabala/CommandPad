@@ -198,6 +198,7 @@ export const MonacoLayout = {
   FIRST_COLUMN: 1,
   LINE_NUMBER_MIN_CHARS: 1,
   FULL_HEIGHT: "100%",
+  UNMEASURED: { width: 0, height: 0 },
 } as const;
 
 /** Flowing editors not yet on screen mount this many per frame. */
