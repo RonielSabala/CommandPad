@@ -1,4 +1,5 @@
 import { LAZY_MOUNTS_PER_FRAME } from "@/common/editorConfig";
+import { afterNextPaint } from "@/utils/dom";
 import { useCallback, useEffect, useState, type RefObject } from "react";
 
 const pending = new Map<Element, () => void>();
@@ -56,7 +57,7 @@ export function queueLazyMounts(): void {
   }
 
   queued = true;
-  requestAnimationFrame(() => setTimeout(mountNearest));
+  afterNextPaint(mountNearest);
 }
 
 /**

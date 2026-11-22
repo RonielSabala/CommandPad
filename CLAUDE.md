@@ -275,7 +275,7 @@ The blocks view and the variables editor wear a miniature of their content in pl
 - **Everything a row owns must be global**, and row lookups must be scoped to the real list ref (never `document`), because the mirror duplicates rows.
 - Mirrors mask secrets (`StaticCodeView` `masked`).
 - One switch for all views: `minimapEnabled`/`minimapPosition`, toggled from `WorkspaceContextMenu`. Hidden when the list is empty.
-- Performance rules: scroll ticks never render (`place` writes transforms directly); `.minimap` is `overflow: clip`; the mirror drops `.item-control`s; scrollers get `is-scrolling` (no pointer events) while moving (`useScrollingClass`).
+- Performance rules: a mirror shows a newly shown tab only once the frame showing its list has painted (`KeptTabs` `afterPaint`), since a mirror repaints whole while the list paints only near the viewport; scroll ticks never render (`place` writes transforms directly); `.minimap` is `overflow: clip`; the mirror drops `.item-control`s; scrollers get `is-scrolling` (no pointer events) while moving (`useScrollingClass`).
 
 ### The runbook source view
 

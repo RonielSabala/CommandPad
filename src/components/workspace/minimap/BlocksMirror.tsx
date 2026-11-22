@@ -29,5 +29,7 @@ export const BlocksMirror = memo(function BlocksMirror({
 }: {
   width: number;
 }) {
-  return <KeptTabs>{() => <TabBlocksMirror width={width} />}</KeptTabs>;
+  return (
+    <KeptTabs afterPaint>{() => <TabBlocksMirror width={width} />}</KeptTabs>
+  );
 });

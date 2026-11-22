@@ -93,6 +93,19 @@ export function scrollRowIntoView(
   });
 }
 
+/** Run `callback` right after the next frame paints. */
+export function afterNextPaint(callback: () => void): () => void {
+  let timeout = 0;
+  const frame = requestAnimationFrame(() => {
+    timeout = window.setTimeout(callback);
+  });
+
+  return () => {
+    cancelAnimationFrame(frame);
+    clearTimeout(timeout);
+  };
+}
+
 /** Run `callback` once `element` has stopped moving on screen */
 export function whenElementSettles(
   element: HTMLElement,
