@@ -1,7 +1,7 @@
 import { CssClass } from "@/common/constants/css";
 import { DialogTone } from "@/common/enums";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useEffect, useRef } from "react";
 
@@ -16,9 +16,9 @@ interface CachedDialog {
 export function AlertModal() {
   const t = useTranslation();
   const dialog = useStore((state) => state.alertDialog);
-  const resolve = useStore((state) => state.resolveAlert);
-  const open = dialog !== null;
+  const { resolveAlert: resolve } = useStoreActions();
 
+  const open = dialog !== null;
   const okRef = useRef<HTMLButtonElement>(null);
 
   // Keep the last dialog rendered while the modal fades out

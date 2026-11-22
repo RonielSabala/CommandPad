@@ -31,7 +31,7 @@ import { createUiSlice } from "./slices/ui";
 import { createVariableSectionsSlice } from "./slices/variableSections";
 import { createVariablesSlice } from "./slices/variables";
 import { createVaultSlice } from "./slices/vault";
-import type { AppStoreApi, StoreState } from "./types";
+import type { AppStoreApi, StoreActions, StoreState } from "./types";
 import { uiStateSnapshot } from "./uiState";
 
 export {
@@ -136,4 +136,9 @@ export function useStoreApi(): AppStoreApi {
 
 export function useStore<T>(selector: (state: StoreState) => T): T {
   return useZustandStore(useContext(StoreContext), selector);
+}
+
+/** The store's actions, read without subscribing to the store. */
+export function useStoreActions(): StoreActions {
+  return useContext(StoreContext).getState();
 }

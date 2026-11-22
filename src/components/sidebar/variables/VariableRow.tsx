@@ -20,7 +20,7 @@ import { VariableOptionsSelect } from "@/components/variables/VariableOptionsSel
 import { usePairWrapping } from "@/hooks/usePairWrapping";
 import { useRowReorder } from "@/hooks/useRowReorder";
 import { useTranslation } from "@/i18n";
-import { getRunbookView, useStore } from "@/store/store";
+import { getRunbookView, useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { memo, useEffect, useRef, type CSSProperties } from "react";
 
@@ -39,15 +39,18 @@ export const VariableRow = memo(function VariableRow({
   showSecretColumn,
 }: Props) {
   const t = useTranslation();
+  const readMode = useStore((state) => state.mode === AppMode.READ);
+  const {
+    updateVariable,
+    toggleVariableSecret,
+    reorderVariables,
+    consumeVariableFocus,
+  } = useStoreActions();
+
   const variableId = variable.id;
   const variableKey = variable.key;
   const variableValue = variable.value;
   const isSecret = !!variable.secret;
-
-  const readMode = useStore((state) => state.mode === AppMode.READ);
-  const updateVariable = useStore((state) => state.updateVariable);
-  const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
-  const reorderVariables = useStore((state) => state.reorderVariables);
 
   const editorShowing = useStore(
     (state) => getRunbookView(state) === RunbookView.VARIABLES,
@@ -55,7 +58,6 @@ export const VariableRow = memo(function VariableRow({
   const pendingFocus = useStore(
     (state) => state.pendingFocusVariableId === variableId,
   );
-  const consumeVariableFocus = useStore((state) => state.consumeVariableFocus);
   const keyRatio = useStore((state) => state.variableKeyRatio);
   const splitResize = useVariableSplitResize();
   const keyRef = useRef<HTMLInputElement>(null);

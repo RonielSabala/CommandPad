@@ -16,7 +16,7 @@ import { VariablesViewContext } from "@/components/variables/variablesViewContex
 import { useClampSurface, useClampSurfaceStyle } from "@/hooks/useClampSurface";
 import { useEditorActions } from "@/hooks/useEditorActions";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import type { VariableMap } from "@/utils/resolution";
 import { classNames, countLines } from "@/utils/string";
 import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
@@ -43,8 +43,7 @@ export function CommandBlock({ block, variableMap, secretKeys }: Props) {
     : t.command.hideEditor;
 
   const promptEnabled = useStore((state) => state.commandPromptEnabled);
-  const updateBlock = useStore((state) => state.updateBlock);
-  const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
+  const { updateBlock, consumeBlockFocus } = useStoreActions();
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
   );

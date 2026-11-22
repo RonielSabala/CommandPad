@@ -14,7 +14,7 @@ import { InfoMenuItem } from "@/components/common/info/InfoMenuItem";
 import { useInfoTooltip } from "@/components/common/info/useInfoTooltip";
 import { CopyIcon, DuplicateIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useContext } from "react";
 
@@ -29,7 +29,7 @@ interface InsertItemsProps {
 
 function InsertItems({ blockId, position }: InsertItemsProps) {
   const t = useTranslation();
-  const addBlock = useStore((state) => state.addBlock);
+  const { addBlock } = useStoreActions();
 
   return BLOCK_TYPE_ORDER.map((type) => {
     const Icon = getBlockIcon(type);
@@ -51,9 +51,9 @@ export function BlockActionsMenu({ block, variableMap, secretKeys }: Props) {
   const Info = getBlockInfo(block.type);
   const blockId = block.id;
   const isNote = block.type === BlockType.NOTE;
-  const duplicateBlock = useStore((state) => state.duplicateBlock);
-  const removeBlock = useStore((state) => state.removeBlock);
-  const toggleBlockSelection = useStore((state) => state.toggleBlockSelection);
+  const { duplicateBlock, removeBlock, toggleBlockSelection } =
+    useStoreActions();
+
   const isSelected = useStore((state) => state.selectedBlockIds.has(blockId));
   const canSelect = useContext(SelectionActionsContext);
   const selectionCount = useStore((state) =>

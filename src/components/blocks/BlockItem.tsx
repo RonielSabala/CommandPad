@@ -7,7 +7,12 @@ import type { Block, Variable } from "@/common/types";
 import { DragHandle } from "@/components/common/DragHandle";
 import { blockDrag, clearBlockDrag } from "@/hooks/blockDrag";
 import { lasso } from "@/hooks/lasso";
-import { getActiveTab, useStore, useStoreApi } from "@/store/store";
+import {
+  getActiveTab,
+  useStore,
+  useStoreActions,
+  useStoreApi,
+} from "@/store/store";
 import { applyDragImage } from "@/utils/dom";
 import { getBlockScope } from "@/utils/resolution";
 import { classNames, classSelector } from "@/utils/string";
@@ -27,13 +32,11 @@ export const BlockItem = memo(function BlockItem({
   const store = useStoreApi();
   const isSelected = useStore((state) => state.selectedBlockIds.has(block.id));
   const isFlashing = useStore((state) => state.flashBlockIds.has(block.id));
-  const clearFlash = useStore((state) => state.clearFlash);
+  const { clearFlash, clearBlockReveal, reorderBlocks, setBlockSelected } =
+    useStoreActions();
   const revealTone = useStore((state) =>
     state.revealedBlockId === block.id ? state.blockRevealTone : null,
   );
-  const clearBlockReveal = useStore((state) => state.clearBlockReveal);
-  const reorderBlocks = useStore((state) => state.reorderBlocks);
-  const setBlockSelected = useStore((state) => state.setBlockSelected);
 
   const [draggable, setDraggable] = useState(false);
   const [dragging, setDragging] = useState(false);

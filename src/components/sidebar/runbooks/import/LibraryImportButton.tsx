@@ -11,7 +11,7 @@ import {
   SidebarSectionChevronIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { FileEarmarkZip } from "react-bootstrap-icons";
 
@@ -21,11 +21,8 @@ const HALF_CLASS = classNames(CssClass.BTN, CssClass.BTN_PRIMARY);
 
 export function LibraryImportButton() {
   const t = useTranslation();
-  const beginImport = useStore((state) => state.beginImport);
-  const beginZipImport = useStore((state) => state.beginZipImport);
-  const openPasteRunbookModal = useStore(
-    (state) => state.openPasteRunbookModal,
-  );
+  const { beginImport, beginZipImport, openPasteRunbookModal } =
+    useStoreActions();
 
   return (
     <div className="library-import-btn">

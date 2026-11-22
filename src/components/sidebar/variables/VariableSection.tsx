@@ -6,7 +6,12 @@ import { KeptTabs } from "@/components/tabs/KeptTabs";
 import { useScopedTab } from "@/components/tabs/tabScope";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
 import { useTranslation } from "@/i18n";
-import { EMPTY_BLOCKS, EMPTY_VARIABLES, useStore } from "@/store/store";
+import {
+  EMPTY_BLOCKS,
+  EMPTY_VARIABLES,
+  useStore,
+  useStoreActions,
+} from "@/store/store";
 import { isVariableUnused } from "@/utils/resolution";
 import { matchesQuery } from "@/utils/string";
 import { memo, useState } from "react";
@@ -59,11 +64,13 @@ const VariableList = memo(function VariableList({ shown }: { shown: boolean }) {
 
 export function VariableSection() {
   const t = useTranslation();
-  const collapsed = useStore((state) => state.variablesSectionCollapsed);
-  const toggle = useStore((state) => state.toggleVariablesSection);
   const query = useStore((state) => state.variableSearchQuery);
-  const setQuery = useStore((state) => state.setVariableSearchQuery);
-  const addVariable = useStore((state) => state.addVariable);
+  const collapsed = useStore((state) => state.variablesSectionCollapsed);
+  const {
+    toggleVariablesSection: toggle,
+    setVariableSearchQuery: setQuery,
+    addVariable,
+  } = useStoreActions();
 
   return (
     <SidebarSection

@@ -2,7 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { BlockType, NoteStyle } from "@/common/enums";
 import type { NoteBlock as NoteBlockData } from "@/common/types";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { useCallback } from "react";
 
 import "./NoteBlock.css";
@@ -22,8 +22,7 @@ export function NoteBlock({ block }: Props) {
   const t = useTranslation();
   const blockId = block.id;
 
-  const updateBlock = useStore((state) => state.updateBlock);
-  const consumeBlockFocus = useStore((state) => state.consumeBlockFocus);
+  const { updateBlock, consumeBlockFocus } = useStoreActions();
   const pendingFocus = useStore(
     (state) => state.pendingFocusBlockId === blockId,
   );

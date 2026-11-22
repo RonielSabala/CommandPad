@@ -8,6 +8,7 @@ import {
   getTabByRunbookId,
   tabContent,
   useStore,
+  useStoreActions,
 } from "@/store/store";
 import {
   localSourceKey,
@@ -48,7 +49,7 @@ export function useEmbeddedRunbook(
   trail: readonly string[],
 ): EmbeddedRunbookState {
   const runbooks = useStore((state) => state.libraryRunbooks);
-  const loadEmbeddedRunbook = useStore((state) => state.loadEmbeddedRunbook);
+  const { loadEmbeddedRunbook } = useStoreActions();
   const source = useMemo(
     () => resolveEmbedSource(runbooks, block),
     [runbooks, block],

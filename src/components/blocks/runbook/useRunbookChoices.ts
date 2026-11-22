@@ -3,7 +3,11 @@ import type { CloudRunbookRef, LibraryRunbook } from "@/common/types";
 import { useLanguage, useTranslation } from "@/i18n";
 import type { ChoiceSource } from "@/monaco/completions";
 import type { CloudEntry } from "@/services/cloud";
-import { getActiveRunbookId, useStore, useStoreApi } from "@/store/store";
+import {
+  getActiveRunbookId,
+  useStoreActions,
+  useStoreApi,
+} from "@/store/store";
 import { folderChoices } from "@/utils/folderChoices";
 import { formatFileSize } from "@/utils/format";
 import {
@@ -85,9 +89,7 @@ export function useCloudChoices(
 ): ChoiceSource {
   const t = useTranslation();
   const language = useLanguage();
-  const listEmbeddableCloudFolder = useStore(
-    (state) => state.listEmbeddableCloudFolder,
-  );
+  const { listEmbeddableCloudFolder } = useStoreActions();
 
   return useMemo(() => {
     const describe = (entry: CloudEntry) =>

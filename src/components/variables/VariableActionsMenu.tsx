@@ -15,6 +15,7 @@ import {
   hasOtherOptions,
   hasValuesToClear,
   useStore,
+  useStoreActions,
 } from "@/store/store";
 import { getCaseOperationKeywords } from "@/utils/resolution";
 import type { ReactNode } from "react";
@@ -34,7 +35,7 @@ interface ItemProps {
 }
 
 function ClearValuesItem({ variableId, children }: ItemProps) {
-  const clearVariableValues = useStore((state) => state.clearVariableValues);
+  const { clearVariableValues } = useStoreActions();
   const hasValues = useStore((state) => hasValuesToClear(state, variableId));
 
   if (!hasValues) {
@@ -53,9 +54,7 @@ function ClearValuesItem({ variableId, children }: ItemProps) {
 
 function RemoveOtherOptionsItem({ variableId, children }: ItemProps) {
   const hasOthers = useStore((state) => hasOtherOptions(state, variableId));
-  const removeOtherVariableOptions = useStore(
-    (state) => state.removeOtherVariableOptions,
-  );
+  const { removeOtherVariableOptions } = useStoreActions();
 
   return (
     <DeleteMenuItem
@@ -76,10 +75,12 @@ interface Props {
 
 export function VariableActionsMenu({ variable, className, sectioned }: Props) {
   const t = useTranslation();
-  const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
-  const applyVariableKeyCase = useStore((state) => state.applyVariableKeyCase);
-  const addVariableSection = useStore((state) => state.addVariableSection);
-  const sortVariableOptions = useStore((state) => state.sortVariableOptions);
+  const {
+    toggleVariableSecret,
+    applyVariableKeyCase,
+    addVariableSection,
+    sortVariableOptions,
+  } = useStoreActions();
 
   const { id: variableId, options } = variable;
   const isSecret = !!variable.secret;

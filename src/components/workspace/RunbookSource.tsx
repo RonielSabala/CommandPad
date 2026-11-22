@@ -6,7 +6,7 @@ import {
 } from "@/components/common/codeEditor/CodeEditor";
 import { useScopedTab } from "@/components/tabs/tabScope";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { buildRunbookSource } from "@/utils/runbookSource";
 import { useMemo, useRef, useState } from "react";
 
@@ -17,7 +17,7 @@ export function RunbookSource() {
   const t = useTranslation();
   const tab = useScopedTab();
   const readOnly = useStore((state) => state.mode === AppMode.READ);
-  const applyRunbookSource = useStore((state) => state.applyRunbookSource);
+  const { applyRunbookSource } = useStoreActions();
 
   const minimapEnabled = useStore((state) => state.minimapEnabled);
   const minimapPosition = useStore((state) => state.minimapPosition);

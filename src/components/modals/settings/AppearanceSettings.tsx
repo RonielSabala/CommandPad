@@ -5,7 +5,7 @@ import { LANGUAGE_OPTIONS } from "@/components/common/LanguageSelect";
 import type { SelectOption } from "@/components/common/Select";
 import { DisplayIcon, MoonIcon, SunIcon } from "@/components/icons";
 import { detectLanguage, useLanguage, useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useMemo } from "react";
 
@@ -23,8 +23,8 @@ export function AppearanceSettings() {
   const t = useTranslation();
   const language = useLanguage();
   const theme = useStore((state) => state.theme);
-  const setTheme = useStore((state) => state.setTheme);
-  const setLanguage = useStore((state) => state.setLanguage);
+  const { setTheme, setLanguage } = useStoreActions();
+
   const themeOptions = useMemo<SelectOption<ThemeSetting>[]>(
     () =>
       Object.values(ThemeSetting).map((value) => {

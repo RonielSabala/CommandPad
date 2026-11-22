@@ -5,7 +5,7 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { EyeIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import { readCompletions, type CompletionSource } from "@/monaco/completions";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { getVariableKey } from "@/utils/resolution";
 import { classNames } from "@/utils/string";
 import { useCallback, useEffect, type RefObject } from "react";
@@ -35,8 +35,7 @@ export function VariableEditor({
   const variableId = variable.id;
   const isSecret = !!variable.secret;
 
-  const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
-  const consumeVariableFocus = useStore((state) => state.consumeVariableFocus);
+  const { toggleVariableSecret, consumeVariableFocus } = useStoreActions();
   const pendingFocus = useStore(
     (state) => state.pendingFocusVariableId === variableId,
   );

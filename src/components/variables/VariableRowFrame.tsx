@@ -8,7 +8,7 @@ import { AppMode, DragGroup, LassoMode, SelectionGroup } from "@/common/enums";
 import { DragHandle } from "@/components/common/DragHandle";
 import { lasso } from "@/hooks/lasso";
 import { useRowReorder } from "@/hooks/useRowReorder";
-import { useStore, useStoreApi } from "@/store/store";
+import { useStore, useStoreActions, useStoreApi } from "@/store/store";
 import { classNames } from "@/utils/string";
 import type { ReactNode, RefObject } from "react";
 
@@ -35,13 +35,15 @@ export function VariableRowFrame({
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const isSelected = useStore((state) => state.selectedVariableIds.has(rowId));
   const isFlashing = useStore((state) => state.flashVariableIds.has(rowId));
-  const clearVariableFlash = useStore((state) => state.clearVariableFlash);
+  const {
+    clearVariableFlash,
+    clearVariableReveal,
+    setVariableSelected,
+    reorderVariables,
+  } = useStoreActions();
   const reveal = useStore((state) =>
     state.revealedVariable?.id === rowId ? state.revealedVariable : null,
   );
-  const clearVariableReveal = useStore((state) => state.clearVariableReveal);
-  const setVariableSelected = useStore((state) => state.setVariableSelected);
-  const reorderVariables = useStore((state) => state.reorderVariables);
 
   const { isDragging, isDragOver, handleProps, rowProps } = useRowReorder(
     DragGroup.VARIABLE,

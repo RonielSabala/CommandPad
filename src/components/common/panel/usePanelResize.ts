@@ -3,7 +3,7 @@ import { CssClass } from "@/common/constants/css";
 import { Cursor, HtmlTag } from "@/common/constants/dom";
 import { EventType, MouseButton } from "@/common/constants/events";
 import { PanelId, PanelSide } from "@/common/enums";
-import { useStore, useStoreApi } from "@/store/store";
+import { useStoreActions, useStoreApi } from "@/store/store";
 import {
   useCallback,
   type MouseEvent as ReactMouseEvent,
@@ -16,9 +16,7 @@ export function usePanelResize(
   panelRef: RefObject<HTMLElement | null>,
 ) {
   const store = useStoreApi();
-  const setPanelWidth = useStore((state) => state.setPanelWidth);
-  const togglePanel = useStore((state) => state.togglePanel);
-  const resetPanelWidth = useStore((state) => state.resetPanelWidth);
+  const { setPanelWidth, togglePanel, resetPanelWidth } = useStoreActions();
 
   const onPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {

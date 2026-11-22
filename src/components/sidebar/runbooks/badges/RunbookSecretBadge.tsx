@@ -2,7 +2,7 @@ import { CssClass } from "@/common/constants/css";
 import { VaultStatus } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { ShieldCheck, ShieldSlash } from "react-bootstrap-icons";
 
@@ -14,12 +14,9 @@ interface Props {
 
 export function RunbookSecretBadge({ runbookId }: Props) {
   const t = useTranslation();
+  const { requestVaultUnlock, changeVaultPassphrase } = useStoreActions();
   const status = useStore(
     (state) => state.vaultStatus[runbookId] ?? VaultStatus.ABSENT,
-  );
-  const requestVaultUnlock = useStore((state) => state.requestVaultUnlock);
-  const changeVaultPassphrase = useStore(
-    (state) => state.changeVaultPassphrase,
   );
 
   const unprotected =

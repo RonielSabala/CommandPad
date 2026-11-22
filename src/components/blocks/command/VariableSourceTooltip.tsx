@@ -8,7 +8,7 @@ import {
   preloadVariableTooltipEditor,
 } from "@/components/variables/lazyVariableTooltipEditor";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import { getActiveTab, useStore, useStoreActions } from "@/store/store";
 import { getVariableKey, sourceKey } from "@/utils/resolution";
 import { displayLabel } from "@/utils/runbook";
 import { classNames } from "@/utils/string";
@@ -28,12 +28,9 @@ export function VariableSourceTooltip({ source, resolved, tip }: Props) {
   const t = useTranslation();
   const embed = useContext(EmbedScopeContext);
   const readMode = useStore((state) => state.mode === AppMode.READ);
-  const revealVariable = useStore((state) => state.revealVariable);
-  const revealEmbeddedVariable = useStore(
-    (state) => state.revealEmbeddedVariable,
-  );
   const activeTabId = useStore((state) => getActiveTab(state)?.id);
-  const defineVariable = useStore((state) => state.defineVariable);
+  const { revealVariable, revealEmbeddedVariable, defineVariable } =
+    useStoreActions();
 
   // Pinned while editing
   const [editingId, setEditingId] = useState<string>();

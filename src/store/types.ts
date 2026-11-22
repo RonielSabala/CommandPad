@@ -556,3 +556,5 @@ export type StoreData = {
     ? never
     : K]: StoreState[K];
 };
+
+export type StoreActions = Omit<StoreState, keyof StoreData>;

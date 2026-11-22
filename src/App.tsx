@@ -7,9 +7,10 @@ import { useSystemTheme } from "@/hooks/useSystemTheme";
 import { useMonacoBootstrap } from "@/monaco/useMonacoBootstrap";
 import { useMonacoTabSize } from "@/monaco/useMonacoTabSize";
 import { useMonacoTheme } from "@/monaco/useMonacoTheme";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { lazy, Suspense, useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+
 import "./App.css";
 
 const loadWorkspace = () => import("./components/workspace/WorkspacePage");
@@ -39,7 +40,7 @@ const ROUTE_LOADERS: readonly RouteLoader[] = [
 ];
 
 export default function App() {
-  const bootstrap = useStore((state) => state.bootstrap);
+  const { bootstrap } = useStoreActions();
   const isInitialized = useStore((state) => state.initialized);
 
   useSystemTheme();

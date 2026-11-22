@@ -3,7 +3,11 @@ import { AppMode } from "@/common/enums";
 import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { SortMenuItems } from "@/components/common/contextMenu/SortMenuItems";
 import { useTranslation } from "@/i18n";
-import { hasLibraryFolderToSort, useStore } from "@/store/store";
+import {
+  hasLibraryFolderToSort,
+  useStore,
+  useStoreActions,
+} from "@/store/store";
 import { collapsesSubtree } from "@/utils/libraryTree";
 import { ChevronBarContract, ChevronBarExpand } from "react-bootstrap-icons";
 
@@ -14,7 +18,7 @@ interface Props {
 function SubtreeToggleItem({ folderId }: Props) {
   const t = useTranslation();
   const folders = useStore((state) => state.libraryFolders);
-  const toggleLibrarySubtree = useStore((state) => state.toggleLibrarySubtree);
+  const { toggleLibrarySubtree } = useStoreActions();
 
   const collapses = collapsesSubtree(folders, folderId);
   const Icon = collapses ? ChevronBarContract : ChevronBarExpand;
@@ -34,7 +38,7 @@ function SubtreeToggleItem({ folderId }: Props) {
 export function LibraryLevelItems({ folderId }: Props) {
   const t = useTranslation();
   const isReadMode = useStore((state) => state.mode === AppMode.READ);
-  const sortLibraryFolder = useStore((state) => state.sortLibraryFolder);
+  const { sortLibraryFolder } = useStoreActions();
 
   return (
     <>

@@ -28,6 +28,7 @@ import {
   EMPTY_SECTIONS,
   EMPTY_VARIABLES,
   useStore,
+  useStoreActions,
 } from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
 import { classNames } from "@/utils/string";
@@ -39,8 +40,7 @@ import "./VariablesList.css";
 
 function AddVariableRow() {
   const t = useTranslation();
-  const addVariable = useStore((state) => state.addVariable);
-  const addVariableSection = useStore((state) => state.addVariableSection);
+  const { addVariable, addVariableSection } = useStoreActions();
 
   return (
     <AddRow
@@ -97,7 +97,7 @@ const VariablesList = memo(function VariablesList({
   const pendingRevealVariableId = useStore(
     (state) => state.pendingRevealVariable?.id ?? null,
   );
-  const finishVariableReveal = useStore((state) => state.finishVariableReveal);
+  const { finishVariableReveal } = useStoreActions();
 
   useRowReveal(
     listRef,

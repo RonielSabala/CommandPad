@@ -15,7 +15,7 @@ import {
   FolderOpenFillIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { displayFolderName, libraryDropZone } from "@/utils/libraryTree";
 import { classNames } from "@/utils/string";
 import { memo, useEffect, useState } from "react";
@@ -47,25 +47,22 @@ export const LibraryFolderRow = memo(function LibraryFolderRow({
 }: Props) {
   const t = useTranslation();
   const readMode = useStore((state) => state.mode === AppMode.READ);
+  const {
+    removeLibraryFolder,
+    duplicateLibraryFolder,
+    renameLibraryFolder,
+    toggleLibraryFolder,
+    consumeLibraryFolderRename,
+  } = useStoreActions();
 
   const folderId = folder.id;
   const folderName = displayFolderName(folder.name, t);
   const FolderIcon = folder.collapsed ? FolderFill : FolderOpenFillIcon;
   const showsContents = !folder.collapsed && !empty;
 
-  const removeLibraryFolder = useStore((state) => state.removeLibraryFolder);
-  const duplicateLibraryFolder = useStore(
-    (state) => state.duplicateLibraryFolder,
-  );
-  const renameLibraryFolder = useStore((state) => state.renameLibraryFolder);
-  const toggleLibraryFolder = useStore((state) => state.toggleLibraryFolder);
-
   // A folder just created opens with its name ready to type over
   const renamePending = useStore(
     (state) => state.pendingLibraryFolderRenameId === folderId,
-  );
-  const consumeLibraryFolderRename = useStore(
-    (state) => state.consumeLibraryFolderRename,
   );
   const [renaming, setRenaming] = useState(false);
 

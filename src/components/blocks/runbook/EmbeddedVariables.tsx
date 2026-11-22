@@ -15,7 +15,12 @@ import {
   withOrigin,
   type VariableCompletion,
 } from "@/monaco/completions";
-import { EMPTY_BLOCKS, EMPTY_VARIABLES, useStore } from "@/store/store";
+import {
+  EMPTY_BLOCKS,
+  EMPTY_VARIABLES,
+  useStore,
+  useStoreActions,
+} from "@/store/store";
 import { embedScopeId, type EmbedSource } from "@/utils/embeddedRunbook";
 import { stripJsonExtension } from "@/utils/export";
 import { splitPath } from "@/utils/path";
@@ -68,10 +73,7 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
 
   const hostLabel = useScopedTab((tab) => tab?.label ?? "");
   const folds = useStore((state) => state.embeddedSectionFolds);
-  const setRunbookOverrides = useStore((state) => state.setRunbookOverrides);
-  const setEmbeddedSectionFolded = useStore(
-    (state) => state.setEmbeddedSectionFolded,
-  );
+  const { setRunbookOverrides, setEmbeddedSectionFolded } = useStoreActions();
 
   const variables = embed.content?.variables;
   const variableSections = embed.content?.variableSections;

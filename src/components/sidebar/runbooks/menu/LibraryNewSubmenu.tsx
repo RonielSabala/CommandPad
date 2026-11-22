@@ -3,7 +3,7 @@ import { ContextMenuItem } from "@/components/common/contextMenu/ContextMenu";
 import { ContextMenuSubmenu } from "@/components/common/contextMenu/ContextMenuSubmenu";
 import { PlusIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStoreActions } from "@/store/store";
 import { FileEarmark, Folder } from "react-bootstrap-icons";
 
 interface Props {
@@ -12,8 +12,7 @@ interface Props {
 
 export function LibraryNewSubmenu({ folderId }: Props) {
   const t = useTranslation();
-  const createNewTab = useStore((state) => state.createNewTab);
-  const createLibraryFolder = useStore((state) => state.createLibraryFolder);
+  const { createNewTab, createLibraryFolder } = useStoreActions();
 
   return (
     <ContextMenuSubmenu

@@ -7,7 +7,7 @@ import { CodeLanguage, PanelSide } from "@/common/enums";
 import { CodeEditor } from "@/components/common/codeEditor/CodeEditor";
 import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useEffect, useState } from "react";
 
@@ -17,10 +17,8 @@ import "./PasteRunbookModal.css";
 export function PasteRunbookModal() {
   const t = useTranslation();
   const isOpen = useStore((state) => state.pasteRunbookModalOpen);
-  const onClose = useStore((state) => state.closePasteRunbookModal);
-  const importRunbookFromText = useStore(
-    (state) => state.importRunbookFromText,
-  );
+  const { closePasteRunbookModal: onClose, importRunbookFromText } =
+    useStoreActions();
 
   const [text, setText] = useState("");
   const [hasError, setHasError] = useState(false);

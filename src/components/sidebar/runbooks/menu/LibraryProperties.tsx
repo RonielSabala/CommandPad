@@ -11,7 +11,12 @@ import { InfoDismissContext } from "@/components/common/info/infoTooltipContext"
 import { useInfoFormat } from "@/components/common/info/useInfoFormat";
 import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
 import { useTranslation } from "@/i18n";
-import { getLibraryRunbook, isRunbookOpen, useStore } from "@/store/store";
+import {
+  getLibraryRunbook,
+  isRunbookOpen,
+  useStore,
+  useStoreActions,
+} from "@/store/store";
 import { getExportBasename, withJsonExtension } from "@/utils/export";
 import {
   displayFolderName,
@@ -22,7 +27,7 @@ import { displayLabel } from "@/utils/runbook";
 import { useContext, useEffect, useMemo, useState } from "react";
 
 function useRunbookStats(runbookIds: Iterable<string>) {
-  const readRunbookStats = useStore((state) => state.readRunbookStats);
+  const { readRunbookStats } = useStoreActions();
   const [stats, setStats] = useState<RunbookStats | null>(null);
 
   useEffect(() => {
@@ -54,7 +59,7 @@ function useRunbookStats(runbookIds: Iterable<string>) {
 }
 
 function useRunbookLinks(runbookId: string) {
-  const readRunbookLinks = useStore((state) => state.readRunbookLinks);
+  const { readRunbookLinks } = useStoreActions();
   const libraryRunbooks = useStore((state) => state.libraryRunbooks);
   const [links, setLinks] = useState<RunbookLinks | null>(null);
 
@@ -83,7 +88,7 @@ function RunbookLinkList({
 }) {
   const t = useTranslation();
   const dismiss = useContext(InfoDismissContext);
-  const loadLibraryRunbook = useStore((state) => state.loadLibraryRunbook);
+  const { loadLibraryRunbook } = useStoreActions();
 
   return (
     <div className={CssClass.TOOLTIP_LINKS}>

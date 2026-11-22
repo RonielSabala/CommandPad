@@ -1,6 +1,6 @@
 import { CssClass, SEMIBOLD_ICON_CLASS } from "@/common/constants/css";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { ArrowLeft } from "react-bootstrap-icons";
 
@@ -12,13 +12,8 @@ export function CloudImportModal() {
   const t = useTranslation();
   const isOpen = useStore((state) => state.cloudImportModalOpen);
   const provider = useStore((state) => state.cloudProvider);
-  const chooseDestination = useStore((state) => state.chooseDestination);
-  const closeCloudImportModal = useStore(
-    (state) => state.closeCloudImportModal,
-  );
-  const returnToDestinationModal = useStore(
-    (state) => state.returnToDestinationModal,
-  );
+  const { chooseDestination, closeCloudImportModal, returnToDestinationModal } =
+    useStoreActions();
 
   return (
     <Modal

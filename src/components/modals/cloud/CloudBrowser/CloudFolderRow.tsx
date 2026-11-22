@@ -1,7 +1,8 @@
 import { useTranslation } from "@/i18n";
 import type { CloudEntry, CloudFolderRef } from "@/services/cloud";
-import { useStore } from "@/store/store";
+import { useStoreActions } from "@/store/store";
 import { FolderFill } from "react-bootstrap-icons";
+
 import { CloudEntryRow } from "./CloudEntryRow";
 
 interface CloudFolderRowProps {
@@ -11,8 +12,7 @@ interface CloudFolderRowProps {
 
 export function CloudFolderRow({ folder, path }: CloudFolderRowProps) {
   const t = useTranslation();
-  const openCloudFolder = useStore((state) => state.openCloudFolder);
-  const navigateCloudToPath = useStore((state) => state.navigateCloudToPath);
+  const { openCloudFolder, navigateCloudToPath } = useStoreActions();
 
   return (
     <CloudEntryRow

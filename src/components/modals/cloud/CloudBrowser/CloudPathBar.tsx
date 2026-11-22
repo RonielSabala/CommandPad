@@ -3,7 +3,7 @@ import { CssClass, SEMIBOLD_ICON_CLASS } from "@/common/constants/css";
 import { HistoryDirection } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { Fragment } from "react";
 import {
@@ -30,10 +30,8 @@ export function CloudPathBar({
   const historyIndex = useStore((state) => state.cloudHistoryIndex);
   const historyLength = useStore((state) => state.cloudHistory.length);
   const loading = useStore((state) => state.cloudLoading);
-
-  const navigateCloudHistory = useStore((state) => state.navigateCloudHistory);
-  const navigateCloudToDepth = useStore((state) => state.navigateCloudToDepth);
-  const refreshCloudEntries = useStore((state) => state.refreshCloudEntries);
+  const { navigateCloudHistory, navigateCloudToDepth, refreshCloudEntries } =
+    useStoreActions();
 
   return (
     <div className="cloud-browser-path-bar">

@@ -4,7 +4,12 @@ import { useScopedTab } from "@/components/tabs/tabScope";
 import { useCompletionSource } from "@/hooks/useCompletionSource";
 import { useRowReveal } from "@/hooks/useRowReveal";
 import { useUsedVariableKeys } from "@/hooks/useUsedVariableKeys";
-import { EMPTY_BLOCKS, EMPTY_VARIABLES, useStore } from "@/store/store";
+import {
+  EMPTY_BLOCKS,
+  EMPTY_VARIABLES,
+  useStore,
+  useStoreActions,
+} from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
 import { classNames } from "@/utils/string";
 import { memo, useEffect, useRef } from "react";
@@ -26,7 +31,7 @@ export const BlocksList = memo(function BlocksList({
   const pendingFocusBlockId = useStore((state) => state.pendingFocusBlockId);
   const imageViewerBlockId = useStore((state) => state.imageViewerBlockId);
   const pendingRevealBlockId = useStore((state) => state.pendingRevealBlockId);
-  const finishBlockReveal = useStore((state) => state.finishBlockReveal);
+  const { finishBlockReveal } = useStoreActions();
 
   const listRef = useRef<HTMLDivElement>(null);
   const usedKeys = useUsedVariableKeys(blocks, variables);

@@ -7,7 +7,7 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { XIcon } from "@/components/icons";
 import { PROVIDER_NAME } from "@/components/modals/cloud/cloudProviders";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useEffect, useState, type ComponentType } from "react";
 import {
@@ -39,7 +39,7 @@ const WARNING_OUTCOMES: ReadonlySet<SaveOutcome> = new Set([
 export function SaveNotice() {
   const t = useTranslation();
   const notice = useStore((state) => state.saveNotice);
-  const dismiss = useStore((state) => state.dismissSaveNotice);
+  const { dismissSaveNotice: dismiss } = useStoreActions();
 
   const [shown, setShown] = useState(notice);
   const [closedByHand, setClosedByHand] = useState(false);

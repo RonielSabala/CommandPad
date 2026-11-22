@@ -3,7 +3,7 @@ import type { CloudProvider } from "@/common/enums";
 import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
 import type { CloudFolderRef } from "@/services/cloud";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useEffect } from "react";
 
@@ -27,7 +27,7 @@ export function CloudFolderPicker({
   const path = useStore((state) => state.cloudPath);
   const signedIn = useStore((state) => state.cloudSignedIn);
   const loading = useStore((state) => state.cloudLoading);
-  const startCloudBrowse = useStore((state) => state.startCloudBrowse);
+  const { startCloudBrowse } = useStoreActions();
 
   useEffect(() => {
     void startCloudBrowse(provider, initialPath);

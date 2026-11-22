@@ -4,7 +4,7 @@ import { EventType, Key } from "@/common/constants/events";
 import { DialogTone } from "@/common/enums";
 import { VerticalDivider } from "@/components/common/VerticalDivider";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useEffect, useRef } from "react";
 
@@ -27,7 +27,7 @@ const EMPTY_DIALOG: CachedDialog = {
 export function ConfirmModal() {
   const t = useTranslation();
   const dialog = useStore((state) => state.confirmDialog);
-  const resolve = useStore((state) => state.resolveConfirm);
+  const { resolveConfirm: resolve } = useStoreActions();
 
   const isOpen = dialog !== null;
   const confirmRef = useRef<HTMLButtonElement>(null);

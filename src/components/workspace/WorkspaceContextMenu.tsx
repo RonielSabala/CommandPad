@@ -8,7 +8,7 @@ import {
 } from "@/components/common/contextMenu/ContextMenu";
 import { CopyIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import { getActiveTab, useStore, useStoreActions } from "@/store/store";
 import { Spellcheck } from "react-bootstrap-icons";
 
 interface Props {
@@ -24,13 +24,12 @@ export function WorkspaceContextMenu({ anchor, onClose }: Props) {
     (state) => state.minimapPosition === PanelSide.LEFT,
   );
   const spellcheckEnabled = useStore((state) => state.spellcheckEnabled);
-
-  const copyRunbookMarkdown = useStore((state) => state.copyRunbookMarkdown);
-  const toggleMinimap = useStore((state) => state.toggleMinimap);
-  const toggleMinimapPosition = useStore(
-    (state) => state.toggleMinimapPosition,
-  );
-  const toggleSpellcheck = useStore((state) => state.toggleSpellcheck);
+  const {
+    copyRunbookMarkdown,
+    toggleMinimap,
+    toggleMinimapPosition,
+    toggleSpellcheck,
+  } = useStoreActions();
 
   return (
     <ContextMenu anchor={anchor} onClose={onClose}>

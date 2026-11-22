@@ -1,7 +1,7 @@
 import { QuickOpenRecents } from "@/common/config";
 import { AppRoute } from "@/common/constants/routes";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { useNavigate } from "react-router-dom";
 
 import { DangerZone, DangerZoneItem, SettingItem, SettingRange } from "./parts";
@@ -10,9 +10,11 @@ export function WorkspaceSettings() {
   const t = useTranslation();
   const navigate = useNavigate();
   const recents = useStore((state) => state.quickOpenRecents);
-  const setRecents = useStore((state) => state.setQuickOpenRecents);
-  const clearAllData = useStore((state) => state.clearAllData);
-  const closeSettingsModal = useStore((state) => state.closeSettingsModal);
+  const {
+    setQuickOpenRecents: setRecents,
+    clearAllData,
+    closeSettingsModal,
+  } = useStoreActions();
 
   const { quickOpenRecents } = t.settings;
   const resetWorkspace = async () => {

@@ -8,7 +8,7 @@ import {
   WindowSidebarIcon,
 } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useState, type ComponentType, type SVGProps } from "react";
 
@@ -50,7 +50,7 @@ const CATEGORY_ORDER = Object.values(SettingsCategory);
 export function SettingsModal() {
   const t = useTranslation();
   const isOpen = useStore((state) => state.settingsModalOpen);
-  const onClose = useStore((state) => state.closeSettingsModal);
+  const { closeSettingsModal: onClose } = useStoreActions();
   const [category, setCategory] = useState<SettingsCategory>(
     SettingsCategory.APPEARANCE,
   );

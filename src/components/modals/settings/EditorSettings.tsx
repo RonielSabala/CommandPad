@@ -8,7 +8,7 @@ import {
 import { PanelSide } from "@/common/enums";
 import { CODE_LANGUAGE_OPTIONS } from "@/components/common/codeEditor/CodeLanguageSelect";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { useMemo } from "react";
 
 import {
@@ -33,21 +33,17 @@ export function EditorSettings() {
   const spellcheckEnabled = useStore((state) => state.spellcheckEnabled);
   const minimapEnabled = useStore((state) => state.minimapEnabled);
   const minimapPosition = useStore((state) => state.minimapPosition);
-
-  const setCommandLanguage = useStore(
-    (state) => state.setDefaultCommandLanguage,
-  );
-  const setVariableLanguage = useStore(
-    (state) => state.setDefaultVariableLanguage,
-  );
-
-  const setKeyRatio = useStore((state) => state.setVariableKeyRatio);
-  const setTabWidth = useStore((state) => state.setTabWidth);
-  const togglePrompt = useStore((state) => state.toggleCommandPrompt);
-  const setClampMaxLines = useStore((state) => state.setClampMaxLines);
-  const toggleSpellcheck = useStore((state) => state.toggleSpellcheck);
-  const toggleMinimap = useStore((state) => state.toggleMinimap);
-  const setMinimapPosition = useStore((state) => state.setMinimapPosition);
+  const {
+    setDefaultCommandLanguage: setCommandLanguage,
+    setDefaultVariableLanguage: setVariableLanguage,
+    setVariableKeyRatio: setKeyRatio,
+    setTabWidth,
+    toggleCommandPrompt: togglePrompt,
+    setClampMaxLines,
+    toggleSpellcheck,
+    toggleMinimap,
+    setMinimapPosition,
+  } = useStoreActions();
 
   const {
     tabWidth: tabWidthText,

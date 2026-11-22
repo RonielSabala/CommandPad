@@ -11,7 +11,7 @@ import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PencilIcon } from "@/components/icons";
 import { useBindingLabel } from "@/hooks/useBindingLabel";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { memo, useCallback, useEffect, useRef } from "react";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
@@ -51,8 +51,7 @@ export const KeybindingRow = memo(function KeybindingRow({
 }: Props) {
   const t = useTranslation();
   const label = useBindingLabel(id);
-  const setKeybinding = useStore((state) => state.setKeybinding);
-  const resetKeybinding = useStore((state) => state.resetKeybinding);
+  const { setKeybinding, resetKeybinding } = useStoreActions();
 
   const refocus = useRef(false);
   const chordRef = useRef<HTMLButtonElement>(null);

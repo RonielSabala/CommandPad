@@ -3,7 +3,7 @@ import { PanelId, PanelSide } from "@/common/enums";
 import { tooltip } from "@/components/common/tooltip/tooltip";
 import { PanelCollapseIcon, PanelSideIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
-import { useStore } from "@/store/store";
+import { useStore, useStoreActions } from "@/store/store";
 import { classNames } from "@/utils/string";
 
 import "./PanelActions.css";
@@ -17,8 +17,7 @@ export function PanelActions({ panelId, name }: Props) {
   const t = useTranslation();
   const side = useStore((state) => state.panels[panelId].side);
   const collapsed = useStore((state) => state.panels[panelId].collapsed);
-  const togglePanel = useStore((state) => state.togglePanel);
-  const togglePanelSide = useStore((state) => state.togglePanelSide);
+  const { togglePanel, togglePanelSide } = useStoreActions();
 
   const isRight = side === PanelSide.RIGHT;
   const toggleLabel = collapsed ? t.panel.expand(name) : t.panel.collapse(name);
