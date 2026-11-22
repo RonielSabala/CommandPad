@@ -433,7 +433,7 @@ export interface StoreState {
   // Interaction
   setSelectKeyHeld: (held: boolean) => void;
   setLinkKeyHeld: (held: boolean) => void;
-  setScrollTop: (view: RunbookView, scrollTop: number) => void;
+  setScrollTop: (tabId: string, view: RunbookView, scrollTop: number) => void;
   clearUserInteraction: () => void;
   toggleClampSurfaceExpanded: (id: string, surface: ClampSurface) => void;
   openImageViewer: (blockId: string, slides?: ImageBlock[] | null) => void;

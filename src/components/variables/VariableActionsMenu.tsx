@@ -1,5 +1,6 @@
 import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { VariableEntryKind } from "@/common/enums";
+import type { Variable } from "@/common/types";
 import {
   ContextMenuItem,
   ContextMenuSeparator,
@@ -10,7 +11,6 @@ import { SortMenuItems } from "@/components/common/contextMenu/SortMenuItems";
 import { EyeIcon } from "@/components/icons";
 import { useTranslation } from "@/i18n";
 import {
-  getActiveTab,
   hasOptionsToSort,
   hasOtherOptions,
   hasValuesToClear,
@@ -68,31 +68,23 @@ function RemoveOtherOptionsItem({ variableId, children }: ItemProps) {
 }
 
 interface Props {
-  variableId: string;
-  isSecret: boolean;
-  isEnum: boolean;
+  variable: Variable;
   className: string;
   /** Whether this surface shows sections. */
   sectioned?: boolean;
 }
 
-export function VariableActionsMenu({
-  variableId,
-  isSecret,
-  isEnum,
-  className,
-  sectioned,
-}: Props) {
+export function VariableActionsMenu({ variable, className, sectioned }: Props) {
   const t = useTranslation();
   const toggleVariableSecret = useStore((state) => state.toggleVariableSecret);
   const applyVariableKeyCase = useStore((state) => state.applyVariableKeyCase);
   const addVariableSection = useStore((state) => state.addVariableSection);
   const sortVariableOptions = useStore((state) => state.sortVariableOptions);
-  const hasManyOptions = useStore(
-    (state) =>
-      (getActiveTab(state)?.variables.find((v) => v.id === variableId)?.options
-        ?.length ?? 0) > 1,
-  );
+
+  const { id: variableId, options } = variable;
+  const isSecret = !!variable.secret;
+  const isEnum = !!options;
+  const hasManyOptions = (options?.length ?? 0) > 1;
 
   return (
     <VariableRowMenu

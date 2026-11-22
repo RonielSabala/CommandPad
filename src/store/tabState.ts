@@ -70,16 +70,29 @@ export function contentCopy(stored: RunbookContent): RunbookContent {
   };
 }
 
+/** Immutably replace the tab `tabId` via `mutate`. */
+export function withTab(
+  state: StoreState,
+  tabId: string | null,
+  mutate: (tab: Tab) => Tab,
+): { tabs: Tab[] } {
+  const index = state.tabs.findIndex((tab) => tab.id === tabId);
+  if (index < 0) {
+    return { tabs: state.tabs };
+  }
+
+  const tabs = state.tabs.slice();
+  tabs[index] = mutate(tabs[index]);
+
+  return { tabs };
+}
+
 /** Immutably replace the active tab via `mutate`. */
 export function withActiveTab(
   state: StoreState,
   mutate: (tab: Tab) => Tab,
 ): { tabs: Tab[] } {
-  const active = getActiveTab(state);
-  if (!active) {
-    return { tabs: state.tabs };
-  }
-  return { tabs: state.tabs.map((t) => (t.id === active.id ? mutate(t) : t)) };
+  return withTab(state, getActiveTab(state)?.id ?? null, mutate);
 }
 
 /** The label a runbook's blocks give it. */

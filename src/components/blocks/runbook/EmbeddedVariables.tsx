@@ -3,6 +3,7 @@ import { CodeModelScope } from "@/common/editorConfig";
 import { TooltipVariant, VariableEntryKind } from "@/common/enums";
 import type { RunbookBlock, Variable, VariableSection } from "@/common/types";
 import { tooltip } from "@/components/common/tooltip/tooltip";
+import { useScopedTab } from "@/components/tabs/tabScope";
 import { OptionScopeContext } from "@/components/variables/optionScopeContext";
 import { VariableSectionHeader } from "@/components/variables/VariableSectionHeader";
 import { VariableValueField } from "@/components/variables/VariableValueField";
@@ -14,12 +15,7 @@ import {
   withOrigin,
   type VariableCompletion,
 } from "@/monaco/completions";
-import {
-  EMPTY_BLOCKS,
-  EMPTY_VARIABLES,
-  getActiveTab,
-  useStore,
-} from "@/store/store";
+import { EMPTY_BLOCKS, EMPTY_VARIABLES, useStore } from "@/store/store";
 import { embedScopeId, type EmbedSource } from "@/utils/embeddedRunbook";
 import { stripJsonExtension } from "@/utils/export";
 import { splitPath } from "@/utils/path";
@@ -70,7 +66,7 @@ export function EmbeddedVariables({ block, embed, host }: Props) {
   const { id: blockId, overrides } = block;
   const { variableMap } = host;
 
-  const hostLabel = useStore((state) => getActiveTab(state)?.label ?? "");
+  const hostLabel = useScopedTab((tab) => tab?.label ?? "");
   const folds = useStore((state) => state.embeddedSectionFolds);
   const setRunbookOverrides = useStore((state) => state.setRunbookOverrides);
   const setEmbeddedSectionFolded = useStore(

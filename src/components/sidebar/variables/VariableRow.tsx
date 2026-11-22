@@ -191,9 +191,7 @@ export const VariableRow = memo(function VariableRow({
       )}
 
       <VariableActionsMenu
-        variableId={variableId}
-        isSecret={isSecret}
-        isEnum={!!variable.options}
+        variable={variable}
         className={CssClass.ROW_ACTIONS}
       />
 

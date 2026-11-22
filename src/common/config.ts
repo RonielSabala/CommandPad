@@ -306,6 +306,11 @@ export const MinimapConfig = {
   OVERSCROLL_PROPERTY: "--minimap-overscroll",
 } as const;
 
+/** How many recently shown tabs keep their lists mounted. */
+export const KeptTabsConfig = {
+  MAX: 4,
+} as const;
+
 // Files
 
 export const JSON_EXTENSION = `.${ExportFormat.JSON}`;

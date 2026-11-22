@@ -30,11 +30,9 @@ export const VariableItem = memo(function VariableItem({
       rowId={variable.id}
       menu={(className) => (
         <VariableActionsMenu
-          variableId={variable.id}
-          isSecret={!!variable.secret}
-          isEnum={!!variable.options}
-          sectioned
+          variable={variable}
           className={className}
+          sectioned
         />
       )}
     >

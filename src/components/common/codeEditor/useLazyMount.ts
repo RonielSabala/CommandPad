@@ -11,7 +11,7 @@ function mount(element: Element): void {
   observer?.unobserve(element);
 
   wake?.();
-  queueMount();
+  queueLazyMounts();
 }
 
 function getObserver(): IntersectionObserver {
@@ -49,8 +49,8 @@ function mountNearest(): void {
   }
 }
 
-// A few elements per frame, right after it paints
-function queueMount(): void {
+/** Mounts the shown pending elements a few per frame, right after it paints. */
+export function queueLazyMounts(): void {
   if (queued || pending.size === 0) {
     return;
   }
@@ -78,7 +78,7 @@ export function useLazyMount(
 
     pending.set(element, wake);
     getObserver().observe(element);
-    queueMount();
+    queueLazyMounts();
 
     return () => {
       pending.delete(element);

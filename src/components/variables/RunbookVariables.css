@@ -11,6 +11,6 @@
 }
 
 /* Off-screen editors skip rendering, once Monaco has laid out at full size. */
-#variables-list .code-editor-painted .code-editor-monaco:not(:focus-within) {
+.variables-list .code-editor-painted .code-editor-monaco:not(:focus-within) {
   content-visibility: auto;
 }

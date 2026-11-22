@@ -2,6 +2,7 @@ import { MinimapConfig } from "@/common/config";
 import { EventType, MouseButton, PASSIVE } from "@/common/constants/events";
 import { CodeRendering } from "@/common/enums";
 import { CodeRenderingProvider } from "@/components/common/codeEditor/codeRendering";
+import { useViewScope } from "@/components/tabs/tabScope";
 import { toPx } from "@/utils/dom";
 import { classNames } from "@/utils/string";
 import {
@@ -75,6 +76,7 @@ export function Minimap({ scrollRef, listId, mirror: Mirror }: Props) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const overscrollRef = useRef(0);
 
+  const { tabId, shown } = useViewScope();
   const [metrics, setMetrics] = useState<MinimapMetrics>(INITIAL_METRICS);
   const metricsRef = useRef(metrics);
 
@@ -176,7 +178,7 @@ export function Minimap({ scrollRef, listId, mirror: Mirror }: Props) {
     observer.observe(list);
 
     return () => observer.disconnect();
-  }, [measure, scrollRef, listId]);
+  }, [measure, scrollRef, listId, tabId, shown]);
 
   // Scroll
   useLayoutEffect(() => {

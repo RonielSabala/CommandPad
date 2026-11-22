@@ -10,6 +10,8 @@ import {
 import { AddRow } from "@/components/common/addRow/AddRow";
 import { EmptyState } from "@/components/common/EmptyState";
 import { EnumIcon, SectionIcon, VariableIcon } from "@/components/icons";
+import { KeptTabs } from "@/components/tabs/KeptTabs";
+import { useScopedTab, useViewScope } from "@/components/tabs/tabScope";
 import { Minimap } from "@/components/workspace/minimap/Minimap";
 import { VariablesMirror } from "@/components/workspace/minimap/VariablesMirror";
 import { WorkspaceContextMenu } from "@/components/workspace/WorkspaceContextMenu";
@@ -25,12 +27,11 @@ import {
   EMPTY_BLOCKS,
   EMPTY_SECTIONS,
   EMPTY_VARIABLES,
-  getActiveTab,
   useStore,
 } from "@/store/store";
 import { scrollRowIntoView } from "@/utils/dom";
 import { classNames } from "@/utils/string";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 
 import "./RunbookVariables.css";
 import { VariableRows } from "./VariableRows";
@@ -74,18 +75,17 @@ function AddVariableRow() {
   );
 }
 
-export function RunbookVariables() {
-  const t = useTranslation();
-  const activeTab = useStore(getActiveTab);
+/** The variables of the tab in scope. */
+const VariablesList = memo(function VariablesList({
+  shown,
+}: {
+  shown: boolean;
+}) {
+  const tab = useScopedTab();
+  const blocks = tab?.blocks ?? EMPTY_BLOCKS;
+  const variables = tab?.variables ?? EMPTY_VARIABLES;
+  const sections = tab?.variableSections ?? EMPTY_SECTIONS;
 
-  const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
-  const variables = activeTab?.variables ?? EMPTY_VARIABLES;
-  const sections = activeTab?.variableSections ?? EMPTY_SECTIONS;
-
-  const isEmpty = variables.length === 0 && sections.length === 0;
-
-  const [root, setRoot] = useState<HTMLDivElement | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
   const pendingFocusVariableId = useStore(
@@ -99,22 +99,10 @@ export function RunbookVariables() {
   );
   const finishVariableReveal = useStore((state) => state.finishVariableReveal);
 
-  const minimapEnabled = useStore((state) => state.minimapEnabled);
-  const minimapOnLeft = useStore(
-    (state) => state.minimapPosition === PanelSide.LEFT,
-  );
-  const showMinimap = minimapEnabled && !isEmpty;
-  const { menuAnchor, onContextMenu, closeMenu } = useWorkspaceContextMenu(
-    CssClass.VARIABLE_ITEM,
-  );
-
-  useScrollingClass(scrollRef);
-  useScrollPersistence(scrollRef, RunbookView.VARIABLES);
-  useLassoSelection(root, SelectionGroup.VARIABLE);
   useRowReveal(
     listRef,
     DataAttr.VARIABLE_ID,
-    pendingRevealVariableId,
+    shown ? pendingRevealVariableId : null,
     finishVariableReveal,
   );
 
@@ -138,6 +126,45 @@ export function RunbookVariables() {
 
   const usedKeys = useUsedVariableKeys(blocks, variables);
   const completions = useCompletionSource(variables, usedKeys);
+
+  return (
+    <div
+      id={shown ? ElementId.VARIABLES_LIST : undefined}
+      className={classNames(CssClass.VARIABLES_LIST, CssClass.REORDER_LIST)}
+      ref={listRef}
+    >
+      <VariableRows
+        variables={variables}
+        sections={sections}
+        usedKeys={usedKeys}
+        completions={completions}
+      />
+    </div>
+  );
+});
+
+export function RunbookVariables() {
+  const t = useTranslation();
+  const { shown } = useViewScope();
+  const isEmpty = useScopedTab(
+    (tab) => !tab?.variables.length && !tab?.variableSections.length,
+  );
+
+  const [root, setRoot] = useState<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const minimapEnabled = useStore((state) => state.minimapEnabled);
+  const minimapOnLeft = useStore(
+    (state) => state.minimapPosition === PanelSide.LEFT,
+  );
+  const showMinimap = minimapEnabled && !isEmpty;
+  const { menuAnchor, onContextMenu, closeMenu } = useWorkspaceContextMenu(
+    CssClass.VARIABLE_ITEM,
+  );
+
+  useScrollingClass(scrollRef);
+  useScrollPersistence(scrollRef, RunbookView.VARIABLES);
+  useLassoSelection(shown ? root : null, SelectionGroup.VARIABLE);
 
   return (
     <div
@@ -169,19 +196,7 @@ export function RunbookVariables() {
           />
         )}
 
-        <div
-          id={ElementId.VARIABLES_LIST}
-          className={classNames(CssClass.VARIABLES_LIST, CssClass.REORDER_LIST)}
-          ref={listRef}
-        >
-          <VariableRows
-            variables={variables}
-            sections={sections}
-            usedKeys={usedKeys}
-            completions={completions}
-          />
-        </div>
-
+        <KeptTabs>{(shown) => <VariablesList shown={shown} />}</KeptTabs>
         <AddVariableRow />
       </div>
 

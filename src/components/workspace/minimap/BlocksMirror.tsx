@@ -1,28 +1,33 @@
 import { CssClass } from "@/common/constants/css";
 import { BlockItems } from "@/components/blocks/BlockItem";
 import "@/components/blocks/BlocksList.css";
-import {
-  EMPTY_BLOCKS,
-  EMPTY_VARIABLES,
-  getActiveTab,
-  useStore,
-} from "@/store/store";
+import { KeptTabs } from "@/components/tabs/KeptTabs";
+import { useScopedTab } from "@/components/tabs/tabScope";
+import { EMPTY_BLOCKS, EMPTY_VARIABLES } from "@/store/store";
 import { memo } from "react";
 
 import { MinimapMirror } from "./Minimap";
 
-export const BlocksMirror = memo(function BlocksMirror({
+const TabBlocksMirror = memo(function TabBlocksMirror({
   width,
 }: {
   width: number;
 }) {
-  const activeTab = useStore(getActiveTab);
-  const blocks = activeTab?.blocks ?? EMPTY_BLOCKS;
-  const variables = activeTab?.variables ?? EMPTY_VARIABLES;
+  const tab = useScopedTab();
+  const blocks = tab?.blocks ?? EMPTY_BLOCKS;
+  const variables = tab?.variables ?? EMPTY_VARIABLES;
 
   return (
     <MinimapMirror className={CssClass.BLOCKS_LIST} width={width}>
       <BlockItems blocks={blocks} variables={variables} />
     </MinimapMirror>
   );
+});
+
+export const BlocksMirror = memo(function BlocksMirror({
+  width,
+}: {
+  width: number;
+}) {
+  return <KeptTabs>{() => <TabBlocksMirror width={width} />}</KeptTabs>;
 });

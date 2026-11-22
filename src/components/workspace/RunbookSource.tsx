@@ -4,8 +4,9 @@ import {
   CodeEditor,
   type CodeEditorHandle,
 } from "@/components/common/codeEditor/CodeEditor";
+import { useScopedTab } from "@/components/tabs/tabScope";
 import { useTranslation } from "@/i18n";
-import { getActiveTab, useStore } from "@/store/store";
+import { useStore } from "@/store/store";
 import { buildRunbookSource } from "@/utils/runbookSource";
 import { useMemo, useRef, useState } from "react";
 
@@ -14,17 +15,19 @@ import { useMonacoScrollPersistence } from "./useMonacoScrollPersistence";
 
 export function RunbookSource() {
   const t = useTranslation();
-  const tab = useStore(getActiveTab);
+  const tab = useScopedTab();
+  const readOnly = useStore((state) => state.mode === AppMode.READ);
+  const applyRunbookSource = useStore((state) => state.applyRunbookSource);
+
+  const minimapEnabled = useStore((state) => state.minimapEnabled);
+  const minimapPosition = useStore((state) => state.minimapPosition);
+  const minimapSide: PanelSide | null = minimapEnabled ? minimapPosition : null;
+
   const editorRef = useRef<CodeEditorHandle>(null);
   const { onScrollChange } = useMonacoScrollPersistence(
     editorRef,
     RunbookView.SOURCE,
   );
-  const readOnly = useStore((state) => state.mode === AppMode.READ);
-  const applyRunbookSource = useStore((state) => state.applyRunbookSource);
-  const minimapEnabled = useStore((state) => state.minimapEnabled);
-  const minimapPosition = useStore((state) => state.minimapPosition);
-  const minimapSide: PanelSide | null = minimapEnabled ? minimapPosition : null;
 
   const source = useMemo(
     () =>

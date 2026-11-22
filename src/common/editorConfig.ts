@@ -284,6 +284,11 @@ export const MonacoCommand = {
   REMOVE_EXPAND_LINE_SELECTION: "-expandLineSelection",
 } as const;
 
+/** Editor contributions every editor would otherwise build. */
+export const MonacoContribution = {
+  INLINE_COMPLETIONS: "editor.contrib.inlineCompletionsController",
+} as const;
+
 export const MonacoFind = {
   CONTROLLER_ID: "editor.contrib.findController",
 } as const;

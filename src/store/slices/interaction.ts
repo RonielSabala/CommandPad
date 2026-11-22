@@ -5,7 +5,7 @@ import { revealVariables } from "@/utils/variableSections";
 
 import type { StoreKit } from "@/store/kit";
 import { getActiveTab, getRunbookView } from "@/store/selectors";
-import { withActiveTab } from "@/store/tabState";
+import { withActiveTab, withTab } from "@/store/tabState";
 import type { StoreState } from "@/store/types";
 
 type InteractionActions = Pick<
@@ -176,9 +176,9 @@ export function createInteractionSlice(kit: StoreKit): InteractionActions {
 
     setSelectKeyHeld: (held) => set({ selectKeyHeld: held }),
     setLinkKeyHeld: (held) => set({ linkKeyHeld: held }),
-    setScrollTop: (view, scrollTop) => {
+    setScrollTop: (tabId, view, scrollTop) => {
       set((s) =>
-        withActiveTab(s, (tab) => ({
+        withTab(s, tabId, (tab) => ({
           ...tab,
           scrollTop: { ...tab.scrollTop, [view]: scrollTop },
         })),
