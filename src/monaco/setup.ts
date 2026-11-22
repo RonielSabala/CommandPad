@@ -1,6 +1,6 @@
 import {
   MonacoCommand,
-  MonacoContribution,
+  MonacoDroppedContribution,
   MonacoWorkerLabel,
 } from "@/common/editorConfig";
 import { loader } from "@monaco-editor/react";
@@ -26,12 +26,12 @@ self.MonacoEnvironment = {
 
 loader.config({ monaco });
 
-// Disable inline suggestions
+const DROPPED_CONTRIBUTIONS: ReadonlySet<string> = new Set(
+  Object.values(MonacoDroppedContribution),
+);
 const { getEditorContributions } = EditorExtensionsRegistry;
 EditorExtensionsRegistry.getEditorContributions = () =>
-  getEditorContributions().filter(
-    ({ id }) => id !== MonacoContribution.INLINE_COMPLETIONS,
-  );
+  getEditorContributions().filter(({ id }) => !DROPPED_CONTRIBUTIONS.has(id));
 
 monaco.editor.addKeybindingRule({
   keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyL,

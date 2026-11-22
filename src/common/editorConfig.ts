@@ -285,9 +285,25 @@ export const MonacoCommand = {
   REMOVE_EXPAND_LINE_SELECTION: "-expandLineSelection",
 } as const;
 
-/** Editor contributions every editor would otherwise build. */
-export const MonacoContribution = {
+/** Editor contributions dropped from every editor. */
+export const MonacoDroppedContribution = {
+  // Adds a <style> per editor
   INLINE_COMPLETIONS: "editor.contrib.inlineCompletionsController",
+  // Off in the options
+  STICKY_SCROLL: "store.contrib.stickyScrollController",
+  LINKS: "editor.linkDetector",
+  COLOR_DETECTOR: "editor.contrib.colorDetector",
+  UNICODE_HIGHLIGHTER: "editor.contrib.unicodeHighlighter",
+  MIDDLE_SCROLL: "editor.contrib.middleScroll",
+  // No provider or menu feeds them
+  CODE_ACTIONS: "editor.contrib.codeActionController",
+  COLOR_PICKER: "editor.contrib.standaloneColorPickerController",
+  FLOATING_TOOLBAR: "editor.contrib.floatingToolbar",
+  GOTO_DEFINITION: "editor.contrib.gotodefinitionatposition",
+  INLAY_HINTS: "editor.contrib.InlayHints",
+  LINKED_EDITING: "editor.contrib.linkedEditing",
+  PARAMETER_HINTS: "editor.controller.parameterHints",
+  SEMANTIC_TOKENS: "editor.contrib.viewportSemanticTokens",
 } as const;
 
 export const MonacoFind = {
