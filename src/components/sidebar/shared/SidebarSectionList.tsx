@@ -12,6 +12,7 @@ interface Props<T> {
   getKey: (item: T) => string | number;
   renderItem: (item: T) => React.ReactNode;
   listRef?: React.Ref<HTMLDivElement>;
+  className?: string;
 }
 
 export function SidebarSectionList<T>({
@@ -21,12 +22,17 @@ export function SidebarSectionList<T>({
   getKey,
   renderItem,
   listRef,
+  className,
 }: Props<T>) {
   const t = useTranslation();
 
   return (
     <div
-      className={classNames("sidebar-section-list", CssClass.REORDER_LIST)}
+      className={classNames(
+        "sidebar-section-list",
+        CssClass.REORDER_LIST,
+        className,
+      )}
       ref={listRef}
     >
       {isEmpty ? (

@@ -138,6 +138,7 @@ export const CssClass = {
 
   // Sidebar rows
   SIDEBAR_SECTION_LIST_ROW: "sidebar-section-list-row",
+  VARIABLE_ROWS: "variable-rows",
   LIBRARY_ROW: "library-row",
   LIBRARY_ROW_MAIN: "library-row-main",
   LIBRARY_ROW_LABEL: "library-row-label",

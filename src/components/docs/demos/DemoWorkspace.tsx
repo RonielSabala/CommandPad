@@ -1,3 +1,4 @@
+import { CssClass } from "@/common/constants/css";
 import { InputSelector } from "@/common/constants/dom";
 import { SelectionGroup } from "@/common/enums";
 import { KeyBinding, keybindingFromEvent } from "@/common/keybindings";
@@ -23,6 +24,7 @@ import {
 } from "@/store/store";
 import { libraryRowKey, libraryRows } from "@/utils/libraryTree";
 import { isVariableUnused } from "@/utils/resolution";
+import { classNames } from "@/utils/string";
 import {
   useLayoutEffect,
   useMemo,
@@ -132,7 +134,7 @@ export function DemoVariableRows() {
   const showSecretColumn = variables.some((variable) => variable.secret);
 
   return (
-    <div className="docs-demo-variables">
+    <div className={classNames("docs-demo-variables", CssClass.VARIABLE_ROWS)}>
       {variables.map((variable) => (
         <VariableRow
           key={variable.id}

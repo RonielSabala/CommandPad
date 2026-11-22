@@ -1,4 +1,4 @@
-import { STANDARD_ICON_CLASS } from "@/common/constants/css";
+import { CssClass, STANDARD_ICON_CLASS } from "@/common/constants/css";
 import { VariableKind } from "@/common/enums";
 import { SearchInput } from "@/components/common/SearchInput";
 import { EnumIcon, VariableIcon } from "@/components/icons";
@@ -46,6 +46,7 @@ const VariableList = memo(function VariableList({ shown }: { shown: boolean }) {
 
   return (
     <SidebarSectionList
+      className={CssClass.VARIABLE_ROWS}
       isEmpty={variables.length === 0}
       visibleItems={visibleItems}
       emptyMessage={t.variables.empty}
