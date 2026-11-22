@@ -178,6 +178,10 @@
   color: var(--color-text-muted);
 }
 
+.cloud-browser-row.is-selected .cloud-browser-row-icon {
+  color: var(--accent-text);
+}
+
 .cloud-browser-row-text {
   display: flex;
   min-width: 0;
