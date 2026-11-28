@@ -12,6 +12,7 @@ import { FramedSection } from "@/components/common/FramedSection";
 import { BlockLinks } from "@/components/common/tooltip/BlockLinks";
 import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
 import { PLAIN_TOOLTIP_LINK } from "@/components/common/tooltip/tooltip";
+import { VariableSourceName } from "@/components/common/VariableSourceName";
 import {
   LazyVariableTooltipEditor,
   preloadVariableTooltipEditor,
@@ -304,7 +305,11 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
                           : problem.label
                       }
                     >
-                      {problem.shortLabel}
+                      {problem.cause === UnresolvedCause.BLANK ? (
+                        <VariableSourceName source={problem.shortLabel} />
+                      ) : (
+                        problem.shortLabel
+                      )}
                     </code>
                     {action(problem)}
                   </div>

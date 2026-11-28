@@ -26,7 +26,7 @@ export {
   unresolvedOverrideParts,
   withOverride
 } from "./overrides";
-export { getTemplateParamNames, sourceKey } from "./params";
+export { getTemplateParamNames, sourceKey, sourceParam } from "./params";
 export {
   renameAllCommandTokens,
   renameAllValueTokens,

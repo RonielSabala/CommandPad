@@ -3,6 +3,7 @@ import { ButtonType } from "@/common/constants/dom";
 import { AppMode, RevealTone } from "@/common/enums";
 import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
 import { PLAIN_TOOLTIP_LINK } from "@/components/common/tooltip/tooltip";
+import { VariableSourceName } from "@/components/common/VariableSourceName";
 import {
   LazyVariableTooltipEditor,
   preloadVariableTooltipEditor,
@@ -110,7 +111,9 @@ export function VariableSourceTooltip({ source, resolved, tip }: Props) {
         <LazyVariableTooltipEditor variableId={editedId} header={goToText} />
       ) : (
         <div className="variable-source-tooltip">
-          <span>{source}</span>
+          <span>
+            <VariableSourceName source={source} />
+          </span>
 
           {hostVariable && (
             <button

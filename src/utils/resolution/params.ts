@@ -101,6 +101,14 @@ export function sourceKey(source: string): string {
   return separator === -1 ? source : source.slice(0, separator);
 }
 
+/** The blank a span's `source` names. */
+export function sourceParam(source: string): string | undefined {
+  const separator = source.indexOf(VariableSyntax.PARAM_SEPARATOR);
+  return separator === -1
+    ? undefined
+    : source.slice(separator + VariableSyntax.PARAM_SEPARATOR.length);
+}
+
 /** Every blank opens with this. */
 const BLANK_OPEN = `${VariableSyntax.BRACE_OPEN}${VariableSyntax.PARAM_SEPARATOR}`;
 

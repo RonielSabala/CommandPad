@@ -1,0 +1,7 @@
+.variable-source-separator {
+  color: var(--color-text-muted);
+}
+
+.variable-source-param {
+  color: var(--constant-text);
+}

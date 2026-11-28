@@ -42,6 +42,10 @@
   overflow-wrap: anywhere;
 }
 
+.tab-unresolved-label .variable-source-param {
+  color: inherit;
+}
+
 .tab-unresolved-problem .btn-flat-icon {
   padding: 0;
   color: var(--accent);
