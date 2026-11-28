@@ -16,11 +16,7 @@ import {
 } from "@/services/vault";
 import type { StoreKit } from "@/store/kit";
 import { withLibraryRunbook } from "@/store/libraryState";
-import {
-  getActiveRunbookId,
-  getActiveTab,
-  getLibraryRunbook,
-} from "@/store/selectors";
+import { getActiveRunbookId, getLibraryRunbook } from "@/store/selectors";
 import { tabContent } from "@/store/tabState";
 import type { VaultBatch, VaultPassphrases } from "@/store/types";
 import { stripJsonExtension } from "@/utils/export";
@@ -114,6 +110,7 @@ export function createVaultFlows(
   const { set, get, isDemo, contentDb } = kit;
   const {
     flagUnsavedCloudChanges,
+    rebaseSyncedContent,
     setEmbeddedRunbook,
     getVaultRecord,
     refreshVaultStatus,
@@ -243,6 +240,8 @@ export function createVaultFlows(
         }
 
         const result = await decryptContent(runbookId, content);
+        rebaseSyncedContent(runbookId, content, result.content);
+
         return { ...tab, variables: result.content.variables };
       }),
     );
@@ -266,19 +265,6 @@ export function createVaultFlows(
         setEmbeddedRunbook(key, { ...entry, content });
       }
     }
-  };
-
-  const promptUnlockForActiveTab = async () => {
-    const tab = getActiveTab(get());
-    const runbookId = tab?.runbookId;
-
-    if (!tab || !runbookId || !getVaultRecord(runbookId)) {
-      return false;
-    }
-
-    return hasEncryptedSecrets(tabContent(tab))
-      ? await promptVault(VaultPrompt.UNLOCK, unlockVaultWith(runbookId))
-      : false;
   };
 
   const ensureVaultForSecrets = async () => {
@@ -400,7 +386,6 @@ export function createVaultFlows(
     closeVaultDialog,
     decryptOpenTabs,
     decryptLoadedEmbeds,
-    promptUnlockForActiveTab,
     ensureVaultForSecrets,
     readImportedContent,
     decryptImportedContent,

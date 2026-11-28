@@ -26,7 +26,6 @@ export function createLifecycleSlice(
     trackCloudChanges,
     refreshVaultStatus,
     persistTabContent,
-    promptUnlockForActiveTab,
     resetWorkspace,
   } = services;
 
@@ -53,6 +52,7 @@ export function createLifecycleSlice(
       if (bootstrapped) {
         return;
       }
+
       bootstrapped = true;
 
       const ui = persistence.loadUiState();
@@ -139,7 +139,6 @@ export function createLifecycleSlice(
 
       set({ initialized: true });
       refreshVaultStatus();
-      await promptUnlockForActiveTab();
 
       for (const tab of get().tabs) {
         if (tab.runbookId) {

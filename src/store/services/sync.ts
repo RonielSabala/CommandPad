@@ -81,6 +81,17 @@ export function createSyncService(kit: StoreKit) {
     setSyncPending(runbookId, json !== synced, link);
   };
 
+  /** Keeps the synced copy in step with an unlock, which changes no content. */
+  const rebaseSyncedContent = (
+    runbookId: string,
+    locked: RunbookContent,
+    unlocked: RunbookContent,
+  ) => {
+    if (syncedContent.get(runbookId) === runbookJson(locked)) {
+      syncedContent.set(runbookId, runbookJson(unlocked));
+    }
+  };
+
   const flagUnsavedCloudChanges = (runbookId: string) => {
     syncedContent.delete(runbookId);
     setSyncPending(runbookId, true);
@@ -127,6 +138,7 @@ export function createSyncService(kit: StoreKit) {
     setSyncPending,
     runbookJson,
     trackCloudChanges,
+    rebaseSyncedContent,
     flagUnsavedCloudChanges,
     markRunbookSynced,
     linkRunbookToCloud,
