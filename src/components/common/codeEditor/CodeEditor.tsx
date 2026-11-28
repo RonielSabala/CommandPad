@@ -10,7 +10,10 @@ import {
 } from "@/common/editorConfig";
 import { CodeLanguage, CodeRendering, PanelSide } from "@/common/enums";
 import { KeyBinding, matchesKeybinding } from "@/common/keybindings";
-import type { ScrollTarget } from "@/components/common/scrollTarget";
+import {
+  useDomScrollTarget,
+  type ScrollTarget,
+} from "@/components/common/scrollTarget";
 import { StickyScrollbar } from "@/components/common/StickyScrollbar";
 import { registerEditorActions, type EditorAction } from "@/monaco/actions";
 import {
@@ -238,6 +241,8 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
       selection: Selection;
       version: number;
     } | null>(null);
+
+    const overlayScrollTarget = useDomScrollTarget(overlayRef);
     const [scrollTarget, setScrollTarget] = useState<ScrollTarget | null>(null);
     const [contentHeight, setContentHeight] = useState(() =>
       estimateContentHeight(countLines(value), singleLine),
@@ -562,16 +567,21 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
 
     // The text until Monaco paints it
     let overlay: ReactNode = null;
+    let scrollbarTarget = painted ? scrollTarget : null;
+
     if (showMask) {
       overlay = joinLines(Array(countLines(value)).fill(SECRET_MASK));
     } else if (!painted && !bounded && (value || placeholder)) {
       overlay = value || (
         <span className="code-editor-static-placeholder">{placeholder}</span>
       );
+
+      if (value) {
+        scrollbarTarget = overlayScrollTarget;
+      }
     }
 
     const shownPlaceholder = value ? undefined : placeholder;
-
     const options = useMemo<editor.IStandaloneEditorConstructionOptions>(
       () => ({
         ...(bounded
@@ -673,8 +683,7 @@ const MonacoCodeEditor = forwardRef<CodeEditorHandle, Props>(
         </div>
 
         {footer}
-
-        <StickyScrollbar target={scrollTarget} deps={[value]} />
+        <StickyScrollbar target={scrollbarTarget} deps={[value]} />
       </div>
     );
 

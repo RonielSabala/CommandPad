@@ -1,13 +1,19 @@
+import { MonacoSelector } from "@/common/constants/dom";
 import type { ScrollTarget } from "@/components/common/scrollTarget";
 import type { editor } from "monaco-editor";
 
 export function monacoScrollTarget(
   instance: editor.IStandaloneCodeEditor,
 ): ScrollTarget {
+  const viewLines = instance
+    .getDomNode()
+    ?.querySelector<HTMLElement>(MonacoSelector.VIEW_LINES);
+
   return {
     getScrollLeft: () => instance.getScrollLeft(),
     setScrollLeft: (value) => instance.setScrollLeft(value),
-    getScrollWidth: () => instance.getScrollWidth(),
+    getScrollWidth: () =>
+      Math.max(instance.getScrollWidth(), viewLines?.scrollWidth ?? 0),
     getClientWidth: () => instance.getLayoutInfo().contentWidth,
 
     onScroll: (listener) => {

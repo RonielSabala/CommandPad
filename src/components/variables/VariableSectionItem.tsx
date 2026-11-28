@@ -26,16 +26,17 @@ export const VariableSectionItem = memo(function VariableSectionItem({
   count,
 }: Props) {
   const t = useTranslation();
+
+  const empty = count === 0;
+  const sectionId = section.id;
+  const collapsed = !!section.collapsed && !empty;
+
   const readMode = useStore((state) => state.mode === AppMode.READ);
   const pendingFocus = useStore(
     (state) => state.pendingFocusSectionId === sectionId,
   );
   const { consumeSectionFocus, renameVariableSection, toggleVariableSection } =
     useStoreActions();
-
-  const empty = count === 0;
-  const sectionId = section.id;
-  const collapsed = !!section.collapsed && !empty;
 
   const rename = useCallback(
     (name: string) => renameVariableSection(sectionId, name),

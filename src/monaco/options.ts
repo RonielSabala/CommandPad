@@ -84,6 +84,7 @@ export function flowingEditorOptions(
     scrollbar: {
       vertical: "hidden",
       horizontal: "hidden",
+      verticalScrollbarSize: 0,
       handleMouseWheel: false,
       alwaysConsumeMouseWheel: false,
     },
