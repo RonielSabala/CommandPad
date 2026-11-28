@@ -634,6 +634,14 @@ export const es: Messages = {
       [VaultError.UNCHANGED]: "La nueva frase de contraseña es la que ya usas.",
       [VaultError.WRONG_PASSPHRASE]: "Esa frase de contraseña no funcionó.",
     },
+    footnote: {
+      [VaultPrompt.CREATE]:
+        "Guárdala en un lugar seguro: **una frase de contraseña perdida no se puede recuperar**.",
+      [VaultPrompt.UNLOCK]:
+        "Tu frase de contraseña nunca sale de este navegador y se olvida al cerrar la pestaña.",
+      [VaultPrompt.CHANGE]:
+        "Guarda la nueva en un lugar seguro: **una frase de contraseña perdida no se puede recuperar**.",
+    },
   },
   cloudModal: {
     importTitle: `Importar desde ${MessageSlot.PROVIDER}`,

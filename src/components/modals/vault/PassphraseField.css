@@ -38,6 +38,14 @@
   box-shadow: 0 0 0 var(--space-1) var(--accent-dim);
 }
 
+.passphrase-input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.passphrase-input[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 var(--space-1) var(--danger-dim);
+}
+
 .passphrase-input:disabled {
   opacity: 0.6;
 }

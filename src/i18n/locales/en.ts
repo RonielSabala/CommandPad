@@ -622,6 +622,14 @@ export const en: Messages = {
       [VaultError.UNCHANGED]: "The new passphrase is the one you already use.",
       [VaultError.WRONG_PASSPHRASE]: "That passphrase did not work.",
     },
+    footnote: {
+      [VaultPrompt.CREATE]:
+        "Keep it somewhere safe: **a lost passphrase can't be recovered**.",
+      [VaultPrompt.UNLOCK]:
+        "Your passphrase never leaves this browser and is forgotten when you close the tab.",
+      [VaultPrompt.CHANGE]:
+        "Keep the new one somewhere safe: **a lost passphrase can't be recovered**.",
+    },
   },
   cloudModal: {
     importTitle: `Import from ${MessageSlot.PROVIDER}`,

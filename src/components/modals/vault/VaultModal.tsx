@@ -12,7 +12,14 @@ import {
 } from "@/store/store";
 import { classNames } from "@/utils/string";
 import { useEffect, useRef, useState } from "react";
-import { ShieldLock } from "react-bootstrap-icons";
+import {
+  ExclamationCircleFill,
+  InfoCircleFill,
+  KeyFill,
+  ShieldFillPlus,
+  ShieldLockFill,
+  type Icon,
+} from "react-bootstrap-icons";
 
 import { Modal, ModalActions, ModalTitle } from "../Modal";
 import { PassphraseField } from "./PassphraseField";
@@ -22,6 +29,12 @@ const EMPTY_PASSPHRASES: VaultPassphrases = {
   [VaultField.CURRENT]: "",
   [VaultField.NEXT]: "",
   [VaultField.CONFIRM]: "",
+};
+
+const PROMPT_ICON: Record<VaultPrompt, Icon> = {
+  [VaultPrompt.CREATE]: ShieldFillPlus,
+  [VaultPrompt.UNLOCK]: ShieldLockFill,
+  [VaultPrompt.CHANGE]: KeyFill,
 };
 
 export function VaultModal() {
@@ -60,6 +73,7 @@ export function VaultModal() {
   const { prompt, busy, error, filename, batch } = active;
   const pending = batch?.pending ?? 0;
   const fields = VAULT_PROMPT_FIELDS[prompt];
+  const PromptIcon = PROMPT_ICON[prompt];
 
   const handleSubmit = () => {
     if (!busy) {
@@ -74,53 +88,66 @@ export function VaultModal() {
 
   return (
     <Modal open={isOpen} onClose={dismiss} className="modal-vault">
-      <div className="vault-header">
-        <span className="vault-badge">
-          <ShieldLock className={CssClass.ICON_LG} />
+      <header className="vault-hero">
+        <span className="vault-emblem" aria-hidden={true}>
+          <PromptIcon />
         </span>
 
-        <div className="vault-heading">
-          <ModalTitle className="vault-title">
-            {t.vaultModal.title[prompt]}
-          </ModalTitle>
-          <div className="vault-message">
-            <p>
-              <NoteText text={message} />
+        <ModalTitle className="vault-title">
+          {t.vaultModal.title[prompt]}
+        </ModalTitle>
+
+        <div
+          className={classNames("vault-message", CssClass.NOTE_CODE_NEUTRAL)}
+        >
+          <p>
+            <NoteText text={message} />
+          </p>
+
+          {pending > 0 && (
+            <p className="vault-batch">
+              <NoteText
+                text={t.vaultModal.batchMessage(pending, t.vaultModal.skipAll)}
+              />
             </p>
-
-            {pending > 0 && (
-              <p>
-                <NoteText
-                  text={t.vaultModal.batchMessage(
-                    pending,
-                    t.vaultModal.skipAll,
-                  )}
-                />
-              </p>
-            )}
-          </div>
+          )}
         </div>
+      </header>
+
+      <div className="vault-body">
+        <div className="vault-fields">
+          {fields.map((field, index) => (
+            <PassphraseField
+              key={`${field}-${session}`}
+              label={t.vaultModal.fieldLabel[prompt][field]}
+              value={passphrases[field]}
+              disabled={busy}
+              invalid={!!error}
+              autoFocus={index === 0}
+              onChange={(value) =>
+                setPassphrases((current) => ({ ...current, [field]: value }))
+              }
+              onSubmit={handleSubmit}
+            />
+          ))}
+        </div>
+
+        {error && (
+          <p className="vault-error" role="alert">
+            <ExclamationCircleFill className="vault-note-icon" />
+            {t.vaultModal.errors[error]}
+          </p>
+        )}
+
+        <p className="vault-footnote">
+          <InfoCircleFill className="vault-note-icon" />
+          <span>
+            <NoteText text={t.vaultModal.footnote[prompt]} />
+          </span>
+        </p>
       </div>
 
-      <div className="vault-fields">
-        {fields.map((field, index) => (
-          <PassphraseField
-            key={`${field}-${session}`}
-            label={t.vaultModal.fieldLabel[prompt][field]}
-            value={passphrases[field]}
-            disabled={busy}
-            autoFocus={index === 0}
-            onChange={(value) =>
-              setPassphrases((current) => ({ ...current, [field]: value }))
-            }
-            onSubmit={handleSubmit}
-          />
-        ))}
-      </div>
-
-      {error && <p className="vault-error">{t.vaultModal.errors[error]}</p>}
-
-      <ModalActions>
+      <ModalActions className="vault-actions">
         {pending > 0 && (
           <button
             className={classNames(CssClass.BTN, CssClass.BTN_LG)}

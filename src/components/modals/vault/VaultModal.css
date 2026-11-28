@@ -1,62 +1,131 @@
 .modal.modal-vault {
+  --vault-pad-x: var(--space-10);
+  --vault-emblem-icon-size: 1.75rem;
+
   width: var(--vault-modal-width);
-  gap: var(--space-8);
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
 }
 
-/* Header */
+/* Hero */
 
-.vault-header {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-5);
-  padding-right: var(--space-16);
-}
-
-.vault-badge {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: var(--vault-badge-size);
-  height: var(--vault-badge-size);
-  color: var(--accent-text);
-}
-
-.vault-heading {
+.vault-hero {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  min-width: 0;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-14) var(--vault-pad-x) var(--space-8);
+  text-align: center;
+  background: radial-gradient(
+    ellipse 80% 100% at 50% 0%,
+    var(--accent-dim),
+    transparent
+  );
+}
+
+.vault-emblem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--vault-emblem-size);
+  height: var(--vault-emblem-size);
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  background: var(--accent-dim);
+  color: var(--accent-text);
+  box-shadow: 0 0 0 var(--space-3) var(--accent-dim);
+}
+
+.vault-emblem svg {
+  width: var(--vault-emblem-icon-size);
+  height: var(--vault-emblem-icon-size);
 }
 
 .vault-title {
   padding: 0;
+  font-size: var(--text-base);
 }
 
 .vault-message {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  max-width: 100%;
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
-/* Fields */
+.vault-message .note-bold {
+  color: var(--color-text-primary);
+}
+
+.vault-batch {
+  padding: var(--space-3) var(--space-5);
+  border: var(--border-standard);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+  text-align: left;
+}
+
+/* Body */
+
+.vault-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-2) var(--vault-pad-x) var(--space-8);
+}
 
 .vault-fields {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-6);
 }
 
-/* Feedback */
-
-.vault-error {
+.vault-error,
+.vault-footnote {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  gap: var(--space-3);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.vault-note-icon {
+  flex-shrink: 0;
+  width: var(--icon-md);
+  height: var(--icon-md);
+  /* Centers the glyph on the first line of text */
+  margin-top: calc((1.5em - var(--icon-md)) / 2);
+}
+
+.vault-error {
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-md);
+  background: var(--danger-dim);
   color: var(--danger);
+}
+
+.vault-footnote {
+  color: var(--color-text-muted);
+}
+
+.vault-footnote .note-bold {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+/* Footer */
+
+.modal-actions.vault-actions {
+  padding: var(--space-6) var(--vault-pad-x);
+  border-top: var(--border-standard);
+  background: var(--color-app-bg);
 }

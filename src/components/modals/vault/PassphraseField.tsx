@@ -15,6 +15,7 @@ interface Props {
   onChange: (value: string) => void;
   onSubmit: () => void;
   disabled?: boolean;
+  invalid?: boolean;
   autoFocus?: boolean;
 }
 
@@ -24,6 +25,7 @@ export function PassphraseField({
   onChange,
   onSubmit,
   disabled = false,
+  invalid = false,
   autoFocus = false,
 }: Props) {
   const t = useTranslation();
@@ -45,6 +47,7 @@ export function PassphraseField({
           type={revealed ? InputType.TEXT : InputType.PASSWORD}
           value={value}
           disabled={disabled}
+          aria-invalid={invalid}
           spellCheck={false}
           autoFocus={autoFocus}
           autoComplete={AutoComplete.OFF}

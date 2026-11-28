@@ -479,6 +479,7 @@ export interface Messages {
     skipAll: string;
     working: string;
     errors: Record<VaultError, string>;
+    footnote: Record<VaultPrompt, string>;
   };
   cloudModal: {
     importTitle: string;
