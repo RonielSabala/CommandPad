@@ -1,7 +1,9 @@
 import { StickyScrollbarConfig } from "@/common/config";
 import { EventType, PASSIVE } from "@/common/constants/events";
 import { toPx } from "@/utils/dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
+
 import type { ScrollTarget } from "./scrollTarget";
 import "./StickyScrollbar.css";
 
@@ -14,51 +16,92 @@ function samePosition(a: number, b: number | null): boolean {
   return b !== null && Math.abs(a - b) < StickyScrollbarConfig.EPSILON_PX;
 }
 
-// Every scrollbar measures in one shared frame
-const pendingMeasures = new Set<() => void>();
-let measureFrame = 0;
+type Measure = () => void;
 
-function measureNextFrame(measure: () => void): () => void {
-  pendingMeasures.add(measure);
+/**
+ * Queues measures into one batch run by `schedule`: all reads first, then
+ * one render committed at once, so what it measured shows before the next
+ * paint.
+ */
+function measureBatch(
+  schedule: (flush: () => void) => void,
+): (measure: Measure) => () => void {
+  const pending = new Set<Measure>();
+  let queued = false;
 
-  measureFrame ||= requestAnimationFrame(() => {
-    measureFrame = 0;
-    const measures = [...pendingMeasures];
+  const flush = () => {
+    queued = false;
+    const measures = [...pending];
+    pending.clear();
 
-    pendingMeasures.clear();
-    measures.forEach((run) => run());
-  });
+    flushSync(() => measures.forEach((run) => run()));
+  };
 
-  return () => pendingMeasures.delete(measure);
+  return (measure) => {
+    pending.add(measure);
+
+    if (!queued) {
+      queued = true;
+      schedule(flush);
+    }
+
+    return () => pending.delete(measure);
+  };
 }
+
+// A surface that just showed measures right after the task that showed it
+const measureNow = measureBatch(queueMicrotask);
+
+// A change measures in the next frame callback, after that frame's writes
+const measureInFrame = measureBatch(requestAnimationFrame);
 
 export function StickyScrollbar({ target, deps }: Props) {
   const proxyRef = useRef<HTMLDivElement>(null);
+  const measureRef = useRef<Measure | null>(null);
+  const justSubscribed = useRef(false);
+
   const [scrollRange, setScrollRange] = useState(0);
 
-  const overflowing = scrollRange > 0;
+  // A range measured on a surface that has gone no longer applies
+  const overflowing = target !== null && scrollRange > 0;
 
-  useEffect(() => {
+  // Once per surface, before paint: it shows with its scrollbar in its first frame
+  useLayoutEffect(() => {
     if (!target) {
       return;
     }
 
     const measure = () => {
       const clientWidth = target.getClientWidth();
-      if (clientWidth <= 0) {
-        return;
+      if (clientWidth > 0) {
+        setScrollRange(Math.max(0, target.getScrollWidth() - clientWidth));
       }
-
-      setScrollRange(Math.max(0, target.getScrollWidth() - clientWidth));
     };
 
-    const cancel = measureNextFrame(measure);
-    const unsubscribe = target.onResize(() => measureNextFrame(measure));
+    measureRef.current = measure;
+    justSubscribed.current = true;
+
+    const cancel = measureNow(measure);
+    let cancelResize: (() => void) | undefined;
+    const unsubscribe = target.onResize(() => {
+      cancelResize = measureInFrame(measure);
+    });
 
     return () => {
+      measureRef.current = null;
       unsubscribe();
       cancel();
+      cancelResize?.();
     };
+  }, [target]);
+
+  // A surface just subscribed has been measured already
+  useLayoutEffect(() => {
+    const measure = measureRef.current;
+    const fresh = justSubscribed.current;
+    justSubscribed.current = false;
+
+    return measure && !fresh ? measureInFrame(measure) : undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target, ...deps]);
 
