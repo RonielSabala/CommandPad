@@ -8,6 +8,7 @@ import {
   UnresolvedCause,
 } from "@/common/enums";
 import type { Block, Tab } from "@/common/types";
+import { VariableSyntax } from "@/common/variableSyntax";
 import { FramedSection } from "@/components/common/FramedSection";
 import { BlockLinks } from "@/components/common/tooltip/BlockLinks";
 import type { RichTooltipControls } from "@/components/common/tooltip/richTooltip";
@@ -26,6 +27,7 @@ import {
   getTabVariableMap,
   getVariableKey,
   sourceKey,
+  sourceParam,
   type UnresolvedPart,
 } from "@/utils/resolution";
 import { abbreviate, classNames } from "@/utils/string";
@@ -51,6 +53,30 @@ interface Problem {
 
 function partLabel(part: UnresolvedPart): string {
   return part.cause === UnresolvedCause.FAILED ? part.text : part.source;
+}
+
+/**
+ * A blank's label gives up its key first, so the param it names stays
+ * readable.
+ */
+function shortenLabel(cause: UnresolvedCause, label: string): string {
+  const { MIN_KEY_LENGTH, MAX_LABEL_LENGTH } = TabUnresolvedConfig;
+  const param =
+    cause === UnresolvedCause.BLANK ? sourceParam(label) : undefined;
+
+  if (param === undefined) {
+    return abbreviate(label, MAX_LABEL_LENGTH);
+  }
+
+  const separator = VariableSyntax.PARAM_SEPARATOR;
+  const tail =
+    separator +
+    abbreviate(param, MAX_LABEL_LENGTH - MIN_KEY_LENGTH - separator.length);
+
+  return (
+    abbreviate(sourceKey(label), MAX_LABEL_LENGTH - Array.from(tail).length) +
+    tail
+  );
 }
 
 interface Props {
@@ -91,7 +117,7 @@ export function TabUnresolvedTooltip({ tab, tip }: Props) {
         problem = {
           cause,
           label,
-          shortLabel: abbreviate(label, TabUnresolvedConfig.MAX_LABEL_LENGTH),
+          shortLabel: shortenLabel(cause, label),
           key,
           blocks: [],
         };

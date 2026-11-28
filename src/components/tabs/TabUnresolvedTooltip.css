@@ -46,6 +46,11 @@
   color: inherit;
 }
 
+.tab-unresolved-problem > :not(.tab-unresolved-label) {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .tab-unresolved-problem .btn-flat-icon {
   padding: 0;
   color: var(--accent);

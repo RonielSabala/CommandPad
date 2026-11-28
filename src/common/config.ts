@@ -293,6 +293,7 @@ export const MessageListConfig = {
 } as const;
 
 export const TabUnresolvedConfig = {
+  MIN_KEY_LENGTH: 12,
   MAX_LABEL_LENGTH: 120,
 } as const;
 
